@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "ripper"
+require "yarp"
+
+filepath = ARGV.first
+pattern = "%-70s %-70s"
+
+puts pattern % ["Ripper lex", "YARP lex"]
+puts pattern % ["-" * 70, "-" * 70]
+
+YARP.ripper_lex(filepath).zip(YARP.compat_lex(filepath)).each do |(ripper, yarp)|
+  left = ripper[...-1].inspect
+  right = (yarp || [])[...-1].inspect
+
+  color = left == right ? "38;5;102" : "1;31"
+  puts "\033[#{color}m#{pattern}\033[0m" % [ripper.inspect, yarp.inspect]
+end

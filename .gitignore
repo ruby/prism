@@ -1,0 +1,12 @@
+/.bundle/
+/.vscode/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+
+/lib/yarp/yarp.*
+test.rb

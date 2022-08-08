@@ -1,0 +1,30 @@
+PATH
+  remote: .
+  specs:
+    yarp (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.16.2)
+    power_assert (2.0.1)
+    rake (13.0.6)
+    rake-compiler (1.2.0)
+      rake
+    test-unit (3.5.3)
+      power_assert
+
+PLATFORMS
+  arm64-darwin-21
+  x86_64-linux
+
+DEPENDENCIES
+  bundler (~> 2)
+  minitest (~> 5)
+  rake (~> 13)
+  rake-compiler (~> 1)
+  test-unit (~> 3)
+  yarp!
+
+BUNDLED WITH
+   2.3.6
