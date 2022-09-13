@@ -122,12 +122,24 @@ YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |name, config
   types << NodeType.new(name, config)
 end
 
-File.write(
-  File.expand_path("../ext/yarp/nodes.h", __dir__),
-  ERB.new(File.read(File.expand_path("templates/nodes.h.erb", __dir__)), trim_mode: "-").result_with_hash(types: types)
-)
+begin_mark = <<-MARK
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
+MARK
 
-File.write(
-  File.expand_path("../ext/yarp/nodes.c", __dir__),
-  ERB.new(File.read(File.expand_path("templates/nodes.c.erb", __dir__)), trim_mode: "-").result_with_hash(types: types)
-)
+end_mark = <<-MARK
+/******************************************************************************/
+/* END TEMPLATE                                                               */
+/******************************************************************************/
+MARK
+
+mark = %r{#{Regexp.escape(begin_mark)}.+#{Regexp.escape(end_mark)}}m
+
+filepath = File.expand_path("../ext/yarp/yarp.h", __dir__)
+contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/nodes.h.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
+File.write(filepath, contents)
+
+filepath = File.expand_path("../ext/yarp/yarp.c", __dir__)
+contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/nodes.c.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
+File.write(filepath, contents)

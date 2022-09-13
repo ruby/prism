@@ -1,11 +1,9 @@
-#ifndef YARP_NODES_H
-#define YARP_NODES_H
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
 
-#include <ruby.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "parser.h"
-
+// This represents a range of bytes in the source string to which a node or
+// token corresponds.
 typedef struct {
   uint64_t start;
   uint64_t end;
@@ -67,7 +65,6 @@ yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #
 void
 yp_node_dealloc(yp_parser_t *parser, yp_node_t *node);
 
-void
-Init_yarp_nodes(void);
-
-#endif
+/******************************************************************************/
+/* END TEMPLATE                                                               */
+/******************************************************************************/
