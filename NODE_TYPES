@@ -1,6 +1,28 @@
-Assignment        (node target, token operator, node value) target->value
-Binary            (node left, token operator, node right)   left->right
-FloatLiteral      (token value)                             value
-Identifier        (token value)                             value
-IntegerLiteral    (token value)                             value
-VariableReference (node value)                              value
+Assignment:
+  child_nodes:
+    - node target
+    - token operator
+    - node value
+  location: target->value
+Binary:
+  child_nodes:
+    - node left
+    - token operator
+    - node right
+  location: left->right
+FloatLiteral:
+  child_nodes:
+    - token value
+  location: value
+Identifier:
+  child_nodes:
+    - token value
+  location: value
+IntegerLiteral:
+  child_nodes:
+    - token value
+  location: value
+VariableReference:
+  child_nodes:
+    - node value
+  location: value

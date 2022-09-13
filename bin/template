@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "erb"
+require "yaml"
 
 class NodeType
   class NodeParam
@@ -66,15 +67,15 @@ class NodeType
 
   attr_reader :name, :type, :human, :params, :location
 
-  def initialize(line)
-    @name, params, location = line.match(/^(\w+)\s+\((.*)\)\s+(.+)$/).captures
+  def initialize(name, config)
+    @name = name
 
     type = @name.gsub(/(.)([A-Z])/, "\\1_\\2")
     @type = "YP_NODE_#{type.upcase}"
     @human = type.downcase
 
     @params =
-      params.split(", ").map do |param|
+      config.fetch("child_nodes").map do |param|
         type, name = param.split(" ")
 
         case type
@@ -87,30 +88,32 @@ class NodeType
         end
       end
 
-    param_location = ->(name) {
-      case found = @params.find { |param| param.name == name }
-      when NodeParam
-        NodeLocation.new(name)
-      when TokenParam
-        TokenLocation.new(name)
-      else
-        raise
-      end
-    }
-
     @location =
-      if location.include?("->")
-        from, to = location.split("->")
-        Node2NodeLocation.new(param_location[from], param_location[to])
-      else
-        param_location[location]
+      config.fetch("location").then do |location|
+        param_location = ->(name) {
+          case found = @params.find { |param| param.name == name }
+          when NodeParam
+            NodeLocation.new(name)
+          when TokenParam
+            TokenLocation.new(name)
+          else
+            raise
+          end
+        }
+
+        if location.include?("->")
+          from, to = location.split("->")
+          Node2NodeLocation.new(param_location[from], param_location[to])
+        else
+          param_location[location]
+        end
       end
   end
 end
 
 types = []
-File.foreach(File.expand_path("../NODE_TYPES", __dir__), chomp: true) do |line|
-  types << NodeType.new(line)
+YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |name, config|
+  types << NodeType.new(name, config)
 end
 
 File.write(
