@@ -1,0 +1,40 @@
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
+
+static VALUE
+node_new(yp_parser_t *parser, yp_node_t *node) {
+  switch (node->type) {
+    <%- types.each do |type| -%>
+    case <%= type.type %>: {
+      VALUE argv[<%= type.params.length + 1 %>];
+      <%- type.params.each_with_index do |param, index| -%>
+
+      // <%= param.name %>
+      <%- case param -%>
+      <%- when NodeParam -%>
+      argv[<%= index %>] = node_new(parser, node->as.<%= type.human %>.<%= param.name %>);
+      <%- when NodeListParam -%>
+      argv[<%= index %>] = rb_ary_new();
+      for (size_t index = 0; index < node->as.<%= type.human %>.<%= param.name %>->size; index++) {
+        rb_ary_push(argv[<%= index %>], node_new(parser, &node->as.<%= type.human %>.<%= param.name %>->nodes[index]));
+      }
+      <%- when TokenParam -%>
+      argv[<%= index %>] = token_new(parser, &node->as.<%= type.human %>.<%= param.name %>);
+      <%- end -%>
+      <%- end -%>
+
+      // location
+      argv[<%= type.params.length %>] = location_new(&node->location);
+
+      return rb_class_new_instance(<%= type.params.length + 1 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= type.name %>")));
+    }
+    <%- end -%>
+    default:
+      rb_raise(rb_eRuntimeError, "unknown node type: %d", node->type);
+  }
+}
+
+/******************************************************************************/
+/* END TEMPLATE                                                               */
+/******************************************************************************/

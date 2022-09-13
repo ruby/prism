@@ -9,6 +9,8 @@ class NodeParam < Struct.new(:name)
   def decl = "struct yp_node *#{name}"
   def param = "yp_node_t *#{name}"
   def assign = name
+  def rbs_class = "Node"
+  def child_nodes = name
 end
 
 # This represents a parameter to a node that is a list of nodes. We pass them as
@@ -17,6 +19,8 @@ class NodeListParam < Struct.new(:name)
   def decl = "struct yp_node_list *#{name}"
   def param = nil
   def assign = "yp_node_list_alloc(parser)"
+  def rbs_class = "Array[Node]"
+  def child_nodes = "*#{name}"
 end
 
 # This represents a parameter to a node that is a token. We pass them as
@@ -25,6 +29,8 @@ class TokenParam < Struct.new(:name)
   def decl = "yp_token_t #{name}"
   def param = "yp_token_t *#{name}"
   def assign = "*#{name}"
+  def rbs_class = "Token"
+  def child_nodes = nil
 end
 
 # This represents using the location of a child node as the location of the
@@ -117,29 +123,38 @@ class NodeType
   end
 end
 
+def template(name, types, mark)
+  filepath = File.expand_path(name, __dir__)
+  contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
+  File.write(filepath, contents)
+end
+
+cmark = %r{#{Regexp.escape(<<-CMARKBEGIN)}.+#{Regexp.escape(<<-CMARKEND)}}m
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
+CMARKBEGIN
+/******************************************************************************/
+/* END TEMPLATE                                                               */
+/******************************************************************************/
+CMARKEND
+
+rbmark = %r{#{Regexp.escape(<<-RBMARKBEGIN)}.+#{Regexp.escape(<<-RBMARKEND)}}m
+  ##############################################################################
+  # BEGIN TEMPLATE                                                             #
+  ##############################################################################
+RBMARKBEGIN
+  ##############################################################################
+  # END TEMPLATE                                                               #
+  ##############################################################################
+RBMARKEND
+
 types = []
 YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |name, config|
   types << NodeType.new(name, config)
 end
 
-begin_mark = <<-MARK
-/******************************************************************************/
-/* BEGIN TEMPLATE                                                             */
-/******************************************************************************/
-MARK
-
-end_mark = <<-MARK
-/******************************************************************************/
-/* END TEMPLATE                                                               */
-/******************************************************************************/
-MARK
-
-mark = %r{#{Regexp.escape(begin_mark)}.+#{Regexp.escape(end_mark)}}m
-
-filepath = File.expand_path("../ext/yarp/yarp.h", __dir__)
-contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/nodes.h.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
-File.write(filepath, contents)
-
-filepath = File.expand_path("../ext/yarp/yarp.c", __dir__)
-contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/nodes.c.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
-File.write(filepath, contents)
+template("../ext/yarp/extension.c", types, cmark)
+template("../ext/yarp/yarp.h", types, cmark)
+template("../ext/yarp/yarp.c", types, cmark)
+template("../lib/yarp.rb", types, rbmark)

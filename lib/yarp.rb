@@ -4,17 +4,238 @@ require_relative "yarp/yarp"
 require_relative "yarp/version"
 
 module YARP
-  # This represents a token from the Ruby source.
-  class Token
-    attr_reader :type, :value, :start_offset, :end_offset
+  # This represents a location in the source corresponding to a node or token.
+  class Location
+    attr_reader :start_offset, :end_offset
 
-    def initialize(type, value, start_offset, end_offset)
-      @type = type
-      @value = value
+    def initialize(start_offset, end_offset)
       @start_offset = start_offset
       @end_offset = end_offset
     end
+
+    def pretty_print(q)
+      q.text("(#{start_offset}..#{end_offset})")
+    end
   end
+
+  # This represents a token from the Ruby source.
+  class Token
+    attr_reader :type, :value, :location
+
+    def initialize(type, value, location)
+      @type = type
+      @value = value
+      @location = location
+    end
+  end
+
+  # This represents a node in the tree.
+  class Node
+  end
+
+  ##############################################################################
+  # BEGIN TEMPLATE                                                             #
+  ##############################################################################
+
+  class Assignment < Node
+    attr_reader :target, :operator, :value, :location
+
+    # def initialize: (target: Node, operator: Token, value: Node, location: Location) -> void
+    def initialize(target, operator, value, location)
+      @target = target
+      @operator = operator
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_assignment(self)
+    end
+
+    def child_nodes
+      [target, value]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { target: target, operator: operator, value: value }
+    end
+  end
+
+  class Binary < Node
+    attr_reader :left, :operator, :right, :location
+
+    # def initialize: (left: Node, operator: Token, right: Node, location: Location) -> void
+    def initialize(left, operator, right, location)
+      @left = left
+      @operator = operator
+      @right = right
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_binary(self)
+    end
+
+    def child_nodes
+      [left, right]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { left: left, operator: operator, right: right }
+    end
+  end
+
+  class FloatLiteral < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_float_literal(self)
+    end
+
+    def child_nodes
+      []
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value }
+    end
+  end
+
+  class Identifier < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_identifier(self)
+    end
+
+    def child_nodes
+      []
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value }
+    end
+  end
+
+  class IntegerLiteral < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_integer_literal(self)
+    end
+
+    def child_nodes
+      []
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value }
+    end
+  end
+
+  class Program < Node
+    attr_reader :statements, :location
+
+    # def initialize: (statements: Node, location: Location) -> void
+    def initialize(statements, location)
+      @statements = statements
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_program(self)
+    end
+
+    def child_nodes
+      [statements]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { statements: statements }
+    end
+  end
+
+  class Statements < Node
+    attr_reader :body, :location
+
+    # def initialize: (body: Array[Node], location: Location) -> void
+    def initialize(body, location)
+      @body = body
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_statements(self)
+    end
+
+    def child_nodes
+      [*body]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { body: body }
+    end
+  end
+
+  class VariableReference < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Node, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_variable_reference(self)
+    end
+
+    def child_nodes
+      [value]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value }
+    end
+  end
+
+  ##############################################################################
+  # END TEMPLATE                                                               #
+  ##############################################################################
 
   # This lexes with the Ripper lex. It drops any space events and normalizes all
   # ignored newlines into regular newlines.
@@ -44,13 +265,13 @@ module YARP
     lex_file(filepath).each do |token|
       line_number, line_offset =
         offsets.each_with_index.detect do |(offset, line)|
-          break [line, offsets[line - 1]] if token.start_offset < offset
+          break [line, offsets[line - 1]] if token.location.start_offset < offset
         end
 
       line_number ||= offsets.length + 1
       line_offset ||= offsets.last
 
-      line_byte = token.start_offset - line_offset
+      line_byte = token.location.start_offset - line_offset
       event = RIPPER.fetch(token.type)
 
       value = token.value

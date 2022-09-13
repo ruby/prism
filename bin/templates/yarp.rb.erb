@@ -1,0 +1,35 @@
+  ##############################################################################
+  # BEGIN TEMPLATE                                                             #
+  ##############################################################################
+
+  <%- types.each do |type| -%>
+  class <%= type.name -%> < Node
+    attr_reader <%= type.params.map { |param| ":#{param.name}" }.join(", ") %>, :location
+
+    # def initialize: (<%= type.params.map { |param| "#{param.name}: #{param.rbs_class}" }.join(", ") %>, location: Location) -> void
+    def initialize(<%= type.params.map(&:name).join(", ") %>, location)
+      <%- type.params.each do |param| -%>
+      @<%= param.name %> = <%= param.name %>
+      <%- end -%>
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_<%= type.human %>(self)
+    end
+
+    def child_nodes
+      [<%= type.params.map(&:child_nodes).compact.join(", ") %>]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { <%= type.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %> }
+    end
+  end
+
+  <%- end -%>
+  ##############################################################################
+  # END TEMPLATE                                                               #
+  ##############################################################################

@@ -858,12 +858,15 @@ yp_node_list_alloc(yp_parser_t *parser) {
 
 // Append a new node onto the end of the node list.
 static void
-yp_node_list_append(yp_parser_t *parser, yp_node_list_t *list, yp_node_t *node) {
+yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list, yp_node_t *node) {
   if (list->size == list->capacity) {
     list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
     list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t));
   }
   list->nodes[list->size++] = *node;
+
+  if (list->size == 0) parent->location.start = node->location.start;
+  parent->location.end = node->location.end;
 }
 
 // Deallocate a list of nodes. The parser argument is not used, but is here for
@@ -1302,19 +1305,18 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
   yp_node_t *statements = yp_node_alloc_statements(parser);
-  yp_node_t *program = yp_node_alloc_program(parser, statements);
   yp_lex_token(parser);
 
   for (bool parsing = true; parsing;) {
     yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
-    yp_node_list_append(parser, statements->as.statements.body, node);
+    yp_node_list_append(parser, statements, statements->as.statements.body, node);
 
     if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
       parsing = false;
     }
   }
 
-  return program;
+  return yp_node_alloc_program(parser, statements);
 }
 
 /******************************************************************************/
