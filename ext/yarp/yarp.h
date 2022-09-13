@@ -251,16 +251,23 @@ struct yp_parser {
   yp_error_handler_t *error_handler; // the error handler
 };
 
-/******************************************************************************/
-/* BEGIN TEMPLATE                                                             */
-/******************************************************************************/
-
 // This represents a range of bytes in the source string to which a node or
 // token corresponds.
 typedef struct {
   uint64_t start;
   uint64_t end;
 } yp_location_t;
+
+struct yp_node;
+typedef struct yp_node_list {
+  struct yp_node **nodes;
+  size_t size;
+  size_t capacity;
+} yp_node_list_t;
+
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
 
 typedef enum {
   YP_NODE_ASSIGNMENT,
@@ -272,8 +279,6 @@ typedef enum {
   YP_NODE_STATEMENTS,
   YP_NODE_VARIABLE_REFERENCE,
 } yp_node_type_t;
-
-struct yp_node_list;
 
 // This is the overall tagged union representing a node in the syntax tree.
 typedef struct yp_node {
@@ -337,15 +342,6 @@ typedef struct yp_node {
   } as;
 } yp_node_t;
 
-typedef struct yp_node_list {
-  yp_node_t *nodes;
-  size_t size;
-  size_t capacity;
-} yp_node_list_t;
-
-void
-yp_node_dealloc(yp_parser_t *parser, yp_node_t *node);
-
 /******************************************************************************/
 /* END TEMPLATE                                                               */
 /******************************************************************************/
@@ -361,5 +357,9 @@ yp_lex_token(yp_parser_t *parser);
 // Parse the Ruby source associated with the given parser and return the tree.
 yp_node_t *
 yp_parse(yp_parser_t *parser);
+
+// Deallocate a node and all of its children.
+void
+yp_node_dealloc(yp_parser_t *parser, struct yp_node *node);
 
 #endif

@@ -842,8 +842,16 @@ lex_token_type(yp_parser_t *parser) {
 }
 
 /******************************************************************************/
-/* BEGIN TEMPLATE                                                             */
+/* Tree node management                                                       */
 /******************************************************************************/
+
+// Allocate the space for a new yp_node_t. Currently we're not using the
+// parser argument, but it's there to allow for the future possibility of
+// pre-allocating larger memory pools and then pulling from those here.
+static inline yp_node_t *
+yp_node_alloc(yp_parser_t *parser) {
+  return malloc(sizeof(yp_node_t));
+}
 
 // Allocate a list of nodes. The parser argument is not used, but is here for
 // the future possibility of pre-allocating memory pools.
@@ -861,9 +869,9 @@ static void
 yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list, yp_node_t *node) {
   if (list->size == list->capacity) {
     list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
-    list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t));
+    list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t *));
   }
-  list->nodes[list->size++] = *node;
+  list->nodes[list->size++] = node;
 
   if (list->size == 0) parent->location.start = node->location.start;
   parent->location.end = node->location.end;
@@ -875,20 +883,16 @@ static void
 yp_node_list_dealloc(yp_parser_t *parser, yp_node_list_t *list) {
   if (list->capacity > 0) {
     for (size_t index = 0; index < list->size; index++) {
-      yp_node_dealloc(parser, &list->nodes[index]);
+      yp_node_dealloc(parser, list->nodes[index]);
     }
     free(list->nodes);
   }
   free(list);
 }
 
-// Allocate the space for a new yp_node_t. Currently we're not using the
-// parser argument, but it's there to allow for the future possibility of
-// pre-allocating larger memory pools and then pulling from those here.
-static inline yp_node_t *
-yp_node_alloc(yp_parser_t *parser) {
-  return malloc(sizeof(yp_node_t));
-}
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
 
 // Allocate a new Assignment node.
 static yp_node_t *

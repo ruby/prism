@@ -272,7 +272,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       // body
       argv[0] = rb_ary_new();
       for (size_t index = 0; index < node->as.statements.body->size; index++) {
-        rb_ary_push(argv[0], node_new(parser, &node->as.statements.body->nodes[index]));
+        rb_ary_push(argv[0], node_new(parser, node->as.statements.body->nodes[index]));
       }
 
       // location
@@ -398,10 +398,7 @@ parse_source(source_t *source) {
   yp_node_t *node = yp_parse(&parser);
   VALUE value = node_new(&parser, node);
 
-  // TODO: I should be freeing the node here, otherwise this will leak. For some
-  // reason this is failing. I'm not sure why.
-  // yp_node_dealloc(&parser, node);
-
+  yp_node_dealloc(&parser, node);
   return value;
 }
 
