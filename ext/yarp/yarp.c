@@ -1258,6 +1258,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_FLOAT:
       node = yp_node_alloc_float_literal(parser, &parser->previous);
       break;
+    case YP_TOKEN_IDENTIFIER:
+      node = yp_node_alloc_identifier(parser, &parser->previous);
+      node = yp_node_alloc_variable_reference(parser, node);
+      break;
     case YP_TOKEN_INTEGER:
       node = yp_node_alloc_integer_literal(parser, &parser->previous);
       break;
@@ -1274,10 +1278,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     yp_lex_token(parser);
 
     switch (token.type) {
+      case YP_TOKEN_EQUAL: {
+        yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
+        node = yp_node_alloc_assignment(parser, node, &token, right);
+        break;
+      }
       case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL:
       case YP_TOKEN_AMPERSAND_EQUAL:
       case YP_TOKEN_CARET_EQUAL:
-      case YP_TOKEN_EQUAL:
       case YP_TOKEN_GREATER_GREATER_EQUAL:
       case YP_TOKEN_LESS_LESS_EQUAL:
       case YP_TOKEN_MINUS_EQUAL:
@@ -1289,7 +1297,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_STAR_EQUAL:
       case YP_TOKEN_STAR_STAR_EQUAL: {
         yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
-        node = yp_node_alloc_assignment(parser, node, &token, right);
+        node = yp_node_alloc_operator_assignment(parser, node, &token, right);
         break;
       }
       case YP_TOKEN_PIPE_PIPE:
