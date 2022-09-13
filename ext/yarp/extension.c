@@ -173,34 +173,28 @@ token_new(yp_parser_t *parser, yp_token_t *token) {
 }
 
 static VALUE
-lex_source(const char *source, off_t size) {
-  // Instantiate the parser struct with all of the necessary information
-  yp_parser_t parser;
-  yp_parser_init(&parser, source, size);
-
-  // Create an array and populate it with the tokens from the source
-  VALUE array = rb_ary_new();
-  for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
-    rb_ary_push(array, token_new(&parser, &parser.current));
-  }
-
-  return array;
+node_new(yp_parser_t *parser, yp_node_t *node) {
+  return Qnil;
 }
 
-static VALUE
-lex(VALUE self, VALUE string) {
-  return lex_source(StringValueCStr(string), RSTRING_LEN(string));
-}
+// Represents a source of Ruby code. It can either be coming from a file or a
+// string. If it's a file, it's going to mmap the contents of the file. If it's
+// a string it's going to just point to the contents of the string.
+typedef struct {
+  enum { SOURCE_FILE, SOURCE_STRING } type;
+  const char *source;
+  off_t size;
+} source_t;
 
-static VALUE
-lex_file(VALUE self, VALUE rb_filepath) {
-  char *filepath = StringValueCStr(rb_filepath);
-
+// Read the file indicated by the filepath parameter into source and load its
+// contents and size into the given source_t.
+int
+source_file_load(source_t *source, VALUE filepath) {
   // Open the file for reading
-  int fd = open(filepath, O_RDONLY);
+  int fd = open(StringValueCStr(filepath), O_RDONLY);
   if (fd == -1) {
     perror("open");
-    return Qnil;
+    return 1;
   }
 
   // Stat the file to get the file size
@@ -208,22 +202,97 @@ lex_file(VALUE self, VALUE rb_filepath) {
   if (fstat(fd, &sb) == -1) {
     close(fd);
     perror("fstat");
-    return Qnil;
+    return 1;
   }
 
   // mmap the file descriptor to virtually get the contents
-  off_t size = sb.st_size;
-  const char *source = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
+  source->size = sb.st_size;
+  source->source = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
 
   close(fd);
   if (source == MAP_FAILED) {
     perror("mmap");
+    return 1;
+  }
+
+  return 0;
+}
+
+// Load the contents and size of the given string into the given source_t.
+void
+source_string_load(source_t *source, VALUE string) {
+  *source = (source_t) {
+    .type = SOURCE_STRING,
+    .source = StringValueCStr(string),
+    .size = RSTRING_LEN(string)
+  };
+}
+
+// Free any resources associated with the given source_t.
+void
+source_file_unload(source_t *source) {
+  munmap((void *) source->source, source->size);
+}
+
+// Return an array of tokens corresponding to the given source.
+static VALUE
+lex_source(source_t *source) {
+  yp_parser_t parser;
+  yp_parser_init(&parser, source->source, source->size);
+
+  VALUE ary = rb_ary_new();
+  for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
+    rb_ary_push(ary, token_new(&parser, &parser.current));
+  }
+
+  return ary;
+}
+
+// Return an array of tokens corresponding to the given string.
+static VALUE
+lex(VALUE self, VALUE string) {
+  source_t source;
+  source_string_load(&source, string);
+  return lex_source(&source);
+}
+
+// Return an array of tokens corresponding to the given file.
+static VALUE
+lex_file(VALUE self, VALUE filepath) {
+  source_t source;
+  if (source_file_load(&source, filepath) != 0) return Qnil;
+
+  VALUE value = lex_source(&source);
+  source_file_unload(&source);
+  return value;
+}
+
+static VALUE
+parse_source(source_t *source) {
+  yp_parser_t parser;
+  yp_parser_init(&parser, source->source, source->size);
+
+  yp_node_t *node = yp_parse(&parser);
+  return node_new(&parser, node);
+}
+
+static VALUE
+parse(VALUE self, VALUE string) {
+  source_t source;
+  source_string_load(&source, string);
+  return parse_source(&source);
+}
+
+static VALUE
+parse_file(VALUE self, VALUE rb_filepath) {
+  source_t source;
+  if (source_file_load(&source, rb_filepath) != 0) {
     return Qnil;
   }
 
-  VALUE array = lex_source(source, size);
-  munmap((void *) source, size);
-  return array;
+  VALUE value = parse_source(&source);
+  source_file_unload(&source);
+  return value;
 }
 
 void
@@ -233,4 +302,7 @@ Init_yarp(void) {
 
   rb_define_singleton_method(rb_cYARP, "lex", lex, 1);
   rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
+
+  rb_define_singleton_method(rb_cYARP, "parse", parse, 1);
+  rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
 }
