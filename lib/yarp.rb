@@ -6,7 +6,7 @@ require_relative "yarp/version"
 module YARP
   # This lexes with the Ripper lex. It drops any space events and normalizes all
   # ignored newlines into regular newlines.
-  def self.ripper_lex(filepath)
+  def self.lex_ripper(filepath)
     Ripper.lex(File.read(filepath)).each_with_object([]) do |token, tokens|
       case token[1]
       when :on_ignored_nl
@@ -22,14 +22,14 @@ module YARP
   # Returns an array of tokens that closely resembles that of the Ripper lexer.
   # The only difference is that since we don't keep track of lexer state in the
   # same way, it's going to always return the NONE state.
-  def self.compat_lex(filepath)
+  def self.lex_compat(filepath)
     offsets = [0]
     File.foreach(filepath) { |line| offsets << offsets.last + line.bytesize }
 
     lexer_state = Ripper::Lexer::State.new(0)
     tokens = []
 
-    each_token(filepath) do |((start_char, _), type, value)|
+    lex_file(filepath) do |((start_char, _), type, value)|
       line_number, line_offset =
         offsets.each_with_index.detect do |(offset, line)|
           break [line, offsets[line - 1]] if start_char < offset

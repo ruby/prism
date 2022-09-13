@@ -178,7 +178,7 @@ token_inspect(yp_parser_t *parser) {
 }
 
 static VALUE
-each_token(VALUE self, VALUE rb_filepath) {
+lex_file(VALUE self, VALUE rb_filepath) {
   char *filepath = StringValueCStr(rb_filepath);
 
   // Open the file for reading
@@ -230,5 +230,5 @@ each_token(VALUE self, VALUE rb_filepath) {
 void
 Init_yarp(void) {
   VALUE rb_cYARP = rb_define_module("YARP");
-  rb_define_singleton_method(rb_cYARP, "each_token", each_token, 1);
+  rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
 }

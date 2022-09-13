@@ -17,7 +17,7 @@ Rake::TestTask.new(test: :compile) do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
-desc "Lex ruby/spec files and compare with compat_lex"
+desc "Lex ruby/spec files and compare with lex_compat"
 task lex: :compile do
   require "bundler/setup"
   require "yarp"
@@ -41,7 +41,7 @@ task lex: :compile do
 
   filepaths.each do |filepath|
     result =
-      YARP.ripper_lex(filepath).zip(YARP.compat_lex(filepath)).all? do |(ripper, yarp)|
+      YARP.lex_ripper(filepath).zip(YARP.lex_compat(filepath)).all? do |(ripper, yarp)|
         break false if yarp.nil?
         ripper[0...-1] == yarp[0...-1]
       end

@@ -11,7 +11,7 @@ pattern = "%-70s %-70s"
 puts pattern % ["Ripper lex", "YARP lex"]
 puts pattern % ["-" * 70, "-" * 70]
 
-YARP.ripper_lex(filepath).zip(YARP.compat_lex(filepath)).each do |(ripper, yarp)|
+YARP.lex_ripper(filepath).zip(YARP.lex_compat(filepath)).each do |(ripper, yarp)|
   left = ripper[...-1].inspect
   right = (yarp || [])[...-1].inspect
 
