@@ -16,8 +16,12 @@ typedef enum {
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
   YP_NODE_INTEGER_LITERAL,
+  YP_NODE_PROGRAM,
+  YP_NODE_STATEMENTS,
   YP_NODE_VARIABLE_REFERENCE,
 } yp_node_type_t;
+
+struct yp_node_list;
 
 // This is the overall tagged union representing a node in the syntax tree.
 typedef struct yp_node {
@@ -64,6 +68,16 @@ typedef struct yp_node {
       yp_token_t value;
     } integer_literal;
 
+    // Program
+    struct {
+      struct yp_node *statements;
+    } program;
+
+    // Statements
+    struct {
+      struct yp_node_list *body;
+    } statements;
+
     // VariableReference
     struct {
       struct yp_node *value;
@@ -71,21 +85,45 @@ typedef struct yp_node {
   } as;
 } yp_node_t;
 
+typedef struct yp_node_list {
+  yp_node_t *nodes;
+  size_t size;
+  size_t capacity;
+} yp_node_list_t;
+
+// Append a new node onto the end of the node list.
+void
+yp_node_list_append(yp_parser_t *parser, yp_node_list_t *list, yp_node_t *node);
+
+// Allocate a new Assignment node.
 yp_node_t *
 yp_node_alloc_assignment(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_node_t *value);
 
+// Allocate a new Binary node.
 yp_node_t *
 yp_node_alloc_binary(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator, yp_node_t *right);
 
+// Allocate a new FloatLiteral node.
 yp_node_t *
 yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value);
 
+// Allocate a new Identifier node.
 yp_node_t *
 yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value);
 
+// Allocate a new IntegerLiteral node.
 yp_node_t *
 yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value);
 
+// Allocate a new Program node.
+yp_node_t *
+yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements);
+
+// Allocate a new Statements node.
+yp_node_t *
+yp_node_alloc_statements(yp_parser_t *parser);
+
+// Allocate a new VariableReference node.
 yp_node_t *
 yp_node_alloc_variable_reference(yp_parser_t *parser, yp_node_t *value);
 

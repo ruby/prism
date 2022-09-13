@@ -16,6 +16,8 @@ typedef enum {
 <%- end -%>
 } yp_node_type_t;
 
+struct yp_node_list;
+
 // This is the overall tagged union representing a node in the syntax tree.
 typedef struct yp_node {
   // This represents the type of the node. It somewhat maps to the nodes that
@@ -43,10 +45,22 @@ typedef struct yp_node {
   <%- end -%>
   } as;
 } yp_node_t;
+
+typedef struct yp_node_list {
+  yp_node_t *nodes;
+  size_t size;
+  size_t capacity;
+} yp_node_list_t;
+
+// Append a new node onto the end of the node list.
+void
+yp_node_list_append(yp_parser_t *parser, yp_node_list_t *list, yp_node_t *node);
 <%- types.each do |type| -%>
 
+// Allocate a new <%= type.name %> node.
 yp_node_t *
-yp_node_alloc_<%= type.human %>(yp_parser_t *parser, <%= type.params.map(&:param).join(", ") %>);
+<%- params = type.params.map(&:param).compact.join(", ") -%>
+yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>);
 <%- end -%>
 
 void

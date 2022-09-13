@@ -16,11 +16,46 @@ static inline void
 yp_node_free(yp_parser_t *parser, yp_node_t *node) {
   free(node);
 }
+
+// Allocate a list of nodes. The parser argument is not used, but is here for
+// the future possibility of pre-allocating memory pools.
+static yp_node_list_t *
+yp_node_list_alloc(yp_parser_t *parser) {
+  yp_node_list_t *list = malloc(sizeof(yp_node_list_t));
+  list->nodes = NULL;
+  list->size = 0;
+  list->capacity = 0;
+  return list;
+}
+
+// Deallocate a list of nodes. The parser argument is not used, but is here for
+// the future possibility of pre-allocating memory pools.
+static void
+yp_node_list_dealloc(yp_parser_t *parser, yp_node_list_t *list) {
+  if (list->capacity > 0) {
+    for (size_t index = 0; index < list->size; index++) {
+      yp_node_dealloc(parser, &list->nodes[index]);
+    }
+    free(list->nodes);
+  }
+  free(list);
+}
+
+// Append a new node onto the end of the node list.
+void
+yp_node_list_append(yp_parser_t *parser, yp_node_list_t *list, yp_node_t *node) {
+  if (list->size == list->capacity) {
+    list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+    list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t));
+  }
+  list->nodes[list->size++] = *node;
+}
 <%- types.each do |type| -%>
 
 // Allocate a new <%= type.name %> node.
 yp_node_t *
-yp_node_alloc_<%= type.human %>(yp_parser_t *parser, <%= type.params.map(&:param).join(", ") %>) {
+<%- params = type.params.map(&:param).compact.join(", ") -%>
+yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = <%= type.type %>,
@@ -41,8 +76,13 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
   switch (node->type) {
     <%- types.each do |type| -%>
     case <%= type.type %>:
-      <%- type.params.grep(NodeParam).each do |param| -%>
+      <%- type.params.each do |param| -%>
+      <%- case param -%>
+      <%- when NodeParam -%>
       yp_node_dealloc(parser, node->as.<%= type.human %>.<%= param.name %>);
+      <%- when NodeListParam -%>
+      yp_node_list_dealloc(parser, node->as.<%= type.human %>.<%= param.name %>);
+      <%- end -%>
       <%- end -%>
       yp_node_free(parser, node);
       break;
