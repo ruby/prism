@@ -842,6 +842,257 @@ lex_token_type(yp_parser_t *parser) {
 }
 
 /******************************************************************************/
+/* Parse functions                                                            */
+/******************************************************************************/
+
+// These are the various precedence rules. Because we are using a Pratt parser,
+// they are named binding power to represent the manner in which nodes are bound
+// together in the stack.
+typedef enum {
+  BINDING_POWER_NONE = 1,
+  BINDING_POWER_BRACES,          // braces
+  BINDING_POWER_MODIFIER,        // if unless until while
+  BINDING_POWER_COMPOSITION,     // and or
+  BINDING_POWER_NOT,             // not
+  BINDING_POWER_DEFINED,         // defined?
+  BINDING_POWER_ASSIGNMENT,      // = += -= *= /= %= &= |= ^= &&= ||= <<= >>= **=
+  BINDING_POWER_MODIFIER_RESCUE, // rescue
+  BINDING_POWER_TERNARY,         // ?:
+  BINDING_POWER_RANGE,           // .. ...
+  BINDING_POWER_LOGICAL_OR,      // ||
+  BINDING_POWER_LOGICAL_AND,     // &&
+  BINDING_POWER_EQUALITY,        // <=> == === != =~ !~
+  BINDING_POWER_COMPARISON,      // > >= < <=
+  BINDING_POWER_BITWISE_OR,      // | ^
+  BINDING_POWER_BITWISE_AND,     // &
+  BINDING_POWER_SHIFT,           // << >>
+  BINDING_POWER_TERM,            // + -
+  BINDING_POWER_FACTOR,          // * / %
+  BINDING_POWER_UMINUS,          // unary minus
+  BINDING_POWER_EXPONENT,        // **
+  BINDING_POWER_UNARY,           // ! ~ +
+  BINDING_POWER_INDEX,           // [] []=
+} binding_power_t;
+
+// This struct represents a set of binding powers used for a given token. They
+// are combined in this way to make it easier to represent associativity.
+typedef struct {
+  binding_power_t left;
+  binding_power_t right;
+} binding_powers_t;
+
+#define LEFT_ASSOCIATIVE(precedence) { precedence, precedence + 1 }
+#define RIGHT_ASSOCIATIVE(precedence) { precedence, precedence }
+
+binding_powers_t binding_powers[] = {
+  // {}
+  [YP_TOKEN_BRACE_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_BRACES),
+
+  // if unless until while
+  [YP_TOKEN_KEYWORD_IF] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_UNLESS] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_UNTIL] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_WHILE] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+
+  // and or
+  [YP_TOKEN_KEYWORD_AND] = LEFT_ASSOCIATIVE(BINDING_POWER_COMPOSITION),
+  [YP_TOKEN_KEYWORD_OR] = LEFT_ASSOCIATIVE(BINDING_POWER_COMPOSITION),
+
+  // not
+  [YP_TOKEN_KEYWORD_NOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_NOT),
+
+  // defined?
+  [YP_TOKEN_KEYWORD_DEFINED] = RIGHT_ASSOCIATIVE(BINDING_POWER_DEFINED),
+
+  // &&= &= ^= = >>= <<= -= %= |= += /= *= **=
+  [YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_AMPERSAND_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_CARET_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_GREATER_GREATER_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_LESS_LESS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_MINUS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_PERCENT_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_PIPE_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_PIPE_PIPE_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_PLUS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_SLASH_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_STAR_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_STAR_STAR_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+
+  // ?:
+  [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(BINDING_POWER_TERNARY),
+
+  // .. ...
+  [YP_TOKEN_DOT_DOT] = LEFT_ASSOCIATIVE(BINDING_POWER_RANGE),
+  [YP_TOKEN_DOT_DOT_DOT] = LEFT_ASSOCIATIVE(BINDING_POWER_RANGE),
+
+  // ||
+  [YP_TOKEN_PIPE_PIPE] = LEFT_ASSOCIATIVE(BINDING_POWER_LOGICAL_OR),
+
+  // &&
+  [YP_TOKEN_AMPERSAND_AMPERSAND] = LEFT_ASSOCIATIVE(BINDING_POWER_LOGICAL_AND),
+
+  // != !~ == === =~ <=>
+  [YP_TOKEN_BANG_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_EQUALITY),
+  [YP_TOKEN_BANG_TILDE] = RIGHT_ASSOCIATIVE(BINDING_POWER_EQUALITY),
+  [YP_TOKEN_EQUAL_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_EQUALITY),
+  [YP_TOKEN_EQUAL_EQUAL_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_EQUALITY),
+  [YP_TOKEN_EQUAL_TILDE] = RIGHT_ASSOCIATIVE(BINDING_POWER_EQUALITY),
+  [YP_TOKEN_LESS_EQUAL_GREATER] = RIGHT_ASSOCIATIVE(BINDING_POWER_EQUALITY),
+
+  // > >= < <=
+  [YP_TOKEN_GREATER] = RIGHT_ASSOCIATIVE(BINDING_POWER_COMPARISON),
+  [YP_TOKEN_GREATER_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_COMPARISON),
+  [YP_TOKEN_LESS] = RIGHT_ASSOCIATIVE(BINDING_POWER_COMPARISON),
+  [YP_TOKEN_LESS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_COMPARISON),
+
+  // ^ |
+  [YP_TOKEN_CARET] = RIGHT_ASSOCIATIVE(BINDING_POWER_BITWISE_OR),
+  [YP_TOKEN_PIPE] = RIGHT_ASSOCIATIVE(BINDING_POWER_BITWISE_OR),
+
+  // &
+  [YP_TOKEN_AMPERSAND] = RIGHT_ASSOCIATIVE(BINDING_POWER_BITWISE_AND),
+
+  // >> <<
+  [YP_TOKEN_GREATER_GREATER] = RIGHT_ASSOCIATIVE(BINDING_POWER_SHIFT),
+  [YP_TOKEN_LESS_LESS] = RIGHT_ASSOCIATIVE(BINDING_POWER_SHIFT),
+
+  // - +
+  [YP_TOKEN_MINUS] = LEFT_ASSOCIATIVE(BINDING_POWER_TERM),
+  [YP_TOKEN_PLUS] = LEFT_ASSOCIATIVE(BINDING_POWER_TERM),
+
+  // % / *
+  [YP_TOKEN_PERCENT] = LEFT_ASSOCIATIVE(BINDING_POWER_FACTOR),
+  [YP_TOKEN_SLASH] = LEFT_ASSOCIATIVE(BINDING_POWER_FACTOR),
+  [YP_TOKEN_STAR] = LEFT_ASSOCIATIVE(BINDING_POWER_FACTOR),
+
+  // **
+  [YP_TOKEN_STAR_STAR] = RIGHT_ASSOCIATIVE(BINDING_POWER_EXPONENT),
+
+  // ! ~
+  [YP_TOKEN_BANG] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
+  [YP_TOKEN_TILDE] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
+
+  // []
+  [YP_TOKEN_BRACKET_LEFT_RIGHT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
+};
+
+#undef LEFT_ASSOCIATIVE
+#undef RIGHT_ASSOCIATIVE
+
+static inline binding_power_t
+left_binding_power(yp_token_type_t type) {
+  return binding_powers[type].left;
+}
+
+static inline binding_power_t
+right_binding_power(yp_token_type_t type) {
+  return binding_powers[type].right;
+}
+
+static bool accept_any(yp_parser_t *parser, size_t count, ...) {
+  va_list types;
+  va_start(types, count);
+
+  for (size_t index = 0; index < count; index++) {
+    if (parser->current.type == va_arg(types, yp_token_type_t)) {
+      yp_lex_token(parser);
+      va_end(types);
+      return true;
+    }
+  }
+
+  va_end(types);
+  return false;
+}
+
+static yp_node_t *
+parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
+  // If this is the end of the file, then return immediately.
+  if (parser->current.type == YP_TOKEN_EOF) {
+    return NULL;
+  }
+
+  yp_lex_token(parser);
+  yp_node_t *node;
+
+  // Check the type of the token that we just lexed. If it's possible for this
+  // token to be in the prefix position, we'll parse it as such. Otherwise we'll
+  // return.
+  switch (parser->previous.type) {
+    case YP_TOKEN_FLOAT:
+      node = yp_node_alloc_float_literal(parser, &parser->previous);
+      break;
+    case YP_TOKEN_INTEGER:
+      node = yp_node_alloc_integer_literal(parser, &parser->previous);
+      break;
+    default:
+      return NULL;
+  }
+
+  // While the current token has a higher binding power than the one we've just
+  // parsed, we'll continue parsing forward and replace the current node we're
+  // working with.
+  yp_token_t token;
+
+  while (token = parser->current, binding_power <= left_binding_power(token.type)) {
+    yp_lex_token(parser);
+
+    switch (token.type) {
+      case YP_TOKEN_PIPE_PIPE:
+      case YP_TOKEN_AMPERSAND_AMPERSAND:
+      case YP_TOKEN_BANG_EQUAL:
+      case YP_TOKEN_BANG_TILDE:
+      case YP_TOKEN_EQUAL_EQUAL:
+      case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+      case YP_TOKEN_EQUAL_TILDE:
+      case YP_TOKEN_LESS_EQUAL_GREATER:
+      case YP_TOKEN_GREATER:
+      case YP_TOKEN_GREATER_EQUAL:
+      case YP_TOKEN_LESS:
+      case YP_TOKEN_LESS_EQUAL:
+      case YP_TOKEN_CARET:
+      case YP_TOKEN_PIPE:
+      case YP_TOKEN_AMPERSAND:
+      case YP_TOKEN_GREATER_GREATER:
+      case YP_TOKEN_LESS_LESS:
+      case YP_TOKEN_MINUS:
+      case YP_TOKEN_PLUS:
+      case YP_TOKEN_PERCENT:
+      case YP_TOKEN_SLASH:
+      case YP_TOKEN_STAR:
+      case YP_TOKEN_STAR_STAR: {
+        yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
+        node = yp_node_alloc_binary(parser, node, &token, right);
+      }
+      default:
+        return node;
+    }
+  }
+
+  return node;
+}
+
+static yp_node_t *
+parse_program(yp_parser_t *parser) {
+  yp_node_t *statements = yp_node_alloc_statements(parser);
+  yp_node_t *program = yp_node_alloc_program(parser, statements);
+  yp_lex_token(parser);
+
+  for (bool parsing = true; parsing;) {
+    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
+    yp_node_list_append(parser, statements->as.statements.body, node);
+
+    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+      parsing = false;
+    }
+  }
+
+  return program;
+}
+
+/******************************************************************************/
 /* External functions                                                         */
 /******************************************************************************/
 
@@ -867,6 +1118,12 @@ void
 yp_lex_token(yp_parser_t *parser) {
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
+}
+
+// Parse the Ruby source associated with the given parser and return the tree.
+yp_node_t *
+yp_parse(yp_parser_t *parser) {
+  return parse_program(parser);
 }
 
 /******************************************************************************/
