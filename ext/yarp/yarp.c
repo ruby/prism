@@ -1360,4 +1360,5 @@ void
 Init_yarp(void) {
   VALUE rb_cYARP = rb_define_module("YARP");
   rb_define_singleton_method(rb_cYARP, "each_token", each_token, 1);
+  Init_yarp_nodes();
 }

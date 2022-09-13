@@ -1,6 +1,7 @@
 #ifndef YARP_NODES_H
 #define YARP_NODES_H
 
+#include <ruby.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "parser.h"
@@ -129,5 +130,8 @@ yp_node_alloc_variable_reference(yp_parser_t *parser, yp_node_t *value);
 
 void
 yp_node_dealloc(yp_parser_t *parser, yp_node_t *node);
+
+void
+Init_yarp_nodes(void);
 
 #endif

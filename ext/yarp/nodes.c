@@ -1,5 +1,4 @@
 #include "nodes.h"
-#include "parser.h"
 
 // Allocate the space for a new yp_node_t. Currently we're not using the
 // parser argument, but it's there to allow for the future possibility of
@@ -203,4 +202,21 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       yp_node_free(parser, node);
       break;
   }
+}
+
+// Initialize all of the necessary classes and methods to wrap the nodes so that
+// they can be used in Ruby.
+void
+Init_yarp_nodes(void) {
+  VALUE rb_cYARP = rb_define_module("YARP");
+  VALUE rb_cYARPNode = rb_define_class_under(rb_cYARP, "Node", rb_cObject);
+
+  VALUE rb_cYARPAssignment = rb_define_class_under(rb_cYARP, "Assignment", rb_cYARPNode);
+  VALUE rb_cYARPBinary = rb_define_class_under(rb_cYARP, "Binary", rb_cYARPNode);
+  VALUE rb_cYARPFloatLiteral = rb_define_class_under(rb_cYARP, "FloatLiteral", rb_cYARPNode);
+  VALUE rb_cYARPIdentifier = rb_define_class_under(rb_cYARP, "Identifier", rb_cYARPNode);
+  VALUE rb_cYARPIntegerLiteral = rb_define_class_under(rb_cYARP, "IntegerLiteral", rb_cYARPNode);
+  VALUE rb_cYARPProgram = rb_define_class_under(rb_cYARP, "Program", rb_cYARPNode);
+  VALUE rb_cYARPStatements = rb_define_class_under(rb_cYARP, "Statements", rb_cYARPNode);
+  VALUE rb_cYARPVariableReference = rb_define_class_under(rb_cYARP, "VariableReference", rb_cYARPNode);
 }

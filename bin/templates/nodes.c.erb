@@ -1,5 +1,4 @@
 #include "nodes.h"
-#include "parser.h"
 
 // Allocate the space for a new yp_node_t. Currently we're not using the
 // parser argument, but it's there to allow for the future possibility of
@@ -88,4 +87,16 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       break;
     <%- end -%>
   }
+}
+
+// Initialize all of the necessary classes and methods to wrap the nodes so that
+// they can be used in Ruby.
+void
+Init_yarp_nodes(void) {
+  VALUE rb_cYARP = rb_define_module("YARP");
+  VALUE rb_cYARPNode = rb_define_class_under(rb_cYARP, "Node", rb_cObject);
+
+  <%- types.each do |type| -%>
+  VALUE rb_cYARP<%= type.name %> = rb_define_class_under(rb_cYARP, "<%= type.name %>", rb_cYARPNode);
+  <%- end -%>
 }
