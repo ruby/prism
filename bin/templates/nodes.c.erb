@@ -14,7 +14,7 @@ yp_node_list_alloc(yp_parser_t *parser) {
 }
 
 // Append a new node onto the end of the node list.
-void
+static void
 yp_node_list_append(yp_parser_t *parser, yp_node_list_t *list, yp_node_t *node) {
   if (list->size == list->capacity) {
     list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
@@ -46,7 +46,7 @@ yp_node_alloc(yp_parser_t *parser) {
 <%- types.each do |type| -%>
 
 // Allocate a new <%= type.name %> node.
-yp_node_t *
+static yp_node_t *
 <%- params = type.params.map(&:param).compact.join(", ") -%>
 yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
   yp_node_t *node = yp_node_alloc(parser);

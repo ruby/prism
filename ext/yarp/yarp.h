@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -340,42 +342,6 @@ typedef struct yp_node_list {
   size_t size;
   size_t capacity;
 } yp_node_list_t;
-
-// Append a new node onto the end of the node list.
-void
-yp_node_list_append(yp_parser_t *parser, yp_node_list_t *list, yp_node_t *node);
-
-// Allocate a new Assignment node.
-yp_node_t *
-yp_node_alloc_assignment(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_node_t *value);
-
-// Allocate a new Binary node.
-yp_node_t *
-yp_node_alloc_binary(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator, yp_node_t *right);
-
-// Allocate a new FloatLiteral node.
-yp_node_t *
-yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value);
-
-// Allocate a new Identifier node.
-yp_node_t *
-yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value);
-
-// Allocate a new IntegerLiteral node.
-yp_node_t *
-yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value);
-
-// Allocate a new Program node.
-yp_node_t *
-yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements);
-
-// Allocate a new Statements node.
-yp_node_t *
-yp_node_alloc_statements(yp_parser_t *parser);
-
-// Allocate a new VariableReference node.
-yp_node_t *
-yp_node_alloc_variable_reference(yp_parser_t *parser, yp_node_t *value);
 
 void
 yp_node_dealloc(yp_parser_t *parser, yp_node_t *node);
