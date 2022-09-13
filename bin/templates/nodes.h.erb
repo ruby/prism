@@ -1,0 +1,55 @@
+#ifndef YARP_NODES_H
+#define YARP_NODES_H
+
+#include <stdlib.h>
+#include <stdint.h>
+#include "parser.h"
+
+typedef struct {
+  uint64_t start;
+  uint64_t end;
+} yp_location_t;
+
+typedef enum {
+<%- types.each do |type| -%>
+  <%= type.type %>,
+<%- end -%>
+} yp_node_type_t;
+
+// This is the overall tagged union representing a node in the syntax tree.
+typedef struct yp_node {
+  // This represents the type of the node. It somewhat maps to the nodes that
+  // existed in the original grammar and ripper, but it's not a 1:1 mapping.
+  yp_node_type_t type;
+
+  // This is the location of the node in the source. It's a range of bytes
+  // containing a start and an end.
+  yp_location_t location;
+
+  // Every entry in this union is a different kind of node in the tree. For
+  // the most part they only contain one or two child nodes, except for the
+  // more complicated nodes like params. There may be an opportunity for
+  // optimization here by combining node types that share the same shape, but
+  // it might not end up mattering in the final compiled code.
+  union {
+  <%- types.each do |type| -%>
+    // <%= type.name %>
+    struct {
+    <%- type.params.each do |param| -%>
+      <%= param.decl %>;
+    <%- end -%>
+    } <%= type.human %>;
+<%= "\n" if type != types.last -%>
+  <%- end -%>
+  } as;
+} yp_node_t;
+<%- types.each do |type| -%>
+
+yp_node_t *
+yp_node_alloc_<%= type.human %>(yp_parser_t *parser, <%= type.params.map(&:param).join(", ") %>);
+<%- end -%>
+
+void
+yp_node_dealloc(yp_parser_t *parser, yp_node_t *node);
+
+#endif

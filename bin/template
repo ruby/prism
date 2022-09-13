@@ -1,0 +1,124 @@
+#!/usr/bin/env ruby
+
+require "erb"
+
+class NodeType
+  class NodeParam
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+
+    def decl = "struct yp_node *#{name}"
+    def param = "yp_node_t *#{name}"
+    def assign = name
+  end
+
+  class TokenParam
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+
+    def decl = "yp_token_t #{name}"
+    def param = "yp_token_t *#{name}"
+    def assign = "*#{name}"
+  end
+
+  class NodeLocation
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+
+    def to_c
+      "#{name}->location"
+    end
+  end
+
+  class TokenLocation
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+
+    def to_c
+      "{ .start = #{name}->start - parser->start, .end = #{name}->end - parser->end }"
+    end
+  end
+
+  class Node2NodeLocation
+    attr_reader :from, :to
+
+    def initialize(from, to)
+      @from = from
+      @to = to
+    end
+
+    def to_c
+      "{ .start = #{from.name}->location.start, .end = #{to.name}->location.end }"
+    end
+  end
+
+  attr_reader :name, :type, :human, :params, :location
+
+  def initialize(line)
+    @name, params, location = line.match(/^(\w+)\s+\((.*)\)\s+(.+)$/).captures
+
+    type = @name.gsub(/(.)([A-Z])/, "\\1_\\2")
+    @type = "YP_NODE_#{type.upcase}"
+    @human = type.downcase
+
+    @params =
+      params.split(", ").map do |param|
+        type, name = param.split(" ")
+
+        case type
+        when "node"
+          NodeParam.new(name)
+        when "token"
+          TokenParam.new(name)
+        else
+          raise
+        end
+      end
+
+    param_location = ->(name) {
+      case found = @params.find { |param| param.name == name }
+      when NodeParam
+        NodeLocation.new(name)
+      when TokenParam
+        TokenLocation.new(name)
+      else
+        raise
+      end
+    }
+
+    @location =
+      if location.include?("->")
+        from, to = location.split("->")
+        Node2NodeLocation.new(param_location[from], param_location[to])
+      else
+        param_location[location]
+      end
+  end
+end
+
+types = []
+File.foreach(File.expand_path("../NODE_TYPES", __dir__), chomp: true) do |line|
+  types << NodeType.new(line)
+end
+
+File.write(
+  File.expand_path("../ext/yarp/nodes.h", __dir__),
+  ERB.new(File.read(File.expand_path("templates/nodes.h.erb", __dir__)), trim_mode: "-").result_with_hash(types: types)
+)
+
+File.write(
+  File.expand_path("../ext/yarp/nodes.c", __dir__),
+  ERB.new(File.read(File.expand_path("templates/nodes.c.erb", __dir__)), trim_mode: "-").result_with_hash(types: types)
+)

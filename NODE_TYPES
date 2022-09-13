@@ -1,0 +1,6 @@
+Assignment        (node target, token operator, node value) target->value
+Binary            (node left, token operator, node right)   left->right
+FloatLiteral      (token value)                             value
+Identifier        (token value)                             value
+IntegerLiteral    (token value)                             value
+VariableReference (node value)                              value

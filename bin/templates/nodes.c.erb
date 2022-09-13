@@ -1,0 +1,51 @@
+#include "nodes.h"
+#include "parser.h"
+
+// Allocate the space for a new yp_node_t. Currently we're not using the
+// parser argument, but it's there to allow for the future possibility of
+// pre-allocating larger memory pools and then pulling from those here.
+static inline yp_node_t *
+yp_node_alloc(yp_parser_t *parser) {
+  return malloc(sizeof(yp_node_t));
+}
+
+// Deallocate the space for a yp_node_t. Similarly to yp_node_alloc, we're not
+// using the parser argument, but it's there to allow for the future possibility
+// of pre-allocating larger memory pools.
+static inline void
+yp_node_free(yp_parser_t *parser, yp_node_t *node) {
+  free(node);
+}
+<%- types.each do |type| -%>
+
+// Allocate a new <%= type.name %> node.
+yp_node_t *
+yp_node_alloc_<%= type.human %>(yp_parser_t *parser, <%= type.params.map(&:param).join(", ") %>) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = <%= type.type %>,
+    .location = <%= type.location.to_c %>,
+    .as.<%= type.human %> = {
+      <%- type.params.each do |param| -%>
+      .<%= param.name %> = <%= param.assign %>,
+      <%- end -%>
+    }
+  };
+  return node;
+}
+<%- end -%>
+
+// Deallocate a node in the tree.
+void
+yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
+  switch (node->type) {
+    <%- types.each do |type| -%>
+    case <%= type.type %>:
+      <%- type.params.grep(NodeType::NodeParam).each do |param| -%>
+      yp_node_dealloc(parser, node->as.<%= type.human %>.<%= param.name %>);
+      <%- end -%>
+      yp_node_free(parser, node);
+      break;
+    <%- end -%>
+  }
+}
