@@ -1,42 +1,42 @@
-Assignment:
+- name: Assignment
   child_nodes:
     - node target
     - token operator
     - node value
   location: target->value
-Binary:
+- name: Binary
   child_nodes:
     - node left
     - token operator
     - node right
   location: left->right
-FloatLiteral:
+- name: FloatLiteral
   child_nodes:
     - token value
   location: value
-Identifier:
+- name: Identifier
   child_nodes:
     - token value
   location: value
-IntegerLiteral:
+- name: IntegerLiteral
   child_nodes:
     - token value
   location: value
-OperatorAssignment:
+- name: OperatorAssignment
   child_nodes:
     - node target
     - token operator
     - node value
   location: target->value
-Program:
+- name: Program
   child_nodes:
     - node statements
   location: statements
-Statements:
+- name: Statements
   child_nodes:
     - node[] body
   location: body
-VariableReference:
+- name: VariableReference
   child_nodes:
     - node value
   location: value

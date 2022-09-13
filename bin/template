@@ -75,8 +75,8 @@ end
 class NodeType
   attr_reader :name, :type, :human, :params, :location
 
-  def initialize(name, config)
-    @name = name
+  def initialize(config)
+    @name = config.fetch("name")
 
     type = @name.gsub(/(.)([A-Z])/, "\\1_\\2")
     @type = "YP_NODE_#{type.upcase}"
@@ -150,8 +150,8 @@ RBMARKBEGIN
 RBMARKEND
 
 types = []
-YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |name, config|
-  types << NodeType.new(name, config)
+YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |config|
+  types << NodeType.new(config)
 end
 
 template("../ext/yarp/extension.c", types, cmark)
