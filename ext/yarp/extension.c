@@ -255,6 +255,23 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("IntegerLiteral")));
     }
+    case YP_NODE_OPERATOR_ASSIGNMENT: {
+      VALUE argv[4];
+
+      // target
+      argv[0] = node_new(parser, node->as.operator_assignment.target);
+
+      // operator
+      argv[1] = token_new(parser, &node->as.operator_assignment.operator);
+
+      // value
+      argv[2] = node_new(parser, node->as.operator_assignment.value);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("OperatorAssignment")));
+    }
     case YP_NODE_PROGRAM: {
       VALUE argv[2];
 

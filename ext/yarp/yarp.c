@@ -968,6 +968,22 @@ yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new OperatorAssignment node.
+static yp_node_t *
+yp_node_alloc_operator_assignment(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_node_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_OPERATOR_ASSIGNMENT,
+    .location = { .start = target->location.start, .end = value->location.end },
+    .as.operator_assignment = {
+      .target = target,
+      .operator = *operator,
+      .value = value,
+    }
+  };
+  return node;
+}
+
 // Allocate a new Program node.
 static yp_node_t *
 yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements) {
@@ -1033,6 +1049,11 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_INTEGER_LITERAL:
+      free(node);
+      break;
+    case YP_NODE_OPERATOR_ASSIGNMENT:
+      yp_node_dealloc(parser, node->as.operator_assignment.target);
+      yp_node_dealloc(parser, node->as.operator_assignment.value);
       free(node);
       break;
     case YP_NODE_PROGRAM:

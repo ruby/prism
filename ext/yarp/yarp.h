@@ -275,6 +275,7 @@ typedef enum {
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
   YP_NODE_INTEGER_LITERAL,
+  YP_NODE_OPERATOR_ASSIGNMENT,
   YP_NODE_PROGRAM,
   YP_NODE_STATEMENTS,
   YP_NODE_VARIABLE_REFERENCE,
@@ -324,6 +325,13 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } integer_literal;
+
+    // OperatorAssignment
+    struct {
+      struct yp_node *target;
+      yp_token_t operator;
+      struct yp_node *value;
+    } operator_assignment;
 
     // Program
     struct {

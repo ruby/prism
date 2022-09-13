@@ -188,6 +188,32 @@ module YARP
     end
   end
 
+  class OperatorAssignment < Node
+    attr_reader :target, :operator, :value, :location
+
+    # def initialize: (target: Node, operator: Token, value: Node, location: Location) -> void
+    def initialize(target, operator, value, location)
+      @target = target
+      @operator = operator
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_operator_assignment(self)
+    end
+
+    def child_nodes
+      [target, value]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { target: target, operator: operator, value: value }
+    end
+  end
+
   class Program < Node
     attr_reader :statements, :location
 

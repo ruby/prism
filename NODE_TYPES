@@ -22,6 +22,12 @@ IntegerLiteral:
   child_nodes:
     - token value
   location: value
+OperatorAssignment:
+  child_nodes:
+    - node target
+    - token operator
+    - node value
+  location: target->value
 Program:
   child_nodes:
     - node statements
