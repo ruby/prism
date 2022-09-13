@@ -27,10 +27,37 @@ module YARP
       @value = value
       @location = location
     end
+
+    def pretty_print(q)
+      q.group do
+        q.text("(#{type}")
+        q.nest(2) do
+          q.breakable
+          q.pp(value)
+        end
+        q.breakable("")
+        q.text(")")
+      end
+    end
   end
 
   # This represents a node in the tree.
   class Node
+    def pretty_print(q)
+      q.group do
+        q.text("(#{self.class.name.split("::").last}")
+        q.nest(2) do
+          q.breakable
+
+          q.seplist(deconstruct_keys([]), lambda { q.comma_breakable }, :each_pair) do |key, value|
+            q.text("#{key}=")
+            q.pp(value)
+          end
+        end
+        q.breakable("")
+        q.text(")")
+      end
+    end
   end
 
   ##############################################################################
