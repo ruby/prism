@@ -4,6 +4,18 @@ require_relative "yarp/yarp"
 require_relative "yarp/version"
 
 module YARP
+  # This represents a token from the Ruby source.
+  class Token
+    attr_reader :type, :value, :start_offset, :end_offset
+
+    def initialize(type, value, start_offset, end_offset)
+      @type = type
+      @value = value
+      @start_offset = start_offset
+      @end_offset = end_offset
+    end
+  end
+
   # This lexes with the Ripper lex. It drops any space events and normalizes all
   # ignored newlines into regular newlines.
   def self.lex_ripper(filepath)
@@ -29,18 +41,19 @@ module YARP
     lexer_state = Ripper::Lexer::State.new(0)
     tokens = []
 
-    lex_file(filepath) do |((start_char, _), type, value)|
+    lex_file(filepath).each do |token|
       line_number, line_offset =
         offsets.each_with_index.detect do |(offset, line)|
-          break [line, offsets[line - 1]] if start_char < offset
+          break [line, offsets[line - 1]] if token.start_offset < offset
         end
 
       line_number ||= offsets.length + 1
       line_offset ||= offsets.last
 
-      line_byte = start_char - line_offset
-      event = RIPPER.fetch(type)
+      line_byte = token.start_offset - line_offset
+      event = RIPPER.fetch(token.type)
 
+      value = token.value
       unescaped =
         if %i[on_comment on_tstring_content].include?(event) && value.include?("\\")
           # Ripper unescapes string content and comments, so we need to do the

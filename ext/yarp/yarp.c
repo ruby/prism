@@ -1321,9 +1321,25 @@ parse_program(yp_parser_t *parser) {
 /* External functions                                                         */
 /******************************************************************************/
 
+// By default, the parser won't attempt to recover from syntax errors at all.
+// This function provides that implementation.
+static yp_token_type_t
+unrecoverable(yp_parser_t *parser) {
+  return YP_TOKEN_EOF;
+}
+
+// This is the default error handler, which does not actually attempt to recover
+// from any errors.
+yp_error_handler_t default_error_handler = {
+  .unterminated_embdoc = unrecoverable,
+  .unterminated_list = unrecoverable,
+  .unterminated_regexp = unrecoverable,
+  .unterminated_string = unrecoverable
+};
+
 // Initialize a parser with the given start and end pointers.
 void
-yp_parser_init(yp_parser_t *parser, const char *source, off_t size, yp_error_handler_t *error_handler) {
+yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
   *parser = (yp_parser_t) {
     .lex_modes = {
       .index = 0,
@@ -1334,7 +1350,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size, yp_error_han
     .end = source + size,
     .current = { .start = source, .end = source },
     .lineno = 1,
-    .error_handler = error_handler
+    .error_handler = &default_error_handler
   };
 }
 

@@ -1,35 +1,20 @@
 #include <ruby.h>
 #include "yarp.h"
 
-// By default, the lexer won't attempt to recover from lexer errors at all. This
-// function provides that implementation.
-static yp_token_type_t
-unrecoverable(yp_parser_t *parser) {
-  return YP_TOKEN_EOF;
-}
+VALUE rb_cYARP;
+VALUE rb_cYARPToken;
 
 static VALUE
-token_inspect(yp_parser_t *parser) {
-  yp_token_t token = parser->current;
-  VALUE parts = rb_ary_new();
-
-  // First, we're going to push on the location information.
-  VALUE location = rb_ary_new();
-  rb_ary_push(location, LONG2FIX(token.start - parser->start));
-  rb_ary_push(location, LONG2FIX(token.end - parser->start));
-  rb_ary_push(parts, location);
-
-  // Next, we're going to push on a symbol that represents the type of token.
-  switch (token.type) {
+token_type(yp_token_t *token) {
+  switch (token->type) {
     // We're going to special-case the invalid token here since that doesn't
     // actually exist in Ripper. This is going to give us a little more
     // information when our tests fail.
     case YP_TOKEN_INVALID:
-      rb_ary_push(parts, ID2SYM(rb_intern("INVALID")));
       // fprintf(stderr, "Invalid token: %.*s\n", (int) (token.end - token.start), token.start);
-      break;
+      return ID2SYM(rb_intern("INVALID"));
 
-#define CASE(type) case YP_TOKEN_##type: rb_ary_push(parts, ID2SYM(rb_intern(#type))); break;
+#define CASE(type) case YP_TOKEN_##type: return ID2SYM(rb_intern(#type)); break;
 
     CASE(AMPERSAND)
     CASE(AMPERSAND_AMPERSAND)
@@ -170,11 +155,41 @@ token_inspect(yp_parser_t *parser) {
 #undef CASE
 
     default:
-      rb_bug("Unknown token type: %d", token.type);
+      rb_bug("Unknown token type: %d", token->type);
+      return Qnil;
+  }
+}
+
+static VALUE
+token_new(yp_parser_t *parser, yp_token_t *token) {
+  VALUE argv[] = {
+    token_type(token),
+    rb_str_new(token->start, token->end - token->start),
+    LONG2FIX(token->start - parser->start),
+    LONG2FIX(token->end - parser->end)
+  };
+
+  return rb_class_new_instance(4, argv, rb_cYARPToken);
+}
+
+static VALUE
+lex_source(const char *source, off_t size) {
+  // Instantiate the parser struct with all of the necessary information
+  yp_parser_t parser;
+  yp_parser_init(&parser, source, size);
+
+  // Create an array and populate it with the tokens from the source
+  VALUE array = rb_ary_new();
+  for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
+    rb_ary_push(array, token_new(&parser, &parser.current));
   }
 
-  rb_ary_push(parts, rb_str_new(token.start, token.end - token.start));
-  return parts;
+  return array;
+}
+
+static VALUE
+lex(VALUE self, VALUE string) {
+  return lex_source(StringValueCStr(string), RSTRING_LEN(string));
 }
 
 static VALUE
@@ -206,29 +221,16 @@ lex_file(VALUE self, VALUE rb_filepath) {
     return Qnil;
   }
 
-  yp_error_handler_t default_error_handler = {
-    .unterminated_embdoc = unrecoverable,
-    .unterminated_list = unrecoverable,
-    .unterminated_regexp = unrecoverable,
-    .unterminated_string = unrecoverable
-  };
-
-  // Instantiate the parser struct with all of the necessary information
-  yp_parser_t parser;
-  yp_parser_init(&parser, source, size, &default_error_handler);
-
-  // Create an array and populate it with the tokens from the filepath
-  for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
-    rb_yield(token_inspect(&parser));
-  }
-
-  // Clean up and free
+  VALUE array = lex_source(source, size);
   munmap((void *) source, size);
-  return Qnil;
+  return array;
 }
 
 void
 Init_yarp(void) {
-  VALUE rb_cYARP = rb_define_module("YARP");
+  rb_cYARP = rb_define_module("YARP");
+  rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
+
+  rb_define_singleton_method(rb_cYARP, "lex", lex, 1);
   rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
 }
