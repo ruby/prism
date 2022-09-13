@@ -55,7 +55,7 @@ yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_FLOAT_LITERAL,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->end },
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.float_literal = {
       .value = *value,
     }
@@ -69,7 +69,7 @@ yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_IDENTIFIER,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->end },
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.identifier = {
       .value = *value,
     }
@@ -83,7 +83,7 @@ yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_INTEGER_LITERAL,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->end },
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.integer_literal = {
       .value = *value,
     }

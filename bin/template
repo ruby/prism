@@ -3,68 +3,84 @@
 require "erb"
 require "yaml"
 
+# This represents a parameter to a node that is itself a node. We pass them as
+# references and store them as references.
+class NodeParam
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def decl = "struct yp_node *#{name}"
+  def param = "yp_node_t *#{name}"
+  def assign = name
+end
+
+# This represents a parameter to a node that is a token. We pass them as
+# references and store them by copying.
+class TokenParam
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def decl = "yp_token_t #{name}"
+  def param = "yp_token_t *#{name}"
+  def assign = "*#{name}"
+end
+
+# This represents using the location of a child node as the location of the
+# parent node. It copies the location from the child node directly.
+class NodeLocation
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def to_c
+    "#{name}->location"
+  end
+end
+
+# This represents using the location of a token as the location of the parent
+# node. It calculates the relative byte offsets from the beginning of the file
+# to the location of the token.
+class TokenLocation
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def to_c
+    "{ .start = #{name}->start - parser->start, .end = #{name}->end - parser->start }"
+  end
+end
+
+# This represents a location calculated as a range between two different nodes.
+# It uses the start byte offset of the first node and the end byte offset of the
+# second node.
+class Node2NodeLocation
+  attr_reader :from, :to
+
+  def initialize(from, to)
+    @from = from
+    @to = to
+  end
+
+  def to_c
+    "{ .start = #{from}->location.start, .end = #{to}->location.end }"
+  end
+end
+
+# This class represents a node in the tree, configured by the NODE_TYPES file in
+# YAML format. It contains information about the name of the node, the various
+# child nodes it contains, and how to obtain the location of the node in the
+# source.
 class NodeType
-  class NodeParam
-    attr_reader :name
-
-    def initialize(name)
-      @name = name
-    end
-
-    def decl = "struct yp_node *#{name}"
-    def param = "yp_node_t *#{name}"
-    def assign = name
-  end
-
-  class TokenParam
-    attr_reader :name
-
-    def initialize(name)
-      @name = name
-    end
-
-    def decl = "yp_token_t #{name}"
-    def param = "yp_token_t *#{name}"
-    def assign = "*#{name}"
-  end
-
-  class NodeLocation
-    attr_reader :name
-
-    def initialize(name)
-      @name = name
-    end
-
-    def to_c
-      "#{name}->location"
-    end
-  end
-
-  class TokenLocation
-    attr_reader :name
-
-    def initialize(name)
-      @name = name
-    end
-
-    def to_c
-      "{ .start = #{name}->start - parser->start, .end = #{name}->end - parser->end }"
-    end
-  end
-
-  class Node2NodeLocation
-    attr_reader :from, :to
-
-    def initialize(from, to)
-      @from = from
-      @to = to
-    end
-
-    def to_c
-      "{ .start = #{from.name}->location.start, .end = #{to.name}->location.end }"
-    end
-  end
-
   attr_reader :name, :type, :human, :params, :location
 
   def initialize(name, config)
@@ -102,8 +118,8 @@ class NodeType
         }
 
         if location.include?("->")
-          from, to = location.split("->")
-          Node2NodeLocation.new(param_location[from], param_location[to])
+          location.split("->").map(&param_location) => [NodeLocation => from, NodeLocation => to]
+          Node2NodeLocation.new(from.name, to.name)
         else
           param_location[location]
         end
