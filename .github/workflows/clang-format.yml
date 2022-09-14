@@ -1,0 +1,21 @@
+name: clang-format
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: run clang-format
+      uses: jidicula/clang-format-action@v4.9.0
+      with:
+        clang-format-version: '14'
+        check-path: 'ext'
