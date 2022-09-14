@@ -127,6 +127,10 @@ def template(name, types, mark)
   filepath = File.expand_path(name, __dir__)
   contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
   File.write(filepath, contents)
+
+  if ['.c', '.h'].include?(File.extname(filepath))
+    system("clang-format -i #{filepath}")
+  end
 end
 
 cmark = %r{#{Regexp.escape(<<-CMARKBEGIN)}.+#{Regexp.escape(<<-CMARKEND)}}m
