@@ -15,7 +15,7 @@ yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #
       <%- type.params.each do |param| -%>
       .<%= param.name %> = <%= param.assign %>,
       <%- end -%>
-    }
+    },
   };
   return node;
 }

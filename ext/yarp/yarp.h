@@ -1,15 +1,15 @@
 #ifndef YARP_H
 #define YARP_H
 
-#include <sys/mman.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 typedef enum {
@@ -237,16 +237,16 @@ typedef struct {
 // it's considering.
 struct yp_parser {
   struct {
-    yp_lex_mode_t *current; // the current state of the lexer
+    yp_lex_mode_t *current;                 // the current state of the lexer
     yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer states
-    size_t index;            // the current index into the lexer state stack
+    size_t index;                           // the current index into the lexer state stack
   } lex_modes;
 
-  const char *start;         // the pointer to the start of the source
-  const char *end;           // the pointer to the end of the source
-  yp_token_t previous;       // the previous token we were considering
-  yp_token_t current;        // the current token we're considering
-  int lineno;                // the current line number we're looking at
+  const char *start;   // the pointer to the start of the source
+  const char *end;     // the pointer to the end of the source
+  yp_token_t previous; // the previous token we were considering
+  yp_token_t current;  // the current token we're considering
+  int lineno;          // the current line number we're looking at
 
   yp_error_handler_t *error_handler; // the error handler
 };
