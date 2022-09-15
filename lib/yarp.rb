@@ -530,6 +530,80 @@ module YARP
     end
   end
 
+  class Redo < Node
+    # attr_reader value: Token
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_redo(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in Redo[value: ^(value)]
+    end
+  end
+
+  class Retry < Node
+    # attr_reader value: Token
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_retry(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in Retry[value: ^(value)]
+    end
+  end
+
   class Statements < Node
     # attr_reader body: Array[Node]
     attr_reader :body
@@ -773,6 +847,12 @@ module YARP
     # Visit a RationalLiteral node
     alias visit_rational_literal visit_child_nodes
 
+    # Visit a Redo node
+    alias visit_redo visit_child_nodes
+
+    # Visit a Retry node
+    alias visit_retry visit_child_nodes
+
     # Visit a Statements node
     alias visit_statements visit_child_nodes
 
@@ -824,6 +904,12 @@ module YARP
 
     # Create a new RationalLiteral node
     def RationalLiteral(value) = RationalLiteral.new(value, Location.null)
+
+    # Create a new Redo node
+    def Redo(value) = Redo.new(value, Location.null)
+
+    # Create a new Retry node
+    def Retry(value) = Retry.new(value, Location.null)
 
     # Create a new Statements node
     def Statements(body) = Statements.new(body, Location.null)

@@ -1135,6 +1135,34 @@ yp_node_alloc_rational_literal(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new Redo node.
+static yp_node_t *
+yp_node_alloc_redo(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_REDO,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.redo = {
+      .value = *value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new Retry node.
+static yp_node_t *
+yp_node_alloc_retry(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_RETRY,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.retry = {
+      .value = *value,
+    },
+  };
+  return node;
+}
+
 // Allocate a new Statements node.
 static yp_node_t *
 yp_node_alloc_statements(yp_parser_t *parser) {
@@ -1257,6 +1285,12 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_RATIONAL_LITERAL:
+      free(node);
+      break;
+    case YP_NODE_REDO:
+      free(node);
+      break;
+    case YP_NODE_RETRY:
       free(node);
       break;
     case YP_NODE_STATEMENTS:
@@ -1484,6 +1518,12 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_SELF:
     case YP_TOKEN_KEYWORD_TRUE:
       node = yp_node_alloc_variable_reference(parser, &parser->previous);
+      break;
+    case YP_TOKEN_KEYWORD_REDO:
+      node = yp_node_alloc_redo(parser, &parser->previous);
+      break;
+    case YP_TOKEN_KEYWORD_RETRY:
+      node = yp_node_alloc_retry(parser, &parser->previous);
       break;
     case YP_TOKEN_RATIONAL_NUMBER:
       node = yp_node_alloc_rational_literal(parser, &parser->previous);

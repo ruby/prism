@@ -53,6 +53,14 @@ class ParseTest < Test::Unit::TestCase
     assert_equal RationalLiteral(RATIONAL_NUMBER("1r")), expression("1r")
   end
 
+  test "redo" do
+    assert_equal Redo(KEYWORD_REDO("redo")), expression("redo")
+  end
+
+  test "retry" do
+    assert_equal Retry(KEYWORD_RETRY("retry")), expression("retry")
+  end
+
   test "self" do
     assert_equal VariableReference(KEYWORD_SELF("self")), expression("self")
   end

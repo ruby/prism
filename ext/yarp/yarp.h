@@ -282,6 +282,8 @@ typedef enum {
   YP_NODE_OPERATOR_ASSIGNMENT,
   YP_NODE_PROGRAM,
   YP_NODE_RATIONAL_LITERAL,
+  YP_NODE_REDO,
+  YP_NODE_RETRY,
   YP_NODE_STATEMENTS,
   YP_NODE_UNLESS_MODIFIER,
   YP_NODE_UNTIL_MODIFIER,
@@ -367,6 +369,16 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } rational_literal;
+
+    // Redo
+    struct {
+      yp_token_t value;
+    } redo;
+
+    // Retry
+    struct {
+      yp_token_t value;
+    } retry;
 
     // Statements
     struct {
