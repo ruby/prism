@@ -25,11 +25,27 @@
     alias deconstruct child_nodes
 
     def deconstruct_keys(keys)
-      { <%= type.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %> }
+      { <%= type.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %>, location: location }
+    end
+
+    def ==(other)
+      other in <%= type.name %>[<%= type.params.map { |param| "#{param.name}: ^(#{param.name})" }.join(", ") %>]
     end
   end
 
   <%- end -%>
+  module DSL
+    private
+
+    <%- types.each do |type| -%>
+    def <%= type.name %>(<%= type.params.map(&:name).join(", ") %>) = <%= type.name %>.new(<%= type.params.map(&:name).join(", ") %>, Location.null)
+    <%- end -%>
+
+    <%- tokens.each do |token| -%>
+    def <%= token %>(value) = Token.new(<%= token.inspect %>, value, Location.null)
+    <%- end -%>
+  end
+
   ##############################################################################
   # END TEMPLATE                                                               #
   ##############################################################################
