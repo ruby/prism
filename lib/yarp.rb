@@ -219,6 +219,34 @@ module YARP
     end
   end
 
+  class ImaginaryLiteral < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_imaginary_literal(self)
+    end
+
+    def child_nodes
+      []
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    def ==(other)
+      other in ImaginaryLiteral[value: ^(value)]
+    end
+  end
+
   class IntegerLiteral < Node
     attr_reader :value, :location
 
@@ -302,6 +330,34 @@ module YARP
 
     def ==(other)
       other in Program[statements: ^(statements)]
+    end
+  end
+
+  class RationalLiteral < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_rational_literal(self)
+    end
+
+    def child_nodes
+      []
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    def ==(other)
+      other in RationalLiteral[value: ^(value)]
     end
   end
 
@@ -396,7 +452,7 @@ module YARP
   class VariableReference < Node
     attr_reader :value, :location
 
-    # def initialize: (value: Node, location: Location) -> void
+    # def initialize: (value: Token, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -407,7 +463,7 @@ module YARP
     end
 
     def child_nodes
-      [value]
+      []
     end
 
     alias deconstruct child_nodes
@@ -459,23 +515,23 @@ module YARP
     def FloatLiteral(value) = FloatLiteral.new(value, Location.null)
     def Identifier(value) = Identifier.new(value, Location.null)
     def IfModifier(statement, keyword, predicate) = IfModifier.new(statement, keyword, predicate, Location.null)
+    def ImaginaryLiteral(value) = ImaginaryLiteral.new(value, Location.null)
     def IntegerLiteral(value) = IntegerLiteral.new(value, Location.null)
     def OperatorAssignment(target, operator, value) = OperatorAssignment.new(target, operator, value, Location.null)
     def Program(statements) = Program.new(statements, Location.null)
+    def RationalLiteral(value) = RationalLiteral.new(value, Location.null)
     def Statements(body) = Statements.new(body, Location.null)
     def UnlessModifier(statement, keyword, predicate) = UnlessModifier.new(statement, keyword, predicate, Location.null)
     def UntilModifier(statement, keyword, predicate) = UntilModifier.new(statement, keyword, predicate, Location.null)
     def VariableReference(value) = VariableReference.new(value, Location.null)
     def WhileModifier(statement, keyword, predicate) = WhileModifier.new(statement, keyword, predicate, Location.null)
 
-    def EOF(value) = Token.new(:EOF, value, Location.null)
-    def INVALID(value) = Token.new(:INVALID, value, Location.null)
     def AMPERSAND(value) = Token.new(:AMPERSAND, value, Location.null)
     def AMPERSAND_AMPERSAND(value) = Token.new(:AMPERSAND_AMPERSAND, value, Location.null)
     def AMPERSAND_AMPERSAND_EQUAL(value) = Token.new(:AMPERSAND_AMPERSAND_EQUAL, value, Location.null)
     def AMPERSAND_EQUAL(value) = Token.new(:AMPERSAND_EQUAL, value, Location.null)
-    def BACK_REFERENCE(value) = Token.new(:BACK_REFERENCE, value, Location.null)
     def BACKTICK(value) = Token.new(:BACKTICK, value, Location.null)
+    def BACK_REFERENCE(value) = Token.new(:BACK_REFERENCE, value, Location.null)
     def BANG(value) = Token.new(:BANG, value, Location.null)
     def BANG_AT(value) = Token.new(:BANG_AT, value, Location.null)
     def BANG_EQUAL(value) = Token.new(:BANG_EQUAL, value, Location.null)
@@ -502,24 +558,23 @@ module YARP
     def EMBDOC_LINE(value) = Token.new(:EMBDOC_LINE, value, Location.null)
     def EMBEXPR_BEGIN(value) = Token.new(:EMBEXPR_BEGIN, value, Location.null)
     def EMBEXPR_END(value) = Token.new(:EMBEXPR_END, value, Location.null)
+    def EOF(value) = Token.new(:EOF, value, Location.null)
     def EQUAL(value) = Token.new(:EQUAL, value, Location.null)
     def EQUAL_EQUAL(value) = Token.new(:EQUAL_EQUAL, value, Location.null)
     def EQUAL_EQUAL_EQUAL(value) = Token.new(:EQUAL_EQUAL_EQUAL, value, Location.null)
     def EQUAL_GREATER(value) = Token.new(:EQUAL_GREATER, value, Location.null)
     def EQUAL_TILDE(value) = Token.new(:EQUAL_TILDE, value, Location.null)
     def FLOAT(value) = Token.new(:FLOAT, value, Location.null)
+    def GLOBAL_VARIABLE(value) = Token.new(:GLOBAL_VARIABLE, value, Location.null)
     def GREATER(value) = Token.new(:GREATER, value, Location.null)
     def GREATER_EQUAL(value) = Token.new(:GREATER_EQUAL, value, Location.null)
     def GREATER_GREATER(value) = Token.new(:GREATER_GREATER, value, Location.null)
     def GREATER_GREATER_EQUAL(value) = Token.new(:GREATER_GREATER_EQUAL, value, Location.null)
-    def GLOBAL_VARIABLE(value) = Token.new(:GLOBAL_VARIABLE, value, Location.null)
     def IDENTIFIER(value) = Token.new(:IDENTIFIER, value, Location.null)
     def IMAGINARY_NUMBER(value) = Token.new(:IMAGINARY_NUMBER, value, Location.null)
     def INSTANCE_VARIABLE(value) = Token.new(:INSTANCE_VARIABLE, value, Location.null)
     def INTEGER(value) = Token.new(:INTEGER, value, Location.null)
-    def KEYWORD___ENCODING__(value) = Token.new(:KEYWORD___ENCODING__, value, Location.null)
-    def KEYWORD___LINE__(value) = Token.new(:KEYWORD___LINE__, value, Location.null)
-    def KEYWORD___FILE__(value) = Token.new(:KEYWORD___FILE__, value, Location.null)
+    def INVALID(value) = Token.new(:INVALID, value, Location.null)
     def KEYWORD_ALIAS(value) = Token.new(:KEYWORD_ALIAS, value, Location.null)
     def KEYWORD_AND(value) = Token.new(:KEYWORD_AND, value, Location.null)
     def KEYWORD_BEGIN(value) = Token.new(:KEYWORD_BEGIN, value, Location.null)
@@ -558,6 +613,9 @@ module YARP
     def KEYWORD_WHEN(value) = Token.new(:KEYWORD_WHEN, value, Location.null)
     def KEYWORD_WHILE(value) = Token.new(:KEYWORD_WHILE, value, Location.null)
     def KEYWORD_YIELD(value) = Token.new(:KEYWORD_YIELD, value, Location.null)
+    def KEYWORD___ENCODING__(value) = Token.new(:KEYWORD___ENCODING__, value, Location.null)
+    def KEYWORD___FILE__(value) = Token.new(:KEYWORD___FILE__, value, Location.null)
+    def KEYWORD___LINE__(value) = Token.new(:KEYWORD___LINE__, value, Location.null)
     def LABEL(value) = Token.new(:LABEL, value, Location.null)
     def LAMBDA_BEGIN(value) = Token.new(:LAMBDA_BEGIN, value, Location.null)
     def LESS(value) = Token.new(:LESS, value, Location.null)
@@ -565,6 +623,7 @@ module YARP
     def LESS_EQUAL_GREATER(value) = Token.new(:LESS_EQUAL_GREATER, value, Location.null)
     def LESS_LESS(value) = Token.new(:LESS_LESS, value, Location.null)
     def LESS_LESS_EQUAL(value) = Token.new(:LESS_LESS_EQUAL, value, Location.null)
+    def MAXIMUM(value) = Token.new(:MAXIMUM, value, Location.null)
     def MINUS(value) = Token.new(:MINUS, value, Location.null)
     def MINUS_AT(value) = Token.new(:MINUS_AT, value, Location.null)
     def MINUS_EQUAL(value) = Token.new(:MINUS_EQUAL, value, Location.null)
@@ -605,7 +664,6 @@ module YARP
     def TILDE(value) = Token.new(:TILDE, value, Location.null)
     def TILDE_AT(value) = Token.new(:TILDE_AT, value, Location.null)
     def WORDS_SEP(value) = Token.new(:WORDS_SEP, value, Location.null)
-    def MAXIMUM(value) = Token.new(:MAXIMUM, value, Location.null)
   end
 
   ##############################################################################

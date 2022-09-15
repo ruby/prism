@@ -157,6 +157,7 @@ types = []
 YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |config|
   types << NodeType.new(config)
 end
+types.sort_by!(&:name)
 
 tokens = []
 File.foreach(File.expand_path("../ext/yarp/yarp.h", __dir__), chomp: true) do |line|
@@ -165,6 +166,7 @@ File.foreach(File.expand_path("../ext/yarp/yarp.h", __dir__), chomp: true) do |l
     tokens << name.to_sym if name
   end
 end
+tokens.sort!
 
 template("../ext/yarp/extension.c", types, cmark)
 template("../ext/yarp/yarp.h", types, cmark)

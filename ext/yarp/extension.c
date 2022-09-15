@@ -264,6 +264,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("IfModifier")));
     }
+    case YP_NODE_IMAGINARY_LITERAL: {
+      VALUE argv[2];
+
+      // value
+      argv[0] = token_new(parser, &node->as.imaginary_literal.value);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("ImaginaryLiteral")));
+    }
     case YP_NODE_INTEGER_LITERAL: {
       VALUE argv[2];
 
@@ -302,6 +313,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[1] = location_new(&node->location);
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Program")));
+    }
+    case YP_NODE_RATIONAL_LITERAL: {
+      VALUE argv[2];
+
+      // value
+      argv[0] = token_new(parser, &node->as.rational_literal.value);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("RationalLiteral")));
     }
     case YP_NODE_STATEMENTS: {
       VALUE argv[2];
@@ -355,7 +377,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = node_new(parser, node->as.variable_reference.value);
+      argv[0] = token_new(parser, &node->as.variable_reference.value);
 
       // location
       argv[1] = location_new(&node->location);

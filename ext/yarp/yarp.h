@@ -276,9 +276,11 @@ typedef enum {
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
   YP_NODE_IF_MODIFIER,
+  YP_NODE_IMAGINARY_LITERAL,
   YP_NODE_INTEGER_LITERAL,
   YP_NODE_OPERATOR_ASSIGNMENT,
   YP_NODE_PROGRAM,
+  YP_NODE_RATIONAL_LITERAL,
   YP_NODE_STATEMENTS,
   YP_NODE_UNLESS_MODIFIER,
   YP_NODE_UNTIL_MODIFIER,
@@ -333,6 +335,11 @@ typedef struct yp_node {
       struct yp_node *predicate;
     } if_modifier;
 
+    // ImaginaryLiteral
+    struct {
+      yp_token_t value;
+    } imaginary_literal;
+
     // IntegerLiteral
     struct {
       yp_token_t value;
@@ -349,6 +356,11 @@ typedef struct yp_node {
     struct {
       struct yp_node *statements;
     } program;
+
+    // RationalLiteral
+    struct {
+      yp_token_t value;
+    } rational_literal;
 
     // Statements
     struct {
@@ -371,7 +383,7 @@ typedef struct yp_node {
 
     // VariableReference
     struct {
-      struct yp_node *value;
+      yp_token_t value;
     } variable_reference;
 
     // WhileModifier
