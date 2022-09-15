@@ -247,6 +247,23 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Identifier")));
     }
+    case YP_NODE_IF_MODIFIER: {
+      VALUE argv[4];
+
+      // statement
+      argv[0] = node_new(parser, node->as.if_modifier.statement);
+
+      // keyword
+      argv[1] = token_new(parser, &node->as.if_modifier.keyword);
+
+      // predicate
+      argv[2] = node_new(parser, node->as.if_modifier.predicate);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("IfModifier")));
+    }
     case YP_NODE_INTEGER_LITERAL: {
       VALUE argv[2];
 
@@ -300,6 +317,40 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Statements")));
     }
+    case YP_NODE_UNLESS_MODIFIER: {
+      VALUE argv[4];
+
+      // statement
+      argv[0] = node_new(parser, node->as.unless_modifier.statement);
+
+      // keyword
+      argv[1] = token_new(parser, &node->as.unless_modifier.keyword);
+
+      // predicate
+      argv[2] = node_new(parser, node->as.unless_modifier.predicate);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("UnlessModifier")));
+    }
+    case YP_NODE_UNTIL_MODIFIER: {
+      VALUE argv[4];
+
+      // statement
+      argv[0] = node_new(parser, node->as.until_modifier.statement);
+
+      // keyword
+      argv[1] = token_new(parser, &node->as.until_modifier.keyword);
+
+      // predicate
+      argv[2] = node_new(parser, node->as.until_modifier.predicate);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("UntilModifier")));
+    }
     case YP_NODE_VARIABLE_REFERENCE: {
       VALUE argv[2];
 
@@ -310,6 +361,23 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[1] = location_new(&node->location);
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("VariableReference")));
+    }
+    case YP_NODE_WHILE_MODIFIER: {
+      VALUE argv[4];
+
+      // statement
+      argv[0] = node_new(parser, node->as.while_modifier.statement);
+
+      // keyword
+      argv[1] = token_new(parser, &node->as.while_modifier.keyword);
+
+      // predicate
+      argv[2] = node_new(parser, node->as.while_modifier.predicate);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("WhileModifier")));
     }
     default:
       rb_raise(rb_eRuntimeError, "unknown node type: %d", node->type);

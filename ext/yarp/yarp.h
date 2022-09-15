@@ -274,11 +274,15 @@ typedef enum {
   YP_NODE_BINARY,
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
+  YP_NODE_IF_MODIFIER,
   YP_NODE_INTEGER_LITERAL,
   YP_NODE_OPERATOR_ASSIGNMENT,
   YP_NODE_PROGRAM,
   YP_NODE_STATEMENTS,
+  YP_NODE_UNLESS_MODIFIER,
+  YP_NODE_UNTIL_MODIFIER,
   YP_NODE_VARIABLE_REFERENCE,
+  YP_NODE_WHILE_MODIFIER,
 } yp_node_type_t;
 
 // This is the overall tagged union representing a node in the syntax tree.
@@ -321,6 +325,13 @@ typedef struct yp_node {
       yp_token_t value;
     } identifier;
 
+    // IfModifier
+    struct {
+      struct yp_node *statement;
+      yp_token_t keyword;
+      struct yp_node *predicate;
+    } if_modifier;
+
     // IntegerLiteral
     struct {
       yp_token_t value;
@@ -343,10 +354,31 @@ typedef struct yp_node {
       struct yp_node_list *body;
     } statements;
 
+    // UnlessModifier
+    struct {
+      struct yp_node *statement;
+      yp_token_t keyword;
+      struct yp_node *predicate;
+    } unless_modifier;
+
+    // UntilModifier
+    struct {
+      struct yp_node *statement;
+      yp_token_t keyword;
+      struct yp_node *predicate;
+    } until_modifier;
+
     // VariableReference
     struct {
       struct yp_node *value;
     } variable_reference;
+
+    // WhileModifier
+    struct {
+      struct yp_node *statement;
+      yp_token_t keyword;
+      struct yp_node *predicate;
+    } while_modifier;
   } as;
 } yp_node_t;
 
