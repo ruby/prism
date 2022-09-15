@@ -24,6 +24,10 @@
     - token keyword
     - node predicate
   location: statement->predicate
+- name: ImaginaryLiteral
+  child_nodes:
+    - token value
+  location: value
 - name: IntegerLiteral
   child_nodes:
     - token value
@@ -38,6 +42,10 @@
   child_nodes:
     - node statements
   location: statements
+- name: RationalLiteral
+  child_nodes:
+    - token value
+  location: value
 - name: Statements
   child_nodes:
     - node[] body
@@ -56,7 +64,7 @@
   location: statement->predicate
 - name: VariableReference
   child_nodes:
-    - node value
+    - token value
   location: value
 - name: WhileModifier
   child_nodes:

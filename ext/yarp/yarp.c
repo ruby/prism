@@ -52,7 +52,7 @@ is_whitespace_char(const char *c) {
 // advanced the current pointer.
 static inline bool
 match(yp_parser_t *parser, char value) {
-  if (*parser->current.end == value) {
+  if (parser->current.end < parser->end && *parser->current.end == value) {
     parser->current.end++;
     return true;
   }
@@ -1049,6 +1049,20 @@ yp_node_alloc_if_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t 
   return node;
 }
 
+// Allocate a new ImaginaryLiteral node.
+static yp_node_t *
+yp_node_alloc_imaginary_literal(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_IMAGINARY_LITERAL,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.imaginary_literal = {
+      .value = *value,
+    },
+  };
+  return node;
+}
+
 // Allocate a new IntegerLiteral node.
 static yp_node_t *
 yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1088,6 +1102,20 @@ yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements) {
     .location = statements->location,
     .as.program = {
       .statements = statements,
+    },
+  };
+  return node;
+}
+
+// Allocate a new RationalLiteral node.
+static yp_node_t *
+yp_node_alloc_rational_literal(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_RATIONAL_LITERAL,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.rational_literal = {
+      .value = *value,
     },
   };
   return node;
@@ -1141,13 +1169,13 @@ yp_node_alloc_until_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token
 
 // Allocate a new VariableReference node.
 static yp_node_t *
-yp_node_alloc_variable_reference(yp_parser_t *parser, yp_node_t *value) {
+yp_node_alloc_variable_reference(yp_parser_t *parser, yp_token_t *value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_VARIABLE_REFERENCE,
-    .location = value->location,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.variable_reference = {
-      .value = value,
+      .value = *value,
     },
   };
   return node;
@@ -1196,6 +1224,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       yp_node_dealloc(parser, node->as.if_modifier.predicate);
       free(node);
       break;
+    case YP_NODE_IMAGINARY_LITERAL:
+      free(node);
+      break;
     case YP_NODE_INTEGER_LITERAL:
       free(node);
       break;
@@ -1206,6 +1237,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       break;
     case YP_NODE_PROGRAM:
       yp_node_dealloc(parser, node->as.program.statements);
+      free(node);
+      break;
+    case YP_NODE_RATIONAL_LITERAL:
       free(node);
       break;
     case YP_NODE_STATEMENTS:
@@ -1223,7 +1257,6 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_VARIABLE_REFERENCE:
-      yp_node_dealloc(parser, node->as.variable_reference.value);
       free(node);
       break;
     case YP_NODE_WHILE_MODIFIER:
@@ -1411,15 +1444,26 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // token to be in the prefix position, we'll parse it as such. Otherwise we'll
   // return.
   switch (parser->previous.type) {
+    case YP_TOKEN_IDENTIFIER:
+      node = yp_node_alloc_variable_reference(parser, &parser->previous);
+      break;
     case YP_TOKEN_FLOAT:
       node = yp_node_alloc_float_literal(parser, &parser->previous);
       break;
-    case YP_TOKEN_IDENTIFIER:
-      node = yp_node_alloc_identifier(parser, &parser->previous);
-      node = yp_node_alloc_variable_reference(parser, node);
+    case YP_TOKEN_IMAGINARY_NUMBER:
+      node = yp_node_alloc_imaginary_literal(parser, &parser->previous);
       break;
     case YP_TOKEN_INTEGER:
       node = yp_node_alloc_integer_literal(parser, &parser->previous);
+      break;
+    case YP_TOKEN_RATIONAL_NUMBER:
+      node = yp_node_alloc_rational_literal(parser, &parser->previous);
+      break;
+    case YP_TOKEN_KEYWORD_FALSE:
+    case YP_TOKEN_KEYWORD_NIL:
+    case YP_TOKEN_KEYWORD_SELF:
+    case YP_TOKEN_KEYWORD_TRUE:
+      node = yp_node_alloc_variable_reference(parser, &parser->previous);
       break;
     default:
       return NULL;
