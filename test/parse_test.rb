@@ -5,12 +5,24 @@ require "test_helper"
 class ParseTest < Test::Unit::TestCase
   include YARP::DSL
 
+  test "binary" do
+    assert_equal Binary(expression("1"), PLUS("+"), expression("2")), expression("1 + 2")
+  end
+
   test "false" do
     assert_equal VariableReference(KEYWORD_FALSE("false")), expression("false")
   end
 
   test "float" do
     assert_equal FloatLiteral(FLOAT("1.0")), expression("1.0")
+  end
+
+  test "identifier" do
+    assert_equal VariableReference(IDENTIFIER("a")), expression("a")
+  end
+
+  test "if modifier" do
+    assert_equal IfModifier(expression("1"), KEYWORD_IF("if"), expression("true")), expression("1 if true")
   end
 
   test "imaginary" do
@@ -33,16 +45,24 @@ class ParseTest < Test::Unit::TestCase
     assert_equal VariableReference(KEYWORD_TRUE("true")), expression("true")
   end
 
+  test "unless modifier" do
+    assert_equal UnlessModifier(expression("1"), KEYWORD_UNLESS("unless"), expression("true")), expression("1 unless true")
+  end
+
+  test "until modifier" do
+    assert_equal UntilModifier(expression("1"), KEYWORD_UNTIL("until"), expression("true")), expression("1 until true")
+  end
+
+  test "while modifier" do
+    assert_equal WhileModifier(expression("1"), KEYWORD_WHILE("while"), expression("true")), expression("1 while true")
+  end
+
   test "TERM < FACTOR" do
     actual = expression("1 + 2 * 3")
     expected = Binary(
-      IntegerLiteral(INTEGER("1")),
+      expression("1"),
       PLUS("+"),
-      Binary(
-        IntegerLiteral(INTEGER("2")),
-        STAR("*"),
-        IntegerLiteral(INTEGER("3"))
-      )
+      Binary(expression("2"), STAR("*"), expression("3"))
     )
 
     assert_equal expected, actual
@@ -51,13 +71,9 @@ class ParseTest < Test::Unit::TestCase
   test "FACTOR < EXPONENT" do
     actual = expression("1 * 2 ** 3")
     expected = Binary(
-      IntegerLiteral(INTEGER("1")),
+      expression("1"),
       STAR("*"),
-      Binary(
-        IntegerLiteral(INTEGER("2")),
-        STAR_STAR("**"),
-        IntegerLiteral(INTEGER("3"))
-      )
+      Binary(expression("2"), STAR_STAR("**"), expression("3"))
     )
 
     assert_equal expected, actual
@@ -66,13 +82,9 @@ class ParseTest < Test::Unit::TestCase
   test "FACTOR > TERM" do
     actual = expression("1 * 2 + 3")
     expected = Binary(
-      Binary(
-        IntegerLiteral(INTEGER("1")),
-        STAR("*"),
-        IntegerLiteral(INTEGER("2"))
-      ),
+      Binary(expression("1"), STAR("*"), expression("2")),
       PLUS("+"),
-      IntegerLiteral(INTEGER("3"))
+      expression("3")
     )
 
     assert_equal expected, actual
@@ -81,13 +93,9 @@ class ParseTest < Test::Unit::TestCase
   test "MODIFIER left associativity" do
     actual = expression("a if b if c")
     expected = IfModifier(
-      IfModifier(
-        VariableReference(IDENTIFIER("a")),
-        KEYWORD_IF("if"),
-        VariableReference(IDENTIFIER("b"))
-      ),
+      IfModifier(expression("a"), KEYWORD_IF("if"), expression("b")),
       KEYWORD_IF("if"),
-      VariableReference(IDENTIFIER("c"))
+      expression("c")
     )
 
     assert_equal expected, actual
