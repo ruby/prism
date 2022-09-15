@@ -273,6 +273,7 @@ typedef struct yp_node_list {
 typedef enum {
   YP_NODE_ASSIGNMENT,
   YP_NODE_BINARY,
+  YP_NODE_CHARACTER_LITERAL,
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
   YP_NODE_IF_MODIFIER,
@@ -317,6 +318,11 @@ typedef struct yp_node {
       yp_token_t operator;
       struct yp_node *right;
     } binary;
+
+    // CharacterLiteral
+    struct {
+      yp_token_t value;
+    } character_literal;
 
     // FloatLiteral
     struct {

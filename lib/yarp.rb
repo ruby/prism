@@ -133,6 +133,34 @@ module YARP
     end
   end
 
+  class CharacterLiteral < Node
+    attr_reader :value, :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_character_literal(self)
+    end
+
+    def child_nodes
+      []
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    def ==(other)
+      other in CharacterLiteral[value: ^(value)]
+    end
+  end
+
   class FloatLiteral < Node
     attr_reader :value, :location
 
@@ -512,6 +540,7 @@ module YARP
 
     def Assignment(target, operator, value) = Assignment.new(target, operator, value, Location.null)
     def Binary(left, operator, right) = Binary.new(left, operator, right, Location.null)
+    def CharacterLiteral(value) = CharacterLiteral.new(value, Location.null)
     def FloatLiteral(value) = FloatLiteral.new(value, Location.null)
     def Identifier(value) = Identifier.new(value, Location.null)
     def IfModifier(statement, keyword, predicate) = IfModifier.new(statement, keyword, predicate, Location.null)

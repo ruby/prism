@@ -10,6 +10,10 @@
     - token operator
     - node right
   location: left->right
+- name: CharacterLiteral
+  child_nodes:
+    - token value
+  location: value
 - name: FloatLiteral
   child_nodes:
     - token value

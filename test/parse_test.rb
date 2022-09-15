@@ -9,6 +9,10 @@ class ParseTest < Test::Unit::TestCase
     assert_equal Binary(expression("1"), PLUS("+"), expression("2")), expression("1 + 2")
   end
 
+  test "character literal" do
+    assert_equal CharacterLiteral(CHARACTER_LITERAL("?a")), expression("?a")
+  end
+
   test "class variable" do
     assert_equal VariableReference(CLASS_VARIABLE("@@abc")), expression("@@abc")
   end

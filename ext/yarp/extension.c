@@ -225,6 +225,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("Binary")));
     }
+    case YP_NODE_CHARACTER_LITERAL: {
+      VALUE argv[2];
+
+      // value
+      argv[0] = token_new(parser, &node->as.character_literal.value);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("CharacterLiteral")));
+    }
     case YP_NODE_FLOAT_LITERAL: {
       VALUE argv[2];
 

@@ -1005,6 +1005,20 @@ yp_node_alloc_binary(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator,
   return node;
 }
 
+// Allocate a new CharacterLiteral node.
+static yp_node_t *
+yp_node_alloc_character_literal(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_CHARACTER_LITERAL,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.character_literal = {
+      .value = *value,
+    },
+  };
+  return node;
+}
+
 // Allocate a new FloatLiteral node.
 static yp_node_t *
 yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1211,6 +1225,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_BINARY:
       yp_node_dealloc(parser, node->as.binary.left);
       yp_node_dealloc(parser, node->as.binary.right);
+      free(node);
+      break;
+    case YP_NODE_CHARACTER_LITERAL:
       free(node);
       break;
     case YP_NODE_FLOAT_LITERAL:
@@ -1444,6 +1461,9 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // token to be in the prefix position, we'll parse it as such. Otherwise we'll
   // return.
   switch (parser->previous.type) {
+    case YP_TOKEN_CHARACTER_LITERAL:
+      node = yp_node_alloc_character_literal(parser, &parser->previous);
+      break;
     case YP_TOKEN_CLASS_VARIABLE:
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_IDENTIFIER:
