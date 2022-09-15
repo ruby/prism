@@ -9,12 +9,20 @@ class ParseTest < Test::Unit::TestCase
     assert_equal Binary(expression("1"), PLUS("+"), expression("2")), expression("1 + 2")
   end
 
+  test "class variable" do
+    assert_equal VariableReference(CLASS_VARIABLE("@@abc")), expression("@@abc")
+  end
+
   test "false" do
     assert_equal VariableReference(KEYWORD_FALSE("false")), expression("false")
   end
 
   test "float" do
     assert_equal FloatLiteral(FLOAT("1.0")), expression("1.0")
+  end
+
+  test "global variable" do
+    assert_equal VariableReference(GLOBAL_VARIABLE("$abc")), expression("$abc")
   end
 
   test "identifier" do
@@ -27,6 +35,10 @@ class ParseTest < Test::Unit::TestCase
 
   test "imaginary" do
     assert_equal ImaginaryLiteral(IMAGINARY_NUMBER("1i")), expression("1i")
+  end
+
+  test "instance variable" do
+    assert_equal VariableReference(INSTANCE_VARIABLE("@abc")), expression("@abc")
   end
 
   test "nil" do

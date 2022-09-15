@@ -1444,7 +1444,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // token to be in the prefix position, we'll parse it as such. Otherwise we'll
   // return.
   switch (parser->previous.type) {
+    case YP_TOKEN_CLASS_VARIABLE:
+    case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_IDENTIFIER:
+    case YP_TOKEN_INSTANCE_VARIABLE:
       node = yp_node_alloc_variable_reference(parser, &parser->previous);
       break;
     case YP_TOKEN_FLOAT:
@@ -1456,14 +1459,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_INTEGER:
       node = yp_node_alloc_integer_literal(parser, &parser->previous);
       break;
-    case YP_TOKEN_RATIONAL_NUMBER:
-      node = yp_node_alloc_rational_literal(parser, &parser->previous);
-      break;
     case YP_TOKEN_KEYWORD_FALSE:
     case YP_TOKEN_KEYWORD_NIL:
     case YP_TOKEN_KEYWORD_SELF:
     case YP_TOKEN_KEYWORD_TRUE:
       node = yp_node_alloc_variable_reference(parser, &parser->previous);
+      break;
+    case YP_TOKEN_RATIONAL_NUMBER:
+      node = yp_node_alloc_rational_literal(parser, &parser->previous);
       break;
     default:
       return NULL;
