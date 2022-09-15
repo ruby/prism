@@ -372,6 +372,29 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Statements")));
     }
+    case YP_NODE_TERNARY: {
+      VALUE argv[6];
+
+      // predicate
+      argv[0] = node_new(parser, node->as.ternary.predicate);
+
+      // question_mark
+      argv[1] = token_new(parser, &node->as.ternary.question_mark);
+
+      // true_expression
+      argv[2] = node_new(parser, node->as.ternary.true_expression);
+
+      // colon
+      argv[3] = token_new(parser, &node->as.ternary.colon);
+
+      // false_expression
+      argv[4] = node_new(parser, node->as.ternary.false_expression);
+
+      // location
+      argv[5] = location_new(&node->location);
+
+      return rb_class_new_instance(6, argv, rb_const_get_at(rb_cYARP, rb_intern("Ternary")));
+    }
     case YP_NODE_UNLESS_MODIFIER: {
       VALUE argv[4];
 

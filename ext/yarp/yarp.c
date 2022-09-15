@@ -1177,6 +1177,25 @@ yp_node_alloc_statements(yp_parser_t *parser) {
   return node;
 }
 
+// Allocate a new Ternary node.
+static yp_node_t *
+yp_node_alloc_ternary(yp_parser_t *parser, yp_node_t *predicate, yp_token_t *question_mark, yp_node_t *true_expression,
+                      yp_token_t *colon, yp_node_t *false_expression) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_TERNARY,
+    .location = { .start = predicate->location.start, .end = false_expression->location.end },
+    .as.ternary = {
+      .predicate = predicate,
+      .question_mark = *question_mark,
+      .true_expression = true_expression,
+      .colon = *colon,
+      .false_expression = false_expression,
+    },
+  };
+  return node;
+}
+
 // Allocate a new UnlessModifier node.
 static yp_node_t *
 yp_node_alloc_unless_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t *keyword, yp_node_t *predicate) {
@@ -1295,6 +1314,12 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       break;
     case YP_NODE_STATEMENTS:
       yp_node_list_dealloc(parser, node->as.statements.body);
+      free(node);
+      break;
+    case YP_NODE_TERNARY:
+      yp_node_dealloc(parser, node->as.ternary.predicate);
+      yp_node_dealloc(parser, node->as.ternary.true_expression);
+      yp_node_dealloc(parser, node->as.ternary.false_expression);
       free(node);
       break;
     case YP_NODE_UNLESS_MODIFIER:
@@ -1465,6 +1490,15 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 #undef RIGHT_ASSOCIATIVE
 
 static bool
+accept(yp_parser_t *parser, yp_token_type_t type) {
+  if (parser->current.type == type) {
+    yp_lex_token(parser);
+    return true;
+  }
+  return false;
+}
+
+static bool
 accept_any(yp_parser_t *parser, size_t count, ...) {
   va_list types;
   va_start(types, count);
@@ -1479,6 +1513,14 @@ accept_any(yp_parser_t *parser, size_t count, ...) {
 
   va_end(types);
   return false;
+}
+
+static void
+consume(yp_parser_t *parser, yp_token_type_t type, const char *message) {
+  if (!accept(parser, type)) {
+    // TODO: should return a missing token here.
+    fprintf(stderr, "%s\n", message);
+  }
 }
 
 static yp_node_t *
@@ -1610,6 +1652,16 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_KEYWORD_WHILE: {
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_while_modifier(parser, node, &token, predicate);
+        break;
+      }
+      case YP_TOKEN_QUESTION_MARK: {
+        yp_node_t *true_expression = parse_expression(parser, token_binding_powers.right);
+        consume(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
+
+        yp_token_t colon = parser->previous;
+        yp_node_t *false_expression = parse_expression(parser, token_binding_powers.right);
+
+        node = yp_node_alloc_ternary(parser, node, &token, true_expression, &colon, false_expression);
         break;
       }
       default:

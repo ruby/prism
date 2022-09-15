@@ -65,6 +65,18 @@ class ParseTest < Test::Unit::TestCase
     assert_equal VariableReference(KEYWORD_SELF("self")), expression("self")
   end
 
+  test "ternary" do
+    expected = Ternary(
+      VariableReference(IDENTIFIER("a")),
+      QUESTION_MARK("?"),
+      VariableReference(IDENTIFIER("b")),
+      COLON(":"),
+      VariableReference(IDENTIFIER("c"))
+    )
+
+    assert_equal expected, expression("a ? b : c")
+  end
+
   test "true" do
     assert_equal VariableReference(KEYWORD_TRUE("true")), expression("true")
   end

@@ -285,6 +285,7 @@ typedef enum {
   YP_NODE_REDO,
   YP_NODE_RETRY,
   YP_NODE_STATEMENTS,
+  YP_NODE_TERNARY,
   YP_NODE_UNLESS_MODIFIER,
   YP_NODE_UNTIL_MODIFIER,
   YP_NODE_VARIABLE_REFERENCE,
@@ -384,6 +385,15 @@ typedef struct yp_node {
     struct {
       struct yp_node_list *body;
     } statements;
+
+    // Ternary
+    struct {
+      struct yp_node *predicate;
+      yp_token_t question_mark;
+      struct yp_node *true_expression;
+      yp_token_t colon;
+      struct yp_node *false_expression;
+    } ternary;
 
     // UnlessModifier
     struct {

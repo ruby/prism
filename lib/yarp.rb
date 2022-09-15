@@ -641,6 +641,59 @@ module YARP
     end
   end
 
+  class Ternary < Node
+    # attr_reader predicate: Node
+    attr_reader :predicate
+
+    # attr_reader question_mark: Token
+    attr_reader :question_mark
+
+    # attr_reader true_expression: Node
+    attr_reader :true_expression
+
+    # attr_reader colon: Token
+    attr_reader :colon
+
+    # attr_reader false_expression: Node
+    attr_reader :false_expression
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (predicate: Node, question_mark: Token, true_expression: Node, colon: Token, false_expression: Node, location: Location) -> void
+    def initialize(predicate, question_mark, true_expression, colon, false_expression, location)
+      @predicate = predicate
+      @question_mark = question_mark
+      @true_expression = true_expression
+      @colon = colon
+      @false_expression = false_expression
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_ternary(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [predicate, true_expression, false_expression]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { predicate: predicate, question_mark: question_mark, true_expression: true_expression, colon: colon, false_expression: false_expression, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in Ternary[predicate: ^(predicate), question_mark: ^(question_mark), true_expression: ^(true_expression), colon: ^(colon), false_expression: ^(false_expression)]
+    end
+  end
+
   class UnlessModifier < Node
     # attr_reader statement: Node
     attr_reader :statement
@@ -856,6 +909,9 @@ module YARP
     # Visit a Statements node
     alias visit_statements visit_child_nodes
 
+    # Visit a Ternary node
+    alias visit_ternary visit_child_nodes
+
     # Visit a UnlessModifier node
     alias visit_unless_modifier visit_child_nodes
 
@@ -913,6 +969,9 @@ module YARP
 
     # Create a new Statements node
     def Statements(body) = Statements.new(body, Location.null)
+
+    # Create a new Ternary node
+    def Ternary(predicate, question_mark, true_expression, colon, false_expression) = Ternary.new(predicate, question_mark, true_expression, colon, false_expression, Location.null)
 
     # Create a new UnlessModifier node
     def UnlessModifier(statement, keyword, predicate) = UnlessModifier.new(statement, keyword, predicate, Location.null)
