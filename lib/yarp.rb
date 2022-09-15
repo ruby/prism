@@ -164,6 +164,32 @@ module YARP
     end
   end
 
+  class IfModifier < Node
+    attr_reader :statement, :keyword, :predicate, :location
+
+    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    def initialize(statement, keyword, predicate, location)
+      @statement = statement
+      @keyword = keyword
+      @predicate = predicate
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_if_modifier(self)
+    end
+
+    def child_nodes
+      [statement, predicate]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { statement: statement, keyword: keyword, predicate: predicate }
+    end
+  end
+
   class IntegerLiteral < Node
     attr_reader :value, :location
 
@@ -262,6 +288,58 @@ module YARP
     end
   end
 
+  class UnlessModifier < Node
+    attr_reader :statement, :keyword, :predicate, :location
+
+    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    def initialize(statement, keyword, predicate, location)
+      @statement = statement
+      @keyword = keyword
+      @predicate = predicate
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_unless_modifier(self)
+    end
+
+    def child_nodes
+      [statement, predicate]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { statement: statement, keyword: keyword, predicate: predicate }
+    end
+  end
+
+  class UntilModifier < Node
+    attr_reader :statement, :keyword, :predicate, :location
+
+    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    def initialize(statement, keyword, predicate, location)
+      @statement = statement
+      @keyword = keyword
+      @predicate = predicate
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_until_modifier(self)
+    end
+
+    def child_nodes
+      [statement, predicate]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { statement: statement, keyword: keyword, predicate: predicate }
+    end
+  end
+
   class VariableReference < Node
     attr_reader :value, :location
 
@@ -283,6 +361,32 @@ module YARP
 
     def deconstruct_keys(keys)
       { value: value }
+    end
+  end
+
+  class WhileModifier < Node
+    attr_reader :statement, :keyword, :predicate, :location
+
+    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    def initialize(statement, keyword, predicate, location)
+      @statement = statement
+      @keyword = keyword
+      @predicate = predicate
+      @location = location
+    end
+
+    def accept(visitor)
+      visitor.visit_while_modifier(self)
+    end
+
+    def child_nodes
+      [statement, predicate]
+    end
+
+    alias deconstruct child_nodes
+
+    def deconstruct_keys(keys)
+      { statement: statement, keyword: keyword, predicate: predicate }
     end
   end
 

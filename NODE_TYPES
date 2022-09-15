@@ -18,6 +18,12 @@
   child_nodes:
     - token value
   location: value
+- name: IfModifier
+  child_nodes:
+    - node statement
+    - token keyword
+    - node predicate
+  location: statement->predicate
 - name: IntegerLiteral
   child_nodes:
     - token value
@@ -36,7 +42,25 @@
   child_nodes:
     - node[] body
   location: body
+- name: UnlessModifier
+  child_nodes:
+    - node statement
+    - token keyword
+    - node predicate
+  location: statement->predicate
+- name: UntilModifier
+  child_nodes:
+    - node statement
+    - token keyword
+    - node predicate
+  location: statement->predicate
 - name: VariableReference
   child_nodes:
     - node value
   location: value
+- name: WhileModifier
+  child_nodes:
+    - node statement
+    - token keyword
+    - node predicate
+  location: statement->predicate

@@ -1033,6 +1033,22 @@ yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new IfModifier node.
+static yp_node_t *
+yp_node_alloc_if_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t *keyword, yp_node_t *predicate) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_IF_MODIFIER,
+    .location = { .start = statement->location.start, .end = predicate->location.end },
+    .as.if_modifier = {
+      .statement = statement,
+      .keyword = *keyword,
+      .predicate = predicate,
+    },
+  };
+  return node;
+}
+
 // Allocate a new IntegerLiteral node.
 static yp_node_t *
 yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1091,6 +1107,38 @@ yp_node_alloc_statements(yp_parser_t *parser) {
   return node;
 }
 
+// Allocate a new UnlessModifier node.
+static yp_node_t *
+yp_node_alloc_unless_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t *keyword, yp_node_t *predicate) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_UNLESS_MODIFIER,
+    .location = { .start = statement->location.start, .end = predicate->location.end },
+    .as.unless_modifier = {
+      .statement = statement,
+      .keyword = *keyword,
+      .predicate = predicate,
+    },
+  };
+  return node;
+}
+
+// Allocate a new UntilModifier node.
+static yp_node_t *
+yp_node_alloc_until_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t *keyword, yp_node_t *predicate) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_UNTIL_MODIFIER,
+    .location = { .start = statement->location.start, .end = predicate->location.end },
+    .as.until_modifier = {
+      .statement = statement,
+      .keyword = *keyword,
+      .predicate = predicate,
+    },
+  };
+  return node;
+}
+
 // Allocate a new VariableReference node.
 static yp_node_t *
 yp_node_alloc_variable_reference(yp_parser_t *parser, yp_node_t *value) {
@@ -1100,6 +1148,22 @@ yp_node_alloc_variable_reference(yp_parser_t *parser, yp_node_t *value) {
     .location = value->location,
     .as.variable_reference = {
       .value = value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new WhileModifier node.
+static yp_node_t *
+yp_node_alloc_while_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t *keyword, yp_node_t *predicate) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_WHILE_MODIFIER,
+    .location = { .start = statement->location.start, .end = predicate->location.end },
+    .as.while_modifier = {
+      .statement = statement,
+      .keyword = *keyword,
+      .predicate = predicate,
     },
   };
   return node;
@@ -1127,6 +1191,11 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_IDENTIFIER:
       free(node);
       break;
+    case YP_NODE_IF_MODIFIER:
+      yp_node_dealloc(parser, node->as.if_modifier.statement);
+      yp_node_dealloc(parser, node->as.if_modifier.predicate);
+      free(node);
+      break;
     case YP_NODE_INTEGER_LITERAL:
       free(node);
       break;
@@ -1143,8 +1212,23 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       yp_node_list_dealloc(parser, node->as.statements.body);
       free(node);
       break;
+    case YP_NODE_UNLESS_MODIFIER:
+      yp_node_dealloc(parser, node->as.unless_modifier.statement);
+      yp_node_dealloc(parser, node->as.unless_modifier.predicate);
+      free(node);
+      break;
+    case YP_NODE_UNTIL_MODIFIER:
+      yp_node_dealloc(parser, node->as.until_modifier.statement);
+      yp_node_dealloc(parser, node->as.until_modifier.predicate);
+      free(node);
+      break;
     case YP_NODE_VARIABLE_REFERENCE:
       yp_node_dealloc(parser, node->as.variable_reference.value);
+      free(node);
+      break;
+    case YP_NODE_WHILE_MODIFIER:
+      yp_node_dealloc(parser, node->as.while_modifier.statement);
+      yp_node_dealloc(parser, node->as.while_modifier.predicate);
       free(node);
       break;
   }
@@ -1407,6 +1491,26 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_STAR_STAR: {
         yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
         node = yp_node_alloc_binary(parser, node, &token, right);
+        break;
+      }
+      case YP_TOKEN_KEYWORD_IF: {
+        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        node = yp_node_alloc_if_modifier(parser, node, &token, predicate);
+        break;
+      }
+      case YP_TOKEN_KEYWORD_UNLESS: {
+        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        node = yp_node_alloc_unless_modifier(parser, node, &token, predicate);
+        break;
+      }
+      case YP_TOKEN_KEYWORD_UNTIL: {
+        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        node = yp_node_alloc_until_modifier(parser, node, &token, predicate);
+        break;
+      }
+      case YP_TOKEN_KEYWORD_WHILE: {
+        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        node = yp_node_alloc_while_modifier(parser, node, &token, predicate);
         break;
       }
       default:
