@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-typedef enum {
+typedef enum yp_token_type {
   YP_TOKEN_EOF = 0,                   // final token in the file
   YP_TOKEN_INVALID,                   // an invalid token
   YP_TOKEN_AMPERSAND,                 // &
@@ -150,6 +150,7 @@ typedef enum {
   YP_TOKEN_TILDE,                     // ~
   YP_TOKEN_TILDE_AT,                  // ~@
   YP_TOKEN_WORDS_SEP,                 // a separator between words in a list
+  YP_TOKEN_MAXIMUM,                   // the maximum token value
 } yp_token_type_t;
 
 // This struct represents a token in the Ruby source. We use it to track both

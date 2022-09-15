@@ -158,6 +158,14 @@ YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |config|
   types << NodeType.new(config)
 end
 
+tokens = []
+File.foreach(File.expand_path("../ext/yarp/yarp.h", __dir__), chomp: true) do |line|
+  if line == "typedef enum yp_token_type {" .. line == "} yp_token_type_t;"
+    name = line[/YP_TOKEN_(\w+)/, 1]
+    tokens << name.to_sym if name
+  end
+end
+
 template("../ext/yarp/extension.c", types, cmark)
 template("../ext/yarp/yarp.h", types, cmark)
 template("../ext/yarp/yarp.c", types, cmark)

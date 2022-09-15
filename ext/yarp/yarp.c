@@ -1283,15 +1283,15 @@ typedef struct {
 #define RIGHT_ASSOCIATIVE(precedence)                                                                                  \
   { precedence, precedence }
 
-binding_powers_t binding_powers[] = {
+binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   // {}
   [YP_TOKEN_BRACE_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_BRACES),
 
   // if unless until while
-  [YP_TOKEN_KEYWORD_IF] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
-  [YP_TOKEN_KEYWORD_UNLESS] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
-  [YP_TOKEN_KEYWORD_UNTIL] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
-  [YP_TOKEN_KEYWORD_WHILE] = RIGHT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_IF] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_UNLESS] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_UNTIL] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_WHILE] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
 
   // and or
   [YP_TOKEN_KEYWORD_AND] = LEFT_ASSOCIATIVE(BINDING_POWER_COMPOSITION),
@@ -1380,16 +1380,6 @@ binding_powers_t binding_powers[] = {
 #undef LEFT_ASSOCIATIVE
 #undef RIGHT_ASSOCIATIVE
 
-static inline binding_power_t
-left_binding_power(yp_token_type_t type) {
-  return binding_powers[type].left;
-}
-
-static inline binding_power_t
-right_binding_power(yp_token_type_t type) {
-  return binding_powers[type].right;
-}
-
 static bool
 accept_any(yp_parser_t *parser, size_t count, ...) {
   va_list types;
@@ -1439,13 +1429,15 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // parsed, we'll continue parsing forward and replace the current node we're
   // working with.
   yp_token_t token;
+  binding_powers_t token_binding_powers;
 
-  while (token = parser->current, binding_power <= left_binding_power(token.type)) {
+  while (token = parser->current, token_binding_powers = binding_powers[token.type],
+         binding_power <= token_binding_powers.left) {
     yp_lex_token(parser);
 
     switch (token.type) {
       case YP_TOKEN_EQUAL: {
-        yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_assignment(parser, node, &token, right);
         break;
       }
@@ -1462,7 +1454,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_SLASH_EQUAL:
       case YP_TOKEN_STAR_EQUAL:
       case YP_TOKEN_STAR_STAR_EQUAL: {
-        yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_operator_assignment(parser, node, &token, right);
         break;
       }
@@ -1489,27 +1481,27 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_SLASH:
       case YP_TOKEN_STAR:
       case YP_TOKEN_STAR_STAR: {
-        yp_node_t *right = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_binary(parser, node, &token, right);
         break;
       }
       case YP_TOKEN_KEYWORD_IF: {
-        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_if_modifier(parser, node, &token, predicate);
         break;
       }
       case YP_TOKEN_KEYWORD_UNLESS: {
-        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_unless_modifier(parser, node, &token, predicate);
         break;
       }
       case YP_TOKEN_KEYWORD_UNTIL: {
-        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_until_modifier(parser, node, &token, predicate);
         break;
       }
       case YP_TOKEN_KEYWORD_WHILE: {
-        yp_node_t *predicate = parse_expression(parser, right_binding_power(token.type));
+        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_alloc_while_modifier(parser, node, &token, predicate);
         break;
       }
