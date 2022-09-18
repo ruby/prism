@@ -1,0 +1,14 @@
+#include "token_type.h"
+
+const char *
+token_type_to_str(yp_token_type_t token_type)
+{
+  switch (token_type) {
+<%- tokens.each do |token| -%>
+  case YP_TOKEN_<%= token.name %>:
+    return "<%= token.name %>";
+<%- end -%>
+  case YP_TOKEN_MAXIMUM:
+    return "MAXIMUM";
+  }
+}

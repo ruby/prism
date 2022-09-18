@@ -63,7 +63,7 @@
     <%- tokens.each do |token| -%>
 
     # Create a new <%= token.name %> token
-    def <%= token %>(value) = Token.new(<%= token.inspect %>, value, Location.null)
+    def <%= token.name %>(value) = Token.new(:<%= token.name %>, value, Location.null)
     <%- end -%>
   end
 
