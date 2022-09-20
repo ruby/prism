@@ -2,17 +2,17 @@
 /* BEGIN TEMPLATE                                                             */
 /******************************************************************************/
 
-<%- types.each do |type| -%>
-// Allocate a new <%= type.name %> node.
+<%- nodes.each do |node| -%>
+// Allocate a new <%= node.name %> node.
 static yp_node_t *
-<%- params = type.params.map(&:param).compact.join(", ") -%>
-yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
+<%- params = node.params.map(&:param).compact.join(", ") -%>
+yp_node_alloc_<%= node.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
-    .type = <%= type.type %>,
-    .location = <%= type.location.to_c %>,
-    .as.<%= type.human %> = {
-      <%- type.params.each do |param| -%>
+    .type = <%= node.type %>,
+    .location = <%= node.location.to_c %>,
+    .as.<%= node.human %> = {
+      <%- node.params.each do |param| -%>
       .<%= param.name %> = <%= param.assign %>,
       <%- end -%>
     },
@@ -27,14 +27,14 @@ yp_node_alloc_<%= type.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #
 void
 yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
   switch (node->type) {
-    <%- types.each do |type| -%>
-    case <%= type.type %>:
-      <%- type.params.each do |param| -%>
+    <%- nodes.each do |node| -%>
+    case <%= node.type %>:
+      <%- node.params.each do |param| -%>
       <%- case param -%>
       <%- when NodeParam -%>
-      yp_node_dealloc(parser, node->as.<%= type.human %>.<%= param.name %>);
+      yp_node_dealloc(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- when NodeListParam -%>
-      yp_node_list_dealloc(parser, node->as.<%= type.human %>.<%= param.name %>);
+      yp_node_list_dealloc(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- end -%>
       <%- end -%>
       free(node);

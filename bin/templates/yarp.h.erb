@@ -3,8 +3,8 @@
 /******************************************************************************/
 
 typedef enum {
-<%- types.each do |type| -%>
-  <%= type.type %>,
+<%- nodes.each do |node| -%>
+  <%= node.type %>,
 <%- end -%>
 } yp_node_type_t;
 
@@ -24,14 +24,14 @@ typedef struct yp_node {
   // optimization here by combining node types that share the same shape, but
   // it might not end up mattering in the final compiled code.
   union {
-  <%- types.each do |type| -%>
-    // <%= type.name %>
+  <%- nodes.each do |node| -%>
+    // <%= node.name %>
     struct {
-    <%- type.params.each do |param| -%>
+    <%- node.params.each do |param| -%>
       <%= param.decl %>;
     <%- end -%>
-    } <%= type.human %>;
-<%= "\n" if type != types.last -%>
+    } <%= node.human %>;
+<%= "\n" if node != nodes.last -%>
   <%- end -%>
   } as;
 } yp_node_t;
