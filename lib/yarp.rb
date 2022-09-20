@@ -985,6 +985,12 @@ module YARP
     # Create a new WhileModifier node
     def WhileModifier(statement, keyword, predicate) = WhileModifier.new(statement, keyword, predicate, Location.null)
 
+    # Create a new EOF token
+    def EOF(value) = Token.new(:EOF, value, Location.null)
+
+    # Create a new INVALID token
+    def INVALID(value) = Token.new(:INVALID, value, Location.null)
+
     # Create a new AMPERSAND token
     def AMPERSAND(value) = Token.new(:AMPERSAND, value, Location.null)
 
@@ -997,11 +1003,11 @@ module YARP
     # Create a new AMPERSAND_EQUAL token
     def AMPERSAND_EQUAL(value) = Token.new(:AMPERSAND_EQUAL, value, Location.null)
 
-    # Create a new BACKTICK token
-    def BACKTICK(value) = Token.new(:BACKTICK, value, Location.null)
-
     # Create a new BACK_REFERENCE token
     def BACK_REFERENCE(value) = Token.new(:BACK_REFERENCE, value, Location.null)
+
+    # Create a new BACKTICK token
+    def BACKTICK(value) = Token.new(:BACKTICK, value, Location.null)
 
     # Create a new BANG token
     def BANG(value) = Token.new(:BANG, value, Location.null)
@@ -1081,9 +1087,6 @@ module YARP
     # Create a new EMBEXPR_END token
     def EMBEXPR_END(value) = Token.new(:EMBEXPR_END, value, Location.null)
 
-    # Create a new EOF token
-    def EOF(value) = Token.new(:EOF, value, Location.null)
-
     # Create a new EQUAL token
     def EQUAL(value) = Token.new(:EQUAL, value, Location.null)
 
@@ -1102,9 +1105,6 @@ module YARP
     # Create a new FLOAT token
     def FLOAT(value) = Token.new(:FLOAT, value, Location.null)
 
-    # Create a new GLOBAL_VARIABLE token
-    def GLOBAL_VARIABLE(value) = Token.new(:GLOBAL_VARIABLE, value, Location.null)
-
     # Create a new GREATER token
     def GREATER(value) = Token.new(:GREATER, value, Location.null)
 
@@ -1116,6 +1116,9 @@ module YARP
 
     # Create a new GREATER_GREATER_EQUAL token
     def GREATER_GREATER_EQUAL(value) = Token.new(:GREATER_GREATER_EQUAL, value, Location.null)
+
+    # Create a new GLOBAL_VARIABLE token
+    def GLOBAL_VARIABLE(value) = Token.new(:GLOBAL_VARIABLE, value, Location.null)
 
     # Create a new IDENTIFIER token
     def IDENTIFIER(value) = Token.new(:IDENTIFIER, value, Location.null)
@@ -1129,8 +1132,14 @@ module YARP
     # Create a new INTEGER token
     def INTEGER(value) = Token.new(:INTEGER, value, Location.null)
 
-    # Create a new INVALID token
-    def INVALID(value) = Token.new(:INVALID, value, Location.null)
+    # Create a new KEYWORD___ENCODING__ token
+    def KEYWORD___ENCODING__(value) = Token.new(:KEYWORD___ENCODING__, value, Location.null)
+
+    # Create a new KEYWORD___LINE__ token
+    def KEYWORD___LINE__(value) = Token.new(:KEYWORD___LINE__, value, Location.null)
+
+    # Create a new KEYWORD___FILE__ token
+    def KEYWORD___FILE__(value) = Token.new(:KEYWORD___FILE__, value, Location.null)
 
     # Create a new KEYWORD_ALIAS token
     def KEYWORD_ALIAS(value) = Token.new(:KEYWORD_ALIAS, value, Location.null)
@@ -1246,15 +1255,6 @@ module YARP
     # Create a new KEYWORD_YIELD token
     def KEYWORD_YIELD(value) = Token.new(:KEYWORD_YIELD, value, Location.null)
 
-    # Create a new KEYWORD___ENCODING__ token
-    def KEYWORD___ENCODING__(value) = Token.new(:KEYWORD___ENCODING__, value, Location.null)
-
-    # Create a new KEYWORD___FILE__ token
-    def KEYWORD___FILE__(value) = Token.new(:KEYWORD___FILE__, value, Location.null)
-
-    # Create a new KEYWORD___LINE__ token
-    def KEYWORD___LINE__(value) = Token.new(:KEYWORD___LINE__, value, Location.null)
-
     # Create a new LABEL token
     def LABEL(value) = Token.new(:LABEL, value, Location.null)
 
@@ -1275,9 +1275,6 @@ module YARP
 
     # Create a new LESS_LESS_EQUAL token
     def LESS_LESS_EQUAL(value) = Token.new(:LESS_LESS_EQUAL, value, Location.null)
-
-    # Create a new MAXIMUM token
-    def MAXIMUM(value) = Token.new(:MAXIMUM, value, Location.null)
 
     # Create a new MINUS token
     def MINUS(value) = Token.new(:MINUS, value, Location.null)

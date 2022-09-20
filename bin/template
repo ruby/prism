@@ -123,6 +123,28 @@ class NodeType
   end
 end
 
+class Token
+  include Comparable
+
+  attr_reader :name, :value, :comment
+
+  def initialize(config)
+    @name = config.fetch('name')
+    @value = config['value']
+    @comment = config.fetch('comment')
+  end
+
+  def declaration
+    output = []
+    output << "YP_TOKEN_#{name}"
+    output << " = #{value}" if value
+    output << ", // #{comment}"
+    output.join(' ')
+  end
+end
+
+ROOT_DIR = File.expand_path('..', __dir__)
+
 def template(name, types, mark)
   filepath = File.expand_path(name, __dir__)
   contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
@@ -130,6 +152,18 @@ def template(name, types, mark)
 
   if ['.c', '.h'].include?(File.extname(filepath))
     system("clang-format -i #{filepath}")
+  end
+end
+
+def pure_template(template:, write_to:, locals:)
+  template = File.join(ROOT_DIR, template)
+  write_to = File.join(ROOT_DIR, write_to)
+
+  contents = ERB.new(File.read(template), trim_mode: "-").result_with_hash(locals)
+  File.write(write_to, contents)
+
+  if ['.c', '.h'].include?(File.extname(write_to))
+    system("clang-format -i #{write_to}")
   end
 end
 
@@ -159,16 +193,12 @@ YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |config|
 end
 types.sort_by!(&:name)
 
-tokens = []
-File.foreach(File.expand_path("../ext/yarp/yarp.h", __dir__), chomp: true) do |line|
-  if line == "typedef enum yp_token_type {" .. line == "} yp_token_type_t;"
-    name = line[/YP_TOKEN_(\w+)/, 1]
-    tokens << name.to_sym if name
-  end
-end
-tokens.sort!
+tokens = YAML.load_file(File.join(ROOT_DIR, 'TOKEN_TYPES')).map { |config| Token.new(config) }
 
 template("../ext/yarp/extension.c", types, cmark)
 template("../ext/yarp/yarp.h", types, cmark)
 template("../ext/yarp/yarp.c", types, cmark)
 template("../lib/yarp.rb", types, rbmark)
+
+pure_template(template: 'bin/templates/token_type.h.erb', write_to: 'ext/yarp/token_type.h', locals: { tokens: tokens })
+pure_template(template: 'bin/templates/token_type.c.erb', write_to: 'ext/yarp/token_type.c', locals: { tokens: tokens })

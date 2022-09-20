@@ -1,0 +1,13 @@
+#ifndef YARP_TOKEN_TYPE_H
+#define YARP_TOKEN_TYPE_H
+
+typedef enum yp_token_type {
+<%- tokens.each do |token| -%>
+  <%= token.declaration %>
+<%- end -%>
+  YP_TOKEN_MAXIMUM, // the maximum token value
+} yp_token_type_t;
+
+const char *token_type_to_str(yp_token_type_t token_type);
+
+#endif // YARP_TOKEN_TYPE_H
