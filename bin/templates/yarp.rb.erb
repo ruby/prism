@@ -2,19 +2,19 @@
   # BEGIN TEMPLATE                                                             #
   ##############################################################################
 
-  <%- types.each do |type| -%>
-  class <%= type.name -%> < Node
-    <%- type.params.each do |type| -%>
-    # attr_reader <%= type.name %>: <%= type.rbs_class %>
-    attr_reader :<%= type.name %>
+  <%- nodes.each do |node| -%>
+  class <%= node.name -%> < Node
+    <%- node.params.each do |param| -%>
+    # attr_reader <%= param.name %>: <%= param.rbs_class %>
+    attr_reader :<%= param.name %>
 
     <%- end -%>
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (<%= type.params.map { |param| "#{param.name}: #{param.rbs_class}" }.join(", ") %>, location: Location) -> void
-    def initialize(<%= type.params.map(&:name).join(", ") %>, location)
-      <%- type.params.each do |param| -%>
+    # def initialize: (<%= node.params.map { |param| "#{param.name}: #{param.rbs_class}" }.join(", ") %>, location: Location) -> void
+    def initialize(<%= node.params.map(&:name).join(", ") %>, location)
+      <%- node.params.each do |param| -%>
       @<%= param.name %> = <%= param.name %>
       <%- end -%>
       @location = location
@@ -22,12 +22,12 @@
 
     # def accept: (visitor: Visitor) -> void
     def accept(visitor)
-      visitor.visit_<%= type.human %>(self)
+      visitor.visit_<%= node.human %>(self)
     end
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [<%= type.params.map(&:child_nodes).compact.join(", ") %>]
+      [<%= node.params.map(&:child_nodes).compact.join(", ") %>]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -35,30 +35,30 @@
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { <%= type.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %>, location: location }
+      { <%= node.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %>, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in <%= type.name %>[<%= type.params.map { |param| "#{param.name}: ^(#{param.name})" }.join(", ") %>]
+      other in <%= node.name %>[<%= node.params.map { |param| "#{param.name}: ^(#{param.name})" }.join(", ") %>]
     end
   end
 
   <%- end -%>
   class Visitor < BasicVisitor
-    <%- types.each do |type| -%>
-    # Visit a <%= type.name %> node
-    alias visit_<%= type.human %> visit_child_nodes
-<%= "\n" if type != types.last -%>
+    <%- nodes.each do |node| -%>
+    # Visit a <%= node.name %> node
+    alias visit_<%= node.human %> visit_child_nodes
+<%= "\n" if node != nodes.last -%>
     <%- end -%>
   end
 
   module DSL
     private
-    <%- types.each do |type| -%>
+    <%- nodes.each do |node| -%>
 
-    # Create a new <%= type.name %> node
-    def <%= type.name %>(<%= type.params.map(&:name).join(", ") %>) = <%= type.name %>.new(<%= type.params.map(&:name).join(", ") %>, Location.null)
+    # Create a new <%= node.name %> node
+    def <%= node.name %>(<%= node.params.map(&:name).join(", ") %>) = <%= node.name %>.new(<%= node.params.map(&:name).join(", ") %>, Location.null)
     <%- end -%>
     <%- tokens.each do |token| -%>
 

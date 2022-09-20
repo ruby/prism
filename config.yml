@@ -1,0 +1,371 @@
+tokens:
+  - name: EOF
+    value: 0
+    comment: final token in the file
+  - name: INVALID
+    comment: "an invalid token"
+  - name: AMPERSAND
+    comment: "&"
+  - name: AMPERSAND_AMPERSAND
+    comment: "&&"
+  - name: AMPERSAND_AMPERSAND_EQUAL
+    comment: "&&="
+  - name: AMPERSAND_EQUAL
+    comment: "&="
+  - name: BACK_REFERENCE
+    comment: "a back reference"
+  - name: BACKTICK
+    comment: "`"
+  - name: BANG
+    comment: "!"
+  - name: BANG_AT
+    comment: "!@"
+  - name: BANG_EQUAL
+    comment: "!="
+  - name: BANG_TILDE
+    comment: "!~"
+  - name: BRACE_LEFT
+    comment: "{"
+  - name: BRACE_RIGHT
+    comment: "}"
+  - name: BRACKET_LEFT
+    comment: "["
+  - name: BRACKET_LEFT_RIGHT
+    comment: "[]"
+  - name: BRACKET_RIGHT
+    comment: "]"
+  - name: CARET
+    comment: "^"
+  - name: CARET_EQUAL
+    comment: "^="
+  - name: CHARACTER_LITERAL
+    comment: "a character literal"
+  - name: CLASS_VARIABLE
+    comment: "a class variable"
+  - name: COLON
+    comment: ":"
+  - name: COLON_COLON
+    comment: "::"
+  - name: COMMA
+    comment: ","
+  - name: COMMENT
+    comment: "a comment"
+  - name: CONSTANT
+    comment: "a constant"
+  - name: DOT
+    comment: "."
+  - name: DOT_DOT
+    comment: ".."
+  - name: DOT_DOT_DOT
+    comment: "..."
+  - name: EMBDOC_BEGIN
+    comment: "=begin"
+  - name: EMBDOC_END
+    comment: "=end"
+  - name: EMBDOC_LINE
+    comment: "a line inside of embedded documentation"
+  - name: EMBEXPR_BEGIN
+    comment: "#{"
+  - name: EMBEXPR_END
+    comment: "}"
+  - name: EQUAL
+    comment: "="
+  - name: EQUAL_EQUAL
+    comment: "=="
+  - name: EQUAL_EQUAL_EQUAL
+    comment: "==="
+  - name: EQUAL_GREATER
+    comment: "=>"
+  - name: EQUAL_TILDE
+    comment: "=~"
+  - name: FLOAT
+    comment: "a floating point number"
+  - name: GREATER
+    comment: ">"
+  - name: GREATER_EQUAL
+    comment: ">="
+  - name: GREATER_GREATER
+    comment: ">>"
+  - name: GREATER_GREATER_EQUAL
+    comment: ">>="
+  - name: GLOBAL_VARIABLE
+    comment: "a global variable"
+  - name: IDENTIFIER
+    comment: "an identifier"
+  - name: IMAGINARY_NUMBER
+    comment: "an imaginary number literal"
+  - name: INSTANCE_VARIABLE
+    comment: "an instance variable"
+  - name: INTEGER
+    comment: "an integer (any base)"
+  - name: KEYWORD___ENCODING__
+    comment: "__ENCODING__"
+  - name: KEYWORD___LINE__
+    comment: "__LINE__"
+  - name: KEYWORD___FILE__
+    comment: "__FILE__"
+  - name: KEYWORD_ALIAS
+    comment: "alias"
+  - name: KEYWORD_AND
+    comment: "and"
+  - name: KEYWORD_BEGIN
+    comment: "begin"
+  - name: KEYWORD_BEGIN_UPCASE
+    comment: "BEGIN"
+  - name: KEYWORD_BREAK
+    comment: "break"
+  - name: KEYWORD_CASE
+    comment: "case"
+  - name: KEYWORD_CLASS
+    comment: "class"
+  - name: KEYWORD_DEF
+    comment: "def"
+  - name: KEYWORD_DEFINED
+    comment: "defined?"
+  - name: KEYWORD_DO
+    comment: "do"
+  - name: KEYWORD_ELSE
+    comment: "else"
+  - name: KEYWORD_ELSIF
+    comment: "elsif"
+  - name: KEYWORD_END
+    comment: "end"
+  - name: KEYWORD_END_UPCASE
+    comment: "END"
+  - name: KEYWORD_ENSURE
+    comment: "ensure"
+  - name: KEYWORD_FALSE
+    comment: "false"
+  - name: KEYWORD_FOR
+    comment: "for"
+  - name: KEYWORD_IF
+    comment: "if"
+  - name: KEYWORD_IN
+    comment: "in"
+  - name: KEYWORD_MODULE
+    comment: "module"
+  - name: KEYWORD_NEXT
+    comment: "next"
+  - name: KEYWORD_NIL
+    comment: "nil"
+  - name: KEYWORD_NOT
+    comment: "not"
+  - name: KEYWORD_OR
+    comment: "or"
+  - name: KEYWORD_REDO
+    comment: "redo"
+  - name: KEYWORD_RESCUE
+    comment: "rescue"
+  - name: KEYWORD_RETRY
+    comment: "retry"
+  - name: KEYWORD_RETURN
+    comment: "return"
+  - name: KEYWORD_SELF
+    comment: "self"
+  - name: KEYWORD_SUPER
+    comment: "super"
+  - name: KEYWORD_THEN
+    comment: "then"
+  - name: KEYWORD_TRUE
+    comment: "true"
+  - name: KEYWORD_UNDEF
+    comment: "undef"
+  - name: KEYWORD_UNLESS
+    comment: "unless"
+  - name: KEYWORD_UNTIL
+    comment: "until"
+  - name: KEYWORD_WHEN
+    comment: "when"
+  - name: KEYWORD_WHILE
+    comment: "while"
+  - name: KEYWORD_YIELD
+    comment: "yield"
+  - name: LABEL
+    comment: "a label"
+  - name: LAMBDA_BEGIN
+    comment: "{"
+  - name: LESS
+    comment: "<"
+  - name: LESS_EQUAL
+    comment: "<="
+  - name: LESS_EQUAL_GREATER
+    comment: "<=>"
+  - name: LESS_LESS
+    comment: "<<"
+  - name: LESS_LESS_EQUAL
+    comment: "<<="
+  - name: MINUS
+    comment: "-"
+  - name: MINUS_AT
+    comment: "-@"
+  - name: MINUS_EQUAL
+    comment: "-="
+  - name: MINUS_GREATER
+    comment: "->"
+  - name: NEWLINE
+    comment: "a newline character outside of other tokens"
+  - name: NTH_REFERENCE
+    comment: "an nth global variable reference"
+  - name: PARENTHESIS_LEFT
+    comment: "("
+  - name: PARENTHESIS_RIGHT
+    comment: ")"
+  - name: PERCENT
+    comment: "%"
+  - name: PERCENT_EQUAL
+    comment: "%="
+  - name: PERCENT_LOWER_I
+    comment: "%i"
+  - name: PERCENT_LOWER_W
+    comment: "%w"
+  - name: PERCENT_LOWER_X
+    comment: "%x"
+  - name: PERCENT_UPPER_I
+    comment: "%I"
+  - name: PERCENT_UPPER_W
+    comment: "%W"
+  - name: PIPE
+    comment: "|"
+  - name: PIPE_EQUAL
+    comment: "|="
+  - name: PIPE_PIPE
+    comment: "||"
+  - name: PIPE_PIPE_EQUAL
+    comment: "||="
+  - name: PLUS
+    comment: "+"
+  - name: PLUS_AT
+    comment: "+@"
+  - name: PLUS_EQUAL
+    comment: "+="
+  - name: QUESTION_MARK
+    comment: "?"
+  - name: RATIONAL_NUMBER
+    comment: "a rational number literal"
+  - name: REGEXP_BEGIN
+    comment: "the beginning of a regular expression"
+  - name: REGEXP_END
+    comment: "the end of a regular expression"
+  - name: SEMICOLON
+    comment: ";"
+  - name: SLASH
+    comment: "/"
+  - name: SLASH_EQUAL
+    comment: "/="
+  - name: STAR
+    comment: "*"
+  - name: STAR_EQUAL
+    comment: "*="
+  - name: STAR_STAR
+    comment: "**"
+  - name: STAR_STAR_EQUAL
+    comment: "**="
+  - name: STRING_BEGIN
+    comment: "the beginning of a string"
+  - name: STRING_CONTENT
+    comment: "the contents of a string"
+  - name: STRING_END
+    comment: "the end of a string"
+  - name: SYMBOL_BEGIN
+    comment: "the beginning of a symbol"
+  - name: TILDE
+    comment: "~"
+  - name: TILDE_AT
+    comment: "~@"
+  - name: WORDS_SEP
+    comment: "a separator between words in a list"
+nodes:
+  - name: Assignment
+    child_nodes:
+      - node target
+      - token operator
+      - node value
+    location: target->value
+  - name: Binary
+    child_nodes:
+      - node left
+      - token operator
+      - node right
+    location: left->right
+  - name: CharacterLiteral
+    child_nodes:
+      - token value
+    location: value
+  - name: FloatLiteral
+    child_nodes:
+      - token value
+    location: value
+  - name: Identifier
+    child_nodes:
+      - token value
+    location: value
+  - name: IfModifier
+    child_nodes:
+      - node statement
+      - token keyword
+      - node predicate
+    location: statement->predicate
+  - name: ImaginaryLiteral
+    child_nodes:
+      - token value
+    location: value
+  - name: IntegerLiteral
+    child_nodes:
+      - token value
+    location: value
+  - name: OperatorAssignment
+    child_nodes:
+      - node target
+      - token operator
+      - node value
+    location: target->value
+  - name: Program
+    child_nodes:
+      - node statements
+    location: statements
+  - name: RationalLiteral
+    child_nodes:
+      - token value
+    location: value
+  - name: Redo
+    child_nodes:
+      - token value
+    location: value
+  - name: Retry
+    child_nodes:
+      - token value
+    location: value
+  - name: Statements
+    child_nodes:
+      - node[] body
+    location: body
+  - name: Ternary
+    child_nodes:
+      - node predicate
+      - token question_mark
+      - node true_expression
+      - token colon
+      - node false_expression
+    location: predicate->false_expression
+  - name: UnlessModifier
+    child_nodes:
+      - node statement
+      - token keyword
+      - node predicate
+    location: statement->predicate
+  - name: UntilModifier
+    child_nodes:
+      - node statement
+      - token keyword
+      - node predicate
+    location: statement->predicate
+  - name: VariableReference
+    child_nodes:
+      - token value
+    location: value
+  - name: WhileModifier
+    child_nodes:
+      - node statement
+      - token keyword
+      - node predicate
+    location: statement->predicate

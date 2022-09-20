@@ -145,9 +145,9 @@ end
 
 ROOT_DIR = File.expand_path('..', __dir__)
 
-def template(name, types, mark)
+def template(name, nodes, mark)
   filepath = File.expand_path(name, __dir__)
-  contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(types: types))
+  contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(nodes: nodes))
   File.write(filepath, contents)
 
   if ['.c', '.h'].include?(File.extname(filepath))
@@ -187,18 +187,15 @@ RBMARKBEGIN
   ##############################################################################
 RBMARKEND
 
-types = []
-YAML.load_file(File.expand_path("../NODE_TYPES", __dir__)).each do |config|
-  types << NodeType.new(config)
-end
-types.sort_by!(&:name)
+config = YAML.load_file(File.expand_path("../config.yml", __dir__))
 
-tokens = YAML.load_file(File.join(ROOT_DIR, 'TOKEN_TYPES')).map { |config| Token.new(config) }
+nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
+tokens = config.fetch("tokens").map { |token| Token.new(token) }
 
-template("../ext/yarp/extension.c", types, cmark)
-template("../ext/yarp/yarp.h", types, cmark)
-template("../ext/yarp/yarp.c", types, cmark)
-template("../lib/yarp.rb", types, rbmark)
+template("../ext/yarp/extension.c", nodes, cmark)
+template("../ext/yarp/yarp.h", nodes, cmark)
+template("../ext/yarp/yarp.c", nodes, cmark)
+template("../lib/yarp.rb", nodes, rbmark)
 
 pure_template(template: 'bin/templates/token_type.h.erb', write_to: 'ext/yarp/token_type.h', locals: { tokens: tokens })
 pure_template(template: 'bin/templates/token_type.c.erb', write_to: 'ext/yarp/token_type.c', locals: { tokens: tokens })
