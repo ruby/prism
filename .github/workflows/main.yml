@@ -22,3 +22,12 @@ jobs:
 
     - name: Run the default task
       run: bundle exec rake
+
+  test-native:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run native tests
+      run: make test

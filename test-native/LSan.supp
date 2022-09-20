@@ -1,0 +1,2 @@
+# Known issue: https://github.com/google/sanitizers/issues/1501
+leak:realizeClassWithoutSwift
