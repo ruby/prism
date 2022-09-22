@@ -1,6 +1,7 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include "location.h"
 #include "token_type.h"
 #include <fcntl.h>
 #include <stdarg.h>
@@ -111,13 +112,6 @@ struct yp_parser {
 
   yp_error_handler_t *error_handler; // the error handler
 };
-
-// This represents a range of bytes in the source string to which a node or
-// token corresponds.
-typedef struct {
-  uint64_t start;
-  uint64_t end;
-} yp_location_t;
 
 struct yp_node;
 typedef struct yp_node_list {
