@@ -2,7 +2,7 @@
 #define YARP_H
 
 #include "location.h"
-#include "token_type.h"
+#include "token.h"
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -13,14 +13,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-// This struct represents a token in the Ruby source. We use it to track both
-// type and location information.
-typedef struct {
-  yp_token_type_t type;
-  const char *start;
-  const char *end;
-} yp_token_t;
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
