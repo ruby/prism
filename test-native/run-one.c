@@ -1,4 +1,4 @@
-#include "../ext/yarp/token_type.c"
+#include "../ext/yarp/gen_token_type.c"
 #include "../ext/yarp/yarp.c"
 #include "file.h"
 #include "formatter.h"

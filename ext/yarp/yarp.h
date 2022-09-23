@@ -1,8 +1,8 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include "gen_node.h"
 #include "location.h"
-#include "node_gen.h"
 #include "token.h"
 #include <fcntl.h>
 #include <stdarg.h>

@@ -3,7 +3,7 @@
 /* modified manually.                                                         */
 /******************************************************************************/
 
-#include "token_type_gen.h"
+#include "gen_token_type.h"
 #include <string.h>
 
 const char *

@@ -1,7 +1,7 @@
 #ifndef YARP_TOKEN_H
 #define YARP_TOKEN_H
 
-#include "token_type_gen.h"
+#include "gen_token_type.h"
 
 // This struct represents a token in the Ruby source. We use it to track both
 // type and location information.
