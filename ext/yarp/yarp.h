@@ -1,7 +1,9 @@
 #ifndef YARP_H
 #define YARP_H
 
-#include "token_type.h"
+#include "location.h"
+#include "node.h"
+#include "token.h"
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -12,14 +14,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-// This struct represents a token in the Ruby source. We use it to track both
-// type and location information.
-typedef struct {
-  yp_token_type_t type;
-  const char *start;
-  const char *end;
-} yp_token_t;
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
@@ -111,181 +105,6 @@ struct yp_parser {
 
   yp_error_handler_t *error_handler; // the error handler
 };
-
-// This represents a range of bytes in the source string to which a node or
-// token corresponds.
-typedef struct {
-  uint64_t start;
-  uint64_t end;
-} yp_location_t;
-
-struct yp_node;
-typedef struct yp_node_list {
-  struct yp_node **nodes;
-  size_t size;
-  size_t capacity;
-} yp_node_list_t;
-
-/******************************************************************************/
-/* BEGIN TEMPLATE                                                             */
-/******************************************************************************/
-
-typedef enum {
-  YP_NODE_ASSIGNMENT,
-  YP_NODE_BINARY,
-  YP_NODE_CHARACTER_LITERAL,
-  YP_NODE_FLOAT_LITERAL,
-  YP_NODE_IDENTIFIER,
-  YP_NODE_IF_MODIFIER,
-  YP_NODE_IMAGINARY_LITERAL,
-  YP_NODE_INTEGER_LITERAL,
-  YP_NODE_OPERATOR_ASSIGNMENT,
-  YP_NODE_PROGRAM,
-  YP_NODE_RATIONAL_LITERAL,
-  YP_NODE_REDO,
-  YP_NODE_RETRY,
-  YP_NODE_STATEMENTS,
-  YP_NODE_TERNARY,
-  YP_NODE_UNLESS_MODIFIER,
-  YP_NODE_UNTIL_MODIFIER,
-  YP_NODE_VARIABLE_REFERENCE,
-  YP_NODE_WHILE_MODIFIER,
-} yp_node_type_t;
-
-// This is the overall tagged union representing a node in the syntax tree.
-typedef struct yp_node {
-  // This represents the type of the node. It somewhat maps to the nodes that
-  // existed in the original grammar and ripper, but it's not a 1:1 mapping.
-  yp_node_type_t type;
-
-  // This is the location of the node in the source. It's a range of bytes
-  // containing a start and an end.
-  yp_location_t location;
-
-  // Every entry in this union is a different kind of node in the tree. For
-  // the most part they only contain one or two child nodes, except for the
-  // more complicated nodes like params. There may be an opportunity for
-  // optimization here by combining node types that share the same shape, but
-  // it might not end up mattering in the final compiled code.
-  union {
-    // Assignment
-    struct {
-      struct yp_node *target;
-      yp_token_t operator;
-      struct yp_node *value;
-    } assignment;
-
-    // Binary
-    struct {
-      struct yp_node *left;
-      yp_token_t operator;
-      struct yp_node *right;
-    } binary;
-
-    // CharacterLiteral
-    struct {
-      yp_token_t value;
-    } character_literal;
-
-    // FloatLiteral
-    struct {
-      yp_token_t value;
-    } float_literal;
-
-    // Identifier
-    struct {
-      yp_token_t value;
-    } identifier;
-
-    // IfModifier
-    struct {
-      struct yp_node *statement;
-      yp_token_t keyword;
-      struct yp_node *predicate;
-    } if_modifier;
-
-    // ImaginaryLiteral
-    struct {
-      yp_token_t value;
-    } imaginary_literal;
-
-    // IntegerLiteral
-    struct {
-      yp_token_t value;
-    } integer_literal;
-
-    // OperatorAssignment
-    struct {
-      struct yp_node *target;
-      yp_token_t operator;
-      struct yp_node *value;
-    } operator_assignment;
-
-    // Program
-    struct {
-      struct yp_node *statements;
-    } program;
-
-    // RationalLiteral
-    struct {
-      yp_token_t value;
-    } rational_literal;
-
-    // Redo
-    struct {
-      yp_token_t value;
-    } redo;
-
-    // Retry
-    struct {
-      yp_token_t value;
-    } retry;
-
-    // Statements
-    struct {
-      struct yp_node_list *body;
-    } statements;
-
-    // Ternary
-    struct {
-      struct yp_node *predicate;
-      yp_token_t question_mark;
-      struct yp_node *true_expression;
-      yp_token_t colon;
-      struct yp_node *false_expression;
-    } ternary;
-
-    // UnlessModifier
-    struct {
-      struct yp_node *statement;
-      yp_token_t keyword;
-      struct yp_node *predicate;
-    } unless_modifier;
-
-    // UntilModifier
-    struct {
-      struct yp_node *statement;
-      yp_token_t keyword;
-      struct yp_node *predicate;
-    } until_modifier;
-
-    // VariableReference
-    struct {
-      yp_token_t value;
-    } variable_reference;
-
-    // WhileModifier
-    struct {
-      struct yp_node *statement;
-      yp_token_t keyword;
-      struct yp_node *predicate;
-    } while_modifier;
-  } as;
-} yp_node_t;
-
-/******************************************************************************/
-/* END TEMPLATE                                                               */
-/******************************************************************************/
 
 // Initialize a parser with the given start and end pointers.
 void

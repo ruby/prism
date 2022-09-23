@@ -1,12 +1,23 @@
-/******************************************************************************/
-/* BEGIN TEMPLATE                                                             */
-/******************************************************************************/
+#ifndef YARP_NODE_H
+#define YARP_NODE_H
+
+#include "location.h"
+#include "token.h"
+#include <stddef.h>
 
 typedef enum {
 <%- nodes.each do |node| -%>
   <%= node.type %>,
 <%- end -%>
 } yp_node_type_t;
+
+struct yp_node;
+struct yp_node;
+typedef struct yp_node_list {
+  struct yp_node **nodes;
+  size_t size;
+  size_t capacity;
+} yp_node_list_t;
 
 // This is the overall tagged union representing a node in the syntax tree.
 typedef struct yp_node {
@@ -36,6 +47,4 @@ typedef struct yp_node {
   } as;
 } yp_node_t;
 
-/******************************************************************************/
-/* END TEMPLATE                                                               */
-/******************************************************************************/
+#endif // YARP_NODE_H
