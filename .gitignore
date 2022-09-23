@@ -10,3 +10,5 @@
 
 /lib/yarp/yarp.*
 test.rb
+test-native/run-one
+*.dSYM

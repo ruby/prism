@@ -1,4 +1,5 @@
 #include "token_type.h"
+#include <string.h>
 
 const char *
 token_type_to_str(yp_token_type_t token_type)
@@ -11,4 +12,17 @@ token_type_to_str(yp_token_type_t token_type)
   case YP_TOKEN_MAXIMUM:
     return "MAXIMUM";
   }
+}
+
+yp_token_type_t
+token_type_from_str(const char *s)
+{
+<%- tokens.each do |token| -%>
+  if (strcmp(s, "<%= token.name %>") == 0) {
+    return YP_TOKEN_<%= token.name %>;
+  }
+<%- end -%>
+
+  // Fallback
+  return YP_TOKEN_INVALID;
 }

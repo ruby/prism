@@ -144,5 +144,7 @@ typedef enum yp_token_type {
 
 const char *
 token_type_to_str(yp_token_type_t token_type);
+yp_token_type_t
+token_type_from_str(const char *s);
 
 #endif // YARP_TOKEN_TYPE_H
