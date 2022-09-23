@@ -327,6 +327,12 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: Range
+    child_nodes:
+      - node?operator left
+      - token operator
+      - node?operator right
+    location: left->right
   - name: Redo
     child_nodes:
       - token value

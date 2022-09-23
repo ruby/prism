@@ -180,6 +180,23 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Program")));
     }
+    case YP_NODE_RANGE: {
+      VALUE argv[4];
+
+      // left
+      argv[0] = node->as.range.left == NULL ? Qnil : node_new(parser, node->as.range.left);
+
+      // operator
+      argv[1] = token_new(parser, &node->as.range.operator);
+
+      // right
+      argv[2] = node->as.range.right == NULL ? Qnil : node_new(parser, node->as.range.right);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("Range")));
+    }
     case YP_NODE_RATIONAL_LITERAL: {
       VALUE argv[2];
 

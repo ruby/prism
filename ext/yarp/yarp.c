@@ -1121,6 +1121,22 @@ yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements) {
   return node;
 }
 
+// Allocate a new Range node.
+static yp_node_t *
+yp_node_alloc_range(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator, yp_node_t * right) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_RANGE,
+    .location = { .start = (left == NULL ? operator->start - parser->start : left->location.start), .end = (right == NULL ? operator->end - parser->start : right->location.end) },
+    .as.range = {
+      .left = left,
+      .operator = *operator,
+      .right = right,
+    },
+  };
+  return node;
+}
+
 // Allocate a new RationalLiteral node.
 static yp_node_t *
 yp_node_alloc_rational_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1301,6 +1317,15 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       break;
     case YP_NODE_PROGRAM:
       yp_node_dealloc(parser, node->as.program.statements);
+      free(node);
+      break;
+    case YP_NODE_RANGE:
+      if (node->as.range.left != NULL) {
+        yp_node_dealloc(parser, node->as.range.left);
+      }
+      if (node->as.range.right != NULL) {
+        yp_node_dealloc(parser, node->as.range.right);
+      }
       free(node);
       break;
     case YP_NODE_RATIONAL_LITERAL:

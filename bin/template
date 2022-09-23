@@ -11,7 +11,25 @@ class NodeParam < Struct.new(:name)
   def assign = name
   def rbs_class = "Node"
   def child_nodes = name
-  def location = "#{name}->location"
+
+  def start_location(params) = "#{name}->location.start"
+  def end_location(params) = "#{name}->location.end"
+  def location(params) = "#{name}->location"
+end
+
+# This represents a parameter to a node that is itself a node and can be
+# optionally null. We pass them as references and store them as references.
+class OptionalNodeParam < Struct.new(:name, :fallback)
+  def decl = "struct yp_node *#{name}"
+  def param = "yp_node_t *#{name}"
+  def assign = name
+  def rbs_class = "Node?"
+  def child_nodes = name
+
+  def fallback_param(params) = params.find { |param| param.name == fallback }
+  def start_location(params) = "(#{name} == NULL ? #{fallback_param(params).start_location(params)} : #{name}->location.start)"
+  def end_location(params) = "(#{name} == NULL ? #{fallback_param(params).end_location(params)} : #{name}->location.end)"
+  def location(params) = "(#{name} == NULL ? #{fallback_param(params).location(params)} : #{name}->location)"
 end
 
 # This represents a parameter to a node that is a list of nodes. We pass them as
@@ -22,7 +40,10 @@ class NodeListParam < Struct.new(:name)
   def assign = "yp_node_list_alloc(parser)"
   def rbs_class = "Array[Node]"
   def child_nodes = "*#{name}"
-  def location = "{ .start = 0, .end = 0 }"
+
+  def start_location(params) = "0"
+  def end_location(params) = "0"
+  def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
 # This represents a parameter to a node that is a token. We pass them as
@@ -33,7 +54,10 @@ class TokenParam < Struct.new(:name)
   def assign = "*#{name}"
   def rbs_class = "Token"
   def child_nodes = nil
-  def location = "{ .start = #{name}->start - parser->start, .end = #{name}->end - parser->start }"
+
+  def start_location(params) = "#{name}->start - parser->start"
+  def end_location(params) = "#{name}->end - parser->start"
+  def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
 # This class represents a node in the tree, configured by the NODE_TYPES file in
@@ -57,8 +81,8 @@ class NodeType
         case type
         when "node"
           NodeParam.new(name)
-        when "node?"
-          OptionalNodeParam.new(name)
+        when /\Anode\?(.+)/
+          OptionalNodeParam.new(name, $1)
         when "node[]"
           NodeListParam.new(name)
         when "token"
@@ -71,10 +95,10 @@ class NodeType
     @location =
       config.fetch("location").then do |location|
         if location.include?("->")
-          from, to = location.split("->")
-          "{ .start = #{from}->location.start, .end = #{to}->location.end }"
+          from, to = location.split("->").map { |name| params.find { |param| param.name == name } }
+          "{ .start = #{from.start_location(params)}, .end = #{to.end_location(params)} }"
         else
-          params.detect { |param| param.name == location }.location
+          params.detect { |param| param.name == location }.location(params)
         end
       end
   end

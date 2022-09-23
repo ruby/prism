@@ -21,6 +21,7 @@ typedef enum {
   YP_NODE_INTEGER_LITERAL,
   YP_NODE_OPERATOR_ASSIGNMENT,
   YP_NODE_PROGRAM,
+  YP_NODE_RANGE,
   YP_NODE_RATIONAL_LITERAL,
   YP_NODE_REDO,
   YP_NODE_RETRY,
@@ -113,6 +114,13 @@ typedef struct yp_node {
     struct {
       struct yp_node *statements;
     } program;
+
+    // Range
+    struct {
+      struct yp_node *left;
+      yp_token_t operator;
+      struct yp_node *right;
+    } range;
 
     // RationalLiteral
     struct {

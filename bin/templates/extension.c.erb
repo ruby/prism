@@ -14,6 +14,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       <%- case param -%>
       <%- when NodeParam -%>
       argv[<%= index %>] = node_new(parser, node->as.<%= node.human %>.<%= param.name %>);
+      <%- when OptionalNodeParam -%>
+      argv[<%= index %>] = node->as.<%= node.human %>.<%= param.name %> == NULL ? Qnil : node_new(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- when NodeListParam -%>
       argv[<%= index %>] = rb_ary_new();
       for (size_t index = 0; index < node->as.<%= node.human %>.<%= param.name %>->size; index++) {
@@ -21,6 +23,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       }
       <%- when TokenParam -%>
       argv[<%= index %>] = token_new(parser, &node->as.<%= node.human %>.<%= param.name %>);
+      <%- else -%>
+      <%- raise -%>
       <%- end -%>
       <%- end -%>
 

@@ -493,6 +493,51 @@ module YARP
     end
   end
 
+  class Range < Node
+    # attr_reader left: Node?
+    attr_reader :left
+
+    # attr_reader operator: Token
+    attr_reader :operator
+
+    # attr_reader right: Node?
+    attr_reader :right
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (left: Node?, operator: Token, right: Node?, location: Location) -> void
+    def initialize(left, operator, right, location)
+      @left = left
+      @operator = operator
+      @right = right
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_range(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [left, right]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { left: left, operator: operator, right: right, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in Range[left: ^(left), operator: ^(operator), right: ^(right)]
+    end
+  end
+
   class RationalLiteral < Node
     # attr_reader value: Token
     attr_reader :value
@@ -897,6 +942,9 @@ module YARP
     # Visit a Program node
     alias visit_program visit_child_nodes
 
+    # Visit a Range node
+    alias visit_range visit_child_nodes
+
     # Visit a RationalLiteral node
     alias visit_rational_literal visit_child_nodes
 
@@ -957,6 +1005,9 @@ module YARP
 
     # Create a new Program node
     def Program(statements) = Program.new(statements, Location.null)
+
+    # Create a new Range node
+    def Range(left, operator, right) = Range.new(left, operator, right, Location.null)
 
     # Create a new RationalLiteral node
     def RationalLiteral(value) = RationalLiteral.new(value, Location.null)
