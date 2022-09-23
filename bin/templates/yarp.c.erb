@@ -10,7 +10,7 @@ yp_node_alloc_<%= node.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = <%= node.type %>,
-    .location = <%= node.location.to_c %>,
+    .location = <%= node.location %>,
     .as.<%= node.human %> = {
       <%- node.params.each do |param| -%>
       .<%= param.name %> = <%= param.assign %>,

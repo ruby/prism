@@ -11,6 +11,7 @@ class NodeParam < Struct.new(:name)
   def assign = name
   def rbs_class = "Node"
   def child_nodes = name
+  def location = "#{name}->location"
 end
 
 # This represents a parameter to a node that is a list of nodes. We pass them as
@@ -21,6 +22,7 @@ class NodeListParam < Struct.new(:name)
   def assign = "yp_node_list_alloc(parser)"
   def rbs_class = "Array[Node]"
   def child_nodes = "*#{name}"
+  def location = "{ .start = 0, .end = 0 }"
 end
 
 # This represents a parameter to a node that is a token. We pass them as
@@ -31,41 +33,7 @@ class TokenParam < Struct.new(:name)
   def assign = "*#{name}"
   def rbs_class = "Token"
   def child_nodes = nil
-end
-
-# This represents using the location of a child node as the location of the
-# parent node. It copies the location from the child node directly.
-class NodeLocation < Struct.new(:name)
-  def to_c
-    "#{name}->location"
-  end
-end
-
-# This represents using a list of nodes as the location of the parent node. When
-# we're first creating the node (which is when this is used) we don't have any
-# location information, so we'll just initialize it to point to 0.
-class NodeListLocation
-  def to_c
-    "{ .start = 0, .end = 0 }"
-  end
-end
-
-# This represents using the location of a token as the location of the parent
-# node. It calculates the relative byte offsets from the beginning of the file
-# to the location of the token.
-class TokenLocation < Struct.new(:name)
-  def to_c
-    "{ .start = #{name}->start - parser->start, .end = #{name}->end - parser->start }"
-  end
-end
-
-# This represents a location calculated as a range between two different nodes.
-# It uses the start byte offset of the first node and the end byte offset of the
-# second node.
-class Node2NodeLocation < Struct.new(:from, :to)
-  def to_c
-    "{ .start = #{from}->location.start, .end = #{to}->location.end }"
-  end
+  def location = "{ .start = #{name}->start - parser->start, .end = #{name}->end - parser->start }"
 end
 
 # This class represents a node in the tree, configured by the NODE_TYPES file in
@@ -89,6 +57,8 @@ class NodeType
         case type
         when "node"
           NodeParam.new(name)
+        when "node?"
+          OptionalNodeParam.new(name)
         when "node[]"
           NodeListParam.new(name)
         when "token"
@@ -100,24 +70,11 @@ class NodeType
 
     @location =
       config.fetch("location").then do |location|
-        param_location = ->(name) {
-          case found = @params.find { |param| param.name == name }
-          when NodeParam
-            NodeLocation.new(name)
-          when NodeListParam
-            NodeListLocation.new
-          when TokenParam
-            TokenLocation.new(name)
-          else
-            raise
-          end
-        }
-
         if location.include?("->")
-          location.split("->").map(&param_location) => [NodeLocation => from, NodeLocation => to]
-          Node2NodeLocation.new(from.name, to.name)
+          from, to = location.split("->")
+          "{ .start = #{from}->location.start, .end = #{to}->location.end }"
         else
-          param_location[location]
+          params.detect { |param| param.name == location }.location
         end
       end
   end
