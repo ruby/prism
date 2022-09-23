@@ -198,4 +198,4 @@ template("../lib/yarp.rb", nodes, rbmark)
 
 pure_template(template: 'bin/templates/token_type.h.erb', write_to: 'ext/yarp/token_type.h', locals: { tokens: tokens })
 pure_template(template: 'bin/templates/token_type.c.erb', write_to: 'ext/yarp/token_type.c', locals: { tokens: tokens })
-pure_template(template: 'bin/templates/node.h.erb', write_to: 'ext/yarp/node.h', locals: { nodes: nodes })
+pure_template(template: 'bin/templates/node_gen.h.erb', write_to: 'ext/yarp/node_gen.h', locals: { nodes: nodes })

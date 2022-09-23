@@ -2,7 +2,7 @@
 #define YARP_H
 
 #include "location.h"
-#include "node.h"
+#include "node_gen.h"
 #include "token.h"
 #include <fcntl.h>
 #include <stdarg.h>

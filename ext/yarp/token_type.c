@@ -696,9 +696,6 @@ token_type_from_str(const char *s) {
   if (strcmp(s, "WORDS_SEP") == 0) {
     return YP_TOKEN_WORDS_SEP;
   }
-  if (strcmp(s, "MAXIMUM") == 0) {
-    return YP_TOKEN_MAXIMUM;
-  }
 
   // Fallback
   return YP_TOKEN_INVALID;
