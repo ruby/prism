@@ -1,4 +1,4 @@
-#include "token_type.h"
+#include "gen_token_type.h"
 #include "yarp.h"
 #include <ruby.h>
 
