@@ -95,7 +95,7 @@ module YARP
     # attr_reader target: Node
     attr_reader :target
 
-    # attr_reader operator: Token
+    # attr_reader operator: String
     attr_reader :operator
 
     # attr_reader value: Node
@@ -104,7 +104,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (target: Node, operator: Token, value: Node, location: Location) -> void
+    # def initialize: (target: Node, operator: String, value: Node, location: Location) -> void
     def initialize(target, operator, value, location)
       @target = target
       @operator = operator
@@ -140,7 +140,7 @@ module YARP
     # attr_reader left: Node
     attr_reader :left
 
-    # attr_reader operator: Token
+    # attr_reader operator: String
     attr_reader :operator
 
     # attr_reader right: Node
@@ -149,7 +149,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (left: Node, operator: Token, right: Node, location: Location) -> void
+    # def initialize: (left: Node, operator: String, right: Node, location: Location) -> void
     def initialize(left, operator, right, location)
       @left = left
       @operator = operator
@@ -182,13 +182,13 @@ module YARP
   end
 
   class CharacterLiteral < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -219,13 +219,13 @@ module YARP
   end
 
   class FloatLiteral < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -256,13 +256,13 @@ module YARP
   end
 
   class Identifier < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -296,7 +296,7 @@ module YARP
     # attr_reader statement: Node
     attr_reader :statement
 
-    # attr_reader keyword: Token
+    # attr_reader keyword: String
     attr_reader :keyword
 
     # attr_reader predicate: Node
@@ -305,7 +305,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    # def initialize: (statement: Node, keyword: String, predicate: Node, location: Location) -> void
     def initialize(statement, keyword, predicate, location)
       @statement = statement
       @keyword = keyword
@@ -338,13 +338,13 @@ module YARP
   end
 
   class ImaginaryLiteral < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -375,13 +375,13 @@ module YARP
   end
 
   class IntegerLiteral < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -415,7 +415,7 @@ module YARP
     # attr_reader target: Node
     attr_reader :target
 
-    # attr_reader operator: Token
+    # attr_reader operator: String
     attr_reader :operator
 
     # attr_reader value: Node
@@ -424,7 +424,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (target: Node, operator: Token, value: Node, location: Location) -> void
+    # def initialize: (target: Node, operator: String, value: Node, location: Location) -> void
     def initialize(target, operator, value, location)
       @target = target
       @operator = operator
@@ -497,7 +497,7 @@ module YARP
     # attr_reader left: Node?
     attr_reader :left
 
-    # attr_reader operator: Token
+    # attr_reader operator: String
     attr_reader :operator
 
     # attr_reader right: Node?
@@ -506,7 +506,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (left: Node?, operator: Token, right: Node?, location: Location) -> void
+    # def initialize: (left: Node?, operator: String, right: Node?, location: Location) -> void
     def initialize(left, operator, right, location)
       @left = left
       @operator = operator
@@ -539,13 +539,13 @@ module YARP
   end
 
   class RationalLiteral < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -576,13 +576,13 @@ module YARP
   end
 
   class Redo < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -613,13 +613,13 @@ module YARP
   end
 
   class Retry < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -690,13 +690,13 @@ module YARP
     # attr_reader predicate: Node
     attr_reader :predicate
 
-    # attr_reader question_mark: Token
+    # attr_reader question_mark: String
     attr_reader :question_mark
 
     # attr_reader true_expression: Node
     attr_reader :true_expression
 
-    # attr_reader colon: Token
+    # attr_reader colon: String
     attr_reader :colon
 
     # attr_reader false_expression: Node
@@ -705,7 +705,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (predicate: Node, question_mark: Token, true_expression: Node, colon: Token, false_expression: Node, location: Location) -> void
+    # def initialize: (predicate: Node, question_mark: String, true_expression: Node, colon: String, false_expression: Node, location: Location) -> void
     def initialize(predicate, question_mark, true_expression, colon, false_expression, location)
       @predicate = predicate
       @question_mark = question_mark
@@ -743,7 +743,7 @@ module YARP
     # attr_reader statement: Node
     attr_reader :statement
 
-    # attr_reader keyword: Token
+    # attr_reader keyword: String
     attr_reader :keyword
 
     # attr_reader predicate: Node
@@ -752,7 +752,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    # def initialize: (statement: Node, keyword: String, predicate: Node, location: Location) -> void
     def initialize(statement, keyword, predicate, location)
       @statement = statement
       @keyword = keyword
@@ -788,7 +788,7 @@ module YARP
     # attr_reader statement: Node
     attr_reader :statement
 
-    # attr_reader keyword: Token
+    # attr_reader keyword: String
     attr_reader :keyword
 
     # attr_reader predicate: Node
@@ -797,7 +797,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    # def initialize: (statement: Node, keyword: String, predicate: Node, location: Location) -> void
     def initialize(statement, keyword, predicate, location)
       @statement = statement
       @keyword = keyword
@@ -830,13 +830,13 @@ module YARP
   end
 
   class VariableReference < Node
-    # attr_reader value: Token
+    # attr_reader value: String
     attr_reader :value
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
+    # def initialize: (value: String, location: Location) -> void
     def initialize(value, location)
       @value = value
       @location = location
@@ -870,7 +870,7 @@ module YARP
     # attr_reader statement: Node
     attr_reader :statement
 
-    # attr_reader keyword: Token
+    # attr_reader keyword: String
     attr_reader :keyword
 
     # attr_reader predicate: Node
@@ -879,7 +879,7 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
+    # def initialize: (statement: Node, keyword: String, predicate: Node, location: Location) -> void
     def initialize(statement, keyword, predicate, location)
       @statement = statement
       @keyword = keyword

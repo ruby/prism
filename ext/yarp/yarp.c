@@ -982,7 +982,7 @@ yp_node_alloc_assignment(yp_parser_t *parser, yp_node_t *target, yp_token_t *ope
     .location = { .start = target->location.start, .end = value->location.end },
     .as.assignment = {
       .target = target,
-      .operator = *operator,
+      .operator = token_to_string(*operator),
       .value = value,
     },
   };
@@ -998,7 +998,7 @@ yp_node_alloc_binary(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator,
     .location = { .start = left->location.start, .end = right->location.end },
     .as.binary = {
       .left = left,
-      .operator = *operator,
+      .operator = token_to_string(*operator),
       .right = right,
     },
   };
@@ -1013,7 +1013,7 @@ yp_node_alloc_character_literal(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_CHARACTER_LITERAL,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.character_literal = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1027,7 +1027,7 @@ yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_FLOAT_LITERAL,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.float_literal = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1041,7 +1041,7 @@ yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_IDENTIFIER,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.identifier = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1056,7 +1056,7 @@ yp_node_alloc_if_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t 
     .location = { .start = statement->location.start, .end = predicate->location.end },
     .as.if_modifier = {
       .statement = statement,
-      .keyword = *keyword,
+      .keyword = token_to_string(*keyword),
       .predicate = predicate,
     },
   };
@@ -1071,7 +1071,7 @@ yp_node_alloc_imaginary_literal(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_IMAGINARY_LITERAL,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.imaginary_literal = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1085,7 +1085,7 @@ yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_INTEGER_LITERAL,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.integer_literal = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1100,7 +1100,7 @@ yp_node_alloc_operator_assignment(yp_parser_t *parser, yp_node_t *target, yp_tok
     .location = { .start = target->location.start, .end = value->location.end },
     .as.operator_assignment = {
       .target = target,
-      .operator = *operator,
+      .operator = token_to_string(*operator),
       .value = value,
     },
   };
@@ -1130,7 +1130,7 @@ yp_node_alloc_range(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator, 
     .location = { .start = (left == NULL ? operator->start - parser->start : left->location.start), .end = (right == NULL ? operator->end - parser->start : right->location.end) },
     .as.range = {
       .left = left,
-      .operator = *operator,
+      .operator = token_to_string(*operator),
       .right = right,
     },
   };
@@ -1145,7 +1145,7 @@ yp_node_alloc_rational_literal(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_RATIONAL_LITERAL,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.rational_literal = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1159,7 +1159,7 @@ yp_node_alloc_redo(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_REDO,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.redo = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1173,7 +1173,7 @@ yp_node_alloc_retry(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_RETRY,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.retry = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1203,9 +1203,9 @@ yp_node_alloc_ternary(yp_parser_t *parser, yp_node_t *predicate, yp_token_t *que
     .location = { .start = predicate->location.start, .end = false_expression->location.end },
     .as.ternary = {
       .predicate = predicate,
-      .question_mark = *question_mark,
+      .question_mark = token_to_string(*question_mark),
       .true_expression = true_expression,
-      .colon = *colon,
+      .colon = token_to_string(*colon),
       .false_expression = false_expression,
     },
   };
@@ -1221,7 +1221,7 @@ yp_node_alloc_unless_modifier(yp_parser_t *parser, yp_node_t *statement, yp_toke
     .location = { .start = statement->location.start, .end = predicate->location.end },
     .as.unless_modifier = {
       .statement = statement,
-      .keyword = *keyword,
+      .keyword = token_to_string(*keyword),
       .predicate = predicate,
     },
   };
@@ -1237,7 +1237,7 @@ yp_node_alloc_until_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token
     .location = { .start = statement->location.start, .end = predicate->location.end },
     .as.until_modifier = {
       .statement = statement,
-      .keyword = *keyword,
+      .keyword = token_to_string(*keyword),
       .predicate = predicate,
     },
   };
@@ -1252,7 +1252,7 @@ yp_node_alloc_variable_reference(yp_parser_t *parser, yp_token_t *value) {
     .type = YP_NODE_VARIABLE_REFERENCE,
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.variable_reference = {
-      .value = *value,
+      .value = token_to_string(*value),
     },
   };
   return node;
@@ -1267,7 +1267,7 @@ yp_node_alloc_while_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token
     .location = { .start = statement->location.start, .end = predicate->location.end },
     .as.while_modifier = {
       .statement = statement,
-      .keyword = *keyword,
+      .keyword = token_to_string(*keyword),
       .predicate = predicate,
     },
   };

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "gen_token_type.h"
 #include "yarp.h"
 #include <ruby.h>
@@ -39,6 +41,11 @@ token_new(yp_parser_t *parser, yp_token_t *token) {
   return rb_class_new_instance(3, argv, rb_cYARPToken);
 }
 
+static VALUE
+string_new(yp_parser_t *parser, yp_string_t *string) {
+  return rb_str_new(string_ptr(string), string_length(string));
+}
+
 /******************************************************************************/
 /* BEGIN TEMPLATE                                                             */
 /******************************************************************************/
@@ -53,7 +60,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.assignment.target);
 
       // operator
-      argv[1] = token_new(parser, &node->as.assignment.operator);
+      argv[1] = string_new(parser, &node->as.assignment.operator);
 
       // value
       argv[2] = node_new(parser, node->as.assignment.value);
@@ -70,7 +77,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.binary.left);
 
       // operator
-      argv[1] = token_new(parser, &node->as.binary.operator);
+      argv[1] = string_new(parser, &node->as.binary.operator);
 
       // right
       argv[2] = node_new(parser, node->as.binary.right);
@@ -84,7 +91,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.character_literal.value);
+      argv[0] = string_new(parser, &node->as.character_literal.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -95,7 +102,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.float_literal.value);
+      argv[0] = string_new(parser, &node->as.float_literal.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -106,7 +113,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.identifier.value);
+      argv[0] = string_new(parser, &node->as.identifier.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -120,7 +127,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.if_modifier.statement);
 
       // keyword
-      argv[1] = token_new(parser, &node->as.if_modifier.keyword);
+      argv[1] = string_new(parser, &node->as.if_modifier.keyword);
 
       // predicate
       argv[2] = node_new(parser, node->as.if_modifier.predicate);
@@ -134,7 +141,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.imaginary_literal.value);
+      argv[0] = string_new(parser, &node->as.imaginary_literal.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -145,7 +152,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.integer_literal.value);
+      argv[0] = string_new(parser, &node->as.integer_literal.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -159,7 +166,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.operator_assignment.target);
 
       // operator
-      argv[1] = token_new(parser, &node->as.operator_assignment.operator);
+      argv[1] = string_new(parser, &node->as.operator_assignment.operator);
 
       // value
       argv[2] = node_new(parser, node->as.operator_assignment.value);
@@ -187,7 +194,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node->as.range.left == NULL ? Qnil : node_new(parser, node->as.range.left);
 
       // operator
-      argv[1] = token_new(parser, &node->as.range.operator);
+      argv[1] = string_new(parser, &node->as.range.operator);
 
       // right
       argv[2] = node->as.range.right == NULL ? Qnil : node_new(parser, node->as.range.right);
@@ -201,7 +208,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.rational_literal.value);
+      argv[0] = string_new(parser, &node->as.rational_literal.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -212,7 +219,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.redo.value);
+      argv[0] = string_new(parser, &node->as.redo.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -223,7 +230,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.retry.value);
+      argv[0] = string_new(parser, &node->as.retry.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -251,13 +258,13 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.ternary.predicate);
 
       // question_mark
-      argv[1] = token_new(parser, &node->as.ternary.question_mark);
+      argv[1] = string_new(parser, &node->as.ternary.question_mark);
 
       // true_expression
       argv[2] = node_new(parser, node->as.ternary.true_expression);
 
       // colon
-      argv[3] = token_new(parser, &node->as.ternary.colon);
+      argv[3] = string_new(parser, &node->as.ternary.colon);
 
       // false_expression
       argv[4] = node_new(parser, node->as.ternary.false_expression);
@@ -274,7 +281,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.unless_modifier.statement);
 
       // keyword
-      argv[1] = token_new(parser, &node->as.unless_modifier.keyword);
+      argv[1] = string_new(parser, &node->as.unless_modifier.keyword);
 
       // predicate
       argv[2] = node_new(parser, node->as.unless_modifier.predicate);
@@ -291,7 +298,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.until_modifier.statement);
 
       // keyword
-      argv[1] = token_new(parser, &node->as.until_modifier.keyword);
+      argv[1] = string_new(parser, &node->as.until_modifier.keyword);
 
       // predicate
       argv[2] = node_new(parser, node->as.until_modifier.predicate);
@@ -305,7 +312,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       VALUE argv[2];
 
       // value
-      argv[0] = token_new(parser, &node->as.variable_reference.value);
+      argv[0] = string_new(parser, &node->as.variable_reference.value);
 
       // location
       argv[1] = location_new(&node->location);
@@ -319,7 +326,7 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[0] = node_new(parser, node->as.while_modifier.statement);
 
       // keyword
-      argv[1] = token_new(parser, &node->as.while_modifier.keyword);
+      argv[1] = string_new(parser, &node->as.while_modifier.keyword);
 
       // predicate
       argv[2] = node_new(parser, node->as.while_modifier.predicate);

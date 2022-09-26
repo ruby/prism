@@ -47,12 +47,12 @@ class NodeListParam < Struct.new(:name)
 end
 
 # This represents a parameter to a node that is a token. We pass them as
-# references and store them by copying.
-class TokenParam < Struct.new(:name)
-  def decl = "yp_token_t #{name}"
+# references and store by converting to a string.
+class StringParam < Struct.new(:name)
+  def decl = "yp_string_t #{name}"
   def param = "yp_token_t *#{name}"
-  def assign = "*#{name}"
-  def rbs_class = "Token"
+  def assign = "token_to_string(*#{name})"
+  def rbs_class = "String"
   def child_nodes = nil
 
   def start_location(params) = "#{name}->start - parser->start"
@@ -85,10 +85,10 @@ class NodeType
           OptionalNodeParam.new(name, $1)
         when "node[]"
           NodeListParam.new(name)
-        when "token"
-          TokenParam.new(name)
+        when "string"
+          StringParam.new(name)
         else
-          raise
+          raise "Unknown field type #{type.inspect}"
         end
       end
 

@@ -60,53 +60,53 @@ typedef struct yp_node {
     // Assignment
     struct {
       struct yp_node *target;
-      yp_token_t operator;
+      yp_string_t operator;
       struct yp_node *value;
     } assignment;
 
     // Binary
     struct {
       struct yp_node *left;
-      yp_token_t operator;
+      yp_string_t operator;
       struct yp_node *right;
     } binary;
 
     // CharacterLiteral
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } character_literal;
 
     // FloatLiteral
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } float_literal;
 
     // Identifier
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } identifier;
 
     // IfModifier
     struct {
       struct yp_node *statement;
-      yp_token_t keyword;
+      yp_string_t keyword;
       struct yp_node *predicate;
     } if_modifier;
 
     // ImaginaryLiteral
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } imaginary_literal;
 
     // IntegerLiteral
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } integer_literal;
 
     // OperatorAssignment
     struct {
       struct yp_node *target;
-      yp_token_t operator;
+      yp_string_t operator;
       struct yp_node *value;
     } operator_assignment;
 
@@ -118,23 +118,23 @@ typedef struct yp_node {
     // Range
     struct {
       struct yp_node *left;
-      yp_token_t operator;
+      yp_string_t operator;
       struct yp_node *right;
     } range;
 
     // RationalLiteral
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } rational_literal;
 
     // Redo
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } redo;
 
     // Retry
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } retry;
 
     // Statements
@@ -145,35 +145,35 @@ typedef struct yp_node {
     // Ternary
     struct {
       struct yp_node *predicate;
-      yp_token_t question_mark;
+      yp_string_t question_mark;
       struct yp_node *true_expression;
-      yp_token_t colon;
+      yp_string_t colon;
       struct yp_node *false_expression;
     } ternary;
 
     // UnlessModifier
     struct {
       struct yp_node *statement;
-      yp_token_t keyword;
+      yp_string_t keyword;
       struct yp_node *predicate;
     } unless_modifier;
 
     // UntilModifier
     struct {
       struct yp_node *statement;
-      yp_token_t keyword;
+      yp_string_t keyword;
       struct yp_node *predicate;
     } until_modifier;
 
     // VariableReference
     struct {
-      yp_token_t value;
+      yp_string_t value;
     } variable_reference;
 
     // WhileModifier
     struct {
       struct yp_node *statement;
-      yp_token_t keyword;
+      yp_string_t keyword;
       struct yp_node *predicate;
     } while_modifier;
   } as;

@@ -278,45 +278,45 @@ nodes:
   - name: Assignment
     child_nodes:
       - node target
-      - token operator
+      - string operator
       - node value
     location: target->value
   - name: Binary
     child_nodes:
       - node left
-      - token operator
+      - string operator
       - node right
     location: left->right
   - name: CharacterLiteral
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: FloatLiteral
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: Identifier
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: IfModifier
     child_nodes:
       - node statement
-      - token keyword
+      - string keyword
       - node predicate
     location: statement->predicate
   - name: ImaginaryLiteral
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: IntegerLiteral
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: OperatorAssignment
     child_nodes:
       - node target
-      - token operator
+      - string operator
       - node value
     location: target->value
   - name: Program
@@ -325,21 +325,21 @@ nodes:
     location: statements
   - name: RationalLiteral
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: Range
     child_nodes:
       - node?operator left
-      - token operator
+      - string operator
       - node?operator right
     location: left->right
   - name: Redo
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: Retry
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: Statements
     child_nodes:
@@ -348,30 +348,30 @@ nodes:
   - name: Ternary
     child_nodes:
       - node predicate
-      - token question_mark
+      - string question_mark
       - node true_expression
-      - token colon
+      - string colon
       - node false_expression
     location: predicate->false_expression
   - name: UnlessModifier
     child_nodes:
       - node statement
-      - token keyword
+      - string keyword
       - node predicate
     location: statement->predicate
   - name: UntilModifier
     child_nodes:
       - node statement
-      - token keyword
+      - string keyword
       - node predicate
     location: statement->predicate
   - name: VariableReference
     child_nodes:
-      - token value
+      - string value
     location: value
   - name: WhileModifier
     child_nodes:
       - node statement
-      - token keyword
+      - string keyword
       - node predicate
     location: statement->predicate

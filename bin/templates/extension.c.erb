@@ -21,10 +21,10 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       for (size_t index = 0; index < node->as.<%= node.human %>.<%= param.name %>->size; index++) {
         rb_ary_push(argv[<%= index %>], node_new(parser, node->as.<%= node.human %>.<%= param.name %>->nodes[index]));
       }
-      <%- when TokenParam -%>
-      argv[<%= index %>] = token_new(parser, &node->as.<%= node.human %>.<%= param.name %>);
+      <%- when StringParam -%>
+      argv[<%= index %>] = string_new(parser, &node->as.<%= node.human %>.<%= param.name %>);
       <%- else -%>
-      <%- raise -%>
+      <%- raise "Unsupported param type #{param.class}" -%>
       <%- end -%>
       <%- end -%>
 
