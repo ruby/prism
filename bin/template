@@ -60,7 +60,7 @@ class TokenParam < Struct.new(:name)
   def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
-# This class represents a node in the tree, configured by the NODE_TYPES file in
+# This class represents a node in the tree, configured by the config.yml file in
 # YAML format. It contains information about the name of the node, the various
 # child nodes it contains, and how to obtain the location of the node in the
 # source.
