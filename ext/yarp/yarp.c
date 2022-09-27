@@ -328,59 +328,60 @@ lex_identifier(yp_parser_t *parser) {
 
   off_t width = parser->current.end - parser->current.start;
 
-#define KEYWORD(value, size, token)                                                                                    \
-  if (width == size && strncmp(parser->current.start, value, size) == 0) return YP_TOKEN_KEYWORD_##token;
+#define KEYWORD(value, token)                                                                                          \
+  if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
+    return YP_TOKEN_KEYWORD_##token;
 
   if ((parser->current.end + 1 < parser->end) && (parser->current.end[1] != '=') &&
       (match(parser, '!') || match(parser, '?'))) {
     width++;
     if (parser->previous.type != YP_TOKEN_DOT) {
-      KEYWORD("defined?", 8, DEFINED)
+      KEYWORD("defined?", DEFINED)
     }
     return YP_TOKEN_IDENTIFIER;
   }
 
   if (parser->previous.type != YP_TOKEN_DOT) {
-    KEYWORD("__ENCODING__", 12, __ENCODING__)
-    KEYWORD("__LINE__", 8, __LINE__)
-    KEYWORD("__FILE__", 8, __FILE__)
-    KEYWORD("alias", 5, ALIAS)
-    KEYWORD("and", 3, AND)
-    KEYWORD("begin", 5, BEGIN)
-    KEYWORD("BEGIN", 5, BEGIN_UPCASE)
-    KEYWORD("break", 5, BREAK)
-    KEYWORD("case", 4, CASE)
-    KEYWORD("class", 5, CLASS)
-    KEYWORD("def", 3, DEF)
-    KEYWORD("do", 2, DO)
-    KEYWORD("else", 4, ELSE)
-    KEYWORD("elsif", 5, ELSIF)
-    KEYWORD("end", 3, END)
-    KEYWORD("END", 3, END_UPCASE)
-    KEYWORD("ensure", 6, ENSURE)
-    KEYWORD("false", 5, FALSE)
-    KEYWORD("for", 3, FOR)
-    KEYWORD("if", 2, IF)
-    KEYWORD("in", 2, IN)
-    KEYWORD("module", 6, MODULE)
-    KEYWORD("next", 4, NEXT)
-    KEYWORD("nil", 3, NIL)
-    KEYWORD("not", 3, NOT)
-    KEYWORD("or", 2, OR)
-    KEYWORD("redo", 4, REDO)
-    KEYWORD("rescue", 6, RESCUE)
-    KEYWORD("retry", 5, RETRY)
-    KEYWORD("return", 6, RETURN)
-    KEYWORD("self", 4, SELF)
-    KEYWORD("super", 5, SUPER)
-    KEYWORD("then", 4, THEN)
-    KEYWORD("true", 4, TRUE)
-    KEYWORD("undef", 5, UNDEF)
-    KEYWORD("unless", 6, UNLESS)
-    KEYWORD("until", 5, UNTIL)
-    KEYWORD("when", 4, WHEN)
-    KEYWORD("while", 5, WHILE)
-    KEYWORD("yield", 5, YIELD)
+    KEYWORD("__ENCODING__", __ENCODING__)
+    KEYWORD("__LINE__", __LINE__)
+    KEYWORD("__FILE__", __FILE__)
+    KEYWORD("alias", ALIAS)
+    KEYWORD("and", AND)
+    KEYWORD("begin", BEGIN)
+    KEYWORD("BEGIN", BEGIN_UPCASE)
+    KEYWORD("break", BREAK)
+    KEYWORD("case", CASE)
+    KEYWORD("class", CLASS)
+    KEYWORD("def", DEF)
+    KEYWORD("do", DO)
+    KEYWORD("else", ELSE)
+    KEYWORD("elsif", ELSIF)
+    KEYWORD("end", END)
+    KEYWORD("END", END_UPCASE)
+    KEYWORD("ensure", ENSURE)
+    KEYWORD("false", FALSE)
+    KEYWORD("for", FOR)
+    KEYWORD("if", IF)
+    KEYWORD("in", IN)
+    KEYWORD("module", MODULE)
+    KEYWORD("next", NEXT)
+    KEYWORD("nil", NIL)
+    KEYWORD("not", NOT)
+    KEYWORD("or", OR)
+    KEYWORD("redo", REDO)
+    KEYWORD("rescue", RESCUE)
+    KEYWORD("retry", RETRY)
+    KEYWORD("return", RETURN)
+    KEYWORD("self", SELF)
+    KEYWORD("super", SUPER)
+    KEYWORD("then", THEN)
+    KEYWORD("true", TRUE)
+    KEYWORD("undef", UNDEF)
+    KEYWORD("unless", UNLESS)
+    KEYWORD("until", UNTIL)
+    KEYWORD("when", WHEN)
+    KEYWORD("while", WHILE)
+    KEYWORD("yield", YIELD)
   }
 
 #undef KEYWORD
