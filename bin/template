@@ -65,7 +65,7 @@ end
 # child nodes it contains, and how to obtain the location of the node in the
 # source.
 class NodeType
-  attr_reader :name, :type, :human, :params, :location
+  attr_reader :name, :type, :human, :params, :location, :comment
 
   def initialize(config)
     @name = config.fetch("name")
@@ -101,6 +101,8 @@ class NodeType
           params.detect { |param| param.name == location }.location(params)
         end
       end
+
+    @comment = config["comment"]
   end
 end
 

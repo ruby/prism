@@ -970,6 +970,12 @@ module YARP
     end
   end
 
+  # Represents the `self` keyword.
+  # 
+  # ```text
+  # self
+  # ~~~~
+  # ```
   class SelfNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword

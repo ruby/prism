@@ -383,6 +383,13 @@ nodes:
     child_nodes:
       - token keyword
     location: keyword
+    comment: |
+      Represents the `self` keyword.
+
+      ```text
+      self
+      ~~~~
+      ```
   - name: Statements
     child_nodes:
       - node[] body
