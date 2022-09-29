@@ -1,6 +1,7 @@
 #ifndef YARP_BUFFER_H
 #define YARP_BUFFER_H
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 

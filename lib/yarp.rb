@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "yarp/yarp"
+require_relative "yarp/serialization"
 require_relative "yarp/version"
 
 module YARP
