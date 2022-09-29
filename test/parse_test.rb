@@ -29,8 +29,12 @@ class ParseTest < Test::Unit::TestCase
     assert_equal FloatLiteral(FLOAT("1.0")), expression("1.0")
   end
 
-  test "global variable" do
-    assert_equal VariableReference(GLOBAL_VARIABLE("$abc")), expression("$abc")
+  test "global variable read" do
+    assert_equal GlobalVariableRead(GLOBAL_VARIABLE("$abc")), expression("$abc")
+  end
+
+  test "global variable write" do
+    assert_equal GlobalVariableWrite(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), expression("$abc = 1")
   end
 
   test "identifier" do
@@ -45,8 +49,12 @@ class ParseTest < Test::Unit::TestCase
     assert_equal ImaginaryLiteral(IMAGINARY_NUMBER("1i")), expression("1i")
   end
 
-  test "instance variable" do
-    assert_equal VariableReference(INSTANCE_VARIABLE("@abc")), expression("@abc")
+  test "instance variable read" do
+    assert_equal InstanceVariableRead(INSTANCE_VARIABLE("@abc")), expression("@abc")
+  end
+
+  test "instance variable write" do
+    assert_equal InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), expression("@abc = 1")
   end
 
   test "nil" do
