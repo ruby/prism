@@ -1020,6 +1020,36 @@ yp_node_alloc_character_literal(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new ClassVariableRead node.
+static yp_node_t *
+yp_node_alloc_class_variable_read(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_CLASS_VARIABLE_READ,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.class_variable_read = {
+      .value = *value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new ClassVariableWrite node.
+static yp_node_t *
+yp_node_alloc_class_variable_write(yp_parser_t *parser, yp_token_t *target, yp_token_t *operator, yp_node_t * value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_CLASS_VARIABLE_WRITE,
+    .location = value->location,
+    .as.class_variable_write = {
+      .target = *target,
+      .operator = *operator,
+      .value = value,
+    },
+  };
+  return node;
+}
+
 // Allocate a new FalseNode node.
 static yp_node_t *
 yp_node_alloc_false_node(yp_parser_t *parser, yp_token_t *keyword) {
@@ -1350,6 +1380,13 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_CHARACTER_LITERAL:
       free(node);
       break;
+    case YP_NODE_CLASS_VARIABLE_READ:
+      free(node);
+      break;
+    case YP_NODE_CLASS_VARIABLE_WRITE:
+      yp_node_dealloc(parser, node->as.class_variable_write.value);
+      free(node);
+      break;
     case YP_NODE_FALSE_NODE:
       free(node);
       break;
@@ -1635,6 +1672,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_character_literal(parser, &parser->previous);
       break;
     case YP_TOKEN_CLASS_VARIABLE:
+      node = yp_node_alloc_class_variable_read(parser, &parser->previous);
+      break;
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_IDENTIFIER:
     case YP_TOKEN_INSTANCE_VARIABLE:
@@ -1686,8 +1725,18 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 
     switch (token.type) {
       case YP_TOKEN_EQUAL: {
-        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_alloc_assignment(parser, node, &token, right);
+        switch (node->type) {
+          case YP_NODE_CLASS_VARIABLE_READ: {
+            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+            node = yp_node_alloc_class_variable_write(parser, &node->as.class_variable_read.value, &token, value);
+            break;
+          }
+          default: {
+            yp_node_t *right = parse_expression(parser, token_binding_powers.right);
+            node = yp_node_alloc_assignment(parser, node, &token, right);
+            break;
+          }
+        }
         break;
       }
       case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL:

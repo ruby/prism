@@ -13,8 +13,12 @@ class ParseTest < Test::Unit::TestCase
     assert_equal CharacterLiteral(CHARACTER_LITERAL("?a")), expression("?a")
   end
 
-  test "class variable" do
-    assert_equal VariableReference(CLASS_VARIABLE("@@abc")), expression("@@abc")
+  test "class variable read" do
+    assert_equal ClassVariableRead(CLASS_VARIABLE("@@abc")), expression("@@abc")
+  end
+
+  test "class variable write" do
+    assert_equal ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), expression("@@abc = 1")
   end
 
   test "false" do
