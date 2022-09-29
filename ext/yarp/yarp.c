@@ -1122,17 +1122,17 @@ yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
-// Allocate a new IfModifier node.
+// Allocate a new IfNode node.
 static yp_node_t *
-yp_node_alloc_if_modifier(yp_parser_t *parser, yp_node_t *statement, yp_token_t *keyword, yp_node_t *predicate) {
+yp_node_alloc_if_node(yp_parser_t *parser, yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
-    .type = YP_NODE_IF_MODIFIER,
-    .location = { .start = statement->location.start, .end = predicate->location.end },
-    .as.if_modifier = {
-      .statement = statement,
+    .type = YP_NODE_IF_NODE,
+    .location = { .start = keyword->start - parser->start, .end = statements->location.end },
+    .as.if_node = {
       .keyword = *keyword,
       .predicate = predicate,
+      .statements = statements,
     },
   };
   return node;
@@ -1464,9 +1464,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_IDENTIFIER:
       free(node);
       break;
-    case YP_NODE_IF_MODIFIER:
-      yp_node_dealloc(parser, node->as.if_modifier.statement);
-      yp_node_dealloc(parser, node->as.if_modifier.predicate);
+    case YP_NODE_IF_NODE:
+      yp_node_dealloc(parser, node->as.if_node.predicate);
+      yp_node_dealloc(parser, node->as.if_node.statements);
       free(node);
       break;
     case YP_NODE_IMAGINARY_LITERAL:
@@ -1882,8 +1882,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         break;
       }
       case YP_TOKEN_KEYWORD_IF: {
+        yp_node_t *statements = yp_node_alloc_statements(parser);
+        yp_node_list_append(parser, statements, statements->as.statements.body, node);
+
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_alloc_if_modifier(parser, node, &token, predicate);
+        node = yp_node_alloc_if_node(parser, &token, predicate, statements);
         break;
       }
       case YP_TOKEN_KEYWORD_UNLESS: {

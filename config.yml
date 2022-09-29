@@ -323,12 +323,12 @@ nodes:
     child_nodes:
       - token value
     location: value
-  - name: IfModifier
+  - name: IfNode
     child_nodes:
-      - node statement
       - token keyword
       - node predicate
-    location: statement->predicate
+      - node statements
+    location: keyword->statements
   - name: ImaginaryLiteral
     child_nodes:
       - token value
