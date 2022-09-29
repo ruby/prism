@@ -18,6 +18,8 @@ typedef enum {
   YP_NODE_CLASS_VARIABLE_WRITE,
   YP_NODE_FALSE_NODE,
   YP_NODE_FLOAT_LITERAL,
+  YP_NODE_GLOBAL_VARIABLE_READ,
+  YP_NODE_GLOBAL_VARIABLE_WRITE,
   YP_NODE_IDENTIFIER,
   YP_NODE_IF_MODIFIER,
   YP_NODE_IMAGINARY_LITERAL,
@@ -103,6 +105,18 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } float_literal;
+
+    // GlobalVariableRead
+    struct {
+      yp_token_t value;
+    } global_variable_read;
+
+    // GlobalVariableWrite
+    struct {
+      yp_token_t target;
+      yp_token_t operator;
+      struct yp_node *value;
+    } global_variable_write;
 
     // Identifier
     struct {

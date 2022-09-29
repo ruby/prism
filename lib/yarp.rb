@@ -374,6 +374,88 @@ module YARP
     end
   end
 
+  class GlobalVariableRead < Node
+    # attr_reader value: Token
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_global_variable_read(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in GlobalVariableRead[value: ^(value)]
+    end
+  end
+
+  class GlobalVariableWrite < Node
+    # attr_reader target: Token
+    attr_reader :target
+
+    # attr_reader operator: Token
+    attr_reader :operator
+
+    # attr_reader value: Node
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (target: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(target, operator, value, location)
+      @target = target
+      @operator = operator
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_global_variable_write(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [value]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { target: target, operator: operator, value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in GlobalVariableWrite[target: ^(target), operator: ^(operator), value: ^(value)]
+    end
+  end
+
   class Identifier < Node
     # attr_reader value: Token
     attr_reader :value
@@ -1163,6 +1245,12 @@ module YARP
     # Visit a FloatLiteral node
     alias visit_float_literal visit_child_nodes
 
+    # Visit a GlobalVariableRead node
+    alias visit_global_variable_read visit_child_nodes
+
+    # Visit a GlobalVariableWrite node
+    alias visit_global_variable_write visit_child_nodes
+
     # Visit a Identifier node
     alias visit_identifier visit_child_nodes
 
@@ -1244,6 +1332,12 @@ module YARP
 
     # Create a new FloatLiteral node
     def FloatLiteral(value) = FloatLiteral.new(value, Location.null)
+
+    # Create a new GlobalVariableRead node
+    def GlobalVariableRead(value) = GlobalVariableRead.new(value, Location.null)
+
+    # Create a new GlobalVariableWrite node
+    def GlobalVariableWrite(target, operator, value) = GlobalVariableWrite.new(target, operator, value, Location.null)
 
     # Create a new Identifier node
     def Identifier(value) = Identifier.new(value, Location.null)
