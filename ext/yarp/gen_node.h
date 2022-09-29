@@ -88,12 +88,12 @@ typedef struct yp_node {
 
     // ClassVariableRead
     struct {
-      yp_token_t value;
+      yp_token_t name;
     } class_variable_read;
 
     // ClassVariableWrite
     struct {
-      yp_token_t target;
+      yp_token_t name;
       yp_token_t operator;
       struct yp_node *value;
     } class_variable_write;
@@ -110,12 +110,12 @@ typedef struct yp_node {
 
     // GlobalVariableRead
     struct {
-      yp_token_t value;
+      yp_token_t name;
     } global_variable_read;
 
     // GlobalVariableWrite
     struct {
-      yp_token_t target;
+      yp_token_t name;
       yp_token_t operator;
       struct yp_node *value;
     } global_variable_write;
@@ -139,12 +139,12 @@ typedef struct yp_node {
 
     // InstanceVariableRead
     struct {
-      yp_token_t value;
+      yp_token_t name;
     } instance_variable_read;
 
     // InstanceVariableWrite
     struct {
-      yp_token_t target;
+      yp_token_t name;
       yp_token_t operator;
       struct yp_node *value;
     } instance_variable_write;

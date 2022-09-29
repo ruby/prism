@@ -293,14 +293,14 @@ nodes:
     location: value
   - name: ClassVariableRead
     child_nodes:
-      - token value
-    location: value
+      - token name
+    location: name
   - name: ClassVariableWrite
     child_nodes:
-      - token target
+      - token name
       - token operator
       - node value
-    location: target->value
+    location: name->value
   - name: FalseNode
     child_nodes:
       - token keyword
@@ -311,14 +311,14 @@ nodes:
     location: value
   - name: GlobalVariableRead
     child_nodes:
-      - token value
-    location: value
+      - token name
+    location: name
   - name: GlobalVariableWrite
     child_nodes:
-      - token target
+      - token name
       - token operator
       - node value
-    location: target->value
+    location: name->value
   - name: Identifier
     child_nodes:
       - token value
@@ -335,14 +335,14 @@ nodes:
     location: value
   - name: InstanceVariableRead
     child_nodes:
-      - token value
-    location: value
+      - token name
+    location: name
   - name: InstanceVariableWrite
     child_nodes:
-      - token target
+      - token name
       - token operator
       - node value
-    location: target->value
+    location: name->value
   - name: IntegerLiteral
     child_nodes:
       - token value

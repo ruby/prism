@@ -219,15 +219,15 @@ module YARP
   end
 
   class ClassVariableRead < Node
-    # attr_reader value: Token
-    attr_reader :value
+    # attr_reader name: Token
+    attr_reader :name
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
-    def initialize(value, location)
-      @value = value
+    # def initialize: (name: Token, location: Location) -> void
+    def initialize(name, location)
+      @name = name
       @location = location
     end
 
@@ -246,18 +246,18 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { value: value, location: location }
+      { name: name, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in ClassVariableRead[value: ^(value)]
+      other in ClassVariableRead[name: ^(name)]
     end
   end
 
   class ClassVariableWrite < Node
-    # attr_reader target: Token
-    attr_reader :target
+    # attr_reader name: Token
+    attr_reader :name
 
     # attr_reader operator: Token
     attr_reader :operator
@@ -268,9 +268,9 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (target: Token, operator: Token, value: Node, location: Location) -> void
-    def initialize(target, operator, value, location)
-      @target = target
+    # def initialize: (name: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(name, operator, value, location)
+      @name = name
       @operator = operator
       @value = value
       @location = location
@@ -291,12 +291,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { target: target, operator: operator, value: value, location: location }
+      { name: name, operator: operator, value: value, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in ClassVariableWrite[target: ^(target), operator: ^(operator), value: ^(value)]
+      other in ClassVariableWrite[name: ^(name), operator: ^(operator), value: ^(value)]
     end
   end
 
@@ -375,15 +375,15 @@ module YARP
   end
 
   class GlobalVariableRead < Node
-    # attr_reader value: Token
-    attr_reader :value
+    # attr_reader name: Token
+    attr_reader :name
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
-    def initialize(value, location)
-      @value = value
+    # def initialize: (name: Token, location: Location) -> void
+    def initialize(name, location)
+      @name = name
       @location = location
     end
 
@@ -402,18 +402,18 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { value: value, location: location }
+      { name: name, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in GlobalVariableRead[value: ^(value)]
+      other in GlobalVariableRead[name: ^(name)]
     end
   end
 
   class GlobalVariableWrite < Node
-    # attr_reader target: Token
-    attr_reader :target
+    # attr_reader name: Token
+    attr_reader :name
 
     # attr_reader operator: Token
     attr_reader :operator
@@ -424,9 +424,9 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (target: Token, operator: Token, value: Node, location: Location) -> void
-    def initialize(target, operator, value, location)
-      @target = target
+    # def initialize: (name: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(name, operator, value, location)
+      @name = name
       @operator = operator
       @value = value
       @location = location
@@ -447,12 +447,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { target: target, operator: operator, value: value, location: location }
+      { name: name, operator: operator, value: value, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in GlobalVariableWrite[target: ^(target), operator: ^(operator), value: ^(value)]
+      other in GlobalVariableWrite[name: ^(name), operator: ^(operator), value: ^(value)]
     end
   end
 
@@ -576,15 +576,15 @@ module YARP
   end
 
   class InstanceVariableRead < Node
-    # attr_reader value: Token
-    attr_reader :value
+    # attr_reader name: Token
+    attr_reader :name
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (value: Token, location: Location) -> void
-    def initialize(value, location)
-      @value = value
+    # def initialize: (name: Token, location: Location) -> void
+    def initialize(name, location)
+      @name = name
       @location = location
     end
 
@@ -603,18 +603,18 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { value: value, location: location }
+      { name: name, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in InstanceVariableRead[value: ^(value)]
+      other in InstanceVariableRead[name: ^(name)]
     end
   end
 
   class InstanceVariableWrite < Node
-    # attr_reader target: Token
-    attr_reader :target
+    # attr_reader name: Token
+    attr_reader :name
 
     # attr_reader operator: Token
     attr_reader :operator
@@ -625,9 +625,9 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (target: Token, operator: Token, value: Node, location: Location) -> void
-    def initialize(target, operator, value, location)
-      @target = target
+    # def initialize: (name: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(name, operator, value, location)
+      @name = name
       @operator = operator
       @value = value
       @location = location
@@ -648,12 +648,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { target: target, operator: operator, value: value, location: location }
+      { name: name, operator: operator, value: value, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in InstanceVariableWrite[target: ^(target), operator: ^(operator), value: ^(value)]
+      other in InstanceVariableWrite[name: ^(name), operator: ^(operator), value: ^(value)]
     end
   end
 
@@ -1410,10 +1410,10 @@ module YARP
     def CharacterLiteral(value) = CharacterLiteral.new(value, Location.null)
 
     # Create a new ClassVariableRead node
-    def ClassVariableRead(value) = ClassVariableRead.new(value, Location.null)
+    def ClassVariableRead(name) = ClassVariableRead.new(name, Location.null)
 
     # Create a new ClassVariableWrite node
-    def ClassVariableWrite(target, operator, value) = ClassVariableWrite.new(target, operator, value, Location.null)
+    def ClassVariableWrite(name, operator, value) = ClassVariableWrite.new(name, operator, value, Location.null)
 
     # Create a new FalseNode node
     def FalseNode(keyword) = FalseNode.new(keyword, Location.null)
@@ -1422,10 +1422,10 @@ module YARP
     def FloatLiteral(value) = FloatLiteral.new(value, Location.null)
 
     # Create a new GlobalVariableRead node
-    def GlobalVariableRead(value) = GlobalVariableRead.new(value, Location.null)
+    def GlobalVariableRead(name) = GlobalVariableRead.new(name, Location.null)
 
     # Create a new GlobalVariableWrite node
-    def GlobalVariableWrite(target, operator, value) = GlobalVariableWrite.new(target, operator, value, Location.null)
+    def GlobalVariableWrite(name, operator, value) = GlobalVariableWrite.new(name, operator, value, Location.null)
 
     # Create a new Identifier node
     def Identifier(value) = Identifier.new(value, Location.null)
@@ -1437,10 +1437,10 @@ module YARP
     def ImaginaryLiteral(value) = ImaginaryLiteral.new(value, Location.null)
 
     # Create a new InstanceVariableRead node
-    def InstanceVariableRead(value) = InstanceVariableRead.new(value, Location.null)
+    def InstanceVariableRead(name) = InstanceVariableRead.new(name, Location.null)
 
     # Create a new InstanceVariableWrite node
-    def InstanceVariableWrite(target, operator, value) = InstanceVariableWrite.new(target, operator, value, Location.null)
+    def InstanceVariableWrite(name, operator, value) = InstanceVariableWrite.new(name, operator, value, Location.null)
 
     # Create a new IntegerLiteral node
     def IntegerLiteral(value) = IntegerLiteral.new(value, Location.null)
