@@ -208,6 +208,34 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("ImaginaryLiteral")));
     }
+    case YP_NODE_INSTANCE_VARIABLE_READ: {
+      VALUE argv[2];
+
+      // value
+      argv[0] = token_new(parser, &node->as.instance_variable_read.value);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("InstanceVariableRead")));
+    }
+    case YP_NODE_INSTANCE_VARIABLE_WRITE: {
+      VALUE argv[4];
+
+      // target
+      argv[0] = token_new(parser, &node->as.instance_variable_write.target);
+
+      // operator
+      argv[1] = token_new(parser, &node->as.instance_variable_write.operator);
+
+      // value
+      argv[2] = node_new(parser, node->as.instance_variable_write.value);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("InstanceVariableWrite")));
+    }
     case YP_NODE_INTEGER_LITERAL: {
       VALUE argv[2];
 

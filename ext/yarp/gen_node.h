@@ -23,6 +23,8 @@ typedef enum {
   YP_NODE_IDENTIFIER,
   YP_NODE_IF_MODIFIER,
   YP_NODE_IMAGINARY_LITERAL,
+  YP_NODE_INSTANCE_VARIABLE_READ,
+  YP_NODE_INSTANCE_VARIABLE_WRITE,
   YP_NODE_INTEGER_LITERAL,
   YP_NODE_NIL_NODE,
   YP_NODE_OPERATOR_ASSIGNMENT,
@@ -134,6 +136,18 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } imaginary_literal;
+
+    // InstanceVariableRead
+    struct {
+      yp_token_t value;
+    } instance_variable_read;
+
+    // InstanceVariableWrite
+    struct {
+      yp_token_t target;
+      yp_token_t operator;
+      struct yp_node *value;
+    } instance_variable_write;
 
     // IntegerLiteral
     struct {

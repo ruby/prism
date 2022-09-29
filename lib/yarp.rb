@@ -575,6 +575,88 @@ module YARP
     end
   end
 
+  class InstanceVariableRead < Node
+    # attr_reader value: Token
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_instance_variable_read(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in InstanceVariableRead[value: ^(value)]
+    end
+  end
+
+  class InstanceVariableWrite < Node
+    # attr_reader target: Token
+    attr_reader :target
+
+    # attr_reader operator: Token
+    attr_reader :operator
+
+    # attr_reader value: Node
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (target: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(target, operator, value, location)
+      @target = target
+      @operator = operator
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_instance_variable_write(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [value]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { target: target, operator: operator, value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in InstanceVariableWrite[target: ^(target), operator: ^(operator), value: ^(value)]
+    end
+  end
+
   class IntegerLiteral < Node
     # attr_reader value: Token
     attr_reader :value
@@ -1260,6 +1342,12 @@ module YARP
     # Visit a ImaginaryLiteral node
     alias visit_imaginary_literal visit_child_nodes
 
+    # Visit a InstanceVariableRead node
+    alias visit_instance_variable_read visit_child_nodes
+
+    # Visit a InstanceVariableWrite node
+    alias visit_instance_variable_write visit_child_nodes
+
     # Visit a IntegerLiteral node
     alias visit_integer_literal visit_child_nodes
 
@@ -1347,6 +1435,12 @@ module YARP
 
     # Create a new ImaginaryLiteral node
     def ImaginaryLiteral(value) = ImaginaryLiteral.new(value, Location.null)
+
+    # Create a new InstanceVariableRead node
+    def InstanceVariableRead(value) = InstanceVariableRead.new(value, Location.null)
+
+    # Create a new InstanceVariableWrite node
+    def InstanceVariableWrite(target, operator, value) = InstanceVariableWrite.new(target, operator, value, Location.null)
 
     # Create a new IntegerLiteral node
     def IntegerLiteral(value) = IntegerLiteral.new(value, Location.null)

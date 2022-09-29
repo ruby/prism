@@ -333,6 +333,16 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: InstanceVariableRead
+    child_nodes:
+      - token value
+    location: value
+  - name: InstanceVariableWrite
+    child_nodes:
+      - token target
+      - token operator
+      - node value
+    location: target->value
   - name: IntegerLiteral
     child_nodes:
       - token value

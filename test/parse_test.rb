@@ -49,8 +49,12 @@ class ParseTest < Test::Unit::TestCase
     assert_equal ImaginaryLiteral(IMAGINARY_NUMBER("1i")), expression("1i")
   end
 
-  test "instance variable" do
-    assert_equal VariableReference(INSTANCE_VARIABLE("@abc")), expression("@abc")
+  test "instance variable read" do
+    assert_equal InstanceVariableRead(INSTANCE_VARIABLE("@abc")), expression("@abc")
+  end
+
+  test "instance variable write" do
+    assert_equal InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), expression("@abc = 1")
   end
 
   test "nil" do

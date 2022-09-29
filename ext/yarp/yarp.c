@@ -1152,6 +1152,37 @@ yp_node_alloc_imaginary_literal(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new InstanceVariableRead node.
+static yp_node_t *
+yp_node_alloc_instance_variable_read(yp_parser_t *parser, yp_token_t *value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_INSTANCE_VARIABLE_READ,
+    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .as.instance_variable_read = {
+      .value = *value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new InstanceVariableWrite node.
+static yp_node_t *
+yp_node_alloc_instance_variable_write(yp_parser_t *parser, yp_token_t *target, yp_token_t *operator,
+                                      yp_node_t * value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_INSTANCE_VARIABLE_WRITE,
+    .location = { .start = target->start - parser->start, .end = value->location.end },
+    .as.instance_variable_write = {
+      .target = *target,
+      .operator = *operator,
+      .value = value,
+    },
+  };
+  return node;
+}
+
 // Allocate a new IntegerLiteral node.
 static yp_node_t *
 yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1441,6 +1472,13 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_IMAGINARY_LITERAL:
       free(node);
       break;
+    case YP_NODE_INSTANCE_VARIABLE_READ:
+      free(node);
+      break;
+    case YP_NODE_INSTANCE_VARIABLE_WRITE:
+      yp_node_dealloc(parser, node->as.instance_variable_write.value);
+      free(node);
+      break;
     case YP_NODE_INTEGER_LITERAL:
       free(node);
       break;
@@ -1711,18 +1749,20 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_CLASS_VARIABLE:
       node = yp_node_alloc_class_variable_read(parser, &parser->previous);
       break;
-    case YP_TOKEN_IDENTIFIER:
-    case YP_TOKEN_INSTANCE_VARIABLE:
-      node = yp_node_alloc_variable_reference(parser, &parser->previous);
-      break;
     case YP_TOKEN_FLOAT:
       node = yp_node_alloc_float_literal(parser, &parser->previous);
       break;
     case YP_TOKEN_GLOBAL_VARIABLE:
       node = yp_node_alloc_global_variable_read(parser, &parser->previous);
       break;
+    case YP_TOKEN_IDENTIFIER:
+      node = yp_node_alloc_variable_reference(parser, &parser->previous);
+      break;
     case YP_TOKEN_IMAGINARY_NUMBER:
       node = yp_node_alloc_imaginary_literal(parser, &parser->previous);
+      break;
+    case YP_TOKEN_INSTANCE_VARIABLE:
+      node = yp_node_alloc_instance_variable_read(parser, &parser->previous);
       break;
     case YP_TOKEN_INTEGER:
       node = yp_node_alloc_integer_literal(parser, &parser->previous);
@@ -1776,8 +1816,16 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           case YP_NODE_GLOBAL_VARIABLE_READ: {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *read = node;
-            
+
             node = yp_node_alloc_global_variable_write(parser, &node->as.global_variable_read.value, &token, value);
+            yp_node_dealloc(parser, read);
+            break;
+          }
+          case YP_NODE_INSTANCE_VARIABLE_READ: {
+            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+            yp_node_t *read = node;
+
+            node = yp_node_alloc_instance_variable_write(parser, &node->as.instance_variable_read.value, &token, value);
             yp_node_dealloc(parser, read);
             break;
           }
