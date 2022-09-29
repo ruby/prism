@@ -1022,13 +1022,13 @@ yp_node_alloc_character_literal(yp_parser_t *parser, yp_token_t *value) {
 
 // Allocate a new ClassVariableRead node.
 static yp_node_t *
-yp_node_alloc_class_variable_read(yp_parser_t *parser, yp_token_t *value) {
+yp_node_alloc_class_variable_read(yp_parser_t *parser, yp_token_t *name) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_CLASS_VARIABLE_READ,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .location = { .start = name->start - parser->start, .end = name->end - parser->start },
     .as.class_variable_read = {
-      .value = *value,
+      .name = *name,
     },
   };
   return node;
@@ -1036,13 +1036,13 @@ yp_node_alloc_class_variable_read(yp_parser_t *parser, yp_token_t *value) {
 
 // Allocate a new ClassVariableWrite node.
 static yp_node_t *
-yp_node_alloc_class_variable_write(yp_parser_t *parser, yp_token_t *target, yp_token_t *operator, yp_node_t * value) {
+yp_node_alloc_class_variable_write(yp_parser_t *parser, yp_token_t *name, yp_token_t *operator, yp_node_t * value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_CLASS_VARIABLE_WRITE,
-    .location = { .start = target->start - parser->start, .end = value->location.end },
+    .location = { .start = name->start - parser->start, .end = value->location.end },
     .as.class_variable_write = {
-      .target = *target,
+      .name = *name,
       .operator = *operator,
       .value = value,
     },
@@ -1080,13 +1080,13 @@ yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value) {
 
 // Allocate a new GlobalVariableRead node.
 static yp_node_t *
-yp_node_alloc_global_variable_read(yp_parser_t *parser, yp_token_t *value) {
+yp_node_alloc_global_variable_read(yp_parser_t *parser, yp_token_t *name) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_GLOBAL_VARIABLE_READ,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .location = { .start = name->start - parser->start, .end = name->end - parser->start },
     .as.global_variable_read = {
-      .value = *value,
+      .name = *name,
     },
   };
   return node;
@@ -1094,13 +1094,13 @@ yp_node_alloc_global_variable_read(yp_parser_t *parser, yp_token_t *value) {
 
 // Allocate a new GlobalVariableWrite node.
 static yp_node_t *
-yp_node_alloc_global_variable_write(yp_parser_t *parser, yp_token_t *target, yp_token_t *operator, yp_node_t * value) {
+yp_node_alloc_global_variable_write(yp_parser_t *parser, yp_token_t *name, yp_token_t *operator, yp_node_t * value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_GLOBAL_VARIABLE_WRITE,
-    .location = { .start = target->start - parser->start, .end = value->location.end },
+    .location = { .start = name->start - parser->start, .end = value->location.end },
     .as.global_variable_write = {
-      .target = *target,
+      .name = *name,
       .operator = *operator,
       .value = value,
     },
@@ -1154,13 +1154,13 @@ yp_node_alloc_imaginary_literal(yp_parser_t *parser, yp_token_t *value) {
 
 // Allocate a new InstanceVariableRead node.
 static yp_node_t *
-yp_node_alloc_instance_variable_read(yp_parser_t *parser, yp_token_t *value) {
+yp_node_alloc_instance_variable_read(yp_parser_t *parser, yp_token_t *name) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_INSTANCE_VARIABLE_READ,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
+    .location = { .start = name->start - parser->start, .end = name->end - parser->start },
     .as.instance_variable_read = {
-      .value = *value,
+      .name = *name,
     },
   };
   return node;
@@ -1168,14 +1168,13 @@ yp_node_alloc_instance_variable_read(yp_parser_t *parser, yp_token_t *value) {
 
 // Allocate a new InstanceVariableWrite node.
 static yp_node_t *
-yp_node_alloc_instance_variable_write(yp_parser_t *parser, yp_token_t *target, yp_token_t *operator,
-                                      yp_node_t * value) {
+yp_node_alloc_instance_variable_write(yp_parser_t *parser, yp_token_t *name, yp_token_t *operator, yp_node_t * value) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_INSTANCE_VARIABLE_WRITE,
-    .location = { .start = target->start - parser->start, .end = value->location.end },
+    .location = { .start = name->start - parser->start, .end = value->location.end },
     .as.instance_variable_write = {
-      .target = *target,
+      .name = *name,
       .operator = *operator,
       .value = value,
     },
@@ -1809,7 +1808,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *read = node;
 
-            node = yp_node_alloc_class_variable_write(parser, &node->as.class_variable_read.value, &token, value);
+            node = yp_node_alloc_class_variable_write(parser, &node->as.class_variable_read.name, &token, value);
             yp_node_dealloc(parser, read);
             break;
           }
@@ -1817,7 +1816,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *read = node;
 
-            node = yp_node_alloc_global_variable_write(parser, &node->as.global_variable_read.value, &token, value);
+            node = yp_node_alloc_global_variable_write(parser, &node->as.global_variable_read.name, &token, value);
             yp_node_dealloc(parser, read);
             break;
           }
@@ -1825,7 +1824,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *read = node;
 
-            node = yp_node_alloc_instance_variable_write(parser, &node->as.instance_variable_read.value, &token, value);
+            node = yp_node_alloc_instance_variable_write(parser, &node->as.instance_variable_read.name, &token, value);
             yp_node_dealloc(parser, read);
             break;
           }

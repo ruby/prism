@@ -94,8 +94,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_CLASS_VARIABLE_READ: {
       VALUE argv[2];
 
-      // value
-      argv[0] = token_new(parser, &node->as.class_variable_read.value);
+      // name
+      argv[0] = token_new(parser, &node->as.class_variable_read.name);
 
       // location
       argv[1] = location_new(&node->location);
@@ -105,8 +105,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_CLASS_VARIABLE_WRITE: {
       VALUE argv[4];
 
-      // target
-      argv[0] = token_new(parser, &node->as.class_variable_write.target);
+      // name
+      argv[0] = token_new(parser, &node->as.class_variable_write.name);
 
       // operator
       argv[1] = token_new(parser, &node->as.class_variable_write.operator);
@@ -144,8 +144,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_GLOBAL_VARIABLE_READ: {
       VALUE argv[2];
 
-      // value
-      argv[0] = token_new(parser, &node->as.global_variable_read.value);
+      // name
+      argv[0] = token_new(parser, &node->as.global_variable_read.name);
 
       // location
       argv[1] = location_new(&node->location);
@@ -155,8 +155,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_GLOBAL_VARIABLE_WRITE: {
       VALUE argv[4];
 
-      // target
-      argv[0] = token_new(parser, &node->as.global_variable_write.target);
+      // name
+      argv[0] = token_new(parser, &node->as.global_variable_write.name);
 
       // operator
       argv[1] = token_new(parser, &node->as.global_variable_write.operator);
@@ -211,8 +211,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_INSTANCE_VARIABLE_READ: {
       VALUE argv[2];
 
-      // value
-      argv[0] = token_new(parser, &node->as.instance_variable_read.value);
+      // name
+      argv[0] = token_new(parser, &node->as.instance_variable_read.name);
 
       // location
       argv[1] = location_new(&node->location);
@@ -222,8 +222,8 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_INSTANCE_VARIABLE_WRITE: {
       VALUE argv[4];
 
-      // target
-      argv[0] = token_new(parser, &node->as.instance_variable_write.target);
+      // name
+      argv[0] = token_new(parser, &node->as.instance_variable_write.name);
 
       // operator
       argv[1] = token_new(parser, &node->as.instance_variable_write.operator);
