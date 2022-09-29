@@ -1020,6 +1020,20 @@ yp_node_alloc_character_literal(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new FalseNode node.
+static yp_node_t *
+yp_node_alloc_false_node(yp_parser_t *parser, yp_token_t *keyword) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_FALSE_NODE,
+    .location = { .start = keyword->start - parser->start, .end = keyword->end - parser->start },
+    .as.false_node = {
+      .keyword = *keyword,
+    },
+  };
+  return node;
+}
+
 // Allocate a new FloatLiteral node.
 static yp_node_t *
 yp_node_alloc_float_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1087,6 +1101,20 @@ yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.integer_literal = {
       .value = *value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new NilNode node.
+static yp_node_t *
+yp_node_alloc_nil_node(yp_parser_t *parser, yp_token_t *keyword) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_NIL_NODE,
+    .location = { .start = keyword->start - parser->start, .end = keyword->end - parser->start },
+    .as.nil_node = {
+      .keyword = *keyword,
     },
   };
   return node;
@@ -1180,6 +1208,20 @@ yp_node_alloc_retry(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new SelfNode node.
+static yp_node_t *
+yp_node_alloc_self_node(yp_parser_t *parser, yp_token_t *keyword) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_SELF_NODE,
+    .location = { .start = keyword->start - parser->start, .end = keyword->end - parser->start },
+    .as.self_node = {
+      .keyword = *keyword,
+    },
+  };
+  return node;
+}
+
 // Allocate a new Statements node.
 static yp_node_t *
 yp_node_alloc_statements(yp_parser_t *parser) {
@@ -1208,6 +1250,20 @@ yp_node_alloc_ternary(yp_parser_t *parser, yp_node_t *predicate, yp_token_t *que
       .true_expression = true_expression,
       .colon = *colon,
       .false_expression = false_expression,
+    },
+  };
+  return node;
+}
+
+// Allocate a new TrueNode node.
+static yp_node_t *
+yp_node_alloc_true_node(yp_parser_t *parser, yp_token_t *keyword) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_TRUE_NODE,
+    .location = { .start = keyword->start - parser->start, .end = keyword->end - parser->start },
+    .as.true_node = {
+      .keyword = *keyword,
     },
   };
   return node;
@@ -1294,6 +1350,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_CHARACTER_LITERAL:
       free(node);
       break;
+    case YP_NODE_FALSE_NODE:
+      free(node);
+      break;
     case YP_NODE_FLOAT_LITERAL:
       free(node);
       break;
@@ -1309,6 +1368,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_INTEGER_LITERAL:
+      free(node);
+      break;
+    case YP_NODE_NIL_NODE:
       free(node);
       break;
     case YP_NODE_OPERATOR_ASSIGNMENT:
@@ -1338,6 +1400,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_RETRY:
       free(node);
       break;
+    case YP_NODE_SELF_NODE:
+      free(node);
+      break;
     case YP_NODE_STATEMENTS:
       yp_node_list_dealloc(parser, node->as.statements.body);
       free(node);
@@ -1346,6 +1411,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       yp_node_dealloc(parser, node->as.ternary.predicate);
       yp_node_dealloc(parser, node->as.ternary.true_expression);
       yp_node_dealloc(parser, node->as.ternary.false_expression);
+      free(node);
+      break;
+    case YP_NODE_TRUE_NODE:
       free(node);
       break;
     case YP_NODE_UNLESS_MODIFIER:
@@ -1582,16 +1650,22 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_integer_literal(parser, &parser->previous);
       break;
     case YP_TOKEN_KEYWORD_FALSE:
+      node = yp_node_alloc_false_node(parser, &parser->previous);
+      break;
     case YP_TOKEN_KEYWORD_NIL:
-    case YP_TOKEN_KEYWORD_SELF:
-    case YP_TOKEN_KEYWORD_TRUE:
-      node = yp_node_alloc_variable_reference(parser, &parser->previous);
+      node = yp_node_alloc_nil_node(parser, &parser->previous);
       break;
     case YP_TOKEN_KEYWORD_REDO:
       node = yp_node_alloc_redo(parser, &parser->previous);
       break;
     case YP_TOKEN_KEYWORD_RETRY:
       node = yp_node_alloc_retry(parser, &parser->previous);
+      break;
+    case YP_TOKEN_KEYWORD_SELF:
+      node = yp_node_alloc_self_node(parser, &parser->previous);
+      break;
+    case YP_TOKEN_KEYWORD_TRUE:
+      node = yp_node_alloc_true_node(parser, &parser->previous);
       break;
     case YP_TOKEN_RATIONAL_NUMBER:
       node = yp_node_alloc_rational_literal(parser, &parser->previous);

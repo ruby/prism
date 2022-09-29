@@ -218,6 +218,43 @@ module YARP
     end
   end
 
+  class FalseNode < Node
+    # attr_reader keyword: Token
+    attr_reader :keyword
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (keyword: Token, location: Location) -> void
+    def initialize(keyword, location)
+      @keyword = keyword
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_false_node(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { keyword: keyword, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in FalseNode[keyword: ^(keyword)]
+    end
+  end
+
   class FloatLiteral < Node
     # attr_reader value: Token
     attr_reader :value
@@ -408,6 +445,43 @@ module YARP
     # def ==(other: Object) -> bool
     def ==(other)
       other in IntegerLiteral[value: ^(value)]
+    end
+  end
+
+  class NilNode < Node
+    # attr_reader keyword: Token
+    attr_reader :keyword
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (keyword: Token, location: Location) -> void
+    def initialize(keyword, location)
+      @keyword = keyword
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_nil_node(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { keyword: keyword, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in NilNode[keyword: ^(keyword)]
     end
   end
 
@@ -649,6 +723,43 @@ module YARP
     end
   end
 
+  class SelfNode < Node
+    # attr_reader keyword: Token
+    attr_reader :keyword
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (keyword: Token, location: Location) -> void
+    def initialize(keyword, location)
+      @keyword = keyword
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_self_node(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { keyword: keyword, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in SelfNode[keyword: ^(keyword)]
+    end
+  end
+
   class Statements < Node
     # attr_reader body: Array[Node]
     attr_reader :body
@@ -736,6 +847,43 @@ module YARP
     # def ==(other: Object) -> bool
     def ==(other)
       other in Ternary[predicate: ^(predicate), question_mark: ^(question_mark), true_expression: ^(true_expression), colon: ^(colon), false_expression: ^(false_expression)]
+    end
+  end
+
+  class TrueNode < Node
+    # attr_reader keyword: Token
+    attr_reader :keyword
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (keyword: Token, location: Location) -> void
+    def initialize(keyword, location)
+      @keyword = keyword
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_true_node(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { keyword: keyword, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in TrueNode[keyword: ^(keyword)]
     end
   end
 
@@ -921,6 +1069,9 @@ module YARP
     # Visit a CharacterLiteral node
     alias visit_character_literal visit_child_nodes
 
+    # Visit a FalseNode node
+    alias visit_false_node visit_child_nodes
+
     # Visit a FloatLiteral node
     alias visit_float_literal visit_child_nodes
 
@@ -935,6 +1086,9 @@ module YARP
 
     # Visit a IntegerLiteral node
     alias visit_integer_literal visit_child_nodes
+
+    # Visit a NilNode node
+    alias visit_nil_node visit_child_nodes
 
     # Visit a OperatorAssignment node
     alias visit_operator_assignment visit_child_nodes
@@ -954,11 +1108,17 @@ module YARP
     # Visit a Retry node
     alias visit_retry visit_child_nodes
 
+    # Visit a SelfNode node
+    alias visit_self_node visit_child_nodes
+
     # Visit a Statements node
     alias visit_statements visit_child_nodes
 
     # Visit a Ternary node
     alias visit_ternary visit_child_nodes
+
+    # Visit a TrueNode node
+    alias visit_true_node visit_child_nodes
 
     # Visit a UnlessModifier node
     alias visit_unless_modifier visit_child_nodes
@@ -985,6 +1145,9 @@ module YARP
     # Create a new CharacterLiteral node
     def CharacterLiteral(value) = CharacterLiteral.new(value, Location.null)
 
+    # Create a new FalseNode node
+    def FalseNode(keyword) = FalseNode.new(keyword, Location.null)
+
     # Create a new FloatLiteral node
     def FloatLiteral(value) = FloatLiteral.new(value, Location.null)
 
@@ -999,6 +1162,9 @@ module YARP
 
     # Create a new IntegerLiteral node
     def IntegerLiteral(value) = IntegerLiteral.new(value, Location.null)
+
+    # Create a new NilNode node
+    def NilNode(keyword) = NilNode.new(keyword, Location.null)
 
     # Create a new OperatorAssignment node
     def OperatorAssignment(target, operator, value) = OperatorAssignment.new(target, operator, value, Location.null)
@@ -1018,11 +1184,17 @@ module YARP
     # Create a new Retry node
     def Retry(value) = Retry.new(value, Location.null)
 
+    # Create a new SelfNode node
+    def SelfNode(keyword) = SelfNode.new(keyword, Location.null)
+
     # Create a new Statements node
     def Statements(body) = Statements.new(body, Location.null)
 
     # Create a new Ternary node
     def Ternary(predicate, question_mark, true_expression, colon, false_expression) = Ternary.new(predicate, question_mark, true_expression, colon, false_expression, Location.null)
+
+    # Create a new TrueNode node
+    def TrueNode(keyword) = TrueNode.new(keyword, Location.null)
 
     # Create a new UnlessModifier node
     def UnlessModifier(statement, keyword, predicate) = UnlessModifier.new(statement, keyword, predicate, Location.null)

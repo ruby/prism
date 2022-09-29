@@ -14,19 +14,23 @@ typedef enum {
   YP_NODE_ASSIGNMENT,
   YP_NODE_BINARY,
   YP_NODE_CHARACTER_LITERAL,
+  YP_NODE_FALSE_NODE,
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
   YP_NODE_IF_MODIFIER,
   YP_NODE_IMAGINARY_LITERAL,
   YP_NODE_INTEGER_LITERAL,
+  YP_NODE_NIL_NODE,
   YP_NODE_OPERATOR_ASSIGNMENT,
   YP_NODE_PROGRAM,
   YP_NODE_RANGE,
   YP_NODE_RATIONAL_LITERAL,
   YP_NODE_REDO,
   YP_NODE_RETRY,
+  YP_NODE_SELF_NODE,
   YP_NODE_STATEMENTS,
   YP_NODE_TERNARY,
+  YP_NODE_TRUE_NODE,
   YP_NODE_UNLESS_MODIFIER,
   YP_NODE_UNTIL_MODIFIER,
   YP_NODE_VARIABLE_REFERENCE,
@@ -76,6 +80,11 @@ typedef struct yp_node {
       yp_token_t value;
     } character_literal;
 
+    // FalseNode
+    struct {
+      yp_token_t keyword;
+    } false_node;
+
     // FloatLiteral
     struct {
       yp_token_t value;
@@ -102,6 +111,11 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } integer_literal;
+
+    // NilNode
+    struct {
+      yp_token_t keyword;
+    } nil_node;
 
     // OperatorAssignment
     struct {
@@ -137,6 +151,11 @@ typedef struct yp_node {
       yp_token_t value;
     } retry;
 
+    // SelfNode
+    struct {
+      yp_token_t keyword;
+    } self_node;
+
     // Statements
     struct {
       struct yp_node_list *body;
@@ -150,6 +169,11 @@ typedef struct yp_node {
       yp_token_t colon;
       struct yp_node *false_expression;
     } ternary;
+
+    // TrueNode
+    struct {
+      yp_token_t keyword;
+    } true_node;
 
     // UnlessModifier
     struct {
