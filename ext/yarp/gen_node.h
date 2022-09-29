@@ -14,6 +14,8 @@ typedef enum {
   YP_NODE_ASSIGNMENT,
   YP_NODE_BINARY,
   YP_NODE_CHARACTER_LITERAL,
+  YP_NODE_CLASS_VARIABLE_READ,
+  YP_NODE_CLASS_VARIABLE_WRITE,
   YP_NODE_FALSE_NODE,
   YP_NODE_FLOAT_LITERAL,
   YP_NODE_IDENTIFIER,
@@ -79,6 +81,18 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } character_literal;
+
+    // ClassVariableRead
+    struct {
+      yp_token_t value;
+    } class_variable_read;
+
+    // ClassVariableWrite
+    struct {
+      yp_token_t target;
+      yp_token_t operator;
+      struct yp_node *value;
+    } class_variable_write;
 
     // FalseNode
     struct {

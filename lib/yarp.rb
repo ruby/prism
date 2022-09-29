@@ -218,6 +218,88 @@ module YARP
     end
   end
 
+  class ClassVariableRead < Node
+    # attr_reader value: Token
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (value: Token, location: Location) -> void
+    def initialize(value, location)
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_class_variable_read(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in ClassVariableRead[value: ^(value)]
+    end
+  end
+
+  class ClassVariableWrite < Node
+    # attr_reader target: Token
+    attr_reader :target
+
+    # attr_reader operator: Token
+    attr_reader :operator
+
+    # attr_reader value: Node
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (target: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(target, operator, value, location)
+      @target = target
+      @operator = operator
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_class_variable_write(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [value]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { target: target, operator: operator, value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in ClassVariableWrite[target: ^(target), operator: ^(operator), value: ^(value)]
+    end
+  end
+
   class FalseNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
@@ -1069,6 +1151,12 @@ module YARP
     # Visit a CharacterLiteral node
     alias visit_character_literal visit_child_nodes
 
+    # Visit a ClassVariableRead node
+    alias visit_class_variable_read visit_child_nodes
+
+    # Visit a ClassVariableWrite node
+    alias visit_class_variable_write visit_child_nodes
+
     # Visit a FalseNode node
     alias visit_false_node visit_child_nodes
 
@@ -1144,6 +1232,12 @@ module YARP
 
     # Create a new CharacterLiteral node
     def CharacterLiteral(value) = CharacterLiteral.new(value, Location.null)
+
+    # Create a new ClassVariableRead node
+    def ClassVariableRead(value) = ClassVariableRead.new(value, Location.null)
+
+    # Create a new ClassVariableWrite node
+    def ClassVariableWrite(target, operator, value) = ClassVariableWrite.new(target, operator, value, Location.null)
 
     # Create a new FalseNode node
     def FalseNode(keyword) = FalseNode.new(keyword, Location.null)
