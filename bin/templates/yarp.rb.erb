@@ -58,12 +58,16 @@
     <%- nodes.each do |node| -%>
 
     # Create a new <%= node.name %> node
-    def <%= node.name %>(<%= node.params.map(&:name).join(", ") %>) = <%= node.name %>.new(<%= node.params.map(&:name).join(", ") %>, Location.null)
+    def <%= node.name %>(<%= node.params.map(&:name).join(", ") %>, location = Location.null)
+      <%= node.name %>.new(<%= node.params.map(&:name).join(", ") %>, location)
+    end
     <%- end -%>
     <%- tokens.each do |token| -%>
 
     # Create a new <%= token.name %> token
-    def <%= token.name %>(value) = Token.new(:<%= token.name %>, value, Location.null)
+    def <%= token.name %>(value, location = Location.null)
+      Token.new(:<%= token.name %>, value, location)
+    end
     <%- end -%>
   end
 

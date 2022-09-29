@@ -18,7 +18,9 @@ module YARP
       q.text("(#{start_offset}..#{end_offset})")
     end
 
-    def self.null = new(0, 0)
+    def self.null
+      new(0, 0)
+    end
   end
 
   # This represents a token from the Ruby source.
@@ -972,10 +974,8 @@ module YARP
 
   # Represents the `self` keyword.
   # 
-  # ```text
-  # self
-  # ~~~~
-  # ```
+  #     self
+  #     ~~~~
   class SelfNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
@@ -1408,505 +1408,839 @@ module YARP
     private
 
     # Create a new Assignment node
-    def Assignment(target, operator, value) = Assignment.new(target, operator, value, Location.null)
+    def Assignment(target, operator, value, location = Location.null)
+      Assignment.new(target, operator, value, location)
+    end
 
     # Create a new Binary node
-    def Binary(left, operator, right) = Binary.new(left, operator, right, Location.null)
+    def Binary(left, operator, right, location = Location.null)
+      Binary.new(left, operator, right, location)
+    end
 
     # Create a new CharacterLiteral node
-    def CharacterLiteral(value) = CharacterLiteral.new(value, Location.null)
+    def CharacterLiteral(value, location = Location.null)
+      CharacterLiteral.new(value, location)
+    end
 
     # Create a new ClassVariableRead node
-    def ClassVariableRead(name) = ClassVariableRead.new(name, Location.null)
+    def ClassVariableRead(name, location = Location.null)
+      ClassVariableRead.new(name, location)
+    end
 
     # Create a new ClassVariableWrite node
-    def ClassVariableWrite(name, operator, value) = ClassVariableWrite.new(name, operator, value, Location.null)
+    def ClassVariableWrite(name, operator, value, location = Location.null)
+      ClassVariableWrite.new(name, operator, value, location)
+    end
 
     # Create a new FalseNode node
-    def FalseNode(keyword) = FalseNode.new(keyword, Location.null)
+    def FalseNode(keyword, location = Location.null)
+      FalseNode.new(keyword, location)
+    end
 
     # Create a new FloatLiteral node
-    def FloatLiteral(value) = FloatLiteral.new(value, Location.null)
+    def FloatLiteral(value, location = Location.null)
+      FloatLiteral.new(value, location)
+    end
 
     # Create a new GlobalVariableRead node
-    def GlobalVariableRead(name) = GlobalVariableRead.new(name, Location.null)
+    def GlobalVariableRead(name, location = Location.null)
+      GlobalVariableRead.new(name, location)
+    end
 
     # Create a new GlobalVariableWrite node
-    def GlobalVariableWrite(name, operator, value) = GlobalVariableWrite.new(name, operator, value, Location.null)
+    def GlobalVariableWrite(name, operator, value, location = Location.null)
+      GlobalVariableWrite.new(name, operator, value, location)
+    end
 
     # Create a new Identifier node
-    def Identifier(value) = Identifier.new(value, Location.null)
+    def Identifier(value, location = Location.null)
+      Identifier.new(value, location)
+    end
 
     # Create a new IfNode node
-    def IfNode(keyword, predicate, statements) = IfNode.new(keyword, predicate, statements, Location.null)
+    def IfNode(keyword, predicate, statements, location = Location.null)
+      IfNode.new(keyword, predicate, statements, location)
+    end
 
     # Create a new ImaginaryLiteral node
-    def ImaginaryLiteral(value) = ImaginaryLiteral.new(value, Location.null)
+    def ImaginaryLiteral(value, location = Location.null)
+      ImaginaryLiteral.new(value, location)
+    end
 
     # Create a new InstanceVariableRead node
-    def InstanceVariableRead(name) = InstanceVariableRead.new(name, Location.null)
+    def InstanceVariableRead(name, location = Location.null)
+      InstanceVariableRead.new(name, location)
+    end
 
     # Create a new InstanceVariableWrite node
-    def InstanceVariableWrite(name, operator, value) = InstanceVariableWrite.new(name, operator, value, Location.null)
+    def InstanceVariableWrite(name, operator, value, location = Location.null)
+      InstanceVariableWrite.new(name, operator, value, location)
+    end
 
     # Create a new IntegerLiteral node
-    def IntegerLiteral(value) = IntegerLiteral.new(value, Location.null)
+    def IntegerLiteral(value, location = Location.null)
+      IntegerLiteral.new(value, location)
+    end
 
     # Create a new NilNode node
-    def NilNode(keyword) = NilNode.new(keyword, Location.null)
+    def NilNode(keyword, location = Location.null)
+      NilNode.new(keyword, location)
+    end
 
     # Create a new OperatorAssignment node
-    def OperatorAssignment(target, operator, value) = OperatorAssignment.new(target, operator, value, Location.null)
+    def OperatorAssignment(target, operator, value, location = Location.null)
+      OperatorAssignment.new(target, operator, value, location)
+    end
 
     # Create a new Program node
-    def Program(statements) = Program.new(statements, Location.null)
+    def Program(statements, location = Location.null)
+      Program.new(statements, location)
+    end
 
     # Create a new Range node
-    def Range(left, operator, right) = Range.new(left, operator, right, Location.null)
+    def Range(left, operator, right, location = Location.null)
+      Range.new(left, operator, right, location)
+    end
 
     # Create a new RationalLiteral node
-    def RationalLiteral(value) = RationalLiteral.new(value, Location.null)
+    def RationalLiteral(value, location = Location.null)
+      RationalLiteral.new(value, location)
+    end
 
     # Create a new Redo node
-    def Redo(value) = Redo.new(value, Location.null)
+    def Redo(value, location = Location.null)
+      Redo.new(value, location)
+    end
 
     # Create a new Retry node
-    def Retry(value) = Retry.new(value, Location.null)
+    def Retry(value, location = Location.null)
+      Retry.new(value, location)
+    end
 
     # Create a new SelfNode node
-    def SelfNode(keyword) = SelfNode.new(keyword, Location.null)
+    def SelfNode(keyword, location = Location.null)
+      SelfNode.new(keyword, location)
+    end
 
     # Create a new Statements node
-    def Statements(body) = Statements.new(body, Location.null)
+    def Statements(body, location = Location.null)
+      Statements.new(body, location)
+    end
 
     # Create a new Ternary node
-    def Ternary(predicate, question_mark, true_expression, colon, false_expression) = Ternary.new(predicate, question_mark, true_expression, colon, false_expression, Location.null)
+    def Ternary(predicate, question_mark, true_expression, colon, false_expression, location = Location.null)
+      Ternary.new(predicate, question_mark, true_expression, colon, false_expression, location)
+    end
 
     # Create a new TrueNode node
-    def TrueNode(keyword) = TrueNode.new(keyword, Location.null)
+    def TrueNode(keyword, location = Location.null)
+      TrueNode.new(keyword, location)
+    end
 
     # Create a new UnlessModifier node
-    def UnlessModifier(statement, keyword, predicate) = UnlessModifier.new(statement, keyword, predicate, Location.null)
+    def UnlessModifier(statement, keyword, predicate, location = Location.null)
+      UnlessModifier.new(statement, keyword, predicate, location)
+    end
 
     # Create a new UntilModifier node
-    def UntilModifier(statement, keyword, predicate) = UntilModifier.new(statement, keyword, predicate, Location.null)
+    def UntilModifier(statement, keyword, predicate, location = Location.null)
+      UntilModifier.new(statement, keyword, predicate, location)
+    end
 
     # Create a new VariableReference node
-    def VariableReference(value) = VariableReference.new(value, Location.null)
+    def VariableReference(value, location = Location.null)
+      VariableReference.new(value, location)
+    end
 
     # Create a new WhileModifier node
-    def WhileModifier(statement, keyword, predicate) = WhileModifier.new(statement, keyword, predicate, Location.null)
+    def WhileModifier(statement, keyword, predicate, location = Location.null)
+      WhileModifier.new(statement, keyword, predicate, location)
+    end
 
     # Create a new EOF token
-    def EOF(value) = Token.new(:EOF, value, Location.null)
+    def EOF(value, location = Location.null)
+      Token.new(:EOF, value, location)
+    end
 
     # Create a new INVALID token
-    def INVALID(value) = Token.new(:INVALID, value, Location.null)
+    def INVALID(value, location = Location.null)
+      Token.new(:INVALID, value, location)
+    end
 
     # Create a new AMPERSAND token
-    def AMPERSAND(value) = Token.new(:AMPERSAND, value, Location.null)
+    def AMPERSAND(value, location = Location.null)
+      Token.new(:AMPERSAND, value, location)
+    end
 
     # Create a new AMPERSAND_AMPERSAND token
-    def AMPERSAND_AMPERSAND(value) = Token.new(:AMPERSAND_AMPERSAND, value, Location.null)
+    def AMPERSAND_AMPERSAND(value, location = Location.null)
+      Token.new(:AMPERSAND_AMPERSAND, value, location)
+    end
 
     # Create a new AMPERSAND_AMPERSAND_EQUAL token
-    def AMPERSAND_AMPERSAND_EQUAL(value) = Token.new(:AMPERSAND_AMPERSAND_EQUAL, value, Location.null)
+    def AMPERSAND_AMPERSAND_EQUAL(value, location = Location.null)
+      Token.new(:AMPERSAND_AMPERSAND_EQUAL, value, location)
+    end
 
     # Create a new AMPERSAND_EQUAL token
-    def AMPERSAND_EQUAL(value) = Token.new(:AMPERSAND_EQUAL, value, Location.null)
+    def AMPERSAND_EQUAL(value, location = Location.null)
+      Token.new(:AMPERSAND_EQUAL, value, location)
+    end
 
     # Create a new BACK_REFERENCE token
-    def BACK_REFERENCE(value) = Token.new(:BACK_REFERENCE, value, Location.null)
+    def BACK_REFERENCE(value, location = Location.null)
+      Token.new(:BACK_REFERENCE, value, location)
+    end
 
     # Create a new BACKTICK token
-    def BACKTICK(value) = Token.new(:BACKTICK, value, Location.null)
+    def BACKTICK(value, location = Location.null)
+      Token.new(:BACKTICK, value, location)
+    end
 
     # Create a new BANG token
-    def BANG(value) = Token.new(:BANG, value, Location.null)
+    def BANG(value, location = Location.null)
+      Token.new(:BANG, value, location)
+    end
 
     # Create a new BANG_AT token
-    def BANG_AT(value) = Token.new(:BANG_AT, value, Location.null)
+    def BANG_AT(value, location = Location.null)
+      Token.new(:BANG_AT, value, location)
+    end
 
     # Create a new BANG_EQUAL token
-    def BANG_EQUAL(value) = Token.new(:BANG_EQUAL, value, Location.null)
+    def BANG_EQUAL(value, location = Location.null)
+      Token.new(:BANG_EQUAL, value, location)
+    end
 
     # Create a new BANG_TILDE token
-    def BANG_TILDE(value) = Token.new(:BANG_TILDE, value, Location.null)
+    def BANG_TILDE(value, location = Location.null)
+      Token.new(:BANG_TILDE, value, location)
+    end
 
     # Create a new BRACE_LEFT token
-    def BRACE_LEFT(value) = Token.new(:BRACE_LEFT, value, Location.null)
+    def BRACE_LEFT(value, location = Location.null)
+      Token.new(:BRACE_LEFT, value, location)
+    end
 
     # Create a new BRACE_RIGHT token
-    def BRACE_RIGHT(value) = Token.new(:BRACE_RIGHT, value, Location.null)
+    def BRACE_RIGHT(value, location = Location.null)
+      Token.new(:BRACE_RIGHT, value, location)
+    end
 
     # Create a new BRACKET_LEFT token
-    def BRACKET_LEFT(value) = Token.new(:BRACKET_LEFT, value, Location.null)
+    def BRACKET_LEFT(value, location = Location.null)
+      Token.new(:BRACKET_LEFT, value, location)
+    end
 
     # Create a new BRACKET_LEFT_RIGHT token
-    def BRACKET_LEFT_RIGHT(value) = Token.new(:BRACKET_LEFT_RIGHT, value, Location.null)
+    def BRACKET_LEFT_RIGHT(value, location = Location.null)
+      Token.new(:BRACKET_LEFT_RIGHT, value, location)
+    end
 
     # Create a new BRACKET_RIGHT token
-    def BRACKET_RIGHT(value) = Token.new(:BRACKET_RIGHT, value, Location.null)
+    def BRACKET_RIGHT(value, location = Location.null)
+      Token.new(:BRACKET_RIGHT, value, location)
+    end
 
     # Create a new CARET token
-    def CARET(value) = Token.new(:CARET, value, Location.null)
+    def CARET(value, location = Location.null)
+      Token.new(:CARET, value, location)
+    end
 
     # Create a new CARET_EQUAL token
-    def CARET_EQUAL(value) = Token.new(:CARET_EQUAL, value, Location.null)
+    def CARET_EQUAL(value, location = Location.null)
+      Token.new(:CARET_EQUAL, value, location)
+    end
 
     # Create a new CHARACTER_LITERAL token
-    def CHARACTER_LITERAL(value) = Token.new(:CHARACTER_LITERAL, value, Location.null)
+    def CHARACTER_LITERAL(value, location = Location.null)
+      Token.new(:CHARACTER_LITERAL, value, location)
+    end
 
     # Create a new CLASS_VARIABLE token
-    def CLASS_VARIABLE(value) = Token.new(:CLASS_VARIABLE, value, Location.null)
+    def CLASS_VARIABLE(value, location = Location.null)
+      Token.new(:CLASS_VARIABLE, value, location)
+    end
 
     # Create a new COLON token
-    def COLON(value) = Token.new(:COLON, value, Location.null)
+    def COLON(value, location = Location.null)
+      Token.new(:COLON, value, location)
+    end
 
     # Create a new COLON_COLON token
-    def COLON_COLON(value) = Token.new(:COLON_COLON, value, Location.null)
+    def COLON_COLON(value, location = Location.null)
+      Token.new(:COLON_COLON, value, location)
+    end
 
     # Create a new COMMA token
-    def COMMA(value) = Token.new(:COMMA, value, Location.null)
+    def COMMA(value, location = Location.null)
+      Token.new(:COMMA, value, location)
+    end
 
     # Create a new COMMENT token
-    def COMMENT(value) = Token.new(:COMMENT, value, Location.null)
+    def COMMENT(value, location = Location.null)
+      Token.new(:COMMENT, value, location)
+    end
 
     # Create a new CONSTANT token
-    def CONSTANT(value) = Token.new(:CONSTANT, value, Location.null)
+    def CONSTANT(value, location = Location.null)
+      Token.new(:CONSTANT, value, location)
+    end
 
     # Create a new DOT token
-    def DOT(value) = Token.new(:DOT, value, Location.null)
+    def DOT(value, location = Location.null)
+      Token.new(:DOT, value, location)
+    end
 
     # Create a new DOT_DOT token
-    def DOT_DOT(value) = Token.new(:DOT_DOT, value, Location.null)
+    def DOT_DOT(value, location = Location.null)
+      Token.new(:DOT_DOT, value, location)
+    end
 
     # Create a new DOT_DOT_DOT token
-    def DOT_DOT_DOT(value) = Token.new(:DOT_DOT_DOT, value, Location.null)
+    def DOT_DOT_DOT(value, location = Location.null)
+      Token.new(:DOT_DOT_DOT, value, location)
+    end
 
     # Create a new EMBDOC_BEGIN token
-    def EMBDOC_BEGIN(value) = Token.new(:EMBDOC_BEGIN, value, Location.null)
+    def EMBDOC_BEGIN(value, location = Location.null)
+      Token.new(:EMBDOC_BEGIN, value, location)
+    end
 
     # Create a new EMBDOC_END token
-    def EMBDOC_END(value) = Token.new(:EMBDOC_END, value, Location.null)
+    def EMBDOC_END(value, location = Location.null)
+      Token.new(:EMBDOC_END, value, location)
+    end
 
     # Create a new EMBDOC_LINE token
-    def EMBDOC_LINE(value) = Token.new(:EMBDOC_LINE, value, Location.null)
+    def EMBDOC_LINE(value, location = Location.null)
+      Token.new(:EMBDOC_LINE, value, location)
+    end
 
     # Create a new EMBEXPR_BEGIN token
-    def EMBEXPR_BEGIN(value) = Token.new(:EMBEXPR_BEGIN, value, Location.null)
+    def EMBEXPR_BEGIN(value, location = Location.null)
+      Token.new(:EMBEXPR_BEGIN, value, location)
+    end
 
     # Create a new EMBEXPR_END token
-    def EMBEXPR_END(value) = Token.new(:EMBEXPR_END, value, Location.null)
+    def EMBEXPR_END(value, location = Location.null)
+      Token.new(:EMBEXPR_END, value, location)
+    end
 
     # Create a new EQUAL token
-    def EQUAL(value) = Token.new(:EQUAL, value, Location.null)
+    def EQUAL(value, location = Location.null)
+      Token.new(:EQUAL, value, location)
+    end
 
     # Create a new EQUAL_EQUAL token
-    def EQUAL_EQUAL(value) = Token.new(:EQUAL_EQUAL, value, Location.null)
+    def EQUAL_EQUAL(value, location = Location.null)
+      Token.new(:EQUAL_EQUAL, value, location)
+    end
 
     # Create a new EQUAL_EQUAL_EQUAL token
-    def EQUAL_EQUAL_EQUAL(value) = Token.new(:EQUAL_EQUAL_EQUAL, value, Location.null)
+    def EQUAL_EQUAL_EQUAL(value, location = Location.null)
+      Token.new(:EQUAL_EQUAL_EQUAL, value, location)
+    end
 
     # Create a new EQUAL_GREATER token
-    def EQUAL_GREATER(value) = Token.new(:EQUAL_GREATER, value, Location.null)
+    def EQUAL_GREATER(value, location = Location.null)
+      Token.new(:EQUAL_GREATER, value, location)
+    end
 
     # Create a new EQUAL_TILDE token
-    def EQUAL_TILDE(value) = Token.new(:EQUAL_TILDE, value, Location.null)
+    def EQUAL_TILDE(value, location = Location.null)
+      Token.new(:EQUAL_TILDE, value, location)
+    end
 
     # Create a new FLOAT token
-    def FLOAT(value) = Token.new(:FLOAT, value, Location.null)
+    def FLOAT(value, location = Location.null)
+      Token.new(:FLOAT, value, location)
+    end
 
     # Create a new GREATER token
-    def GREATER(value) = Token.new(:GREATER, value, Location.null)
+    def GREATER(value, location = Location.null)
+      Token.new(:GREATER, value, location)
+    end
 
     # Create a new GREATER_EQUAL token
-    def GREATER_EQUAL(value) = Token.new(:GREATER_EQUAL, value, Location.null)
+    def GREATER_EQUAL(value, location = Location.null)
+      Token.new(:GREATER_EQUAL, value, location)
+    end
 
     # Create a new GREATER_GREATER token
-    def GREATER_GREATER(value) = Token.new(:GREATER_GREATER, value, Location.null)
+    def GREATER_GREATER(value, location = Location.null)
+      Token.new(:GREATER_GREATER, value, location)
+    end
 
     # Create a new GREATER_GREATER_EQUAL token
-    def GREATER_GREATER_EQUAL(value) = Token.new(:GREATER_GREATER_EQUAL, value, Location.null)
+    def GREATER_GREATER_EQUAL(value, location = Location.null)
+      Token.new(:GREATER_GREATER_EQUAL, value, location)
+    end
 
     # Create a new GLOBAL_VARIABLE token
-    def GLOBAL_VARIABLE(value) = Token.new(:GLOBAL_VARIABLE, value, Location.null)
+    def GLOBAL_VARIABLE(value, location = Location.null)
+      Token.new(:GLOBAL_VARIABLE, value, location)
+    end
 
     # Create a new IDENTIFIER token
-    def IDENTIFIER(value) = Token.new(:IDENTIFIER, value, Location.null)
+    def IDENTIFIER(value, location = Location.null)
+      Token.new(:IDENTIFIER, value, location)
+    end
 
     # Create a new IMAGINARY_NUMBER token
-    def IMAGINARY_NUMBER(value) = Token.new(:IMAGINARY_NUMBER, value, Location.null)
+    def IMAGINARY_NUMBER(value, location = Location.null)
+      Token.new(:IMAGINARY_NUMBER, value, location)
+    end
 
     # Create a new INSTANCE_VARIABLE token
-    def INSTANCE_VARIABLE(value) = Token.new(:INSTANCE_VARIABLE, value, Location.null)
+    def INSTANCE_VARIABLE(value, location = Location.null)
+      Token.new(:INSTANCE_VARIABLE, value, location)
+    end
 
     # Create a new INTEGER token
-    def INTEGER(value) = Token.new(:INTEGER, value, Location.null)
+    def INTEGER(value, location = Location.null)
+      Token.new(:INTEGER, value, location)
+    end
 
     # Create a new KEYWORD___ENCODING__ token
-    def KEYWORD___ENCODING__(value) = Token.new(:KEYWORD___ENCODING__, value, Location.null)
+    def KEYWORD___ENCODING__(value, location = Location.null)
+      Token.new(:KEYWORD___ENCODING__, value, location)
+    end
 
     # Create a new KEYWORD___LINE__ token
-    def KEYWORD___LINE__(value) = Token.new(:KEYWORD___LINE__, value, Location.null)
+    def KEYWORD___LINE__(value, location = Location.null)
+      Token.new(:KEYWORD___LINE__, value, location)
+    end
 
     # Create a new KEYWORD___FILE__ token
-    def KEYWORD___FILE__(value) = Token.new(:KEYWORD___FILE__, value, Location.null)
+    def KEYWORD___FILE__(value, location = Location.null)
+      Token.new(:KEYWORD___FILE__, value, location)
+    end
 
     # Create a new KEYWORD_ALIAS token
-    def KEYWORD_ALIAS(value) = Token.new(:KEYWORD_ALIAS, value, Location.null)
+    def KEYWORD_ALIAS(value, location = Location.null)
+      Token.new(:KEYWORD_ALIAS, value, location)
+    end
 
     # Create a new KEYWORD_AND token
-    def KEYWORD_AND(value) = Token.new(:KEYWORD_AND, value, Location.null)
+    def KEYWORD_AND(value, location = Location.null)
+      Token.new(:KEYWORD_AND, value, location)
+    end
 
     # Create a new KEYWORD_BEGIN token
-    def KEYWORD_BEGIN(value) = Token.new(:KEYWORD_BEGIN, value, Location.null)
+    def KEYWORD_BEGIN(value, location = Location.null)
+      Token.new(:KEYWORD_BEGIN, value, location)
+    end
 
     # Create a new KEYWORD_BEGIN_UPCASE token
-    def KEYWORD_BEGIN_UPCASE(value) = Token.new(:KEYWORD_BEGIN_UPCASE, value, Location.null)
+    def KEYWORD_BEGIN_UPCASE(value, location = Location.null)
+      Token.new(:KEYWORD_BEGIN_UPCASE, value, location)
+    end
 
     # Create a new KEYWORD_BREAK token
-    def KEYWORD_BREAK(value) = Token.new(:KEYWORD_BREAK, value, Location.null)
+    def KEYWORD_BREAK(value, location = Location.null)
+      Token.new(:KEYWORD_BREAK, value, location)
+    end
 
     # Create a new KEYWORD_CASE token
-    def KEYWORD_CASE(value) = Token.new(:KEYWORD_CASE, value, Location.null)
+    def KEYWORD_CASE(value, location = Location.null)
+      Token.new(:KEYWORD_CASE, value, location)
+    end
 
     # Create a new KEYWORD_CLASS token
-    def KEYWORD_CLASS(value) = Token.new(:KEYWORD_CLASS, value, Location.null)
+    def KEYWORD_CLASS(value, location = Location.null)
+      Token.new(:KEYWORD_CLASS, value, location)
+    end
 
     # Create a new KEYWORD_DEF token
-    def KEYWORD_DEF(value) = Token.new(:KEYWORD_DEF, value, Location.null)
+    def KEYWORD_DEF(value, location = Location.null)
+      Token.new(:KEYWORD_DEF, value, location)
+    end
 
     # Create a new KEYWORD_DEFINED token
-    def KEYWORD_DEFINED(value) = Token.new(:KEYWORD_DEFINED, value, Location.null)
+    def KEYWORD_DEFINED(value, location = Location.null)
+      Token.new(:KEYWORD_DEFINED, value, location)
+    end
 
     # Create a new KEYWORD_DO token
-    def KEYWORD_DO(value) = Token.new(:KEYWORD_DO, value, Location.null)
+    def KEYWORD_DO(value, location = Location.null)
+      Token.new(:KEYWORD_DO, value, location)
+    end
 
     # Create a new KEYWORD_ELSE token
-    def KEYWORD_ELSE(value) = Token.new(:KEYWORD_ELSE, value, Location.null)
+    def KEYWORD_ELSE(value, location = Location.null)
+      Token.new(:KEYWORD_ELSE, value, location)
+    end
 
     # Create a new KEYWORD_ELSIF token
-    def KEYWORD_ELSIF(value) = Token.new(:KEYWORD_ELSIF, value, Location.null)
+    def KEYWORD_ELSIF(value, location = Location.null)
+      Token.new(:KEYWORD_ELSIF, value, location)
+    end
 
     # Create a new KEYWORD_END token
-    def KEYWORD_END(value) = Token.new(:KEYWORD_END, value, Location.null)
+    def KEYWORD_END(value, location = Location.null)
+      Token.new(:KEYWORD_END, value, location)
+    end
 
     # Create a new KEYWORD_END_UPCASE token
-    def KEYWORD_END_UPCASE(value) = Token.new(:KEYWORD_END_UPCASE, value, Location.null)
+    def KEYWORD_END_UPCASE(value, location = Location.null)
+      Token.new(:KEYWORD_END_UPCASE, value, location)
+    end
 
     # Create a new KEYWORD_ENSURE token
-    def KEYWORD_ENSURE(value) = Token.new(:KEYWORD_ENSURE, value, Location.null)
+    def KEYWORD_ENSURE(value, location = Location.null)
+      Token.new(:KEYWORD_ENSURE, value, location)
+    end
 
     # Create a new KEYWORD_FALSE token
-    def KEYWORD_FALSE(value) = Token.new(:KEYWORD_FALSE, value, Location.null)
+    def KEYWORD_FALSE(value, location = Location.null)
+      Token.new(:KEYWORD_FALSE, value, location)
+    end
 
     # Create a new KEYWORD_FOR token
-    def KEYWORD_FOR(value) = Token.new(:KEYWORD_FOR, value, Location.null)
+    def KEYWORD_FOR(value, location = Location.null)
+      Token.new(:KEYWORD_FOR, value, location)
+    end
 
     # Create a new KEYWORD_IF token
-    def KEYWORD_IF(value) = Token.new(:KEYWORD_IF, value, Location.null)
+    def KEYWORD_IF(value, location = Location.null)
+      Token.new(:KEYWORD_IF, value, location)
+    end
 
     # Create a new KEYWORD_IN token
-    def KEYWORD_IN(value) = Token.new(:KEYWORD_IN, value, Location.null)
+    def KEYWORD_IN(value, location = Location.null)
+      Token.new(:KEYWORD_IN, value, location)
+    end
 
     # Create a new KEYWORD_MODULE token
-    def KEYWORD_MODULE(value) = Token.new(:KEYWORD_MODULE, value, Location.null)
+    def KEYWORD_MODULE(value, location = Location.null)
+      Token.new(:KEYWORD_MODULE, value, location)
+    end
 
     # Create a new KEYWORD_NEXT token
-    def KEYWORD_NEXT(value) = Token.new(:KEYWORD_NEXT, value, Location.null)
+    def KEYWORD_NEXT(value, location = Location.null)
+      Token.new(:KEYWORD_NEXT, value, location)
+    end
 
     # Create a new KEYWORD_NIL token
-    def KEYWORD_NIL(value) = Token.new(:KEYWORD_NIL, value, Location.null)
+    def KEYWORD_NIL(value, location = Location.null)
+      Token.new(:KEYWORD_NIL, value, location)
+    end
 
     # Create a new KEYWORD_NOT token
-    def KEYWORD_NOT(value) = Token.new(:KEYWORD_NOT, value, Location.null)
+    def KEYWORD_NOT(value, location = Location.null)
+      Token.new(:KEYWORD_NOT, value, location)
+    end
 
     # Create a new KEYWORD_OR token
-    def KEYWORD_OR(value) = Token.new(:KEYWORD_OR, value, Location.null)
+    def KEYWORD_OR(value, location = Location.null)
+      Token.new(:KEYWORD_OR, value, location)
+    end
 
     # Create a new KEYWORD_REDO token
-    def KEYWORD_REDO(value) = Token.new(:KEYWORD_REDO, value, Location.null)
+    def KEYWORD_REDO(value, location = Location.null)
+      Token.new(:KEYWORD_REDO, value, location)
+    end
 
     # Create a new KEYWORD_RESCUE token
-    def KEYWORD_RESCUE(value) = Token.new(:KEYWORD_RESCUE, value, Location.null)
+    def KEYWORD_RESCUE(value, location = Location.null)
+      Token.new(:KEYWORD_RESCUE, value, location)
+    end
 
     # Create a new KEYWORD_RETRY token
-    def KEYWORD_RETRY(value) = Token.new(:KEYWORD_RETRY, value, Location.null)
+    def KEYWORD_RETRY(value, location = Location.null)
+      Token.new(:KEYWORD_RETRY, value, location)
+    end
 
     # Create a new KEYWORD_RETURN token
-    def KEYWORD_RETURN(value) = Token.new(:KEYWORD_RETURN, value, Location.null)
+    def KEYWORD_RETURN(value, location = Location.null)
+      Token.new(:KEYWORD_RETURN, value, location)
+    end
 
     # Create a new KEYWORD_SELF token
-    def KEYWORD_SELF(value) = Token.new(:KEYWORD_SELF, value, Location.null)
+    def KEYWORD_SELF(value, location = Location.null)
+      Token.new(:KEYWORD_SELF, value, location)
+    end
 
     # Create a new KEYWORD_SUPER token
-    def KEYWORD_SUPER(value) = Token.new(:KEYWORD_SUPER, value, Location.null)
+    def KEYWORD_SUPER(value, location = Location.null)
+      Token.new(:KEYWORD_SUPER, value, location)
+    end
 
     # Create a new KEYWORD_THEN token
-    def KEYWORD_THEN(value) = Token.new(:KEYWORD_THEN, value, Location.null)
+    def KEYWORD_THEN(value, location = Location.null)
+      Token.new(:KEYWORD_THEN, value, location)
+    end
 
     # Create a new KEYWORD_TRUE token
-    def KEYWORD_TRUE(value) = Token.new(:KEYWORD_TRUE, value, Location.null)
+    def KEYWORD_TRUE(value, location = Location.null)
+      Token.new(:KEYWORD_TRUE, value, location)
+    end
 
     # Create a new KEYWORD_UNDEF token
-    def KEYWORD_UNDEF(value) = Token.new(:KEYWORD_UNDEF, value, Location.null)
+    def KEYWORD_UNDEF(value, location = Location.null)
+      Token.new(:KEYWORD_UNDEF, value, location)
+    end
 
     # Create a new KEYWORD_UNLESS token
-    def KEYWORD_UNLESS(value) = Token.new(:KEYWORD_UNLESS, value, Location.null)
+    def KEYWORD_UNLESS(value, location = Location.null)
+      Token.new(:KEYWORD_UNLESS, value, location)
+    end
 
     # Create a new KEYWORD_UNTIL token
-    def KEYWORD_UNTIL(value) = Token.new(:KEYWORD_UNTIL, value, Location.null)
+    def KEYWORD_UNTIL(value, location = Location.null)
+      Token.new(:KEYWORD_UNTIL, value, location)
+    end
 
     # Create a new KEYWORD_WHEN token
-    def KEYWORD_WHEN(value) = Token.new(:KEYWORD_WHEN, value, Location.null)
+    def KEYWORD_WHEN(value, location = Location.null)
+      Token.new(:KEYWORD_WHEN, value, location)
+    end
 
     # Create a new KEYWORD_WHILE token
-    def KEYWORD_WHILE(value) = Token.new(:KEYWORD_WHILE, value, Location.null)
+    def KEYWORD_WHILE(value, location = Location.null)
+      Token.new(:KEYWORD_WHILE, value, location)
+    end
 
     # Create a new KEYWORD_YIELD token
-    def KEYWORD_YIELD(value) = Token.new(:KEYWORD_YIELD, value, Location.null)
+    def KEYWORD_YIELD(value, location = Location.null)
+      Token.new(:KEYWORD_YIELD, value, location)
+    end
 
     # Create a new LABEL token
-    def LABEL(value) = Token.new(:LABEL, value, Location.null)
+    def LABEL(value, location = Location.null)
+      Token.new(:LABEL, value, location)
+    end
 
     # Create a new LAMBDA_BEGIN token
-    def LAMBDA_BEGIN(value) = Token.new(:LAMBDA_BEGIN, value, Location.null)
+    def LAMBDA_BEGIN(value, location = Location.null)
+      Token.new(:LAMBDA_BEGIN, value, location)
+    end
 
     # Create a new LESS token
-    def LESS(value) = Token.new(:LESS, value, Location.null)
+    def LESS(value, location = Location.null)
+      Token.new(:LESS, value, location)
+    end
 
     # Create a new LESS_EQUAL token
-    def LESS_EQUAL(value) = Token.new(:LESS_EQUAL, value, Location.null)
+    def LESS_EQUAL(value, location = Location.null)
+      Token.new(:LESS_EQUAL, value, location)
+    end
 
     # Create a new LESS_EQUAL_GREATER token
-    def LESS_EQUAL_GREATER(value) = Token.new(:LESS_EQUAL_GREATER, value, Location.null)
+    def LESS_EQUAL_GREATER(value, location = Location.null)
+      Token.new(:LESS_EQUAL_GREATER, value, location)
+    end
 
     # Create a new LESS_LESS token
-    def LESS_LESS(value) = Token.new(:LESS_LESS, value, Location.null)
+    def LESS_LESS(value, location = Location.null)
+      Token.new(:LESS_LESS, value, location)
+    end
 
     # Create a new LESS_LESS_EQUAL token
-    def LESS_LESS_EQUAL(value) = Token.new(:LESS_LESS_EQUAL, value, Location.null)
+    def LESS_LESS_EQUAL(value, location = Location.null)
+      Token.new(:LESS_LESS_EQUAL, value, location)
+    end
 
     # Create a new MINUS token
-    def MINUS(value) = Token.new(:MINUS, value, Location.null)
+    def MINUS(value, location = Location.null)
+      Token.new(:MINUS, value, location)
+    end
 
     # Create a new MINUS_AT token
-    def MINUS_AT(value) = Token.new(:MINUS_AT, value, Location.null)
+    def MINUS_AT(value, location = Location.null)
+      Token.new(:MINUS_AT, value, location)
+    end
 
     # Create a new MINUS_EQUAL token
-    def MINUS_EQUAL(value) = Token.new(:MINUS_EQUAL, value, Location.null)
+    def MINUS_EQUAL(value, location = Location.null)
+      Token.new(:MINUS_EQUAL, value, location)
+    end
 
     # Create a new MINUS_GREATER token
-    def MINUS_GREATER(value) = Token.new(:MINUS_GREATER, value, Location.null)
+    def MINUS_GREATER(value, location = Location.null)
+      Token.new(:MINUS_GREATER, value, location)
+    end
 
     # Create a new NEWLINE token
-    def NEWLINE(value) = Token.new(:NEWLINE, value, Location.null)
+    def NEWLINE(value, location = Location.null)
+      Token.new(:NEWLINE, value, location)
+    end
 
     # Create a new NTH_REFERENCE token
-    def NTH_REFERENCE(value) = Token.new(:NTH_REFERENCE, value, Location.null)
+    def NTH_REFERENCE(value, location = Location.null)
+      Token.new(:NTH_REFERENCE, value, location)
+    end
 
     # Create a new PARENTHESIS_LEFT token
-    def PARENTHESIS_LEFT(value) = Token.new(:PARENTHESIS_LEFT, value, Location.null)
+    def PARENTHESIS_LEFT(value, location = Location.null)
+      Token.new(:PARENTHESIS_LEFT, value, location)
+    end
 
     # Create a new PARENTHESIS_RIGHT token
-    def PARENTHESIS_RIGHT(value) = Token.new(:PARENTHESIS_RIGHT, value, Location.null)
+    def PARENTHESIS_RIGHT(value, location = Location.null)
+      Token.new(:PARENTHESIS_RIGHT, value, location)
+    end
 
     # Create a new PERCENT token
-    def PERCENT(value) = Token.new(:PERCENT, value, Location.null)
+    def PERCENT(value, location = Location.null)
+      Token.new(:PERCENT, value, location)
+    end
 
     # Create a new PERCENT_EQUAL token
-    def PERCENT_EQUAL(value) = Token.new(:PERCENT_EQUAL, value, Location.null)
+    def PERCENT_EQUAL(value, location = Location.null)
+      Token.new(:PERCENT_EQUAL, value, location)
+    end
 
     # Create a new PERCENT_LOWER_I token
-    def PERCENT_LOWER_I(value) = Token.new(:PERCENT_LOWER_I, value, Location.null)
+    def PERCENT_LOWER_I(value, location = Location.null)
+      Token.new(:PERCENT_LOWER_I, value, location)
+    end
 
     # Create a new PERCENT_LOWER_W token
-    def PERCENT_LOWER_W(value) = Token.new(:PERCENT_LOWER_W, value, Location.null)
+    def PERCENT_LOWER_W(value, location = Location.null)
+      Token.new(:PERCENT_LOWER_W, value, location)
+    end
 
     # Create a new PERCENT_LOWER_X token
-    def PERCENT_LOWER_X(value) = Token.new(:PERCENT_LOWER_X, value, Location.null)
+    def PERCENT_LOWER_X(value, location = Location.null)
+      Token.new(:PERCENT_LOWER_X, value, location)
+    end
 
     # Create a new PERCENT_UPPER_I token
-    def PERCENT_UPPER_I(value) = Token.new(:PERCENT_UPPER_I, value, Location.null)
+    def PERCENT_UPPER_I(value, location = Location.null)
+      Token.new(:PERCENT_UPPER_I, value, location)
+    end
 
     # Create a new PERCENT_UPPER_W token
-    def PERCENT_UPPER_W(value) = Token.new(:PERCENT_UPPER_W, value, Location.null)
+    def PERCENT_UPPER_W(value, location = Location.null)
+      Token.new(:PERCENT_UPPER_W, value, location)
+    end
 
     # Create a new PIPE token
-    def PIPE(value) = Token.new(:PIPE, value, Location.null)
+    def PIPE(value, location = Location.null)
+      Token.new(:PIPE, value, location)
+    end
 
     # Create a new PIPE_EQUAL token
-    def PIPE_EQUAL(value) = Token.new(:PIPE_EQUAL, value, Location.null)
+    def PIPE_EQUAL(value, location = Location.null)
+      Token.new(:PIPE_EQUAL, value, location)
+    end
 
     # Create a new PIPE_PIPE token
-    def PIPE_PIPE(value) = Token.new(:PIPE_PIPE, value, Location.null)
+    def PIPE_PIPE(value, location = Location.null)
+      Token.new(:PIPE_PIPE, value, location)
+    end
 
     # Create a new PIPE_PIPE_EQUAL token
-    def PIPE_PIPE_EQUAL(value) = Token.new(:PIPE_PIPE_EQUAL, value, Location.null)
+    def PIPE_PIPE_EQUAL(value, location = Location.null)
+      Token.new(:PIPE_PIPE_EQUAL, value, location)
+    end
 
     # Create a new PLUS token
-    def PLUS(value) = Token.new(:PLUS, value, Location.null)
+    def PLUS(value, location = Location.null)
+      Token.new(:PLUS, value, location)
+    end
 
     # Create a new PLUS_AT token
-    def PLUS_AT(value) = Token.new(:PLUS_AT, value, Location.null)
+    def PLUS_AT(value, location = Location.null)
+      Token.new(:PLUS_AT, value, location)
+    end
 
     # Create a new PLUS_EQUAL token
-    def PLUS_EQUAL(value) = Token.new(:PLUS_EQUAL, value, Location.null)
+    def PLUS_EQUAL(value, location = Location.null)
+      Token.new(:PLUS_EQUAL, value, location)
+    end
 
     # Create a new QUESTION_MARK token
-    def QUESTION_MARK(value) = Token.new(:QUESTION_MARK, value, Location.null)
+    def QUESTION_MARK(value, location = Location.null)
+      Token.new(:QUESTION_MARK, value, location)
+    end
 
     # Create a new RATIONAL_NUMBER token
-    def RATIONAL_NUMBER(value) = Token.new(:RATIONAL_NUMBER, value, Location.null)
+    def RATIONAL_NUMBER(value, location = Location.null)
+      Token.new(:RATIONAL_NUMBER, value, location)
+    end
 
     # Create a new REGEXP_BEGIN token
-    def REGEXP_BEGIN(value) = Token.new(:REGEXP_BEGIN, value, Location.null)
+    def REGEXP_BEGIN(value, location = Location.null)
+      Token.new(:REGEXP_BEGIN, value, location)
+    end
 
     # Create a new REGEXP_END token
-    def REGEXP_END(value) = Token.new(:REGEXP_END, value, Location.null)
+    def REGEXP_END(value, location = Location.null)
+      Token.new(:REGEXP_END, value, location)
+    end
 
     # Create a new SEMICOLON token
-    def SEMICOLON(value) = Token.new(:SEMICOLON, value, Location.null)
+    def SEMICOLON(value, location = Location.null)
+      Token.new(:SEMICOLON, value, location)
+    end
 
     # Create a new SLASH token
-    def SLASH(value) = Token.new(:SLASH, value, Location.null)
+    def SLASH(value, location = Location.null)
+      Token.new(:SLASH, value, location)
+    end
 
     # Create a new SLASH_EQUAL token
-    def SLASH_EQUAL(value) = Token.new(:SLASH_EQUAL, value, Location.null)
+    def SLASH_EQUAL(value, location = Location.null)
+      Token.new(:SLASH_EQUAL, value, location)
+    end
 
     # Create a new STAR token
-    def STAR(value) = Token.new(:STAR, value, Location.null)
+    def STAR(value, location = Location.null)
+      Token.new(:STAR, value, location)
+    end
 
     # Create a new STAR_EQUAL token
-    def STAR_EQUAL(value) = Token.new(:STAR_EQUAL, value, Location.null)
+    def STAR_EQUAL(value, location = Location.null)
+      Token.new(:STAR_EQUAL, value, location)
+    end
 
     # Create a new STAR_STAR token
-    def STAR_STAR(value) = Token.new(:STAR_STAR, value, Location.null)
+    def STAR_STAR(value, location = Location.null)
+      Token.new(:STAR_STAR, value, location)
+    end
 
     # Create a new STAR_STAR_EQUAL token
-    def STAR_STAR_EQUAL(value) = Token.new(:STAR_STAR_EQUAL, value, Location.null)
+    def STAR_STAR_EQUAL(value, location = Location.null)
+      Token.new(:STAR_STAR_EQUAL, value, location)
+    end
 
     # Create a new STRING_BEGIN token
-    def STRING_BEGIN(value) = Token.new(:STRING_BEGIN, value, Location.null)
+    def STRING_BEGIN(value, location = Location.null)
+      Token.new(:STRING_BEGIN, value, location)
+    end
 
     # Create a new STRING_CONTENT token
-    def STRING_CONTENT(value) = Token.new(:STRING_CONTENT, value, Location.null)
+    def STRING_CONTENT(value, location = Location.null)
+      Token.new(:STRING_CONTENT, value, location)
+    end
 
     # Create a new STRING_END token
-    def STRING_END(value) = Token.new(:STRING_END, value, Location.null)
+    def STRING_END(value, location = Location.null)
+      Token.new(:STRING_END, value, location)
+    end
 
     # Create a new SYMBOL_BEGIN token
-    def SYMBOL_BEGIN(value) = Token.new(:SYMBOL_BEGIN, value, Location.null)
+    def SYMBOL_BEGIN(value, location = Location.null)
+      Token.new(:SYMBOL_BEGIN, value, location)
+    end
 
     # Create a new TILDE token
-    def TILDE(value) = Token.new(:TILDE, value, Location.null)
+    def TILDE(value, location = Location.null)
+      Token.new(:TILDE, value, location)
+    end
 
     # Create a new TILDE_AT token
-    def TILDE_AT(value) = Token.new(:TILDE_AT, value, Location.null)
+    def TILDE_AT(value, location = Location.null)
+      Token.new(:TILDE_AT, value, location)
+    end
 
     # Create a new WORDS_SEP token
-    def WORDS_SEP(value) = Token.new(:WORDS_SEP, value, Location.null)
+    def WORDS_SEP(value, location = Location.null)
+      Token.new(:WORDS_SEP, value, location)
+    end
   end
 
   ##############################################################################

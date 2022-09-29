@@ -386,10 +386,8 @@ nodes:
     comment: |
       Represents the `self` keyword.
 
-      ```text
-      self
-      ~~~~
-      ```
+          self
+          ~~~~
   - name: Statements
     child_nodes:
       - node[] body
