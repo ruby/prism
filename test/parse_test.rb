@@ -42,7 +42,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "if modifier" do
-    assert_equal IfModifier(expression("1"), KEYWORD_IF("if"), expression("true")), expression("1 if true")
+    assert_equal IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), expression("1 if true")
   end
 
   test "imaginary" do
@@ -140,10 +140,12 @@ class ParseTest < Test::Unit::TestCase
 
   test "MODIFIER left associativity" do
     actual = expression("a if b if c")
-    expected = IfModifier(
-      IfModifier(expression("a"), KEYWORD_IF("if"), expression("b")),
+    expected = IfNode(
       KEYWORD_IF("if"),
-      expression("c")
+      expression("c"),
+      Statements([
+        IfNode(KEYWORD_IF("if"), expression("b"), Statements([expression("a")]))
+      ])
     )
 
     assert_equal expected, actual

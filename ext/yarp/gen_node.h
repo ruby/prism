@@ -21,7 +21,7 @@ typedef enum {
   YP_NODE_GLOBAL_VARIABLE_READ,
   YP_NODE_GLOBAL_VARIABLE_WRITE,
   YP_NODE_IDENTIFIER,
-  YP_NODE_IF_MODIFIER,
+  YP_NODE_IF_NODE,
   YP_NODE_IMAGINARY_LITERAL,
   YP_NODE_INSTANCE_VARIABLE_READ,
   YP_NODE_INSTANCE_VARIABLE_WRITE,
@@ -125,12 +125,12 @@ typedef struct yp_node {
       yp_token_t value;
     } identifier;
 
-    // IfModifier
+    // IfNode
     struct {
-      struct yp_node *statement;
       yp_token_t keyword;
       struct yp_node *predicate;
-    } if_modifier;
+      struct yp_node *statements;
+    } if_node;
 
     // ImaginaryLiteral
     struct {

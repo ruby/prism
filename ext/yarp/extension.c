@@ -180,22 +180,22 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Identifier")));
     }
-    case YP_NODE_IF_MODIFIER: {
+    case YP_NODE_IF_NODE: {
       VALUE argv[4];
 
-      // statement
-      argv[0] = node_new(parser, node->as.if_modifier.statement);
-
       // keyword
-      argv[1] = token_new(parser, &node->as.if_modifier.keyword);
+      argv[0] = token_new(parser, &node->as.if_node.keyword);
 
       // predicate
-      argv[2] = node_new(parser, node->as.if_modifier.predicate);
+      argv[1] = node_new(parser, node->as.if_node.predicate);
+
+      // statements
+      argv[2] = node_new(parser, node->as.if_node.statements);
 
       // location
       argv[3] = location_new(&node->location);
 
-      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("IfModifier")));
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("IfNode")));
     }
     case YP_NODE_IMAGINARY_LITERAL: {
       VALUE argv[2];

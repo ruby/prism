@@ -493,35 +493,35 @@ module YARP
     end
   end
 
-  class IfModifier < Node
-    # attr_reader statement: Node
-    attr_reader :statement
-
+  class IfNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
 
     # attr_reader predicate: Node
     attr_reader :predicate
 
+    # attr_reader statements: Node
+    attr_reader :statements
+
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
-    def initialize(statement, keyword, predicate, location)
-      @statement = statement
+    # def initialize: (keyword: Token, predicate: Node, statements: Node, location: Location) -> void
+    def initialize(keyword, predicate, statements, location)
       @keyword = keyword
       @predicate = predicate
+      @statements = statements
       @location = location
     end
 
     # def accept: (visitor: Visitor) -> void
     def accept(visitor)
-      visitor.visit_if_modifier(self)
+      visitor.visit_if_node(self)
     end
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [statement, predicate]
+      [predicate, statements]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -529,12 +529,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { statement: statement, keyword: keyword, predicate: predicate, location: location }
+      { keyword: keyword, predicate: predicate, statements: statements, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in IfModifier[statement: ^(statement), keyword: ^(keyword), predicate: ^(predicate)]
+      other in IfNode[keyword: ^(keyword), predicate: ^(predicate), statements: ^(statements)]
     end
   end
 
@@ -1336,8 +1336,8 @@ module YARP
     # Visit a Identifier node
     alias visit_identifier visit_child_nodes
 
-    # Visit a IfModifier node
-    alias visit_if_modifier visit_child_nodes
+    # Visit a IfNode node
+    alias visit_if_node visit_child_nodes
 
     # Visit a ImaginaryLiteral node
     alias visit_imaginary_literal visit_child_nodes
@@ -1430,8 +1430,8 @@ module YARP
     # Create a new Identifier node
     def Identifier(value) = Identifier.new(value, Location.null)
 
-    # Create a new IfModifier node
-    def IfModifier(statement, keyword, predicate) = IfModifier.new(statement, keyword, predicate, Location.null)
+    # Create a new IfNode node
+    def IfNode(keyword, predicate, statements) = IfNode.new(keyword, predicate, statements, Location.null)
 
     # Create a new ImaginaryLiteral node
     def ImaginaryLiteral(value) = ImaginaryLiteral.new(value, Location.null)
