@@ -174,8 +174,10 @@ nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
 tokens = config.fetch("tokens").map { |token| Token.new(token) }
 
 template("../ext/yarp/extension.c", nodes, cmark)
+template("../ext/yarp/serialize.c", nodes, cmark)
 template("../ext/yarp/yarp.c", nodes, cmark)
 template("../lib/yarp.rb", nodes, rbmark)
+template("../lib/yarp/serialization.rb", nodes, rbmark)
 
 pure_template(template: 'bin/templates/gen_token_type.h.erb', write_to: 'ext/yarp/gen_token_type.h', locals: { tokens: tokens })
 pure_template(template: 'bin/templates/gen_token_type.c.erb', write_to: 'ext/yarp/gen_token_type.c', locals: { tokens: tokens })

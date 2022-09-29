@@ -1,0 +1,54 @@
+/******************************************************************************/
+/* BEGIN TEMPLATE                                                             */
+/******************************************************************************/
+
+static void
+serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
+  yp_buffer_append_u8(buffer, token->type);
+  yp_buffer_append_u64(buffer, token->start - parser->start);
+  yp_buffer_append_u64(buffer, token->end - parser->start);
+}
+
+static void
+serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
+  yp_buffer_append_u8(buffer, node->type);
+
+  size_t offset = buffer->length;
+  yp_buffer_append_u64(buffer, 0);
+
+  yp_buffer_append_u64(buffer, node->location.start);
+  yp_buffer_append_u64(buffer, node->location.end);
+
+  switch (node->type) {
+    <%- nodes.each do |node| -%>
+    case <%= node.type %>: {
+      <%- node.params.each do |param| -%>
+      <%- case param -%>
+      <%- when NodeParam -%>
+      serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>, buffer);
+      <%- when OptionalNodeParam -%>
+      if (node->as.<%= node.human %>.<%= param.name %> != NULL) serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>, buffer);
+      <%- when NodeListParam -%>
+      uint64_t size = node->as.<%= node.human %>.<%= param.name %>->size;
+      yp_buffer_append_u64(buffer, size);
+      for (uint64_t index = 0; index < size; index++) {
+        serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>->nodes[index], buffer);
+      }
+      <%- when TokenParam -%>
+      serialize_token(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
+      <%- else -%>
+      <%- raise -%>
+      <%- end -%>
+      <%- end -%>
+      break;
+    }
+    <%- end -%>
+  }
+
+  uint64_t length = buffer->length - offset - sizeof(uint64_t);
+  memcpy(buffer->value + offset, &length, sizeof(uint64_t));
+}
+
+/******************************************************************************/
+/* END TEMPLATE                                                               */
+/******************************************************************************/

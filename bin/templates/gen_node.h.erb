@@ -11,8 +11,8 @@
 #include <stddef.h>
 
 typedef enum {
-<%- nodes.each do |node| -%>
-  <%= node.type %>,
+<%- nodes.each_with_index do |node, index| -%>
+  <%= node.type %> = <%= index %>,
 <%- end -%>
 } yp_node_type_t;
 

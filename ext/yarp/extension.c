@@ -523,6 +523,42 @@ source_file_unload(source_t *source) {
   munmap((void *) source->source, source->size);
 }
 
+// Dump the AST corresponding to the given source to a string.
+static VALUE
+dump_source(source_t *source) {
+  yp_parser_t parser;
+  yp_parser_init(&parser, source->source, source->size);
+
+  yp_node_t *node = yp_parse(&parser);
+  yp_buffer_t *buffer = yp_buffer_alloc();
+  yp_serialize(&parser, node, buffer);
+
+  VALUE dumped = rb_str_new(buffer->value, buffer->length);
+  yp_node_dealloc(&parser, node);
+  yp_buffer_free(buffer);
+
+  return dumped;
+}
+
+// Dump the AST corresponding to the given string to a string.
+static VALUE
+dump(VALUE self, VALUE string) {
+  source_t source;
+  source_string_load(&source, string);
+  return dump_source(&source);
+}
+
+// Dump the AST corresponding to the given file to a string.
+static VALUE
+dump_file(VALUE self, VALUE filepath) {
+  source_t source;
+  if (source_file_load(&source, filepath) != 0) return Qnil;
+
+  VALUE value = dump_source(&source);
+  source_file_unload(&source);
+  return value;
+}
+
 // Return an array of tokens corresponding to the given source.
 static VALUE
 lex_source(source_t *source) {
@@ -592,6 +628,9 @@ Init_yarp(void) {
   rb_cYARP = rb_define_module("YARP");
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
+
+  rb_define_singleton_method(rb_cYARP, "dump", dump, 1);
+  rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
 
   rb_define_singleton_method(rb_cYARP, "lex", lex, 1);
   rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);

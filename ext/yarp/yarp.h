@@ -1,6 +1,7 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include "buffer.h"
 #include "gen_node.h"
 #include "location.h"
 #include "token.h"
@@ -121,5 +122,9 @@ yp_parse(yp_parser_t *parser);
 // Deallocate a node and all of its children.
 void
 yp_node_dealloc(yp_parser_t *parser, struct yp_node *node);
+
+// Serialize the AST represented by the given node to the given buffer.
+void
+yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 #endif
