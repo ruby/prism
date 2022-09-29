@@ -18,7 +18,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "false" do
-    assert_equal VariableReference(KEYWORD_FALSE("false")), expression("false")
+    assert_equal FalseNode(KEYWORD_FALSE("false")), expression("false")
   end
 
   test "float" do
@@ -46,7 +46,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "nil" do
-    assert_equal VariableReference(KEYWORD_NIL("nil")), expression("nil")
+    assert_equal NilNode(KEYWORD_NIL("nil")), expression("nil")
   end
 
   test "rational" do
@@ -62,7 +62,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "self" do
-    assert_equal VariableReference(KEYWORD_SELF("self")), expression("self")
+    assert_equal SelfNode(KEYWORD_SELF("self")), expression("self")
   end
 
   test "ternary" do
@@ -78,7 +78,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "true" do
-    assert_equal VariableReference(KEYWORD_TRUE("true")), expression("true")
+    assert_equal TrueNode(KEYWORD_TRUE("true")), expression("true")
   end
 
   test "unless modifier" do

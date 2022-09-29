@@ -291,6 +291,10 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: FalseNode
+    child_nodes:
+      - token keyword
+    location: keyword
   - name: FloatLiteral
     child_nodes:
       - token value
@@ -313,6 +317,10 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: NilNode
+    child_nodes:
+      - token keyword
+    location: keyword
   - name: OperatorAssignment
     child_nodes:
       - node target
@@ -341,6 +349,10 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: SelfNode
+    child_nodes:
+      - token keyword
+    location: keyword
   - name: Statements
     child_nodes:
       - node[] body
@@ -353,6 +365,10 @@ nodes:
       - token colon
       - node false_expression
     location: predicate->false_expression
+  - name: TrueNode
+    child_nodes:
+      - token keyword
+    location: keyword
   - name: UnlessModifier
     child_nodes:
       - node statement

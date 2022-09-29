@@ -91,6 +91,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("CharacterLiteral")));
     }
+    case YP_NODE_FALSE_NODE: {
+      VALUE argv[2];
+
+      // keyword
+      argv[0] = token_new(parser, &node->as.false_node.keyword);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("FalseNode")));
+    }
     case YP_NODE_FLOAT_LITERAL: {
       VALUE argv[2];
 
@@ -151,6 +162,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[1] = location_new(&node->location);
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("IntegerLiteral")));
+    }
+    case YP_NODE_NIL_NODE: {
+      VALUE argv[2];
+
+      // keyword
+      argv[0] = token_new(parser, &node->as.nil_node.keyword);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("NilNode")));
     }
     case YP_NODE_OPERATOR_ASSIGNMENT: {
       VALUE argv[4];
@@ -230,6 +252,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Retry")));
     }
+    case YP_NODE_SELF_NODE: {
+      VALUE argv[2];
+
+      // keyword
+      argv[0] = token_new(parser, &node->as.self_node.keyword);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("SelfNode")));
+    }
     case YP_NODE_STATEMENTS: {
       VALUE argv[2];
 
@@ -266,6 +299,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[5] = location_new(&node->location);
 
       return rb_class_new_instance(6, argv, rb_const_get_at(rb_cYARP, rb_intern("Ternary")));
+    }
+    case YP_NODE_TRUE_NODE: {
+      VALUE argv[2];
+
+      // keyword
+      argv[0] = token_new(parser, &node->as.true_node.keyword);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("TrueNode")));
     }
     case YP_NODE_UNLESS_MODIFIER: {
       VALUE argv[4];
