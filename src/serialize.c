@@ -99,6 +99,10 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       serialize_token(parser, &node->as.integer_literal.value, buffer);
       break;
     }
+    case YP_NODE_LOCAL_VARIABLE_READ: {
+      serialize_token(parser, &node->as.local_variable_read.name, buffer);
+      break;
+    }
     case YP_NODE_LOCAL_VARIABLE_WRITE: {
       serialize_token(parser, &node->as.local_variable_write.name, buffer);
       serialize_token(parser, &node->as.local_variable_write.operator, buffer);

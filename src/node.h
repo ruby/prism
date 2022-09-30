@@ -26,21 +26,22 @@ typedef enum {
   YP_NODE_INSTANCE_VARIABLE_READ = 12,
   YP_NODE_INSTANCE_VARIABLE_WRITE = 13,
   YP_NODE_INTEGER_LITERAL = 14,
-  YP_NODE_LOCAL_VARIABLE_WRITE = 15,
-  YP_NODE_NIL_NODE = 16,
-  YP_NODE_OPERATOR_ASSIGNMENT = 17,
-  YP_NODE_PROGRAM = 18,
-  YP_NODE_RATIONAL_LITERAL = 19,
-  YP_NODE_REDO = 20,
-  YP_NODE_RETRY = 21,
-  YP_NODE_SCOPE = 22,
-  YP_NODE_SELF_NODE = 23,
-  YP_NODE_STATEMENTS = 24,
-  YP_NODE_TERNARY = 25,
-  YP_NODE_TRUE_NODE = 26,
-  YP_NODE_UNLESS_NODE = 27,
-  YP_NODE_UNTIL_NODE = 28,
-  YP_NODE_WHILE_NODE = 29,
+  YP_NODE_LOCAL_VARIABLE_READ = 15,
+  YP_NODE_LOCAL_VARIABLE_WRITE = 16,
+  YP_NODE_NIL_NODE = 17,
+  YP_NODE_OPERATOR_ASSIGNMENT = 18,
+  YP_NODE_PROGRAM = 19,
+  YP_NODE_RATIONAL_LITERAL = 20,
+  YP_NODE_REDO = 21,
+  YP_NODE_RETRY = 22,
+  YP_NODE_SCOPE = 23,
+  YP_NODE_SELF_NODE = 24,
+  YP_NODE_STATEMENTS = 25,
+  YP_NODE_TERNARY = 26,
+  YP_NODE_TRUE_NODE = 27,
+  YP_NODE_UNLESS_NODE = 28,
+  YP_NODE_UNTIL_NODE = 29,
+  YP_NODE_WHILE_NODE = 30,
 } yp_node_type_t;
 
 struct yp_node;
@@ -153,6 +154,11 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } integer_literal;
+
+    // LocalVariableRead
+    struct {
+      yp_token_t name;
+    } local_variable_read;
 
     // LocalVariableWrite
     struct {

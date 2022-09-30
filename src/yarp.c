@@ -1196,6 +1196,20 @@ yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
   return node;
 }
 
+// Allocate a new LocalVariableRead node.
+static yp_node_t *
+yp_node_alloc_local_variable_read(yp_parser_t *parser, yp_token_t *name) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_LOCAL_VARIABLE_READ,
+    .location = { .start = name->start - parser->start, .end = name->end - parser->start },
+    .as.local_variable_read = {
+      .name = *name,
+    },
+  };
+  return node;
+}
+
 // Allocate a new LocalVariableWrite node.
 static yp_node_t *
 yp_node_alloc_local_variable_write(yp_parser_t *parser, yp_token_t *name, yp_token_t *operator, yp_node_t * value) {
@@ -1480,6 +1494,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_INTEGER_LITERAL:
+      free(node);
+      break;
+    case YP_NODE_LOCAL_VARIABLE_READ:
       free(node);
       break;
     case YP_NODE_LOCAL_VARIABLE_WRITE:
@@ -1770,7 +1787,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_global_variable_read(parser, &parser->previous);
       break;
     case YP_TOKEN_IDENTIFIER:
-      node = yp_node_alloc_call_node(parser, &parser->previous);
+      if (yp_token_list_includes(parser->current_scope->as.scope.locals, &parser->previous)) {
+        node = yp_node_alloc_local_variable_read(parser, &parser->previous);
+      } else {
+        node = yp_node_alloc_call_node(parser, &parser->previous);
+      }
       break;
     case YP_TOKEN_IMAGINARY_NUMBER:
       node = yp_node_alloc_imaginary_literal(parser, &parser->previous);
@@ -1893,12 +1914,17 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_dealloc(parser, read);
             break;
           }
-          case YP_NODE_CALL_NODE: {
+          case YP_NODE_CALL_NODE:
+          case YP_NODE_LOCAL_VARIABLE_READ: {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *read = node;
 
-            node = yp_node_alloc_local_variable_write(parser, &node->as.call_node.message, &token, value);
+            yp_token_t name = node->as.local_variable_read.name;
+            yp_token_list_append(parser->current_scope->as.scope.locals, &name);
+
+            node = yp_node_alloc_local_variable_write(parser, &name, &token, value);
             yp_node_dealloc(parser, read);
+
             break;
           }
           case YP_NODE_INSTANCE_VARIABLE_READ: {

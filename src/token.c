@@ -20,6 +20,21 @@ yp_token_list_append(yp_token_list_t *token_list, yp_token_t *token) {
   token_list->tokens[token_list->size++] = *token;
 }
 
+// Checks if the current token list includes the given token.
+bool
+yp_token_list_includes(yp_token_list_t *token_list, yp_token_t *token) {
+  size_t length = token->end - token->start;
+
+  for (size_t index = 0; index < token_list->size; index++) {
+    yp_token_t current_token = token_list->tokens[index];
+
+    if (current_token.type == token->type && memcmp(current_token.start, token->start, length) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Free the memory associated with the token list and the token list itself.
 void
 yp_token_list_dealloc(yp_token_list_t *token_list) {

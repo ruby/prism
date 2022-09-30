@@ -246,6 +246,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("IntegerLiteral")));
     }
+    case YP_NODE_LOCAL_VARIABLE_READ: {
+      VALUE argv[2];
+
+      // name
+      argv[0] = token_new(parser, &node->as.local_variable_read.name);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("LocalVariableRead")));
+    }
     case YP_NODE_LOCAL_VARIABLE_WRITE: {
       VALUE argv[4];
 
