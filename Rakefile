@@ -18,18 +18,12 @@ end
 
 desc "Lex ruby/spec files and compare with lex_compat"
 task lex: :compile do
-  require "bundler/setup"
+  $:.unshift(File.expand_path("lib", __dir__))
   require "yarp"
   require "ripper"
 
-  filepath = File.expand_path("KNOWN_FAILURES", __dir__)
-  known_failures = File.readlines(filepath, chomp: true)
-
-  results = { passing: 0, failing: 0 }
+  results = { passing: [], failing: [] }
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
-
-  passing = 0
-  failing = 0
 
   filepaths =
     if ENV["FILEPATHS"]
@@ -46,18 +40,11 @@ task lex: :compile do
       end
 
     print result ? colorize.call(32, ".") : colorize.call(31, "E")
-
-    if result
-      known_failures.delete(filepath) if known_failures.include?(filepath)
-      passing += 1
-    else
-      known_failures << filepath unless known_failures.include?(filepath)
-      failing += 1
-    end
+    results[result ? :passing : :failing] << filepath
   end
 
-  File.write(filepath, known_failures.sort.join("\n") + "\n") unless ENV["FILEPATHS"]  
-  puts "\n\nPASS=#{passing}\nFAIL=#{failing}"
+  puts "\n\nPASSING=#{results[:passing].length}\nFAILING=#{results[:failing].length}"
+  puts "\n#{results[:failing].sort.join("\n")}"
 end
 
 task default: :test

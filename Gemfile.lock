@@ -13,6 +13,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bundler
   rake
   rake-compiler
   test-unit
