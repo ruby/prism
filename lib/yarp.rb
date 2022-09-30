@@ -459,43 +459,6 @@ module YARP
     end
   end
 
-  class Identifier < Node
-    # attr_reader value: Token
-    attr_reader :value
-
-    # attr_reader location: Location
-    attr_reader :location
-
-    # def initialize: (value: Token, location: Location) -> void
-    def initialize(value, location)
-      @value = value
-      @location = location
-    end
-
-    # def accept: (visitor: Visitor) -> void
-    def accept(visitor)
-      visitor.visit_identifier(self)
-    end
-
-    # def child_nodes: () -> Array[nil | Node]
-    def child_nodes
-      []
-    end
-
-    # def deconstruct: () -> Array[nil | Node]
-    alias deconstruct child_nodes
-
-    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
-    def deconstruct_keys(keys)
-      { value: value, location: location }
-    end
-
-    # def ==(other: Object) -> bool
-    def ==(other)
-      other in Identifier[value: ^(value)]
-    end
-  end
-
   class IfNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
@@ -813,51 +776,6 @@ module YARP
     # def ==(other: Object) -> bool
     def ==(other)
       other in Program[statements: ^(statements)]
-    end
-  end
-
-  class Range < Node
-    # attr_reader left: Node?
-    attr_reader :left
-
-    # attr_reader operator: Token
-    attr_reader :operator
-
-    # attr_reader right: Node?
-    attr_reader :right
-
-    # attr_reader location: Location
-    attr_reader :location
-
-    # def initialize: (left: Node?, operator: Token, right: Node?, location: Location) -> void
-    def initialize(left, operator, right, location)
-      @left = left
-      @operator = operator
-      @right = right
-      @location = location
-    end
-
-    # def accept: (visitor: Visitor) -> void
-    def accept(visitor)
-      visitor.visit_range(self)
-    end
-
-    # def child_nodes: () -> Array[nil | Node]
-    def child_nodes
-      [left, right]
-    end
-
-    # def deconstruct: () -> Array[nil | Node]
-    alias deconstruct child_nodes
-
-    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
-    def deconstruct_keys(keys)
-      { left: left, operator: operator, right: right, location: location }
-    end
-
-    # def ==(other: Object) -> bool
-    def ==(other)
-      other in Range[left: ^(left), operator: ^(operator), right: ^(right)]
     end
   end
 
@@ -1340,9 +1258,6 @@ module YARP
     # Visit a GlobalVariableWrite node
     alias visit_global_variable_write visit_child_nodes
 
-    # Visit a Identifier node
-    alias visit_identifier visit_child_nodes
-
     # Visit a IfNode node
     alias visit_if_node visit_child_nodes
 
@@ -1366,9 +1281,6 @@ module YARP
 
     # Visit a Program node
     alias visit_program visit_child_nodes
-
-    # Visit a Range node
-    alias visit_range visit_child_nodes
 
     # Visit a RationalLiteral node
     alias visit_rational_literal visit_child_nodes
@@ -1452,11 +1364,6 @@ module YARP
       GlobalVariableWrite.new(name, operator, value, location)
     end
 
-    # Create a new Identifier node
-    def Identifier(value, location = Location.null)
-      Identifier.new(value, location)
-    end
-
     # Create a new IfNode node
     def IfNode(keyword, predicate, statements, location = Location.null)
       IfNode.new(keyword, predicate, statements, location)
@@ -1495,11 +1402,6 @@ module YARP
     # Create a new Program node
     def Program(statements, location = Location.null)
       Program.new(statements, location)
-    end
-
-    # Create a new Range node
-    def Range(left, operator, right, location = Location.null)
-      Range.new(left, operator, right, location)
     end
 
     # Create a new RationalLiteral node

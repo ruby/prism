@@ -133,7 +133,7 @@ def template(name, nodes, mark)
   contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(nodes: nodes))
   File.write(filepath, contents)
 
-  if ['.c', '.h'].include?(File.extname(filepath))
+  if [".c", ".h"].include?(File.extname(filepath))
     system("clang-format -i #{filepath}")
   end
 end
@@ -145,7 +145,7 @@ def pure_template(template:, write_to:, locals:)
   contents = ERB.new(File.read(template), trim_mode: "-").result_with_hash(locals)
   File.write(write_to, contents)
 
-  if ['.c', '.h'].include?(File.extname(write_to))
+  if [".c", ".h"].include?(File.extname(write_to))
     system("clang-format -i #{write_to}")
   end
 end
@@ -176,11 +176,11 @@ nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
 tokens = config.fetch("tokens").map { |token| Token.new(token) }
 
 template("../ext/yarp/extension.c", nodes, cmark)
-template("../ext/yarp/serialize.c", nodes, cmark)
-template("../ext/yarp/yarp.c", nodes, cmark)
+template("../src/serialize.c", nodes, cmark)
+template("../src/yarp.c", nodes, cmark)
 template("../lib/yarp.rb", nodes, rbmark)
 template("../lib/yarp/serialization.rb", nodes, rbmark)
 
-pure_template(template: 'bin/templates/gen_token_type.h.erb', write_to: 'ext/yarp/gen_token_type.h', locals: { tokens: tokens })
-pure_template(template: 'bin/templates/gen_token_type.c.erb', write_to: 'ext/yarp/gen_token_type.c', locals: { tokens: tokens })
-pure_template(template: 'bin/templates/gen_node.h.erb', write_to: 'ext/yarp/gen_node.h', locals: { nodes: nodes })
+pure_template(template: "bin/templates/node.h.erb", write_to: "src/node.h", locals: { nodes: nodes })
+pure_template(template: "bin/templates/token_type.c.erb", write_to: "src/token_type.c", locals: { tokens: tokens })
+pure_template(template: "bin/templates/token_type.h.erb", write_to: "src/token_type.h", locals: { tokens: tokens })

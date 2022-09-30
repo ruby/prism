@@ -1108,20 +1108,6 @@ yp_node_alloc_global_variable_write(yp_parser_t *parser, yp_token_t *name, yp_to
   return node;
 }
 
-// Allocate a new Identifier node.
-static yp_node_t *
-yp_node_alloc_identifier(yp_parser_t *parser, yp_token_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) {
-    .type = YP_NODE_IDENTIFIER,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
-    .as.identifier = {
-      .value = *value,
-    },
-  };
-  return node;
-}
-
 // Allocate a new IfNode node.
 static yp_node_t *
 yp_node_alloc_if_node(yp_parser_t *parser, yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
@@ -1235,22 +1221,6 @@ yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements) {
     .location = statements->location,
     .as.program = {
       .statements = statements,
-    },
-  };
-  return node;
-}
-
-// Allocate a new Range node.
-static yp_node_t *
-yp_node_alloc_range(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator, yp_node_t * right) {
-  yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) {
-    .type = YP_NODE_RANGE,
-    .location = { .start = (left == NULL ? operator->start - parser->start : left->location.start), .end = (right == NULL ? operator->end - parser->start : right->location.end) },
-    .as.range = {
-      .left = left,
-      .operator = *operator,
-      .right = right,
     },
   };
   return node;
@@ -1460,9 +1430,6 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       yp_node_dealloc(parser, node->as.global_variable_write.value);
       free(node);
       break;
-    case YP_NODE_IDENTIFIER:
-      free(node);
-      break;
     case YP_NODE_IF_NODE:
       yp_node_dealloc(parser, node->as.if_node.predicate);
       yp_node_dealloc(parser, node->as.if_node.statements);
@@ -1491,15 +1458,6 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       break;
     case YP_NODE_PROGRAM:
       yp_node_dealloc(parser, node->as.program.statements);
-      free(node);
-      break;
-    case YP_NODE_RANGE:
-      if (node->as.range.left != NULL) {
-        yp_node_dealloc(parser, node->as.range.left);
-      }
-      if (node->as.range.right != NULL) {
-        yp_node_dealloc(parser, node->as.range.right);
-      }
       free(node);
       break;
     case YP_NODE_RATIONAL_LITERAL:

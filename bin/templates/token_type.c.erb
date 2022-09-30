@@ -3,11 +3,10 @@
 /* modified manually.                                                         */
 /******************************************************************************/
 
-#include "gen_token_type.h"
-#include <string.h>
+#include "token_type.h"
 
 const char *
-token_type_to_str(yp_token_type_t token_type)
+yp_token_type_to_str(yp_token_type_t token_type)
 {
   switch (token_type) {
 <%- tokens.each do |token| -%>
@@ -17,10 +16,11 @@ token_type_to_str(yp_token_type_t token_type)
     case YP_TOKEN_MAXIMUM:
       return "MAXIMUM";
   }
+  return "\0";
 }
 
 yp_token_type_t
-token_type_from_str(const char *str)
+yp_token_type_from_str(const char *str)
 {
 <%- tokens.sort_by { |token| [*token.name.split("_"), *5.times.map { "ZZZ" }] }.each do |token| -%>
   if (strncmp(str, "<%= token.name %>", <%= token.name.length %>) == 0) return YP_TOKEN_<%= token.name %>;
