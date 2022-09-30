@@ -41,6 +41,10 @@ class ParseTest < Test::Unit::TestCase
     assert_equal VariableReference(IDENTIFIER("a")), expression("a")
   end
 
+  test "if" do
+    assert_equal IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), expression("if true; 1; end")
+  end
+
   test "if modifier" do
     assert_equal IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), expression("1 if true")
   end
@@ -93,12 +97,24 @@ class ParseTest < Test::Unit::TestCase
     assert_equal TrueNode(KEYWORD_TRUE("true")), expression("true")
   end
 
+  test "unless" do
+    assert_equal UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), expression("unless true; 1; end")
+  end
+
   test "unless modifier" do
     assert_equal UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), expression("1 unless true")
   end
 
+  test "until" do
+    assert_equal UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), expression("until true; 1; end")
+  end
+
   test "until modifier" do
     assert_equal UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), expression("1 until true")
+  end
+
+  test "while" do
+    assert_equal WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), expression("while true; 1; end")
   end
 
   test "while modifier" do
