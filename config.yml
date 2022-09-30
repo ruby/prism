@@ -287,6 +287,10 @@ nodes:
       - token operator
       - node right
     location: left->right
+  - name: CallNode
+    child_nodes:
+      - token message
+    location: message
   - name: CharacterLiteral
     child_nodes:
       - token value
@@ -319,10 +323,6 @@ nodes:
       - token operator
       - node value
     location: name->value
-  # - name: Identifier
-  #   child_nodes:
-  #     - token value
-  #   location: value
   - name: IfNode
     child_nodes:
       - token keyword
@@ -347,6 +347,12 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: LocalVariableWrite
+    child_nodes:
+      - token name
+      - token operator
+      - node value
+    location: name->value
   - name: NilNode
     child_nodes:
       - token keyword
@@ -416,10 +422,6 @@ nodes:
       - node predicate
       - node statement
     location: keyword->statement
-  - name: VariableReference
-    child_nodes:
-      - token value
-    location: value
   - name: WhileNode
     child_nodes:
       - token keyword

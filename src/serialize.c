@@ -39,6 +39,10 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       serialize_node(parser, node->as.binary.right, buffer);
       break;
     }
+    case YP_NODE_CALL_NODE: {
+      serialize_token(parser, &node->as.call_node.message, buffer);
+      break;
+    }
     case YP_NODE_CHARACTER_LITERAL: {
       serialize_token(parser, &node->as.character_literal.value, buffer);
       break;
@@ -93,6 +97,12 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     }
     case YP_NODE_INTEGER_LITERAL: {
       serialize_token(parser, &node->as.integer_literal.value, buffer);
+      break;
+    }
+    case YP_NODE_LOCAL_VARIABLE_WRITE: {
+      serialize_token(parser, &node->as.local_variable_write.name, buffer);
+      serialize_token(parser, &node->as.local_variable_write.operator, buffer);
+      serialize_node(parser, node->as.local_variable_write.value, buffer);
       break;
     }
     case YP_NODE_NIL_NODE: {
@@ -155,10 +165,6 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       serialize_token(parser, &node->as.until_node.keyword, buffer);
       serialize_node(parser, node->as.until_node.predicate, buffer);
       serialize_node(parser, node->as.until_node.statement, buffer);
-      break;
-    }
-    case YP_NODE_VARIABLE_REFERENCE: {
-      serialize_token(parser, &node->as.variable_reference.value, buffer);
       break;
     }
     case YP_NODE_WHILE_NODE: {

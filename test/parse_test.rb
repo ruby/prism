@@ -38,7 +38,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "identifier" do
-    assert_equal VariableReference(IDENTIFIER("a")), expression("a")
+    assert_equal CallNode(IDENTIFIER("a")), expression("a")
   end
 
   test "if" do
@@ -83,11 +83,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "ternary" do
     expected = Ternary(
-      VariableReference(IDENTIFIER("a")),
+      CallNode(IDENTIFIER("a")),
       QUESTION_MARK("?"),
-      VariableReference(IDENTIFIER("b")),
+      CallNode(IDENTIFIER("b")),
       COLON(":"),
-      VariableReference(IDENTIFIER("c"))
+      CallNode(IDENTIFIER("c"))
     )
 
     assert_equal expected, expression("a ? b : c")

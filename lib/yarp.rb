@@ -184,6 +184,43 @@ module YARP
     end
   end
 
+  class CallNode < Node
+    # attr_reader message: Token
+    attr_reader :message
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (message: Token, location: Location) -> void
+    def initialize(message, location)
+      @message = message
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_call_node(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { message: message, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in CallNode[message: ^(message)]
+    end
+  end
+
   class CharacterLiteral < Node
     # attr_reader value: Token
     attr_reader :value
@@ -657,6 +694,51 @@ module YARP
     # def ==(other: Object) -> bool
     def ==(other)
       other in IntegerLiteral[value: ^(value)]
+    end
+  end
+
+  class LocalVariableWrite < Node
+    # attr_reader name: Token
+    attr_reader :name
+
+    # attr_reader operator: Token
+    attr_reader :operator
+
+    # attr_reader value: Node
+    attr_reader :value
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (name: Token, operator: Token, value: Node, location: Location) -> void
+    def initialize(name, operator, value, location)
+      @name = name
+      @operator = operator
+      @value = value
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_local_variable_write(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [value]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { name: name, operator: operator, value: value, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in LocalVariableWrite[name: ^(name), operator: ^(operator), value: ^(value)]
     end
   end
 
@@ -1148,43 +1230,6 @@ module YARP
     end
   end
 
-  class VariableReference < Node
-    # attr_reader value: Token
-    attr_reader :value
-
-    # attr_reader location: Location
-    attr_reader :location
-
-    # def initialize: (value: Token, location: Location) -> void
-    def initialize(value, location)
-      @value = value
-      @location = location
-    end
-
-    # def accept: (visitor: Visitor) -> void
-    def accept(visitor)
-      visitor.visit_variable_reference(self)
-    end
-
-    # def child_nodes: () -> Array[nil | Node]
-    def child_nodes
-      []
-    end
-
-    # def deconstruct: () -> Array[nil | Node]
-    alias deconstruct child_nodes
-
-    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
-    def deconstruct_keys(keys)
-      { value: value, location: location }
-    end
-
-    # def ==(other: Object) -> bool
-    def ==(other)
-      other in VariableReference[value: ^(value)]
-    end
-  end
-
   class WhileNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
@@ -1237,6 +1282,9 @@ module YARP
     # Visit a Binary node
     alias visit_binary visit_child_nodes
 
+    # Visit a CallNode node
+    alias visit_call_node visit_child_nodes
+
     # Visit a CharacterLiteral node
     alias visit_character_literal visit_child_nodes
 
@@ -1272,6 +1320,9 @@ module YARP
 
     # Visit a IntegerLiteral node
     alias visit_integer_literal visit_child_nodes
+
+    # Visit a LocalVariableWrite node
+    alias visit_local_variable_write visit_child_nodes
 
     # Visit a NilNode node
     alias visit_nil_node visit_child_nodes
@@ -1309,9 +1360,6 @@ module YARP
     # Visit a UntilNode node
     alias visit_until_node visit_child_nodes
 
-    # Visit a VariableReference node
-    alias visit_variable_reference visit_child_nodes
-
     # Visit a WhileNode node
     alias visit_while_node visit_child_nodes
   end
@@ -1327,6 +1375,11 @@ module YARP
     # Create a new Binary node
     def Binary(left, operator, right, location = Location.null)
       Binary.new(left, operator, right, location)
+    end
+
+    # Create a new CallNode node
+    def CallNode(message, location = Location.null)
+      CallNode.new(message, location)
     end
 
     # Create a new CharacterLiteral node
@@ -1389,6 +1442,11 @@ module YARP
       IntegerLiteral.new(value, location)
     end
 
+    # Create a new LocalVariableWrite node
+    def LocalVariableWrite(name, operator, value, location = Location.null)
+      LocalVariableWrite.new(name, operator, value, location)
+    end
+
     # Create a new NilNode node
     def NilNode(keyword, location = Location.null)
       NilNode.new(keyword, location)
@@ -1447,11 +1505,6 @@ module YARP
     # Create a new UntilNode node
     def UntilNode(keyword, predicate, statement, location = Location.null)
       UntilNode.new(keyword, predicate, statement, location)
-    end
-
-    # Create a new VariableReference node
-    def VariableReference(value, location = Location.null)
-      VariableReference.new(value, location)
     end
 
     # Create a new WhileNode node

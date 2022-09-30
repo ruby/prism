@@ -13,32 +13,33 @@
 typedef enum {
   YP_NODE_ASSIGNMENT = 0,
   YP_NODE_BINARY = 1,
-  YP_NODE_CHARACTER_LITERAL = 2,
-  YP_NODE_CLASS_VARIABLE_READ = 3,
-  YP_NODE_CLASS_VARIABLE_WRITE = 4,
-  YP_NODE_FALSE_NODE = 5,
-  YP_NODE_FLOAT_LITERAL = 6,
-  YP_NODE_GLOBAL_VARIABLE_READ = 7,
-  YP_NODE_GLOBAL_VARIABLE_WRITE = 8,
-  YP_NODE_IF_NODE = 9,
-  YP_NODE_IMAGINARY_LITERAL = 10,
-  YP_NODE_INSTANCE_VARIABLE_READ = 11,
-  YP_NODE_INSTANCE_VARIABLE_WRITE = 12,
-  YP_NODE_INTEGER_LITERAL = 13,
-  YP_NODE_NIL_NODE = 14,
-  YP_NODE_OPERATOR_ASSIGNMENT = 15,
-  YP_NODE_PROGRAM = 16,
-  YP_NODE_RATIONAL_LITERAL = 17,
-  YP_NODE_REDO = 18,
-  YP_NODE_RETRY = 19,
-  YP_NODE_SELF_NODE = 20,
-  YP_NODE_STATEMENTS = 21,
-  YP_NODE_TERNARY = 22,
-  YP_NODE_TRUE_NODE = 23,
-  YP_NODE_UNLESS_NODE = 24,
-  YP_NODE_UNTIL_NODE = 25,
-  YP_NODE_VARIABLE_REFERENCE = 26,
-  YP_NODE_WHILE_NODE = 27,
+  YP_NODE_CALL_NODE = 2,
+  YP_NODE_CHARACTER_LITERAL = 3,
+  YP_NODE_CLASS_VARIABLE_READ = 4,
+  YP_NODE_CLASS_VARIABLE_WRITE = 5,
+  YP_NODE_FALSE_NODE = 6,
+  YP_NODE_FLOAT_LITERAL = 7,
+  YP_NODE_GLOBAL_VARIABLE_READ = 8,
+  YP_NODE_GLOBAL_VARIABLE_WRITE = 9,
+  YP_NODE_IF_NODE = 10,
+  YP_NODE_IMAGINARY_LITERAL = 11,
+  YP_NODE_INSTANCE_VARIABLE_READ = 12,
+  YP_NODE_INSTANCE_VARIABLE_WRITE = 13,
+  YP_NODE_INTEGER_LITERAL = 14,
+  YP_NODE_LOCAL_VARIABLE_WRITE = 15,
+  YP_NODE_NIL_NODE = 16,
+  YP_NODE_OPERATOR_ASSIGNMENT = 17,
+  YP_NODE_PROGRAM = 18,
+  YP_NODE_RATIONAL_LITERAL = 19,
+  YP_NODE_REDO = 20,
+  YP_NODE_RETRY = 21,
+  YP_NODE_SELF_NODE = 22,
+  YP_NODE_STATEMENTS = 23,
+  YP_NODE_TERNARY = 24,
+  YP_NODE_TRUE_NODE = 25,
+  YP_NODE_UNLESS_NODE = 26,
+  YP_NODE_UNTIL_NODE = 27,
+  YP_NODE_WHILE_NODE = 28,
 } yp_node_type_t;
 
 struct yp_node;
@@ -78,6 +79,11 @@ typedef struct yp_node {
       yp_token_t operator;
       struct yp_node *right;
     } binary;
+
+    // CallNode
+    struct {
+      yp_token_t message;
+    } call_node;
 
     // CharacterLiteral
     struct {
@@ -146,6 +152,13 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } integer_literal;
+
+    // LocalVariableWrite
+    struct {
+      yp_token_t name;
+      yp_token_t operator;
+      struct yp_node *value;
+    } local_variable_write;
 
     // NilNode
     struct {
@@ -216,11 +229,6 @@ typedef struct yp_node {
       struct yp_node *predicate;
       struct yp_node *statement;
     } until_node;
-
-    // VariableReference
-    struct {
-      yp_token_t value;
-    } variable_reference;
 
     // WhileNode
     struct {
