@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "erb"
+require "fileutils"
 require "yaml"
 
 # This represents a parameter to a node that is itself a node. We pass them as
@@ -184,6 +185,7 @@ template("../ext/yarp/extension.c", nodes, cmark)
 template("../src/serialize.c", nodes, cmark)
 template("../src/yarp.c", nodes, cmark)
 
+FileUtils.mkdir_p(File.expand_path("../lib/yarp", __dir__))
 pure_template(template: "bin/templates/node.rb.erb", write_to: "lib/yarp/node.rb", locals: { nodes: nodes })
 pure_template(template: "bin/templates/serialize.rb.erb", write_to: "lib/yarp/serialize.rb", locals: { nodes: nodes })
 

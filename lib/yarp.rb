@@ -288,5 +288,4 @@ end
 
 require_relative "yarp/node"
 require_relative "yarp/serialize"
-require_relative "yarp/version"
 require_relative "yarp/yarp"
