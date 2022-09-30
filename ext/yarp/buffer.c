@@ -12,43 +12,50 @@ yp_buffer_alloc() {
   return buffer;
 }
 
-// Append a string to the buffer.
-void
-yp_buffer_append_str(yp_buffer_t *buffer, const char *value, size_t length) {
+// Append a generic pointer to memory to the buffer.
+static inline void
+yp_buffer_append(yp_buffer_t *buffer, const void *source, size_t length) {
   if (buffer->length + length > buffer->capacity) {
     buffer->capacity = buffer->capacity * 2;
     buffer->value = realloc(buffer->value, buffer->capacity);
   }
-  memcpy(buffer->value + buffer->length, value, length);
+  memcpy(buffer->value + buffer->length, source, length);
   buffer->length += length;
+}
+
+// Append a string to the buffer.
+void
+yp_buffer_append_str(yp_buffer_t *buffer, const char *value, size_t length) {
+  const void *source = value;
+  yp_buffer_append(buffer, source, length);
 }
 
 // Append a single byte to the buffer.
 void
 yp_buffer_append_u8(yp_buffer_t *buffer, uint8_t value) {
-  const char *str = (const char *) &value;
-  yp_buffer_append_str(buffer, str, sizeof(uint8_t));
+  const void *source = &value;
+  yp_buffer_append(buffer, source, sizeof(uint8_t));
 }
 
 // Append a 16-bit unsigned integer to the buffer.
 void
 yp_buffer_append_u16(yp_buffer_t *buffer, uint16_t value) {
-  const char *str = (const char *) &value;
-  yp_buffer_append_str(buffer, str, sizeof(uint16_t));
+  const void *source = &value;
+  yp_buffer_append(buffer, source, sizeof(uint16_t));
 }
 
 // Append a 32-bit unsigned integer to the buffer.
 void
 yp_buffer_append_u32(yp_buffer_t *buffer, uint32_t value) {
-  const char *str = (const char *) &value;
-  yp_buffer_append_str(buffer, str, sizeof(uint32_t));
+  const void *source = &value;
+  yp_buffer_append(buffer, source, sizeof(uint32_t));
 }
 
 // Append a 64-bit unsigned integer to the buffer.
 void
 yp_buffer_append_u64(yp_buffer_t *buffer, uint64_t value) {
-  const char *str = (const char *) &value;
-  yp_buffer_append_str(buffer, str, sizeof(uint64_t));
+  const void *source = &value;
+  yp_buffer_append(buffer, source, sizeof(uint64_t));
 }
 
 // Free the memory associated with the buffer and the buffer itself.
