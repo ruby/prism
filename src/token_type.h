@@ -6,6 +6,8 @@
 #ifndef YARP_TOKEN_TYPE_H
 #define YARP_TOKEN_TYPE_H
 
+#include <string.h>
+
 typedef enum yp_token_type {
   YP_TOKEN_EOF = 0,                   // final token in the file
   YP_TOKEN_INVALID,                   // an invalid token
@@ -147,9 +149,10 @@ typedef enum yp_token_type {
   YP_TOKEN_MAXIMUM,                   // the maximum token value
 } yp_token_type_t;
 
-const char *
-token_type_to_str(yp_token_type_t token_type);
-yp_token_type_t
-token_type_from_str(const char *str);
+__attribute__((__visibility__("default"))) extern const char *
+yp_token_type_to_str(yp_token_type_t token_type);
+
+__attribute__((__visibility__("default"))) extern yp_token_type_t
+yp_token_type_from_str(const char *str);
 
 #endif // YARP_TOKEN_TYPE_H

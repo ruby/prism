@@ -1,6 +1,5 @@
-#include "gen_token_type.h"
-#include "yarp.h"
 #include <ruby.h>
+#include <yarp.h>
 
 VALUE rb_cYARP;
 VALUE rb_cYARPToken;
@@ -22,7 +21,7 @@ token_type(yp_token_t *token) {
     return ID2SYM(rb_intern("INVALID"));
   }
 
-  return ID2SYM(rb_intern(token_type_to_str(token->type)));
+  return ID2SYM(rb_intern(yp_token_type_to_str(token->type)));
 }
 
 static VALUE
@@ -169,17 +168,6 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("GlobalVariableWrite")));
     }
-    case YP_NODE_IDENTIFIER: {
-      VALUE argv[2];
-
-      // value
-      argv[0] = token_new(parser, &node->as.identifier.value);
-
-      // location
-      argv[1] = location_new(&node->location);
-
-      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Identifier")));
-    }
     case YP_NODE_IF_NODE: {
       VALUE argv[4];
 
@@ -285,23 +273,6 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[1] = location_new(&node->location);
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Program")));
-    }
-    case YP_NODE_RANGE: {
-      VALUE argv[4];
-
-      // left
-      argv[0] = node->as.range.left == NULL ? Qnil : node_new(parser, node->as.range.left);
-
-      // operator
-      argv[1] = token_new(parser, &node->as.range.operator);
-
-      // right
-      argv[2] = node->as.range.right == NULL ? Qnil : node_new(parser, node->as.range.right);
-
-      // location
-      argv[3] = location_new(&node->location);
-
-      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("Range")));
     }
     case YP_NODE_RATIONAL_LITERAL: {
       VALUE argv[2];

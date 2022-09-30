@@ -3,11 +3,10 @@
 /* modified manually.                                                         */
 /******************************************************************************/
 
-#include "gen_token_type.h"
-#include <string.h>
+#include "token_type.h"
 
 const char *
-token_type_to_str(yp_token_type_t token_type) {
+yp_token_type_to_str(yp_token_type_t token_type) {
   switch (token_type) {
     case YP_TOKEN_EOF:
       return "EOF";
@@ -286,10 +285,11 @@ token_type_to_str(yp_token_type_t token_type) {
     case YP_TOKEN_MAXIMUM:
       return "MAXIMUM";
   }
+  return "\0";
 }
 
 yp_token_type_t
-token_type_from_str(const char *str) {
+yp_token_type_from_str(const char *str) {
   if (strncmp(str, "AMPERSAND_AMPERSAND_EQUAL", 25) == 0) return YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL;
   if (strncmp(str, "AMPERSAND_AMPERSAND", 19) == 0) return YP_TOKEN_AMPERSAND_AMPERSAND;
   if (strncmp(str, "AMPERSAND_EQUAL", 15) == 0) return YP_TOKEN_AMPERSAND_EQUAL;

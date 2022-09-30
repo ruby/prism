@@ -71,10 +71,6 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       serialize_node(parser, node->as.global_variable_write.value, buffer);
       break;
     }
-    case YP_NODE_IDENTIFIER: {
-      serialize_token(parser, &node->as.identifier.value, buffer);
-      break;
-    }
     case YP_NODE_IF_NODE: {
       serialize_token(parser, &node->as.if_node.keyword, buffer);
       serialize_node(parser, node->as.if_node.predicate, buffer);
@@ -111,12 +107,6 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     }
     case YP_NODE_PROGRAM: {
       serialize_node(parser, node->as.program.statements, buffer);
-      break;
-    }
-    case YP_NODE_RANGE: {
-      if (node->as.range.left != NULL) serialize_node(parser, node->as.range.left, buffer);
-      serialize_token(parser, &node->as.range.operator, buffer);
-      if (node->as.range.right != NULL) serialize_node(parser, node->as.range.right, buffer);
       break;
     }
     case YP_NODE_RATIONAL_LITERAL: {

@@ -19,10 +19,6 @@ class LexTest < Test::Unit::TestCase
     assert_lex __FILE__
   end
 
-  test "lex yarp.gemspec" do
-    assert_lex File.expand_path("../yarp.gemspec", __dir__)
-  end
-
   private
 
   def assert_lex(filepath)

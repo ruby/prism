@@ -2,7 +2,8 @@
 #define YARP_H
 
 #include "buffer.h"
-#include "gen_node.h"
+#include "node.h"
+#include "token_type.h"
 #include "location.h"
 #include "token.h"
 #include <fcntl.h>
@@ -108,23 +109,23 @@ struct yp_parser {
 };
 
 // Initialize a parser with the given start and end pointers.
-void
+__attribute__ ((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, off_t size);
 
 // Get the next token type and set its value on the current pointer.
-void
+__attribute__ ((__visibility__("default"))) extern void
 yp_lex_token(yp_parser_t *parser);
 
 // Parse the Ruby source associated with the given parser and return the tree.
-yp_node_t *
+__attribute__ ((__visibility__("default"))) extern yp_node_t *
 yp_parse(yp_parser_t *parser);
 
 // Deallocate a node and all of its children.
-void
+__attribute__ ((__visibility__("default"))) extern void
 yp_node_dealloc(yp_parser_t *parser, struct yp_node *node);
 
 // Serialize the AST represented by the given node to the given buffer.
-void
+__attribute__ ((__visibility__("default"))) extern void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 #endif

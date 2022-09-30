@@ -20,27 +20,25 @@ typedef enum {
   YP_NODE_FLOAT_LITERAL = 6,
   YP_NODE_GLOBAL_VARIABLE_READ = 7,
   YP_NODE_GLOBAL_VARIABLE_WRITE = 8,
-  YP_NODE_IDENTIFIER = 9,
-  YP_NODE_IF_NODE = 10,
-  YP_NODE_IMAGINARY_LITERAL = 11,
-  YP_NODE_INSTANCE_VARIABLE_READ = 12,
-  YP_NODE_INSTANCE_VARIABLE_WRITE = 13,
-  YP_NODE_INTEGER_LITERAL = 14,
-  YP_NODE_NIL_NODE = 15,
-  YP_NODE_OPERATOR_ASSIGNMENT = 16,
-  YP_NODE_PROGRAM = 17,
-  YP_NODE_RANGE = 18,
-  YP_NODE_RATIONAL_LITERAL = 19,
-  YP_NODE_REDO = 20,
-  YP_NODE_RETRY = 21,
-  YP_NODE_SELF_NODE = 22,
-  YP_NODE_STATEMENTS = 23,
-  YP_NODE_TERNARY = 24,
-  YP_NODE_TRUE_NODE = 25,
-  YP_NODE_UNLESS_MODIFIER = 26,
-  YP_NODE_UNTIL_MODIFIER = 27,
-  YP_NODE_VARIABLE_REFERENCE = 28,
-  YP_NODE_WHILE_MODIFIER = 29,
+  YP_NODE_IF_NODE = 9,
+  YP_NODE_IMAGINARY_LITERAL = 10,
+  YP_NODE_INSTANCE_VARIABLE_READ = 11,
+  YP_NODE_INSTANCE_VARIABLE_WRITE = 12,
+  YP_NODE_INTEGER_LITERAL = 13,
+  YP_NODE_NIL_NODE = 14,
+  YP_NODE_OPERATOR_ASSIGNMENT = 15,
+  YP_NODE_PROGRAM = 16,
+  YP_NODE_RATIONAL_LITERAL = 17,
+  YP_NODE_REDO = 18,
+  YP_NODE_RETRY = 19,
+  YP_NODE_SELF_NODE = 20,
+  YP_NODE_STATEMENTS = 21,
+  YP_NODE_TERNARY = 22,
+  YP_NODE_TRUE_NODE = 23,
+  YP_NODE_UNLESS_MODIFIER = 24,
+  YP_NODE_UNTIL_MODIFIER = 25,
+  YP_NODE_VARIABLE_REFERENCE = 26,
+  YP_NODE_WHILE_MODIFIER = 27,
 } yp_node_type_t;
 
 struct yp_node;
@@ -120,11 +118,6 @@ typedef struct yp_node {
       struct yp_node *value;
     } global_variable_write;
 
-    // Identifier
-    struct {
-      yp_token_t value;
-    } identifier;
-
     // IfNode
     struct {
       yp_token_t keyword;
@@ -170,13 +163,6 @@ typedef struct yp_node {
     struct {
       struct yp_node *statements;
     } program;
-
-    // Range
-    struct {
-      struct yp_node *left;
-      yp_token_t operator;
-      struct yp_node *right;
-    } range;
 
     // RationalLiteral
     struct {
