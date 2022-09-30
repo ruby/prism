@@ -201,10 +201,10 @@ module YARP
         when 21 then YARP::Statements.new(io.read(8).unpack1("Q").times.map { load_node(source, io) }, location)
         when 22 then YARP::Ternary.new(load_node(source, io), load_token(source, io), load_node(source, io), load_token(source, io), load_node(source, io), location)
         when 23 then YARP::TrueNode.new(load_token(source, io), location)
-        when 24 then YARP::UnlessModifier.new(load_node(source, io), load_token(source, io), load_node(source, io), location)
-        when 25 then YARP::UntilModifier.new(load_node(source, io), load_token(source, io), load_node(source, io), location)
+        when 24 then YARP::UnlessNode.new(load_token(source, io), load_node(source, io), load_node(source, io), location)
+        when 25 then YARP::UntilNode.new(load_token(source, io), load_node(source, io), load_node(source, io), location)
         when 26 then YARP::VariableReference.new(load_token(source, io), location)
-        when 27 then YARP::WhileModifier.new(load_node(source, io), load_token(source, io), load_node(source, io), location)
+        when 27 then YARP::WhileNode.new(load_token(source, io), load_node(source, io), load_node(source, io), location)
         end
       end
     end

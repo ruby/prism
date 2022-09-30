@@ -1058,35 +1058,35 @@ module YARP
     end
   end
 
-  class UnlessModifier < Node
-    # attr_reader statement: Node
-    attr_reader :statement
-
+  class UnlessNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
 
     # attr_reader predicate: Node
     attr_reader :predicate
 
+    # attr_reader statement: Node
+    attr_reader :statement
+
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
-    def initialize(statement, keyword, predicate, location)
-      @statement = statement
+    # def initialize: (keyword: Token, predicate: Node, statement: Node, location: Location) -> void
+    def initialize(keyword, predicate, statement, location)
       @keyword = keyword
       @predicate = predicate
+      @statement = statement
       @location = location
     end
 
     # def accept: (visitor: Visitor) -> void
     def accept(visitor)
-      visitor.visit_unless_modifier(self)
+      visitor.visit_unless_node(self)
     end
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [statement, predicate]
+      [predicate, statement]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -1094,44 +1094,44 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { statement: statement, keyword: keyword, predicate: predicate, location: location }
+      { keyword: keyword, predicate: predicate, statement: statement, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in UnlessModifier[statement: ^(statement), keyword: ^(keyword), predicate: ^(predicate)]
+      other in UnlessNode[keyword: ^(keyword), predicate: ^(predicate), statement: ^(statement)]
     end
   end
 
-  class UntilModifier < Node
-    # attr_reader statement: Node
-    attr_reader :statement
-
+  class UntilNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
 
     # attr_reader predicate: Node
     attr_reader :predicate
 
+    # attr_reader statement: Node
+    attr_reader :statement
+
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
-    def initialize(statement, keyword, predicate, location)
-      @statement = statement
+    # def initialize: (keyword: Token, predicate: Node, statement: Node, location: Location) -> void
+    def initialize(keyword, predicate, statement, location)
       @keyword = keyword
       @predicate = predicate
+      @statement = statement
       @location = location
     end
 
     # def accept: (visitor: Visitor) -> void
     def accept(visitor)
-      visitor.visit_until_modifier(self)
+      visitor.visit_until_node(self)
     end
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [statement, predicate]
+      [predicate, statement]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -1139,12 +1139,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { statement: statement, keyword: keyword, predicate: predicate, location: location }
+      { keyword: keyword, predicate: predicate, statement: statement, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in UntilModifier[statement: ^(statement), keyword: ^(keyword), predicate: ^(predicate)]
+      other in UntilNode[keyword: ^(keyword), predicate: ^(predicate), statement: ^(statement)]
     end
   end
 
@@ -1185,35 +1185,35 @@ module YARP
     end
   end
 
-  class WhileModifier < Node
-    # attr_reader statement: Node
-    attr_reader :statement
-
+  class WhileNode < Node
     # attr_reader keyword: Token
     attr_reader :keyword
 
     # attr_reader predicate: Node
     attr_reader :predicate
 
+    # attr_reader statement: Node
+    attr_reader :statement
+
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statement: Node, keyword: Token, predicate: Node, location: Location) -> void
-    def initialize(statement, keyword, predicate, location)
-      @statement = statement
+    # def initialize: (keyword: Token, predicate: Node, statement: Node, location: Location) -> void
+    def initialize(keyword, predicate, statement, location)
       @keyword = keyword
       @predicate = predicate
+      @statement = statement
       @location = location
     end
 
     # def accept: (visitor: Visitor) -> void
     def accept(visitor)
-      visitor.visit_while_modifier(self)
+      visitor.visit_while_node(self)
     end
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [statement, predicate]
+      [predicate, statement]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -1221,12 +1221,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { statement: statement, keyword: keyword, predicate: predicate, location: location }
+      { keyword: keyword, predicate: predicate, statement: statement, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in WhileModifier[statement: ^(statement), keyword: ^(keyword), predicate: ^(predicate)]
+      other in WhileNode[keyword: ^(keyword), predicate: ^(predicate), statement: ^(statement)]
     end
   end
 
@@ -1303,17 +1303,17 @@ module YARP
     # Visit a TrueNode node
     alias visit_true_node visit_child_nodes
 
-    # Visit a UnlessModifier node
-    alias visit_unless_modifier visit_child_nodes
+    # Visit a UnlessNode node
+    alias visit_unless_node visit_child_nodes
 
-    # Visit a UntilModifier node
-    alias visit_until_modifier visit_child_nodes
+    # Visit a UntilNode node
+    alias visit_until_node visit_child_nodes
 
     # Visit a VariableReference node
     alias visit_variable_reference visit_child_nodes
 
-    # Visit a WhileModifier node
-    alias visit_while_modifier visit_child_nodes
+    # Visit a WhileNode node
+    alias visit_while_node visit_child_nodes
   end
 
   module DSL
@@ -1439,14 +1439,14 @@ module YARP
       TrueNode.new(keyword, location)
     end
 
-    # Create a new UnlessModifier node
-    def UnlessModifier(statement, keyword, predicate, location = Location.null)
-      UnlessModifier.new(statement, keyword, predicate, location)
+    # Create a new UnlessNode node
+    def UnlessNode(keyword, predicate, statement, location = Location.null)
+      UnlessNode.new(keyword, predicate, statement, location)
     end
 
-    # Create a new UntilModifier node
-    def UntilModifier(statement, keyword, predicate, location = Location.null)
-      UntilModifier.new(statement, keyword, predicate, location)
+    # Create a new UntilNode node
+    def UntilNode(keyword, predicate, statement, location = Location.null)
+      UntilNode.new(keyword, predicate, statement, location)
     end
 
     # Create a new VariableReference node
@@ -1454,9 +1454,9 @@ module YARP
       VariableReference.new(value, location)
     end
 
-    # Create a new WhileModifier node
-    def WhileModifier(statement, keyword, predicate, location = Location.null)
-      WhileModifier.new(statement, keyword, predicate, location)
+    # Create a new WhileNode node
+    def WhileNode(keyword, predicate, statement, location = Location.null)
+      WhileNode.new(keyword, predicate, statement, location)
     end
 
     # Create a new EOF token
