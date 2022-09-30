@@ -61,6 +61,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), "@abc = 1"
   end
 
+  test "local variable read" do
+    assert_parses LocalVariableRead(IDENTIFIER("abc")), "abc = 1; abc"
+  end
+
   test "nil" do
     assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
   end
@@ -166,7 +170,8 @@ class ParseTest < Test::Unit::TestCase
   private
 
   def assert_serializes(expected, source)
-    assert_equal Program(Scope([]), Statements([expected])), YARP.load(source, YARP.dump(source))
+    YARP.load(source, YARP.dump(source)) => YARP::Program[statements: YARP::Statements[body: [*, node]]]
+    assert_equal expected, node
   end
 
   def assert_parses(expected, source)
@@ -175,7 +180,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::Program[statements: YARP::Statements[body: [node]]]
+    YARP.parse(source) => YARP::Program[statements: YARP::Statements[body: [*, node]]]
     node
   end
 end

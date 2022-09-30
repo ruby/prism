@@ -347,6 +347,10 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: LocalVariableRead
+    child_nodes:
+      - token name
+    location: name
   - name: LocalVariableWrite
     child_nodes:
       - token name

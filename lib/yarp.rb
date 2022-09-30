@@ -697,6 +697,43 @@ module YARP
     end
   end
 
+  class LocalVariableRead < Node
+    # attr_reader name: Token
+    attr_reader :name
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (name: Token, location: Location) -> void
+    def initialize(name, location)
+      @name = name
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_local_variable_read(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      []
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { name: name, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in LocalVariableRead[name: ^(name)]
+    end
+  end
+
   class LocalVariableWrite < Node
     # attr_reader name: Token
     attr_reader :name
@@ -1362,6 +1399,9 @@ module YARP
     # Visit a IntegerLiteral node
     alias visit_integer_literal visit_child_nodes
 
+    # Visit a LocalVariableRead node
+    alias visit_local_variable_read visit_child_nodes
+
     # Visit a LocalVariableWrite node
     alias visit_local_variable_write visit_child_nodes
 
@@ -1484,6 +1524,11 @@ module YARP
     # Create a new IntegerLiteral node
     def IntegerLiteral(value, location = Location.null)
       IntegerLiteral.new(value, location)
+    end
+
+    # Create a new LocalVariableRead node
+    def LocalVariableRead(name, location = Location.null)
+      LocalVariableRead.new(name, location)
     end
 
     # Create a new LocalVariableWrite node

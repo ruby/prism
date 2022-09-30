@@ -2,7 +2,9 @@
 #define YARP_TOKEN_H
 
 #include "token_type.h"
+#include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 // This struct represents a token in the Ruby source. We use it to track both
 // type and location information.
@@ -25,6 +27,10 @@ yp_token_list_alloc();
 // Append a token to the given list.
 void
 yp_token_list_append(yp_token_list_t *token_list, yp_token_t *token);
+
+// Checks if the current token list includes the given token.
+bool
+yp_token_list_includes(yp_token_list_t *token_list, yp_token_t *token);
 
 // Free the memory associated with the token list and the token list itself.
 void
