@@ -116,6 +116,7 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       break;
     }
     case YP_NODE_PROGRAM: {
+      serialize_node(parser, node->as.program.scope, buffer);
       serialize_node(parser, node->as.program.statements, buffer);
       break;
     }
@@ -129,6 +130,14 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     }
     case YP_NODE_RETRY: {
       serialize_token(parser, &node->as.retry.value, buffer);
+      break;
+    }
+    case YP_NODE_SCOPE: {
+      uint64_t size = node->as.scope.locals->size;
+      yp_buffer_append_u64(buffer, size);
+      for (uint64_t index = 0; index < size; index++) {
+        serialize_token(parser, &node->as.scope.locals->tokens[index], buffer);
+      }
       break;
     }
     case YP_NODE_SELF_NODE: {

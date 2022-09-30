@@ -106,6 +106,7 @@ struct yp_parser {
   int lineno;          // the current line number we're looking at
 
   yp_error_handler_t *error_handler; // the error handler
+  yp_node_t *current_scope;    // the current local scope
 };
 
 // Initialize a parser with the given start and end pointers.

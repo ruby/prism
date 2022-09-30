@@ -365,6 +365,7 @@ nodes:
     location: target->value
   - name: Program
     child_nodes:
+      - node scope
       - node statements
     location: statements
   - name: RationalLiteral
@@ -385,6 +386,10 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: Scope
+    child_nodes:
+      - token[] locals
+    location: locals
   - name: SelfNode
     child_nodes:
       - token keyword

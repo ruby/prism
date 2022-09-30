@@ -33,13 +33,14 @@ typedef enum {
   YP_NODE_RATIONAL_LITERAL = 19,
   YP_NODE_REDO = 20,
   YP_NODE_RETRY = 21,
-  YP_NODE_SELF_NODE = 22,
-  YP_NODE_STATEMENTS = 23,
-  YP_NODE_TERNARY = 24,
-  YP_NODE_TRUE_NODE = 25,
-  YP_NODE_UNLESS_NODE = 26,
-  YP_NODE_UNTIL_NODE = 27,
-  YP_NODE_WHILE_NODE = 28,
+  YP_NODE_SCOPE = 22,
+  YP_NODE_SELF_NODE = 23,
+  YP_NODE_STATEMENTS = 24,
+  YP_NODE_TERNARY = 25,
+  YP_NODE_TRUE_NODE = 26,
+  YP_NODE_UNLESS_NODE = 27,
+  YP_NODE_UNTIL_NODE = 28,
+  YP_NODE_WHILE_NODE = 29,
 } yp_node_type_t;
 
 struct yp_node;
@@ -174,6 +175,7 @@ typedef struct yp_node {
 
     // Program
     struct {
+      struct yp_node *scope;
       struct yp_node *statements;
     } program;
 
@@ -191,6 +193,11 @@ typedef struct yp_node {
     struct {
       yp_token_t value;
     } retry;
+
+    // Scope
+    struct {
+      yp_token_list_t *locals;
+    } scope;
 
     // SelfNode
     struct {

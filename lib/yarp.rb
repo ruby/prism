@@ -825,14 +825,18 @@ module YARP
   end
 
   class Program < Node
+    # attr_reader scope: Node
+    attr_reader :scope
+
     # attr_reader statements: Node
     attr_reader :statements
 
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (statements: Node, location: Location) -> void
-    def initialize(statements, location)
+    # def initialize: (scope: Node, statements: Node, location: Location) -> void
+    def initialize(scope, statements, location)
+      @scope = scope
       @statements = statements
       @location = location
     end
@@ -844,7 +848,7 @@ module YARP
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [statements]
+      [scope, statements]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -852,12 +856,12 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
     def deconstruct_keys(keys)
-      { statements: statements, location: location }
+      { scope: scope, statements: statements, location: location }
     end
 
     # def ==(other: Object) -> bool
     def ==(other)
-      other in Program[statements: ^(statements)]
+      other in Program[scope: ^(scope), statements: ^(statements)]
     end
   end
 
@@ -969,6 +973,43 @@ module YARP
     # def ==(other: Object) -> bool
     def ==(other)
       other in Retry[value: ^(value)]
+    end
+  end
+
+  class Scope < Node
+    # attr_reader locals: Array[Token]
+    attr_reader :locals
+
+    # attr_reader location: Location
+    attr_reader :location
+
+    # def initialize: (locals: Array[Token], location: Location) -> void
+    def initialize(locals, location)
+      @locals = locals
+      @location = location
+    end
+
+    # def accept: (visitor: Visitor) -> void
+    def accept(visitor)
+      visitor.visit_scope(self)
+    end
+
+    # def child_nodes: () -> Array[nil | Node]
+    def child_nodes
+      [*locals]
+    end
+
+    # def deconstruct: () -> Array[nil | Node]
+    alias deconstruct child_nodes
+
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    def deconstruct_keys(keys)
+      { locals: locals, location: location }
+    end
+
+    # def ==(other: Object) -> bool
+    def ==(other)
+      other in Scope[locals: ^(locals)]
     end
   end
 
@@ -1342,6 +1383,9 @@ module YARP
     # Visit a Retry node
     alias visit_retry visit_child_nodes
 
+    # Visit a Scope node
+    alias visit_scope visit_child_nodes
+
     # Visit a SelfNode node
     alias visit_self_node visit_child_nodes
 
@@ -1458,8 +1502,8 @@ module YARP
     end
 
     # Create a new Program node
-    def Program(statements, location = Location.null)
-      Program.new(statements, location)
+    def Program(scope, statements, location = Location.null)
+      Program.new(scope, statements, location)
     end
 
     # Create a new RationalLiteral node
@@ -1475,6 +1519,11 @@ module YARP
     # Create a new Retry node
     def Retry(value, location = Location.null)
       Retry.new(value, location)
+    end
+
+    # Create a new Scope node
+    def Scope(locals, location = Location.null)
+      Scope.new(locals, location)
     end
 
     # Create a new SelfNode node

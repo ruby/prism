@@ -1244,12 +1244,13 @@ yp_node_alloc_operator_assignment(yp_parser_t *parser, yp_node_t *target, yp_tok
 
 // Allocate a new Program node.
 static yp_node_t *
-yp_node_alloc_program(yp_parser_t *parser, yp_node_t *statements) {
+yp_node_alloc_program(yp_parser_t *parser, yp_node_t *scope, yp_node_t *statements) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) {
     .type = YP_NODE_PROGRAM,
     .location = statements->location,
     .as.program = {
+      .scope = scope,
       .statements = statements,
     },
   };
@@ -1293,6 +1294,20 @@ yp_node_alloc_retry(yp_parser_t *parser, yp_token_t *value) {
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.retry = {
       .value = *value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new Scope node.
+static yp_node_t *
+yp_node_alloc_scope(yp_parser_t *parser) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_SCOPE,
+    .location = { .start = 0, .end = 0 },
+    .as.scope = {
+      .locals = yp_token_list_alloc(),
     },
   };
   return node;
@@ -1480,6 +1495,7 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_PROGRAM:
+      yp_node_dealloc(parser, node->as.program.scope);
       yp_node_dealloc(parser, node->as.program.statements);
       free(node);
       break;
@@ -1490,6 +1506,10 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_RETRY:
+      free(node);
+      break;
+    case YP_NODE_SCOPE:
+      yp_token_list_dealloc(node->as.scope.locals);
       free(node);
       break;
     case YP_NODE_SELF_NODE:
@@ -1994,7 +2014,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
   yp_lex_token(parser);
-  return yp_node_alloc_program(parser, parse_statements(parser, YP_TOKEN_EOF));
+
+  yp_node_t *scope = yp_node_alloc_scope(parser);
+  parser->current_scope = scope;
+
+  return yp_node_alloc_program(parser, scope, parse_statements(parser, YP_TOKEN_EOF));
 }
 
 /******************************************************************************/
@@ -2032,6 +2056,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     .current = {.start = source, .end = source},
     .lineno = 1,
     .error_handler = &default_error_handler,
+    .current_scope = NULL
   };
 }
 
