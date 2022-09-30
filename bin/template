@@ -60,6 +60,19 @@ class TokenParam < Struct.new(:name)
   def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
+# This represents a parameter to a node that is a list of tokens.
+class TokenListParam < Struct.new(:name)
+  def decl = "yp_token_list_t *#{name}"
+  def param = nil
+  def assign = "yp_token_list_alloc()"
+  def rbs_class = "Array[Token]"
+  def child_nodes = "*#{name}"
+
+  def start_location(params) = "0"
+  def end_location(params) = "0"
+  def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
+end
+
 # This class represents a node in the tree, configured by the config.yml file in
 # YAML format. It contains information about the name of the node, the various
 # child nodes it contains, and how to obtain the location of the node in the
@@ -87,6 +100,8 @@ class NodeType
           NodeListParam.new(name)
         when "token"
           TokenParam.new(name)
+        when "token[]"
+          TokenListParam.new(name)
         else
           raise
         end

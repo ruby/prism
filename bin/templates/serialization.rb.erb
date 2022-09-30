@@ -43,6 +43,8 @@
           when OptionalNodeParam then "load_node(source, io)"
           when NodeListParam then "io.read(8).unpack1(\"Q\").times.map { load_node(source, io) }"
           when TokenParam then "load_token(source, io)"
+          when TokenListParam then "io.read(8).unpack1(\"Q\").times.map { load_token(source, io) }"
+          else raise
           end
         }.join(", ") -%>, location)
         <%- end -%>

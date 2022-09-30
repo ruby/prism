@@ -166,7 +166,7 @@ class ParseTest < Test::Unit::TestCase
   private
 
   def assert_serializes(expected, source)
-    assert_equal Program(Statements([expected])), YARP.load(source, YARP.dump(source))
+    assert_equal Program(Scope([]), Statements([expected])), YARP.load(source, YARP.dump(source))
   end
 
   def assert_parses(expected, source)

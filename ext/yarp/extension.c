@@ -292,15 +292,18 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("OperatorAssignment")));
     }
     case YP_NODE_PROGRAM: {
-      VALUE argv[2];
+      VALUE argv[3];
+
+      // scope
+      argv[0] = node_new(parser, node->as.program.scope);
 
       // statements
-      argv[0] = node_new(parser, node->as.program.statements);
+      argv[1] = node_new(parser, node->as.program.statements);
 
       // location
-      argv[1] = location_new(&node->location);
+      argv[2] = location_new(&node->location);
 
-      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Program")));
+      return rb_class_new_instance(3, argv, rb_const_get_at(rb_cYARP, rb_intern("Program")));
     }
     case YP_NODE_RATIONAL_LITERAL: {
       VALUE argv[2];
@@ -334,6 +337,20 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[1] = location_new(&node->location);
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Retry")));
+    }
+    case YP_NODE_SCOPE: {
+      VALUE argv[2];
+
+      // locals
+      argv[0] = rb_ary_new();
+      for (size_t index = 0; index < node->as.scope.locals->size; index++) {
+        rb_ary_push(argv[0], token_new(parser, &node->as.scope.locals->tokens[index]));
+      }
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("Scope")));
     }
     case YP_NODE_SELF_NODE: {
       VALUE argv[2];
