@@ -17,6 +17,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define YP_SERIALIZE_MAJOR 0
+#define YP_SERIALIZE_MINOR 1
+#define YP_SERIALIZE_PATCH 0
+
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
 // a string, the first token that we return is a TOKEN_STRING_BEGIN token. After
