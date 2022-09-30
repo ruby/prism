@@ -20,6 +20,9 @@ jobs:
         ruby-version: head
         bundler-cache: true
 
+    - name: Run templating
+      run: bin/template
+
     - name: Run native tests
       run: make test
 
