@@ -79,6 +79,17 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
 
       return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("Binary")));
     }
+    case YP_NODE_CALL_NODE: {
+      VALUE argv[2];
+
+      // message
+      argv[0] = token_new(parser, &node->as.call_node.message);
+
+      // location
+      argv[1] = location_new(&node->location);
+
+      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("CallNode")));
+    }
     case YP_NODE_CHARACTER_LITERAL: {
       VALUE argv[2];
 
@@ -234,6 +245,23 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[1] = location_new(&node->location);
 
       return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("IntegerLiteral")));
+    }
+    case YP_NODE_LOCAL_VARIABLE_WRITE: {
+      VALUE argv[4];
+
+      // name
+      argv[0] = token_new(parser, &node->as.local_variable_write.name);
+
+      // operator
+      argv[1] = token_new(parser, &node->as.local_variable_write.operator);
+
+      // value
+      argv[2] = node_new(parser, node->as.local_variable_write.value);
+
+      // location
+      argv[3] = location_new(&node->location);
+
+      return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("LocalVariableWrite")));
     }
     case YP_NODE_NIL_NODE: {
       VALUE argv[2];
@@ -399,17 +427,6 @@ node_new(yp_parser_t *parser, yp_node_t *node) {
       argv[3] = location_new(&node->location);
 
       return rb_class_new_instance(4, argv, rb_const_get_at(rb_cYARP, rb_intern("UntilNode")));
-    }
-    case YP_NODE_VARIABLE_REFERENCE: {
-      VALUE argv[2];
-
-      // value
-      argv[0] = token_new(parser, &node->as.variable_reference.value);
-
-      // location
-      argv[1] = location_new(&node->location);
-
-      return rb_class_new_instance(2, argv, rb_const_get_at(rb_cYARP, rb_intern("VariableReference")));
     }
     case YP_NODE_WHILE_NODE: {
       VALUE argv[4];

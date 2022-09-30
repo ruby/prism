@@ -1006,6 +1006,20 @@ yp_node_alloc_binary(yp_parser_t *parser, yp_node_t *left, yp_token_t *operator,
   return node;
 }
 
+// Allocate a new CallNode node.
+static yp_node_t *
+yp_node_alloc_call_node(yp_parser_t *parser, yp_token_t *message) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_CALL_NODE,
+    .location = { .start = message->start - parser->start, .end = message->end - parser->start },
+    .as.call_node = {
+      .message = *message,
+    },
+  };
+  return node;
+}
+
 // Allocate a new CharacterLiteral node.
 static yp_node_t *
 yp_node_alloc_character_literal(yp_parser_t *parser, yp_token_t *value) {
@@ -1177,6 +1191,22 @@ yp_node_alloc_integer_literal(yp_parser_t *parser, yp_token_t *value) {
     .location = { .start = value->start - parser->start, .end = value->end - parser->start },
     .as.integer_literal = {
       .value = *value,
+    },
+  };
+  return node;
+}
+
+// Allocate a new LocalVariableWrite node.
+static yp_node_t *
+yp_node_alloc_local_variable_write(yp_parser_t *parser, yp_token_t *name, yp_token_t *operator, yp_node_t * value) {
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) {
+    .type = YP_NODE_LOCAL_VARIABLE_WRITE,
+    .location = { .start = name->start - parser->start, .end = value->location.end },
+    .as.local_variable_write = {
+      .name = *name,
+      .operator = *operator,
+      .value = value,
     },
   };
   return node;
@@ -1361,20 +1391,6 @@ yp_node_alloc_until_node(yp_parser_t *parser, yp_token_t *keyword, yp_node_t *pr
   return node;
 }
 
-// Allocate a new VariableReference node.
-static yp_node_t *
-yp_node_alloc_variable_reference(yp_parser_t *parser, yp_token_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) {
-    .type = YP_NODE_VARIABLE_REFERENCE,
-    .location = { .start = value->start - parser->start, .end = value->end - parser->start },
-    .as.variable_reference = {
-      .value = *value,
-    },
-  };
-  return node;
-}
-
 // Allocate a new WhileNode node.
 static yp_node_t *
 yp_node_alloc_while_node(yp_parser_t *parser, yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statement) {
@@ -1405,6 +1421,9 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_BINARY:
       yp_node_dealloc(parser, node->as.binary.left);
       yp_node_dealloc(parser, node->as.binary.right);
+      free(node);
+      break;
+    case YP_NODE_CALL_NODE:
       free(node);
       break;
     case YP_NODE_CHARACTER_LITERAL:
@@ -1446,6 +1465,10 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       free(node);
       break;
     case YP_NODE_INTEGER_LITERAL:
+      free(node);
+      break;
+    case YP_NODE_LOCAL_VARIABLE_WRITE:
+      yp_node_dealloc(parser, node->as.local_variable_write.value);
       free(node);
       break;
     case YP_NODE_NIL_NODE:
@@ -1493,9 +1516,6 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
     case YP_NODE_UNTIL_NODE:
       yp_node_dealloc(parser, node->as.until_node.predicate);
       yp_node_dealloc(parser, node->as.until_node.statement);
-      free(node);
-      break;
-    case YP_NODE_VARIABLE_REFERENCE:
       free(node);
       break;
     case YP_NODE_WHILE_NODE:
@@ -1730,7 +1750,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_global_variable_read(parser, &parser->previous);
       break;
     case YP_TOKEN_IDENTIFIER:
-      node = yp_node_alloc_variable_reference(parser, &parser->previous);
+      node = yp_node_alloc_call_node(parser, &parser->previous);
       break;
     case YP_TOKEN_IMAGINARY_NUMBER:
       node = yp_node_alloc_imaginary_literal(parser, &parser->previous);
@@ -1819,7 +1839,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_rational_literal(parser, &parser->previous);
       break;
     default:
-      fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
+      fprintf(stderr, "Could not understand token type %s in the prefix position\n",
+              yp_token_type_to_str(parser->previous.type));
       return NULL;
   }
 
@@ -1849,6 +1870,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_t *read = node;
 
             node = yp_node_alloc_global_variable_write(parser, &node->as.global_variable_read.name, &token, value);
+            yp_node_dealloc(parser, read);
+            break;
+          }
+          case YP_NODE_CALL_NODE: {
+            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+            yp_node_t *read = node;
+
+            node = yp_node_alloc_local_variable_write(parser, &node->as.call_node.message, &token, value);
             yp_node_dealloc(parser, read);
             break;
           }

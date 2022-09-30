@@ -6,156 +6,152 @@ class ParseTest < Test::Unit::TestCase
   include YARP::DSL
 
   test "binary" do
-    assert_equal Binary(expression("1"), PLUS("+"), expression("2")), expression("1 + 2")
+    assert_parses Binary(expression("1"), PLUS("+"), expression("2")), "1 + 2"
   end
 
   test "character literal" do
-    assert_equal CharacterLiteral(CHARACTER_LITERAL("?a")), expression("?a")
+    assert_parses CharacterLiteral(CHARACTER_LITERAL("?a")), "?a"
   end
 
   test "class variable read" do
-    assert_equal ClassVariableRead(CLASS_VARIABLE("@@abc")), expression("@@abc")
+    assert_parses ClassVariableRead(CLASS_VARIABLE("@@abc")), "@@abc"
   end
 
   test "class variable write" do
-    assert_equal ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), expression("@@abc = 1")
+    assert_parses ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), "@@abc = 1"
   end
 
   test "false" do
-    assert_equal FalseNode(KEYWORD_FALSE("false")), expression("false")
+    assert_parses FalseNode(KEYWORD_FALSE("false")), "false"
   end
 
   test "float" do
-    assert_equal FloatLiteral(FLOAT("1.0")), expression("1.0")
+    assert_parses FloatLiteral(FLOAT("1.0")), "1.0"
   end
 
   test "global variable read" do
-    assert_equal GlobalVariableRead(GLOBAL_VARIABLE("$abc")), expression("$abc")
+    assert_parses GlobalVariableRead(GLOBAL_VARIABLE("$abc")), "$abc"
   end
 
   test "global variable write" do
-    assert_equal GlobalVariableWrite(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), expression("$abc = 1")
+    assert_parses GlobalVariableWrite(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), "$abc = 1"
   end
 
   test "identifier" do
-    assert_equal VariableReference(IDENTIFIER("a")), expression("a")
+    assert_parses CallNode(IDENTIFIER("a")), "a"
   end
 
   test "if" do
-    assert_equal IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), expression("if true; 1; end")
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), "if true; 1; end"
   end
 
   test "if modifier" do
-    assert_equal IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), expression("1 if true")
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), "1 if true"
   end
 
   test "imaginary" do
-    assert_equal ImaginaryLiteral(IMAGINARY_NUMBER("1i")), expression("1i")
+    assert_parses ImaginaryLiteral(IMAGINARY_NUMBER("1i")), "1i"
   end
 
   test "instance variable read" do
-    assert_equal InstanceVariableRead(INSTANCE_VARIABLE("@abc")), expression("@abc")
+    assert_parses InstanceVariableRead(INSTANCE_VARIABLE("@abc")), "@abc"
   end
 
   test "instance variable write" do
-    assert_equal InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), expression("@abc = 1")
+    assert_parses InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), "@abc = 1"
   end
 
   test "nil" do
-    assert_equal NilNode(KEYWORD_NIL("nil")), expression("nil")
+    assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
   end
 
   test "rational" do
-    assert_equal RationalLiteral(RATIONAL_NUMBER("1r")), expression("1r")
+    assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
   end
 
   test "redo" do
-    assert_equal Redo(KEYWORD_REDO("redo")), expression("redo")
+    assert_parses Redo(KEYWORD_REDO("redo")), "redo"
   end
 
   test "retry" do
-    assert_equal Retry(KEYWORD_RETRY("retry")), expression("retry")
+    assert_parses Retry(KEYWORD_RETRY("retry")), "retry"
   end
 
   test "self" do
-    assert_equal SelfNode(KEYWORD_SELF("self")), expression("self")
+    assert_parses SelfNode(KEYWORD_SELF("self")), "self"
   end
 
   test "ternary" do
     expected = Ternary(
-      VariableReference(IDENTIFIER("a")),
+      CallNode(IDENTIFIER("a")),
       QUESTION_MARK("?"),
-      VariableReference(IDENTIFIER("b")),
+      CallNode(IDENTIFIER("b")),
       COLON(":"),
-      VariableReference(IDENTIFIER("c"))
+      CallNode(IDENTIFIER("c"))
     )
 
-    assert_equal expected, expression("a ? b : c")
+    assert_parses expected, "a ? b : c"
   end
 
   test "true" do
-    assert_equal TrueNode(KEYWORD_TRUE("true")), expression("true")
+    assert_parses TrueNode(KEYWORD_TRUE("true")), "true"
   end
 
   test "unless" do
-    assert_equal UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), expression("unless true; 1; end")
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), "unless true; 1; end"
   end
 
   test "unless modifier" do
-    assert_equal UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), expression("1 unless true")
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), "1 unless true"
   end
 
   test "until" do
-    assert_equal UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), expression("until true; 1; end")
+    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "until true; 1; end"
   end
 
   test "until modifier" do
-    assert_equal UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), expression("1 until true")
+    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "1 until true"
   end
 
   test "while" do
-    assert_equal WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), expression("while true; 1; end")
+    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "while true; 1; end"
   end
 
   test "while modifier" do
-    assert_equal WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), expression("1 while true")
+    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "1 while true"
   end
 
   test "TERM < FACTOR" do
-    actual = expression("1 + 2 * 3")
     expected = Binary(
       expression("1"),
       PLUS("+"),
       Binary(expression("2"), STAR("*"), expression("3"))
     )
 
-    assert_equal expected, actual
+    assert_parses expected, "1 + 2 * 3"
   end
 
   test "FACTOR < EXPONENT" do
-    actual = expression("1 * 2 ** 3")
     expected = Binary(
       expression("1"),
       STAR("*"),
       Binary(expression("2"), STAR_STAR("**"), expression("3"))
     )
 
-    assert_equal expected, actual
+    assert_parses expected, "1 * 2 ** 3"
   end
 
   test "FACTOR > TERM" do
-    actual = expression("1 * 2 + 3")
     expected = Binary(
       Binary(expression("1"), STAR("*"), expression("2")),
       PLUS("+"),
       expression("3")
     )
 
-    assert_equal expected, actual
+    assert_parses expected, "1 * 2 + 3"
   end
 
   test "MODIFIER left associativity" do
-    actual = expression("a if b if c")
     expected = IfNode(
       KEYWORD_IF("if"),
       expression("c"),
@@ -164,10 +160,19 @@ class ParseTest < Test::Unit::TestCase
       ])
     )
 
-    assert_equal expected, actual
+    assert_parses expected, "a if b if c"
   end
 
   private
+
+  def assert_serializes(expected, source)
+    assert_equal Program(Statements([expected])), YARP.load(source, YARP.dump(source))
+  end
+
+  def assert_parses(expected, source)
+    assert_equal expected, expression(source)
+    assert_serializes expected, source
+  end
 
   def expression(source)
     YARP.parse(source) => YARP::Program[statements: YARP::Statements[body: [node]]]
