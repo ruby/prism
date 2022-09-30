@@ -1,13 +1,12 @@
 CFLAGS := -Wall -Werror -fPIC -g -fvisibility=hidden
 LSAN_OPTIONS := suppressions=test-native/LSan.supp:print_suppressions=0
+ASAN_OPTIONS := detect_leak=1
 
 ifeq ($(shell uname), Darwin)
 SOEXT := dylib
-ASAN_OPTIONS :=
 LDFLAGS :=
 else
 SOEXT := so
-ASAN_OPTIONS := detect_leak=1
 LDFLAGS := -Wl,-rpath,build
 endif
 

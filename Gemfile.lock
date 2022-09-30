@@ -9,11 +9,9 @@ GEM
       power_assert
 
 PLATFORMS
-  arm64-darwin-21
-  x86_64-linux
+  ruby
 
 DEPENDENCIES
-  bundler
   rake
   rake-compiler
   test-unit
