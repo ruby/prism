@@ -645,6 +645,8 @@ Init_yarp(void) {
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
 
+  rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
+
   rb_define_singleton_method(rb_cYARP, "dump", dump, 1);
   rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
 

@@ -1,10 +1,6 @@
 #include "buffer.h"
 #include "yarp.h"
 
-#define YARP_SERIALIZE_MAJOR 0
-#define YARP_SERIALIZE_MINOR 1
-#define YARP_SERIALIZE_PATCH 0
-
 /******************************************************************************/
 /* BEGIN TEMPLATE                                                             */
 /******************************************************************************/
@@ -199,9 +195,9 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_buffer_append_str(buffer, "YARP", 4);
-  yp_buffer_append_u8(buffer, YARP_SERIALIZE_MAJOR);
-  yp_buffer_append_u8(buffer, YARP_SERIALIZE_MINOR);
-  yp_buffer_append_u8(buffer, YARP_SERIALIZE_PATCH);
+  yp_buffer_append_u8(buffer, YP_VERSION_MAJOR);
+  yp_buffer_append_u8(buffer, YP_VERSION_MINOR);
+  yp_buffer_append_u8(buffer, YP_VERSION_PATCH);
 
   serialize_node(parser, node, buffer);
   yp_buffer_append_str(buffer, "\0", 1);

@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "erb"
+require "fileutils"
 require "yaml"
 
 # This represents a parameter to a node that is itself a node. We pass them as
@@ -175,16 +176,6 @@ CMARKBEGIN
 /******************************************************************************/
 CMARKEND
 
-rbmark = %r{#{Regexp.escape(<<-RBMARKBEGIN)}.+#{Regexp.escape(<<-RBMARKEND)}}m
-  ##############################################################################
-  # BEGIN TEMPLATE                                                             #
-  ##############################################################################
-RBMARKBEGIN
-  ##############################################################################
-  # END TEMPLATE                                                               #
-  ##############################################################################
-RBMARKEND
-
 config = YAML.load_file(File.expand_path("../config.yml", __dir__))
 
 nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
@@ -193,8 +184,10 @@ tokens = config.fetch("tokens").map { |token| Token.new(token) }
 template("../ext/yarp/extension.c", nodes, cmark)
 template("../src/serialize.c", nodes, cmark)
 template("../src/yarp.c", nodes, cmark)
-template("../lib/yarp.rb", nodes, rbmark)
-template("../lib/yarp/serialization.rb", nodes, rbmark)
+
+FileUtils.mkdir_p(File.expand_path("../lib/yarp", __dir__))
+pure_template(template: "bin/templates/node.rb.erb", write_to: "lib/yarp/node.rb", locals: { nodes: nodes })
+pure_template(template: "bin/templates/serialize.rb.erb", write_to: "lib/yarp/serialize.rb", locals: { nodes: nodes })
 
 pure_template(template: "bin/templates/node.h.erb", write_to: "src/node.h", locals: { nodes: nodes })
 pure_template(template: "bin/templates/token_type.c.erb", write_to: "src/token_type.c", locals: { tokens: tokens })
