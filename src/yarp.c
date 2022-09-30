@@ -1687,6 +1687,23 @@ consume(yp_parser_t *parser, yp_token_type_t type, const char *message) {
 }
 
 static yp_node_t *
+parse_expression(yp_parser_t *parser, binding_power_t binding_power);
+
+static yp_node_t *
+parse_statements(yp_parser_t *parser, yp_token_type_t terminator) {
+  yp_node_t *statements = yp_node_alloc_statements(parser);
+  bool parsing = true;
+
+  while (parsing && parser->current.type != terminator) {
+    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
+    yp_node_list_append(parser, statements, statements->as.statements.body, node);
+    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) parsing = false;
+  }
+
+  return statements;
+}
+
+static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // If this is the end of the file, then return immediately.
   if (parser->current.type == YP_TOKEN_EOF) {
@@ -1727,6 +1744,20 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_FALSE:
       node = yp_node_alloc_false_node(parser, &parser->previous);
       break;
+    case YP_TOKEN_KEYWORD_IF: {
+      yp_token_t keyword = parser->previous;
+
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
+      accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
+
+      node = yp_node_alloc_if_node(parser, &keyword, predicate, statements);
+      break;
+    }
     case YP_TOKEN_KEYWORD_NIL:
       node = yp_node_alloc_nil_node(parser, &parser->previous);
       break;
@@ -1742,10 +1773,53 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_TRUE:
       node = yp_node_alloc_true_node(parser, &parser->previous);
       break;
+    case YP_TOKEN_KEYWORD_UNLESS: {
+      yp_token_t keyword = parser->previous;
+
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
+      accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `unless` statement.");
+
+      node = yp_node_alloc_unless_node(parser, &keyword, predicate, statements);
+      break;
+    }
+    case YP_TOKEN_KEYWORD_UNTIL: {
+      yp_token_t keyword = parser->previous;
+
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
+      accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
+
+      node = yp_node_alloc_until_node(parser, &keyword, predicate, statements);
+      break;
+    }
+    case YP_TOKEN_KEYWORD_WHILE: {
+      yp_token_t keyword = parser->previous;
+
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
+      accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
+
+      node = yp_node_alloc_while_node(parser, &keyword, predicate, statements);
+      break;
+    }
     case YP_TOKEN_RATIONAL_NUMBER:
       node = yp_node_alloc_rational_literal(parser, &parser->previous);
       break;
     default:
+      fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
       return NULL;
   }
 
@@ -1890,19 +1964,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-  yp_node_t *statements = yp_node_alloc_statements(parser);
   yp_lex_token(parser);
-
-  for (bool parsing = true; parsing;) {
-    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
-    yp_node_list_append(parser, statements, statements->as.statements.body, node);
-
-    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
-      parsing = false;
-    }
-  }
-
-  return yp_node_alloc_program(parser, statements);
+  return yp_node_alloc_program(parser, parse_statements(parser, YP_TOKEN_EOF));
 }
 
 /******************************************************************************/
