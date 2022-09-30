@@ -1687,6 +1687,25 @@ consume(yp_parser_t *parser, yp_token_type_t type, const char *message) {
 }
 
 static yp_node_t *
+parse_expression(yp_parser_t *parser, binding_power_t binding_power);
+
+static yp_node_t *
+parse_statements(yp_parser_t *parser) {
+  yp_node_t *statements = yp_node_alloc_statements(parser);
+
+  for (bool parsing = true; parsing;) {
+    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
+    yp_node_list_append(parser, statements, statements->as.statements.body, node);
+
+    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+      parsing = false;
+    }
+  }
+
+  return statements;
+}
+
+static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // If this is the end of the file, then return immediately.
   if (parser->current.type == YP_TOKEN_EOF) {
@@ -1890,19 +1909,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-  yp_node_t *statements = yp_node_alloc_statements(parser);
   yp_lex_token(parser);
-
-  for (bool parsing = true; parsing;) {
-    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
-    yp_node_list_append(parser, statements, statements->as.statements.body, node);
-
-    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
-      parsing = false;
-    }
-  }
-
-  return yp_node_alloc_program(parser, statements);
+  return yp_node_alloc_program(parser, parse_statements(parser));
 }
 
 /******************************************************************************/
