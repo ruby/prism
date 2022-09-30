@@ -404,25 +404,25 @@ nodes:
     child_nodes:
       - token keyword
     location: keyword
-  - name: UnlessModifier
+  - name: UnlessNode
     child_nodes:
-      - node statement
       - token keyword
       - node predicate
-    location: statement->predicate
-  - name: UntilModifier
-    child_nodes:
       - node statement
+    location: keyword->statement
+  - name: UntilNode
+    child_nodes:
       - token keyword
       - node predicate
-    location: statement->predicate
+      - node statement
+    location: keyword->statement
   - name: VariableReference
     child_nodes:
       - token value
     location: value
-  - name: WhileModifier
+  - name: WhileNode
     child_nodes:
-      - node statement
       - token keyword
       - node predicate
-    location: statement->predicate
+      - node statement
+    location: keyword->statement

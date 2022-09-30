@@ -145,26 +145,26 @@ serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       serialize_token(parser, &node->as.true_node.keyword, buffer);
       break;
     }
-    case YP_NODE_UNLESS_MODIFIER: {
-      serialize_node(parser, node->as.unless_modifier.statement, buffer);
-      serialize_token(parser, &node->as.unless_modifier.keyword, buffer);
-      serialize_node(parser, node->as.unless_modifier.predicate, buffer);
+    case YP_NODE_UNLESS_NODE: {
+      serialize_token(parser, &node->as.unless_node.keyword, buffer);
+      serialize_node(parser, node->as.unless_node.predicate, buffer);
+      serialize_node(parser, node->as.unless_node.statement, buffer);
       break;
     }
-    case YP_NODE_UNTIL_MODIFIER: {
-      serialize_node(parser, node->as.until_modifier.statement, buffer);
-      serialize_token(parser, &node->as.until_modifier.keyword, buffer);
-      serialize_node(parser, node->as.until_modifier.predicate, buffer);
+    case YP_NODE_UNTIL_NODE: {
+      serialize_token(parser, &node->as.until_node.keyword, buffer);
+      serialize_node(parser, node->as.until_node.predicate, buffer);
+      serialize_node(parser, node->as.until_node.statement, buffer);
       break;
     }
     case YP_NODE_VARIABLE_REFERENCE: {
       serialize_token(parser, &node->as.variable_reference.value, buffer);
       break;
     }
-    case YP_NODE_WHILE_MODIFIER: {
-      serialize_node(parser, node->as.while_modifier.statement, buffer);
-      serialize_token(parser, &node->as.while_modifier.keyword, buffer);
-      serialize_node(parser, node->as.while_modifier.predicate, buffer);
+    case YP_NODE_WHILE_NODE: {
+      serialize_token(parser, &node->as.while_node.keyword, buffer);
+      serialize_node(parser, node->as.while_node.predicate, buffer);
+      serialize_node(parser, node->as.while_node.statement, buffer);
       break;
     }
   }

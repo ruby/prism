@@ -94,15 +94,15 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "unless modifier" do
-    assert_equal UnlessModifier(expression("1"), KEYWORD_UNLESS("unless"), expression("true")), expression("1 unless true")
+    assert_equal UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), expression("1 unless true")
   end
 
   test "until modifier" do
-    assert_equal UntilModifier(expression("1"), KEYWORD_UNTIL("until"), expression("true")), expression("1 until true")
+    assert_equal UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), expression("1 until true")
   end
 
   test "while modifier" do
-    assert_equal WhileModifier(expression("1"), KEYWORD_WHILE("while"), expression("true")), expression("1 while true")
+    assert_equal WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), expression("1 while true")
   end
 
   test "TERM < FACTOR" do

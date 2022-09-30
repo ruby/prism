@@ -35,10 +35,10 @@ typedef enum {
   YP_NODE_STATEMENTS = 21,
   YP_NODE_TERNARY = 22,
   YP_NODE_TRUE_NODE = 23,
-  YP_NODE_UNLESS_MODIFIER = 24,
-  YP_NODE_UNTIL_MODIFIER = 25,
+  YP_NODE_UNLESS_NODE = 24,
+  YP_NODE_UNTIL_NODE = 25,
   YP_NODE_VARIABLE_REFERENCE = 26,
-  YP_NODE_WHILE_MODIFIER = 27,
+  YP_NODE_WHILE_NODE = 27,
 } yp_node_type_t;
 
 struct yp_node;
@@ -203,31 +203,31 @@ typedef struct yp_node {
       yp_token_t keyword;
     } true_node;
 
-    // UnlessModifier
+    // UnlessNode
     struct {
-      struct yp_node *statement;
       yp_token_t keyword;
       struct yp_node *predicate;
-    } unless_modifier;
+      struct yp_node *statement;
+    } unless_node;
 
-    // UntilModifier
+    // UntilNode
     struct {
-      struct yp_node *statement;
       yp_token_t keyword;
       struct yp_node *predicate;
-    } until_modifier;
+      struct yp_node *statement;
+    } until_node;
 
     // VariableReference
     struct {
       yp_token_t value;
     } variable_reference;
 
-    // WhileModifier
+    // WhileNode
     struct {
-      struct yp_node *statement;
       yp_token_t keyword;
       struct yp_node *predicate;
-    } while_modifier;
+      struct yp_node *statement;
+    } while_node;
   } as;
 } yp_node_t;
 
