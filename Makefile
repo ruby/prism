@@ -10,14 +10,14 @@ SOEXT := so
 LDFLAGS := -Wl,-rpath,build
 endif
 
-YARP_SOURCES := $(shell find src -name '*.c')
-YARP_HEADERS := $(shell find src -name '*.h')
-
-build/librubyparser.$(SOEXT): $(YARP_SOURCES) $(YARP_HEADERS) build Makefile
-	$(CC) $(CFLAGS) -shared -Isrc -o $@ $(YARP_SOURCES)
+build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build src/node.h
+	$(CC) $(CFLAGS) -shared -Isrc -o $@ $(shell find src -name '*.c')
 
 build:
 	mkdir -p build
+
+src/node.h: bin/template
+	bin/template
 
 test: test-native/run-one
 	LSAN_OPTIONS=$(LSAN_OPTIONS) ASAN_OPTIONS=$(ASAN_OPTIONS) test-native/run-all.sh
@@ -26,6 +26,6 @@ test-native/run-one: test-native/run-one.c build/librubyparser.$(SOEXT)
 	$(CC) $(CFLAGS) $(LDFLAGS) -fsanitize=address -Isrc -Lbuild -lrubyparser $< -o $@
 
 clean:
-	rm -f build/librubyparser.$(SOEXT) test-native/run-one
+	rm -f build/librubyparser.$(SOEXT) src/{node.h,token_type.{c,h}} test-native/run-one
 
 .PHONY: test clean
