@@ -182,7 +182,6 @@ nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
 tokens = config.fetch("tokens").map { |token| Token.new(token) }
 
 template("../ext/yarp/extension.c", nodes, cmark)
-template("../src/serialize.c", nodes, cmark)
 template("../src/yarp.c", nodes, cmark)
 
 FileUtils.mkdir_p(File.expand_path("../lib/yarp", __dir__))
@@ -190,5 +189,6 @@ pure_template(template: "bin/templates/node.rb.erb", write_to: "lib/yarp/node.rb
 pure_template(template: "bin/templates/serialize.rb.erb", write_to: "lib/yarp/serialize.rb", locals: { nodes: nodes })
 
 pure_template(template: "bin/templates/node.h.erb", write_to: "src/node.h", locals: { nodes: nodes })
+pure_template(template: "bin/templates/serialize.c.erb", write_to: "src/serialize.c", locals: { nodes: nodes })
 pure_template(template: "bin/templates/token_type.c.erb", write_to: "src/token_type.c", locals: { tokens: tokens })
 pure_template(template: "bin/templates/token_type.h.erb", write_to: "src/token_type.h", locals: { tokens: tokens })

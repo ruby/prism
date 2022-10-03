@@ -14,5 +14,6 @@ test.rb
 test-native/run-one
 *.dSYM
 
+/src/serialize.c
 /lib/yarp/node.rb
 /lib/yarp/serialize.rb

@@ -2098,3 +2098,14 @@ yp_node_t *
 yp_parse(yp_parser_t *parser) {
   return parse_program(parser);
 }
+
+void
+yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
+  yp_buffer_append_str(buffer, "YARP", 4);
+  yp_buffer_append_u8(buffer, YP_VERSION_MAJOR);
+  yp_buffer_append_u8(buffer, YP_VERSION_MINOR);
+  yp_buffer_append_u8(buffer, YP_VERSION_PATCH);
+
+  yp_serialize_node(parser, node, buffer);
+  yp_buffer_append_str(buffer, "\0", 1);
+}

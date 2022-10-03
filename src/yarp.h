@@ -113,6 +113,8 @@ struct yp_parser {
   yp_node_t *current_scope;    // the current local scope
 };
 
+#include "serialize.h"
+
 // Initialize a parser with the given start and end pointers.
 __attribute__ ((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, off_t size);

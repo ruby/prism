@@ -26,6 +26,6 @@ test-native/run-one: test-native/run-one.c build/librubyparser.$(SOEXT)
 	$(CC) $(CFLAGS) $(LDFLAGS) -fsanitize=address -Isrc -Lbuild -lrubyparser $< -o $@
 
 clean:
-	rm -f build/librubyparser.$(SOEXT) src/{node.h,token_type.{c,h}} test-native/run-one
+	rm -f build/librubyparser.$(SOEXT) src/{node.h,serialize.c,token_type.{c,h}} test-native/run-one
 
 .PHONY: test clean
