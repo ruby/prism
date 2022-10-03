@@ -166,7 +166,11 @@ def pure_template(template:, write_to:, locals:)
   end
 end
 
-cmark = %r{#{Regexp.escape(<<-CMARKBEGIN)}.+#{Regexp.escape(<<-CMARKEND)}}m
+config = YAML.load_file(File.expand_path("../config.yml", __dir__))
+nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
+tokens = config.fetch("tokens").map { |token| Token.new(token) }
+
+template("../src/yarp.c", nodes, %r{#{Regexp.escape(<<-CMARKBEGIN)}.+#{Regexp.escape(<<-CMARKEND)}}m)
 /******************************************************************************/
 /* BEGIN TEMPLATE                                                             */
 /******************************************************************************/
@@ -176,17 +180,11 @@ CMARKBEGIN
 /******************************************************************************/
 CMARKEND
 
-config = YAML.load_file(File.expand_path("../config.yml", __dir__))
-
-nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
-tokens = config.fetch("tokens").map { |token| Token.new(token) }
-
-template("../ext/yarp/extension.c", nodes, cmark)
-template("../src/yarp.c", nodes, cmark)
-
 FileUtils.mkdir_p(File.expand_path("../lib/yarp", __dir__))
 pure_template(template: "bin/templates/node.rb.erb", write_to: "lib/yarp/node.rb", locals: { nodes: nodes })
 pure_template(template: "bin/templates/serialize.rb.erb", write_to: "lib/yarp/serialize.rb", locals: { nodes: nodes })
+
+pure_template(template: "bin/templates/node.c.erb", write_to: "ext/yarp/node.c", locals: { nodes: nodes })
 
 pure_template(template: "bin/templates/node.h.erb", write_to: "src/node.h", locals: { nodes: nodes })
 pure_template(template: "bin/templates/serialize.c.erb", write_to: "src/serialize.c", locals: { nodes: nodes })
