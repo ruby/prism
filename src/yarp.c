@@ -1277,6 +1277,15 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_RATIONAL_NUMBER:
       node = yp_node_alloc_rational_literal(parser, &parser->previous);
       break;
+    case YP_TOKEN_BANG:
+    case YP_TOKEN_MINUS:
+    case YP_TOKEN_PLUS:
+    case YP_TOKEN_TILDE: {
+      yp_token_t operator = parser->previous;
+      yp_node_t *statement = parse_expression(parser, binding_powers[parser->previous.type].right);
+      node = yp_node_alloc_unary_node(parser, &operator, statement);
+      break;
+    }
     default:
       fprintf(stderr, "Could not understand token type %s in the prefix position\n",
               yp_token_type_to_str(parser->previous.type));

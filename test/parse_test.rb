@@ -147,6 +147,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses TrueNode(KEYWORD_TRUE("true")), "true"
   end
 
+  test "unary !" do
+    assert_parses UnaryNode(BANG("!"), expression("1")), "!1"
+  end
+
+  test "unary -" do
+    assert_parses UnaryNode(MINUS("-"), expression("1")), "-1"
+  end
+
+  test "unary +" do
+    assert_parses UnaryNode(PLUS("+"), expression("1")), "+1"
+  end
+
+  test "unary ~" do
+    assert_parses UnaryNode(TILDE("~"), expression("1")), "~1"
+  end
+
   test "unless" do
     assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), "unless true; 1; end"
   end
