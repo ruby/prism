@@ -286,6 +286,10 @@ nodes:
 
           left and right
           ~~~~~~~~~~~~~~
+  - name: ArgumentsNode
+    child_nodes:
+      - node[] arguments
+    location: arguments
   - name: Assignment
     child_nodes:
       - node target
@@ -300,8 +304,10 @@ nodes:
     location: left->right
   - name: CallNode
     child_nodes:
+      - node?message receiver
       - token message
-    location: message
+      - node arguments
+    location: receiver->arguments
   - name: CharacterLiteral
     child_nodes:
       - token value

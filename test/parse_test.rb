@@ -46,7 +46,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "identifier" do
-    assert_parses CallNode(IDENTIFIER("a")), "a"
+    assert_parses CallNode(nil, IDENTIFIER("a"), ArgumentsNode([])), "a"
   end
 
   test "if" do
@@ -67,10 +67,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "instance variable write" do
     assert_parses InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), "@abc = 1"
-  end
-
-  test "local variable read" do
-    assert_parses LocalVariableRead(IDENTIFIER("abc")), "abc = 1; abc"
   end
 
   test "nil" do
@@ -133,11 +129,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "ternary" do
     expected = Ternary(
-      CallNode(IDENTIFIER("a")),
+      CallNode(nil, IDENTIFIER("a"), ArgumentsNode([])),
       QUESTION_MARK("?"),
-      CallNode(IDENTIFIER("b")),
+      CallNode(nil, IDENTIFIER("b"), ArgumentsNode([])),
       COLON(":"),
-      CallNode(IDENTIFIER("c"))
+      CallNode(nil, IDENTIFIER("c"), ArgumentsNode([]))
     )
 
     assert_parses expected, "a ? b : c"
