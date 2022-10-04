@@ -122,15 +122,16 @@ class NodeType
   end
 end
 
+# This represents a token in the lexer. They are configured through the
+# config.yml file for now, but this will probably change as we transition to
+# storing semantic strings instead of the lexer tokens.
 class Token
-  include Comparable
-
   attr_reader :name, :value, :comment
 
   def initialize(config)
-    @name = config.fetch('name')
-    @value = config['value']
-    @comment = config.fetch('comment')
+    @name = config.fetch("name")
+    @value = config["value"]
+    @comment = config.fetch("comment")
   end
 
   def declaration
@@ -138,27 +139,18 @@ class Token
     output << "YP_TOKEN_#{name}"
     output << " = #{value}" if value
     output << ", // #{comment}"
-    output.join(' ')
+    output.join(" ")
   end
 end
 
-ROOT_DIR = File.expand_path('..', __dir__)
-
-def template(name, nodes, mark)
-  filepath = File.expand_path(name, __dir__)
-  contents = File.read(filepath).gsub(mark, ERB.new(File.read(File.expand_path("templates/#{File.basename(name)}.erb", __dir__)), trim_mode: "-").result_with_hash(nodes: nodes))
-  File.write(filepath, contents)
-
-  if [".c", ".h"].include?(File.extname(filepath))
-    system("clang-format -i #{filepath}")
-  end
-end
-
-def pure_template(template:, write_to:, locals:)
-  template = File.join(ROOT_DIR, template)
-  write_to = File.join(ROOT_DIR, write_to)
+# This templates out a file using ERB with the given locals. The locals are
+# derived from the config.yml file.
+def template(name, locals)
+  template = File.expand_path("../bin/templates/#{name}.erb", __dir__)
+  write_to = File.expand_path("../#{name}", __dir__)
 
   contents = ERB.new(File.read(template), trim_mode: "-").result_with_hash(locals)
+  FileUtils.mkdir_p(File.dirname(write_to))
   File.write(write_to, contents)
 
   if [".c", ".h"].include?(File.extname(write_to))
@@ -166,29 +158,17 @@ def pure_template(template:, write_to:, locals:)
   end
 end
 
-cmark = %r{#{Regexp.escape(<<-CMARKBEGIN)}.+#{Regexp.escape(<<-CMARKEND)}}m
-/******************************************************************************/
-/* BEGIN TEMPLATE                                                             */
-/******************************************************************************/
-CMARKBEGIN
-/******************************************************************************/
-/* END TEMPLATE                                                               */
-/******************************************************************************/
-CMARKEND
-
 config = YAML.load_file(File.expand_path("../config.yml", __dir__))
+locals = {
+  nodes: config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name),
+  tokens: config.fetch("tokens").map { |token| Token.new(token) }
+}
 
-nodes = config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name)
-tokens = config.fetch("tokens").map { |token| Token.new(token) }
-
-template("../ext/yarp/extension.c", nodes, cmark)
-template("../src/serialize.c", nodes, cmark)
-template("../src/yarp.c", nodes, cmark)
-
-FileUtils.mkdir_p(File.expand_path("../lib/yarp", __dir__))
-pure_template(template: "bin/templates/node.rb.erb", write_to: "lib/yarp/node.rb", locals: { nodes: nodes })
-pure_template(template: "bin/templates/serialize.rb.erb", write_to: "lib/yarp/serialize.rb", locals: { nodes: nodes })
-
-pure_template(template: "bin/templates/node.h.erb", write_to: "src/node.h", locals: { nodes: nodes })
-pure_template(template: "bin/templates/token_type.c.erb", write_to: "src/token_type.c", locals: { tokens: tokens })
-pure_template(template: "bin/templates/token_type.h.erb", write_to: "src/token_type.h", locals: { tokens: tokens })
+template("ext/yarp/node.c", locals)
+template("lib/yarp/node.rb", locals)
+template("lib/yarp/serialize.rb", locals)
+template("src/ast.h", locals)
+template("src/node.c", locals)
+template("src/node.h", locals)
+template("src/serialize.c", locals)
+template("src/token_type.c", locals)
