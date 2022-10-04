@@ -1,5 +1,4 @@
-#include <ruby.h>
-#include <yarp.h>
+#include "extension.h"
 
 extern VALUE rb_cYARP;
 extern VALUE rb_cYARPToken;
@@ -24,8 +23,8 @@ token_type(yp_token_t *token) {
   return ID2SYM(rb_intern(yp_token_type_to_str(token->type)));
 }
 
-static VALUE
-token_new(yp_parser_t *parser, yp_token_t *token) {
+VALUE
+yp_token_new(yp_parser_t *parser, yp_token_t *token) {
   VALUE argv[] = {
     token_type(token),
     rb_str_new(token->start, token->end - token->start),
@@ -58,11 +57,11 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node) {
         rb_ary_push(argv[<%= index %>], yp_node_new(parser, node->as.<%= node.human %>.<%= param.name %>->nodes[index]));
       }
       <%- when TokenParam -%>
-      argv[<%= index %>] = token_new(parser, &node->as.<%= node.human %>.<%= param.name %>);
+      argv[<%= index %>] = yp_token_new(parser, &node->as.<%= node.human %>.<%= param.name %>);
       <%- when TokenListParam -%>
       argv[<%= index %>] = rb_ary_new();
       for (size_t index = 0; index < node->as.<%= node.human %>.<%= param.name %>->size; index++) {
-        rb_ary_push(argv[<%= index %>], token_new(parser, &node->as.<%= node.human %>.<%= param.name %>->tokens[index]));
+        rb_ary_push(argv[<%= index %>], yp_token_new(parser, &node->as.<%= node.human %>.<%= param.name %>->tokens[index]));
       }
       <%- else -%>
       <%- raise -%>

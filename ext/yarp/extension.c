@@ -1,6 +1,4 @@
-#include <ruby.h>
-#include <yarp.h>
-#include "node.c"
+#include "extension.h"
 
 VALUE rb_cYARP;
 VALUE rb_cYARPToken;
@@ -107,7 +105,7 @@ lex_source(source_t *source) {
 
   VALUE ary = rb_ary_new();
   for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
-    rb_ary_push(ary, token_new(&parser, &parser.current));
+    rb_ary_push(ary, yp_token_new(&parser, &parser.current));
   }
 
   return ary;
