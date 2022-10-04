@@ -5,6 +5,14 @@ require "test_helper"
 class ParseTest < Test::Unit::TestCase
   include YARP::DSL
 
+  test "and keyword" do
+    assert_parses AndNode(expression("1"), KEYWORD_AND("and"), expression("2")), "1 and 2"
+  end
+
+  test "and operator" do
+    assert_parses AndNode(expression("1"), AMPERSAND_AMPERSAND("&&"), expression("2")), "1 && 2"
+  end
+
   test "binary" do
     assert_parses Binary(expression("1"), PLUS("+"), expression("2")), "1 + 2"
   end
@@ -67,6 +75,14 @@ class ParseTest < Test::Unit::TestCase
 
   test "nil" do
     assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
+  end
+
+  test "or keyword" do
+    assert_parses OrNode(expression("1"), KEYWORD_OR("or"), expression("2")), "1 or 2"
+  end
+
+  test "or operator" do
+    assert_parses OrNode(expression("1"), PIPE_PIPE("||"), expression("2")), "1 || 2"
   end
 
   test "post execution" do
