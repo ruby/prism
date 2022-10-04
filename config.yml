@@ -275,6 +275,17 @@ tokens:
   - name: WORDS_SEP
     comment: "a separator between words in a list"
 nodes:
+  - name: AndNode
+    child_nodes:
+      - node left
+      - token operator
+      - node right
+    location: left->right
+    comment: |
+      Represents the use of the `&&` operator or the `and` keyword.
+
+          left and right
+               ~~~
   - name: Assignment
     child_nodes:
       - node target
@@ -367,6 +378,17 @@ nodes:
       - token operator
       - node value
     location: target->value
+  - name: OrNode
+    child_nodes:
+      - node left
+      - token operator
+      - node right
+    location: left->right
+    comment: |
+      Represents the use of the `||` operator or the `or` keyword.
+
+          left or right
+               ~~
   - name: PostExecutionNode
     child_nodes:
       - token keyword

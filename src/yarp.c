@@ -1358,8 +1358,18 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         node = yp_node_alloc_operator_assignment(parser, node, &token, right);
         break;
       }
-      case YP_TOKEN_PIPE_PIPE:
       case YP_TOKEN_AMPERSAND_AMPERSAND:
+      case YP_TOKEN_KEYWORD_AND: {
+        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
+        node = yp_node_alloc_and_node(parser, node, &token, right);
+        break;
+      }
+      case YP_TOKEN_KEYWORD_OR:
+      case YP_TOKEN_PIPE_PIPE: {
+        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
+        node = yp_node_alloc_or_node(parser, node, &token, right);
+        break;
+      }
       case YP_TOKEN_BANG_EQUAL:
       case YP_TOKEN_BANG_TILDE:
       case YP_TOKEN_EQUAL_EQUAL:
