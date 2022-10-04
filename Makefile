@@ -26,6 +26,6 @@ test-native/run-one: test-native/run-one.c build/librubyparser.$(SOEXT)
 	$(CC) $(CFLAGS) $(LDFLAGS) -fsanitize=address -Isrc -Lbuild -lrubyparser $< -o $@
 
 clean:
-	rm -f build/librubyparser.$(SOEXT) ext/yarp/node.c src/{ast.h,node.{c,h},serialize.c,token_type.c} test-native/run-one
+	rm -f build/librubyparser.$(SOEXT) ext/yarp/node.c lib/yarp/{node,serialize}.rb src/{ast.h,node.{c,h},serialize.c,token_type.c} test-native/run-one
 
 .PHONY: test clean

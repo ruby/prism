@@ -122,6 +122,9 @@ class NodeType
   end
 end
 
+# This represents a token in the lexer. They are configured through the
+# config.yml file for now, but this will probably change as we transition to
+# storing semantic strings instead of the lexer tokens.
 class Token
   attr_reader :name, :value, :comment
 
@@ -140,6 +143,8 @@ class Token
   end
 end
 
+# This templates out a file using ERB with the given locals. The locals are
+# derived from the config.yml file.
 def template(name, locals)
   template = File.expand_path("../bin/templates/#{name}.erb", __dir__)
   write_to = File.expand_path("../#{name}", __dir__)
