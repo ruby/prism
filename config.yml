@@ -487,6 +487,16 @@ nodes:
     child_nodes:
       - token keyword
     location: keyword
+  - name: UnaryNode
+    child_nodes:
+      - token operator
+      - node statement
+    location: operator->statement
+    comment: |
+      Represents a unary operator on a statement.
+
+          ~statement
+          ~~~~~~~~~~
   - name: UnlessNode
     child_nodes:
       - token keyword
