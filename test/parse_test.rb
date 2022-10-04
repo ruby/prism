@@ -85,6 +85,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses OrNode(expression("1"), PIPE_PIPE("||"), expression("2")), "1 || 2"
   end
 
+  test "operator and assignment" do
+    assert_parses OperatorAndAssignmentNode(expression("a"), AMPERSAND_AMPERSAND_EQUAL("&&="), expression("b")), "a &&= b"
+  end
+
+  test "operator or assignment" do
+    assert_parses OperatorOrAssignmentNode(expression("a"), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
+  end
+
+  test "operator assignment" do
+    assert_parses OperatorAssignmentNode(expression("a"), PLUS_EQUAL("+="), expression("b")), "a += b"
+  end
+
   test "post execution" do
     assert_parses PostExecutionNode(KEYWORD_END_UPCASE("END"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "END { 1 }"
   end
