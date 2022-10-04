@@ -1230,6 +1230,26 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_while_node(parser, &keyword, predicate, statements);
       break;
     }
+    case YP_TOKEN_PERCENT_LOWER_I: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *symbol_list = yp_node_alloc_symbol_list_node(parser, &opening, &opening);
+
+      while (parser->current.type != YP_TOKEN_STRING_END) {
+        if (symbol_list->as.symbol_list_node.symbols->size == 0) {
+          accept(parser, YP_TOKEN_WORDS_SEP);
+        } else {
+          consume(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
+        }
+        consume(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
+        yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols, yp_node_alloc_symbol_node(parser, &parser->previous));
+      }
+
+      consume(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
+      symbol_list->as.symbol_list_node.closing = parser->previous;
+
+      node = symbol_list;
+      break;
+    }
     case YP_TOKEN_RATIONAL_NUMBER:
       node = yp_node_alloc_rational_literal(parser, &parser->previous);
       break;

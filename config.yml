@@ -407,6 +407,16 @@ nodes:
     child_nodes:
       - node[] body
     location: body
+  - name: SymbolNode
+    child_nodes:
+      - token value
+    location: value
+  - name: SymbolListNode
+    child_nodes:
+      - token opening
+      - node[] symbols
+      - token closing
+    location: opening->closing
   - name: Ternary
     child_nodes:
       - node predicate
