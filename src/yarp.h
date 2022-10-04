@@ -1,13 +1,10 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include "ast.h"
 #include "buffer.h"
-#include "node.h"
-#include "token_type.h"
-#include "location.h"
 #include "parser.h"
-#include "serialize.h"
-#include "token.h"
+#include "node.h"
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -22,6 +19,9 @@
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 1
 #define YP_VERSION_PATCH 0
+
+void
+yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 // Initialize a parser with the given start and end pointers.
 __attribute__ ((__visibility__("default"))) extern void
@@ -42,5 +42,11 @@ yp_node_dealloc(yp_parser_t *parser, struct yp_node *node);
 // Serialize the AST represented by the given node to the given buffer.
 __attribute__ ((__visibility__("default"))) extern void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
+
+__attribute__((__visibility__("default"))) extern const char *
+yp_token_type_to_str(yp_token_type_t token_type);
+
+__attribute__((__visibility__("default"))) extern yp_token_type_t
+yp_token_type_from_str(const char *str);
 
 #endif

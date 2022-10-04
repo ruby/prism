@@ -3,9 +3,10 @@
 /* modified manually.                                                         */
 /******************************************************************************/
 
-#include "token_type.h"
+#include "ast.h"
+#include <string.h>
 
-const char *
+__attribute__((__visibility__("default"))) const char *
 yp_token_type_to_str(yp_token_type_t token_type)
 {
   switch (token_type) {
@@ -19,7 +20,7 @@ yp_token_type_to_str(yp_token_type_t token_type)
   return "\0";
 }
 
-yp_token_type_t
+__attribute__((__visibility__("default"))) yp_token_type_t
 yp_token_type_from_str(const char *str)
 {
 <%- tokens.sort_by { |token| [*token.name.split("_"), *5.times.map { "ZZZ" }] }.each do |token| -%>

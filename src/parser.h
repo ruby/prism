@@ -1,8 +1,8 @@
 #ifndef YARP_PARSER_H
 #define YARP_PARSER_H
 
-#include "node.h"
-#include "token.h"
+#include "ast.h"
+#include <stdbool.h>
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
