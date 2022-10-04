@@ -1156,6 +1156,30 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_INTEGER:
       node = yp_node_alloc_integer_literal(parser, &parser->previous);
       break;
+    case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
+      yp_token_t keyword = parser->previous;
+      consume(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
+      yp_token_t opening = parser->previous;
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_BRACE_RIGHT);
+      consume(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
+      yp_token_t closing = parser->previous;
+
+      node = yp_node_alloc_pre_execution_node(parser, &keyword, &opening, statements, &closing);
+      break;
+    }
+    case YP_TOKEN_KEYWORD_END_UPCASE: {
+      yp_token_t keyword = parser->previous;
+      consume(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
+      yp_token_t opening = parser->previous;
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_BRACE_RIGHT);
+      consume(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
+      yp_token_t closing = parser->previous;
+
+      node = yp_node_alloc_post_execution_node(parser, &keyword, &opening, statements, &closing);
+      break;
+    }
     case YP_TOKEN_KEYWORD_FALSE:
       node = yp_node_alloc_false_node(parser, &parser->previous);
       break;

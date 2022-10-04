@@ -69,6 +69,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
   end
 
+  test "post execution" do
+    assert_parses PostExecutionNode(KEYWORD_END_UPCASE("END"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "END { 1 }"
+  end
+
+  test "pre execution" do
+    assert_parses PreExecutionNode(KEYWORD_BEGIN_UPCASE("BEGIN"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "BEGIN { 1 }"
+  end
+
   test "rational" do
     assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
   end
