@@ -382,11 +382,11 @@ nodes:
   #     - token operator
   #     - node?operator right
   #   location: left->right
-  - name: Redo
+  - name: RedoNode
     child_nodes:
       - token value
     location: value
-  - name: Retry
+  - name: RetryNode
     child_nodes:
       - token value
     location: value
