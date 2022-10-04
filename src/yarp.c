@@ -1341,7 +1341,16 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         }
         break;
       }
-      case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL:
+      case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
+        yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+        node = yp_node_alloc_operator_and_assignment_node(parser, node, &token, value);
+        break;
+      }
+      case YP_TOKEN_PIPE_PIPE_EQUAL: {
+        yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+        node = yp_node_alloc_operator_or_assignment_node(parser, node, &token, value);
+        break;
+      }
       case YP_TOKEN_AMPERSAND_EQUAL:
       case YP_TOKEN_CARET_EQUAL:
       case YP_TOKEN_GREATER_GREATER_EQUAL:
@@ -1349,13 +1358,12 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_MINUS_EQUAL:
       case YP_TOKEN_PERCENT_EQUAL:
       case YP_TOKEN_PIPE_EQUAL:
-      case YP_TOKEN_PIPE_PIPE_EQUAL:
       case YP_TOKEN_PLUS_EQUAL:
       case YP_TOKEN_SLASH_EQUAL:
       case YP_TOKEN_STAR_EQUAL:
       case YP_TOKEN_STAR_STAR_EQUAL: {
-        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_alloc_operator_assignment(parser, node, &token, right);
+        yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+        node = yp_node_alloc_operator_assignment_node(parser, node, &token, value);
         break;
       }
       case YP_TOKEN_AMPERSAND_AMPERSAND:

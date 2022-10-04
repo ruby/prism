@@ -285,7 +285,7 @@ nodes:
       Represents the use of the `&&` operator or the `and` keyword.
 
           left and right
-               ~~~
+          ~~~~~~~~~~~~~~
   - name: Assignment
     child_nodes:
       - node target
@@ -372,12 +372,34 @@ nodes:
     child_nodes:
       - token keyword
     location: keyword
-  - name: OperatorAssignment
+  - name: OperatorAssignmentNode
     child_nodes:
       - node target
       - token operator
       - node value
     location: target->value
+  - name: OperatorAndAssignmentNode
+    child_nodes:
+      - node target
+      - token operator
+      - node value
+    location: target->value
+    comment: |
+      Represents the use of the `&&=` operator for assignment.
+
+          target &&= value
+          ~~~~~~~~~~~~~~~~
+  - name: OperatorOrAssignmentNode
+    child_nodes:
+      - node target
+      - token operator
+      - node value
+    location: target->value
+    comment: |
+      Represents the use of the `||=` operator for assignment.
+
+          target ||= value
+          ~~~~~~~~~~~~~~~~
   - name: OrNode
     child_nodes:
       - node left
@@ -388,7 +410,7 @@ nodes:
       Represents the use of the `||` operator or the `or` keyword.
 
           left or right
-               ~~
+          ~~~~~~~~~~~~~
   - name: PostExecutionNode
     child_nodes:
       - token keyword
