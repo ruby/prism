@@ -85,6 +85,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
   end
 
+  test "symbol list" do
+    expected = SymbolListNode(
+      PERCENT_LOWER_I("%i["),
+      [SymbolNode(STRING_CONTENT("a")), SymbolNode(STRING_CONTENT("b")), SymbolNode(STRING_CONTENT("c"))],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%i[a b c]"
+  end
+
   test "ternary" do
     expected = Ternary(
       CallNode(IDENTIFIER("a")),
