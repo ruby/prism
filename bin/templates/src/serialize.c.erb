@@ -30,7 +30,11 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       <%- when NodeParam -%>
       yp_serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>, buffer);
       <%- when OptionalNodeParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %> != NULL) yp_serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>, buffer);
+      if (node->as.<%= node.human %>.<%= param.name %> == NULL) {
+        yp_buffer_append_u8(buffer, 0);
+      } else {
+        yp_serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>, buffer);
+      }
       <%- when NodeListParam -%>
       uint64_t size = node->as.<%= node.human %>.<%= param.name %>->size;
       yp_buffer_append_u64(buffer, size);

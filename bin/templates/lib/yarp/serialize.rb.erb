@@ -42,6 +42,13 @@ module YARP
         YARP::Token.new(type, source[start_offset...end_offset], location)
       end
 
+      def load_optional_node
+        if io.read(1).unpack1("C") != 0
+          io.pos -= 1
+          load_node
+        end
+      end
+
       def load_node
         type, _length, start_offset, end_offset = io.read(25).unpack("CQQQ")
         location = YARP::Location.new(start_offset, end_offset)
@@ -51,7 +58,7 @@ module YARP
         when <%= index %> then YARP::<%= node.name %>.new(<%= node.params.map { |param|
           case param
           when NodeParam then "load_node"
-          when OptionalNodeParam then "load_node"
+          when OptionalNodeParam then "load_optional_node"
           when NodeListParam then "io.read(8).unpack1(\"Q\").times.map { load_node }"
           when TokenParam then "load_token"
           when TokenListParam then "io.read(8).unpack1(\"Q\").times.map { load_token }"
