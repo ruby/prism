@@ -367,6 +367,20 @@ nodes:
       - token operator
       - node value
     location: target->value
+  - name: PostExecutionNode
+    child_nodes:
+      - token keyword
+      - token opening
+      - node statements
+      - token closing
+    location: keyword->closing
+  - name: PreExecutionNode
+    child_nodes:
+      - token keyword
+      - token opening
+      - node statements
+      - token closing
+    location: keyword->closing
   - name: Program
     child_nodes:
       - node scope
