@@ -74,11 +74,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "redo" do
-    assert_parses Redo(KEYWORD_REDO("redo")), "redo"
+    assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
   end
 
   test "retry" do
-    assert_parses Retry(KEYWORD_RETRY("retry")), "retry"
+    assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
   end
 
   test "self" do

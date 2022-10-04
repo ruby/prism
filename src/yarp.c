@@ -1177,10 +1177,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_alloc_nil_node(parser, &parser->previous);
       break;
     case YP_TOKEN_KEYWORD_REDO:
-      node = yp_node_alloc_redo(parser, &parser->previous);
+      node = yp_node_alloc_redo_node(parser, &parser->previous);
       break;
     case YP_TOKEN_KEYWORD_RETRY:
-      node = yp_node_alloc_retry(parser, &parser->previous);
+      node = yp_node_alloc_retry_node(parser, &parser->previous);
       break;
     case YP_TOKEN_KEYWORD_SELF:
       node = yp_node_alloc_self_node(parser, &parser->previous);
