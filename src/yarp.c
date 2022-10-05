@@ -1407,8 +1407,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_SLASH:
       case YP_TOKEN_STAR:
       case YP_TOKEN_STAR_STAR: {
-        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_alloc_binary(parser, node, &token, right);
+        yp_node_t *arguments = yp_node_alloc_arguments_node(parser);
+        yp_node_t *argument = parse_expression(parser, token_binding_powers.right);
+        yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, argument);
+
+        node = yp_node_alloc_call_node(parser, node, &token, arguments);
         break;
       }
       case YP_TOKEN_KEYWORD_IF: {

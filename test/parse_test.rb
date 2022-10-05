@@ -13,8 +13,88 @@ class ParseTest < Test::Unit::TestCase
     assert_parses AndNode(expression("1"), AMPERSAND_AMPERSAND("&&"), expression("2")), "1 && 2"
   end
 
-  test "binary" do
-    assert_parses Binary(expression("1"), PLUS("+"), expression("2")), "1 + 2"
+  test "binary !=" do
+    assert_parses CallNode(expression("1"), BANG_EQUAL("!="), ArgumentsNode([expression("2")])), "1 != 2"
+  end
+
+  test "binary !~" do
+    assert_parses CallNode(expression("1"), BANG_TILDE("!~"), ArgumentsNode([expression("2")])), "1 !~ 2"
+  end
+
+  test "binary ==" do
+    assert_parses CallNode(expression("1"), EQUAL_EQUAL("=="), ArgumentsNode([expression("2")])), "1 == 2"
+  end
+
+  test "binary ===" do
+    assert_parses CallNode(expression("1"), EQUAL_EQUAL_EQUAL("==="), ArgumentsNode([expression("2")])), "1 === 2"
+  end
+
+  test "binary =~" do
+    assert_parses CallNode(expression("1"), EQUAL_TILDE("=~"), ArgumentsNode([expression("2")])), "1 =~ 2"
+  end
+
+  test "binary <=>" do
+    assert_parses CallNode(expression("1"), LESS_EQUAL_GREATER("<=>"), ArgumentsNode([expression("2")])), "1 <=> 2"
+  end
+
+  test "binary >" do
+    assert_parses CallNode(expression("1"), GREATER(">"), ArgumentsNode([expression("2")])), "1 > 2"
+  end
+
+  test "binary >=" do
+    assert_parses CallNode(expression("1"), GREATER_EQUAL(">="), ArgumentsNode([expression("2")])), "1 >= 2"
+  end
+
+  test "binary <" do
+    assert_parses CallNode(expression("1"), LESS("<"), ArgumentsNode([expression("2")])), "1 < 2"
+  end
+
+  test "binary <=" do
+    assert_parses CallNode(expression("1"), LESS_EQUAL("<="), ArgumentsNode([expression("2")])), "1 <= 2"
+  end
+
+  test "binary ^" do
+    assert_parses CallNode(expression("1"), CARET("^"), ArgumentsNode([expression("2")])), "1 ^ 2"
+  end
+
+  test "binary |" do
+    assert_parses CallNode(expression("1"), PIPE("|"), ArgumentsNode([expression("2")])), "1 | 2"
+  end
+
+  test "binary &" do
+    assert_parses CallNode(expression("1"), AMPERSAND("&"), ArgumentsNode([expression("2")])), "1 & 2"
+  end
+
+  test "binary >>" do
+    assert_parses CallNode(expression("1"), GREATER_GREATER(">>"), ArgumentsNode([expression("2")])), "1 >> 2"
+  end
+
+  test "binary <<" do
+    assert_parses CallNode(expression("1"), LESS_LESS("<<"), ArgumentsNode([expression("2")])), "1 << 2"
+  end
+
+  test "binary -" do
+    assert_parses CallNode(expression("1"), MINUS("-"), ArgumentsNode([expression("2")])), "1 - 2"
+  end
+
+  test "binary +" do
+    assert_parses CallNode(expression("1"), PLUS("+"), ArgumentsNode([expression("2")])), "1 + 2"
+  end
+
+  test "binary %" do
+    assert_parses CallNode(expression("1"), PERCENT("%"), ArgumentsNode([expression("2")])), "1 % 2"
+  end
+
+  test "binary /" do
+    assert_parses CallNode(expression("1"), SLASH("/"), ArgumentsNode([expression("2")])), "1 / 2"
+  end
+
+  test "binary *" do
+    assert_parses CallNode(expression("1"), STAR("*"), ArgumentsNode([expression("2")])), "1 * 2"
+  end
+
+  test "binary **" do
+    assert_parses CallNode(expression("1"), STAR_STAR("**"), ArgumentsNode([expression("2")])), "1**2"
   end
 
   test "character literal" do
@@ -184,30 +264,34 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "TERM < FACTOR" do
-    expected = Binary(
+    expected = CallNode(
       expression("1"),
       PLUS("+"),
-      Binary(expression("2"), STAR("*"), expression("3"))
+      ArgumentsNode([
+        CallNode(expression("2"), STAR("*"), ArgumentsNode([expression("3")]))
+      ])
     )
 
     assert_parses expected, "1 + 2 * 3"
   end
 
   test "FACTOR < EXPONENT" do
-    expected = Binary(
+    expected = CallNode(
       expression("1"),
       STAR("*"),
-      Binary(expression("2"), STAR_STAR("**"), expression("3"))
+      ArgumentsNode([
+        CallNode(expression("2"), STAR_STAR("**"), ArgumentsNode([expression("3")]))
+      ])
     )
 
     assert_parses expected, "1 * 2 ** 3"
   end
 
   test "FACTOR > TERM" do
-    expected = Binary(
-      Binary(expression("1"), STAR("*"), expression("2")),
+    expected = CallNode(
+      CallNode(expression("1"), STAR("*"), ArgumentsNode([expression("2")])),
       PLUS("+"),
-      expression("3")
+      ArgumentsNode([expression("3")])
     )
 
     assert_parses expected, "1 * 2 + 3"
