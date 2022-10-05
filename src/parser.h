@@ -2,6 +2,8 @@
 #define YARP_PARSER_H
 
 #include "ast.h"
+#include "error.h"
+#include "lexer/string_literal.h"
 #include <stdbool.h>
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
@@ -86,6 +88,8 @@ struct yp_parser {
     size_t index;                           // the current index into the lexer state stack
   } lex_modes;
 
+  yp_string_literal_stack_t string_literals; // the stack of string literals (including word lists, regexes, heredocs)
+
   const char *start;   // the pointer to the start of the source
   const char *end;     // the pointer to the end of the source
   yp_token_t previous; // the previous token we were considering
@@ -95,6 +99,8 @@ struct yp_parser {
   yp_error_list_t error_list;        // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler; // the error handler
   yp_node_t *current_scope;          // the current local scope
+
+  size_t curly_level; // the number of nested braces that we are currently in
 };
 
 #endif // YARP_PARSER_H

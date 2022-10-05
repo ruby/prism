@@ -1,4 +1,6 @@
 #include "yarp.h"
+#include "lexer/string_literal_extend.h"
+#include "lexer/string_literals/action.h"
 
 /******************************************************************************/
 /* Basic character checks                                                     */
@@ -396,6 +398,28 @@ lex_identifier(yp_parser_t *parser) {
 // was found.
 static yp_token_type_t
 lex_token_type(yp_parser_t *parser) {
+  if (parser->string_literals.size != 0) {
+    yp_string_literal_t *literal = yp_string_literal_stack_last(&parser->string_literals);
+    yp_string_literal_extend_action_t action = yp_string_literal_extend(literal, parser);
+
+    switch (action) {
+      case EXTEND_ACTION_EMIT_TOKEN: {
+        // String literal handled string content on its own, re-emit it.
+        return parser->current.type;
+      }
+      case EXTEND_ACTION_NONE: {
+        // This situation can't happen in reality.
+        // If it happens we have a bug.
+        fprintf(stderr, "Got EXTEND_ACTION_NONE from the string literal\n");
+        return YP_TOKEN_INVALID;
+      }
+      case EXTEND_ACTION_READ_INTERPOLATED_CONTENT: {
+        // String literal is in the middle of the interpolation,
+        // tokenize normally.
+      }
+    }
+  }
+
   switch (parser->lex_modes.current->mode) {
     case YP_LEX_DEFAULT:
     case YP_LEX_EMBEXPR: {
@@ -1110,7 +1134,7 @@ expect(yp_parser_t *parser, yp_token_type_t type, const char *message) {
   parser->previous = (yp_token_t) {
     .type = YP_TOKEN_MISSING,
     .start = parser->previous.end,
-    .end = parser->previous.end
+    .end = parser->previous.end,
   };
 }
 
@@ -1652,7 +1676,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           }
           default: {
             // TODO: return missing node here
-            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n", yp_token_type_to_str(parser->current.type));
+            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n",
+                    yp_token_type_to_str(parser->current.type));
           }
         }
 
@@ -1706,6 +1731,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
         .stack = {{.mode = YP_LEX_DEFAULT}},
         .current = &parser->lex_modes.stack[0],
       },
+    .string_literals = yp_string_literal_stack_create(10),
     .start = source,
     .end = source + size,
     .current = {.start = source, .end = source},
@@ -1721,6 +1747,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser) {
   yp_error_list_free(&parser->error_list);
+  yp_string_literal_stack_destroy(&parser->string_literals);
 }
 
 // Get the next token type and set its value on the current pointer.
