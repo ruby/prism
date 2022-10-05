@@ -1144,7 +1144,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       if (yp_token_list_includes(parser->current_scope->as.scope.locals, &parser->previous)) {
         node = yp_node_alloc_local_variable_read(parser, &parser->previous);
       } else {
-        node = yp_node_alloc_call_node(parser, NULL, &parser->previous, yp_node_alloc_arguments_node(parser));
+        node = yp_node_alloc_call_node(parser, NULL, &parser->previous, NULL);
       }
       break;
     case YP_TOKEN_IMAGINARY_NUMBER:
@@ -1282,8 +1282,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_PLUS:
     case YP_TOKEN_TILDE: {
       yp_token_t operator = parser->previous;
-      yp_node_t *statement = parse_expression(parser, binding_powers[parser->previous.type].right);
-      node = yp_node_alloc_unary_node(parser, &operator, statement);
+      yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
+      node = yp_node_alloc_call_node(parser, receiver, &operator, NULL);
       break;
     }
     default:
