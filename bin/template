@@ -38,7 +38,7 @@ end
 class NodeListParam < Struct.new(:name)
   def decl = "struct yp_node_list *#{name}"
   def param = nil
-  def assign = "yp_node_list_alloc(parser)"
+  def assign = "yp_node_list_create(parser)"
   def rbs_class = "Array[Node]"
   def child_nodes = "*#{name}"
 
@@ -65,7 +65,7 @@ end
 class TokenListParam < Struct.new(:name)
   def decl = "yp_token_list_t *#{name}"
   def param = nil
-  def assign = "yp_token_list_alloc()"
+  def assign = "yp_token_list_create()"
   def rbs_class = "Array[Token]"
   def child_nodes = "*#{name}"
 

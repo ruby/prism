@@ -16,7 +16,7 @@ typedef struct {
 
 // Allocate a new yp_buffer_t with the default initial capacity.
 __attribute__ ((__visibility__("default"))) extern yp_buffer_t *
-yp_buffer_alloc();
+yp_buffer_create();
 
 // Append a string to the buffer.
 void
@@ -40,6 +40,6 @@ yp_buffer_append_u64(yp_buffer_t *buffer, uint64_t value);
 
 // Free the memory associated with the buffer and the buffer itself.
 __attribute__ ((__visibility__("default"))) extern void
-yp_buffer_free(yp_buffer_t *buffer);
+yp_buffer_destroy(yp_buffer_t *buffer);
 
 #endif
