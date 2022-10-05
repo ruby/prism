@@ -1,8 +1,8 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include "util/buffer.h"
 #include "ast.h"
-#include "buffer.h"
 #include "parser.h"
 #include "node.h"
 #include <fcntl.h>

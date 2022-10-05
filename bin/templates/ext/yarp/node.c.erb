@@ -23,6 +23,11 @@ token_type(yp_token_t *token) {
   return ID2SYM(rb_intern(yp_token_type_to_str(token->type)));
 }
 
+static VALUE
+yp_string_new(yp_string_t *string) {
+  return rb_str_new(yp_string_source(string), yp_string_length(string));
+}
+
 VALUE
 yp_token_new(yp_parser_t *parser, yp_token_t *token) {
   VALUE argv[] = {
@@ -56,6 +61,8 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node) {
       for (size_t index = 0; index < node->as.<%= node.human %>.<%= param.name %>->size; index++) {
         rb_ary_push(argv[<%= index %>], yp_node_new(parser, node->as.<%= node.human %>.<%= param.name %>->nodes[index]));
       }
+      <%- when StringParam -%>
+      argv[<%= index %>] = yp_string_new(&node->as.<%= node.human %>.<%= param.name %>);
       <%- when TokenParam -%>
       argv[<%= index %>] = yp_token_new(parser, &node->as.<%= node.human %>.<%= param.name %>);
       <%- when TokenListParam -%>

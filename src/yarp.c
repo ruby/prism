@@ -1144,7 +1144,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       if (yp_token_list_includes(parser->current_scope->as.scope.locals, &parser->previous)) {
         node = yp_node_local_variable_read_create(parser, &parser->previous);
       } else {
-        node = yp_node_call_node_create(parser, NULL, &parser->previous, NULL);
+        yp_string_t *name = yp_string_shared_create(parser->previous.start, parser->previous.end);
+        node = yp_node_call_node_create(parser, NULL, &parser->previous, NULL, name);
       }
       break;
     case YP_TOKEN_IMAGINARY_NUMBER:
@@ -1278,12 +1279,31 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_rational_literal_create(parser, &parser->previous);
       break;
     case YP_TOKEN_BANG:
-    case YP_TOKEN_MINUS:
-    case YP_TOKEN_PLUS:
     case YP_TOKEN_TILDE: {
       yp_token_t operator = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
-      node = yp_node_call_node_create(parser, receiver, &operator, NULL);
+      yp_string_t *name = yp_string_shared_create(operator.start, operator.end);
+      node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
+      break;
+    }
+    case YP_TOKEN_MINUS: {
+      yp_token_t operator = parser->previous;
+      yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
+
+      yp_string_t *name = yp_string_owned_create(malloc(2), 2);
+      memcpy(name->as.owned.source, "-@", 2);
+
+      node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
+      break;
+    }
+    case YP_TOKEN_PLUS: {
+      yp_token_t operator = parser->previous;
+      yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
+
+      yp_string_t *name = yp_string_owned_create(malloc(2), 2);
+      memcpy(name->as.owned.source, "+@", 2);
+
+      node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
       break;
     }
     default:
@@ -1410,8 +1430,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_t *arguments = yp_node_arguments_node_create(parser);
         yp_node_t *argument = parse_expression(parser, token_binding_powers.right);
         yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, argument);
-
-        node = yp_node_call_node_create(parser, node, &token, arguments);
+        yp_string_t *name = yp_string_shared_create(token.start, token.end);
+        node = yp_node_call_node_create(parser, node, &token, arguments, name);
         break;
       }
       case YP_TOKEN_KEYWORD_IF: {
