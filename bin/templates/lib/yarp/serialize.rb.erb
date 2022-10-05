@@ -49,6 +49,11 @@ module YARP
         end
       end
 
+      def load_string
+        length = io.read(8).unpack1("Q")
+        io.read(length)
+      end
+
       def load_node
         type, _length, start_offset, end_offset = io.read(25).unpack("CQQQ")
         location = YARP::Location.new(start_offset, end_offset)
@@ -59,6 +64,7 @@ module YARP
           case param
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"
+          when StringParam then "load_string"
           when NodeListParam then "io.read(8).unpack1(\"Q\").times.map { load_node }"
           when TokenParam then "load_token"
           when TokenListParam then "io.read(8).unpack1(\"Q\").times.map { load_token }"

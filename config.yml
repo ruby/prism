@@ -301,6 +301,7 @@ nodes:
       - node?message receiver
       - token message
       - node?message arguments
+      - string name
     location: receiver->arguments
   - name: CharacterLiteral
     child_nodes:

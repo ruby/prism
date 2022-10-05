@@ -131,6 +131,8 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
       if (node->as.<%= node.human %>.<%= param.name %> != NULL) {
         yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       }
+      <%- when StringParam -%>
+      yp_string_destroy(&node->as.<%= node.human %>.<%= param.name %>);
       <%- when NodeListParam -%>
       yp_node_list_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- when TokenListParam -%>
