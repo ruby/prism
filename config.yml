@@ -296,12 +296,6 @@ nodes:
       - token operator
       - node value
     location: target->value
-  - name: Binary
-    child_nodes:
-      - node left
-      - token operator
-      - node right
-    location: left->right
   - name: CallNode
     child_nodes:
       - node?message receiver
