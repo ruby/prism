@@ -1266,7 +1266,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           consume(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
         }
         consume(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
-        yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols, yp_node_symbol_node_create(parser, &parser->previous));
+        yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols,
+                            yp_node_symbol_node_create(parser, &parser->previous));
       }
 
       consume(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
@@ -1280,30 +1281,30 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       break;
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
-      yp_token_t operator = parser->previous;
+      yp_token_t operator_token = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
-      yp_string_t *name = yp_string_shared_create(operator.start, operator.end);
-      node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
+      yp_string_t *name = yp_string_shared_create(operator_token.start, operator_token.end);
+      node = yp_node_call_node_create(parser, receiver, &operator_token, NULL, name);
       break;
     }
     case YP_TOKEN_MINUS: {
-      yp_token_t operator = parser->previous;
+      yp_token_t operator_token = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
 
       yp_string_t *name = yp_string_owned_create(malloc(2), 2);
       memcpy(name->as.owned.source, "-@", 2);
 
-      node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
+      node = yp_node_call_node_create(parser, receiver, &operator_token, NULL, name);
       break;
     }
     case YP_TOKEN_PLUS: {
-      yp_token_t operator = parser->previous;
+      yp_token_t operator_token = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
 
       yp_string_t *name = yp_string_owned_create(malloc(2), 2);
       memcpy(name->as.owned.source, "+@", 2);
 
-      node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
+      node = yp_node_call_node_create(parser, receiver, &operator_token, NULL, name);
       break;
     }
     default:
