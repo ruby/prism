@@ -68,12 +68,12 @@ dump_source(source_t *source) {
   yp_parser_init(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
-  yp_buffer_t *buffer = yp_buffer_alloc();
+  yp_buffer_t *buffer = yp_buffer_create();
   yp_serialize(&parser, node, buffer);
 
   VALUE dumped = rb_str_new(buffer->value, buffer->length);
-  yp_node_dealloc(&parser, node);
-  yp_buffer_free(buffer);
+  yp_node_destroy(&parser, node);
+  yp_buffer_destroy(buffer);
 
   return dumped;
 }
@@ -138,7 +138,7 @@ parse_source(source_t *source) {
   yp_node_t *node = yp_parse(&parser);
   VALUE value = yp_node_new(&parser, node);
 
-  yp_node_dealloc(&parser, node);
+  yp_node_destroy(&parser, node);
   return value;
 }
 

@@ -37,7 +37,7 @@ yp_parse(yp_parser_t *parser);
 
 // Deallocate a node and all of its children.
 __attribute__ ((__visibility__("default"))) extern void
-yp_node_dealloc(yp_parser_t *parser, struct yp_node *node);
+yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
 // Serialize the AST represented by the given node to the given buffer.
 __attribute__ ((__visibility__("default"))) extern void

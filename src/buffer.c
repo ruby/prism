@@ -4,7 +4,7 @@
 
 // Allocate a new yp_buffer_t with the default initial capacity.
 yp_buffer_t *
-yp_buffer_alloc() {
+yp_buffer_create() {
   yp_buffer_t *buffer = malloc(sizeof(yp_buffer_t));
   buffer->value = (char *) malloc(YP_BUFFER_INITIAL_SIZE);
   buffer->length = 0;
@@ -60,7 +60,7 @@ yp_buffer_append_u64(yp_buffer_t *buffer, uint64_t value) {
 
 // Free the memory associated with the buffer and the buffer itself.
 void
-yp_buffer_free(yp_buffer_t *buffer) {
+yp_buffer_destroy(yp_buffer_t *buffer) {
   free(buffer->value);
   free(buffer);
 }

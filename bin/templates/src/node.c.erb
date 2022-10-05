@@ -9,13 +9,13 @@
 // parser argument, but it's there to allow for the future possibility of
 // pre-allocating larger memory pools and then pulling from those here.
 static inline yp_node_t *
-yp_node_alloc(yp_parser_t *parser) {
+yp_node_create(yp_parser_t *parser) {
   return malloc(sizeof(yp_node_t));
 }
 
 // Allocate a new yp_token_list_t.
 yp_token_list_t *
-yp_token_list_alloc() {
+yp_token_list_create() {
   yp_token_list_t *token_list = malloc(sizeof(yp_token_list_t));
   token_list->tokens = NULL;
   token_list->size = 0;
@@ -50,7 +50,7 @@ yp_token_list_includes(yp_token_list_t *token_list, yp_token_t *token) {
 
 // Free the memory associated with the token list and the token list itself.
 void
-yp_token_list_dealloc(yp_token_list_t *token_list) {
+yp_token_list_destroy(yp_token_list_t *token_list) {
   free(token_list->tokens);
   free(token_list);
 }
@@ -58,7 +58,7 @@ yp_token_list_dealloc(yp_token_list_t *token_list) {
 // Allocate a list of nodes. The parser argument is not used, but is here for
 // the future possibility of pre-allocating memory pools.
 static yp_node_list_t *
-yp_node_list_alloc(yp_parser_t *parser) {
+yp_node_list_create(yp_parser_t *parser) {
   yp_node_list_t *list = malloc(sizeof(yp_node_list_t));
   list->nodes = NULL;
   list->size = 0;
@@ -80,15 +80,15 @@ yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list
 }
 
 __attribute__((__visibility__("default"))) void
-yp_node_dealloc(yp_parser_t *parser, yp_node_t *node);
+yp_node_destroy(yp_parser_t *parser, yp_node_t *node);
 
 // Deallocate a list of nodes. The parser argument is not used, but is here for
 // the future possibility of pre-allocating memory pools.
 static void
-yp_node_list_dealloc(yp_parser_t *parser, yp_node_list_t *list) {
+yp_node_list_destroy(yp_parser_t *parser, yp_node_list_t *list) {
   if (list->capacity > 0) {
     for (size_t index = 0; index < list->size; index++) {
-      yp_node_dealloc(parser, list->nodes[index]);
+      yp_node_destroy(parser, list->nodes[index]);
     }
     free(list->nodes);
   }
@@ -99,8 +99,8 @@ yp_node_list_dealloc(yp_parser_t *parser, yp_node_list_t *list) {
 // Allocate a new <%= node.name %> node.
 yp_node_t *
 <%- params = node.params.map(&:param).compact.join(", ") -%>
-yp_node_alloc_<%= node.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
-  yp_node_t *node = yp_node_alloc(parser);
+yp_node_<%= node.human %>_create(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
+  yp_node_t *node = yp_node_create(parser);
   *node = (yp_node_t) {
     .type = <%= node.type %>,
     .location = <%= node.location %>,
@@ -118,7 +118,7 @@ yp_node_alloc_<%= node.human %>(yp_parser_t *parser<%= params.empty? ? "" : ", #
 // using the parser argument, but it's there to allow for the future possibility
 // of pre-allocating larger memory pools.
 __attribute__((__visibility__("default"))) void
-yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
+yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
   switch (node->type) {
     <%- nodes.each do |node| -%>
     case <%= node.type %>:
@@ -126,15 +126,15 @@ yp_node_dealloc(yp_parser_t *parser, yp_node_t *node) {
       <%- case param -%>
       <%- when TokenParam -%>
       <%- when NodeParam -%>
-      yp_node_dealloc(parser, node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- when OptionalNodeParam -%>
       if (node->as.<%= node.human %>.<%= param.name %> != NULL) {
-        yp_node_dealloc(parser, node->as.<%= node.human %>.<%= param.name %>);
+        yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       }
       <%- when NodeListParam -%>
-      yp_node_list_dealloc(parser, node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_list_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- when TokenListParam -%>
-      yp_token_list_dealloc(node->as.<%= node.human %>.<%= param.name %>);
+      yp_token_list_destroy(node->as.<%= node.human %>.<%= param.name %>);
       <%- else -%>
       <%- raise -%>
       <%- end -%>
