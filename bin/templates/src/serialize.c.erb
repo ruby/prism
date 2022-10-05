@@ -8,8 +8,8 @@
 static void
 serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
   yp_buffer_append_u8(buffer, token->type);
-  yp_buffer_append_u64(buffer, token->start - parser->start);
-  yp_buffer_append_u64(buffer, token->end - parser->start);
+  yp_buffer_append_u64(buffer, token->start - parser->input.start);
+  yp_buffer_append_u64(buffer, token->end - parser->input.start);
 }
 
 void

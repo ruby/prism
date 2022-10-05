@@ -56,8 +56,8 @@ class TokenParam < Struct.new(:name)
   def rbs_class = "Token"
   def child_nodes = nil
 
-  def start_location(params) = "#{name}->start - parser->start"
-  def end_location(params) = "#{name}->end - parser->start"
+  def start_location(params) = "#{name}->start - parser->input.start"
+  def end_location(params) = "#{name}->end - parser->input.start"
   def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 

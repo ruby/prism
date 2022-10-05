@@ -34,8 +34,8 @@ yp_token_new(yp_parser_t *parser, yp_token_t *token) {
     token_type(token),
     rb_str_new(token->start, token->end - token->start),
     location_new(&(yp_location_t) {
-      .start = token->start - parser->start,
-      .end = token->end - parser->start,
+      .start = token->start - parser->input.start,
+      .end = token->end - parser->input.start,
     }),
   };
 

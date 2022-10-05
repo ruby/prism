@@ -2,6 +2,7 @@
 #define YARP_PARSER_H
 
 #include "ast.h"
+#include "input.h"
 #include <stdbool.h>
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
@@ -86,14 +87,13 @@ struct yp_parser {
     size_t index;                           // the current index into the lexer state stack
   } lex_modes;
 
-  const char *start;   // the pointer to the start of the source
-  const char *end;     // the pointer to the end of the source
+  yp_input_t input;
   yp_token_t previous; // the previous token we were considering
   yp_token_t current;  // the current token we're considering
   int lineno;          // the current line number we're looking at
 
   yp_error_handler_t *error_handler; // the error handler
-  yp_node_t *current_scope;    // the current local scope
+  yp_node_t *current_scope;          // the current local scope
 };
 
 #endif // YARP_PARSER_H

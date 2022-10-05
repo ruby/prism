@@ -52,7 +52,7 @@ is_whitespace_char(const char *c) {
 // advanced the current pointer.
 static inline bool
 match(yp_parser_t *parser, char value) {
-  if (parser->current.end < parser->end && *parser->current.end == value) {
+  if (parser->current.end < parser->input.end && *parser->current.end == value) {
     parser->current.end++;
     return true;
   }
@@ -126,7 +126,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   // Here we're going to attempt to parse the optional decimal portion of a
   // float. If it's not there, then it's okay and we'll just continue on.
   if (*parser->current.end == '.') {
-    if ((parser->current.end + 1 < parser->end) && is_decimal_number_char(parser->current.end + 1)) {
+    if ((parser->current.end + 1 < parser->input.end) && is_decimal_number_char(parser->current.end + 1)) {
       parser->current.end += 2;
       while (is_decimal_number_char(parser->current.end)) {
         parser->current.end++;
@@ -332,7 +332,7 @@ lex_identifier(yp_parser_t *parser) {
   if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
     return YP_TOKEN_KEYWORD_##token;
 
-  if ((parser->current.end + 1 < parser->end) && (parser->current.end[1] != '=') &&
+  if ((parser->current.end + 1 < parser->input.end) && (parser->current.end[1] != '=') &&
       (match(parser, '!') || match(parser, '?'))) {
     width++;
     if (parser->previous.type != YP_TOKEN_DOT) {
@@ -715,12 +715,12 @@ lex_token_type(yp_parser_t *parser) {
 
       // Otherwise, we'll parse until the end of the line and return a line of
       // embedded documentation.
-      while ((parser->current.end < parser->end) && (*parser->current.end++ != '\n'))
+      while ((parser->current.end < parser->input.end) && (*parser->current.end++ != '\n'))
         ;
 
       // If we've still got content, then we'll return a line of embedded
       // documentation.
-      if (parser->current.end < parser->end) {
+      if (parser->current.end < parser->input.end) {
         parser->lineno++;
         return YP_TOKEN_EMBDOC_LINE;
       }
@@ -746,7 +746,7 @@ lex_token_type(yp_parser_t *parser) {
       parser->current.start = parser->current.end;
 
       // Lex as far as we can into the word.
-      while (parser->current.end < parser->end) {
+      while (parser->current.end < parser->input.end) {
         // If we've hit whitespace, then we must have received content by now,
         // so we can return an element of the list.
         if (is_whitespace_char(parser->current.end)) {
@@ -809,7 +809,7 @@ lex_token_type(yp_parser_t *parser) {
       // Otherwise, we'll lex as far as we can into the regular expression. If
       // we hit the end of the regular expression, then we'll return everything
       // up to that point.
-      while (parser->current.end < parser->end) {
+      while (parser->current.end < parser->input.end) {
         // If we hit the terminator, then return this element of the string.
         if (*parser->current.end == parser->lex_modes.current->term) {
           return YP_TOKEN_STRING_CONTENT;
@@ -856,7 +856,7 @@ lex_token_type(yp_parser_t *parser) {
 
       // Otherwise, we'll lex as far as we can into the string. If we hit the
       // end of the string, then we'll return everything up to that point.
-      while (parser->current.end < parser->end) {
+      while (parser->current.end < parser->input.end) {
         // If we hit the terminator, then return this element of the string.
         if (*parser->current.end == parser->lex_modes.current->term) {
           return YP_TOKEN_STRING_CONTENT;
@@ -903,7 +903,7 @@ lex_token_type(yp_parser_t *parser) {
       parser->current.start = parser->current.end;
 
       // Lex as far as we can into the symbol.
-      if (parser->current.end < parser->end && is_identifier_start_char(parser->current.end++)) {
+      if (parser->current.end < parser->input.end && is_identifier_start_char(parser->current.end++)) {
         pop_lex_mode(parser);
 
         yp_token_type_t type = lex_identifier(parser);
@@ -1266,7 +1266,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           consume(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
         }
         consume(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
-        yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols, yp_node_symbol_node_create(parser, &parser->previous));
+        yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols,
+                            yp_node_symbol_node_create(parser, &parser->previous));
       }
 
       consume(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
@@ -1280,14 +1281,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       break;
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
-      yp_token_t operator = parser->previous;
+      yp_token_t operator= parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
       yp_string_t *name = yp_string_shared_create(operator.start, operator.end);
       node = yp_node_call_node_create(parser, receiver, &operator, NULL, name);
       break;
     }
     case YP_TOKEN_MINUS: {
-      yp_token_t operator = parser->previous;
+      yp_token_t operator= parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
 
       yp_string_t *name = yp_string_owned_create(malloc(2), 2);
@@ -1297,7 +1298,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       break;
     }
     case YP_TOKEN_PLUS: {
-      yp_token_t operator = parser->previous;
+      yp_token_t operator= parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
 
       yp_string_t *name = yp_string_owned_create(malloc(2), 2);
@@ -1524,8 +1525,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
         .stack = {{.mode = YP_LEX_DEFAULT}},
         .current = &parser->lex_modes.stack[0],
       },
-    .start = source,
-    .end = source + size,
+    .input = (yp_input_t){.start = source, .end = source + size, .pos = source},
     .current = {.start = source, .end = source},
     .lineno = 1,
     .error_handler = &default_error_handler,
