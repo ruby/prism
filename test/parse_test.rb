@@ -126,7 +126,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "identifier" do
-    assert_parses CallNode(nil, IDENTIFIER("a"), ArgumentsNode([])), "a"
+    assert_parses CallNode(nil, IDENTIFIER("a"), nil), "a"
   end
 
   test "if" do
@@ -209,11 +209,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "ternary" do
     expected = Ternary(
-      CallNode(nil, IDENTIFIER("a"), ArgumentsNode([])),
+      CallNode(nil, IDENTIFIER("a"), nil),
       QUESTION_MARK("?"),
-      CallNode(nil, IDENTIFIER("b"), ArgumentsNode([])),
+      CallNode(nil, IDENTIFIER("b"), nil),
       COLON(":"),
-      CallNode(nil, IDENTIFIER("c"), ArgumentsNode([]))
+      CallNode(nil, IDENTIFIER("c"), nil)
     )
 
     assert_parses expected, "a ? b : c"
@@ -224,19 +224,19 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "unary !" do
-    assert_parses UnaryNode(BANG("!"), expression("1")), "!1"
+    assert_parses CallNode(expression("1"), BANG("!"), nil), "!1"
   end
 
   test "unary -" do
-    assert_parses UnaryNode(MINUS("-"), expression("1")), "-1"
+    assert_parses CallNode(expression("1"), MINUS("-"), nil), "-1"
   end
 
   test "unary +" do
-    assert_parses UnaryNode(PLUS("+"), expression("1")), "+1"
+    assert_parses CallNode(expression("1"), PLUS("+"), nil), "+1"
   end
 
   test "unary ~" do
-    assert_parses UnaryNode(TILDE("~"), expression("1")), "~1"
+    assert_parses CallNode(expression("1"), TILDE("~"), nil), "~1"
   end
 
   test "unless" do

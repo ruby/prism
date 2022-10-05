@@ -300,7 +300,7 @@ nodes:
     child_nodes:
       - node?message receiver
       - token message
-      - node arguments
+      - node?message arguments
     location: receiver->arguments
   - name: CharacterLiteral
     child_nodes:
@@ -487,16 +487,6 @@ nodes:
     child_nodes:
       - token keyword
     location: keyword
-  - name: UnaryNode
-    child_nodes:
-      - token operator
-      - node statement
-    location: operator->statement
-    comment: |
-      Represents a unary operator on a statement.
-
-          ~statement
-          ~~~~~~~~~~
   - name: UnlessNode
     child_nodes:
       - token keyword
