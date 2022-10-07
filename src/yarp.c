@@ -1134,6 +1134,9 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_CLASS_VARIABLE:
       node = yp_node_class_variable_read_create(parser, &parser->previous);
       break;
+    case YP_TOKEN_CONSTANT:
+      node = yp_node_constant_read_create(parser, &parser->previous);
+      break;
     case YP_TOKEN_FLOAT:
       node = yp_node_float_literal_create(parser, &parser->previous);
       break;

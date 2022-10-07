@@ -109,6 +109,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), "@@abc = 1"
   end
 
+  test "constant read" do
+    assert_parses ConstantRead(CONSTANT("ABC")), "ABC"
+  end
+
   test "false" do
     assert_parses FalseNode(KEYWORD_FALSE("false")), "false"
   end
