@@ -967,6 +967,9 @@ typedef struct {
   { precedence, precedence }
 
 binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
+  // ::
+  [YP_TOKEN_COLON_COLON] = LEFT_ASSOCIATIVE(BINDING_POWER_NONE),
+
   // {}
   [YP_TOKEN_BRACE_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_BRACES),
 
@@ -1499,6 +1502,29 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_t *false_expression = parse_expression(parser, token_binding_powers.right);
 
         node = yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+        break;
+      }
+      case YP_TOKEN_COLON_COLON: {
+        yp_token_t delimiter = parser->previous;
+
+        switch (parser->current.type) {
+          case YP_TOKEN_CONSTANT: {
+            yp_node_t *child = parse_expression(parser, BINDING_POWER_NONE);
+            node = yp_node_constant_path_node_create(parser, node, &delimiter, child);
+            break;
+          }
+          case YP_TOKEN_IDENTIFIER: {
+            yp_node_t *call = parse_expression(parser, BINDING_POWER_NONE);
+            call->as.call_node.receiver = node;
+            node = call;
+            break;
+          }
+          default: {
+            // TODO: return missing node here
+            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n", yp_token_type_to_str(parser->current.type));
+          }
+        }
+
         break;
       }
       default:

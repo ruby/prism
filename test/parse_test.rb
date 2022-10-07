@@ -109,6 +109,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), "@@abc = 1"
   end
 
+  test "constant path" do
+    assert_parses ConstantPathNode(ConstantRead(CONSTANT("A")), COLON_COLON("::"), ConstantRead(CONSTANT("B"))), "A::B"
+  end
+
+  test "constant path with multiple levels" do
+    expected = ConstantPathNode(
+      ConstantRead(CONSTANT("A")),
+      COLON_COLON("::"),
+      ConstantPathNode(
+        ConstantRead(CONSTANT("B")),
+        COLON_COLON("::"),
+        ConstantRead(CONSTANT("C"))
+      )
+    )
+
+    assert_parses expected, "A::B::C"
+  end
+
+  test "constant path with variable parent" do
+    expected = ConstantPathNode(
+      CallNode(nil, IDENTIFIER("a"), nil, "a"),
+      COLON_COLON("::"),
+      ConstantRead(CONSTANT("B"))
+    )
+
+    assert_parses expected, "a::B"
+  end
+
   test "constant read" do
     assert_parses ConstantRead(CONSTANT("ABC")), "ABC"
   end
