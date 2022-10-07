@@ -149,6 +149,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), "@abc = 1"
   end
 
+  test "local variable write" do
+    assert_parses LocalVariableWrite(IDENTIFIER("abc"), EQUAL("="), expression("1")), "abc = 1"
+  end
+
   test "nil" do
     assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
   end
