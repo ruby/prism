@@ -185,6 +185,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses LocalVariableWrite(IDENTIFIER("abc"), EQUAL("="), expression("1")), "abc = 1"
   end
 
+  test "module" do
+    expected = ModuleNode(
+      Scope([IDENTIFIER("a")]),
+      KEYWORD_MODULE("module"),
+      ConstantRead(CONSTANT("A")),
+      Statements([
+        LocalVariableWrite(
+          IDENTIFIER("a"),
+          EQUAL("="),
+          IntegerLiteral(INTEGER("1"))
+        )
+      ]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "module A a = 1 end"
+  end
+
   test "nil" do
     assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
   end

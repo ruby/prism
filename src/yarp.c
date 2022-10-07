@@ -1204,6 +1204,21 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_if_node_create(parser, &keyword, predicate, statements);
       break;
     }
+    case YP_TOKEN_KEYWORD_MODULE: {
+      yp_token_t module_keyword = parser->previous;
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
+
+      node = yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
+      parser->current_scope = parent_scope;
+      break;
+    }
     case YP_TOKEN_KEYWORD_NIL:
       node = yp_node_nil_node_create(parser, &parser->previous);
       break;
