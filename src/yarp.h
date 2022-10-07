@@ -3,6 +3,7 @@
 
 #include "util/buffer.h"
 #include "ast.h"
+#include "error.h"
 #include "parser.h"
 #include "node.h"
 #include <fcntl.h>
@@ -25,7 +26,11 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 // Initialize a parser with the given start and end pointers.
 __attribute__ ((__visibility__("default"))) extern void
-yp_parser_init(yp_parser_t *parser, const char *source, off_t size);
+yp_parser_create(yp_parser_t *parser, const char *source, off_t size);
+
+// Free any memory associated with the given parser.
+__attribute__ ((__visibility__("default"))) extern void
+yp_parser_destroy(yp_parser_t *parser);
 
 // Get the next token type and set its value on the current pointer.
 __attribute__ ((__visibility__("default"))) extern void

@@ -92,8 +92,9 @@ struct yp_parser {
   yp_token_t current;  // the current token we're considering
   int lineno;          // the current line number we're looking at
 
+  yp_error_list_t error_list;        // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler; // the error handler
-  yp_node_t *current_scope;    // the current local scope
+  yp_node_t *current_scope;          // the current local scope
 };
 
 #endif // YARP_PARSER_H

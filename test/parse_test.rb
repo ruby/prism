@@ -253,6 +253,23 @@ class ParseTest < Test::Unit::TestCase
     assert_parses PreExecutionNode(KEYWORD_BEGIN_UPCASE("BEGIN"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "BEGIN { 1 }"
   end
 
+  test "pre execution missing {" do
+    expected = PreExecutionNode(
+      KEYWORD_BEGIN_UPCASE("BEGIN"),
+      MISSING(""),
+      Statements([expression("1")]),
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "BEGIN 1 }"
+  end
+
+  test "pre execution missing { error" do
+    result = YARP.parse("BEGIN 1 }")
+    result => { errors: [{ message: "Expected '{' after 'BEGIN'." }] }
+    assert result.failure?
+  end
+
   test "rational" do
     assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
   end
@@ -397,7 +414,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::Program[statements: YARP::Statements[body: [*, node]]]
+    YARP.parse(source) => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
     node
   end
 end

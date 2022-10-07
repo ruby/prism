@@ -4,6 +4,8 @@ tokens:
     comment: final token in the file
   - name: INVALID
     comment: "an invalid token"
+  - name: MISSING
+    comment: "a token that was expected but not found"
   - name: AMPERSAND
     comment: "&"
   - name: AMPERSAND_AMPERSAND

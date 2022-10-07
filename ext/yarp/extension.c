@@ -4,6 +4,9 @@ VALUE rb_cYARP;
 VALUE rb_cYARPToken;
 VALUE rb_cYARPLocation;
 
+VALUE rb_cYARPParseError;
+VALUE rb_cYARPParseResult;
+
 // Represents a source of Ruby code. It can either be coming from a file or a
 // string. If it's a file, it's going to mmap the contents of the file. If it's
 // a string it's going to just point to the contents of the string.
@@ -65,7 +68,7 @@ source_file_unload(source_t *source) {
 static VALUE
 dump_source(source_t *source) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source->source, source->size);
+  yp_parser_create(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
   yp_buffer_t *buffer = yp_buffer_create();
@@ -74,6 +77,7 @@ dump_source(source_t *source) {
   VALUE dumped = rb_str_new(buffer->value, buffer->length);
   yp_node_destroy(&parser, node);
   yp_buffer_destroy(buffer);
+  yp_parser_destroy(&parser);
 
   return dumped;
 }
@@ -101,13 +105,14 @@ dump_file(VALUE self, VALUE filepath) {
 static VALUE
 lex_source(source_t *source) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source->source, source->size);
+  yp_parser_create(&parser, source->source, source->size);
 
   VALUE ary = rb_ary_new();
   for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
     rb_ary_push(ary, yp_token_new(&parser, &parser.current));
   }
 
+  yp_parser_destroy(&parser);
   return ary;
 }
 
@@ -133,13 +138,27 @@ lex_file(VALUE self, VALUE filepath) {
 static VALUE
 parse_source(source_t *source) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source->source, source->size);
+  yp_parser_create(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
-  VALUE value = yp_node_new(&parser, node);
+  VALUE errors = rb_ary_new();
+
+  for (yp_error_t *error = parser.error_list.head; error != NULL; error = error->next) {
+    VALUE location_argv[] = { LONG2FIX(error->location.start), LONG2FIX(error->location.end) };
+
+    VALUE error_argv[] = { rb_str_new(yp_string_source(&error->message), yp_string_length(&error->message)),
+                           rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+
+    rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
+  }
+
+  VALUE result_argv[] = { yp_node_new(&parser, node), errors };
+  VALUE result = rb_class_new_instance(2, result_argv, rb_cYARPParseResult);
 
   yp_node_destroy(&parser, node);
-  return value;
+  yp_parser_destroy(&parser);
+
+  return result;
 }
 
 static VALUE
@@ -166,6 +185,9 @@ Init_yarp(void) {
   rb_cYARP = rb_define_module("YARP");
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
+
+  rb_cYARPParseError = rb_define_class_under(rb_cYARP, "ParseError", rb_cObject);
+  rb_cYARPParseResult = rb_define_class_under(rb_cYARP, "ParseResult", rb_cObject);
 
   rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
 

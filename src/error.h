@@ -1,0 +1,34 @@
+#ifndef YARP_ERROR_H
+#define YARP_ERROR_H
+
+#include "ast.h"
+#include "util/string.h"
+#include <stdlib.h>
+#include <string.h>
+
+// This struct represents an error found during parsing.
+typedef struct yp_error {
+  yp_string_t message;
+  yp_location_t location;
+  struct yp_error *next;
+} yp_error_t;
+
+// The struct manages a list of errors.
+typedef struct {
+  yp_error_t *head;
+  yp_error_t *tail;
+} yp_error_list_t;
+
+// Initializes a list of errors.
+void
+yp_error_list_create(yp_error_list_t *error_list);
+
+// Append an error to the given list of errors.
+void
+yp_error_list_append(yp_error_list_t *error_list, const char *message, uint64_t position);
+
+// Deallocate the internal state of the given error list.
+void
+yp_error_list_destroy(yp_error_list_t *error_list);
+
+#endif
