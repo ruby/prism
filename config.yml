@@ -301,6 +301,14 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: ClassNode
+    child_nodes:
+      - node scope
+      - token class_keyword
+      - node constant_path
+      - node statements
+      - token end_keyword
+    location: class_keyword->end_keyword
   - name: ClassVariableRead
     child_nodes:
       - token name
@@ -311,6 +319,16 @@ nodes:
       - token operator
       - node value
     location: name->value
+  - name: ConstantPathNode
+    child_nodes:
+      - node parent
+      - token delimiter
+      - node child
+    location: parent->child
+  - name: ConstantRead
+    child_nodes:
+      - token name
+    location: name
   - name: FalseNode
     child_nodes:
       - token keyword
@@ -363,6 +381,14 @@ nodes:
       - token operator
       - node value
     location: name->value
+  - name: ModuleNode
+    child_nodes:
+      - node scope
+      - token module_keyword
+      - node constant_path
+      - node statements
+      - token end_keyword
+    location: module_keyword->end_keyword
   - name: NilNode
     child_nodes:
       - token keyword

@@ -101,12 +101,62 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CharacterLiteral(CHARACTER_LITERAL("?a")), "?a"
   end
 
+  test "class" do
+    expected = ClassNode(
+      Scope([IDENTIFIER("a")]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      Statements([
+        LocalVariableWrite(
+          IDENTIFIER("a"),
+          EQUAL("="),
+          IntegerLiteral(INTEGER("1"))
+        )
+      ]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "class A a = 1 end"
+  end
+
   test "class variable read" do
     assert_parses ClassVariableRead(CLASS_VARIABLE("@@abc")), "@@abc"
   end
 
   test "class variable write" do
     assert_parses ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), "@@abc = 1"
+  end
+
+  test "constant path" do
+    assert_parses ConstantPathNode(ConstantRead(CONSTANT("A")), COLON_COLON("::"), ConstantRead(CONSTANT("B"))), "A::B"
+  end
+
+  test "constant path with multiple levels" do
+    expected = ConstantPathNode(
+      ConstantRead(CONSTANT("A")),
+      COLON_COLON("::"),
+      ConstantPathNode(
+        ConstantRead(CONSTANT("B")),
+        COLON_COLON("::"),
+        ConstantRead(CONSTANT("C"))
+      )
+    )
+
+    assert_parses expected, "A::B::C"
+  end
+
+  test "constant path with variable parent" do
+    expected = ConstantPathNode(
+      CallNode(nil, IDENTIFIER("a"), nil, "a"),
+      COLON_COLON("::"),
+      ConstantRead(CONSTANT("B"))
+    )
+
+    assert_parses expected, "a::B"
+  end
+
+  test "constant read" do
+    assert_parses ConstantRead(CONSTANT("ABC")), "ABC"
   end
 
   test "false" do
@@ -151,6 +201,24 @@ class ParseTest < Test::Unit::TestCase
 
   test "local variable write" do
     assert_parses LocalVariableWrite(IDENTIFIER("abc"), EQUAL("="), expression("1")), "abc = 1"
+  end
+
+  test "module" do
+    expected = ModuleNode(
+      Scope([IDENTIFIER("a")]),
+      KEYWORD_MODULE("module"),
+      ConstantRead(CONSTANT("A")),
+      Statements([
+        LocalVariableWrite(
+          IDENTIFIER("a"),
+          EQUAL("="),
+          IntegerLiteral(INTEGER("1"))
+        )
+      ]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "module A a = 1 end"
   end
 
   test "nil" do

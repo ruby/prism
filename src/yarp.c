@@ -967,6 +967,9 @@ typedef struct {
   { precedence, precedence }
 
 binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
+  // ::
+  [YP_TOKEN_COLON_COLON] = LEFT_ASSOCIATIVE(BINDING_POWER_NONE),
+
   // {}
   [YP_TOKEN_BRACE_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_BRACES),
 
@@ -1134,6 +1137,9 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_CLASS_VARIABLE:
       node = yp_node_class_variable_read_create(parser, &parser->previous);
       break;
+    case YP_TOKEN_CONSTANT:
+      node = yp_node_constant_read_create(parser, &parser->previous);
+      break;
     case YP_TOKEN_FLOAT:
       node = yp_node_float_literal_create(parser, &parser->previous);
       break;
@@ -1169,6 +1175,21 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
       break;
     }
+    case YP_TOKEN_KEYWORD_CLASS: {
+      yp_token_t class_keyword = parser->previous;
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
+
+      node = yp_node_class_node_create(parser, scope, &class_keyword, name, statements, &parser->previous);
+      parser->current_scope = parent_scope;
+      break;
+    }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;
       consume(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
@@ -1196,6 +1217,21 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
 
       node = yp_node_if_node_create(parser, &keyword, predicate, statements);
+      break;
+    }
+    case YP_TOKEN_KEYWORD_MODULE: {
+      yp_token_t module_keyword = parser->previous;
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
+
+      node = yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
+      parser->current_scope = parent_scope;
       break;
     }
     case YP_TOKEN_KEYWORD_NIL:
@@ -1496,6 +1532,29 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_t *false_expression = parse_expression(parser, token_binding_powers.right);
 
         node = yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+        break;
+      }
+      case YP_TOKEN_COLON_COLON: {
+        yp_token_t delimiter = parser->previous;
+
+        switch (parser->current.type) {
+          case YP_TOKEN_CONSTANT: {
+            yp_node_t *child = parse_expression(parser, BINDING_POWER_NONE);
+            node = yp_node_constant_path_node_create(parser, node, &delimiter, child);
+            break;
+          }
+          case YP_TOKEN_IDENTIFIER: {
+            yp_node_t *call = parse_expression(parser, BINDING_POWER_NONE);
+            call->as.call_node.receiver = node;
+            node = call;
+            break;
+          }
+          default: {
+            // TODO: return missing node here
+            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n", yp_token_type_to_str(parser->current.type));
+          }
+        }
+
         break;
       }
       default:
