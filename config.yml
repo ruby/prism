@@ -290,12 +290,6 @@ nodes:
     child_nodes:
       - node[] arguments
     location: arguments
-  - name: Assignment
-    child_nodes:
-      - node target
-      - token operator
-      - node value
-    location: target->value
   - name: CallNode
     child_nodes:
       - node?message receiver

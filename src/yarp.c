@@ -1362,9 +1362,30 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_destroy(parser, read);
             break;
           }
+          case YP_NODE_CALL_NODE: {
+            if (node->as.call_node.receiver == NULL && node->as.call_node.arguments == NULL) {
+              yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+              yp_node_t *read = node;
+
+              yp_token_t name = node->as.call_node.message;
+              yp_token_list_append(parser->current_scope->as.scope.locals, &name);
+
+              node = yp_node_local_variable_write_create(parser, &name, &token, value);
+              yp_node_destroy(parser, read);
+              break;
+            }
+            // fallthrough
+          }
           default: {
-            yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-            node = yp_node_assignment_create(parser, node, &token, right);
+            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+            yp_node_t *arguments = yp_node_arguments_node_create(parser);
+            yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, value);
+
+            int length = node->location.end - node->location.start;
+            yp_string_t *name = yp_string_owned_create(malloc(length + 1), length + 1);
+            sprintf(name->as.owned.source, "%.*s=", length, parser->start + node->location.start);
+
+            node = yp_node_call_node_create(parser, node, &token, arguments, name);
             break;
           }
         }
