@@ -143,7 +143,7 @@ parse_source(source_t *source) {
   yp_node_t *node = yp_parse(&parser);
   VALUE errors = rb_ary_new();
 
-  for (yp_error_t *error = parser.errors; error != NULL; error = error->next) {
+  for (yp_error_t *error = parser.error_list.head; error != NULL; error = error->next) {
     VALUE location_argv[] = { LONG2FIX(error->location.start), LONG2FIX(error->location.end) };
 
     VALUE error_argv[] = { rb_str_new(yp_string_source(&error->message), yp_string_length(&error->message)),

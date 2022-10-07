@@ -1092,38 +1092,6 @@ accept_any(yp_parser_t *parser, size_t count, ...) {
   return false;
 }
 
-// Push a new error onto the error stack.
-static void
-yp_parser_error(yp_parser_t *parser, const char *message) {
-  yp_error_t *error = malloc(sizeof(yp_error_t));
-  uint64_t location = parser->previous.end - parser->start;
-
-  size_t length = strlen(message);
-  *error = (yp_error_t) {
-    .location = { .start = location, .end = location },
-    .message = {
-      .type = YP_STRING_OWNED,
-      .as.owned = {
-        .source = malloc(length),
-        .length = length
-      }
-    },
-    .next = NULL
-  };
-
-  memcpy(error->message.as.owned.source, message, length);
-
-  if (parser->errors == NULL) {
-    parser->errors = error;
-  } else {
-    yp_error_t *last = parser->errors;
-    while (last->next != NULL) {
-      last = last->next;
-    }
-    last->next = error;
-  }
-}
-
 // This function indicates that the parser expects a token in a specific
 // position. For example, if you're parsing a BEGIN block, you know that a { is
 // expected immediately after the keyword. In that case you would call this
@@ -1137,7 +1105,7 @@ static void
 expect(yp_parser_t *parser, yp_token_type_t type, const char *message) {
   if (accept(parser, type)) return;
 
-  yp_parser_error(parser, message);
+  yp_error_list_append(&parser->error_list, message, parser->previous.end - parser->start);
 
   parser->previous = (yp_token_t) {
     .type = YP_TOKEN_MISSING,
@@ -1655,23 +1623,17 @@ yp_parser_create(yp_parser_t *parser, const char *source, off_t size) {
     .end = source + size,
     .current = {.start = source, .end = source},
     .lineno = 1,
-    .errors = NULL,
     .error_handler = &default_error_handler,
     .current_scope = NULL
   };
+
+  yp_error_list_create(&parser->error_list);
 }
 
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_destroy(yp_parser_t *parser) {
-  yp_error_t *previous, *current;
-
-  for (current = parser->errors; current != NULL;) {
-    previous = current;
-    current = current->next;
-    yp_string_destroy(&previous->message);
-    free(previous);
-  }
+  yp_error_list_destroy(&parser->error_list);
 }
 
 // Get the next token type and set its value on the current pointer.

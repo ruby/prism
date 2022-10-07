@@ -3,6 +3,7 @@
 
 #include "util/buffer.h"
 #include "ast.h"
+#include "error.h"
 #include "parser.h"
 #include "node.h"
 #include <fcntl.h>
