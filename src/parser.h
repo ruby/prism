@@ -60,6 +60,13 @@ typedef struct yp_lex_mode {
 // each of its function calls.
 typedef struct yp_parser yp_parser_t;
 
+// This struct represents an error found during parsing.
+typedef struct yp_error {
+  yp_string_t message;
+  yp_location_t location;
+  struct yp_error *next;
+} yp_error_t;
+
 // This struct is for handling error recovery. We're going to provide our own
 // implementation for default, but this is an extension point if folks want to
 // provide their own.
@@ -92,6 +99,7 @@ struct yp_parser {
   yp_token_t current;  // the current token we're considering
   int lineno;          // the current line number we're looking at
 
+  yp_error_t *errors;  // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler; // the error handler
   yp_node_t *current_scope;    // the current local scope
 };

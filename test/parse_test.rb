@@ -253,6 +253,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses PreExecutionNode(KEYWORD_BEGIN_UPCASE("BEGIN"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "BEGIN { 1 }"
   end
 
+  test "pre execution missing {" do
+    expected = PreExecutionNode(
+      KEYWORD_BEGIN_UPCASE("BEGIN"),
+      MISSING(""),
+      Statements([expression("1")]),
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "BEGIN 1 }"
+  end
+
   test "rational" do
     assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
   end

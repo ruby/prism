@@ -1092,12 +1092,58 @@ accept_any(yp_parser_t *parser, size_t count, ...) {
   return false;
 }
 
+// Push a new error onto the error stack.
 static void
-consume(yp_parser_t *parser, yp_token_type_t type, const char *message) {
-  if (!accept(parser, type)) {
-    // TODO: should return a missing token here.
-    fprintf(stderr, "%s\n", message);
+yp_parser_error(yp_parser_t *parser, const char *message) {
+  yp_error_t *error = malloc(sizeof(yp_error_t));
+  uint64_t location = parser->previous.end - parser->start;
+
+  size_t length = strlen(message);
+  *error = (yp_error_t) {
+    .location = { .start = location, .end = location },
+    .message = {
+      .type = YP_STRING_OWNED,
+      .as.owned = {
+        .source = malloc(length),
+        .length = length
+      }
+    },
+    .next = NULL
+  };
+
+  memcpy(error->message.as.owned.source, message, length);
+
+  if (parser->errors == NULL) {
+    parser->errors = error;
+  } else {
+    yp_error_t *last = parser->errors;
+    while (last->next != NULL) {
+      last = last->next;
+    }
+    last->next = error;
   }
+}
+
+// This function indicates that the parser expects a token in a specific
+// position. For example, if you're parsing a BEGIN block, you know that a { is
+// expected immediately after the keyword. In that case you would call this
+// function to indicate that that token should be found.
+//
+// If we didn't find the token that we were expecting, then we're going to add
+// an error to the parser's list of errors (to indicate that the tree is not
+// valid) and create an artificial token instead. This allows us to recover from
+// the fact that the token isn't present and continue parsing.
+static void
+expect(yp_parser_t *parser, yp_token_type_t type, const char *message) {
+  if (accept(parser, type)) return;
+
+  yp_parser_error(parser, message);
+
+  parser->previous = (yp_token_t) {
+    .type = YP_TOKEN_MISSING,
+    .start = parser->previous.end,
+    .end = parser->previous.end
+  };
 }
 
 static yp_node_t *
@@ -1165,11 +1211,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       break;
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       yp_token_t keyword = parser->previous;
-      consume(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
+      expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
       yp_token_t opening = parser->previous;
 
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_BRACE_RIGHT);
-      consume(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
+      expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
       yp_token_t closing = parser->previous;
 
       node = yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
@@ -1184,7 +1230,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       parser->current_scope = scope;
 
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
-      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
       node = yp_node_class_node_create(parser, scope, &class_keyword, name, statements, &parser->previous);
       parser->current_scope = parent_scope;
@@ -1192,11 +1238,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;
-      consume(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
+      expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
       yp_token_t opening = parser->previous;
 
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_BRACE_RIGHT);
-      consume(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
+      expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
       yp_token_t closing = parser->previous;
 
       node = yp_node_post_execution_node_create(parser, &keyword, &opening, statements, &closing);
@@ -1214,7 +1260,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
 
       node = yp_node_if_node_create(parser, &keyword, predicate, statements);
       break;
@@ -1228,7 +1274,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       parser->current_scope = scope;
 
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
-      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
 
       node = yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
       parser->current_scope = parent_scope;
@@ -1258,7 +1304,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `unless` statement.");
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `unless` statement.");
 
       node = yp_node_unless_node_create(parser, &keyword, predicate, statements);
       break;
@@ -1272,7 +1318,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
 
       node = yp_node_until_node_create(parser, &keyword, predicate, statements);
       break;
@@ -1286,7 +1332,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
 
       node = yp_node_while_node_create(parser, &keyword, predicate, statements);
       break;
@@ -1299,14 +1345,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         if (symbol_list->as.symbol_list_node.symbols->size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
-          consume(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
+          expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
         }
-        consume(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
+        expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
         yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols,
                             yp_node_symbol_node_create(parser, &parser->previous));
       }
 
-      consume(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
       symbol_list->as.symbol_list_node.closing = parser->previous;
 
       node = symbol_list;
@@ -1526,7 +1572,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
       case YP_TOKEN_QUESTION_MARK: {
         yp_node_t *true_expression = parse_expression(parser, token_binding_powers.right);
-        consume(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
+        expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
 
         yp_token_t colon = parser->previous;
         yp_node_t *false_expression = parse_expression(parser, token_binding_powers.right);
@@ -1596,8 +1642,8 @@ yp_error_handler_t default_error_handler = {
 };
 
 // Initialize a parser with the given start and end pointers.
-__attribute__((__visibility__("default"))) void
-yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
+__attribute__((__visibility__("default"))) extern void
+yp_parser_create(yp_parser_t *parser, const char *source, off_t size) {
   *parser = (yp_parser_t) {
     .lex_modes =
       {
@@ -1609,25 +1655,39 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     .end = source + size,
     .current = {.start = source, .end = source},
     .lineno = 1,
+    .errors = NULL,
     .error_handler = &default_error_handler,
     .current_scope = NULL
   };
 }
 
+// Free any memory associated with the given parser.
+__attribute__((__visibility__("default"))) extern void
+yp_parser_destroy(yp_parser_t *parser) {
+  yp_error_t *previous, *current;
+
+  for (current = parser->errors; current != NULL;) {
+    previous = current;
+    current = current->next;
+    yp_string_destroy(&previous->message);
+    free(previous);
+  }
+}
+
 // Get the next token type and set its value on the current pointer.
-__attribute__((__visibility__("default"))) void
+__attribute__((__visibility__("default"))) extern void
 yp_lex_token(yp_parser_t *parser) {
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
 }
 
 // Parse the Ruby source associated with the given parser and return the tree.
-__attribute__((__visibility__("default"))) yp_node_t *
+__attribute__((__visibility__("default"))) extern yp_node_t *
 yp_parse(yp_parser_t *parser) {
   return parse_program(parser);
 }
 
-__attribute__((__visibility__("default"))) void
+__attribute__((__visibility__("default"))) extern void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_buffer_append_str(buffer, "YARP", 4);
   yp_buffer_append_u8(buffer, YP_VERSION_MAJOR);

@@ -137,7 +137,7 @@ run_lexer_fixture(yp_lexer_fixture_t *fixture) {
   }
 
   yp_parser_t parser;
-  yp_parser_init(&parser, fixture->input, strlen(fixture->input));
+  yp_parser_create(&parser, fixture->input, strlen(fixture->input));
   yp_lex_token(&parser);
 
   yp_token_t actual = parser.current;
@@ -156,6 +156,7 @@ run_lexer_fixture(yp_lexer_fixture_t *fixture) {
     return 1;
   }
 
+  yp_parser_destroy(&parser);
   return 0;
 }
 
