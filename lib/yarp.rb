@@ -19,6 +19,43 @@ module YARP
     end
   end
 
+  # This represents an error that was encountered during parsing.
+  class ParseError
+    attr_reader :message, :location
+
+    def initialize(message, location)
+      @message = message
+      @location = location
+    end
+
+    def deconstruct_keys(keys)
+      { message: message, location: location }
+    end
+  end
+
+  # This represents the result of a call to ::parse or ::parse_file. It contains
+  # both the AST and any errors that were encountered.
+  class ParseResult
+    attr_reader :node, :errors
+
+    def initialize(node, errors)
+      @node = node
+      @errors = errors
+    end
+
+    def deconstruct_keys(keys)
+      { node: node, errors: errors }
+    end
+
+    def success?
+      errors.empty?
+    end
+
+    def failure?
+      !success?
+    end
+  end
+
   # This represents a token from the Ruby source.
   class Token
     attr_reader :type, :value, :location

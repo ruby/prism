@@ -4,6 +4,9 @@ VALUE rb_cYARP;
 VALUE rb_cYARPToken;
 VALUE rb_cYARPLocation;
 
+VALUE rb_cYARPParseError;
+VALUE rb_cYARPParseResult;
+
 // Represents a source of Ruby code. It can either be coming from a file or a
 // string. If it's a file, it's going to mmap the contents of the file. If it's
 // a string it's going to just point to the contents of the string.
@@ -138,12 +141,24 @@ parse_source(source_t *source) {
   yp_parser_create(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
-  VALUE value = yp_node_new(&parser, node);
+  VALUE errors = rb_ary_new();
+
+  for (yp_error_t *error = parser.errors; error != NULL; error = error->next) {
+    VALUE location_argv[] = { LONG2FIX(error->location.start), LONG2FIX(error->location.end) };
+
+    VALUE error_argv[] = { rb_str_new(yp_string_source(&error->message), yp_string_length(&error->message)),
+                           rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+
+    rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
+  }
+
+  VALUE result_argv[] = { yp_node_new(&parser, node), errors };
+  VALUE result = rb_class_new_instance(2, result_argv, rb_cYARPParseResult);
 
   yp_node_destroy(&parser, node);
   yp_parser_destroy(&parser);
 
-  return value;
+  return result;
 }
 
 static VALUE
@@ -170,6 +185,9 @@ Init_yarp(void) {
   rb_cYARP = rb_define_module("YARP");
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
+
+  rb_cYARPParseError = rb_define_class_under(rb_cYARP, "ParseError", rb_cObject);
+  rb_cYARPParseResult = rb_define_class_under(rb_cYARP, "ParseResult", rb_cObject);
 
   rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
 
