@@ -1175,6 +1175,21 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
       break;
     }
+    case YP_TOKEN_KEYWORD_CLASS: {
+      yp_token_t class_keyword = parser->previous;
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      yp_node_t *statements = parse_statements(parser, YP_TOKEN_KEYWORD_END);
+      consume(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
+
+      node = yp_node_class_node_create(parser, scope, &class_keyword, name, statements, &parser->previous);
+      parser->current_scope = parent_scope;
+      break;
+    }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;
       consume(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");

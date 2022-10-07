@@ -101,6 +101,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CharacterLiteral(CHARACTER_LITERAL("?a")), "?a"
   end
 
+  test "class" do
+    expected = ClassNode(
+      Scope([IDENTIFIER("a")]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      Statements([
+        LocalVariableWrite(
+          IDENTIFIER("a"),
+          EQUAL("="),
+          IntegerLiteral(INTEGER("1"))
+        )
+      ]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "class A a = 1 end"
+  end
+
   test "class variable read" do
     assert_parses ClassVariableRead(CLASS_VARIABLE("@@abc")), "@@abc"
   end

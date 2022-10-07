@@ -301,6 +301,14 @@ nodes:
     child_nodes:
       - token value
     location: value
+  - name: ClassNode
+    child_nodes:
+      - node scope
+      - token class_keyword
+      - node constant_path
+      - node statements
+      - token end_keyword
+    location: class_keyword->end_keyword
   - name: ClassVariableRead
     child_nodes:
       - token name
