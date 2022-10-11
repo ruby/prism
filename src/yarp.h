@@ -25,27 +25,27 @@ void
 yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 // Initialize a parser with the given start and end pointers.
-__attribute__ ((__visibility__("default"))) extern void
+__attribute__((__visibility__("default"))) extern void
 yp_parser_create(yp_parser_t *parser, const char *source, off_t size);
 
 // Free any memory associated with the given parser.
-__attribute__ ((__visibility__("default"))) extern void
+__attribute__((__visibility__("default"))) extern void
 yp_parser_destroy(yp_parser_t *parser);
 
 // Get the next token type and set its value on the current pointer.
-__attribute__ ((__visibility__("default"))) extern void
+__attribute__((__visibility__("default"))) extern void
 yp_lex_token(yp_parser_t *parser);
 
 // Parse the Ruby source associated with the given parser and return the tree.
-__attribute__ ((__visibility__("default"))) extern yp_node_t *
+__attribute__((__visibility__("default"))) extern yp_node_t *
 yp_parse(yp_parser_t *parser);
 
 // Deallocate a node and all of its children.
-__attribute__ ((__visibility__("default"))) extern void
+__attribute__((__visibility__("default"))) extern void
 yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
 // Serialize the AST represented by the given node to the given buffer.
-__attribute__ ((__visibility__("default"))) extern void
+__attribute__((__visibility__("default"))) extern void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 __attribute__((__visibility__("default"))) extern const char *
