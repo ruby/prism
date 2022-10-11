@@ -1,21 +1,18 @@
 #include "error.h"
 
 static yp_error_t *
-yp_error_create(const char *message, uint64_t position) {
+yp_error_create(const char *source, uint64_t position) {
   yp_error_t *error = malloc(sizeof(yp_error_t));
-
-  size_t length = strlen(message);
-  char *source = malloc(length);
+  size_t length = strlen(source);
 
   *error = (yp_error_t) {
     .location = { .start = position, .end = position },
     .message = {
-      .type = YP_STRING_OWNED,
-      .as.owned = { .source = source, .length = length }
+      .type = YP_STRING_CONSTANT,
+      .as.constant = { .source = source, .length = length }
     }
   };
 
-  memcpy(source, message, length);
   return error;
 }
 

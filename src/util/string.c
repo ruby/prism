@@ -32,6 +32,22 @@ yp_string_owned_create(char *source, size_t length) {
   return string;
 }
 
+// Constructs a constant string that doesn't own its memory source.
+yp_string_t *
+yp_string_constant_create(const char *source, size_t length) {
+  yp_string_t *string = malloc(sizeof(yp_string_t));
+
+  *string = (yp_string_t) {
+    .type = YP_STRING_CONSTANT,
+    .as.constant = {
+      .source = source,
+      .length = length
+    }
+  };
+
+  return string;
+}
+
 // Returns the length associated with the string.
 __attribute__ ((__visibility__("default"))) extern size_t
 yp_string_length(const yp_string_t *string) {

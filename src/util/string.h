@@ -6,7 +6,7 @@
 
 // This struct represents a string value.
 typedef struct {
-  enum { YP_STRING_SHARED, YP_STRING_OWNED } type;
+  enum { YP_STRING_SHARED, YP_STRING_OWNED, YP_STRING_CONSTANT } type;
 
   union {
     struct {
@@ -18,6 +18,11 @@ typedef struct {
       char *source;
       size_t length;
     } owned;
+
+    struct {
+      const char *source;
+      size_t length;
+    } constant;
   } as;
 } yp_string_t;
 
@@ -28,6 +33,10 @@ yp_string_shared_create(const char *start, const char *end);
 // Constructs an owned string that is responsible for freeing allocated memory.
 yp_string_t *
 yp_string_owned_create(char *source, size_t length);
+
+// Constructs a constant string that doesn't own its memory source.
+yp_string_t *
+yp_string_constant_create(const char *source, size_t length);
 
 // Returns the length associated with the string.
 __attribute__ ((__visibility__("default"))) extern size_t
