@@ -73,7 +73,14 @@ typedef struct yp_node {
     // <%= node.name %>
     struct {
     <%- node.params.each do |param| -%>
-      <%= param.decl %>;
+      <%= case param
+      in NodeParam | OptionalNodeParam then "struct yp_node *#{param.name}"
+      in NodeListParam then "struct yp_node_list #{param.name}"
+      in TokenParam then "yp_token_t #{param.name}"
+      in TokenListParam then "yp_token_list_t #{param.name}"
+      in StringParam then "yp_string_t #{param.name}"
+      end
+      %>;
     <%- end -%>
     } <%= node.human %>;
 <%= "\n" if node != nodes.last -%>

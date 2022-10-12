@@ -7,74 +7,41 @@ require "yaml"
 # This represents a parameter to a node that is itself a node. We pass them as
 # references and store them as references.
 class NodeParam < Struct.new(:name)
-  def decl = "struct yp_node *#{name}"
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node"
-  def child_nodes = name
-
-  def start_location(params) = "#{name}->location.start"
-  def end_location(params) = "#{name}->location.end"
-  def location(params) = "#{name}->location"
 end
 
 # This represents a parameter to a node that is itself a node and can be
 # optionally null. We pass them as references and store them as references.
 class OptionalNodeParam < Struct.new(:name, :fallback)
-  def decl = "struct yp_node *#{name}"
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node?"
-  def child_nodes = name
-
-  def fallback_param(params) = params.find { |param| param.name == fallback }
-  def start_location(params) = "(#{name} == NULL ? #{fallback_param(params).start_location(params)} : #{name}->location.start)"
-  def end_location(params) = "(#{name} == NULL ? #{fallback_param(params).end_location(params)} : #{name}->location.end)"
-  def location(params) = "(#{name} == NULL ? #{fallback_param(params).location(params)} : #{name}->location)"
 end
 
 # This represents a parameter to a node that is a list of nodes. We pass them as
 # references and store them as references.
 class NodeListParam < Struct.new(:name)
-  def decl = "struct yp_node_list #{name}"
   def param = nil
   def rbs_class = "Array[Node]"
-  def child_nodes = "*#{name}"
-
-  def start_location(params) = "0"
-  def end_location(params) = "0"
-  def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
 # This represents a parameter to a node that is a token. We pass them as
 # references and store them by copying.
 class TokenParam < Struct.new(:name)
-  def decl = "yp_token_t #{name}"
   def param = "yp_token_t *#{name}"
   def rbs_class = "Token"
-  def child_nodes = nil
-
-  def start_location(params) = "#{name}->start - parser->start"
-  def end_location(params) = "#{name}->end - parser->start"
-  def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
 # This represents a parameter to a node that is a list of tokens.
 class TokenListParam < Struct.new(:name)
-  def decl = "yp_token_list_t #{name}"
   def param = nil
   def rbs_class = "Array[Token]"
-  def child_nodes = "*#{name}"
-
-  def start_location(params) = "0"
-  def end_location(params) = "0"
-  def location(params) = "{ .start = #{start_location(params)}, .end = #{end_location(params)} }"
 end
 
 # This represents a parameter to a node that is a string.
 class StringParam < Struct.new(:name)
-  def decl = "yp_string_t #{name}"
   def param = "yp_string_t *#{name}"
-  def rbs_class = ""
-  def child_nodes = nil
+  def rbs_class = "String"
 end
 
 # This class represents a node in the tree, configured by the config.yml file in
@@ -93,13 +60,13 @@ class NodeType
 
     @params =
       config.fetch("child_nodes").map do |param|
-        type, name = param.split(" ")
+        name = param.fetch("name")
 
-        case type
+        case param.fetch("type")
         when "node"
           NodeParam.new(name)
-        when /\Anode\?(.+)/
-          OptionalNodeParam.new(name, $1)
+        when "node?"
+          OptionalNodeParam.new(name)
         when "node[]"
           NodeListParam.new(name)
         when "string"
@@ -115,15 +82,32 @@ class NodeType
 
     @location =
       config.fetch("location").then do |location|
-        if location.include?("->")
-          from, to = location.split("->").map { |name| params.find { |param| param.name == name } }
-          "{ .start = #{from.start_location(params)}, .end = #{to.end_location(params)} }"
-        else
-          params.detect { |param| param.name == location }.location(params)
-        end
+        bounds = location.include?("->") ? location.split("->") : [location, location]
+        from, to = bounds.map { |names| names.split("|").map { |name| params.find { |param| param.name == name } } }
+        "{ .start = #{start_location_for(from)}, .end = #{end_location_for(to)} }"
       end
 
     @comment = config["comment"]
+  end
+
+  private
+
+  def start_location_for(params)
+    case param = params.first
+    in NodeParam then "#{param.name}->location.start"
+    in OptionalNodeParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->location.start)"
+    in NodeListParam | TokenListParam then "0"
+    in TokenParam then "#{param.name}->start - parser->start"
+    end
+  end
+
+  def end_location_for(params)
+    case param = params.first
+    in NodeParam then "#{param.name}->location.end"
+    in OptionalNodeParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->location.end)"
+    in NodeListParam | TokenListParam then "0"
+    in TokenParam then "#{param.name}->end - parser->start"
+    end
   end
 end
 

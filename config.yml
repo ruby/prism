@@ -279,9 +279,12 @@ tokens:
 nodes:
   - name: AndNode
     child_nodes:
-      - node left
-      - token operator
-      - node right
+      - name: left
+        type: node
+      - name: operator
+        type: token
+      - name: right
+        type: node
     location: left->right
     comment: |
       Represents the use of the `&&` operator or the `and` keyword.
@@ -290,122 +293,172 @@ nodes:
           ~~~~~~~~~~~~~~
   - name: ArgumentsNode
     child_nodes:
-      - node[] arguments
+      - name: arguments
+        type: node[]
     location: arguments
   - name: CallNode
     child_nodes:
-      - node?message receiver
-      - token message
-      - node?message arguments
-      - string name
-    location: receiver->arguments
+      - name: receiver
+        type: node?
+      - name: message
+        type: token
+      - name: arguments
+        type: node?
+      - name: name
+        type: string
+    location: receiver|message->arguments|message
   - name: CharacterLiteral
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: ClassNode
     child_nodes:
-      - node scope
-      - token class_keyword
-      - node constant_path
-      - node statements
-      - token end_keyword
+      - name: scope
+        type: node
+      - name: class_keyword
+        type: token
+      - name: constant_path
+        type: node
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
     location: class_keyword->end_keyword
   - name: ClassVariableRead
     child_nodes:
-      - token name
+      - name: name
+        type: token
     location: name
   - name: ClassVariableWrite
     child_nodes:
-      - token name
-      - token operator
-      - node value
+      - name: name
+        type: token
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: name->value
   - name: ConstantPathNode
     child_nodes:
-      - node parent
-      - token delimiter
-      - node child
+      - name: parent
+        type: node
+      - name: delimiter
+        type: token
+      - name: child
+        type: node
     location: parent->child
   - name: ConstantRead
     child_nodes:
-      - token name
+      - name: name
+        type: token
     location: name
   - name: FalseNode
     child_nodes:
-      - token keyword
+      - name: keyword
+        type: token
     location: keyword
   - name: FloatLiteral
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: GlobalVariableRead
     child_nodes:
-      - token name
+      - name: name
+        type: token
     location: name
   - name: GlobalVariableWrite
     child_nodes:
-      - token name
-      - token operator
-      - node value
+      - name: name
+        type: token
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: name->value
   - name: IfNode
     child_nodes:
-      - token keyword
-      - node predicate
-      - node statements
+      - name: keyword
+        type: token
+      - name: predicate
+        type: node
+      - name: statements
+        type: node
     location: keyword->statements
   - name: ImaginaryLiteral
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: InstanceVariableRead
     child_nodes:
-      - token name
+      - name: name
+        type: token
     location: name
   - name: InstanceVariableWrite
     child_nodes:
-      - token name
-      - token operator
-      - node value
+      - name: name
+        type: token
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: name->value
   - name: IntegerLiteral
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: LocalVariableRead
     child_nodes:
-      - token name
+      - name: name
+        type: token
     location: name
   - name: LocalVariableWrite
     child_nodes:
-      - token name
-      - token operator
-      - node value
+      - name: name
+        type: token
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: name->value
   - name: ModuleNode
     child_nodes:
-      - node scope
-      - token module_keyword
-      - node constant_path
-      - node statements
-      - token end_keyword
+      - name: scope
+        type: node
+      - name: module_keyword
+        type: token
+      - name: constant_path
+        type: node
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
     location: module_keyword->end_keyword
   - name: NilNode
     child_nodes:
-      - token keyword
+      - name: keyword
+        type: token
     location: keyword
   - name: OperatorAssignmentNode
     child_nodes:
-      - node target
-      - token operator
-      - node value
+      - name: target
+        type: node
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: target->value
   - name: OperatorAndAssignmentNode
     child_nodes:
-      - node target
-      - token operator
-      - node value
+      - name: target
+        type: node
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: target->value
     comment: |
       Represents the use of the `&&=` operator for assignment.
@@ -414,9 +467,12 @@ nodes:
           ~~~~~~~~~~~~~~~~
   - name: OperatorOrAssignmentNode
     child_nodes:
-      - node target
-      - token operator
-      - node value
+      - name: target
+        type: node
+      - name: operator
+        type: token
+      - name: value
+        type: node
     location: target->value
     comment: |
       Represents the use of the `||=` operator for assignment.
@@ -425,9 +481,12 @@ nodes:
           ~~~~~~~~~~~~~~~~
   - name: OrNode
     child_nodes:
-      - node left
-      - token operator
-      - node right
+      - name: left
+        type: node
+      - name: operator
+        type: token
+      - name: right
+        type: node
     location: left->right
     comment: |
       Represents the use of the `||` operator or the `or` keyword.
@@ -436,48 +495,63 @@ nodes:
           ~~~~~~~~~~~~~
   - name: PostExecutionNode
     child_nodes:
-      - token keyword
-      - token opening
-      - node statements
-      - token closing
+      - name: keyword
+        type: token
+      - name: opening
+        type: token
+      - name: statements
+        type: node
+      - name: closing
+        type: token
     location: keyword->closing
   - name: PreExecutionNode
     child_nodes:
-      - token keyword
-      - token opening
-      - node statements
-      - token closing
+      - name: keyword
+        type: token
+      - name: opening
+        type: token
+      - name: statements
+        type: node
+      - name: closing
+        type: token
     location: keyword->closing
   - name: Program
     child_nodes:
-      - node scope
-      - node statements
+      - name: scope
+        type: node
+      - name: statements
+        type: node
     location: statements
   - name: RationalLiteral
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   # - name: Range
   #   child_nodes:
-  #     - node?operator left
+  #     - node? left
   #     - token operator
-  #     - node?operator right
-  #   location: left->right
+  #     - node? right
+  #   location: left|operator->right|operator
   - name: RedoNode
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: RetryNode
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: Scope
     child_nodes:
-      - token[] locals
+      - name: locals
+        type: token[]
     location: locals
   - name: SelfNode
     child_nodes:
-      - token keyword
+      - name: keyword
+        type: token
     location: keyword
     comment: |
       Represents the `self` keyword.
@@ -486,45 +560,65 @@ nodes:
           ~~~~
   - name: Statements
     child_nodes:
-      - node[] body
+      - name: body
+        type: node[]
     location: body
   - name: SymbolNode
     child_nodes:
-      - token value
+      - name: value
+        type: token
     location: value
   - name: SymbolListNode
     child_nodes:
-      - token opening
-      - node[] symbols
-      - token closing
+      - name: opening
+        type: token
+      - name: symbols
+        type: node[]
+      - name: closing
+        type: token
     location: opening->closing
   - name: Ternary
     child_nodes:
-      - node predicate
-      - token question_mark
-      - node true_expression
-      - token colon
-      - node false_expression
+      - name: predicate
+        type: node
+      - name: question_mark
+        type: token
+      - name: true_expression
+        type: node
+      - name: colon
+        type: token
+      - name: false_expression
+        type: node
     location: predicate->false_expression
   - name: TrueNode
     child_nodes:
-      - token keyword
+      - name: keyword
+        type: token
     location: keyword
   - name: UnlessNode
     child_nodes:
-      - token keyword
-      - node predicate
-      - node statement
+      - name: keyword
+        type: token
+      - name: predicate
+        type: node
+      - name: statement
+        type: node
     location: keyword->statement
   - name: UntilNode
     child_nodes:
-      - token keyword
-      - node predicate
-      - node statement
+      - name: keyword
+        type: token
+      - name: predicate
+        type: node
+      - name: statement
+        type: node
     location: keyword->statement
   - name: WhileNode
     child_nodes:
-      - token keyword
-      - node predicate
-      - node statement
+      - name: keyword
+        type: token
+      - name: predicate
+        type: node
+      - name: statement
+        type: node
     location: keyword->statement
