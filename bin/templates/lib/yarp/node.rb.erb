@@ -29,13 +29,18 @@ module YARP
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [<%= node.params.map(&:child_nodes).compact.join(", ") %>]
+      [<%= node.params.filter_map { |param|
+        case param
+        when NodeParam, OptionalNodeParam then param.name
+        when NodeListParam then "*#{param.name}"
+        end
+      }.join(", ") %>]
     end
 
     # def deconstruct: () -> Array[nil | Node]
     alias deconstruct child_nodes
 
-    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Token | Node | Array[Node] | Location]
+    # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Node | Array[Node] | String | Token | Array[Token] | Location]
     def deconstruct_keys(keys)
       { <%= node.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %>, location: location }
     end
