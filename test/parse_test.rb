@@ -105,6 +105,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "break()"
   end
 
+  test "break(1)" do
+    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "break(1)"
+  end
+
+  test "break(1, 2, 3)" do
+    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "break(1, 2, 3)"
+  end
+
   test "character literal" do
     assert_parses CharacterLiteral(CHARACTER_LITERAL("?a")), "?a"
   end
@@ -229,6 +237,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "module A a = 1 end"
   end
 
+  test "next" do
+    assert_parses NextNode(KEYWORD_NEXT("next"), nil, nil, nil), "next"
+  end
+
+  test "next()" do
+    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "next()"
+  end
+
+  test "next(1)" do
+    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "next(1)"
+  end
+
+  test "next(1, 2, 3)" do
+    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "next(1, 2, 3)"
+  end
+
   test "nil" do
     assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
   end
@@ -292,6 +316,22 @@ class ParseTest < Test::Unit::TestCase
 
   test "self" do
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
+  end
+
+  test "super" do
+    assert_parses SuperNode(KEYWORD_SUPER("super"), nil, nil, nil), "super"
+  end
+
+  test "super()" do
+    assert_parses SuperNode(KEYWORD_SUPER("super"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "super()"
+  end
+
+  test "super(1)" do
+    assert_parses SuperNode(KEYWORD_SUPER("super"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "super(1)"
+  end
+
+  test "super(1, 2, 3)" do
+    assert_parses SuperNode(KEYWORD_SUPER("super"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "super(1, 2, 3)"
   end
 
   test "symbol list" do
@@ -358,6 +398,22 @@ class ParseTest < Test::Unit::TestCase
 
   test "while modifier" do
     assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "1 while true"
+  end
+
+  test "yield" do
+    assert_parses YieldNode(KEYWORD_YIELD("yield"), nil, nil, nil), "yield"
+  end
+
+  test "yield()" do
+    assert_parses YieldNode(KEYWORD_YIELD("yield"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "yield()"
+  end
+
+  test "yield(1)" do
+    assert_parses YieldNode(KEYWORD_YIELD("yield"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "yield(1)"
+  end
+
+  test "yield(1, 2, 3)" do
+    assert_parses YieldNode(KEYWORD_YIELD("yield"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "yield(1, 2, 3)"
   end
 
   test "TERM < FACTOR" do
