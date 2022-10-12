@@ -1161,7 +1161,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_global_variable_read_create(parser, &parser->previous);
       break;
     case YP_TOKEN_IDENTIFIER:
-      if (yp_token_list_includes(parser->current_scope->as.scope.locals, &parser->previous)) {
+      if (yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
         node = yp_node_local_variable_read_create(parser, &parser->previous);
       } else {
         yp_string_t *name = yp_string_alloc();
@@ -1402,7 +1402,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_t *read = node;
 
             yp_token_t name = node->as.local_variable_read.name;
-            yp_token_list_append(parser->current_scope->as.scope.locals, &name);
+            yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
             node = yp_node_local_variable_write_create(parser, &name, &token, value);
             yp_node_destroy(parser, read);
@@ -1423,7 +1423,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
               yp_node_t *read = node;
 
               yp_token_t name = node->as.call_node.message;
-              yp_token_list_append(parser->current_scope->as.scope.locals, &name);
+              yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
               node = yp_node_local_variable_write_create(parser, &name, &token, value);
               yp_node_destroy(parser, read);
