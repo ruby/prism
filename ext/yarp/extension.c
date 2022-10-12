@@ -68,16 +68,18 @@ source_file_unload(source_t *source) {
 static VALUE
 dump_source(source_t *source) {
   yp_parser_t parser;
-  yp_parser_create(&parser, source->source, source->size);
+  yp_parser_init(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
-  yp_buffer_t *buffer = yp_buffer_create();
-  yp_serialize(&parser, node, buffer);
+  yp_buffer_t buffer;
 
-  VALUE dumped = rb_str_new(buffer->value, buffer->length);
+  yp_buffer_init(&buffer);
+  yp_serialize(&parser, node, &buffer);
+  VALUE dumped = rb_str_new(buffer.value, buffer.length);
+
   yp_node_destroy(&parser, node);
-  yp_buffer_destroy(buffer);
-  yp_parser_destroy(&parser);
+  yp_buffer_free(&buffer);
+  yp_parser_free(&parser);
 
   return dumped;
 }
@@ -105,14 +107,14 @@ dump_file(VALUE self, VALUE filepath) {
 static VALUE
 lex_source(source_t *source) {
   yp_parser_t parser;
-  yp_parser_create(&parser, source->source, source->size);
+  yp_parser_init(&parser, source->source, source->size);
 
   VALUE ary = rb_ary_new();
   for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
     rb_ary_push(ary, yp_token_new(&parser, &parser.current));
   }
 
-  yp_parser_destroy(&parser);
+  yp_parser_free(&parser);
   return ary;
 }
 
@@ -138,7 +140,7 @@ lex_file(VALUE self, VALUE filepath) {
 static VALUE
 parse_source(source_t *source) {
   yp_parser_t parser;
-  yp_parser_create(&parser, source->source, source->size);
+  yp_parser_init(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
   VALUE errors = rb_ary_new();
@@ -156,7 +158,7 @@ parse_source(source_t *source) {
   VALUE result = rb_class_new_instance(2, result_argv, rb_cYARPParseResult);
 
   yp_node_destroy(&parser, node);
-  yp_parser_destroy(&parser);
+  yp_parser_free(&parser);
 
   return result;
 }

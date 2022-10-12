@@ -19,9 +19,13 @@ typedef struct {
   yp_error_t *tail;
 } yp_error_list_t;
 
+// Allocate a new list of errors.
+yp_error_list_t *
+yp_error_list_alloc(void);
+
 // Initializes a list of errors.
 void
-yp_error_list_create(yp_error_list_t *error_list);
+yp_error_list_init(yp_error_list_t *error_list);
 
 // Append an error to the given list of errors.
 void
@@ -29,6 +33,6 @@ yp_error_list_append(yp_error_list_t *error_list, const char *message, uint64_t 
 
 // Deallocate the internal state of the given error list.
 void
-yp_error_list_destroy(yp_error_list_t *error_list);
+yp_error_list_free(yp_error_list_t *error_list);
 
 #endif

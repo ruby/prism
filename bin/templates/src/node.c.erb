@@ -9,18 +9,14 @@
 // parser argument, but it's there to allow for the future possibility of
 // pre-allocating larger memory pools and then pulling from those here.
 static inline yp_node_t *
-yp_node_create(yp_parser_t *parser) {
-  return malloc(sizeof(yp_node_t));
+yp_node_alloc(yp_parser_t *parser) {
+  return (yp_node_t *) malloc(sizeof(yp_node_t));
 }
 
-// Allocate a new yp_token_list_t.
-yp_token_list_t *
-yp_token_list_create() {
-  yp_token_list_t *token_list = malloc(sizeof(yp_token_list_t));
-  token_list->tokens = NULL;
-  token_list->size = 0;
-  token_list->capacity = 0;
-  return token_list;
+// Initialize a yp_token_list_t with its default values.
+static void
+yp_token_list_init(yp_token_list_t *token_list) {
+  *token_list = (yp_token_list_t) { .tokens = NULL, .size = 0, .capacity = 0 };
 }
 
 // Append a token to the given list.
@@ -48,22 +44,18 @@ yp_token_list_includes(yp_token_list_t *token_list, yp_token_t *token) {
   return false;
 }
 
-// Free the memory associated with the token list and the token list itself.
-void
-yp_token_list_destroy(yp_token_list_t *token_list) {
-  free(token_list->tokens);
-  free(token_list);
+// Free the memory associated with the token list.
+static void
+yp_token_list_free(yp_token_list_t *token_list) {
+  if (token_list->tokens != NULL) {
+    free(token_list->tokens);
+  }
 }
 
-// Allocate a list of nodes. The parser argument is not used, but is here for
-// the future possibility of pre-allocating memory pools.
-static yp_node_list_t *
-yp_node_list_create(yp_parser_t *parser) {
-  yp_node_list_t *list = malloc(sizeof(yp_node_list_t));
-  list->nodes = NULL;
-  list->size = 0;
-  list->capacity = 0;
-  return list;
+// Initiailize a list of nodes.
+static void
+yp_node_list_init(yp_node_list_t *node_list) {
+  *node_list = (yp_node_list_t) { .nodes = NULL, .size = 0, .capacity = 0 };
 }
 
 // Append a new node onto the end of the node list.
@@ -82,34 +74,40 @@ yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list
 __attribute__((__visibility__("default"))) void
 yp_node_destroy(yp_parser_t *parser, yp_node_t *node);
 
-// Deallocate a list of nodes. The parser argument is not used, but is here for
-// the future possibility of pre-allocating memory pools.
+// Deallocate the inner memory of a list of nodes. The parser argument is not
+// used, but is here for the future possibility of pre-allocating memory pools.
 static void
-yp_node_list_destroy(yp_parser_t *parser, yp_node_list_t *list) {
+yp_node_list_free(yp_parser_t *parser, yp_node_list_t *list) {
   if (list->capacity > 0) {
     for (size_t index = 0; index < list->size; index++) {
       yp_node_destroy(parser, list->nodes[index]);
     }
     free(list->nodes);
   }
-  free(list);
 }
 
 <%- nodes.each do |node| -%>
 // Allocate a new <%= node.name %> node.
 yp_node_t *
 <%- params = node.params.map(&:param).compact.join(", ") -%>
+<%- assigns = node.params.map { |param| 
+  case param
+  in NodeParam | OptionalNodeParam then ".#{param.name} = #{param.name}"
+  in StringParam | TokenParam then ".#{param.name} = *#{param.name}"
+  in NodeListParam | TokenListParam then nil
+  end
+}.compact.join(", ") -%>
 yp_node_<%= node.human %>_create(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
-  yp_node_t *node = yp_node_create(parser);
-  *node = (yp_node_t) {
-    .type = <%= node.type %>,
-    .location = <%= node.location %>,
-    .as.<%= node.human %> = {
-      <%- node.params.each do |param| -%>
-      .<%= param.name %> = <%= param.assign %>,
-      <%- end -%>
-    },
-  };
+  yp_node_t *node = yp_node_alloc(parser);
+  *node = (yp_node_t) { .type = <%= node.type %>, .location = <%= node.location %><%= assigns.empty? ? "" : ", .as.#{node.human} = { #{assigns} }" %> };
+  <%- node.params.each do |param| %>
+  <%- case param -%>
+  <%- when NodeListParam -%>
+  yp_node_list_init(&node->as.<%= node.human %>.<%= param.name %>);
+  <%- when TokenListParam -%>
+  yp_token_list_init(&node->as.<%= node.human %>.<%= param.name %>);
+  <%- end -%>
+  <%- end -%>
   return node;
 }
 
@@ -132,11 +130,11 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
         yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       }
       <%- when StringParam -%>
-      yp_string_destroy(&node->as.<%= node.human %>.<%= param.name %>);
+      yp_string_free(&node->as.<%= node.human %>.<%= param.name %>);
       <%- when NodeListParam -%>
-      yp_node_list_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_list_free(parser, &node->as.<%= node.human %>.<%= param.name %>);
       <%- when TokenListParam -%>
-      yp_token_list_destroy(node->as.<%= node.human %>.<%= param.name %>);
+      yp_token_list_free(&node->as.<%= node.human %>.<%= param.name %>);
       <%- else -%>
       <%- raise -%>
       <%- end -%>

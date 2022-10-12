@@ -55,3 +55,16 @@ The repository contains the infrastructure for both a shared library (librubypar
 ## Contributing
 
 Check out the [discussions](https://github.com/Shopify/yarp/discussions) page to get a better sense of the active discussions happening on this repository.
+
+### Naming conventions
+
+When naming entities in YARP, there are a couple of conventions that we stick by for consistency.
+
+* All non-static symbols should start with `yp_` or `YP_`.
+* Each struct should have three functions associated with it:
+  * `yp_xxx_alloc` - should allocate the space for the struct only
+  * `yp_xxx_init` - should initialize the struct with parameters or default values
+  * `yp_xxx_free` - should free the _internal_ memory associated with the struct
+* If something is _always_ allocated on the heap, you can instead use:
+  * `yp_xxx_create` - should allocate the struct and initialize it all at once
+  * `yp_xxx_destroy` - should deallocate internal memory and deallocate the struct itself
