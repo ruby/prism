@@ -21,6 +21,10 @@ jobs:
         bundler-cache: true
 
     - name: Run templating
+      uses: jidicula/clang-format-action@v4.9.0
+      with:
+        clang-format-version: '14'
+        check-path: 'ext'
       run: bundle exec rake templates
 
     - name: Run native tests
