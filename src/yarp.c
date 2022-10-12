@@ -1636,13 +1636,13 @@ yp_parser_create(yp_parser_t *parser, const char *source, off_t size) {
     .current_scope = NULL
   };
 
-  yp_error_list_create(&parser->error_list);
+  yp_error_list_init(&parser->error_list);
 }
 
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_destroy(yp_parser_t *parser) {
-  yp_error_list_destroy(&parser->error_list);
+  yp_error_list_free(&parser->error_list);
 }
 
 // Get the next token type and set its value on the current pointer.
