@@ -93,7 +93,7 @@ yp_node_t *
 <%- assigns = node.params.map { |param| 
   case param
   in NodeParam | OptionalNodeParam then ".#{param.name} = #{param.name}"
-  in StringParam | TokenParam then ".#{param.name} = *#{param.name}"
+  in StringParam | TokenParam | OptionalTokenParam then ".#{param.name} = *#{param.name}"
   in NodeListParam | TokenListParam then nil
   end
 }.compact.join(", ") -%>
@@ -122,7 +122,7 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
     case <%= node.type %>:
       <%- node.params.each do |param| -%>
       <%- case param -%>
-      <%- when TokenParam -%>
+      <%- when TokenParam, OptionalTokenParam -%>
       <%- when NodeParam -%>
       yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
       <%- when OptionalNodeParam -%>

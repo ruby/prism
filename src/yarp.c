@@ -1191,6 +1191,26 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
       break;
     }
+    case YP_TOKEN_KEYWORD_BREAK: {
+      yp_token_t keyword = parser->previous;
+      yp_token_t lparen;
+      yp_node_t *arguments = NULL;
+      yp_token_t rparen;
+
+      if (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        expect(parser, YP_TOKEN_PARENTHESIS_LEFT, "Expected '(' after 'break'.");
+        lparen = parser->previous;
+        arguments = yp_node_arguments_node_create(parser);
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'break' arguments.");
+        rparen = parser->previous;
+      } else {
+        lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+        rparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+      }
+
+      node = yp_node_break_node_create(parser, &keyword, &lparen, arguments, &rparen);
+      break;
+    }
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;
       yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);

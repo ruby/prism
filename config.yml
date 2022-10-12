@@ -6,6 +6,8 @@ tokens:
     comment: "an invalid token"
   - name: MISSING
     comment: "a token that was expected but not found"
+  - name: NOT_PROVIDED
+    comment: "a token that was not present but it is okay"
   - name: AMPERSAND
     comment: "&"
   - name: AMPERSAND_AMPERSAND
@@ -296,6 +298,17 @@ nodes:
       - name: arguments
         type: node[]
     location: arguments
+  - name: BreakNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: lparen
+        type: token?
+      - name: arguments
+        type: node?
+      - name: rparen
+        type: token?
+    location: keyword->rparen|arguments|lparen|keyword
   - name: CallNode
     child_nodes:
       - name: receiver

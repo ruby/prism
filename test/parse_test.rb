@@ -97,6 +97,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CallNode(expression("1"), STAR_STAR("**"), ArgumentsNode([expression("2")]), "**"), "1**2"
   end
 
+  test "break" do
+    assert_parses BreakNode(KEYWORD_BREAK("break"), nil, nil, nil), "break"
+  end
+
+  test "break()" do
+    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "break()"
+  end
+
   test "character literal" do
     assert_parses CharacterLiteral(CHARACTER_LITERAL("?a")), "?a"
   end
