@@ -20,5 +20,6 @@ test-native/run-one
 /src/ast.h
 /src/node.c
 /src/node.h
+/src/prettyprint.c
 /src/serialize.c
 /src/token_type.c
