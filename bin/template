@@ -32,6 +32,12 @@ class TokenParam < Struct.new(:name)
   def rbs_class = "Token"
 end
 
+# This represents a parameter to a node that is a token that is optional.
+class OptionalTokenParam < Struct.new(:name)
+  def param = "yp_token_t *#{name}"
+  def rbs_class = "Token?"
+end
+
 # This represents a parameter to a node that is a list of tokens.
 class TokenListParam < Struct.new(:name)
   def param = nil
@@ -73,6 +79,8 @@ class NodeType
           StringParam.new(name)
         when "token"
           TokenParam.new(name)
+        when "token?"
+          OptionalTokenParam.new(name)
         when "token[]"
           TokenListParam.new(name)
         else
@@ -98,6 +106,7 @@ class NodeType
     in OptionalNodeParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->location.start)"
     in NodeListParam | TokenListParam then "0"
     in TokenParam then "#{param.name}->start - parser->start"
+    in OptionalTokenParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->start - parser->start)"
     end
   end
 
@@ -107,6 +116,7 @@ class NodeType
     in OptionalNodeParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->location.end)"
     in NodeListParam | TokenListParam then "0"
     in TokenParam then "#{param.name}->end - parser->start"
+    in OptionalTokenParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->end - parser->start)"
     end
   end
 end
@@ -138,7 +148,10 @@ def template(name, locals)
   template = File.expand_path("../bin/templates/#{name}.erb", __dir__)
   write_to = File.expand_path("../#{name}", __dir__)
 
-  contents = ERB.new(File.read(template), trim_mode: "-").result_with_hash(locals)
+  erb = ERB.new(File.read(template), trim_mode: "-")
+  erb.filename = template
+
+  contents = erb.result_with_hash(locals)
   FileUtils.mkdir_p(File.dirname(write_to))
   File.write(write_to, contents)
 

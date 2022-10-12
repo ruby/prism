@@ -49,6 +49,13 @@ module YARP
         end
       end
 
+      def load_optional_token
+        if io.read(1).unpack1("C") != 0
+          io.pos -= 1
+          load_token
+        end
+      end
+
       def load_string
         length = io.read(8).unpack1("Q")
         io.read(length)
@@ -68,6 +75,7 @@ module YARP
           when NodeListParam then "io.read(8).unpack1(\"Q\").times.map { load_node }"
           when TokenParam then "load_token"
           when TokenListParam then "io.read(8).unpack1(\"Q\").times.map { load_token }"
+          when OptionalTokenParam then "load_optional_token"
           else raise
           end
         }.join(", ") -%>, location)

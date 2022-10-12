@@ -1131,6 +1131,20 @@ parse_statements(yp_parser_t *parser, yp_token_type_t terminator) {
   return statements;
 }
 
+// Parse a list of arguments to a keyword like `break`.
+void
+parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
+  if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+    while (true) {
+      yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE);
+      yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
+      expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
+    }
+  }
+}
+
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // If this is the end of the file, then return immediately.
@@ -1189,6 +1203,42 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t closing = parser->previous;
 
       node = yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
+      break;
+    }
+    case YP_TOKEN_KEYWORD_BREAK:
+    case YP_TOKEN_KEYWORD_NEXT:
+    case YP_TOKEN_KEYWORD_SUPER:
+    case YP_TOKEN_KEYWORD_YIELD: {
+      yp_token_t keyword = parser->previous;
+      yp_token_t lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+      yp_node_t *arguments = NULL;
+      yp_token_t rparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+        arguments = yp_node_arguments_node_create(parser);
+        parse_arguments(parser, arguments);
+        rparen = parser->previous;
+      }
+
+      switch (keyword.type) {
+        case YP_TOKEN_KEYWORD_BREAK:
+          node = yp_node_break_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          break;
+        case YP_TOKEN_KEYWORD_NEXT:
+          node = yp_node_next_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          break;
+        case YP_TOKEN_KEYWORD_SUPER:
+          node = yp_node_super_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          break;
+        case YP_TOKEN_KEYWORD_YIELD:
+          node = yp_node_yield_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          break;
+        default:
+          // Cannot hit here.
+          break;
+      }
+
       break;
     }
     case YP_TOKEN_KEYWORD_CLASS: {

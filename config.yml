@@ -6,6 +6,8 @@ tokens:
     comment: "an invalid token"
   - name: MISSING
     comment: "a token that was expected but not found"
+  - name: NOT_PROVIDED
+    comment: "a token that was not present but it is okay"
   - name: AMPERSAND
     comment: "&"
   - name: AMPERSAND_AMPERSAND
@@ -296,6 +298,17 @@ nodes:
       - name: arguments
         type: node[]
     location: arguments
+  - name: BreakNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: lparen
+        type: token?
+      - name: arguments
+        type: node?
+      - name: rparen
+        type: token?
+    location: keyword->rparen|arguments|lparen|keyword
   - name: CallNode
     child_nodes:
       - name: receiver
@@ -437,6 +450,17 @@ nodes:
       - name: end_keyword
         type: token
     location: module_keyword->end_keyword
+  - name: NextNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: lparen
+        type: token?
+      - name: arguments
+        type: node?
+      - name: rparen
+        type: token?
+    location: keyword->rparen|arguments|lparen|keyword
   - name: NilNode
     child_nodes:
       - name: keyword
@@ -563,6 +587,17 @@ nodes:
       - name: body
         type: node[]
     location: body
+  - name: SuperNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: lparen
+        type: token?
+      - name: arguments
+        type: node?
+      - name: rparen
+        type: token?
+    location: keyword->rparen|arguments|lparen|keyword
   - name: SymbolNode
     child_nodes:
       - name: value
@@ -622,3 +657,14 @@ nodes:
       - name: statement
         type: node
     location: keyword->statement
+  - name: YieldNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: lparen
+        type: token?
+      - name: arguments
+        type: node?
+      - name: rparen
+        type: token?
+    location: keyword->rparen|arguments|lparen|keyword
