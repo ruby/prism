@@ -3,15 +3,10 @@
 static yp_error_t *
 yp_error_create(const char *source, uint64_t position) {
   yp_error_t *error = malloc(sizeof(yp_error_t));
-  size_t length = strlen(source);
+  *error = (yp_error_t) { .location = { .start = position, .end = position } };
 
-  *error = (yp_error_t) {
-    .location = { .start = position, .end = position },
-    .message = {
-      .type = YP_STRING_CONSTANT,
-      .as.constant = { .source = source, .length = length }
-    }
-  };
+  size_t length = strlen(source);
+  yp_string_constant_init(&error->message, source, length);
 
   return error;
 }
@@ -44,7 +39,7 @@ yp_error_list_destroy(yp_error_list_t *error_list) {
   for (current = error_list->head; current != NULL;) {
     previous = current;
     current = current->next;
-    yp_string_destroy(&previous->message);
+    yp_string_free(&previous->message);
     free(previous);
   }
 }

@@ -1164,7 +1164,9 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       if (yp_token_list_includes(parser->current_scope->as.scope.locals, &parser->previous)) {
         node = yp_node_local_variable_read_create(parser, &parser->previous);
       } else {
-        yp_string_t *name = yp_string_shared_create(parser->previous.start, parser->previous.end);
+        yp_string_t *name = yp_string_alloc();
+        yp_string_shared_init(name, parser->previous.start, parser->previous.end);
+
         node = yp_node_call_node_create(parser, NULL, &parser->previous, NULL, name);
       }
       break;
@@ -1333,7 +1335,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_TILDE: {
       yp_token_t operator_token = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
-      yp_string_t *name = yp_string_shared_create(operator_token.start, operator_token.end);
+
+      yp_string_t *name = yp_string_alloc();
+      yp_string_shared_init(name, operator_token.start, operator_token.end);
+
       node = yp_node_call_node_create(parser, receiver, &operator_token, NULL, name);
       break;
     }
@@ -1341,8 +1346,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t operator_token = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
 
-      yp_string_t *name = yp_string_owned_create(malloc(2), 2);
-      memcpy(name->as.owned.source, "-@", 2);
+      yp_string_t *name = yp_string_alloc();
+      yp_string_constant_init(name, "-@", 2);
 
       node = yp_node_call_node_create(parser, receiver, &operator_token, NULL, name);
       break;
@@ -1351,8 +1356,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t operator_token = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right);
 
-      yp_string_t *name = yp_string_owned_create(malloc(2), 2);
-      memcpy(name->as.owned.source, "+@", 2);
+      yp_string_t *name = yp_string_alloc();
+      yp_string_constant_init(name, "+@", 2);
 
       node = yp_node_call_node_create(parser, receiver, &operator_token, NULL, name);
       break;
@@ -1432,7 +1437,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, value);
 
             int length = node->location.end - node->location.start;
-            yp_string_t *name = yp_string_owned_create(malloc(length + 1), length + 1);
+            yp_string_t *name = yp_string_alloc();
+            yp_string_owned_init(name, malloc(length + 1), length + 1);
             sprintf(name->as.owned.source, "%.*s=", length, parser->start + node->location.start);
 
             node = yp_node_call_node_create(parser, node, &token, arguments, name);
@@ -1502,7 +1508,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_t *arguments = yp_node_arguments_node_create(parser);
         yp_node_t *argument = parse_expression(parser, token_binding_powers.right);
         yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, argument);
-        yp_string_t *name = yp_string_shared_create(token.start, token.end);
+
+        yp_string_t *name = yp_string_alloc();
+        yp_string_shared_init(name, token.start, token.end);
+
         node = yp_node_call_node_create(parser, node, &token, arguments, name);
         break;
       }

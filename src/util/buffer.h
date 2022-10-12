@@ -42,8 +42,8 @@ yp_buffer_append_u32(yp_buffer_t *buffer, uint32_t value);
 void
 yp_buffer_append_u64(yp_buffer_t *buffer, uint64_t value);
 
-// Free the memory associated with the buffer and the buffer itself.
+// Free the memory associated with the buffer.
 __attribute__ ((__visibility__("default"))) extern void
-yp_buffer_destroy(yp_buffer_t *buffer);
+yp_buffer_free(yp_buffer_t *buffer);
 
 #endif
