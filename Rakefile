@@ -31,7 +31,10 @@ ERB_GENERATED_FILES = [
   "src/token_type.c",
 ]
 
-task :make => ERB_GENERATED_FILES do
+desc "Generate all ERB template based files"
+task :templates => ERB_GENERATED_FILES
+
+task :make => :templates do
   sh "make"
 end
 
