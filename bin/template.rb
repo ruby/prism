@@ -160,22 +160,14 @@ def template(name, locals)
   File.write(write_to, contents)
 
   if [".c", ".h"].include?(File.extname(write_to))
-    system("clang-format -i #{write_to}")
+    sh("clang-format -i #{write_to}")
   end
 end
 
-config = YAML.load_file(File.expand_path("../config.yml", __dir__))
-locals = {
-  nodes: config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name),
-  tokens: config.fetch("tokens").map { |token| Token.new(token) }
-}
-
-template("ext/yarp/node.c", locals)
-template("lib/yarp/node.rb", locals)
-template("lib/yarp/serialize.rb", locals)
-template("src/ast.h", locals)
-template("src/node.c", locals)
-template("src/node.h", locals)
-template("src/prettyprint.c", locals)
-template("src/serialize.c", locals)
-template("src/token_type.c", locals)
+def locals
+  config = YAML.load_file(File.expand_path("../config.yml", __dir__))
+  {
+    nodes: config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name),
+    tokens: config.fetch("tokens").map { |token| Token.new(token) }
+  }
+end
