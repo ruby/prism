@@ -14,9 +14,13 @@ typedef struct {
   size_t capacity;
 } yp_buffer_t;
 
-// Allocate a new yp_buffer_t with the default initial capacity.
+// Allocate a new yp_buffer_t.
 __attribute__ ((__visibility__("default"))) extern yp_buffer_t *
-yp_buffer_create();
+yp_buffer_alloc(void);
+
+// Initialize a yp_buffer_t with its default values.
+__attribute__ ((__visibility__("default"))) extern void
+yp_buffer_init(yp_buffer_t *buffer);
 
 // Append a string to the buffer.
 void

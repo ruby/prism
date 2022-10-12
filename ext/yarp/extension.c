@@ -71,12 +71,14 @@ dump_source(source_t *source) {
   yp_parser_create(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
-  yp_buffer_t *buffer = yp_buffer_create();
-  yp_serialize(&parser, node, buffer);
+  yp_buffer_t buffer;
 
-  VALUE dumped = rb_str_new(buffer->value, buffer->length);
+  yp_buffer_init(&buffer);
+  yp_serialize(&parser, node, &buffer);
+  VALUE dumped = rb_str_new(buffer.value, buffer.length);
+
   yp_node_destroy(&parser, node);
-  yp_buffer_destroy(buffer);
+  yp_buffer_free(&buffer);
   yp_parser_destroy(&parser);
 
   return dumped;
