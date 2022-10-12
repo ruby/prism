@@ -34,7 +34,7 @@ end
 # This represents a parameter to a node that is a list of nodes. We pass them as
 # references and store them as references.
 class NodeListParam < Struct.new(:name)
-  def decl = "struct yp_node_list *#{name}"
+  def decl = "struct yp_node_list #{name}"
   def param = nil
   def rbs_class = "Array[Node]"
   def child_nodes = "*#{name}"

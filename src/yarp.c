@@ -1124,7 +1124,7 @@ parse_statements(yp_parser_t *parser, yp_token_type_t terminator) {
 
   while (parsing && parser->current.type != terminator) {
     yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
-    yp_node_list_append(parser, statements, statements->as.statements.body, node);
+    yp_node_list_append(parser, statements, &statements->as.statements.body, node);
     if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) parsing = false;
   }
 
@@ -1312,13 +1312,13 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *symbol_list = yp_node_symbol_list_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_STRING_END) {
-        if (symbol_list->as.symbol_list_node.symbols->size == 0) {
+        if (symbol_list->as.symbol_list_node.symbols.size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
         }
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
-        yp_node_list_append(parser, symbol_list, symbol_list->as.symbol_list_node.symbols,
+        yp_node_list_append(parser, symbol_list, &symbol_list->as.symbol_list_node.symbols,
                             yp_node_symbol_node_create(parser, &parser->previous));
       }
 
@@ -1434,7 +1434,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           default: {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *arguments = yp_node_arguments_node_create(parser);
-            yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, value);
+            yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
 
             int length = node->location.end - node->location.start;
             yp_string_t *name = yp_string_alloc();
@@ -1507,7 +1507,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_STAR_STAR: {
         yp_node_t *arguments = yp_node_arguments_node_create(parser);
         yp_node_t *argument = parse_expression(parser, token_binding_powers.right);
-        yp_node_list_append(parser, arguments, arguments->as.arguments_node.arguments, argument);
+        yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
 
         yp_string_t *name = yp_string_alloc();
         yp_string_shared_init(name, token.start, token.end);
@@ -1517,7 +1517,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
       case YP_TOKEN_KEYWORD_IF: {
         yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, statements->as.statements.body, node);
+        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_if_node_create(parser, &token, predicate, statements);
@@ -1525,7 +1525,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
       case YP_TOKEN_KEYWORD_UNLESS: {
         yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, statements->as.statements.body, node);
+        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_unless_node_create(parser, &token, predicate, statements);
@@ -1533,7 +1533,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
       case YP_TOKEN_KEYWORD_UNTIL: {
         yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, statements->as.statements.body, node);
+        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_until_node_create(parser, &token, predicate, statements);
@@ -1541,7 +1541,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
       case YP_TOKEN_KEYWORD_WHILE: {
         yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, statements->as.statements.body, node);
+        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
         node = yp_node_while_node_create(parser, &token, predicate, statements);
@@ -1620,7 +1620,7 @@ yp_error_handler_t default_error_handler = {
 
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
-yp_parser_create(yp_parser_t *parser, const char *source, off_t size) {
+yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
   *parser = (yp_parser_t) {
     .lex_modes =
       {
@@ -1641,7 +1641,7 @@ yp_parser_create(yp_parser_t *parser, const char *source, off_t size) {
 
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
-yp_parser_destroy(yp_parser_t *parser) {
+yp_parser_free(yp_parser_t *parser) {
   yp_error_list_free(&parser->error_list);
 }
 
