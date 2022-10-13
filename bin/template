@@ -95,7 +95,7 @@ class NodeType
         "{ .start = #{start_location_for(from)}, .end = #{end_location_for(to)} }"
       end
 
-    @comment = config["comment"]
+    @comment = config.fetch("comment")
   end
 
   private
