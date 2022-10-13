@@ -292,7 +292,6 @@ nodes:
       Represents the use of the `&&` operator or the `and` keyword.
 
           left and right
-          ~~~~~~~~~~~~~~
   - name: ArgumentsNode
     child_nodes:
       - name: arguments
@@ -376,6 +375,15 @@ nodes:
       - name: value
         type: token
     location: value
+  - name: ForwardingSuper
+    child_nodes:
+      - name: keyword
+        type: token
+    location: keyword
+    comment: |
+      Represents the use of the `super` keyword without parentheses or arguments.
+
+          super
   - name: GlobalVariableRead
     child_nodes:
       - name: name
@@ -488,7 +496,6 @@ nodes:
       Represents the use of the `&&=` operator for assignment.
 
           target &&= value
-          ~~~~~~~~~~~~~~~~
   - name: OperatorOrAssignmentNode
     child_nodes:
       - name: target
@@ -502,7 +509,6 @@ nodes:
       Represents the use of the `||=` operator for assignment.
 
           target ||= value
-          ~~~~~~~~~~~~~~~~
   - name: OrNode
     child_nodes:
       - name: left
@@ -516,7 +522,6 @@ nodes:
       Represents the use of the `||` operator or the `or` keyword.
 
           left or right
-          ~~~~~~~~~~~~~
   - name: PostExecutionNode
     child_nodes:
       - name: keyword
@@ -581,7 +586,6 @@ nodes:
       Represents the `self` keyword.
 
           self
-          ~~~~
   - name: Statements
     child_nodes:
       - name: body
