@@ -759,6 +759,47 @@ nodes:
 
           foo; bar; baz
           ^^^^^^^^^^^^^
+  - name: StringNode
+    child_nodes:
+      - name: opening
+        type: token?
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token?
+    location: opening|parts->closing|parts
+    comment: |
+      Represents a string literal or a string contained within a `%w` list.
+
+          "foo"
+          ^^^^^
+
+          %w[foo]
+             ^^^
+  - name: StringContentNode
+    child_nodes:
+      - name: value
+        type: token
+    location: value
+    comment: |
+      Represents the plain content of a string literal.
+
+          "foo"
+           ^^^
+  - name: StringListNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: strings
+        type: node[]
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents a `%w` string literal list.
+
+          %w[foo bar baz]
+          ^^^^^^^^^^^^^^^
   - name: SuperNode
     child_nodes:
       - name: keyword
