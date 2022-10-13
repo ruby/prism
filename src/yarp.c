@@ -1230,7 +1230,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           break;
         case YP_TOKEN_KEYWORD_SUPER:
           if (arguments == NULL) {
-            node = yp_node_forwarding_super_create(parser, &keyword);
+            node = yp_node_forwarding_super_node_create(parser, &keyword);
           } else {
             node = yp_node_super_node_create(parser, &keyword, &lparen, arguments, &rparen);
           }

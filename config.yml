@@ -292,7 +292,7 @@ nodes:
       Represents the use of the `&&` operator or the `and` keyword.
 
           left and right
-          ~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^
   - name: ArgumentsNode
     child_nodes:
       - name: arguments
@@ -302,7 +302,7 @@ nodes:
       Represents a set of arguments to a method or a keyword.
 
           return foo, bar, baz
-                 ~~~~~~~~~~~~~
+                 ^^^^^^^^^^^^^
   - name: BreakNode
     child_nodes:
       - name: keyword
@@ -318,7 +318,7 @@ nodes:
       Represents the use of the `break` keyword.
 
           break foo
-          ~~~~~~~~~
+          ^^^^^^^^^
   - name: CallNode
     child_nodes:
       - name: receiver
@@ -334,16 +334,16 @@ nodes:
       Represents a method call, in all of the various forms that that can take.
 
           foo
-          ~~~
+          ^^^
 
           +foo
-          ~~~~
+          ^^^^
 
           foo + bar
-          ~~~~~~~~~
+          ^^^^^^^^^
 
           foo.bar
-          ~~~~~~~
+          ^^^^^^^
   - name: CharacterLiteral
     child_nodes:
       - name: value
@@ -353,7 +353,7 @@ nodes:
       Represents a character literal using the `?` syntax.
 
           ?a
-          ~~
+          ^^
   - name: ClassNode
     child_nodes:
       - name: scope
@@ -371,7 +371,7 @@ nodes:
       Represents a class declaration involving the `class` keyword.
 
           class Foo end
-          ~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^
   - name: ClassVariableRead
     child_nodes:
       - name: name
@@ -381,7 +381,7 @@ nodes:
       Represents referencing a class variable.
 
           @@foo
-          ~~~~~
+          ^^^^^
   - name: ClassVariableWrite
     child_nodes:
       - name: name
@@ -395,7 +395,7 @@ nodes:
       Represents writing to a class variable.
 
           @@foo = 1
-          ~~~~~~~~~
+          ^^^^^^^^^
   - name: ConstantPathNode
     child_nodes:
       - name: parent
@@ -409,7 +409,7 @@ nodes:
       Represents accessing a constant through a path of `::` operators.
 
           Foo::Bar
-          ~~~~~~~~
+          ^^^^^^^^
   - name: ConstantRead
     child_nodes:
       - name: name
@@ -419,7 +419,7 @@ nodes:
       Represents referencing a constant.
 
           Foo
-          ~~~
+          ^^^
   - name: FalseNode
     child_nodes:
       - name: keyword
@@ -429,7 +429,7 @@ nodes:
       Represents the use of the literal `false` keyword.
 
           false
-          ~~~~~
+          ^^^^^
   - name: FloatLiteral
     child_nodes:
       - name: value
@@ -439,8 +439,8 @@ nodes:
       Represents a floating point number literal.
 
           1.0
-          ~~~
-  - name: ForwardingSuper
+          ^^^
+  - name: ForwardingSuperNode
     child_nodes:
       - name: keyword
         type: token
@@ -449,7 +449,7 @@ nodes:
       Represents the use of the `super` keyword without parentheses or arguments.
 
           super
-          ~~~~~
+          ^^^^^
   - name: GlobalVariableRead
     child_nodes:
       - name: name
@@ -459,7 +459,7 @@ nodes:
       Represents referencing a global variable.
 
           $foo
-          ~~~~
+          ^^^^
   - name: GlobalVariableWrite
     child_nodes:
       - name: name
@@ -473,7 +473,7 @@ nodes:
       Represents writing to a global variable.
 
           $foo = 1
-          ~~~~~~~~
+          ^^^^^^^^
   - name: IfNode
     child_nodes:
       - name: keyword
@@ -487,10 +487,10 @@ nodes:
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
           bar if foo
-          ~~~~~~~~~~
+          ^^^^^^^^^^
 
           if foo then bar end
-          ~~~~~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^^^^^
   - name: ImaginaryLiteral
     child_nodes:
       - name: value
@@ -500,7 +500,7 @@ nodes:
       Represents an imaginary number literal.
 
           1.0i
-          ~~~~
+          ^^^^
   - name: InstanceVariableRead
     child_nodes:
       - name: name
@@ -510,7 +510,7 @@ nodes:
       Represents referencing an instance variable.
 
           @foo
-          ~~~~
+          ^^^^
   - name: InstanceVariableWrite
     child_nodes:
       - name: name
@@ -524,7 +524,7 @@ nodes:
       Represents writing to an instance variable.
 
           @foo = 1
-          ~~~~~~~~
+          ^^^^^^^^
   - name: IntegerLiteral
     child_nodes:
       - name: value
@@ -534,7 +534,7 @@ nodes:
       Represents an integer number literal.
 
           1
-          ~
+          ^
   - name: LocalVariableRead
     child_nodes:
       - name: name
@@ -546,7 +546,7 @@ nodes:
       otherwise it is parsed as a method call.
 
           foo
-          ~~~
+          ^^^
   - name: LocalVariableWrite
     child_nodes:
       - name: name
@@ -560,7 +560,7 @@ nodes:
       Represents writing to a local variable.
 
           foo = 1
-          ~~~~~~~
+          ^^^^^^^
   - name: ModuleNode
     child_nodes:
       - name: scope
@@ -578,7 +578,7 @@ nodes:
       Represents a module declaration involving the `module` keyword.
 
           module Foo end
-          ~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^
   - name: NextNode
     child_nodes:
       - name: keyword
@@ -594,7 +594,7 @@ nodes:
       Represents the use of the `next` keyword.
 
           next 1
-          ~~~~~~
+          ^^^^^^
   - name: NilNode
     child_nodes:
       - name: keyword
@@ -604,7 +604,7 @@ nodes:
       Represents the use of the `nil` keyword.
 
           nil
-          ~~~
+          ^^^
   - name: OperatorAssignmentNode
     child_nodes:
       - name: target
@@ -618,7 +618,7 @@ nodes:
       Represents assigning to a value using an operator that isn't `=`.
 
           foo += bar
-          ~~~~~~~~~~
+          ^^^^^^^^^^
   - name: OperatorAndAssignmentNode
     child_nodes:
       - name: target
@@ -632,7 +632,7 @@ nodes:
       Represents the use of the `&&=` operator for assignment.
 
           target &&= value
-          ~~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^^
   - name: OperatorOrAssignmentNode
     child_nodes:
       - name: target
@@ -646,7 +646,7 @@ nodes:
       Represents the use of the `||=` operator for assignment.
 
           target ||= value
-          ~~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^^
   - name: OrNode
     child_nodes:
       - name: left
@@ -660,7 +660,7 @@ nodes:
       Represents the use of the `||` operator or the `or` keyword.
 
           left or right
-          ~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^
   - name: PostExecutionNode
     child_nodes:
       - name: keyword
@@ -676,7 +676,7 @@ nodes:
       Represents the use of the `END` keyword.
 
           BEGIN { foo }
-          ~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^
   - name: PreExecutionNode
     child_nodes:
       - name: keyword
@@ -692,7 +692,7 @@ nodes:
       Represents the use of the `END` keyword.
 
           END { foo }
-          ~~~~~~~~~~~
+          ^^^^^^^^^^^
   - name: Program
     child_nodes:
       - name: scope
@@ -710,7 +710,7 @@ nodes:
       Represents a rational number literal.
 
           1.0r
-          ~~~~
+          ^^^^
   - name: RedoNode
     child_nodes:
       - name: value
@@ -720,7 +720,7 @@ nodes:
       Represents the use of the `redo` keyword.
 
           redo
-          ~~~~
+          ^^^^
   - name: RetryNode
     child_nodes:
       - name: value
@@ -730,7 +730,7 @@ nodes:
       Represents the use of the `retry` keyword.
 
           retry
-          ~~~~~
+          ^^^^^
   - name: Scope
     child_nodes:
       - name: locals
@@ -748,7 +748,7 @@ nodes:
       Represents the `self` keyword.
 
           self
-          ~~~~
+          ^^^^
   - name: Statements
     child_nodes:
       - name: body
@@ -758,7 +758,7 @@ nodes:
       Represents a set of statements contained within some scope.
 
           foo; bar; baz
-          ~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^
   - name: SuperNode
     child_nodes:
       - name: keyword
@@ -774,10 +774,10 @@ nodes:
       Represents the use of the `super` keyword with parentheses or arguments.
 
           super()
-          ~~~~~~~
+          ^^^^^^^
 
           super foo, bar
-          ~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^
   - name: SymbolNode
     child_nodes:
       - name: value
@@ -787,10 +787,10 @@ nodes:
       Represents a symbol literal or a symbol contained within a `%i` list.
 
           :foo
-          ~~~~
+          ^^^^
 
           %i[foo]
-             ~~~
+             ^^^
   - name: SymbolListNode
     child_nodes:
       - name: opening
@@ -804,7 +804,7 @@ nodes:
       Represents a `%i` symbol literal list.
 
           %i[foo bar baz]
-          ~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^
   - name: Ternary
     child_nodes:
       - name: predicate
@@ -822,7 +822,7 @@ nodes:
       Represents the use of the ternary operators.
 
           foo ? bar : baz
-          ~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^
   - name: TrueNode
     child_nodes:
       - name: keyword
@@ -832,7 +832,7 @@ nodes:
       Represents the use of the literal `true` keyword.
 
           true
-          ~~~~
+          ^^^^
   - name: UnlessNode
     child_nodes:
       - name: keyword
@@ -846,10 +846,10 @@ nodes:
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
           bar unless foo
-          ~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^
 
           unless foo then bar end
-          ~~~~~~~~~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^^^^^^^^^
   - name: UntilNode
     child_nodes:
       - name: keyword
@@ -863,10 +863,10 @@ nodes:
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
           bar until foo
-          ~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^
 
           until foo do bar end
-          ~~~~~~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^^^^^^
   - name: WhileNode
     child_nodes:
       - name: keyword
@@ -880,10 +880,10 @@ nodes:
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 
           bar while foo
-          ~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^
 
           while foo do bar end
-          ~~~~~~~~~~~~~~~~~~~~
+          ^^^^^^^^^^^^^^^^^^^^
   - name: YieldNode
     child_nodes:
       - name: keyword
@@ -899,4 +899,4 @@ nodes:
       Represents the use of the `yield` keyword.
 
           yield 1
-          ~~~~~~~
+          ^^^^^^^
