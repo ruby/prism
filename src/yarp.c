@@ -1382,6 +1382,30 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       node = symbol_list;
       break;
     }
+    case YP_TOKEN_PERCENT_LOWER_W: {
+      yp_token_t opening = parser->previous;
+      node = yp_node_string_list_node_create(parser, &opening, &opening);
+
+      while (parser->current.type != YP_TOKEN_STRING_END) {
+        if (node->as.string_list_node.strings.size == 0) {
+          accept(parser, YP_TOKEN_WORDS_SEP);
+        } else {
+          expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the strings in a `%w` list.");
+        }
+        expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%w` list.");
+
+        yp_token_t delimiter = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+        yp_node_t *string = yp_node_string_node_create(parser, &delimiter, &delimiter);
+        yp_node_t *string_content = yp_node_string_content_node_create(parser, &parser->previous);
+
+        yp_node_list_append(parser, string, &string->as.string_node.parts, string_content);
+        yp_node_list_append(parser, node, &node->as.string_list_node.strings, string);
+      }
+
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
+      node->as.string_list_node.closing = parser->previous;
+      break;
+    }
     case YP_TOKEN_RATIONAL_NUMBER:
       node = yp_node_rational_literal_create(parser, &parser->previous);
       break;

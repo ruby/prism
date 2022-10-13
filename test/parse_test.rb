@@ -318,6 +318,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
   end
 
+  test "string list" do
+    expected = StringListNode(
+      PERCENT_LOWER_W("%w["),
+      [
+        StringNode(nil, [StringContentNode(STRING_CONTENT("a"))], nil),
+        StringNode(nil, [StringContentNode(STRING_CONTENT("b"))], nil),
+        StringNode(nil, [StringContentNode(STRING_CONTENT("c"))], nil)
+      ],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%w[a b c]"
+  end
+
   test "super" do
     assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
   end
