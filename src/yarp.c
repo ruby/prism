@@ -1,5 +1,7 @@
 #include "yarp.h"
 
+const yp_token_t TOKEN_NOT_PROVIDED = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+
 /******************************************************************************/
 /* Basic character checks                                                     */
 /******************************************************************************/
@@ -1210,15 +1212,19 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_SUPER:
     case YP_TOKEN_KEYWORD_YIELD: {
       yp_token_t keyword = parser->previous;
-      yp_token_t lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
-      yp_node_t *arguments = NULL;
-      yp_token_t rparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
+      yp_token_t lparen;
+      yp_node_t *arguments;
+      yp_token_t rparen;
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         lparen = parser->previous;
         arguments = yp_node_arguments_node_create(parser);
         parse_arguments(parser, arguments);
         rparen = parser->previous;
+      } else {
+        lparen = TOKEN_NOT_PROVIDED;
+        arguments = NULL;
+        rparen = TOKEN_NOT_PROVIDED;
       }
 
       switch (keyword.type) {
@@ -1394,11 +1400,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         }
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%w` list.");
 
-        yp_token_t delimiter = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED };
-        yp_node_t *string = yp_node_string_node_create(parser, &delimiter, &delimiter);
-        yp_node_t *string_content = yp_node_string_content_node_create(parser, &parser->previous);
-
-        yp_node_list_append(parser, string, &string->as.string_node.parts, string_content);
+        yp_node_t *string = yp_node_string_node_create(parser, &TOKEN_NOT_PROVIDED, &parser->previous, &TOKEN_NOT_PROVIDED);
         yp_node_list_append(parser, node, &node->as.string_list_node.strings, string);
       }
 

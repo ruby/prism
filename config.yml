@@ -535,6 +535,20 @@ nodes:
 
           1
           ^
+  - name: InterpolatedStringNode
+    child_nodes:
+      - name: opening
+        type: token?
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token?
+    location: opening|parts->closing|parts
+    comment: |
+      Represents a string literal that contains interpolation.
+
+          "foo #{bar} baz"
+          ^^^^^^^^^^^^^^^^
   - name: LocalVariableRead
     child_nodes:
       - name: name
@@ -763,29 +777,23 @@ nodes:
     child_nodes:
       - name: opening
         type: token?
-      - name: parts
-        type: node[]
+      - name: content
+        type: token
       - name: closing
         type: token?
-    location: opening|parts->closing|parts
+    location: opening|content->closing|content
     comment: |
-      Represents a string literal or a string contained within a `%w` list.
+      Represents a string literal, a string contained within a `%w` list, or
+      plain string content within an interpolated string.
 
           "foo"
           ^^^^^
 
           %w[foo]
              ^^^
-  - name: StringContentNode
-    child_nodes:
-      - name: value
-        type: token
-    location: value
-    comment: |
-      Represents the plain content of a string literal.
 
-          "foo"
-           ^^^
+          "foo #{bar} baz"
+           ^^^^      ^^^^
   - name: StringListNode
     child_nodes:
       - name: opening

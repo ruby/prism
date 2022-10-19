@@ -322,9 +322,9 @@ class ParseTest < Test::Unit::TestCase
     expected = StringListNode(
       PERCENT_LOWER_W("%w["),
       [
-        StringNode(nil, [StringContentNode(STRING_CONTENT("a"))], nil),
-        StringNode(nil, [StringContentNode(STRING_CONTENT("b"))], nil),
-        StringNode(nil, [StringContentNode(STRING_CONTENT("c"))], nil)
+        StringNode(nil, STRING_CONTENT("a"), nil),
+        StringNode(nil, STRING_CONTENT("b"), nil),
+        StringNode(nil, STRING_CONTENT("c"), nil)
       ],
       STRING_END("]")
     )
