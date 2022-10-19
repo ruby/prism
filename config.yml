@@ -773,6 +773,20 @@ nodes:
 
           foo; bar; baz
           ^^^^^^^^^^^^^
+  - name: StringInterpolatedNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: statements
+        type: node
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents an interpolated set of statements within a string.
+
+          "foo #{bar}"
+               ^^^^^^
   - name: StringNode
     child_nodes:
       - name: opening

@@ -318,6 +318,42 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
   end
 
+  test "string empty" do
+    assert_parses StringNode(STRING_BEGIN("'"), NOT_PROVIDED(""), STRING_END("'")), "''"
+  end
+
+  test "string interpolation disallowed" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("abc"), STRING_END("'")), "'abc'"
+  end
+
+  test "string interpolation allowed, but not used" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("abc"), nil)],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"abc\""
+  end
+
+  test "string interpolation allowed, sed" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [
+        StringNode(nil, STRING_CONTENT("aaa "), nil),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, IDENTIFIER("bbb"), nil, "bbb")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT(" ccc"), nil)
+      ],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"aaa \#{bbb} ccc\""
+  end
+
   test "string list" do
     expected = StringListNode(
       PERCENT_LOWER_W("%w["),
