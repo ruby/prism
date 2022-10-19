@@ -344,16 +344,6 @@ nodes:
 
           foo.bar
           ^^^^^^^
-  - name: CharacterLiteral
-    child_nodes:
-      - name: value
-        type: token
-    location: value
-    comment: |
-      Represents a character literal using the `?` syntax.
-
-          ?a
-          ^^
   - name: ClassNode
     child_nodes:
       - name: scope

@@ -114,7 +114,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "character literal" do
-    assert_parses CharacterLiteral(CHARACTER_LITERAL("?a")), "?a"
+    assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil), "?a"
   end
 
   test "class" do
@@ -319,7 +319,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string empty" do
-    assert_parses StringNode(STRING_BEGIN("'"), NOT_PROVIDED(""), STRING_END("'")), "''"
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'")), "''"
   end
 
   test "string interpolation disallowed" do

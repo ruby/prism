@@ -1159,9 +1159,19 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // token to be in the prefix position, we'll parse it as such. Otherwise we'll
   // return.
   switch (parser->previous.type) {
-    case YP_TOKEN_CHARACTER_LITERAL:
-      node = yp_node_character_literal_create(parser, &parser->previous);
+    case YP_TOKEN_CHARACTER_LITERAL: {
+      yp_token_t opening = parser->previous;
+      opening.type = YP_TOKEN_STRING_BEGIN;
+      opening.end = opening.start + 1;
+
+      yp_token_t content = parser->previous;
+      content.type = YP_TOKEN_STRING_CONTENT;
+      content.start = content.start + 1;
+
+      yp_token_t closing = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = content.end, .end = content.end };
+      node = yp_node_string_node_create(parser, &opening, &content, &closing);
       break;
+    }
     case YP_TOKEN_CLASS_VARIABLE:
       node = yp_node_class_variable_read_create(parser, &parser->previous);
       break;
@@ -1478,7 +1488,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
           content = parser->previous;
         } else {
-          content = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+          content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
         }
 
         expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
