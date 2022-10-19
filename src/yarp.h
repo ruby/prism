@@ -24,6 +24,9 @@
 void
 yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
+void
+yp_print_node(yp_parser_t *parser, yp_node_t *node);
+
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, off_t size);
@@ -43,6 +46,10 @@ yp_parse(yp_parser_t *parser);
 // Deallocate a node and all of its children.
 __attribute__((__visibility__("default"))) extern void
 yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
+
+// Pretty-prints the AST represented by the given node to the given buffer.
+__attribute__((__visibility__("default"))) extern void
+yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 // Serialize the AST represented by the given node to the given buffer.
 __attribute__((__visibility__("default"))) extern void
