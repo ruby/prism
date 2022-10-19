@@ -28,13 +28,13 @@ end
 # This represents a parameter to a node that is a token. We pass them as
 # references and store them by copying.
 class TokenParam < Struct.new(:name)
-  def param = "yp_token_t *#{name}"
+  def param = "const yp_token_t *#{name}"
   def rbs_class = "Token"
 end
 
 # This represents a parameter to a node that is a token that is optional.
 class OptionalTokenParam < Struct.new(:name)
-  def param = "yp_token_t *#{name}"
+  def param = "const yp_token_t *#{name}"
   def rbs_class = "Token?"
 end
 
