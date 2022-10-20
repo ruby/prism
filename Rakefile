@@ -42,7 +42,7 @@ end
 CLOBBER.concat ERB_GENERATED_FILES
 
 escaped = ERB_GENERATED_FILES.map { |filepath| Regexp.escape(filepath) }
-rule Regexp.new("\\A(#{escaped.join("|")})\\z") => "bin/templates/%p.erb" do |t|
+rule Regexp.new("\\A(#{escaped.join("|")})\\z") => ["bin/templates/%p.erb", "config.yml"] do |t|
   require_relative "bin/template"
   template(t.name, locals)
 end
