@@ -427,6 +427,29 @@ nodes:
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
+  - name: DefNode
+    child_nodes:
+      - name: def_keyword
+        type: token
+      - name: name
+        type: token
+      - name: lparen
+        type: token?
+      - name: rparen
+        type: token?
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+      - name: scope
+        type: node
+    location: def_keyword->end_keyword
+    comment: |
+      Represents a method definition.
+
+          def method
+          end
+          ^^^^^^^^^^
   - name: DefinedNode
     child_nodes:
       - name: keyword

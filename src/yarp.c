@@ -1306,6 +1306,36 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       parser->current_scope = parent_scope;
       break;
     }
+    case YP_TOKEN_KEYWORD_DEF: {
+      yp_token_t def_keyword = parser->previous;
+
+      expect(parser, YP_TOKEN_IDENTIFIER, "Expected name of method after `def`.");
+      yp_token_t name = parser->previous;
+
+      yp_token_t lparen;
+      yp_token_t rparen;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+        rparen = parser->previous;
+      } else {
+        lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+        rparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+      }
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
+
+      node = yp_node_def_node_create(parser, &def_keyword, &name, &lparen, &rparen, statements, &parser->previous, scope);
+      parser->current_scope = parent_scope;
+      break;
+    }
     case YP_TOKEN_KEYWORD_DEFINED: {
       yp_token_t keyword = parser->previous;
       yp_token_t lparen;

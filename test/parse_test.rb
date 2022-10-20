@@ -189,6 +189,48 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "A::B = 1"
   end
 
+  test "def without parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a\nend"
+  end
+
+  test "def with parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      PARENTHESIS_RIGHT(")"),
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a()\nend"
+  end
+
+  test "def with scope" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      nil,
+      Statements([expression("b = 1")]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b")])
+    )
+
+    assert_parses expected, "def a\nb = 1\nend"
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil), "defined? 1"
   end
