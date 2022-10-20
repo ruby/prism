@@ -100,7 +100,7 @@ yp_node_t *
 yp_node_<%= node.human %>_create(yp_parser_t *parser<%= params.empty? ? "" : ", #{params}" %>) {
   yp_node_t *node = yp_node_alloc(parser);
   *node = (yp_node_t) { .type = <%= node.type %>, .location = <%= node.location %><%= assigns.empty? ? "" : ", .as.#{node.human} = { #{assigns} }" %> };
-  <%- node.params.each do |param| %>
+  <%- node.params.each do |param| -%>
   <%- case param -%>
   <%- when NodeListParam -%>
   yp_node_list_init(&node->as.<%= node.human %>.<%= param.name %>);
