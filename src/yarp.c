@@ -1175,6 +1175,29 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
   }
 }
 
+// Parse a list of parameters on a method definition.
+static yp_node_t *
+parse_parameters(yp_parser_t *parser) {
+  yp_node_t *params = yp_node_parameters_node_create(parser);
+  bool parsing = true;
+
+  while (parsing) {
+    if (parser->current.type == YP_TOKEN_IDENTIFIER) {
+      yp_lex_token(parser);
+
+      yp_token_list_append(&parser->current_scope->as.scope.locals, &parser->previous);
+      yp_node_t *param = yp_node_required_parameter_node_create(parser, &parser->previous);
+      yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
+
+      if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
+    } else {
+      parsing = false;
+    }
+  }
+
+  return params;
+}
+
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
   // If this is the end of the file, then return immediately.
@@ -1317,22 +1340,27 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         lparen = parser->previous;
+      } else {
+        lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+      }
+
+      yp_node_t *parent_scope = parser->current_scope;
+      yp_node_t *scope = yp_node_scope_create(parser);
+      parser->current_scope = scope;
+      yp_node_t *params = parse_parameters(parser);
+
+      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
         rparen = parser->previous;
       } else {
-        lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
         rparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
       }
-
-      yp_node_t *scope = yp_node_scope_create(parser);
-      yp_node_t *parent_scope = parser->current_scope;
-      parser->current_scope = scope;
 
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
 
-      node = yp_node_def_node_create(parser, &def_keyword, &name, &lparen, &rparen, statements, &parser->previous, scope);
+      node = yp_node_def_node_create(parser, &def_keyword, &name, &lparen, params, &rparen, statements, &parser->previous, scope);
       parser->current_scope = parent_scope;
       break;
     }

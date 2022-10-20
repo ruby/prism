@@ -435,6 +435,8 @@ nodes:
         type: token
       - name: lparen
         type: token?
+      - name: parameters
+        type: node
       - name: rparen
         type: token?
       - name: statements
@@ -739,6 +741,17 @@ nodes:
 
           left or right
           ^^^^^^^^^^^^^
+  - name: ParametersNode
+    child_nodes:
+      - name: requireds
+        type: node[]
+    location: requireds
+    comment: |
+      Represents the list of parameters on a method, block, or lambda definition.
+
+          def a(b, c, d)
+                ^^^^^^^
+          end
   - name: PostExecutionNode
     child_nodes:
       - name: keyword
@@ -816,6 +829,17 @@ nodes:
 
           redo
           ^^^^
+  - name: RequiredParameterNode
+    child_nodes:
+      - name: name
+        type: token
+    location: name
+    comment: |
+      Represents a required parameter to a method, block, or lambda definition.
+
+          def a(b)
+                ^
+          end
   - name: RetryNode
     child_nodes:
       - name: value

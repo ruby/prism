@@ -194,6 +194,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
+      ParametersNode([]),
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -208,6 +209,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
+      ParametersNode([]),
       PARENTHESIS_RIGHT(")"),
       Statements([]),
       KEYWORD_END("end"),
@@ -222,6 +224,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
+      ParametersNode([]),
       nil,
       Statements([expression("b = 1")]),
       KEYWORD_END("end"),
@@ -229,6 +232,40 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def a\nb = 1\nend"
+  end
+
+  test "def with required parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([RequiredParameterNode(IDENTIFIER("b"))]),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b")])
+    )
+
+    assert_parses expected, "def a b\nend"
+  end
+
+  test "def with multiple required parameters" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([
+        RequiredParameterNode(IDENTIFIER("b")),
+        RequiredParameterNode(IDENTIFIER("c")),
+        RequiredParameterNode(IDENTIFIER("d"))
+      ]),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")])
+    )
+
+    assert_parses expected, "def a b, c, d\nend"
   end
 
   test "defined? without parentheses" do
