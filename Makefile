@@ -16,8 +16,8 @@ build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -na
 build:
 	mkdir -p build
 
-src/ast.h: bin/template
-	bin/template
+src/ast.h: bin/templates/src/ast.h.erb
+	rake $@
 
 test: test-native/run-one
 	LSAN_OPTIONS=$(LSAN_OPTIONS) ASAN_OPTIONS=$(ASAN_OPTIONS) test-native/run-all.sh

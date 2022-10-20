@@ -1759,7 +1759,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
         yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
-        yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+        yp_token_t end_keyword =
+          (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
 
         node = yp_node_if_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
         break;
