@@ -229,11 +229,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "if" do
-    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), "if true; 1; end"
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")]), nil, KEYWORD_END("end")), "if true; 1; end"
   end
 
   test "if modifier" do
-    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")])), "1 if true"
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")]), nil, nil), "1 if true"
   end
 
   test "imaginary" do
@@ -548,9 +548,9 @@ class ParseTest < Test::Unit::TestCase
     expected = IfNode(
       KEYWORD_IF("if"),
       expression("c"),
-      Statements([
-        IfNode(KEYWORD_IF("if"), expression("b"), Statements([expression("a")]))
-      ])
+      Statements([IfNode(KEYWORD_IF("if"), expression("b"), Statements([expression("a")]), nil, nil)]),
+      nil,
+      nil
     )
 
     assert_parses expected, "a if b if c"

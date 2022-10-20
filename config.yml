@@ -443,6 +443,20 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
+  # - name: ElseNode
+  #   child_nodes:
+  #     - name: else_keyword
+  #       type: token
+  #     - name: statements
+  #       type: node
+  #     - name: end_keyword
+  #       type: token
+  #   location: else_keyword->end_keyword
+  #   comment: |
+  #     Represents an `else` clause in a `case`, `if`, or `unless` statement.
+
+  #         if a then b else c end
+  #                     ^^^^^^^^^^
   - name: FalseNode
     child_nodes:
       - name: keyword
@@ -499,13 +513,17 @@ nodes:
           ^^^^^^^^
   - name: IfNode
     child_nodes:
-      - name: keyword
+      - name: if_keyword
         type: token
       - name: predicate
         type: node
       - name: statements
         type: node
-    location: keyword->statements
+      - name: consequent
+        type: node?
+      - name: end_keyword
+        type: token?
+    location: if_keyword->end_keyword|consequent|statements
     comment: |
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
