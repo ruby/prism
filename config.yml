@@ -443,20 +443,20 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
-  # - name: ElseNode
-  #   child_nodes:
-  #     - name: else_keyword
-  #       type: token
-  #     - name: statements
-  #       type: node
-  #     - name: end_keyword
-  #       type: token
-  #   location: else_keyword->end_keyword
-  #   comment: |
-  #     Represents an `else` clause in a `case`, `if`, or `unless` statement.
+  - name: ElseNode
+    child_nodes:
+      - name: else_keyword
+        type: token
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: else_keyword->end_keyword
+    comment: |
+      Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
-  #         if a then b else c end
-  #                     ^^^^^^^^^^
+          if a then b else c end
+                      ^^^^^^^^^^
   - name: FalseNode
     child_nodes:
       - name: keyword
