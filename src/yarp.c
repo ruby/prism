@@ -1107,11 +1107,8 @@ expect(yp_parser_t *parser, yp_token_type_t type, const char *message) {
 
   yp_error_list_append(&parser->error_list, message, parser->previous.end - parser->start);
 
-  parser->previous = (yp_token_t) {
-    .type = YP_TOKEN_MISSING,
-    .start = parser->previous.end,
-    .end = parser->previous.end
-  };
+  parser->previous =
+    (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
 }
 
 static yp_node_t *
@@ -1230,9 +1227,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         parse_arguments(parser, arguments);
         rparen = parser->previous;
       } else {
-        lparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+        lparen =
+          (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
         arguments = NULL;
-        rparen = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+        rparen =
+          (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
       }
 
       switch (keyword.type) {
@@ -1408,8 +1407,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         }
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%w` list.");
 
-        yp_token_t opening = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.start, .end = parser->previous.start };
-        yp_token_t closing = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+        yp_token_t opening = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED,
+                                            .start = parser->previous.start,
+                                            .end = parser->previous.start };
+        yp_token_t closing =
+          (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
         yp_node_t *string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
         yp_node_list_append(parser, node, &node->as.string_list_node.strings, string);
       }
@@ -1462,9 +1464,15 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           switch (parser->current.type) {
             case YP_TOKEN_STRING_CONTENT: {
               yp_lex_token(parser);
-              yp_token_t string_content_opening = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.start, .end = parser->previous.start };
-              yp_token_t string_content_closing = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
-              yp_node_list_append(parser, node, &node->as.interpolated_string_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
+              yp_token_t string_content_opening = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED,
+                                                                 .start = parser->previous.start,
+                                                                 .end = parser->previous.start };
+              yp_token_t string_content_closing = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED,
+                                                                 .start = parser->previous.end,
+                                                                 .end = parser->previous.end };
+              yp_node_list_append(parser, node, &node->as.interpolated_string_node.parts,
+                                  yp_node_string_node_create(parser, &string_content_opening, &parser->previous,
+                                                             &string_content_closing));
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -1472,11 +1480,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
               yp_token_t embexpr_opening = parser->previous;
               yp_node_t *statements = parse_statements(parser, YP_TOKEN_EMBEXPR_END);
               expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-              yp_node_list_append(parser, node, &node->as.interpolated_string_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
+              yp_node_list_append(
+                parser, node, &node->as.interpolated_string_node.parts,
+                yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
               break;
             }
             default:
-              fprintf(stderr, "Could not understand token type %s in an interpolated string\n", yp_token_type_to_str(parser->previous.type));
+              fprintf(stderr, "Could not understand token type %s in an interpolated string\n",
+                      yp_token_type_to_str(parser->previous.type));
               return NULL;
           }
         }
@@ -1488,7 +1499,9 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
           content = parser->previous;
         } else {
-          content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+          content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT,
+                                   .start = parser->previous.end,
+                                   .end = parser->previous.end };
         }
 
         expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
@@ -1709,7 +1722,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           }
           default: {
             // TODO: return missing node here
-            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n", yp_token_type_to_str(parser->current.type));
+            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n",
+                    yp_token_type_to_str(parser->current.type));
           }
         }
 
