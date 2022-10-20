@@ -722,6 +722,23 @@ nodes:
         type: node
     location: statements
     comment: The top level node of any parse tree.
+  - name: RangeNode
+    child_nodes:
+      - name: left
+        type: node?
+      - name: range_operator
+        type: token
+      - name: right
+        type: node?
+    location: left|range_operator->right|range_operator
+    comment: |
+      Represents the use of the `..` or `...` operators.
+
+          1..2
+          ^^^^
+
+          c if a =~ /left/ ... b =~ /right/
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   - name: RationalLiteral
     child_nodes:
       - name: value

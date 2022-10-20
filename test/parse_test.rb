@@ -316,6 +316,14 @@ class ParseTest < Test::Unit::TestCase
     assert result.failure?
   end
 
+  test "range inclusive" do
+    assert_parses RangeNode(expression("1"), DOT_DOT(".."), expression("2")), "1..2"
+  end
+
+  test "range exclusive" do
+    assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), expression("2")), "1...2"
+  end
+
   test "rational" do
     assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
   end

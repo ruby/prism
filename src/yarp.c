@@ -1684,6 +1684,12 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         node = yp_node_call_node_create(parser, node, &token, arguments, name);
         break;
       }
+      case YP_TOKEN_DOT_DOT:
+      case YP_TOKEN_DOT_DOT_DOT: {
+        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
+        node = yp_node_range_node_create(parser, node, &token, right);
+        break;
+      }
       case YP_TOKEN_KEYWORD_IF: {
         yp_node_t *statements = yp_node_statements_create(parser);
         yp_node_list_append(parser, statements, &statements->as.statements.body, node);
