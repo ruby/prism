@@ -32,16 +32,17 @@ ERB_GENERATED_FILES = [
 ]
 
 desc "Generate all ERB template based files"
-task :templates => ERB_GENERATED_FILES
+task templates: ERB_GENERATED_FILES
 
-task :make => :templates do
+task make: :templates do
   sh "make"
 end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat ERB_GENERATED_FILES
 
-rule /\.(c|rb|h)$/ => "bin/templates/%p.erb" do |t|
+escaped = ERB_GENERATED_FILES.map { |filepath| Regexp.escape(filepath) }
+rule Regexp.new("\\A(#{escaped.join("|")})\\z") => "bin/templates/%p.erb" do |t|
   require_relative "bin/template"
   template(t.name, locals)
 end
