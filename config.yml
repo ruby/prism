@@ -410,6 +410,23 @@ nodes:
 
           Foo
           ^^^
+  - name: ConstantPathWriteNode
+    child_nodes:
+      - name: target
+        type: node
+      - name: operator
+        type: token
+      - name: value
+        type: node
+    location: target->value
+    comment: |
+      Represents writing to a constant.
+
+          Foo = 1
+          ^^^^^^^
+
+          Foo::Bar = 1
+          ^^^^^^^^^^^^
   - name: FalseNode
     child_nodes:
       - name: keyword
