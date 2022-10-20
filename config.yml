@@ -352,6 +352,10 @@ nodes:
         type: token
       - name: constant_path
         type: node
+      - name: inheritance_operator
+        type: token?
+      - name: superclass
+        type: node?
       - name: statements
         type: node
       - name: end_keyword

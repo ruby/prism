@@ -122,6 +122,8 @@ class ParseTest < Test::Unit::TestCase
       Scope([IDENTIFIER("a")]),
       KEYWORD_CLASS("class"),
       ConstantRead(CONSTANT("A")),
+      nil,
+      nil,
       Statements([
         LocalVariableWrite(
           IDENTIFIER("a"),
@@ -133,6 +135,26 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "class A a = 1 end"
+  end
+
+  test "class with superclass" do
+    expected = ClassNode(
+      Scope([IDENTIFIER("a")]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      LESS("<"),
+      ConstantRead(CONSTANT("B")),
+      Statements([
+        LocalVariableWrite(
+          IDENTIFIER("a"),
+          EQUAL("="),
+          IntegerLiteral(INTEGER("1"))
+        )
+      ]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "class A < B a = 1 end"
   end
 
   test "class variable read" do

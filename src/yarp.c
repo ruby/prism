@@ -1316,7 +1316,18 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;
-      yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_CONSTANT_LOOKUP);
+
+      yp_token_t inheritance_operator;
+      yp_node_t *superclass;
+
+      if (accept(parser, YP_TOKEN_LESS)) {
+        inheritance_operator = parser->previous;
+        superclass = parse_expression(parser, BINDING_POWER_NONE);
+      } else {
+        inheritance_operator = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+        superclass = NULL;
+      }
 
       yp_node_t *scope = yp_node_scope_create(parser);
       yp_node_t *parent_scope = parser->current_scope;
@@ -1325,7 +1336,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
-      node = yp_node_class_node_create(parser, scope, &class_keyword, name, statements, &parser->previous);
+      node = yp_node_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
       parser->current_scope = parent_scope;
       break;
     }
