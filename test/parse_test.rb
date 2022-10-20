@@ -175,6 +175,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ConstantRead(CONSTANT("ABC")), "ABC"
   end
 
+  test "constant path write single" do
+    assert_parses ConstantPathWriteNode(ConstantRead(CONSTANT("A")), EQUAL("="), expression("1")), "A = 1"
+  end
+
+  test "constant path write multiple" do
+    expected = ConstantPathWriteNode(
+      ConstantPathNode(ConstantRead(CONSTANT("A")), COLON_COLON("::"), ConstantRead(CONSTANT("B"))),
+      EQUAL("="),
+      expression("1")
+    )
+
+    assert_parses expected, "A::B = 1"
+  end
+
   test "false" do
     assert_parses FalseNode(KEYWORD_FALSE("false")), "false"
   end

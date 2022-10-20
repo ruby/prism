@@ -1,6 +1,20 @@
 #include "yarp.h"
 
 /******************************************************************************/
+/* Debugging                                                                  */
+/******************************************************************************/
+
+__attribute__((unused)) static void
+debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
+  yp_buffer_t buffer;
+  yp_buffer_init(&buffer);
+  yp_prettyprint(parser, node, &buffer);
+
+  printf("%s\n%.*s\n", message, (int) buffer.length, buffer.value);
+  yp_buffer_free(&buffer);
+}
+
+/******************************************************************************/
 /* Basic character checks                                                     */
 /******************************************************************************/
 
@@ -952,6 +966,7 @@ typedef enum {
   BINDING_POWER_EXPONENT,        // **
   BINDING_POWER_UNARY,           // ! ~ +
   BINDING_POWER_INDEX,           // [] []=
+  BINDING_POWER_CONSTANT_LOOKUP  // ::
 } binding_power_t;
 
 // This struct represents a set of binding powers used for a given token. They
@@ -967,9 +982,6 @@ typedef struct {
   { precedence, precedence }
 
 binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
-  // ::
-  [YP_TOKEN_COLON_COLON] = LEFT_ASSOCIATIVE(BINDING_POWER_NONE),
-
   // {}
   [YP_TOKEN_BRACE_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_BRACES),
 
@@ -1061,6 +1073,9 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // []
   [YP_TOKEN_BRACKET_LEFT_RIGHT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
+
+  // ::
+  [YP_TOKEN_COLON_COLON] = RIGHT_ASSOCIATIVE(BINDING_POWER_INDEX)
 };
 
 #undef LEFT_ASSOCIATIVE
@@ -1537,6 +1552,12 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             yp_node_destroy(parser, read);
             break;
           }
+          case YP_NODE_CONSTANT_PATH_NODE:
+          case YP_NODE_CONSTANT_READ: {
+            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+            node = yp_node_constant_path_write_node_create(parser, node, &token, value);
+            break;
+          }
           case YP_NODE_GLOBAL_VARIABLE_READ: {
             yp_node_t *value = parse_expression(parser, token_binding_powers.right);
             yp_node_t *read = node;
@@ -1710,12 +1731,12 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 
         switch (parser->current.type) {
           case YP_TOKEN_CONSTANT: {
-            yp_node_t *child = parse_expression(parser, BINDING_POWER_NONE);
+            yp_node_t *child = parse_expression(parser, token_binding_powers.right);
             node = yp_node_constant_path_node_create(parser, node, &delimiter, child);
             break;
           }
           case YP_TOKEN_IDENTIFIER: {
-            yp_node_t *call = parse_expression(parser, BINDING_POWER_NONE);
+            yp_node_t *call = parse_expression(parser, token_binding_powers.right);
             call->as.call_node.receiver = node;
             node = call;
             break;
