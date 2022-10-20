@@ -158,10 +158,6 @@ def template(name, locals)
   contents = erb.result_with_hash(locals)
   FileUtils.mkdir_p(File.dirname(write_to))
   File.write(write_to, contents)
-
-  if [".c", ".h"].include?(File.extname(write_to))
-    sh("clang-format -i #{write_to}")
-  end
 end
 
 def locals
