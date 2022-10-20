@@ -1288,6 +1288,31 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       parser->current_scope = parent_scope;
       break;
     }
+    case YP_TOKEN_KEYWORD_DEFINED: {
+      yp_token_t keyword = parser->previous;
+      yp_token_t lparen;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+      } else {
+        lparen =
+          (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+      }
+
+      yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED);
+      yp_token_t rparen;
+
+      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'defined?' expression.");
+        rparen = parser->previous;
+      } else {
+        rparen =
+          (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->previous.end, .end = parser->previous.end };
+      }
+
+      node = yp_node_defined_node_create(parser, &keyword, &lparen, expression, &rparen);
+      break;
+    }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
