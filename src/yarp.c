@@ -38,14 +38,15 @@ is_hexadecimal_number_char(const char *c) {
   return (*c >= '0' && *c <= '9') || (*c >= 'a' && *c <= 'f') || (*c >= 'A' && *c <= 'F');
 }
 
-static inline bool
-is_identifier_start_char(const char *c) {
-  return (*c >= 'a' && *c <= 'z') || (*c >= 'A' && *c <= 'Z') || (*c == '_');
+static inline size_t
+is_identifier_start_char(yp_parser_t *parser, const char *c) {
+  return (*c == '_') ? 1 : parser->encoding.alpha_char(c);
 }
 
-static inline bool
-is_identifier_char(const char *c) {
-  return is_identifier_start_char(c) || is_decimal_number_char(c);
+static inline size_t
+is_identifier_char(yp_parser_t *parser, const char *c) {
+  size_t width;
+  return (width = parser->encoding.alnum_char(c)) ? width : is_identifier_start_char(parser, c);
 }
 
 static inline bool
@@ -320,10 +321,10 @@ lex_global_variable(yp_parser_t *parser) {
       return YP_TOKEN_NTH_REFERENCE;
 
     default:
-      if (is_identifier_char(parser->current.end)) {
+      if (is_identifier_char(parser, parser->current.end)) {
         do {
           parser->current.end++;
-        } while (is_identifier_char(parser->current.end));
+        } while (is_identifier_char(parser, parser->current.end));
         return YP_TOKEN_GLOBAL_VARIABLE;
       }
 
@@ -336,7 +337,7 @@ lex_global_variable(yp_parser_t *parser) {
 static yp_token_type_t
 lex_identifier(yp_parser_t *parser) {
   // Lex as far as we can into the current identifier.
-  while (is_identifier_char(parser->current.end)) {
+  while (is_identifier_char(parser, parser->current.end)) {
     parser->current.end++;
   }
 
@@ -539,7 +540,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // ? character literal
         case '?':
-          if (is_identifier_char(parser->current.end)) {
+          if (is_identifier_char(parser, parser->current.end)) {
             parser->current.end++;
             return YP_TOKEN_CHARACTER_LITERAL;
           }
@@ -594,7 +595,7 @@ lex_token_type(yp_parser_t *parser) {
         // :: symbol
         case ':':
           if (match(parser, ':')) return YP_TOKEN_COLON_COLON;
-          if (is_identifier_char(parser->current.end)) {
+          if (is_identifier_char(parser, parser->current.end)) {
             push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL, .term = '\0' });
             return YP_TOKEN_SYMBOL_BEGIN;
           }
@@ -689,10 +690,10 @@ lex_token_type(yp_parser_t *parser) {
         case '@': {
           yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
 
-          if (is_identifier_start_char(parser->current.end)) {
+          if (is_identifier_start_char(parser, parser->current.end)) {
             do {
               parser->current.end++;
-            } while (is_identifier_char(parser->current.end));
+            } while (is_identifier_char(parser, parser->current.end));
             return type;
           }
 
@@ -702,7 +703,7 @@ lex_token_type(yp_parser_t *parser) {
         default: {
           // If this isn't the beginning of an identifier, then it's an invalid
           // token as we've exhausted all of the other options.
-          if (!is_identifier_start_char(parser->current.start)) {
+          if (!is_identifier_start_char(parser, parser->current.start)) {
             return YP_TOKEN_INVALID;
           }
 
@@ -919,7 +920,7 @@ lex_token_type(yp_parser_t *parser) {
       parser->current.start = parser->current.end;
 
       // Lex as far as we can into the symbol.
-      if (parser->current.end < parser->end && is_identifier_start_char(parser->current.end++)) {
+      if (parser->current.end < parser->end && is_identifier_start_char(parser, parser->current.end++)) {
         pop_lex_mode(parser);
 
         yp_token_type_t type = lex_identifier(parser);
@@ -2033,7 +2034,11 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     .current = {.start = source, .end = source},
     .lineno = 1,
     .error_handler = &default_error_handler,
-    .current_scope = NULL
+    .current_scope = NULL,
+    .encoding = {
+      .alpha_char = yp_encoding_ascii_alpha_char,
+      .alnum_char = yp_encoding_ascii_alnum_char
+    }
   };
 
   yp_error_list_init(&parser->error_list);

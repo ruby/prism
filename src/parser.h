@@ -1,8 +1,9 @@
 #ifndef YARP_PARSER_H
 #define YARP_PARSER_H
 
-#include "ast.h"
 #include <stdbool.h>
+#include "ast.h"
+#include "encoding.h"
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
@@ -95,6 +96,13 @@ struct yp_parser {
   yp_error_list_t error_list;        // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler; // the error handler
   yp_node_t *current_scope;          // the current local scope
+
+  // The encoding functions for the current file is attached to the parser as
+  // it's parsing so that it can change with a magic comment.
+  struct {
+    size_t (*alpha_char)(const char *c);
+    size_t (*alnum_char)(const char *c);
+  } encoding;
 };
 
 #endif // YARP_PARSER_H
