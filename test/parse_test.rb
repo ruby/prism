@@ -278,7 +278,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([]),
+      ParametersNode([], [], []),
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -293,7 +293,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
-      ParametersNode([]),
+      ParametersNode([], [], []),
       PARENTHESIS_RIGHT(")"),
       Statements([]),
       KEYWORD_END("end"),
@@ -308,7 +308,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([]),
+      ParametersNode([], [], []),
       nil,
       Statements([expression("b = 1")]),
       KEYWORD_END("end"),
@@ -323,7 +323,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([RequiredParameterNode(IDENTIFIER("b"))]),
+      ParametersNode([RequiredParameterNode(IDENTIFIER("b"))], [], []),
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -338,11 +338,15 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([
-        RequiredParameterNode(IDENTIFIER("b")),
-        RequiredParameterNode(IDENTIFIER("c")),
-        RequiredParameterNode(IDENTIFIER("d"))
-      ]),
+      ParametersNode(
+        [
+          RequiredParameterNode(IDENTIFIER("b")),
+          RequiredParameterNode(IDENTIFIER("c")),
+          RequiredParameterNode(IDENTIFIER("d"))
+        ],
+        [],
+        []
+      ),
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -350,6 +354,47 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def a b, c, d\nend"
+  end
+
+  test "def with required and optional parameters" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("b"))],
+        [OptionalParameterNode(IDENTIFIER("c"), EQUAL("="), expression("2"))],
+        []
+      ),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b"), IDENTIFIER("c")])
+    )
+
+    assert_parses expected, "def a b, c = 2\nend"
+  end
+
+  test "def with optional parameters" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode(
+        [],
+        [
+          OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), expression("1")),
+          OptionalParameterNode(IDENTIFIER("c"), EQUAL("="), expression("2"))
+        ],
+        []
+      ),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b"), IDENTIFIER("c")])
+    )
+
+    assert_parses expected, "def a b = 1, c = 2\nend"
   end
 
   test "defined? without parentheses" do

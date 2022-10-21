@@ -621,6 +621,17 @@ nodes:
 
           "foo #{bar} baz"
           ^^^^^^^^^^^^^^^^
+  - name: KeywordParameterNode
+    child_nodes:
+      - name: name
+        type: token
+    location: name
+    comment: |
+      Represents an required keyword parameter to a method, block, or lambda definition.
+
+          def a(b:)
+                ^^
+          end
   - name: LocalVariableRead
     child_nodes:
       - name: name
@@ -733,6 +744,21 @@ nodes:
 
           target ||= value
           ^^^^^^^^^^^^^^^^
+  - name: OptionalParameterNode
+    child_nodes:
+      - name: name
+        type: token
+      - name: equal_operator
+        type: token
+      - name: value
+        type: node
+    location: name->value
+    comment: |
+      Represents an optional parameter to a method, block, or lambda definition.
+
+          def a(b = 1)
+                ^^^^^
+          end
   - name: OrNode
     child_nodes:
       - name: left
@@ -751,7 +777,11 @@ nodes:
     child_nodes:
       - name: requireds
         type: node[]
-    location: requireds
+      - name: optionals
+        type: node[]
+      - name: keywords
+        type: node[]
+    location: requireds->keywords
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
