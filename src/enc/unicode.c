@@ -1504,7 +1504,7 @@ unicode_codepoint_match(unicode_codepoint_t codepoint, unicode_codepoint_t *code
 static unicode_codepoint_t
 utf8_codepoint(const char *c, size_t *width) {
   if ((c[0] >> 7) == 0b0) {
-		// 0xxxxxxx
+    // 0xxxxxxx
     *width = 1;
     return c[0];
   }
