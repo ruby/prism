@@ -1900,6 +1900,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           }
           case YP_TOKEN_IDENTIFIER: {
             yp_node_t *call = parse_expression(parser, token_binding_powers.right);
+            call->as.call_node.call_operator = delimiter;
             call->as.call_node.receiver = node;
             node = call;
             break;
