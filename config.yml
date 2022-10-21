@@ -323,6 +323,8 @@ nodes:
     child_nodes:
       - name: receiver
         type: node?
+      - name: call_operator
+        type: token?
       - name: message
         type: token
       - name: arguments
