@@ -1185,16 +1185,43 @@ parse_parameters(yp_parser_t *parser) {
   bool parsing = true;
 
   while (parsing) {
-    if (parser->current.type == YP_TOKEN_IDENTIFIER) {
-      yp_lex_token(parser);
+    switch (parser->current.type) {
+      case YP_TOKEN_IDENTIFIER: {
+        yp_lex_token(parser);
 
-      yp_token_list_append(&parser->current_scope->as.scope.locals, &parser->previous);
-      yp_node_t *param = yp_node_required_parameter_node_create(parser, &parser->previous);
-      yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
+        yp_token_t name = parser->previous;
+        yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
-      if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
-    } else {
-      parsing = false;
+        if (accept(parser, YP_TOKEN_EQUAL)) {
+          yp_token_t operator = parser->previous;
+          yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE);
+          yp_node_t *param = yp_node_optional_parameter_node_create(parser, &name, &operator, value);
+          yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
+        } else {
+          yp_node_t *param = yp_node_required_parameter_node_create(parser, &name);
+          yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
+        }
+
+        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
+        break;
+      }
+      case YP_TOKEN_LABEL: {
+        yp_lex_token(parser);
+
+        yp_token_t name = parser->previous;
+        yp_token_t local = name;
+        local.end -= 1;
+        yp_token_list_append(&parser->current_scope->as.scope.locals, &local);
+
+        yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name);
+        yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
+        break;
+      }
+      default: {
+        parsing = false;
+        break;
+      }
     }
   }
 
