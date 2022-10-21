@@ -113,6 +113,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "break(1, 2, 3)"
   end
 
+  test "call with ? identifier" do
+    assert_parses CallNode(nil, nil, IDENTIFIER("a?"), nil, "a?"), "a?"
+  end
+
+  test "call with ! identifier" do
+    assert_parses CallNode(nil, nil, IDENTIFIER("a!"), nil, "a!"), "a!"
+  end
+
   test "call with ::" do
     expected = CallNode(
       CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
