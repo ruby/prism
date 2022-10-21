@@ -14,87 +14,87 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "binary !=" do
-    assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), ArgumentsNode([expression("2")]), "!="), "1 != 2"
+    assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), nil, ArgumentsNode([expression("2")]), nil, "!="), "1 != 2"
   end
 
   test "binary !~" do
-    assert_parses CallNode(expression("1"), nil, BANG_TILDE("!~"), ArgumentsNode([expression("2")]), "!~"), "1 !~ 2"
+    assert_parses CallNode(expression("1"), nil, BANG_TILDE("!~"), nil, ArgumentsNode([expression("2")]), nil, "!~"), "1 !~ 2"
   end
 
   test "binary ==" do
-    assert_parses CallNode(expression("1"), nil, EQUAL_EQUAL("=="), ArgumentsNode([expression("2")]), "=="), "1 == 2"
+    assert_parses CallNode(expression("1"), nil, EQUAL_EQUAL("=="), nil, ArgumentsNode([expression("2")]), nil, "=="), "1 == 2"
   end
 
   test "binary ===" do
-    assert_parses CallNode(expression("1"), nil, EQUAL_EQUAL_EQUAL("==="), ArgumentsNode([expression("2")]), "==="), "1 === 2"
+    assert_parses CallNode(expression("1"), nil, EQUAL_EQUAL_EQUAL("==="), nil, ArgumentsNode([expression("2")]), nil, "==="), "1 === 2"
   end
 
   test "binary =~" do
-    assert_parses CallNode(expression("1"), nil, EQUAL_TILDE("=~"), ArgumentsNode([expression("2")]), "=~"), "1 =~ 2"
+    assert_parses CallNode(expression("1"), nil, EQUAL_TILDE("=~"), nil, ArgumentsNode([expression("2")]), nil, "=~"), "1 =~ 2"
   end
 
   test "binary <=>" do
-    assert_parses CallNode(expression("1"), nil, LESS_EQUAL_GREATER("<=>"), ArgumentsNode([expression("2")]), "<=>"), "1 <=> 2"
+    assert_parses CallNode(expression("1"), nil, LESS_EQUAL_GREATER("<=>"), nil, ArgumentsNode([expression("2")]), nil, "<=>"), "1 <=> 2"
   end
 
   test "binary >" do
-    assert_parses CallNode(expression("1"), nil, GREATER(">"), ArgumentsNode([expression("2")]), ">"), "1 > 2"
+    assert_parses CallNode(expression("1"), nil, GREATER(">"), nil, ArgumentsNode([expression("2")]), nil, ">"), "1 > 2"
   end
 
   test "binary >=" do
-    assert_parses CallNode(expression("1"), nil, GREATER_EQUAL(">="), ArgumentsNode([expression("2")]), ">="), "1 >= 2"
+    assert_parses CallNode(expression("1"), nil, GREATER_EQUAL(">="), nil, ArgumentsNode([expression("2")]), nil, ">="), "1 >= 2"
   end
 
   test "binary <" do
-    assert_parses CallNode(expression("1"), nil, LESS("<"), ArgumentsNode([expression("2")]), "<"), "1 < 2"
+    assert_parses CallNode(expression("1"), nil, LESS("<"), nil, ArgumentsNode([expression("2")]), nil, "<"), "1 < 2"
   end
 
   test "binary <=" do
-    assert_parses CallNode(expression("1"), nil, LESS_EQUAL("<="), ArgumentsNode([expression("2")]), "<="), "1 <= 2"
+    assert_parses CallNode(expression("1"), nil, LESS_EQUAL("<="), nil, ArgumentsNode([expression("2")]), nil, "<="), "1 <= 2"
   end
 
   test "binary ^" do
-    assert_parses CallNode(expression("1"), nil, CARET("^"), ArgumentsNode([expression("2")]), "^"), "1 ^ 2"
+    assert_parses CallNode(expression("1"), nil, CARET("^"), nil, ArgumentsNode([expression("2")]), nil, "^"), "1 ^ 2"
   end
 
   test "binary |" do
-    assert_parses CallNode(expression("1"), nil, PIPE("|"), ArgumentsNode([expression("2")]), "|"), "1 | 2"
+    assert_parses CallNode(expression("1"), nil, PIPE("|"), nil, ArgumentsNode([expression("2")]), nil, "|"), "1 | 2"
   end
 
   test "binary &" do
-    assert_parses CallNode(expression("1"), nil, AMPERSAND("&"), ArgumentsNode([expression("2")]), "&"), "1 & 2"
+    assert_parses CallNode(expression("1"), nil, AMPERSAND("&"), nil, ArgumentsNode([expression("2")]), nil, "&"), "1 & 2"
   end
 
   test "binary >>" do
-    assert_parses CallNode(expression("1"), nil, GREATER_GREATER(">>"), ArgumentsNode([expression("2")]), ">>"), "1 >> 2"
+    assert_parses CallNode(expression("1"), nil, GREATER_GREATER(">>"), nil, ArgumentsNode([expression("2")]), nil, ">>"), "1 >> 2"
   end
 
   test "binary <<" do
-    assert_parses CallNode(expression("1"), nil, LESS_LESS("<<"), ArgumentsNode([expression("2")]), "<<"), "1 << 2"
+    assert_parses CallNode(expression("1"), nil, LESS_LESS("<<"), nil, ArgumentsNode([expression("2")]), nil, "<<"), "1 << 2"
   end
 
   test "binary -" do
-    assert_parses CallNode(expression("1"), nil, MINUS("-"), ArgumentsNode([expression("2")]), "-"), "1 - 2"
+    assert_parses CallNode(expression("1"), nil, MINUS("-"), nil, ArgumentsNode([expression("2")]), nil, "-"), "1 - 2"
   end
 
   test "binary +" do
-    assert_parses CallNode(expression("1"), nil, PLUS("+"), ArgumentsNode([expression("2")]), "+"), "1 + 2"
+    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1 + 2"
   end
 
   test "binary %" do
-    assert_parses CallNode(expression("1"), nil, PERCENT("%"), ArgumentsNode([expression("2")]), "%"), "1 % 2"
+    assert_parses CallNode(expression("1"), nil, PERCENT("%"), nil, ArgumentsNode([expression("2")]), nil, "%"), "1 % 2"
   end
 
   test "binary /" do
-    assert_parses CallNode(expression("1"), nil, SLASH("/"), ArgumentsNode([expression("2")]), "/"), "1 / 2"
+    assert_parses CallNode(expression("1"), nil, SLASH("/"), nil, ArgumentsNode([expression("2")]), nil, "/"), "1 / 2"
   end
 
   test "binary *" do
-    assert_parses CallNode(expression("1"), nil, STAR("*"), ArgumentsNode([expression("2")]), "*"), "1 * 2"
+    assert_parses CallNode(expression("1"), nil, STAR("*"), nil, ArgumentsNode([expression("2")]), nil, "*"), "1 * 2"
   end
 
   test "binary **" do
-    assert_parses CallNode(expression("1"), nil, STAR_STAR("**"), ArgumentsNode([expression("2")]), "**"), "1**2"
+    assert_parses CallNode(expression("1"), nil, STAR_STAR("**"), nil, ArgumentsNode([expression("2")]), nil, "**"), "1**2"
   end
 
   test "break" do
@@ -114,11 +114,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "call with ? identifier" do
-    assert_parses CallNode(nil, nil, IDENTIFIER("a?"), nil, "a?"), "a?"
+    assert_parses CallNode(nil, nil, IDENTIFIER("a?"), nil, nil, nil, "a?"), "a?"
   end
 
   test "call with ! identifier" do
-    assert_parses CallNode(nil, nil, IDENTIFIER("a!"), nil, "a!"), "a!"
+    assert_parses CallNode(nil, nil, IDENTIFIER("a!"), nil, nil, nil, "a!"), "a!"
   end
 
   test "call with ::" do
@@ -126,6 +126,8 @@ class ParseTest < Test::Unit::TestCase
       expression("a"),
       COLON_COLON("::"),
       IDENTIFIER("b"),
+      nil,
+      nil,
       nil,
       "b"
     )
@@ -135,10 +137,12 @@ class ParseTest < Test::Unit::TestCase
 
   test "call with .() shorthand" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
       DOT("."),
       NOT_PROVIDED(""),
+      PARENTHESIS_LEFT("("),
       nil,
+      PARENTHESIS_RIGHT(")"),
       "call"
     )    
 
@@ -150,7 +154,9 @@ class ParseTest < Test::Unit::TestCase
       expression("a"),
       DOT("."),
       NOT_PROVIDED(""),
+      PARENTHESIS_LEFT("("),
       ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      PARENTHESIS_RIGHT(")"),
       "call"
     )    
 
@@ -163,12 +169,16 @@ class ParseTest < Test::Unit::TestCase
         expression("a"),
         DOT("."),
         IDENTIFIER("b"),
-        ArgumentsNode([]),
+        nil,
+        nil,
+        nil,
         "b"
       ),
       DOT("."),
       IDENTIFIER("c"),
-      ArgumentsNode([]),
+      nil,
+      nil,
+      nil,
       "c"
     )
 
@@ -247,7 +257,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "constant path with variable parent" do
     expected = ConstantPathNode(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
       COLON_COLON("::"),
       ConstantRead(CONSTANT("B"))
     )
@@ -433,7 +443,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "identifier" do
-    assert_parses CallNode(nil, nil, IDENTIFIER("a"), nil, "a"), "a"
+    assert_parses CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"), "a"
   end
 
   test "if" do
@@ -608,7 +618,7 @@ class ParseTest < Test::Unit::TestCase
         StringNode(nil, STRING_CONTENT("aaa "), nil),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
-          Statements([CallNode(nil, nil, IDENTIFIER("bbb"), nil, "bbb")]),
+          Statements([CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, "bbb")]),
           EMBEXPR_END("}")
         ),
         StringNode(nil, STRING_CONTENT(" ccc"), nil)
@@ -661,11 +671,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "ternary" do
     expected = Ternary(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
       QUESTION_MARK("?"),
-      CallNode(nil, nil, IDENTIFIER("b"), nil, "b"),
+      CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
       COLON(":"),
-      CallNode(nil, nil, IDENTIFIER("c"), nil, "c")
+      CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c")
     )
 
     assert_parses expected, "a ? b : c"
@@ -676,19 +686,19 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "unary !" do
-    assert_parses CallNode(expression("1"), nil, BANG("!"), nil, "!"), "!1"
+    assert_parses CallNode(expression("1"), nil, BANG("!"), nil, nil, nil, "!"), "!1"
   end
 
   test "unary -" do
-    assert_parses CallNode(expression("1"), nil, MINUS("-"), nil, "-@"), "-1"
+    assert_parses CallNode(expression("1"), nil, MINUS("-"), nil, nil, nil, "-@"), "-1"
   end
 
   test "unary +" do
-    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, "+@"), "+1"
+    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, nil, nil, "+@"), "+1"
   end
 
   test "unary ~" do
-    assert_parses CallNode(expression("1"), nil, TILDE("~"), nil, "~"), "~1"
+    assert_parses CallNode(expression("1"), nil, TILDE("~"), nil, nil, nil, "~"), "~1"
   end
 
   test "unless" do
@@ -736,9 +746,11 @@ class ParseTest < Test::Unit::TestCase
       expression("1"),
       nil,
       PLUS("+"),
+      nil,
       ArgumentsNode([
-        CallNode(expression("2"), nil, STAR("*"), ArgumentsNode([expression("3")]), "*")
+        CallNode(expression("2"), nil, STAR("*"), nil, ArgumentsNode([expression("3")]), nil, "*")
       ]),
+      nil,
       "+"
     )
 
@@ -750,9 +762,11 @@ class ParseTest < Test::Unit::TestCase
       expression("1"),
       nil,
       STAR("*"),
+      nil,
       ArgumentsNode([
-        CallNode(expression("2"), nil, STAR_STAR("**"), ArgumentsNode([expression("3")]), "**")
+        CallNode(expression("2"), nil, STAR_STAR("**"), nil, ArgumentsNode([expression("3")]), nil, "**")
       ]),
+      nil,
       "*"
     )
 
@@ -761,10 +775,12 @@ class ParseTest < Test::Unit::TestCase
 
   test "FACTOR > TERM" do
     expected = CallNode(
-      CallNode(expression("1"), nil, STAR("*"), ArgumentsNode([expression("2")]), "*"),
+      CallNode(expression("1"), nil, STAR("*"), nil, ArgumentsNode([expression("2")]), nil, "*"),
       nil,
       PLUS("+"),
+      nil,
       ArgumentsNode([expression("3")]),
+      nil,
       "+"
     )
 

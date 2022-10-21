@@ -327,11 +327,15 @@ nodes:
         type: token?
       - name: message
         type: token
+      - name: lparen
+        type: token?
       - name: arguments
         type: node?
+      - name: rparen
+        type: token?
       - name: name
         type: string
-    location: receiver|message->arguments|message
+    location: receiver|message->rparen|arguments|message
     comment: |
       Represents a method call, in all of the various forms that that can take.
 
