@@ -123,7 +123,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "call with ::" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      expression("a"),
       COLON_COLON("::"),
       IDENTIFIER("b"),
       nil,
@@ -133,10 +133,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a::b"
   end
 
+  test "call with .() shorthand" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      DOT("."),
+      NOT_PROVIDED(""),
+      nil,
+      "call"
+    )    
+
+    assert_parses expected, "a.()"
+  end
+
+  test "call with .() shorthand and arguments" do
+    expected = CallNode(
+      expression("a"),
+      DOT("."),
+      NOT_PROVIDED(""),
+      ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      "call"
+    )    
+
+    assert_parses expected, "a.(1, 2, 3)"
+  end
+
   test "call with no parentheses or arguments" do
     expected = CallNode(
       CallNode(
-        CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+        expression("a"),
         DOT("."),
         IDENTIFIER("b"),
         ArgumentsNode([]),

@@ -1846,14 +1846,35 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       case YP_TOKEN_DOT: {
         yp_token_t call_operator = parser->previous;
 
-        expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
-        yp_token_t message = parser->previous;
+        if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+          yp_token_t message = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED,
+                                              .start = parser->previous.start,
+                                              .end = parser->previous.start };
 
-        yp_string_t name;
-        yp_string_shared_init(&name, message.start, message.end);
+          yp_string_t name;
+          yp_string_constant_init(&name, "call", 4);
 
-        yp_node_t *arguments = yp_node_arguments_node_create(parser);
-        node = yp_node_call_node_create(parser, node, &call_operator, &message, arguments, &name);
+          yp_node_t *arguments;
+          if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+            arguments = NULL;
+          } else {
+            arguments = yp_node_arguments_node_create(parser);
+            parse_arguments(parser, arguments);
+            expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' after the call arguments.");
+          }
+
+          node = yp_node_call_node_create(parser, node, &call_operator, &message, arguments, &name);
+        } else {
+          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
+          yp_token_t message = parser->previous;
+
+          yp_string_t name;
+          yp_string_shared_init(&name, message.start, message.end);
+
+          yp_node_t *arguments = yp_node_arguments_node_create(parser);
+          node = yp_node_call_node_create(parser, node, &call_operator, &message, arguments, &name);
+        }
+
         break;
       }
       case YP_TOKEN_DOT_DOT:
