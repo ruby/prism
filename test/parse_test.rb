@@ -113,9 +113,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "break(1, 2, 3)"
   end
 
+  test "call with ? identifier" do
+    assert_parses CallNode(nil, nil, IDENTIFIER("a?"), nil, "a?"), "a?"
+  end
+
+  test "call with ! identifier" do
+    assert_parses CallNode(nil, nil, IDENTIFIER("a!"), nil, "a!"), "a!"
+  end
+
   test "call with ::" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      expression("a"),
       COLON_COLON("::"),
       IDENTIFIER("b"),
       nil,
@@ -125,10 +133,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a::b"
   end
 
+  test "call with .() shorthand" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+      DOT("."),
+      NOT_PROVIDED(""),
+      nil,
+      "call"
+    )    
+
+    assert_parses expected, "a.()"
+  end
+
+  test "call with .() shorthand and arguments" do
+    expected = CallNode(
+      expression("a"),
+      DOT("."),
+      NOT_PROVIDED(""),
+      ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      "call"
+    )    
+
+    assert_parses expected, "a.(1, 2, 3)"
+  end
+
   test "call with no parentheses or arguments" do
     expected = CallNode(
       CallNode(
-        CallNode(nil, nil, IDENTIFIER("a"), nil, "a"),
+        expression("a"),
         DOT("."),
         IDENTIFIER("b"),
         ArgumentsNode([]),
