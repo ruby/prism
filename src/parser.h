@@ -1,8 +1,9 @@
 #ifndef YARP_PARSER_H
 #define YARP_PARSER_H
 
-#include "ast.h"
 #include <stdbool.h>
+#include "ast.h"
+#include "encoding.h"
 
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
@@ -75,16 +76,6 @@ typedef struct {
   yp_token_type_t (*unterminated_string)(yp_parser_t *parser);
 } yp_error_handler_t;
 
-// As we're parsing, we're going to need to check characters against the
-// encoding of the file. This can change depending on an optional magic comment
-// at the top of the file. To do this, we keep around an encoding object that
-// contains function pointers in order to fulfill the contract of functions that
-// we need.
-typedef struct {
-  size_t (*alpha_char)(const char *c);
-  size_t (*alnum_char)(const char *c);
-} yp_encoding_t;
-
 // This struct represents the overall parser. It contains a reference to the
 // source file, as well as pointers that indicate where in the source it's
 // currently parsing. It also contains the most recent and current token that
@@ -105,7 +96,13 @@ struct yp_parser {
   yp_error_list_t error_list;        // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler; // the error handler
   yp_node_t *current_scope;          // the current local scope
-  yp_encoding_t *encoding;           // the encoding object for the current file
+
+  // The encoding functions for the current file is attached to the parser as
+  // it's parsing so that it can change with a magic comment.
+  struct {
+    size_t (*alpha_char)(const char *c);
+    size_t (*alnum_char)(const char *c);
+  } encoding;
 };
 
 #endif // YARP_PARSER_H

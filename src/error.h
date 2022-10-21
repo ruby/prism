@@ -1,10 +1,10 @@
 #ifndef YARP_ERROR_H
 #define YARP_ERROR_H
 
-#include "ast.h"
-#include "util/string.h"
 #include <stdlib.h>
 #include <string.h>
+#include "ast.h"
+#include "util/string.h"
 
 // This struct represents an error found during parsing.
 typedef struct yp_error {

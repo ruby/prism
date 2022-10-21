@@ -15,27 +15,6 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
 }
 
 /******************************************************************************/
-/* Encodings                                                                  */
-/******************************************************************************/
-
-static inline size_t
-ascii_alpha_char(const char *c) {
-  if ((*c >= 'a' && *c <= 'z') || (*c >= 'A' && *c <= 'Z')) return 1;
-  return 0;
-}
-
-static inline size_t
-ascii_alnum_char(const char *c) {
-  if (ascii_alpha_char(c) || (*c >= '0' && *c <= '9')) return 1;
-  return 0;
-}
-
-yp_encoding_t ascii_encoding = {
-  .alpha_char = ascii_alpha_char,
-  .alnum_char = ascii_alnum_char
-};
-
-/******************************************************************************/
 /* Basic character checks                                                     */
 /******************************************************************************/
 
@@ -61,13 +40,13 @@ is_hexadecimal_number_char(const char *c) {
 
 static inline size_t
 is_identifier_start_char(yp_parser_t *parser, const char *c) {
-  return (*c == '_') ? 1 : parser->encoding->alpha_char(c);
+  return (*c == '_') ? 1 : parser->encoding.alpha_char(c);
 }
 
 static inline size_t
 is_identifier_char(yp_parser_t *parser, const char *c) {
   size_t width;
-  return (width = parser->encoding->alnum_char(c)) ? width : is_identifier_start_char(parser, c);
+  return (width = parser->encoding.alnum_char(c)) ? width : is_identifier_start_char(parser, c);
 }
 
 static inline bool
@@ -2056,7 +2035,10 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     .lineno = 1,
     .error_handler = &default_error_handler,
     .current_scope = NULL,
-    .encoding = &ascii_encoding
+    .encoding = {
+      .alpha_char = yp_encoding_ascii_alpha_char,
+      .alnum_char = yp_encoding_ascii_alnum_char
+    }
   };
 
   yp_error_list_init(&parser->error_list);
