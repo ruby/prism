@@ -928,34 +928,43 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
-        // If we hit a newline, make sure to do the required bookkeeping.
-        if (*parser->current.end == '\n') parser->lineno++;
+        switch (*parser->current.end) {
+          case '\n':
+            // If we hit a newline, make sure to do the required bookkeeping.
+            parser->lineno++;
+            break;
+          case '#':
+            // If our current lex state allows interpolation and we've hit a #,
+            // then check if it's used as the beginning of either an embedded
+            // variable or an embedded expression.
+            if (parser->lex_modes.current->interp) {
+              switch (parser->current.end[1]) {
+              case '@':
+                // In this case it could be an embedded instance or class
+                // variable.
+                break;
+              case '$':
+                // In this case it could be an embedded global variable.
+                break;
+              case '{':
+                // In this case it's the start of an embedded expression.
 
-        // If our current lex state allows interpolation and we've hit a #, then
-        // check if it's used as the beginning of either an embedded variable or
-        // an embedded expression.
-        if (parser->lex_modes.current->interp && *parser->current.end == '#') {
-          switch (parser->current.end[1]) {
-            case '@':
-              // In this case it could be an embedded instance or class
-              // variable.
-              break;
-            case '$':
-              // In this case it could be an embedded global variable.
-              break;
-            case '{':
-              // In this case it's the start of an embedded expression.
+                // If we have already consumed content, then we need to return
+                // that content as string content first.
+                if (parser->current.end > parser->current.start) {
+                  return YP_TOKEN_STRING_CONTENT;
+                }
 
-              // If we have already consumed content, then we need to return
-              // that content as string content first.
-              if (parser->current.end > parser->current.start) {
-                return YP_TOKEN_STRING_CONTENT;
+                parser->current.end += 2;
+                push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+                return YP_TOKEN_EMBEXPR_BEGIN;
               }
-
-              parser->current.end += 2;
-              push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
-              return YP_TOKEN_EMBEXPR_BEGIN;
-          }
+            }
+            break;
+          case '\\':
+            // If we hit an escape, then we need that handle the subsequent
+            // character literally.
+            parser->current.end++;
         }
 
         parser->current.end++;
