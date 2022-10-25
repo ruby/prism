@@ -571,9 +571,7 @@ lex_token_type(yp_parser_t *parser) {
         // + += +@
         case '+':
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
-              match(parser, '@'))
-            return YP_TOKEN_PLUS_AT;
+          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
           return YP_TOKEN_PLUS;
 
         // - -= -@
