@@ -210,6 +210,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
         // fall through
 
       // 01111 is an octal number
+      case '_':
       case '0':
       case '1':
       case '2':
@@ -218,6 +219,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '5':
       case '6':
       case '7':
+        match(parser, '_');
         while (is_octal_number_char(parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
@@ -250,6 +252,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
   } else {
     // If it didn't start with a 0, then we'll lex as far as we can into a
     // decimal number.
+    match(parser, '_');
     while (is_decimal_number_char(parser->current.end)) {
       parser->current.end++;
       match(parser, '_');
