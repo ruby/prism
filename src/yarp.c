@@ -784,6 +784,20 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_STRING_END;
         }
 
+        // If we've hit a #{, then we're at the start of an embedded expression,
+        // so we'll switch to the embedded expression lex mode.
+        if (parser->lex_modes.current->interp && parser->current.end[0] == '#' && parser->current.end[1] == '{') {
+          // If we've already skipped past content, then we need to return that
+          // content first before we switch to the embedded expression lex mode.
+          if (parser->current.start < parser->current.end) {
+            return YP_TOKEN_STRING_CONTENT;
+          }
+
+          parser->current.end += 2;
+          push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+          return YP_TOKEN_EMBEXPR_BEGIN;
+        }
+
         // Otherwise, just skip past the content as it's part of an element of
         // the list.
         parser->current.end++;
@@ -1621,6 +1635,115 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
+      node->as.string_list_node.closing = parser->previous;
+      break;
+    }
+    case YP_TOKEN_PERCENT_UPPER_W: {
+      yp_token_t opening = parser->previous;
+      node = yp_node_string_list_node_create(parser, &opening, &opening);
+      yp_node_t *current = NULL;
+
+      while (parser->current.type != YP_TOKEN_STRING_END) {
+        switch (parser->current.type) {
+          case YP_TOKEN_WORDS_SEP: {
+            if (current == NULL) {
+              // If we hit a separator before we have any content, then we don't
+              // need to do anything.
+            } else {
+              // If we hit a separator after we've hit content, then we need to
+              // append that content to the list and reset the current node.
+              yp_node_list_append(parser, node, &node->as.string_list_node.strings, current);
+              current = NULL;
+            }
+
+            yp_lex_token(parser);
+            break;
+          }
+          case YP_TOKEN_STRING_CONTENT: {
+            yp_lex_token(parser);
+
+            if (current == NULL) {
+              // If we hit content and the current node is NULL, then this is
+              // the first string content we've seen. In that case we're going
+              // to create a new string node and set that to the current.
+              yp_token_t opening;
+              not_provided(&opening, parser->previous.start);
+
+              yp_token_t closing;
+              not_provided(&closing, parser->previous.end);
+
+              current = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+            } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
+              // If we hit string content and the current node is an
+              // interpolated string, then we need to append the string content
+              // to the list of child nodes.
+              yp_token_t opening;
+              not_provided(&opening, parser->previous.start);
+
+              yp_token_t closing;
+              not_provided(&closing, parser->previous.end);
+
+              yp_node_t *next_string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+              yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, next_string);
+            }
+
+            break;
+          }
+          case YP_TOKEN_EMBEXPR_BEGIN: {
+            yp_lex_token(parser);
+
+            if (current == NULL) {
+              // If we hit an embedded expression and the current node is NULL,
+              // then this is the start of a new string. We'll set the current
+              // node to a new interpolated string.
+              yp_token_t opening;
+              not_provided(&opening, parser->previous.start);
+
+              yp_token_t closing;
+              not_provided(&closing, parser->previous.start);
+
+              current = yp_node_interpolated_string_node_create(parser, &opening, &closing);
+            } else if (current->type == YP_NODE_STRING_NODE) {
+              // If we hit an embedded expression and the current node is a
+              // string node, then we'll convert the current into an
+              // interpolated string and add the string node to the list of
+              // parts.
+              yp_token_t opening;
+              not_provided(&opening, parser->previous.start);
+
+              yp_token_t closing;
+              not_provided(&closing, parser->previous.start);
+
+              yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &closing);
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, current);
+              current = interpolated;
+            } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
+              // If we hit an embedded expression and the current node is an
+              // interpolated string, then we'll just continue on.
+            }
+
+            yp_token_t embexpr_opening = parser->previous;
+            yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_EMBEXPR_END);
+            expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+
+            yp_token_t embexpr_closing = parser->previous;
+            yp_node_t *interpolated = yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &embexpr_closing);
+            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, interpolated);
+            break;
+          }
+          default:
+            expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%W` list.");
+            yp_lex_token(parser);
+            break;
+        }
+      }
+
+      // If we have a current node, then we need to append it to the list.
+      if (current) {
+        yp_node_list_append(parser, node, &node->as.string_list_node.strings, current);
+      }
+
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
       node->as.string_list_node.closing = parser->previous;
       break;
     }

@@ -643,6 +643,46 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%w[a b c]"
   end
 
+  test "string list with interpolation allowed but not used" do
+    expected = StringListNode(
+      PERCENT_UPPER_W("%W["),
+      [
+        StringNode(nil, STRING_CONTENT("a"), nil),
+        StringNode(nil, STRING_CONTENT("b"), nil),
+        StringNode(nil, STRING_CONTENT("c"), nil)
+      ],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%W[a b c]"
+  end
+
+  test "string list with interpolation allowed and used" do
+    expected = StringListNode(
+      PERCENT_UPPER_W("%W["),
+      [
+        StringNode(nil, STRING_CONTENT("a"), nil),
+        InterpolatedStringNode(
+          nil,
+          [
+            StringNode(nil, STRING_CONTENT("b"), nil),
+            StringInterpolatedNode(
+              EMBEXPR_BEGIN("\#{"),
+              Statements([expression("c")]),
+              EMBEXPR_END("}")
+            ),
+            StringNode(nil, STRING_CONTENT("d"), nil)
+          ],
+          nil
+        ),
+        StringNode(nil, STRING_CONTENT("e"), nil)
+      ],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%W[a b\#{c}d e]"
+  end
+
   test "super" do
     assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
   end
