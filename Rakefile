@@ -64,8 +64,9 @@ task lex: :compile do
     end
 
   filepaths.each do |filepath|
+    source = File.read(filepath)
     result =
-      YARP.lex_ripper(filepath).zip(YARP.lex_compat(filepath)).all? do |(ripper, yarp)|
+      YARP.lex_ripper(source).zip(YARP.lex_compat(source)).all? do |(ripper, yarp)|
         break false if yarp.nil?
         ripper[0...-1] == yarp[0...-1]
       end

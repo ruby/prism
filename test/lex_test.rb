@@ -22,7 +22,8 @@ class LexTest < Test::Unit::TestCase
   private
 
   def assert_lex(filepath)
-    YARP.lex_ripper(filepath).zip(YARP.lex_compat(filepath)).each do |(ripper, yarp)|
+    source = File.read(filepath)
+    YARP.lex_ripper(source).zip(YARP.lex_compat(source)).each do |(ripper, yarp)|
       assert_equal ripper[0...-1], yarp[0...-1]
     end
   end
