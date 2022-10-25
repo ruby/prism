@@ -162,10 +162,15 @@ module YARP
 
       value = token.value
       unescaped =
-        if %i[on_comment on_tstring_content].include?(event) && value.include?("\\")
+        if %i[on_comment on_tstring_content].include?(event)
           # Ripper unescapes string content and comments, so we need to do the
-          # same here.
-          value.force_encoding("UTF-8").unicode_normalize
+          # same here. We're going to attempt to force it into UTF-8, but if
+          # that doesn't work we'll just use the plain value.
+          begin
+            value.force_encoding("UTF-8").unicode_normalize
+          rescue ArgumentError
+            value
+          end
         else
           value
         end
