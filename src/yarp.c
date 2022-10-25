@@ -430,8 +430,26 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_EMBEXPR: {
       // First, we're going to skip past any whitespace at the front of the next
       // token.
-      while (is_non_newline_whitespace_char(parser->current.end)) {
-        parser->current.end++;
+      bool chomping = true;
+      while (chomping) {
+        switch (*parser->current.end) {
+          case ' ':
+          case '\t':
+          case '\f':
+          case '\v':
+            parser->current.end++;
+            break;
+          case '\r':
+            if (parser->current.end[1] == '\n') {
+              chomping = false;
+            } else {
+              parser->current.end++;
+            }
+            break;
+          default:
+            chomping = false;
+            break;
+        }
       }
 
       // Next, we'll set to start of this token to be the current end.
@@ -450,6 +468,14 @@ lex_token_type(yp_parser_t *parser) {
           }
           (void) match(parser, '\n');
           return YP_TOKEN_COMMENT;
+
+        case '\r': {
+          // The only way to get here is if this is immediately followed by a
+          // newline.
+          (void) match(parser, '\n');
+          parser->lineno++;
+          return YP_TOKEN_NEWLINE;
+        }
 
         case '\n': {
           parser->lineno++;
