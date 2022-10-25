@@ -350,15 +350,24 @@ lex_identifier(yp_parser_t *parser) {
   if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
     return YP_TOKEN_KEYWORD_##token;
 
-  if ((parser->current.end < parser->end) && (parser->current.end[1] != '=') &&
-      (match(parser, '!') || match(parser, '?'))) {
-    width++;
-
-    if (parser->previous.type != YP_TOKEN_DOT) {
-      KEYWORD("defined?", DEFINED)
+  if (parser->current.end < parser->end) {
+    // If we're in a position where we can accept a = at the end of an
+    // identifier, then we'll optionally accept it.
+    if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '=')) {
+      return YP_TOKEN_IDENTIFIER;
     }
 
-    return YP_TOKEN_IDENTIFIER;
+    // Else we'll attempt to extend the identifier by a ! or ?. Then we'll check
+    // if we're returning the defined? keyword or just an identifier.
+    if ((parser->current.end[1] != '=') && (match(parser, '!') || match(parser, '?'))) {
+      width++;
+
+      if (parser->previous.type != YP_TOKEN_DOT) {
+        KEYWORD("defined?", DEFINED)
+      }
+
+      return YP_TOKEN_IDENTIFIER;
+    }
   }
 
   if (parser->previous.type != YP_TOKEN_DOT) {
@@ -490,8 +499,7 @@ lex_token_type(yp_parser_t *parser) {
         case '!':
           if (match(parser, '=')) return YP_TOKEN_BANG_EQUAL;
           if (match(parser, '~')) return YP_TOKEN_BANG_TILDE;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
-              match(parser, '@'))
+          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@'))
             return YP_TOKEN_BANG_AT;
           return YP_TOKEN_BANG;
 
