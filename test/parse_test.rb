@@ -560,7 +560,7 @@ class ParseTest < Test::Unit::TestCase
       BRACE_RIGHT("}")
     )
 
-    assert_parses expected, "BEGIN 1 }"
+    assert_parses expected, "BEGIN 1 }", errors: true
   end
 
   test "pre execution missing { error" do
@@ -733,10 +733,6 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CallNode(expression("1"), nil, MINUS("-"), nil, nil, nil, "-@"), "-1"
   end
 
-  test "unary +" do
-    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, nil, nil, "+@"), "+1"
-  end
-
   test "unary ~" do
     assert_parses CallNode(expression("1"), nil, TILDE("~"), nil, nil, nil, "~"), "~1"
   end
@@ -846,9 +842,17 @@ class ParseTest < Test::Unit::TestCase
     assert_equal expected, node
   end
 
-  def assert_parses(expected, source)
+  def assert_parses(expected, source, errors: false)
     assert_equal expected, expression(source)
     assert_serializes expected, source
+
+    # If it's expected that there are syntax errors in the given source, then
+    # we're not going to compare against the ripper lexer.
+    return if errors
+
+    YARP.lex_ripper(source).zip(YARP.lex_compat(source)).each do |(ripper, yarp)|
+      assert_equal ripper[0...-1], yarp[0...-1]
+    end
   end
 
   def expression(source)
