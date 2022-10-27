@@ -1008,6 +1008,7 @@ typedef enum {
   CONTEXT_CLASS,    // a class declaration
   CONTEXT_DEF,      // a method definition
   CONTEXT_IF,       // an if statement
+  CONTEXT_ELSIF,    // an elsif clause
   CONTEXT_UNLESS,   // an unless statement
   CONTEXT_ELSE,     // an else clause
   CONTEXT_WHILE,    // a while statement
@@ -1032,7 +1033,8 @@ is_context_terminator(context_t context, yp_token_t *token) {
     case CONTEXT_ELSE:
       return token->type == YP_TOKEN_KEYWORD_END;
     case CONTEXT_IF:
-      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
+    case CONTEXT_ELSIF:
+      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
     case CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
   }
@@ -1316,6 +1318,80 @@ parse_parameters(yp_parser_t *parser) {
   return params;
 }
 
+static inline yp_node_t *
+parse_conditional(yp_parser_t *parser, context_t context) {
+  yp_token_t keyword = parser->previous;
+
+  yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
+  accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+  yp_node_t *statements = parse_statements(parser, context);
+  accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+  yp_token_t end_keyword;
+  not_provided(&end_keyword, parser->previous.end);
+
+  yp_node_t *parent;
+  switch (context) {
+    case CONTEXT_IF:
+      parent = yp_node_if_node_create(parser, &keyword, predicate, statements, NULL, &end_keyword);
+      break;
+    case CONTEXT_UNLESS:
+      parent = yp_node_unless_node_create(parser, &keyword, predicate, statements, NULL, &end_keyword);
+      break;
+    default:
+      // Should not be able to reach here.
+      parent = NULL;
+      break;
+  }
+
+  yp_node_t *current = parent;
+
+  // Parse any number of elsif clauses. This will form a linked list of if
+  // nodes pointing to each other from the top.
+  while (parser->current.type == YP_TOKEN_KEYWORD_ELSIF) {
+    yp_lex_token(parser);
+    yp_token_t elsif_keyword = parser->previous;
+
+    yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
+    accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    yp_node_t *statements = parse_statements(parser, CONTEXT_ELSIF);
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    yp_node_t *elsif = yp_node_if_node_create(parser, &elsif_keyword, predicate, statements, NULL, &end_keyword);
+    current->as.if_node.consequent = elsif;
+    current = elsif;
+  }
+
+  switch (parser->current.type) {
+    case YP_TOKEN_KEYWORD_ELSE: {
+      yp_lex_token(parser);
+      yp_token_t else_keyword = parser->previous;
+      yp_node_t *else_statements = parse_statements(parser, CONTEXT_ELSE);
+
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
+
+      yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
+      current->as.if_node.consequent = else_node;
+      parent->as.if_node.end_keyword = parser->previous;
+      break;
+    }
+    case YP_TOKEN_KEYWORD_END: {
+      yp_lex_token(parser);
+      parent->as.if_node.end_keyword = parser->previous;
+      break;
+    }
+    default:
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
+      parent->as.if_node.end_keyword = parser->previous;
+      break;
+  }
+
+  return parent;
+}
+
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
@@ -1515,36 +1591,10 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       return yp_node_false_node_create(parser, &parser->previous);
-    case YP_TOKEN_KEYWORD_IF: {
-      yp_token_t if_keyword = parser->previous;
-
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
-      accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-      yp_node_t *statements = parse_statements(parser, CONTEXT_IF);
-      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-      switch (parser->current.type) {
-        case YP_TOKEN_KEYWORD_ELSE: {
-          yp_lex_token(parser);
-          yp_token_t else_keyword = parser->previous;
-          yp_node_t *else_statements = parse_statements(parser, CONTEXT_ELSE);
-
-          accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-          expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
-
-          yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
-          return yp_node_if_node_create(parser, &if_keyword, predicate, statements, else_node, &parser->previous);
-        }
-        case YP_TOKEN_KEYWORD_END: {
-          yp_lex_token(parser);
-          return yp_node_if_node_create(parser, &if_keyword, predicate, statements, NULL, &parser->previous);
-        }
-        default:
-          expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
-          return yp_node_if_node_create(parser, &if_keyword, predicate, statements, NULL, &parser->previous);
-      }
-    }
+    case YP_TOKEN_KEYWORD_IF:
+      return parse_conditional(parser, CONTEXT_IF);
+    case YP_TOKEN_KEYWORD_UNLESS:
+      return parse_conditional(parser, CONTEXT_UNLESS);
     case YP_TOKEN_KEYWORD_MODULE: {
       yp_token_t module_keyword = parser->previous;
       yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE);
@@ -1569,18 +1619,6 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_self_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_TRUE:
       return yp_node_true_node_create(parser, &parser->previous);
-    case YP_TOKEN_KEYWORD_UNLESS: {
-      yp_token_t keyword = parser->previous;
-
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
-      accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-      yp_node_t *statements = parse_statements(parser, CONTEXT_UNLESS);
-      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `unless` statement.");
-      return yp_node_unless_node_create(parser, &keyword, predicate, statements);
-    }
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_token_t keyword = parser->previous;
 
@@ -2091,7 +2129,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power);
-      return yp_node_unless_node_create(parser, &token, predicate, statements);
+      yp_token_t end_keyword;
+      not_provided(&end_keyword, parser->previous.end);
+
+      return yp_node_unless_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_node_t *statements = yp_node_statements_create(parser);

@@ -484,6 +484,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "if true\n1 else 2 end"
   end
 
+  test "if elsif" do
+    expected = IfNode(
+      KEYWORD_IF("if"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      IfNode(
+        KEYWORD_ELSIF("elsif"),
+        FalseNode(KEYWORD_FALSE("false")),
+        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        IfNode(
+          KEYWORD_ELSIF("elsif"),
+          NilNode(KEYWORD_NIL("nil")),
+          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          ElseNode(
+            KEYWORD_ELSE("else"),
+            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            KEYWORD_END("end")
+          ),
+          nil
+        ),
+        nil
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "if true then true elsif false then false elsif nil then nil else self end"
+  end
+
   test "imaginary" do
     assert_parses ImaginaryLiteral(IMAGINARY_NUMBER("1i")), "1i"
   end
@@ -752,11 +780,55 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "unless" do
-    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), "unless true; 1; end"
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")]), nil, KEYWORD_END("end")), "unless true; 1; end"
   end
 
   test "unless modifier" do
-    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")])), "1 unless true"
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")]), nil, nil), "1 unless true"
+  end
+
+  test "unless else" do
+    expected = UnlessNode(
+      KEYWORD_UNLESS("unless"),
+      expression("true"),
+      Statements([expression("1")]),
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([expression("2")]),
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "unless true\n1 else 2 end"
+  end
+
+  test "unless elsif" do
+    expected = UnlessNode(
+      KEYWORD_UNLESS("unless"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      IfNode(
+        KEYWORD_ELSIF("elsif"),
+        FalseNode(KEYWORD_FALSE("false")),
+        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        IfNode(
+          KEYWORD_ELSIF("elsif"),
+          NilNode(KEYWORD_NIL("nil")),
+          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          ElseNode(
+            KEYWORD_ELSE("else"),
+            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            KEYWORD_END("end")
+          ),
+          nil
+        ),
+        nil
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "unless true then true elsif false then false elsif nil then nil else self end"
   end
 
   test "until" do
