@@ -4,6 +4,44 @@
 /* Debugging                                                                  */
 /******************************************************************************/
 
+__attribute__((unused)) static const char *
+debug_context(yp_context_t context) {
+  switch (context) {
+    case YP_CONTEXT_CLASS: return "CLASS";
+    case YP_CONTEXT_DEF: return "DEF";
+    case YP_CONTEXT_ELSE: return "ELSE";
+    case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
+    case YP_CONTEXT_IF: return "IF";
+    case YP_CONTEXT_MAIN: return "MAIN";
+    case YP_CONTEXT_MODULE: return "MODULE";
+    case YP_CONTEXT_POSTEXE: return "POSTEXE";
+    case YP_CONTEXT_PREEXE: return "PREEXE";
+    case YP_CONTEXT_UNLESS: return "UNLESS";
+    case YP_CONTEXT_UNTIL: return "UNTIL";
+    case YP_CONTEXT_WHILE: return "WHILE";
+  }
+}
+
+__attribute__((unused)) static void
+debug_contexts(yp_parser_t *parser) {
+  yp_context_node_t *context_node = parser->current_context;
+  printf("CONTEXTS: ");
+
+  if (context_node != NULL) {
+    while (context_node != NULL) {
+      printf("%s", debug_context(context_node->context));
+      context_node = context_node->prev;
+      if (context_node != NULL) {
+        printf(" <- ");
+      }
+    }
+  } else {
+    printf("NONE");
+  }
+
+  printf("\n");
+}
+
 __attribute__((unused)) static void
 debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
   yp_buffer_t buffer;
@@ -1001,7 +1039,7 @@ lex_token_type(yp_parser_t *parser) {
 /******************************************************************************/
 
 static bool
-is_context_terminator(yp_context_t context, yp_token_t *token) {
+context_terminator(yp_context_t context, yp_token_t *token) {
   switch (context) {
     case YP_CONTEXT_MAIN:
       return token->type == YP_TOKEN_EOF;
@@ -1021,6 +1059,18 @@ is_context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
+  }
+
+  return false;
+}
+
+static bool
+context_recoverable(yp_parser_t *parser, yp_token_t *token) {
+  yp_context_node_t *context_node = parser->current_context;
+
+  while (context_node != NULL) {
+    if (context_terminator(context_node->context, token)) return true;
+    context_node = context_node->prev;
   }
 
   return false;
@@ -1255,8 +1305,10 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   context_push(parser, context);
   yp_node_t *statements = yp_node_statements_create(parser);
 
-  while (!is_context_terminator(context, &parser->current)) {
+  while (!context_terminator(context, &parser->current)) {
     yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
+    if (node->type == YP_NODE_RECOVERED_NODE) break;
+
     yp_node_list_append(parser, statements, &statements->as.statements.body, node);
     if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
   }
@@ -1271,6 +1323,8 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
   if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
     while (true) {
       yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE);
+      if (expression->type == YP_NODE_RECOVERED_NODE) break;
+
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
@@ -1406,6 +1460,9 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
+  yp_token_t recoverable = parser->previous;
+  yp_lex_token(parser);
+
   switch (parser->previous.type) {
     case YP_TOKEN_CHARACTER_LITERAL: {
       yp_token_t opening = parser->previous;
@@ -1920,8 +1977,14 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_string_node_create(parser, &opening, &content, &parser->previous);
     }
     default:
-      fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
-      return NULL;
+      if (context_recoverable(parser, &parser->previous)) {
+        parser->current = parser->previous;
+        parser->previous = recoverable;
+        return yp_node_recovered_node_create(parser, parser->previous.start - parser->start);
+      } else {
+        fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
+        return NULL;
+      }
   }
 }
 
@@ -2198,10 +2261,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
-  yp_lex_token(parser);
   yp_node_t *node = parse_expression_prefix(parser);
-  binding_powers_t current_binding_powers;
+  if (node->type == YP_NODE_RECOVERED_NODE) return node;
 
+  binding_powers_t current_binding_powers;
   while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
     yp_lex_token(parser);
     node = parse_expression_infix(parser, node, current_binding_powers.right);

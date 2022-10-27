@@ -151,7 +151,7 @@ class Token
     output << "YP_TOKEN_#{name}"
     output << " = #{value}" if value
     output << ", // #{comment}"
-    output.join(" ")
+    output.join
   end
 end
 
