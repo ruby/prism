@@ -210,6 +210,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
         // fall through
 
       // 01111 is an octal number
+      case '_':
       case '0':
       case '1':
       case '2':
@@ -218,6 +219,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '5':
       case '6':
       case '7':
+        match(parser, '_');
         while (is_octal_number_char(parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
@@ -250,6 +252,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
   } else {
     // If it didn't start with a 0, then we'll lex as far as we can into a
     // decimal number.
+    match(parser, '_');
     while (is_decimal_number_char(parser->current.end)) {
       parser->current.end++;
       match(parser, '_');
@@ -347,15 +350,24 @@ lex_identifier(yp_parser_t *parser) {
   if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
     return YP_TOKEN_KEYWORD_##token;
 
-  if ((parser->current.end < parser->end) && (parser->current.end[1] != '=') &&
-      (match(parser, '!') || match(parser, '?'))) {
-    width++;
-
-    if (parser->previous.type != YP_TOKEN_DOT) {
-      KEYWORD("defined?", DEFINED)
+  if (parser->current.end < parser->end) {
+    // If we're in a position where we can accept a = at the end of an
+    // identifier, then we'll optionally accept it.
+    if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '=')) {
+      return YP_TOKEN_IDENTIFIER;
     }
 
-    return YP_TOKEN_IDENTIFIER;
+    // Else we'll attempt to extend the identifier by a ! or ?. Then we'll check
+    // if we're returning the defined? keyword or just an identifier.
+    if ((parser->current.end[1] != '=') && (match(parser, '!') || match(parser, '?'))) {
+      width++;
+
+      if (parser->previous.type != YP_TOKEN_DOT) {
+        KEYWORD("defined?", DEFINED)
+      }
+
+      return YP_TOKEN_IDENTIFIER;
+    }
   }
 
   if (parser->previous.type != YP_TOKEN_DOT) {
@@ -418,8 +430,26 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_EMBEXPR: {
       // First, we're going to skip past any whitespace at the front of the next
       // token.
-      while (is_non_newline_whitespace_char(parser->current.end)) {
-        parser->current.end++;
+      bool chomping = true;
+      while (chomping) {
+        switch (*parser->current.end) {
+          case ' ':
+          case '\t':
+          case '\f':
+          case '\v':
+            parser->current.end++;
+            break;
+          case '\r':
+            if (parser->current.end[1] == '\n') {
+              chomping = false;
+            } else {
+              parser->current.end++;
+            }
+            break;
+          default:
+            chomping = false;
+            break;
+        }
       }
 
       // Next, we'll set to start of this token to be the current end.
@@ -438,6 +468,14 @@ lex_token_type(yp_parser_t *parser) {
           }
           (void) match(parser, '\n');
           return YP_TOKEN_COMMENT;
+
+        case '\r': {
+          // The only way to get here is if this is immediately followed by a
+          // newline.
+          (void) match(parser, '\n');
+          parser->lineno++;
+          return YP_TOKEN_NEWLINE;
+        }
 
         case '\n': {
           parser->lineno++;
@@ -487,8 +525,7 @@ lex_token_type(yp_parser_t *parser) {
         case '!':
           if (match(parser, '=')) return YP_TOKEN_BANG_EQUAL;
           if (match(parser, '~')) return YP_TOKEN_BANG_TILDE;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
-              match(parser, '@'))
+          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@'))
             return YP_TOKEN_BANG_AT;
           return YP_TOKEN_BANG;
 
@@ -560,9 +597,7 @@ lex_token_type(yp_parser_t *parser) {
         // + += +@
         case '+':
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
-              match(parser, '@'))
-            return YP_TOKEN_PLUS_AT;
+          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
           return YP_TOKEN_PLUS;
 
         // - -= -@
@@ -893,34 +928,43 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
-        // If we hit a newline, make sure to do the required bookkeeping.
-        if (*parser->current.end == '\n') parser->lineno++;
+        switch (*parser->current.end) {
+          case '\n':
+            // If we hit a newline, make sure to do the required bookkeeping.
+            parser->lineno++;
+            break;
+          case '#':
+            // If our current lex state allows interpolation and we've hit a #,
+            // then check if it's used as the beginning of either an embedded
+            // variable or an embedded expression.
+            if (parser->lex_modes.current->interp) {
+              switch (parser->current.end[1]) {
+              case '@':
+                // In this case it could be an embedded instance or class
+                // variable.
+                break;
+              case '$':
+                // In this case it could be an embedded global variable.
+                break;
+              case '{':
+                // In this case it's the start of an embedded expression.
 
-        // If our current lex state allows interpolation and we've hit a #, then
-        // check if it's used as the beginning of either an embedded variable or
-        // an embedded expression.
-        if (parser->lex_modes.current->interp && *parser->current.end == '#') {
-          switch (parser->current.end[1]) {
-            case '@':
-              // In this case it could be an embedded instance or class
-              // variable.
-              break;
-            case '$':
-              // In this case it could be an embedded global variable.
-              break;
-            case '{':
-              // In this case it's the start of an embedded expression.
+                // If we have already consumed content, then we need to return
+                // that content as string content first.
+                if (parser->current.end > parser->current.start) {
+                  return YP_TOKEN_STRING_CONTENT;
+                }
 
-              // If we have already consumed content, then we need to return
-              // that content as string content first.
-              if (parser->current.end > parser->current.start) {
-                return YP_TOKEN_STRING_CONTENT;
+                parser->current.end += 2;
+                push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+                return YP_TOKEN_EMBEXPR_BEGIN;
               }
-
-              parser->current.end += 2;
-              push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
-              return YP_TOKEN_EMBEXPR_BEGIN;
-          }
+            }
+            break;
+          case '\\':
+            // If we hit an escape, then we need that handle the subsequent
+            // character literally.
+            parser->current.end++;
         }
 
         parser->current.end++;
@@ -1251,19 +1295,9 @@ parse_parameters(yp_parser_t *parser) {
   return params;
 }
 
-static yp_node_t *
-parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
-  // If this is the end of the file, then return immediately.
-  if (parser->current.type == YP_TOKEN_EOF) {
-    return NULL;
-  }
-
-  yp_lex_token(parser);
-  yp_node_t *node;
-
-  // Check the type of the token that we just lexed. If it's possible for this
-  // token to be in the prefix position, we'll parse it as such. Otherwise we'll
-  // return.
+// Parse an expression that begins with the previous node that we just lexed.
+static inline yp_node_t *
+parse_expression_prefix(yp_parser_t *parser) {
   switch (parser->previous.type) {
     case YP_TOKEN_CHARACTER_LITERAL: {
       yp_token_t opening = parser->previous;
@@ -1277,56 +1311,46 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t closing;
       not_provided(&closing, content.end);
 
-      node = yp_node_string_node_create(parser, &opening, &content, &closing);
-      break;
+      return yp_node_string_node_create(parser, &opening, &content, &closing);
     }
     case YP_TOKEN_CLASS_VARIABLE:
-      node = yp_node_class_variable_read_create(parser, &parser->previous);
-      break;
+      return yp_node_class_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_CONSTANT:
-      node = yp_node_constant_read_create(parser, &parser->previous);
-      break;
+      return yp_node_constant_read_create(parser, &parser->previous);
     case YP_TOKEN_FLOAT:
-      node = yp_node_float_literal_create(parser, &parser->previous);
-      break;
+      return yp_node_float_literal_create(parser, &parser->previous);
     case YP_TOKEN_GLOBAL_VARIABLE:
-      node = yp_node_global_variable_read_create(parser, &parser->previous);
-      break;
+      return yp_node_global_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_IDENTIFIER: {
       // Strictly speaking, we don't actually need to do this check here because
       // you're never going to have a local that ends with ! or ?. But it avoids
       // a lookup in the local table, so its more performant to check first.
-      if (parser->previous.end[-1] != '!' && parser->previous.end[-1] != '?' &&
-          yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
-        node = yp_node_local_variable_read_create(parser, &parser->previous);
-      } else {
-        yp_string_t *name = yp_string_alloc();
-        yp_string_shared_init(name, parser->previous.start, parser->previous.end);
-
-        yp_token_t message = parser->previous;
-
-        yp_token_t call_operator;
-        not_provided(&call_operator, message.start);
-
-        yp_token_t lparen;
-        not_provided(&lparen, message.end);
-
-        yp_token_t rparen;
-        not_provided(&rparen, message.end);
-
-        node = yp_node_call_node_create(parser, NULL, &call_operator, &message, &lparen, NULL, &rparen, name);
+      if (parser->previous.end[-1] != '!' && parser->previous.end[-1] != '?' && yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
+        return yp_node_local_variable_read_create(parser, &parser->previous);
       }
-      break;
+
+      yp_string_t *name = yp_string_alloc();
+      yp_string_shared_init(name, parser->previous.start, parser->previous.end);
+
+      yp_token_t message = parser->previous;
+
+      yp_token_t call_operator;
+      not_provided(&call_operator, message.start);
+
+      yp_token_t lparen;
+      not_provided(&lparen, message.end);
+
+      yp_token_t rparen;
+      not_provided(&rparen, message.end);
+
+      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &lparen, NULL, &rparen, name);
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
-      node = yp_node_imaginary_literal_create(parser, &parser->previous);
-      break;
+      return yp_node_imaginary_literal_create(parser, &parser->previous);
     case YP_TOKEN_INSTANCE_VARIABLE:
-      node = yp_node_instance_variable_read_create(parser, &parser->previous);
-      break;
+      return yp_node_instance_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_INTEGER:
-      node = yp_node_integer_literal_create(parser, &parser->previous);
-      break;
+      return yp_node_integer_literal_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       yp_token_t keyword = parser->previous;
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
@@ -1336,8 +1360,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
       yp_token_t closing = parser->previous;
 
-      node = yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
-      break;
+      return yp_node_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
     }
     case YP_TOKEN_KEYWORD_BREAK:
     case YP_TOKEN_KEYWORD_NEXT:
@@ -1361,27 +1384,21 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
 
       switch (keyword.type) {
         case YP_TOKEN_KEYWORD_BREAK:
-          node = yp_node_break_node_create(parser, &keyword, &lparen, arguments, &rparen);
-          break;
+          return yp_node_break_node_create(parser, &keyword, &lparen, arguments, &rparen);
         case YP_TOKEN_KEYWORD_NEXT:
-          node = yp_node_next_node_create(parser, &keyword, &lparen, arguments, &rparen);
-          break;
+          return yp_node_next_node_create(parser, &keyword, &lparen, arguments, &rparen);
         case YP_TOKEN_KEYWORD_SUPER:
           if (arguments == NULL) {
-            node = yp_node_forwarding_super_node_create(parser, &keyword);
+            return yp_node_forwarding_super_node_create(parser, &keyword);
           } else {
-            node = yp_node_super_node_create(parser, &keyword, &lparen, arguments, &rparen);
+            return yp_node_super_node_create(parser, &keyword, &lparen, arguments, &rparen);
           }
-          break;
         case YP_TOKEN_KEYWORD_YIELD:
-          node = yp_node_yield_node_create(parser, &keyword, &lparen, arguments, &rparen);
-          break;
+          return yp_node_yield_node_create(parser, &keyword, &lparen, arguments, &rparen);
         default:
           // Cannot hit here.
-          break;
+          return NULL;
       }
-
-      break;
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;
@@ -1405,10 +1422,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
-      node = yp_node_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass,
-                                       statements, &parser->previous);
       parser->current_scope = parent_scope;
-      break;
+      return yp_node_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_DEF: {
       yp_token_t def_keyword = parser->previous;
@@ -1441,10 +1456,8 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
 
-      node = yp_node_def_node_create(parser, &def_keyword, &name, &lparen, params, &rparen, statements,
-                                     &parser->previous, scope);
       parser->current_scope = parent_scope;
-      break;
+      return yp_node_def_node_create(parser, &def_keyword, &name, &lparen, params, &rparen, statements, &parser->previous, scope);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       yp_token_t keyword = parser->previous;
@@ -1466,8 +1479,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         not_provided(&rparen, parser->previous.end);
       }
 
-      node = yp_node_defined_node_create(parser, &keyword, &lparen, expression, &rparen);
-      break;
+      return yp_node_defined_node_create(parser, &keyword, &lparen, expression, &rparen);
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;
@@ -1478,12 +1490,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
       yp_token_t closing = parser->previous;
 
-      node = yp_node_post_execution_node_create(parser, &keyword, &opening, statements, &closing);
-      break;
+      return yp_node_post_execution_node_create(parser, &keyword, &opening, statements, &closing);
     }
     case YP_TOKEN_KEYWORD_FALSE:
-      node = yp_node_false_node_create(parser, &parser->previous);
-      break;
+      return yp_node_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_IF: {
       yp_token_t if_keyword = parser->previous;
 
@@ -1503,21 +1513,16 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
 
           yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
-          node = yp_node_if_node_create(parser, &if_keyword, predicate, statements, else_node, &parser->previous);
-          break;
+          return yp_node_if_node_create(parser, &if_keyword, predicate, statements, else_node, &parser->previous);
         }
         case YP_TOKEN_KEYWORD_END: {
           yp_lex_token(parser);
-          node = yp_node_if_node_create(parser, &if_keyword, predicate, statements, NULL, &parser->previous);
-          break;
+          return yp_node_if_node_create(parser, &if_keyword, predicate, statements, NULL, &parser->previous);
         }
         default:
           expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
-          node = yp_node_if_node_create(parser, &if_keyword, predicate, statements, NULL, &parser->previous);
-          break;
+          return yp_node_if_node_create(parser, &if_keyword, predicate, statements, NULL, &parser->previous);
       }
-
-      break;
     }
     case YP_TOKEN_KEYWORD_MODULE: {
       yp_token_t module_keyword = parser->previous;
@@ -1530,25 +1535,19 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
 
-      node = yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
       parser->current_scope = parent_scope;
-      break;
+      return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_NIL:
-      node = yp_node_nil_node_create(parser, &parser->previous);
-      break;
+      return yp_node_nil_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_REDO:
-      node = yp_node_redo_node_create(parser, &parser->previous);
-      break;
+      return yp_node_redo_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_RETRY:
-      node = yp_node_retry_node_create(parser, &parser->previous);
-      break;
+      return yp_node_retry_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_SELF:
-      node = yp_node_self_node_create(parser, &parser->previous);
-      break;
+      return yp_node_self_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_TRUE:
-      node = yp_node_true_node_create(parser, &parser->previous);
-      break;
+      return yp_node_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNLESS: {
       yp_token_t keyword = parser->previous;
 
@@ -1559,9 +1558,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `unless` statement.");
-
-      node = yp_node_unless_node_create(parser, &keyword, predicate, statements);
-      break;
+      return yp_node_unless_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_token_t keyword = parser->previous;
@@ -1573,9 +1570,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
-
-      node = yp_node_until_node_create(parser, &keyword, predicate, statements);
-      break;
+      return yp_node_until_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_token_t keyword = parser->previous;
@@ -1587,9 +1582,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
-
-      node = yp_node_while_node_create(parser, &keyword, predicate, statements);
-      break;
+      return yp_node_while_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_PERCENT_LOWER_I: {
       yp_token_t opening = parser->previous;
@@ -1602,22 +1595,22 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
         }
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
-        yp_node_list_append(parser, symbol_list, &symbol_list->as.symbol_list_node.symbols,
-                            yp_node_symbol_node_create(parser, &parser->previous));
+
+        yp_node_t *symbol = yp_node_symbol_node_create(parser, &parser->previous);
+        yp_node_list_append(parser, symbol_list, &symbol_list->as.symbol_list_node.symbols, symbol);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
       symbol_list->as.symbol_list_node.closing = parser->previous;
 
-      node = symbol_list;
-      break;
+      return symbol_list;
     }
     case YP_TOKEN_PERCENT_LOWER_W: {
       yp_token_t opening = parser->previous;
-      node = yp_node_string_list_node_create(parser, &opening, &opening);
+      yp_node_t *string_list = yp_node_string_list_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_STRING_END) {
-        if (node->as.string_list_node.strings.size == 0) {
+        if (string_list->as.string_list_node.strings.size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the strings in a `%w` list.");
@@ -1631,16 +1624,17 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
         not_provided(&closing, parser->previous.end);
 
         yp_node_t *string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
-        yp_node_list_append(parser, node, &node->as.string_list_node.strings, string);
+        yp_node_list_append(parser, string_list, &string_list->as.string_list_node.strings, string);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
-      node->as.string_list_node.closing = parser->previous;
-      break;
+      string_list->as.string_list_node.closing = parser->previous;
+
+      return string_list;
     }
     case YP_TOKEN_PERCENT_UPPER_W: {
       yp_token_t opening = parser->previous;
-      node = yp_node_string_list_node_create(parser, &opening, &opening);
+      yp_node_t *string_list = yp_node_string_list_node_create(parser, &opening, &opening);
       yp_node_t *current = NULL;
 
       while (parser->current.type != YP_TOKEN_STRING_END) {
@@ -1652,7 +1646,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
             } else {
               // If we hit a separator after we've hit content, then we need to
               // append that content to the list and reset the current node.
-              yp_node_list_append(parser, node, &node->as.string_list_node.strings, current);
+              yp_node_list_append(parser, string_list, &string_list->as.string_list_node.strings, current);
               current = NULL;
             }
 
@@ -1739,17 +1733,15 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       }
 
       // If we have a current node, then we need to append it to the list.
-      if (current) {
-        yp_node_list_append(parser, node, &node->as.string_list_node.strings, current);
-      }
+      if (current)
+        yp_node_list_append(parser, string_list, &string_list->as.string_list_node.strings, current);
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
-      node->as.string_list_node.closing = parser->previous;
-      break;
+      string_list->as.string_list_node.closing = parser->previous;
+      return string_list;
     }
     case YP_TOKEN_RATIONAL_NUMBER:
-      node = yp_node_rational_literal_create(parser, &parser->previous);
-      break;
+      return yp_node_rational_literal_create(parser, &parser->previous);
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
       yp_token_t operator_token = parser->previous;
@@ -1768,8 +1760,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_string_t *name = yp_string_alloc();
       yp_string_shared_init(name, operator_token.start, operator_token.end);
 
-      node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
-      break;
+      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
     }
     case YP_TOKEN_MINUS: {
       yp_token_t operator_token = parser->previous;
@@ -1788,8 +1779,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_string_t *name = yp_string_alloc();
       yp_string_constant_init(name, "-@", 2);
 
-      node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
-      break;
+      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
     }
     case YP_TOKEN_PLUS: {
       yp_token_t operator_token = parser->previous;
@@ -1808,14 +1798,13 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
       yp_string_t *name = yp_string_alloc();
       yp_string_constant_init(name, "+@", 2);
 
-      node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
-      break;
+      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
     }
     case YP_TOKEN_STRING_BEGIN: {
       yp_token_t opening = parser->previous;
 
       if (parser->lex_modes.current->interp) {
-        node = yp_node_interpolated_string_node_create(parser, &opening, &opening);
+        yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &opening);
 
         while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
           switch (parser->current.type) {
@@ -1828,9 +1817,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
               yp_token_t string_content_closing;
               not_provided(&string_content_closing, parser->previous.end);
 
-              yp_node_list_append(parser, node, &node->as.interpolated_string_node.parts,
-                                  yp_node_string_node_create(parser, &string_content_opening, &parser->previous,
-                                                             &string_content_closing));
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -1838,334 +1825,314 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
               yp_token_t embexpr_opening = parser->previous;
               yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_EMBEXPR_END);
               expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-              yp_node_list_append(
-                parser, node, &node->as.interpolated_string_node.parts,
-                yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
               break;
             }
             default:
-              fprintf(stderr, "Could not understand token type %s in an interpolated string\n",
-                      yp_token_type_to_str(parser->previous.type));
+              fprintf(stderr, "Could not understand token type %s in an interpolated string\n", yp_token_type_to_str(parser->previous.type));
               return NULL;
           }
         }
 
         expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated string.");
-        node->as.interpolated_string_node.closing = parser->previous;
-      } else {
-        yp_token_t content;
-        if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
-          content = parser->previous;
-        } else {
-          content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT,
-                                   .start = parser->previous.end,
-                                   .end = parser->previous.end };
-        }
-
-        expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-        node = yp_node_string_node_create(parser, &opening, &content, &parser->previous);
+        interpolated->as.interpolated_string_node.closing = parser->previous;
+        return interpolated;
       }
 
-      break;
+      yp_token_t content;
+      if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
+        content = parser->previous;
+      } else {
+        content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+      }
+
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
+      return yp_node_string_node_create(parser, &opening, &content, &parser->previous);
     }
     default:
-      fprintf(stderr, "Could not understand token type %s in the prefix position\n",
-              yp_token_type_to_str(parser->previous.type));
+      fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
       return NULL;
   }
+}
 
-  // While the current token has a higher binding power than the one we've just
-  // parsed, we'll continue parsing forward and replace the current node we're
-  // working with.
-  yp_token_t token;
-  binding_powers_t token_binding_powers;
+static inline yp_node_t *
+parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t binding_power) {
+  yp_token_t token = parser->previous;
 
-  while (token = parser->current, token_binding_powers = binding_powers[token.type],
-         binding_power <= token_binding_powers.left) {
-    yp_lex_token(parser);
+  switch (token.type) {
+    case YP_TOKEN_EQUAL: {
+      switch (node->type) {
+        case YP_NODE_CLASS_VARIABLE_READ: {
+          yp_node_t *value = parse_expression(parser, binding_power);
+          yp_node_t *read = node;
 
-    switch (token.type) {
-      case YP_TOKEN_EQUAL: {
-        switch (node->type) {
-          case YP_NODE_CLASS_VARIABLE_READ: {
-            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
+          yp_node_t *result = yp_node_class_variable_write_create(parser, &node->as.class_variable_read.name, &token, value);
+          yp_node_destroy(parser, read);
+          return result;
+        }
+        case YP_NODE_CONSTANT_PATH_NODE:
+        case YP_NODE_CONSTANT_READ: {
+          yp_node_t *value = parse_expression(parser, binding_power);
+          return yp_node_constant_path_write_node_create(parser, node, &token, value);
+        }
+        case YP_NODE_GLOBAL_VARIABLE_READ: {
+          yp_node_t *value = parse_expression(parser, binding_power);
+          yp_node_t *read = node;
+
+          yp_node_t *result = yp_node_global_variable_write_create(parser, &node->as.global_variable_read.name, &token, value);
+          yp_node_destroy(parser, read);
+          return result;
+        }
+        case YP_NODE_LOCAL_VARIABLE_READ: {
+          yp_node_t *value = parse_expression(parser, binding_power);
+          yp_node_t *read = node;
+
+          yp_token_t name = node->as.local_variable_read.name;
+          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+
+          yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
+          yp_node_destroy(parser, read);
+          return result;
+        }
+        case YP_NODE_INSTANCE_VARIABLE_READ: {
+          yp_node_t *value = parse_expression(parser, binding_power);
+          yp_node_t *read = node;
+
+          yp_node_t *result = yp_node_instance_variable_write_create(parser, &node->as.instance_variable_read.name, &token, value);
+          yp_node_destroy(parser, read);
+          return result;
+        }
+        case YP_NODE_CALL_NODE: {
+          if (node->as.call_node.receiver == NULL && node->as.call_node.arguments == NULL) {
+            yp_node_t *value = parse_expression(parser, binding_power);
             yp_node_t *read = node;
 
-            node = yp_node_class_variable_write_create(parser, &node->as.class_variable_read.name, &token, value);
-            yp_node_destroy(parser, read);
-            break;
-          }
-          case YP_NODE_CONSTANT_PATH_NODE:
-          case YP_NODE_CONSTANT_READ: {
-            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-            node = yp_node_constant_path_write_node_create(parser, node, &token, value);
-            break;
-          }
-          case YP_NODE_GLOBAL_VARIABLE_READ: {
-            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-            yp_node_t *read = node;
-
-            node = yp_node_global_variable_write_create(parser, &node->as.global_variable_read.name, &token, value);
-            yp_node_destroy(parser, read);
-            break;
-          }
-          case YP_NODE_LOCAL_VARIABLE_READ: {
-            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-            yp_node_t *read = node;
-
-            yp_token_t name = node->as.local_variable_read.name;
+            yp_token_t name = node->as.call_node.message;
             yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
-            node = yp_node_local_variable_write_create(parser, &name, &token, value);
+            yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
             yp_node_destroy(parser, read);
-
-            break;
+            return result;
           }
-          case YP_NODE_INSTANCE_VARIABLE_READ: {
-            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-            yp_node_t *read = node;
-
-            node = yp_node_instance_variable_write_create(parser, &node->as.instance_variable_read.name, &token, value);
-            yp_node_destroy(parser, read);
-            break;
-          }
-          case YP_NODE_CALL_NODE: {
-            if (node->as.call_node.receiver == NULL && node->as.call_node.arguments == NULL) {
-              yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-              yp_node_t *read = node;
-
-              yp_token_t name = node->as.call_node.message;
-              yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
-
-              node = yp_node_local_variable_write_create(parser, &name, &token, value);
-              yp_node_destroy(parser, read);
-              break;
-            }
-            // fallthrough
-          }
-          default: {
-            yp_token_t call_operator;
-            not_provided(&call_operator, token.start);
-
-            yp_token_t lparen;
-            not_provided(&lparen, token.end);
-
-            yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-            yp_node_t *arguments = yp_node_arguments_node_create(parser);
-            yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
-
-            yp_token_t rparen;
-            not_provided(&rparen, parser->previous.end);
-
-            int length = node->location.end - node->location.start;
-            yp_string_t *name = yp_string_alloc();
-            yp_string_owned_init(name, malloc(length + 1), length + 1);
-            sprintf(name->as.owned.source, "%.*s=", length, parser->start + node->location.start);
-
-            node = yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
-            break;
-          }
+          // fallthrough
         }
-        break;
-      }
-      case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
-        yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_operator_and_assignment_node_create(parser, node, &token, value);
-        break;
-      }
-      case YP_TOKEN_PIPE_PIPE_EQUAL: {
-        yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_operator_or_assignment_node_create(parser, node, &token, value);
-        break;
-      }
-      case YP_TOKEN_AMPERSAND_EQUAL:
-      case YP_TOKEN_CARET_EQUAL:
-      case YP_TOKEN_GREATER_GREATER_EQUAL:
-      case YP_TOKEN_LESS_LESS_EQUAL:
-      case YP_TOKEN_MINUS_EQUAL:
-      case YP_TOKEN_PERCENT_EQUAL:
-      case YP_TOKEN_PIPE_EQUAL:
-      case YP_TOKEN_PLUS_EQUAL:
-      case YP_TOKEN_SLASH_EQUAL:
-      case YP_TOKEN_STAR_EQUAL:
-      case YP_TOKEN_STAR_STAR_EQUAL: {
-        yp_node_t *value = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_operator_assignment_node_create(parser, node, &token, value);
-        break;
-      }
-      case YP_TOKEN_AMPERSAND_AMPERSAND:
-      case YP_TOKEN_KEYWORD_AND: {
-        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_and_node_create(parser, node, &token, right);
-        break;
-      }
-      case YP_TOKEN_KEYWORD_OR:
-      case YP_TOKEN_PIPE_PIPE: {
-        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_or_node_create(parser, node, &token, right);
-        break;
-      }
-      case YP_TOKEN_BANG_EQUAL:
-      case YP_TOKEN_BANG_TILDE:
-      case YP_TOKEN_EQUAL_EQUAL:
-      case YP_TOKEN_EQUAL_EQUAL_EQUAL:
-      case YP_TOKEN_EQUAL_TILDE:
-      case YP_TOKEN_LESS_EQUAL_GREATER:
-      case YP_TOKEN_GREATER:
-      case YP_TOKEN_GREATER_EQUAL:
-      case YP_TOKEN_LESS:
-      case YP_TOKEN_LESS_EQUAL:
-      case YP_TOKEN_CARET:
-      case YP_TOKEN_PIPE:
-      case YP_TOKEN_AMPERSAND:
-      case YP_TOKEN_GREATER_GREATER:
-      case YP_TOKEN_LESS_LESS:
-      case YP_TOKEN_MINUS:
-      case YP_TOKEN_PLUS:
-      case YP_TOKEN_PERCENT:
-      case YP_TOKEN_SLASH:
-      case YP_TOKEN_STAR:
-      case YP_TOKEN_STAR_STAR: {
-        yp_token_t call_operator;
-        not_provided(&call_operator, token.start);
-
-        yp_node_t *arguments = yp_node_arguments_node_create(parser);
-        yp_node_t *argument = parse_expression(parser, token_binding_powers.right);
-        yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
-
-        yp_string_t *name = yp_string_alloc();
-        yp_string_shared_init(name, token.start, token.end);
-
-        yp_token_t lparen;
-        not_provided(&lparen, token.end);
-
-        yp_token_t rparen;
-        not_provided(&rparen, token.end);
-
-        node = yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
-        break;
-      }
-      case YP_TOKEN_DOT: {
-        yp_token_t call_operator = parser->previous;
-
-        if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-          yp_token_t lparen = parser->previous;
-          yp_token_t rparen;
-
-          yp_token_t message;
-          not_provided(&message, lparen.start);
-
-          yp_string_t name;
-          yp_string_constant_init(&name, "call", 4);
-
-          yp_node_t *arguments;
-          if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-            rparen = parser->previous;
-            arguments = NULL;
-          } else {
-            arguments = yp_node_arguments_node_create(parser);
-            parse_arguments(parser, arguments);
-            rparen = parser->previous;
-          }
-
-          node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
-        } else {
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
-          yp_token_t message = parser->previous;
+        default: {
+          yp_token_t call_operator;
+          not_provided(&call_operator, token.start);
 
           yp_token_t lparen;
-          not_provided(&lparen, message.end);
+          not_provided(&lparen, token.end);
+
+          yp_node_t *value = parse_expression(parser, binding_power);
+          yp_node_t *arguments = yp_node_arguments_node_create(parser);
+          yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
 
           yp_token_t rparen;
-          not_provided(&rparen, message.end);
+          not_provided(&rparen, parser->previous.end);
 
-          yp_string_t name;
-          yp_string_shared_init(&name, message.start, message.end);
+          int length = node->location.end - node->location.start;
+          yp_string_t *name = yp_string_alloc();
+          yp_string_owned_init(name, malloc(length + 1), length + 1);
+          sprintf(name->as.owned.source, "%.*s=", length, parser->start + node->location.start);
 
-          node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, NULL, &rparen, &name);
+          return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
         }
-
-        break;
       }
-      case YP_TOKEN_DOT_DOT:
-      case YP_TOKEN_DOT_DOT_DOT: {
-        yp_node_t *right = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_range_node_create(parser, node, &token, right);
-        break;
-      }
-      case YP_TOKEN_KEYWORD_IF: {
-        yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
-
-        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
-        yp_token_t end_keyword;
-        not_provided(&end_keyword, parser->previous.end);
-
-        node = yp_node_if_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
-        break;
-      }
-      case YP_TOKEN_KEYWORD_UNLESS: {
-        yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
-
-        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_unless_node_create(parser, &token, predicate, statements);
-        break;
-      }
-      case YP_TOKEN_KEYWORD_UNTIL: {
-        yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
-
-        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_until_node_create(parser, &token, predicate, statements);
-        break;
-      }
-      case YP_TOKEN_KEYWORD_WHILE: {
-        yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
-
-        yp_node_t *predicate = parse_expression(parser, token_binding_powers.right);
-        node = yp_node_while_node_create(parser, &token, predicate, statements);
-        break;
-      }
-      case YP_TOKEN_QUESTION_MARK: {
-        yp_node_t *true_expression = parse_expression(parser, token_binding_powers.right);
-        expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
-
-        yp_token_t colon = parser->previous;
-        yp_node_t *false_expression = parse_expression(parser, token_binding_powers.right);
-
-        node = yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
-        break;
-      }
-      case YP_TOKEN_COLON_COLON: {
-        yp_token_t delimiter = parser->previous;
-
-        switch (parser->current.type) {
-          case YP_TOKEN_CONSTANT: {
-            yp_node_t *child = parse_expression(parser, token_binding_powers.right);
-            node = yp_node_constant_path_node_create(parser, node, &delimiter, child);
-            break;
-          }
-          case YP_TOKEN_IDENTIFIER: {
-            yp_node_t *call = parse_expression(parser, token_binding_powers.right);
-            call->as.call_node.call_operator = delimiter;
-            call->as.call_node.receiver = node;
-            node = call;
-            break;
-          }
-          default: {
-            // TODO: return missing node here
-            fprintf(stderr, "Expected identifier or constant after '::', got %s.\n",
-                    yp_token_type_to_str(parser->current.type));
-          }
-        }
-
-        break;
-      }
-      default:
-        return node;
     }
+    case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
+      yp_node_t *value = parse_expression(parser, binding_power);
+      return yp_node_operator_and_assignment_node_create(parser, node, &token, value);
+    }
+    case YP_TOKEN_PIPE_PIPE_EQUAL: {
+      yp_node_t *value = parse_expression(parser, binding_power);
+      return yp_node_operator_or_assignment_node_create(parser, node, &token, value);
+    }
+    case YP_TOKEN_AMPERSAND_EQUAL:
+    case YP_TOKEN_CARET_EQUAL:
+    case YP_TOKEN_GREATER_GREATER_EQUAL:
+    case YP_TOKEN_LESS_LESS_EQUAL:
+    case YP_TOKEN_MINUS_EQUAL:
+    case YP_TOKEN_PERCENT_EQUAL:
+    case YP_TOKEN_PIPE_EQUAL:
+    case YP_TOKEN_PLUS_EQUAL:
+    case YP_TOKEN_SLASH_EQUAL:
+    case YP_TOKEN_STAR_EQUAL:
+    case YP_TOKEN_STAR_STAR_EQUAL: {
+      yp_node_t *value = parse_expression(parser, binding_power);
+      return yp_node_operator_assignment_node_create(parser, node, &token, value);
+    }
+    case YP_TOKEN_AMPERSAND_AMPERSAND:
+    case YP_TOKEN_KEYWORD_AND: {
+      yp_node_t *right = parse_expression(parser, binding_power);
+      return yp_node_and_node_create(parser, node, &token, right);
+    }
+    case YP_TOKEN_KEYWORD_OR:
+    case YP_TOKEN_PIPE_PIPE: {
+      yp_node_t *right = parse_expression(parser, binding_power);
+      return yp_node_or_node_create(parser, node, &token, right);
+    }
+    case YP_TOKEN_BANG_EQUAL:
+    case YP_TOKEN_BANG_TILDE:
+    case YP_TOKEN_EQUAL_EQUAL:
+    case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+    case YP_TOKEN_EQUAL_TILDE:
+    case YP_TOKEN_LESS_EQUAL_GREATER:
+    case YP_TOKEN_GREATER:
+    case YP_TOKEN_GREATER_EQUAL:
+    case YP_TOKEN_LESS:
+    case YP_TOKEN_LESS_EQUAL:
+    case YP_TOKEN_CARET:
+    case YP_TOKEN_PIPE:
+    case YP_TOKEN_AMPERSAND:
+    case YP_TOKEN_GREATER_GREATER:
+    case YP_TOKEN_LESS_LESS:
+    case YP_TOKEN_MINUS:
+    case YP_TOKEN_PLUS:
+    case YP_TOKEN_PERCENT:
+    case YP_TOKEN_SLASH:
+    case YP_TOKEN_STAR:
+    case YP_TOKEN_STAR_STAR: {
+      yp_token_t call_operator;
+      not_provided(&call_operator, token.start);
+
+      yp_node_t *arguments = yp_node_arguments_node_create(parser);
+      yp_node_t *argument = parse_expression(parser, binding_power);
+      yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
+
+      yp_string_t *name = yp_string_alloc();
+      yp_string_shared_init(name, token.start, token.end);
+
+      yp_token_t lparen;
+      not_provided(&lparen, token.end);
+
+      yp_token_t rparen;
+      not_provided(&rparen, token.end);
+
+      return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
+    }
+    case YP_TOKEN_DOT: {
+      yp_token_t call_operator = parser->previous;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        yp_token_t lparen = parser->previous;
+        yp_token_t rparen;
+
+        yp_token_t message;
+        not_provided(&message, lparen.start);
+
+        yp_string_t name;
+        yp_string_constant_init(&name, "call", 4);
+
+        yp_node_t *arguments;
+        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+          rparen = parser->previous;
+          arguments = NULL;
+        } else {
+          arguments = yp_node_arguments_node_create(parser);
+          parse_arguments(parser, arguments);
+          rparen = parser->previous;
+        }
+
+        return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
+      } else {
+        expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
+        yp_token_t message = parser->previous;
+
+        yp_token_t lparen;
+        not_provided(&lparen, message.end);
+
+        yp_token_t rparen;
+        not_provided(&rparen, message.end);
+
+        yp_string_t name;
+        yp_string_shared_init(&name, message.start, message.end);
+
+        return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, NULL, &rparen, &name);
+      }
+    }
+    case YP_TOKEN_DOT_DOT:
+    case YP_TOKEN_DOT_DOT_DOT: {
+      yp_node_t *right = parse_expression(parser, binding_power);
+      return yp_node_range_node_create(parser, node, &token, right);
+    }
+    case YP_TOKEN_KEYWORD_IF: {
+      yp_node_t *statements = yp_node_statements_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+
+      yp_node_t *predicate = parse_expression(parser, binding_power);
+      yp_token_t end_keyword;
+      not_provided(&end_keyword, parser->previous.end);
+
+      return yp_node_if_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
+    }
+    case YP_TOKEN_KEYWORD_UNLESS: {
+      yp_node_t *statements = yp_node_statements_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+
+      yp_node_t *predicate = parse_expression(parser, binding_power);
+      return yp_node_unless_node_create(parser, &token, predicate, statements);
+    }
+    case YP_TOKEN_KEYWORD_UNTIL: {
+      yp_node_t *statements = yp_node_statements_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+
+      yp_node_t *predicate = parse_expression(parser, binding_power);
+      return yp_node_until_node_create(parser, &token, predicate, statements);
+    }
+    case YP_TOKEN_KEYWORD_WHILE: {
+      yp_node_t *statements = yp_node_statements_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+
+      yp_node_t *predicate = parse_expression(parser, binding_power);
+      return yp_node_while_node_create(parser, &token, predicate, statements);
+    }
+    case YP_TOKEN_QUESTION_MARK: {
+      yp_node_t *true_expression = parse_expression(parser, binding_power);
+      expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
+
+      yp_token_t colon = parser->previous;
+      yp_node_t *false_expression = parse_expression(parser, binding_power);
+
+      return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+    }
+    case YP_TOKEN_COLON_COLON: {
+      yp_token_t delimiter = parser->previous;
+
+      switch (parser->current.type) {
+        case YP_TOKEN_CONSTANT: {
+          yp_node_t *child = parse_expression(parser, binding_power);
+          return yp_node_constant_path_node_create(parser, node, &delimiter, child);
+        }
+        case YP_TOKEN_IDENTIFIER: {
+          yp_node_t *call = parse_expression(parser, binding_power);
+          call->as.call_node.call_operator = delimiter;
+          call->as.call_node.receiver = node;
+          return call;
+        }
+        default: {
+          // TODO: return missing node here
+          fprintf(stderr, "Expected identifier or constant after '::', got %s.\n", yp_token_type_to_str(parser->current.type));
+        }
+      }
+    }
+    default:
+      return node;
+  }
+}
+
+static yp_node_t *
+parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
+  if (parser->current.type == YP_TOKEN_EOF) {
+    return NULL; // TODO: return missing node here
+  }
+
+  yp_lex_token(parser);
+  yp_node_t *node = parse_expression_prefix(parser);
+  binding_powers_t current_binding_powers;
+
+  while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
+    yp_lex_token(parser);
+    node = parse_expression_infix(parser, node, current_binding_powers.right);
   }
 
   return node;

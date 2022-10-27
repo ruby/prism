@@ -125,8 +125,8 @@ module YARP
 
   # This lexes with the Ripper lex. It drops any space events and normalizes all
   # ignored newlines into regular newlines.
-  def self.lex_ripper(filepath)
-    Ripper.lex(File.read(filepath)).each_with_object([]) do |token, tokens|
+  def self.lex_ripper(source)
+    Ripper.lex(source).each_with_object([]) do |token, tokens|
       case token[1]
       when :on_ignored_nl
         tokens << [token[0], :on_nl, token[2], token[3]]
@@ -141,14 +141,14 @@ module YARP
   # Returns an array of tokens that closely resembles that of the Ripper lexer.
   # The only difference is that since we don't keep track of lexer state in the
   # same way, it's going to always return the NONE state.
-  def self.lex_compat(filepath)
+  def self.lex_compat(source)
     offsets = [0]
-    File.foreach(filepath) { |line| offsets << offsets.last + line.bytesize }
+    source.each_line { |line| offsets << offsets.last + line.bytesize }
 
     lexer_state = Ripper::Lexer::State.new(0)
     tokens = []
 
-    lex_file(filepath).each do |token|
+    lex(source).each do |token|
       line_number, line_offset =
         offsets.each_with_index.detect do |(offset, line)|
           break [line, offsets[line - 1]] if token.location.start_offset < offset
@@ -162,10 +162,15 @@ module YARP
 
       value = token.value
       unescaped =
-        if %i[on_comment on_tstring_content].include?(event) && value.include?("\\")
+        if %i[on_comment on_tstring_content].include?(event)
           # Ripper unescapes string content and comments, so we need to do the
-          # same here.
-          value.force_encoding("UTF-8").unicode_normalize
+          # same here. We're going to attempt to force it into UTF-8, but if
+          # that doesn't work we'll just use the plain value.
+          begin
+            value.force_encoding("UTF-8").unicode_normalize
+          rescue ArgumentError
+            value
+          end
         else
           value
         end

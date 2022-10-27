@@ -64,8 +64,17 @@ task lex: :compile do
     end
 
   filepaths.each do |filepath|
+    source = File.read(filepath)
+
+    # We're not currently handling anything that can contain a null byte, so
+    # skipping right past them here.
+    if source.include?("\x0")
+      print colorize.call(31, "E")
+      next
+    end
+
     result =
-      YARP.lex_ripper(filepath).zip(YARP.lex_compat(filepath)).all? do |(ripper, yarp)|
+      YARP.lex_ripper(source).zip(YARP.lex_compat(source)).all? do |(ripper, yarp)|
         break false if yarp.nil?
         ripper[0...-1] == yarp[0...-1]
       end
