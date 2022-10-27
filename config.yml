@@ -865,12 +865,6 @@ nodes:
 
           1.0r
           ^^^^
-  - name: RecoveredNode
-    child_nodes: []
-    location: provided
-    comment: |
-      A marked as the return value of a parse function that we have recovered
-      from a syntax error. In this case this node should be ignored.
   - name: RedoNode
     child_nodes:
       - name: value

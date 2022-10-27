@@ -121,7 +121,9 @@ struct yp_parser {
   yp_error_list_t error_list;         // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler;  // the error handler
   yp_node_t *current_scope;           // the current local scope
+
   yp_context_node_t *current_context; // the current parsing context
+  bool recovering; // whether or not we're currently recovering from a syntax error
 
   // The encoding functions for the current file is attached to the parser as
   // it's parsing so that it can change with a magic comment.
