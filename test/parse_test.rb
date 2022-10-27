@@ -484,6 +484,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "if true\n1 else 2 end"
   end
 
+  test "if elsif" do
+    expected = IfNode(
+      KEYWORD_IF("if"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      IfNode(
+        KEYWORD_ELSIF("elsif"),
+        FalseNode(KEYWORD_FALSE("false")),
+        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        IfNode(
+          KEYWORD_ELSIF("elsif"),
+          NilNode(KEYWORD_NIL("nil")),
+          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          ElseNode(
+            KEYWORD_ELSE("else"),
+            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            KEYWORD_END("end")
+          ),
+          nil
+        ),
+        nil
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "if true then true elsif false then false elsif nil then nil else self end"
+  end
+
   test "imaginary" do
     assert_parses ImaginaryLiteral(IMAGINARY_NUMBER("1i")), "1i"
   end
