@@ -265,6 +265,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a::B"
   end
 
+  test "constant path with invalid token after" do
+    expected = ConstantPathNode(
+      ConstantRead(CONSTANT("A")),
+      COLON_COLON("::"),
+      MissingNode()
+    )
+
+    assert_parses expected, "A::$b", errors: true
+  end
+
   test "constant read" do
     assert_parses ConstantRead(CONSTANT("ABC")), "ABC"
   end
