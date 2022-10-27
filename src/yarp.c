@@ -1000,6 +1000,46 @@ lex_token_type(yp_parser_t *parser) {
 /* Parse functions                                                            */
 /******************************************************************************/
 
+typedef enum {
+  CONTEXT_MAIN,     // the top level context
+  CONTEXT_PREEXE,   // a BEGIN block
+  CONTEXT_POSTEXE,  // an END block
+  CONTEXT_MODULE,   // a module declaration
+  CONTEXT_CLASS,    // a class declaration
+  CONTEXT_DEF,      // a method definition
+  CONTEXT_IF,       // an if statement
+  CONTEXT_UNLESS,   // an unless statement
+  CONTEXT_ELSE,     // an else clause
+  CONTEXT_WHILE,    // a while statement
+  CONTEXT_UNTIL,    // an until statement
+  CONTEXT_EMBEXPR,  // an interpolated expression
+} context_t;
+
+static bool
+is_context_terminator(context_t context, yp_token_t *token) {
+  switch (context) {
+    case CONTEXT_MAIN:
+      return token->type == YP_TOKEN_EOF;
+    case CONTEXT_PREEXE:
+    case CONTEXT_POSTEXE:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
+    case CONTEXT_MODULE:
+    case CONTEXT_CLASS:
+    case CONTEXT_DEF:
+    case CONTEXT_UNLESS:
+    case CONTEXT_WHILE:
+    case CONTEXT_UNTIL:
+    case CONTEXT_ELSE:
+      return token->type == YP_TOKEN_KEYWORD_END;
+    case CONTEXT_IF:
+      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
+    case CONTEXT_EMBEXPR:
+      return token->type == YP_TOKEN_EMBEXPR_END;
+  }
+
+  return false;
+}
+
 // These are the various precedence rules. Because we are using a Pratt parser,
 // they are named binding power to represent the manner in which nodes are bound
 // together in the stack.
@@ -1200,32 +1240,13 @@ static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power);
 
 static yp_node_t *
-parse_statements(yp_parser_t *parser, size_t count, ...) {
-  va_list types;
-  va_start(types, count);
-
-  yp_token_type_t terminators[count];
-  for (size_t index = 0; index < count; index++) {
-    terminators[index] = va_arg(types, yp_token_type_t);
-  }
-
-  va_end(types);
+parse_statements(yp_parser_t *parser, context_t context) {
   yp_node_t *statements = yp_node_statements_create(parser);
-  bool parsing = true;
 
-  while (parsing) {
-    for (size_t index = 0; index < count; index++) {
-      if (parser->current.type == terminators[index]) {
-        parsing = false;
-        break;
-      }
-    }
-
-    if (parsing) {
-      yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
-      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
-      if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
-    }
+  while (!is_context_terminator(context, &parser->current)) {
+    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE);
+    yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
   }
 
   return statements;
@@ -1356,7 +1377,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
       yp_token_t opening = parser->previous;
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_BRACE_RIGHT);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_PREEXE);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
       yp_token_t closing = parser->previous;
 
@@ -1419,7 +1440,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parent_scope = parser->current_scope;
       parser->current_scope = scope;
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_CLASS);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
       parser->current_scope = parent_scope;
@@ -1453,7 +1474,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_DEF);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
 
       parser->current_scope = parent_scope;
@@ -1486,7 +1507,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
       yp_token_t opening = parser->previous;
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_BRACE_RIGHT);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_POSTEXE);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
       yp_token_t closing = parser->previous;
 
@@ -1500,14 +1521,14 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
       accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      yp_node_t *statements = parse_statements(parser, 2, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_IF);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       switch (parser->current.type) {
         case YP_TOKEN_KEYWORD_ELSE: {
           yp_lex_token(parser);
           yp_token_t else_keyword = parser->previous;
-          yp_node_t *else_statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+          yp_node_t *else_statements = parse_statements(parser, CONTEXT_ELSE);
 
           accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
           expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
@@ -1532,7 +1553,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parent_scope = parser->current_scope;
       parser->current_scope = scope;
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_MODULE);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
 
       parser->current_scope = parent_scope;
@@ -1554,7 +1575,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
       accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_UNLESS);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `unless` statement.");
@@ -1566,7 +1587,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
       accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_UNTIL);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
@@ -1578,7 +1599,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE);
       accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_KEYWORD_END);
+      yp_node_t *statements = parse_statements(parser, CONTEXT_WHILE);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
@@ -1717,7 +1738,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             }
 
             yp_token_t embexpr_opening = parser->previous;
-            yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_EMBEXPR_END);
+            yp_node_t *statements = parse_statements(parser, CONTEXT_EMBEXPR);
             expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
 
             yp_token_t embexpr_closing = parser->previous;
@@ -1823,7 +1844,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             case YP_TOKEN_EMBEXPR_BEGIN: {
               yp_lex_token(parser);
               yp_token_t embexpr_opening = parser->previous;
-              yp_node_t *statements = parse_statements(parser, 1, YP_TOKEN_EMBEXPR_END);
+              yp_node_t *statements = parse_statements(parser, CONTEXT_EMBEXPR);
               expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
               yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
               break;
@@ -2110,8 +2131,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return call;
         }
         default: {
-          // TODO: return missing node here
-          fprintf(stderr, "Expected identifier or constant after '::', got %s.\n", yp_token_type_to_str(parser->current.type));
+          uint64_t position = delimiter.end - parser->start;
+          yp_error_list_append(&parser->error_list, "Expected identifier or constant after '::'", position);
+
+          yp_node_t *child = yp_node_missing_node_create(parser, position);
+          return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
       }
     }
@@ -2122,10 +2146,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
-  if (parser->current.type == YP_TOKEN_EOF) {
-    return NULL; // TODO: return missing node here
-  }
-
   yp_lex_token(parser);
   yp_node_t *node = parse_expression_prefix(parser);
   binding_powers_t current_binding_powers;
@@ -2145,7 +2165,7 @@ parse_program(yp_parser_t *parser) {
   yp_node_t *scope = yp_node_scope_create(parser);
   parser->current_scope = scope;
 
-  return yp_node_program_create(parser, scope, parse_statements(parser, 1, YP_TOKEN_EOF));
+  return yp_node_program_create(parser, scope, parse_statements(parser, CONTEXT_MAIN));
 }
 
 /******************************************************************************/
