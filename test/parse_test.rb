@@ -5,6 +5,10 @@ require "test_helper"
 class ParseTest < Test::Unit::TestCase
   include YARP::DSL
 
+  test "empty string" do
+    YARP.parse("") => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: []]]]
+  end
+
   test "and keyword" do
     assert_parses AndNode(expression("1"), KEYWORD_AND("and"), expression("2")), "1 and 2"
   end

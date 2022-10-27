@@ -2125,10 +2125,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power) {
-  if (parser->current.type == YP_TOKEN_EOF) {
-    return NULL; // TODO: return missing node here
-  }
-
   yp_lex_token(parser);
   yp_node_t *node = parse_expression_prefix(parser);
   binding_powers_t current_binding_powers;
