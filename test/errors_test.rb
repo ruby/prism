@@ -15,6 +15,26 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "A::$b", "Expected identifier or constant after '::'"
   end
 
+  test "module name recoverable" do
+    expected = ModuleNode(
+      Scope([]),
+      KEYWORD_MODULE("module"),
+      ConstantRead(CONSTANT("Parent")),
+      Statements([
+        ModuleNode(
+          Scope([]),
+          KEYWORD_MODULE("module"),
+          MissingNode(),
+          Statements([]),
+          MISSING("")
+        )
+      ]),
+      KEYWORD_END("end")
+    )
+
+    assert_errors expected, "module Parent module end", "Expected to find a module name after `module`."
+  end
+
   test "pre execution missing {" do
     expected = PreExecutionNode(
       KEYWORD_BEGIN_UPCASE("BEGIN"),

@@ -1298,6 +1298,11 @@ not_provided(yp_token_t *token, const char *location) {
   *token = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = location, .end = location };
 }
 
+static inline void
+missing(yp_token_t *token, const char *location) {
+  *token = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = location, .end = location };
+}
+
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
 
@@ -1655,7 +1660,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `defined?`.");
       yp_token_t rparen;
 
-      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+      if (!parser->recovering && lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'defined?' expression.");
         rparen = parser->previous;
       } else {
@@ -1685,14 +1690,24 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t module_keyword = parser->previous;
       yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a module name after `module`.");
 
+      // If we can recover from a syntax error that occurred while parsing the
+      // name of the module, then we'll handle that here.
+      if (parser->recovering) {
+        yp_node_t *scope = yp_node_scope_create(parser);
+        yp_node_t *statements = yp_node_statements_create(parser);
+        yp_token_t end_keyword;
+        missing(&end_keyword, parser->previous.end);
+        return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
+      }
+
       yp_node_t *scope = yp_node_scope_create(parser);
       yp_node_t *parent_scope = parser->current_scope;
       parser->current_scope = scope;
 
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_MODULE);
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
-
       parser->current_scope = parent_scope;
+
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
       return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_NIL:
