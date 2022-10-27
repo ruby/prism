@@ -662,6 +662,12 @@ nodes:
 
           foo = 1
           ^^^^^^^
+  - name: MissingNode
+    child_nodes: []
+    location: provided
+    comment: |
+      Represents a node that is missing from the source and results in a syntax
+      error.
   - name: ModuleNode
     child_nodes:
       - name: scope

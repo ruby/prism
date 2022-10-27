@@ -55,7 +55,7 @@ end
 # child nodes it contains, and how to obtain the location of the node in the
 # source.
 class NodeType
-  attr_reader :name, :type, :human, :params, :location, :comment
+  attr_reader :name, :type, :human, :params, :location, :location_provided, :comment
 
   def initialize(config)
     @name = config.fetch("name")
@@ -90,12 +90,21 @@ class NodeType
 
     @location =
       config.fetch("location").then do |location|
-        bounds = location.include?("->") ? location.split("->") : [location, location]
-        from, to = bounds.map { |names| names.split("|").map { |name| params.find { |param| param.name == name } } }
-        "{ .start = #{start_location_for(from)}, .end = #{end_location_for(to)} }"
+        if location == "provided"
+          @location_provided = true
+          "{ .start = location, .end = location }"
+        else
+          bounds = location.include?("->") ? location.split("->") : [location, location]
+          from, to = bounds.map { |names| names.split("|").map { |name| params.find { |param| param.name == name } } }
+          "{ .start = #{start_location_for(from)}, .end = #{end_location_for(to)} }"
+        end
       end
 
     @comment = config.fetch("comment")
+  end
+
+  def location_provided?
+    @location_provided
   end
 
   private
