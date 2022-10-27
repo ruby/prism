@@ -605,12 +605,6 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "BEGIN 1 }", errors: true
   end
 
-  test "pre execution error handling" do
-    expected = nil
-
-    assert_parses expected, "BEGIN { 1 + }", errors: true
-  end
-
   test "pre execution missing { error" do
     result = YARP.parse("BEGIN 1 }")
     result => { errors: [{ message: "Expected '{' after 'BEGIN'." }] }

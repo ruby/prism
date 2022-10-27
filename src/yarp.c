@@ -10,6 +10,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_CLASS: return "CLASS";
     case YP_CONTEXT_DEF: return "DEF";
     case YP_CONTEXT_ELSE: return "ELSE";
+    case YP_CONTEXT_ELSIF: return "ELSIF";
     case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
     case YP_CONTEXT_IF: return "IF";
     case YP_CONTEXT_MAIN: return "MAIN";
