@@ -58,44 +58,44 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
 /******************************************************************************/
 
 static inline bool
-is_binary_number_char(const char *c) {
+char_is_binary_number(const char *c) {
   return *c == '0' || *c == '1';
 }
 
 static inline bool
-is_octal_number_char(const char *c) {
+char_is_octal_number(const char *c) {
   return *c >= '0' && *c <= '7';
 }
 
 static inline bool
-is_decimal_number_char(const char *c) {
+char_is_decimal_number(const char *c) {
   return *c >= '0' && *c <= '9';
 }
 
 static inline bool
-is_hexadecimal_number_char(const char *c) {
+char_is_hexadecimal_number(const char *c) {
   return (*c >= '0' && *c <= '9') || (*c >= 'a' && *c <= 'f') || (*c >= 'A' && *c <= 'F');
 }
 
 static inline size_t
-is_identifier_start_char(yp_parser_t *parser, const char *c) {
+char_is_identifier_start(yp_parser_t *parser, const char *c) {
   return (*c == '_') ? 1 : parser->encoding.alpha_char(c);
 }
 
 static inline size_t
-is_identifier_char(yp_parser_t *parser, const char *c) {
+char_is_identifier(yp_parser_t *parser, const char *c) {
   size_t width;
-  return (width = parser->encoding.alnum_char(c)) ? width : is_identifier_start_char(parser, c);
+  return (width = parser->encoding.alnum_char(c)) ? width : char_is_identifier_start(parser, c);
 }
 
 static inline bool
-is_non_newline_whitespace_char(const char *c) {
+char_is_non_newline_whitespace(const char *c) {
   return *c == ' ' || *c == '\t' || *c == '\f' || *c == '\r' || *c == '\v';
 }
 
 static inline bool
-is_whitespace_char(const char *c) {
-  return is_non_newline_whitespace_char(c) || *c == '\n';
+char_is_whitespace(const char *c) {
+  return char_is_non_newline_whitespace(c) || *c == '\n';
 }
 
 /******************************************************************************/
@@ -139,7 +139,7 @@ terminator(const char start) {
 // space of the lex state stack, then we'll just use a new slot. Otherwise we'll
 // allocate a new pointer and use that.
 static void
-push_lex_mode(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
+lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
   lex_mode.prev = parser->lex_modes.current;
   parser->lex_modes.index++;
 
@@ -155,7 +155,7 @@ push_lex_mode(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
 // space of the lex state stack, then we'll just decrement the index. Otherwise
 // we'll free the current pointer and use the previous pointer.
 static void
-pop_lex_mode(yp_parser_t *parser) {
+lex_mode_pop(yp_parser_t *parser) {
   if (parser->lex_modes.index == 0) {
     parser->lex_modes.current->mode = YP_LEX_DEFAULT;
   } else if (parser->lex_modes.index < YP_LEX_STACK_SIZE) {
@@ -180,9 +180,9 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   // Here we're going to attempt to parse the optional decimal portion of a
   // float. If it's not there, then it's okay and we'll just continue on.
   if (*parser->current.end == '.') {
-    if ((parser->current.end + 1 < parser->end) && is_decimal_number_char(parser->current.end + 1)) {
+    if ((parser->current.end + 1 < parser->end) && char_is_decimal_number(parser->current.end + 1)) {
       parser->current.end += 2;
-      while (is_decimal_number_char(parser->current.end)) {
+      while (char_is_decimal_number(parser->current.end)) {
         parser->current.end++;
         match(parser, '_');
       }
@@ -200,9 +200,9 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   if (match(parser, 'e') || match(parser, 'E')) {
     (void) (match(parser, '+') || match(parser, '-'));
 
-    if (is_decimal_number_char(parser->current.end)) {
+    if (char_is_decimal_number(parser->current.end)) {
       parser->current.end++;
-      while (is_decimal_number_char(parser->current.end)) {
+      while (char_is_decimal_number(parser->current.end)) {
         parser->current.end++;
         match(parser, '_');
       }
@@ -225,8 +225,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0d1111 is a decimal number
       case 'd':
       case 'D':
-        if (!is_decimal_number_char(++parser->current.end)) return YP_TOKEN_INVALID;
-        while (is_decimal_number_char(parser->current.end)) {
+        if (!char_is_decimal_number(++parser->current.end)) return YP_TOKEN_INVALID;
+        while (char_is_decimal_number(parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -235,8 +235,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0b1111 is a binary number
       case 'b':
       case 'B':
-        if (!is_binary_number_char(++parser->current.end)) return YP_TOKEN_INVALID;
-        while (is_binary_number_char(parser->current.end)) {
+        if (!char_is_binary_number(++parser->current.end)) return YP_TOKEN_INVALID;
+        while (char_is_binary_number(parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -245,7 +245,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0o1111 is an octal number
       case 'o':
       case 'O':
-        if (!is_octal_number_char(++parser->current.end)) return YP_TOKEN_INVALID;
+        if (!char_is_octal_number(++parser->current.end)) return YP_TOKEN_INVALID;
         // fall through
 
       // 01111 is an octal number
@@ -259,7 +259,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '6':
       case '7':
         match(parser, '_');
-        while (is_octal_number_char(parser->current.end)) {
+        while (char_is_octal_number(parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -268,8 +268,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0x1111 is a hexadecimal number
       case 'x':
       case 'X':
-        if (!is_hexadecimal_number_char(++parser->current.end)) return YP_TOKEN_INVALID;
-        while (is_hexadecimal_number_char(parser->current.end)) {
+        if (!char_is_hexadecimal_number(++parser->current.end)) return YP_TOKEN_INVALID;
+        while (char_is_hexadecimal_number(parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -292,7 +292,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
     // If it didn't start with a 0, then we'll lex as far as we can into a
     // decimal number.
     match(parser, '_');
-    while (is_decimal_number_char(parser->current.end)) {
+    while (char_is_decimal_number(parser->current.end)) {
       parser->current.end++;
       match(parser, '_');
     }
@@ -359,14 +359,14 @@ lex_global_variable(yp_parser_t *parser) {
     case '9':
       do {
         parser->current.end++;
-      } while (is_decimal_number_char(parser->current.end));
+      } while (char_is_decimal_number(parser->current.end));
       return YP_TOKEN_NTH_REFERENCE;
 
     default:
-      if (is_identifier_char(parser, parser->current.end)) {
+      if (char_is_identifier(parser, parser->current.end)) {
         do {
           parser->current.end++;
-        } while (is_identifier_char(parser, parser->current.end));
+        } while (char_is_identifier(parser, parser->current.end));
         return YP_TOKEN_GLOBAL_VARIABLE;
       }
 
@@ -379,7 +379,7 @@ lex_global_variable(yp_parser_t *parser) {
 static yp_token_type_t
 lex_identifier(yp_parser_t *parser) {
   // Lex as far as we can into the current identifier.
-  while (is_identifier_char(parser, parser->current.end)) {
+  while (char_is_identifier(parser, parser->current.end)) {
     parser->current.end++;
   }
 
@@ -550,7 +550,7 @@ lex_token_type(yp_parser_t *parser) {
         // }
         case '}':
           if (parser->lex_modes.current->mode == YP_LEX_EMBEXPR) {
-            pop_lex_mode(parser);
+            lex_mode_pop(parser);
             return YP_TOKEN_EMBEXPR_END;
           }
           return YP_TOKEN_BRACE_RIGHT;
@@ -572,7 +572,7 @@ lex_token_type(yp_parser_t *parser) {
         case '=':
           if (parser->current.end[-2] == '\n' && (strncmp(parser->current.end, "begin\n", 6) == 0)) {
             parser->current.end += 6;
-            push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
             return YP_TOKEN_EMBDOC_BEGIN;
           }
 
@@ -601,22 +601,22 @@ lex_token_type(yp_parser_t *parser) {
 
         // double-quoted string literal
         case '"':
-          push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '"', .interp = true });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '"', .interp = true });
           return YP_TOKEN_STRING_BEGIN;
 
         // xstring literal
         case '`':
-          push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '`', .interp = true });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '`', .interp = true });
           return YP_TOKEN_BACKTICK;
 
         // single-quoted string literal
         case '\'':
-          push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '\'', .interp = false });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '\'', .interp = false });
           return YP_TOKEN_STRING_BEGIN;
 
         // ? character literal
         case '?':
-          if (is_identifier_char(parser, parser->current.end)) {
+          if (char_is_identifier(parser, parser->current.end)) {
             parser->current.end++;
             return YP_TOKEN_CHARACTER_LITERAL;
           }
@@ -669,8 +669,8 @@ lex_token_type(yp_parser_t *parser) {
         // :: symbol
         case ':':
           if (match(parser, ':')) return YP_TOKEN_COLON_COLON;
-          if (is_identifier_char(parser, parser->current.end)) {
-            push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL, .term = '\0' });
+          if (char_is_identifier(parser, parser->current.end)) {
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL, .term = '\0' });
             return YP_TOKEN_SYMBOL_BEGIN;
           }
           return YP_TOKEN_COLON;
@@ -680,7 +680,7 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
           if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
 
-          push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = '/' });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = '/' });
           return YP_TOKEN_REGEXP_BEGIN;
 
         // ^ ^=
@@ -706,49 +706,49 @@ lex_token_type(yp_parser_t *parser) {
               return YP_TOKEN_PERCENT_EQUAL;
             case 'i':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
               return YP_TOKEN_PERCENT_LOWER_I;
             case 'I':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_UPPER_I;
             case 'r':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_REGEXP_BEGIN;
             case 'q':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
               return YP_TOKEN_STRING_BEGIN;
             case 'Q':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_STRING_BEGIN;
             case 'w':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
               return YP_TOKEN_PERCENT_LOWER_W;
             case 'W':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_UPPER_W;
             case 'x':
               parser->current.end++;
-              push_lex_mode(
+              lex_mode_push(
                 parser,
                 (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_LOWER_X;
@@ -764,10 +764,10 @@ lex_token_type(yp_parser_t *parser) {
         case '@': {
           yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
 
-          if (is_identifier_start_char(parser, parser->current.end)) {
+          if (char_is_identifier_start(parser, parser->current.end)) {
             do {
               parser->current.end++;
-            } while (is_identifier_char(parser, parser->current.end));
+            } while (char_is_identifier(parser, parser->current.end));
             return type;
           }
 
@@ -777,7 +777,7 @@ lex_token_type(yp_parser_t *parser) {
         default: {
           // If this isn't the beginning of an identifier, then it's an invalid
           // token as we've exhausted all of the other options.
-          if (!is_identifier_start_char(parser, parser->current.start)) {
+          if (!char_is_identifier_start(parser, parser->current.start)) {
             return YP_TOKEN_INVALID;
           }
 
@@ -800,7 +800,7 @@ lex_token_type(yp_parser_t *parser) {
       // If we've hit the end of the embedded documentation then we'll return that token here.
       if (strncmp(parser->current.end, "=end\n", 5) == 0) {
         parser->current.end += 5;
-        pop_lex_mode(parser);
+        lex_mode_pop(parser);
         return YP_TOKEN_EMBDOC_END;
       }
 
@@ -822,13 +822,13 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_LIST: {
       // If there's any whitespace at the start of the list, then we're going to
       // trim it off the beginning and create a new token.
-      if (is_whitespace_char(parser->current.end)) {
+      if (char_is_whitespace(parser->current.end)) {
         parser->current.start = parser->current.end;
 
         do {
           if (*parser->current.end == '\n') parser->lineno++;
           parser->current.end++;
-        } while (is_whitespace_char(parser->current.end));
+        } while (char_is_whitespace(parser->current.end));
 
         return YP_TOKEN_WORDS_SEP;
       }
@@ -840,7 +840,7 @@ lex_token_type(yp_parser_t *parser) {
       while (parser->current.end < parser->end) {
         // If we've hit whitespace, then we must have received content by now,
         // so we can return an element of the list.
-        if (is_whitespace_char(parser->current.end)) {
+        if (char_is_whitespace(parser->current.end)) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -854,7 +854,7 @@ lex_token_type(yp_parser_t *parser) {
           // Otherwise, switch back to the default state and return the end of
           // the list.
           parser->current.end++;
-          pop_lex_mode(parser);
+          lex_mode_pop(parser);
           return YP_TOKEN_STRING_END;
         }
 
@@ -868,7 +868,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           parser->current.end += 2;
-          push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
           return YP_TOKEN_EMBEXPR_BEGIN;
         }
 
@@ -907,7 +907,7 @@ lex_token_type(yp_parser_t *parser) {
           }
         }
 
-        pop_lex_mode(parser);
+        lex_mode_pop(parser);
         return YP_TOKEN_REGEXP_END;
       }
 
@@ -937,7 +937,7 @@ lex_token_type(yp_parser_t *parser) {
               }
 
               parser->current.end += 2;
-              push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
               return YP_TOKEN_EMBEXPR_BEGIN;
           }
         }
@@ -955,7 +955,7 @@ lex_token_type(yp_parser_t *parser) {
       // If we've hit the end of the string, then we can return to the default
       // state of the lexer and return a string ending token.
       if (match(parser, parser->lex_modes.current->term)) {
-        pop_lex_mode(parser);
+        lex_mode_pop(parser);
         return YP_TOKEN_STRING_END;
       }
 
@@ -995,7 +995,7 @@ lex_token_type(yp_parser_t *parser) {
                 }
 
                 parser->current.end += 2;
-                push_lex_mode(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+                lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
                 return YP_TOKEN_EMBEXPR_BEGIN;
               }
             }
@@ -1017,8 +1017,8 @@ lex_token_type(yp_parser_t *parser) {
       parser->current.start = parser->current.end;
 
       // Lex as far as we can into the symbol.
-      if (parser->current.end < parser->end && is_identifier_start_char(parser, parser->current.end++)) {
-        pop_lex_mode(parser);
+      if (parser->current.end < parser->end && char_is_identifier_start(parser, parser->current.end++)) {
+        lex_mode_pop(parser);
 
         yp_token_type_t type = lex_identifier(parser);
         return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
