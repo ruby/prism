@@ -67,7 +67,7 @@ module YARP
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
-        when <%= index %> then YARP::<%= node.name %>.new(<%= node.params.map { |param|
+        when <%= index %> then YARP::<%= node.name %>.new(<%= (node.params.map { |param|
           case param
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"
@@ -78,7 +78,7 @@ module YARP
           when OptionalTokenParam then "load_optional_token"
           else raise
           end
-        }.join(", ") -%>, location)
+        } + ["location"]).join(", ") -%>)
         <%- end -%>
         end
       end

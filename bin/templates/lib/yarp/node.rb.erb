@@ -14,8 +14,8 @@ module YARP
     # attr_reader location: Location
     attr_reader :location
 
-    # def initialize: (<%= node.params.map { |param| "#{param.name}: #{param.rbs_class}" }.join(", ") %>, location: Location) -> void
-    def initialize(<%= node.params.map(&:name).join(", ") %>, location)
+    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["location: Location"]).join(", ") %>) -> void
+    def initialize(<%= (node.params.map(&:name) + ["location"]).join(", ") %>)
       <%- node.params.each do |param| -%>
       @<%= param.name %> = <%= param.name %>
       <%- end -%>
@@ -42,7 +42,7 @@ module YARP
 
     # def deconstruct_keys: (keys: Array[Symbol]) -> Hash[Symbol, nil | Node | Array[Node] | String | Token | Array[Token] | Location]
     def deconstruct_keys(keys)
-      { <%= node.params.map { |param| "#{param.name}: #{param.name}" }.join(", ") %>, location: location }
+      { <%= (node.params.map { |param| "#{param.name}: #{param.name}" } + ["location: location"]).join(", ") %> }
     end
 
     # def ==(other: Object) -> bool
@@ -65,8 +65,8 @@ module YARP
     <%- nodes.each do |node| -%>
 
     # Create a new <%= node.name %> node
-    def <%= node.name %>(<%= node.params.map(&:name).join(", ") %>, location = Location.null)
-      <%= node.name %>.new(<%= node.params.map(&:name).join(", ") %>, location)
+    def <%= node.name %>(<%= (node.params.map(&:name) + ["location = Location.null"]).join(", ") %>)
+      <%= node.name %>.new(<%= (node.params.map(&:name) + ["location"]).join(", ") %>)
     end
     <%- end -%>
     <%- tokens.each do |token| -%>
