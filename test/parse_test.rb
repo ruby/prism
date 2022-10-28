@@ -269,16 +269,6 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a::B"
   end
 
-  test "constant path with invalid token after" do
-    expected = ConstantPathNode(
-      ConstantRead(CONSTANT("A")),
-      COLON_COLON("::"),
-      MissingNode()
-    )
-
-    assert_parses expected, "A::$b", errors: true
-  end
-
   test "constant read" do
     assert_parses ConstantRead(CONSTANT("ABC")), "ABC"
   end
@@ -592,23 +582,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "pre execution" do
     assert_parses PreExecutionNode(KEYWORD_BEGIN_UPCASE("BEGIN"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "BEGIN { 1 }"
-  end
-
-  test "pre execution missing {" do
-    expected = PreExecutionNode(
-      KEYWORD_BEGIN_UPCASE("BEGIN"),
-      MISSING(""),
-      Statements([expression("1")]),
-      BRACE_RIGHT("}")
-    )
-
-    assert_parses expected, "BEGIN 1 }", errors: true
-  end
-
-  test "pre execution missing { error" do
-    result = YARP.parse("BEGIN 1 }")
-    result => { errors: [{ message: "Expected '{' after 'BEGIN'." }] }
-    assert result.failure?
   end
 
   test "range inclusive" do
@@ -928,13 +901,9 @@ class ParseTest < Test::Unit::TestCase
     assert_equal expected, node
   end
 
-  def assert_parses(expected, source, errors: false)
+  def assert_parses(expected, source)
     assert_equal expected, expression(source)
     assert_serializes expected, source
-
-    # If it's expected that there are syntax errors in the given source, then
-    # we're not going to compare against the ripper lexer.
-    return if errors
 
     YARP.lex_ripper(source).zip(YARP.lex_compat(source)).each do |(ripper, yarp)|
       assert_equal ripper[0...-1], yarp[0...-1]
@@ -942,7 +911,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
+    YARP.parse(source) => YARP::ParseResult[
+      node: YARP::Program[statements: YARP::Statements[body: [*, node]]],
+      errors: []
+    ]
+
     node
   end
 end

@@ -76,6 +76,31 @@ typedef struct {
   yp_token_type_t (*unterminated_string)(yp_parser_t *parser);
 } yp_error_handler_t;
 
+// While parsing, we keep track of a stack of contexts. This is helpful for
+// error recovery so that we can pop back to a previous context when we hit a
+// token that is understood by a parent context but not by the current context.
+typedef enum {
+  YP_CONTEXT_MAIN,     // the top level context
+  YP_CONTEXT_PREEXE,   // a BEGIN block
+  YP_CONTEXT_POSTEXE,  // an END block
+  YP_CONTEXT_MODULE,   // a module declaration
+  YP_CONTEXT_CLASS,    // a class declaration
+  YP_CONTEXT_DEF,      // a method definition
+  YP_CONTEXT_IF,       // an if statement
+  YP_CONTEXT_ELSIF,    // an elsif clause
+  YP_CONTEXT_UNLESS,   // an unless statement
+  YP_CONTEXT_ELSE,     // an else clause
+  YP_CONTEXT_WHILE,    // a while statement
+  YP_CONTEXT_UNTIL,    // an until statement
+  YP_CONTEXT_EMBEXPR,  // an interpolated expression
+} yp_context_t;
+
+// This is a node in a linked list of contexts.
+typedef struct yp_context_node {
+  yp_context_t context;
+  struct yp_context_node *prev;
+} yp_context_node_t;
+
 // This struct represents the overall parser. It contains a reference to the
 // source file, as well as pointers that indicate where in the source it's
 // currently parsing. It also contains the most recent and current token that
@@ -93,9 +118,12 @@ struct yp_parser {
   yp_token_t current;  // the current token we're considering
   int lineno;          // the current line number we're looking at
 
-  yp_error_list_t error_list;        // the list of errors that have been found while parsing
-  yp_error_handler_t *error_handler; // the error handler
-  yp_node_t *current_scope;          // the current local scope
+  yp_error_list_t error_list;         // the list of errors that have been found while parsing
+  yp_error_handler_t *error_handler;  // the error handler
+  yp_node_t *current_scope;           // the current local scope
+
+  yp_context_node_t *current_context; // the current parsing context
+  bool recovering; // whether or not we're currently recovering from a syntax error
 
   // The encoding functions for the current file is attached to the parser as
   // it's parsing so that it can change with a magic comment.
