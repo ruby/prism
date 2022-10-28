@@ -88,6 +88,30 @@ typedef enum yp_pack_result {
   YP_PACK_ERROR_DOUBLE_ENDIAN
 } yp_pack_result;
 
+// Parse a single directive from a pack or unpack format string.
+//
+// Parameters:
+//  - [in] yp_pack_version version    the version of Ruby
+//  - [in] yp_pack_variant variant    pack or unpack
+//  - [in out] const char **format    the start of the next directive to parse
+//      on calling, and advanced beyond the parsed directive on return, or as
+//      much of it as was consumed until an error was encountered 
+//  - [out] yp_pack_type *type        the type of the directive
+//  - [out] yp_pack_signed *signed    whether the value is signed
+//  - [out] yp_pack_endian *endian    the endianness of the value
+//  - [out] yp_pack_size *size        the size of the value
+//  - [out] yp_pack_length_type *length_type
+//                                    what kind of length is specified
+//  - [out] size_t *length            the length of the directive
+//  - [out] yp_pack_encoding *encoding
+//                                    the resulting encoding
+//
+// Return:
+//  - YP_PACK_OK on success
+//  - YP_PACK_ERROR_* on error
+//
+// Notes:
+//   Consult Ruby documentation for the meaning of directives.
 yp_pack_result
 yp_pack_parse(
     yp_pack_version version,
@@ -102,6 +126,8 @@ yp_pack_parse(
     uint64_t *length,
     yp_pack_encoding *encoding);
 
+// YARP abstracts sizes away from the native system - this converts an abstract
+// size to a native size.
 size_t yp_size_to_native(yp_pack_size size);
 
 #endif
