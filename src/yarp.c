@@ -21,6 +21,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_UNTIL: return "UNTIL";
     case YP_CONTEXT_WHILE: return "WHILE";
   }
+  return NULL;
 }
 
 __attribute__((unused)) static void
