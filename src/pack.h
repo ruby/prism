@@ -103,8 +103,12 @@ typedef enum yp_pack_result {
 //  - [out] yp_pack_length_type *length_type
 //                                    what kind of length is specified
 //  - [out] size_t *length            the length of the directive
-//  - [out] yp_pack_encoding *encoding
-//                                    the resulting encoding
+//  - [in out] yp_pack_encoding *encoding
+//                                    takes the current encoding of the string
+//      which would result from parsing the whole directive, and returns a
+//      possibly changed directive - the encoding should be
+//      YP_PACK_ENCODING_START when yp_pack_parse is called for the first
+//      directive in a format string
 //
 // Return:
 //  - YP_PACK_OK on success
