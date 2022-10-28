@@ -95,9 +95,11 @@ typedef enum yp_pack_result {
 //  - [in] yp_pack_variant variant    pack or unpack
 //  - [in out] const char **format    the start of the next directive to parse
 //      on calling, and advanced beyond the parsed directive on return, or as
-//      much of it as was consumed until an error was encountered 
+//      much of it as was consumed until an error was encountered
+//  - [in] const char *format_end     the end of the format string
 //  - [out] yp_pack_type *type        the type of the directive
-//  - [out] yp_pack_signed *signed    whether the value is signed
+//  - [out] yp_pack_signed *signed_type
+//                                    whether the value is signed
 //  - [out] yp_pack_endian *endian    the endianness of the value
 //  - [out] yp_pack_size *size        the size of the value
 //  - [out] yp_pack_length_type *length_type
@@ -105,7 +107,7 @@ typedef enum yp_pack_result {
 //  - [out] size_t *length            the length of the directive
 //  - [in out] yp_pack_encoding *encoding
 //                                    takes the current encoding of the string
-//      which would result from parsing the whole directive, and returns a
+//      which would result from parsing the whole format string, and returns a
 //      possibly changed directive - the encoding should be
 //      YP_PACK_ENCODING_START when yp_pack_parse is called for the first
 //      directive in a format string
