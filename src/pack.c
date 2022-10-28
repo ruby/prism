@@ -431,7 +431,7 @@ exit_modifier_loop:
       errno = 0;
       *length_type = YP_PACK_LENGTH_FIXED;
       #if UINTMAX_MAX < UINT64_MAX
-        #error YARP's design assumes uintmax_t is at least as large as uint64_t
+        #error "YARP's design assumes uintmax_t is at least as large as uint64_t"
       #endif
       uintmax_t length_max = strtoumaxc(format);
       if (errno || length_max > UINT64_MAX) {
