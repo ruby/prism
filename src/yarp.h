@@ -1,21 +1,18 @@
 #ifndef YARP_H
 #define YARP_H
 
-#include "util/buffer.h"
-#include "ast.h"
-#include "error.h"
-#include "parser.h"
-#include "node.h"
-#include <fcntl.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <unistd.h>
+
+#include "util/buffer.h"
+#include "ast.h"
+#include "error.h"
+#include "parser.h"
+#include "node.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 1
