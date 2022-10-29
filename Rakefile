@@ -4,7 +4,7 @@ require "rake/extensiontask"
 require "rake/testtask"
 require "rake/clean"
 
-task :compile => :make
+task compile: :make
 
 Rake::ExtensionTask.new(:compile) do |ext|
   ext.name = "yarp"
@@ -19,7 +19,9 @@ Rake::TestTask.new(test: :compile) do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
-ERB_GENERATED_FILES = [
+task default: :test
+
+TEMPLATES = [
   "ext/yarp/node.c",
   "lib/yarp/node.rb",
   "lib/yarp/serialize.rb",
@@ -32,19 +34,21 @@ ERB_GENERATED_FILES = [
 ]
 
 desc "Generate all ERB template based files"
-task templates: ERB_GENERATED_FILES
+task templates: TEMPLATES
 
 task make: :templates do
   sh "make"
 end
 
 # So `rake clobber` will delete generated files
-CLOBBER.concat ERB_GENERATED_FILES
+CLOBBER.concat(TEMPLATES)
 
-escaped = ERB_GENERATED_FILES.map { |filepath| Regexp.escape(filepath) }
-rule Regexp.new("\\A(#{escaped.join("|")})\\z") => ["bin/templates/%p.erb", "config.yml"] do |t|
-  require_relative "bin/template"
-  template(t.name, locals)
+TEMPLATES.each do |filepath|
+  desc "Template #{filepath}"
+  file filepath => ["bin/templates/#{filepath}.erb", "config.yml"] do |t|
+    require_relative "bin/template"
+    template(t.name, locals)
+  end
 end
 
 desc "Lex ruby/spec files and compare with lex_compat"
@@ -86,5 +90,3 @@ task lex: :compile do
   puts "\n\nPASSING=#{results[:passing].length}\nFAILING=#{results[:failing].length}"
   puts "\n#{results[:failing].sort.join("\n")}"
 end
-
-task default: :test
