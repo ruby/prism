@@ -4,6 +4,11 @@
 #include <ruby.h>
 #include <yarp.h>
 
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 VALUE
 yp_token_new(yp_parser_t *parser, yp_token_t *token);
 
