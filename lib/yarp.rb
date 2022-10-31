@@ -19,6 +19,20 @@ module YARP
     end
   end
 
+  # This represents a comment that was encountered during parsing.
+  class Comment
+    attr_reader :type, :location
+
+    def initialize(type, location)
+      @type = type
+      @location = location
+    end
+
+    def deconstruct_keys(keys)
+      { type: type, location: location }
+    end
+  end
+
   # This represents an error that was encountered during parsing.
   class ParseError
     attr_reader :message, :location
@@ -34,17 +48,19 @@ module YARP
   end
 
   # This represents the result of a call to ::parse or ::parse_file. It contains
-  # both the AST and any errors that were encountered.
+  # the AST, any comments that were encounters, and any errors that were
+  # encountered.
   class ParseResult
-    attr_reader :node, :errors
+    attr_reader :node, :comments, :errors
 
-    def initialize(node, errors)
+    def initialize(node, comments, errors)
       @node = node
+      @comments = comments
       @errors = errors
     end
 
     def deconstruct_keys(keys)
-      { node: node, errors: errors }
+      { node: node, comments: comments, errors: errors }
     end
 
     def success?

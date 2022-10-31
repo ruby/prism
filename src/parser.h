@@ -101,6 +101,19 @@ typedef struct yp_context_node {
   struct yp_context_node *prev;
 } yp_context_node_t;
 
+// This is the type of a comment that we've found while parsing.
+typedef enum {
+  YP_COMMENT_INLINE,
+  YP_COMMENT_EMBDOC,
+  YP_COMMENT___END__
+} yp_comment_type_t;
+
+// This is a node in the linked list of comments that we've found while parsing.
+typedef struct yp_comment {
+  yp_list_node_t node;
+  yp_comment_type_t type;
+} yp_comment_t;
+
 // This struct represents the overall parser. It contains a reference to the
 // source file, as well as pointers that indicate where in the source it's
 // currently parsing. It also contains the most recent and current token that
@@ -118,6 +131,7 @@ struct yp_parser {
   yp_token_t current;  // the current token we're considering
   int lineno;          // the current line number we're looking at
 
+  yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
   yp_error_handler_t *error_handler;  // the error handler
   yp_node_t *current_scope;           // the current local scope
