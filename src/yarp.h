@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util/buffer.h"
+#include "util/yp_buffer.h"
 #include "ast.h"
 #include "error.h"
 #include "parser.h"

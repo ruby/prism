@@ -1,4 +1,4 @@
-#include "buffer.h"
+#include "yp_buffer.h"
 
 #define YP_BUFFER_INITIAL_SIZE 1024
 
