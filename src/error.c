@@ -6,7 +6,7 @@ yp_error_alloc(void) {
 }
 
 static void
-yp_error_init(yp_error_t *error, const char *source, uint64_t position) {
+yp_error_init(yp_error_t *error, const char *source, uint32_t position) {
   *error = (yp_error_t) { .location = { .start = position, .end = position } };
   yp_string_constant_init(&error->message, source, strlen(source));
 }
@@ -25,7 +25,7 @@ yp_error_list_init(yp_error_list_t *error_list) {
 
 // Append an error to the given list of errors.
 void
-yp_error_list_append(yp_error_list_t *error_list, const char *message, uint64_t position) {
+yp_error_list_append(yp_error_list_t *error_list, const char *message, uint32_t position) {
   yp_error_t *error = yp_error_alloc();
   yp_error_init(error, message, position);
 

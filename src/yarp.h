@@ -15,7 +15,7 @@
 #include "node.h"
 
 #define YP_VERSION_MAJOR 0
-#define YP_VERSION_MINOR 1
+#define YP_VERSION_MINOR 2
 #define YP_VERSION_PATCH 0
 
 void
@@ -23,6 +23,10 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 void
 yp_print_node(yp_parser_t *parser, yp_node_t *node);
+
+// Returns the YARP version and notably the serialization format
+__attribute__((__visibility__("default"))) extern char*
+yp_version(void);
 
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void

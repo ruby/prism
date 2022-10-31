@@ -184,6 +184,11 @@ parse_file(VALUE self, VALUE rb_filepath) {
 
 void
 Init_yarp(void) {
+  if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
+    rb_raise(rb_eRuntimeError, "The YARP library version (%s) does not match the expected version (%s)", yp_version(),
+             EXPECTED_YARP_VERSION);
+  }
+
   rb_cYARP = rb_define_module("YARP");
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);

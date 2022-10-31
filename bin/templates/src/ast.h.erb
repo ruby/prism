@@ -49,8 +49,8 @@ typedef enum {
 // This represents a range of bytes in the source string to which a node or
 // token corresponds.
 typedef struct {
-  uint64_t start;
-  uint64_t end;
+  uint32_t start;
+  uint32_t end;
 } yp_location_t;
 
 // This is the overall tagged union representing a node in the syntax tree.
