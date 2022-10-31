@@ -1,5 +1,13 @@
 #include "yarp.h"
 
+#define STRINGIZE0(expr) #expr
+#define STRINGIZE(expr) STRINGIZE0(expr)
+#define YP_VERSION_MACRO STRINGIZE(YP_VERSION_MAJOR) "." STRINGIZE(YP_VERSION_MINOR) "." STRINGIZE(YP_VERSION_PATCH)
+
+char* yp_version(void) {
+  return YP_VERSION_MACRO;
+}
+
 /******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
