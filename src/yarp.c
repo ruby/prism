@@ -1100,6 +1100,12 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     } else if (strncmp(pointer, "utf-8", 5) == 0) {
       parser->encoding.alnum_char = yp_encoding_utf8_alnum_char;
       parser->encoding.alpha_char = yp_encoding_utf8_alpha_char;
+    } else if (strncmp(pointer, "utf-16-be", 9) == 0) {
+      parser->encoding.alnum_char = yp_encoding_utf16be_alnum_char;
+      parser->encoding.alpha_char = yp_encoding_utf16be_alpha_char;
+    } else if (strncmp(pointer, "utf-16-le", 9) == 0) {
+      parser->encoding.alnum_char = yp_encoding_utf16le_alnum_char;
+      parser->encoding.alpha_char = yp_encoding_utf16le_alpha_char;
     } else {
       // TODO: handling invalid encoding.
       fprintf(stderr, "Could not parse encoding: %.*s\n", (int) (parser->current.end - pointer), pointer);

@@ -1501,6 +1501,16 @@ unicode_codepoint_match(unicode_codepoint_t codepoint, unicode_codepoint_t *code
   return false;
 }
 
+static inline bool
+unicode_codepoint_match_alpha(unicode_codepoint_t codepoint) {
+  return unicode_codepoint_match(codepoint, unicode_alpha_codepoints, UNICODE_ALPHA_CODEPOINTS_LENGTH);
+}
+
+static inline bool
+unicode_codepoint_match_alnum(unicode_codepoint_t codepoint) {
+  return unicode_codepoint_match(codepoint, unicode_alnum_codepoints, UNICODE_ALNUM_CODEPOINTS_LENGTH);
+}
+
 static unicode_codepoint_t
 utf8_codepoint(const char *c, size_t *width) {
   if ((c[0] >> 7) == 0b0) {
@@ -1526,16 +1536,74 @@ utf8_codepoint(const char *c, size_t *width) {
   return 0;
 }
 
+static unicode_codepoint_t
+utf16be_codepoint(const char *c, size_t *width) {
+  const unsigned char *uc = (const unsigned char *)c;
+
+  if (uc[0] >= 0xD8 && uc[1] <= 0xDB) {
+    // 110110xx xxxxxxxx 110111xx xxxxxxxx
+    *width = 4;
+    return ((uc[0] & 0b11) << 18) | (uc[1] << 10) | ((uc[2] & 0b11) << 8) | uc[3];
+  } else {
+    // xxxxxxxx xxxxxxxx
+    *width = 2;
+    return (uc[0] << 8) | uc[1];
+  }
+}
+
+static unicode_codepoint_t
+utf16le_codepoint(const char *c, size_t *width) {
+  const unsigned char *uc = (const unsigned char *)c;
+
+  if (uc[1] >= 0xD8 && uc[1] <= 0xDB) {
+    // xxxxxxxx 110110xx xxxxxxxx 110111xx
+    *width = 4;
+    return ((uc[1] & 0b11) << 18) | (uc[0] << 10) | ((uc[3] & 0b11) << 8) | uc[2];
+  } else {
+    // xxxxxxxx xxxxxxxx
+    *width = 2;
+    return (uc[1] << 8) | uc[0];
+  }
+}
+
 size_t
 yp_encoding_utf8_alpha_char(const char *c) {
   size_t width;
   unicode_codepoint_t codepoint = utf8_codepoint(c, &width);
-  return (codepoint && unicode_codepoint_match(codepoint, unicode_alpha_codepoints, UNICODE_ALPHA_CODEPOINTS_LENGTH)) ? width : 0;
+  return (codepoint && unicode_codepoint_match_alpha(codepoint)) ? width : 0;
 }
 
 size_t
 yp_encoding_utf8_alnum_char(const char *c) {
   size_t width;
   unicode_codepoint_t codepoint = utf8_codepoint(c, &width);
-  return (codepoint && unicode_codepoint_match(codepoint, unicode_alnum_codepoints, UNICODE_ALNUM_CODEPOINTS_LENGTH)) ? width : 0;
+  return (codepoint && unicode_codepoint_match_alnum(codepoint)) ? width : 0;
+}
+
+size_t
+yp_encoding_utf16be_alpha_char(const char *c) {
+  size_t width;
+  unicode_codepoint_t codepoint = utf16be_codepoint(c, &width);
+  return unicode_codepoint_match_alpha(codepoint) ? width : 0;
+}
+
+size_t
+yp_encoding_utf16be_alnum_char(const char *c) {
+  size_t width;
+  unicode_codepoint_t codepoint = utf16be_codepoint(c, &width);
+  return unicode_codepoint_match_alnum(codepoint) ? width : 0;
+}
+
+size_t
+yp_encoding_utf16le_alpha_char(const char *c) {
+  size_t width;
+  unicode_codepoint_t codepoint = utf16le_codepoint(c, &width);
+  return unicode_codepoint_match_alpha(codepoint) ? width : 0;
+}
+
+size_t
+yp_encoding_utf16le_alnum_char(const char *c) {
+  size_t width;
+  unicode_codepoint_t codepoint = utf16le_codepoint(c, &width);
+  return unicode_codepoint_match_alnum(codepoint) ? width : 0;
 }
