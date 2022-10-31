@@ -1,4 +1,4 @@
-#include "encoding.h"
+#include "yp_encoding.h"
 
 size_t
 yp_encoding_ascii_alpha_char(const char *c) {

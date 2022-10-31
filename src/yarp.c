@@ -1094,12 +1094,10 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     pointer += 9;
     while (char_is_non_newline_whitespace(pointer)) pointer++;
 
-    if ((strncmp(pointer, "ascii", 5) == 0) || (strncmp(pointer, "us-ascii", 8) == 0)) {
-      parser->encoding.alnum_char = yp_encoding_ascii_alnum_char;
-      parser->encoding.alpha_char = yp_encoding_ascii_alpha_char;
+    if ((strncmp(pointer, "ascii", 5) == 0) || (strncmp(pointer, "binary", 6) == 0) || (strncmp(pointer, "us-ascii", 8) == 0)) {
+      parser->encoding = yp_encoding_ascii;
     } else if (strncmp(pointer, "utf-8", 5) == 0) {
-      parser->encoding.alnum_char = yp_encoding_utf8_alnum_char;
-      parser->encoding.alpha_char = yp_encoding_utf8_alpha_char;
+      parser->encoding = yp_encoding_utf8;
     } else {
       // TODO: handling invalid encoding.
       fprintf(stderr, "Could not parse encoding: %.*s\n", (int) (parser->current.end - pointer), pointer);

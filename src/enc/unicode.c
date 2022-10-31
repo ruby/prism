@@ -1,4 +1,4 @@
-#include "encoding.h"
+#include "yp_encoding.h"
 
 typedef uint32_t unicode_codepoint_t;
 
