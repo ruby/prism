@@ -792,6 +792,19 @@ lex_token_type(yp_parser_t *parser) {
 
           yp_token_type_t type = lex_identifier(parser);
 
+          // If we've hit a __END__ and it was at the start of the line or the
+          // start of the file and it is followed by either a \n or a \r\n, then
+          // this is the last token of the file.
+          if (
+            ((parser->current.end - parser->current.start) == 7) &&
+            (strncmp(parser->current.start, "__END__", 7) == 0) &&
+            ((parser->current.start == parser->start) || (parser->current.start[-1] == '\n')) &&
+            (*parser->current.end == '\n' || (*parser->current.end == '\r' && parser->current.end[1] == '\n'))
+          ) {
+            parser->current.end = parser->end;
+            return YP_TOKEN___END__;
+          }
+
           // If we're lexing in a place that allows labels and we've hit a
           // colon, then we can return a label token.
           if ((parser->current.end[0] == ':') && (parser->current.end[1] != ':')) {

@@ -177,8 +177,9 @@ module YARP
       event = RIPPER.fetch(token.type)
 
       value = token.value
-      unescaped =
-        if %i[on_comment on_tstring_content].include?(event)
+      normalized =
+        case event
+        when :on_comment, :on_tstring_content
           # Ripper unescapes string content and comments, so we need to do the
           # same here. We're going to attempt to force it into UTF-8, but if
           # that doesn't work we'll just use the plain value.
@@ -187,11 +188,15 @@ module YARP
           rescue ArgumentError
             value
           end
+        when :on___end__
+          # Ripper doesn't include the rest of the token in the event, so we
+          # need to trim it down to just the first newline.
+          value[0..value.index("\n")]
         else
           value
         end
 
-      tokens << [[line_number, line_byte], event, unescaped, lexer_state]
+      tokens << [[line_number, line_byte], event, normalized, lexer_state]
     end
 
     tokens
@@ -339,6 +344,7 @@ module YARP
     TILDE: :on_op,
     TILDE_AT: :on_op,
     WORDS_SEP: :on_words_sep,
+    __END__: :on___end__
   }.freeze
 
   private_constant :RIPPER
