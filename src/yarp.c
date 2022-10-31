@@ -1067,14 +1067,20 @@ parser_lex(yp_parser_t *parser) {
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
 
-  while (parser->current.type == YP_TOKEN_COMMENT) {
+  while (parser->current.type == YP_TOKEN_COMMENT || parser->current.type == YP_TOKEN___END__) {
     // If we found a comment while lexing, then we're going to add it to the
     // list of comments in the file and keep lexing.
     yp_comment_t *comment = malloc(sizeof(yp_comment_t));
+    yp_comment_type_t type = YP_COMMENT_INLINE;
+
+    if (parser->current.type == YP_TOKEN___END__) {
+      type = YP_COMMENT___END__;
+    }
+
     *comment = (yp_comment_t) {
       .node.start = parser->current.start - parser->start,
       .node.end = parser->current.end - parser->start,
-      .type = YP_COMMENT_INLINE
+      .type = type
     };
 
     yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);

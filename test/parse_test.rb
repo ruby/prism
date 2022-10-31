@@ -9,6 +9,19 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse("") => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: []]]]
   end
 
+  test "comment inline" do
+    YARP.parse("# comment") => YARP::ParseResult[comments: [YARP::Comment[type: :inline]]]
+  end
+
+  test "comment __END__" do
+    source = <<~RUBY
+      __END__
+      comment
+    RUBY
+
+    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :__END__]]]
+  end
+
   test "and keyword" do
     assert_parses AndNode(expression("1"), KEYWORD_AND("and"), expression("2")), "1 and 2"
   end
@@ -83,10 +96,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "binary +" do
     assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1 + 2"
-  end
-
-  test "binary + with comments" do
-    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1 + # comment\n2"
   end
 
   test "binary %" do
