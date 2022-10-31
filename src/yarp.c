@@ -388,8 +388,9 @@ lex_global_variable(yp_parser_t *parser) {
 static yp_token_type_t
 lex_identifier(yp_parser_t *parser) {
   // Lex as far as we can into the current identifier.
-  while (char_is_identifier(parser, parser->current.end)) {
-    parser->current.end++;
+  size_t width;
+  while ((width = char_is_identifier(parser, parser->current.end))) {
+    parser->current.end += width;
   }
 
   off_t width = parser->current.end - parser->current.start;
@@ -785,11 +786,15 @@ lex_token_type(yp_parser_t *parser) {
         // instance variable, class variable
         case '@': {
           yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
+          size_t width;
 
-          if (char_is_identifier_start(parser, parser->current.end)) {
-            do {
-              parser->current.end++;
-            } while (char_is_identifier(parser, parser->current.end));
+          if ((width = char_is_identifier_start(parser, parser->current.end))) {
+            parser->current.end += width;
+
+            while ((width = char_is_identifier(parser, parser->current.end))) {
+              parser->current.end += width;
+            }
+
             return type;
           }
 
@@ -799,10 +804,10 @@ lex_token_type(yp_parser_t *parser) {
         default: {
           // If this isn't the beginning of an identifier, then it's an invalid
           // token as we've exhausted all of the other options.
-          if (!char_is_identifier_start(parser, parser->current.start)) {
-            return YP_TOKEN_INVALID;
-          }
+          size_t width = char_is_identifier_start(parser, parser->current.start);
+          if (!width) return YP_TOKEN_INVALID;
 
+          parser->current.end = parser->current.start + width;
           yp_token_type_t type = lex_identifier(parser);
 
           // If we've hit a __END__ and it was at the start of the line or the
