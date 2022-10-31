@@ -2401,7 +2401,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     }
   };
 
-  yp_error_list_init(&parser->error_list);
+  yp_list_init(&parser->error_list);
 }
 
 // Free any memory associated with the given parser.
