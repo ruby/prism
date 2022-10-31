@@ -1,4 +1,5 @@
 /.bundle/
+/.idea/
 /.vscode/
 /.yardoc
 /_yardoc/
@@ -15,6 +16,8 @@ test-native/run-one
 *.dSYM
 
 /ext/yarp/node.c
+/java/org/yarp/Loader.java
+/java/org/yarp/Nodes.java
 /lib/yarp/node.rb
 /lib/yarp/serialize.rb
 /src/ast.h

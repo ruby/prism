@@ -25,6 +25,8 @@ TEMPLATES = [
   "ext/yarp/node.c",
   "lib/yarp/node.rb",
   "lib/yarp/serialize.rb",
+  "java/org/yarp/Loader.java",
+  "java/org/yarp/Nodes.java",
   "src/ast.h",
   "src/node.c",
   "src/node.h",

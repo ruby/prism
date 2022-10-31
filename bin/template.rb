@@ -9,6 +9,7 @@ require "yaml"
 class NodeParam < Struct.new(:name)
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node"
+  def java_type = "Node"
 end
 
 # This represents a parameter to a node that is itself a node and can be
@@ -16,6 +17,7 @@ end
 class OptionalNodeParam < Struct.new(:name, :fallback)
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node?"
+  def java_type = "Node"
 end
 
 # This represents a parameter to a node that is a list of nodes. We pass them as
@@ -23,6 +25,7 @@ end
 class NodeListParam < Struct.new(:name)
   def param = nil
   def rbs_class = "Array[Node]"
+  def java_type = "Node[]"
 end
 
 # This represents a parameter to a node that is a token. We pass them as
@@ -30,24 +33,28 @@ end
 class TokenParam < Struct.new(:name)
   def param = "const yp_token_t *#{name}"
   def rbs_class = "Token"
+  def java_type = "Token"
 end
 
 # This represents a parameter to a node that is a token that is optional.
 class OptionalTokenParam < Struct.new(:name)
   def param = "const yp_token_t *#{name}"
   def rbs_class = "Token?"
+  def java_type = "Token"
 end
 
 # This represents a parameter to a node that is a list of tokens.
 class TokenListParam < Struct.new(:name)
   def param = nil
   def rbs_class = "Array[Token]"
+  def java_type = "Token[]"
 end
 
 # This represents a parameter to a node that is a string.
 class StringParam < Struct.new(:name)
   def param = "yp_string_t *#{name}"
   def rbs_class = "String"
+  def java_type = "byte[]"
 end
 
 # This class represents a node in the tree, configured by the config.yml file in
