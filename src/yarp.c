@@ -589,16 +589,20 @@ lex_token_type(yp_parser_t *parser) {
 
         // = => =~ == === =begin
         case '=':
-          if (
-            current_token_starts_line(parser) &&
-            (strncmp(parser->current.end, "begin", 5) == 0) &&
-            ((parser->current.end[5] == '\r' && parser->current.end[6] == '\n') || (parser->current.end[5] == '\n'))
-          ) {
-            parser->current.end += 5;
-            (void) match(parser, '\r');
-            (void) match(parser, '\n');
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
-            return YP_TOKEN_EMBDOC_BEGIN;
+          if (current_token_starts_line(parser)) {
+            if (strncmp(parser->current.end, "begin\n", 6) == 0) {
+              parser->current.end += 6;
+              parser->lineno++;
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+              return YP_TOKEN_EMBDOC_BEGIN;
+            }
+
+            if (strncmp(parser->current.end, "begin\r\n", 7) == 0) {
+              parser->current.end += 7;
+              parser->lineno++;
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+              return YP_TOKEN_EMBDOC_BEGIN;
+            }
           }
 
           if (match(parser, '>')) return YP_TOKEN_EQUAL_GREATER;
@@ -846,10 +850,15 @@ lex_token_type(yp_parser_t *parser) {
         return YP_TOKEN_EMBDOC_END;
       }
 
+      if (strncmp(parser->current.end, "=end\r\n", 6) == 0) {
+        parser->current.end += 6;
+        lex_mode_pop(parser);
+        return YP_TOKEN_EMBDOC_END;
+      }
+
       // Otherwise, we'll parse until the end of the line and return a line of
       // embedded documentation.
-      while ((parser->current.end < parser->end) && (*parser->current.end++ != '\n'))
-        ;
+      while ((parser->current.end < parser->end) && (*parser->current.end++ != '\n'));
 
       // If we've still got content, then we'll return a line of embedded
       // documentation.
@@ -1078,8 +1087,23 @@ lex_token_type(yp_parser_t *parser) {
 }
 
 /******************************************************************************/
-/* Parse functions                                                            */
+/* Encoding-related functions                                                 */
 /******************************************************************************/
+
+static yp_encoding_t yp_encoding_ascii = {
+  .alnum_char = yp_encoding_ascii_alnum_char,
+  .alpha_char = yp_encoding_ascii_alpha_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_9 = {
+  .alnum_char = yp_encoding_iso_8859_9_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_9_alpha_char
+};
+
+static yp_encoding_t yp_encoding_utf_8 = {
+  .alnum_char = yp_encoding_utf_8_alnum_char,
+  .alpha_char = yp_encoding_utf_8_alpha_char
+};
 
 // Here we're going to check if this is a "magic" comment, and perform whatever
 // actions are necessary for it here.
@@ -1087,6 +1111,11 @@ static void
 parser_lex_magic_comments(yp_parser_t *parser) {
   const char *pointer = parser->current.start + 1;
   while (char_is_non_newline_whitespace(pointer)) pointer++;
+
+  if (strncmp(pointer, "-*-", 3) == 0) {
+    pointer += 3;
+    while (char_is_non_newline_whitespace(pointer)) pointer++;
+  }
 
   // There is a lot TODO here to make it more accurately reflect encoding
   // parsing, but for now this gets us closer.
@@ -1096,14 +1125,20 @@ parser_lex_magic_comments(yp_parser_t *parser) {
 
     if ((strncmp(pointer, "ascii", 5) == 0) || (strncmp(pointer, "binary", 6) == 0) || (strncmp(pointer, "us-ascii", 8) == 0)) {
       parser->encoding = yp_encoding_ascii;
+    } else if (strncmp(pointer, "iso-8859-9", 10) == 0) {
+      parser->encoding = yp_encoding_iso_8859_9;
     } else if (strncmp(pointer, "utf-8", 5) == 0) {
-      parser->encoding = yp_encoding_utf8;
+      parser->encoding = yp_encoding_utf_8;
     } else {
       // TODO: handling invalid encoding.
       fprintf(stderr, "Could not parse encoding: %.*s\n", (int) (parser->current.end - pointer), pointer);
     }
   }
 }
+
+/******************************************************************************/
+/* Parse functions                                                            */
+/******************************************************************************/
 
 // Get the next token type and skip over comment tokens.
 static void

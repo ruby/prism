@@ -62,7 +62,7 @@ task lex: :compile do
 
   accepted_encodings = [
     Encoding::ASCII_8BIT,
-    # ISO-8859 not yet supported
+    Encoding::ISO_8859_9,
     Encoding::US_ASCII,
     Encoding::UTF_8
   ]
