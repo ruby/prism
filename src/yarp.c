@@ -2295,7 +2295,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return call;
         }
         default: {
-          uint64_t position = delimiter.end - parser->start;
+          uint32_t position = delimiter.end - parser->start;
           yp_error_list_append(&parser->error_list, "Expected identifier or constant after '::'", position);
 
           yp_node_t *child = yp_node_missing_node_create(parser, position);

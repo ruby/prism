@@ -29,7 +29,7 @@ yp_error_list_init(yp_error_list_t *error_list);
 
 // Append an error to the given list of errors.
 void
-yp_error_list_append(yp_error_list_t *error_list, const char *message, uint64_t position);
+yp_error_list_append(yp_error_list_t *error_list, const char *message, uint32_t position);
 
 // Deallocate the internal state of the given error list.
 void
