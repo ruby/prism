@@ -388,11 +388,14 @@ lex_global_variable(yp_parser_t *parser) {
 static yp_token_type_t
 lex_identifier(yp_parser_t *parser) {
   // Lex as far as we can into the current identifier.
-  while (char_is_identifier(parser, parser->current.end)) {
-    parser->current.end++;
+  size_t width;
+  while ((width = char_is_identifier(parser, parser->current.end))) {
+    parser->current.end += width;
   }
 
-  off_t width = parser->current.end - parser->current.start;
+  // Now cache the length of the identifier so that we can quickly compare it
+  // against known keywords.
+  width = parser->current.end - parser->current.start;
 
 #define KEYWORD(value, token)                                                                                          \
   if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
@@ -465,6 +468,13 @@ lex_identifier(yp_parser_t *parser) {
 
   char start = parser->current.start[0];
   return start >= 'A' && start <= 'Z' ? YP_TOKEN_CONSTANT : YP_TOKEN_IDENTIFIER;
+}
+
+// Returns true if the current token that the parser is considering is at the
+// beginning of a line or the beginning of the source.
+static bool
+current_token_starts_line(yp_parser_t *parser) {
+  return (parser->current.start == parser->start) || (parser->current.start[-1] == '\n');
 }
 
 // This is the overall lexer function. It is responsible for advancing both
@@ -579,8 +589,14 @@ lex_token_type(yp_parser_t *parser) {
 
         // = => =~ == === =begin
         case '=':
-          if (parser->current.end[-2] == '\n' && (strncmp(parser->current.end, "begin\n", 6) == 0)) {
-            parser->current.end += 6;
+          if (
+            current_token_starts_line(parser) &&
+            (strncmp(parser->current.end, "begin", 5) == 0) &&
+            ((parser->current.end[5] == '\r' && parser->current.end[6] == '\n') || (parser->current.end[5] == '\n'))
+          ) {
+            parser->current.end += 5;
+            (void) match(parser, '\r');
+            (void) match(parser, '\n');
             lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
             return YP_TOKEN_EMBDOC_BEGIN;
           }
@@ -772,11 +788,15 @@ lex_token_type(yp_parser_t *parser) {
         // instance variable, class variable
         case '@': {
           yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
+          size_t width;
 
-          if (char_is_identifier_start(parser, parser->current.end)) {
-            do {
-              parser->current.end++;
-            } while (char_is_identifier(parser, parser->current.end));
+          if ((width = char_is_identifier_start(parser, parser->current.end))) {
+            parser->current.end += width;
+
+            while ((width = char_is_identifier(parser, parser->current.end))) {
+              parser->current.end += width;
+            }
+
             return type;
           }
 
@@ -786,11 +806,24 @@ lex_token_type(yp_parser_t *parser) {
         default: {
           // If this isn't the beginning of an identifier, then it's an invalid
           // token as we've exhausted all of the other options.
-          if (!char_is_identifier_start(parser, parser->current.start)) {
-            return YP_TOKEN_INVALID;
-          }
+          size_t width = char_is_identifier_start(parser, parser->current.start);
+          if (!width) return YP_TOKEN_INVALID;
 
+          parser->current.end = parser->current.start + width;
           yp_token_type_t type = lex_identifier(parser);
+
+          // If we've hit a __END__ and it was at the start of the line or the
+          // start of the file and it is followed by either a \n or a \r\n, then
+          // this is the last token of the file.
+          if (
+            ((parser->current.end - parser->current.start) == 7) &&
+            current_token_starts_line(parser) &&
+            (strncmp(parser->current.start, "__END__", 7) == 0) &&
+            (*parser->current.end == '\n' || (*parser->current.end == '\r' && parser->current.end[1] == '\n'))
+          ) {
+            parser->current.end = parser->end;
+            return YP_TOKEN___END__;
+          }
 
           // If we're lexing in a place that allows labels and we've hit a
           // colon, then we can return a label token.
@@ -1048,20 +1081,82 @@ lex_token_type(yp_parser_t *parser) {
 /* Parse functions                                                            */
 /******************************************************************************/
 
+// Here we're going to check if this is a "magic" comment, and perform whatever
+// actions are necessary for it here.
+static void
+parser_lex_magic_comments(yp_parser_t *parser) {
+  const char *pointer = parser->current.start + 1;
+  while (char_is_non_newline_whitespace(pointer)) pointer++;
+
+  // There is a lot TODO here to make it more accurately reflect encoding
+  // parsing, but for now this gets us closer.
+  if (strncmp(pointer, "encoding:", 9) == 0) {
+    pointer += 9;
+    while (char_is_non_newline_whitespace(pointer)) pointer++;
+
+    if ((strncmp(pointer, "ascii", 5) == 0) || (strncmp(pointer, "us-ascii", 8) == 0)) {
+      parser->encoding.alnum_char = yp_encoding_ascii_alnum_char;
+      parser->encoding.alpha_char = yp_encoding_ascii_alpha_char;
+    } else if (strncmp(pointer, "utf-8", 5) == 0) {
+      parser->encoding.alnum_char = yp_encoding_utf8_alnum_char;
+      parser->encoding.alpha_char = yp_encoding_utf8_alpha_char;
+    } else {
+      // TODO: handling invalid encoding.
+      fprintf(stderr, "Could not parse encoding: %.*s\n", (int) (parser->current.end - pointer), pointer);
+    }
+  }
+}
+
 // Get the next token type and skip over comment tokens.
 static void
 parser_lex(yp_parser_t *parser) {
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
 
-  while (parser->current.type == YP_TOKEN_COMMENT) {
+  while (
+    parser->current.type == YP_TOKEN_COMMENT ||
+    parser->current.type == YP_TOKEN___END__ ||
+    parser->current.type == YP_TOKEN_EMBDOC_BEGIN
+  ) {
     // If we found a comment while lexing, then we're going to add it to the
     // list of comments in the file and keep lexing.
     yp_comment_t *comment = malloc(sizeof(yp_comment_t));
+    yp_comment_type_t type;
+
+    switch (parser->current.type) {
+      case YP_TOKEN_COMMENT:
+        parser_lex_magic_comments(parser);
+        type = YP_COMMENT_INLINE;
+        break;
+      case YP_TOKEN___END__:
+        type = YP_COMMENT___END__;
+        break;
+      case YP_TOKEN_EMBDOC_BEGIN: {
+        // If we found an embedded document, then we need to lex until we find
+        // the end of the embedded document.
+        while (parser->current.type != YP_TOKEN_EMBDOC_END && parser->current.type != YP_TOKEN_EOF) {
+          parser->current.type = lex_token_type(parser);
+        }
+
+        // If we hit the end of the file, then the embedded document is
+        // unterminated. Otherwise, we need to lex past the end of the embedded
+        // document.
+        if (parser->current.type != YP_TOKEN_EOF) {
+          parser->current.type = lex_token_type(parser);
+        }
+
+        type = YP_COMMENT_EMBDOC;
+        break;
+      }
+      default:
+        type = YP_COMMENT_INLINE;
+        break;
+    }
+
     *comment = (yp_comment_t) {
       .node.start = parser->current.start - parser->start,
       .node.end = parser->current.end - parser->start,
-      .type = YP_COMMENT_INLINE
+      .type = type
     };
 
     yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);

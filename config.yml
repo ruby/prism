@@ -278,6 +278,8 @@ tokens:
     comment: "~@"
   - name: WORDS_SEP
     comment: "a separator between words in a list"
+  - name: __END__
+    comment: "marker for the point in the file at which the parser should stop"
 nodes:
   - name: AndNode
     child_nodes:

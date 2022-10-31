@@ -54,7 +54,7 @@ void
 source_string_load(source_t *source, VALUE string) {
   *source = (source_t) {
     .type = SOURCE_STRING,
-    .source = StringValueCStr(string),
+    .source = RSTRING_PTR(string),
     .size = RSTRING_LEN(string),
   };
 }
