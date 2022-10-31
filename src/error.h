@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
-#include "util/string.h"
+#include "util/yp_string.h"
 
 // This struct represents an error found during parsing.
 typedef struct yp_error {

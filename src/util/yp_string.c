@@ -1,4 +1,4 @@
-#include "string.h"
+#include "yp_string.h"
 
 // Allocate a new yp_string_t.
 yp_string_t *
