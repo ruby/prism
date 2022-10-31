@@ -393,7 +393,9 @@ lex_identifier(yp_parser_t *parser) {
     parser->current.end += width;
   }
 
-  off_t width = parser->current.end - parser->current.start;
+  // Now cache the length of the identifier so that we can quickly compare it
+  // against known keywords.
+  width = parser->current.end - parser->current.start;
 
 #define KEYWORD(value, token)                                                                                          \
   if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
