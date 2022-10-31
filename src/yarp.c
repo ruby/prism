@@ -1088,9 +1088,36 @@ parser_lex(yp_parser_t *parser) {
     // If we found a comment while lexing, then we're going to add it to the
     // list of comments in the file and keep lexing.
     yp_comment_t *comment = malloc(sizeof(yp_comment_t));
-    yp_comment_type_t type = YP_COMMENT_INLINE;
+    yp_comment_type_t type;
 
     switch (parser->current.type) {
+      case YP_TOKEN_COMMENT: {
+        // Here we're going to check if this is a "magic" comment, and perform
+        // whatever actions are necessary for it here.
+        const char *pointer = parser->current.start + 1;
+        while (char_is_non_newline_whitespace(pointer)) pointer++;
+
+        // There is a lot TODO here to make it more accurately reflect encoding
+        // parsing, but for now this gets us closer.
+        if (strncmp(pointer, "encoding:", 9) == 0) {
+          pointer += 9;
+          while (char_is_non_newline_whitespace(pointer)) pointer++;
+
+          if ((strncmp(pointer, "ascii", 5) == 0) || (strncmp(pointer, "us-ascii", 8) == 0)) {
+            parser->encoding.alnum_char = yp_encoding_ascii_alnum_char;
+            parser->encoding.alpha_char = yp_encoding_ascii_alpha_char;
+          } else if (strncmp(pointer, "utf-8", 5) == 0) {
+            parser->encoding.alnum_char = yp_encoding_utf8_alnum_char;
+            parser->encoding.alpha_char = yp_encoding_utf8_alpha_char;
+          } else {
+            // TODO: handling invalid encoding.
+            fprintf(stderr, "Could not parse encoding: %.*s\n", (int) (parser->current.end - pointer), pointer);
+          }
+        }
+
+        type = YP_COMMENT_INLINE;
+        break;
+      }
       case YP_TOKEN___END__:
         type = YP_COMMENT___END__;
         break;
@@ -1112,6 +1139,7 @@ parser_lex(yp_parser_t *parser) {
         break;
       }
       default:
+        type = YP_COMMENT_INLINE;
         break;
     }
 
