@@ -1048,6 +1048,27 @@ lex_token_type(yp_parser_t *parser) {
 /* Parse functions                                                            */
 /******************************************************************************/
 
+// Get the next token type and skip over comment tokens.
+static void
+parser_lex(yp_parser_t *parser) {
+  parser->previous = parser->current;
+  parser->current.type = lex_token_type(parser);
+
+  while (parser->current.type == YP_TOKEN_COMMENT) {
+    // If we found a comment while lexing, then we're going to add it to the
+    // list of comments in the file and keep lexing.
+    yp_comment_t *comment = malloc(sizeof(yp_comment_t));
+    *comment = (yp_comment_t) {
+      .node.start = parser->current.start - parser->start,
+      .node.end = parser->current.end - parser->start,
+      .type = YP_COMMENT_INLINE
+    };
+
+    yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
+    parser->current.type = lex_token_type(parser);
+  }
+}
+
 static bool
 context_terminator(yp_context_t context, yp_token_t *token) {
   switch (context) {
@@ -1257,7 +1278,7 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 static bool
 accept(yp_parser_t *parser, yp_token_type_t type) {
   if (parser->current.type == type) {
-    yp_lex_token(parser);
+    parser_lex(parser);
     return true;
   }
   return false;
@@ -1270,7 +1291,7 @@ accept_any(yp_parser_t *parser, size_t count, ...) {
 
   for (size_t index = 0; index < count; index++) {
     if (parser->current.type == va_arg(types, yp_token_type_t)) {
-      yp_lex_token(parser);
+      parser_lex(parser);
       va_end(types);
       return true;
     }
@@ -1368,7 +1389,7 @@ parse_parameters(yp_parser_t *parser) {
   while (parsing) {
     switch (parser->current.type) {
       case YP_TOKEN_IDENTIFIER: {
-        yp_lex_token(parser);
+        parser_lex(parser);
 
         yp_token_t name = parser->previous;
         yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
@@ -1393,7 +1414,7 @@ parse_parameters(yp_parser_t *parser) {
         break;
       }
       case YP_TOKEN_LABEL: {
-        yp_lex_token(parser);
+        parser_lex(parser);
 
         yp_token_t name = parser->previous;
         yp_token_t local = name;
@@ -1447,7 +1468,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   // Parse any number of elsif clauses. This will form a linked list of if
   // nodes pointing to each other from the top.
   while (parser->current.type == YP_TOKEN_KEYWORD_ELSIF) {
-    yp_lex_token(parser);
+    parser_lex(parser);
     yp_token_t elsif_keyword = parser->previous;
 
     yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a predicate for the elsif clause.");
@@ -1463,7 +1484,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 
   switch (parser->current.type) {
     case YP_TOKEN_KEYWORD_ELSE: {
-      yp_lex_token(parser);
+      parser_lex(parser);
       yp_token_t else_keyword = parser->previous;
       yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_ELSE);
 
@@ -1476,7 +1497,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
       break;
     }
     case YP_TOKEN_KEYWORD_END: {
-      yp_lex_token(parser);
+      parser_lex(parser);
       parent->as.if_node.end_keyword = parser->previous;
       break;
     }
@@ -1493,7 +1514,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
   yp_token_t recoverable = parser->previous;
-  yp_lex_token(parser);
+  parser_lex(parser);
 
   switch (parser->previous.type) {
     case YP_TOKEN_CHARACTER_LITERAL: {
@@ -1819,11 +1840,11 @@ parse_expression_prefix(yp_parser_t *parser) {
               current = NULL;
             }
 
-            yp_lex_token(parser);
+            parser_lex(parser);
             break;
           }
           case YP_TOKEN_STRING_CONTENT: {
-            yp_lex_token(parser);
+            parser_lex(parser);
 
             if (current == NULL) {
               // If we hit content and the current node is NULL, then this is
@@ -1853,7 +1874,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
-            yp_lex_token(parser);
+            parser_lex(parser);
 
             if (current == NULL) {
               // If we hit an embedded expression and the current node is NULL,
@@ -1896,7 +1917,7 @@ parse_expression_prefix(yp_parser_t *parser) {
           }
           default:
             expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%W` list.");
-            yp_lex_token(parser);
+            parser_lex(parser);
             break;
         }
       }
@@ -1978,7 +1999,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
           switch (parser->current.type) {
             case YP_TOKEN_STRING_CONTENT: {
-              yp_lex_token(parser);
+              parser_lex(parser);
 
               yp_token_t string_content_opening;
               not_provided(&string_content_opening, parser->previous.start);
@@ -1990,7 +2011,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
-              yp_lex_token(parser);
+              parser_lex(parser);
               yp_token_t embexpr_opening = parser->previous;
               yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
               expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
@@ -2340,7 +2361,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 
   binding_powers_t current_binding_powers;
   while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
-    yp_lex_token(parser);
+    parser_lex(parser);
     node = parse_expression_infix(parser, node, current_binding_powers.right);
   }
 
@@ -2349,7 +2370,7 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-  yp_lex_token(parser);
+  parser_lex(parser);
 
   yp_node_t *scope = yp_node_scope_create(parser);
   parser->current_scope = scope;
@@ -2402,12 +2423,14 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
   };
 
   yp_list_init(&parser->error_list);
+  yp_list_init(&parser->comment_list);
 }
 
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser) {
   yp_error_list_free(&parser->error_list);
+  yp_list_free(&parser->comment_list);
 }
 
 // Get the next token type and set its value on the current pointer.

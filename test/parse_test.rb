@@ -85,6 +85,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1 + 2"
   end
 
+  test "binary + with comments" do
+    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1 + # comment\n2"
+  end
+
   test "binary %" do
     assert_parses CallNode(expression("1"), nil, PERCENT("%"), nil, ArgumentsNode([expression("2")]), nil, "%"), "1 % 2"
   end

@@ -4,6 +4,7 @@ VALUE rb_cYARP;
 VALUE rb_cYARPToken;
 VALUE rb_cYARPLocation;
 
+VALUE rb_cYARPComment;
 VALUE rb_cYARPParseError;
 VALUE rb_cYARPParseResult;
 
@@ -143,7 +144,29 @@ parse_source(source_t *source) {
   yp_parser_init(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
+  VALUE comments = rb_ary_new();
   VALUE errors = rb_ary_new();
+
+  for (yp_comment_t *comment = (yp_comment_t *) parser.comment_list.head; comment != NULL;
+       comment = (yp_comment_t *) comment->node.next) {
+    VALUE location_argv[] = { LONG2FIX(comment->node.start), LONG2FIX(comment->node.end) };
+    VALUE type;
+
+    switch (comment->type) {
+      case YP_COMMENT_INLINE:
+        type = ID2SYM(rb_intern("inline"));
+        break;
+      case YP_COMMENT_EMBDOC:
+        type = ID2SYM(rb_intern("embdoc"));
+        break;
+      case YP_COMMENT___END__:
+        type = ID2SYM(rb_intern("__END__"));
+        break;
+    }
+
+    VALUE comment_argv[] = { type, rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+    rb_ary_push(comments, rb_class_new_instance(2, comment_argv, rb_cYARPComment));
+  }
 
   for (yp_error_t *error = (yp_error_t *) parser.error_list.head; error != NULL;
        error = (yp_error_t *) error->node.next) {
@@ -155,8 +178,8 @@ parse_source(source_t *source) {
     rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
   }
 
-  VALUE result_argv[] = { yp_node_new(&parser, node), errors };
-  VALUE result = rb_class_new_instance(2, result_argv, rb_cYARPParseResult);
+  VALUE result_argv[] = { yp_node_new(&parser, node), comments, errors };
+  VALUE result = rb_class_new_instance(3, result_argv, rb_cYARPParseResult);
 
   yp_node_destroy(&parser, node);
   yp_parser_free(&parser);
@@ -194,6 +217,7 @@ Init_yarp(void) {
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
 
+  rb_cYARPComment = rb_define_class_under(rb_cYARP, "Comment", rb_cObject);
   rb_cYARPParseError = rb_define_class_under(rb_cYARP, "ParseError", rb_cObject);
   rb_cYARPParseResult = rb_define_class_under(rb_cYARP, "ParseResult", rb_cObject);
 
