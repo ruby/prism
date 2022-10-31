@@ -22,6 +22,16 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :__END__]]]
   end
 
+  test "comment embedded document" do
+    source = <<~RUBY
+      =begin
+      comment
+      =end
+    RUBY
+
+    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
+  end
+
   test "and keyword" do
     assert_parses AndNode(expression("1"), KEYWORD_AND("and"), expression("2")), "1 and 2"
   end
