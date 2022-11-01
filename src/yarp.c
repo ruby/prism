@@ -1684,10 +1684,12 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_GLOBAL_VARIABLE:
       return yp_node_global_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_IDENTIFIER: {
-      // Strictly speaking, we don't actually need to do this check here because
-      // you're never going to have a local that ends with ! or ?. But it avoids
-      // a lookup in the local table, so its more performant to check first.
-      if (parser->previous.end[-1] != '!' && parser->previous.end[-1] != '?' && yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
+      if (
+        (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
+        (parser->previous.end[-1] != '!') &&
+        (parser->previous.end[-1] != '?') &&
+        yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)
+      ) {
         return yp_node_local_variable_read_create(parser, &parser->previous);
       }
 
@@ -1700,12 +1702,27 @@ parse_expression_prefix(yp_parser_t *parser) {
       not_provided(&call_operator, message.start);
 
       yp_token_t lparen;
-      not_provided(&lparen, message.end);
-
+      yp_node_t *arguments;
       yp_token_t rparen;
-      not_provided(&rparen, message.end);
 
-      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &lparen, NULL, &rparen, name);
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+
+        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+          arguments = NULL;
+          rparen = parser->previous;
+        } else {
+          arguments = yp_node_arguments_node_create(parser);
+          parse_arguments(parser, arguments);
+          rparen = parser->previous;
+        }
+      } else {
+        not_provided(&lparen, message.end);
+        arguments = NULL;
+        not_provided(&rparen, message.end);
+      }
+
+      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &lparen, arguments, &rparen, name);
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
@@ -2369,6 +2386,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     case YP_TOKEN_DOT: {
       yp_token_t call_operator = parser->previous;
 
+      // This if statement handles the foo.() syntax.
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         yp_token_t lparen = parser->previous;
         yp_token_t rparen;
@@ -2390,21 +2408,40 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         }
 
         return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
-      } else {
-        expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
-        yp_token_t message = parser->previous;
+      }
 
-        yp_token_t lparen;
+      expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
+      yp_token_t message = parser->previous;
+
+      yp_token_t lparen;
+      yp_node_t *arguments;
+      yp_token_t rparen;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+
+        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+          rparen = parser->previous;
+          arguments = NULL;
+        } else {
+          arguments = yp_node_arguments_node_create(parser);
+          parse_arguments(parser, arguments);
+          rparen = parser->previous;
+        }
+      } else {
         not_provided(&lparen, message.end);
 
-        yp_token_t rparen;
+        // TODO: here is where we would parse the arguments for a method call
+        // that doesn't use parentheses (known as a "command_call" in ripper).
+        arguments = NULL;
+
         not_provided(&rparen, message.end);
-
-        yp_string_t name;
-        yp_string_shared_init(&name, message.start, message.end);
-
-        return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, NULL, &rparen, &name);
       }
+
+      yp_string_t name;
+      yp_string_shared_init(&name, message.start, message.end);
+
+      return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
