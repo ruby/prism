@@ -24,8 +24,8 @@ Each node's child is then appended to the serialized string. The child node type
 
 * `node` - A child node that is a node itself. This is structured just as like parent node.
 * `node?` - A child node that is optionally present. If the node is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just as like parent node.
-* `string` - A child node that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a `4` byte length, followed by the string itself (_without_ a trailing null byte).
 * `node[]` - A child node that is an array of nodes. This is structured as a `4` byte length, followed by the child nodes themselves.
+* `string` - A child node that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a `4` byte length, followed by the string itself (_without_ a trailing null byte).
 * `token` - A child node that is a token. This is structured as a single byte type, followed by two `4`-byte byte offsets into the source string.
 * `token?` - A child node that is a token that is optionally present. If the token is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just like the `token` child node.
 * `token[]` - A child node that is an array of tokens. This is structured as a `4` byte length, followed by the child tokens themselves.
