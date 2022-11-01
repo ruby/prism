@@ -1505,7 +1505,16 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   return statements;
 }
 
-// Parse a list of arguments to a keyword like `break`.
+// This is a special out parameter to the parse_arguments function that includes
+// opening and closing parentheses in addition to the arguments since it's so
+// common.
+typedef struct {
+  yp_token_t opening;
+  yp_node_t *arguments;
+  yp_token_t closing;
+} yp_arguments_t;
+
+// Parse a list of arguments.
 void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
   if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
@@ -1521,6 +1530,31 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
       if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
       expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
     }
+  }
+}
+
+// Parse a list of arguments and their surrounding parentheses if they are
+// present.
+void
+parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
+  if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+    arguments->opening = parser->previous;
+
+    if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+      arguments->arguments = NULL;
+      arguments->closing = parser->previous;
+    } else {
+      arguments->arguments = yp_node_arguments_node_create(parser);
+      parse_arguments(parser, arguments->arguments);
+      arguments->closing = parser->previous;
+    }
+  } else {
+    not_provided(&arguments->opening, parser->previous.end);
+
+    // TODO: here we should handle arguments without parentheses.
+    arguments->arguments = NULL;
+
+    not_provided(&arguments->closing, parser->previous.end);
   }
 }
 
@@ -1701,28 +1735,10 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t call_operator;
       not_provided(&call_operator, message.start);
 
-      yp_token_t lparen;
-      yp_node_t *arguments;
-      yp_token_t rparen;
+      yp_arguments_t arguments;
+      parse_arguments_list(parser, &arguments);
 
-      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        lparen = parser->previous;
-
-        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          arguments = NULL;
-          rparen = parser->previous;
-        } else {
-          arguments = yp_node_arguments_node_create(parser);
-          parse_arguments(parser, arguments);
-          rparen = parser->previous;
-        }
-      } else {
-        not_provided(&lparen, message.end);
-        arguments = NULL;
-        not_provided(&rparen, message.end);
-      }
-
-      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &lparen, arguments, &rparen, name);
+      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, name);
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
@@ -1746,34 +1762,22 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_KEYWORD_SUPER:
     case YP_TOKEN_KEYWORD_YIELD: {
       yp_token_t keyword = parser->previous;
-      yp_token_t lparen;
-      yp_node_t *arguments;
-      yp_token_t rparen;
-
-      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        lparen = parser->previous;
-        arguments = yp_node_arguments_node_create(parser);
-        parse_arguments(parser, arguments);
-        rparen = parser->previous;
-      } else {
-        not_provided(&lparen, parser->previous.end);
-        arguments = NULL;
-        not_provided(&rparen, parser->previous.end);
-      }
+      yp_arguments_t arguments;
+      parse_arguments_list(parser, &arguments);
 
       switch (keyword.type) {
         case YP_TOKEN_KEYWORD_BREAK:
-          return yp_node_break_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          return yp_node_break_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
         case YP_TOKEN_KEYWORD_NEXT:
-          return yp_node_next_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          return yp_node_next_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
         case YP_TOKEN_KEYWORD_SUPER:
-          if (arguments == NULL) {
+          if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
             return yp_node_forwarding_super_node_create(parser, &keyword);
           } else {
-            return yp_node_super_node_create(parser, &keyword, &lparen, arguments, &rparen);
+            return yp_node_super_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
           }
         case YP_TOKEN_KEYWORD_YIELD:
-          return yp_node_yield_node_create(parser, &keyword, &lparen, arguments, &rparen);
+          return yp_node_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
         default:
           // Cannot hit here.
           return NULL;
@@ -2413,35 +2417,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
       yp_token_t message = parser->previous;
 
-      yp_token_t lparen;
-      yp_node_t *arguments;
-      yp_token_t rparen;
-
-      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        lparen = parser->previous;
-
-        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          rparen = parser->previous;
-          arguments = NULL;
-        } else {
-          arguments = yp_node_arguments_node_create(parser);
-          parse_arguments(parser, arguments);
-          rparen = parser->previous;
-        }
-      } else {
-        not_provided(&lparen, message.end);
-
-        // TODO: here is where we would parse the arguments for a method call
-        // that doesn't use parentheses (known as a "command_call" in ripper).
-        arguments = NULL;
-
-        not_provided(&rparen, message.end);
-      }
+      yp_arguments_t arguments;
+      parse_arguments_list(parser, &arguments);
 
       yp_string_t name;
       yp_string_shared_init(&name, message.start, message.end);
 
-      return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
+      return yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, &name);
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {

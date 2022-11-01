@@ -129,7 +129,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "break()" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "break()"
+    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "break()"
   end
 
   test "break(1)" do
@@ -620,7 +620,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "next()" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "next()"
+    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "next()"
   end
 
   test "next(1)" do
@@ -782,7 +782,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "super()" do
-    assert_parses SuperNode(KEYWORD_SUPER("super"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "super()"
+    assert_parses SuperNode(KEYWORD_SUPER("super"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "super()"
   end
 
   test "super(1)" do
@@ -912,7 +912,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "yield()" do
-    assert_parses YieldNode(KEYWORD_YIELD("yield"), PARENTHESIS_LEFT("("), ArgumentsNode([]), PARENTHESIS_RIGHT(")")), "yield()"
+    assert_parses YieldNode(KEYWORD_YIELD("yield"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "yield()"
   end
 
   test "yield(1)" do
