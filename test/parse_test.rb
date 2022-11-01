@@ -740,7 +740,11 @@ class ParseTest < Test::Unit::TestCase
   test "symbol list" do
     expected = SymbolListNode(
       PERCENT_LOWER_I("%i["),
-      [SymbolNode(STRING_CONTENT("a")), SymbolNode(STRING_CONTENT("b")), SymbolNode(STRING_CONTENT("c"))],
+      [
+        SymbolNode(nil, STRING_CONTENT("a"), nil),
+        SymbolNode(nil, STRING_CONTENT("b"), nil),
+        SymbolNode(nil, STRING_CONTENT("c"), nil)
+      ],
       STRING_END("]")
     )
 

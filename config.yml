@@ -996,9 +996,13 @@ nodes:
           ^^^^^^^^^^^^^^
   - name: SymbolNode
     child_nodes:
+      - name: opening
+        type: token?
       - name: value
         type: token
-    location: value
+      - name: closing
+        type: token?
+    location: opening|value->closing|value
     comment: |
       Represents a symbol literal or a symbol contained within a `%i` list.
 
