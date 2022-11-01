@@ -397,8 +397,8 @@ lex_identifier(yp_parser_t *parser) {
   // against known keywords.
   width = parser->current.end - parser->current.start;
 
-#define KEYWORD(value, token)                                                                                          \
-  if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0)                     \
+#define KEYWORD(value, token) \
+  if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0) \
     return YP_TOKEN_KEYWORD_##token;
 
   if (parser->current.end < parser->end) {
@@ -1109,30 +1109,53 @@ static yp_encoding_t yp_encoding_utf_8 = {
 // actions are necessary for it here.
 static void
 parser_lex_magic_comments(yp_parser_t *parser) {
-  const char *pointer = parser->current.start + 1;
-  while (char_is_non_newline_whitespace(pointer)) pointer++;
+  const char *start = parser->current.start + 1;
+  while (char_is_non_newline_whitespace(start)) start++;
 
-  if (strncmp(pointer, "-*-", 3) == 0) {
-    pointer += 3;
-    while (char_is_non_newline_whitespace(pointer)) pointer++;
+  if (strncmp(start, "-*-", 3) == 0) {
+    start += 3;
+    while (char_is_non_newline_whitespace(start)) start++;
   }
 
   // There is a lot TODO here to make it more accurately reflect encoding
   // parsing, but for now this gets us closer.
-  if (strncmp(pointer, "encoding:", 9) == 0) {
-    pointer += 9;
-    while (char_is_non_newline_whitespace(pointer)) pointer++;
+  if (strncmp(start, "encoding:", 9) == 0) {
+    start += 9;
+    while (char_is_non_newline_whitespace(start)) start++;
 
-    if ((strncmp(pointer, "ascii", 5) == 0) || (strncmp(pointer, "binary", 6) == 0) || (strncmp(pointer, "us-ascii", 8) == 0)) {
-      parser->encoding = yp_encoding_ascii;
-    } else if (strncmp(pointer, "iso-8859-9", 10) == 0) {
-      parser->encoding = yp_encoding_iso_8859_9;
-    } else if (strncmp(pointer, "utf-8", 5) == 0) {
-      parser->encoding = yp_encoding_utf_8;
-    } else {
-      // TODO: handling invalid encoding.
-      fprintf(stderr, "Could not parse encoding: %.*s\n", (int) (parser->current.end - pointer), pointer);
+    const char *end = start;
+    while (!char_is_whitespace(end)) end++;
+    size_t width = end - start;
+
+    // First, we're going to loop through each of the encodings that we handle
+    // explicitly. If we found one that we understand, we'll use that value.
+#define ENCODING(value, prebuilt) \
+    if (width == sizeof(value) - 1 && strncmp(start, value, sizeof(value) - 1) == 0) { \
+      parser->encoding = prebuilt; \
+      return; \
     }
+
+    ENCODING("ascii", yp_encoding_ascii);
+    ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
+    ENCODING("utf-8", yp_encoding_utf_8);
+    ENCODING("binary", yp_encoding_ascii);
+    ENCODING("us-ascii", yp_encoding_ascii);
+
+#undef ENCODING
+
+    // Otherwise, we're going to call out to a user-defined callback. If they
+    // return an encoding struct that we can use, then we'll use that here.
+    yp_encoding_t *encoding = parser->encoding_decode_callback(start, width);
+    if (encoding != NULL) {
+      parser->encoding = *encoding;
+      return;
+    }
+
+    // If nothing was returned by this point, then we've got an issue because we
+    // didn't understand the encoding that the user was trying to use. In this
+    // case we'll keep using the default encoding but add an error to the
+    // parser to indicate an unsuccessful parse.
+    yp_error_list_append(&parser->error_list, "Could not understand the encoding specified in the magic comment.", start - parser->start);
   }
 }
 
@@ -2519,6 +2542,14 @@ yp_error_handler_t default_error_handler = {
   .unterminated_string = unrecoverable,
 };
 
+// By default, the parser will not attempt to decode any more encodings than are
+// already hard-coded into the parser. This function provides the default
+// implementation so that the parser always has a valid function pointer.
+static yp_encoding_t *
+undecodeable(const char *name, size_t length) {
+  return NULL;
+}
+
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
@@ -2537,14 +2568,22 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     .current_scope = NULL,
     .current_context = NULL,
     .recovering = false,
-    .encoding = {
-      .alpha_char = yp_encoding_ascii_alpha_char,
-      .alnum_char = yp_encoding_ascii_alnum_char
-    }
+    .encoding = yp_encoding_utf_8,
+    .encoding_decode_callback = undecodeable
   };
 
   yp_list_init(&parser->error_list);
   yp_list_init(&parser->comment_list);
+}
+
+// Register a callback that will be called when YARP encounters a magic comment
+// with an encoding referenced that it doesn't understand. The callback should
+// return NULL if it also doesn't understand the encoding or it should return a
+// pointer to a yp_encoding_t struct that contains the functions necessary to
+// parse identifiers.
+__attribute__((__visibility__("default"))) extern void
+yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback) {
+  parser->encoding_decode_callback = callback;
 }
 
 // Free any memory associated with the given parser.

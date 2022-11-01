@@ -5,11 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct {
-  size_t (*alpha_char)(const char *c);
-  size_t (*alnum_char)(const char *c);
-} yp_encoding_t;
-
 size_t
 yp_encoding_ascii_alpha_char(const char *c);
 

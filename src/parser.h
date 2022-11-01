@@ -115,6 +115,21 @@ typedef struct yp_comment {
   yp_comment_type_t type;
 } yp_comment_t;
 
+// This struct defines the functions necessary to implement the encoding
+// interface so we can determine how many bytes the subsequent character takes.
+// Each callback should return the number of bytes, or 0 if the next bytes are
+// invalid for the encoding and type.
+typedef struct {
+  size_t (*alpha_char)(const char *c);
+  size_t (*alnum_char)(const char *c);
+} yp_encoding_t;
+
+// When an encoding is encountered that isn't understood by YARP, we provide
+// the ability here to call out to a user-defined function to get an encoding
+// struct. If the function returns something that isn't NULL, we set that to
+// our encoding and use it to parse identifiers.
+typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(const char *name, size_t width);
+
 // This struct represents the overall parser. It contains a reference to the
 // source file, as well as pointers that indicate where in the source it's
 // currently parsing. It also contains the most recent and current token that
@@ -143,6 +158,12 @@ struct yp_parser {
   // The encoding functions for the current file is attached to the parser as
   // it's parsing so that it can change with a magic comment.
   yp_encoding_t encoding;
+
+  // When an encoding is encountered that isn't understood by YARP, we provide
+  // the ability here to call out to a user-defined function to get an encoding
+  // struct. If the function returns something that isn't NULL, we set that to
+  // our encoding and use it to parse identifiers.
+  yp_encoding_decode_callback_t encoding_decode_callback;
 };
 
 #endif // YARP_PARSER_H
