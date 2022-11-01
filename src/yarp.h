@@ -32,6 +32,14 @@ yp_version(void);
 __attribute__((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, off_t size);
 
+// Register a callback that will be called when YARP encounters a magic comment
+// with an encoding referenced that it doesn't understand. The callback should
+// return NULL if it also doesn't understand the encoding or it should return a
+// pointer to a yp_encoding_t struct that contains the functions necessary to
+// parse identifiers.
+__attribute__((__visibility__("default"))) extern void
+yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback);
+
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser);
