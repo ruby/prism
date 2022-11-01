@@ -1930,7 +1930,13 @@ parse_expression_prefix(yp_parser_t *parser) {
         }
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
 
-        yp_node_t *symbol = yp_node_symbol_node_create(parser, &parser->previous);
+        yp_token_t opening;
+        not_provided(&opening, parser->previous.start);
+
+        yp_token_t closing;
+        not_provided(&closing, parser->previous.end);
+
+        yp_node_t *symbol = yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
         yp_node_list_append(parser, symbol_list, &symbol_list->as.symbol_list_node.symbols, symbol);
       }
 
@@ -2182,6 +2188,15 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
       return yp_node_string_node_create(parser, &opening, &content, &parser->previous);
+    }
+    case YP_TOKEN_SYMBOL_BEGIN: {
+      yp_token_t opening = parser->previous;
+      parser_lex(parser);
+
+      yp_token_t closing;
+      not_provided(&closing, parser->previous.end);
+
+      return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
     }
     default:
       if (context_recoverable(parser, &parser->previous)) {

@@ -737,10 +737,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SuperNode(KEYWORD_SUPER("super"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "super(1, 2, 3)"
   end
 
+  test "symbol" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil), ":a"
+  end
+
   test "symbol list" do
     expected = SymbolListNode(
       PERCENT_LOWER_I("%i["),
-      [SymbolNode(STRING_CONTENT("a")), SymbolNode(STRING_CONTENT("b")), SymbolNode(STRING_CONTENT("c"))],
+      [
+        SymbolNode(nil, STRING_CONTENT("a"), nil),
+        SymbolNode(nil, STRING_CONTENT("b"), nil),
+        SymbolNode(nil, STRING_CONTENT("c"), nil)
+      ],
       STRING_END("]")
     )
 
