@@ -64,6 +64,11 @@ yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 __attribute__((__visibility__("default"))) extern void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
+// Parse and serialize the AST represented by the given source to the given
+// buffer.
+__attribute__((__visibility__("default"))) extern void
+yp_parse_serialize(const char *source, off_t size, yp_buffer_t *buffer);
+
 __attribute__((__visibility__("default"))) extern const char *
 yp_token_type_to_str(yp_token_type_t token_type);
 

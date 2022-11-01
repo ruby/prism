@@ -2616,3 +2616,17 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_serialize_node(parser, node, buffer);
   yp_buffer_append_str(buffer, "\0", 1);
 }
+
+// Parse and serialize the AST represented by the given source to the given
+// buffer.
+__attribute__((__visibility__("default"))) extern void
+yp_parse_serialize(const char *source, off_t size, yp_buffer_t *buffer) {
+  yp_parser_t parser;
+  yp_parser_init(&parser, source, size);
+
+  yp_node_t *node = yp_parse(&parser);
+  yp_serialize(&parser, node, buffer);
+
+  yp_node_destroy(&parser, node);
+  yp_parser_free(&parser);
+}
