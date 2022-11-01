@@ -1171,13 +1171,6 @@ parser_lex(yp_parser_t *parser) {
           parser->current.type = lex_token_type(parser);
         }
 
-        // If we hit the end of the file, then the embedded document is
-        // unterminated. Otherwise, we need to lex past the end of the embedded
-        // document.
-        if (parser->current.type != YP_TOKEN_EOF) {
-          parser->current.type = lex_token_type(parser);
-        }
-
         type = YP_COMMENT_EMBDOC;
         break;
       }

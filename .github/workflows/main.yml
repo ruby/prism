@@ -14,23 +14,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: run clang-format
-      uses: jidicula/clang-format-action@v4.9.0
-      with:
-        clang-format-version: '14'
-        check-path: 'ext'
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: head
         bundler-cache: true
 
-    - name: Run templating
-      run: bundle exec rake templates
+    - name: Run Ruby tests
+      run: bundle exec rake
 
     - name: Run native tests
       run: make test
-
-    - name: Run Ruby tests
-      run: bundle exec rake
