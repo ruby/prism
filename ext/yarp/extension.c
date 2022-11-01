@@ -162,6 +162,9 @@ parse_source(source_t *source) {
       case YP_COMMENT___END__:
         type = ID2SYM(rb_intern("__END__"));
         break;
+      default:
+        type = ID2SYM(rb_intern("inline"));
+        break;
     }
 
     VALUE comment_argv[] = { type, rb_class_new_instance(2, location_argv, rb_cYARPLocation) };

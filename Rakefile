@@ -60,6 +60,13 @@ task lex: :compile do
   results = { passing: [], failing: [] }
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
 
+  accepted_encodings = [
+    Encoding::ASCII_8BIT,
+    Encoding::ISO_8859_9,
+    Encoding::US_ASCII,
+    Encoding::UTF_8
+  ]
+
   filepaths =
     if ENV["FILEPATHS"]
       Dir[ENV["FILEPATHS"]]
@@ -69,6 +76,20 @@ task lex: :compile do
 
   filepaths.each do |filepath|
     source = File.read(filepath)
+
+    # If this file can't be parsed at all, then don't try to compare it to
+    # ripper's output.
+    ripper = Ripper.new(source).tap(&:parse)
+    next if ripper.error?
+
+    # If this file has an encoding that we don't support, then don't try to
+    # compare it to ripper's output.
+    unless accepted_encodings.include?(ripper.encoding)
+      print colorize.call(31, "E")
+      results[:failing] << filepath
+      next
+    end
+
     result =
       YARP.lex_ripper(source).zip(YARP.lex_compat(source)).all? do |(ripper, yarp)|
         break false if yarp.nil?
