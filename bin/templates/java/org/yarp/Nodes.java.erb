@@ -31,6 +31,8 @@ public abstract class Nodes {
             this.startOffset = startOffset;
             this.endOffset = endOffset;
         }
+
+        public abstract <T> T accept(AbstractNodeVisitor<T> visitor);
     }
 
     <%- nodes.each do |node| -%>
@@ -46,6 +48,10 @@ public abstract class Nodes {
       <%-node.params.each do |param| -%>
             this.<%= param.name %> = <%= param.name %>;
       <%- end -%>
+        }
+
+        public <T> T accept(AbstractNodeVisitor<T> visitor) {
+            return visitor.visit<%= node.name -%>(this);
         }
     }
     <%- end -%>
