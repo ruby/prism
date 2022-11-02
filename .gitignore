@@ -16,6 +16,7 @@ test-native/run-one
 *.dSYM
 
 /ext/yarp/node.c
+/java/org/yarp/AbstractNodeVisitor.java
 /java/org/yarp/Loader.java
 /java/org/yarp/Nodes.java
 /lib/yarp/node.rb
