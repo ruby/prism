@@ -37,19 +37,19 @@ public class Loader {
     }
 
     private Nodes.Token loadOptionalToken() {
-        if (buffer.get() != 0) {
-            buffer.position(buffer.position() - 1);
+        if (buffer.get(buffer.position()) != 0) {
             return loadToken();
         } else {
+            buffer.position(buffer.position() + 1); // continue after the 0 byte
             return null;
         }
     }
 
     private Nodes.Node loadOptionalNode() {
-        if (buffer.get() != 0) {
-            buffer.position(buffer.position() - 1);
+        if (buffer.get(buffer.position()) != 0) {
             return loadNode();
         } else {
+            buffer.position(buffer.position() + 1); // continue after the 0 byte
             return null;
         }
     }
