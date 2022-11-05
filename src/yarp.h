@@ -13,6 +13,7 @@
 #include "error.h"
 #include "parser.h"
 #include "node.h"
+#include "pack.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 2
