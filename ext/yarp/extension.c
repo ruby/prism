@@ -345,4 +345,6 @@ Init_yarp(void) {
   rb_define_singleton_method(rb_cYARP, "unescape_all", unescape_all, 1);
 
   rb_define_singleton_method(rb_cYARP, "memsize", memsize, 1);
+
+  Init_yarp_pack();
 }
