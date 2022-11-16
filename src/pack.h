@@ -118,7 +118,7 @@ typedef enum yp_pack_result {
 //
 // Notes:
 //   Consult Ruby documentation for the meaning of directives.
-yp_pack_result
+__attribute__((__visibility__("default"))) extern yp_pack_result
 yp_pack_parse(
     yp_pack_version version,
     yp_pack_variant variant,
@@ -134,6 +134,7 @@ yp_pack_parse(
 
 // YARP abstracts sizes away from the native system - this converts an abstract
 // size to a native size.
-size_t yp_size_to_native(yp_pack_size size);
+__attribute__((__visibility__("default"))) extern size_t
+yp_size_to_native(yp_pack_size size);
 
 #endif
