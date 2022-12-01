@@ -43,11 +43,15 @@ typedef struct {
 
 // This initializes a new parser with the given source.
 static void
-yp_regexp_parser_init(yp_regexp_parser_t *parser, const char *start, const char *end, yp_encoding_t *encoding, yp_string_list_t *named_captures) {
+yp_regexp_parser_init(yp_regexp_parser_t *parser, const char *start, const char *end, yp_string_list_t *named_captures) {
   *parser = (yp_regexp_parser_t) {
     .start = start,
     .end = end,
-    .encoding = *encoding,
+    .encoding = {
+      .char_size = yp_encoding_utf_8_char,
+      .alpha_char = yp_encoding_utf_8_alpha_char,
+      .alnum_char = yp_encoding_utf_8_alnum_char
+    },
     .previous = { .type = YP_REGEXP_TOKEN_EOF, .start = start, .end = start },
     .current = { .type = YP_REGEXP_TOKEN_EOF, .start = start, .end = start },
     .named_captures = named_captures
@@ -627,9 +631,9 @@ yp_regexp_parse_pattern(yp_regexp_parser_t *parser) {
 
 // Parse a regular expression and extract the names of all of the named capture
 // groups.
-yp_regexp_parse_result_t
-yp_regexp_named_capture_group_names(const char *source, size_t size, yp_encoding_t *encoding, yp_string_list_t *named_captures) {
+__attribute__((__visibility__("default"))) extern yp_regexp_parse_result_t
+yp_regexp_named_capture_group_names(const char *source, size_t size, yp_string_list_t *named_captures) {
   yp_regexp_parser_t parser;
-  yp_regexp_parser_init(&parser, source, source + size, encoding, named_captures);
+  yp_regexp_parser_init(&parser, source, source + size, named_captures);
   return yp_regexp_parse_pattern(&parser);
 }

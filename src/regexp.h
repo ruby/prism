@@ -17,7 +17,7 @@ typedef enum {
 
 // Parse a regular expression and extract the names of all of the named capture
 // groups.
-yp_regexp_parse_result_t
-yp_regexp_named_capture_group_names(const char *source, size_t size, yp_encoding_t *encoding, yp_string_list_t *named_captures);
+__attribute__((__visibility__("default"))) extern yp_regexp_parse_result_t
+yp_regexp_named_capture_group_names(const char *source, size_t size, yp_string_list_t *named_captures);
 
 #endif
