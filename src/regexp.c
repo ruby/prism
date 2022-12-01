@@ -1,4 +1,5 @@
 #include "regexp.h"
+#include <stdio.h>
 
 // These are all of the potential types of tokens in the regular expression AST.
 typedef enum {
@@ -36,7 +37,6 @@ typedef struct {
   const char *start;
   const char *end;
   yp_encoding_t encoding;
-  yp_regexp_token_t previous;
   yp_regexp_token_t current;
   yp_string_list_t *named_captures;
 } yp_regexp_parser_t;
@@ -52,7 +52,6 @@ yp_regexp_parser_init(yp_regexp_parser_t *parser, const char *start, const char 
       .alpha_char = yp_encoding_utf_8_alpha_char,
       .alnum_char = yp_encoding_utf_8_alnum_char
     },
-    .previous = { .type = YP_REGEXP_TOKEN_EOF, .start = start, .end = start },
     .current = { .type = YP_REGEXP_TOKEN_EOF, .start = start, .end = start },
     .named_captures = named_captures
   };
@@ -70,7 +69,7 @@ yp_regexp_parser_named_capture(yp_regexp_parser_t *parser, const char *start, co
 // This advances the parser to the next token.
 static void
 yp_regexp_lex_token(yp_regexp_parser_t *parser) {
-  parser->previous = parser->current;
+  parser->current.start = parser->current.end;
 
   if (parser->current.end >= parser->end) {
     parser->current.type = YP_REGEXP_TOKEN_EOF;
@@ -110,11 +109,13 @@ yp_regexp_lex_token(yp_regexp_parser_t *parser) {
 }
 
 // Optionally accept a token and consume it if it exists.
-static void
+static bool
 yp_regexp_accept_token(yp_regexp_parser_t *parser, yp_regexp_token_type_t type) {
   if (parser->current.type == type) {
     yp_regexp_lex_token(parser);
+    return true;
   }
+  return false;
 }
 
 // Expect a token to be present and consume it.
@@ -125,29 +126,6 @@ yp_regexp_expect_token(yp_regexp_parser_t *parser, yp_regexp_token_type_t type) 
     return YP_REGEXP_PARSE_RESULT_OK;
   }
   return YP_REGEXP_PARSE_RESULT_ERROR;
-}
-
-// This represents a point in time for the parser. It's used to backtrack in
-// case that becomes necessary.
-typedef struct {
-  yp_regexp_token_t previous;
-  yp_regexp_token_t current;
-} yp_regexp_parser_savepoint_t;
-
-// Initialize a new savepoint from the parser.
-static void
-yp_regexp_parser_savepoint_init(yp_regexp_parser_savepoint_t *savepoint, yp_regexp_parser_t *parser) {
-  *savepoint = (yp_regexp_parser_savepoint_t) {
-    .previous = parser->previous,
-    .current = parser->current
-  };
-}
-
-// Restore the parser to a previous savepoint.
-static void
-yp_regexp_parser_savepoint_restore(yp_regexp_parser_savepoint_t *savepoint, yp_regexp_parser_t *parser) {
-  parser->previous = savepoint->previous;
-  parser->current = savepoint->current;
 }
 
 // Returns true if the current token is a decimal digit character.
@@ -190,8 +168,7 @@ yp_regexp_is_char_digit(yp_regexp_parser_t *parser) {
 // consumed so we're in the start state.
 static yp_regexp_parse_result_t
 yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
-  yp_regexp_parser_savepoint_t savepoint;
-  yp_regexp_parser_savepoint_init(&savepoint, parser);
+  yp_regexp_token_t savepoint = parser->current;
 
   enum {
     YP_REGEXP_RANGE_QUANTIFIER_STATE_START,
@@ -209,14 +186,14 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
               state = YP_REGEXP_RANGE_QUANTIFIER_STATE_MINIMUM;
               break;
             } else {
-              yp_regexp_parser_savepoint_restore(&savepoint, parser);
+              parser->current = savepoint;
               return YP_REGEXP_PARSE_RESULT_OK;
             }
           case YP_REGEXP_TOKEN_COMMA:
             state = YP_REGEXP_RANGE_QUANTIFIER_STATE_COMMA;
             break;
           default:
-            yp_regexp_parser_savepoint_restore(&savepoint, parser);
+              parser->current = savepoint;
             return YP_REGEXP_PARSE_RESULT_OK;
         }
         break;
@@ -226,7 +203,7 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
             if (yp_regexp_is_char_digit(parser)) {
               break;
             } else {
-              yp_regexp_parser_savepoint_restore(&savepoint, parser);
+              parser->current = savepoint;
               return YP_REGEXP_PARSE_RESULT_OK;
             }
           case YP_REGEXP_TOKEN_COMMA:
@@ -235,7 +212,7 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
           case YP_REGEXP_TOKEN_RBRACE:
             return YP_REGEXP_PARSE_RESULT_OK;
           default:
-            yp_regexp_parser_savepoint_restore(&savepoint, parser);
+            parser->current = savepoint;
             return YP_REGEXP_PARSE_RESULT_OK;
         }
         break;
@@ -244,7 +221,7 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
           state = YP_REGEXP_RANGE_QUANTIFIER_STATE_MAXIMUM;
           break;
         } else {
-          yp_regexp_parser_savepoint_restore(&savepoint, parser);
+          parser->current = savepoint;
           return YP_REGEXP_PARSE_RESULT_OK;
         }
       case YP_REGEXP_RANGE_QUANTIFIER_STATE_MAXIMUM:
@@ -253,13 +230,13 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
             if (yp_regexp_is_char_digit(parser)) {
               break;
             } else {
-              yp_regexp_parser_savepoint_restore(&savepoint, parser);
+              parser->current = savepoint;
               return YP_REGEXP_PARSE_RESULT_OK;
             }
           case YP_REGEXP_TOKEN_RBRACE:
             return YP_REGEXP_PARSE_RESULT_OK;
           default:
-            yp_regexp_parser_savepoint_restore(&savepoint, parser);
+            parser->current = savepoint;
             return YP_REGEXP_PARSE_RESULT_OK;
         }
         break;
@@ -435,9 +412,7 @@ yp_regexp_options_remove(yp_regexp_options_t *options, unsigned char option) {
 static yp_regexp_parse_result_t
 yp_regexp_parse_group(yp_regexp_parser_t *parser) {
   // First, parse any options for the group.
-  if (parser->current.type == YP_REGEXP_TOKEN_CHAR && *parser->current.start == '?') {
-    yp_regexp_lex_token(parser);
-
+  if (yp_regexp_accept_token(parser, YP_REGEXP_TOKEN_QMARK)) {
     if (parser->current.type != YP_REGEXP_TOKEN_CHAR) {
       return YP_REGEXP_PARSE_RESULT_ERROR;
     }
@@ -469,8 +444,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
             if (yp_regexp_find_char(parser, '>') == YP_REGEXP_PARSE_RESULT_ERROR) {
               return YP_REGEXP_PARSE_RESULT_ERROR;
             }
-
-            yp_regexp_parser_named_capture(parser, parser->current.start + 1, parser->current.end - 2);
+            yp_regexp_parser_named_capture(parser, parser->current.start + 1, parser->current.end - 1);
             break;
         }
         break;
@@ -479,7 +453,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
           return YP_REGEXP_PARSE_RESULT_ERROR;
         }
 
-        yp_regexp_parser_named_capture(parser, parser->current.start + 1, parser->current.end - 2);
+        yp_regexp_parser_named_capture(parser, parser->current.start + 1, parser->current.end - 1);
         break;
       case '(': // conditional expression
         if (yp_regexp_find_char(parser, ')') == YP_REGEXP_PARSE_RESULT_ERROR) {

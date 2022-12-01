@@ -1,4 +1,5 @@
 #include "yp_string_list.h"
+#include <stdio.h>
 
 // Allocate a new yp_string_list_t.
 yp_string_list_t *
@@ -21,7 +22,8 @@ yp_string_list_append(yp_string_list_t *string_list, yp_string_t *string) {
     string_list->capacity = string_list->capacity * 2;
     string_list->strings = realloc(string_list->strings, string_list->capacity * sizeof(yp_string_t));
   }
-  *(string_list->strings + (string_list->length * sizeof(yp_string_t))) = *string;
+
+  string_list->strings[string_list->length++] = *string;
 }
 
 // Free the memory associated with the string list.
