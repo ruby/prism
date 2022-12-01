@@ -1,24 +1,29 @@
 #include "yp_encoding.h"
 
 size_t
+yp_encoding_iso_8859_9_char(const char *c) {
+  return 1;
+}
+
+size_t
 yp_encoding_iso_8859_9_alpha_char(const char *c) {
-  const unsigned char v = *c;
+  const unsigned char *uc = (const unsigned char *) c;
 
   return (
-    (v >= 65 && v <= 90) ||
-    (v >= 97 && v <= 122) ||
-    (v == 170) ||
-    (v == 181) ||
-    (v == 186) ||
-    (v >= 192 && v <= 214) ||
-    (v >= 216 && v <= 246) ||
-    (v >= 248 && v <= 255)
+    (*uc >= 0x41 && *uc <= 0x5A) ||
+    (*uc >= 0x61 && *uc <= 0x7A) ||
+    (*uc == 0xAA) ||
+    (*uc == 0xB5) ||
+    (*uc == 0xBA) ||
+    (*uc >= 0xC0 && *uc <= 0xD6) ||
+    (*uc >= 0xD8 && *uc <= 0xF6) ||
+    (*uc >= 0xF8 && *uc <= 0xFF)
   );
 }
 
 size_t
 yp_encoding_iso_8859_9_alnum_char(const char *c) {
-  const unsigned char v = *c;
+  const unsigned char *uc = (const unsigned char *) c;
 
-  return ((v >= 48 && v <= 57) || yp_encoding_iso_8859_9_alpha_char(c));
+  return ((*uc >= 0x30 && *uc <= 0x39) || yp_encoding_iso_8859_9_alpha_char(c));
 }

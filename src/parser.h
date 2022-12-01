@@ -120,6 +120,7 @@ typedef struct yp_comment {
 // Each callback should return the number of bytes, or 0 if the next bytes are
 // invalid for the encoding and type.
 typedef struct {
+  size_t (*char_size)(const char *c);
   size_t (*alpha_char)(const char *c);
   size_t (*alnum_char)(const char *c);
 } yp_encoding_t;

@@ -1091,16 +1091,19 @@ lex_token_type(yp_parser_t *parser) {
 /******************************************************************************/
 
 static yp_encoding_t yp_encoding_ascii = {
+  .char_size = yp_encoding_ascii_char,
   .alnum_char = yp_encoding_ascii_alnum_char,
   .alpha_char = yp_encoding_ascii_alpha_char
 };
 
 static yp_encoding_t yp_encoding_iso_8859_9 = {
+  .char_size = yp_encoding_iso_8859_9_char,
   .alnum_char = yp_encoding_iso_8859_9_alnum_char,
   .alpha_char = yp_encoding_iso_8859_9_alpha_char
 };
 
 static yp_encoding_t yp_encoding_utf_8 = {
+  .char_size = yp_encoding_utf_8_char,
   .alnum_char = yp_encoding_utf_8_alnum_char,
   .alpha_char = yp_encoding_utf_8_alpha_char
 };

@@ -1527,6 +1527,13 @@ utf_8_codepoint(const char *c, size_t *width) {
 }
 
 size_t
+yp_encoding_utf_8_char(const char *c) {
+  size_t width = 0;
+  utf_8_codepoint(c, &width);
+  return width;
+}
+
+size_t
 yp_encoding_utf_8_alpha_char(const char *c) {
   size_t width;
   unicode_codepoint_t codepoint = utf_8_codepoint(c, &width);
