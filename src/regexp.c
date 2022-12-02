@@ -98,7 +98,7 @@ yp_regexp_char_find(yp_regexp_parser_t *parser, char value) {
 //
 // Note that by the time we've hit this function, the lbrace has already been
 // consumed so we're in the start state.
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
   const char *savepoint = parser->cursor;
 
@@ -123,7 +123,7 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
             break;
           default:
             parser->cursor = savepoint;
-            return YP_REGEXP_PARSE_RESULT_OK;
+            return true;
         }
         break;
       case YP_REGEXP_RANGE_QUANTIFIER_STATE_MINIMUM:
@@ -137,10 +137,10 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
             break;
           case '}':
             parser->cursor++;
-            return YP_REGEXP_PARSE_RESULT_OK;
+            return true;
           default:
             parser->cursor = savepoint;
-            return YP_REGEXP_PARSE_RESULT_OK;
+            return true;
         }
         break;
       case YP_REGEXP_RANGE_QUANTIFIER_STATE_COMMA:
@@ -151,7 +151,7 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
             break;
           default:
             parser->cursor = savepoint;
-            return YP_REGEXP_PARSE_RESULT_OK;
+            return true;
         }
         break;
       case YP_REGEXP_RANGE_QUANTIFIER_STATE_MAXIMUM:
@@ -161,16 +161,16 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
             break;
           case '}':
             parser->cursor++;
-            return YP_REGEXP_PARSE_RESULT_OK;
+            return true;
           default:
             parser->cursor = savepoint;
-            return YP_REGEXP_PARSE_RESULT_OK;
+            return true;
         }
         break;
     }
   }
 
-  return YP_REGEXP_PARSE_RESULT_OK;
+  return true;
 }
 
 // quantifier : star-quantifier
@@ -179,50 +179,47 @@ yp_regexp_parse_range_quantifier(yp_regexp_parser_t *parser) {
 //            | range-quantifier
 //            | <empty>
 //            ;
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_quantifier(yp_regexp_parser_t *parser) {
   switch (*parser->cursor) {
     case '*':
     case '+':
     case '?':
       parser->cursor++;
-      return YP_REGEXP_PARSE_RESULT_OK;
+      return true;
     case '{':
       parser->cursor++;
       return yp_regexp_parse_range_quantifier(parser);
     default:
       // In this case there is no quantifier.
-      return YP_REGEXP_PARSE_RESULT_OK;
+      return true;
   }
 }
 
 // match-posix-class : '[' '[' ':' '^'? CHAR+ ':' ']' ']'
 //                   ;
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_posix_class(yp_regexp_parser_t *parser) {
   if (!yp_regexp_char_expect(parser, ':')) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
+    return false;
   }
 
   yp_regexp_char_accept(parser, '^');
-  if (!yp_regexp_char_find(parser, ':')) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
-  }
 
-  if (!yp_regexp_char_expect(parser, ']') || !yp_regexp_char_expect(parser, ']')) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
-  }
-
-  return YP_REGEXP_PARSE_RESULT_OK;
+  return (
+    yp_regexp_char_find(parser, ':') &&
+    yp_regexp_char_expect(parser, ']') &&
+    yp_regexp_char_expect(parser, ']')
+  );
 }
 
 // Forward declaration because character sets can be nested.
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_lbracket(yp_regexp_parser_t *parser);
 
 // match-char-set : '[' '^'? (match-range | match-char)* ']'
 //                ;
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_character_set(yp_regexp_parser_t *parser) {
   yp_regexp_char_accept(parser, '^');
 
@@ -242,15 +239,11 @@ yp_regexp_parse_character_set(yp_regexp_parser_t *parser) {
     }
   }
 
-  if (!yp_regexp_char_expect(parser, ']')) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
-  }
-
-  return YP_REGEXP_PARSE_RESULT_OK;
+  return yp_regexp_char_expect(parser, ']');
 }
 
 // A left bracket can either mean a POSIX class or a character set.
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_lbracket(yp_regexp_parser_t *parser) {
   if ((parser->cursor + 2 < parser->end) && parser->cursor[0] == '[' && parser->cursor[1] == ':') {
     parser->cursor++;
@@ -261,7 +254,7 @@ yp_regexp_parse_lbracket(yp_regexp_parser_t *parser) {
 
 // Forward declaration here since parsing groups needs to go back up the grammar
 // to parse expressions within them.
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_expression(yp_regexp_parser_t *parser);
 
 // These are the states of the options that are configurable on the regular
@@ -337,7 +330,7 @@ yp_regexp_options_remove(yp_regexp_options_t *options, unsigned char option) {
 // * (?imxdau-imx)                 - turn on and off configuration
 // * (?imxdau-imx:subexp)          - turn on and off configuration for an expression
 //
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_group(yp_regexp_parser_t *parser) {
   // First, parse any options for the group.
   if (yp_regexp_char_accept(parser, '?')) {
@@ -346,10 +339,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
 
     switch (*parser->cursor) {
       case '#': // inline comments
-        if (!yp_regexp_char_find(parser, ')')) {
-          return YP_REGEXP_PARSE_RESULT_ERROR;
-        }
-        return YP_REGEXP_PARSE_RESULT_OK;
+        return yp_regexp_char_find(parser, ')');
       case ':': // non-capturing group
       case '=': // positive lookahead
       case '!': // negative lookahead
@@ -360,7 +350,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
       case '<':
         parser->cursor++;
         if (yp_regexp_char_is_eof(parser)) {
-          return YP_REGEXP_PARSE_RESULT_ERROR;
+          return false;
         }
 
         switch (*parser->cursor) {
@@ -371,7 +361,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
           default: { // named capture group
             const char *start = parser->cursor;
             if (!yp_regexp_char_find(parser, '>')) {
-              return YP_REGEXP_PARSE_RESULT_ERROR;
+              return false;
             }
             yp_regexp_parser_named_capture(parser, start, parser->cursor - 1);
             break;
@@ -381,7 +371,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
       case '\'': { // named capture group
         const char *start = ++parser->cursor;
         if (!yp_regexp_char_find(parser, '\'')) {
-          return YP_REGEXP_PARSE_RESULT_ERROR;
+          return false;
         }
 
         yp_regexp_parser_named_capture(parser, start, parser->cursor - 1);
@@ -389,19 +379,19 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
       }
       case '(': // conditional expression
         if (!yp_regexp_char_find(parser, ')')) {
-          return YP_REGEXP_PARSE_RESULT_ERROR;
+          return false;
         }
         break;
       case 'i': case 'm': case 'x': case 'd': case 'a': case 'u': // options
         while (!yp_regexp_char_is_eof(parser) && *parser->cursor != '-' && *parser->cursor != ':' && *parser->cursor != ')') {
           if (!yp_regexp_options_add(&options, *parser->cursor)) {
-            return YP_REGEXP_PARSE_RESULT_ERROR;
+            return false;
           }
           parser->cursor++;
         }
 
         if (yp_regexp_char_is_eof(parser)) {
-          return YP_REGEXP_PARSE_RESULT_ERROR;
+          return false;
         }
 
         if (*parser->cursor == '-') {
@@ -414,33 +404,30 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
         parser->cursor++;
         while (!yp_regexp_char_is_eof(parser) && *parser->cursor != ':' && *parser->cursor != ')') {
           if (!yp_regexp_options_remove(&options, *parser->cursor)) {
-            return YP_REGEXP_PARSE_RESULT_ERROR;
+            return false;
           }
           parser->cursor++;
         }
 
         if (yp_regexp_char_is_eof(parser)) {
-          return YP_REGEXP_PARSE_RESULT_ERROR;
+          return false;
         }
         break;
       default:
-        return YP_REGEXP_PARSE_RESULT_ERROR;
+        return false;
     }
   }
 
   // Now, parse the expressions within this group.
   while (!yp_regexp_char_is_eof(parser) && *parser->cursor != ')') {
-    if (yp_regexp_parse_expression(parser) == YP_REGEXP_PARSE_RESULT_ERROR) {
-      return YP_REGEXP_PARSE_RESULT_ERROR;
+    if (!yp_regexp_parse_expression(parser)) {
+      return false;
     }
     yp_regexp_char_accept(parser, '|');
   }
 
   // Finally, make sure we have a closing parenthesis.
-  if (!yp_regexp_char_expect(parser, ')')) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
-  }
-  return YP_REGEXP_PARSE_RESULT_OK;
+  return yp_regexp_char_expect(parser, ')');
 }
 
 // item : anchor
@@ -453,86 +440,68 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
 //      | group
 //      | quantified
 //      ;
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_item(yp_regexp_parser_t *parser) {
-  switch (*parser->cursor) {
+  switch (*parser->cursor++) {
     case '^':
     case '$':
-      parser->cursor++;
-      return YP_REGEXP_PARSE_RESULT_OK;
+      return true;
     case '\\':
-      parser->cursor++;
       if (!yp_regexp_char_is_eof(parser)) {
         parser->cursor++;
       }
       return yp_regexp_parse_quantifier(parser);
     case '(':
-      parser->cursor++;
-      if (yp_regexp_parse_group(parser) == YP_REGEXP_PARSE_RESULT_ERROR) {
-        return YP_REGEXP_PARSE_RESULT_ERROR;
-      }
-      return yp_regexp_parse_quantifier(parser);
+      return yp_regexp_parse_group(parser) && yp_regexp_parse_quantifier(parser);
     case '[':
-      parser->cursor++;
-      if (yp_regexp_parse_lbracket(parser) == YP_REGEXP_PARSE_RESULT_ERROR) {
-        return YP_REGEXP_PARSE_RESULT_ERROR;
-      }
-      return yp_regexp_parse_quantifier(parser);
+      return yp_regexp_parse_lbracket(parser) && yp_regexp_parse_quantifier(parser);
     default:
-      parser->cursor++;
       return yp_regexp_parse_quantifier(parser);
   }
 }
 
 // expression : item+
 //            ;
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_expression(yp_regexp_parser_t *parser) {
-  if (yp_regexp_parse_item(parser) == YP_REGEXP_PARSE_RESULT_ERROR) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
+  if (!yp_regexp_parse_item(parser)) {
+    return false;
   }
 
   while (!yp_regexp_char_is_eof(parser) && *parser->cursor != ')' && *parser->cursor != '|') {
-    if (yp_regexp_parse_item(parser) == YP_REGEXP_PARSE_RESULT_ERROR) {
-      return YP_REGEXP_PARSE_RESULT_ERROR;
+    if (!yp_regexp_parse_item(parser)) {
+      return false;
     }
   }
 
-  return YP_REGEXP_PARSE_RESULT_OK;
+  return true;
 }
 
 // pattern : EOF
 //         | expression EOF
 //         | expression '|' pattern
 //         ;
-static yp_regexp_parse_result_t
+static bool
 yp_regexp_parse_pattern(yp_regexp_parser_t *parser) {
-  // Exit early if the pattern is empty.
-  if (yp_regexp_char_is_eof(parser)) {
-    return YP_REGEXP_PARSE_RESULT_OK;
-  }
-
-  // Parse the first expression in the pattern.
-  if (yp_regexp_parse_expression(parser) == YP_REGEXP_PARSE_RESULT_ERROR) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
-  }
-
-  // Return now if we've parsed the entire pattern.
-  if (yp_regexp_char_is_eof(parser)) {
-    return YP_REGEXP_PARSE_RESULT_OK;
-  }
-
-  // Otherwise, we should have a pipe character.
-  if (!yp_regexp_char_expect(parser, '|')) {
-    return YP_REGEXP_PARSE_RESULT_ERROR;
-  }
-
-  return yp_regexp_parse_pattern(parser);
+  return (
+    (
+      // Exit early if the pattern is empty.
+      yp_regexp_char_is_eof(parser) ||
+      // Parse the first expression in the pattern.
+      yp_regexp_parse_expression(parser)
+    ) &&
+    (
+      // Return now if we've parsed the entire pattern.
+      yp_regexp_char_is_eof(parser) ||
+      // Otherwise, we should have a pipe character.
+      (yp_regexp_char_expect(parser, '|') && yp_regexp_parse_pattern(parser))
+    )
+  );
 }
 
 // Parse a regular expression and extract the names of all of the named capture
 // groups.
-__attribute__((__visibility__("default"))) extern yp_regexp_parse_result_t
+__attribute__((__visibility__("default"))) extern bool
 yp_regexp_named_capture_group_names(const char *source, size_t size, yp_string_list_t *named_captures) {
   yp_regexp_parser_t parser;
   yp_regexp_parser_init(&parser, source, source + size, named_captures);
