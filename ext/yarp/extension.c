@@ -209,6 +209,29 @@ parse_file(VALUE self, VALUE rb_filepath) {
   return value;
 }
 
+static VALUE
+named_captures(VALUE self, VALUE rb_source) {
+  yp_string_list_t string_list;
+  yp_string_list_init(&string_list);
+
+  yp_regexp_parse_result_t result =
+    yp_regexp_named_capture_group_names(RSTRING_PTR(rb_source), RSTRING_LEN(rb_source), &string_list);
+
+  if (result == YP_REGEXP_PARSE_RESULT_ERROR) {
+    yp_string_list_free(&string_list);
+    return Qnil;
+  }
+
+  VALUE names = rb_ary_new();
+  for (size_t index = 0; index < string_list.length; index++) {
+    const yp_string_t *string = &string_list.strings[index];
+    rb_ary_push(names, rb_str_new(yp_string_source(string), yp_string_length(string)));
+  }
+
+  yp_string_list_free(&string_list);
+  return names;
+}
+
 void
 Init_yarp(void) {
   if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
@@ -234,4 +257,6 @@ Init_yarp(void) {
 
   rb_define_singleton_method(rb_cYARP, "parse", parse, 1);
   rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
+
+  rb_define_singleton_method(rb_cYARP, "named_captures", named_captures, 1);
 }

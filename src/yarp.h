@@ -11,9 +11,10 @@
 #include "util/yp_buffer.h"
 #include "ast.h"
 #include "error.h"
-#include "parser.h"
-#include "node.h"
 #include "pack.h"
+#include "parser.h"
+#include "regexp.h"
+#include "node.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 2
