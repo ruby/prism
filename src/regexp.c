@@ -1,5 +1,4 @@
 #include "regexp.h"
-#include <stdio.h>
 
 // This is the parser that is going to handle parsing regular expressions.
 typedef struct {

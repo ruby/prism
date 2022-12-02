@@ -281,6 +281,20 @@ tokens:
   - name: __END__
     comment: "marker for the point in the file at which the parser should stop"
 nodes:
+  - name: AliasNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: left
+        type: node
+      - name: right
+        type: node
+    location: keyword->right
+    comment: |
+      Represents the use of the `alias` keyword.
+
+          alias foo bar
+          ^^^^^^^^^^^^^
   - name: AndNode
     child_nodes:
       - name: left
@@ -1053,6 +1067,18 @@ nodes:
 
           true
           ^^^^
+  - name: UndefNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: names
+        type: node[]
+    location: keyword->names
+    comment: |
+      Represents the use of the `undef` keyword.
+
+          undef :foo, :bar, :baz
+          ^^^^^^^^^^^^^^^^^^^^^^
   - name: UnlessNode
     child_nodes:
       - name: keyword

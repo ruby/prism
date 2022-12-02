@@ -1,5 +1,4 @@
 #include "yp_string_list.h"
-#include <stdio.h>
 
 // Allocate a new yp_string_list_t.
 yp_string_list_t *
