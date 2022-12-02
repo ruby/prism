@@ -1,11 +1,6 @@
 #include "yp_encoding.h"
 
 size_t
-yp_encoding_iso_8859_9_char(const char *c) {
-  return 1;
-}
-
-size_t
 yp_encoding_iso_8859_9_alpha_char(const char *c) {
   const unsigned char *uc = (const unsigned char *) c;
 

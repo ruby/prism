@@ -24,7 +24,7 @@ void
 yp_string_list_append(yp_string_list_t *string_list, yp_string_t *string);
 
 // Free the memory associated with the string list.
-void
+__attribute__((__visibility__("default"))) extern void
 yp_string_list_free(yp_string_list_t *string_list);
 
 #endif

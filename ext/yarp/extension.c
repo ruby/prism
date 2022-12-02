@@ -214,11 +214,13 @@ named_captures(VALUE self, VALUE rb_source) {
   yp_string_list_t string_list;
   yp_string_list_init(&string_list);
 
-  yp_regexp_named_capture_group_names(
-    RSTRING_PTR(rb_source),
-    RSTRING_LEN(rb_source),
-    &string_list
-  );
+  yp_regexp_parse_result_t result =
+    yp_regexp_named_capture_group_names(RSTRING_PTR(rb_source), RSTRING_LEN(rb_source), &string_list);
+
+  if (result == YP_REGEXP_PARSE_RESULT_ERROR) {
+    yp_string_list_free(&string_list);
+    return Qnil;
+  }
 
   VALUE names = rb_ary_new();
   for (size_t index = 0; index < string_list.length; index++) {
@@ -226,6 +228,7 @@ named_captures(VALUE self, VALUE rb_source) {
     rb_ary_push(names, rb_str_new(yp_string_source(string), yp_string_length(string)));
   }
 
+  yp_string_list_free(&string_list);
   return names;
 }
 
