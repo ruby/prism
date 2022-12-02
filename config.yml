@@ -1067,6 +1067,18 @@ nodes:
 
           true
           ^^^^
+  - name: UndefNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: names
+        type: node[]
+    location: keyword->names
+    comment: |
+      Represents the use of the `undef` keyword.
+
+          undef :foo, :bar, :baz
+          ^^^^^^^^^^^^^^^^^^^^^^
   - name: UnlessNode
     child_nodes:
       - name: keyword

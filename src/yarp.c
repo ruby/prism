@@ -1304,7 +1304,6 @@ typedef enum {
   BINDING_POWER_UNARY,           // ! ~ +
   BINDING_POWER_INDEX,           // [] []=
   BINDING_POWER_CALL,            // :: .
-  BINDING_POWER_MAXIMUM
 } binding_power_t;
 
 // This struct represents a set of binding powers used for a given token. They
@@ -1689,6 +1688,39 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   return parent;
 }
 
+// Parse an argument to alias or undef which can either be a bare word, a
+// symbol, or an interpolated symbol.
+static inline yp_node_t *
+parse_alias_or_undef_argument(yp_parser_t *parser) {
+  switch (parser->current.type) {
+    case YP_TOKEN_IDENTIFIER: {
+      yp_token_t opening;
+      not_provided(&opening, parser->current.start);
+
+      yp_token_t closing;
+      not_provided(&closing, parser->previous.end);
+
+      parser_lex(parser);
+      return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
+    }
+    case YP_TOKEN_SYMBOL_BEGIN: {
+      yp_token_t opening = parser->current;
+      parser_lex(parser);
+
+      yp_token_t symbol = parser->current;
+      parser_lex(parser);
+
+      yp_token_t closing;
+      not_provided(&closing, parser->previous.end);
+
+      return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
+    }
+    default:
+      yp_error_list_append(&parser->error_list, "Expected a bare word or symbol argument.", parser->current.start - parser->start);
+      return yp_node_missing_node_create(parser, parser->current.start - parser->start);
+  }
+}
+
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
@@ -1749,8 +1781,8 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_integer_literal_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_ALIAS: {
       yp_token_t keyword = parser->previous;
-      yp_node_t *left = parse_expression(parser, BINDING_POWER_MAXIMUM, "Expected to find an expression to alias.");
-      yp_node_t *right = parse_expression(parser, BINDING_POWER_MAXIMUM, "Expected to find an expression to alias to.");
+      yp_node_t *left = parse_alias_or_undef_argument(parser);
+      yp_node_t *right = parse_alias_or_undef_argument(parser);
 
       return yp_node_alias_node_create(parser, &keyword, left, right);
     }
@@ -1887,6 +1919,24 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_IF:
       return parse_conditional(parser, YP_CONTEXT_IF);
+    case YP_TOKEN_KEYWORD_UNDEF: {
+      yp_token_t keyword = parser->previous;
+      yp_node_t *undef = yp_node_undef_node_create(parser, &keyword);
+
+      yp_node_t *name = parse_alias_or_undef_argument(parser);
+      if (name->type == YP_NODE_MISSING_NODE) return undef;
+
+      yp_node_list_append(parser, undef, &undef->as.undef_node.names, name);
+
+      while (accept(parser, YP_TOKEN_COMMA)) {
+        name = parse_alias_or_undef_argument(parser);
+        if (name->type == YP_NODE_MISSING_NODE) return undef;
+
+        yp_node_list_append(parser, undef, &undef->as.undef_node.names, name);
+      }
+
+      return undef;
+    }
     case YP_TOKEN_KEYWORD_UNLESS:
       return parse_conditional(parser, YP_CONTEXT_UNLESS);
     case YP_TOKEN_KEYWORD_MODULE: {

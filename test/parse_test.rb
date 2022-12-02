@@ -32,8 +32,24 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
   end
 
-  test "alias keyword" do
-    assert_parses AliasNode(KEYWORD_ALIAS("alias"), expression(":foo"), expression(":bar")), "alias :foo :bar"
+  test "alias bare" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      SymbolNode(nil, IDENTIFIER("foo"), nil),
+      SymbolNode(nil, IDENTIFIER("bar"), nil)
+    )
+
+    assert_parses expected, "alias foo bar"
+  end
+
+  test "alias symbols" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil)
+    )
+
+    assert_parses expected, "alias :foo :bar"
   end
 
   test "and keyword" do
@@ -841,6 +857,31 @@ class ParseTest < Test::Unit::TestCase
 
   test "unary ~" do
     assert_parses CallNode(expression("1"), nil, TILDE("~"), nil, nil, nil, "~"), "~1"
+  end
+
+  test "undef bare" do
+    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil)]), "undef a"
+  end
+
+  test "undef bare, multiple" do
+    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)]), "undef a, b"
+  end
+
+  test "undef symbol" do
+    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)]), "undef :a"
+  end
+
+  test "undef symbol, multiple" do
+    expected = UndefNode(
+      KEYWORD_UNDEF("undef"),
+      [
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil)
+      ]
+    )
+
+    assert_parses expected, "undef :a, :b, :c"
   end
 
   test "unless" do
