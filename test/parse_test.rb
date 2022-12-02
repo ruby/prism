@@ -32,6 +32,10 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
   end
 
+  test "alias keyword" do
+    assert_parses AliasNode(KEYWORD_ALIAS("alias"), expression(":foo"), expression(":bar")), "alias :foo :bar"
+  end
+
   test "and keyword" do
     assert_parses AndNode(expression("1"), KEYWORD_AND("and"), expression("2")), "1 and 2"
   end

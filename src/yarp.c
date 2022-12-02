@@ -1304,6 +1304,7 @@ typedef enum {
   BINDING_POWER_UNARY,           // ! ~ +
   BINDING_POWER_INDEX,           // [] []=
   BINDING_POWER_CALL,            // :: .
+  BINDING_POWER_MAXIMUM
 } binding_power_t;
 
 // This struct represents a set of binding powers used for a given token. They
@@ -1746,6 +1747,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_instance_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_INTEGER:
       return yp_node_integer_literal_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD_ALIAS: {
+      yp_token_t keyword = parser->previous;
+      yp_node_t *left = parse_expression(parser, BINDING_POWER_MAXIMUM, "Expected to find an expression to alias.");
+      yp_node_t *right = parse_expression(parser, BINDING_POWER_MAXIMUM, "Expected to find an expression to alias to.");
+
+      return yp_node_alias_node_create(parser, &keyword, left, right);
+    }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       yp_token_t keyword = parser->previous;
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
