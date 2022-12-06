@@ -2,23 +2,23 @@
 
 size_t
 yp_encoding_iso_8859_9_alpha_char(const char *c) {
-  const unsigned char *uc = (const unsigned char *) c;
+  const unsigned char v = *c;
 
   return (
-    (*uc >= 0x41 && *uc <= 0x5A) ||
-    (*uc >= 0x61 && *uc <= 0x7A) ||
-    (*uc == 0xAA) ||
-    (*uc == 0xB5) ||
-    (*uc == 0xBA) ||
-    (*uc >= 0xC0 && *uc <= 0xD6) ||
-    (*uc >= 0xD8 && *uc <= 0xF6) ||
-    (*uc >= 0xF8 && *uc <= 0xFF)
+    (v >= 0x41 && v <= 0x5A) ||
+    (v >= 0x61 && v <= 0x7A) ||
+    (v == 0xAA) ||
+    (v == 0xB5) ||
+    (v == 0xBA) ||
+    (v >= 0xC0 && v <= 0xD6) ||
+    (v >= 0xD8 && v <= 0xF6) ||
+    (v >= 0xF8 && v <= 0xFF)
   );
 }
 
 size_t
 yp_encoding_iso_8859_9_alnum_char(const char *c) {
-  const unsigned char *uc = (const unsigned char *) c;
+  const unsigned char v = *c;
 
-  return ((*uc >= 0x30 && *uc <= 0x39) || yp_encoding_iso_8859_9_alpha_char(c));
+  return ((v >= 0x30 && v <= 0x39) || yp_encoding_iso_8859_9_alpha_char(c));
 }

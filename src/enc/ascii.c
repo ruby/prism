@@ -2,12 +2,16 @@
 
 size_t
 yp_encoding_ascii_alpha_char(const char *c) {
-  if ((*c >= 'a' && *c <= 'z') || (*c >= 'A' && *c <= 'Z')) return 1;
+  const unsigned char v = *c;
+
+  if ((v >= 'a' && v <= 'z') || (v >= 'A' && v <= 'Z')) return 1;
   return 0;
 }
 
 size_t
 yp_encoding_ascii_alnum_char(const char *c) {
-  if (yp_encoding_ascii_alpha_char(c) || (*c >= '0' && *c <= '9')) return 1;
+  const unsigned char v = *c;
+
+  if (yp_encoding_ascii_alpha_char(c) || (v >= '0' && v <= '9')) return 1;
   return 0;
 }
