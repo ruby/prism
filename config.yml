@@ -285,11 +285,11 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
-      - name: left
+      - name: new_name
         type: node
-      - name: right
+      - name: old_name
         type: node
-    location: keyword->right
+    location: keyword->old_name
     comment: |
       Represents the use of the `alias` keyword.
 
