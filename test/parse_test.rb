@@ -858,7 +858,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string list" do
-    expected = StringListNode(
+    expected = ArrayNode(
       PERCENT_LOWER_W("%w["),
       [
         StringNode(nil, STRING_CONTENT("a"), nil),
@@ -872,7 +872,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string list with interpolation allowed but not used" do
-    expected = StringListNode(
+    expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
         StringNode(nil, STRING_CONTENT("a"), nil),
@@ -886,7 +886,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string list with interpolation allowed and used" do
-    expected = StringListNode(
+    expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
         StringNode(nil, STRING_CONTENT("a"), nil),
@@ -932,7 +932,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "symbol list" do
-    expected = SymbolListNode(
+    expected = ArrayNode(
       PERCENT_LOWER_I("%i["),
       [
         SymbolNode(nil, STRING_CONTENT("a"), nil),

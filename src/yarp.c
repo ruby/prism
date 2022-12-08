@@ -2061,10 +2061,10 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_PERCENT_LOWER_I: {
       yp_token_t opening = parser->previous;
-      yp_node_t *symbol_list = yp_node_symbol_list_node_create(parser, &opening, &opening);
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_STRING_END) {
-        if (symbol_list->as.symbol_list_node.symbols.size == 0) {
+        if (array->as.array_node.elements.size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
@@ -2078,20 +2078,20 @@ parse_expression_prefix(yp_parser_t *parser) {
         not_provided(&closing, parser->previous.end);
 
         yp_node_t *symbol = yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
-        yp_node_list_append(parser, symbol_list, &symbol_list->as.symbol_list_node.symbols, symbol);
+        yp_node_list_append(parser, array, &array->as.array_node.elements, symbol);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
-      symbol_list->as.symbol_list_node.closing = parser->previous;
+      array->as.array_node.closing = parser->previous;
 
-      return symbol_list;
+      return array;
     }
     case YP_TOKEN_PERCENT_LOWER_W: {
       yp_token_t opening = parser->previous;
-      yp_node_t *string_list = yp_node_string_list_node_create(parser, &opening, &opening);
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_STRING_END) {
-        if (string_list->as.string_list_node.strings.size == 0) {
+        if (array->as.array_node.elements.size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the strings in a `%w` list.");
@@ -2105,17 +2105,17 @@ parse_expression_prefix(yp_parser_t *parser) {
         not_provided(&closing, parser->previous.end);
 
         yp_node_t *string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
-        yp_node_list_append(parser, string_list, &string_list->as.string_list_node.strings, string);
+        yp_node_list_append(parser, array, &array->as.array_node.elements, string);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
-      string_list->as.string_list_node.closing = parser->previous;
+      array->as.array_node.closing = parser->previous;
 
-      return string_list;
+      return array;
     }
     case YP_TOKEN_PERCENT_UPPER_W: {
       yp_token_t opening = parser->previous;
-      yp_node_t *string_list = yp_node_string_list_node_create(parser, &opening, &opening);
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
       yp_node_t *current = NULL;
 
       while (parser->current.type != YP_TOKEN_STRING_END) {
@@ -2127,7 +2127,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             } else {
               // If we hit a separator after we've hit content, then we need to
               // append that content to the list and reset the current node.
-              yp_node_list_append(parser, string_list, &string_list->as.string_list_node.strings, current);
+              yp_node_list_append(parser, array, &array->as.array_node.elements, current);
               current = NULL;
             }
 
@@ -2214,12 +2214,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       // If we have a current node, then we need to append it to the list.
-      if (current)
-        yp_node_list_append(parser, string_list, &string_list->as.string_list_node.strings, current);
+      if (current) {
+        yp_node_list_append(parser, array, &array->as.array_node.elements, current);
+      }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
-      string_list->as.string_list_node.closing = parser->previous;
-      return string_list;
+      array->as.array_node.closing = parser->previous;
+      return array;
     }
     case YP_TOKEN_RATIONAL_NUMBER:
       return yp_node_rational_literal_create(parser, &parser->previous);
