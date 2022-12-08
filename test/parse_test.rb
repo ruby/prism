@@ -391,7 +391,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([], [], []),
+      ParametersNode([], [], nil, [], nil, nil),
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -406,7 +406,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
-      ParametersNode([], [], []),
+      ParametersNode([], [], nil, [], nil, nil),
       PARENTHESIS_RIGHT(")"),
       Statements([]),
       KEYWORD_END("end"),
@@ -421,7 +421,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([], [], []),
+      ParametersNode([], [], nil, [], nil, nil),
       nil,
       Statements([expression("b = 1")]),
       KEYWORD_END("end"),
@@ -436,7 +436,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       IDENTIFIER("a"),
       nil,
-      ParametersNode([RequiredParameterNode(IDENTIFIER("b"))], [], []),
+      ParametersNode([RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil),
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -458,7 +458,10 @@ class ParseTest < Test::Unit::TestCase
           RequiredParameterNode(IDENTIFIER("d"))
         ],
         [],
-        []
+        nil,
+        [],
+        nil,
+        nil
       ),
       nil,
       Statements([]),
@@ -477,7 +480,10 @@ class ParseTest < Test::Unit::TestCase
       ParametersNode(
         [RequiredParameterNode(IDENTIFIER("b"))],
         [OptionalParameterNode(IDENTIFIER("c"), EQUAL("="), expression("2"))],
-        []
+        nil,
+        [],
+        nil,
+        nil
       ),
       nil,
       Statements([]),
@@ -499,7 +505,10 @@ class ParseTest < Test::Unit::TestCase
           OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), expression("1")),
           OptionalParameterNode(IDENTIFIER("c"), EQUAL("="), expression("2"))
         ],
-        []
+        nil,
+        [],
+        nil,
+        nil
       ),
       nil,
       Statements([]),
@@ -508,6 +517,111 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def a b = 1, c = 2\nend"
+  end
+
+  test "def with rest parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], RestParameterNode(STAR("*"), IDENTIFIER("b")), [], nil, nil),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b")])
+    )
+
+    assert_parses expected, "def a *b\nend"
+  end
+
+  test "def with rest parameter without name" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], RestParameterNode(STAR("*"), nil), [], nil, nil),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a *\nend"
+  end
+
+  test "def with keyword rest parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("b")), nil),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b")])
+    )
+
+    assert_parses expected, "def a **b\nend"
+  end
+
+  test "def with keyword rest parameter without name" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], KeywordRestParameterNode(STAR_STAR("**"), nil), nil),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a **\nend"
+  end
+
+  test "def with forwarding parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], ForwardingParameterNode(DOT_DOT_DOT("...")), nil),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a ...\nend"
+  end
+
+  test "def with block parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], nil, BlockParameterNode(AMPERSAND("&"), IDENTIFIER("b"))),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b")])
+    )
+
+    assert_parses expected, "def a &b\nend"
+  end
+
+  test "def with block parameter without name" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], nil, BlockParameterNode(AMPERSAND("&"), nil)),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a &\nend"
   end
 
   test "defined? without parentheses" do
