@@ -1561,7 +1561,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
 // Parse a list of parameters on a method definition.
 static yp_node_t *
 parse_parameters(yp_parser_t *parser) {
-  yp_node_t *params = yp_node_parameters_node_create(parser);
+  yp_node_t *params = yp_node_parameters_node_create(parser, NULL);
   bool parsing = true;
 
   while (parsing) {
@@ -1601,6 +1601,24 @@ parse_parameters(yp_parser_t *parser) {
 
         yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name);
         yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
+        break;
+      }
+      case YP_TOKEN_STAR: {
+        parser_lex(parser);
+
+        yp_token_t operator = parser->previous;
+        yp_token_t name;
+
+        if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+          name = parser->previous;
+          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        } else {
+          not_provided(&name, parser->previous.end);
+        }
+
+        yp_node_t *param = yp_node_rest_parameter_node_create(parser, &operator, &name);
+        params->as.parameters_node.rest = param;
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
