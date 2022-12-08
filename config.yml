@@ -319,6 +319,21 @@ nodes:
 
           return foo, bar, baz
                  ^^^^^^^^^^^^^
+  - name: ArrayNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: elements
+        type: node[]
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents an array literal. This can be a regular array using brackets or
+      a special array using % like %w or %i.
+
+          [1, 2, 3]
+          ^^^^^^^^^
   - name: BlockParameterNode
     child_nodes:
       - name: operator
@@ -1031,20 +1046,6 @@ nodes:
 
           "foo #{bar} baz"
            ^^^^      ^^^^
-  - name: StringListNode
-    child_nodes:
-      - name: opening
-        type: token
-      - name: strings
-        type: node[]
-      - name: closing
-        type: token
-    location: opening->closing
-    comment: |
-      Represents a `%w` string literal list.
-
-          %w[foo bar baz]
-          ^^^^^^^^^^^^^^^
   - name: SuperNode
     child_nodes:
       - name: keyword
@@ -1081,20 +1082,6 @@ nodes:
 
           %i[foo]
              ^^^
-  - name: SymbolListNode
-    child_nodes:
-      - name: opening
-        type: token
-      - name: symbols
-        type: node[]
-      - name: closing
-        type: token
-    location: opening->closing
-    comment: |
-      Represents a `%i` symbol literal list.
-
-          %i[foo bar baz]
-          ^^^^^^^^^^^^^^^
   - name: Ternary
     child_nodes:
       - name: predicate

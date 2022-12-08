@@ -60,6 +60,25 @@ class ParseTest < Test::Unit::TestCase
     assert_parses AndNode(expression("1"), AMPERSAND_AMPERSAND("&&"), expression("2")), "1 && 2"
   end
 
+  test "array literal" do
+    expected = ArrayNode(
+      BRACKET_LEFT("["),
+      [
+        IntegerLiteral(INTEGER("1")),
+        FloatLiteral(FLOAT("1.0")),
+        RationalLiteral(RATIONAL_NUMBER("1r")),
+        ImaginaryLiteral(IMAGINARY_NUMBER("1i"))
+      ],
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[1, 1.0, 1r, 1i]"
+  end
+
+  test "array literal empty" do
+    assert_parses ArrayNode(BRACKET_LEFT("["), [], BRACKET_RIGHT("]")), "[]"
+  end
+
   test "binary !=" do
     assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), nil, ArgumentsNode([expression("2")]), nil, "!="), "1 != 2"
   end
@@ -858,7 +877,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string list" do
-    expected = StringListNode(
+    expected = ArrayNode(
       PERCENT_LOWER_W("%w["),
       [
         StringNode(nil, STRING_CONTENT("a"), nil),
@@ -872,7 +891,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string list with interpolation allowed but not used" do
-    expected = StringListNode(
+    expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
         StringNode(nil, STRING_CONTENT("a"), nil),
@@ -886,7 +905,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string list with interpolation allowed and used" do
-    expected = StringListNode(
+    expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
         StringNode(nil, STRING_CONTENT("a"), nil),
@@ -932,7 +951,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "symbol list" do
-    expected = SymbolListNode(
+    expected = ArrayNode(
       PERCENT_LOWER_I("%i["),
       [
         SymbolNode(nil, STRING_CONTENT("a"), nil),
