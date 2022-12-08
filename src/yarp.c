@@ -1584,6 +1584,14 @@ parse_parameters(yp_parser_t *parser) {
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
+      case YP_TOKEN_DOT_DOT_DOT: {
+        parser_lex(parser);
+
+        yp_node_t *param = yp_node_forwarding_parameter_node_create(parser, &parser->previous);
+        params->as.parameters_node.keyword_rest = param;
+        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
+        break;
+      }
       case YP_TOKEN_IDENTIFIER: {
         parser_lex(parser);
 

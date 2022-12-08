@@ -579,6 +579,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a **\nend"
   end
 
+  test "def with forwarding parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], ForwardingParameterNode(DOT_DOT_DOT("...")), nil),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a ...\nend"
+  end
+
   test "def with block parameter" do
     expected = DefNode(
       KEYWORD_DEF("def"),
