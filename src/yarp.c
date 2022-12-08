@@ -1790,6 +1790,24 @@ parse_expression_prefix(yp_parser_t *parser) {
   parser_lex(parser);
 
   switch (parser->previous.type) {
+    case YP_TOKEN_BRACKET_LEFT: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
+
+      while (parser->current.type != YP_TOKEN_BRACKET_RIGHT) {
+        if (array->as.array_node.elements.size != 0) {
+          expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
+        }
+
+        yp_node_t *element = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an element for the array.");
+        yp_node_list_append(parser, array, &array->as.array_node.elements, element);
+      }
+
+      expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
+      array->as.array_node.closing = parser->previous;
+
+      return array;
+    }
     case YP_TOKEN_CHARACTER_LITERAL: {
       yp_token_t opening = parser->previous;
       opening.type = YP_TOKEN_STRING_BEGIN;
