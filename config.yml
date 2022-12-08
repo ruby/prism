@@ -319,6 +319,19 @@ nodes:
 
           return foo, bar, baz
                  ^^^^^^^^^^^^^
+  - name: BlockParameterNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: name
+        type: token?
+    location: operator->name|operator
+    comment: |
+      Represents a block parameter to a method, block, or lambda definition.
+
+          def a(&b)
+                ^^
+          end
   - name: BreakNode
     child_nodes:
       - name: keyword
@@ -824,7 +837,9 @@ nodes:
         type: node[]
       - name: keyword_rest
         type: node?
-    location: requireds->keyword_rest|keywords
+      - name: block
+        type: node?
+    location: requireds->block|keyword_rest|keywords
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
