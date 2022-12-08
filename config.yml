@@ -652,6 +652,19 @@ nodes:
           def a(b:)
                 ^^
           end
+  - name: KeywordRestParameterNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: name
+        type: token?
+    location: operator->name|operator
+    comment: |
+      Represents a keyword rest parameter to a method, block, or lambda definition.
+
+          def a(**b)
+                ^^^
+          end
   - name: LocalVariableRead
     child_nodes:
       - name: name
@@ -809,7 +822,9 @@ nodes:
         type: node?
       - name: keywords
         type: node[]
-    location: requireds->keywords
+      - name: keyword_rest
+        type: node?
+    location: requireds->keyword_rest|keywords
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
