@@ -1229,6 +1229,26 @@ nodes:
 
           while foo do bar end
           ^^^^^^^^^^^^^^^^^^^^
+  - name: ForNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: index
+        type: node
+      - name: keyword_in
+        type: token
+      - name: collection
+        type: node
+      - name: statement
+        type: node
+      - name: end_keyword
+        type: token?
+    location: keyword->statement
+    comment: |
+      Represents the use of the `for` keyword.
+
+          for i in a end
+          ^^^^^^^^^^^^^^
   - name: YieldNode
     child_nodes:
       - name: keyword

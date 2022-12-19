@@ -1177,7 +1177,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a if b if c"
   end
 
-   test "begin statements" do
+  test "begin statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
@@ -1190,7 +1190,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin a; end"
   end
 
-   test "endless method definition without arguments" do
+  test "endless method definition without arguments" do
     expected = DefNode(
       KEYWORD_DEF("def"),
       IDENTIFIER("foo"),
@@ -1206,7 +1206,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def foo = 123"
   end
 
-   test "endless method definition with arguments" do
+  test "endless method definition with arguments" do
     expected = DefNode(
       KEYWORD_DEF("def"),
       IDENTIFIER("foo"),
@@ -1280,6 +1280,19 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "class << self\n1 + 2\nend"
     assert_parses expected, "class << self;1 + 2;end"
+  end
+
+  test "for loops" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      expression("i"),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i in a\nend"
   end
 
   private
