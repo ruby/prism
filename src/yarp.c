@@ -2035,6 +2035,9 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       return yp_node_false_node_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD_FOR:
+      printf("GOT HERE!\n");
+      return NULL;
     case YP_TOKEN_KEYWORD_IF:
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {

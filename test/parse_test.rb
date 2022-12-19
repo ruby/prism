@@ -1288,6 +1288,7 @@ class ParseTest < Test::Unit::TestCase
       expression("i"),
       KEYWORD_IN("in"),
       expression("1..10"),
+      nil,
       Statements([expression("i")]),
       KEYWORD_END("end"),
     )
