@@ -1293,7 +1293,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end"),
     )
 
-    assert_parses expected, "for i in a\nend"
+    assert_parses expected, "for i in 1..10\ni\nend"
   end
 
   private

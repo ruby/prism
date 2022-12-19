@@ -21,6 +21,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
     case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
+    case YP_CONTEXT_FOR: return "FOR";
     case YP_CONTEXT_IF: return "IF";
     case YP_CONTEXT_MAIN: return "MAIN";
     case YP_CONTEXT_MODULE: return "MODULE";
@@ -1220,6 +1221,7 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_ELSE:
     case YP_CONTEXT_BEGIN:
     case YP_CONTEXT_SCLASS:
+    case YP_CONTEXT_FOR:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_UNLESS:
@@ -2035,9 +2037,36 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       return yp_node_false_node_create(parser, &parser->previous);
-    case YP_TOKEN_KEYWORD_FOR:
-      printf("GOT HERE!\n");
-      return NULL;
+    case YP_TOKEN_KEYWORD_FOR: {
+      yp_token_t for_keyword = parser->previous;
+      yp_node_t *index = parse_expression(parser, BINDING_POWER_INDEX, "Expected index after for.");
+
+      expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
+      yp_token_t in_keyword = parser->previous;
+
+      yp_node_t *collection = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected collection.");
+
+      yp_token_t do_keyword;
+      if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
+        do_keyword = parser->previous;
+      } else {
+        not_provided(&do_keyword, parser->previous.start);
+      }
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      accept(parser, YP_TOKEN_NEWLINE);
+
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_FOR);
+      parser->current_scope = parent_scope;
+
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close for loop.");
+      yp_token_t end_keyword = parser->previous;
+
+      return yp_node_for_node_create(parser, &for_keyword, index, &in_keyword, collection, &do_keyword, statements, &end_keyword);
+    }
     case YP_TOKEN_KEYWORD_IF:
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {

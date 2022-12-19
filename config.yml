@@ -1241,11 +1241,11 @@ nodes:
         type: node
       - name: do_keyword
         type: token?
-      - name: statement
+      - name: statements
         type: node
       - name: end_keyword
         type: token
-    location: for_keyword->statement
+    location: for_keyword->statements
     comment: |
       Represents the use of the `for` keyword.
 
