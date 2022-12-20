@@ -334,6 +334,22 @@ nodes:
 
           [1, 2, 3]
           ^^^^^^^^^
+  - name: BeginNode
+    child_nodes:
+      - name: begin_keyword
+        type: token
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: begin_keyword->end_keyword
+    comment: |
+      Represents a begin statement.
+
+          begin
+            foo
+          end
+          ^^^^^
   - name: BlockParameterNode
     child_nodes:
       - name: operator

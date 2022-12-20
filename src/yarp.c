@@ -15,6 +15,7 @@ char* yp_version(void) {
 __attribute__((unused)) static const char *
 debug_context(yp_context_t context) {
   switch (context) {
+    case YP_CONTEXT_BEGIN: return "BEGIN";
     case YP_CONTEXT_CLASS: return "CLASS";
     case YP_CONTEXT_DEF: return "DEF";
     case YP_CONTEXT_ELSE: return "ELSE";
@@ -1227,6 +1228,7 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_WHILE:
     case YP_CONTEXT_UNTIL:
     case YP_CONTEXT_ELSE:
+    case YP_CONTEXT_BEGIN:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_UNLESS:
@@ -1865,6 +1867,18 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *right = parse_alias_or_undef_argument(parser);
 
       return yp_node_alias_node_create(parser, &keyword, left, right);
+    }
+    case YP_TOKEN_KEYWORD_BEGIN: {
+      yp_token_t begin_keyword = parser->previous;
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_BEGIN);
+
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
+
+      yp_token_t end_keyword = parser->previous;
+      return yp_node_begin_node_create(parser, &begin_keyword, statements, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       yp_token_t keyword = parser->previous;
