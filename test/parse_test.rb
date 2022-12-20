@@ -210,7 +210,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       PARENTHESIS_RIGHT(")"),
       "call"
-    )    
+    )
 
     assert_parses expected, "a.()"
   end
@@ -224,7 +224,7 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("1"), expression("2"), expression("3")]),
       PARENTHESIS_RIGHT(")"),
       "call"
-    )    
+    )
 
     assert_parses expected, "a.(1, 2, 3)"
   end
@@ -1157,6 +1157,19 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "a if b if c"
+  end
+
+   test "begin statements" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nend"
+    assert_parses expected, "begin; a; end"
+    assert_parses expected, "begin a\n end"
+    assert_parses expected, "begin a; end"
   end
 
   private
