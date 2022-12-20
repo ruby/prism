@@ -43,6 +43,13 @@ task make: :templates do
   sh "make"
 end
 
+task generate_compilation_database: :templates do
+  sh "which bear"
+  abort("Installing bear is required to generate the compilation database") unless $?.success?
+
+  sh "bear -- make"
+end
+
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
 
