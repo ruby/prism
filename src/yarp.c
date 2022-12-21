@@ -1,4 +1,5 @@
 #include "yarp.h"
+#include "ast.h"
 #include "error.h"
 #include "node.h"
 
@@ -2059,6 +2060,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parent_scope = parser->current_scope;
       parser->current_scope = scope;
 
+      accept(parser, YP_TOKEN_SEMICOLON);
       accept(parser, YP_TOKEN_NEWLINE);
 
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_FOR);
