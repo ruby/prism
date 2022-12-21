@@ -1009,7 +1009,7 @@ nodes:
         type: token
       - name: operator
         type: token
-      - name: superclass
+      - name: expression
         type: node
       - name: statements
         type: node

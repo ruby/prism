@@ -1922,42 +1922,48 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;
 
-      yp_token_t operator;
-      yp_node_t *superclass;
-      yp_node_t *name;
+      if (accept(parser, YP_TOKEN_LESS_LESS))
+      {
+        yp_token_t operator = parser->previous;
 
-      bool is_singleton = accept(parser, YP_TOKEN_LESS_LESS);
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expeted to find expression.");
 
-      if (is_singleton) {
-        operator = parser->previous;
-        superclass = parse_expression(parser, BINDING_POWER_CALL, "Expeted to find superclass name.");
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-      } else {
-        name = parse_expression(parser, BINDING_POWER_CALL, "Expected to find a class name after `class`.");
 
-        if (accept(parser, YP_TOKEN_LESS)) {
-          operator = parser->previous;
-          superclass = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a superclass after `<`.");
-        } else {
-          not_provided(&operator, parser->previous.end);
-          superclass = NULL;
-        }
+        yp_node_t *scope = yp_node_scope_create(parser);
+        yp_node_t *parent_scope = parser->current_scope;
+        parser->current_scope = scope;
+
+        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_SCLASS);
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
+
+        parser->current_scope = parent_scope;
+
+        return yp_node_s_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
+      }
+
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_CALL, "Expected to find a class name after `class`.");
+
+      yp_token_t inheritance_operator;
+      yp_node_t *superclass;
+
+      if (accept(parser, YP_TOKEN_LESS)) {
+        inheritance_operator = parser->previous;
+        superclass = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a superclass after `<`.");
+      } else {
+        not_provided(&inheritance_operator, parser->previous.end);
+        superclass = NULL;
       }
 
       yp_node_t *scope = yp_node_scope_create(parser);
       yp_node_t *parent_scope = parser->current_scope;
       parser->current_scope = scope;
 
-      yp_node_t *statements = parse_statements(parser, is_singleton ? YP_CONTEXT_SCLASS : YP_CONTEXT_CLASS);
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_CLASS);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
       parser->current_scope = parent_scope;
-
-      if (is_singleton) {
-        return yp_node_s_class_node_create(parser, scope, &class_keyword, &operator, superclass, statements, &parser->previous);
-      } else {
-        return yp_node_class_node_create(parser, scope, &class_keyword, name, &operator, superclass, statements, &parser->previous);
-      }
+      return yp_node_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_DEF: {
       yp_token_t def_keyword = parser->previous;
