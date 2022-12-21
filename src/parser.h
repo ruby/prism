@@ -95,6 +95,7 @@ typedef enum {
   YP_CONTEXT_UNTIL,    // an until statement
   YP_CONTEXT_EMBEXPR,  // an interpolated expression
   YP_CONTEXT_BEGIN,    // a begin statement
+  YP_CONTEXT_SCLASS,   // a singleton class definition
 } yp_context_t;
 
 // This is a node in a linked list of contexts.

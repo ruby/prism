@@ -1001,6 +1001,26 @@ nodes:
 
           retry
           ^^^^^
+  - name: SClassNode
+    child_nodes:
+      - name: scope
+        type: node
+      - name: class_keyword
+        type: token
+      - name: operator
+        type: token
+      - name: superclass
+        type: node
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: class_keyword->end_keyword
+    comment: |
+      Represents a singleton class declaration involving the `class` keyword.
+
+          class << self end
+          ^^^^^^^^^^^^^^^^^
   - name: Scope
     child_nodes:
       - name: locals
