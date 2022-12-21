@@ -412,6 +412,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], nil, nil),
       nil,
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([])
@@ -427,6 +428,7 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_LEFT("("),
       ParametersNode([], [], nil, [], nil, nil),
       PARENTHESIS_RIGHT(")"),
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([])
@@ -442,6 +444,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], nil, nil),
       nil,
+      nil,
       Statements([expression("b = 1")]),
       KEYWORD_END("end"),
       Scope([IDENTIFIER("b")])
@@ -456,6 +459,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       nil,
       ParametersNode([RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil),
+      nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -483,6 +487,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       nil,
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")])
@@ -504,6 +509,7 @@ class ParseTest < Test::Unit::TestCase
         nil,
         nil
       ),
+      nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -530,6 +536,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       nil,
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([IDENTIFIER("b"), IDENTIFIER("c")])
@@ -544,6 +551,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       nil,
       ParametersNode([], [], RestParameterNode(STAR("*"), IDENTIFIER("b")), [], nil, nil),
+      nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -560,6 +568,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], RestParameterNode(STAR("*"), nil), [], nil, nil),
       nil,
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([])
@@ -574,6 +583,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       nil,
       ParametersNode([], [], nil, [], KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("b")), nil),
+      nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -590,6 +600,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], KeywordRestParameterNode(STAR_STAR("**"), nil), nil),
       nil,
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([])
@@ -604,6 +615,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       nil,
       ParametersNode([], [], nil, [], ForwardingParameterNode(DOT_DOT_DOT("...")), nil),
+      nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -620,6 +632,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], nil, BlockParameterNode(AMPERSAND("&"), IDENTIFIER("b"))),
       nil,
+      nil,
       Statements([]),
       KEYWORD_END("end"),
       Scope([IDENTIFIER("b")])
@@ -634,6 +647,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       nil,
       ParametersNode([], [], nil, [], nil, BlockParameterNode(AMPERSAND("&"), nil)),
+      nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
@@ -1170,6 +1184,38 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin; a; end"
     assert_parses expected, "begin a\n end"
     assert_parses expected, "begin a; end"
+  end
+
+   test "endless method definition without arguments" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      EQUAL("="),
+      Statements([expression("123")]),
+      nil,
+      Scope([])
+    )
+
+    assert_parses expected, "def foo = 123"
+  end
+
+   test "endless method definition with arguments" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode([RequiredParameterNode(IDENTIFIER("bar"))], [], nil, [], nil, nil),
+      PARENTHESIS_RIGHT(")"),
+      EQUAL("="),
+      Statements([expression("123")]),
+      nil,
+      Scope([IDENTIFIER("bar")])
+    )
+
+    assert_parses expected, "def foo(bar) = 123"
   end
 
   private
