@@ -509,13 +509,15 @@ nodes:
         type: node
       - name: rparen
         type: token?
+      - name: equal
+        type: token?
       - name: statements
         type: node
       - name: end_keyword
-        type: token
+        type: token?
       - name: scope
         type: node
-    location: def_keyword->end_keyword
+    location: def_keyword->end_keyword|statements
     comment: |
       Represents a method definition.
 

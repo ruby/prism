@@ -1969,12 +1969,28 @@ parse_expression_prefix(yp_parser_t *parser) {
         not_provided(&rparen, parser->previous.end);
       }
 
-      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      yp_token_t equal;
+      bool endless_definition = accept(parser, YP_TOKEN_EQUAL);
+
+      if (endless_definition) {
+        equal = parser->previous;
+      } else {
+        not_provided(&equal, parser->previous.end);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      }
+
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_DEF);
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
+      yp_token_t end_keyword;
+
+      if (endless_definition) {
+        not_provided(&end_keyword, parser->previous.end);
+      } else {
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
+        end_keyword = parser->previous;
+      }
 
       parser->current_scope = parent_scope;
-      return yp_node_def_node_create(parser, &def_keyword, &name, &lparen, params, &rparen, statements, &parser->previous, scope);
+      return yp_node_def_node_create(parser, &def_keyword, &name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       yp_token_t keyword = parser->previous;
