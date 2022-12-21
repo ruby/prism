@@ -1922,11 +1922,9 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;
 
-      if (accept(parser, YP_TOKEN_LESS_LESS))
-      {
+      if (accept(parser, YP_TOKEN_LESS_LESS)) {
         yp_token_t operator = parser->previous;
-
-        yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expeted to find expression.");
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expected to find an expression after `<<`.");
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
@@ -1938,12 +1936,10 @@ parse_expression_prefix(yp_parser_t *parser) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
         parser->current_scope = parent_scope;
-
         return yp_node_s_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
       yp_node_t *name = parse_expression(parser, BINDING_POWER_CALL, "Expected to find a class name after `class`.");
-
       yp_token_t inheritance_operator;
       yp_node_t *superclass;
 
