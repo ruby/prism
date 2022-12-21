@@ -772,6 +772,16 @@ nodes:
 
           module Foo end
           ^^^^^^^^^^^^^^
+  - name: MultiLeftHandNode
+    child_nodes:
+      - name: targets
+        type: node[]
+    location: targets
+    comment: |
+      Represents a multi-left-hand expression.
+
+        a, b, c = 1, 2, 3
+        ^^^^^^^
   - name: NextNode
     child_nodes:
       - name: keyword

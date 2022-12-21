@@ -1479,6 +1479,9 @@ static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
 
 static yp_node_t *
+parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message);
+
+static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
   context_push(parser, context);
   yp_node_t *statements = yp_node_statements_create(parser);
@@ -2042,7 +2045,10 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_FOR: {
       yp_token_t for_keyword = parser->previous;
-      yp_node_t *index = parse_expression(parser, BINDING_POWER_INDEX, "Expected index after for.");
+      yp_node_t *index = parse_left_hand_side(parser, BINDING_POWER_INDEX, "Expected index after for.");
+
+      // expect(parser, YP_TOKEN_COMMA, "Expected comma.");
+      // parse_expression(parser, BINDING_POWER_INDEX, "Expected index after for.");
 
       expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
       yp_token_t in_keyword = parser->previous;
@@ -2768,6 +2774,33 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
   }
 
   return node;
+}
+
+static yp_node_t *
+parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
+  yp_node_t *node = parse_expression(parser, binding_power, message);
+
+  if(!accept(parser, YP_TOKEN_COMMA)) {
+    return node;
+  } else {
+    yp_node_t *multi_left_hand = yp_node_multi_left_hand_node_create(parser);
+    yp_node_t *target = parse_expression(parser, binding_power, message);
+
+    yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, node);
+    yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, target);
+
+    // while(accept(parser, YP_TOKEN_COMMA)) {
+    //   *target = parse_expression(parser, binding_power, message);
+    //   yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
+    // }
+
+    return multi_left_hand;
+
+  }
+
+  // while(accept(parser, YP_TOKEN_COMMA)) {
+  //   yp_node_t *node = parse_expression(parser, BINDING_POWER_INDEX, "TODO: write me");
+  // }
 }
 
 static yp_node_t *
