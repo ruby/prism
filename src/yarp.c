@@ -26,6 +26,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_MODULE: return "MODULE";
     case YP_CONTEXT_POSTEXE: return "POSTEXE";
     case YP_CONTEXT_PREEXE: return "PREEXE";
+    case YP_CONTEXT_SCLASS: return "SCLASS";
     case YP_CONTEXT_UNLESS: return "UNLESS";
     case YP_CONTEXT_UNTIL: return "UNTIL";
     case YP_CONTEXT_WHILE: return "WHILE";
@@ -1229,6 +1230,7 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_UNTIL:
     case YP_CONTEXT_ELSE:
     case YP_CONTEXT_BEGIN:
+    case YP_CONTEXT_SCLASS:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_UNLESS:
@@ -1919,6 +1921,27 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;
+
+      if (accept(parser, YP_TOKEN_LESS_LESS))
+      {
+        yp_token_t operator = parser->previous;
+
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expeted to find expression.");
+
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        yp_node_t *scope = yp_node_scope_create(parser);
+        yp_node_t *parent_scope = parser->current_scope;
+        parser->current_scope = scope;
+
+        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_SCLASS);
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
+
+        parser->current_scope = parent_scope;
+
+        return yp_node_s_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
+      }
+
       yp_node_t *name = parse_expression(parser, BINDING_POWER_CALL, "Expected to find a class name after `class`.");
 
       yp_token_t inheritance_operator;

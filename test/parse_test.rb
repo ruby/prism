@@ -1218,6 +1218,66 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def foo(bar) = 123"
   end
 
+  test "singleton class defintion" do
+    expected = SClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      LESS_LESS("<<"),
+      expression("self"),
+      Statements([]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "class << self\nend"
+    assert_parses expected, "class << self;end"
+  end
+
+  test "singleton class definition with method invocation for rhs" do
+    expected = SClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      LESS_LESS("<<"),
+      CallNode(
+        CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+        DOT("."),
+        IDENTIFIER("bar"),
+        nil,
+        nil,
+        nil,
+        "bar"
+      ),
+      Statements([]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "class << foo.bar\nend"
+    assert_parses expected, "class << foo.bar;end"
+  end
+
+  test "singleton class defintion with statement" do
+    expected = SClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      LESS_LESS("<<"),
+      expression("self"),
+      Statements(
+        [CallNode(
+          IntegerLiteral(INTEGER("1")),
+          nil,
+          PLUS("+"),
+          nil,
+          ArgumentsNode([IntegerLiteral(INTEGER("2"))]),
+          nil,
+          "+"
+        )]
+      ),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "class << self\n1 + 2\nend"
+    assert_parses expected, "class << self;1 + 2;end"
+  end
+
   private
 
   def assert_serializes(expected, source)
