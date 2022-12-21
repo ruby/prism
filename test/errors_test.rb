@@ -12,7 +12,7 @@ class ErrorsTest < Test::Unit::TestCase
       MissingNode()
     )
 
-    assert_errors expected, "A::$b", "Expected identifier or constant after '::'"
+    assert_errors expected, "A::$b", ["Expected identifier or constant after '::'"]
   end
 
   test "module name recoverable" do
@@ -32,7 +32,35 @@ class ErrorsTest < Test::Unit::TestCase
       KEYWORD_END("end")
     )
 
-    assert_errors expected, "module Parent module end", "Expected to find a module name after `module`."
+    assert_errors expected, "module Parent module end", ["Expected to find a module name after `module`."]
+  end
+
+  test "for loops index missing" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MissingNode(),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_errors expected, "for in 1..10\ni\nend", ["Expected index after for."]
+  end
+
+  test "for loops only end" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MissingNode(),
+      MISSING(""),
+      MissingNode(),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+    )
+
+    assert_errors expected, "for end", ["Expected index after for.", "Expected keyword in.", "Expected collection."]
   end
 
   test "pre execution missing {" do
@@ -43,7 +71,7 @@ class ErrorsTest < Test::Unit::TestCase
       BRACE_RIGHT("}")
     )
 
-    assert_errors expected, "BEGIN 1 }", "Expected '{' after 'BEGIN'."
+    assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
   end
 
   test "pre execution context" do
@@ -64,7 +92,7 @@ class ErrorsTest < Test::Unit::TestCase
       BRACE_RIGHT("}")
     )
 
-    assert_errors expected, "BEGIN { 1 + }", "Expected a value after the operator."
+    assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]
   end
 
   test "unterminated embdoc" do
@@ -93,12 +121,12 @@ class ErrorsTest < Test::Unit::TestCase
 
   private
 
-  def assert_errors(expected, source, error)
+  def assert_errors(expected, source, errors)
     result = YARP.parse(source)
     result => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
 
     assert_equal expected, node
-    assert_equal [error], result.errors.map(&:message)
+    assert_equal errors, result.errors.map(&:message)
   end
 
   def expression(source)

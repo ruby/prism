@@ -1,4 +1,6 @@
 #include "yarp.h"
+#include "error.h"
+#include "node.h"
 
 #define STRINGIZE0(expr) #expr
 #define STRINGIZE(expr) STRINGIZE0(expr)
@@ -2443,14 +2445,12 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     default:
       if (context_recoverable(parser, &parser->previous)) {
-        parser->current = parser->previous;
-        parser->previous = recoverable;
         parser->recovering = true;
-        return yp_node_missing_node_create(parser, parser->previous.start - parser->start);
       }
 
-      fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
-      return NULL;
+      parser->current = parser->previous;
+      parser->previous = recoverable;
+      return yp_node_missing_node_create(parser, parser->previous.start - parser->start);
   }
 }
 
