@@ -1774,6 +1774,68 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   return parent;
 }
 
+static yp_node_t*
+parse_symbol(yp_parser_t *parser, int mode) {
+  yp_token_t opening = parser->previous;
+
+  if (mode == YP_LEX_SYMBOL) {
+    yp_token_t symbol = parser->current;
+    parser_lex(parser);
+
+    yp_token_t closing;
+    not_provided(&closing, parser->previous.end);
+
+    return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
+  }
+
+  if (parser->lex_modes.current->interp) {
+    yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
+
+    while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+      switch (parser->current.type) {
+        case YP_TOKEN_STRING_CONTENT: {
+          parser_lex(parser);
+
+          yp_token_t string_content_opening;
+          not_provided(&string_content_opening, parser->previous.start);
+
+          yp_token_t string_content_closing;
+          not_provided(&string_content_closing, parser->previous.end);
+
+          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
+          break;
+        }
+        case YP_TOKEN_EMBEXPR_BEGIN: {
+          parser_lex(parser);
+          yp_token_t embexpr_opening = parser->previous;
+          yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+          expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
+          break;
+        }
+        default:
+          fprintf(stderr, "Could not understand token type %s in an interpolated symbol\n", yp_token_type_to_str(parser->previous.type));
+          return NULL;
+      }
+    }
+
+    expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
+    interpolated->as.interpolated_symbol_node.closing = parser->previous;
+    return interpolated;
+  }
+
+  yp_token_t content;
+  if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
+    content = parser->previous;
+  } else {
+    content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+  }
+
+  expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a dynamic symbol.");
+  return yp_node_symbol_node_create(parser, &opening, &content, &parser->previous);
+
+}
+
 // Parse an argument to alias or undef which can either be a bare word, a
 // symbol, or an interpolated symbol.
 static inline yp_node_t *
@@ -1790,67 +1852,9 @@ parse_alias_or_undef_argument(yp_parser_t *parser) {
       return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
     }
     case YP_TOKEN_SYMBOL_BEGIN: {
-      yp_token_t opening = parser->current;
-
-      if (parser->lex_modes.current->mode == YP_LEX_SYMBOL) {
-        parser_lex(parser);
-        yp_token_t symbol = parser->current;
-        parser_lex(parser);
-
-        yp_token_t closing;
-        not_provided(&closing, parser->previous.end);
-
-        return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
-      }
-
+      int mode = parser->lex_modes.current->mode;
       parser_lex(parser);
-
-      if (parser->lex_modes.current->interp) {
-        yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
-
-        while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
-          switch (parser->current.type) {
-            case YP_TOKEN_STRING_CONTENT: {
-              parser_lex(parser);
-
-              yp_token_t string_content_opening;
-              not_provided(&string_content_opening, parser->previous.start);
-
-              yp_token_t string_content_closing;
-              not_provided(&string_content_closing, parser->previous.end);
-
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
-              break;
-            }
-            case YP_TOKEN_EMBEXPR_BEGIN: {
-              parser_lex(parser);
-              yp_token_t embexpr_opening = parser->previous;
-              yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-              expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
-              break;
-            }
-            default:
-              fprintf(stderr, "Could not understand token type %s in an interpolated symbol\n", yp_token_type_to_str(parser->previous.type));
-              return NULL;
-          }
-        }
-
-        expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
-        interpolated->as.interpolated_symbol_node.closing = parser->previous;
-        return interpolated;
-      }
-
-      yp_token_t content;
-      if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
-        content = parser->previous;
-      } else {
-        content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
-      }
-
-      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a dynamic symbol.");
-      return yp_node_symbol_node_create(parser, &opening, &content, &parser->previous);
-
+      return parse_symbol(parser, mode);
     }
     default:
       yp_error_list_append(&parser->error_list, "Expected a bare word or symbol argument.", parser->current.start - parser->start);
@@ -1862,6 +1866,7 @@ parse_alias_or_undef_argument(yp_parser_t *parser) {
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
   yp_token_t recoverable = parser->previous;
+  int mode = parser->lex_modes.current->mode;
   parser_lex(parser);
 
   switch (parser->previous.type) {
@@ -2513,15 +2518,8 @@ parse_expression_prefix(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
       return yp_node_string_node_create(parser, &opening, &content, &parser->previous);
     }
-    case YP_TOKEN_SYMBOL_BEGIN: {
-      yp_token_t opening = parser->previous;
-      parser_lex(parser);
-
-      yp_token_t closing;
-      not_provided(&closing, parser->previous.end);
-
-      return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
-    }
+    case YP_TOKEN_SYMBOL_BEGIN:
+      return parse_symbol(parser, mode);
     default:
       if (context_recoverable(parser, &parser->previous)) {
         parser->recovering = true;

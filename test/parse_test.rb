@@ -4,7 +4,7 @@ require "test_helper"
 
 class ParseTest < Test::Unit::TestCase
   include YARP::DSL
-=begin
+
   test "empty string" do
     YARP.parse("") => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: []]]]
   end
@@ -981,8 +981,27 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "%i[a b c]"
   end
-=end
+
   test "dynamic symbol" do
+    expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))
+    assert_parses expected, ":'abc'"
+  end
+
+  test "dynamic symbol with interpolation" do
+    expected = InterpolatedSymbolNode(
+      SYMBOL_BEGIN(":\""),
+      [StringNode(nil, STRING_CONTENT("abc"), nil),
+       StringInterpolatedNode(
+         EMBEXPR_BEGIN("\#{"),
+         Statements([expression("1")]),
+         EMBEXPR_END("}")
+       )],
+      STRING_END("\"")
+    )
+    assert_parses expected, ":\"abc\#{1}\""
+  end
+
+  test "alias with dynamic symbol" do
     expected = AliasNode(
       KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
@@ -991,7 +1010,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "alias :'def' :'abc'"
   end
 
-  test "dynamic symbol with interpolation" do
+  test "alias with dynamic symbol with interpolation" do
     expected = AliasNode(
       KEYWORD_ALIAS("alias"),
       InterpolatedSymbolNode(
@@ -1008,7 +1027,7 @@ class ParseTest < Test::Unit::TestCase
     )
     assert_parses expected, "alias :\"def\#{1}\" :'abc'"
   end
-=begin
+
   test "ternary" do
     expected = Ternary(
       CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
@@ -1044,11 +1063,11 @@ class ParseTest < Test::Unit::TestCase
   test "undef bare, multiple" do
     assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)]), "undef a, b"
   end
-=end
+
   test "undef symbol" do
     assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)]), "undef :a"
   end
-=begin
+
   test "undef symbol, multiple" do
     expected = UndefNode(
       KEYWORD_UNDEF("undef"),
@@ -1399,7 +1418,7 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "for i,j,k in 1..10\ni\nend"
   end
-=end
+
   private
 
   def assert_serializes(expected, source)
