@@ -96,27 +96,27 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "unterminated embdoc" do
-    assert_errors expression("1"), "1\n=begin\n", "Unterminated embdoc"
+    assert_errors expression("1"), "1\n=begin\n", ["Unterminated embdoc"]
   end
 
   test "unterminated %i list" do
-    assert_errors expression("%i["), "%i[", "Expected a closing delimiter for a `%i` list."
+    assert_errors expression("%i["), "%i[", ["Expected a closing delimiter for a `%i` list."]
   end
 
   test "unterminated %w list" do
-    assert_errors expression("%w["), "%w[", "Expected a closing delimiter for a `%w` list."
+    assert_errors expression("%w["), "%w[", ["Expected a closing delimiter for a `%w` list."]
   end
 
   test "unterminated %W list" do
-    assert_errors expression("%W["), "%W[", "Expected a closing delimiter for a `%W` list."
+    assert_errors expression("%W["), "%W[", ["Expected a closing delimiter for a `%W` list."]
   end
 
   test "unterminated regular expression" do
-    assert_errors expression("/hello"), "/hello", "Expected a closing delimiter for a regular expression."
+    assert_errors expression("/hello"), "/hello", ["Expected a closing delimiter for a regular expression."]
   end
 
   test "unterminated string" do
-    assert_errors expression('"hello'), '"hello', "Expected a closing delimiter for an interpolated string."
+    assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end
 
   private
