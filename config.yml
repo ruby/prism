@@ -772,6 +772,16 @@ nodes:
 
           module Foo end
           ^^^^^^^^^^^^^^
+  - name: MultiLeftHandNode
+    child_nodes:
+      - name: targets
+        type: node[]
+    location: targets
+    comment: |
+      Represents a multi-left-hand expression.
+
+        a, b, c = 1, 2, 3
+        ^^^^^^^
   - name: NextNode
     child_nodes:
       - name: keyword
@@ -1229,6 +1239,28 @@ nodes:
 
           while foo do bar end
           ^^^^^^^^^^^^^^^^^^^^
+  - name: ForNode
+    child_nodes:
+      - name: for_keyword
+        type: token
+      - name: index
+        type: node
+      - name: in_keyword
+        type: token
+      - name: collection
+        type: node
+      - name: do_keyword
+        type: token?
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: for_keyword->statements
+    comment: |
+      Represents the use of the `for` keyword.
+
+          for i in a end
+          ^^^^^^^^^^^^^^
   - name: YieldNode
     child_nodes:
       - name: keyword

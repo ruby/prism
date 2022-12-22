@@ -21,6 +21,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
     case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
+    case YP_CONTEXT_FOR: return "FOR";
     case YP_CONTEXT_IF: return "IF";
     case YP_CONTEXT_MAIN: return "MAIN";
     case YP_CONTEXT_MODULE: return "MODULE";
@@ -1220,6 +1221,7 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_ELSE:
     case YP_CONTEXT_BEGIN:
     case YP_CONTEXT_SCLASS:
+    case YP_CONTEXT_FOR:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_UNLESS:
@@ -1472,6 +1474,28 @@ missing(yp_token_t *token, const char *location) {
 
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
+
+static yp_node_t *
+parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
+  yp_node_t *first_target = parse_expression(parser, binding_power, message);
+
+  if(parser->current.type != YP_TOKEN_COMMA) {
+    return first_target;
+  } else {
+    yp_node_t *multi_left_hand = yp_node_multi_left_hand_node_create(parser);
+    yp_node_t *target;
+
+    yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, first_target);
+
+    while(accept(parser, YP_TOKEN_COMMA)) {
+      target = parse_expression(parser, binding_power, message);
+      yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, target);
+    }
+
+    return multi_left_hand;
+  }
+}
+
 
 static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
@@ -2035,6 +2059,37 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       return yp_node_false_node_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD_FOR: {
+      yp_token_t for_keyword = parser->previous;
+      yp_node_t *index = parse_left_hand_side(parser, BINDING_POWER_INDEX, "Expected index after for.");
+
+      expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
+      yp_token_t in_keyword = parser->previous;
+
+      yp_node_t *collection = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected collection.");
+
+      yp_token_t do_keyword;
+      if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
+        do_keyword = parser->previous;
+      } else {
+        not_provided(&do_keyword, parser->previous.start);
+      }
+
+      yp_node_t *scope = yp_node_scope_create(parser);
+      yp_node_t *parent_scope = parser->current_scope;
+      parser->current_scope = scope;
+
+      accept(parser, YP_TOKEN_SEMICOLON);
+      accept(parser, YP_TOKEN_NEWLINE);
+
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_FOR);
+      parser->current_scope = parent_scope;
+
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close for loop.");
+      yp_token_t end_keyword = parser->previous;
+
+      return yp_node_for_node_create(parser, &for_keyword, index, &in_keyword, collection, &do_keyword, statements, &end_keyword);
+    }
     case YP_TOKEN_KEYWORD_IF:
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {
@@ -2411,14 +2466,12 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     default:
       if (context_recoverable(parser, &parser->previous)) {
-        parser->current = parser->previous;
-        parser->previous = recoverable;
         parser->recovering = true;
-        return yp_node_missing_node_create(parser, parser->previous.start - parser->start);
       }
 
-      fprintf(stderr, "Could not understand token type %s in the prefix position\n", yp_token_type_to_str(parser->previous.type));
-      return NULL;
+      parser->current = parser->previous;
+      parser->previous = recoverable;
+      return yp_node_missing_node_create(parser, parser->previous.start - parser->start);
   }
 }
 

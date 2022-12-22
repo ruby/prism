@@ -1177,7 +1177,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a if b if c"
   end
 
-   test "begin statements" do
+  test "begin statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
@@ -1190,7 +1190,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin a; end"
   end
 
-   test "endless method definition without arguments" do
+  test "endless method definition without arguments" do
     expected = DefNode(
       KEYWORD_DEF("def"),
       IDENTIFIER("foo"),
@@ -1206,7 +1206,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def foo = 123"
   end
 
-   test "endless method definition with arguments" do
+  test "endless method definition with arguments" do
     expected = DefNode(
       KEYWORD_DEF("def"),
       IDENTIFIER("foo"),
@@ -1280,6 +1280,97 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "class << self\n1 + 2\nend"
     assert_parses expected, "class << self;1 + 2;end"
+  end
+
+  test "for loop" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      expression("i"),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i in 1..10\ni\nend"
+  end
+
+  test "for loop with do keyword" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      expression("i"),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      KEYWORD_DO("do"),
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i in 1..10 do\ni\nend"
+  end
+
+  test "for loop no newlines" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      expression("i"),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i in 1..10 i end"
+  end
+
+  test "for loop with semicolons" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      expression("i"),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i in 1..10; i; end"
+  end
+
+  test "for loop with 2 indexes" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MultiLeftHandNode([
+        expression("i"),
+        expression("j"),
+      ]),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i,j in 1..10\ni\nend"
+  end
+
+  test "for loop with 3 indexes" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MultiLeftHandNode([
+        expression("i"),
+        expression("j"),
+        expression("k"),
+      ]),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i,j,k in 1..10\ni\nend"
   end
 
   private

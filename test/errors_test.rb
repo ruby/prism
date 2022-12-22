@@ -12,7 +12,7 @@ class ErrorsTest < Test::Unit::TestCase
       MissingNode()
     )
 
-    assert_errors expected, "A::$b", "Expected identifier or constant after '::'"
+    assert_errors expected, "A::$b", ["Expected identifier or constant after '::'"]
   end
 
   test "module name recoverable" do
@@ -32,7 +32,35 @@ class ErrorsTest < Test::Unit::TestCase
       KEYWORD_END("end")
     )
 
-    assert_errors expected, "module Parent module end", "Expected to find a module name after `module`."
+    assert_errors expected, "module Parent module end", ["Expected to find a module name after `module`."]
+  end
+
+  test "for loops index missing" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MissingNode(),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_errors expected, "for in 1..10\ni\nend", ["Expected index after for."]
+  end
+
+  test "for loops only end" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MissingNode(),
+      MISSING(""),
+      MissingNode(),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+    )
+
+    assert_errors expected, "for end", ["Expected index after for.", "Expected keyword in.", "Expected collection."]
   end
 
   test "pre execution missing {" do
@@ -43,7 +71,7 @@ class ErrorsTest < Test::Unit::TestCase
       BRACE_RIGHT("}")
     )
 
-    assert_errors expected, "BEGIN 1 }", "Expected '{' after 'BEGIN'."
+    assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
   end
 
   test "pre execution context" do
@@ -64,41 +92,41 @@ class ErrorsTest < Test::Unit::TestCase
       BRACE_RIGHT("}")
     )
 
-    assert_errors expected, "BEGIN { 1 + }", "Expected a value after the operator."
+    assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]
   end
 
   test "unterminated embdoc" do
-    assert_errors expression("1"), "1\n=begin\n", "Unterminated embdoc"
+    assert_errors expression("1"), "1\n=begin\n", ["Unterminated embdoc"]
   end
 
   test "unterminated %i list" do
-    assert_errors expression("%i["), "%i[", "Expected a closing delimiter for a `%i` list."
+    assert_errors expression("%i["), "%i[", ["Expected a closing delimiter for a `%i` list."]
   end
 
   test "unterminated %w list" do
-    assert_errors expression("%w["), "%w[", "Expected a closing delimiter for a `%w` list."
+    assert_errors expression("%w["), "%w[", ["Expected a closing delimiter for a `%w` list."]
   end
 
   test "unterminated %W list" do
-    assert_errors expression("%W["), "%W[", "Expected a closing delimiter for a `%W` list."
+    assert_errors expression("%W["), "%W[", ["Expected a closing delimiter for a `%W` list."]
   end
 
   test "unterminated regular expression" do
-    assert_errors expression("/hello"), "/hello", "Expected a closing delimiter for a regular expression."
+    assert_errors expression("/hello"), "/hello", ["Expected a closing delimiter for a regular expression."]
   end
 
   test "unterminated string" do
-    assert_errors expression('"hello'), '"hello', "Expected a closing delimiter for an interpolated string."
+    assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end
 
   private
 
-  def assert_errors(expected, source, error)
+  def assert_errors(expected, source, errors)
     result = YARP.parse(source)
     result => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
 
     assert_equal expected, node
-    assert_equal [error], result.errors.map(&:message)
+    assert_equal errors, result.errors.map(&:message)
   end
 
   def expression(source)
