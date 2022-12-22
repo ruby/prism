@@ -342,9 +342,11 @@ nodes:
         type: token
       - name: statements
         type: node
+      - name: ensure_clause
+        type: node?
       - name: end_keyword
-        type: token
-    location: begin_keyword->end_keyword
+        type: token?
+    location: begin_keyword->ensure_clause|end_keyword|statements
     comment: |
       Represents a begin statement.
 
@@ -542,6 +544,24 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
+  - name: EnsureNode
+    child_nodes:
+      - name: ensure_keyword
+        type: token
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: ensure_keyword->end_keyword
+    comment: |
+      Represents an `ensure` clause in a `begin` statement.
+
+          begin
+            foo
+          ensure
+          ^^^^^^
+            bar
+          end
   - name: ElseNode
     child_nodes:
       - name: else_keyword

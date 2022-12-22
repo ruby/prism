@@ -83,6 +83,7 @@ typedef enum {
   YP_CONTEXT_SCLASS,   // a singleton class definition
   YP_CONTEXT_FOR,      // a for loop
   YP_CONTEXT_PARENS,   // a parenthesized expression
+  YP_CONTEXT_ENSURE,   // an ensure statement
 } yp_context_t;
 
 // This is a node in a linked list of contexts.
