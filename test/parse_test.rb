@@ -846,6 +846,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
   end
 
+  test "regular expression, /, no interpolation" do
+    assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
+  end
+
   test "retry" do
     assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
   end

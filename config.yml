@@ -967,6 +967,20 @@ nodes:
 
           redo
           ^^^^
+  - name: RegularExpressionNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: content
+        type: token
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents a regular expression literal with no interpolation.
+
+          /foo/i
+          ^^^^^^
   - name: RequiredParameterNode
     child_nodes:
       - name: name

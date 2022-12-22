@@ -62,21 +62,6 @@ typedef struct yp_lex_mode {
 // each of its function calls.
 typedef struct yp_parser yp_parser_t;
 
-// This struct is for handling error recovery. We're going to provide our own
-// implementation for default, but this is an extension point if folks want to
-// provide their own.
-//
-// Each function is going to be provided with a pointer to the struct itself, at
-// which point it is expected to set the parsers state to whatever it should be
-// in order to recover from the error. If it can't recover, it should return
-// TOKEN_INVALID.
-typedef struct {
-  yp_token_type_t (*unterminated_embdoc)(yp_parser_t *parser);
-  yp_token_type_t (*unterminated_list)(yp_parser_t *parser);
-  yp_token_type_t (*unterminated_regexp)(yp_parser_t *parser);
-  yp_token_type_t (*unterminated_string)(yp_parser_t *parser);
-} yp_error_handler_t;
-
 // While parsing, we keep track of a stack of contexts. This is helpful for
 // error recovery so that we can pop back to a previous context when we hit a
 // token that is understood by a parent context but not by the current context.
@@ -147,11 +132,9 @@ struct yp_parser {
   const char *end;     // the pointer to the end of the source
   yp_token_t previous; // the previous token we were considering
   yp_token_t current;  // the current token we're considering
-  int lineno;          // the current line number we're looking at
 
   yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
-  yp_error_handler_t *error_handler;  // the error handler
   yp_node_t *current_scope;           // the current local scope
 
   yp_context_node_t *current_context; // the current parsing context

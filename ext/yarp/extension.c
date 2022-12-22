@@ -14,7 +14,7 @@ VALUE rb_cYARPParseResult;
 typedef struct {
   enum { SOURCE_FILE, SOURCE_STRING } type;
   const char *source;
-  off_t size;
+  size_t size;
 } source_t;
 
 // Read the file indicated by the filepath parameter into source and load its
