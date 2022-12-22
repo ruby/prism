@@ -698,6 +698,20 @@ nodes:
 
           "foo #{bar} baz"
           ^^^^^^^^^^^^^^^^
+  - name: InterpolatedSymbolNode
+    child_nodes:
+      - name: opening
+        type: token?
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token?
+    location: opening|parts->closing|parts
+    comment: |
+      Represents a symbol literal that contains interpolation.
+
+          :"foo #{bar} baz"
+          ^^^^^^^^^^^^^^^^^
   - name: KeywordParameterNode
     child_nodes:
       - name: name
