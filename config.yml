@@ -369,13 +369,9 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
-      - name: lparen
-        type: token?
       - name: arguments
         type: node?
-      - name: rparen
-        type: token?
-    location: keyword->rparen|arguments|lparen|keyword
+    location: keyword->arguments|keyword
     comment: |
       Represents the use of the `break` keyword.
 
@@ -802,13 +798,9 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
-      - name: lparen
-        type: token?
       - name: arguments
         type: node?
-      - name: rparen
-        type: token?
-    location: keyword->rparen|arguments|lparen|keyword
+    location: keyword->arguments|keyword
     comment: |
       Represents the use of the `next` keyword.
 
@@ -1066,6 +1058,18 @@ nodes:
 
           retry
           ^^^^^
+  - name: ReturnNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: arguments
+        type: node?
+    location: keyword->arguments|keyword
+    comment: |
+      Represents the use of the `return` keyword.
+
+          return 1
+          ^^^^^^^^
   - name: SClassNode
     child_nodes:
       - name: scope

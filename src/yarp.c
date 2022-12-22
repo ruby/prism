@@ -1,4 +1,6 @@
 #include "yarp.h"
+#include "ast.h"
+#include "node.h"
 
 #define STRINGIZE0(expr) #expr
 #define STRINGIZE(expr) STRINGIZE0(expr)
@@ -1600,7 +1602,29 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
+      // This needs to allow for optional new line
       expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
+    }
+  }
+}
+
+// Parse a list of arguments without parenthesis.
+void
+parse_arguments_without_parenthesis(yp_parser_t *parser, yp_node_t *arguments) {
+  if (!accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+    while (parser->current.type != YP_TOKEN_EOF) {
+      yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+
+      yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
+
+      // If parsing the argument resulted in error recovery, then we can stop
+      // parsing the arguments entirely now.
+      if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
+
+      if (accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) break;
+
+      expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
+      accept(parser, YP_TOKEN_NEWLINE);
     }
   }
 }
@@ -1628,6 +1652,22 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
 
     not_provided(&arguments->closing, parser->previous.end);
   }
+}
+
+// Parse a list of arguments and their surrounding parentheses if they are
+// present.
+void
+parse_arguments_list_without_parenthesis(yp_parser_t *parser, yp_arguments_t *arguments) {
+  not_provided(&arguments->opening, parser->previous.end);
+
+  if (accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+    arguments->arguments = NULL;
+  } else {
+    arguments->arguments = yp_node_arguments_node_create(parser);
+    parse_arguments_without_parenthesis(parser, arguments->arguments);
+  }
+
+  not_provided(&arguments->closing, parser->previous.end);
 }
 
 // Parse a list of parameters on a method definition.
@@ -1948,6 +1988,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parentheses;
 
       if (parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        accept(parser, YP_TOKEN_NEWLINE);
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PARENS);
         parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
       } else {
@@ -2041,6 +2082,23 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_BREAK:
     case YP_TOKEN_KEYWORD_NEXT:
+    case YP_TOKEN_KEYWORD_RETURN: {
+      yp_token_t keyword = parser->previous;
+      yp_arguments_t arguments;
+
+      parse_arguments_list_without_parenthesis(parser, &arguments);
+
+      switch (keyword.type) {
+      case YP_TOKEN_KEYWORD_BREAK:
+        return yp_node_break_node_create(parser, &keyword, arguments.arguments);
+      case YP_TOKEN_KEYWORD_NEXT:
+        return yp_node_next_node_create(parser, &keyword, arguments.arguments);
+      case YP_TOKEN_KEYWORD_RETURN:
+        return yp_node_return_node_create(parser, &keyword, arguments.arguments);
+      default:
+        return NULL;
+      }
+    }
     case YP_TOKEN_KEYWORD_SUPER:
     case YP_TOKEN_KEYWORD_YIELD: {
       yp_token_t keyword = parser->previous;
@@ -2048,10 +2106,6 @@ parse_expression_prefix(yp_parser_t *parser) {
       parse_arguments_list(parser, &arguments);
 
       switch (keyword.type) {
-        case YP_TOKEN_KEYWORD_BREAK:
-          return yp_node_break_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
-        case YP_TOKEN_KEYWORD_NEXT:
-          return yp_node_next_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
         case YP_TOKEN_KEYWORD_SUPER:
           if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
             return yp_node_forwarding_super_node_create(parser, &keyword);
