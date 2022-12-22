@@ -732,51 +732,35 @@ lex_token_type(yp_parser_t *parser) {
               return YP_TOKEN_PERCENT_EQUAL;
             case 'i':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
               return YP_TOKEN_PERCENT_LOWER_I;
             case 'I':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_UPPER_I;
             case 'r':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = terminator(*parser->current.end++), .interp = true });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_REGEXP_BEGIN;
             case 'q':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
               return YP_TOKEN_STRING_BEGIN;
             case 'Q':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_STRING_BEGIN;
             case 'w':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
               return YP_TOKEN_PERCENT_LOWER_W;
             case 'W':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_UPPER_W;
             case 'x':
               parser->current.end++;
-              lex_mode_push(
-                parser,
-                (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_LOWER_X;
             default:
               return YP_TOKEN_PERCENT;
@@ -922,7 +906,6 @@ lex_token_type(yp_parser_t *parser) {
         parser->current.end++;
       }
 
-      yp_error_list_append(&parser->error_list, "Unterminated list", parser->current.start - parser->start);
       return YP_TOKEN_EOF;
     }
     case YP_LEX_REGEXP: {
@@ -1781,7 +1764,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_BRACKET_RIGHT) {
+      while (parser->current.type != YP_TOKEN_BRACKET_RIGHT && parser->current.type != YP_TOKEN_EOF) {
         if (array->as.array_node.elements.size != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
         }
@@ -2113,7 +2096,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_STRING_END) {
+      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
         if (array->as.array_node.elements.size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
@@ -2140,7 +2123,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_STRING_END) {
+      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
         if (array->as.array_node.elements.size == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
@@ -2168,7 +2151,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
       yp_node_t *current = NULL;
 
-      while (parser->current.type != YP_TOKEN_STRING_END) {
+      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
         switch (parser->current.type) {
           case YP_TOKEN_WORDS_SEP: {
             if (current == NULL) {

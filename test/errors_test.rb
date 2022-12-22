@@ -67,6 +67,10 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "BEGIN { 1 + }", "Expected a value after the operator."
   end
 
+  test "unterminated list" do
+    assert_errors expression("%w["), "%w[", "Expected a closing delimiter for a `%w` list."
+  end
+
   test "unterminated regular expression" do
     assert_errors expression("/hello"), "/hello", "Expected a closing delimiter for a regular expression."
   end
