@@ -533,14 +533,11 @@ lex_token_type(yp_parser_t *parser) {
           // The only way to get here is if this is immediately followed by a
           // newline.
           (void) match(parser, '\n');
-          parser->lineno++;
           return YP_TOKEN_NEWLINE;
         }
 
-        case '\n': {
-          parser->lineno++;
+        case '\n':
           return YP_TOKEN_NEWLINE;
-        }
 
         // , ( ) ;
         case ',':
@@ -594,14 +591,12 @@ lex_token_type(yp_parser_t *parser) {
           if (current_token_starts_line(parser)) {
             if (strncmp(parser->current.end, "begin\n", 6) == 0) {
               parser->current.end += 6;
-              parser->lineno++;
               lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
               return YP_TOKEN_EMBDOC_BEGIN;
             }
 
             if (strncmp(parser->current.end, "begin\r\n", 7) == 0) {
               parser->current.end += 7;
-              parser->lineno++;
               lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
               return YP_TOKEN_EMBDOC_BEGIN;
             }
@@ -864,10 +859,8 @@ lex_token_type(yp_parser_t *parser) {
 
       // If we've still got content, then we'll return a line of embedded
       // documentation.
-      if (parser->current.end < parser->end) {
-        parser->lineno++;
+      if (parser->current.end < parser->end)
         return YP_TOKEN_EMBDOC_LINE;
-      }
 
       // Otherwise, fall back to error recovery.
       return parser->error_handler->unterminated_embdoc(parser);
@@ -879,7 +872,6 @@ lex_token_type(yp_parser_t *parser) {
         parser->current.start = parser->current.end;
 
         do {
-          if (*parser->current.end == '\n') parser->lineno++;
           parser->current.end++;
         } while (char_is_whitespace(parser->current.end));
 
@@ -973,9 +965,6 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
-        // If we hit a newline, make sure to do the required bookkeeping.
-        if (*parser->current.end == '\n') parser->lineno++;
-
         // If we've hit a #, then check if it's used as the beginning of either
         // an embedded variable or an embedded expression.
         if (*parser->current.end == '#') {
@@ -1021,10 +1010,6 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         switch (*parser->current.end) {
-          case '\n':
-            // If we hit a newline, make sure to do the required bookkeeping.
-            parser->lineno++;
-            break;
           case '#':
             // If our current lex state allows interpolation and we've hit a #,
             // then check if it's used as the beginning of either an embedded
@@ -2785,7 +2770,6 @@ yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
     .start = source,
     .end = source + size,
     .current = {.start = source, .end = source},
-    .lineno = 1,
     .error_handler = &default_error_handler,
     .current_scope = NULL,
     .current_context = NULL,

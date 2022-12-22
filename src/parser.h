@@ -147,7 +147,6 @@ struct yp_parser {
   const char *end;     // the pointer to the end of the source
   yp_token_t previous; // the previous token we were considering
   yp_token_t current;  // the current token we're considering
-  int lineno;          // the current line number we're looking at
 
   yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
