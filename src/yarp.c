@@ -2759,7 +2759,7 @@ undecodeable(const char *name, size_t length) {
 
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
-yp_parser_init(yp_parser_t *parser, const char *source, off_t size) {
+yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   *parser = (yp_parser_t) {
     .lex_modes =
       {
@@ -2826,7 +2826,7 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
 __attribute__((__visibility__("default"))) extern void
-yp_parse_serialize(const char *source, off_t size, yp_buffer_t *buffer) {
+yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
   yp_parser_t parser;
   yp_parser_init(&parser, source, size);
 
