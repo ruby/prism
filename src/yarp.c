@@ -862,8 +862,8 @@ lex_token_type(yp_parser_t *parser) {
       if (parser->current.end < parser->end)
         return YP_TOKEN_EMBDOC_LINE;
 
-      // Otherwise, fall back to error recovery.
-      return parser->error_handler->unterminated_embdoc(parser);
+      yp_error_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
+      return YP_TOKEN_EOF;
     }
     case YP_LEX_LIST: {
       // If there's any whitespace at the start of the list, then we're going to
@@ -922,8 +922,8 @@ lex_token_type(yp_parser_t *parser) {
         parser->current.end++;
       }
 
-      // Otherwise, fall back to error recovery.
-      return parser->error_handler->unterminated_list(parser);
+      yp_error_list_append(&parser->error_list, "Unterminated list", parser->current.start - parser->start);
+      return YP_TOKEN_EOF;
     }
     case YP_LEX_REGEXP: {
       // First, we'll set to start of this token to be the current end.
@@ -987,8 +987,7 @@ lex_token_type(yp_parser_t *parser) {
         parser->current.end++;
       }
 
-      // Otherwise, fall back to error recovery.
-      return parser->error_handler->unterminated_regexp(parser);
+      return YP_TOKEN_EOF;
     }
     case YP_LEX_STRING: {
       // First, we'll set to start of this token to be the current end.
@@ -1047,8 +1046,7 @@ lex_token_type(yp_parser_t *parser) {
         parser->current.end++;
       }
 
-      // Otherwise, fall back to error recovery.
-      return parser->error_handler->unterminated_string(parser);
+      return YP_TOKEN_EOF;
     }
     case YP_LEX_SYMBOL: {
       // First, we'll set to start of this token to be the current end.
@@ -2276,6 +2274,19 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_RATIONAL_NUMBER:
       return yp_node_rational_literal_create(parser, &parser->previous);
+    case YP_TOKEN_REGEXP_BEGIN: {
+      yp_token_t opening = parser->previous;
+      yp_token_t content;
+
+      if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
+        content = parser->previous;
+      } else {
+        content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+      }
+
+      expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
+      return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+    }
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
       yp_token_t operator_token = parser->previous;
@@ -2733,22 +2744,6 @@ parse_program(yp_parser_t *parser) {
 /* External functions                                                         */
 /******************************************************************************/
 
-// By default, the parser won't attempt to recover from syntax errors at all.
-// This function provides that implementation.
-static yp_token_type_t
-unrecoverable(yp_parser_t *parser) {
-  return YP_TOKEN_EOF;
-}
-
-// This is the default error handler, which does not actually attempt to recover
-// from any errors.
-yp_error_handler_t default_error_handler = {
-  .unterminated_embdoc = unrecoverable,
-  .unterminated_list = unrecoverable,
-  .unterminated_regexp = unrecoverable,
-  .unterminated_string = unrecoverable,
-};
-
 // By default, the parser will not attempt to decode any more encodings than are
 // already hard-coded into the parser. This function provides the default
 // implementation so that the parser always has a valid function pointer.
@@ -2770,7 +2765,6 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .start = source,
     .end = source + size,
     .current = {.start = source, .end = source},
-    .error_handler = &default_error_handler,
     .current_scope = NULL,
     .current_context = NULL,
     .recovering = false,

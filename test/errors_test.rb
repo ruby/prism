@@ -67,6 +67,14 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "BEGIN { 1 + }", "Expected a value after the operator."
   end
 
+  test "unterminated regular expression" do
+    assert_errors expression("/hello"), "/hello", "Expected a closing delimiter for a regular expression."
+  end
+
+  test "unterminated string" do
+    assert_errors expression('"hello'), '"hello', "Expected a closing delimiter for an interpolated string."
+  end
+
   private
 
   def assert_errors(expected, source, error)
