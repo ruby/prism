@@ -64,6 +64,19 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
   yp_buffer_free(&buffer);
 }
 
+__attribute__((unused)) static void
+debug_lex_mode(yp_parser_t *parser) {
+  switch (parser->lex_modes.current->mode) {
+    case YP_LEX_DEFAULT: printf("lexing in DEFAULT mode\n"); return;
+    case YP_LEX_EMBDOC: printf("lexing in EMBDOC mode\n"); return;
+    case YP_LEX_EMBEXPR: printf("lexing in EMBEXPR mode\n"); return;
+    case YP_LEX_LIST: printf("lexing in LIST mode\n"); return;
+    case YP_LEX_REGEXP: printf("lexing in REGEXP mode\n"); return;
+    case YP_LEX_STRING: printf("lexing in STRING mode\n"); return;
+    case YP_LEX_SYMBOL: printf("lexing in SYMBOL mode\n"); return;
+  }
+}
+
 /******************************************************************************/
 /* Basic character checks                                                     */
 /******************************************************************************/
@@ -846,7 +859,6 @@ lex_token_type(yp_parser_t *parser) {
       if (parser->current.end < parser->end)
         return YP_TOKEN_EMBDOC_LINE;
 
-      yp_error_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
       return YP_TOKEN_EOF;
     }
     case YP_LEX_LIST: {
@@ -1145,39 +1157,50 @@ parser_lex(yp_parser_t *parser) {
     // If we found a comment while lexing, then we're going to add it to the
     // list of comments in the file and keep lexing.
     yp_comment_t *comment = malloc(sizeof(yp_comment_t));
-    yp_comment_type_t type;
+    comment->node.start = parser->current.start - parser->start;
 
     switch (parser->current.type) {
       case YP_TOKEN_COMMENT:
         parser_lex_magic_comments(parser);
-        type = YP_COMMENT_INLINE;
+        *comment = (yp_comment_t) {
+          .node.end = parser->current.end - parser->start,
+          .type = YP_COMMENT_INLINE
+        };
+
+        parser->current.type = lex_token_type(parser);
         break;
       case YP_TOKEN___END__:
-        type = YP_COMMENT___END__;
+        *comment = (yp_comment_t) {
+          .node.end = parser->current.end - parser->start,
+          .type = YP_COMMENT___END__
+        };
+
+        parser->current.type = lex_token_type(parser);
         break;
       case YP_TOKEN_EMBDOC_BEGIN: {
         // If we found an embedded document, then we need to lex until we find
         // the end of the embedded document.
-        while (parser->current.type != YP_TOKEN_EMBDOC_END && parser->current.type != YP_TOKEN_EOF) {
+        do {
+          parser->current.type = lex_token_type(parser);
+        } while ((parser->current.type != YP_TOKEN_EMBDOC_END) && (parser->current.type != YP_TOKEN_EOF));
+
+        *comment = (yp_comment_t) {
+          .node.end = parser->current.end - parser->start,
+          .type = YP_COMMENT_EMBDOC
+        };
+
+        if (parser->current.type == YP_TOKEN_EOF) {
+          yp_error_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
+        } else {
           parser->current.type = lex_token_type(parser);
         }
-
-        type = YP_COMMENT_EMBDOC;
         break;
       }
       default:
-        type = YP_COMMENT_INLINE;
         break;
     }
 
-    *comment = (yp_comment_t) {
-      .node.start = parser->current.start - parser->start,
-      .node.end = parser->current.end - parser->start,
-      .type = type
-    };
-
     yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
-    parser->current.type = lex_token_type(parser);
   }
 }
 
