@@ -1338,7 +1338,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "for i in 1..10; i; end"
   end
 
-  test "for loop with destructured index" do
+  test "for loop with 2 indexes" do
     expected = ForNode(
       KEYWORD_FOR("for"),
       MultiLeftHandNode([
@@ -1353,6 +1353,24 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "for i,j in 1..10\ni\nend"
+  end
+
+  test "for loop with 3 indexes" do
+    expected = ForNode(
+      KEYWORD_FOR("for"),
+      MultiLeftHandNode([
+        expression("i"),
+        expression("j"),
+        expression("k"),
+      ]),
+      KEYWORD_IN("in"),
+      expression("1..10"),
+      nil,
+      Statements([expression("i")]),
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "for i,j,k in 1..10\ni\nend"
   end
 
   private
