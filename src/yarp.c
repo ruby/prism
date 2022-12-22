@@ -1476,7 +1476,26 @@ static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
 
 static yp_node_t *
-parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message);
+parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
+  yp_node_t *first_target = parse_expression(parser, binding_power, message);
+
+  if(parser->current.type != YP_TOKEN_COMMA) {
+    return first_target;
+  } else {
+    yp_node_t *multi_left_hand = yp_node_multi_left_hand_node_create(parser);
+    yp_node_t *target;
+
+    yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, first_target);
+
+    while(accept(parser, YP_TOKEN_COMMA)) {
+      target = parse_expression(parser, binding_power, message);
+      yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, target);
+    }
+
+    return multi_left_hand;
+  }
+}
+
 
 static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
@@ -2768,27 +2787,6 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
   }
 
   return node;
-}
-
-static yp_node_t *
-parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
-  yp_node_t *first_target = parse_expression(parser, binding_power, message);
-
-  if(parser->current.type != YP_TOKEN_COMMA) {
-    return first_target;
-  } else {
-    yp_node_t *multi_left_hand = yp_node_multi_left_hand_node_create(parser);
-    yp_node_t *target;
-
-    yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, first_target);
-
-    while(accept(parser, YP_TOKEN_COMMA)) {
-      target = parse_expression(parser, binding_power, message);
-      yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, target);
-    }
-
-    return multi_left_hand;
-  }
 }
 
 static yp_node_t *
