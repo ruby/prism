@@ -2090,6 +2090,13 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return yp_node_for_node_create(parser, &for_keyword, index, &in_keyword, collection, &do_keyword, statements, &end_keyword);
     }
+    case YP_TOKEN_KEYWORD_RETURN: {
+      yp_token_t keyword = parser->previous;
+      yp_arguments_t arguments;
+      parse_arguments_list(parser, &arguments);
+
+      return yp_node_return_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
+    }
     case YP_TOKEN_KEYWORD_IF:
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {

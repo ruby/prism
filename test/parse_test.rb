@@ -1373,6 +1373,70 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "for i,j,k in 1..10\ni\nend"
   end
 
+  test "return with no argument" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      nil,
+      nil,
+      nil,
+    )
+
+    assert_parses expected, "return"
+  end
+
+  test "return with an argument" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      nil,
+      ArgumentsNode([expression("1")]),
+      nil,
+    )
+
+    assert_parses expected, "return 1"
+  end
+
+  test "return with an argument inside parentheses" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode([expression("1")]),
+      PARENTHESIS_RIGHT(")"),
+    )
+
+    assert_parses expected, "return(1)"
+  end
+
+  test "return with an explicit array of arguments" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      nil,
+      ArgumentsNode([
+        ArrayNode(
+          BRACKET_LEFT("["),
+          [
+            IntegerLiteral(INTEGER("1")),
+            IntegerLiteral(INTEGER("2"))
+          ],
+          BRACKET_RIGHT("]")
+        )
+      ]),
+      nil,
+    )
+
+    assert_parses expected, "return [1, 2]"
+  end
+
+  test "return with an implicit array of arguments" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      nil,
+      ArgumentsNode([expression("1, 2")]),
+      nil,
+    )
+
+    assert_parses expected, "return 1, 2"
+  end
+
   private
 
   def assert_serializes(expected, source)

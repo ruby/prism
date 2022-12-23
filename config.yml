@@ -1261,6 +1261,21 @@ nodes:
 
           for i in a end
           ^^^^^^^^^^^^^^
+  - name: ReturnNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: lparen
+        type: token?
+      - name: arguments
+        type: node?
+      - name: rparen
+        type: token?
+    location: keyword->rparen|arguments|lparen|keyword
+    comment: |
+      Represents the use of the `return` keyword.
+
+          return true
   - name: YieldNode
     child_nodes:
       - name: keyword
