@@ -982,6 +982,77 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%i[a b c]"
   end
 
+  test "dynamic symbol" do
+    expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))
+    assert_parses expected, ":'abc'"
+  end
+
+  test "dynamic symbol with interpolation" do
+    expected = InterpolatedSymbolNode(
+      SYMBOL_BEGIN(":\""),
+      [StringNode(nil, STRING_CONTENT("abc"), nil),
+       StringInterpolatedNode(
+         EMBEXPR_BEGIN("\#{"),
+         Statements([expression("1")]),
+         EMBEXPR_END("}")
+       )],
+      STRING_END("\"")
+    )
+    assert_parses expected, ":\"abc\#{1}\""
+  end
+
+  test "alias with dynamic symbol" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'")),
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"))
+    )
+    assert_parses expected, "alias :'abc' :'def'"
+  end
+
+  test "alias with dynamic symbol with interpolation" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      InterpolatedSymbolNode(
+        SYMBOL_BEGIN(":\""),
+        [StringNode(nil, STRING_CONTENT("abc"), nil),
+         StringInterpolatedNode(
+           EMBEXPR_BEGIN("\#{"),
+           Statements([expression("1")]),
+           EMBEXPR_END("}")
+         )],
+        STRING_END("\"")
+      ),
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"))
+    )
+    assert_parses expected, "alias :\"abc\#{1}\" :'def'"
+  end
+
+  test "undef with dynamic symbols" do
+    expected = UndefNode(
+      KEYWORD_UNDEF("undef"),
+      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))]
+    )
+    assert_parses expected, "undef :'abc'"
+  end
+
+  test "undef with dynamic symbols with interpolation" do
+    expected = UndefNode(
+      KEYWORD_UNDEF("undef"),
+      [InterpolatedSymbolNode(
+         SYMBOL_BEGIN(":\""),
+         [StringNode(nil, STRING_CONTENT("abc"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([expression("1")]),
+            EMBEXPR_END("}")
+          )],
+         STRING_END("\"")
+       )]
+    )
+    assert_parses expected, "undef :\"abc\#{1}\""
+  end
+
   test "ternary" do
     expected = Ternary(
       CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
