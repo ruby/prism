@@ -772,7 +772,7 @@ nodes:
 
           module Foo end
           ^^^^^^^^^^^^^^
-  - name: MultiLeftHandNode
+  - name: MultiTargetNode
     child_nodes:
       - name: targets
         type: node[]

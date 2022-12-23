@@ -1341,7 +1341,7 @@ class ParseTest < Test::Unit::TestCase
   test "for loop with 2 indexes" do
     expected = ForNode(
       KEYWORD_FOR("for"),
-      MultiLeftHandNode([
+      MultiTargetNode([
         expression("i"),
         expression("j"),
       ]),
@@ -1358,7 +1358,7 @@ class ParseTest < Test::Unit::TestCase
   test "for loop with 3 indexes" do
     expected = ForNode(
       KEYWORD_FOR("for"),
-      MultiLeftHandNode([
+      MultiTargetNode([
         expression("i"),
         expression("j"),
         expression("k"),

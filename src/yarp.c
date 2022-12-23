@@ -1414,6 +1414,11 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 #undef LEFT_ASSOCIATIVE
 #undef RIGHT_ASSOCIATIVE
 
+// If the current token is of the specified type, lex forward by one token and
+// return true. Otherwise, return false. For example:
+//
+//     if (accept(parser, YP_TOKEN_COLON)) { ... }
+//
 static bool
 accept(yp_parser_t *parser, yp_token_type_t type) {
   if (parser->current.type == type) {
@@ -1423,6 +1428,11 @@ accept(yp_parser_t *parser, yp_token_type_t type) {
   return false;
 }
 
+// If the current token is of any of the specified types, lex forward by one
+// token and return true. Otherwise, return false. For example:
+//
+//     if (accept_any(parser, 2, YP_TOKEN_COLON, YP_TOKEN_SEMICOLON)) { ... }
+//
 static bool
 accept_any(yp_parser_t *parser, size_t count, ...) {
   va_list types;
@@ -1461,12 +1471,24 @@ expect(yp_parser_t *parser, yp_token_type_t type, const char *message) {
 
 // In a lot of places in the tree you can have tokens that are not provided but
 // that do not cause an error. For example, in a method call without
-// parentheses. In these cases we set the token to the "not provided" type.
+// parentheses. In these cases we set the token to the "not provided" type. For
+// example:
+//
+//     yp_token_t token;
+//     not_provided(&token, parser->previous.end);
+//
 static inline void
 not_provided(yp_token_t *token, const char *location) {
   *token = (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = location, .end = location };
 }
 
+// This function is used to mark a token as missing. This is used when a token
+// is expected in a certain position but is not present. To use it, allocate a
+// token on the stack and pass it to this function. For example:
+//
+//     yp_token_t token;
+//     missing(&token, parser->previous.end);
+//
 static inline void
 missing(yp_token_t *token, const char *location) {
   *token = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = location, .end = location };
@@ -1475,28 +1497,36 @@ missing(yp_token_t *token, const char *location) {
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
 
+// Parse a list of targets for assignment. This is used in the case of a for
+// loop or a multi-assignment. For example, in the following code:
+//
+//     for foo, bar in baz
+//         ^^^^^^^^
+//
+// The targets are `foo` and `bar`. This function will either return a single
+// target node or a multi-target node.
 static yp_node_t *
-parse_left_hand_side(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
+parse_targets(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
   yp_node_t *first_target = parse_expression(parser, binding_power, message);
 
-  if(parser->current.type != YP_TOKEN_COMMA) {
+  if (parser->current.type != YP_TOKEN_COMMA) {
     return first_target;
-  } else {
-    yp_node_t *multi_left_hand = yp_node_multi_left_hand_node_create(parser);
-    yp_node_t *target;
-
-    yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, first_target);
-
-    while(accept(parser, YP_TOKEN_COMMA)) {
-      target = parse_expression(parser, binding_power, message);
-      yp_node_list_append(parser, multi_left_hand, &multi_left_hand->as.multi_left_hand_node.targets, target);
-    }
-
-    return multi_left_hand;
   }
+
+  yp_node_t *multi_target = yp_node_multi_target_node_create(parser);
+  yp_node_t *target;
+
+  yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, first_target);
+
+  while(accept(parser, YP_TOKEN_COMMA)) {
+    target = parse_expression(parser, binding_power, message);
+    yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, target);
+  }
+
+  return multi_target;
 }
 
-
+// Parse a list of statements separated by newlines or semicolons.
 static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
   context_push(parser, context);
@@ -2061,7 +2091,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_FOR: {
       yp_token_t for_keyword = parser->previous;
-      yp_node_t *index = parse_left_hand_side(parser, BINDING_POWER_INDEX, "Expected index after for.");
+      yp_node_t *index = parse_targets(parser, BINDING_POWER_INDEX, "Expected index after for.");
 
       expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
       yp_token_t in_keyword = parser->previous;
