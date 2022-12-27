@@ -1016,6 +1016,20 @@ nodes:
           def a(b)
                 ^
           end
+  - name: RescueModifierNode
+    child_nodes:
+      - name: expression
+        type: node
+      - name: rescue_keyword
+        type: token
+      - name: rescue_expression
+        type: node
+    location: expression->rescue_expression
+    comment: |
+      Represents an expression modified with a rescue.
+
+        foo rescue nil
+        ^^^^^^^^^^^^^^
   - name: RestParameterNode
     child_nodes:
       - name: operator
