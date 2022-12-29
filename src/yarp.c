@@ -768,6 +768,10 @@ lex_token_type(yp_parser_t *parser) {
               parser->current.end++;
               lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_STRING_BEGIN;
+            case 's':
+              parser->current.end++;
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
+              return YP_TOKEN_SYMBOL_BEGIN;
             case 'w':
               parser->current.end++;
               lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
@@ -1059,6 +1063,7 @@ lex_token_type(yp_parser_t *parser) {
           lex_mode_pop(parser);
 
           yp_token_type_t type = lex_identifier(parser);
+
           return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
         }
       }
