@@ -657,6 +657,29 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a &\nend"
   end
 
+  test "def with **nil" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("m"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [KeywordParameterNode(LABEL("b:"))],
+        KeywordRestParameterNode(STAR_STAR("**"), KEYWORD_NIL("nil")),
+        nil
+      ),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("a"), LABEL("b"), KEYWORD_NIL("nil")])
+    )
+
+    assert_parses expected, "def m a, b:, **nil\nend"
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil), "defined? 1"
   end

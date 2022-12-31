@@ -1711,6 +1711,9 @@ parse_parameters(yp_parser_t *parser) {
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
           yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        } else if (accept(parser, YP_TOKEN_KEYWORD_NIL)) {
+          name = parser->previous;
+          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
         } else {
           not_provided(&name, parser->previous.end);
         }
