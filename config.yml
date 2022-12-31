@@ -14,6 +14,8 @@ tokens:
     comment: "&&"
   - name: AMPERSAND_AMPERSAND_EQUAL
     comment: "&&="
+  - name: AMPERSAND_DOT
+    comment: "&."
   - name: AMPERSAND_EQUAL
     comment: "&="
   - name: BACK_REFERENCE

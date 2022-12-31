@@ -666,6 +666,8 @@ lex_token_type(yp_parser_t *parser) {
         case '&':
           if (match(parser, '&'))
             return match(parser, '=') ? YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL : YP_TOKEN_AMPERSAND_AMPERSAND;
+          if (match(parser, '.'))
+            return YP_TOKEN_AMPERSAND_DOT;
           return match(parser, '=') ? YP_TOKEN_AMPERSAND_EQUAL : YP_TOKEN_AMPERSAND;
 
         // | || ||= |=
@@ -1413,9 +1415,10 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   // []
   [YP_TOKEN_BRACKET_LEFT_RIGHT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
 
-  // :: .
+  // :: . &.
   [YP_TOKEN_COLON_COLON] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL),
-  [YP_TOKEN_DOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL)
+  [YP_TOKEN_DOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL),
+  [YP_TOKEN_AMPERSAND_DOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL)
 };
 
 #undef LEFT_ASSOCIATIVE
@@ -2716,6 +2719,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
       return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
     }
+    case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
       yp_token_t call_operator = parser->previous;
 

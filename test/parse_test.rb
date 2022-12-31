@@ -307,6 +307,77 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a.b(c, d)"
   end
 
+  test "safe call" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      nil,
+      nil,
+      nil,
+      "b"
+    )
+
+    assert_parses expected, "a&.b"
+  end
+
+  test "safe call with &.() shorthand and no arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      NOT_PROVIDED(""),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "call"
+    )
+
+    assert_parses expected, "a&.()"
+  end
+
+  test "safe call with parentheses and no arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "b"
+    )
+
+    assert_parses expected, "a&.b()"
+  end
+
+  test "safe call with parentheses and arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode([expression("c")]),
+      PARENTHESIS_RIGHT(")"),
+      "b"
+    )
+
+    assert_parses expected, "a&.b(c)"
+  end
+
+  test "safe call with non identifier method name" do
+    omit("non identifier method call")
+    expected = CallNode(
+      IntegerLiteral(INTEGER("1")),
+      AMPERSAND_DOT("&."),
+      MINUS_AT("-@"),
+      nil,
+      nil,
+      nil,
+      "b"
+    )
+
+    assert_parses expected, "1&.-@"
+  end
+
   test "character literal" do
     assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil), "?a"
   end
