@@ -2290,6 +2290,68 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return array;
     }
+    case YP_TOKEN_PERCENT_UPPER_I: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
+
+      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+        if (array->as.array_node.elements.size == 0) {
+          accept(parser, YP_TOKEN_WORDS_SEP);
+        } else {
+          expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%I` list.");
+        }
+
+	yp_token_t dynamic_symbol_opening;
+	not_provided(&dynamic_symbol_opening, parser->previous.end);
+	yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &dynamic_symbol_opening, &dynamic_symbol_opening);
+
+	while (parser->current.type != YP_TOKEN_WORDS_SEP && parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+	  switch (parser->current.type) {
+	  case YP_TOKEN_STRING_CONTENT: {
+	    parser_lex(parser);
+
+	    yp_token_t string_content_opening;
+	    not_provided(&string_content_opening, parser->previous.start);
+
+	    yp_token_t string_content_closing;
+	    not_provided(&string_content_closing, parser->previous.end);
+
+	    yp_node_t *symbol_node = yp_node_symbol_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing);
+
+	    if (parser->current.type == YP_TOKEN_EMBEXPR_BEGIN || interpolated->as.interpolated_symbol_node.parts.size > 0) {
+	      yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, symbol_node);
+	    } else {
+	      yp_node_list_append(parser, array, &array->as.array_node.elements, symbol_node);
+	    }
+
+	    break;
+	  }
+	  case YP_TOKEN_EMBEXPR_BEGIN: {
+	    parser_lex(parser);
+	    yp_token_t embexpr_opening = parser->previous;
+	    yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+	    expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+	    yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
+	    break;
+	  }
+	  default:
+	    fprintf(stderr, "Could not understand token type %s in an interpolated symbol list\n", yp_token_type_to_str(parser->previous.type));
+	    return NULL;
+	  }
+	}
+
+	if (interpolated->as.interpolated_symbol_node.parts.size > 0) {
+	  yp_node_list_append(parser, array, &array->as.array_node.elements, interpolated);
+	} else {
+	  yp_node_destroy(parser, interpolated);
+	}
+      }
+
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%I` list.");
+      array->as.array_node.closing = parser->previous;
+
+      return array;
+    }
     case YP_TOKEN_PERCENT_LOWER_W: {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
