@@ -982,6 +982,60 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%i[a b c]"
   end
 
+  test "symbol list with ignored interpolation" do
+    expected = ArrayNode(
+      PERCENT_LOWER_I("%i["),
+      [SymbolNode(nil, STRING_CONTENT("a"), nil),
+       SymbolNode(nil, STRING_CONTENT("b\#{1}"), nil),
+       SymbolNode(nil, STRING_CONTENT("\#{2}c"), nil),
+       SymbolNode(nil, STRING_CONTENT("d\#{3}f"), nil)],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%i[a b\#{1} \#{2}c d\#{3}f]"
+  end
+
+  test "symbol list with interpreted interpolation" do
+    expected = ArrayNode(
+      PERCENT_UPPER_I("%I["),
+      [SymbolNode(nil, STRING_CONTENT("a"), nil),
+       InterpolatedSymbolNode(
+         nil,
+         [SymbolNode(nil, STRING_CONTENT("b"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("1"))]),
+            EMBEXPR_END("}")
+          )],
+         nil
+       ),
+       InterpolatedSymbolNode(
+         nil,
+         [StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("2"))]),
+            EMBEXPR_END("}")
+          ),
+          SymbolNode(nil, STRING_CONTENT("c"), nil)],
+         nil
+       ),
+       InterpolatedSymbolNode(
+         nil,
+         [SymbolNode(nil, STRING_CONTENT("d"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("3"))]),
+            EMBEXPR_END("}")
+          ),
+          SymbolNode(nil, STRING_CONTENT("f"), nil)],
+         nil
+       )],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%I[a b\#{1} \#{2}c d\#{3}f]"
+  end
+
   test "dynamic symbol" do
     expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))
     assert_parses expected, ":'abc'"
