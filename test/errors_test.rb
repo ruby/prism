@@ -119,6 +119,14 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end
 
+  test "unterminated parenthesised expression" do
+    assert_errors expression('(1+2'), '(1+2', ["Expected a closing parenthesis."]
+  end
+
+  test "parenthesised expression with unparsable internals" do
+    assert_errors expression('(/+.'), '(/+.', ["Expected a closing delimiter for a regular expression.", "Expected a closing parenthesis."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

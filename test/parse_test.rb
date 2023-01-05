@@ -155,6 +155,51 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CallNode(expression("1"), nil, SLASH("/"), nil, ArgumentsNode([expression("2")]), nil, "/"), "1 / 2"
   end
 
+  test "binary / no whitespace" do
+    assert_parses CallNode(expression("1"), nil, SLASH("/"), nil, ArgumentsNode([expression("2")]), nil, "/"), "1/2"
+  end
+
+  test "binary / variables no whitespace" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
+      nil,
+      SLASH("/"),
+      nil,
+      ArgumentsNode([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b")]),
+      nil,
+      "/"
+    )
+
+    assert_parses expected, "a/b"
+  end
+
+  test "binary + variables parenthesised" do
+    expected = CallNode(
+      ArrayNode(
+        PARENTHESIS_LEFT("("),
+        [CallNode(
+           CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
+           nil,
+           PLUS("+"),
+           nil,
+           ArgumentsNode(
+             [CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b")]
+           ),
+           nil,
+           "+"
+         )],
+        PARENTHESIS_RIGHT(")")
+      ),
+      nil,
+      SLASH("/"),
+      nil,
+      ArgumentsNode([CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c")]),
+      nil,
+      "/"
+    )
+    assert_parses expected, "(a+b)/c"
+  end
+
   test "binary *" do
     assert_parses CallNode(expression("1"), nil, STAR("*"), nil, ArgumentsNode([expression("2")]), nil, "*"), "1 * 2"
   end

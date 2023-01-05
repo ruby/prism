@@ -722,7 +722,8 @@ lex_token_type(yp_parser_t *parser) {
         // / /=
         case '/':
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
-          if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
+          if (parser->previous.type == YP_TOKEN_INTEGER || parser->previous.type == YP_TOKEN_IDENTIFIER || parser->previous.type == YP_TOKEN_PARENTHESIS_RIGHT)
+	    return YP_TOKEN_SLASH;
 
           lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = '/' });
           return YP_TOKEN_REGEXP_BEGIN;
@@ -1918,6 +1919,22 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return array;
     }
+    case YP_TOKEN_PARENTHESIS_LEFT: {
+      // expression grouping parenthesis
+      yp_token_t opening = parser->previous;
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
+
+      if (parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        yp_node_t *element = parse_expression(parser, BINDING_POWER_DEFINED, "Could not parse expression in parenthesis.");
+        yp_node_list_append(parser, array, &array->as.array_node.elements, element);
+      }
+
+      expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
+      array->as.array_node.closing = parser->previous;
+
+      return array;
+    }
+
     case YP_TOKEN_CHARACTER_LITERAL: {
       yp_token_t opening = parser->previous;
       opening.type = YP_TOKEN_STRING_BEGIN;
