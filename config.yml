@@ -1125,6 +1125,8 @@ nodes:
         type: token
       - name: closing
         type: token?
+      - name: unescaped
+        type: string
     location: opening|content->closing|content
     comment: |
       Represents a string literal, a string contained within a `%w` list, or

@@ -1083,6 +1083,93 @@ lex_token_type(yp_parser_t *parser) {
 }
 
 /******************************************************************************/
+/* Escaping-related functions                                                 */
+/******************************************************************************/
+
+// When we are parsing string-like content, we need to unescape the content to
+// provide to the consumers of the parser. This function accepts a range of
+// characters from the source and unescapes into the provided string. The
+// supported escapes are:
+//
+// \a             bell, ASCII 07h (BEL)
+// \b             backspace, ASCII 08h (BS)
+// \t             horizontal tab, ASCII 09h (TAB)
+// \n             newline (line feed), ASCII 0Ah (LF)
+// \v             vertical tab, ASCII 0Bh (VT)
+// \f             form feed, ASCII 0Ch (FF)
+// \r             carriage return, ASCII 0Dh (CR)
+// \e             escape, ASCII 1Bh (ESC)
+// \s             space, ASCII 20h (SPC)
+// \\             backslash
+// \nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
+// \xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
+// \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
+// \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+// \cx or \C-x    control character, where x is an ASCII printable character
+// \M-x           meta character, where x is an ASCII printable character
+// \M-\C-x        meta control character, where x is an ASCII printable character
+// \M-\cx         same as above
+// \c\M-x         same as above
+// \c? or \C-?    delete, ASCII 7Fh (DEL)
+//
+static yp_node_t *
+yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
+  yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
+  size_t total_length = content->end - content->start;
+
+  const char *cursor = content->start;
+  const char *backslash;
+
+  if ((backslash = memchr(content->start, '\\', total_length))) {
+    // Here we have found an escape character, so we need to handle all escapes
+    // within the string.
+    yp_string_owned_init(&node->as.string_node.unescaped, malloc(total_length), total_length);
+
+    // This is the memory address where we're putting the unescaped string.
+    char *dest = node->as.string_node.unescaped.as.owned.source;
+    size_t dest_length = 0;
+
+    // For each escape found in the source string, we will handle it and update
+    // the moving cursor->backslash window.
+    while (backslash != NULL && backslash < content->end) {
+      // This is the size of the segment of the string from the previous escape
+      // or the start of the string to the current escape.
+      size_t segment_size = backslash - cursor;
+
+      memcpy(dest + dest_length, cursor, segment_size);
+      dest_length += segment_size;
+
+      switch (backslash[1]) {
+        case '\\':
+          dest[dest_length++] = '\\';
+          cursor = backslash + 2;
+          break;
+        case '\'':
+          dest[dest_length++] = '\'';
+          cursor = backslash + 2;
+          break;
+        default:
+          // In this case we're escaping something that doesn't need escaping.
+          dest[dest_length++] = '\\';
+          cursor = backslash + 1;
+          break;
+      }
+
+      backslash = memchr(cursor, '\\', content->end - cursor);
+    }
+
+    // We need to copy the final segment of the string after the last escape.
+    memcpy(dest + dest_length, cursor, content->end - cursor);
+    node->as.string_node.unescaped.as.owned.length = dest_length + (content->end - cursor);
+  } else {
+    // Here there are no escapes, so we can reference the string directly.
+    yp_string_shared_init(&node->as.string_node.unescaped, content->start, content->end);
+  }
+
+  return node;
+}
+
+/******************************************************************************/
 /* Encoding-related functions                                                 */
 /******************************************************************************/
 
@@ -1840,7 +1927,7 @@ parse_symbol(yp_parser_t *parser, int mode) {
           yp_token_t string_content_closing;
           not_provided(&string_content_closing, parser->previous.end);
 
-          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
+          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing));
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -1954,7 +2041,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t closing;
       not_provided(&closing, content.end);
 
-      return yp_node_string_node_create(parser, &opening, &content, &closing);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing);
     }
     case YP_TOKEN_CLASS_VARIABLE:
       return yp_node_class_variable_read_create(parser, &parser->previous);
@@ -1974,9 +2061,6 @@ parse_expression_prefix(yp_parser_t *parser) {
         return yp_node_local_variable_read_create(parser, &parser->previous);
       }
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, parser->previous.start, parser->previous.end);
-
       yp_token_t message = parser->previous;
 
       yp_token_t call_operator;
@@ -1985,7 +2069,9 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
 
-      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, name);
+      yp_node_t *node = yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+      yp_string_shared_init(&node->as.call_node.name, message.start, message.end);
+      return node;
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
@@ -2394,7 +2480,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_token_t closing;
         not_provided(&closing, parser->previous.end);
 
-        yp_node_t *string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing);
         yp_node_list_append(parser, array, &array->as.array_node.elements, string);
       }
 
@@ -2437,7 +2523,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t closing;
               not_provided(&closing, parser->previous.end);
 
-              current = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+              current = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing);
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit string content and the current node is an
               // interpolated string, then we need to append the string content
@@ -2448,7 +2534,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t closing;
               not_provided(&closing, parser->previous.end);
 
-              yp_node_t *next_string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+              yp_node_t *next_string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing);
               yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, next_string);
             }
 
@@ -2542,10 +2628,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary operator.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, operator_token.start, operator_token.end);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_shared_init(&node->as.call_node.name, operator_token.start, operator_token.end);
+      return node;
     }
     case YP_TOKEN_MINUS: {
       yp_token_t operator_token = parser->previous;
@@ -2561,10 +2646,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary -.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_constant_init(name, "-@", 2);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "-@", 2);
+      return node;
     }
     case YP_TOKEN_PLUS: {
       yp_token_t operator_token = parser->previous;
@@ -2580,10 +2664,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary +.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_constant_init(name, "+@", 2);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "+@", 2);
+      return node;
     }
     case YP_TOKEN_STRING_BEGIN: {
       yp_token_t opening = parser->previous;
@@ -2602,7 +2685,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t string_content_closing;
               not_provided(&string_content_closing, parser->previous.end);
 
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing));
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -2632,7 +2715,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-      return yp_node_string_node_create(parser, &opening, &content, &parser->previous);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous);
     }
     case YP_TOKEN_SYMBOL_BEGIN:
       return parse_symbol(parser, mode);
@@ -2738,21 +2821,22 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             yp_token_t rparen;
             not_provided(&rparen, parser->previous.end);
 
-            int length = node->as.call_node.message.end - node->as.call_node.message.start;
-            yp_string_t *name = yp_string_alloc();
-            yp_string_owned_init(name, malloc(length + 1), length + 1);
-            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
-
-            return yp_node_call_node_create(
+            yp_node_t *next_node = yp_node_call_node_create(
               parser,
               node->as.call_node.receiver,
               &node->as.call_node.call_operator,
               &token,
               &lparen,
               arguments,
-              &rparen,
-              name
+              &rparen
             );
+
+            int length = node->as.call_node.message.end - node->as.call_node.message.start;
+            yp_string_t *name = &next_node->as.call_node.name;
+            yp_string_owned_init(name, malloc(length + 1), length + 1);
+            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
+
+            return next_node;
           }
 
           // If there are arguments on the call node, then it can't be a method
@@ -2828,16 +2912,15 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, token.start, token.end);
-
       yp_token_t lparen;
       not_provided(&lparen, token.end);
 
       yp_token_t rparen;
       not_provided(&rparen, token.end);
 
-      return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
+      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen);
+      yp_string_shared_init(&next_node->as.call_node.name, token.start, token.end);
+      return next_node;
     }
     case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
@@ -2851,9 +2934,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         yp_token_t message;
         not_provided(&message, lparen.start);
 
-        yp_string_t name;
-        yp_string_constant_init(&name, "call", 4);
-
         yp_node_t *arguments;
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           rparen = parser->previous;
@@ -2864,7 +2944,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           rparen = parser->previous;
         }
 
-        return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
+        yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen);
+        yp_string_constant_init(&next_node->as.call_node.name, "call", 4);
+        return next_node;
       }
 
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
@@ -2873,10 +2955,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
 
-      yp_string_t name;
-      yp_string_shared_init(&name, message.start, message.end);
-
-      return yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, &name);
+      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+      yp_string_shared_init(&next_node->as.call_node.name, message.start, message.end);
+      return next_node;
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {

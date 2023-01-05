@@ -416,7 +416,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "character literal" do
-    assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil), "?a"
+    assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil, "a"), "?a"
   end
 
   test "class" do
@@ -967,17 +967,17 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string empty" do
-    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'")), "''"
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'"), ""), "''"
   end
 
   test "string interpolation disallowed" do
-    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("abc"), STRING_END("'")), "'abc'"
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("abc"), STRING_END("'"), "abc"), "'abc'"
   end
 
   test "string interpolation allowed, but not used" do
     expected = InterpolatedStringNode(
       STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil)],
+      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc")],
       STRING_END("\"")
     )
 
@@ -988,13 +988,13 @@ class ParseTest < Test::Unit::TestCase
     expected = InterpolatedStringNode(
       STRING_BEGIN("\""),
       [
-        StringNode(nil, STRING_CONTENT("aaa "), nil),
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
           Statements([CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, "bbb")]),
           EMBEXPR_END("}")
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil)
+        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")
       ],
       STRING_END("\"")
     )
@@ -1006,9 +1006,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       PERCENT_LOWER_W("%w["),
       [
-        StringNode(nil, STRING_CONTENT("a"), nil),
-        StringNode(nil, STRING_CONTENT("b"), nil),
-        StringNode(nil, STRING_CONTENT("c"), nil)
+        StringNode(nil, STRING_CONTENT("a"), nil, "a"),
+        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
+        StringNode(nil, STRING_CONTENT("c"), nil, "c")
       ],
       STRING_END("]")
     )
@@ -1020,9 +1020,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
-        StringNode(nil, STRING_CONTENT("a"), nil),
-        StringNode(nil, STRING_CONTENT("b"), nil),
-        StringNode(nil, STRING_CONTENT("c"), nil)
+        StringNode(nil, STRING_CONTENT("a"), nil, "a"),
+        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
+        StringNode(nil, STRING_CONTENT("c"), nil, "c")
       ],
       STRING_END("]")
     )
@@ -1034,26 +1034,34 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
-        StringNode(nil, STRING_CONTENT("a"), nil),
+        StringNode(nil, STRING_CONTENT("a"), nil, "a"),
         InterpolatedStringNode(
           nil,
           [
-            StringNode(nil, STRING_CONTENT("b"), nil),
+            StringNode(nil, STRING_CONTENT("b"), nil, "b"),
             StringInterpolatedNode(
               EMBEXPR_BEGIN("\#{"),
               Statements([expression("c")]),
               EMBEXPR_END("}")
             ),
-            StringNode(nil, STRING_CONTENT("d"), nil)
+            StringNode(nil, STRING_CONTENT("d"), nil, "d")
           ],
           nil
         ),
-        StringNode(nil, STRING_CONTENT("e"), nil)
+        StringNode(nil, STRING_CONTENT("e"), nil, "e")
       ],
       STRING_END("]")
     )
 
     assert_parses expected, "%W[a b\#{c}d e]"
+  end
+
+  test "string with \\ escapes" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\\\ foo \\\\ bar"), STRING_END("'"), "\\ foo \\ bar"), "'\\\\ foo \\\\ bar'"
+  end
+
+  test "string with ' escapes" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\' foo \\' bar"), STRING_END("'"), "' foo ' bar"), "'\\' foo \\' bar'"
   end
 
   test "super" do
@@ -1152,7 +1160,7 @@ class ParseTest < Test::Unit::TestCase
   test "dynamic symbol with interpolation" do
     expected = InterpolatedSymbolNode(
       SYMBOL_BEGIN(":\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil),
+      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
        StringInterpolatedNode(
          EMBEXPR_BEGIN("\#{"),
          Statements([expression("1")]),
@@ -1177,7 +1185,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_ALIAS("alias"),
       InterpolatedSymbolNode(
         SYMBOL_BEGIN(":\""),
-        [StringNode(nil, STRING_CONTENT("abc"), nil),
+        [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
          StringInterpolatedNode(
            EMBEXPR_BEGIN("\#{"),
            Statements([expression("1")]),
@@ -1203,7 +1211,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_UNDEF("undef"),
       [InterpolatedSymbolNode(
          SYMBOL_BEGIN(":\""),
-         [StringNode(nil, STRING_CONTENT("abc"), nil),
+         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
           StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
             Statements([expression("1")]),
