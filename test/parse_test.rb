@@ -1056,6 +1056,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%W[a b\#{c}d e]"
   end
 
+  test "string with \\ escapes" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\\\ foo \\\\ bar"), STRING_END("'"), "\\ foo \\ bar"), "'\\\\ foo \\\\ bar'"
+  end
+
+  test "string with ' escapes" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\' foo \\' bar"), STRING_END("'"), "' foo ' bar"), "'\\' foo \\' bar'"
+  end
+
   test "super" do
     assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
   end

@@ -1100,7 +1100,7 @@ lex_token_type(yp_parser_t *parser) {
 // \r             carriage return, ASCII 0Dh (CR)
 // \e             escape, ASCII 1Bh (ESC)
 // \s             space, ASCII 20h (SPC)
-// \\             backslash, \
+// \\             backslash
 // \nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
 // \xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
 // \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
@@ -1115,7 +1115,57 @@ lex_token_type(yp_parser_t *parser) {
 static yp_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
-  yp_string_shared_init(&node->as.string_node.unescaped, content->start, content->end);
+  size_t total_length = content->end - content->start;
+
+  const char *cursor = content->start;
+  const char *backslash;
+
+  if ((backslash = memchr(content->start, '\\', total_length))) {
+    // Here we have found an escape character, so we need to handle all escapes
+    // within the string.
+    yp_string_owned_init(&node->as.string_node.unescaped, malloc(total_length), total_length);
+
+    // This is the memory address where we're putting the unescaped string.
+    char *dest = node->as.string_node.unescaped.as.owned.source;
+    size_t dest_length = 0;
+
+    // For each escape found in the source string, we will handle it and update
+    // the moving cursor->backslash window.
+    while (backslash != NULL && backslash < content->end) {
+      // This is the size of the segment of the string from the previous escape
+      // or the start of the string to the current escape.
+      size_t segment_size = backslash - cursor;
+
+      memcpy(dest + dest_length, cursor, segment_size);
+      dest_length += segment_size;
+
+      switch (backslash[1]) {
+        case '\\':
+          dest[dest_length++] = '\\';
+          cursor = backslash + 2;
+          break;
+        case '\'':
+          dest[dest_length++] = '\'';
+          cursor = backslash + 2;
+          break;
+        default:
+          // In this case we're escaping something that doesn't need escaping.
+          dest[dest_length++] = '\\';
+          cursor = backslash + 1;
+          break;
+      }
+
+      backslash = memchr(cursor, '\\', content->end - cursor);
+    }
+
+    // We need to copy the final segment of the string after the last escape.
+    memcpy(dest + dest_length, cursor, content->end - cursor);
+    node->as.string_node.unescaped.as.owned.length = dest_length + (content->end - cursor);
+  } else {
+    // Here there are no escapes, so we can reference the string directly.
+    yp_string_shared_init(&node->as.string_node.unescaped, content->start, content->end);
+  }
+
   return node;
 }
 
