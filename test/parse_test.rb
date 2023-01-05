@@ -1178,6 +1178,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "undef :\"abc\#{1}\""
   end
 
+  test "%s symbol" do
+    expected = SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]"))
+    assert_parses expected, "%s[abc]"
+  end
+
+  test "alias with %s symbol" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]")),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]"))
+    )
+    assert_parses expected, "alias %s[abc] %s[def]"
+  end
+
   test "ternary" do
     expected = Ternary(
       CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),

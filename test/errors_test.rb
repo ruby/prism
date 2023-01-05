@@ -119,6 +119,10 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end
 
+  test "unterminated %s symbol" do
+    assert_errors expression("%s[abc"), "%s[abc", ["Expected a closing delimiter for a dynamic symbol."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
