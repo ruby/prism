@@ -307,6 +307,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a.b(c, d)"
   end
 
+  test "call with =" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      DOT("."),
+      EQUAL("="),
+      nil,
+      ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+      nil,
+      "bar="
+    )
+
+    assert_parses expected, "foo.bar = 1"
+  end
+
   test "safe call" do
     expected = CallNode(
       expression("a"),
@@ -361,21 +375,6 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "a&.b(c)"
-  end
-
-  test "safe call with non identifier method name" do
-    omit("non identifier method call")
-    expected = CallNode(
-      IntegerLiteral(INTEGER("1")),
-      AMPERSAND_DOT("&."),
-      MINUS_AT("-@"),
-      nil,
-      nil,
-      nil,
-      "b"
-    )
-
-    assert_parses expected, "1&.-@"
   end
 
   test "character literal" do
