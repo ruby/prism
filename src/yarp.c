@@ -1923,6 +1923,22 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return array;
     }
+    case YP_TOKEN_PARENTHESIS_LEFT: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *parentheses;
+
+      if (parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_BEGIN);
+        parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
+      } else {
+        yp_node_t *statements = yp_node_statements_create(parser);
+        parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
+      }
+
+      expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
+      parentheses->as.parentheses_node.closing = parser->previous;
+      return parentheses;
+    }
     case YP_TOKEN_CHARACTER_LITERAL: {
       yp_token_t opening = parser->previous;
       opening.type = YP_TOKEN_STRING_BEGIN;

@@ -123,6 +123,10 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("%s[abc"), "%s[abc", ["Expected a closing delimiter for a dynamic symbol."]
   end
 
+  test "unterminated parenthesized expression" do
+    assert_errors expression('(1 + 2'), '(1 + 2', ["Expected a closing parenthesis."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
