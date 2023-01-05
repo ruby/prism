@@ -104,6 +104,19 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "(1 + 1)"
   end
 
+  test "parentesized with multiple statements" do
+    expected = ParenthesesNode(
+      PARENTHESIS_LEFT("("),
+      Statements(
+        [CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
+         CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
+         CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c")]
+      ),
+      PARENTHESIS_RIGHT(")")
+    )
+    assert_parses expected, "(a; b; c)"
+  end
+
   test "binary !=" do
     assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), nil, ArgumentsNode([expression("2")]), nil, "!="), "1 != 2"
   end
