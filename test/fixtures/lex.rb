@@ -182,3 +182,5 @@ def ~@() end
 abc.~@
 
 `abc`
+
+abc&.xyz

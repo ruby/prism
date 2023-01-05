@@ -211,6 +211,7 @@ module YARP
     AMPERSAND: :on_op,
     AMPERSAND_AMPERSAND: :on_op,
     AMPERSAND_AMPERSAND_EQUAL: :on_op,
+    AMPERSAND_DOT: :on_op,
     AMPERSAND_EQUAL: :on_op,
     BACK_REFERENCE: :on_backref,
     BACKTICK: :on_backtick,

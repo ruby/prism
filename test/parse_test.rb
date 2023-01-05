@@ -307,6 +307,76 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a.b(c, d)"
   end
 
+  test "call with =" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      DOT("."),
+      EQUAL("="),
+      nil,
+      ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+      nil,
+      "bar="
+    )
+
+    assert_parses expected, "foo.bar = 1"
+  end
+
+  test "safe call" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      nil,
+      nil,
+      nil,
+      "b"
+    )
+
+    assert_parses expected, "a&.b"
+  end
+
+  test "safe call with &.() shorthand and no arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      NOT_PROVIDED(""),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "call"
+    )
+
+    assert_parses expected, "a&.()"
+  end
+
+  test "safe call with parentheses and no arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "b"
+    )
+
+    assert_parses expected, "a&.b()"
+  end
+
+  test "safe call with parentheses and arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode([expression("c")]),
+      PARENTHESIS_RIGHT(")"),
+      "b"
+    )
+
+    assert_parses expected, "a&.b(c)"
+  end
+
   test "character literal" do
     assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil), "?a"
   end
@@ -1066,6 +1136,60 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%i[a b c]"
   end
 
+  test "symbol list with ignored interpolation" do
+    expected = ArrayNode(
+      PERCENT_LOWER_I("%i["),
+      [SymbolNode(nil, STRING_CONTENT("a"), nil),
+       SymbolNode(nil, STRING_CONTENT("b\#{1}"), nil),
+       SymbolNode(nil, STRING_CONTENT("\#{2}c"), nil),
+       SymbolNode(nil, STRING_CONTENT("d\#{3}f"), nil)],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%i[a b\#{1} \#{2}c d\#{3}f]"
+  end
+
+  test "symbol list with interpreted interpolation" do
+    expected = ArrayNode(
+      PERCENT_UPPER_I("%I["),
+      [SymbolNode(nil, STRING_CONTENT("a"), nil),
+       InterpolatedSymbolNode(
+         nil,
+         [SymbolNode(nil, STRING_CONTENT("b"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("1"))]),
+            EMBEXPR_END("}")
+          )],
+         nil
+       ),
+       InterpolatedSymbolNode(
+         nil,
+         [StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("2"))]),
+            EMBEXPR_END("}")
+          ),
+          SymbolNode(nil, STRING_CONTENT("c"), nil)],
+         nil
+       ),
+       InterpolatedSymbolNode(
+         nil,
+         [SymbolNode(nil, STRING_CONTENT("d"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("3"))]),
+            EMBEXPR_END("}")
+          ),
+          SymbolNode(nil, STRING_CONTENT("f"), nil)],
+         nil
+       )],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%I[a b\#{1} \#{2}c d\#{3}f]"
+  end
+
   test "dynamic symbol" do
     expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))
     assert_parses expected, ":'abc'"
@@ -1135,6 +1259,20 @@ class ParseTest < Test::Unit::TestCase
        )]
     )
     assert_parses expected, "undef :\"abc\#{1}\""
+  end
+
+  test "%s symbol" do
+    expected = SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]"))
+    assert_parses expected, "%s[abc]"
+  end
+
+  test "alias with %s symbol" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]")),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]"))
+    )
+    assert_parses expected, "alias %s[abc] %s[def]"
   end
 
   test "ternary" do
