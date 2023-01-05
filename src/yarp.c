@@ -2679,40 +2679,77 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return result;
         }
         case YP_NODE_CALL_NODE: {
-          if (node->as.call_node.receiver == NULL && node->as.call_node.arguments == NULL) {
-            yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
-            yp_node_t *read = node;
+          if (node->as.call_node.lparen.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL) {
+            // If we have no arguments to the call node and we have an equals
+            // sign then this is either a method call or a local variable write.
+            if (node->as.call_node.receiver == NULL) {
+              // When we get here, we have a local varaible write, because it
+              // was previously marked as a method call but now we have an =.
+              // This looks like:
+              //
+              //     foo = 1
+              //
+              // When it was parsed in the prefix position, foo was seen as a
+              // method call with no receiver and no arguments. Now we have an
+              // =, so we know it's a local variable write.
+              yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
+              yp_node_t *read = node;
 
-            yp_token_t name = node->as.call_node.message;
-            yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+              yp_token_t name = node->as.call_node.message;
+              yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
-            yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
-            yp_node_destroy(parser, read);
-            return result;
+              yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
+              yp_node_destroy(parser, read);
+              return result;
+            }
+
+            // When we get here, we have a method call, because it was
+            // previously marked as a method call but now we have an =. This
+            // looks like:
+            //
+            //     foo.bar = 1
+            //
+            // When it was parsed in the prefix position, foo.bar was seen as a
+            // method call with no arguments. Now we have an =, so we know it's
+            // a method call with an argument.
+            yp_token_t lparen;
+            not_provided(&lparen, token.end);
+
+            yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the call after =.");
+            yp_node_t *arguments = yp_node_arguments_node_create(parser);
+            yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
+
+            yp_token_t rparen;
+            not_provided(&rparen, parser->previous.end);
+
+            int length = node->as.call_node.message.end - node->as.call_node.message.start;
+            yp_string_t *name = yp_string_alloc();
+            yp_string_owned_init(name, malloc(length + 1), length + 1);
+            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
+
+            return yp_node_call_node_create(
+              parser,
+              node->as.call_node.receiver,
+              &node->as.call_node.call_operator,
+              &token,
+              &lparen,
+              arguments,
+              &rparen,
+              name
+            );
           }
-          // fallthrough
+
+          // If there are arguments on the call node, then it can't be a method
+          // call ending with = or a local variable write, so it must be a
+          // syntax error. In this case we'll fall through to our default
+          // handling.
         }
-        default: {
-          yp_token_t call_operator;
-          not_provided(&call_operator, token.start);
-
-          yp_token_t lparen;
-          not_provided(&lparen, token.end);
-
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the call after =.");
-          yp_node_t *arguments = yp_node_arguments_node_create(parser);
-          yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
-
-          yp_token_t rparen;
-          not_provided(&rparen, parser->previous.end);
-
-          int length = node->location.end - node->location.start;
-          yp_string_t *name = yp_string_alloc();
-          yp_string_owned_init(name, malloc(length + 1), length + 1);
-          sprintf(name->as.owned.source, "%.*s=", length, parser->start + node->location.start);
-
-          return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
-        }
+        default:
+          // In this case we have an = sign, but we don't know what it's for. We
+          // need to treat it as an error. For now, we'll mark it as an error
+          // and just skip right past it.
+          yp_error_list_append(&parser->error_list, "Unexpected `='.", parser->previous.start - parser->start);
+          return node;
       }
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
