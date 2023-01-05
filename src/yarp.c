@@ -25,6 +25,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_IF: return "IF";
     case YP_CONTEXT_MAIN: return "MAIN";
     case YP_CONTEXT_MODULE: return "MODULE";
+    case YP_CONTEXT_PARENS: return "PARENS";
     case YP_CONTEXT_POSTEXE: return "POSTEXE";
     case YP_CONTEXT_PREEXE: return "PREEXE";
     case YP_CONTEXT_SCLASS: return "SCLASS";
@@ -1243,6 +1244,8 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
+    case YP_CONTEXT_PARENS:
+      return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
   }
 
   return false;
@@ -1928,7 +1931,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parentheses;
 
       if (parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT && parser->current.type != YP_TOKEN_EOF) {
-        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_BEGIN);
+        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PARENS);
         parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
       } else {
         yp_node_t *statements = yp_node_statements_create(parser);
