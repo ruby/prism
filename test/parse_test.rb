@@ -117,6 +117,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "(a; b; c)"
   end
 
+  test "parentesized with empty statements" do
+    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "(\n;\n;\n)"
+  end
+
   test "binary !=" do
     assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), nil, ArgumentsNode([expression("2")]), nil, "!="), "1 != 2"
   end
