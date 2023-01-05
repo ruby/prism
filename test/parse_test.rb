@@ -2353,7 +2353,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "% string with any non-closing token" do
-    %w[! @ # $ % ^ & * _ + - | \\ : ; " ' , .].each do |token|
+    %w[! @ # $ % ^ & * _ + - | \\ : ; " ' , . ~ ? / `].each do |token|
       expected = InterpolatedStringNode(
         STRING_BEGIN("%#{token}"),
         [StringNode(nil, STRING_CONTENT("abc"), nil)],
