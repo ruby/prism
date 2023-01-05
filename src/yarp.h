@@ -1,6 +1,7 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>

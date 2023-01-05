@@ -1064,6 +1064,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\' foo \\' bar"), STRING_END("'"), "' foo ' bar"), "'\\' foo \\' bar'"
   end
 
+  test "string with octal escapes" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("\\7 \\43 \\141"), nil, "\a # a")],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"\\7 \\43 \\141\""
+  end
+
   test "super" do
     assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
   end
