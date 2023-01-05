@@ -1580,12 +1580,9 @@ typedef struct {
 void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
   if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-    while (true) {
+    while (parser->current.type != YP_TOKEN_EOF) {
       yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
-
-      // If parsing the argument resulted in error recovery, then we can stop
-      // parsing the arguments entirely now.
-      if (parser->recovering) break;
+      if (expression->type == YP_NODE_MISSING_NODE) break;
 
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
 
@@ -2968,12 +2965,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
   // to add the error message to the parser's error list.
   if (node->type == YP_NODE_MISSING_NODE) {
     yp_error_list_append(&parser->error_list, message, recovery.end - parser->start);
+    return node;
   }
 
-  // If we're recovering from a syntax error, then we should just return the
-  // node that we found and not attempt to parse any more of the expression.
-  if (parser->recovering) return node;
-
+  // Otherwise we'll look and see if the next token can be parsed as an infix
+  // operator. If it can, then we'll parse it using parse_expression_infix.
   binding_powers_t current_binding_powers;
   while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
     parser_lex(parser);
