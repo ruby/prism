@@ -916,6 +916,20 @@ nodes:
           def a(b, c, d)
                 ^^^^^^^
           end
+  - name: ParenthesesNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: statements
+        type: node
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents a parentesized expression
+
+          (10 + 34)
+          ^^^^^^^^^
   - name: PostExecutionNode
     child_nodes:
       - name: keyword

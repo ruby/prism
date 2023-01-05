@@ -79,6 +79,31 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ArrayNode(BRACKET_LEFT("["), [], BRACKET_RIGHT("]")), "[]"
   end
 
+  test "empty parenteses" do
+    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
+  end
+
+
+  test "parentesized expression" do
+    expected = ParenthesesNode(
+      PARENTHESIS_LEFT("("),
+      Statements(
+        [CallNode(
+           IntegerLiteral(INTEGER("1")),
+           nil,
+           PLUS("+"),
+           nil,
+           ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+           nil,
+           "+"
+         )]
+      ),
+      PARENTHESIS_RIGHT(")")
+    )
+
+    assert_parses expected, "(1 + 1)"
+  end
+
   test "binary !=" do
     assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), nil, ArgumentsNode([expression("2")]), nil, "!="), "1 != 2"
   end
