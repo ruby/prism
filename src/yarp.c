@@ -1974,9 +1974,6 @@ parse_expression_prefix(yp_parser_t *parser) {
         return yp_node_local_variable_read_create(parser, &parser->previous);
       }
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, parser->previous.start, parser->previous.end);
-
       yp_token_t message = parser->previous;
 
       yp_token_t call_operator;
@@ -1985,7 +1982,9 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
 
-      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, name);
+      yp_node_t *node = yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+      yp_string_shared_init(&node->as.call_node.name, message.start, message.end);
+      return node;
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
@@ -2542,10 +2541,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary operator.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, operator_token.start, operator_token.end);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_shared_init(&node->as.call_node.name, operator_token.start, operator_token.end);
+      return node;
     }
     case YP_TOKEN_MINUS: {
       yp_token_t operator_token = parser->previous;
@@ -2561,10 +2559,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary -.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_constant_init(name, "-@", 2);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "-@", 2);
+      return node;
     }
     case YP_TOKEN_PLUS: {
       yp_token_t operator_token = parser->previous;
@@ -2580,10 +2577,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary +.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_constant_init(name, "+@", 2);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "+@", 2);
+      return node;
     }
     case YP_TOKEN_STRING_BEGIN: {
       yp_token_t opening = parser->previous;
@@ -2738,21 +2734,22 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             yp_token_t rparen;
             not_provided(&rparen, parser->previous.end);
 
-            int length = node->as.call_node.message.end - node->as.call_node.message.start;
-            yp_string_t *name = yp_string_alloc();
-            yp_string_owned_init(name, malloc(length + 1), length + 1);
-            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
-
-            return yp_node_call_node_create(
+            yp_node_t *next_node = yp_node_call_node_create(
               parser,
               node->as.call_node.receiver,
               &node->as.call_node.call_operator,
               &token,
               &lparen,
               arguments,
-              &rparen,
-              name
+              &rparen
             );
+
+            int length = node->as.call_node.message.end - node->as.call_node.message.start;
+            yp_string_t *name = &next_node->as.call_node.name;
+            yp_string_owned_init(name, malloc(length + 1), length + 1);
+            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
+
+            return next_node;
           }
 
           // If there are arguments on the call node, then it can't be a method
@@ -2828,16 +2825,15 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, token.start, token.end);
-
       yp_token_t lparen;
       not_provided(&lparen, token.end);
 
       yp_token_t rparen;
       not_provided(&rparen, token.end);
 
-      return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
+      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen);
+      yp_string_shared_init(&next_node->as.call_node.name, token.start, token.end);
+      return next_node;
     }
     case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
@@ -2851,9 +2847,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         yp_token_t message;
         not_provided(&message, lparen.start);
 
-        yp_string_t name;
-        yp_string_constant_init(&name, "call", 4);
-
         yp_node_t *arguments;
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           rparen = parser->previous;
@@ -2864,7 +2857,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           rparen = parser->previous;
         }
 
-        return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
+        yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen);
+        yp_string_constant_init(&next_node->as.call_node.name, "call", 4);
+        return next_node;
       }
 
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
@@ -2873,10 +2868,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
 
-      yp_string_t name;
-      yp_string_shared_init(&name, message.start, message.end);
-
-      return yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, &name);
+      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+      yp_string_shared_init(&next_node->as.call_node.name, message.start, message.end);
+      return next_node;
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
