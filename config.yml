@@ -822,6 +822,17 @@ nodes:
 
           nil
           ^^^
+  - name: NoKeywordsParameterNode
+    child_nodes:
+      - name: keyword
+        type: token
+    location: keyword
+    comment: |
+      Represents the use of `**nil` inside method arguments.
+
+          def a(**nil)
+                ^^^^^
+          end
   - name: OperatorAssignmentNode
     child_nodes:
       - name: target

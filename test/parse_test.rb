@@ -667,14 +667,14 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [KeywordParameterNode(LABEL("b:"))],
-        KeywordRestParameterNode(STAR_STAR("**"), KEYWORD_NIL("nil")),
+        NoKeywordsParameterNode(KEYWORD_NIL("nil")),
         nil
       ),
       nil,
       nil,
       Statements([]),
       KEYWORD_END("end"),
-      Scope([IDENTIFIER("a"), LABEL("b"), KEYWORD_NIL("nil")])
+      Scope([IDENTIFIER("a"), LABEL("b")])
     )
 
     assert_parses expected, "def m a, b:, **nil\nend"
