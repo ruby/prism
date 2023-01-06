@@ -86,7 +86,7 @@ unescape_hexadecimal(const char *backslash, unsigned char *value) {
 // \c\M-x         same as above
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
-void
+__attribute__((__visibility__("default"))) extern void
 yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type) {
   if (unescape_type == YP_UNESCAPE_NONE) {
     // If we're not unescaping then we can reference the source directly.

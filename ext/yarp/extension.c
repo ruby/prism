@@ -229,6 +229,17 @@ named_captures(VALUE self, VALUE rb_source) {
   return names;
 }
 
+static VALUE
+unescape(VALUE self, VALUE rb_source) {
+  yp_string_t string;
+
+  yp_unescape(RSTRING_PTR(rb_source), RSTRING_LEN(rb_source), &string, YP_UNESCAPE_ALL);
+  VALUE result = rb_str_new(yp_string_source(&string), yp_string_length(&string));
+  yp_string_free(&string);
+
+  return result;
+}
+
 void
 Init_yarp(void) {
   if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
@@ -256,4 +267,5 @@ Init_yarp(void) {
   rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
 
   rb_define_singleton_method(rb_cYARP, "named_captures", named_captures, 1);
+  rb_define_singleton_method(rb_cYARP, "unescape", unescape, 1);
 }
