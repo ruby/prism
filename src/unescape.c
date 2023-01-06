@@ -87,25 +87,24 @@ unescape_hexadecimal(const char *backslash, unsigned char *value) {
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
 void
-yp_unescape(const yp_token_t *content, yp_string_t *string, yp_unescape_type_t unescape_type) {
+yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type) {
   if (unescape_type == YP_UNESCAPE_NONE) {
     // If we're not unescaping then we can reference the source directly.
-    yp_string_shared_init(string, content->start, content->end);
+    yp_string_shared_init(string, value, value + length);
     return;
   }
 
-  size_t content_length = content->end - content->start;
-  const char *backslash = memchr(content->start, '\\', content_length);
+  const char *backslash = memchr(value, '\\', length);
 
   if (backslash == NULL) {
     // Here there are no escapes, so we can reference the source directly.
-    yp_string_shared_init(string, content->start, content->end);
+    yp_string_shared_init(string, value, value + length);
     return;
   }
 
   // Here we have found an escape character, so we need to handle all escapes
   // within the string.
-  yp_string_owned_init(string, malloc(content_length), content_length);
+  yp_string_owned_init(string, malloc(length), length);
 
   // This is the memory address where we're putting the unescaped string.
   char *dest = string->as.owned.source;
@@ -114,11 +113,12 @@ yp_unescape(const yp_token_t *content, yp_string_t *string, yp_unescape_type_t u
   // This is the current position in the source string that we're looking at.
   // It's going to move along behind the backslash so that we can copy each
   // segment of the string that doesn't contain an escape.
-  const char *cursor = content->start;
+  const char *cursor = value;
+  const char *end = value + length;
 
   // For each escape found in the source string, we will handle it and update
   // the moving cursor->backslash window.
-  while (backslash != NULL && backslash < content->end) {
+  while (backslash != NULL && backslash < end) {
     // This is the size of the segment of the string from the previous escape
     // or the start of the string to the current escape.
     size_t segment_size = backslash - cursor;
@@ -211,14 +211,14 @@ yp_unescape(const yp_token_t *content, yp_string_t *string, yp_unescape_type_t u
         }
     }
 
-    backslash = memchr(cursor, '\\', content->end - cursor);
+    backslash = memchr(cursor, '\\', end - cursor);
   }
 
   // We need to copy the final segment of the string after the last escape.
-  memcpy(dest + dest_length, cursor, content->end - cursor);
+  memcpy(dest + dest_length, cursor, end - cursor);
 
   // We also need to update the length at the end. This is because every escape
   // reduces the length of the final string, and we don't want garbage at the
   // end.
-  string->as.owned.length = dest_length + (content->end - cursor);
+  string->as.owned.length = dest_length + (end - cursor);
 }

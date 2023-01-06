@@ -1165,7 +1165,7 @@ parser_lex_magic_comments(yp_parser_t *parser) {
 static yp_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
-  yp_unescape(content, &node->as.string_node.unescaped, unescape_type);
+  yp_unescape(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type);
   return node;
 }
 
