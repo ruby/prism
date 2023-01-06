@@ -2,47 +2,85 @@
 
 require "test_helper"
 
-class UnescapeTest < Test::Unit::TestCase
-  test "backslash" do
-    assert_unescapes("\\", "\\\\")
+module UnescapeTest
+  class UnescapeNoneTest < Test::Unit::TestCase
+    test "backslash" do
+      assert_unescape_none("\\")
+    end
+
+    test "single quote" do
+      assert_unescape_none("'")
+    end
+
+    private
+
+    def assert_unescape_none(source)
+      assert_equal(source, YARP.unescape_none(source))
+    end
   end
 
-  test "single quote" do
-    assert_unescapes("'", "\\'")
+  class UnescapeMinimalTest < Test::Unit::TestCase
+    test "backslash" do
+      assert_unescape_minimal("\\", "\\\\")
+    end
+
+    test "single quote" do
+      assert_unescape_minimal("'", "\\'")
+    end
+
+    test "single char" do
+      assert_unescape_minimal("\\a", "\\a")
+    end
+
+    private
+
+    def assert_unescape_minimal(expected, source)
+      assert_equal(expected, YARP.unescape_minimal(source))
+    end
   end
 
-  test "single char" do
-    assert_unescapes("\a", "\\a")
-    assert_unescapes("\b", "\\b")
-    assert_unescapes("\e", "\\e")
-    assert_unescapes("\f", "\\f")
-    assert_unescapes("\n", "\\n")
-    assert_unescapes("\r", "\\r")
-    assert_unescapes("\s", "\\s")
-    assert_unescapes("\t", "\\t")
-    assert_unescapes("\v", "\\v")
-  end
+  class UnescapeAllTest < Test::Unit::TestCase
+    test "backslash" do
+      assert_unescape_all("\\", "\\\\")
+    end
 
-  test "octal" do
-    assert_unescapes("\a", "\\7")
-    assert_unescapes("#", "\\43")
-    assert_unescapes("a", "\\141")
-  end
+    test "single quote" do
+      assert_unescape_all("'", "\\'")
+    end
 
-  test "hexidecimal" do
-    assert_unescapes("\a", "\\x7")
-    assert_unescapes("#", "\\x23")
-    assert_unescapes("a", "\\x61")
-  end
+    test "single char" do
+      assert_unescape_all("\a", "\\a")
+      assert_unescape_all("\b", "\\b")
+      assert_unescape_all("\e", "\\e")
+      assert_unescape_all("\f", "\\f")
+      assert_unescape_all("\n", "\\n")
+      assert_unescape_all("\r", "\\r")
+      assert_unescape_all("\s", "\\s")
+      assert_unescape_all("\t", "\\t")
+      assert_unescape_all("\v", "\\v")
+    end
 
-  test "unnecessary escapes" do
-    assert_unescapes("\\d", "\\d")
-    assert_unescapes("\\g", "\\g")
-  end
+    test "octal" do
+      assert_unescape_all("\a", "\\7")
+      assert_unescape_all("#", "\\43")
+      assert_unescape_all("a", "\\141")
+    end
 
-  private
+    test "hexidecimal" do
+      assert_unescape_all("\a", "\\x7")
+      assert_unescape_all("#", "\\x23")
+      assert_unescape_all("a", "\\x61")
+    end
 
-  def assert_unescapes(expected, source)
-    assert_equal(expected, YARP.unescape(source))
+    test "unnecessary escapes" do
+      assert_unescape_all("\\d", "\\d")
+      assert_unescape_all("\\g", "\\g")
+    end
+
+    private
+
+    def assert_unescape_all(expected, source)
+      assert_equal(expected, YARP.unescape_all(source))
+    end
   end
 end

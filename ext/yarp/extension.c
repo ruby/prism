@@ -230,14 +230,29 @@ named_captures(VALUE self, VALUE rb_source) {
 }
 
 static VALUE
-unescape(VALUE self, VALUE rb_source) {
+unescape(VALUE source, yp_unescape_type_t unescape_type) {
   yp_string_t string;
 
-  yp_unescape(RSTRING_PTR(rb_source), RSTRING_LEN(rb_source), &string, YP_UNESCAPE_ALL);
+  yp_unescape(RSTRING_PTR(source), RSTRING_LEN(source), &string, unescape_type);
   VALUE result = rb_str_new(yp_string_source(&string), yp_string_length(&string));
   yp_string_free(&string);
 
   return result;
+}
+
+static VALUE
+unescape_none(VALUE self, VALUE source) {
+  return unescape(source, YP_UNESCAPE_NONE);
+}
+
+static VALUE
+unescape_minimal(VALUE self, VALUE source) {
+  return unescape(source, YP_UNESCAPE_MINIMAL);
+}
+
+static VALUE
+unescape_all(VALUE self, VALUE source) {
+  return unescape(source, YP_UNESCAPE_ALL);
 }
 
 void
@@ -267,5 +282,8 @@ Init_yarp(void) {
   rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
 
   rb_define_singleton_method(rb_cYARP, "named_captures", named_captures, 1);
-  rb_define_singleton_method(rb_cYARP, "unescape", unescape, 1);
+
+  rb_define_singleton_method(rb_cYARP, "unescape_none", unescape_none, 1);
+  rb_define_singleton_method(rb_cYARP, "unescape_minimal", unescape_minimal, 1);
+  rb_define_singleton_method(rb_cYARP, "unescape_all", unescape_all, 1);
 }
