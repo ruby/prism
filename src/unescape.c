@@ -11,7 +11,7 @@ char_is_hexadecimal_number(const char c) {
 }
 
 // This is a lookup table for unescapes that only take up a single character.
-static const char unescape_chars[128] = {
+static const char unescape_chars[] = {
   ['\''] = '\'',
   ['\\'] = '\\',
   ['a'] = '\a',
@@ -59,6 +59,60 @@ unescape_hexadecimal(const char *backslash, unsigned char *value) {
   }
 
   *value = (*value << 4) | unescape_hexadecimal_digit(backslash[3]);
+  return 4;
+}
+
+// Scan the 4 digits of a Unicode escape into the value. Returns the number of
+// digits scanned.
+static inline size_t
+unescape_unicode(const char *backslash, uint32_t *value) {
+  // TODO: validate that the digits are all hexadecimal.
+
+  *value = (
+    (unescape_hexadecimal_digit(backslash[2]) << 12) |
+    (unescape_hexadecimal_digit(backslash[3]) << 8) |
+    (unescape_hexadecimal_digit(backslash[4]) << 4) |
+    unescape_hexadecimal_digit(backslash[5])
+  );
+
+  return 6;
+}
+
+// Accepts the pointer to the string to write the unicode value along with the
+// 32-bit value to write. Writes the UTF-8 representation of the value to the
+// string and returns the number of bytes written.
+static inline size_t
+unescape_unicode_write(char *destination, uint32_t value) {
+  if (value <= 0x7F) {
+    // 0xxxxxxx
+    destination[0] = value;
+    return 1;
+  }
+
+  if (value <= 0x7FF) {
+    // 110xxxxx 10xxxxxx
+    destination[0] = 0xC0 | (value >> 6);
+    destination[1] = 0x80 | (value & 0x3F);
+    return 2;
+  }
+
+  if (value <= 0xFFFF) {
+    // 1110xxxx 10xxxxxx 10xxxxxx
+    destination[0] = 0xE0 | (value >> 12);
+    destination[1] = 0x80 | ((value >> 6) & 0x3F);
+    destination[2] = 0x80 | (value & 0x3F);
+    return 3;
+  }
+
+  // At this point it must be a 4 digit UTF-8 representation. If it's not, then
+  // the input is invalid.
+  assert(value <= 0x10FFFF);
+
+  // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+  destination[0] = 0xF0 | (value >> 18);
+  destination[1] = 0x80 | ((value >> 12) & 0x3F);
+  destination[2] = 0x80 | ((value >> 6) & 0x3F);
+  destination[3] = 0x80 | (value & 0x3F);
   return 4;
 }
 
@@ -177,8 +231,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           }
           // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
-          case 'u':
+          case 'u': {
+            uint32_t value;
+            cursor = backslash + unescape_unicode(backslash, &value);
+            dest_length += unescape_unicode_write(dest + dest_length, value);
             break;
+          }
           // \cx          control character, where x is an ASCII printable character
           // \c\M-x       meta control character, where x is an ASCII printable character
           // \c?          delete, ASCII 7Fh (DEL)

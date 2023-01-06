@@ -77,6 +77,13 @@ module UnescapeTest
       assert_unescape_all("\x7f", "\\C-?")
     end
 
+    test "unicode codepoint" do
+      assert_unescape_all("a", "\\u0061")
+      assert_unescape_all("Ā", "\\u0100", "UTF-8")
+      assert_unescape_all("က", "\\u1000", "UTF-8")
+      assert_unescape_all("တ", "\\u1010", "UTF-8")
+    end
+
     test "unnecessary escapes" do
       assert_unescape_all("\\d", "\\d")
       assert_unescape_all("\\g", "\\g")
@@ -84,8 +91,10 @@ module UnescapeTest
 
     private
 
-    def assert_unescape_all(expected, source)
-      assert_equal(expected, YARP.unescape_all(source))
+    def assert_unescape_all(expected, source, forced_encoding = nil)
+      result = YARP.unescape_all(source)
+      result.force_encoding(forced_encoding) if forced_encoding
+      assert_equal(expected, result)
     end
   end
 end
