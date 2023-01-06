@@ -1074,6 +1074,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "\"\\7 \\43 \\141\""
   end
 
+  test "string with hexadecimal escapes" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("\\x7 \\x23 \\x61"), nil, "\a # a")],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"\\x7 \\x23 \\x61\""
+  end
+
   test "super" do
     assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
   end

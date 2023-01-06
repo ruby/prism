@@ -1118,7 +1118,7 @@ static const char unescape_chars[128] = {
 
 // Scan the 1-3 digits of octal into the value. Returns the number of digits
 // scanned.
-static size_t
+static inline size_t
 unescape_octal(const char *backslash, unsigned char *value) {
   *value = backslash[1] - '0';
   if (!char_is_decimal_number(backslash + 2)) {
@@ -1131,6 +1131,25 @@ unescape_octal(const char *backslash, unsigned char *value) {
   }
 
   *value = (*value << 3) | (backslash[3] - '0');
+  return 4;
+}
+
+// Convert a hexadecimal digit into its equivalent value.
+static inline unsigned char
+unescape_hexadecimal_digit(const char value) {
+  return (value <= '9') ? value - '0' : (value & 0x7) + 9;
+}
+
+// Scan the 1-2 digits of hexadecimal into the value. Returns the number of
+// digits scanned.
+static inline size_t
+unescape_hexadecimal(const char *backslash, unsigned char *value) {
+  *value = unescape_hexadecimal_digit(backslash[2]);
+  if (!char_is_hexadecimal_number(backslash + 3)) {
+    return 3;
+  }
+
+  *value = (*value << 4) | unescape_hexadecimal_digit(backslash[3]);
   return 4;
 }
 
@@ -1235,8 +1254,12 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
               break;
             }
             // \xnn         hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
-            case 'x':
+            case 'x': {
+              unsigned char value;
+              cursor = backslash + unescape_hexadecimal(backslash, &value);
+              dest[dest_length++] = value;
               break;
+            }
             // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
             // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
             case 'u':
