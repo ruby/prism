@@ -1086,6 +1086,73 @@ lex_token_type(yp_parser_t *parser) {
 /* Escaping-related functions                                                 */
 /******************************************************************************/
 
+// The type of escape we are performing.
+typedef enum {
+  // When we're creating a string inside of a list literal like %w, we shouldn't
+  // escape anything.
+  YP_UNESCAPE_TYPE_NONE,
+
+  // When we're unescaping a single-quoted string, we only need to unescape
+  // single quotes and backslashes.
+  YP_UNESCAPE_TYPE_MINIMAL,
+
+  // When we're unescaping a double-quoted string, we need to unescape all
+  // escapes.
+  YP_UNESCAPE_TYPE_ALL
+} yp_unescape_type_t;
+
+// This is a lookup table for unescapes that only take up a single character.
+static const char unescape_chars[128] = {
+  ['\''] = '\'',
+  ['\\'] = '\\',
+  ['a'] = '\a',
+  ['b'] = '\b',
+  ['e'] = '\e',
+  ['f'] = '\f',
+  ['n'] = '\n',
+  ['r'] = '\r',
+  ['s'] = ' ',
+  ['t'] = '\t',
+  ['v'] = '\v'
+};
+
+// Scan the 1-3 digits of octal into the value. Returns the number of digits
+// scanned.
+static inline size_t
+unescape_octal(const char *backslash, unsigned char *value) {
+  *value = backslash[1] - '0';
+  if (!char_is_decimal_number(backslash + 2)) {
+    return 2;
+  }
+
+  *value = (*value << 3) | (backslash[2] - '0');
+  if (!char_is_decimal_number(backslash + 3)) {
+    return 3;
+  }
+
+  *value = (*value << 3) | (backslash[3] - '0');
+  return 4;
+}
+
+// Convert a hexadecimal digit into its equivalent value.
+static inline unsigned char
+unescape_hexadecimal_digit(const char value) {
+  return (value <= '9') ? value - '0' : (value & 0x7) + 9;
+}
+
+// Scan the 1-2 digits of hexadecimal into the value. Returns the number of
+// digits scanned.
+static inline size_t
+unescape_hexadecimal(const char *backslash, unsigned char *value) {
+  *value = unescape_hexadecimal_digit(backslash[2]);
+  if (!char_is_hexadecimal_number(backslash + 3)) {
+    return 3;
+  }
+
+  *value = (*value << 4) | unescape_hexadecimal_digit(backslash[3]);
+  return 4;
+}
+
 // When we are parsing string-like content, we need to unescape the content to
 // provide to the consumers of the parser. This function accepts a range of
 // characters from the source and unescapes into the provided string. The
@@ -1113,8 +1180,15 @@ lex_token_type(yp_parser_t *parser) {
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
 static yp_node_t *
-yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
+yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
+
+  if (unescape_type == YP_UNESCAPE_TYPE_NONE) {
+    // If we're not unescaping then we can reference the string directly.
+    yp_string_shared_init(&node->as.string_node.unescaped, content->start, content->end);
+    return node;
+  }
+
   size_t total_length = content->end - content->start;
 
   const char *cursor = content->start;
@@ -1141,18 +1215,85 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
 
       switch (backslash[1]) {
         case '\\':
-          dest[dest_length++] = '\\';
-          cursor = backslash + 2;
-          break;
         case '\'':
-          dest[dest_length++] = '\'';
+          dest[dest_length++] = unescape_chars[(unsigned char) backslash[1]];
           cursor = backslash + 2;
           break;
         default:
-          // In this case we're escaping something that doesn't need escaping.
-          dest[dest_length++] = '\\';
-          cursor = backslash + 1;
-          break;
+          if (unescape_type == YP_UNESCAPE_TYPE_MINIMAL) {
+            // In this case we're escaping something that doesn't need escaping.
+            dest[dest_length++] = '\\';
+            cursor = backslash + 1;
+            break;
+          }
+
+          // This is the only type of unescaping left. In this case we need to
+          // handle all of the different unescapes.
+          assert(unescape_type == YP_UNESCAPE_TYPE_ALL);
+
+          switch (backslash[1]) {
+            // \a \b \e \f \n \r \s \t \v
+            case 'a':
+            case 'b':
+            case 'e':
+            case 'f':
+            case 'n':
+            case 'r':
+            case 's':
+            case 't':
+            case 'v':
+              dest[dest_length++] = unescape_chars[(unsigned char) backslash[1]];
+              cursor = backslash + 2;
+              break;
+            // \nnn         octal bit pattern, where nnn is 1-3 octal digits ([0-7])
+            case '0': case '1': case '2': case '3': case '4':
+            case '5': case '6': case '7': case '8': case '9': {
+              unsigned char value;
+              cursor = backslash + unescape_octal(backslash, &value);
+              dest[dest_length++] = value;
+              break;
+            }
+            // \xnn         hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
+            case 'x': {
+              unsigned char value;
+              cursor = backslash + unescape_hexadecimal(backslash, &value);
+              dest[dest_length++] = value;
+              break;
+            }
+            // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
+            // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+            case 'u':
+              break;
+            // \cx          control character, where x is an ASCII printable character
+            // \c\M-x       meta control character, where x is an ASCII printable character
+            // \c?          delete, ASCII 7Fh (DEL)
+            case 'c':
+              switch (backslash[2]) {
+                case '\\':
+                  break;
+                case '?':
+                  cursor = backslash + 3;
+                  dest[dest_length++] = 0x7f;
+                  break;
+                default:
+                  break;
+              }
+              break;
+            // \C-x         control character, where x is an ASCII printable character
+            // \C-?         delete, ASCII 7Fh (DEL)
+            case 'C':
+              break;
+            // \M-x         meta character, where x is an ASCII printable character
+            // \M-\C-x      meta control character, where x is an ASCII printable character
+            // \M-\cx       meta control character, where x is an ASCII printable character
+            case 'M':
+              break;
+            // In this case we're escaping something that doesn't need escaping.
+            default:
+              dest[dest_length++] = '\\';
+              cursor = backslash + 1;
+              break;
+          }
       }
 
       backslash = memchr(cursor, '\\', content->end - cursor);
@@ -1927,7 +2068,7 @@ parse_symbol(yp_parser_t *parser, int mode) {
           yp_token_t string_content_closing;
           not_provided(&string_content_closing, parser->previous.end);
 
-          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing));
+          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing, YP_UNESCAPE_TYPE_ALL));
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -2041,7 +2182,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t closing;
       not_provided(&closing, content.end);
 
-      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_TYPE_NONE);
     }
     case YP_TOKEN_CLASS_VARIABLE:
       return yp_node_class_variable_read_create(parser, &parser->previous);
@@ -2480,7 +2621,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_token_t closing;
         not_provided(&closing, parser->previous.end);
 
-        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing);
+        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_TYPE_NONE);
         yp_node_list_append(parser, array, &array->as.array_node.elements, string);
       }
 
@@ -2523,7 +2664,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t closing;
               not_provided(&closing, parser->previous.end);
 
-              current = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing);
+              current = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_TYPE_ALL);
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit string content and the current node is an
               // interpolated string, then we need to append the string content
@@ -2534,7 +2675,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t closing;
               not_provided(&closing, parser->previous.end);
 
-              yp_node_t *next_string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing);
+              yp_node_t *next_string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_TYPE_ALL);
               yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, next_string);
             }
 
@@ -2685,7 +2826,8 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t string_content_closing;
               not_provided(&string_content_closing, parser->previous.end);
 
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing));
+              yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing, YP_UNESCAPE_TYPE_ALL);
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, part);
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -2715,7 +2857,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_TYPE_MINIMAL);
     }
     case YP_TOKEN_SYMBOL_BEGIN:
       return parse_symbol(parser, mode);
