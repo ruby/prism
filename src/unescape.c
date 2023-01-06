@@ -1,5 +1,9 @@
 #include "unescape.h"
 
+/******************************************************************************/
+/* Character checks                                                           */
+/******************************************************************************/
+
 static inline bool
 char_is_space(const char c) {
   return c == ' ' || ('\t' <= c && c <= '\r');
@@ -24,6 +28,10 @@ char_is_hexadecimal_numbers(const char *c, size_t length) {
   }
   return true;
 }
+
+/******************************************************************************/
+/* Unescaping for segments                                                    */
+/******************************************************************************/
 
 // This is a lookup table for unescapes that only take up a single character.
 static const char unescape_chars[] = {
@@ -126,6 +134,10 @@ unescape_unicode_write(char *destination, uint32_t value) {
   destination[3] = 0x80 | (value & 0x3F);
   return 4;
 }
+
+/******************************************************************************/
+/* Public functions and entrypoints                                           */
+/******************************************************************************/
 
 // Unescape the contents of the given token into the given string using the
 // given unescape mode. The supported escapes are:
