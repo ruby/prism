@@ -1,6 +1,11 @@
 #include "unescape.h"
 
 static inline bool
+char_is_space(const char c) {
+  return c == ' ' || ('\t' <= c && c <= '\r');
+}
+
+static inline bool
 char_is_octal_number(const char c) {
   return c >= '0' && c <= '7';
 }
@@ -8,6 +13,16 @@ char_is_octal_number(const char c) {
 static inline bool
 char_is_hexadecimal_number(const char c) {
   return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+
+static inline bool
+char_is_hexadecimal_numbers(const char *c, size_t length) {
+  for (size_t index = 0; index < length; index++) {
+    if (!char_is_hexadecimal_number(c[index])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // This is a lookup table for unescapes that only take up a single character.
@@ -63,19 +78,15 @@ unescape_hexadecimal(const char *backslash, unsigned char *value) {
 }
 
 // Scan the 4 digits of a Unicode escape into the value. Returns the number of
-// digits scanned.
-static inline size_t
-unescape_unicode(const char *backslash, uint32_t *value) {
-  // TODO: validate that the digits are all hexadecimal.
-
-  *value = (
-    (unescape_hexadecimal_digit(backslash[2]) << 12) |
-    (unescape_hexadecimal_digit(backslash[3]) << 8) |
-    (unescape_hexadecimal_digit(backslash[4]) << 4) |
-    unescape_hexadecimal_digit(backslash[5])
-  );
-
-  return 6;
+// digits scanned. This function assumes that the characters have already been
+// validated.
+static inline void
+unescape_unicode(const char *string, size_t length, uint32_t *value) {
+  *value = 0;
+  for (size_t index = 0; index < length; index++) {
+    if (index != 0) *value <<= 4;
+    *value |= unescape_hexadecimal_digit(string[index]);
+  }
 }
 
 // Accepts the pointer to the string to write the unicode value along with the
@@ -232,14 +243,33 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
           case 'u': {
-            if (char_is_hexadecimal_number(backslash[2]) && char_is_hexadecimal_number(backslash[3]) && char_is_hexadecimal_number(backslash[4]) && char_is_hexadecimal_number(backslash[5])) {
+            if (backslash[2] == '{') {
+              const char *unicode_cursor = backslash + 3;
+
+              while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
+                const char *unicode_start = unicode_cursor;
+                while ((unicode_cursor < end) && char_is_hexadecimal_number(*unicode_cursor)) unicode_cursor++;
+
+                uint32_t value;
+                unescape_unicode(unicode_start, unicode_cursor - unicode_start, &value);
+                dest_length += unescape_unicode_write(dest + dest_length, value);
+
+                while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
+              }
+
+              cursor = unicode_cursor + 1;
+              break;
+            }
+
+            if (char_is_hexadecimal_numbers(backslash + 2, 4)) {
               uint32_t value;
-              cursor = backslash + unescape_unicode(backslash, &value);
+              unescape_unicode(backslash + 2, 4, &value);
+
+              cursor = backslash + 6;
               dest_length += unescape_unicode_write(dest + dest_length, value);
               break;
             }
 
-            // Otherwise, this is an invalid Unicode escape.
             return false;
           }
           // \cx          control character, where x is an ASCII printable character
@@ -280,6 +310,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
             cursor = backslash + 1;
             break;
         }
+        break;
     }
 
     backslash = memchr(cursor, '\\', end - cursor);

@@ -86,6 +86,14 @@ module UnescapeTest
       assert_nil(YARP.unescape_all("\\uxxxx"))
     end
 
+    test "unicode codepoints" do
+      # assert_unescape_all("a", "\\u{61}")
+      assert_unescape_all("Ā", "\\u{0100}", "UTF-8")
+      # assert_unescape_all("က", "\\u{1000}", "UTF-8")
+      # assert_unescape_all("တ", "\\u{1010}", "UTF-8")
+      # assert_unescape_all("𐀀", "\\u{10000}", "UTF-8")
+    end
+
     test "unnecessary escapes" do
       assert_unescape_all("\\d", "\\d")
       assert_unescape_all("\\g", "\\g")
