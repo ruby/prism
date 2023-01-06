@@ -1268,6 +1268,16 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
             // \c\M-x       meta control character, where x is an ASCII printable character
             // \c?          delete, ASCII 7Fh (DEL)
             case 'c':
+              switch (backslash[2]) {
+                case '\\':
+                  break;
+                case '?':
+                  cursor = backslash + 3;
+                  dest[dest_length++] = 0x7f;
+                  break;
+                default:
+                  break;
+              }
               break;
             // \C-x         control character, where x is an ASCII printable character
             // \C-?         delete, ASCII 7Fh (DEL)
@@ -1277,6 +1287,11 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
             // \M-\C-x      meta control character, where x is an ASCII printable character
             // \M-\cx       meta control character, where x is an ASCII printable character
             case 'M':
+              break;
+            // In this case we're escaping something that doesn't need escaping.
+            default:
+              dest[dest_length++] = '\\';
+              cursor = backslash + 1;
               break;
           }
       }
