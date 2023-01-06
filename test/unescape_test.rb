@@ -87,11 +87,43 @@ module UnescapeTest
     end
 
     test "unicode codepoints" do
-      # assert_unescape_all("a", "\\u{61}")
+      assert_unescape_all("a", "\\u{61}")
       assert_unescape_all("Ā", "\\u{0100}", "UTF-8")
-      # assert_unescape_all("က", "\\u{1000}", "UTF-8")
-      # assert_unescape_all("တ", "\\u{1010}", "UTF-8")
-      # assert_unescape_all("𐀀", "\\u{10000}", "UTF-8")
+      assert_unescape_all("က", "\\u{1000}", "UTF-8")
+      assert_unescape_all("တ", "\\u{1010}", "UTF-8")
+      assert_unescape_all("𐀀", "\\u{10000}", "UTF-8")
+      assert_unescape_all("𐀐", "\\u{10010}", "UTF-8")
+      assert_unescape_all("aĀကတ𐀀𐀐", "\\u{ 61\s100\n1000\t1010\r10000\v10010 }", "UTF-8")
+    end
+
+    test "control characters" do
+      each_printable do |chr|
+        byte = eval("\"\\c#{chr}\"").bytes.first
+        assert_unescape_all(byte.chr, "\\c#{chr}")
+
+        byte = eval("\"\\C-#{chr}\"").bytes.first
+        assert_unescape_all(byte.chr, "\\C-#{chr}")
+      end
+    end
+
+    test "meta characters" do
+      each_printable do |chr|
+        byte = eval("\"\\M-#{chr}\"").bytes.first
+        assert_unescape_all(byte.chr, "\\M-#{chr}")
+      end
+    end
+
+    test "meta control characters" do
+      each_printable do |chr|
+        byte = eval("\"\\M-\\c#{chr}\"").bytes.first
+        assert_unescape_all(byte.chr, "\\M-\\c#{chr}")
+
+        byte = eval("\"\\M-\\C-#{chr}\"").bytes.first
+        assert_unescape_all(byte.chr, "\\M-\\C-#{chr}")
+
+        byte = eval("\"\\c\\M-#{chr}\"").bytes.first
+        assert_unescape_all(byte.chr, "\\c\\M-#{chr}")
+      end
     end
 
     test "unnecessary escapes" do
@@ -105,6 +137,13 @@ module UnescapeTest
       result = YARP.unescape_all(source)
       result.force_encoding(forced_encoding) if forced_encoding
       assert_equal(expected, result)
+    end
+
+    def each_printable
+      (1..127).each do |ord|
+        chr = ord.chr
+        yield chr if chr.match?(/[:print:]/)
+      end
     end
   end
 end

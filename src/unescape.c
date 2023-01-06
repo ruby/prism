@@ -30,7 +30,7 @@ char_is_hexadecimal_numbers(const char *c, size_t length) {
 }
 
 /******************************************************************************/
-/* Unescaping for segments                                                    */
+/* Lookup tables for characters                                               */
 /******************************************************************************/
 
 // This is a lookup table for unescapes that only take up a single character.
@@ -47,6 +47,42 @@ static const char unescape_chars[] = {
   ['t'] = '\t',
   ['v'] = '\v'
 };
+
+// This is a lookup table for whether or not an ASCII character is printable.
+static const bool printable_chars[] = {
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0
+};
+
+static inline bool
+char_is_printable(const char c) {
+  return printable_chars[(unsigned char) c];
+}
+
+static inline unsigned char
+control_char(const char c) {
+  return c & 0x1f;
+}
+
+static inline unsigned char
+meta_char(const char c) {
+  return c | 0x80;
+}
+
+static inline unsigned char
+meta_control_char(const char c) {
+  return meta_char(control_char(c));
+}
+
+/******************************************************************************/
+/* Unescaping for segments                                                    */
+/******************************************************************************/
 
 // Scan the 1-3 digits of octal into the value. Returns the number of digits
 // scanned.
@@ -252,11 +288,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
             dest[dest_length++] = value;
             break;
           }
-          // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+          // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           case 'u': {
             if (backslash[2] == '{') {
               const char *unicode_cursor = backslash + 3;
+              while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
 
               while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
                 const char *unicode_start = unicode_cursor;
@@ -284,38 +321,64 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
 
             return false;
           }
-          // \cx          control character, where x is an ASCII printable character
           // \c\M-x       meta control character, where x is an ASCII printable character
           // \c?          delete, ASCII 7Fh (DEL)
+          // \cx          control character, where x is an ASCII printable character
           case 'c':
             switch (backslash[2]) {
               case '\\':
+                if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_printable(backslash[5])) return false;
+                cursor = backslash + 6;
+                dest[dest_length++] = meta_control_char(backslash[5]);
                 break;
               case '?':
                 cursor = backslash + 3;
                 dest[dest_length++] = 0x7f;
                 break;
-              default:
+              default: {
+                if (!char_is_printable(backslash[2])) return false;
+                cursor = backslash + 3;
+                dest[dest_length++] = control_char(backslash[2]);
                 break;
+              }
             }
             break;
           // \C-x         control character, where x is an ASCII printable character
           // \C-?         delete, ASCII 7Fh (DEL)
           case 'C':
-            if (backslash[2] != '-') {
-              // handle invalid escape here
-            } else if (backslash[3] == '?') {
-              cursor = backslash + 4;
-              dest[dest_length++] = 0x7f;
-            } else {
-              // check printable character here
-            }
+            if (backslash[2] != '-' || !char_is_printable(backslash[3])) return false;
+            cursor = backslash + 4;
+            dest[dest_length++] = backslash[3] == '?' ? 0x7f : control_char(backslash[3]);
             break;
-          // \M-x         meta character, where x is an ASCII printable character
           // \M-\C-x      meta control character, where x is an ASCII printable character
           // \M-\cx       meta control character, where x is an ASCII printable character
+          // \M-x         meta character, where x is an ASCII printable character
           case 'M':
-            break;
+            if (backslash[2] != '-') return false;
+
+            if (backslash[3] == '\\') {
+              if (backslash[4] == 'C' && backslash[5] == '-' && char_is_printable(backslash[6])) {
+                cursor = backslash + 7;
+                dest[dest_length++] = meta_control_char(backslash[6]);
+                break;
+              }
+
+              if (backslash[4] == 'c' && char_is_printable(backslash[5])) {
+                cursor = backslash + 6;
+                dest[dest_length++] = meta_control_char(backslash[5]);
+                break;
+              }
+
+              return false;
+            }
+
+            if (char_is_printable(backslash[3])) {
+              cursor = backslash + 4;
+              dest[dest_length++] = meta_char(backslash[3]);
+              break;
+            }
+
+            return false;
           // In this case we're escaping something that doesn't need escaping.
           default:
             dest[dest_length++] = '\\';
