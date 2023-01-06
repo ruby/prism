@@ -1941,17 +1941,24 @@ parse_parameters(yp_parser_t *parser) {
       case YP_TOKEN_STAR_STAR: {
         parser_lex(parser);
 
-        yp_token_t operator = parser->previous;
-        yp_token_t name;
+        yp_node_t *param;
 
-        if (accept(parser, YP_TOKEN_IDENTIFIER)) {
-          name = parser->previous;
-          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        if (accept(parser, YP_TOKEN_KEYWORD_NIL)) {
+          param = yp_node_no_keywords_parameter_node_create(parser, &parser->previous);
         } else {
-          not_provided(&name, parser->previous.end);
+          yp_token_t operator = parser->previous;
+          yp_token_t name;
+
+          if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+            name = parser->previous;
+            yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+          } else {
+            not_provided(&name, parser->previous.end);
+          }
+
+          param = yp_node_keyword_rest_parameter_node_create(parser, &operator, &name);
         }
 
-        yp_node_t *param = yp_node_keyword_rest_parameter_node_create(parser, &operator, &name);
         params->as.parameters_node.keyword_rest = param;
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
