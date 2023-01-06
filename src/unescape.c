@@ -1,8 +1,8 @@
 #include "unescape.h"
 
 static inline bool
-char_is_decimal_number(const char c) {
-  return c >= '0' && c <= '9';
+char_is_octal_number(const char c) {
+  return c >= '0' && c <= '7';
 }
 
 static inline bool
@@ -30,12 +30,12 @@ static const char unescape_chars[128] = {
 static inline size_t
 unescape_octal(const char *backslash, unsigned char *value) {
   *value = backslash[1] - '0';
-  if (!char_is_decimal_number(backslash[2])) {
+  if (!char_is_octal_number(backslash[2])) {
     return 2;
   }
 
   *value = (*value << 3) | (backslash[2] - '0');
-  if (!char_is_decimal_number(backslash[3])) {
+  if (!char_is_octal_number(backslash[3])) {
     return 3;
   }
 
@@ -197,6 +197,14 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \C-x         control character, where x is an ASCII printable character
           // \C-?         delete, ASCII 7Fh (DEL)
           case 'C':
+            if (backslash[2] != '-') {
+              // handle invalid escape here
+            } else if (backslash[3] == '?') {
+              cursor = backslash + 4;
+              dest[dest_length++] = 0x7f;
+            } else {
+              // check printable character here
+            }
             break;
           // \M-x         meta character, where x is an ASCII printable character
           // \M-\C-x      meta control character, where x is an ASCII printable character

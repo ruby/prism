@@ -72,6 +72,11 @@ module UnescapeTest
       assert_unescape_all("a", "\\x61")
     end
 
+    test "deletes" do
+      assert_unescape_all("\x7f", "\\c?")
+      assert_unescape_all("\x7f", "\\C-?")
+    end
+
     test "unnecessary escapes" do
       assert_unescape_all("\\d", "\\d")
       assert_unescape_all("\\g", "\\g")
