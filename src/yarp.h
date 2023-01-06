@@ -16,6 +16,7 @@
 #include "parser.h"
 #include "regexp.h"
 #include "node.h"
+#include "unescape.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 2
