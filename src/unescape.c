@@ -140,12 +140,12 @@ unescape_unicode_write(char *destination, uint32_t value) {
 // \c\M-x         same as above
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
-__attribute__((__visibility__("default"))) extern void
+__attribute__((__visibility__("default"))) extern bool
 yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type) {
   if (unescape_type == YP_UNESCAPE_NONE) {
     // If we're not unescaping then we can reference the source directly.
     yp_string_shared_init(string, value, value + length);
-    return;
+    return true;
   }
 
   const char *backslash = memchr(value, '\\', length);
@@ -153,7 +153,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
   if (backslash == NULL) {
     // Here there are no escapes, so we can reference the source directly.
     yp_string_shared_init(string, value, value + length);
-    return;
+    return true;
   }
 
   // Here we have found an escape character, so we need to handle all escapes
@@ -232,10 +232,15 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
           case 'u': {
-            uint32_t value;
-            cursor = backslash + unescape_unicode(backslash, &value);
-            dest_length += unescape_unicode_write(dest + dest_length, value);
-            break;
+            if (char_is_hexadecimal_number(backslash[2]) && char_is_hexadecimal_number(backslash[3]) && char_is_hexadecimal_number(backslash[4]) && char_is_hexadecimal_number(backslash[5])) {
+              uint32_t value;
+              cursor = backslash + unescape_unicode(backslash, &value);
+              dest_length += unescape_unicode_write(dest + dest_length, value);
+              break;
+            }
+
+            // Otherwise, this is an invalid Unicode escape.
+            return false;
           }
           // \cx          control character, where x is an ASCII printable character
           // \c\M-x       meta control character, where x is an ASCII printable character
@@ -287,4 +292,5 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
   // reduces the length of the final string, and we don't want garbage at the
   // end.
   string->as.owned.length = dest_length + (end - cursor);
+  return true;
 }

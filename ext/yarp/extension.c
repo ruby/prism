@@ -232,11 +232,15 @@ named_captures(VALUE self, VALUE rb_source) {
 static VALUE
 unescape(VALUE source, yp_unescape_type_t unescape_type) {
   yp_string_t string;
+  VALUE result;
 
-  yp_unescape(RSTRING_PTR(source), RSTRING_LEN(source), &string, unescape_type);
-  VALUE result = rb_str_new(yp_string_source(&string), yp_string_length(&string));
+  if (yp_unescape(RSTRING_PTR(source), RSTRING_LEN(source), &string, unescape_type)) {
+    result = rb_str_new(yp_string_source(&string), yp_string_length(&string));
+  } else {
+    result = Qnil;
+  }
+
   yp_string_free(&string);
-
   return result;
 }
 
