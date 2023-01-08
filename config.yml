@@ -1414,6 +1414,18 @@ nodes:
 
           foo ? bar : baz
           ^^^^^^^^^^^^^^^
+  - name: TopLevelConstantNode
+    child_nodes:
+      - name: delimiter
+        type: token
+      - name: name
+        type: token
+    location: delimiter->name
+    comment: |
+      Represents the use of a top level constant
+
+        ::Foo
+        ^^^^^
   - name: TrueNode
     child_nodes:
       - name: keyword

@@ -15,6 +15,11 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "A::$b", ["Expected identifier or constant after '::'"]
   end
 
+  test "top level constant with invalid token after" do
+    expected = TopLevelConstantNode(COLON_COLON("::"), MISSING(""))
+    assert_errors expected, "::foo", ["Expected a constant after '::'."]
+  end
+
   test "module name recoverable" do
     expected = ModuleNode(
       Scope([]),

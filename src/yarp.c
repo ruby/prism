@@ -3417,6 +3417,11 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_SYMBOL_BEGIN:
       return parse_symbol(parser, lex_mode.mode);
+    case YP_TOKEN_COLON_COLON: {
+      yp_token_t delimiter = parser->previous;
+      expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after '::'.");
+      return yp_node_top_level_constant_node_create(parser, &delimiter, &parser->previous);
+    }
     default:
       if (context_recoverable(parser, &parser->previous)) {
         parser->recovering = true;
@@ -3444,6 +3449,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return result;
         }
         case YP_NODE_CONSTANT_PATH_NODE:
+        case YP_NODE_TOP_LEVEL_CONSTANT_NODE:
         case YP_NODE_CONSTANT_READ: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the constant after =.");
           return yp_node_constant_path_write_node_create(parser, node, &token, value);

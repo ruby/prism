@@ -620,6 +620,44 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "A::B = 1"
   end
 
+  test "top level constant" do
+    assert_parses TopLevelConstantNode(COLON_COLON("::"), CONSTANT("A")), "::A"
+  end
+
+  test "top level constant path" do
+    expected = ConstantPathNode(
+      TopLevelConstantNode(COLON_COLON("::"), CONSTANT("A")),
+      COLON_COLON("::"),
+      ConstantRead(CONSTANT("B"))
+    )
+
+    assert_parses expected, "::A::B"
+  end
+
+  test "top level constant write single" do
+    expected = ConstantPathWriteNode(
+      TopLevelConstantNode(COLON_COLON("::"), CONSTANT("A")),
+      EQUAL("="),
+      IntegerLiteral(INTEGER("1"))
+    )
+
+    assert_parses expected, "::A = 1"
+  end
+
+  test "top level constant write multiple" do
+    expected = ConstantPathWriteNode(
+      ConstantPathNode(
+        TopLevelConstantNode(COLON_COLON("::"), CONSTANT("A")),
+        COLON_COLON("::"),
+        ConstantRead(CONSTANT("B"))
+      ),
+      EQUAL("="),
+      IntegerLiteral(INTEGER("1"))
+    )
+
+    assert_parses expected, "::A::B = 1"
+  end
+
   test "def without parentheses" do
     expected = DefNode(
       KEYWORD_DEF("def"),
