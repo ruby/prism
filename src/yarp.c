@@ -1141,64 +1141,74 @@ lex_token_type(yp_parser_t *parser) {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
 
-      // If we've hit the end of the string, then we can return to the default
-      // state of the lexer and return a string ending token.
-      if (match(parser, parser->lex_modes.current->as.regexp.terminator)) {
-        // Since we've hit the terminator of the regular expression, we now need
-        // to parse the options.
-        bool options = true;
-        while (options) {
-          switch (*parser->current.end) {
-            case 'e':
-            case 'i':
-            case 'm':
-            case 'n':
-            case 's':
-            case 'u':
-            case 'x':
-              parser->current.end++;
-              break;
-            default:
-              options = false;
-              break;
+      // These are the places where we need to split up the content of the
+      // regular expression. We'll use strpbrk to find the first of these
+      // characters.
+      char breakpoints[] = " \\#";
+      breakpoints[0] = parser->lex_modes.current->as.string.terminator;
+
+      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+
+      while (breakpoint != NULL) {
+        switch (*breakpoint) {
+          case '\\':
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            break;
+          case '#': {
+            yp_token_type_t type = lex_interpolation(parser, breakpoint);
+            if (type != YP_TOKEN_NOT_PROVIDED) return type;
+
+            // If we haven't returned at this point then we had something
+            // that looked like an interpolated class or instance variable
+            // like "#@" but wasn't actually. In this case we'll just skip
+            // to the next breakpoint.
+            breakpoint = strpbrk(parser->current.end, breakpoints);
+            break;
           }
-        }
+          default: {
+            assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
 
-        lex_mode_pop(parser);
-        return YP_TOKEN_REGEXP_END;
-      }
+            // Here we've hit the terminator. If we have already consumed
+            // content then we need to return that content as string content
+            // first.
+            if (breakpoint > parser->current.end) {
+              parser->current.end = breakpoint;
+              return YP_TOKEN_STRING_CONTENT;
+            }
 
-      // Otherwise, we'll lex as far as we can into the regular expression. If
-      // we hit the end of the regular expression, then we'll return everything
-      // up to that point.
-      while (parser->current.end < parser->end) {
-        // If we hit the terminator, then return this element of the string.
-        if (*parser->current.end == parser->lex_modes.current->as.regexp.terminator) {
-          return YP_TOKEN_STRING_CONTENT;
-        }
+            // Since we've hit the terminator of the regular expression, we now
+            // need to parse the options.
+            bool options = true;
+            parser->current.end = breakpoint + 1;
 
-        // If we've hit a #, then check if it's used as the beginning of either
-        // an embedded variable or an embedded expression.
-        if (*parser->current.end == '#') {
-          switch (parser->current.end[1]) {
-            case '{':
-              // In this case it's the start of an embedded expression.
-
-              // If we have already consumed content, then we need to return
-              // that content as string content first.
-              if (parser->current.end > parser->current.start) {
-                return YP_TOKEN_STRING_CONTENT;
+            while (options) {
+              switch (*parser->current.end) {
+                case 'e':
+                case 'i':
+                case 'm':
+                case 'n':
+                case 's':
+                case 'u':
+                case 'x':
+                  parser->current.end++;
+                  break;
+                default:
+                  options = false;
+                  break;
               }
+            }
 
-              parser->current.end += 2;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
-              return YP_TOKEN_EMBEXPR_BEGIN;
+            lex_mode_pop(parser);
+            return YP_TOKEN_REGEXP_END;
           }
         }
-
-        parser->current.end++;
       }
 
+      // At this point, the breakpoint is NULL which means we were unable to
+      // find anything before the end of the file.
       return YP_TOKEN_EOF;
     }
     case YP_LEX_STRING: {
@@ -1238,6 +1248,8 @@ lex_token_type(yp_parser_t *parser) {
             break;
           }
           default:
+            assert(*breakpoint == parser->lex_modes.current->as.string.terminator);
+
             // Here we've hit the terminator. If we have already consumed
             // content then we need to return that content as string content
             // first.
