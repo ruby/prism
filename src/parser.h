@@ -40,14 +40,37 @@ typedef struct yp_lex_mode {
     YP_LEX_SYMBOL,
   } mode;
 
-  // This is the terminator of the current state. It is used when lexing a
-  // string (either single or double quoted) and an xstring.
-  char term;
+  union {
+    struct {
+      // This is the terminator of the list literal.
+      char terminator;
 
-  // Whether or not interpolation is allowed in this lex state. This corresponds
-  // to some LEX_LIST states (e.g., %W) and LEX_STRING states (e.g., double
-  // quotes).
-  bool interp;
+      // Whether or not interpolation is allowed in this list.
+      bool interpolation;
+    } list;
+
+    struct {
+      // This is the terminator of the regular expression.
+      char terminator;
+    } regexp;
+
+    struct {
+      // This is the terminator of the string. It is typically either a single
+      // or double quote.
+      char terminator;
+
+      // Whether or not interpolation is allowed in this string.
+      bool interpolation;
+    } string;
+
+    struct {
+      // This is the terminator of the symbol.
+      char terminator;
+
+      // Whether or not interpolation is allowed in this symbol.
+      bool interpolation;
+    } symbol;
+  } as;
 
   // The previous lex state so that it knows how to pop.
   struct yp_lex_mode *prev;
