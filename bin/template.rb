@@ -52,7 +52,7 @@ end
 
 # This represents a parameter to a node that is a string.
 class StringParam < Struct.new(:name)
-  def param = "yp_string_t *#{name}"
+  def param = nil
   def rbs_class = "String"
   def java_type = "byte[]"
 end

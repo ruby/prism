@@ -14,6 +14,8 @@ tokens:
     comment: "&&"
   - name: AMPERSAND_AMPERSAND_EQUAL
     comment: "&&="
+  - name: AMPERSAND_DOT
+    comment: "&."
   - name: AMPERSAND_EQUAL
     comment: "&="
   - name: BACK_REFERENCE
@@ -340,9 +342,11 @@ nodes:
         type: token
       - name: statements
         type: node
+      - name: ensure_clause
+        type: node?
       - name: end_keyword
-        type: token
-    location: begin_keyword->end_keyword
+        type: token?
+    location: begin_keyword->ensure_clause|end_keyword|statements
     comment: |
       Represents a begin statement.
 
@@ -540,6 +544,24 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
+  - name: EnsureNode
+    child_nodes:
+      - name: ensure_keyword
+        type: token
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: ensure_keyword->end_keyword
+    comment: |
+      Represents an `ensure` clause in a `begin` statement.
+
+          begin
+            foo
+          ensure
+          ^^^^^^
+            bar
+          end
   - name: ElseNode
     child_nodes:
       - name: else_keyword
@@ -822,6 +844,17 @@ nodes:
 
           nil
           ^^^
+  - name: NoKeywordsParameterNode
+    child_nodes:
+      - name: keyword
+        type: token
+    location: keyword
+    comment: |
+      Represents the use of `**nil` inside method arguments.
+
+          def a(**nil)
+                ^^^^^
+          end
   - name: OperatorAssignmentNode
     child_nodes:
       - name: target
@@ -914,6 +947,20 @@ nodes:
           def a(b, c, d)
                 ^^^^^^^
           end
+  - name: ParenthesesNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: statements
+        type: node
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents a parentesized expression
+
+          (10 + 34)
+          ^^^^^^^^^
   - name: PostExecutionNode
     child_nodes:
       - name: keyword
@@ -1109,6 +1156,8 @@ nodes:
         type: token
       - name: closing
         type: token?
+      - name: unescaped
+        type: string
     location: opening|content->closing|content
     comment: |
       Represents a string literal, a string contained within a `%w` list, or
