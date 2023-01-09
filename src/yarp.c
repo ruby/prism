@@ -1095,59 +1095,99 @@ lex_token_type(yp_parser_t *parser) {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
 
-      // If we've hit the end of the string, then we can return to the default
-      // state of the lexer and return a string ending token.
-      if (match(parser, parser->lex_modes.current->as.string.terminator)) {
-        lex_mode_pop(parser);
-        return YP_TOKEN_STRING_END;
+      // These are the places where we need to split up the content of the
+      // string. We'll use strpbrk to find the first of these characters.
+      char breakpoints[] = " \\\0";
+      breakpoints[0] = parser->lex_modes.current->as.string.terminator;
+
+      // If interpolation is allowed, then we're going to check for the #
+      // character. Otherwise we'll only look for escapes and the terminator.
+      if (parser->lex_modes.current->as.string.interpolation) {
+        breakpoints[2] = '#';
       }
 
-      // Otherwise, we'll lex as far as we can into the string. If we hit the
-      // end of the string, then we'll return everything up to that point.
-      while (parser->current.end < parser->end) {
-        // If we hit the terminator, then return this element of the string.
-        if (*parser->current.end == parser->lex_modes.current->as.string.terminator) {
-          return YP_TOKEN_STRING_CONTENT;
-        }
+      char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
-        switch (*parser->current.end) {
+      while (breakpoint != NULL) {
+        switch (*breakpoint) {
+          case '\\':
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            break;
           case '#':
-            // If our current lex state allows interpolation and we've hit a #,
-            // then check if it's used as the beginning of either an embedded
-            // variable or an embedded expression.
-            if (parser->lex_modes.current->as.string.interpolation) {
-              switch (parser->current.end[1]) {
+            // If we hit a #, we need to check if it is the start of
+            // interpolation. If it is, then we'll handle that here. Otherwise
+            // we'll continue on. Note that we'll only hit this branch if we
+            // allow interpolation.
+
+            // If there is no content following this #, then we're at the end of
+            // the string and we can safely return string content.
+            if (breakpoint + 1 >= parser->end) {
+              parser->current.end = breakpoint;
+              return YP_TOKEN_STRING_CONTENT;
+            }
+
+            // Now we'll check against the character the follows the #. If it
+            // constitutes valid interplation, we'll handle that, otherwise
+            // we'll skip to the next breakpoint.
+            switch (breakpoint[1]) {
               case '@':
-                // In this case it could be an embedded instance or class
+                // In this case we may have hit an embedded instance or class
                 // variable.
+                breakpoint = strpbrk(breakpoint + 2, breakpoints);
                 break;
               case '$':
-                // In this case it could be an embedded global variable.
-                break;
-              case '{':
-                // In this case it's the start of an embedded expression.
-
-                // If we have already consumed content, then we need to return
-                // that content as string content first.
-                if (parser->current.end > parser->current.start) {
+                // In this case we've hit an embedded global variable. First
+                // check to see if we've already consumed content. If we have,
+                // then we need to return that content as string content first.
+                if (breakpoint > parser->current.end) {
+                  parser->current.end = breakpoint;
                   return YP_TOKEN_STRING_CONTENT;
                 }
 
-                parser->current.end += 2;
+                // Otherwise, we need to return the embedded variable token and
+                // switch to the embedded variable lex mode.
+                breakpoint = strpbrk(breakpoint + 2, breakpoints);
+                return YP_TOKEN_EOF;
+              case '{':
+                // In this case it's the start of an embedded expression. If we
+                // have already consumed content, then we need to return that
+                // content as string content first.
+                if (breakpoint > parser->current.end) {
+                  parser->current.end = breakpoint;
+                  return YP_TOKEN_STRING_CONTENT;
+                }
+
+                // Otherwise we'll skip past the #{ and begin lexing the
+                // embedded expression.
+                parser->current.end = breakpoint + 2;
                 lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
                 return YP_TOKEN_EMBEXPR_BEGIN;
-              }
             }
-            break;
-          case '\\':
-            // If we hit an escape, then we need that handle the subsequent
-            // character literally.
-            parser->current.end++;
-        }
 
-        parser->current.end++;
+            break;
+          default:
+            // Here we've hit the terminator. If we have already consumed
+            // content then we need to return that content as string content
+            // first.
+            if (breakpoint > parser->current.end) {
+              parser->current.end = breakpoint;
+              return YP_TOKEN_STRING_CONTENT;
+            }
+
+            // Otherwise we need to switch back to the parent lex mode and
+            // return the end of the string.
+            parser->current.end = breakpoint + 1;
+            lex_mode_pop(parser);
+            return YP_TOKEN_STRING_END;
+        }
       }
 
+      // If we've hit the end of the string, then this is an unterminated
+      // string. In that case we'll return the EOF token.
+      parser->current.end = parser->end;
       return YP_TOKEN_EOF;
     }
     case YP_LEX_SYMBOL: {
