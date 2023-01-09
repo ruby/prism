@@ -23,6 +23,10 @@ typedef struct yp_lex_mode {
     // expression of a string.
     YP_LEX_EMBEXPR,
 
+    // This state is used when we're lexing a variable that is embedded directly
+    // inside of a string with the # shorthand.
+    YP_LEX_EMBVAR,
+
     // This state is used when we are lexing a list of tokens, as in a %w word
     // list literal or a %i symbol list literal.
     YP_LEX_LIST,

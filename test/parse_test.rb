@@ -1107,6 +1107,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "\"\\x7 \\x23 \\x61\""
   end
 
+  test "string with embedded global variables" do
+    expected = InterpolatedStringNode(STRING_BEGIN("\""), [expression("$foo")], STRING_END("\""))
+    assert_parses expected, "\"\#$foo\""
+  end
+
+  test "string with embedded instance variables" do
+    expected = InterpolatedStringNode(STRING_BEGIN("\""), [expression("@foo")], STRING_END("\""))
+    assert_parses expected, "\"\#@foo\""
+  end
+
+  test "string with embedded class variables" do
+    expected = InterpolatedStringNode(STRING_BEGIN("\""), [expression("@@foo")], STRING_END("\""))
+    assert_parses expected, "\"\#@@foo\""
+  end
+
   test "super" do
     assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
   end
