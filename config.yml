@@ -74,6 +74,8 @@ tokens:
     comment: "#{"
   - name: EMBEXPR_END
     comment: "}"
+  - name: EMBVAR
+    comment: "#"
   - name: EQUAL
     comment: "="
   - name: EQUAL_EQUAL

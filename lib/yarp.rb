@@ -241,6 +241,7 @@ module YARP
     EMBDOC_LINE: :on_embdoc,
     EMBEXPR_BEGIN: :on_embexpr_beg,
     EMBEXPR_END: :on_embexpr_end,
+    EMBVAR: :on_embvar,
     EQUAL: :on_op,
     EQUAL_EQUAL: :on_op,
     EQUAL_EQUAL_EQUAL: :on_op,
