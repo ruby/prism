@@ -2154,6 +2154,77 @@ parse_alias_or_undef_argument(yp_parser_t *parser) {
   }
 }
 
+// Parse a node that is part of a string. If the subsequent tokens cannot be
+// parsed as a string part, then NULL is returned.
+static yp_node_t *
+parse_string_part(yp_parser_t *parser) {
+  parser_lex(parser);
+
+  switch (parser->previous.type) {
+    // Here the lexer has returned to us plain string content. In this case
+    // we'll create a string node that has no opening or closing and return that
+    // as the part. These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //      ^^^^      ^     ^^^^
+    case YP_TOKEN_STRING_CONTENT: {
+      yp_token_t opening;
+      not_provided(&opening, parser->previous.start);
+
+      yp_token_t closing;
+      not_provided(&closing, parser->previous.end);
+
+      return yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+    }
+    // Here the lexer has returned the beginning of an embedded expression. In
+    // that case we'll parse the inner statements and return that as the part.
+    // These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //          ^^^^^^
+    case YP_TOKEN_EMBEXPR_BEGIN: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+      expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+      yp_token_t closing = parser->previous;
+
+      return yp_node_string_interpolated_node_create(parser, &opening, statements, &closing);
+    }
+    // Here the lexer has returned the beginning of an embedded variable. In
+    // that case we'll parse the variable and create an appropriate node for it
+    // and then return that node. These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //                 ^^^^^
+    case YP_TOKEN_EMBVAR: {
+      parser_lex(parser);
+
+      switch (parser->previous.type) {
+        // In this case a global variable is being interpolated. We'll create
+        // a global variable read node.
+        case YP_TOKEN_BACK_REFERENCE:
+        case YP_TOKEN_GLOBAL_VARIABLE:
+        case YP_TOKEN_NTH_REFERENCE:
+          return yp_node_global_variable_read_create(parser, &parser->previous);
+        // In this case an instance variable is being interpolated. We'll
+        // create an instance variable read node.
+        case YP_TOKEN_INSTANCE_VARIABLE:
+          return yp_node_instance_variable_read_create(parser, &parser->previous);
+        // In this case a class variable is being interpolated. We'll create a
+        // class variable read node.
+        case YP_TOKEN_CLASS_VARIABLE:
+          return yp_node_class_variable_read_create(parser, &parser->previous);
+        default:
+          assert(false && "Unexpected token type for an interpolated variable.");
+      }
+    }
+    default:
+      yp_error_list_append(&parser->error_list, "Could not understand string part", parser->previous.start - parser->start);
+      return NULL;
+  }
+}
+
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
@@ -2792,17 +2863,73 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_RATIONAL_NUMBER:
       return yp_node_rational_literal_create(parser, &parser->previous);
     case YP_TOKEN_REGEXP_BEGIN: {
+      // When we get here, we don't know if this regular expression is going to
+      // have interpolation or not, even though it is allowed. Still, we want to
+      // be able to return a regular expression node without interpolation if we
+      // can since it'll be faster.
       yp_token_t opening = parser->previous;
-      yp_token_t content;
 
-      if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
-        content = parser->previous;
-      } else {
-        content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+      switch (parser->current.type) {
+        case YP_TOKEN_REGEXP_END: {
+          // If we get here, then we have an end immediately after a start. In
+          // that case we'll create an empty content token and return an
+          // uninterpolated regular expression.
+          yp_token_t content = {
+            .type = YP_TOKEN_STRING_CONTENT,
+            .start = parser->previous.end,
+            .end = parser->previous.end
+          };
+
+          parser_lex(parser);
+          return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+        }
+        case YP_TOKEN_STRING_CONTENT: {
+          // In this case we've hit string content so we know the regular
+          // expression at least has something in it. We'll need to check if the
+          // following token is the end (in which case we can return a plain
+          // regular expression) or if it's not then it has interpolation.
+          yp_token_t content = parser->current;
+
+          parser_lex(parser);
+          if (accept(parser, YP_TOKEN_REGEXP_END)) {
+            return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+          }
+
+          // If we get here, then we have interpolation so we'll need to create
+          // a regular expression node with interpolation.
+          break;
+        }
+        default:
+          // If we hit anything else, then we're going to create a regular
+          // expression with interpolation.
+          parser_lex(parser);
+          break;
+      }
+
+      yp_node_t *node = yp_node_interpolated_regular_expression_node_create(parser, &opening, &opening);
+      yp_node_list_t *parts = &node->as.interpolated_regular_expression_node.parts;
+
+      if (parser->previous.type == YP_TOKEN_STRING_CONTENT) {
+        yp_token_t string_opening;
+        not_provided(&string_opening, parser->previous.start);
+
+        yp_token_t string_closing;
+        not_provided(&string_closing, parser->previous.end);
+
+        yp_node_t *string_child = yp_node_string_node_create_and_unescape(parser, &string_opening, &parser->previous, &string_closing, YP_UNESCAPE_ALL);
+        yp_node_list_append(parser, node, parts, string_child);
+      }
+
+      while (parser->current.type != YP_TOKEN_EOF && parser->current.type != YP_TOKEN_REGEXP_END) {
+        yp_node_t *part;
+        if ((part = parse_string_part(parser)) != NULL) {
+          yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part); 
+        }
       }
 
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
-      return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+      node->as.interpolated_regular_expression_node.closing = parser->previous;
+      return node;
     }
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
@@ -2866,73 +2993,9 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &opening);
 
         while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
-          switch (parser->current.type) {
-            case YP_TOKEN_STRING_CONTENT: {
-              parser_lex(parser);
-
-              yp_token_t string_content_opening;
-              not_provided(&string_content_opening, parser->previous.start);
-
-              yp_token_t string_content_closing;
-              not_provided(&string_content_closing, parser->previous.end);
-
-              yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing, YP_UNESCAPE_ALL);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, part);
-              break;
-            }
-            case YP_TOKEN_EMBEXPR_BEGIN: {
-              parser_lex(parser);
-              yp_token_t embexpr_opening = parser->previous;
-              yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-              expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
-              break;
-            }
-            case YP_TOKEN_EMBVAR: {
-              // Skip past the # token and parse the variable being
-              // interpolated.
-              parser_lex(parser);
-
-              // This is the part that is being interpolated. It'll be set
-              // depending on the type of interpolation.
-              yp_node_t *part;
-
-              switch (parser->current.type) {
-                case YP_TOKEN_BACK_REFERENCE:
-                case YP_TOKEN_GLOBAL_VARIABLE:
-                case YP_TOKEN_NTH_REFERENCE:
-                  // In this case a global variable is being interpolated. We'll
-                  // create a global variable read node and add it to the list
-                  // of string parts.
-                  part = yp_node_global_variable_read_create(parser, &parser->current);
-                  break;
-                case YP_TOKEN_INSTANCE_VARIABLE:
-                  // In this case an instance variable is being interpolated.
-                  // We'll create an instance variable read node and add it to
-                  // the list of string parts.
-                  part = yp_node_instance_variable_read_create(parser, &parser->current);
-                  break;
-                case YP_TOKEN_CLASS_VARIABLE:
-                  // In this case a class variable is being interpolated. We'll
-                  // create a class variable read node and add it to the list of
-                  // string parts.
-                  part = yp_node_class_variable_read_create(parser, &parser->current);
-                  break;
-                default:
-                  assert(false && "Unexpected token type for an interpolated variable.");
-              }
-
-              // Here we're going to skip past the token that we just used to
-              // create the part that is being interpolated, then we'll add the
-              // interpolated part onto the list of parts for the string.
-              parser_lex(parser);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, part);
-
-              break;
-            }
-            default:
-              fprintf(stderr, "Could not understand token type %s in an interpolated string\n", yp_token_type_to_str(parser->previous.type));
-              return NULL;
+          yp_node_t *part;
+          if ((part = parse_string_part(parser)) != NULL) {
+            yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, part); 
           }
         }
 

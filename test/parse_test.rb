@@ -981,6 +981,37 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
   end
 
+  test "regular expression with interpolation" do
+    expected = InterpolatedRegularExpressionNode(
+      REGEXP_BEGIN("/"),
+      [
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([expression("bbb")]),
+          EMBEXPR_END("}")
+        ),
+       StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")
+      ],
+      REGEXP_END("/")
+    )
+
+    assert_parses expected, "/aaa \#{bbb} ccc/"
+  end
+
+  test "regular expression with interpolated variable" do
+    expected = InterpolatedRegularExpressionNode(
+      REGEXP_BEGIN("/"),
+      [
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
+        expression("$bbb")
+      ],
+      REGEXP_END("/")
+    )    
+
+    assert_parses expected, "/aaa \#$bbb/"
+  end
+
   test "retry" do
     assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
   end

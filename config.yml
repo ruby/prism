@@ -708,6 +708,20 @@ nodes:
 
           1
           ^
+  - name: InterpolatedRegularExpressionNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents a regular expression literal that contains interpolation.
+
+          /foo #{bar} baz/
+          ^^^^^^^^^^^^^^^^
   - name: InterpolatedStringNode
     child_nodes:
       - name: opening
