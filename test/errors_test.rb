@@ -173,6 +173,14 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("break 1,;"), "break 1,;", ["Expected to be able to parse an argument."]
   end
 
+  test "argument forwarding when parent is not forwarding" do
+    assert_errors expression('def a(x, y, z); b(...); end'), 'def a(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
+  end
+
+  test "argument forwarding only effects its own internals" do
+    assert_errors expression('def a(...); b(...); end; def c(x, y, z); b(...); end'), 'def a(...); b(...); end; def c(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
