@@ -607,13 +607,13 @@ lex_token_type(yp_parser_t *parser) {
           if (current_token_starts_line(parser)) {
             if (strncmp(parser->current.end, "begin\n", 6) == 0) {
               parser->current.end += 6;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
               return YP_TOKEN_EMBDOC_BEGIN;
             }
 
             if (strncmp(parser->current.end, "begin\r\n", 7) == 0) {
               parser->current.end += 7;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
               return YP_TOKEN_EMBDOC_BEGIN;
             }
           }
@@ -642,19 +642,40 @@ lex_token_type(yp_parser_t *parser) {
           return match(parser, '=') ? YP_TOKEN_GREATER_EQUAL : YP_TOKEN_GREATER;
 
         // double-quoted string literal
-        case '"':
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '"', .interp = true });
+        case '"': {
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '"',
+            .as.string.interpolation = true
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_STRING_BEGIN;
+        }
 
         // xstring literal
-        case '`':
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '`', .interp = true });
+        case '`': {
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '`',
+            .as.string.interpolation = true
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_BACKTICK;
+        }
 
         // single-quoted string literal
-        case '\'':
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '\'', .interp = false });
+        case '\'': {
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '\'',
+            .as.string.interpolation = false
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_STRING_BEGIN;
+        }
 
         // ? character literal
         case '?':
@@ -714,14 +735,24 @@ lex_token_type(yp_parser_t *parser) {
         // :: symbol
         case ':':
           if (match(parser, ':')) return YP_TOKEN_COLON_COLON;
+
           if (char_is_identifier(parser, parser->current.end)) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL, .term = '\0' });
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
             return YP_TOKEN_SYMBOL_BEGIN;
-          } else if ((*parser->current.end == '"') || (*parser->current.end == '\'')) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = *parser->current.end, .interp = *parser->current.end == '"' });
+          }
+
+          if ((*parser->current.end == '"') || (*parser->current.end == '\'')) {
+            yp_lex_mode_t lex_mode = {
+              .mode = YP_LEX_STRING,
+              .as.string.terminator = *parser->current.end,
+              .as.string.interpolation = *parser->current.end == '"'
+            };
+
+            lex_mode_push(parser, lex_mode);
             parser->current.end++;
             return YP_TOKEN_SYMBOL_BEGIN;
           }
+
           return YP_TOKEN_COLON;
 
         // / /=
@@ -729,7 +760,7 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
           if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
 
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = '/' });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
           return YP_TOKEN_REGEXP_BEGIN;
 
         // ^ ^=
@@ -753,42 +784,104 @@ lex_token_type(yp_parser_t *parser) {
             case '=':
               parser->current.end++;
               return YP_TOKEN_PERCENT_EQUAL;
-            case 'i':
+            case 'i': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_LOWER_I;
-            case 'I':
+            }
+            case 'I': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_UPPER_I;
-            case 'r':
+            }
+            case 'r': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_REGEXP,
+                .as.regexp.terminator = terminator(*parser->current.end++)
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_REGEXP_BEGIN;
-            case 'q':
+            }
+            case 'q': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_STRING_BEGIN;
-            case 'Q':
+            }
+            case 'Q': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_STRING_BEGIN;
-            case 's':
+            }
+            case 's': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_SYMBOL_BEGIN;
-            case 'w':
+            }
+            case 'w': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_LOWER_W;
-            case 'W':
+            }
+            case 'W': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_UPPER_W;
-            case 'x':
+            }
+            case 'x': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_LOWER_X;
+            }
             default:
               return YP_TOKEN_PERCENT;
           }
@@ -899,7 +992,7 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
-        if (*parser->current.end == parser->lex_modes.current->term) {
+        if (*parser->current.end == parser->lex_modes.current->as.list.terminator) {
           // If we've hit the terminator and we've already skipped past content,
           // then we can return a list node.
           if (parser->current.start < parser->current.end) {
@@ -915,7 +1008,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // If we've hit a #{, then we're at the start of an embedded expression,
         // so we'll switch to the embedded expression lex mode.
-        if (parser->lex_modes.current->interp && parser->current.end[0] == '#' && parser->current.end[1] == '{') {
+        if (parser->lex_modes.current->as.list.interpolation && parser->current.end[0] == '#' && parser->current.end[1] == '{') {
           // If we've already skipped past content, then we need to return that
           // content first before we switch to the embedded expression lex mode.
           if (parser->current.start < parser->current.end) {
@@ -940,7 +1033,7 @@ lex_token_type(yp_parser_t *parser) {
 
       // If we've hit the end of the string, then we can return to the default
       // state of the lexer and return a string ending token.
-      if (match(parser, parser->lex_modes.current->term)) {
+      if (match(parser, parser->lex_modes.current->as.regexp.terminator)) {
         // Since we've hit the terminator of the regular expression, we now need
         // to parse the options.
         bool options = true;
@@ -970,7 +1063,7 @@ lex_token_type(yp_parser_t *parser) {
       // up to that point.
       while (parser->current.end < parser->end) {
         // If we hit the terminator, then return this element of the string.
-        if (*parser->current.end == parser->lex_modes.current->term) {
+        if (*parser->current.end == parser->lex_modes.current->as.regexp.terminator) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -1004,7 +1097,7 @@ lex_token_type(yp_parser_t *parser) {
 
       // If we've hit the end of the string, then we can return to the default
       // state of the lexer and return a string ending token.
-      if (match(parser, parser->lex_modes.current->term)) {
+      if (match(parser, parser->lex_modes.current->as.string.terminator)) {
         lex_mode_pop(parser);
         return YP_TOKEN_STRING_END;
       }
@@ -1013,7 +1106,7 @@ lex_token_type(yp_parser_t *parser) {
       // end of the string, then we'll return everything up to that point.
       while (parser->current.end < parser->end) {
         // If we hit the terminator, then return this element of the string.
-        if (*parser->current.end == parser->lex_modes.current->term) {
+        if (*parser->current.end == parser->lex_modes.current->as.string.terminator) {
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -1022,7 +1115,7 @@ lex_token_type(yp_parser_t *parser) {
             // If our current lex state allows interpolation and we've hit a #,
             // then check if it's used as the beginning of either an embedded
             // variable or an embedded expression.
-            if (parser->lex_modes.current->interp) {
+            if (parser->lex_modes.current->as.string.interpolation) {
               switch (parser->current.end[1]) {
               case '@':
                 // In this case it could be an embedded instance or class
@@ -1847,7 +1940,11 @@ parse_symbol(yp_parser_t *parser, int mode) {
     return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
   }
 
-  if (parser->lex_modes.current->interp) {
+  // If we're not in YP_LEX_SYMBOL, then we should be in YP_LEX_STRING, because
+  // the lexer determined this was a dynamic symbol node.
+  assert(mode == YP_LEX_STRING);
+
+  if (parser->lex_modes.current->as.string.interpolation) {
     yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
 
     while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
@@ -2629,7 +2726,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_STRING_BEGIN: {
       yp_token_t opening = parser->previous;
 
-      if (parser->lex_modes.current->interp) {
+      if (parser->lex_modes.current->as.string.interpolation) {
         yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &opening);
 
         while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
