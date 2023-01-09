@@ -1185,13 +1185,13 @@ parser_lex(yp_parser_t *parser) {
     // If we found a comment while lexing, then we're going to add it to the
     // list of comments in the file and keep lexing.
     yp_comment_t *comment = malloc(sizeof(yp_comment_t));
-    comment->node.start = parser->current.start - parser->start;
+    comment->start = parser->current.start - parser->start;
 
     switch (parser->current.type) {
       case YP_TOKEN_COMMENT:
         parser_lex_magic_comments(parser);
         *comment = (yp_comment_t) {
-          .node.end = parser->current.end - parser->start,
+          .end = parser->current.end - parser->start,
           .type = YP_COMMENT_INLINE
         };
 
@@ -1199,7 +1199,7 @@ parser_lex(yp_parser_t *parser) {
         break;
       case YP_TOKEN___END__:
         *comment = (yp_comment_t) {
-          .node.end = parser->current.end - parser->start,
+          .end = parser->current.end - parser->start,
           .type = YP_COMMENT___END__
         };
 
@@ -1213,7 +1213,7 @@ parser_lex(yp_parser_t *parser) {
         } while ((parser->current.type != YP_TOKEN_EMBDOC_END) && (parser->current.type != YP_TOKEN_EOF));
 
         *comment = (yp_comment_t) {
-          .node.end = parser->current.end - parser->start,
+          .end = parser->current.end - parser->start,
           .type = YP_COMMENT_EMBDOC
         };
 

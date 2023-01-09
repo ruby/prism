@@ -11,6 +11,8 @@
 // This struct represents an error found during parsing.
 typedef struct yp_error {
   yp_list_node_t node;
+  uint32_t start;
+  uint32_t end;
   yp_string_t message;
 } yp_error_t;
 
