@@ -18,6 +18,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_BEGIN: return "BEGIN";
     case YP_CONTEXT_CLASS: return "CLASS";
     case YP_CONTEXT_DEF: return "DEF";
+    case YP_CONTEXT_ENSURE: return "ENSURE";
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
     case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
@@ -1244,14 +1245,16 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_WHILE:
     case YP_CONTEXT_UNTIL:
     case YP_CONTEXT_ELSE:
-    case YP_CONTEXT_BEGIN:
     case YP_CONTEXT_SCLASS:
     case YP_CONTEXT_FOR:
+    case YP_CONTEXT_ENSURE:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_UNLESS:
     case YP_CONTEXT_ELSIF:
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_BEGIN:
+      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
     case YP_CONTEXT_PARENS:
@@ -2020,13 +2023,37 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t begin_keyword = parser->previous;
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_BEGIN);
-
+      yp_node_t *begin_statements = parse_statements(parser, YP_CONTEXT_BEGIN);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
 
-      yp_token_t end_keyword = parser->previous;
-      return yp_node_begin_node_create(parser, &begin_keyword, statements, &end_keyword);
+      yp_token_t end_keyword;
+      not_provided(&end_keyword, parser->previous.end);
+
+      yp_node_t *begin_node = yp_node_begin_node_create(parser, &begin_keyword, begin_statements, NULL, &end_keyword);
+
+      if (accept(parser, YP_TOKEN_KEYWORD_ENSURE)) {
+        yp_token_t ensure_keyword = parser->previous;
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        yp_node_t *ensure_statements = parse_statements(parser, YP_CONTEXT_ENSURE);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `ensure` statement.");
+
+        yp_node_t *ensure_node = yp_node_ensure_node_create(
+          parser,
+          &ensure_keyword,
+          ensure_statements,
+          &parser->previous
+        );
+
+        begin_node->as.begin_node.ensure_clause = ensure_node;
+      } else {
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
+        begin_node->as.begin_node.end_keyword = parser->previous;
+      }
+
+      return begin_node;
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       yp_token_t keyword = parser->previous;
