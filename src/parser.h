@@ -102,6 +102,8 @@ typedef enum {
 // This is a node in the linked list of comments that we've found while parsing.
 typedef struct yp_comment {
   yp_list_node_t node;
+  uint32_t start;
+  uint32_t end;
   yp_comment_type_t type;
 } yp_comment_t;
 

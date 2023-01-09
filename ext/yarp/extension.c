@@ -149,7 +149,7 @@ parse_source(source_t *source) {
 
   for (yp_comment_t *comment = (yp_comment_t *) parser.comment_list.head; comment != NULL;
        comment = (yp_comment_t *) comment->node.next) {
-    VALUE location_argv[] = { LONG2FIX(comment->node.start), LONG2FIX(comment->node.end) };
+    VALUE location_argv[] = { LONG2FIX(comment->start), LONG2FIX(comment->end) };
     VALUE type;
 
     switch (comment->type) {
@@ -173,7 +173,7 @@ parse_source(source_t *source) {
 
   for (yp_error_t *error = (yp_error_t *) parser.error_list.head; error != NULL;
        error = (yp_error_t *) error->node.next) {
-    VALUE location_argv[] = { LONG2FIX(error->node.start), LONG2FIX(error->node.end) };
+    VALUE location_argv[] = { LONG2FIX(error->start), LONG2FIX(error->end) };
 
     VALUE error_argv[] = { rb_str_new(yp_string_source(&error->message), yp_string_length(&error->message)),
                            rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
