@@ -1794,6 +1794,11 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   yp_node_t *statements = yp_node_statements_create(parser);
 
   while (!context_terminator(context, &parser->current)) {
+    // Ignore semicolon without statements before them
+    if (accept(parser, YP_TOKEN_SEMICOLON) || accept(parser, YP_TOKEN_NEWLINE)) {
+      continue;
+    }
+
     yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an expression.");
     yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
