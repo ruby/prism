@@ -3225,11 +3225,38 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_node_or_node_create(parser, node, &token, right);
     }
+    case YP_TOKEN_EQUAL_TILDE: {
+      // If the receiver of this =~ is a regular expression node, then we need
+      // to introduce local variables for it based on its named capture groups.
+      if (node->type == YP_NODE_REGULAR_EXPRESSION_NODE) {
+        yp_string_list_t named_captures;
+        yp_string_list_init(&named_captures);
+
+        yp_token_t *content = &node->as.regular_expression_node.content;
+        assert(yp_regexp_named_capture_group_names(content->start, content->end - content->start, &named_captures));
+
+        yp_token_list_t *locals = &parser->current_scope->as.scope.locals;
+        for (size_t index = 0; index < named_captures.length; index++) {
+          yp_string_t *name = &named_captures.strings[index];
+          assert(name->type == YP_STRING_SHARED);
+
+          yp_token_list_append(locals, &(yp_token_t) {
+            .type = YP_TOKEN_IDENTIFIER,
+            .start = name->as.shared.start,
+            .end = name->as.shared.end
+          });
+        }
+
+        yp_string_list_free(&named_captures);
+      }
+
+      // Here we're going to fall through to our other operators because this
+      // will become a call node.
+    }
     case YP_TOKEN_BANG_EQUAL:
     case YP_TOKEN_BANG_TILDE:
     case YP_TOKEN_EQUAL_EQUAL:
     case YP_TOKEN_EQUAL_EQUAL_EQUAL:
-    case YP_TOKEN_EQUAL_TILDE:
     case YP_TOKEN_LESS_EQUAL_GREATER:
     case YP_TOKEN_GREATER:
     case YP_TOKEN_GREATER_EQUAL:
