@@ -1365,10 +1365,9 @@ class ParseTest < Test::Unit::TestCase
   test "return [1, 2, 3]" do
     expected = ReturnNode(
       KEYWORD_RETURN("return"),
-      ArgumentsNode([
-        expression("[1, 2, 3]"),
-      ]),
+      ArgumentsNode([expression("[1, 2, 3]")])
     )
+
     assert_parses expected, "return [1, 2, 3]"
   end
 

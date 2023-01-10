@@ -132,11 +132,13 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "return(1, 2, 3)" do
-    puts "\n\n\n"
+    errors = [
+      "Expected a closing parenthesis.",
+      "Expected an ',' to delimit arguments.",
+      "Expected to be able to parse an argument."
+    ]
 
-    assert_errors expression("return(1, 2, 3)"), "return(1, 2, 3)", ["Expected a closing parenthesis.",
-    "Expected an ',' to delimit arguments.",
-    "Expected to be able to parse an argument."]
+    assert_errors expression("return(1, 2, 3)"), "return(1, 2, 3)", errors
   end
 
   test "return 1,;" do
@@ -144,9 +146,13 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "next(1, 2, 3)" do
-    assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", ["Expected a closing parenthesis.",
-    "Expected an ',' to delimit arguments.",
-    "Expected to be able to parse an argument."]
+    errors = [
+      "Expected a closing parenthesis.",
+      "Expected an ',' to delimit arguments.",
+      "Expected to be able to parse an argument."
+    ]
+
+    assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", errors
   end
 
   test "next 1,;" do
@@ -154,9 +160,13 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "break(1, 2, 3)" do
-    assert_errors expression("break(1, 2, 3)"), "break(1, 2, 3)", ["Expected a closing parenthesis.",
-    "Expected an ',' to delimit arguments.",
-    "Expected to be able to parse an argument."]
+    errors = [
+      "Expected a closing parenthesis.",
+      "Expected an ',' to delimit arguments.",
+      "Expected to be able to parse an argument."
+    ]
+
+    assert_errors expression("break(1, 2, 3)"), "break(1, 2, 3)", errors
   end
 
   test "break 1,;" do
