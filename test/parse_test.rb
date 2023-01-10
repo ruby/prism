@@ -811,6 +811,61 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "defined? 1 and defined? 2"
   end
 
+  test "not without parentheses" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      nil,
+      nil,
+      nil,
+      "!"
+    )
+
+    assert_parses expected, "not foo"
+  end
+
+  test "not with parentheses" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "!"
+    )
+
+    assert_parses expected, "not(foo)"
+  end
+
+  test "not binding power" do
+    expected =
+      AndNode(
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        ),
+        KEYWORD_AND("and"),
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, "bar"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        )
+      )
+
+    assert_parses expected, "not foo and not bar"
+  end
+
   test "false" do
     assert_parses FalseNode(KEYWORD_FALSE("false")), "false"
   end
