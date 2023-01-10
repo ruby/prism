@@ -2589,7 +2589,8 @@ parse_expression_prefix(yp_parser_t *parser) {
         case YP_TOKEN_KEYWORD_RETURN:
           return yp_node_return_node_create(parser, &keyword, arguments);
         default:
-          assert(0);
+          assert(false && "unreachable");
+          return yp_node_missing_node_create(parser, keyword.start - parser->start);
       }
     }
     case YP_TOKEN_KEYWORD_SUPER:
