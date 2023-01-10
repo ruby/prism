@@ -551,6 +551,12 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         parser->current.end = pound + 1;
         return YP_TOKEN_EMBVAR;
       }
+
+      // If we didn't get an valid interpolation, then this is just regular
+      // string content. This is like if we get "#@-". In this case the caller
+      // should keep lexing.
+      parser->current.end = variable;
+      return YP_TOKEN_NOT_PROVIDED;
     }
     case '$':
       // In this case we've hit an embedded global variable. First check to see

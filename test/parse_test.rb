@@ -1060,6 +1060,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "\"aaa \#{bbb} ccc\""
   end
 
+  test "string interpolation allowed, not actually interpolated" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("\#@---"), nil, "\#@---")],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"#@---\""
+  end
+
   test "string list" do
     expected = ArrayNode(
       PERCENT_LOWER_W("%w["),
