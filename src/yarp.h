@@ -1,6 +1,7 @@
 #ifndef YARP_H
 #define YARP_H
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,6 +16,7 @@
 #include "parser.h"
 #include "regexp.h"
 #include "node.h"
+#include "unescape.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 2

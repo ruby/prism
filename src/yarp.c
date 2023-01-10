@@ -18,6 +18,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_BEGIN: return "BEGIN";
     case YP_CONTEXT_CLASS: return "CLASS";
     case YP_CONTEXT_DEF: return "DEF";
+    case YP_CONTEXT_ENSURE: return "ENSURE";
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
     case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
@@ -25,6 +26,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_IF: return "IF";
     case YP_CONTEXT_MAIN: return "MAIN";
     case YP_CONTEXT_MODULE: return "MODULE";
+    case YP_CONTEXT_PARENS: return "PARENS";
     case YP_CONTEXT_POSTEXE: return "POSTEXE";
     case YP_CONTEXT_PREEXE: return "PREEXE";
     case YP_CONTEXT_SCLASS: return "SCLASS";
@@ -67,13 +69,16 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
 
 __attribute__((unused)) static void
 debug_lex_mode(yp_parser_t *parser) {
-  switch (parser->lex_modes.current->mode) {
+  yp_lex_mode_t *lex_mode = parser->lex_modes.current;
+
+  switch (lex_mode->mode) {
     case YP_LEX_DEFAULT: printf("lexing in DEFAULT mode\n"); return;
     case YP_LEX_EMBDOC: printf("lexing in EMBDOC mode\n"); return;
     case YP_LEX_EMBEXPR: printf("lexing in EMBEXPR mode\n"); return;
-    case YP_LEX_LIST: printf("lexing in LIST mode\n"); return;
-    case YP_LEX_REGEXP: printf("lexing in REGEXP mode\n"); return;
-    case YP_LEX_STRING: printf("lexing in STRING mode\n"); return;
+    case YP_LEX_EMBVAR: printf("lexing in EMBVAR mode\n"); return;
+    case YP_LEX_LIST: printf("lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
+    case YP_LEX_REGEXP: printf("lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
+    case YP_LEX_STRING: printf("lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
     case YP_LEX_SYMBOL: printf("lexing in SYMBOL mode\n"); return;
   }
 }
@@ -493,6 +498,103 @@ current_token_starts_line(yp_parser_t *parser) {
   return (parser->current.start == parser->start) || (parser->current.start[-1] == '\n');
 }
 
+// When we hit a # while lexing something like a string, we need to potentially
+// handle interpolation. This function performs that check. It returns a token
+// type representing what it found. Those cases are:
+//
+// * YP_TOKEN_NOT_PROVIDED - No interpolation was found at this point. The
+//     caller should keep lexing.
+// * YP_TOKEN_STRING_CONTENT - No interpolation was found at this point. The
+//     caller should return this token type.
+// * YP_TOKEN_EMBEXPR_BEGIN - An embedded expression was found. The caller
+//     should return this token type.
+// * YP_TOKEN_EMBVAR - An embedded variable was found. The caller should return
+//     this token type.
+//
+static yp_token_type_t
+lex_interpolation(yp_parser_t *parser, const char *pound) {
+  // If there is no content following this #, then we're at the end of
+  // the string and we can safely return string content.
+  if (pound + 1 >= parser->end) {
+    parser->current.end = pound;
+    return YP_TOKEN_STRING_CONTENT;
+  }
+
+  // Now we'll check against the character the follows the #. If it constitutes
+  // valid interplation, we'll handle that, otherwise we'll return
+  // YP_TOKEN_NOT_PROVIDED.
+  switch (pound[1]) {
+    case '@': {
+      // In this case we may have hit an embedded instance or class variable.
+      if (pound + 2 >= parser->end) {
+        parser->current.end = pound + 1;
+        return YP_TOKEN_STRING_CONTENT;
+      }
+
+      // If we're looking at a @ and there's another @, then we'll skip past the
+      // second @.
+      const char *variable = pound + 2;
+      if (*variable == '@' && pound + 3 < parser->end) variable++;
+
+      if (char_is_identifier_start(parser, variable)) {
+        // At this point we're sure that we've either hit an embedded instance
+        // or class variable. In this case we'll first need to check if we've
+        // already consumed content.
+        if (pound > parser->current.end) {
+          parser->current.end = pound;
+          return YP_TOKEN_STRING_CONTENT;
+        }
+
+        // Otherwise we need to return the embedded variable token
+        // and then switch to the embedded variable lex mode.
+        lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
+        parser->current.end = pound + 1;
+        return YP_TOKEN_EMBVAR;
+      }
+
+      // If we didn't get an valid interpolation, then this is just regular
+      // string content. This is like if we get "#@-". In this case the caller
+      // should keep lexing.
+      parser->current.end = variable;
+      return YP_TOKEN_NOT_PROVIDED;
+    }
+    case '$':
+      // In this case we've hit an embedded global variable. First check to see
+      // if we've already consumed content. If we have, then we need to return
+      // that content as string content first.
+      if (pound > parser->current.end) {
+        parser->current.end = pound;
+        return YP_TOKEN_STRING_CONTENT;
+      }
+
+      // Otherwise, we need to return the embedded variable token and switch to
+      // the embedded variable lex mode.
+      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
+      parser->current.end = pound + 1;
+      return YP_TOKEN_EMBVAR;
+    case '{':
+      // In this case it's the start of an embedded expression. If we have
+      // already consumed content, then we need to return that content as string
+      // content first.
+      if (pound > parser->current.end) {
+        parser->current.end = pound;
+        return YP_TOKEN_STRING_CONTENT;
+      }
+
+      // Otherwise we'll skip past the #{ and begin lexing the embedded
+      // expression.
+      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+      parser->current.end = pound + 2;
+      return YP_TOKEN_EMBEXPR_BEGIN;
+    default:
+      // In this case we've hit a # that doesn't constitute interpolation. We'll
+      // mark that by returning the not provided token type. This tells the
+      // consumer to keep lexing forward.
+      parser->current.end = pound + 1;
+      return YP_TOKEN_NOT_PROVIDED;
+  }
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -501,7 +603,8 @@ static yp_token_type_t
 lex_token_type(yp_parser_t *parser) {
   switch (parser->lex_modes.current->mode) {
     case YP_LEX_DEFAULT:
-    case YP_LEX_EMBEXPR: {
+    case YP_LEX_EMBEXPR:
+    case YP_LEX_EMBVAR: {
       // First, we're going to skip past any whitespace at the front of the next
       // token.
       bool chomping = true;
@@ -605,13 +708,13 @@ lex_token_type(yp_parser_t *parser) {
           if (current_token_starts_line(parser)) {
             if (strncmp(parser->current.end, "begin\n", 6) == 0) {
               parser->current.end += 6;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
               return YP_TOKEN_EMBDOC_BEGIN;
             }
 
             if (strncmp(parser->current.end, "begin\r\n", 7) == 0) {
               parser->current.end += 7;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC, .term = '\0', .interp = false });
+              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
               return YP_TOKEN_EMBDOC_BEGIN;
             }
           }
@@ -640,19 +743,40 @@ lex_token_type(yp_parser_t *parser) {
           return match(parser, '=') ? YP_TOKEN_GREATER_EQUAL : YP_TOKEN_GREATER;
 
         // double-quoted string literal
-        case '"':
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '"', .interp = true });
+        case '"': {
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '"',
+            .as.string.interpolation = true
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_STRING_BEGIN;
+        }
 
         // xstring literal
-        case '`':
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '`', .interp = true });
+        case '`': {
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '`',
+            .as.string.interpolation = true
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_BACKTICK;
+        }
 
         // single-quoted string literal
-        case '\'':
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = '\'', .interp = false });
+        case '\'': {
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '\'',
+            .as.string.interpolation = false
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_STRING_BEGIN;
+        }
 
         // ? character literal
         case '?':
@@ -666,6 +790,8 @@ lex_token_type(yp_parser_t *parser) {
         case '&':
           if (match(parser, '&'))
             return match(parser, '=') ? YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL : YP_TOKEN_AMPERSAND_AMPERSAND;
+          if (match(parser, '.'))
+            return YP_TOKEN_AMPERSAND_DOT;
           return match(parser, '=') ? YP_TOKEN_AMPERSAND_EQUAL : YP_TOKEN_AMPERSAND;
 
         // | || ||= |=
@@ -677,6 +803,7 @@ lex_token_type(yp_parser_t *parser) {
         case '+':
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
+          if (char_is_decimal_number(parser->current.end)) return lex_numeric(parser);
           return YP_TOKEN_PLUS;
 
         // - -= -@
@@ -709,14 +836,24 @@ lex_token_type(yp_parser_t *parser) {
         // :: symbol
         case ':':
           if (match(parser, ':')) return YP_TOKEN_COLON_COLON;
+
           if (char_is_identifier(parser, parser->current.end)) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL, .term = '\0' });
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
             return YP_TOKEN_SYMBOL_BEGIN;
-          } else if ((*parser->current.end == '"') || (*parser->current.end == '\'')) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = *parser->current.end, .interp = *parser->current.end == '"' });
+          }
+
+          if ((*parser->current.end == '"') || (*parser->current.end == '\'')) {
+            yp_lex_mode_t lex_mode = {
+              .mode = YP_LEX_STRING,
+              .as.string.terminator = *parser->current.end,
+              .as.string.interpolation = *parser->current.end == '"'
+            };
+
+            lex_mode_push(parser, lex_mode);
             parser->current.end++;
             return YP_TOKEN_SYMBOL_BEGIN;
           }
+
           return YP_TOKEN_COLON;
 
         // / /=
@@ -724,7 +861,7 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
           if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
 
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = '/' });
+          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
           return YP_TOKEN_REGEXP_BEGIN;
 
         // ^ ^=
@@ -748,45 +885,120 @@ lex_token_type(yp_parser_t *parser) {
             case '=':
               parser->current.end++;
               return YP_TOKEN_PERCENT_EQUAL;
-            case 'i':
+            case 'i': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_LOWER_I;
-            case 'I':
+            }
+            case 'I': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_UPPER_I;
-            case 'r':
+            }
+            case 'r': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_REGEXP,
+                .as.regexp.terminator = terminator(*parser->current.end++)
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_REGEXP_BEGIN;
-            case 'q':
+            }
+            case 'q': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_STRING_BEGIN;
-            case 'Q':
+            }
+            case 'Q': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_STRING_BEGIN;
-            case 'w':
+            }
+            case 's': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = false });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
+              return YP_TOKEN_SYMBOL_BEGIN;
+            }
+            case 'w': {
+              parser->current.end++;
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = false
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_LOWER_W;
-            case 'W':
+            }
+            case 'W': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_LIST, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_LIST,
+                .as.list.terminator = terminator(*parser->current.end++),
+                .as.list.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_UPPER_W;
-            case 'x':
+            }
+            case 'x': {
               parser->current.end++;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
+              yp_lex_mode_t lex_mode = {
+                .mode = YP_LEX_STRING,
+                .as.string.terminator = terminator(*parser->current.end++),
+                .as.string.interpolation = true
+              };
+
+              lex_mode_push(parser, lex_mode);
               return YP_TOKEN_PERCENT_LOWER_X;
+            }
             default:
               return YP_TOKEN_PERCENT;
           }
 
         // global variable
-        case '$':
-          return lex_global_variable(parser);
+        case '$': {
+          yp_token_type_t type = lex_global_variable(parser);
+
+          // If we're lexing an embedded variable, then we need to pop back into
+          // the parent lex context.
+          if (parser->lex_modes.current->mode == YP_LEX_EMBVAR) {
+            lex_mode_pop(parser);
+          }
+
+          return type;
+        }
 
         // instance variable, class variable
         case '@': {
@@ -798,6 +1010,12 @@ lex_token_type(yp_parser_t *parser) {
 
             while ((width = char_is_identifier(parser, parser->current.end))) {
               parser->current.end += width;
+            }
+
+            // If we're lexing an embedded variable, then we need to pop back
+            // into the parent lex context.
+            if (parser->lex_modes.current->mode == YP_LEX_EMBVAR) {
+              lex_mode_pop(parser);
             }
 
             return type;
@@ -867,185 +1085,211 @@ lex_token_type(yp_parser_t *parser) {
       return YP_TOKEN_EOF;
     }
     case YP_LEX_LIST: {
+      // First we'll set the beginning of the token.
+      parser->current.start = parser->current.end;
+
       // If there's any whitespace at the start of the list, then we're going to
       // trim it off the beginning and create a new token.
-      if (char_is_whitespace(parser->current.end)) {
-        parser->current.start = parser->current.end;
-
-        do {
-          parser->current.end++;
-        } while (char_is_whitespace(parser->current.end));
-
+      size_t whitespace;
+      if ((whitespace = strspn(parser->current.end, " \t\f\r\v\n")) > 0) {
+        parser->current.end += whitespace;
         return YP_TOKEN_WORDS_SEP;
       }
 
-      // Next, we'll set to start of this token to be the current end.
-      parser->current.start = parser->current.end;
+      // These are the places where we need to split up the content of the list.
+      // We'll use strpbrk to find the first of these characters.
+      char breakpoints[] = " \\ \t\f\r\v\n\0";
+      breakpoints[0] = parser->lex_modes.current->as.list.terminator;
 
-      // Lex as far as we can into the word.
-      while (parser->current.end < parser->end) {
-        // If we've hit whitespace, then we must have received content by now,
-        // so we can return an element of the list.
-        if (char_is_whitespace(parser->current.end)) {
-          return YP_TOKEN_STRING_CONTENT;
-        }
-
-        if (*parser->current.end == parser->lex_modes.current->term) {
-          // If we've hit the terminator and we've already skipped past content,
-          // then we can return a list node.
-          if (parser->current.start < parser->current.end) {
-            return YP_TOKEN_STRING_CONTENT;
-          }
-
-          // Otherwise, switch back to the default state and return the end of
-          // the list.
-          parser->current.end++;
-          lex_mode_pop(parser);
-          return YP_TOKEN_STRING_END;
-        }
-
-        // If we've hit a #{, then we're at the start of an embedded expression,
-        // so we'll switch to the embedded expression lex mode.
-        if (parser->lex_modes.current->interp && parser->current.end[0] == '#' && parser->current.end[1] == '{') {
-          // If we've already skipped past content, then we need to return that
-          // content first before we switch to the embedded expression lex mode.
-          if (parser->current.start < parser->current.end) {
-            return YP_TOKEN_STRING_CONTENT;
-          }
-
-          parser->current.end += 2;
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
-          return YP_TOKEN_EMBEXPR_BEGIN;
-        }
-
-        // Otherwise, just skip past the content as it's part of an element of
-        // the list.
-        parser->current.end++;
+      // If interpolation is allowed, then we're going to check for the #
+      // character. Otherwise we'll only look for escapes and the terminator.
+      if (parser->lex_modes.current->as.list.interpolation) {
+        breakpoints[8] = '#';
       }
 
+      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+      while (breakpoint != NULL) {
+        switch (*breakpoint) {
+          case '\\':
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            break;
+          case ' ':
+          case '\t':
+          case '\f':
+          case '\r':
+          case '\v':
+          case '\n':
+            // If we've hit whitespace, then we must have received content by
+            // now, so we can return an element of the list.
+            parser->current.end = breakpoint;
+            return YP_TOKEN_STRING_CONTENT;
+          case '#': {
+            yp_token_type_t type = lex_interpolation(parser, breakpoint);
+            if (type != YP_TOKEN_NOT_PROVIDED) return type;
+
+            // If we haven't returned at this point then we had something
+            // that looked like an interpolated class or instance variable
+            // like "#@" but wasn't actually. In this case we'll just skip
+            // to the next breakpoint.
+            breakpoint = strpbrk(parser->current.end, breakpoints);
+            break;
+          }
+          default:
+            // In this case we've hit the terminator. If we've hit the
+            // terminator and we've already skipped past content, then we can
+            // return a list node.
+            if (breakpoint > parser->current.end) {
+              parser->current.end = breakpoint;
+              return YP_TOKEN_STRING_CONTENT;
+            }
+
+            // Otherwise, switch back to the default state and return the end of
+            // the list.
+            parser->current.end = breakpoint + 1;
+            lex_mode_pop(parser);
+            return YP_TOKEN_STRING_END;
+        }
+      }
+
+      // If we were unable to find a breakpoint, then this token hits the end of
+      // the file.
       return YP_TOKEN_EOF;
     }
     case YP_LEX_REGEXP: {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
 
-      // If we've hit the end of the string, then we can return to the default
-      // state of the lexer and return a string ending token.
-      if (match(parser, parser->lex_modes.current->term)) {
-        // Since we've hit the terminator of the regular expression, we now need
-        // to parse the options.
-        bool options = true;
-        while (options) {
-          switch (*parser->current.end) {
-            case 'e':
-            case 'i':
-            case 'm':
-            case 'n':
-            case 's':
-            case 'u':
-            case 'x':
-              parser->current.end++;
-              break;
-            default:
-              options = false;
-              break;
+      // These are the places where we need to split up the content of the
+      // regular expression. We'll use strpbrk to find the first of these
+      // characters.
+      char breakpoints[] = " \\#";
+      breakpoints[0] = parser->lex_modes.current->as.string.terminator;
+
+      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+
+      while (breakpoint != NULL) {
+        switch (*breakpoint) {
+          case '\\':
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            break;
+          case '#': {
+            yp_token_type_t type = lex_interpolation(parser, breakpoint);
+            if (type != YP_TOKEN_NOT_PROVIDED) return type;
+
+            // If we haven't returned at this point then we had something
+            // that looked like an interpolated class or instance variable
+            // like "#@" but wasn't actually. In this case we'll just skip
+            // to the next breakpoint.
+            breakpoint = strpbrk(parser->current.end, breakpoints);
+            break;
           }
-        }
+          default: {
+            assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
 
-        lex_mode_pop(parser);
-        return YP_TOKEN_REGEXP_END;
-      }
+            // Here we've hit the terminator. If we have already consumed
+            // content then we need to return that content as string content
+            // first.
+            if (breakpoint > parser->current.end) {
+              parser->current.end = breakpoint;
+              return YP_TOKEN_STRING_CONTENT;
+            }
 
-      // Otherwise, we'll lex as far as we can into the regular expression. If
-      // we hit the end of the regular expression, then we'll return everything
-      // up to that point.
-      while (parser->current.end < parser->end) {
-        // If we hit the terminator, then return this element of the string.
-        if (*parser->current.end == parser->lex_modes.current->term) {
-          return YP_TOKEN_STRING_CONTENT;
-        }
+            // Since we've hit the terminator of the regular expression, we now
+            // need to parse the options.
+            bool options = true;
+            parser->current.end = breakpoint + 1;
 
-        // If we've hit a #, then check if it's used as the beginning of either
-        // an embedded variable or an embedded expression.
-        if (*parser->current.end == '#') {
-          switch (parser->current.end[1]) {
-            case '{':
-              // In this case it's the start of an embedded expression.
-
-              // If we have already consumed content, then we need to return
-              // that content as string content first.
-              if (parser->current.end > parser->current.start) {
-                return YP_TOKEN_STRING_CONTENT;
+            while (options) {
+              switch (*parser->current.end) {
+                case 'e':
+                case 'i':
+                case 'm':
+                case 'n':
+                case 's':
+                case 'u':
+                case 'x':
+                  parser->current.end++;
+                  break;
+                default:
+                  options = false;
+                  break;
               }
+            }
 
-              parser->current.end += 2;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
-              return YP_TOKEN_EMBEXPR_BEGIN;
+            lex_mode_pop(parser);
+            return YP_TOKEN_REGEXP_END;
           }
         }
-
-        parser->current.end++;
       }
 
+      // At this point, the breakpoint is NULL which means we were unable to
+      // find anything before the end of the file.
       return YP_TOKEN_EOF;
     }
     case YP_LEX_STRING: {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
 
-      // If we've hit the end of the string, then we can return to the default
-      // state of the lexer and return a string ending token.
-      if (match(parser, parser->lex_modes.current->term)) {
-        lex_mode_pop(parser);
-        return YP_TOKEN_STRING_END;
+      // These are the places where we need to split up the content of the
+      // string. We'll use strpbrk to find the first of these characters.
+      char breakpoints[] = " \\\0";
+      breakpoints[0] = parser->lex_modes.current->as.string.terminator;
+
+      // If interpolation is allowed, then we're going to check for the #
+      // character. Otherwise we'll only look for escapes and the terminator.
+      if (parser->lex_modes.current->as.string.interpolation) {
+        breakpoints[2] = '#';
       }
 
-      // Otherwise, we'll lex as far as we can into the string. If we hit the
-      // end of the string, then we'll return everything up to that point.
-      while (parser->current.end < parser->end) {
-        // If we hit the terminator, then return this element of the string.
-        if (*parser->current.end == parser->lex_modes.current->term) {
-          return YP_TOKEN_STRING_CONTENT;
-        }
+      char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
-        switch (*parser->current.end) {
-          case '#':
-            // If our current lex state allows interpolation and we've hit a #,
-            // then check if it's used as the beginning of either an embedded
-            // variable or an embedded expression.
-            if (parser->lex_modes.current->interp) {
-              switch (parser->current.end[1]) {
-              case '@':
-                // In this case it could be an embedded instance or class
-                // variable.
-                break;
-              case '$':
-                // In this case it could be an embedded global variable.
-                break;
-              case '{':
-                // In this case it's the start of an embedded expression.
-
-                // If we have already consumed content, then we need to return
-                // that content as string content first.
-                if (parser->current.end > parser->current.start) {
-                  return YP_TOKEN_STRING_CONTENT;
-                }
-
-                parser->current.end += 2;
-                lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
-                return YP_TOKEN_EMBEXPR_BEGIN;
-              }
-            }
-            break;
+      while (breakpoint != NULL) {
+        switch (*breakpoint) {
           case '\\':
-            // If we hit an escape, then we need that handle the subsequent
-            // character literally.
-            parser->current.end++;
-        }
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            break;
+          case '#': {
+            yp_token_type_t type = lex_interpolation(parser, breakpoint);
+            if (type != YP_TOKEN_NOT_PROVIDED) return type;
 
-        parser->current.end++;
+            // If we haven't returned at this point then we had something
+            // that looked like an interpolated class or instance variable
+            // like "#@" but wasn't actually. In this case we'll just skip
+            // to the next breakpoint.
+            breakpoint = strpbrk(parser->current.end, breakpoints);
+            break;
+          }
+          default:
+            assert(*breakpoint == parser->lex_modes.current->as.string.terminator);
+
+            // Here we've hit the terminator. If we have already consumed
+            // content then we need to return that content as string content
+            // first.
+            if (breakpoint > parser->current.end) {
+              parser->current.end = breakpoint;
+              return YP_TOKEN_STRING_CONTENT;
+            }
+
+            // Otherwise we need to switch back to the parent lex mode and
+            // return the end of the string.
+            parser->current.end = breakpoint + 1;
+            lex_mode_pop(parser);
+            return YP_TOKEN_STRING_END;
+        }
       }
 
+      // If we've hit the end of the string, then this is an unterminated
+      // string. In that case we'll return the EOF token.
+      parser->current.end = parser->end;
       return YP_TOKEN_EOF;
     }
     case YP_LEX_SYMBOL: {
@@ -1059,6 +1303,7 @@ lex_token_type(yp_parser_t *parser) {
           lex_mode_pop(parser);
 
           yp_token_type_t type = lex_identifier(parser);
+
           return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
         }
       }
@@ -1151,6 +1396,16 @@ parser_lex_magic_comments(yp_parser_t *parser) {
 /* Parse functions                                                            */
 /******************************************************************************/
 
+// When we are parsing string-like content, we need to unescape the content to
+// provide to the consumers of the parser. This function accepts a range of
+// characters from the source and unescapes into the provided string.
+static yp_node_t *
+yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
+  yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
+  yp_unescape(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type);
+  return node;
+}
+
 // Get the next token type and skip over comment tokens.
 static void
 parser_lex(yp_parser_t *parser) {
@@ -1165,13 +1420,13 @@ parser_lex(yp_parser_t *parser) {
     // If we found a comment while lexing, then we're going to add it to the
     // list of comments in the file and keep lexing.
     yp_comment_t *comment = malloc(sizeof(yp_comment_t));
-    comment->node.start = parser->current.start - parser->start;
+    comment->start = parser->current.start - parser->start;
 
     switch (parser->current.type) {
       case YP_TOKEN_COMMENT:
         parser_lex_magic_comments(parser);
         *comment = (yp_comment_t) {
-          .node.end = parser->current.end - parser->start,
+          .end = parser->current.end - parser->start,
           .type = YP_COMMENT_INLINE
         };
 
@@ -1179,7 +1434,7 @@ parser_lex(yp_parser_t *parser) {
         break;
       case YP_TOKEN___END__:
         *comment = (yp_comment_t) {
-          .node.end = parser->current.end - parser->start,
+          .end = parser->current.end - parser->start,
           .type = YP_COMMENT___END__
         };
 
@@ -1193,7 +1448,7 @@ parser_lex(yp_parser_t *parser) {
         } while ((parser->current.type != YP_TOKEN_EMBDOC_END) && (parser->current.type != YP_TOKEN_EOF));
 
         *comment = (yp_comment_t) {
-          .node.end = parser->current.end - parser->start,
+          .end = parser->current.end - parser->start,
           .type = YP_COMMENT_EMBDOC
         };
 
@@ -1226,16 +1481,20 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_WHILE:
     case YP_CONTEXT_UNTIL:
     case YP_CONTEXT_ELSE:
-    case YP_CONTEXT_BEGIN:
     case YP_CONTEXT_SCLASS:
     case YP_CONTEXT_FOR:
+    case YP_CONTEXT_ENSURE:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_UNLESS:
     case YP_CONTEXT_ELSIF:
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_BEGIN:
+      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
+    case YP_CONTEXT_PARENS:
+      return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
   }
 
   return false;
@@ -1359,6 +1618,9 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   // ?:
   [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(BINDING_POWER_TERNARY),
 
+  // rescue
+  [YP_TOKEN_KEYWORD_RESCUE] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER_RESCUE),
+
   // .. ...
   [YP_TOKEN_DOT_DOT] = LEFT_ASSOCIATIVE(BINDING_POWER_RANGE),
   [YP_TOKEN_DOT_DOT_DOT] = LEFT_ASSOCIATIVE(BINDING_POWER_RANGE),
@@ -1413,12 +1675,10 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   // []
   [YP_TOKEN_BRACKET_LEFT_RIGHT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
 
-  // :: .
+  // :: . &.
   [YP_TOKEN_COLON_COLON] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL),
   [YP_TOKEN_DOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL),
-
-  // rescue
-  [YP_TOKEN_KEYWORD_RESCUE] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER_RESCUE)
+  [YP_TOKEN_AMPERSAND_DOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL)
 };
 
 #undef LEFT_ASSOCIATIVE
@@ -1543,6 +1803,11 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   yp_node_t *statements = yp_node_statements_create(parser);
 
   while (!context_terminator(context, &parser->current)) {
+    // Ignore semicolon without statements before them
+    if (accept(parser, YP_TOKEN_SEMICOLON) || accept(parser, YP_TOKEN_NEWLINE)) {
+      continue;
+    }
+
     yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an expression.");
     yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
@@ -1575,12 +1840,9 @@ typedef struct {
 void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
   if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-    while (true) {
+    while (parser->current.type != YP_TOKEN_EOF) {
       yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
-
-      // If parsing the argument resulted in error recovery, then we can stop
-      // parsing the arguments entirely now.
-      if (parser->recovering) break;
+      if (expression->type == YP_NODE_MISSING_NODE) break;
 
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
 
@@ -1708,17 +1970,24 @@ parse_parameters(yp_parser_t *parser) {
       case YP_TOKEN_STAR_STAR: {
         parser_lex(parser);
 
-        yp_token_t operator = parser->previous;
-        yp_token_t name;
+        yp_node_t *param;
 
-        if (accept(parser, YP_TOKEN_IDENTIFIER)) {
-          name = parser->previous;
-          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        if (accept(parser, YP_TOKEN_KEYWORD_NIL)) {
+          param = yp_node_no_keywords_parameter_node_create(parser, &parser->previous);
         } else {
-          not_provided(&name, parser->previous.end);
+          yp_token_t operator = parser->previous;
+          yp_token_t name;
+
+          if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+            name = parser->previous;
+            yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+          } else {
+            not_provided(&name, parser->previous.end);
+          }
+
+          param = yp_node_keyword_rest_parameter_node_create(parser, &operator, &name);
         }
 
-        yp_node_t *param = yp_node_keyword_rest_parameter_node_create(parser, &operator, &name);
         params->as.parameters_node.keyword_rest = param;
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
@@ -1821,7 +2090,11 @@ parse_symbol(yp_parser_t *parser, int mode) {
     return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
   }
 
-  if (parser->lex_modes.current->interp) {
+  // If we're not in YP_LEX_SYMBOL, then we should be in YP_LEX_STRING, because
+  // the lexer determined this was a dynamic symbol node.
+  assert(mode == YP_LEX_STRING);
+
+  if (parser->lex_modes.current->as.string.interpolation) {
     yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
 
     while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
@@ -1835,7 +2108,7 @@ parse_symbol(yp_parser_t *parser, int mode) {
           yp_token_t string_content_closing;
           not_provided(&string_content_closing, parser->previous.end);
 
-          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
+          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_node_create_and_unescape(parser, &string_content_opening, &parser->previous, &string_content_closing, YP_UNESCAPE_ALL));
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -1895,11 +2168,82 @@ parse_alias_or_undef_argument(yp_parser_t *parser) {
   }
 }
 
+// Parse a node that is part of a string. If the subsequent tokens cannot be
+// parsed as a string part, then NULL is returned.
+static yp_node_t *
+parse_string_part(yp_parser_t *parser) {
+  parser_lex(parser);
+
+  switch (parser->previous.type) {
+    // Here the lexer has returned to us plain string content. In this case
+    // we'll create a string node that has no opening or closing and return that
+    // as the part. These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //      ^^^^      ^     ^^^^
+    case YP_TOKEN_STRING_CONTENT: {
+      yp_token_t opening;
+      not_provided(&opening, parser->previous.start);
+
+      yp_token_t closing;
+      not_provided(&closing, parser->previous.end);
+
+      return yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+    }
+    // Here the lexer has returned the beginning of an embedded expression. In
+    // that case we'll parse the inner statements and return that as the part.
+    // These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //          ^^^^^^
+    case YP_TOKEN_EMBEXPR_BEGIN: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+      expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+      yp_token_t closing = parser->previous;
+
+      return yp_node_string_interpolated_node_create(parser, &opening, statements, &closing);
+    }
+    // Here the lexer has returned the beginning of an embedded variable. In
+    // that case we'll parse the variable and create an appropriate node for it
+    // and then return that node. These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //                 ^^^^^
+    case YP_TOKEN_EMBVAR: {
+      parser_lex(parser);
+
+      switch (parser->previous.type) {
+        // In this case a global variable is being interpolated. We'll create
+        // a global variable read node.
+        case YP_TOKEN_BACK_REFERENCE:
+        case YP_TOKEN_GLOBAL_VARIABLE:
+        case YP_TOKEN_NTH_REFERENCE:
+          return yp_node_global_variable_read_create(parser, &parser->previous);
+        // In this case an instance variable is being interpolated. We'll
+        // create an instance variable read node.
+        case YP_TOKEN_INSTANCE_VARIABLE:
+          return yp_node_instance_variable_read_create(parser, &parser->previous);
+        // In this case a class variable is being interpolated. We'll create a
+        // class variable read node.
+        case YP_TOKEN_CLASS_VARIABLE:
+          return yp_node_class_variable_read_create(parser, &parser->previous);
+        default:
+          assert(false && "Unexpected token type for an interpolated variable.");
+      }
+    }
+    default:
+      yp_error_list_append(&parser->error_list, "Could not understand string part", parser->previous.start - parser->start);
+      return NULL;
+  }
+}
+
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
   yp_token_t recoverable = parser->previous;
-  int mode = parser->lex_modes.current->mode;
+  yp_lex_mode_t lex_mode = *parser->lex_modes.current;
   parser_lex(parser);
 
   switch (parser->previous.type) {
@@ -1921,6 +2265,22 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return array;
     }
+    case YP_TOKEN_PARENTHESIS_LEFT: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *parentheses;
+
+      if (parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PARENS);
+        parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
+      } else {
+        yp_node_t *statements = yp_node_statements_create(parser);
+        parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
+      }
+
+      expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
+      parentheses->as.parentheses_node.closing = parser->previous;
+      return parentheses;
+    }
     case YP_TOKEN_CHARACTER_LITERAL: {
       yp_token_t opening = parser->previous;
       opening.type = YP_TOKEN_STRING_BEGIN;
@@ -1933,7 +2293,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t closing;
       not_provided(&closing, content.end);
 
-      return yp_node_string_node_create(parser, &opening, &content, &closing);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_NONE);
     }
     case YP_TOKEN_CLASS_VARIABLE:
       return yp_node_class_variable_read_create(parser, &parser->previous);
@@ -1953,9 +2313,6 @@ parse_expression_prefix(yp_parser_t *parser) {
         return yp_node_local_variable_read_create(parser, &parser->previous);
       }
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, parser->previous.start, parser->previous.end);
-
       yp_token_t message = parser->previous;
 
       yp_token_t call_operator;
@@ -1964,7 +2321,9 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
 
-      return yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, name);
+      yp_node_t *node = yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+      yp_string_shared_init(&node->as.call_node.name, message.start, message.end);
+      return node;
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
@@ -1972,6 +2331,12 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_instance_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_INTEGER:
       return yp_node_integer_literal_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD___ENCODING__:
+      return yp_node_source_encoding_node_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD___FILE__:
+      return yp_node_source_file_node_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD___LINE__:
+      return yp_node_source_line_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_ALIAS: {
       yp_token_t keyword = parser->previous;
       yp_node_t *left = parse_alias_or_undef_argument(parser);
@@ -1983,13 +2348,37 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t begin_keyword = parser->previous;
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_BEGIN);
-
+      yp_node_t *begin_statements = parse_statements(parser, YP_CONTEXT_BEGIN);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
 
-      yp_token_t end_keyword = parser->previous;
-      return yp_node_begin_node_create(parser, &begin_keyword, statements, &end_keyword);
+      yp_token_t end_keyword;
+      not_provided(&end_keyword, parser->previous.end);
+
+      yp_node_t *begin_node = yp_node_begin_node_create(parser, &begin_keyword, begin_statements, NULL, &end_keyword);
+
+      if (accept(parser, YP_TOKEN_KEYWORD_ENSURE)) {
+        yp_token_t ensure_keyword = parser->previous;
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        yp_node_t *ensure_statements = parse_statements(parser, YP_CONTEXT_ENSURE);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `ensure` statement.");
+
+        yp_node_t *ensure_node = yp_node_ensure_node_create(
+          parser,
+          &ensure_keyword,
+          ensure_statements,
+          &parser->previous
+        );
+
+        begin_node->as.begin_node.ensure_clause = ensure_node;
+      } else {
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
+        begin_node->as.begin_node.end_keyword = parser->previous;
+      }
+
+      return begin_node;
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       yp_token_t keyword = parser->previous;
@@ -2206,6 +2595,33 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return undef;
     }
+    case YP_TOKEN_KEYWORD_NOT: {
+      yp_token_t operator_token = parser->previous;
+
+      yp_token_t lparen;
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+      } else {
+        not_provided(&lparen, parser->previous.end);
+      }
+
+      yp_node_t *receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
+
+      yp_token_t rparen;
+      if (!parser->recovering && lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
+        rparen = parser->previous;
+      } else {
+        not_provided(&rparen, parser->previous.end);
+      }
+
+      yp_token_t call_operator;
+      not_provided(&call_operator, operator_token.start);
+
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "!", 1);
+      return node;
+    }
     case YP_TOKEN_KEYWORD_UNLESS:
       return parse_conditional(parser, YP_CONTEXT_UNLESS);
     case YP_TOKEN_KEYWORD_MODULE: {
@@ -2293,6 +2709,68 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return array;
     }
+    case YP_TOKEN_PERCENT_UPPER_I: {
+      yp_token_t opening = parser->previous;
+      yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
+
+      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+        if (array->as.array_node.elements.size == 0) {
+          accept(parser, YP_TOKEN_WORDS_SEP);
+        } else {
+          expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%I` list.");
+        }
+
+        yp_token_t dynamic_symbol_opening;
+        not_provided(&dynamic_symbol_opening, parser->previous.end);
+        yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &dynamic_symbol_opening, &dynamic_symbol_opening);
+
+        while (parser->current.type != YP_TOKEN_WORDS_SEP && parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+          switch (parser->current.type) {
+            case YP_TOKEN_STRING_CONTENT: {
+              parser_lex(parser);
+
+              yp_token_t string_content_opening;
+              not_provided(&string_content_opening, parser->previous.start);
+
+              yp_token_t string_content_closing;
+              not_provided(&string_content_closing, parser->previous.end);
+
+              yp_node_t *symbol_node = yp_node_symbol_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing);
+
+              if (parser->current.type == YP_TOKEN_EMBEXPR_BEGIN || interpolated->as.interpolated_symbol_node.parts.size > 0) {
+                yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, symbol_node);
+              } else {
+                yp_node_list_append(parser, array, &array->as.array_node.elements, symbol_node);
+              }
+
+              break;
+            }
+            case YP_TOKEN_EMBEXPR_BEGIN: {
+              parser_lex(parser);
+              yp_token_t embexpr_opening = parser->previous;
+              yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+              expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
+              break;
+            }
+            default:
+              fprintf(stderr, "Could not understand token type %s in an interpolated symbol list\n", yp_token_type_to_str(parser->previous.type));
+              return NULL;
+            }
+        }
+
+        if (interpolated->as.interpolated_symbol_node.parts.size > 0) {
+          yp_node_list_append(parser, array, &array->as.array_node.elements, interpolated);
+        } else {
+          yp_node_destroy(parser, interpolated);
+        }
+      }
+
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%I` list.");
+      array->as.array_node.closing = parser->previous;
+
+      return array;
+    }
     case YP_TOKEN_PERCENT_LOWER_W: {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
@@ -2311,7 +2789,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_token_t closing;
         not_provided(&closing, parser->previous.end);
 
-        yp_node_t *string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_NONE);
         yp_node_list_append(parser, array, &array->as.array_node.elements, string);
       }
 
@@ -2354,7 +2832,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t closing;
               not_provided(&closing, parser->previous.end);
 
-              current = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+              current = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit string content and the current node is an
               // interpolated string, then we need to append the string content
@@ -2365,7 +2843,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t closing;
               not_provided(&closing, parser->previous.end);
 
-              yp_node_t *next_string = yp_node_string_node_create(parser, &opening, &parser->previous, &closing);
+              yp_node_t *next_string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
               yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, next_string);
             }
 
@@ -2432,17 +2910,73 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_RATIONAL_NUMBER:
       return yp_node_rational_literal_create(parser, &parser->previous);
     case YP_TOKEN_REGEXP_BEGIN: {
+      // When we get here, we don't know if this regular expression is going to
+      // have interpolation or not, even though it is allowed. Still, we want to
+      // be able to return a regular expression node without interpolation if we
+      // can since it'll be faster.
       yp_token_t opening = parser->previous;
-      yp_token_t content;
 
-      if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
-        content = parser->previous;
-      } else {
-        content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+      switch (parser->current.type) {
+        case YP_TOKEN_REGEXP_END: {
+          // If we get here, then we have an end immediately after a start. In
+          // that case we'll create an empty content token and return an
+          // uninterpolated regular expression.
+          yp_token_t content = {
+            .type = YP_TOKEN_STRING_CONTENT,
+            .start = parser->previous.end,
+            .end = parser->previous.end
+          };
+
+          parser_lex(parser);
+          return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+        }
+        case YP_TOKEN_STRING_CONTENT: {
+          // In this case we've hit string content so we know the regular
+          // expression at least has something in it. We'll need to check if the
+          // following token is the end (in which case we can return a plain
+          // regular expression) or if it's not then it has interpolation.
+          yp_token_t content = parser->current;
+
+          parser_lex(parser);
+          if (accept(parser, YP_TOKEN_REGEXP_END)) {
+            return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+          }
+
+          // If we get here, then we have interpolation so we'll need to create
+          // a regular expression node with interpolation.
+          break;
+        }
+        default:
+          // If we hit anything else, then we're going to create a regular
+          // expression with interpolation.
+          parser_lex(parser);
+          break;
+      }
+
+      yp_node_t *node = yp_node_interpolated_regular_expression_node_create(parser, &opening, &opening);
+      yp_node_list_t *parts = &node->as.interpolated_regular_expression_node.parts;
+
+      if (parser->previous.type == YP_TOKEN_STRING_CONTENT) {
+        yp_token_t string_opening;
+        not_provided(&string_opening, parser->previous.start);
+
+        yp_token_t string_closing;
+        not_provided(&string_closing, parser->previous.end);
+
+        yp_node_t *string_child = yp_node_string_node_create_and_unescape(parser, &string_opening, &parser->previous, &string_closing, YP_UNESCAPE_ALL);
+        yp_node_list_append(parser, node, parts, string_child);
+      }
+
+      while (parser->current.type != YP_TOKEN_EOF && parser->current.type != YP_TOKEN_REGEXP_END) {
+        yp_node_t *part;
+        if ((part = parse_string_part(parser)) != NULL) {
+          yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part); 
+        }
       }
 
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
-      return yp_node_regular_expression_node_create(parser, &opening, &content, &parser->previous);
+      node->as.interpolated_regular_expression_node.closing = parser->previous;
+      return node;
     }
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
@@ -2459,10 +2993,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary operator.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, operator_token.start, operator_token.end);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_shared_init(&node->as.call_node.name, operator_token.start, operator_token.end);
+      return node;
     }
     case YP_TOKEN_MINUS: {
       yp_token_t operator_token = parser->previous;
@@ -2478,10 +3011,9 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary -.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_constant_init(name, "-@", 2);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "-@", 2);
+      return node;
     }
     case YP_TOKEN_PLUS: {
       yp_token_t operator_token = parser->previous;
@@ -2497,42 +3029,20 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary +.");
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_constant_init(name, "+@", 2);
-
-      return yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen, name);
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "+@", 2);
+      return node;
     }
     case YP_TOKEN_STRING_BEGIN: {
       yp_token_t opening = parser->previous;
 
-      if (parser->lex_modes.current->interp) {
+      if (lex_mode.as.string.interpolation) {
         yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &opening);
 
         while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
-          switch (parser->current.type) {
-            case YP_TOKEN_STRING_CONTENT: {
-              parser_lex(parser);
-
-              yp_token_t string_content_opening;
-              not_provided(&string_content_opening, parser->previous.start);
-
-              yp_token_t string_content_closing;
-              not_provided(&string_content_closing, parser->previous.end);
-
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing));
-              break;
-            }
-            case YP_TOKEN_EMBEXPR_BEGIN: {
-              parser_lex(parser);
-              yp_token_t embexpr_opening = parser->previous;
-              yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-              expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
-              break;
-            }
-            default:
-              fprintf(stderr, "Could not understand token type %s in an interpolated string\n", yp_token_type_to_str(parser->previous.type));
-              return NULL;
+          yp_node_t *part;
+          if ((part = parse_string_part(parser)) != NULL) {
+            yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, part); 
           }
         }
 
@@ -2549,10 +3059,10 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-      return yp_node_string_node_create(parser, &opening, &content, &parser->previous);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_MINIMAL);
     }
     case YP_TOKEN_SYMBOL_BEGIN:
-      return parse_symbol(parser, mode);
+      return parse_symbol(parser, lex_mode.mode);
     default:
       if (context_recoverable(parser, &parser->previous)) {
         parser->recovering = true;
@@ -2611,40 +3121,78 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return result;
         }
         case YP_NODE_CALL_NODE: {
-          if (node->as.call_node.receiver == NULL && node->as.call_node.arguments == NULL) {
-            yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
-            yp_node_t *read = node;
+          if (node->as.call_node.lparen.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL) {
+            // If we have no arguments to the call node and we have an equals
+            // sign then this is either a method call or a local variable write.
+            if (node->as.call_node.receiver == NULL) {
+              // When we get here, we have a local varaible write, because it
+              // was previously marked as a method call but now we have an =.
+              // This looks like:
+              //
+              //     foo = 1
+              //
+              // When it was parsed in the prefix position, foo was seen as a
+              // method call with no receiver and no arguments. Now we have an
+              // =, so we know it's a local variable write.
+              yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
+              yp_node_t *read = node;
 
-            yp_token_t name = node->as.call_node.message;
-            yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+              yp_token_t name = node->as.call_node.message;
+              yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
-            yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
-            yp_node_destroy(parser, read);
-            return result;
+              yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
+              yp_node_destroy(parser, read);
+              return result;
+            }
+
+            // When we get here, we have a method call, because it was
+            // previously marked as a method call but now we have an =. This
+            // looks like:
+            //
+            //     foo.bar = 1
+            //
+            // When it was parsed in the prefix position, foo.bar was seen as a
+            // method call with no arguments. Now we have an =, so we know it's
+            // a method call with an argument.
+            yp_token_t lparen;
+            not_provided(&lparen, token.end);
+
+            yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the call after =.");
+            yp_node_t *arguments = yp_node_arguments_node_create(parser);
+            yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
+
+            yp_token_t rparen;
+            not_provided(&rparen, parser->previous.end);
+
+            yp_node_t *next_node = yp_node_call_node_create(
+              parser,
+              node->as.call_node.receiver,
+              &node->as.call_node.call_operator,
+              &token,
+              &lparen,
+              arguments,
+              &rparen
+            );
+
+            int length = node->as.call_node.message.end - node->as.call_node.message.start;
+            yp_string_t *name = &next_node->as.call_node.name;
+            yp_string_owned_init(name, malloc(length + 1), length + 1);
+            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
+
+            return next_node;
           }
-          // fallthrough
+
+          // If there are arguments on the call node, then it can't be a method
+          // call ending with = or a local variable write, so it must be a
+          // syntax error. In this case we'll fall through to our default
+          // handling.
         }
-        default: {
-          yp_token_t call_operator;
-          not_provided(&call_operator, token.start);
-
-          yp_token_t lparen;
-          not_provided(&lparen, token.end);
-
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the call after =.");
-          yp_node_t *arguments = yp_node_arguments_node_create(parser);
-          yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, value);
-
-          yp_token_t rparen;
-          not_provided(&rparen, parser->previous.end);
-
-          int length = node->location.end - node->location.start;
-          yp_string_t *name = yp_string_alloc();
-          yp_string_owned_init(name, malloc(length + 1), length + 1);
-          sprintf(name->as.owned.source, "%.*s=", length, parser->start + node->location.start);
-
-          return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
-        }
+        default:
+          // In this case we have an = sign, but we don't know what it's for. We
+          // need to treat it as an error. For now, we'll mark it as an error
+          // and just skip right past it.
+          yp_error_list_append(&parser->error_list, "Unexpected `='.", parser->previous.start - parser->start);
+          return node;
       }
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
@@ -2679,11 +3227,38 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_node_or_node_create(parser, node, &token, right);
     }
+    case YP_TOKEN_EQUAL_TILDE: {
+      // If the receiver of this =~ is a regular expression node, then we need
+      // to introduce local variables for it based on its named capture groups.
+      if (node->type == YP_NODE_REGULAR_EXPRESSION_NODE) {
+        yp_string_list_t named_captures;
+        yp_string_list_init(&named_captures);
+
+        yp_token_t *content = &node->as.regular_expression_node.content;
+        assert(yp_regexp_named_capture_group_names(content->start, content->end - content->start, &named_captures));
+
+        yp_token_list_t *locals = &parser->current_scope->as.scope.locals;
+        for (size_t index = 0; index < named_captures.length; index++) {
+          yp_string_t *name = &named_captures.strings[index];
+          assert(name->type == YP_STRING_SHARED);
+
+          yp_token_list_append(locals, &(yp_token_t) {
+            .type = YP_TOKEN_IDENTIFIER,
+            .start = name->as.shared.start,
+            .end = name->as.shared.end
+          });
+        }
+
+        yp_string_list_free(&named_captures);
+      }
+
+      // Here we're going to fall through to our other operators because this
+      // will become a call node.
+    }
     case YP_TOKEN_BANG_EQUAL:
     case YP_TOKEN_BANG_TILDE:
     case YP_TOKEN_EQUAL_EQUAL:
     case YP_TOKEN_EQUAL_EQUAL_EQUAL:
-    case YP_TOKEN_EQUAL_TILDE:
     case YP_TOKEN_LESS_EQUAL_GREATER:
     case YP_TOKEN_GREATER:
     case YP_TOKEN_GREATER_EQUAL:
@@ -2707,17 +3282,17 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
 
-      yp_string_t *name = yp_string_alloc();
-      yp_string_shared_init(name, token.start, token.end);
-
       yp_token_t lparen;
       not_provided(&lparen, token.end);
 
       yp_token_t rparen;
       not_provided(&rparen, token.end);
 
-      return yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen, name);
+      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &token, &lparen, arguments, &rparen);
+      yp_string_shared_init(&next_node->as.call_node.name, token.start, token.end);
+      return next_node;
     }
+    case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
       yp_token_t call_operator = parser->previous;
 
@@ -2729,9 +3304,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         yp_token_t message;
         not_provided(&message, lparen.start);
 
-        yp_string_t name;
-        yp_string_constant_init(&name, "call", 4);
-
         yp_node_t *arguments;
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           rparen = parser->previous;
@@ -2742,7 +3314,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           rparen = parser->previous;
         }
 
-        return yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen, &name);
+        yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen);
+        yp_string_constant_init(&next_node->as.call_node.name, "call", 4);
+        return next_node;
       }
 
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
@@ -2751,10 +3325,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
 
-      yp_string_t name;
-      yp_string_shared_init(&name, message.start, message.end);
-
-      return yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing, &name);
+      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+      yp_string_shared_init(&next_node->as.call_node.name, message.start, message.end);
+      return next_node;
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
@@ -2868,12 +3441,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
   // to add the error message to the parser's error list.
   if (node->type == YP_NODE_MISSING_NODE) {
     yp_error_list_append(&parser->error_list, message, recovery.end - parser->start);
+    return node;
   }
 
-  // If we're recovering from a syntax error, then we should just return the
-  // node that we found and not attempt to parse any more of the expression.
-  if (parser->recovering) return node;
-
+  // Otherwise we'll look and see if the next token can be parsed as an infix
+  // operator. If it can, then we'll parse it using parse_expression_infix.
   binding_powers_t current_binding_powers;
   while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
     parser_lex(parser);

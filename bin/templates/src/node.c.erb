@@ -92,8 +92,8 @@ yp_node_t *
 <%- assigns = node.params.map { |param| 
   case param
   in NodeParam | OptionalNodeParam then ".#{param.name} = #{param.name}"
-  in StringParam | TokenParam | OptionalTokenParam then ".#{param.name} = *#{param.name}"
-  in NodeListParam | TokenListParam then nil
+  in TokenParam | OptionalTokenParam then ".#{param.name} = *#{param.name}"
+  in StringParam | NodeListParam | TokenListParam then nil
   end
 }.compact.join(", ") -%>
 yp_node_<%= node.human %>_create(<%= ["yp_parser_t *parser", *node.params.map(&:param), ("uint32_t location" if node.location_provided?)].compact.join(", ") %>) {

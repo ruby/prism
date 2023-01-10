@@ -79,6 +79,48 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ArrayNode(BRACKET_LEFT("["), [], BRACKET_RIGHT("]")), "[]"
   end
 
+  test "empty parenteses" do
+    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
+  end
+
+
+  test "parentesized expression" do
+    expected = ParenthesesNode(
+      PARENTHESIS_LEFT("("),
+      Statements(
+        [CallNode(
+           IntegerLiteral(INTEGER("1")),
+           nil,
+           PLUS("+"),
+           nil,
+           ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+           nil,
+           "+"
+         )]
+      ),
+      PARENTHESIS_RIGHT(")")
+    )
+
+    assert_parses expected, "(1 + 1)"
+  end
+
+  test "parentesized with multiple statements" do
+    expected = ParenthesesNode(
+      PARENTHESIS_LEFT("("),
+      Statements(
+        [CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
+         CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
+         CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c")]
+      ),
+      PARENTHESIS_RIGHT(")")
+    )
+    assert_parses expected, "(a; b; c)"
+  end
+
+  test "parentesized with empty statements" do
+    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "(\n;\n;\n)"
+  end
+
   test "binary !=" do
     assert_parses CallNode(expression("1"), nil, BANG_EQUAL("!="), nil, ArgumentsNode([expression("2")]), nil, "!="), "1 != 2"
   end
@@ -307,8 +349,78 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a.b(c, d)"
   end
 
+  test "call with =" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      DOT("."),
+      EQUAL("="),
+      nil,
+      ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+      nil,
+      "bar="
+    )
+
+    assert_parses expected, "foo.bar = 1"
+  end
+
+  test "safe call" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      nil,
+      nil,
+      nil,
+      "b"
+    )
+
+    assert_parses expected, "a&.b"
+  end
+
+  test "safe call with &.() shorthand and no arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      NOT_PROVIDED(""),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "call"
+    )
+
+    assert_parses expected, "a&.()"
+  end
+
+  test "safe call with parentheses and no arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "b"
+    )
+
+    assert_parses expected, "a&.b()"
+  end
+
+  test "safe call with parentheses and arguments" do
+    expected = CallNode(
+      expression("a"),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("b"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode([expression("c")]),
+      PARENTHESIS_RIGHT(")"),
+      "b"
+    )
+
+    assert_parses expected, "a&.b(c)"
+  end
+
   test "character literal" do
-    assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil), "?a"
+    assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil, "a"), "?a"
   end
 
   test "class" do
@@ -657,6 +769,29 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a &\nend"
   end
 
+  test "def with **nil" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("m"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [KeywordParameterNode(LABEL("b:"))],
+        NoKeywordsParameterNode(KEYWORD_NIL("nil")),
+        nil
+      ),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("a"), LABEL("b")])
+    )
+
+    assert_parses expected, "def m a, b:, **nil\nend"
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil), "defined? 1"
   end
@@ -674,6 +809,61 @@ class ParseTest < Test::Unit::TestCase
       )
 
     assert_parses expected, "defined? 1 and defined? 2"
+  end
+
+  test "not without parentheses" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      nil,
+      nil,
+      nil,
+      "!"
+    )
+
+    assert_parses expected, "not foo"
+  end
+
+  test "not with parentheses" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "!"
+    )
+
+    assert_parses expected, "not(foo)"
+  end
+
+  test "not binding power" do
+    expected =
+      AndNode(
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        ),
+        KEYWORD_AND("and"),
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, "bar"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        )
+      )
+
+    assert_parses expected, "not foo and not bar"
   end
 
   test "false" do
@@ -850,6 +1040,68 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
   end
 
+  test "regular expression with interpolation" do
+    expected = InterpolatedRegularExpressionNode(
+      REGEXP_BEGIN("/"),
+      [
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([expression("bbb")]),
+          EMBEXPR_END("}")
+        ),
+       StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")
+      ],
+      REGEXP_END("/")
+    )
+
+    assert_parses expected, "/aaa \#{bbb} ccc/"
+  end
+
+  test "regular expression with interpolated variable" do
+    expected = InterpolatedRegularExpressionNode(
+      REGEXP_BEGIN("/"),
+      [
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
+        expression("$bbb")
+      ],
+      REGEXP_END("/")
+    )    
+
+    assert_parses expected, "/aaa \#$bbb/"
+  end
+
+  test "regular expression with %r" do
+    assert_parses RegularExpressionNode(REGEXP_BEGIN("%r{"), STRING_CONTENT("abc"), REGEXP_END("}i")), "%r{abc}i"
+  end
+
+  test "regular expression with named capture groups" do
+    expected = ArrayNode(
+      BRACKET_LEFT("["),
+      [
+        CallNode(
+          RegularExpressionNode(
+            REGEXP_BEGIN("/"),
+            STRING_CONTENT("(?<foo>bar)"),
+            REGEXP_END("/")
+          ),
+          nil,
+          EQUAL_TILDE("=~"),
+          nil,
+          ArgumentsNode([expression("baz")]),
+          nil,
+          "=~"
+        ),
+        # This is the important bit of the test here, that this is a local
+        # variable and not a method call.
+        LocalVariableRead(IDENTIFIER("foo"))
+      ],
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[/(?<foo>bar)/ =~ baz, foo]"
+  end
+
   test "retry" do
     assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
   end
@@ -858,18 +1110,30 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
   end
 
+  test "source encoding" do
+    assert_parses SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")), "__ENCODING__"
+  end
+
+  test "source file" do
+    assert_parses SourceFileNode(KEYWORD___FILE__("__FILE__")), "__FILE__"
+  end
+
+  test "source line" do
+    assert_parses SourceLineNode(KEYWORD___LINE__("__LINE__")), "__LINE__"
+  end
+
   test "string empty" do
-    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'")), "''"
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'"), ""), "''"
   end
 
   test "string interpolation disallowed" do
-    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("abc"), STRING_END("'")), "'abc'"
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("abc"), STRING_END("'"), "abc"), "'abc'"
   end
 
   test "string interpolation allowed, but not used" do
     expected = InterpolatedStringNode(
       STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil)],
+      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc")],
       STRING_END("\"")
     )
 
@@ -880,13 +1144,13 @@ class ParseTest < Test::Unit::TestCase
     expected = InterpolatedStringNode(
       STRING_BEGIN("\""),
       [
-        StringNode(nil, STRING_CONTENT("aaa "), nil),
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
           Statements([CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, "bbb")]),
           EMBEXPR_END("}")
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil)
+        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")
       ],
       STRING_END("\"")
     )
@@ -894,13 +1158,23 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "\"aaa \#{bbb} ccc\""
   end
 
+  test "string interpolation allowed, not actually interpolated" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("\#@---"), nil, "\#@---")],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"#@---\""
+  end
+
   test "string list" do
     expected = ArrayNode(
       PERCENT_LOWER_W("%w["),
       [
-        StringNode(nil, STRING_CONTENT("a"), nil),
-        StringNode(nil, STRING_CONTENT("b"), nil),
-        StringNode(nil, STRING_CONTENT("c"), nil)
+        StringNode(nil, STRING_CONTENT("a"), nil, "a"),
+        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
+        StringNode(nil, STRING_CONTENT("c"), nil, "c")
       ],
       STRING_END("]")
     )
@@ -912,9 +1186,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
-        StringNode(nil, STRING_CONTENT("a"), nil),
-        StringNode(nil, STRING_CONTENT("b"), nil),
-        StringNode(nil, STRING_CONTENT("c"), nil)
+        StringNode(nil, STRING_CONTENT("a"), nil, "a"),
+        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
+        StringNode(nil, STRING_CONTENT("c"), nil, "c")
       ],
       STRING_END("]")
     )
@@ -926,26 +1200,69 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       PERCENT_UPPER_W("%W["),
       [
-        StringNode(nil, STRING_CONTENT("a"), nil),
+        StringNode(nil, STRING_CONTENT("a"), nil, "a"),
         InterpolatedStringNode(
           nil,
           [
-            StringNode(nil, STRING_CONTENT("b"), nil),
+            StringNode(nil, STRING_CONTENT("b"), nil, "b"),
             StringInterpolatedNode(
               EMBEXPR_BEGIN("\#{"),
               Statements([expression("c")]),
               EMBEXPR_END("}")
             ),
-            StringNode(nil, STRING_CONTENT("d"), nil)
+            StringNode(nil, STRING_CONTENT("d"), nil, "d")
           ],
           nil
         ),
-        StringNode(nil, STRING_CONTENT("e"), nil)
+        StringNode(nil, STRING_CONTENT("e"), nil, "e")
       ],
       STRING_END("]")
     )
 
     assert_parses expected, "%W[a b\#{c}d e]"
+  end
+
+  test "string with \\ escapes" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\\\ foo \\\\ bar"), STRING_END("'"), "\\ foo \\ bar"), "'\\\\ foo \\\\ bar'"
+  end
+
+  test "string with ' escapes" do
+    assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT("\\' foo \\' bar"), STRING_END("'"), "' foo ' bar"), "'\\' foo \\' bar'"
+  end
+
+  test "string with octal escapes" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("\\7 \\43 \\141"), nil, "\a # a")],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"\\7 \\43 \\141\""
+  end
+
+  test "string with hexadecimal escapes" do
+    expected = InterpolatedStringNode(
+      STRING_BEGIN("\""),
+      [StringNode(nil, STRING_CONTENT("\\x7 \\x23 \\x61"), nil, "\a # a")],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, "\"\\x7 \\x23 \\x61\""
+  end
+
+  test "string with embedded global variables" do
+    expected = InterpolatedStringNode(STRING_BEGIN("\""), [expression("$foo")], STRING_END("\""))
+    assert_parses expected, "\"\#$foo\""
+  end
+
+  test "string with embedded instance variables" do
+    expected = InterpolatedStringNode(STRING_BEGIN("\""), [expression("@foo")], STRING_END("\""))
+    assert_parses expected, "\"\#@foo\""
+  end
+
+  test "string with embedded class variables" do
+    expected = InterpolatedStringNode(STRING_BEGIN("\""), [expression("@@foo")], STRING_END("\""))
+    assert_parses expected, "\"\#@@foo\""
   end
 
   test "super" do
@@ -982,6 +1299,60 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%i[a b c]"
   end
 
+  test "symbol list with ignored interpolation" do
+    expected = ArrayNode(
+      PERCENT_LOWER_I("%i["),
+      [SymbolNode(nil, STRING_CONTENT("a"), nil),
+       SymbolNode(nil, STRING_CONTENT("b\#{1}"), nil),
+       SymbolNode(nil, STRING_CONTENT("\#{2}c"), nil),
+       SymbolNode(nil, STRING_CONTENT("d\#{3}f"), nil)],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%i[a b\#{1} \#{2}c d\#{3}f]"
+  end
+
+  test "symbol list with interpreted interpolation" do
+    expected = ArrayNode(
+      PERCENT_UPPER_I("%I["),
+      [SymbolNode(nil, STRING_CONTENT("a"), nil),
+       InterpolatedSymbolNode(
+         nil,
+         [SymbolNode(nil, STRING_CONTENT("b"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("1"))]),
+            EMBEXPR_END("}")
+          )],
+         nil
+       ),
+       InterpolatedSymbolNode(
+         nil,
+         [StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("2"))]),
+            EMBEXPR_END("}")
+          ),
+          SymbolNode(nil, STRING_CONTENT("c"), nil)],
+         nil
+       ),
+       InterpolatedSymbolNode(
+         nil,
+         [SymbolNode(nil, STRING_CONTENT("d"), nil),
+          StringInterpolatedNode(
+            EMBEXPR_BEGIN("\#{"),
+            Statements([IntegerLiteral(INTEGER("3"))]),
+            EMBEXPR_END("}")
+          ),
+          SymbolNode(nil, STRING_CONTENT("f"), nil)],
+         nil
+       )],
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%I[a b\#{1} \#{2}c d\#{3}f]"
+  end
+
   test "dynamic symbol" do
     expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))
     assert_parses expected, ":'abc'"
@@ -990,7 +1361,7 @@ class ParseTest < Test::Unit::TestCase
   test "dynamic symbol with interpolation" do
     expected = InterpolatedSymbolNode(
       SYMBOL_BEGIN(":\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil),
+      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
        StringInterpolatedNode(
          EMBEXPR_BEGIN("\#{"),
          Statements([expression("1")]),
@@ -1015,7 +1386,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_ALIAS("alias"),
       InterpolatedSymbolNode(
         SYMBOL_BEGIN(":\""),
-        [StringNode(nil, STRING_CONTENT("abc"), nil),
+        [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
          StringInterpolatedNode(
            EMBEXPR_BEGIN("\#{"),
            Statements([expression("1")]),
@@ -1041,7 +1412,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_UNDEF("undef"),
       [InterpolatedSymbolNode(
          SYMBOL_BEGIN(":\""),
-         [StringNode(nil, STRING_CONTENT("abc"), nil),
+         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
           StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
             Statements([expression("1")]),
@@ -1051,6 +1422,20 @@ class ParseTest < Test::Unit::TestCase
        )]
     )
     assert_parses expected, "undef :\"abc\#{1}\""
+  end
+
+  test "%s symbol" do
+    expected = SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]"))
+    assert_parses expected, "%s[abc]"
+  end
+
+  test "alias with %s symbol" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]")),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]"))
+    )
+    assert_parses expected, "alias %s[abc] %s[def]"
   end
 
   test "ternary" do
@@ -1252,6 +1637,7 @@ class ParseTest < Test::Unit::TestCase
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -1479,6 +1865,24 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "foo rescue nil || 1"
+  end
+
+  test "ensure statements" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      EnsureNode(
+        KEYWORD_ENSURE("ensure"),
+        Statements([expression("b")]),
+        KEYWORD_END("end"),
+      ),
+      nil,
+    )
+
+    assert_parses expected, "begin\na\nensure\nb\nend"
+    assert_parses expected, "begin; a; ensure; b; end"
+    assert_parses expected, "begin a\n ensure b\n end"
+    assert_parses expected, "begin a; ensure b; end"
   end
 
   private

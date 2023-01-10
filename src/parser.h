@@ -23,6 +23,10 @@ typedef struct yp_lex_mode {
     // expression of a string.
     YP_LEX_EMBEXPR,
 
+    // This state is used when we're lexing a variable that is embedded directly
+    // inside of a string with the # shorthand.
+    YP_LEX_EMBVAR,
+
     // This state is used when we are lexing a list of tokens, as in a %w word
     // list literal or a %i symbol list literal.
     YP_LEX_LIST,
@@ -40,14 +44,37 @@ typedef struct yp_lex_mode {
     YP_LEX_SYMBOL,
   } mode;
 
-  // This is the terminator of the current state. It is used when lexing a
-  // string (either single or double quoted) and an xstring.
-  char term;
+  union {
+    struct {
+      // This is the terminator of the list literal.
+      char terminator;
 
-  // Whether or not interpolation is allowed in this lex state. This corresponds
-  // to some LEX_LIST states (e.g., %W) and LEX_STRING states (e.g., double
-  // quotes).
-  bool interp;
+      // Whether or not interpolation is allowed in this list.
+      bool interpolation;
+    } list;
+
+    struct {
+      // This is the terminator of the regular expression.
+      char terminator;
+    } regexp;
+
+    struct {
+      // This is the terminator of the string. It is typically either a single
+      // or double quote.
+      char terminator;
+
+      // Whether or not interpolation is allowed in this string.
+      bool interpolation;
+    } string;
+
+    struct {
+      // This is the terminator of the symbol.
+      char terminator;
+
+      // Whether or not interpolation is allowed in this symbol.
+      bool interpolation;
+    } symbol;
+  } as;
 
   // The previous lex state so that it knows how to pop.
   struct yp_lex_mode *prev;
@@ -82,6 +109,8 @@ typedef enum {
   YP_CONTEXT_BEGIN,    // a begin statement
   YP_CONTEXT_SCLASS,   // a singleton class definition
   YP_CONTEXT_FOR,      // a for loop
+  YP_CONTEXT_PARENS,   // a parenthesized expression
+  YP_CONTEXT_ENSURE,   // an ensure statement
 } yp_context_t;
 
 // This is a node in a linked list of contexts.
@@ -100,6 +129,8 @@ typedef enum {
 // This is a node in the linked list of comments that we've found while parsing.
 typedef struct yp_comment {
   yp_list_node_t node;
+  uint32_t start;
+  uint32_t end;
   yp_comment_type_t type;
 } yp_comment_t;
 

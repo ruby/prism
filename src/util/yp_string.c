@@ -63,7 +63,7 @@ yp_string_source(const yp_string_t *string) {
 }
 
 // Free the associated memory of the given string.
-void
+__attribute__((__visibility__("default"))) extern void
 yp_string_free(yp_string_t *string) {
   if (string->type == YP_STRING_OWNED) {
     free(string->as.owned.source);
