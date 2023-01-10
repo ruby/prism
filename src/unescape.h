@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "error.h"
+#include "util/yp_list.h"
 #include "util/yp_string.h"
 
 // The type of unescape we are performing.
@@ -25,7 +27,7 @@ typedef enum {
 
 // Unescape the contents of the given token into the given string using the
 // given unescape mode.
-__attribute__((__visibility__("default"))) extern bool
-yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type);
+__attribute__((__visibility__("default"))) extern void
+yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list);
 
 #endif

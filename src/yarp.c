@@ -88,23 +88,23 @@ debug_lex_mode(yp_parser_t *parser) {
 /******************************************************************************/
 
 static inline bool
-char_is_binary_number(const char *c) {
-  return *c == '0' || *c == '1';
+char_is_binary_number(const char c) {
+  return c == '0' || c == '1';
 }
 
 static inline bool
-char_is_octal_number(const char *c) {
-  return *c >= '0' && *c <= '7';
+char_is_octal_number(const char c) {
+  return c >= '0' && c <= '7';
 }
 
 static inline bool
-char_is_decimal_number(const char *c) {
-  return *c >= '0' && *c <= '9';
+char_is_decimal_number(const char c) {
+  return c >= '0' && c <= '9';
 }
 
 static inline bool
-char_is_hexadecimal_number(const char *c) {
-  return (*c >= '0' && *c <= '9') || (*c >= 'a' && *c <= 'f') || (*c >= 'A' && *c <= 'F');
+char_is_hexadecimal_number(const char c) {
+  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
 static inline size_t
@@ -115,17 +115,41 @@ char_is_identifier_start(yp_parser_t *parser, const char *c) {
 static inline size_t
 char_is_identifier(yp_parser_t *parser, const char *c) {
   size_t width;
-  return (width = parser->encoding.alnum_char(c)) ? width : char_is_identifier_start(parser, c);
+
+  if ((width = parser->encoding.alnum_char(c))) {
+    return width;
+  } else if (*c == '_') {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 static inline bool
-char_is_non_newline_whitespace(const char *c) {
-  return *c == ' ' || *c == '\t' || *c == '\f' || *c == '\r' || *c == '\v';
+char_is_non_newline_whitespace(const char c) {
+  return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\v';
 }
 
 static inline bool
-char_is_whitespace(const char *c) {
-  return char_is_non_newline_whitespace(c) || *c == '\n';
+char_is_whitespace(const char c) {
+  return char_is_non_newline_whitespace(c) || c == '\n';
+}
+
+// This is a lookup table for whether or not an ASCII character is printable.
+static const bool ascii_printable_chars[] = {
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0
+};
+
+static inline bool
+char_is_ascii_printable(const char c) {
+  return ascii_printable_chars[(unsigned char) c];
 }
 
 /******************************************************************************/
@@ -210,9 +234,9 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   // Here we're going to attempt to parse the optional decimal portion of a
   // float. If it's not there, then it's okay and we'll just continue on.
   if (*parser->current.end == '.') {
-    if ((parser->current.end + 1 < parser->end) && char_is_decimal_number(parser->current.end + 1)) {
+    if ((parser->current.end + 1 < parser->end) && char_is_decimal_number(parser->current.end[1])) {
       parser->current.end += 2;
-      while (char_is_decimal_number(parser->current.end)) {
+      while (char_is_decimal_number(*parser->current.end)) {
         parser->current.end++;
         match(parser, '_');
       }
@@ -230,9 +254,9 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   if (match(parser, 'e') || match(parser, 'E')) {
     (void) (match(parser, '+') || match(parser, '-'));
 
-    if (char_is_decimal_number(parser->current.end)) {
+    if (char_is_decimal_number(*parser->current.end)) {
       parser->current.end++;
-      while (char_is_decimal_number(parser->current.end)) {
+      while (char_is_decimal_number(*parser->current.end)) {
         parser->current.end++;
         match(parser, '_');
       }
@@ -255,8 +279,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0d1111 is a decimal number
       case 'd':
       case 'D':
-        if (!char_is_decimal_number(++parser->current.end)) return YP_TOKEN_INVALID;
-        while (char_is_decimal_number(parser->current.end)) {
+        if (!char_is_decimal_number(*++parser->current.end)) return YP_TOKEN_INVALID;
+        while (char_is_decimal_number(*parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -265,8 +289,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0b1111 is a binary number
       case 'b':
       case 'B':
-        if (!char_is_binary_number(++parser->current.end)) return YP_TOKEN_INVALID;
-        while (char_is_binary_number(parser->current.end)) {
+        if (!char_is_binary_number(*++parser->current.end)) return YP_TOKEN_INVALID;
+        while (char_is_binary_number(*parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -275,7 +299,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0o1111 is an octal number
       case 'o':
       case 'O':
-        if (!char_is_octal_number(++parser->current.end)) return YP_TOKEN_INVALID;
+        if (!char_is_octal_number(*++parser->current.end)) return YP_TOKEN_INVALID;
         // fall through
 
       // 01111 is an octal number
@@ -289,7 +313,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '6':
       case '7':
         match(parser, '_');
-        while (char_is_octal_number(parser->current.end)) {
+        while (char_is_octal_number(*parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -298,8 +322,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0x1111 is a hexadecimal number
       case 'x':
       case 'X':
-        if (!char_is_hexadecimal_number(++parser->current.end)) return YP_TOKEN_INVALID;
-        while (char_is_hexadecimal_number(parser->current.end)) {
+        if (!char_is_hexadecimal_number(*++parser->current.end)) return YP_TOKEN_INVALID;
+        while (char_is_hexadecimal_number(*parser->current.end)) {
           parser->current.end++;
           match(parser, '_');
         }
@@ -322,7 +346,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
     // If it didn't start with a 0, then we'll lex as far as we can into a
     // decimal number.
     match(parser, '_');
-    while (char_is_decimal_number(parser->current.end)) {
+    while (char_is_decimal_number(*parser->current.end)) {
       parser->current.end++;
       match(parser, '_');
     }
@@ -389,7 +413,7 @@ lex_global_variable(yp_parser_t *parser) {
     case '9':
       do {
         parser->current.end++;
-      } while (char_is_decimal_number(parser->current.end));
+      } while (char_is_decimal_number(*parser->current.end));
       return YP_TOKEN_NTH_REFERENCE;
 
     default:
@@ -595,6 +619,151 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
   }
 }
 
+// This function is responsible for lexing either a character literal or the ?
+// operator. The supported character literals are described below.
+//
+// \a             bell, ASCII 07h (BEL)
+// \b             backspace, ASCII 08h (BS)
+// \t             horizontal tab, ASCII 09h (TAB)
+// \n             newline (line feed), ASCII 0Ah (LF)
+// \v             vertical tab, ASCII 0Bh (VT)
+// \f             form feed, ASCII 0Ch (FF)
+// \r             carriage return, ASCII 0Dh (CR)
+// \e             escape, ASCII 1Bh (ESC)
+// \s             space, ASCII 20h (SPC)
+// \\             backslash
+// \nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
+// \xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
+// \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
+// \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+// \cx or \C-x    control character, where x is an ASCII printable character
+// \M-x           meta character, where x is an ASCII printable character
+// \M-\C-x        meta control character, where x is an ASCII printable character
+// \M-\cx         same as above
+// \c\M-x         same as above
+// \c? or \C-?    delete, ASCII 7Fh (DEL)
+//
+static yp_token_type_t
+lex_question_mark(yp_parser_t *parser) {
+  switch (*parser->current.end) {
+    case '\n':
+    case ' ':
+      // TODO: this is wrong. We need to track the state for the lexer on
+      // whether or not the ? operator is allowed here. For now, we're depending
+      // on space characters.
+      return YP_TOKEN_QUESTION_MARK;
+    case '\t':
+    case '\v':
+    case '\f':
+    case '\r':
+      parser->current.end++;
+      return YP_TOKEN_CHARACTER_LITERAL;
+    case '\\':
+      parser->current.end++;
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_CHARACTER_LITERAL;
+      }
+
+      switch (*parser->current.end) {
+        case 'a':
+        case 'b':
+        case 't':
+        case 'n':
+        case 'v':
+        case 'f':
+        case 'r':
+        case 'e':
+        case 's':
+        case '\\':
+          parser->current.end++;
+          return YP_TOKEN_CHARACTER_LITERAL;
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+          // \nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
+          parser->current.end++;
+          if (parser->current.end < parser->end && char_is_octal_number(*parser->current.end)) parser->current.end++;
+          if (parser->current.end < parser->end && char_is_octal_number(*parser->current.end)) parser->current.end++;
+          return YP_TOKEN_CHARACTER_LITERAL;
+        case 'x':
+          // \xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
+          parser->current.end++;
+          if (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
+          if (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
+          return YP_TOKEN_CHARACTER_LITERAL;
+        case 'u':
+          // \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
+          // \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+          parser->current.end++;
+          if (match(parser, '{')) {
+            while (parser->current.end < parser->end && char_is_whitespace(*parser->current.end)) parser->current.end++;
+            while (!match(parser, '}')) {
+              while (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
+              while (parser->current.end < parser->end && char_is_whitespace(*parser->current.end)) parser->current.end++;
+            }
+          } else {
+            for (size_t index = 0; index < 4; index++) {
+              if (char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
+              else break;
+            }
+          }
+          return YP_TOKEN_CHARACTER_LITERAL;
+        case 'c':
+          // \cx            control character, where x is an ASCII printable character
+          // \c\M-x         same as above
+          // \c?            delete, ASCII 7Fh (DEL)
+          parser->current.end++;
+
+          if (parser->current.end < parser->end) {
+            if (char_is_ascii_printable(*parser->current.end)) {
+              parser->current.end++;
+            } else if (match(parser, '\\') && match(parser, 'M') && match(parser, '-') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
+              parser->current.end++;
+            }
+          }
+          
+          return YP_TOKEN_CHARACTER_LITERAL;
+        case 'C':
+          // \C-x           control character, where x is an ASCII printable character
+          // \C-?           delete, ASCII 7Fh (DEL)
+          parser->current.end++;
+          if (match(parser, '-') && char_is_ascii_printable(*parser->current.end)) {
+            parser->current.end++;
+          }
+          return YP_TOKEN_CHARACTER_LITERAL;
+        case 'M':
+          // \M-x           meta character, where x is an ASCII printable character
+          // \M-\C-x        meta control character, where x is an ASCII printable character
+          // \M-\cx         same as above
+          parser->current.end++;
+          if (match(parser, '-')) {
+            if (match(parser, '\\')) {
+              if (match(parser, 'C') && match(parser, '-') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
+                parser->current.end++;
+              } else if (match(parser, 'c') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
+                parser->current.end++;
+              }
+            } else if (char_is_ascii_printable(*parser->current.end)) {
+              parser->current.end++;
+            }
+          }
+          return YP_TOKEN_CHARACTER_LITERAL;
+        default:
+          return YP_TOKEN_CHARACTER_LITERAL;
+      }
+    default:
+      parser->current.end++;
+      return YP_TOKEN_CHARACTER_LITERAL;
+  }
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -780,11 +949,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // ? character literal
         case '?':
-          if (char_is_identifier(parser, parser->current.end)) {
-            parser->current.end++;
-            return YP_TOKEN_CHARACTER_LITERAL;
-          }
-          return YP_TOKEN_QUESTION_MARK;
+          return lex_question_mark(parser);
 
         // & && &&= &=
         case '&':
@@ -803,7 +968,7 @@ lex_token_type(yp_parser_t *parser) {
         case '+':
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
-          if (char_is_decimal_number(parser->current.end)) return lex_numeric(parser);
+          if (char_is_decimal_number(*parser->current.end)) return lex_numeric(parser);
           return YP_TOKEN_PLUS;
 
         // - -= -@
@@ -1343,21 +1508,21 @@ static yp_encoding_t yp_encoding_utf_8 = {
 static void
 parser_lex_magic_comments(yp_parser_t *parser) {
   const char *start = parser->current.start + 1;
-  while (char_is_non_newline_whitespace(start)) start++;
+  while (char_is_non_newline_whitespace(*start)) start++;
 
   if (strncmp(start, "-*-", 3) == 0) {
     start += 3;
-    while (char_is_non_newline_whitespace(start)) start++;
+    while (char_is_non_newline_whitespace(*start)) start++;
   }
 
   // There is a lot TODO here to make it more accurately reflect encoding
   // parsing, but for now this gets us closer.
   if (strncmp(start, "encoding:", 9) == 0) {
     start += 9;
-    while (char_is_non_newline_whitespace(start)) start++;
+    while (char_is_non_newline_whitespace(*start)) start++;
 
     const char *end = start;
-    while (!char_is_whitespace(end)) end++;
+    while (!char_is_whitespace(*end)) end++;
     size_t width = end - start;
 
     // First, we're going to loop through each of the encodings that we handle
@@ -1402,7 +1567,7 @@ parser_lex_magic_comments(yp_parser_t *parser) {
 static yp_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type);
+  yp_unescape(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
@@ -2293,7 +2458,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t closing;
       not_provided(&closing, content.end);
 
-      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_NONE);
+      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_ALL);
     }
     case YP_TOKEN_CLASS_VARIABLE:
       return yp_node_class_variable_read_create(parser, &parser->previous);

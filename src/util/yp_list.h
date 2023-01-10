@@ -30,6 +30,7 @@
 #ifndef YARP_LIST_H
 #define YARP_LIST_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -51,15 +52,19 @@ yp_list_t *
 yp_list_alloc(void);
 
 // Initializes a new list.
-void
+__attribute__((__visibility__("default"))) extern void
 yp_list_init(yp_list_t *list);
+
+// Returns true if the given list is empty.
+__attribute__((__visibility__("default"))) extern bool
+yp_list_empty(yp_list_t *list);
 
 // Append a node to the given list.
 void
 yp_list_append(yp_list_t *list, yp_list_node_t *node);
 
 // Deallocate the internal state of the given list.
-void
+__attribute__((__visibility__("default"))) extern void
 yp_list_free(yp_list_t *list);
 
 #endif
