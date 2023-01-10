@@ -1071,6 +1071,37 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "/aaa \#$bbb/"
   end
 
+  test "regular expression with %r" do
+    assert_parses RegularExpressionNode(REGEXP_BEGIN("%r{"), STRING_CONTENT("abc"), REGEXP_END("}i")), "%r{abc}i"
+  end
+
+  test "regular expression with named capture groups" do
+    expected = ArrayNode(
+      BRACKET_LEFT("["),
+      [
+        CallNode(
+          RegularExpressionNode(
+            REGEXP_BEGIN("/"),
+            STRING_CONTENT("(?<foo>bar)"),
+            REGEXP_END("/")
+          ),
+          nil,
+          EQUAL_TILDE("=~"),
+          nil,
+          ArgumentsNode([expression("baz")]),
+          nil,
+          "=~"
+        ),
+        # This is the important bit of the test here, that this is a local
+        # variable and not a method call.
+        LocalVariableRead(IDENTIFIER("foo"))
+      ],
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[/(?<foo>bar)/ =~ baz, foo]"
+  end
+
   test "retry" do
     assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
   end
