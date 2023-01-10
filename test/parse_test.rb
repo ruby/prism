@@ -1024,6 +1024,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
   end
 
+  test "source encoding" do
+    assert_parses SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")), "__ENCODING__"
+  end
+
+  test "source file" do
+    assert_parses SourceFileNode(KEYWORD___FILE__("__FILE__")), "__FILE__"
+  end
+
+  test "source line" do
+    assert_parses SourceLineNode(KEYWORD___LINE__("__LINE__")), "__LINE__"
+  end
+
   test "string empty" do
     assert_parses StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'"), ""), "''"
   end

@@ -2328,6 +2328,12 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_instance_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_INTEGER:
       return yp_node_integer_literal_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD___ENCODING__:
+      return yp_node_source_encoding_node_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD___FILE__:
+      return yp_node_source_file_node_create(parser, &parser->previous);
+    case YP_TOKEN_KEYWORD___LINE__:
+      return yp_node_source_line_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_ALIAS: {
       yp_token_t keyword = parser->previous;
       yp_node_t *left = parse_alias_or_undef_argument(parser);
