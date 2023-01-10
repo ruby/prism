@@ -1548,8 +1548,8 @@ typedef enum {
   BINDING_POWER_NOT,             // not
   BINDING_POWER_DEFINED,         // defined?
   BINDING_POWER_ASSIGNMENT,      // = += -= *= /= %= &= |= ^= &&= ||= <<= >>= **=
-  BINDING_POWER_MODIFIER_RESCUE, // rescue
   BINDING_POWER_TERNARY,         // ?:
+  BINDING_POWER_MODIFIER_RESCUE, // rescue
   BINDING_POWER_RANGE,           // .. ...
   BINDING_POWER_LOGICAL_OR,      // ||
   BINDING_POWER_LOGICAL_AND,     // &&
@@ -1617,6 +1617,9 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // ?:
   [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(BINDING_POWER_TERNARY),
+
+  // rescue
+  [YP_TOKEN_KEYWORD_RESCUE] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER_RESCUE),
 
   // .. ...
   [YP_TOKEN_DOT_DOT] = LEFT_ASSOCIATIVE(BINDING_POWER_RANGE),
@@ -3105,7 +3108,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
           yp_token_t name = node->as.local_variable_read.name;
           yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
-
           yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
           yp_node_destroy(parser, read);
           return result;
@@ -3411,6 +3413,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
       }
+    }
+    case YP_TOKEN_KEYWORD_RESCUE: {
+      while (accept(parser, YP_TOKEN_NEWLINE)) {};
+      yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
+
+      return yp_node_rescue_modifier_node_create(parser, node, &token, value);
     }
     default:
       return node;

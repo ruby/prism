@@ -1830,6 +1830,43 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "for i,j,k in 1..10\ni\nend"
   end
 
+  test "rescue modifier" do
+    expected = RescueModifierNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      KEYWORD_RESCUE("rescue"),
+      NilNode(KEYWORD_NIL("nil"))
+    )
+
+    assert_parses expected, "foo rescue nil"
+    assert_parses expected, "foo rescue\nnil"
+  end
+
+  test "rescue modifier within a ternary operator" do
+    expected = Ternary(
+      RescueModifierNode(
+        CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+        KEYWORD_RESCUE("rescue"),
+        NilNode(KEYWORD_NIL("nil"))
+      ),
+      QUESTION_MARK("?"),
+      IntegerLiteral(INTEGER("1")),
+      COLON(":"),
+      IntegerLiteral(INTEGER("2"))
+    )
+
+    assert_parses expected, "foo rescue nil ? 1 : 2"
+  end
+
+  test "rescue modifier with logical operator" do
+    expected = RescueModifierNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      KEYWORD_RESCUE("rescue"),
+      OrNode(NilNode(KEYWORD_NIL("nil")), PIPE_PIPE("||"), IntegerLiteral(INTEGER("1")))
+    )
+
+    assert_parses expected, "foo rescue nil || 1"
+  end
+
   test "ensure statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
