@@ -3415,7 +3415,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       }
     }
     case YP_TOKEN_KEYWORD_RESCUE: {
-      while (accept(parser, YP_TOKEN_NEWLINE)) {};
+      accept(parser, YP_TOKEN_NEWLINE);
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
 
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
