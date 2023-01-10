@@ -206,19 +206,109 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "break" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), nil, nil, nil), "break"
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      nil,
+    )
+
+    assert_parses expected, "break"
+  end
+
+  test "break 1" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("1"),
+      ]),
+    )
+    assert_parses expected, "break 1"
+  end
+
+  test "break 1, 2, 3" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "break 1, 2, 3"
+  end
+
+  test "break 1, 2,\n3" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "break 1, 2,\n3"
   end
 
   test "break()" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "break()"
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("()"),
+      ]),
+    )
+    assert_parses expected, "break()"
   end
 
   test "break(1)" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "break(1)"
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("(1)"),
+      ]),
+    )
+
+    assert_parses expected, "break(1)"
   end
 
-  test "break(1, 2, 3)" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "break(1, 2, 3)"
+  test "break (1), (2), (3)" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("(1)"),
+        expression("(2)"),
+        expression("(3)"),
+      ]),
+    )
+    assert_parses expected, "break (1), (2), (3)"
+  end
+
+  test "break [1, 2, 3]" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("[1, 2, 3]"),
+      ]),
+    )
+    assert_parses expected, "break [1, 2, 3]"
+  end
+
+  test "break multiple statements inside of parentheses" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        ParenthesesNode(
+          PARENTHESIS_LEFT("("),
+          Statements([expression("1"), expression("2")]),
+          PARENTHESIS_RIGHT(")")
+        )
+      ])
+    )
+
+    assert_parses expected, <<~RUBY
+      break(
+        1
+        2
+      )
+    RUBY
   end
 
   test "call with ? identifier" do
@@ -973,19 +1063,109 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "next" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), nil, nil, nil), "next"
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      nil,
+    )
+
+    assert_parses expected, "next"
+  end
+
+  test "next 1" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("1"),
+      ]),
+    )
+    assert_parses expected, "next 1"
+  end
+
+  test "next 1, 2, 3" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "next 1, 2, 3"
+  end
+
+  test "next 1, 2,\n3" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "next 1, 2,\n3"
   end
 
   test "next()" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "next()"
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("()"),
+      ]),
+    )
+    assert_parses expected, "next()"
   end
 
   test "next(1)" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "next(1)"
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("(1)"),
+      ]),
+    )
+
+    assert_parses expected, "next(1)"
   end
 
-  test "next(1, 2, 3)" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "next(1, 2, 3)"
+  test "next (1), (2), (3)" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("(1)"),
+        expression("(2)"),
+        expression("(3)"),
+      ]),
+    )
+    assert_parses expected, "next (1), (2), (3)"
+  end
+
+  test "next [1, 2, 3]" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("[1, 2, 3]"),
+      ]),
+    )
+    assert_parses expected, "next [1, 2, 3]"
+  end
+
+  test "next multiple statements inside of parentheses" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        ParenthesesNode(
+          PARENTHESIS_LEFT("("),
+          Statements([expression("1"), expression("2")]),
+          PARENTHESIS_RIGHT(")")
+        )
+      ])
+    )
+
+    assert_parses expected, <<~RUBY
+      next(
+        1
+        2
+      )
+    RUBY
   end
 
   test "nil" do
@@ -1104,6 +1284,112 @@ class ParseTest < Test::Unit::TestCase
 
   test "retry" do
     assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
+  end
+
+  test "return" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      nil,
+    )
+
+    assert_parses expected, "return"
+  end
+
+  test "return 1" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("1"),
+      ]),
+    )
+    assert_parses expected, "return 1"
+  end
+
+  test "return 1, 2, 3" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "return 1, 2, 3"
+  end
+
+  test "return 1, 2,\n3" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "return 1, 2,\n3"
+  end
+
+  test "return()" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("()"),
+      ]),
+    )
+    assert_parses expected, "return()"
+  end
+
+  test "return(1)" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("(1)"),
+      ]),
+    )
+
+    assert_parses expected, "return(1)"
+  end
+
+  test "return (1), (2), (3)" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("(1)"),
+        expression("(2)"),
+        expression("(3)"),
+      ]),
+    )
+    assert_parses expected, "return (1), (2), (3)"
+  end
+
+  test "return [1, 2, 3]" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("[1, 2, 3]"),
+      ]),
+    )
+    assert_parses expected, "return [1, 2, 3]"
+  end
+
+  test "return multiple statements inside of parentheses" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        ParenthesesNode(
+          PARENTHESIS_LEFT("("),
+          Statements([expression("1"), expression("2")]),
+          PARENTHESIS_RIGHT(")")
+        )
+      ])
+    )
+
+    assert_parses expected, <<~RUBY
+      return(
+        1
+        2
+      )
+    RUBY
   end
 
   test "self" do
