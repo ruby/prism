@@ -1,6 +1,4 @@
 #include "yarp.h"
-#include "ast.h"
-#include "node.h"
 
 #define STRINGIZE0(expr) #expr
 #define STRINGIZE(expr) STRINGIZE0(expr)
@@ -2464,18 +2462,18 @@ parse_expression_prefix(yp_parser_t *parser) {
       return undef;
     }
     case YP_TOKEN_KEYWORD_NOT: {
-      yp_token_t keyword = parser->previous;
-      yp_token_t lparen;
+      yp_token_t operator_token = parser->previous;
 
+      yp_token_t lparen;
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         lparen = parser->previous;
       } else {
         not_provided(&lparen, parser->previous.end);
       }
 
-      yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
-      yp_token_t rparen;
+      yp_node_t *receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
 
+      yp_token_t rparen;
       if (!parser->recovering && lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
         rparen = parser->previous;
@@ -2483,7 +2481,12 @@ parse_expression_prefix(yp_parser_t *parser) {
         not_provided(&rparen, parser->previous.end);
       }
 
-      return yp_node_not_node_create(parser, &keyword, &lparen, expression, &rparen);
+      yp_token_t call_operator;
+      not_provided(&call_operator, operator_token.start);
+
+      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
+      yp_string_constant_init(&node->as.call_node.name, "!", 1);
+      return node;
     }
     case YP_TOKEN_KEYWORD_UNLESS:
       return parse_conditional(parser, YP_CONTEXT_UNLESS);

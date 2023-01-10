@@ -808,19 +808,55 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "not without parentheses" do
-    assert_parses NotNode(KEYWORD_NOT("not"), nil, expression("foo"), nil), "not foo"
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      nil,
+      nil,
+      nil,
+      "!"
+    )
+
+    assert_parses expected, "not foo"
   end
 
   test "not with parentheses" do
-    assert_parses NotNode(KEYWORD_NOT("not"), PARENTHESIS_LEFT("("), expression("foo"), PARENTHESIS_RIGHT(")")), "not(foo)"
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "!"
+    )
+
+    assert_parses expected, "not(foo)"
   end
 
   test "not binding power" do
     expected =
       AndNode(
-        NotNode(KEYWORD_NOT("not"), nil, expression("foo"), nil),
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        ),
         KEYWORD_AND("and"),
-        NotNode(KEYWORD_NOT("not"), nil, expression("bar"), nil)
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, "bar"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        )
       )
 
     assert_parses expected, "not foo and not bar"

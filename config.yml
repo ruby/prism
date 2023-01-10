@@ -824,22 +824,6 @@ nodes:
 
           nil
           ^^^
-  - name: NotNode
-    child_nodes:
-      - name: keyword
-        type: token
-      - name: lparen
-        type: token?
-      - name: value
-        type: node
-      - name: rparen
-        type: token?
-    location: keyword->rparen|value
-    comment: |
-      Represents the use of the `not` keyword.
-
-          not(a)
-          ^^^^^^
   - name: NoKeywordsParameterNode
     child_nodes:
       - name: keyword
