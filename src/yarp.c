@@ -792,7 +792,11 @@ lex_token_type(yp_parser_t *parser) {
               lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
               return YP_TOKEN_PERCENT_LOWER_X;
             default:
-              if (char_is_symbol(parser->current.end)) {
+              if (
+                parser->encoding.alnum_char(parser->current.end) == 0 &&
+                !char_is_non_newline_whitespace(parser->current.end) &&
+                char_is_ascii(parser->current.end)
+              ) {
                 lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_STRING, .term = terminator(*parser->current.end++), .interp = true });
                 return YP_TOKEN_STRING_BEGIN;
               } else {
