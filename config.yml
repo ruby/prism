@@ -596,6 +596,18 @@ nodes:
 
           1.0
           ^^^
+  - name: ForwardingArgumentsNode
+    child_nodes:
+      - name: operator
+        type: token
+    location: operator
+    comment: |
+      Represents forwarding all arguments to this method to another method.
+
+          def foo(...)
+            bar(...)
+            ^^^^^^^^
+          end
   - name: ForwardingParameterNode
     child_nodes:
       - name: operator
