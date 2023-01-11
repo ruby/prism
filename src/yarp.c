@@ -1994,26 +1994,32 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   return statements;
 }
 
+// Parse an individual argument.
+static yp_node_t *
+parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
+  yp_node_t *argument;
+
+  if (accept(parser, YP_TOKEN_DOT_DOT_DOT)) {
+    if (!yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
+      yp_error_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
+    }
+    argument = yp_node_forwarding_arguments_node_create(parser, &parser->previous);
+  } else {
+    argument = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+  }
+
+  return argument;
+}
+
 // Parse a list of arguments.
-void
+static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
   if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
     while (parser->current.type != YP_TOKEN_EOF) {
-      yp_node_t *argument;
-
-      if (accept(parser, YP_TOKEN_DOT_DOT_DOT)) {
-	if (!yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
-	  yp_error_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
-	}
-	argument = yp_node_forwarding_parameter_node_create(parser, &parser->previous);
-      } else {
-	argument = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
-	if (argument->type == YP_NODE_MISSING_NODE) break;
-      }
+      yp_node_t *argument = parse_argument(parser, arguments);
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
 
-      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
-      // This needs to allow for optional new line
+      if ((argument->type == YP_NODE_MISSING_NODE) || accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
       expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
     }
   }
@@ -2030,7 +2036,7 @@ typedef struct {
 
 // Parse a list of arguments and their surrounding parentheses if they are
 // present.
-void
+static void
 parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
   if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
     arguments->opening = parser->previous;
@@ -2253,7 +2259,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   return parent;
 }
 
-static yp_node_t*
+static yp_node_t *
 parse_symbol(yp_parser_t *parser, int mode) {
   yp_token_t opening = parser->previous;
 
@@ -2533,7 +2539,6 @@ parse_expression_prefix(yp_parser_t *parser) {
       not_provided(&end_keyword, parser->previous.end);
 
       yp_node_t *begin_node = yp_node_begin_node_create(parser, &begin_keyword, begin_statements, NULL, NULL, &end_keyword);
-
       yp_node_t *current = NULL;
 
       // Parse any number of rescue clauses. This will form a linked list of if
