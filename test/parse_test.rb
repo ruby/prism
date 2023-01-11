@@ -1946,19 +1946,46 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "until" do
-    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "until true; 1; end"
+    expected = UntilNode(
+      KEYWORD_UNTIL("until"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([IntegerLiteral(INTEGER("1"))]),
+      KEYWORD_END("end")
+    )
+    assert_parses expected, "until true; 1; end"
   end
 
   test "until modifier" do
-    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "1 until true"
+    expected = UntilNode(
+      KEYWORD_UNTIL("until"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([IntegerLiteral(INTEGER("1"))]),
+      nil
+    )
+
+    assert_parses expected, "1 until true"
   end
 
   test "while" do
-    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "while true; 1; end"
+    expected = WhileNode(
+      KEYWORD_WHILE("while"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([IntegerLiteral(INTEGER("1"))]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "while true; 1; end"
   end
 
   test "while modifier" do
-    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "1 while true"
+    expected = WhileNode(
+      KEYWORD_WHILE("while"),
+      TrueNode(KEYWORD_TRUE("true")),
+      Statements([IntegerLiteral(INTEGER("1"))]),
+      nil
+    )
+
+    assert_parses expected, "1 while true"
   end
 
   test "yield" do

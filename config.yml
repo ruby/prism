@@ -382,10 +382,8 @@ nodes:
     comment: |
       Represents a begin statement.
 
-          begin
-            foo
-          end
-          ^^^^^
+          begin; foo; end
+          ^^^^^^^^^^^^^^^
   - name: BlockParameterNode
     child_nodes:
       - name: operator
@@ -427,7 +425,7 @@ nodes:
         type: token?
       - name: name
         type: string
-    location: receiver|message->rparen|arguments|message
+    location: call_operator|receiver|message->rparen|arguments|message
     comment: |
       Represents a method call, in all of the various forms that that can take.
 
@@ -435,13 +433,13 @@ nodes:
           ^^^
 
           +foo
-          ^^^^
+          ^
 
           foo + bar
-          ^^^^^^^^^
+              ^
 
           foo.bar
-          ^^^^^^^
+             ^^^^
   - name: ClassNode
     child_nodes:
       - name: scope
@@ -640,7 +638,7 @@ nodes:
         type: node
       - name: end_keyword
         type: token
-    location: for_keyword->statements
+    location: for_keyword->end_keyword|statements
     comment: |
       Represents the use of the `for` keyword.
 
@@ -734,7 +732,7 @@ nodes:
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
           bar if foo
-          ^^^^^^^^^^
+              ^^^^^^
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
@@ -1436,12 +1434,12 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
-    location: keyword->statements
+    location: keyword->end_keyword|statements
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
           bar unless foo
-          ^^^^^^^^^^^^^^
+              ^^^^^^^^^^
 
           unless foo then bar end
           ^^^^^^^^^^^^^^^^^^^^^^^
@@ -1453,15 +1451,17 @@ nodes:
         type: node
       - name: statement
         type: node
-    location: keyword->statement
+      - name: end_keyword
+        type: token?
+    location: keyword->end_keyword|statement
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
           bar until foo
-          ^^^^^^^^^^^^^
+              ^^^^^^^^^
 
           until foo do bar end
-          ^^^^^^^^^^^^^^^^^^^^
+          ^^^^^^^^^
   - name: WhileNode
     child_nodes:
       - name: keyword
@@ -1470,15 +1470,17 @@ nodes:
         type: node
       - name: statement
         type: node
-    location: keyword->statement
+      - name: end_keyword
+        type: token?
+    location: keyword->end_keyword|statement
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 
           bar while foo
-          ^^^^^^^^^^^^^
+              ^^^^^^^^^
 
           while foo do bar end
-          ^^^^^^^^^^^^^^^^^^^^
+          ^^^^^^^^^
   - name: XStringNode
     child_nodes:
       - name: opening
@@ -1508,4 +1510,4 @@ nodes:
       Represents the use of the `yield` keyword.
 
           yield 1
-          ^^^^^^^
+          ^^^^^

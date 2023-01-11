@@ -2243,16 +2243,19 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
       yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
       current->as.if_node.consequent = else_node;
       parent->as.if_node.end_keyword = parser->previous;
+      parent->location.end = parser->previous.end - parser->start;
       break;
     }
     case YP_TOKEN_KEYWORD_END: {
       parser_lex(parser);
       parent->as.if_node.end_keyword = parser->previous;
+      parent->location.end = parser->previous.end - parser->start;
       break;
     }
     default:
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
       parent->as.if_node.end_keyword = parser->previous;
+      parent->location.end = parser->previous.end - parser->start;
       break;
   }
 
@@ -2310,6 +2313,8 @@ parse_symbol(yp_parser_t *parser, int mode) {
 
     expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
     interpolated->as.interpolated_symbol_node.closing = parser->previous;
+    interpolated->location.end = parser->previous.end - parser->start;
+
     return interpolated;
   }
 
@@ -2335,7 +2340,7 @@ parse_alias_or_undef_argument(yp_parser_t *parser) {
       not_provided(&opening, parser->current.start);
 
       yp_token_t closing;
-      not_provided(&closing, parser->previous.end);
+      not_provided(&closing, parser->current.end);
 
       parser_lex(parser);
       return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
@@ -2505,6 +2510,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
       array->as.array_node.closing = parser->previous;
+      array->location.end = parser->previous.end - parser->start;
 
       return array;
     }
@@ -2523,6 +2529,8 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
       parentheses->as.parentheses_node.closing = parser->previous;
+      parentheses->location.end = parser->previous.end - parser->start;
+
       return parentheses;
     }
 
@@ -2588,7 +2596,10 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
+
       node->as.hash_node.closing = parser->previous;
+      node->location.end = parser->previous.end - parser->start;
+
       return node;
     }
     case YP_TOKEN_CHARACTER_LITERAL: {
@@ -2731,6 +2742,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       } else {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
         begin_node->as.begin_node.end_keyword = parser->previous;
+        begin_node->location.end = parser->previous.end - parser->start;
       }
 
       return begin_node;
@@ -3052,7 +3064,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
-      return yp_node_until_node_create(parser, &keyword, predicate, statements);
+      return yp_node_until_node_create(parser, &keyword, predicate, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_token_t keyword = parser->previous;
@@ -3064,7 +3076,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
-      return yp_node_while_node_create(parser, &keyword, predicate, statements);
+      return yp_node_while_node_create(parser, &keyword, predicate, statements, &parser->previous);
     }
     case YP_TOKEN_PERCENT_LOWER_I: {
       yp_token_t opening = parser->previous;
@@ -3090,6 +3102,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
       array->as.array_node.closing = parser->previous;
+      array->location.end = parser->previous.end - parser->start;
 
       return array;
     }
@@ -3152,6 +3165,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%I` list.");
       array->as.array_node.closing = parser->previous;
+      array->location.end = parser->previous.end - parser->start;
 
       return array;
     }
@@ -3179,6 +3193,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
       array->as.array_node.closing = parser->previous;
+      array->location.end = parser->previous.end - parser->start;
 
       return array;
     }
@@ -3289,6 +3304,8 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
       array->as.array_node.closing = parser->previous;
+      array->location.end = parser->previous.end - parser->start;
+
       return array;
     }
     case YP_TOKEN_RATIONAL_NUMBER:
@@ -3305,6 +3322,8 @@ parse_expression_prefix(yp_parser_t *parser) {
       parse_interpolated_string_parts(parser, YP_TOKEN_REGEXP_END, node, parts);
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
       node->as.interpolated_regular_expression_node.closing = parser->previous;
+      node->location.end = parser->previous.end - parser->start;
+
       return node;
     }
     case YP_TOKEN_BACKTICK:
@@ -3320,6 +3339,8 @@ parse_expression_prefix(yp_parser_t *parser) {
       parse_interpolated_string_parts(parser, YP_TOKEN_STRING_END, node, parts);
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an xstring.");
       node->as.interpolated_x_string_node.closing = parser->previous;
+      node->location.end = parser->previous.end - parser->start;
+
       return node;
     }
     case YP_TOKEN_BANG:
@@ -3391,6 +3412,8 @@ parse_expression_prefix(yp_parser_t *parser) {
         parse_interpolated_string_parts(parser, YP_TOKEN_STRING_END, interpolated, parts);
         expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated string.");
         interpolated->as.interpolated_string_node.closing = parser->previous;
+        interpolated->location.end = parser->previous.end - parser->start;
+
         return interpolated;
       }
 
@@ -3695,21 +3718,35 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_token_t end_keyword;
       not_provided(&end_keyword, parser->previous.end);
 
-      return yp_node_unless_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
+      yp_node_t *unless_node = yp_node_unless_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
+      unless_node->location.end = parser->previous.end - parser->start;
+
+      return unless_node;
     }
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_node_t *statements = yp_node_statements_create(parser);
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
-      return yp_node_until_node_create(parser, &token, predicate, statements);
+
+      yp_token_t end_keyword;
+      not_provided(&end_keyword, parser->previous.end);
+
+      yp_node_t *until_node = yp_node_until_node_create(parser, &token, predicate, statements, &end_keyword);
+      until_node->location.end = parser->previous.end - parser->start;
+
+      return until_node;
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_node_t *statements = yp_node_statements_create(parser);
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
-      return yp_node_while_node_create(parser, &token, predicate, statements);
+
+      yp_token_t end_keyword;
+      not_provided(&end_keyword, parser->previous.end);
+
+      return yp_node_while_node_create(parser, &token, predicate, statements, &end_keyword);
     }
     case YP_TOKEN_QUESTION_MARK: {
       yp_node_t *true_expression = parse_expression(parser, binding_power, "Expected a value after '?'");
