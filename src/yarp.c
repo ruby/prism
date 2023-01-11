@@ -3241,6 +3241,21 @@ parse_expression_prefix(yp_parser_t *parser) {
       node->as.interpolated_regular_expression_node.closing = parser->previous;
       return node;
     }
+    case YP_TOKEN_BACKTICK:
+    case YP_TOKEN_PERCENT_LOWER_X: {
+      yp_token_t opening = parser->previous;
+      yp_token_t content;
+      if (parse_string_without_interpolation(parser, YP_TOKEN_STRING_END, &content)) {
+        return yp_node_x_string_node_create(parser, &opening, &content, &parser->previous);
+      }
+
+      yp_node_t *node = yp_node_interpolated_x_string_node_create(parser, &opening, &opening);
+      yp_node_list_t *parts = &node->as.interpolated_x_string_node.parts;
+      parse_interpolated_string_parts(parser, YP_TOKEN_STRING_END, node, parts);
+      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an xstring.");
+      node->as.interpolated_x_string_node.closing = parser->previous;
+      return node;
+    }
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
       yp_token_t operator_token = parser->previous;

@@ -1331,6 +1331,32 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
   end
 
+  test "xstring, `, no interpolation" do
+    assert_parses XStringNode(BACKTICK("`"), STRING_CONTENT("foo"), STRING_END("`")), "`foo`"
+  end
+
+  test "xstring with interpolation" do
+    expected = InterpolatedXStringNode(
+      BACKTICK("`"),
+      [
+        StringNode(nil, STRING_CONTENT("foo "), nil, "foo "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([expression("bar")]),
+          EMBEXPR_END("}")
+        ),
+       StringNode(nil, STRING_CONTENT(" baz"), nil, " baz")
+      ],
+      STRING_END("`")
+    )
+
+    assert_parses expected, "`foo \#{bar} baz`"
+  end
+
+  test "xstring with %x" do
+    assert_parses XStringNode(PERCENT_LOWER_X("%x["), STRING_CONTENT("foo"), STRING_END("]")), "%x[foo]"
+  end
+
   test "regular expression, /, no interpolation" do
     assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
   end

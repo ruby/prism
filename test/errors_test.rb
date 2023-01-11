@@ -115,6 +115,10 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("/hello"), "/hello", ["Expected a closing delimiter for a regular expression."]
   end
 
+  test "unterminated xstring" do
+    assert_errors expression("`hello"), "`hello", ["Expected a closing delimiter for an xstring."]
+  end
+
   test "unterminated string" do
     assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end

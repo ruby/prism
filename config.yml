@@ -732,6 +732,20 @@ nodes:
 
           /foo #{bar} baz/
           ^^^^^^^^^^^^^^^^
+  - name: InterpolatedXStringNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents an xstring literal that contains interpolation.
+
+          `foo #{bar} baz`
+          ^^^^^^^^^^^^^^^^
   - name: InterpolatedStringNode
     child_nodes:
       - name: opening
@@ -1074,6 +1088,20 @@ nodes:
 
           /foo/i
           ^^^^^^
+  - name: XStringNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: content
+        type: token
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents an xstring literal with no interpolation.
+
+          `foo`
+          ^^^^^
   - name: RequiredParameterNode
     child_nodes:
       - name: name
