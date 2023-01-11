@@ -1531,13 +1531,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string interpolation allowed, but not used" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"abc\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("abc"), STRING_END("\""), "abc"), "\"abc\""
   end
 
   test "string interpolation allowed, sed" do
@@ -1559,13 +1553,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string interpolation allowed, not actually interpolated" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\#@---"), nil, "\#@---")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"#@---\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\#@---"), STRING_END("\""), "\#@---"), "\"#@---\""
   end
 
   test "string list" do
@@ -1631,23 +1619,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string with octal escapes" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\\7 \\43 \\141"), nil, "\a # a")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"\\7 \\43 \\141\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\\7 \\43 \\141"), STRING_END("\""), "\a # a"), "\"\\7 \\43 \\141\""
   end
 
   test "string with hexadecimal escapes" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\\x7 \\x23 \\x61"), nil, "\a # a")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"\\x7 \\x23 \\x61\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\\x7 \\x23 \\x61"), STRING_END("\""), "\a # a"), "\"\\x7 \\x23 \\x61\""
   end
 
   test "string with embedded global variables" do
