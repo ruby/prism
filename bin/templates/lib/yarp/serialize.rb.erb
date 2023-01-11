@@ -30,7 +30,9 @@ module YARP
       private
 
       def load_token
-        number, start_offset, end_offset = io.read(9).unpack("CLL")
+        number = io.read(1)
+        location = load_location
+
         type =
           case number
           <%- tokens.each_with_index do |token, index| -%>
@@ -38,8 +40,7 @@ module YARP
           <%- end -%>
           end
 
-        location = YARP::Location.new(start_offset, end_offset)
-        YARP::Token.new(type, source[start_offset...end_offset], location)
+        Token.new(type, source[location.start_offset...location.end_offset], location)
       end
 
       def load_optional_node
@@ -61,13 +62,18 @@ module YARP
         io.read(length)
       end
 
+      def load_location
+        start_offset, end_offset = io.read(8).unpack("LL")
+        Location.new(start_offset, end_offset)
+      end
+
       def load_node
-        type, _length, start_offset, end_offset = io.read(13).unpack("CLLL")
-        location = YARP::Location.new(start_offset, end_offset)
+        type, _length = io.read(5).unpack("CL")
+        location = load_location
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
-        when <%= index %> then YARP::<%= node.name %>.new(<%= (node.params.map { |param|
+        when <%= index %> then <%= node.name %>.new(<%= (node.params.map { |param|
           case param
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"
@@ -76,6 +82,7 @@ module YARP
           when TokenParam then "load_token"
           when TokenListParam then "io.read(4).unpack1(\"L\").times.map { load_token }"
           when OptionalTokenParam then "load_optional_token"
+          when LocationParam then "load_location"
           else raise
           end
         } + ["location"]).join(", ") -%>)

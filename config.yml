@@ -584,15 +584,15 @@ nodes:
           ^^^^^^^^^^
   - name: DefinedNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_location
+        type: location
       - name: lparen
         type: token?
       - name: value
         type: node
       - name: rparen
         type: token?
-    location: keyword->rparen|value
+    location: keyword_location->rparen|value
     comment: |
       Represents the use of the `defined?` keyword.
 

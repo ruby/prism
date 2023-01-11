@@ -23,6 +23,16 @@ public abstract class Nodes {
         }
     }
 
+    public static final class Location {
+        public final int startOffset;
+        public final int endOffset;
+
+        public Location(int startOffset, int endOffset) {
+            this.startOffset = startOffset;
+            this.endOffset = endOffset;
+        }
+    }
+
     public static abstract class Node {
         public final int startOffset;
         public final int endOffset;

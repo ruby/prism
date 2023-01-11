@@ -81,6 +81,12 @@ public class Loader {
         return new Nodes.Token(tokenType, startOffset, endOffset);
     }
 
+    private Nodes.Location loadLocation() {
+        int startOffset = buffer.getInt();
+        int endOffset = buffer.getInt();
+        return new Nodes.Location(startOffset, endOffset);
+    }
+
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         int length = buffer.getInt();
@@ -99,6 +105,7 @@ public class Loader {
                     when TokenParam then "loadToken()"
                     when TokenListParam then "loadTokens()"
                     when OptionalTokenParam then "loadOptionalToken()"
+                    when LocationParam then "loadLocation()"
                     else raise
                     end
             } + ["startOffset", "endOffset"]).join(", ") -%>);
