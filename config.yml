@@ -338,35 +338,21 @@ nodes:
 
           [1, 2, 3]
           ^^^^^^^^^
-  - name: HashNode
-    child_nodes:
-      - name: opening
-        type: token
-      - name: elements
-        type: node[]
-      - name: closing
-        type: token
-    location: opening->closing
-    comment: |
-      Represents an hash literal
-
-          { a => b }
-          ^^^^^^^^^^
   - name: AssocNode
     child_nodes:
       - name: key
         type: node
       - name: operator
-        type: token
+        type: token?
       - name: value
         type: node
     location: key->value
     comment: |
-      Represents an hash key/value combo
+      Represents a hash key/value pair.
 
           { a => b }
             ^^^^^^
-  - name: AssocSplat
+  - name: AssocSplatNode
     child_nodes:
       - name: operator
         type: token
@@ -374,7 +360,7 @@ nodes:
         type: node
     location: operator->value
     comment: |
-      Represents a splat in a hash literal
+      Represents a splat in a hash literal.
 
           { **foo }
             ^^^^^
@@ -715,6 +701,20 @@ nodes:
 
           $foo = 1
           ^^^^^^^^
+  - name: HashNode
+    child_nodes:
+      - name: opening
+        type: token?
+      - name: elements
+        type: node[]
+      - name: closing
+        type: token?
+    location: opening|elements->closing|elements
+    comment: |
+      Represents a hash literal.
+
+          { a => b }
+          ^^^^^^^^^^
   - name: IfNode
     child_nodes:
       - name: if_keyword

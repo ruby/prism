@@ -2476,7 +2476,7 @@ class ParseTest < Test::Unit::TestCase
          EQUAL_GREATER("=>"),
          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
        ),
-       AssocSplat(
+       AssocSplatNode(
          STAR_STAR("**"),
          CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c"),
        )],
