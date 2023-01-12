@@ -2537,19 +2537,51 @@ parse_expression_prefix(yp_parser_t *parser) {
 
         yp_node_t *element;
 
-        if (accept(parser, YP_TOKEN_STAR_STAR)) {
-          yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
+        switch (parser->current.type) {
+          case YP_TOKEN_STAR_STAR: {
+            parser_lex(parser);
+            yp_token_t operator = parser->previous;
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
 
-          element = yp_node_assoc_splat_node_create(parser, &operator, value);
-        } else {
-          yp_node_t *key = parse_expression(parser, BINDING_POWER_NONE, "Expected a key in the hash literal.");
+            element = yp_node_assoc_splat_node_create(parser, &operator, value);
+            break;
+          }
+          case YP_TOKEN_LABEL: {
+            parser_lex(parser);
+            yp_token_t label = {
+              .type = YP_TOKEN_LABEL,
+              .start = parser->previous.start,
+              .end = parser->previous.end - 1
+            };
 
-          expect(parser, YP_TOKEN_EQUAL_GREATER, "expected a => between the key and the value in the hash.");
-          yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+            yp_token_t opening;
+            not_provided(&opening, parser->previous.start);
 
-          element = yp_node_assoc_node_create(parser, key, &operator, value);
+            yp_token_t closing = {
+              .type = YP_TOKEN_LABEL_END,
+              .start = label.end,
+              .end = label.end + 1
+            };
+
+            yp_node_t *key = yp_node_symbol_node_create(parser, &opening, &label, &closing);
+
+            yp_token_t operator;
+            not_provided(&operator, parser->previous.end);
+
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after the label in hash.");
+            element = yp_node_assoc_node_create(parser, key, &operator, value);
+            break;
+          }
+          default: {
+            yp_node_t *key = parse_expression(parser, BINDING_POWER_NONE, "Expected a key in the hash literal.");
+
+            expect(parser, YP_TOKEN_EQUAL_GREATER, "expected a => between the key and the value in the hash.");
+            yp_token_t operator = parser->previous;
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+
+            element = yp_node_assoc_node_create(parser, key, &operator, value);
+            break;
+          }
         }
 
         yp_node_list_append(parser, node, &node->as.hash_node.elements, element);

@@ -190,6 +190,8 @@ tokens:
     comment: "yield"
   - name: LABEL
     comment: "a label"
+  - name: LABEL_END
+    comment: "the end of a label"
   - name: LAMBDA_BEGIN
     comment: "{"
   - name: LESS
