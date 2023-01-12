@@ -474,16 +474,6 @@ nodes:
 
           Foo::Bar
           ^^^^^^^^
-  - name: ConstantRead
-    child_nodes:
-      - name: name
-        type: token
-    location: name
-    comment: |
-      Represents referencing a constant.
-
-          Foo
-          ^^^
   - name: ConstantPathWriteNode
     child_nodes:
       - name: target
@@ -501,6 +491,16 @@ nodes:
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
+  - name: ConstantRead
+    child_nodes:
+      - name: name
+        type: token
+    location: name
+    comment: |
+      Represents referencing a constant.
+
+          Foo
+          ^^^
   - name: DefNode
     child_nodes:
       - name: def_keyword
@@ -544,6 +544,20 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
+  - name: ElseNode
+    child_nodes:
+      - name: else_keyword
+        type: token
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: else_keyword->end_keyword
+    comment: |
+      Represents an `else` clause in a `case`, `if`, or `unless` statement.
+
+          if a then b else c end
+                      ^^^^^^^^^^
   - name: EnsureNode
     child_nodes:
       - name: ensure_keyword
@@ -562,20 +576,6 @@ nodes:
           ^^^^^^
             bar
           end
-  - name: ElseNode
-    child_nodes:
-      - name: else_keyword
-        type: token
-      - name: statements
-        type: node
-      - name: end_keyword
-        type: token
-    location: else_keyword->end_keyword
-    comment: |
-      Represents an `else` clause in a `case`, `if`, or `unless` statement.
-
-          if a then b else c end
-                      ^^^^^^^^^^
   - name: FalseNode
     child_nodes:
       - name: keyword
@@ -596,6 +596,28 @@ nodes:
 
           1.0
           ^^^
+  - name: ForNode
+    child_nodes:
+      - name: for_keyword
+        type: token
+      - name: index
+        type: node
+      - name: in_keyword
+        type: token
+      - name: collection
+        type: node
+      - name: do_keyword
+        type: token?
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: for_keyword->statements
+    comment: |
+      Represents the use of the `for` keyword.
+
+          for i in a end
+          ^^^^^^^^^^^^^^
   - name: ForwardingArgumentsNode
     child_nodes:
       - name: operator
@@ -891,20 +913,6 @@ nodes:
           def a(**nil)
                 ^^^^^
           end
-  - name: OperatorAssignmentNode
-    child_nodes:
-      - name: target
-        type: node
-      - name: operator
-        type: token
-      - name: value
-        type: node
-    location: target->value
-    comment: |
-      Represents assigning to a value using an operator that isn't `=`.
-
-          foo += bar
-          ^^^^^^^^^^
   - name: OperatorAndAssignmentNode
     child_nodes:
       - name: target
@@ -919,6 +927,20 @@ nodes:
 
           target &&= value
           ^^^^^^^^^^^^^^^^
+  - name: OperatorAssignmentNode
+    child_nodes:
+      - name: target
+        type: node
+      - name: operator
+        type: token
+      - name: value
+        type: node
+    location: target->value
+    comment: |
+      Represents assigning to a value using an operator that isn't `=`.
+
+          foo += bar
+          ^^^^^^^^^^
   - name: OperatorOrAssignmentNode
     child_nodes:
       - name: target
@@ -1088,20 +1110,6 @@ nodes:
 
           /foo/i
           ^^^^^^
-  - name: XStringNode
-    child_nodes:
-      - name: opening
-        type: token
-      - name: content
-        type: token
-      - name: closing
-        type: token
-    location: opening->closing
-    comment: |
-      Represents an xstring literal with no interpolation.
-
-          `foo`
-          ^^^^^
   - name: RequiredParameterNode
     child_nodes:
       - name: name
@@ -1429,28 +1437,20 @@ nodes:
 
           while foo do bar end
           ^^^^^^^^^^^^^^^^^^^^
-  - name: ForNode
+  - name: XStringNode
     child_nodes:
-      - name: for_keyword
+      - name: opening
         type: token
-      - name: index
-        type: node
-      - name: in_keyword
+      - name: content
         type: token
-      - name: collection
-        type: node
-      - name: do_keyword
-        type: token?
-      - name: statements
-        type: node
-      - name: end_keyword
+      - name: closing
         type: token
-    location: for_keyword->statements
+    location: opening->closing
     comment: |
-      Represents the use of the `for` keyword.
+      Represents an xstring literal with no interpolation.
 
-          for i in a end
-          ^^^^^^^^^^^^^^
+          `foo`
+          ^^^^^
   - name: YieldNode
     child_nodes:
       - name: keyword
