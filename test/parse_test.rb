@@ -2468,6 +2468,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "{ a => b, c => d }"
   end
 
+  test "hash with label keys" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), nil, expression("b")),
+        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), nil, expression("d")),
+        AssocSplatNode(STAR_STAR("**"), expression("e")),
+        AssocNode(SymbolNode(nil, LABEL("f"), LABEL_END(":")), nil, expression("g")),
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{ a: b, c: d, **e, f: g }"
+  end
+
   test "parses hash with splat" do
     expected = HashNode(
       BRACE_LEFT("{"),
