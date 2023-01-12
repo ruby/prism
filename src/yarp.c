@@ -3694,10 +3694,22 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_token_t rparen;
       not_provided(&rparen, start);
 
-      yp_token_t message = (yp_token_t) { .type = YP_TOKEN_BRACKET_LEFT_RIGHT, .start = start, .end = start };
+      const char *name = "[]";
+
+      if (accept(parser, YP_TOKEN_EQUAL)) {
+        yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
+        yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
+        name = "[]=";
+      }
+
+      yp_token_t message = (yp_token_t) {
+        .type = YP_TOKEN_BRACKET_LEFT_RIGHT,
+        .start = start,
+        .end = start
+      };
 
       yp_node_t *call_node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen);
-      yp_string_constant_init(&call_node->as.call_node.name, "[]", 2);
+      yp_string_constant_init(&call_node->as.call_node.name, name, strlen(name));
       return call_node;
     }
     default:

@@ -2466,7 +2466,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
   end
 
-  test "simple #[] calls" do
+  test "simple #[] call" do
     expected = CallNode(
       expression("foo"),
       nil,
@@ -2480,7 +2480,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar]"
   end
 
-  test "multiple arguments #[] calls " do
+  test "simple #[]= call" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([expression("bar"), expression("baz")]),
+      nil,
+      "[]="
+    )
+
+    assert_parses expected, "foo[bar] = baz"
+  end
+
+  test "multiple arguments #[] call" do
     expected = CallNode(
       expression("foo"),
       nil,
@@ -2492,6 +2506,20 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "foo[bar, baz]"
+  end
+
+  test "multiple arguments #[]= call" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([expression("bar"), expression("baz"), expression("qux")]),
+      nil,
+      "[]="
+    )
+
+    assert_parses expected, "foo[bar, baz] = qux"
   end
 
   test "chained #[] calls " do
@@ -2516,7 +2544,29 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar][baz]"
   end
 
-  test "nested #[] calls " do
+  test "chained #[] and #[]= calls " do
+    expected = CallNode(
+      CallNode(
+        expression("foo"),
+        nil,
+        BRACKET_LEFT_RIGHT(""),
+        nil,
+        ArgumentsNode([expression("bar")]),
+        nil,
+        "[]"
+      ),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([expression("baz"), expression("qux")]),
+      nil,
+      "[]="
+    )
+
+    assert_parses expected, "foo[bar][baz] = qux"
+  end
+
+  test "nested #[] and #[]= calls " do
     expected = CallNode(
       expression("foo"),
       nil,
@@ -2528,16 +2578,16 @@ class ParseTest < Test::Unit::TestCase
           nil,
           BRACKET_LEFT_RIGHT(""),
           nil,
-          ArgumentsNode([expression("baz")]),
+          ArgumentsNode([expression("baz"), expression("qux")]),
           nil,
-          "[]"
+          "[]="
         ),
       ]),
       nil,
       "[]"
     )
 
-    assert_parses expected, "foo[bar[baz]]"
+    assert_parses expected, "foo[bar[baz] = qux]"
   end
 
   private
