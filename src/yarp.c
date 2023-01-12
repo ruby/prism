@@ -2014,13 +2014,13 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
 
 // Parse a list of arguments.
 static void
-parse_arguments(yp_parser_t *parser, yp_node_t *arguments) {
-  if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
+  if (!accept(parser, terminator)) {
     while (parser->current.type != YP_TOKEN_EOF) {
       yp_node_t *argument = parse_argument(parser, arguments);
       yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
 
-      if ((argument->type == YP_NODE_MISSING_NODE) || accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
+      if ((argument->type == YP_NODE_MISSING_NODE) || accept(parser, terminator)) break;
       expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
     }
   }
@@ -2047,7 +2047,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
       arguments->closing = parser->previous;
     } else {
       arguments->arguments = yp_node_arguments_node_create(parser);
-      parse_arguments(parser, arguments->arguments);
+      parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
       arguments->closing = parser->previous;
     }
   } else {
@@ -3569,7 +3569,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           arguments = NULL;
         } else {
           arguments = yp_node_arguments_node_create(parser);
-          parse_arguments(parser, arguments);
+          parse_arguments(parser, arguments, YP_TOKEN_PARENTHESIS_RIGHT);
           rparen = parser->previous;
         }
 
@@ -3680,19 +3680,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_BRACKET_LEFT: {
-      const char * start = parser->previous.start;
+      const char *start = parser->previous.start;
 
       yp_node_t *arguments = yp_node_arguments_node_create(parser);
-      while (parser->current.type != YP_TOKEN_EOF) {
-        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
-        if (expression->type == YP_NODE_MISSING_NODE) break;
-
-        yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
-
-        if (accept(parser, YP_TOKEN_BRACKET_RIGHT)) break;
-        // This needs to allow for optional new line
-        expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
-      }
+      parse_arguments(parser, arguments, YP_TOKEN_BRACKET_RIGHT);
 
       yp_token_t call_operator;
       not_provided(&call_operator, start);
