@@ -384,6 +384,8 @@ nodes:
         type: token
       - name: statements
         type: node
+      - name: rescue_clause
+        type: node?
       - name: ensure_clause
         type: node?
       - name: end_keyword
@@ -413,13 +415,9 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
-      - name: lparen
-        type: token?
       - name: arguments
         type: node?
-      - name: rparen
-        type: token?
-    location: keyword->rparen|arguments|lparen|keyword
+    location: keyword->arguments|keyword
     comment: |
       Represents the use of the `break` keyword.
 
@@ -516,16 +514,6 @@ nodes:
 
           Foo::Bar
           ^^^^^^^^
-  - name: ConstantRead
-    child_nodes:
-      - name: name
-        type: token
-    location: name
-    comment: |
-      Represents referencing a constant.
-
-          Foo
-          ^^^
   - name: ConstantPathWriteNode
     child_nodes:
       - name: target
@@ -543,6 +531,16 @@ nodes:
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
+  - name: ConstantRead
+    child_nodes:
+      - name: name
+        type: token
+    location: name
+    comment: |
+      Represents referencing a constant.
+
+          Foo
+          ^^^
   - name: DefNode
     child_nodes:
       - name: def_keyword
@@ -586,6 +584,20 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
+  - name: ElseNode
+    child_nodes:
+      - name: else_keyword
+        type: token
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: else_keyword->end_keyword
+    comment: |
+      Represents an `else` clause in a `case`, `if`, or `unless` statement.
+
+          if a then b else c end
+                      ^^^^^^^^^^
   - name: EnsureNode
     child_nodes:
       - name: ensure_keyword
@@ -604,20 +616,6 @@ nodes:
           ^^^^^^
             bar
           end
-  - name: ElseNode
-    child_nodes:
-      - name: else_keyword
-        type: token
-      - name: statements
-        type: node
-      - name: end_keyword
-        type: token
-    location: else_keyword->end_keyword
-    comment: |
-      Represents an `else` clause in a `case`, `if`, or `unless` statement.
-
-          if a then b else c end
-                      ^^^^^^^^^^
   - name: FalseNode
     child_nodes:
       - name: keyword
@@ -638,6 +636,40 @@ nodes:
 
           1.0
           ^^^
+  - name: ForNode
+    child_nodes:
+      - name: for_keyword
+        type: token
+      - name: index
+        type: node
+      - name: in_keyword
+        type: token
+      - name: collection
+        type: node
+      - name: do_keyword
+        type: token?
+      - name: statements
+        type: node
+      - name: end_keyword
+        type: token
+    location: for_keyword->statements
+    comment: |
+      Represents the use of the `for` keyword.
+
+          for i in a end
+          ^^^^^^^^^^^^^^
+  - name: ForwardingArgumentsNode
+    child_nodes:
+      - name: operator
+        type: token
+    location: operator
+    comment: |
+      Represents forwarding all arguments to this method to another method.
+
+          def foo(...)
+            bar(...)
+            ^^^^^^^^
+          end
   - name: ForwardingParameterNode
     child_nodes:
       - name: operator
@@ -762,6 +794,20 @@ nodes:
 
           /foo #{bar} baz/
           ^^^^^^^^^^^^^^^^
+  - name: InterpolatedXStringNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents an xstring literal that contains interpolation.
+
+          `foo #{bar} baz`
+          ^^^^^^^^^^^^^^^^
   - name: InterpolatedStringNode
     child_nodes:
       - name: opening
@@ -878,13 +924,9 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
-      - name: lparen
-        type: token?
       - name: arguments
         type: node?
-      - name: rparen
-        type: token?
-    location: keyword->rparen|arguments|lparen|keyword
+    location: keyword->arguments|keyword
     comment: |
       Represents the use of the `next` keyword.
 
@@ -911,20 +953,6 @@ nodes:
           def a(**nil)
                 ^^^^^
           end
-  - name: OperatorAssignmentNode
-    child_nodes:
-      - name: target
-        type: node
-      - name: operator
-        type: token
-      - name: value
-        type: node
-    location: target->value
-    comment: |
-      Represents assigning to a value using an operator that isn't `=`.
-
-          foo += bar
-          ^^^^^^^^^^
   - name: OperatorAndAssignmentNode
     child_nodes:
       - name: target
@@ -939,6 +967,20 @@ nodes:
 
           target &&= value
           ^^^^^^^^^^^^^^^^
+  - name: OperatorAssignmentNode
+    child_nodes:
+      - name: target
+        type: node
+      - name: operator
+        type: token
+      - name: value
+        type: node
+    location: target->value
+    comment: |
+      Represents assigning to a value using an operator that isn't `=`.
+
+          foo += bar
+          ^^^^^^^^^^
   - name: OperatorOrAssignmentNode
     child_nodes:
       - name: target
@@ -1119,6 +1161,41 @@ nodes:
           def a(b)
                 ^
           end
+  - name: RescueModifierNode
+    child_nodes:
+      - name: expression
+        type: node
+      - name: rescue_keyword
+        type: token
+      - name: rescue_expression
+        type: node
+    location: expression->rescue_expression
+    comment: |
+      Represents an expression modified with a rescue.
+
+        foo rescue nil
+        ^^^^^^^^^^^^^^
+  - name: RescueNode
+    child_nodes:
+      - name: rescue_keyword
+        type: token
+      - name: exception_classes
+        type: node[]
+      - name: equal_greater
+        type: token?
+      - name: exception_variable
+        type: token?
+      - name: statements
+        type: node
+      - name: consequent
+        type: node?
+    location: rescue_keyword->statements|consequent
+    comment: |
+      Represents a rescue statement.
+
+          rescue
+            foo
+          ^^^^^^
   - name: RestParameterNode
     child_nodes:
       - name: operator
@@ -1142,6 +1219,18 @@ nodes:
 
           retry
           ^^^^^
+  - name: ReturnNode
+    child_nodes:
+      - name: keyword
+        type: token
+      - name: arguments
+        type: node?
+    location: keyword->arguments|keyword
+    comment: |
+      Represents the use of the `return` keyword.
+
+          return 1
+          ^^^^^^^^
   - name: SClassNode
     child_nodes:
       - name: scope
@@ -1180,6 +1269,36 @@ nodes:
 
           self
           ^^^^
+  - name: SourceEncodingNode
+    child_nodes:
+      - name: keyword
+        type: token
+    location: keyword
+    comment: |
+      Represents the use of the `__ENCODING__` keyword.
+
+          __ENCODING__
+          ^^^^^^^^^^^^
+  - name: SourceFileNode
+    child_nodes:
+      - name: keyword
+        type: token
+    location: keyword
+    comment: |
+      Represents the use of the `__FILE__` keyword.
+
+          __FILE__
+          ^^^^^^^^
+  - name: SourceLineNode
+    child_nodes:
+      - name: keyword
+        type: token
+    location: keyword
+    comment: |
+      Represents the use of the `__LINE__` keyword.
+
+          __LINE__
+          ^^^^^^^^
   - name: Statements
     child_nodes:
       - name: body
@@ -1358,28 +1477,20 @@ nodes:
 
           while foo do bar end
           ^^^^^^^^^^^^^^^^^^^^
-  - name: ForNode
+  - name: XStringNode
     child_nodes:
-      - name: for_keyword
+      - name: opening
         type: token
-      - name: index
-        type: node
-      - name: in_keyword
+      - name: content
         type: token
-      - name: collection
-        type: node
-      - name: do_keyword
-        type: token?
-      - name: statements
-        type: node
-      - name: end_keyword
+      - name: closing
         type: token
-    location: for_keyword->statements
+    location: opening->closing
     comment: |
-      Represents the use of the `for` keyword.
+      Represents an xstring literal with no interpolation.
 
-          for i in a end
-          ^^^^^^^^^^^^^^
+          `foo`
+          ^^^^^
   - name: YieldNode
     child_nodes:
       - name: keyword

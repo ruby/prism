@@ -115,6 +115,10 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("/hello"), "/hello", ["Expected a closing delimiter for a regular expression."]
   end
 
+  test "unterminated xstring" do
+    assert_errors expression("`hello"), "`hello", ["Expected a closing delimiter for an xstring."]
+  end
+
   test "unterminated string" do
     assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end
@@ -125,6 +129,60 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "unterminated parenthesized expression" do
     assert_errors expression('(1 + 2'), '(1 + 2', ["Expected a closing parenthesis."]
+  end
+
+  test "(1, 2, 3)" do
+    assert_errors expression("(1, 2, 3)"), "(1, 2, 3)", ["Expected a closing parenthesis."]
+  end
+
+  test "return(1, 2, 3)" do
+    errors = [
+      "Expected a closing parenthesis.",
+      "Expected an ',' to delimit arguments.",
+      "Expected to be able to parse an argument."
+    ]
+
+    assert_errors expression("return(1, 2, 3)"), "return(1, 2, 3)", errors
+  end
+
+  test "return 1,;" do
+    assert_errors expression("return 1,;"), "return 1,;", ["Expected to be able to parse an argument."]
+  end
+
+  test "next(1, 2, 3)" do
+    errors = [
+      "Expected a closing parenthesis.",
+      "Expected an ',' to delimit arguments.",
+      "Expected to be able to parse an argument."
+    ]
+
+    assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", errors
+  end
+
+  test "next 1,;" do
+    assert_errors expression("next 1,;"), "next 1,;", ["Expected to be able to parse an argument."]
+  end
+
+  test "break(1, 2, 3)" do
+    errors = [
+      "Expected a closing parenthesis.",
+      "Expected an ',' to delimit arguments.",
+      "Expected to be able to parse an argument."
+    ]
+
+    assert_errors expression("break(1, 2, 3)"), "break(1, 2, 3)", errors
+  end
+
+  test "break 1,;" do
+    assert_errors expression("break 1,;"), "break 1,;", ["Expected to be able to parse an argument."]
+  end
+
+  test "argument forwarding when parent is not forwarding" do
+    assert_errors expression('def a(x, y, z); b(...); end'), 'def a(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
+  end
+
+  test "argument forwarding only effects its own internals" do
+    assert_errors expression('def a(...); b(...); end; def c(x, y, z); b(...); end'), 'def a(...); b(...); end; def c(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
   end
 
   private

@@ -206,19 +206,109 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "break" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), nil, nil, nil), "break"
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      nil,
+    )
+
+    assert_parses expected, "break"
+  end
+
+  test "break 1" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("1"),
+      ]),
+    )
+    assert_parses expected, "break 1"
+  end
+
+  test "break 1, 2, 3" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "break 1, 2, 3"
+  end
+
+  test "break 1, 2,\n3" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "break 1, 2,\n3"
   end
 
   test "break()" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "break()"
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("()"),
+      ]),
+    )
+    assert_parses expected, "break()"
   end
 
   test "break(1)" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "break(1)"
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("(1)"),
+      ]),
+    )
+
+    assert_parses expected, "break(1)"
   end
 
-  test "break(1, 2, 3)" do
-    assert_parses BreakNode(KEYWORD_BREAK("break"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "break(1, 2, 3)"
+  test "break (1), (2), (3)" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("(1)"),
+        expression("(2)"),
+        expression("(3)"),
+      ]),
+    )
+    assert_parses expected, "break (1), (2), (3)"
+  end
+
+  test "break [1, 2, 3]" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        expression("[1, 2, 3]"),
+      ]),
+    )
+    assert_parses expected, "break [1, 2, 3]"
+  end
+
+  test "break multiple statements inside of parentheses" do
+    expected = BreakNode(
+      KEYWORD_BREAK("break"),
+      ArgumentsNode([
+        ParenthesesNode(
+          PARENTHESIS_LEFT("("),
+          Statements([expression("1"), expression("2")]),
+          PARENTHESIS_RIGHT(")")
+        )
+      ])
+    )
+
+    assert_parses expected, <<~RUBY
+      break(
+        1
+        2
+      )
+    RUBY
   end
 
   test "call with ? identifier" do
@@ -731,7 +821,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       Statements([]),
       KEYWORD_END("end"),
-      Scope([])
+      Scope([DOT_DOT_DOT("...")])
     )
 
     assert_parses expected, "def a ...\nend"
@@ -792,6 +882,121 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def m a, b:, **nil\nend"
   end
 
+  test "method call with ..." do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode(
+        [],
+        [],
+        nil,
+        [],
+        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        nil
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements(
+        [CallNode(
+           nil,
+           nil,
+           IDENTIFIER("b"),
+           PARENTHESIS_LEFT("("),
+           ArgumentsNode([ForwardingArgumentsNode(DOT_DOT_DOT("..."))]),
+           PARENTHESIS_RIGHT(")"),
+           "b"
+         )]
+      ),
+      KEYWORD_END("end"),
+      Scope([DOT_DOT_DOT("...")])
+    )
+
+    assert_parses expected, "def a(...); b(...); end"
+  end
+
+
+  test "method call with ... after args" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode(
+        [],
+        [],
+        nil,
+        [],
+        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        nil
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements(
+        [CallNode(
+           nil,
+           nil,
+           IDENTIFIER("b"),
+           PARENTHESIS_LEFT("("),
+           ArgumentsNode(
+             [IntegerLiteral(INTEGER("1")),
+              IntegerLiteral(INTEGER("2")),
+              ForwardingArgumentsNode(DOT_DOT_DOT("..."))]
+           ),
+           PARENTHESIS_RIGHT(")"),
+           "b"
+         )]
+      ),
+      KEYWORD_END("end"),
+      Scope([DOT_DOT_DOT("...")])
+    )
+
+    assert_parses expected, "def a(...); b(1, 2, ...); end"
+  end
+
+  test "method call with interpolated ..." do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode(
+        [],
+        [],
+        nil,
+        [],
+        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        nil
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements(
+        [InterpolatedStringNode(
+           STRING_BEGIN("\""),
+           [StringNode(nil, STRING_CONTENT("foo"), nil, "foo"),
+            StringInterpolatedNode(
+              EMBEXPR_BEGIN("\#{"),
+              Statements(
+                [CallNode(
+                   nil,
+                   nil,
+                   IDENTIFIER("b"),
+                   PARENTHESIS_LEFT("("),
+                   ArgumentsNode([ForwardingArgumentsNode(DOT_DOT_DOT("..."))]),
+                   PARENTHESIS_RIGHT(")"),
+                   "b"
+                 )]
+              ),
+              EMBEXPR_END("}")
+            )],
+           STRING_END("\"")
+         )]
+      ),
+      KEYWORD_END("end"),
+      Scope([DOT_DOT_DOT("...")])
+    )
+
+    assert_parses expected, "def a(...); \"foo\#{b(...)}\"; end"
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil), "defined? 1"
   end
@@ -809,6 +1014,61 @@ class ParseTest < Test::Unit::TestCase
       )
 
     assert_parses expected, "defined? 1 and defined? 2"
+  end
+
+  test "not without parentheses" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      nil,
+      nil,
+      nil,
+      "!"
+    )
+
+    assert_parses expected, "not foo"
+  end
+
+  test "not with parentheses" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      nil,
+      KEYWORD_NOT("not"),
+      PARENTHESIS_LEFT("("),
+      nil,
+      PARENTHESIS_RIGHT(")"),
+      "!"
+    )
+
+    assert_parses expected, "not(foo)"
+  end
+
+  test "not binding power" do
+    expected =
+      AndNode(
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        ),
+        KEYWORD_AND("and"),
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, "bar"),
+          nil,
+          KEYWORD_NOT("not"),
+          nil,
+          nil,
+          nil,
+          "!"
+        )
+      )
+
+    assert_parses expected, "not foo and not bar"
   end
 
   test "false" do
@@ -918,19 +1178,109 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "next" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), nil, nil, nil), "next"
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      nil,
+    )
+
+    assert_parses expected, "next"
+  end
+
+  test "next 1" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("1"),
+      ]),
+    )
+    assert_parses expected, "next 1"
+  end
+
+  test "next 1, 2, 3" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "next 1, 2, 3"
+  end
+
+  test "next 1, 2,\n3" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "next 1, 2,\n3"
   end
 
   test "next()" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "next()"
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("()"),
+      ]),
+    )
+    assert_parses expected, "next()"
   end
 
   test "next(1)" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1")]), PARENTHESIS_RIGHT(")")), "next(1)"
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("(1)"),
+      ]),
+    )
+
+    assert_parses expected, "next(1)"
   end
 
-  test "next(1, 2, 3)" do
-    assert_parses NextNode(KEYWORD_NEXT("next"), PARENTHESIS_LEFT("("), ArgumentsNode([expression("1"), expression("2"), expression("3")]), PARENTHESIS_RIGHT(")")), "next(1, 2, 3)"
+  test "next (1), (2), (3)" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("(1)"),
+        expression("(2)"),
+        expression("(3)"),
+      ]),
+    )
+    assert_parses expected, "next (1), (2), (3)"
+  end
+
+  test "next [1, 2, 3]" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        expression("[1, 2, 3]"),
+      ]),
+    )
+    assert_parses expected, "next [1, 2, 3]"
+  end
+
+  test "next multiple statements inside of parentheses" do
+    expected = NextNode(
+      KEYWORD_NEXT("next"),
+      ArgumentsNode([
+        ParenthesesNode(
+          PARENTHESIS_LEFT("("),
+          Statements([expression("1"), expression("2")]),
+          PARENTHESIS_RIGHT(")")
+        )
+      ])
+    )
+
+    assert_parses expected, <<~RUBY
+      next(
+        1
+        2
+      )
+    RUBY
   end
 
   test "nil" do
@@ -981,6 +1331,32 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
   end
 
+  test "xstring, `, no interpolation" do
+    assert_parses XStringNode(BACKTICK("`"), STRING_CONTENT("foo"), STRING_END("`")), "`foo`"
+  end
+
+  test "xstring with interpolation" do
+    expected = InterpolatedXStringNode(
+      BACKTICK("`"),
+      [
+        StringNode(nil, STRING_CONTENT("foo "), nil, "foo "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([expression("bar")]),
+          EMBEXPR_END("}")
+        ),
+       StringNode(nil, STRING_CONTENT(" baz"), nil, " baz")
+      ],
+      STRING_END("`")
+    )
+
+    assert_parses expected, "`foo \#{bar} baz`"
+  end
+
+  test "xstring with %x" do
+    assert_parses XStringNode(PERCENT_LOWER_X("%x["), STRING_CONTENT("foo"), STRING_END("]")), "%x[foo]"
+  end
+
   test "regular expression, /, no interpolation" do
     assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
   end
@@ -1016,12 +1392,160 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "/aaa \#$bbb/"
   end
 
+  test "regular expression with %r" do
+    assert_parses RegularExpressionNode(REGEXP_BEGIN("%r{"), STRING_CONTENT("abc"), REGEXP_END("}i")), "%r{abc}i"
+  end
+
+  test "regular expression with named capture groups" do
+    expected = ArrayNode(
+      BRACKET_LEFT("["),
+      [
+        CallNode(
+          RegularExpressionNode(
+            REGEXP_BEGIN("/"),
+            STRING_CONTENT("(?<foo>bar)"),
+            REGEXP_END("/")
+          ),
+          nil,
+          EQUAL_TILDE("=~"),
+          nil,
+          ArgumentsNode([expression("baz")]),
+          nil,
+          "=~"
+        ),
+        # This is the important bit of the test here, that this is a local
+        # variable and not a method call.
+        LocalVariableRead(IDENTIFIER("foo"))
+      ],
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[/(?<foo>bar)/ =~ baz, foo]"
+  end
+
   test "retry" do
     assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
   end
 
+  test "return" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      nil,
+    )
+
+    assert_parses expected, "return"
+  end
+
+  test "return 1" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("1"),
+      ]),
+    )
+    assert_parses expected, "return 1"
+  end
+
+  test "return 1, 2, 3" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "return 1, 2, 3"
+  end
+
+  test "return 1, 2,\n3" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("1"),
+        expression("2"),
+        expression("3"),
+      ]),
+    )
+    assert_parses expected, "return 1, 2,\n3"
+  end
+
+  test "return()" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("()"),
+      ]),
+    )
+    assert_parses expected, "return()"
+  end
+
+  test "return(1)" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("(1)"),
+      ]),
+    )
+
+    assert_parses expected, "return(1)"
+  end
+
+  test "return (1), (2), (3)" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        expression("(1)"),
+        expression("(2)"),
+        expression("(3)"),
+      ]),
+    )
+    assert_parses expected, "return (1), (2), (3)"
+  end
+
+  test "return [1, 2, 3]" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([expression("[1, 2, 3]")])
+    )
+
+    assert_parses expected, "return [1, 2, 3]"
+  end
+
+  test "return multiple statements inside of parentheses" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([
+        ParenthesesNode(
+          PARENTHESIS_LEFT("("),
+          Statements([expression("1"), expression("2")]),
+          PARENTHESIS_RIGHT(")")
+        )
+      ])
+    )
+
+    assert_parses expected, <<~RUBY
+      return(
+        1
+        2
+      )
+    RUBY
+  end
+
   test "self" do
     assert_parses SelfNode(KEYWORD_SELF("self")), "self"
+  end
+
+  test "source encoding" do
+    assert_parses SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")), "__ENCODING__"
+  end
+
+  test "source file" do
+    assert_parses SourceFileNode(KEYWORD___FILE__("__FILE__")), "__FILE__"
+  end
+
+  test "source line" do
+    assert_parses SourceLineNode(KEYWORD___LINE__("__LINE__")), "__LINE__"
   end
 
   test "string empty" do
@@ -1033,13 +1557,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string interpolation allowed, but not used" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"abc\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("abc"), STRING_END("\""), "abc"), "\"abc\""
   end
 
   test "string interpolation allowed, sed" do
@@ -1058,6 +1576,10 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "\"aaa \#{bbb} ccc\""
+  end
+
+  test "string interpolation allowed, not actually interpolated" do
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\#@---"), STRING_END("\""), "\#@---"), "\"#@---\""
   end
 
   test "string list" do
@@ -1123,23 +1645,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string with octal escapes" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\\7 \\43 \\141"), nil, "\a # a")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"\\7 \\43 \\141\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\\7 \\43 \\141"), STRING_END("\""), "\a # a"), "\"\\7 \\43 \\141\""
   end
 
   test "string with hexadecimal escapes" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\\x7 \\x23 \\x61"), nil, "\a # a")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"\\x7 \\x23 \\x61\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\\x7 \\x23 \\x61"), STRING_END("\""), "\a # a"), "\"\\x7 \\x23 \\x61\""
   end
 
   test "string with embedded global variables" do
@@ -1530,6 +2040,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -1722,10 +2233,204 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "for i,j,k in 1..10\ni\nend"
   end
 
+  test "rescue modifier" do
+    expected = RescueModifierNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      KEYWORD_RESCUE("rescue"),
+      NilNode(KEYWORD_NIL("nil"))
+    )
+
+    assert_parses expected, "foo rescue nil"
+    assert_parses expected, "foo rescue\nnil"
+  end
+
+  test "rescue modifier within a ternary operator" do
+    expected = Ternary(
+      RescueModifierNode(
+        CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+        KEYWORD_RESCUE("rescue"),
+        NilNode(KEYWORD_NIL("nil"))
+      ),
+      QUESTION_MARK("?"),
+      IntegerLiteral(INTEGER("1")),
+      COLON(":"),
+      IntegerLiteral(INTEGER("2"))
+    )
+
+    assert_parses expected, "foo rescue nil ? 1 : 2"
+  end
+
+  test "rescue modifier with logical operator" do
+    expected = RescueModifierNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+      KEYWORD_RESCUE("rescue"),
+      OrNode(NilNode(KEYWORD_NIL("nil")), PIPE_PIPE("||"), IntegerLiteral(INTEGER("1")))
+    )
+
+    assert_parses expected, "foo rescue nil || 1"
+  end
+
+  test "begin with rescue statement" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [],
+        nil,
+        nil,
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue\nb\nend"
+    assert_parses expected, "begin;a;rescue;b;end"
+    assert_parses expected, "begin\na;rescue\nb;end"
+  end
+
+  test "begin with rescue statement and exception" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception"))],
+        nil,
+        nil,
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception\nb\nend"
+  end
+
+  test "begin with rescue statement with variable" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception"))],
+        EQUAL_GREATER("=>"),
+        IDENTIFIER("ex"),
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nend"
+  end
+
+  test "begin with rescue statement and exception list" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception")), ConstantRead(CONSTANT("CustomException"))],
+        nil,
+        nil,
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception, CustomException\nb\nend"
+  end
+
+  test "begin with rescue statement and exception list with variable" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception")), ConstantRead(CONSTANT("CustomException"))],
+        EQUAL_GREATER("=>"),
+        IDENTIFIER("ex"),
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception, CustomException => ex\nb\nend"
+  end
+
+  test "begin with multiple rescue statements" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [],
+        nil,
+        nil,
+        Statements([expression("b")]),
+        RescueNode(
+          KEYWORD_RESCUE("rescue"),
+          [],
+          nil,
+          nil,
+          Statements([expression("c")]),
+          RescueNode(
+            KEYWORD_RESCUE("rescue"),
+            [],
+            nil,
+            nil,
+            Statements([expression("d")]),
+            nil
+          )
+        )
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue\nb\nrescue\nc\nrescue\nd\nend"
+  end
+
+  test "begin with multiple rescue statements with exception classes and variables" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception"))],
+        EQUAL_GREATER("=>"),
+        IDENTIFIER("ex"),
+        Statements([expression("b")]),
+        RescueNode(
+          KEYWORD_RESCUE("rescue"),
+          [ConstantRead(CONSTANT("AnotherException")), ConstantRead(CONSTANT("OneMoreException"))],
+          EQUAL_GREATER("=>"),
+          IDENTIFIER("ex"),
+          Statements([expression("c")]),
+          nil
+        )
+      ),
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nrescue AnotherException, OneMoreException => ex\nc\nend"
+  end
+
   test "ensure statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
+      nil,
       EnsureNode(
         KEYWORD_ENSURE("ensure"),
         Statements([expression("b")]),
@@ -1779,6 +2484,29 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "{ a => b, **c }"
+  end
+
+  test "begin with rescue and ensure statements" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception"))],
+        EQUAL_GREATER("=>"),
+        IDENTIFIER("ex"),
+        Statements([expression("b")]),
+        nil
+      ),
+      EnsureNode(
+        KEYWORD_ENSURE("ensure"),
+        Statements([expression("b")]),
+        KEYWORD_END("end"),
+      ),
+      nil,
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
   end
 
   private

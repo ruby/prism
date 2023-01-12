@@ -49,7 +49,7 @@ static const char unescape_chars[] = {
 };
 
 // This is a lookup table for whether or not an ASCII character is printable.
-static const bool printable_chars[] = {
+static const bool ascii_printable_chars[] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -61,8 +61,8 @@ static const bool printable_chars[] = {
 };
 
 static inline bool
-char_is_printable(const char c) {
-  return printable_chars[(unsigned char) c];
+char_is_ascii_printable(const char c) {
+  return ascii_printable_chars[(unsigned char) c];
 }
 
 static inline unsigned char
@@ -199,12 +199,12 @@ unescape_unicode_write(char *destination, uint32_t value) {
 // \c\M-x         same as above
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
-__attribute__((__visibility__("default"))) extern bool
-yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type) {
+__attribute__((__visibility__("default"))) extern void
+yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
   if (unescape_type == YP_UNESCAPE_NONE) {
     // If we're not unescaping then we can reference the source directly.
     yp_string_shared_init(string, value, value + length);
-    return true;
+    return;
   }
 
   const char *backslash = memchr(value, '\\', length);
@@ -212,7 +212,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
   if (backslash == NULL) {
     // Here there are no escapes, so we can reference the source directly.
     yp_string_shared_init(string, value, value + length);
-    return true;
+    return;
   }
 
   // Here we have found an escape character, so we need to handle all escapes
@@ -319,7 +319,9 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
               break;
             }
 
-            return false;
+            yp_error_list_append(error_list, "Invalid Unicode escape sequence", backslash - value);
+            cursor = backslash + 2;
+            break;
           }
           // \c\M-x       meta control character, where x is an ASCII printable character
           // \c?          delete, ASCII 7Fh (DEL)
@@ -327,7 +329,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           case 'c':
             switch (backslash[2]) {
               case '\\':
-                if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_printable(backslash[5])) return false;
+                if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_ascii_printable(backslash[5])) {
+                  yp_error_list_append(error_list, "Invalid control escape sequence", backslash - value);
+                  cursor = backslash + 3;
+                  break;
+                }
+
                 cursor = backslash + 6;
                 dest[dest_length++] = meta_control_char(backslash[5]);
                 break;
@@ -336,7 +343,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
                 dest[dest_length++] = 0x7f;
                 break;
               default: {
-                if (!char_is_printable(backslash[2])) return false;
+                if (!char_is_ascii_printable(backslash[2])) {
+                  yp_error_list_append(error_list, "Invalid control escape sequence", backslash - value);
+                  cursor = backslash + 2;
+                  break;
+                }
+
                 cursor = backslash + 3;
                 dest[dest_length++] = control_char(backslash[2]);
                 break;
@@ -346,39 +358,52 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \C-x         control character, where x is an ASCII printable character
           // \C-?         delete, ASCII 7Fh (DEL)
           case 'C':
-            if (backslash[2] != '-' || !char_is_printable(backslash[3])) return false;
+            if (backslash[2] != '-' || !char_is_ascii_printable(backslash[3])) {
+              yp_error_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              cursor = backslash + 2;
+              break;
+            }
+
             cursor = backslash + 4;
             dest[dest_length++] = backslash[3] == '?' ? 0x7f : control_char(backslash[3]);
             break;
           // \M-\C-x      meta control character, where x is an ASCII printable character
           // \M-\cx       meta control character, where x is an ASCII printable character
           // \M-x         meta character, where x is an ASCII printable character
-          case 'M':
-            if (backslash[2] != '-') return false;
+          case 'M': {
+            if (backslash[2] != '-') {
+              yp_error_list_append(error_list, "Invalid meta escape sequence", backslash - value);
+              cursor = backslash + 2;
+              break;
+            }
 
             if (backslash[3] == '\\') {
-              if (backslash[4] == 'C' && backslash[5] == '-' && char_is_printable(backslash[6])) {
+              if (backslash[4] == 'C' && backslash[5] == '-' && char_is_ascii_printable(backslash[6])) {
                 cursor = backslash + 7;
                 dest[dest_length++] = meta_control_char(backslash[6]);
                 break;
               }
 
-              if (backslash[4] == 'c' && char_is_printable(backslash[5])) {
+              if (backslash[4] == 'c' && char_is_ascii_printable(backslash[5])) {
                 cursor = backslash + 6;
                 dest[dest_length++] = meta_control_char(backslash[5]);
                 break;
               }
 
-              return false;
+              yp_error_list_append(error_list, "Invalid meta escape sequence", backslash - value);
+              cursor = backslash + 4;
+              break;
             }
 
-            if (char_is_printable(backslash[3])) {
+            if (char_is_ascii_printable(backslash[3])) {
               cursor = backslash + 4;
               dest[dest_length++] = meta_char(backslash[3]);
               break;
             }
 
-            return false;
+            yp_error_list_append(error_list, "Invalid meta escape sequence", backslash - value);
+            cursor = backslash + 3;
+          }
           // In this case we're escaping something that doesn't need escaping.
           default:
             dest[dest_length++] = '\\';
@@ -398,5 +423,4 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
   // reduces the length of the final string, and we don't want garbage at the
   // end.
   string->as.owned.length = dest_length + (end - cursor);
-  return true;
 }
