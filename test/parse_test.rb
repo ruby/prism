@@ -79,6 +79,19 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ArrayNode(BRACKET_LEFT("["), [], BRACKET_RIGHT("]")), "[]"
   end
 
+  test "array with splat" do
+    expected = ArrayNode(
+      BRACKET_LEFT("["),
+      [StarNode(
+         IDENTIFIER("a"),
+         CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a")
+       )],
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[*a]"
+  end
+
   test "empty parenteses" do
     assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
   end
