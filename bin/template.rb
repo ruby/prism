@@ -67,7 +67,7 @@ class NodeType
   def initialize(config)
     @name = config.fetch("name")
 
-    type = @name.gsub(/(.)([A-Z])/, "\\1_\\2")
+    type = @name.gsub(/(?<=.)[A-Z]/, "_\\0")
     @type = "YP_NODE_#{type.upcase}"
     @human = type.downcase
 

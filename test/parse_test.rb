@@ -1331,6 +1331,32 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
   end
 
+  test "xstring, `, no interpolation" do
+    assert_parses XStringNode(BACKTICK("`"), STRING_CONTENT("foo"), STRING_END("`")), "`foo`"
+  end
+
+  test "xstring with interpolation" do
+    expected = InterpolatedXStringNode(
+      BACKTICK("`"),
+      [
+        StringNode(nil, STRING_CONTENT("foo "), nil, "foo "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([expression("bar")]),
+          EMBEXPR_END("}")
+        ),
+       StringNode(nil, STRING_CONTENT(" baz"), nil, " baz")
+      ],
+      STRING_END("`")
+    )
+
+    assert_parses expected, "`foo \#{bar} baz`"
+  end
+
+  test "xstring with %x" do
+    assert_parses XStringNode(PERCENT_LOWER_X("%x["), STRING_CONTENT("foo"), STRING_END("]")), "%x[foo]"
+  end
+
   test "regular expression, /, no interpolation" do
     assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
   end
@@ -1531,13 +1557,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string interpolation allowed, but not used" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("abc"), nil, "abc")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"abc\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("abc"), STRING_END("\""), "abc"), "\"abc\""
   end
 
   test "string interpolation allowed, sed" do
@@ -1559,13 +1579,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string interpolation allowed, not actually interpolated" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\#@---"), nil, "\#@---")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"#@---\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\#@---"), STRING_END("\""), "\#@---"), "\"#@---\""
   end
 
   test "string list" do
@@ -1631,23 +1645,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "string with octal escapes" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\\7 \\43 \\141"), nil, "\a # a")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"\\7 \\43 \\141\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\\7 \\43 \\141"), STRING_END("\""), "\a # a"), "\"\\7 \\43 \\141\""
   end
 
   test "string with hexadecimal escapes" do
-    expected = InterpolatedStringNode(
-      STRING_BEGIN("\""),
-      [StringNode(nil, STRING_CONTENT("\\x7 \\x23 \\x61"), nil, "\a # a")],
-      STRING_END("\"")
-    )
-
-    assert_parses expected, "\"\\x7 \\x23 \\x61\""
+    assert_parses StringNode(STRING_BEGIN("\""), STRING_CONTENT("\\x7 \\x23 \\x61"), STRING_END("\""), "\a # a"), "\"\\x7 \\x23 \\x61\""
   end
 
   test "string with embedded global variables" do
