@@ -2554,11 +2554,10 @@ class ParseTest < Test::Unit::TestCase
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::ParseResult[
-      node: YARP::Program[statements: YARP::Statements[body: [*, node]]],
-      errors: []
-    ]
+    result = YARP.parse(source)
+    assert_empty result.errors, PP.pp(result.node, +"")
 
+    result.node => YARP::Program[statements: YARP::Statements[body: [*, node]]]
     node
   end
 end

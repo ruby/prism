@@ -807,6 +807,7 @@ lex_token_type(yp_parser_t *parser) {
         case '\0':   // NUL or end of script
         case '\004': // ^D
         case '\032': // ^Z
+          parser->current.end--;
           return YP_TOKEN_EOF;
 
         case '#': // comments
@@ -1575,6 +1576,8 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
 // Get the next token type and skip over comment tokens.
 static void
 parser_lex(yp_parser_t *parser) {
+  assert(parser->current.end <= parser->end);
+
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
 
@@ -2786,7 +2789,6 @@ parse_expression_prefix(yp_parser_t *parser) {
           return yp_node_return_node_create(parser, &keyword, arguments);
         default:
           assert(false && "unreachable");
-          return yp_node_missing_node_create(parser, keyword.start - parser->start);
       }
     }
     case YP_TOKEN_KEYWORD_SUPER:
