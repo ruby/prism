@@ -1841,6 +1841,7 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // []
   [YP_TOKEN_BRACKET_LEFT_RIGHT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
+  [YP_TOKEN_BRACKET_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
 
   // :: . &.
   [YP_TOKEN_COLON_COLON] = RIGHT_ASSOCIATIVE(BINDING_POWER_CALL),
@@ -3677,6 +3678,36 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
 
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
+    }
+    case YP_TOKEN_BRACKET_LEFT: {
+      const char * start = parser->previous.start;
+
+      yp_node_t *arguments = yp_node_arguments_node_create(parser);
+      while (parser->current.type != YP_TOKEN_EOF) {
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+        if (expression->type == YP_NODE_MISSING_NODE) break;
+
+        yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, expression);
+
+        if (accept(parser, YP_TOKEN_BRACKET_RIGHT)) break;
+        // This needs to allow for optional new line
+        expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
+      }
+
+      yp_token_t call_operator;
+      not_provided(&call_operator, start);
+
+      yp_token_t lparen;
+      not_provided(&lparen, start);
+
+      yp_token_t rparen;
+      not_provided(&rparen, start);
+
+      yp_token_t message = (yp_token_t) { .type = YP_TOKEN_BRACKET_LEFT_RIGHT, .start = start, .end = start };
+
+      yp_node_t *call_node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen);
+      yp_string_constant_init(&call_node->as.call_node.name, "[]", 2);
+      return call_node;
     }
     default:
       return node;

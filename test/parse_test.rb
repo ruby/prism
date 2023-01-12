@@ -2466,6 +2466,80 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
   end
 
+  test "simple #[] calls" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([expression("bar")]),
+      nil,
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar]"
+  end
+
+  test "multiple arguments #[] calls " do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([expression("bar"), expression("baz")]),
+      nil,
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar, baz]"
+  end
+
+  test "chained #[] calls " do
+    expected = CallNode(
+      CallNode(
+        expression("foo"),
+        nil,
+        BRACKET_LEFT_RIGHT(""),
+        nil,
+        ArgumentsNode([expression("bar")]),
+        nil,
+        "[]"
+      ),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([expression("baz")]),
+      nil,
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar][baz]"
+  end
+
+  test "nested #[] calls " do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT(""),
+      nil,
+      ArgumentsNode([
+        CallNode(
+          expression("bar"),
+          nil,
+          BRACKET_LEFT_RIGHT(""),
+          nil,
+          ArgumentsNode([expression("baz")]),
+          nil,
+          "[]"
+        ),
+      ]),
+      nil,
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar[baz]]"
+  end
+
   private
 
   def assert_serializes(expected, source)
