@@ -442,6 +442,31 @@ nodes:
 
           foo.bar
           ^^^^^^^
+  - name: CaseNode
+    child_nodes:
+      - name: case_keyword
+        type: token
+      - name: expression
+        type: node?
+      - name: when_branches
+        type: node[]
+      - name: consequent
+        type: node?
+      - name: end_keyword
+        type: token
+    location: case_keyword->end_keyword
+    comment: |
+      Represents a `case` statement (not for pattern matching).
+
+          case a
+          when b
+            c
+          when d
+            e
+          else
+            f
+          end
+          ^^^^^^
   - name: ClassNode
     child_nodes:
       - name: scope
@@ -1474,6 +1499,21 @@ nodes:
 
           until foo do bar end
           ^^^^^^^^^^^^^^^^^^^^
+  - name: WhenNode
+    child_nodes:
+      - name: when_keyword
+        type: token
+      - name: patterns
+        type: node[]
+      - name: statements
+        type: node
+    location: when_keyword->statements|patterns
+    comment: |
+      Represents a `when` branch of a `case` statement.
+
+          when foo
+            bar
+          ^^^^^^^^
   - name: WhileNode
     child_nodes:
       - name: keyword

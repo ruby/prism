@@ -34,6 +34,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_UNLESS: return "UNLESS";
     case YP_CONTEXT_UNTIL: return "UNTIL";
     case YP_CONTEXT_WHILE: return "WHILE";
+    case YP_CONTEXT_WHEN: return "WHEN";
   }
   return NULL;
 }
@@ -1658,6 +1659,8 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_UNLESS:
     case YP_CONTEXT_ELSIF:
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_WHEN:
+      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_WHEN || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
     case YP_CONTEXT_PARENS:
@@ -1967,8 +1970,8 @@ parse_targets(yp_parser_t *parser, binding_power_t binding_power, const char *me
   return multi_target;
 }
 
-// Parse statements separated by newlines or semicolons, appending them to the
-// given list of statements.
+// Parse statements separated by newlines or semicolons, and append them to
+// the given list of statements.
 static void
 parse_and_append_statements(yp_parser_t *parser, yp_context_t context, yp_node_t *statements) {
   context_push(parser, context);
@@ -2818,6 +2821,63 @@ parse_expression_prefix(yp_parser_t *parser) {
           // Cannot hit here.
           return NULL;
       }
+    }
+    case YP_TOKEN_KEYWORD_CASE: {
+      yp_token_t case_keyword = parser->previous;
+
+      yp_node_t *expression;
+
+      if (parser->current.type == YP_TOKEN_KEYWORD_WHEN || accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+        expression = NULL;
+      } else {
+        expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find an expression after `case`.");
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      }
+
+      if (parser->current.type != YP_TOKEN_KEYWORD_WHEN) {
+        yp_error_list_append(&parser->error_list, "Expected at least one `when` branch in `case` statement.", parser->previous.end - parser->start);
+      }
+
+      yp_node_t *node = yp_node_case_node_create(parser, &case_keyword, expression, NULL, &case_keyword);
+
+      while (accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
+        yp_token_t when_keyword = parser->previous;
+
+        yp_node_t *when_statements = yp_node_statements_create(parser);
+        yp_node_t *when_node = yp_node_when_node_create(parser, &when_keyword, when_statements);
+
+        while (true) {
+          yp_node_t *when_expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find an expression after `when`.");
+          yp_node_list_append(parser, when_node, &when_node->as.when_node.patterns, when_expression);
+
+          if (accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
+          expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit `when` expressions.");
+        }
+
+        parse_and_append_statements(parser, YP_CONTEXT_WHEN, when_statements);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        yp_node_list_append(parser, node, &node->as.case_node.when_branches, when_node);
+      }
+
+      yp_node_t *else_node;
+
+      if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
+        yp_token_t else_keyword = parser->previous;
+
+        yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_ELSE);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+        else_node = yp_node_else_node_create(parser, &else_keyword, else_statements, &else_keyword);
+        node->as.case_node.consequent = else_node;
+      } else {
+        else_node = NULL;
+      }
+
+      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `case` statement.");
+      node->as.case_node.end_keyword = parser->previous;
+      if (else_node) else_node->as.else_node.end_keyword = parser->previous;
+      return node;
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       yp_token_t class_keyword = parser->previous;

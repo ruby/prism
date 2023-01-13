@@ -2661,6 +2661,120 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar[baz] = qux]"
   end
 
+  test "case statement without expression" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      nil,
+      [WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("foo")],
+         Statements([expression("bar")])
+       )],
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case when foo then bar end"
+  end
+
+  test "case statement with expression" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      expression("a"),
+      [WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("b")],
+         Statements([expression("c")])
+       )],
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case a when b then c end"
+  end
+
+  test "case statement with multiple expressions in a single when branch" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      expression("a"),
+      [WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("b"),
+          expression("c")],
+         Statements([expression("d")])
+       )],
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case a when b, c then d end"
+  end
+
+  test "case statement with multiple when branches" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      expression("a"),
+      [WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("b")],
+         Statements([expression("c")])
+       ),
+       WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("d")],
+         Statements([expression("e")])
+       )],
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([expression("f")]),
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case a when b then c when d then e else f end"
+  end
+
+  test "case statement with semicolons" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      expression("a"),
+      [WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("b")],
+         Statements([expression("c")])
+       )],
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([expression("d")]),
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case a; when b; c; else; d; end"
+  end
+
+  test "case statement with newlines" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      expression("a"),
+      [WhenNode(
+         KEYWORD_WHEN("when"),
+         [expression("b")],
+         Statements([expression("c")])
+       )],
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([expression("d")]),
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case a\nwhen b\n  c\nelse\n  d\nend"
+  end
+
   private
 
   def assert_serializes(expected, source)
