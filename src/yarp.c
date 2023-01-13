@@ -154,6 +154,15 @@ char_is_ascii_printable(const char c) {
 }
 
 /******************************************************************************/
+/* Node type helpers                                                          */
+/******************************************************************************/
+
+static inline bool
+token_type_is_numeric(const yp_token_type_t type) {
+  return type == YP_TOKEN_INTEGER || type == YP_TOKEN_FLOAT || type == YP_TOKEN_RATIONAL_NUMBER || type == YP_TOKEN_IMAGINARY_NUMBER;
+}
+
+/******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
 
@@ -970,7 +979,7 @@ lex_token_type(yp_parser_t *parser) {
         case '+':
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
-          if (parser->previous.type == YP_TOKEN_INTEGER || parser->previous.type == YP_TOKEN_FLOAT) return YP_TOKEN_PLUS;
+          if (token_type_is_numeric(parser->previous.type)) return YP_TOKEN_PLUS;
           if (char_is_decimal_number(*parser->current.end)) return lex_numeric(parser);
           return YP_TOKEN_PLUS;
 

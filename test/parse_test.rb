@@ -204,6 +204,27 @@ class ParseTest < Test::Unit::TestCase
 
   test "binary + without spaces" do
     assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1+2"
+    assert_parses CallNode(
+      IntegerLiteral(INTEGER("10")),
+      nil,
+      PLUS("+"),
+      nil,
+      ArgumentsNode(
+        [ParenthesesNode(
+           PARENTHESIS_LEFT("("),
+           Statements([CallNode(FloatLiteral(FLOAT("2.1")), nil, PLUS("+"), nil, ArgumentsNode([FloatLiteral(FLOAT("3.14"))]), nil, "+")]),
+           PARENTHESIS_RIGHT(")")
+         )]
+      ),
+      nil,
+      "+"
+    ), "10+(2.1+3.14)"
+    assert_parses CallNode(
+      RationalLiteral(RATIONAL_NUMBER("1r")), nil, PLUS("+"), nil, ArgumentsNode([RationalLiteral(RATIONAL_NUMBER("2r"))]), nil, "+"
+    ), "1r+2r"
+    assert_parses CallNode(
+      ImaginaryLiteral(IMAGINARY_NUMBER("1i")), nil, PLUS("+"), nil, ArgumentsNode([ImaginaryLiteral(IMAGINARY_NUMBER("2i"))]), nil, "+"
+    ), "1i+2i"
   end
 
   test "binary %" do
@@ -220,7 +241,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "binary **" do
     assert_parses CallNode(expression("1"), nil, STAR_STAR("**"), nil, ArgumentsNode([expression("2")]), nil, "**"), "1**2"
-  end
+  end  
 
   test "break" do
     expected = BreakNode(
