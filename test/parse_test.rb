@@ -202,6 +202,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1 + 2"
   end
 
+  test "binary + without spaces" do
+    assert_parses CallNode(expression("1"), nil, PLUS("+"), nil, ArgumentsNode([expression("2")]), nil, "+"), "1+2"
+  end
+
   test "binary %" do
     assert_parses CallNode(expression("1"), nil, PERCENT("%"), nil, ArgumentsNode([expression("2")]), nil, "%"), "1 % 2"
   end
@@ -2004,6 +2008,22 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "1 + 2 * 3"
+  end
+
+  test "TERM < FACTOR without spaces" do
+    expected = CallNode(
+      expression("1"),
+      nil,
+      PLUS("+"),
+      nil,
+      ArgumentsNode([
+        CallNode(expression("2"), nil, STAR("*"), nil, ArgumentsNode([expression("3")]), nil, "*")
+      ]),
+      nil,
+      "+"
+    )
+
+    assert_parses expected, "1+2*3"
   end
 
   test "FACTOR < EXPONENT" do
