@@ -1110,6 +1110,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a(...); \"foo\#{b(...)}\"; end"
   end
 
+  test "method call with *rest" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [StarNode(IDENTIFIER("rest"), CallNode(nil, nil, IDENTIFIER("rest"), nil, nil, nil, "rest"))]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      "foo"
+    )
+    assert_parses expected, "foo(*rest)"
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil), "defined? 1"
   end
