@@ -1967,11 +1967,11 @@ parse_targets(yp_parser_t *parser, binding_power_t binding_power, const char *me
   return multi_target;
 }
 
-// Parse a list of statements separated by newlines or semicolons.
-static yp_node_t *
-parse_statements(yp_parser_t *parser, yp_context_t context) {
+// Parse statements separated by newlines or semicolons, appending them to the
+// given list of statements.
+static void
+parse_and_append_statements(yp_parser_t *parser, yp_context_t context, yp_node_t *statements) {
   context_push(parser, context);
-  yp_node_t *statements = yp_node_statements_create(parser);
 
   while (!context_terminator(context, &parser->current)) {
     // Ignore semicolon without statements before them
@@ -1995,6 +1995,13 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   }
 
   context_pop(parser);
+}
+
+// Parse a list of statements separated by newlines or semicolons.
+static yp_node_t *
+parse_statements(yp_parser_t *parser, yp_context_t context) {
+  yp_node_t *statements = yp_node_statements_create(parser);
+  parse_and_append_statements(parser, context, statements);
   return statements;
 }
 
@@ -2712,7 +2719,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-        rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
+        parse_and_append_statements(parser, YP_CONTEXT_RESCUE, statements);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
         if (current == NULL) {
