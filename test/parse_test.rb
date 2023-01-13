@@ -241,7 +241,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "binary **" do
     assert_parses CallNode(expression("1"), nil, STAR_STAR("**"), nil, ArgumentsNode([expression("2")]), nil, "**"), "1**2"
-  end  
+  end
 
   test "break" do
     expected = BreakNode(
