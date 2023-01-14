@@ -4821,6 +4821,100 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "+foo**bar"
   end
 
+  test "simple stabby lambda with braces" do
+    expected = LambdaNode(
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements([expression("foo")])
+    )
+
+    assert_parses expected, "-> { foo }"
+  end
+
+  test "simple stabby lambda with do...end" do
+    expected = LambdaNode(
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements([expression("foo")])
+    )
+
+    assert_parses expected, "-> do; foo; end"
+  end
+
+  test "stabby lambda with parameters with braces" do
+    expected = LambdaNode(
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [OptionalParameterNode(
+           IDENTIFIER("b"),
+           EQUAL("="),
+           IntegerLiteral(INTEGER("1"))
+         )],
+         RestParameterNode(STAR("*"), IDENTIFIER("e")),
+         [KeywordParameterNode(LABEL("c:")), KeywordParameterNode(LABEL("d:"))],
+         KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
+         BlockParameterNode(AMPERSAND("&"), IDENTIFIER("g"))
+      ),
+      Statements([expression("a")])
+    )
+
+    assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) { a }"
+  end
+
+  test "stabby lambda with parameters with do..end" do
+    expected = LambdaNode(
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [OptionalParameterNode(
+           IDENTIFIER("b"),
+           EQUAL("="),
+           IntegerLiteral(INTEGER("1"))
+         )],
+         RestParameterNode(STAR("*"), IDENTIFIER("e")),
+         [KeywordParameterNode(LABEL("c:")), KeywordParameterNode(LABEL("d:"))],
+         KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
+         BlockParameterNode(AMPERSAND("&"), IDENTIFIER("g"))
+      ),
+      Statements([expression("a")])
+    )
+
+    assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) do\n  a\nend"
+  end
+
+  test "nested lambdas" do
+    expected = LambdaNode(
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [],
+        nil,
+        nil
+      ),
+      Statements(
+        [LambdaNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("b"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          Statements([CallNode(
+            expression("a"),
+            nil,
+            STAR("*"),
+            nil,
+            ArgumentsNode([expression("b")]),
+            nil,
+            "*"
+          )])
+        )]
+      )
+    )
+
+    assert_parses expected, "-> (a) { -> (b) { a * b } }"
+  end
+
   private
 
   def assert_serializes(expected, source)

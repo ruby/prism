@@ -1128,6 +1128,8 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_UNLESS: return "UNLESS";
     case YP_CONTEXT_UNTIL: return "UNTIL";
     case YP_CONTEXT_WHILE: return "WHILE";
+    case YP_CONTEXT_LAMBDA_BRACES: return "LAMBDA_BRACES";
+    case YP_CONTEXT_LAMBDA_DO_END: return "LAMBDA_DO_END";
   }
   return NULL;
 }
@@ -3689,6 +3691,10 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_RESCUE_ELSE:
       return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_LAMBDA_BRACES:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
+    case YP_CONTEXT_LAMBDA_DO_END:
+      return token->type == YP_TOKEN_KEYWORD_END;
   }
 
   return false;
@@ -5915,6 +5921,34 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *node = yp_call_node_unary_create(parser, &operator, receiver, "-@");
 
       return node;
+    }
+    case YP_TOKEN_MINUS_GREATER: {
+      yp_node_t *parameters;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        yp_node_t *parent_scope = parser->current_scope;
+        yp_node_t *scope = yp_node_scope_create(parser);
+        parser->current_scope = scope;
+        parameters = parse_parameters(parser);
+
+        // TODO: Lambda block locals
+
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+        parser->current_scope = parent_scope;
+      } else {
+        parameters = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
+      }
+
+      yp_node_t *body = NULL;
+      if (accept(parser, YP_TOKEN_LAMBDA_BEGIN)) {
+        body = parse_statements(parser, YP_CONTEXT_LAMBDA_BRACES);
+        expect(parser, YP_TOKEN_BRACE_RIGHT, "Expecting '}' to close lambda block.");
+      } else if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
+        body = parse_statements(parser, YP_CONTEXT_LAMBDA_DO_END);
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
+      }
+
+      return yp_node_lambda_node_create(parser, parameters, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
