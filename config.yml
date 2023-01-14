@@ -491,12 +491,12 @@ nodes:
   - name: ConstantPathNode
     child_nodes:
       - name: parent
-        type: node
+        type: node?
       - name: delimiter
         type: token
       - name: child
         type: node
-    location: parent->child
+    location: parent|delimiter->child
     comment: |
       Represents accessing a constant through a path of `::` operators.
 

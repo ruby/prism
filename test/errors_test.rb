@@ -185,6 +185,16 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression('def a(...); b(...); end; def c(x, y, z); b(...); end'), 'def a(...); b(...); end; def c(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
   end
 
+  test "top level constant with downcased identifier" do
+    expected = CallNode(nil, COLON_COLON("::"), IDENTIFIER("foo"), nil, nil, nil, "foo")
+    assert_errors expected, "::foo", ["Expected constant after ::."]
+  end
+
+  test "top level constant starting with downcased identifier" do
+    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A")))
+    assert_errors expected, "::foo::A", ["Expected constant after ::."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
