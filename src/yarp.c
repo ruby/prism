@@ -2058,7 +2058,7 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
     yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
     return yp_node_star_node_create(parser, &parser->previous, expression);
   }
-  
+
   return parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
 }
 
