@@ -2663,6 +2663,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "encoding magic comment" do
     assert YARP.parse("#encoding: utf-8").errors.empty?
+    assert YARP.parse("#encoding: UTF-8").errors.empty?
+    assert YARP.parse("# -*- encoding: UTF-8 -*-").errors.empty?
+    assert YARP.parse("# -*- encoding: utf-8 -*-").errors.empty?
     refute YARP.parse("#encoding: utf8").errors.empty?
   end
 

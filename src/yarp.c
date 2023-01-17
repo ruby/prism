@@ -1538,7 +1538,7 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     // First, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
-    if (width == sizeof(value) - 1 && strncmp(start, value, sizeof(value) - 1) == 0) { \
+    if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
       parser->encoding = prebuilt; \
       return; \
     }
