@@ -2054,6 +2054,7 @@ class ParseTest < Test::Unit::TestCase
       Statements([expression("a")]),
       nil,
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -2062,6 +2063,60 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin a\n end"
     assert_parses expected, "begin a; end"
   end
+
+
+  test "begin rescue, else" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [],
+        nil,
+        nil,
+        Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b")]),
+        nil
+      ),
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c")]),
+        SEMICOLON(";")
+      ),
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "begin; a; rescue; b; else; c; end"
+  end
+
+  test "begin rescue, else and ensure" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [],
+        nil,
+        nil,
+        Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b")]),
+        nil
+      ),
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c")]),
+        SEMICOLON(";")
+      ),
+      EnsureNode(
+        KEYWORD_ENSURE("ensure"),
+        Statements([CallNode(nil, nil, IDENTIFIER("d"), nil, nil, nil, "d")]),
+        KEYWORD_END("end")
+      ),
+      nil
+    )
+
+    assert_parses expected, "begin; a; rescue; b; else; c; ensure; d; end"
+  end
+
 
   test "endless method definition without arguments" do
     expected = DefNode(
@@ -2296,6 +2351,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -2317,6 +2373,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -2333,8 +2390,9 @@ class ParseTest < Test::Unit::TestCase
         EQUAL_GREATER("=>"),
         IDENTIFIER("ex"),
         Statements([expression("b")]),
-        nil
+        nil,
       ),
+      nil,
       nil,
       KEYWORD_END("end"),
     )
@@ -2355,6 +2413,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -2373,6 +2432,7 @@ class ParseTest < Test::Unit::TestCase
         Statements([expression("b")]),
         nil
       ),
+      nil,
       nil,
       KEYWORD_END("end"),
     )
@@ -2407,6 +2467,7 @@ class ParseTest < Test::Unit::TestCase
         )
       ),
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -2433,6 +2494,7 @@ class ParseTest < Test::Unit::TestCase
         )
       ),
       nil,
+      nil,
       KEYWORD_END("end"),
     )
 
@@ -2444,12 +2506,13 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
       nil,
+      nil,
       EnsureNode(
         KEYWORD_ENSURE("ensure"),
         Statements([expression("b")]),
         KEYWORD_END("end"),
       ),
-      nil,
+      nil
     )
 
     assert_parses expected, "begin\na\nensure\nb\nend"
@@ -2526,6 +2589,7 @@ class ParseTest < Test::Unit::TestCase
         Statements([expression("b")]),
         nil
       ),
+      nil,
       EnsureNode(
         KEYWORD_ENSURE("ensure"),
         Statements([expression("b")]),
