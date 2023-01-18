@@ -422,6 +422,18 @@ nodes:
           def a(&b)
                 ^^
           end
+  - name: BlockVarNode
+    child_nodes:
+      - name: parameters
+        type: node
+      - name: locals
+        type: token[]
+    location: parameters->locals
+    comment: |
+      Represents a block variable declaration.
+
+          -> (a, b = 1; local) { }
+              ^^^^^^^^^^^^^^^
   - name: BreakNode
     child_nodes:
       - name: arguments

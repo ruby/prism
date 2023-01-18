@@ -5929,14 +5929,20 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_node_t *parent_scope = parser->current_scope;
         yp_node_t *scope = yp_node_scope_create(parser);
         parser->current_scope = scope;
-        parameters = parse_parameters(parser);
+        yp_node_t *block_params = parse_parameters(parser);
 
-        // TODO: Lambda block locals
+        parameters = yp_node_block_var_node_create(parser, block_params);
 
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+        if (accept(parser, YP_TOKEN_SEMICOLON)) {
+          // TODO: Parse lambda block locals
+        } else {
+          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+        }
+
         parser->current_scope = parent_scope;
       } else {
-        parameters = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
+        yp_node_t *block_params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
+        parameters = yp_node_block_var_node_create(parser, block_params);
       }
 
       yp_node_t *body = NULL;
