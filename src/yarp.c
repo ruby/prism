@@ -1573,7 +1573,28 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
   return node;
 }
 
-// Get the next token type and skip over comment tokens.
+// Return a new comment node of the specified type.
+static inline yp_comment_t *
+parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
+  yp_comment_t *comment = (yp_comment_t *) malloc(sizeof(yp_comment_t));
+  *comment = (yp_comment_t) {
+    .type = type,
+    .start = parser->current.start - parser->start,
+    .end = parser->current.end - parser->start
+  };
+
+  return comment;
+}
+
+// Called when the parser requires a new token. The parser maintains a moving
+// window of two tokens at a time: parser.previous and parser.current. This
+// function will move the current token into the previous token and then
+// lex a new token into the current token.
+//
+// The raw lex_token_type function is responsible for returning the next token
+// type that it finds. This function is responsible for taking that output and
+// skipping past any tokens that should not be present in the final tree. This
+// includes any kind of comments or invalid tokens.
 static void
 parser_lex(yp_parser_t *parser) {
   assert(parser->current.end <= parser->end);
@@ -1584,42 +1605,38 @@ parser_lex(yp_parser_t *parser) {
   while (
     parser->current.type == YP_TOKEN_COMMENT ||
     parser->current.type == YP_TOKEN___END__ ||
-    parser->current.type == YP_TOKEN_EMBDOC_BEGIN
+    parser->current.type == YP_TOKEN_EMBDOC_BEGIN ||
+    parser->current.type == YP_TOKEN_INVALID
   ) {
-    // If we found a comment while lexing, then we're going to add it to the
-    // list of comments in the file and keep lexing.
-    yp_comment_t *comment = malloc(sizeof(yp_comment_t));
-    comment->start = parser->current.start - parser->start;
-
     switch (parser->current.type) {
-      case YP_TOKEN_COMMENT:
+      case YP_TOKEN_COMMENT: {
+        // If we found a comment while lexing, then we're going to add it to the
+        // list of comments in the file and keep lexing.
+        yp_comment_t *comment = parser_comment(parser, YP_COMMENT_INLINE);
+        yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
+
         parser_lex_magic_comments(parser);
-        *comment = (yp_comment_t) {
-          .end = parser->current.end - parser->start,
-          .type = YP_COMMENT_INLINE
-        };
+        parser->current.type = lex_token_type(parser);
+        break;
+      }
+      case YP_TOKEN___END__: {
+        yp_comment_t *comment = parser_comment(parser, YP_COMMENT___END__);
+        yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         parser->current.type = lex_token_type(parser);
         break;
-      case YP_TOKEN___END__:
-        *comment = (yp_comment_t) {
-          .end = parser->current.end - parser->start,
-          .type = YP_COMMENT___END__
-        };
-
-        parser->current.type = lex_token_type(parser);
-        break;
+      }
       case YP_TOKEN_EMBDOC_BEGIN: {
+        yp_comment_t *comment = parser_comment(parser, YP_COMMENT_EMBDOC);
+
         // If we found an embedded document, then we need to lex until we find
         // the end of the embedded document.
         do {
           parser->current.type = lex_token_type(parser);
         } while ((parser->current.type != YP_TOKEN_EMBDOC_END) && (parser->current.type != YP_TOKEN_EOF));
 
-        *comment = (yp_comment_t) {
-          .end = parser->current.end - parser->start,
-          .type = YP_COMMENT_EMBDOC
-        };
+        comment->end = parser->current.end - parser->start;
+        yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         if (parser->current.type == YP_TOKEN_EOF) {
           yp_error_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
@@ -1628,11 +1645,16 @@ parser_lex(yp_parser_t *parser) {
         }
         break;
       }
+      case YP_TOKEN_INVALID: {
+        // If we found an invalid token, then we're going to add an error to the
+        // parser and keep lexing.
+        yp_error_list_append(&parser->error_list, "Invalid token", parser->current.start - parser->start);
+        parser->current.type = lex_token_type(parser);
+        break;
+      }
       default:
         break;
     }
-
-    yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
   }
 }
 
@@ -2499,13 +2521,17 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_BRACKET_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        while (accept(parser, YP_TOKEN_NEWLINE));
+
         if (array->as.array_node.elements.size != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
         }
 
-        // [*splat]
+        while (accept(parser, YP_TOKEN_NEWLINE));
         yp_node_t *element;
+
         if (accept(parser, YP_TOKEN_STAR)) {
+          // [*splat]
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_star_node_create(parser, &parser->previous, expression);
         } else {
@@ -2543,10 +2569,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *node = yp_node_hash_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_BRACE_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        while (accept(parser, YP_TOKEN_NEWLINE));
+
         if (node->as.hash_node.elements.size != 0) {
           expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
         }
 
+        while (accept(parser, YP_TOKEN_NEWLINE));
         yp_node_t *element;
 
         switch (parser->current.type) {
