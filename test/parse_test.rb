@@ -4823,10 +4823,12 @@ class ParseTest < Test::Unit::TestCase
 
   test "simple stabby lambda with braces" do
     expected = LambdaNode(
+      nil,
       BlockVarNode(
         ParametersNode([], [], nil, [], nil, nil),
         []
       ),
+      nil,
       Statements([expression("foo")])
     )
 
@@ -4835,10 +4837,12 @@ class ParseTest < Test::Unit::TestCase
 
   test "simple stabby lambda with do...end" do
     expected = LambdaNode(
+      nil,
       BlockVarNode(
         ParametersNode([], [], nil, [], nil, nil),
         []
       ),
+      nil,
       Statements([expression("foo")])
     )
 
@@ -4847,6 +4851,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "stabby lambda with parameters with braces" do
     expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
@@ -4862,14 +4867,41 @@ class ParseTest < Test::Unit::TestCase
         ),
         []
       ),
+      PARENTHESIS_RIGHT(")"),
       Statements([expression("a")])
     )
 
     assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) { a }"
   end
 
+  test "stabby lambda with non-parenthesised parameters with braces" do
+    expected = LambdaNode(
+      nil,
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [OptionalParameterNode(
+            IDENTIFIER("b"),
+            EQUAL("="),
+            IntegerLiteral(INTEGER("1"))
+          )],
+          nil,
+          [KeywordParameterNode(LABEL("c:")), KeywordParameterNode(LABEL("d:"))],
+          nil,
+          BlockParameterNode(AMPERSAND("&"), IDENTIFIER("e"))
+        ),
+        []
+      ),
+      nil,
+      Statements([expression("a")])
+    )
+
+    assert_parses expected, "-> a, b = 1, c:, d:, &e { a }"
+  end
+
   test "stabby lambda with parameters with do..end" do
     expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
@@ -4885,6 +4917,7 @@ class ParseTest < Test::Unit::TestCase
         ),
         []
       ),
+      PARENTHESIS_RIGHT(")"),
       Statements([expression("a")])
     )
 
@@ -4893,6 +4926,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "nested lambdas" do
     expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
@@ -4904,8 +4938,10 @@ class ParseTest < Test::Unit::TestCase
         ),
         []
       ),
+      PARENTHESIS_RIGHT(")"),
       Statements(
         [LambdaNode(
+          nil,
           BlockVarNode(
             ParametersNode(
               [RequiredParameterNode(IDENTIFIER("b"))],
@@ -4917,6 +4953,7 @@ class ParseTest < Test::Unit::TestCase
             ),
             []
           ),
+          nil,
           Statements([CallNode(
             expression("a"),
             nil,
@@ -4930,11 +4967,12 @@ class ParseTest < Test::Unit::TestCase
       )
     )
 
-    assert_parses expected, "-> (a) { -> (b) { a * b } }"
+    assert_parses expected, "-> (a) { -> b { a * b } }"
   end
 
   test "lambdas with block locals" do
     expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
@@ -4946,6 +4984,7 @@ class ParseTest < Test::Unit::TestCase
         ),
         [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
       ),
+      PARENTHESIS_RIGHT(")"),
       Statements([expression("b")])
     )
 

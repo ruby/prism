@@ -5951,25 +5951,32 @@ parse_expression_prefix(yp_parser_t *parser) {
       return node;
     }
     case YP_TOKEN_MINUS_GREATER: {
-      yp_node_t *parameters;
+      yp_token_t lparen;
+      yp_token_t rparen;
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        yp_node_t *parent_scope = parser->current_scope;
-        yp_node_t *scope = yp_node_scope_create(parser);
-        parser->current_scope = scope;
-
-        parameters = parse_block_parameters(parser);
-
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
-
-        parser->current_scope = parent_scope;
+        lparen = parser->previous;
       } else {
-        yp_node_t *block_params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
-        parameters = yp_node_block_var_node_create(parser, block_params);
+        not_provided(parser);
       }
 
+      yp_node_t *parent_scope = parser->current_scope;
+      yp_node_t *scope = yp_node_scope_create(parser);
+      parser->current_scope = scope;
+
+      yp_node_t *parameters = parse_block_parameters(parser);;
+
+      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+        rparen = parser->previous;
+      } else {
+        not_provided(parser);
+      }
+
+      parser->current_scope = parent_scope;
+
       yp_node_t *body = NULL;
-      if (accept(parser, YP_TOKEN_LAMBDA_BEGIN)) {
+      if (accept_any(parser, 2, YP_TOKEN_LAMBDA_BEGIN, YP_TOKEN_BRACE_LEFT)) {
         body = parse_statements(parser, YP_CONTEXT_LAMBDA_BRACES);
         expect(parser, YP_TOKEN_BRACE_RIGHT, "Expecting '}' to close lambda block.");
       } else if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
@@ -5977,7 +5984,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
       }
 
-      return yp_node_lambda_node_create(parser, parameters, body);
+      return yp_node_lambda_node_create(parser, &lparen, parameters, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
