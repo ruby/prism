@@ -2668,8 +2668,8 @@ class ParseTest < Test::Unit::TestCase
     assert_equal expected, node
   end
 
-  def assert_parses(expected, source)
-    assert_equal expected, expression(source)
+  def assert_parses(expected, source, errors = nil)
+    assert_equal expected, expression(source, errors)
     assert_serializes expected, source
 
     YARP.lex_ripper(source).zip(YARP.lex_compat(source)).each do |(ripper, yarp)|
@@ -2677,10 +2677,13 @@ class ParseTest < Test::Unit::TestCase
     end
   end
 
-  def expression(source)
+  def expression(source, errors = nil)
     result = YARP.parse(source)
-    assert_empty result.errors, PP.pp(result.node, +"")
-
+    if errors.nil?
+      assert_empty result.errors, PP.pp(result.node, +"")
+    else
+      assert_equal errors, result.errors
+    end
     result.node => YARP::Program[statements: YARP::Statements[body: [*, node]]]
     node
   end

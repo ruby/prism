@@ -17,6 +17,10 @@ module YARP
     def self.null
       new(0, 0)
     end
+
+    def ==(other)
+      self.class == other.class && start_offset == other.start_offset && end_offset == other.end_offset
+    end
   end
 
   # This represents a comment that was encountered during parsing.
@@ -44,6 +48,10 @@ module YARP
 
     def deconstruct_keys(keys)
       { message: message, location: location }
+    end
+
+    def ==(other)
+      self.class == other.class && message == other.message && location == other.location
     end
   end
 
