@@ -4933,6 +4933,25 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "-> (a) { -> (b) { a * b } }"
   end
 
+  test "lambdas with block locals" do
+    expected = LambdaNode(
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [],
+          nil,
+          [],
+          nil,
+          nil
+        ),
+        [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
+      ),
+      Statements([expression("b")])
+    )
+
+    assert_parses expected, "-> (a; b, c, d) { b }"
+  end
+
   private
 
   def assert_serializes(expected, source)

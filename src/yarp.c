@@ -5934,10 +5934,24 @@ parse_expression_prefix(yp_parser_t *parser) {
         parameters = yp_node_block_var_node_create(parser, block_params);
 
         if (accept(parser, YP_TOKEN_SEMICOLON)) {
-          // TODO: Parse lambda block locals
-        } else {
-          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+          bool parsing = true;
+
+          while (parsing) {
+            if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+              yp_token_t name = parser->previous;
+              yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+              yp_token_list_append(&parameters->as.block_var_node.locals, &name);
+
+              if (!accept(parser, YP_TOKEN_COMMA)) {
+                parsing = false;
+              }
+            } else {
+              parsing = false;
+            }
+          }
         }
+
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
 
         parser->current_scope = parent_scope;
       } else {
