@@ -2521,13 +2521,17 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *array = yp_node_array_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_BRACKET_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        while (accept(parser, YP_TOKEN_NEWLINE));
+
         if (array->as.array_node.elements.size != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
         }
 
-        // [*splat]
+        while (accept(parser, YP_TOKEN_NEWLINE));
         yp_node_t *element;
+
         if (accept(parser, YP_TOKEN_STAR)) {
+          // [*splat]
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_star_node_create(parser, &parser->previous, expression);
         } else {
@@ -2565,10 +2569,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *node = yp_node_hash_node_create(parser, &opening, &opening);
 
       while (parser->current.type != YP_TOKEN_BRACE_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+        while (accept(parser, YP_TOKEN_NEWLINE));
+
         if (node->as.hash_node.elements.size != 0) {
           expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
         }
 
+        while (accept(parser, YP_TOKEN_NEWLINE));
         yp_node_t *element;
 
         switch (parser->current.type) {
