@@ -2085,13 +2085,52 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
   }
 }
 
+// This represents the different order states we can be in when parsing
+// method parameters.
+typedef enum {
+  YP_PARAMETERS_ORDER_NOTHING_AFTER = 1,
+  YP_PARAMETERS_ORDER_KEYWORDS_REST,
+  YP_PARAMETERS_ORDER_KEYWORDS,
+  YP_PARAMETERS_ORDER_REST,
+  YP_PARAMETERS_ORDER_NAMED,
+  YP_PARAMETERS_ORDER_NONE,
+} parameters_order_t;
+
+// This matches parameters tokens with parameters state.
+parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
+  [YP_TOKEN_AMPERSAND] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
+  [YP_TOKEN_DOT_DOT_DOT] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
+  [YP_TOKEN_IDENTIFIER] = YP_PARAMETERS_ORDER_NAMED,
+  [YP_TOKEN_LABEL] = YP_PARAMETERS_ORDER_KEYWORDS,
+  [YP_TOKEN_STAR] = YP_PARAMETERS_ORDER_REST,
+  [YP_TOKEN_STAR_STAR] = YP_PARAMETERS_ORDER_KEYWORDS_REST
+};
+
+// Check if current parameter follows valid parameters ordering. If not it adds an
+// error to the list without stopping the parsing, otherwise sets the parameters state
+// to the one corresponding to the current parameter.
+static void
+check_parameters_order(yp_parser_t *parser, parameters_order_t *current) {
+  parameters_order_t state = parameters_ordering[parser->current.type];
+
+if (*current == YP_PARAMETERS_ORDER_NOTHING_AFTER || state > *current) {
+    yp_error_list_append(&parser->error_list, "Wrong method parameters order", parser->current.start - parser->start);
+  } else if (state < *current) {
+    *current = state;
+  }
+}
+
 // Parse a list of parameters on a method definition.
 static yp_node_t *
 parse_parameters(yp_parser_t *parser) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
   bool parsing = true;
 
+  parameters_order_t order = YP_PARAMETERS_ORDER_NONE;
+
   while (parsing) {
+    check_parameters_order(parser, &order);
+
     switch (parser->current.type) {
       case YP_TOKEN_AMPERSAND: {
         parser_lex(parser);

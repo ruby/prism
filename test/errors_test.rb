@@ -185,6 +185,36 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression('def a(...); b(...); end; def c(x, y, z); b(...); end'), 'def a(...); b(...); end; def c(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
   end
 
+  test "method parameters after block" do
+    assert_errors_only "def foo(&block, a)\nend", ["Wrong method parameters order"]
+    assert_errors_only "def foo(&, a)\nend", ["Wrong method parameters order"]
+  end
+
+  test "method parameters after arguments forwarding" do
+    assert_errors_only "def foo(..., a)\nend", ["Wrong method parameters order"]
+  end
+
+  test "kargs before required parameters" do
+    assert_errors_only "def foo(*b, a)\nend", ["Wrong method parameters order"]
+  end
+
+  test "keywords parameters before required parameters" do
+    assert_errors_only "def foo(b:, a)\nend", ["Wrong method parameters order"]
+  end
+
+  test "rest keywords parameters before required parameters" do
+    assert_errors_only "def foo(**rest, b:)\nend", ["Wrong method parameters order"]
+  end
+
+  test "double arguments forwarding" do
+    assert_errors_only "def foo(..., ...)\nend", ["Wrong method parameters order"]
+  end
+
+  test "multiple error in parameters order" do
+    err = "Wrong method parameters order"
+    assert_errors_only "def foo(**args, a, b:)\nend", [err, err]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
@@ -192,6 +222,11 @@ class ErrorsTest < Test::Unit::TestCase
     result => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
 
     assert_equal expected, node
+    assert_equal errors, result.errors.map(&:message)
+  end
+
+  def assert_errors_only(source, errors)
+    result = YARP.parse(source)
     assert_equal errors, result.errors.map(&:message)
   end
 
