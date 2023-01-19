@@ -104,6 +104,12 @@ dump_file(VALUE self, VALUE filepath) {
   return value;
 }
 
+static void
+lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
+  VALUE ary = (VALUE) data;
+  rb_ary_push(ary, yp_token_new(parser, token));
+}
+
 // Return an array of tokens corresponding to the given source.
 static VALUE
 lex_source(source_t *source) {
@@ -111,11 +117,15 @@ lex_source(source_t *source) {
   yp_parser_init(&parser, source->source, source->size);
 
   VALUE ary = rb_ary_new();
-  for (yp_lex_token(&parser); parser.current.type != YP_TOKEN_EOF; yp_lex_token(&parser)) {
-    rb_ary_push(ary, yp_token_new(&parser, &parser.current));
-  }
+  yp_lex_callback_t lex_callback = (yp_lex_callback_t) {
+    .data = (void *) ary,
+    .callback = lex_token,
+  };
 
+  parser.lex_callback = &lex_callback;
+  yp_parse(&parser);
   yp_parser_free(&parser);
+
   return ary;
 }
 
