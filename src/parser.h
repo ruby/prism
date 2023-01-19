@@ -150,6 +150,23 @@ typedef struct {
 // our encoding and use it to parse identifiers.
 typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(const char *name, size_t width);
 
+// When you are lexing through a file, the lexer needs all of the information
+// that the parser additionally provides (for example, the local table). So if
+// you want to properly lex Ruby, you need to actually lex it in the context of
+// the parser. In order to provide this functionality, we optionally allow a
+// struct to be attached to the parser that calls back out to a user-provided
+// callback when each token is lexed.
+typedef struct {
+  // This opaque pointer is used to provide whatever information the user deemed
+  // necessary to the callback. In our case we use it to pass the array that the
+  // tokens get appended into.
+  void *data;
+
+  // This is the callback that is called when a token is lexed. It is passed the
+  // opaque data pointer, the parser, and the token that was lexed.
+  void (*callback)(void *data, yp_parser_t *parser, yp_token_t *token);
+} yp_lex_callback_t;
+
 // This struct represents the overall parser. It contains a reference to the
 // source file, as well as pointers that indicate where in the source it's
 // currently parsing. It also contains the most recent and current token that
@@ -182,6 +199,10 @@ struct yp_parser {
   // struct. If the function returns something that isn't NULL, we set that to
   // our encoding and use it to parse identifiers.
   yp_encoding_decode_callback_t encoding_decode_callback;
+
+  // This is an optional callback that can be attached to the parser that will
+  // be called whenever a new token is lexed by the parser.
+  yp_lex_callback_t *lex_callback;
 };
 
 #endif // YARP_PARSER_H

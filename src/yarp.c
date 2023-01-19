@@ -1028,6 +1028,15 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
           if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
 
+          // If the previous token is an identifier and it is in the local
+          // table, then this is a division. Otherwise, it is a regexp.
+          if (
+            parser->previous.type == YP_TOKEN_IDENTIFIER &&
+            yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)
+          ) {
+            return YP_TOKEN_SLASH;
+          }
+
           lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
           return YP_TOKEN_REGEXP_BEGIN;
 
@@ -1586,6 +1595,12 @@ parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
   return comment;
 }
 
+// Optionally call out to the lex callback if one is provided.
+static inline void
+parser_lex_callback(yp_parser_t *parser) {
+  parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
+}
+
 // Called when the parser requires a new token. The parser maintains a moving
 // window of two tokens at a time: parser.previous and parser.current. This
 // function will move the current token into the previous token and then
@@ -1601,6 +1616,7 @@ parser_lex(yp_parser_t *parser) {
 
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
+  if (parser->lex_callback) parser_lex_callback(parser);
 
   while (
     parser->current.type == YP_TOKEN_COMMENT ||
@@ -1617,6 +1633,8 @@ parser_lex(yp_parser_t *parser) {
 
         parser_lex_magic_comments(parser);
         parser->current.type = lex_token_type(parser);
+        if (parser->lex_callback) parser_lex_callback(parser);
+
         break;
       }
       case YP_TOKEN___END__: {
@@ -1624,6 +1642,8 @@ parser_lex(yp_parser_t *parser) {
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         parser->current.type = lex_token_type(parser);
+        if (parser->lex_callback) parser_lex_callback(parser);
+
         break;
       }
       case YP_TOKEN_EMBDOC_BEGIN: {
@@ -1633,6 +1653,7 @@ parser_lex(yp_parser_t *parser) {
         // the end of the embedded document.
         do {
           parser->current.type = lex_token_type(parser);
+          if (parser->lex_callback) parser_lex_callback(parser);
         } while ((parser->current.type != YP_TOKEN_EMBDOC_END) && (parser->current.type != YP_TOKEN_EOF));
 
         comment->end = parser->current.end - parser->start;
@@ -1642,6 +1663,7 @@ parser_lex(yp_parser_t *parser) {
           yp_error_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
         } else {
           parser->current.type = lex_token_type(parser);
+          if (parser->lex_callback) parser_lex_callback(parser);
         }
         break;
       }
@@ -1650,6 +1672,7 @@ parser_lex(yp_parser_t *parser) {
         // parser and keep lexing.
         yp_error_list_append(&parser->error_list, "Invalid token", parser->current.start - parser->start);
         parser->current.type = lex_token_type(parser);
+        if (parser->lex_callback) parser_lex_callback(parser);
         break;
       }
       default:
@@ -3910,7 +3933,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .current_context = NULL,
     .recovering = false,
     .encoding = yp_encoding_utf_8,
-    .encoding_decode_callback = undecodeable
+    .encoding_decode_callback = undecodeable,
+    .lex_callback = NULL
   };
 
   yp_list_init(&parser->error_list);

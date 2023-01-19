@@ -199,7 +199,7 @@ module YARP
       tokens << [[line_number, line_byte], event, normalized, lexer_state]
     end
 
-    tokens
+    tokens[0...-1]
   end
 
   # Load the serialized AST using the source as a reference into a tree.
@@ -242,6 +242,7 @@ module YARP
     EMBEXPR_BEGIN: :on_embexpr_beg,
     EMBEXPR_END: :on_embexpr_end,
     EMBVAR: :on_embvar,
+    EOF: :on_eof,
     EQUAL: :on_op,
     EQUAL_EQUAL: :on_op,
     EQUAL_EQUAL_EQUAL: :on_op,

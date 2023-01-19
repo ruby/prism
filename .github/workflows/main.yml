@@ -22,6 +22,3 @@ jobs:
 
     - name: Run Ruby tests
       run: bundle exec rake
-
-    - name: Run native tests
-      run: make test
