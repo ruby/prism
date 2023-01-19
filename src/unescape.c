@@ -380,13 +380,13 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
             if (backslash[3] == '\\') {
               if (backslash[4] == 'C' && backslash[5] == '-' && char_is_ascii_printable(backslash[6])) {
                 cursor = backslash + 7;
-                dest[dest_length++] = meta_control_char(backslash[6]);
+                dest[dest_length++] = backslash[6] == '?' ? meta_char(0x7f) : meta_control_char(backslash[6]);
                 break;
               }
 
               if (backslash[4] == 'c' && char_is_ascii_printable(backslash[5])) {
                 cursor = backslash + 6;
-                dest[dest_length++] = meta_control_char(backslash[5]);
+                dest[dest_length++] = backslash[5] == '?' ? meta_char(0x7f) : meta_control_char(backslash[5]);
                 break;
               }
 

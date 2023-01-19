@@ -142,7 +142,7 @@ module UnescapeTest
     def each_printable
       (1..127).each do |ord|
         chr = ord.chr
-        yield chr if chr.match?(/[:print:]/)
+        yield chr if chr.match?(/[[:print:]]/) && chr != " " && chr != "\\"
       end
     end
   end
