@@ -1,0 +1,106 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+$:.unshift(File.expand_path("../test", __dir__))
+
+require "yarp"
+require "optparse"
+require "digest"
+
+options = {}
+OptionParser.new do |o|
+  o.banner = "Usage: bin/specs [options]"
+  o.on("--dry-run", "Write to stdout instead of the spec file.", TrueClass)
+end.parse!(into: options)
+
+class Printer
+  def print(node, io: StringIO.new)
+    pretty_output_lines(node).each { |line| io.puts(line) }
+  end
+
+  private
+
+  def pretty_output_lines(node, depth: 0)
+    indent = " " * depth
+    return ["#{indent}(#{node.name})"] if node.child_nodes.empty?
+
+    lines = ["#{indent}(#{node.name}"]
+    node.child_nodes.each do |child|
+      lines += pretty_output_lines(child, depth: depth + 1)
+    end
+
+    lines.last << ")"
+    lines
+  end
+end
+
+class SexprVisitor < YARP::BasicVisitor
+  TreeNode = Struct.new(:name, :child_nodes) do
+    def initialize(name) = super(name, [])
+  end
+
+  attr_reader :tree
+
+  def initialize = @stack = []
+
+  def visit(node)
+    return unless node
+
+    @stack << TreeNode.new(node.class.name.split("::").last)
+    visit_child_nodes(node)
+    node = @stack.pop
+
+    if @stack.empty?
+      @tree = node
+    else
+      @stack.last.child_nodes << node
+    end
+  end
+end
+
+module ParsePatch
+  module SingletonMethods
+    def parse(source) = super.tap { sources << source }
+    def sources = @sources ||= Set.new
+  end
+
+  def self.prepended(mod)
+    mod.singleton_class.alias_method :parse_without_patch, :parse
+    mod.singleton_class.prepend(SingletonMethods)
+  end
+end
+
+YARP.prepend(ParsePatch)
+
+require "test_helper"
+require "parse_test"
+
+unless Test::Unit::AutoRunner.run(false, nil, ["--verbose=silent"])
+  puts "❌ There were errors while running the tests. Please fix them before generating the specs."
+  exit(1)
+end
+
+filepath = File.join("specs", "specs.txt")
+io = options[:"dry-run"] ? $stdout : File.open(filepath, "w")
+
+visitor = SexprVisitor.new
+YARP.sources.sort.each do |source|
+  visitor.visit(YARP.parse_without_patch(source).node)
+
+  io.puts "=" * 80
+  io.puts Digest::MD5.hexdigest(source)
+  io.puts "=" * 80
+  io.puts
+  io.puts source
+  io.puts
+  io.puts "-" * 80
+  io.puts
+  Printer.new.print(visitor.tree, io: io)
+  io.puts
+end
+
+exit if options[:"dry-run"]
+
+puts "✅ successfully wrote specs to `#{filepath}`"
+io.close
