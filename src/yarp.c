@@ -1756,6 +1756,7 @@ context_pop(yp_parser_t *parser) {
 // they are named binding power to represent the manner in which nodes are bound
 // together in the stack.
 typedef enum {
+  BINDING_POWER_UNSET = 0,       // used to indicate this token cannot be used as an infix operator
   BINDING_POWER_NONE = 1,
   BINDING_POWER_BRACES,          // braces
   BINDING_POWER_MODIFIER,        // if unless until while
@@ -1807,12 +1808,6 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   // and or
   [YP_TOKEN_KEYWORD_AND] = LEFT_ASSOCIATIVE(BINDING_POWER_COMPOSITION),
   [YP_TOKEN_KEYWORD_OR] = LEFT_ASSOCIATIVE(BINDING_POWER_COMPOSITION),
-
-  // not
-  [YP_TOKEN_KEYWORD_NOT] = RIGHT_ASSOCIATIVE(BINDING_POWER_NOT),
-
-  // defined?
-  [YP_TOKEN_KEYWORD_DEFINED] = RIGHT_ASSOCIATIVE(BINDING_POWER_DEFINED),
 
   // &&= &= ^= = >>= <<= -= %= |= += /= *= **=
   [YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
@@ -2063,14 +2058,20 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
 // Parse a list of arguments.
 static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
-  if (!accept(parser, terminator)) {
-    while (parser->current.type != YP_TOKEN_EOF) {
-      yp_node_t *argument = parse_argument(parser, arguments);
-      yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
-
-      if ((argument->type == YP_NODE_MISSING_NODE) || accept(parser, terminator)) break;
-      expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
+  while (
+    parser->current.type != terminator &&
+    parser->current.type != YP_TOKEN_NEWLINE &&
+    parser->current.type != YP_TOKEN_SEMICOLON &&
+    parser->current.type != YP_TOKEN_EOF
+  ) {
+    if (arguments->as.arguments_node.arguments.size > 0) {
+      expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
+
+    yp_node_t *argument = parse_argument(parser, arguments);
+    yp_node_list_append(parser, arguments, &arguments->as.arguments_node.arguments, argument);
+
+    if (argument->type == YP_NODE_MISSING_NODE) break;
   }
 }
 
@@ -2087,24 +2088,64 @@ typedef struct {
 // present.
 static void
 parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
-  if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-    arguments->opening = parser->previous;
+  switch (parser->current.type) {
+    case YP_TOKEN_EOF:
+    case YP_TOKEN_BRACE_RIGHT:
+    case YP_TOKEN_BRACKET_RIGHT:
+    case YP_TOKEN_COLON:
+    case YP_TOKEN_COMMA:
+    case YP_TOKEN_EMBEXPR_END:
+    case YP_TOKEN_EQUAL_GREATER:
+    case YP_TOKEN_KEYWORD_DO:
+    case YP_TOKEN_KEYWORD_END:
+    case YP_TOKEN_KEYWORD_IN:
+    case YP_TOKEN_NEWLINE:
+    case YP_TOKEN_PARENTHESIS_RIGHT:
+    case YP_TOKEN_SEMICOLON: {
+      // The reason we need this short-circuit is because we're using the
+      // binding powers table to tell us if the subsequent token could
+      // potentially be an argument. If there _is_ a binding power for one of
+      // these tokens, then we should remove it from this list and let it be
+      // handled by the default case below.
+      assert(binding_powers[parser->current.type].left == BINDING_POWER_UNSET);
 
-    if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+      not_provided(&arguments->opening, parser->previous.end);
+      not_provided(&arguments->closing, parser->previous.end);
+
       arguments->arguments = NULL;
-      arguments->closing = parser->previous;
-    } else {
-      arguments->arguments = yp_node_arguments_node_create(parser);
-      parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
-      arguments->closing = parser->previous;
+      break;
     }
-  } else {
-    not_provided(&arguments->opening, parser->previous.end);
+    case YP_TOKEN_PARENTHESIS_LEFT: {
+      parser_lex(parser);
+      arguments->opening = parser->previous;
 
-    // TODO: here we should handle arguments without parentheses.
-    arguments->arguments = NULL;
+      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+        arguments->arguments = NULL;
+        arguments->closing = parser->previous;
+      } else {
+        arguments->arguments = yp_node_arguments_node_create(parser);
+        parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
+        arguments->closing = parser->previous;
+      }
+      break;
+    }
+    default: {
+      not_provided(&arguments->opening, parser->previous.end);
 
-    not_provided(&arguments->closing, parser->previous.end);
+      if (binding_powers[parser->current.type].left == BINDING_POWER_UNSET) {
+        // If we get here, then the subsequent token cannot be used as an infix
+        // operator. In this case we assume the subsequent token is part of an
+        // argument to this method call.
+        arguments->arguments = yp_node_arguments_node_create(parser);
+        parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
+      } else {
+        arguments->arguments = NULL;
+      }
+
+      not_provided(&arguments->closing, parser->previous.end);
+      break;
+    }
   }
 }
 
@@ -2704,6 +2745,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *node = yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
       yp_string_shared_init(&node->as.call_node.name, message.start, message.end);
+
       return node;
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
@@ -3724,6 +3766,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         } else {
           arguments = yp_node_arguments_node_create(parser);
           parse_arguments(parser, arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after arguments.");
           rparen = parser->previous;
         }
 
@@ -3838,6 +3881,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
       yp_node_t *arguments = yp_node_arguments_node_create(parser);
       parse_arguments(parser, arguments, YP_TOKEN_BRACKET_RIGHT);
+      expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
 
       yp_token_t call_operator;
       not_provided(&call_operator, start);

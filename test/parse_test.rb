@@ -522,6 +522,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a&.b(c)"
   end
 
+  test "call without parentheses" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      nil,
+      ArgumentsNode([expression("b"), expression("c")]),
+      nil,
+      "a"
+    )
+
+    assert_parses expected, "a b, c"
+  end
+
+  test "call without parentheses with a receiver" do
+    expected = CallNode(
+      expression("a"),
+      DOT("."),
+      IDENTIFIER("b"),
+      nil,
+      ArgumentsNode([expression("c"), expression("d")]),
+      nil,
+      "b"
+    )
+
+    assert_parses expected, "a.b c, d"
+  end
+
   test "character literal" do
     assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil, "a"), "?a"
   end
