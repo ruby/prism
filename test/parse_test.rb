@@ -622,13 +622,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "top-level constant path read" do
     expected = ConstantPathNode(
-      nil,
+      ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A"))),
       COLON_COLON("::"),
-      ConstantPathNode(
-        ConstantRead(CONSTANT("A")),
-        COLON_COLON("::"),
-        ConstantRead(CONSTANT("B"))
-      )
+      ConstantRead(CONSTANT("B"))
     )
 
     assert_parses expected, "::A::B"
@@ -637,13 +633,9 @@ class ParseTest < Test::Unit::TestCase
   test "top-level constant path assignment" do
     expected = ConstantPathWriteNode(
       ConstantPathNode(
-        nil,
+        ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A"))),
         COLON_COLON("::"),
-        ConstantPathNode(
-          ConstantRead(CONSTANT("A")),
-          COLON_COLON("::"),
-          ConstantRead(CONSTANT("B"))
-        )
+        ConstantRead(CONSTANT("B"))
       ),
       EQUAL("="),
       IntegerLiteral(INTEGER("1"))
@@ -653,18 +645,14 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "top level constant with method inside" do
-    expected = ConstantPathNode(
-      nil,
+    expected = CallNode(
+      ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A"))),
       COLON_COLON("::"),
-      CallNode(
-        ConstantRead(CONSTANT("A")),
-        COLON_COLON("::"),
-        IDENTIFIER("foo"),
-        nil,
-        nil,
-        nil,
-        "foo"
-      )
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      nil,
+      "foo"
     )
 
     assert_parses expected, "::A::foo"
