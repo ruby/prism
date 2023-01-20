@@ -186,13 +186,13 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "top level constant with downcased identifier" do
-    expected = CallNode(nil, COLON_COLON("::"), IDENTIFIER("foo"), nil, nil, nil, "foo")
-    assert_errors expected, "::foo", ["Expected constant after ::."]
+    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(MISSING("")))
+    assert_errors expected, "::foo", ["Expected a constant after ::."]
   end
 
   test "top level constant starting with downcased identifier" do
-    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A")))
-    assert_errors expected, "::foo::A", ["Expected constant after ::."]
+    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(MISSING("")))
+    assert_errors expected, "::foo::A", ["Expected a constant after ::."]
   end
 
   private
