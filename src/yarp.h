@@ -73,10 +73,8 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 __attribute__((__visibility__("default"))) extern void
 yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer);
 
+// Returns a string representation of the given token type.
 __attribute__((__visibility__("default"))) extern const char *
 yp_token_type_to_str(yp_token_type_t token_type);
-
-__attribute__((__visibility__("default"))) extern yp_token_type_t
-yp_token_type_from_str(const char *str);
 
 #endif

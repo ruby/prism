@@ -6,6 +6,7 @@
 #include "ast.h"
 #include <string.h>
 
+// Returns a string representation of the given token type.
 __attribute__((__visibility__("default"))) const char *
 yp_token_type_to_str(yp_token_type_t token_type)
 {
@@ -18,14 +19,4 @@ yp_token_type_to_str(yp_token_type_t token_type)
       return "MAXIMUM";
   }
   return "\0";
-}
-
-__attribute__((__visibility__("default"))) yp_token_type_t
-yp_token_type_from_str(const char *str)
-{
-<%- tokens.sort_by { |token| [*token.name.split("_"), *5.times.map { "ZZZ" }] }.each do |token| -%>
-  if (strncmp(str, "<%= token.name %>", <%= token.name.length %>) == 0) return YP_TOKEN_<%= token.name %>;
-<%- end -%>
-  // Fallback
-  return YP_TOKEN_INVALID;
 }
