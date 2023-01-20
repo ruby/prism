@@ -1037,6 +1037,7 @@ lex_token_type(yp_parser_t *parser) {
         case '/':
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
           if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
+          if (token_type_is_numeric(parser->previous.type)) return YP_TOKEN_SLASH;
 
           // If the previous token is an identifier and it is in the local
           // table, then this is a division. Otherwise, it is a regexp.

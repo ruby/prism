@@ -235,6 +235,12 @@ class ParseTest < Test::Unit::TestCase
     assert_parses CallNode(expression("1"), nil, SLASH("/"), nil, ArgumentsNode([expression("2")]), nil, "/"), "1 / 2"
   end
 
+  test "binary / without spaces" do
+    assert_parses CallNode(
+      ImaginaryLiteral(IMAGINARY_NUMBER("1i")), nil, SLASH("/"), nil, ArgumentsNode([ImaginaryLiteral(IMAGINARY_NUMBER("2i"))]), nil, "/"
+    ), "1i/2i"
+  end
+
   test "binary *" do
     assert_parses CallNode(expression("1"), nil, STAR("*"), nil, ArgumentsNode([expression("2")]), nil, "*"), "1 * 2"
   end
