@@ -48,8 +48,7 @@ The repository contains the infrastructure for both a shared library (librubypar
 ├── src
 │   ├── yarp.c            main entrypoint into the shared library
 │   └── yarp.h            main header file for the shared library
-├── test                  Ruby tests for the Ruby library
-└── test-native           C tests for the shared library
+└── test                  Ruby tests for the Ruby library
 ```
 
 ## Contributing
