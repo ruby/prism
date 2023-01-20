@@ -2531,6 +2531,10 @@ parse_interpolated_string_parts(yp_parser_t *parser, yp_token_type_t end_type, y
   }
 }
 
+// Early declaration to make it accessible inside parse_expression_prefix
+static inline yp_node_t *
+parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t binding_power);
+
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
@@ -2673,6 +2677,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_class_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_CONSTANT:
       return yp_node_constant_read_create(parser, &parser->previous);
+    case YP_TOKEN_COLON_COLON: {
+      if (parser->current.type != YP_TOKEN_CONSTANT) {
+        yp_error_list_append(&parser->error_list, "Expected constant after ::.", parser->previous.start - parser->start);
+      }
+
+      return parse_expression_infix(parser, NULL, BINDING_POWER_CALL);
+    }
     case YP_TOKEN_FLOAT:
       return yp_node_float_literal_create(parser, &parser->previous);
     case YP_TOKEN_GLOBAL_VARIABLE:
