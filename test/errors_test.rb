@@ -195,6 +195,18 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "::foo::A", ["Expected a constant after ::."]
   end
 
+  test "aliasing global variable with non global variable" do
+    assert_errors expression("alias $a b"), "alias $a b", ["Expected a global variable."]
+  end
+
+  test "aliasing non global variable with global variable" do
+    assert_errors expression("alias a $b"), "alias a $b", ["Expected a bare word or symbol argument."]
+  end
+
+  test "aliasing global variable with global number variable" do
+    assert_errors expression("alias $a $1"), "alias $a $1", ["Can't make alias for number variables."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

@@ -52,6 +52,26 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "alias :foo :bar"
   end
 
+  test "alias global variables" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      GlobalVariableRead(GLOBAL_VARIABLE("$foo")),
+      GlobalVariableRead(GLOBAL_VARIABLE("$bar"))
+    )
+
+    assert_parses expected, "alias $foo $bar"
+  end
+
+  test "alias backreference global variables" do
+    expected = AliasNode(
+      KEYWORD_ALIAS("alias"),
+      GlobalVariableRead(GLOBAL_VARIABLE("$a")),
+      GlobalVariableRead(BACK_REFERENCE("$'"))
+    )
+
+    assert_parses expected, "alias $a $'"
+  end
+
   test "and keyword" do
     assert_parses AndNode(expression("1"), KEYWORD_AND("and"), expression("2")), "1 and 2"
   end
