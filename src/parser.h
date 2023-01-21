@@ -148,6 +148,7 @@ typedef enum {
   YP_CONTEXT_WHILE,       // a while statement
   YP_CONTEXT_UNTIL,       // an until statement
   YP_CONTEXT_EMBEXPR,     // an interpolated expression
+  YP_CONTEXT_BLOCK_BRACES,      // expressions in block arguments using braces
   YP_CONTEXT_BEGIN,       // a begin statement
   YP_CONTEXT_SCLASS,      // a singleton class definition
   YP_CONTEXT_FOR,         // a for loop
