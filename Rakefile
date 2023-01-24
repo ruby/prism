@@ -44,8 +44,9 @@ task make: :templates do
 end
 
 task generate_compilation_database: :templates do
-  sh "which bear"
-  abort("Installing bear is required to generate the compilation database") unless $?.success?
+  sh "which bear" do |ok, _|
+    abort("Installing bear is required to generate the compilation database") unless ok
+  end
 
   sh "bear -- make"
 end
