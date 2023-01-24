@@ -1338,12 +1338,24 @@ lex_token_type(yp_parser_t *parser) {
           // The only way to get here is if this is immediately followed by a
           // newline.
           (void) match(parser, '\n');
-          return YP_TOKEN_NEWLINE;
+
+          // fallthrough
         }
 
         case '\n':
           lex_state_set(parser, YP_LEX_STATE_BEG);
           parser->command_start = true;
+
+          // At this point we are about to return a newline token. We need to
+          // check if we have any heredocs that we need to process. If we do,
+          // then we need to switch to the heredoc mode and process the heredoc.
+          if (parser->current_heredoc) {
+            lex_mode_push(parser, (yp_lex_mode_t) {
+              .mode = YP_LEX_HEREDOC,
+              .as.heredoc.node = parser->current_heredoc,
+            });
+          }
+
           return YP_TOKEN_NEWLINE;
 
         // ,
@@ -2244,9 +2256,10 @@ lex_token_type(yp_parser_t *parser) {
       parser->current.end = parser->end;
       return YP_TOKEN_EOF;
     }
-    case YP_LEX_HEREDOC:
+    case YP_LEX_HEREDOC: {
       assert(0);
       break;
+    }
     case YP_LEX_SYMBOL: {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;

@@ -119,6 +119,11 @@ typedef struct yp_lex_mode {
       // Whether or not interpolation is allowed in this symbol.
       bool interpolation;
     } symbol;
+
+    struct {
+      // This is the heredoc node that we are currently filling in.
+      yp_node_t *node;
+    } heredoc;
   } as;
 
   // The previous lex state so that it knows how to pop.
