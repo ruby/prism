@@ -14,6 +14,6 @@ src/ast.h: bin/templates/src/ast.h.erb
 	rake $@
 
 clean:
-	rm -f build/librubyparser.$(SOEXT) ext/yarp/node.c lib/yarp/{node,prettyprint,serialize}.rb src/{ast.h,node.{c,h},serialize.c,token_type.c}
+	rm -f build/librubyparser.$(SOEXT) ext/yarp/node.c lib/yarp/{node,serialize}.rb src/{ast.h,node.{c,h},prettyprint.c,serialize.c,token_type.c}
 
 .PHONY: clean
