@@ -277,6 +277,8 @@ module YARP
     GREATER_GREATER: :on_op,
     GREATER_GREATER_EQUAL: :on_op,
     GLOBAL_VARIABLE: :on_gvar,
+    HEREDOC_END: :on_heredoc_end,
+    HEREDOC_START: :on_heredoc_beg,
     IDENTIFIER: :on_ident,
     IMAGINARY_NUMBER: :on_imaginary,
     INTEGER: :on_int,

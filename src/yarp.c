@@ -1492,8 +1492,12 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '<')) {
             if (match(parser, '=')) return YP_TOKEN_LESS_LESS_EQUAL;
 
-            // We don't yet handle heredocs.
-            if (match(parser, '-') || match(parser, '~')) return YP_TOKEN_EOF;
+            // Here we need to lex the heredoc declaration. <<-HERE or <<~HERE
+            if (match(parser, '-') || match(parser, '~')) {
+              size_t width;
+              while ((width = char_is_identifier(parser, parser->current.end))) {
+                parser->current.end += width;
+              }
 
             if (parser->lex_state == YP_LEX_STATE_CLASS) {
               parser->command_start = true;
@@ -1504,6 +1508,9 @@ lex_token_type(yp_parser_t *parser) {
             } else {
               lex_state_set(parser, YP_LEX_STATE_BEG);
             }
+
+            // TODO: this is actually incorrect. It could potentially be the
+            // start of a heredoc. <<HERE
             return YP_TOKEN_LESS_LESS;
           }
 
@@ -3833,6 +3840,15 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_global_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_IDENTIFIER:
       return parse_identifier(parser);
+    case YP_TOKEN_HEREDOC_START: {
+      yp_node_t *node = yp_node_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+
+      // We only support one heredoc at the moment.
+      assert(parser->current_heredoc == NULL);
+
+      parser->current_heredoc = node;
+      return node;
+    }
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
     case YP_TOKEN_INSTANCE_VARIABLE:
@@ -5193,7 +5209,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .recovering = false,
     .encoding = yp_encoding_utf_8,
     .encoding_decode_callback = undecodeable,
-    .lex_callback = NULL
+    .lex_callback = NULL,
+    .current_heredoc = NULL
   };
 
   yp_state_stack_init(&parser->do_loop_stack);

@@ -258,6 +258,10 @@ struct yp_parser {
   // This is an optional callback that can be attached to the parser that will
   // be called whenever a new token is lexed by the parser.
   yp_lex_callback_t *lex_callback;
+
+  // This is the current heredoc where we have found the declaration but have
+  // not yet parsed the body.
+  yp_node_t *current_heredoc;
 };
 
 #endif // YARP_PARSER_H
