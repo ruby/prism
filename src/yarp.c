@@ -360,6 +360,7 @@ debug_lex_mode(yp_parser_t *parser) {
     case YP_LEX_EMBDOC: fprintf(stderr, "lexing in EMBDOC mode\n"); return;
     case YP_LEX_EMBEXPR: fprintf(stderr, "lexing in EMBEXPR mode\n"); return;
     case YP_LEX_EMBVAR: fprintf(stderr, "lexing in EMBVAR mode\n"); return;
+    case YP_LEX_HEREDOC: fprintf(stderr, "lexing in HEREDOC mode\n"); return;
     case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
     case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
     case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
@@ -2177,13 +2178,16 @@ lex_token_type(yp_parser_t *parser) {
 
       // These are the places where we need to split up the content of the
       // string. We'll use strpbrk to find the first of these characters.
-      char breakpoints[] = " \\\0";
+      char breakpoints[3];
       breakpoints[0] = parser->lex_modes.current->as.string.terminator;
+      breakpoints[1] = '\\';
 
       // If interpolation is allowed, then we're going to check for the #
       // character. Otherwise we'll only look for escapes and the terminator.
       if (parser->lex_modes.current->as.string.interpolation) {
         breakpoints[2] = '#';
+      } else {
+        breakpoints[2] = '\0';
       }
 
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
@@ -2233,6 +2237,9 @@ lex_token_type(yp_parser_t *parser) {
       parser->current.end = parser->end;
       return YP_TOKEN_EOF;
     }
+    case YP_LEX_HEREDOC:
+      assert(0);
+      break;
     case YP_LEX_SYMBOL: {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;

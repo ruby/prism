@@ -1912,6 +1912,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses GlobalVariableWrite(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), "$abc = 1"
   end
 
+  test "heredocs" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-EOF"),
+      [STRING_CONTENT("  a\n")],
+      HEREDOC_END("EOF"),
+      0
+    )
+
+    assert_parses nil, "<<-EOF\n  a\nEOF"
+  end
+
   test "identifier" do
     assert_parses CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"), "a"
   end

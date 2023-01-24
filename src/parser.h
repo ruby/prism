@@ -69,6 +69,9 @@ typedef struct yp_lex_mode {
     // inside of a string with the # shorthand.
     YP_LEX_EMBVAR,
 
+    // This state is used when you are inside the content of a heredoc.
+    YP_LEX_HEREDOC,
+
     // This state is used when we are lexing a list of tokens, as in a %w word
     // list literal or a %i symbol list literal.
     YP_LEX_LIST,
