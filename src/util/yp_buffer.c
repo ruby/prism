@@ -62,6 +62,13 @@ yp_buffer_append_u64(yp_buffer_t *buffer, uint64_t value) {
   yp_buffer_append(buffer, source, sizeof(uint64_t));
 }
 
+// Append an integer to the buffer.
+void
+yp_buffer_append_int(yp_buffer_t *buffer, int value) {
+  const void *source = &value;
+  yp_buffer_append(buffer, source, sizeof(int));
+}
+
 // Free the memory associated with the buffer.
 void
 yp_buffer_free(yp_buffer_t *buffer) {

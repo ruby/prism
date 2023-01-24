@@ -64,6 +64,13 @@ class LocationParam < Struct.new(:name)
   def java_type = "Location"
 end
 
+# This represents an integer parameter.
+class IntegerParam < Struct.new(:name)
+  def param = "int #{name}"
+  def rbs_class = "Integer"
+  def java_type = "int"
+end
+
 # This class represents a node in the tree, configured by the config.yml file in
 # YAML format. It contains information about the name of the node, the various
 # child nodes it contains, and how to obtain the location of the node in the
@@ -99,6 +106,8 @@ class NodeType
           TokenListParam.new(name)
         when "location"
           LocationParam.new(name)
+        when "integer"
+          IntegerParam.new(name)
         else
           raise "Unknown param type: #{param["type"].inspect}"
         end

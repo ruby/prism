@@ -83,6 +83,7 @@ module YARP
           when TokenListParam then "io.read(4).unpack1(\"L\").times.map { load_token }"
           when OptionalTokenParam then "load_optional_token"
           when LocationParam then "load_location"
+          when IntegerParam then "io.read(4).unpack1(\"L\")"
           else raise
           end
         } + ["location"]).join(", ") -%>)

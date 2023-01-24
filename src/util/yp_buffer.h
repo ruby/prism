@@ -42,6 +42,10 @@ yp_buffer_append_u32(yp_buffer_t *buffer, uint32_t value);
 void
 yp_buffer_append_u64(yp_buffer_t *buffer, uint64_t value);
 
+// Append an integer to the buffer.
+void
+yp_buffer_append_int(yp_buffer_t *buffer, int value);
+
 // Free the memory associated with the buffer.
 __attribute__ ((__visibility__("default"))) extern void
 yp_buffer_free(yp_buffer_t *buffer);
