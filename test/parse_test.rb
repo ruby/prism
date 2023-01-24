@@ -1920,7 +1920,7 @@ class ParseTest < Test::Unit::TestCase
       0
     )
 
-    assert_parses nil, "<<-EOF\n  a\nEOF"
+    assert_parses expected, "<<-EOF\n  a\nEOF"
   end
 
   test "identifier" do
