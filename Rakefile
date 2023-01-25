@@ -43,15 +43,23 @@ task make: :templates do
   sh "make"
 end
 
-task generate_compilation_database: :templates do
-  sh "which bear"
-  abort("Installing bear is required to generate the compilation database") unless $?.success?
+task generate_compilation_database: [:clobber, :templates] do
+  sh "which bear" do |ok, _|
+    abort("Installing bear is required to generate the compilation database") unless ok
+  end
 
   sh "bear -- make"
 end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
+if RbConfig::CONFIG["host_os"] =~ /darwin/
+  so_ext = "dylib"
+else
+  so_ext = "so"
+end
+CLOBBER << "build/librubyparser.#{so_ext}"
+CLOBBER << "lib/yarp.so"
 
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"
