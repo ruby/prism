@@ -2903,10 +2903,12 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
         yp_token_t else_keyword = parser->previous;
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-        yp_node_t *rescue_else_statements = parse_statements(parser, YP_CONTEXT_RESCUE_ELSE);
+
+        yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_RESCUE_ELSE);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-        yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, rescue_else_statements, &parser->previous);
-        begin_node->as.begin_node.rescue_else_clause = else_node;
+
+        yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
+        begin_node->as.begin_node.else_clause = else_node;
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_ENSURE)) {
