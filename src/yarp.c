@@ -2418,10 +2418,10 @@ parse_symbol(yp_parser_t *parser, int mode) {
 
 }
 
-// Parse an argument to alias or undef which can either be a bare word, a
+// Parse an argument to undef which can either be a bare word, a
 // symbol, or an interpolated symbol.
 static inline yp_node_t *
-parse_alias_or_undef_argument(yp_parser_t *parser) {
+parse_undef_argument(yp_parser_t *parser) {
   switch (parser->current.type) {
     case YP_TOKEN_IDENTIFIER: {
       yp_token_t opening;
@@ -2440,6 +2440,38 @@ parse_alias_or_undef_argument(yp_parser_t *parser) {
     }
     default:
       yp_error_list_append(&parser->error_list, "Expected a bare word or symbol argument.", parser->current.start - parser->start);
+      return yp_node_missing_node_create(parser, parser->current.start - parser->start);
+  }
+}
+
+// Parse an argument to alias which can either be a bare word, a
+// symbol, an interpolated symbol or a global variable.
+static inline yp_node_t *
+parse_alias_argument(yp_parser_t *parser) {
+  switch (parser->current.type) {
+    case YP_TOKEN_IDENTIFIER: {
+      yp_token_t opening;
+      not_provided(&opening, parser->current.start);
+
+      yp_token_t closing;
+      not_provided(&closing, parser->previous.end);
+
+      parser_lex(parser);
+      return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
+    }
+    case YP_TOKEN_SYMBOL_BEGIN: {
+      int mode = parser->lex_modes.current->mode;
+      parser_lex(parser);
+      return parse_symbol(parser, mode);
+    }
+    case YP_TOKEN_BACK_REFERENCE:
+    case YP_TOKEN_NTH_REFERENCE:
+    case YP_TOKEN_GLOBAL_VARIABLE: {
+      parser_lex(parser);
+      return yp_node_global_variable_read_create(parser, &parser->previous);
+    }
+    default:
+      yp_error_list_append(&parser->error_list, "Expected a bare word, symbol or global variable argument.", parser->current.start - parser->start);
       return yp_node_missing_node_create(parser, parser->current.start - parser->start);
   }
 }
@@ -2765,8 +2797,49 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_source_line_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_ALIAS: {
       yp_token_t keyword = parser->previous;
-      yp_node_t *left = parse_alias_or_undef_argument(parser);
-      yp_node_t *right = parse_alias_or_undef_argument(parser);
+      yp_node_t *left = parse_alias_argument(parser);
+      yp_node_t *right = parse_alias_argument(parser);
+
+      switch (left->type) {
+        case YP_NODE_SYMBOL_NODE:
+        case YP_NODE_INTERPOLATED_SYMBOL_NODE: {
+          switch (right->type) {
+            case YP_NODE_SYMBOL_NODE:
+            case YP_NODE_INTERPOLATED_SYMBOL_NODE: {
+              break;
+            }
+            default: {
+              yp_error_list_append(&parser->error_list, "Expected a bare word or symbol argument.", parser->previous.start - parser->start);
+            }
+          }
+          break;
+        }
+        case YP_NODE_GLOBAL_VARIABLE_READ: {
+          if (right->type == YP_NODE_GLOBAL_VARIABLE_READ) {
+            switch(right->as.global_variable_read.name.type) {
+              case YP_TOKEN_BACK_REFERENCE:
+              case YP_TOKEN_GLOBAL_VARIABLE: {
+                break;
+              }
+              case YP_TOKEN_NTH_REFERENCE: {
+                yp_error_list_append(&parser->error_list, "Can't make alias for number variables.", parser->previous.start - parser->start);
+                break;
+              }
+              default: {
+                // Cannot hit here.
+                return NULL;
+              }
+            }
+          } else {
+            yp_error_list_append(&parser->error_list, "Expected a global variable.", parser->previous.start - parser->start);
+          }
+          break;
+        }
+        default: {
+          // Cannot hit here.
+          return NULL;
+        }
+      }
 
       return yp_node_alias_node_create(parser, &keyword, left, right);
     }
@@ -3089,13 +3162,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t keyword = parser->previous;
       yp_node_t *undef = yp_node_undef_node_create(parser, &keyword);
 
-      yp_node_t *name = parse_alias_or_undef_argument(parser);
+      yp_node_t *name = parse_undef_argument(parser);
       if (name->type == YP_NODE_MISSING_NODE) return undef;
 
       yp_node_list_append(parser, undef, &undef->as.undef_node.names, name);
 
       while (accept(parser, YP_TOKEN_COMMA)) {
-        name = parse_alias_or_undef_argument(parser);
+        name = parse_undef_argument(parser);
         if (name->type == YP_NODE_MISSING_NODE) return undef;
 
         yp_node_list_append(parser, undef, &undef->as.undef_node.names, name);
