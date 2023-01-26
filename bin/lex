@@ -13,9 +13,9 @@ puts pattern % ["-" * 70, "-" * 70]
 
 source = File.read(filepath)
 YARP.lex_ripper(source).zip(YARP.lex_compat(source)).each do |(ripper, yarp)|
-  left = ripper[...-1].inspect
-  right = (yarp || [])[...-1].inspect
+  left = ripper.inspect
+  right = yarp.inspect
 
   color = left == right ? "38;5;102" : "1;31"
-  puts "\033[#{color}m#{pattern}\033[0m" % [ripper.inspect, yarp.inspect]
+  puts "\033[#{color}m#{pattern}\033[0m" % [left, right]
 end
