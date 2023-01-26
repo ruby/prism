@@ -106,9 +106,9 @@ dump_file(VALUE self, VALUE filepath) {
 
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
-  VALUE yields = rb_ary_new();
+  VALUE yields = rb_ary_new_capa(2);
   rb_ary_push(yields, yp_token_new(parser, token));
-  rb_ary_push(yields, INT2FIX(0));
+  rb_ary_push(yields, INT2FIX(parser->lex_state));
 
   VALUE ary = (VALUE) data;
   rb_ary_push(ary, yields);

@@ -6,6 +6,13 @@
 #include "util/yp_list.h"
 #include "ast.h"
 
+// This enum provides various bits that represent different kinds of states that
+// the lexer can track. This is used to determine which kind of token to return
+// based on the context of the parser.
+typedef enum {
+  YP_LEX_STATE_NONE
+} yp_lex_state_t;
+
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
 // a string, the first token that we return is a TOKEN_STRING_BEGIN token. After
@@ -173,10 +180,12 @@ typedef struct {
 // currently parsing. It also contains the most recent and current token that
 // it's considering.
 struct yp_parser {
+  yp_lex_state_t lex_state; // the current state of the lexer
+
   struct {
-    yp_lex_mode_t *current;                 // the current state of the lexer
-    yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer states
-    size_t index;                           // the current index into the lexer state stack
+    yp_lex_mode_t *current;                 // the current mode of the lexer
+    yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes
+    size_t index;                           // the current index into the lexer mode stack
   } lex_modes;
 
   const char *start;   // the pointer to the start of the source

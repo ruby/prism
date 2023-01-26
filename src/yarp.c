@@ -3976,6 +3976,7 @@ undecodeable(const char *name, size_t length) {
 __attribute__((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   *parser = (yp_parser_t) {
+    .lex_state = YP_LEX_STATE_NONE,
     .lex_modes =
       {
         .index = 0,
