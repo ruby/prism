@@ -2658,7 +2658,11 @@ parse_undef_argument(yp_parser_t *parser) {
     }
     default:
       yp_error_list_append(&parser->error_list, "Expected a bare word or symbol argument.", parser->current.start - parser->start);
-      return yp_node_missing_node_create(parser, parser->current.start - parser->start);
+
+      return yp_node_missing_node_create(parser, &(yp_location_t) {
+        .start = parser->current.start,
+        .end = parser->current.end,
+      });
   }
 }
 
@@ -2688,7 +2692,11 @@ parse_alias_argument(yp_parser_t *parser) {
     }
     default:
       yp_error_list_append(&parser->error_list, "Expected a bare word, symbol or global variable argument.", parser->current.start - parser->start);
-      return yp_node_missing_node_create(parser, parser->current.start - parser->start);
+
+      return yp_node_missing_node_create(parser, &(yp_location_t) {
+        .start = parser->current.start,
+        .end = parser->current.end
+      });
   }
 }
 
@@ -3783,7 +3791,11 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       parser->current = parser->previous;
       parser->previous = recoverable;
-      return yp_node_missing_node_create(parser, parser->previous.start - parser->start);
+
+      return yp_node_missing_node_create(parser, &(yp_location_t) {
+        .start = parser->previous.start,
+        .end = parser->previous.end,
+      });
   }
 }
 
@@ -4081,7 +4093,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         // accidentally move past a ':' token that occurs after the syntax
         // error.
         yp_token_t colon = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
-        yp_node_t *false_expression = yp_node_missing_node_create(parser, colon.end - parser->start);
+        yp_node_t *false_expression = yp_node_missing_node_create(parser, &(yp_location_t) {
+          .start = colon.start,
+          .end = colon.end,
+        });
 
         return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
       }
@@ -4111,7 +4126,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           uint32_t position = delimiter.end - parser->start;
           yp_error_list_append(&parser->error_list, "Expected identifier or constant after '::'", position);
 
-          yp_node_t *child = yp_node_missing_node_create(parser, position);
+          yp_node_t *child = yp_node_missing_node_create(parser, &(yp_location_t) {
+            .start = delimiter.start,
+            .end = delimiter.end,
+          });
+
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
       }

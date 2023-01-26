@@ -5,8 +5,8 @@ extern VALUE rb_cYARPToken;
 extern VALUE rb_cYARPLocation;
 
 static VALUE
-location_new(yp_location_t *location) {
-  VALUE argv[] = { LONG2FIX(location->start), LONG2FIX(location->end) };
+location_new(yp_parser_t *parser, const char *start, const char *end) {
+  VALUE argv[] = { LONG2FIX(start - parser->start), LONG2FIX(end - parser->end) };
   return rb_class_new_instance(2, argv, rb_cYARPLocation);
 }
 
@@ -33,10 +33,7 @@ yp_token_new(yp_parser_t *parser, yp_token_t *token) {
   VALUE argv[] = {
     token_type(token),
     rb_str_new(token->start, token->end - token->start),
-    location_new(&(yp_location_t) {
-      .start = (uint32_t) (token->start - parser->start),
-      .end = (uint32_t) (token->end - parser->start),
-    }),
+    location_new(parser, token->start, token->end)
   };
 
   return rb_class_new_instance(3, argv, rb_cYARPToken);
@@ -78,7 +75,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node) {
       <%- end -%>
 
       // location
-      argv[<%= node.params.length %>] = location_new(&node->location);
+      argv[<%= node.params.length %>] = location_new(parser, node->location.start, node->location.end);
 
       return rb_class_new_instance(<%= node.params.length + 1 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= node.name %>")));
     }
