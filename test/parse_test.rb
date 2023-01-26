@@ -2480,7 +2480,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin\na\nrescue Exception\nb\nend"
   end
 
-  test "begin with rescue statement with variable" do
+  test "begin with rescue statement with local variable assignment" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       Statements([expression("a")]),
@@ -2488,7 +2488,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), NOT_PROVIDED(""), MissingNode()),
         Statements([expression("b")]),
         nil,
       ),
@@ -2498,6 +2498,62 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "begin\na\nrescue Exception => ex\nb\nend"
+  end
+
+  test "begin with rescue statement with reader call" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception"))],
+        EQUAL_GREATER("=>"),
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+          DOT("."),
+          IDENTIFIER("bar"),
+          nil,
+          nil,
+          nil,
+          "bar"
+        ),
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception => foo.bar\nb\nend"
+  end
+
+  test "begin with rescue statement with [] call" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [ConstantRead(CONSTANT("Exception"))],
+        EQUAL_GREATER("=>"),
+        CallNode(
+          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
+          nil,
+          BRACKET_LEFT_RIGHT(""),
+          nil,
+          ArgumentsNode([]),
+          nil,
+          "[]"
+        ),
+        Statements([expression("b")]),
+        nil
+      ),
+      nil,
+      nil,
+      KEYWORD_END("end"),
+    )
+
+    assert_parses expected, "begin\na\nrescue Exception => foo[]\nb\nend"
   end
 
   test "begin with rescue statement and exception list" do
@@ -2528,7 +2584,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception")), ConstantRead(CONSTANT("CustomException"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), NOT_PROVIDED(""), MissingNode()),
         Statements([expression("b")]),
         nil
       ),
@@ -2582,13 +2638,13 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), NOT_PROVIDED(""), MissingNode()),
         Statements([expression("b")]),
         RescueNode(
           KEYWORD_RESCUE("rescue"),
           [ConstantRead(CONSTANT("AnotherException")), ConstantRead(CONSTANT("OneMoreException"))],
           EQUAL_GREATER("=>"),
-          IDENTIFIER("ex"),
+          LocalVariableWrite(IDENTIFIER("ex"), NOT_PROVIDED(""), MissingNode()),
           Statements([expression("c")]),
           nil
         )
@@ -2685,7 +2741,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), NOT_PROVIDED(""), MissingNode()),
         Statements([expression("b")]),
         nil
       ),

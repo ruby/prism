@@ -2833,10 +2833,10 @@ parse_expression_prefix(yp_parser_t *parser) {
         parser_lex(parser);
         yp_token_t rescue_keyword = parser->previous;
 
-        yp_token_t exception_variable = not_provided(parser);
         yp_token_t equal_greater = not_provided(parser);
         yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, &exception_variable, statements, NULL);
+
+        yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, NULL, statements, NULL);
 
         while (parser->current.type == YP_TOKEN_CONSTANT) {
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
@@ -2849,8 +2849,13 @@ parse_expression_prefix(yp_parser_t *parser) {
         if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
           rescue->as.rescue_node.equal_greater = parser->previous;
 
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
-          rescue->as.rescue_node.exception_variable = parser->previous;
+          yp_node_t *assigned_node = parse_expression(parser, BINDING_POWER_NONE, "Expected variable name after `=>` in rescue statement");
+          if (assigned_node->as.call_node.receiver == NULL) {
+            yp_token_t message = assigned_node->as.call_node.message;
+            yp_node_t *value = yp_node_missing_node_create(parser, parser->previous.start - parser->start);
+            assigned_node = yp_node_local_variable_write_create(parser, &message, &equal_greater, value);
+          }
+          rescue->as.rescue_node.assigned_node = assigned_node;
         }
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -3539,7 +3544,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
   yp_token_t token = parser->previous;
 
   switch (token.type) {
-    case YP_TOKEN_EQUAL: {
+    case YP_TOKEN_EQUAL:
+    case YP_TOKEN_EQUAL_GREATER: {
       switch (node->type) {
         case YP_NODE_CLASS_VARIABLE_READ: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the class variable after =.");
