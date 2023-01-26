@@ -374,6 +374,8 @@ nodes:
         type: node
       - name: rescue_clause
         type: node?
+      - name: rescue_else_clause
+        type: node?
       - name: ensure_clause
         type: node?
       - name: end_keyword

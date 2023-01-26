@@ -30,6 +30,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_POSTEXE: return "POSTEXE";
     case YP_CONTEXT_PREEXE: return "PREEXE";
     case YP_CONTEXT_RESCUE: return "RESCUE";
+    case YP_CONTEXT_RESCUE_ELSE: return "RESCUE ELSE";
     case YP_CONTEXT_SCLASS: return "SCLASS";
     case YP_CONTEXT_UNLESS: return "UNLESS";
     case YP_CONTEXT_UNTIL: return "UNTIL";
@@ -1709,7 +1710,9 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
     case YP_CONTEXT_BEGIN:
     case YP_CONTEXT_RESCUE:
-      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_END;
+      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_RESCUE_ELSE:
+      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
   }
 
   return false;
@@ -2777,7 +2780,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t end_keyword;
       not_provided(&end_keyword, parser->previous.end);
 
-      yp_node_t *begin_node = yp_node_begin_node_create(parser, &begin_keyword, begin_statements, NULL, NULL, &end_keyword);
+      yp_node_t *begin_node = yp_node_begin_node_create(parser, &begin_keyword, begin_statements, NULL, NULL, NULL, &end_keyword);
       yp_node_t *current = NULL;
 
       // Parse any number of rescue clauses. This will form a linked list of if
@@ -2822,6 +2825,15 @@ parse_expression_prefix(yp_parser_t *parser) {
           current->as.rescue_node.consequent = rescue;
         }
         current = rescue;
+      }
+
+      if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
+        yp_token_t else_keyword = parser->previous;
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+        yp_node_t *rescue_else_statements = parse_statements(parser, YP_CONTEXT_RESCUE_ELSE);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+        yp_node_t *else_node = yp_node_else_node_create(parser, &else_keyword, rescue_else_statements, &parser->previous);
+        begin_node->as.begin_node.rescue_else_clause = else_node;
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_ENSURE)) {
