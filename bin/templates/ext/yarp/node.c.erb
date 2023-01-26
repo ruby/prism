@@ -6,7 +6,7 @@ extern VALUE rb_cYARPLocation;
 
 static VALUE
 location_new(yp_parser_t *parser, const char *start, const char *end) {
-  VALUE argv[] = { LONG2FIX(start - parser->start), LONG2FIX(end - parser->end) };
+  VALUE argv[] = { LONG2FIX(start - parser->start), LONG2FIX(end - parser->start) };
   return rb_class_new_instance(2, argv, rb_cYARPLocation);
 }
 

@@ -121,7 +121,7 @@ class NodeType
     in NodeParam then "#{param.name}->location.start"
     in OptionalNodeParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->location.start)"
     in TokenParam then "#{param.name}->start"
-    in OptionalTokenParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
+    in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
     in NodeListParam | TokenListParam then "0"
     else
       raise "Unknown param type: #{param.inspect}"
@@ -133,7 +133,7 @@ class NodeType
     in NodeParam then "#{param.name}->location.end"
     in OptionalNodeParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->location.end)"
     in TokenParam then "#{param.name}->end"
-    in OptionalTokenParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
+    in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
     in NodeListParam | TokenListParam then "0"
     else
       raise "Unknown param type: #{param.inspect}"
