@@ -106,8 +106,12 @@ dump_file(VALUE self, VALUE filepath) {
 
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
+  VALUE yields = rb_ary_new();
+  rb_ary_push(yields, yp_token_new(parser, token));
+  rb_ary_push(yields, INT2FIX(0));
+
   VALUE ary = (VALUE) data;
-  rb_ary_push(ary, yp_token_new(parser, token));
+  rb_ary_push(ary, yields);
 }
 
 // Return an array of tokens corresponding to the given source.

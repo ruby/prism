@@ -161,10 +161,8 @@ module YARP
     offsets = [0]
     source.each_line { |line| offsets << offsets.last + line.bytesize }
 
-    lexer_state = Ripper::Lexer::State.new(0)
     tokens = []
-
-    lex(source).each do |token|
+    lex(source).each do |(token, state)|
       line_number, line_offset =
         offsets.each_with_index.detect do |(offset, line)|
           break [line, offsets[line - 1]] if token.location.start_offset < offset
@@ -196,6 +194,7 @@ module YARP
           value
         end
 
+      lexer_state = Ripper::Lexer::State.new(state)
       tokens << [[line_number, line_byte], event, normalized, lexer_state]
     end
 
