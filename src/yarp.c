@@ -1502,44 +1502,33 @@ lex_token_type(yp_parser_t *parser) {
         // < << <<= <= <=>
         case '<':
           if (match(parser, '<')) {
-            if (match(parser, '=')) return YP_TOKEN_LESS_LESS_EQUAL;
-
-            // Here we need to lex the heredoc declaration. <<-HERE or <<~HERE
-            if (match(parser, '-') || match(parser, '~')) {
+            if (!lex_state_p(parser, YP_LEX_STATE_DOT | YP_LEX_STATE_CLASS) && !lex_state_end_p(parser) && (!lex_state_p(parser, YP_LEX_STATE_ARG_ANY) || space_seen)) {
+              match(parser, '-') || match(parser, '~');
               size_t width;
+
               while ((width = char_is_identifier(parser, parser->current.end))) {
                 parser->current.end += width;
               }
 
-            if (parser->lex_state == YP_LEX_STATE_CLASS) {
-              parser->command_start = true;
-            }
-
-            if (lex_state_operator_p(parser)) {
-              lex_state_set(parser, YP_LEX_STATE_ARG);
+              return YP_TOKEN_HEREDOC_START;
             } else {
               lex_state_set(parser, YP_LEX_STATE_BEG);
+              return YP_TOKEN_LESS_LESS;
             }
-
-            // TODO: this is actually incorrect. It could potentially be the
-            // start of a heredoc. <<HERE
-            return YP_TOKEN_LESS_LESS;
-          }
-
-          if (match(parser, '=')) {
-            if (lex_state_operator_p(parser)) {
-              lex_state_set(parser, YP_LEX_STATE_ARG);
-            } else {
-              lex_state_set(parser, YP_LEX_STATE_BEG);
-            }
-            return match(parser, '>') ? YP_TOKEN_LESS_EQUAL_GREATER : YP_TOKEN_LESS_EQUAL;
           }
 
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
+            if (lex_state_p(parser, YP_LEX_STATE_CLASS)) parser->command_start = true;
             lex_state_set(parser, YP_LEX_STATE_BEG);
           }
+
+          if (match(parser, '=')) {
+            if (match(parser, '>')) return YP_TOKEN_LESS_EQUAL_GREATER;
+            return YP_TOKEN_LESS_EQUAL;
+          }
+
           return YP_TOKEN_LESS;
 
         // > >> >>= >=
@@ -2257,8 +2246,102 @@ lex_token_type(yp_parser_t *parser) {
       return YP_TOKEN_EOF;
     }
     case YP_LEX_HEREDOC: {
-      assert(0);
-      break;
+      // First, we'll set to start of this token to be the current end.
+      parser->current.start = parser->current.end;
+
+      // These are the places where we need to split up the content of the
+      // heredoc. We'll use strpbrk to find the first of these characters.
+      char breakpoints[] = "\n\\#";
+      // char *breakpoint = strpbrk(parser->current.end, breakpoints);
+      char *breakpoint = (char *) parser->current.end;
+      while (breakpoint < parser->end && *breakpoint != '\n' && *breakpoint != '\r' && *breakpoint != '\\') breakpoint++;
+      if (breakpoint == parser->end) breakpoint = NULL;
+
+      // This is the current heredoc.
+      yp_node_t *node = parser->lex_modes.current->as.heredoc.node;
+      const char *terminator_start = node->location.start + 3;
+      uint32_t terminator_length = node->location.end - terminator_start;
+
+      while (breakpoint != NULL) {
+        switch (*breakpoint) {
+          case '\n': {
+            // If we hit a newline, then we need to check if the next line
+            // matches the terminator. If it does, then we're done with the
+            // heredoc. To do this, we'll first find the next newline and then
+            // look backward, first at the length and then at the content.
+            char *ending = breakpoint + 1;
+            while (ending < parser->end && *ending != '\n' && *ending != '\r') ending++;
+
+            if (ending == parser->end) {
+              ending = (char *) parser->end;
+            } else if (*ending == '\n') {
+              // We're fine.
+            } else if (ending + 1 < parser->end && ending[0] == '\r' && ending[1] == '\n') {
+              // We're also fine.
+            } else {
+              // We're not fine.
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              break;
+            }
+
+            if (ending - breakpoint - 1 == terminator_length && strncmp(breakpoint + 1, terminator_start, terminator_length) == 0) {
+              // If we have already consumed content then we need to return
+              // that content as string content first.
+              if (breakpoint > parser->current.end) {
+                parser->current.end = breakpoint;
+                return YP_TOKEN_STRING_CONTENT;
+              }
+
+              // Otherwise we need to switch back to the parent lex mode and
+              // return the end of the heredoc.
+              parser->current.end = breakpoint + 1 + terminator_length;
+
+              if (parser->current.end != parser->end) {
+                switch (*parser->current.end) {
+                  case '\r':
+                    parser->current.end += 2;
+                    break;
+                  case '\n':
+                    parser->current.end += 1;
+                    break;
+                }
+              }
+
+              lex_mode_pop(parser);
+              parser->current_heredoc = NULL;
+              return YP_TOKEN_HEREDOC_END;
+            }
+
+            // If we haven't returned at this point then we haven't hit the
+            // terminator yet. In this case we'll just skip to the next
+            // breakpoint.
+            breakpoint = strpbrk(breakpoint + 1, breakpoints);
+            break;
+          }
+          case '\\':
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            break;
+          case '#': {
+            yp_token_type_t type = lex_interpolation(parser, breakpoint);
+            if (type != YP_TOKEN_NOT_PROVIDED) return type;
+
+            // If we haven't returned at this point then we had something
+            // that looked like an interpolated class or instance variable
+            // like "#@" but wasn't actually. In this case we'll just skip
+            // to the next breakpoint.
+            breakpoint = strpbrk(parser->current.end, breakpoints);
+            break;
+          }
+        }
+      }
+
+      // If we've hit the end of the string, then this is an unterminated
+      // heredoc. In that case we'll return the EOF token.
+      parser->current.end = parser->end;
+      return YP_TOKEN_EOF;
     }
     case YP_LEX_SYMBOL: {
       // First, we'll set to start of this token to be the current end.
