@@ -850,6 +850,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // ;
         case ';':
+          parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_SEMICOLON;
 
         // [ []
