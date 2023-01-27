@@ -444,9 +444,11 @@ lex_identifier(yp_parser_t *parser) {
   // against known keywords.
   width = parser->current.end - parser->current.start;
 
-#define KEYWORD(value, token) \
-  if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0) \
-    return YP_TOKEN_KEYWORD_##token;
+#define KEYWORD(value, token, state) \
+  if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0) { \
+    parser->lex_state = state; \
+    return YP_TOKEN_KEYWORD_##token; \
+  }
 
   if (parser->current.end < parser->end) {
     // If we're in a position where we can accept a = at the end of an
@@ -461,7 +463,7 @@ lex_identifier(yp_parser_t *parser) {
       width++;
 
       if (parser->previous.type != YP_TOKEN_DOT) {
-        KEYWORD("defined?", DEFINED)
+        KEYWORD("defined?", DEFINED, YP_LEX_STATE_NONE)
       }
 
       return YP_TOKEN_IDENTIFIER;
@@ -469,46 +471,46 @@ lex_identifier(yp_parser_t *parser) {
   }
 
   if (parser->previous.type != YP_TOKEN_DOT) {
-    KEYWORD("__ENCODING__", __ENCODING__)
-    KEYWORD("__LINE__", __LINE__)
-    KEYWORD("__FILE__", __FILE__)
-    KEYWORD("alias", ALIAS)
-    KEYWORD("and", AND)
-    KEYWORD("begin", BEGIN)
-    KEYWORD("BEGIN", BEGIN_UPCASE)
-    KEYWORD("break", BREAK)
-    KEYWORD("case", CASE)
-    KEYWORD("class", CLASS)
-    KEYWORD("def", DEF)
-    KEYWORD("do", DO)
-    KEYWORD("else", ELSE)
-    KEYWORD("elsif", ELSIF)
-    KEYWORD("end", END)
-    KEYWORD("END", END_UPCASE)
-    KEYWORD("ensure", ENSURE)
-    KEYWORD("false", FALSE)
-    KEYWORD("for", FOR)
-    KEYWORD("if", IF)
-    KEYWORD("in", IN)
-    KEYWORD("module", MODULE)
-    KEYWORD("next", NEXT)
-    KEYWORD("nil", NIL)
-    KEYWORD("not", NOT)
-    KEYWORD("or", OR)
-    KEYWORD("redo", REDO)
-    KEYWORD("rescue", RESCUE)
-    KEYWORD("retry", RETRY)
-    KEYWORD("return", RETURN)
-    KEYWORD("self", SELF)
-    KEYWORD("super", SUPER)
-    KEYWORD("then", THEN)
-    KEYWORD("true", TRUE)
-    KEYWORD("undef", UNDEF)
-    KEYWORD("unless", UNLESS)
-    KEYWORD("until", UNTIL)
-    KEYWORD("when", WHEN)
-    KEYWORD("while", WHILE)
-    KEYWORD("yield", YIELD)
+    KEYWORD("__ENCODING__", __ENCODING__, YP_LEX_STATE_END)
+    KEYWORD("__LINE__", __LINE__, YP_LEX_STATE_END)
+    KEYWORD("__FILE__", __FILE__, YP_LEX_STATE_END)
+    KEYWORD("alias", ALIAS, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM)
+    KEYWORD("and", AND, YP_LEX_STATE_BEG)
+    KEYWORD("begin", BEGIN, YP_LEX_STATE_NONE)
+    KEYWORD("BEGIN", BEGIN_UPCASE, YP_LEX_STATE_END)
+    KEYWORD("break", BREAK, YP_LEX_STATE_MID)
+    KEYWORD("case", CASE, YP_LEX_STATE_BEG)
+    KEYWORD("class", CLASS, YP_LEX_STATE_CLASS)
+    KEYWORD("def", DEF, YP_LEX_STATE_FNAME)
+    KEYWORD("do", DO, YP_LEX_STATE_NONE)
+    KEYWORD("else", ELSE, YP_LEX_STATE_BEG)
+    KEYWORD("elsif", ELSIF, YP_LEX_STATE_END)
+    KEYWORD("end", END, YP_LEX_STATE_END)
+    KEYWORD("END", END_UPCASE, YP_LEX_STATE_END)
+    KEYWORD("ensure", ENSURE, YP_LEX_STATE_NONE)
+    KEYWORD("false", FALSE, YP_LEX_STATE_END)
+    KEYWORD("for", FOR, YP_LEX_STATE_NONE)
+    KEYWORD("if", IF, YP_LEX_STATE_BEG)
+    KEYWORD("in", IN, YP_LEX_STATE_NONE)
+    KEYWORD("module", MODULE, YP_LEX_STATE_BEG)
+    KEYWORD("next", NEXT, YP_LEX_STATE_NONE)
+    KEYWORD("nil", NIL, YP_LEX_STATE_END)
+    KEYWORD("not", NOT, YP_LEX_STATE_NONE)
+    KEYWORD("or", OR, YP_LEX_STATE_NONE)
+    KEYWORD("redo", REDO, YP_LEX_STATE_NONE)
+    KEYWORD("rescue", RESCUE, YP_LEX_STATE_NONE)
+    KEYWORD("retry", RETRY, YP_LEX_STATE_NONE)
+    KEYWORD("return", RETURN, YP_LEX_STATE_NONE)
+    KEYWORD("self", SELF, YP_LEX_STATE_END)
+    KEYWORD("super", SUPER, YP_LEX_STATE_NONE)
+    KEYWORD("then", THEN, YP_LEX_STATE_BEG)
+    KEYWORD("true", TRUE, YP_LEX_STATE_END)
+    KEYWORD("undef", UNDEF, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM)
+    KEYWORD("unless", UNLESS, YP_LEX_STATE_BEG)
+    KEYWORD("until", UNTIL, YP_LEX_STATE_BEG)
+    KEYWORD("when", WHEN, YP_LEX_STATE_NONE)
+    KEYWORD("while", WHILE, YP_LEX_STATE_BEG)
+    KEYWORD("yield", YIELD, YP_LEX_STATE_NONE)
   }
 
 #undef KEYWORD
@@ -1311,10 +1313,12 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_LABEL;
           }
 
-          if (previous_command_start) {
-            parser->lex_state = YP_LEX_STATE_CMDARG;
-          } else {
-            parser->lex_state = YP_LEX_STATE_ARG;
+          if (type == YP_TOKEN_IDENTIFIER) {
+            if (previous_command_start) {
+              parser->lex_state = YP_LEX_STATE_CMDARG;
+            } else {
+              parser->lex_state = YP_LEX_STATE_ARG;
+            }
           }
 
           return type;
