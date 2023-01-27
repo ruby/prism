@@ -885,7 +885,15 @@ lex_token_type(yp_parser_t *parser) {
 
         // * ** **= *=
         case '*':
-          if (match(parser, '*')) return match(parser, '=') ? YP_TOKEN_STAR_STAR_EQUAL : YP_TOKEN_STAR_STAR;
+          if (match(parser, '*')) {
+            if (match(parser, '=')) {
+              return YP_TOKEN_STAR_STAR_EQUAL;
+            }
+
+            parser->lex_state = YP_LEX_STATE_BEG;
+            return YP_TOKEN_STAR_STAR;
+          }
+
           return match(parser, '=') ? YP_TOKEN_STAR_EQUAL : YP_TOKEN_STAR;
 
         // ! != !~ !@
@@ -2722,7 +2730,7 @@ parse_expression_prefix(yp_parser_t *parser) {
           case YP_TOKEN_STAR_STAR: {
             parser_lex(parser);
             yp_token_t operator = parser->previous;
-            yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_CALL, "Expected an expression after ** in hash.");
 
             element = yp_node_assoc_splat_node_create(parser, &operator, value);
             break;
