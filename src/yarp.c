@@ -446,7 +446,12 @@ lex_identifier(yp_parser_t *parser) {
 
 #define KEYWORD(value, token, state) \
   if (width == sizeof(value) - 1 && strncmp(parser->current.start, value, sizeof(value) - 1) == 0) { \
-    parser->lex_state = state; \
+    if (parser->lex_state & YP_LEX_STATE_FNAME) { \
+      parser->lex_state = YP_LEX_STATE_ENDFN; \
+    } else { \
+      parser->lex_state = state; \
+      if ((state) == YP_LEX_STATE_BEG) parser->command_start = true; \
+    } \
     return YP_TOKEN_KEYWORD_##token; \
   }
 
@@ -482,7 +487,7 @@ lex_identifier(yp_parser_t *parser) {
     KEYWORD("case", CASE, YP_LEX_STATE_BEG)
     KEYWORD("class", CLASS, YP_LEX_STATE_CLASS)
     KEYWORD("def", DEF, YP_LEX_STATE_FNAME)
-    KEYWORD("do", DO, YP_LEX_STATE_NONE)
+    KEYWORD("do", DO, YP_LEX_STATE_BEG)
     KEYWORD("else", ELSE, YP_LEX_STATE_BEG)
     KEYWORD("elsif", ELSIF, YP_LEX_STATE_END)
     KEYWORD("end", END, YP_LEX_STATE_END)
@@ -657,6 +662,8 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 //
 static yp_token_type_t
 lex_question_mark(yp_parser_t *parser) {
+  parser->lex_state = YP_LEX_STATE_END;
+
   switch (*parser->current.end) {
     case '\n':
     case ' ':
@@ -841,6 +848,7 @@ lex_token_type(yp_parser_t *parser) {
 
         case '\n':
           parser->lex_state = YP_LEX_STATE_BEG;
+          parser->command_start = true;
           return YP_TOKEN_NEWLINE;
 
         // ,
@@ -1099,6 +1107,7 @@ lex_token_type(yp_parser_t *parser) {
 
             lex_mode_push(parser, lex_mode);
             parser->current.end++;
+            parser->lex_state = YP_LEX_STATE_FNAME;
             return YP_TOKEN_SYMBOL_BEGIN;
           }
 
@@ -1107,7 +1116,11 @@ lex_token_type(yp_parser_t *parser) {
         // / /=
         case '/':
           if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
-          if (*parser->current.end == ' ') return YP_TOKEN_SLASH;
+
+          if (*parser->current.end == ' ') {
+            parser->lex_state = YP_LEX_STATE_BEG;
+            return YP_TOKEN_SLASH;
+          }
 
           // If the previous token is an identifier and it is in the local
           // table, then this is a division. Otherwise, it is a regexp.
@@ -1115,6 +1128,7 @@ lex_token_type(yp_parser_t *parser) {
             parser->previous.type == YP_TOKEN_IDENTIFIER &&
             yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)
           ) {
+            parser->lex_state = YP_LEX_STATE_BEG;
             return YP_TOKEN_SLASH;
           }
 
@@ -1313,11 +1327,17 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_LABEL;
           }
 
-          if (type == YP_TOKEN_IDENTIFIER) {
-            if (previous_command_start) {
-              parser->lex_state = YP_LEX_STATE_CMDARG;
+          if (type == YP_TOKEN_IDENTIFIER || type == YP_TOKEN_CONSTANT) {
+            if (parser->lex_state & (YP_LEX_STATE_BEG_ANY | YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_DOT)) {
+              if (previous_command_start) {
+                parser->lex_state = YP_LEX_STATE_CMDARG;
+              } else {
+                parser->lex_state = YP_LEX_STATE_ARG;
+              }
+            } else if (parser->lex_state == YP_LEX_STATE_FNAME) {
+              parser->lex_state = YP_LEX_STATE_ENDFN;
             } else {
-              parser->lex_state = YP_LEX_STATE_ARG;
+              parser->lex_state = YP_LEX_STATE_END;
             }
           }
 
