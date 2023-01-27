@@ -1218,8 +1218,8 @@ nodes:
       - name: operator
         type: token
       - name: expression
-        type: node
-    location: operator->expression
+        type: node?
+    location: operator->expression|operator
     comment: |
       Represents array splats.
 

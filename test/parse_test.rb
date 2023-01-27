@@ -886,7 +886,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       Statements([]),
       KEYWORD_END("end"),
-      Scope([])
+      Scope([STAR("*")])
     )
 
     assert_parses expected, "def a *\nend"
@@ -1123,6 +1123,32 @@ class ParseTest < Test::Unit::TestCase
       "foo"
     )
     assert_parses expected, "foo(*rest)"
+  end
+
+  test "method call with *" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode([], [], RestParameterNode(STAR("*"), nil), [], nil, nil),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements(
+        [CallNode(
+          nil,
+          nil,
+          IDENTIFIER("b"),
+          PARENTHESIS_LEFT("("),
+          ArgumentsNode([StarNode(STAR("*"), nil)]),
+          PARENTHESIS_RIGHT(")"),
+          "b"
+         )]
+      ),
+      KEYWORD_END("end"),
+      Scope([STAR("*")])
+    )
+
+    assert_parses expected, "def a(*); b(*); end"
   end
 
   test "defined? without parentheses" do

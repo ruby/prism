@@ -2048,8 +2048,15 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
   }
 
   if (accept(parser, YP_TOKEN_STAR)) {
-      yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
-      return yp_node_star_node_create(parser, &parser->previous, expression);
+    yp_token_t previous = parser->previous;
+    if (*parser->current.start == ',' || *parser->current.start == ')') {
+      // if (!yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
+      //   yp_error_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
+      // } 
+      return yp_node_star_node_create(parser, &previous, NULL);
+    }
+    yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
+    return yp_node_star_node_create(parser, &parser->previous, expression);
   }
   
   return parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
@@ -2232,6 +2239,7 @@ parse_parameters(yp_parser_t *parser) {
           name = parser->previous;
           yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
         } else {
+          yp_token_list_append(&parser->current_scope->as.scope.locals, &operator);
           name = not_provided(parser);
         }
 
