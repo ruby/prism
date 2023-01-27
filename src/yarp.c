@@ -543,6 +543,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
   // the string and we can safely return string content.
   if (pound + 1 >= parser->end) {
     parser->current.end = pound;
+    parser->lex_state = YP_LEX_STATE_BEG;
     return YP_TOKEN_STRING_CONTENT;
   }
 
@@ -554,6 +555,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // In this case we may have hit an embedded instance or class variable.
       if (pound + 2 >= parser->end) {
         parser->current.end = pound + 1;
+        parser->lex_state = YP_LEX_STATE_BEG;
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -568,6 +570,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // already consumed content.
         if (pound > parser->current.end) {
           parser->current.end = pound;
+          parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -575,6 +578,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // and then switch to the embedded variable lex mode.
         lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
         parser->current.end = pound + 1;
+        parser->lex_state = YP_LEX_STATE_BEG;
         return YP_TOKEN_EMBVAR;
       }
 
@@ -590,6 +594,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // that content as string content first.
       if (pound > parser->current.end) {
         parser->current.end = pound;
+        parser->lex_state = YP_LEX_STATE_BEG;
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -597,6 +602,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // the embedded variable lex mode.
       lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
       parser->current.end = pound + 1;
+      parser->lex_state = YP_LEX_STATE_BEG;
       return YP_TOKEN_EMBVAR;
     case '{':
       // In this case it's the start of an embedded expression. If we have
@@ -604,6 +610,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // content first.
       if (pound > parser->current.end) {
         parser->current.end = pound;
+        parser->lex_state = YP_LEX_STATE_BEG;
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -611,6 +618,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // expression.
       lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
       parser->current.end = pound + 2;
+      parser->command_start = true;
       return YP_TOKEN_EMBEXPR_BEGIN;
     default:
       // In this case we've hit a # that doesn't constitute interpolation. We'll
@@ -851,6 +859,7 @@ lex_token_type(yp_parser_t *parser) {
         // ;
         case ';':
           parser->lex_state = YP_LEX_STATE_BEG;
+          parser->command_start = true;
           return YP_TOKEN_SEMICOLON;
 
         // [ []
@@ -894,6 +903,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_STAR_STAR;
           }
 
+          parser->lex_state = YP_LEX_STATE_BEG;
           return match(parser, '=') ? YP_TOKEN_STAR_EQUAL : YP_TOKEN_STAR;
 
         // ! != !~ !@
@@ -921,6 +931,8 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (match(parser, '>')) return YP_TOKEN_EQUAL_GREATER;
+
+          parser->lex_state = YP_LEX_STATE_BEG;
           if (match(parser, '~')) return YP_TOKEN_EQUAL_TILDE;
           if (match(parser, '=')) return match(parser, '=') ? YP_TOKEN_EQUAL_EQUAL_EQUAL : YP_TOKEN_EQUAL_EQUAL;
           return YP_TOKEN_EQUAL;
@@ -935,12 +947,23 @@ lex_token_type(yp_parser_t *parser) {
 
             return YP_TOKEN_LESS_LESS;
           }
-          if (match(parser, '=')) return match(parser, '>') ? YP_TOKEN_LESS_EQUAL_GREATER : YP_TOKEN_LESS_EQUAL;
+
+          if (match(parser, '=')) {
+            parser->lex_state = YP_LEX_STATE_BEG;
+            return match(parser, '>') ? YP_TOKEN_LESS_EQUAL_GREATER : YP_TOKEN_LESS_EQUAL;
+          }
+
+          parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_LESS;
 
         // > >> >>= >=
         case '>':
-          if (match(parser, '>')) return match(parser, '=') ? YP_TOKEN_GREATER_GREATER_EQUAL : YP_TOKEN_GREATER_GREATER;
+          if (match(parser, '>')) {
+            parser->lex_state = YP_LEX_STATE_BEG;
+            return match(parser, '=') ? YP_TOKEN_GREATER_GREATER_EQUAL : YP_TOKEN_GREATER_GREATER;
+          }
+
+          parser->lex_state = YP_LEX_STATE_BEG;
           return match(parser, '=') ? YP_TOKEN_GREATER_EQUAL : YP_TOKEN_GREATER;
 
         // double-quoted string literal
@@ -989,7 +1012,13 @@ lex_token_type(yp_parser_t *parser) {
             return match(parser, '=') ? YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL : YP_TOKEN_AMPERSAND_AMPERSAND;
           if (match(parser, '.'))
             return YP_TOKEN_AMPERSAND_DOT;
-          return match(parser, '=') ? YP_TOKEN_AMPERSAND_EQUAL : YP_TOKEN_AMPERSAND;
+
+          if (match(parser, '=')) {
+            return YP_TOKEN_AMPERSAND_EQUAL;
+          }
+
+          parser->lex_state = YP_LEX_STATE_BEG;
+          return YP_TOKEN_AMPERSAND;
 
         // | || ||= |=
         case '|':
@@ -1000,7 +1029,11 @@ lex_token_type(yp_parser_t *parser) {
         case '+':
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
-          if (char_is_decimal_number(*parser->current.end)) return lex_numeric(parser);
+
+          if (parser->lex_state == YP_LEX_STATE_BEG && char_is_decimal_number(*parser->current.end)) {
+            parser->lex_state = YP_LEX_STATE_END;
+            return lex_numeric(parser);
+          }
 
           parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_PLUS;
@@ -1088,6 +1121,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // ^ ^=
         case '^':
+          parser->lex_state = YP_LEX_STATE_BEG;
           return match(parser, '=') ? YP_TOKEN_CARET_EQUAL : YP_TOKEN_CARET;
 
         // ~ ~@
@@ -1219,6 +1253,7 @@ lex_token_type(yp_parser_t *parser) {
             lex_mode_pop(parser);
           }
 
+          parser->lex_state = YP_LEX_STATE_END;
           return type;
         }
 
@@ -1379,6 +1414,8 @@ lex_token_type(yp_parser_t *parser) {
             // the list.
             parser->current.end = breakpoint + 1;
             lex_mode_pop(parser);
+
+            parser->lex_state = YP_LEX_STATE_END;
             return YP_TOKEN_STRING_END;
         }
       }
@@ -1452,6 +1489,7 @@ lex_token_type(yp_parser_t *parser) {
             }
 
             lex_mode_pop(parser);
+            parser->lex_state = YP_LEX_STATE_END;
             return YP_TOKEN_REGEXP_END;
           }
         }
@@ -1512,6 +1550,8 @@ lex_token_type(yp_parser_t *parser) {
             // return the end of the string.
             parser->current.end = breakpoint + 1;
             lex_mode_pop(parser);
+
+            parser->lex_state = YP_LEX_STATE_END;
             return YP_TOKEN_STRING_END;
         }
       }
