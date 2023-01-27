@@ -826,15 +826,23 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         case '\n':
+          parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_NEWLINE;
 
-        // , ( ) ;
+        // ,
         case ',':
+          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
           return YP_TOKEN_COMMA;
+
+        // (
         case '(':
           return YP_TOKEN_PARENTHESIS_LEFT;
+
+        // )
         case ')':
           return YP_TOKEN_PARENTHESIS_RIGHT;
+
+        // ;
         case ';':
           return YP_TOKEN_SEMICOLON;
 
@@ -843,6 +851,8 @@ lex_token_type(yp_parser_t *parser) {
           if (parser->previous.type == YP_TOKEN_DOT && match(parser, ']')) {
             return YP_TOKEN_BRACKET_LEFT_RIGHT;
           }
+
+          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
           return YP_TOKEN_BRACKET_LEFT;
 
         // ]
@@ -998,8 +1008,11 @@ lex_token_type(yp_parser_t *parser) {
         case '6':
         case '7':
         case '8':
-        case '9':
-          return lex_numeric(parser);
+        case '9': {
+          yp_token_type_t type = lex_numeric(parser);
+          parser->lex_state = YP_LEX_STATE_END;
+          return type;
+        }
 
         // :: symbol
         case ':':
