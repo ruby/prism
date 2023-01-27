@@ -772,6 +772,10 @@ lex_question_mark(yp_parser_t *parser) {
 // was found.
 static yp_token_type_t
 lex_token_type(yp_parser_t *parser) {
+  // This value mirrors cmd_state from CRuby.
+  bool previous_command_start = parser->command_start;
+  parser->command_start = false;
+
   switch (parser->lex_modes.current->mode) {
     case YP_LEX_DEFAULT:
     case YP_LEX_EMBEXPR:
@@ -982,6 +986,8 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
           if (char_is_decimal_number(*parser->current.end)) return lex_numeric(parser);
+
+          parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_PLUS;
 
         // - -= -@
@@ -1241,6 +1247,12 @@ lex_token_type(yp_parser_t *parser) {
           if ((parser->current.end[0] == ':') && (parser->current.end[1] != ':')) {
             parser->current.end++;
             return YP_TOKEN_LABEL;
+          }
+
+          if (previous_command_start) {
+            parser->lex_state = YP_LEX_STATE_CMDARG;
+          } else {
+            parser->lex_state = YP_LEX_STATE_ARG;
           }
 
           return type;
@@ -3990,6 +4002,7 @@ __attribute__((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   *parser = (yp_parser_t) {
     .lex_state = YP_LEX_STATE_BEG,
+    .command_start = true,
     .lex_modes =
       {
         .index = 0,

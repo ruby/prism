@@ -215,6 +215,7 @@ typedef struct {
 // it's considering.
 struct yp_parser {
   yp_lex_state_t lex_state; // the current state of the lexer
+  bool command_start;       // whether or not we're at the beginning of a command
 
   struct {
     yp_lex_mode_t *current;                 // the current mode of the lexer
