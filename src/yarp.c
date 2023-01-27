@@ -1520,27 +1520,35 @@ static yp_encoding_t yp_encoding_utf_8 = {
 static void
 parser_lex_magic_comments(yp_parser_t *parser) {
   const char *start = parser->current.start + 1;
-  while (char_is_non_newline_whitespace(*start)) start++;
+  while (char_is_non_newline_whitespace(*start) && start < parser->end) {
+    start++;
+  }
 
   if (strncmp(start, "-*-", 3) == 0) {
     start += 3;
-    while (char_is_non_newline_whitespace(*start)) start++;
+    while (char_is_non_newline_whitespace(*start) && start < parser->end) {
+      start++;
+    }
   }
 
   // There is a lot TODO here to make it more accurately reflect encoding
   // parsing, but for now this gets us closer.
   if (strncmp(start, "encoding:", 9) == 0) {
     start += 9;
-    while (char_is_non_newline_whitespace(*start)) start++;
+    while (char_is_non_newline_whitespace(*start) && start < parser->end) {
+      start++;
+    }
 
     const char *end = start;
-    while (!char_is_whitespace(*end)) end++;
+    while (!char_is_whitespace(*end) && end < parser->end) {
+      end++;
+    }
     size_t width = end - start;
 
     // First, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
-    if (width == sizeof(value) - 1 && strncmp(start, value, sizeof(value) - 1) == 0) { \
+    if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
       parser->encoding = prebuilt; \
       return; \
     }

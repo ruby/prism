@@ -2825,6 +2825,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar[baz] = qux]"
   end
 
+  test "encoding magic comment" do
+    assert YARP.parse("#encoding: utf-8").errors.empty?
+    assert YARP.parse("#encoding: UTF-8").errors.empty?
+    assert YARP.parse("# -*- encoding: UTF-8 -*-").errors.empty?
+    assert YARP.parse("# -*- encoding: utf-8 -*-").errors.empty?
+    refute YARP.parse("#encoding: utf8").errors.empty?
+  end
+
   private
 
   def assert_serializes(expected, source)
