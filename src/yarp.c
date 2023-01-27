@@ -1029,7 +1029,10 @@ lex_token_type(yp_parser_t *parser) {
 
         // :: symbol
         case ':':
-          if (match(parser, ':')) return YP_TOKEN_COLON_COLON;
+          if (match(parser, ':')) {
+            parser->lex_state = YP_LEX_STATE_DOT;
+            return YP_TOKEN_COLON_COLON;
+          }
 
           if (char_is_identifier(parser, parser->current.end)) {
             lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
