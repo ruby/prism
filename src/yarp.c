@@ -1003,8 +1003,12 @@ lex_token_type(yp_parser_t *parser) {
 
         // . .. ...
         case '.':
-          if (!match(parser, '.')) return YP_TOKEN_DOT;
-          return match(parser, '.') ? YP_TOKEN_DOT_DOT_DOT : YP_TOKEN_DOT_DOT;
+          if (match(parser, '.')) {
+            return match(parser, '.') ? YP_TOKEN_DOT_DOT_DOT : YP_TOKEN_DOT_DOT;
+          }
+
+          parser->lex_state = YP_LEX_STATE_DOT;
+          return YP_TOKEN_DOT;
 
         // integer
         case '0':
