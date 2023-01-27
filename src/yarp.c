@@ -840,10 +840,12 @@ lex_token_type(yp_parser_t *parser) {
 
         // (
         case '(':
+          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
           return YP_TOKEN_PARENTHESIS_LEFT;
 
         // )
         case ')':
+          parser->lex_state = YP_LEX_STATE_ENDFN;
           return YP_TOKEN_PARENTHESIS_RIGHT;
 
         // ;
