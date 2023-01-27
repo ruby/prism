@@ -1004,6 +1004,7 @@ lex_token_type(yp_parser_t *parser) {
         // . .. ...
         case '.':
           if (match(parser, '.')) {
+            parser->lex_state = YP_LEX_STATE_BEG;
             return match(parser, '.') ? YP_TOKEN_DOT_DOT_DOT : YP_TOKEN_DOT_DOT;
           }
 
