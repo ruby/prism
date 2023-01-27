@@ -997,6 +997,8 @@ lex_token_type(yp_parser_t *parser) {
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
               match(parser, '@'))
             return YP_TOKEN_MINUS_AT;
+
+          parser->lex_state = YP_LEX_STATE_BEG;
           return YP_TOKEN_MINUS;
 
         // . .. ...
