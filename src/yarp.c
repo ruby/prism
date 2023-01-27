@@ -869,6 +869,8 @@ lex_token_type(yp_parser_t *parser) {
         // {
         case '{':
           if (parser->previous.type == YP_TOKEN_MINUS_GREATER) return YP_TOKEN_LAMBDA_BEGIN;
+
+          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
           return YP_TOKEN_BRACE_LEFT;
 
         // }
@@ -877,6 +879,8 @@ lex_token_type(yp_parser_t *parser) {
             lex_mode_pop(parser);
             return YP_TOKEN_EMBEXPR_END;
           }
+
+          parser->lex_state = YP_LEX_STATE_END;
           return YP_TOKEN_BRACE_RIGHT;
 
         // * ** **= *=
@@ -1039,6 +1043,7 @@ lex_token_type(yp_parser_t *parser) {
 
           if (char_is_identifier(parser, parser->current.end)) {
             lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
+            parser->lex_state = YP_LEX_STATE_FNAME;
             return YP_TOKEN_SYMBOL_BEGIN;
           }
 
@@ -1259,6 +1264,7 @@ lex_token_type(yp_parser_t *parser) {
           // colon, then we can return a label token.
           if ((parser->current.end[0] == ':') && (parser->current.end[1] != ':')) {
             parser->current.end++;
+            parser->lex_state = YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED;
             return YP_TOKEN_LABEL;
           }
 
@@ -1519,6 +1525,7 @@ lex_token_type(yp_parser_t *parser) {
 
           yp_token_type_t type = lex_identifier(parser);
 
+          parser->lex_state = YP_LEX_STATE_ENDFN;
           return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
         }
       }
