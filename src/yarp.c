@@ -2226,8 +2226,8 @@ parse_parameters(yp_parser_t *parser) {
 
         if (parser->current.type != YP_TOKEN_COMMA && parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT) {
           yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a default value for the keyword parameter.");
-          yp_node_t *param = yp_node_optional_keyword_parameter_node_create(parser, &name, value);
-          yp_node_list_append(parser, params, &params->as.parameters_node.keyword_optionals, param);
+          yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
+          yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
 
           // If parsing the value of the keyword parameter resulted in error recovery,
           // then we can put a missing node in its place and stop parsing the
@@ -2236,7 +2236,7 @@ parse_parameters(yp_parser_t *parser) {
 
           parsing = false;
         } else {
-          yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name);
+          yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
           yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
         }
 
