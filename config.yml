@@ -999,6 +999,19 @@ nodes:
 
           target ||= value
           ^^^^^^^^^^^^^^^^
+  - name: OptionalKeywordParameterNode
+    child_nodes:
+      - name: name
+        type: token
+      - name: value
+        type: node
+    location: name->value
+    comment: |
+      Represents an optional keyword parameter to a method, block, or lambda definition.
+
+          def a(b: 1)
+                ^^^^
+          end
   - name: OptionalParameterNode
     child_nodes:
       - name: name
@@ -1037,6 +1050,8 @@ nodes:
       - name: rest
         type: node?
       - name: keywords
+        type: node[]
+      - name: keyword_optionals
         type: node[]
       - name: keyword_rest
         type: node?
