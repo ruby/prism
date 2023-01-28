@@ -2697,7 +2697,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
 
 // Parse a list of parameters on a method definition.
 static yp_node_t *
-parse_parameters(yp_parser_t *parser) {
+parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
   bool parsing = true;
 
@@ -2765,8 +2765,35 @@ parse_parameters(yp_parser_t *parser) {
         local.end -= 1;
         yp_token_list_append(&parser->current_scope->as.scope.locals, &local);
 
-        yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name);
-        yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+        switch (parser->current.type) {
+          case YP_TOKEN_COMMA:
+          case YP_TOKEN_PARENTHESIS_RIGHT: {
+            yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
+            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+            break;
+          }
+          case YP_TOKEN_NEWLINE: {
+            if (!uses_parentheses) {
+              yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
+              yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+              break;
+            } else {
+              accept(parser, YP_TOKEN_NEWLINE);
+            }
+          }
+          default: {
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a default value for the keyword parameter.");
+
+            yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
+            yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
+
+            // If parsing the value of the parameter resulted in error recovery,
+            // then we can put a missing node in its place and stop parsing the
+            // parameters entirely now.
+            if (parser->recovering) return params;
+          }
+        }
+
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
@@ -3591,7 +3618,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parent_scope = parser->current_scope;
       yp_node_t *scope = yp_node_scope_create(parser);
       parser->current_scope = scope;
-      yp_node_t *params = parse_parameters(parser);
+      yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
