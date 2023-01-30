@@ -275,6 +275,28 @@ unescape_all(VALUE self, VALUE source) {
   return unescape(source, YP_UNESCAPE_ALL);
 }
 
+// This function returns a hash of information about the given source string's
+// memory usage.
+static VALUE
+memsize(VALUE self, VALUE string) {
+  yp_parser_t parser;
+  size_t length = RSTRING_LEN(string);
+  yp_parser_init(&parser, RSTRING_PTR(string), length);
+
+  yp_node_t *node = yp_parse(&parser);
+  yp_memsize_t memsize;
+  yp_node_memsize(node, &memsize);
+
+  yp_node_destroy(&parser, node);
+  yp_parser_free(&parser);
+
+  VALUE result = rb_hash_new();
+  rb_hash_aset(result, ID2SYM(rb_intern("length")), INT2FIX(length));
+  rb_hash_aset(result, ID2SYM(rb_intern("memsize")), INT2FIX(memsize.memsize));
+  rb_hash_aset(result, ID2SYM(rb_intern("node_count")), INT2FIX(memsize.node_count));
+  return result;
+}
+
 void
 Init_yarp(void) {
   if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
@@ -306,4 +328,6 @@ Init_yarp(void) {
   rb_define_singleton_method(rb_cYARP, "unescape_none", unescape_none, 1);
   rb_define_singleton_method(rb_cYARP, "unescape_minimal", unescape_minimal, 1);
   rb_define_singleton_method(rb_cYARP, "unescape_all", unescape_all, 1);
+
+  rb_define_singleton_method(rb_cYARP, "memsize", memsize, 1);
 }
