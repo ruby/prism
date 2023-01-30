@@ -60,6 +60,10 @@ yp_parse(yp_parser_t *parser);
 __attribute__((__visibility__("default"))) extern void
 yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
+// Calculates the memory footprint of a given node.
+__attribute__((__visibility__("default"))) extern size_t
+yp_node_memsize(yp_node_t *node);
+
 // Pretty-prints the AST represented by the given node to the given buffer.
 __attribute__((__visibility__("default"))) extern void
 yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
