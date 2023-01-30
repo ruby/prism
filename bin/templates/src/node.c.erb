@@ -64,12 +64,15 @@ yp_node_list_init(yp_node_list_t *node_list) {
   *node_list = (yp_node_list_t) { .nodes = NULL, .size = 0, .capacity = 0 };
 }
 
+static void
+yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize);
+
 // Calculate the size of the node list in bytes.
 static size_t
-yp_node_list_memsize(yp_node_list_t *node_list) {
+yp_node_list_memsize(yp_node_list_t *node_list, yp_memsize_t *memsize) {
   size_t size = sizeof(yp_node_list_t) + (node_list->capacity * sizeof(yp_node_t *));
   for (size_t index = 0; index < node_list->size; index++) {
-    size += yp_node_memsize(node_list->nodes[index]);
+    yp_node_memsize_node(node_list->nodes[index], memsize);
   }
   return size;
 }
@@ -160,34 +163,42 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
   }
 }
 
-// Calculates the memory footprint of a given node.
-__attribute__((__visibility__("default"))) extern size_t
-yp_node_memsize(yp_node_t *node) {
+static void
+yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
+  memsize->node_count++;
+
   switch (node->type) {
     <%- nodes.each do |node| -%>
     case <%= node.type %>: {
-      size_t size = sizeof(yp_node_t);
+      memsize->memsize += sizeof(yp_node_t);
       <%- node.params.each do |param| -%>
       <%- case param -%>
       <%- when TokenParam, OptionalTokenParam -%>
       <%- when NodeParam -%>
-      size += yp_node_memsize(node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_memsize_node(node->as.<%= node.human %>.<%= param.name %>, memsize);
       <%- when OptionalNodeParam -%>
       if (node->as.<%= node.human %>.<%= param.name %> != NULL) {
-        size += yp_node_memsize(node->as.<%= node.human %>.<%= param.name %>);
+        yp_node_memsize_node(node->as.<%= node.human %>.<%= param.name %>, memsize);
       }
       <%- when StringParam -%>
-      size += yp_string_memsize(&node->as.<%= node.human %>.<%= param.name %>);
+      memsize->memsize += yp_string_memsize(&node->as.<%= node.human %>.<%= param.name %>);
       <%- when NodeListParam -%>
-      size += yp_node_list_memsize(&node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_list_memsize(&node->as.<%= node.human %>.<%= param.name %>, memsize);
       <%- when TokenListParam -%>
-      size += yp_token_list_memsize(&node->as.<%= node.human %>.<%= param.name %>);
+      memsize->memsize += yp_token_list_memsize(&node->as.<%= node.human %>.<%= param.name %>);
       <%- else -%>
       <%- raise -%>
       <%- end -%>
       <%- end -%>
-      return size;
+      break;
     }
     <%- end -%>
   }
+}
+
+// Calculates the memory footprint of a given node.
+__attribute__((__visibility__("default"))) extern void
+yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize) {
+  *memsize = (yp_memsize_t) { .memsize = 0, .node_count = 0 };
+  yp_node_memsize_node(node, memsize);
 }

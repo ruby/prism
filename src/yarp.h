@@ -60,9 +60,17 @@ yp_parse(yp_parser_t *parser);
 __attribute__((__visibility__("default"))) extern void
 yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
+// This struct stores the information gathered by the yp_node_memsize function.
+// It contains both the memory footprint and additionally metadata about the
+// shape of the tree.
+typedef struct {
+  size_t memsize;
+  size_t node_count;
+} yp_memsize_t;
+
 // Calculates the memory footprint of a given node.
-__attribute__((__visibility__("default"))) extern size_t
-yp_node_memsize(yp_node_t *node);
+__attribute__((__visibility__("default"))) extern void
+yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize);
 
 // Pretty-prints the AST represented by the given node to the given buffer.
 __attribute__((__visibility__("default"))) extern void
