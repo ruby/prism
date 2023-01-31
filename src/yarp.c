@@ -42,21 +42,21 @@ debug_context(yp_context_t context) {
 __attribute__((unused)) static void
 debug_contexts(yp_parser_t *parser) {
   yp_context_node_t *context_node = parser->current_context;
-  printf("CONTEXTS: ");
+  fprintf(stderr, "CONTEXTS: ");
 
   if (context_node != NULL) {
     while (context_node != NULL) {
-      printf("%s", debug_context(context_node->context));
+      fprintf(stderr, "%s", debug_context(context_node->context));
       context_node = context_node->prev;
       if (context_node != NULL) {
-        printf(" <- ");
+        fprintf(stderr, " <- ");
       }
     }
   } else {
-    printf("NONE");
+    fprintf(stderr, "NONE");
   }
 
-  printf("\n");
+  fprintf(stderr, "\n");
 }
 
 __attribute__((unused)) static void
@@ -65,7 +65,7 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
   yp_buffer_init(&buffer);
   yp_prettyprint(parser, node, &buffer);
 
-  printf("%s\n%.*s\n", message, (int) buffer.length, buffer.value);
+  fprintf(stderr, "%s\n%.*s\n", message, (int) buffer.length, buffer.value);
   yp_buffer_free(&buffer);
 }
 
@@ -74,14 +74,14 @@ debug_lex_mode(yp_parser_t *parser) {
   yp_lex_mode_t *lex_mode = parser->lex_modes.current;
 
   switch (lex_mode->mode) {
-    case YP_LEX_DEFAULT: printf("lexing in DEFAULT mode\n"); return;
-    case YP_LEX_EMBDOC: printf("lexing in EMBDOC mode\n"); return;
-    case YP_LEX_EMBEXPR: printf("lexing in EMBEXPR mode\n"); return;
-    case YP_LEX_EMBVAR: printf("lexing in EMBVAR mode\n"); return;
-    case YP_LEX_LIST: printf("lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
-    case YP_LEX_REGEXP: printf("lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
-    case YP_LEX_STRING: printf("lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
-    case YP_LEX_SYMBOL: printf("lexing in SYMBOL mode\n"); return;
+    case YP_LEX_DEFAULT: fprintf(stderr, "lexing in DEFAULT mode\n"); return;
+    case YP_LEX_EMBDOC: fprintf(stderr, "lexing in EMBDOC mode\n"); return;
+    case YP_LEX_EMBEXPR: fprintf(stderr, "lexing in EMBEXPR mode\n"); return;
+    case YP_LEX_EMBVAR: fprintf(stderr, "lexing in EMBVAR mode\n"); return;
+    case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
+    case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
+    case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
+    case YP_LEX_SYMBOL: fprintf(stderr, "lexing in SYMBOL mode\n"); return;
   }
 }
 
