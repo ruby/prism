@@ -1051,6 +1051,136 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def m a, b:, **nil\nend"
   end
 
+  test "method call with label keyword args" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("hi"),
+      nil,
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("there"), LABEL_END(":")),
+              nil,
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
+            )],
+           nil
+         )]
+      ),
+      nil,
+      "hi"
+    )
+
+    assert_parses expected, "hi there: :friend"
+  end
+
+  test "method call with rocket keyword args" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("hi"),
+      nil,
+      ArgumentsNode(
+        [AssocNode(
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+           EQUAL_GREATER("=>"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
+         )]
+      ),
+      nil,
+      "hi"
+    )
+    assert_parses expected, "hi :there => :friend"
+  end
+
+  test "method call with mixed format keyword args" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("hi"),
+      nil,
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocSplatNode(
+              STAR_STAR("**"),
+              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
+              nil,
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil)
+            )],
+           nil
+         )]
+      ),
+      nil,
+      "hi"
+    )
+    assert_parses expected, "hi :there => :friend, **{}, whatup: :dog"
+  end
+
+  test "method call with parens + keyword args" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("hi"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocSplatNode(
+              STAR_STAR("**"),
+              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
+              nil,
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil)
+            )],
+           nil
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      "hi"
+    )
+    assert_parses expected, "hi(:there => :friend, **{}, whatup: :dog)"
+  end
+
+  test "method call with explicit hash" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("hi"),
+      nil,
+      ArgumentsNode(
+        [IntegerLiteral(INTEGER("123")),
+         HashNode(
+           BRACE_LEFT("{"),
+           [AssocNode(
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+              EQUAL_GREATER("=>"),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
+            ),
+            AssocSplatNode(
+              STAR_STAR("**"),
+              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
+              nil,
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil)
+            )],
+           BRACE_RIGHT("}")
+         )]
+      ),
+      nil,
+      "hi"
+    )
+    assert_parses expected, "hi 123, { :there => :friend, **{}, whatup: :dog }"
+  end
+
   test "method call with ..." do
     expected = DefNode(
       KEYWORD_DEF("def"),
