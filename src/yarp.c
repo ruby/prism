@@ -3138,8 +3138,11 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t inheritance_operator;
       yp_node_t *superclass;
 
-      if (accept(parser, YP_TOKEN_LESS)) {
-        inheritance_operator = parser->previous;
+      if (parser->current.type == YP_TOKEN_LESS) {
+        inheritance_operator = parser->current;
+        parser->lex_state = YP_LEX_STATE_BEG;
+        parser->command_start = true;
+        parser_lex(parser);
         superclass = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a superclass after `<`.");
       } else {
         inheritance_operator = not_provided(parser);
