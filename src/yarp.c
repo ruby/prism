@@ -783,6 +783,12 @@ lex_question_mark(yp_parser_t *parser) {
   }
 }
 
+static bool
+current_scope_has_local(yp_parser_t * parser, yp_token_t * token)
+{
+    return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -1126,7 +1132,7 @@ lex_token_type(yp_parser_t *parser) {
           // table, then this is a division. Otherwise, it is a regexp.
           if (
             parser->previous.type == YP_TOKEN_IDENTIFIER &&
-            yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)
+            current_scope_has_local(parser, &parser->previous)
           ) {
             parser->lex_state = YP_LEX_STATE_BEG;
             return YP_TOKEN_SLASH;
@@ -1319,6 +1325,8 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN___END__;
           }
 
+          yp_lex_state_t last_state = parser->lex_state;
+
           // If we're lexing in a place that allows labels and we've hit a
           // colon, then we can return a label token.
           if ((parser->current.end[0] == ':') && (parser->current.end[1] != ':')) {
@@ -1339,6 +1347,12 @@ lex_token_type(yp_parser_t *parser) {
             } else {
               parser->lex_state = YP_LEX_STATE_END;
             }
+          }
+
+          if (!(last_state & (YP_LEX_STATE_DOT|YP_LEX_STATE_FNAME)) &&
+                  (type == YP_TOKEN_IDENTIFIER) &&
+                  current_scope_has_local(parser, &parser->current)) {
+              parser->lex_state = (YP_LEX_STATE_END|YP_LEX_STATE_LABEL);
           }
 
           return type;
@@ -2158,7 +2172,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 static yp_node_t *
 parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
   if (accept(parser, YP_TOKEN_DOT_DOT_DOT)) {
-    if (!yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
+    if (!current_scope_has_local(parser, &parser->previous)) {
       yp_error_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
     }
     return yp_node_forwarding_arguments_node_create(parser, &parser->previous);
@@ -2167,7 +2181,7 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
   if (accept(parser, YP_TOKEN_STAR)) {
     yp_token_t previous = parser->previous;
     if (parser->current.type == YP_TOKEN_PARENTHESIS_RIGHT || parser->current.type == YP_TOKEN_COMMA) {
-      if (!yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)) {
+    if (!current_scope_has_local(parser, &parser->previous)) {
         yp_error_list_append(&parser->error_list, "unexpected * when parent method is not forwarding.", parser->previous.start - parser->start);
       }
       return yp_node_star_node_create(parser, &previous, NULL);
@@ -2873,7 +2887,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
         (parser->previous.end[-1] != '!') &&
         (parser->previous.end[-1] != '?') &&
-        yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)
+        current_scope_has_local(parser, &parser->previous)
       ) {
         return yp_node_local_variable_read_create(parser, &parser->previous);
       }
@@ -4069,10 +4083,10 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-  parser_lex(parser);
-
   yp_node_t *scope = yp_node_scope_create(parser);
   parser->current_scope = scope;
+
+  parser_lex(parser);
 
   return yp_node_program_create(parser, scope, parse_statements(parser, YP_CONTEXT_MAIN));
 }
