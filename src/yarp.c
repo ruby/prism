@@ -87,17 +87,19 @@ debug_lex_mode(yp_parser_t *parser) {
 
 __attribute__((unused)) static void
 debug_token(yp_token_t * token) {
-    fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
+  fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
 }
 
 __attribute__((unused)) static void
 debug_scope(yp_parser_t *parser) {
-    fprintf(stderr, "Scope:\n");
-    yp_token_list_t token_list = parser->current_scope->as.scope.locals;
-    for (size_t index = 0; index < token_list.size; index++) {
-        debug_token(&token_list.tokens[index]);
-    }
-    fprintf(stderr, "\n");
+  fprintf(stderr, "SCOPE:\n");
+
+  yp_token_list_t token_list = parser->current_scope->as.scope.locals;
+  for (size_t index = 0; index < token_list.size; index++) {
+    debug_token(&token_list.tokens[index]);
+  }
+
+  fprintf(stderr, "\n");
 }
 
 /******************************************************************************/
