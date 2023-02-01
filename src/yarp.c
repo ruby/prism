@@ -1006,6 +1006,11 @@ lex_token_type(yp_parser_t *parser) {
             // We don't yet handle heredocs.
             if (match(parser, '-') || match(parser, '~')) return YP_TOKEN_EOF;
 
+            if (parser->lex_state == YP_LEX_STATE_CLASS) {
+              parser->command_start = true;
+              parser->lex_state = YP_LEX_STATE_BEG;
+            }
+
             return YP_TOKEN_LESS_LESS;
           }
 
