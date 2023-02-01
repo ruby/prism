@@ -2918,8 +2918,25 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_CLASS_VARIABLE:
       return yp_node_class_variable_read_create(parser, &parser->previous);
-    case YP_TOKEN_CONSTANT:
-      return yp_node_constant_read_create(parser, &parser->previous);
+    case YP_TOKEN_CONSTANT: {
+      yp_token_t constant = parser->previous;
+
+      // If a constant is immediately followed by parentheses, then this is in
+      // fact a method call, not a constant read.
+      if (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        yp_token_t call_operator = not_provided(parser);
+
+        yp_arguments_t arguments;
+        parse_arguments_list(parser, &arguments);
+
+        yp_node_t *node = yp_node_call_node_create(parser, NULL, &call_operator, &constant, &arguments.opening, arguments.arguments, &arguments.closing);
+        yp_string_shared_init(&node->as.call_node.name, constant.start, constant.end);
+
+        return node;
+      } else {
+        return yp_node_constant_read_create(parser, &parser->previous);
+      }
+    }
     case YP_TOKEN_COLON_COLON: {
       yp_token_t delimiter = parser->previous;
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
