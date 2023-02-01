@@ -1784,6 +1784,29 @@ parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
   return comment;
 }
 
+// Returns true if the current token is of the specified type.
+static inline bool
+match_type_p(yp_parser_t *parser, yp_token_type_t type) {
+  return parser->current.type == type;
+}
+
+// Returns true if the current token is of any of the specified types.
+static bool
+match_any_type_p(yp_parser_t *parser, size_t count, ...) {
+  va_list types;
+  va_start(types, count);
+
+  for (size_t index = 0; index < count; index++) {
+    if (match_type_p(parser, va_arg(types, yp_token_type_t))) {
+      va_end(types);
+      return true;
+    }
+  }
+
+  va_end(types);
+  return false;
+}
+
 // Optionally call out to the lex callback if one is provided.
 static inline void
 parser_lex_callback(yp_parser_t *parser) {
@@ -1807,12 +1830,7 @@ parser_lex(yp_parser_t *parser) {
   parser->current.type = lex_token_type(parser);
   if (parser->lex_callback) parser_lex_callback(parser);
 
-  while (
-    parser->current.type == YP_TOKEN_COMMENT ||
-    parser->current.type == YP_TOKEN___END__ ||
-    parser->current.type == YP_TOKEN_EMBDOC_BEGIN ||
-    parser->current.type == YP_TOKEN_INVALID
-  ) {
+  while (match_any_type_p(parser, 4, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
     switch (parser->current.type) {
       case YP_TOKEN_COMMENT: {
         // If we found a comment while lexing, then we're going to add it to the
@@ -1848,7 +1866,7 @@ parser_lex(yp_parser_t *parser) {
         comment->end = parser->current.end - parser->start;
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
-        if (parser->current.type == YP_TOKEN_EOF) {
+        if (match_type_p(parser, YP_TOKEN_EOF)) {
           yp_error_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
         } else {
           parser->current.type = lex_token_type(parser);
@@ -2093,7 +2111,7 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
 //
 static bool
 accept(yp_parser_t *parser, yp_token_type_t type) {
-  if (parser->current.type == type) {
+  if (match_type_p(parser, type)) {
     parser_lex(parser);
     return true;
   }
@@ -2111,7 +2129,7 @@ accept_any(yp_parser_t *parser, size_t count, ...) {
   va_start(types, count);
 
   for (size_t index = 0; index < count; index++) {
-    if (parser->current.type == va_arg(types, yp_token_type_t)) {
+    if (match_type_p(parser, va_arg(types, yp_token_type_t))) {
       parser_lex(parser);
       va_end(types);
       return true;
@@ -2229,8 +2247,9 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
 
   if (accept(parser, YP_TOKEN_STAR)) {
     yp_token_t previous = parser->previous;
-    if (parser->current.type == YP_TOKEN_PARENTHESIS_RIGHT || parser->current.type == YP_TOKEN_COMMA) {
-    if (!current_scope_has_local(parser, &parser->previous)) {
+
+    if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_COMMA)) {
+      if (!current_scope_has_local(parser, &parser->previous)) {
         yp_error_list_append(&parser->error_list, "unexpected * when parent method is not forwarding.", parser->previous.start - parser->start);
       }
       return yp_node_star_node_create(parser, &previous, NULL);
@@ -2493,8 +2512,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 
   // Parse any number of elsif clauses. This will form a linked list of if
   // nodes pointing to each other from the top.
-  while (parser->current.type == YP_TOKEN_KEYWORD_ELSIF) {
-    parser_lex(parser);
+  while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
     yp_token_t elsif_keyword = parser->previous;
 
     yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a predicate for the elsif clause.");
@@ -2730,7 +2748,7 @@ parse_string_without_interpolation(yp_parser_t *parser, yp_token_type_t end_type
   // able to return a string node without interpolation if we can since it'll
   // be faster.
 
-  if (parser->current.type == end_type) {
+  if (match_type_p(parser, end_type)) {
     // If we get here, then we have an end immediately after a start. In
     // that case we'll create an empty content token and return an
     // uninterpolated string.
@@ -2744,7 +2762,7 @@ parse_string_without_interpolation(yp_parser_t *parser, yp_token_type_t end_type
     return true;
   }
 
-  if (parser->current.type == YP_TOKEN_STRING_CONTENT) {
+  if (match_type_p(parser, YP_TOKEN_STRING_CONTENT)) {
     // In this case we've hit string content so we know the string at least
     // has something in it. We'll need to check if the following token is the
     // end (in which case we can return a plain string) or if it's not then it
@@ -2923,7 +2941,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       // If a constant is immediately followed by parentheses, then this is in
       // fact a method call, not a constant read.
-      if (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) {
+      if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         yp_token_t call_operator = not_provided(parser);
 
         yp_arguments_t arguments;
@@ -3043,8 +3061,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       // Parse any number of rescue clauses. This will form a linked list of if
       // nodes pointing to each other from the top.
-      while (parser->current.type == YP_TOKEN_KEYWORD_RESCUE) {
-        parser_lex(parser);
+      while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
         yp_token_t rescue_keyword = parser->previous;
 
         yp_token_t exception_variable = not_provided(parser);
@@ -3052,7 +3069,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_node_t *statements = yp_node_statements_create(parser);
         yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, &exception_variable, statements, NULL);
 
-        while (parser->current.type == YP_TOKEN_CONSTANT) {
+        while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
           yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
 
@@ -3204,7 +3221,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t inheritance_operator;
       yp_node_t *superclass;
 
-      if (parser->current.type == YP_TOKEN_LESS) {
+      if (match_type_p(parser, YP_TOKEN_LESS)) {
         inheritance_operator = parser->current;
         parser->lex_state = YP_LEX_STATE_BEG;
         parser->command_start = true;
@@ -3493,7 +3510,7 @@ parse_expression_prefix(yp_parser_t *parser) {
               yp_token_t string_content_closing = not_provided(parser);
               yp_node_t *symbol_node = yp_node_symbol_node_create(parser, &string_content_opening, &parser->previous, &string_content_closing);
 
-              if (parser->current.type == YP_TOKEN_EMBEXPR_BEGIN || interpolated->as.interpolated_symbol_node.parts.size > 0) {
+              if (match_type_p(parser, YP_TOKEN_EMBEXPR_BEGIN) || interpolated->as.interpolated_symbol_node.parts.size > 0) {
                 yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, symbol_node);
               } else {
                 yp_node_list_append(parser, array, &array->as.array_node.elements, symbol_node);
