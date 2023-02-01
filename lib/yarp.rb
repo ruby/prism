@@ -353,5 +353,6 @@ module YARP
 end
 
 require_relative "yarp/node"
+require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/yarp"
