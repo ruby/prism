@@ -497,7 +497,7 @@ lex_identifier(yp_parser_t *parser) {
     if ((parser->current.end[1] != '=') && (match(parser, '!') || match(parser, '?'))) {
       width++;
 
-      if (parser->previous.type != YP_TOKEN_DOT) {
+      if (parser->lex_state != YP_LEX_STATE_DOT) {
         if (width == 8 && lex_keyword(parser, "defined?", YP_LEX_STATE_NONE)) {
           return YP_TOKEN_KEYWORD_DEFINED;
         }
@@ -507,7 +507,7 @@ lex_identifier(yp_parser_t *parser) {
     }
   }
 
-  if (parser->previous.type != YP_TOKEN_DOT) {
+  if (parser->lex_state != YP_LEX_STATE_DOT) {
     switch (width) {
       case 2:
         if (lex_keyword(parser, "do", YP_LEX_STATE_BEG)) return YP_TOKEN_KEYWORD_DO;
@@ -830,9 +830,8 @@ lex_question_mark(yp_parser_t *parser) {
 }
 
 static bool
-current_scope_has_local(yp_parser_t * parser, yp_token_t * token)
-{
-    return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
+current_scope_has_local(yp_parser_t * parser, yp_token_t * token) {
+  return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
 }
 
 // This is the overall lexer function. It is responsible for advancing both
@@ -1330,6 +1329,8 @@ lex_token_type(yp_parser_t *parser) {
           yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
           size_t width;
 
+          parser->lex_state = parser->lex_state & YP_LEX_STATE_FNAME ? YP_LEX_STATE_ENDFN : YP_LEX_STATE_END;
+
           if ((width = char_is_identifier_start(parser, parser->current.end))) {
             parser->current.end += width;
 
@@ -1395,10 +1396,12 @@ lex_token_type(yp_parser_t *parser) {
             }
           }
 
-          if (!(last_state & (YP_LEX_STATE_DOT|YP_LEX_STATE_FNAME)) &&
-                  (type == YP_TOKEN_IDENTIFIER) &&
-                  current_scope_has_local(parser, &parser->current)) {
-              parser->lex_state = (YP_LEX_STATE_END|YP_LEX_STATE_LABEL);
+          if (
+            !(last_state & (YP_LEX_STATE_DOT|YP_LEX_STATE_FNAME)) &&
+            (type == YP_TOKEN_IDENTIFIER) &&
+            current_scope_has_local(parser, &parser->current)
+          ) {
+            parser->lex_state = (YP_LEX_STATE_END|YP_LEX_STATE_LABEL);
           }
 
           return type;
