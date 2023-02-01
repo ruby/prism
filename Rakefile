@@ -92,6 +92,18 @@ task lex: :compile do
       Dir["vendor/spec/**/*.rb"]
     end
 
+  # There are a couple of files that always cause infinite loops or segfaults.
+  # So we have to skip them for now.
+  filepaths.reject! do |filepath|
+    if filepath == "vendor/spec/library/abbrev/abbrev_spec.rb" || filepath.start_with?("vendor/spec/core/range/")
+      print colorize.call(31, "E")
+      results[:failing] << filepath
+      true
+    else
+      false
+    end
+  end
+
   filepaths.each do |filepath|
     source = File.read(filepath)
 
@@ -111,7 +123,7 @@ task lex: :compile do
     result =
       YARP.lex_ripper(source).zip(YARP.lex_compat(source)).all? do |(ripper, yarp)|
         break false if yarp.nil?
-        ripper[0...-1] == yarp[0...-1]
+        ripper == yarp
       end
 
     print result ? colorize.call(32, ".") : colorize.call(31, "E")
@@ -119,5 +131,4 @@ task lex: :compile do
   end
 
   puts "\n\nPASSING=#{results[:passing].length}\nFAILING=#{results[:failing].length}"
-  puts "\n#{results[:failing].sort.join("\n")}"
 end
