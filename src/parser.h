@@ -6,6 +6,47 @@
 #include "util/yp_list.h"
 #include "ast.h"
 
+// This enum provides various bits that represent different kinds of states that
+// the lexer can track. This is used to determine which kind of token to return
+// based on the context of the parser.
+typedef enum {
+  YP_LEX_STATE_BIT_BEG,
+  YP_LEX_STATE_BIT_END,
+  YP_LEX_STATE_BIT_ENDARG,
+  YP_LEX_STATE_BIT_ENDFN,
+  YP_LEX_STATE_BIT_ARG,
+  YP_LEX_STATE_BIT_CMDARG,
+  YP_LEX_STATE_BIT_MID,
+  YP_LEX_STATE_BIT_FNAME,
+  YP_LEX_STATE_BIT_DOT,
+  YP_LEX_STATE_BIT_CLASS,
+  YP_LEX_STATE_BIT_LABEL,
+  YP_LEX_STATE_BIT_LABELED,
+  YP_LEX_STATE_BIT_FITEM
+} yp_lex_state_bit_t;
+
+// This enum combines the various bits from the above enum into individual
+// values that represent the various states of the lexer.
+typedef enum {
+  YP_LEX_STATE_NONE = 0,
+  YP_LEX_STATE_BEG = (1 << YP_LEX_STATE_BIT_BEG),
+  YP_LEX_STATE_END = (1 << YP_LEX_STATE_BIT_END),
+  YP_LEX_STATE_ENDARG = (1 << YP_LEX_STATE_BIT_ENDARG),
+  YP_LEX_STATE_ENDFN = (1 << YP_LEX_STATE_BIT_ENDFN),
+  YP_LEX_STATE_ARG = (1 << YP_LEX_STATE_BIT_ARG),
+  YP_LEX_STATE_CMDARG = (1 << YP_LEX_STATE_BIT_CMDARG),
+  YP_LEX_STATE_MID = (1 << YP_LEX_STATE_BIT_MID),
+  YP_LEX_STATE_FNAME = (1 << YP_LEX_STATE_BIT_FNAME),
+  YP_LEX_STATE_DOT = (1 << YP_LEX_STATE_BIT_DOT),
+  YP_LEX_STATE_CLASS = (1 << YP_LEX_STATE_BIT_CLASS),
+  YP_LEX_STATE_LABEL = (1 << YP_LEX_STATE_BIT_LABEL),
+  YP_LEX_STATE_LABELED = (1 << YP_LEX_STATE_BIT_LABELED),
+  YP_LEX_STATE_FITEM = (1 << YP_LEX_STATE_BIT_FITEM),
+  YP_LEX_STATE_BEG_ANY = YP_LEX_STATE_BEG | YP_LEX_STATE_MID | YP_LEX_STATE_CLASS,
+  YP_LEX_STATE_ARG_ANY = YP_LEX_STATE_ARG | YP_LEX_STATE_CMDARG,
+  YP_LEX_STATE_END_ANY = YP_LEX_STATE_END | YP_LEX_STATE_ENDARG | YP_LEX_STATE_ENDFN
+} yp_lex_state_t;
+
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
 // a string, the first token that we return is a TOKEN_STRING_BEGIN token. After
@@ -173,10 +214,13 @@ typedef struct {
 // currently parsing. It also contains the most recent and current token that
 // it's considering.
 struct yp_parser {
+  yp_lex_state_t lex_state; // the current state of the lexer
+  bool command_start;       // whether or not we're at the beginning of a command
+
   struct {
-    yp_lex_mode_t *current;                 // the current state of the lexer
-    yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer states
-    size_t index;                           // the current index into the lexer state stack
+    yp_lex_mode_t *current;                 // the current mode of the lexer
+    yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes
+    size_t index;                           // the current index into the lexer mode stack
   } lex_modes;
 
   const char *start;   // the pointer to the start of the source
