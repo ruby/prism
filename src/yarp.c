@@ -1166,6 +1166,8 @@ lex_token_type(yp_parser_t *parser) {
             parser->current.end++;
           }
           (void) match(parser, '\n');
+          parser->lex_state = YP_LEX_STATE_ARG;
+          parser->command_start = true;
           return YP_TOKEN_COMMENT;
 
         case '\r': {
@@ -1204,6 +1206,7 @@ lex_token_type(yp_parser_t *parser) {
         // [ []
         case '[':
           if (parser->previous.type == YP_TOKEN_DOT && match(parser, ']')) {
+            parser->lex_state = YP_LEX_STATE_END;
             return YP_TOKEN_BRACKET_LEFT_RIGHT;
           }
 
@@ -1679,7 +1682,17 @@ lex_token_type(yp_parser_t *parser) {
               if (previous_command_start) {
                 parser->lex_state = YP_LEX_STATE_CMDARG;
               } else {
-                parser->lex_state = YP_LEX_STATE_ARG;
+                  if (parser->lex_state & (YP_LEX_STATE_BEG_ANY|YP_LEX_STATE_DOT|YP_LEX_STATE_FNAME)) {
+                      parser->lex_state = YP_LEX_STATE_ARG;
+                  }
+                  else {
+                      if (parser->lex_state & YP_LEX_STATE_ARG) {
+                        parser->lex_state = YP_LEX_STATE_ARG;
+                      }
+                      else {
+                        parser->lex_state = YP_LEX_STATE_END|YP_LEX_STATE_LABEL;
+                      }
+                  }
               }
             } else if (parser->lex_state == YP_LEX_STATE_FNAME) {
               parser->lex_state = YP_LEX_STATE_ENDFN;
