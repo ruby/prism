@@ -99,7 +99,7 @@ class NodeType
       config.fetch("location").then do |location|
         if location == "provided"
           @location_provided = true
-          "{ .start = location, .end = location }"
+          "*location"
         else
           bounds = location.include?("->") ? location.split("->") : [location, location]
           from, to = bounds.map { |names| names.split("|").map { |name| params.find { |param| param.name == name } } }
@@ -120,9 +120,9 @@ class NodeType
     case param = params.first
     in NodeParam then "#{param.name}->location.start"
     in OptionalNodeParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->location.start)"
+    in TokenParam then "#{param.name}->start"
+    in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
     in NodeListParam | TokenListParam then "0"
-    in TokenParam then "#{param.name}->start - parser->start"
-    in OptionalTokenParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->start - parser->start)"
     else
       raise "Unknown param type: #{param.inspect}"
     end
@@ -132,9 +132,9 @@ class NodeType
     case param = params.first
     in NodeParam then "#{param.name}->location.end"
     in OptionalNodeParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->location.end)"
+    in TokenParam then "#{param.name}->end"
+    in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
     in NodeListParam | TokenListParam then "0"
-    in TokenParam then "#{param.name}->end - parser->start"
-    in OptionalTokenParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->end - parser->start)"
     else
       raise "Unknown param type: #{param.inspect}"
     end
