@@ -261,6 +261,26 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, 
   return node;
 }
 
+// Allocate and initialize a new BreakNode node.
+yp_node_t *
+yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_BREAK_NODE,
+    .location = {
+      .start = keyword->start,
+      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+    },
+    .as.break_node = {
+      .keyword = *keyword,
+      .arguments = arguments
+    }
+  };
+
+  return node;
+}
+
 /******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
@@ -2133,7 +2153,7 @@ parser_lex(yp_parser_t *parser) {
         do {
           parser->current.type = lex_token_type(parser);
           if (parser->lex_callback) parser_lex_callback(parser);
-        } while ((parser->current.type != YP_TOKEN_EMBDOC_END) && (parser->current.type != YP_TOKEN_EOF));
+        } while (!match_any_type_p(parser, 2, YP_TOKEN_EMBDOC_END, YP_TOKEN_EOF));
 
         comment->end = parser->current.end - parser->start;
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
@@ -2459,7 +2479,7 @@ static yp_node_t *
 parse_targets(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
   yp_node_t *first_target = parse_expression(parser, binding_power, message);
 
-  if (parser->current.type != YP_TOKEN_COMMA) {
+  if (!match_type_p(parser, YP_TOKEN_COMMA)) {
     return first_target;
   }
 
@@ -2536,12 +2556,7 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
 // Parse a list of arguments.
 static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
-  while (
-    parser->current.type != terminator &&
-    parser->current.type != YP_TOKEN_NEWLINE &&
-    parser->current.type != YP_TOKEN_SEMICOLON &&
-    parser->current.type != YP_TOKEN_EOF
-  ) {
+  while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
     if (yp_arguments_node_size(arguments) > 0) {
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
@@ -2847,7 +2862,7 @@ parse_symbol(yp_parser_t *parser, int mode) {
   if (parser->lex_modes.current->as.string.interpolation) {
     yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
 
-    while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+    while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
       switch (parser->current.type) {
         case YP_TOKEN_STRING_CONTENT: {
           parser_lex(parser);
@@ -3072,7 +3087,7 @@ parse_string_without_interpolation(yp_parser_t *parser, yp_token_type_t end_type
 static void
 parse_interpolated_string_parts(yp_parser_t *parser, yp_token_type_t end_type, yp_node_t *node, yp_node_list_t *parts) {
   bool advancing = false;
-  while (parser->current.type != end_type && parser->current.type != YP_TOKEN_EOF) {
+  while (!match_any_type_p(parser, 2, end_type, YP_TOKEN_EOF)) {
     if (advancing) parser_lex(parser);
     advancing = true;
 
@@ -3095,7 +3110,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_BRACKET_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+      while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
         while (accept(parser, YP_TOKEN_NEWLINE));
 
         if (yp_array_node_size(array) != 0) {
@@ -3125,7 +3140,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *parentheses;
 
-      if (parser->current.type != YP_TOKEN_PARENTHESIS_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+      if (!match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_EOF)) {
         accept(parser, YP_TOKEN_NEWLINE);
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PARENS);
         parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
@@ -3136,6 +3151,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
       parentheses->as.parentheses_node.closing = parser->previous;
+      parentheses->location.end = parser->previous.end;
       return parentheses;
     }
 
@@ -3143,7 +3159,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *node = yp_node_hash_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_BRACE_RIGHT && parser->current.type != YP_TOKEN_EOF) {
+      while (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
         while (accept(parser, YP_TOKEN_NEWLINE));
 
         if (node->as.hash_node.elements.size != 0) {
@@ -3250,7 +3266,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_global_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_IDENTIFIER: {
       if (
-        (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
+        !match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) &&
         (parser->previous.end[-1] != '!') &&
         (parser->previous.end[-1] != '?') &&
         current_scope_has_local(parser, &parser->previous)
@@ -3414,12 +3430,12 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (!accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
         arguments = yp_arguments_node_create(parser);
 
-        while (parser->current.type != YP_TOKEN_EOF) {
+        while (!match_type_p(parser, YP_TOKEN_EOF)) {
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
           yp_arguments_node_append(arguments, expression);
 
-          // If parsing the argument resulted in error recovery, then we can stop
-          // parsing the arguments entirely now.
+          // If parsing the argument resulted in error recovery, then we can
+          // stop parsing the arguments entirely now.
           if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
           if (accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) break;
 
@@ -3430,7 +3446,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       switch (keyword.type) {
         case YP_TOKEN_KEYWORD_BREAK:
-          return yp_node_break_node_create(parser, &keyword, arguments);
+          return yp_break_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_NEXT:
           return yp_node_next_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_RETURN:
@@ -3729,7 +3745,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+      while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         if (yp_array_node_size(array) == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
@@ -3753,7 +3769,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+      while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         if (yp_array_node_size(array) == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
@@ -3763,7 +3779,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_token_t dynamic_symbol_opening = not_provided(parser);
         yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &dynamic_symbol_opening, &dynamic_symbol_opening);
 
-        while (parser->current.type != YP_TOKEN_WORDS_SEP && parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+        while (!match_any_type_p(parser, 3, YP_TOKEN_WORDS_SEP, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
           switch (parser->current.type) {
             case YP_TOKEN_STRING_CONTENT: {
               parser_lex(parser);
@@ -3810,7 +3826,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
-      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+      while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         if (yp_array_node_size(array) == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
@@ -3834,7 +3850,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
       yp_node_t *current = NULL;
 
-      while (parser->current.type != YP_TOKEN_STRING_END && parser->current.type != YP_TOKEN_EOF) {
+      while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         switch (parser->current.type) {
           case YP_TOKEN_WORDS_SEP: {
             if (current == NULL) {

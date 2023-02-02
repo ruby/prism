@@ -42,6 +42,13 @@ class LocationTest < Test::Unit::TestCase
     assert_location(YARP::BlockParameterNode, "def foo(&bar) end", 8...12) { |node| node.parameters.block }
   end
 
+  test "BreakNode" do
+    assert_location(YARP::BreakNode, "break")
+    assert_location(YARP::BreakNode, "break foo")
+    assert_location(YARP::BreakNode, "break foo, bar")
+    assert_location(YARP::BreakNode, "break(foo)")
+  end
+
   private
 
   def assert_location(kind, source, expected = 0...source.length)
