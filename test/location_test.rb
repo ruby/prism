@@ -38,6 +38,10 @@ class LocationTest < Test::Unit::TestCase
     assert_location(YARP::BeginNode, "begin foo rescue bar\nelse baz\nensure qux end")
   end
 
+  test "BlockParameterNode" do
+    assert_location(YARP::BlockParameterNode, "def foo(&bar) end", 8...12) { |node| node.parameters.block }
+  end
+
   private
 
   def assert_location(kind, source, expected = 0...source.length)

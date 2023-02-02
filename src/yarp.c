@@ -241,6 +241,26 @@ yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
   node->as.begin_node.end_keyword = *end_keyword;
 }
 
+// Allocate and initialize a new BlockParameterNode node.
+static yp_node_t *
+yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_BLOCK_PARAMETER_NODE,
+    .location = {
+      .start = operator->start,
+      .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+    },
+    .as.block_parameter_node = {
+      .operator = *operator,
+      .name = *name
+    }
+  };
+
+  return node;
+}
+
 /******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
@@ -2628,8 +2648,9 @@ parse_parameters(yp_parser_t *parser) {
           name = not_provided(parser);
         }
 
-        yp_node_t *param = yp_node_block_parameter_node_create(parser, &operator, &name);
+        yp_node_t *param = yp_block_parameter_node_create(parser, &operator, &name);
         params->as.parameters_node.block = param;
+
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
@@ -2639,6 +2660,7 @@ parse_parameters(yp_parser_t *parser) {
         yp_token_list_append(&parser->current_scope->as.scope.locals, &parser->previous);
         yp_node_t *param = yp_node_forwarding_parameter_node_create(parser, &parser->previous);
         params->as.parameters_node.keyword_rest = param;
+
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
