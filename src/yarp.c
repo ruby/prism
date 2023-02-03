@@ -515,6 +515,23 @@ lex_mode_pop(yp_parser_t *parser) {
   }
 }
 
+// This is the equivalent of IS_lex_state is CRuby.
+static inline bool
+lex_state_p(yp_parser_t *parser, yp_lex_state_t state) {
+  return parser->lex_state & state;
+}
+
+// This is the equivalent of IS_lex_state_all_for in CRuby.
+static inline bool
+lex_states_p(yp_parser_t *parser, yp_lex_state_t states) {
+  return (parser->lex_state & states) == states;
+}
+
+static bool
+lex_state_beg_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_BEG_ANY) || lex_states_p(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
+}
+
 /******************************************************************************/
 /* Specific token lexers                                                      */
 /******************************************************************************/
@@ -1126,6 +1143,10 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_DEFAULT:
     case YP_LEX_EMBEXPR:
     case YP_LEX_EMBVAR: {
+      // This value mirrors space_seen from CRuby. It tracks whether or not
+      // space has been eaten before the start of the next token.
+      bool space_seen = false;
+
       // First, we're going to skip past any whitespace at the front of the next
       // token.
       bool chomping = true;
@@ -1136,12 +1157,14 @@ lex_token_type(yp_parser_t *parser) {
           case '\f':
           case '\v':
             parser->current.end++;
+            space_seen = true;
             break;
           case '\r':
             if (parser->current.end[1] == '\n') {
               chomping = false;
             } else {
               parser->current.end++;
+              space_seen = true;
             }
             break;
           default:
@@ -1458,25 +1481,30 @@ lex_token_type(yp_parser_t *parser) {
 
         // / /=
         case '/':
-          if (match(parser, '=')) return YP_TOKEN_SLASH_EQUAL;
-
-          if (*parser->current.end == ' ') {
-            parser->lex_state = YP_LEX_STATE_BEG;
-            return YP_TOKEN_SLASH;
+          if (lex_state_beg_p(parser)) {
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
+            return YP_TOKEN_REGEXP_BEGIN;
           }
 
-          // If the previous token is an identifier and it is in the local
-          // table, then this is a division. Otherwise, it is a regexp.
-          if (
-            parser->previous.type == YP_TOKEN_IDENTIFIER &&
-            current_scope_has_local(parser, &parser->previous)
-          ) {
+          if (match(parser, '=')) {
             parser->lex_state = YP_LEX_STATE_BEG;
-            return YP_TOKEN_SLASH;
+            return YP_TOKEN_SLASH_EQUAL;
           }
 
-          lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
-          return YP_TOKEN_REGEXP_BEGIN;
+          if (lex_state_p(parser, YP_LEX_STATE_ARG) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
+            // TODO: arg_ambiguous(p, '/');
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
+            return YP_TOKEN_REGEXP_BEGIN;
+          }
+
+          if (lex_state_p(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT)) {
+            parser->lex_state = YP_LEX_STATE_ARG;
+          } else {
+            parser->lex_state = YP_LEX_STATE_BEG;
+          }
+
+          // TODO: warn_balanced('/', "/", "regexp literal");
+          return YP_TOKEN_SLASH;
 
         // ^ ^=
         case '^':
