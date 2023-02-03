@@ -527,9 +527,15 @@ lex_states_p(yp_parser_t *parser, yp_lex_state_t states) {
   return (parser->lex_state & states) == states;
 }
 
-static bool
+static inline bool
 lex_state_beg_p(yp_parser_t *parser) {
   return lex_state_p(parser, YP_LEX_STATE_BEG_ANY) || lex_states_p(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
+}
+
+// This is the equivalent of IS_AFTER_OPERATOR in CRuby.
+static inline bool
+lex_state_operator_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT);
 }
 
 /******************************************************************************/
@@ -805,7 +811,13 @@ lex_identifier(yp_parser_t *parser) {
   if (parser->lex_state != YP_LEX_STATE_DOT) {
     switch (width) {
       case 2:
-        if (lex_keyword(parser, "do", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_DO;
+        if (lex_keyword(parser, "do", YP_LEX_STATE_BEG, false)) {
+          if (yp_state_stack_p(&parser->do_loop_stack)) {
+            return YP_TOKEN_KEYWORD_DO_LOOP;
+          }
+          return YP_TOKEN_KEYWORD_DO;
+        }
+
         if (lex_keyword(parser, "if", YP_LEX_STATE_BEG, true)) return YP_TOKEN_KEYWORD_IF;
         if (lex_keyword(parser, "in", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_IN;
         if (lex_keyword(parser, "or", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_OR;
@@ -967,6 +979,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
       parser->current.end = pound + 2;
       parser->command_start = true;
+      yp_state_stack_push(&parser->do_loop_stack, false);
       return YP_TOKEN_EMBEXPR_BEGIN;
     default:
       // In this case we've hit a # that doesn't constitute interpolation. We'll
@@ -1211,11 +1224,13 @@ lex_token_type(yp_parser_t *parser) {
         // (
         case '(':
           parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_PARENTHESIS_LEFT;
 
         // )
         case ')':
           parser->lex_state = YP_LEX_STATE_ENDFN;
+          yp_state_stack_pop(&parser->do_loop_stack);
           return YP_TOKEN_PARENTHESIS_RIGHT;
 
         // ;
@@ -1226,16 +1241,24 @@ lex_token_type(yp_parser_t *parser) {
 
         // [ []
         case '[':
-          if (parser->previous.type == YP_TOKEN_DOT && match(parser, ']')) {
-            return YP_TOKEN_BRACKET_LEFT_RIGHT;
+          if (lex_state_operator_p(parser)) {
+            if (match(parser, ']')) {
+              parser->lex_state = YP_LEX_STATE_ARG;
+              return match(parser, '=') ? YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL : YP_TOKEN_BRACKET_LEFT_RIGHT;
+            }
+
+            parser->lex_state = YP_LEX_STATE_ARG | YP_LEX_STATE_LABEL;
+            return YP_TOKEN_BRACKET_LEFT;
           }
 
           parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_BRACKET_LEFT;
 
         // ]
         case ']':
           parser->lex_state = YP_LEX_STATE_END;
+          yp_state_stack_pop(&parser->do_loop_stack);
           return YP_TOKEN_BRACKET_RIGHT;
 
         // {
@@ -1243,10 +1266,13 @@ lex_token_type(yp_parser_t *parser) {
           if (parser->previous.type == YP_TOKEN_MINUS_GREATER) return YP_TOKEN_LAMBDA_BEGIN;
 
           parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_BRACE_LEFT;
 
         // }
         case '}':
+          yp_state_stack_pop(&parser->do_loop_stack);
+
           if (parser->lex_modes.current->mode == YP_LEX_EMBEXPR) {
             lex_mode_pop(parser);
             return YP_TOKEN_EMBEXPR_END;
@@ -1497,7 +1523,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_REGEXP_BEGIN;
           }
 
-          if (lex_state_p(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT)) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -3639,10 +3665,12 @@ parse_expression_prefix(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
       yp_token_t in_keyword = parser->previous;
 
+      yp_state_stack_push(&parser->do_loop_stack, true);
       yp_node_t *collection = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected collection.");
+      yp_state_stack_pop(&parser->do_loop_stack);
 
       yp_token_t do_keyword;
-      if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
+      if (accept(parser, YP_TOKEN_KEYWORD_DO_LOOP)) {
         do_keyword = parser->previous;
       } else {
         do_keyword = not_provided(parser);
@@ -3746,9 +3774,12 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_token_t keyword = parser->previous;
+      yp_state_stack_push(&parser->do_loop_stack, true);
 
       yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected predicate expression after `until`.");
-      accept_any(parser, 3, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      yp_state_stack_pop(&parser->do_loop_stack);
+
+      accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_UNTIL);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -3758,9 +3789,12 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_token_t keyword = parser->previous;
+      yp_state_stack_push(&parser->do_loop_stack, true);
 
       yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected predicate expression after `while`.");
-      accept_any(parser, 3, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      yp_state_stack_pop(&parser->do_loop_stack);
+
+      accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_WHILE);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -4529,6 +4563,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .lex_callback = NULL
   };
 
+  yp_state_stack_init(&parser->do_loop_stack);
   yp_list_init(&parser->warning_list);
   yp_list_init(&parser->error_list);
   yp_list_init(&parser->comment_list);

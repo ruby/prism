@@ -38,6 +38,8 @@ tokens:
     comment: "["
   - name: BRACKET_LEFT_RIGHT
     comment: "[]"
+  - name: BRACKET_LEFT_RIGHT_EQUAL
+    comment: "[]="
   - name: BRACKET_RIGHT
     comment: "]"
   - name: CARET
@@ -132,6 +134,8 @@ tokens:
     comment: "defined?"
   - name: KEYWORD_DO
     comment: "do"
+  - name: KEYWORD_DO_LOOP
+    comment: "do keyword for a predicate in a while, until, or for loop"
   - name: KEYWORD_ELSE
     comment: "else"
   - name: KEYWORD_ELSIF

@@ -2393,7 +2393,7 @@ class ParseTest < Test::Unit::TestCase
       expression("i"),
       KEYWORD_IN("in"),
       expression("1..10"),
-      KEYWORD_DO("do"),
+      KEYWORD_DO_LOOP("do"),
       Statements([expression("i")]),
       KEYWORD_END("end"),
     )
