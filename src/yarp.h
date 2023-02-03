@@ -11,7 +11,7 @@
 
 #include "util/yp_buffer.h"
 #include "ast.h"
-#include "error.h"
+#include "diagnostic.h"
 #include "pack.h"
 #include "parser.h"
 #include "regexp.h"

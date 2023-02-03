@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "enc/yp_encoding.h"
 #include "util/yp_list.h"
+#include "util/yp_state_stack.h"
 #include "ast.h"
 
 // This enum provides various bits that represent different kinds of states that
@@ -217,6 +218,10 @@ struct yp_parser {
   yp_lex_state_t lex_state; // the current state of the lexer
   bool command_start;       // whether or not we're at the beginning of a command
 
+  // the stack used to determine if a do keyword belongs to the predicate of a
+  // while, until, or for loop
+  yp_state_stack_t do_loop_stack;
+
   struct {
     yp_lex_mode_t *current;                 // the current mode of the lexer
     yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes
@@ -229,6 +234,7 @@ struct yp_parser {
   yp_token_t current;  // the current token we're considering
 
   yp_list_t comment_list;             // the list of comments that have been found while parsing
+  yp_list_t warning_list;             // the list of warnings that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
   yp_node_t *current_scope;           // the current local scope
 
