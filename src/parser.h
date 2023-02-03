@@ -229,6 +229,7 @@ struct yp_parser {
   yp_token_t current;  // the current token we're considering
 
   yp_list_t comment_list;             // the list of comments that have been found while parsing
+  yp_list_t warning_list;             // the list of warnings that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
   yp_node_t *current_scope;           // the current local scope
 

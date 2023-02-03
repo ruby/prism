@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "error.h"
+#include "diagnostic.h"
 #include "util/yp_list.h"
 #include "util/yp_string.h"
 

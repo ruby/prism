@@ -47,20 +47,35 @@ module YARP
     end
   end
 
+  # This represents a warning that was encountered during parsing.
+  class ParseWarning
+    attr_reader :message, :location
+
+    def initialize(message, location)
+      @message = message
+      @location = location
+    end
+
+    def deconstruct_keys(keys)
+      { message: message, location: location }
+    end
+  end
+
   # This represents the result of a call to ::parse or ::parse_file. It contains
   # the AST, any comments that were encounters, and any errors that were
   # encountered.
   class ParseResult
-    attr_reader :node, :comments, :errors
+    attr_reader :node, :comments, :errors, :warnings
 
-    def initialize(node, comments, errors)
+    def initialize(node, comments, errors, warnings)
       @node = node
       @comments = comments
       @errors = errors
+      @warnings = warnings
     end
 
     def deconstruct_keys(keys)
-      { node: node, comments: comments, errors: errors }
+      { node: node, comments: comments, errors: errors, warnings: warnings }
     end
 
     def success?
