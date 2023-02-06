@@ -207,6 +207,28 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("alias $a $1"), "alias $a $1", ["Can't make alias for number variables."]
   end
 
+  test "def with expression receiver and no identifier" do
+    assert_errors expression("def (a); end"), "def (a); end", [
+      "Expected '.' or '::' after receiver",
+      "Expected a method name after receiver.",
+    ]
+  end
+
+  test "def with multiple statements receiver" do
+    assert_errors expression("def (\na\nb\n).c; end"), "def (\na\nb\n).c; end", [
+      "Expected to be able to parse receiver.",
+      "Expected closing ')' for receiver.",
+      "Expected '.' or '::' after receiver",
+      "Expected a method name after receiver.",
+      "Expected to be able to parse an expression.",
+      "Expected `end` to close `def` statement.",
+    ]
+  end
+
+  test "def with empty expression receiver" do
+    assert_errors expression("def ().a; end"), "def ().a; end", ["Expected to be able to parse receiver."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
