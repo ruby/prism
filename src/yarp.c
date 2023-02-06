@@ -2520,8 +2520,7 @@ expect_any(yp_parser_t *parser, const char*message, int count, ...) {
 
   va_end(types);
 
-  yp_error_list_append(&parser->error_list, message, parser->previous.end - parser->start);
-
+  yp_diagnostic_list_append(&parser->error_list, message, parser->previous.end - parser->start);
   parser->previous =
     (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
 }
@@ -3173,9 +3172,9 @@ parse_interpolated_string_parts(yp_parser_t *parser, yp_token_type_t end_type, y
   }
 }
 
-
+// Parse an identifier into either a local variable read or a call.
 static yp_node_t *
-parse_local_read_or_call(yp_parser_t *parser) {
+parse_vcall(yp_parser_t *parser) {
   if (
     (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
     (parser->previous.end[-1] != '!') &&
@@ -3186,13 +3185,34 @@ parse_local_read_or_call(yp_parser_t *parser) {
   }
 
   yp_token_t message = parser->previous;
-  yp_token_t call_operator = not_provided(parser);
+  yp_token_t operator = not_provided(parser);
+  yp_token_t opening = not_provided(parser);
+  yp_token_t closing = not_provided(parser);
 
-  yp_arguments_t arguments;
-  parse_arguments_list(parser, &arguments);
-
-  yp_node_t *node = yp_node_call_node_create(parser, NULL, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
+  yp_node_t *node = yp_node_call_node_create(parser, NULL, &operator, &message, &opening, NULL, &closing);
   yp_string_shared_init(&node->as.call_node.name, message.start, message.end);
+
+  return node;
+}
+
+static yp_node_t *
+parse_identifier(yp_parser_t *parser) {
+  yp_node_t *node = parse_vcall(parser);
+
+  if (node->type == YP_NODE_CALL_NODE) {
+    yp_arguments_t arguments;
+    parse_arguments_list(parser, &arguments);
+
+    node->as.call_node.lparen = arguments.opening;
+    node->as.call_node.rparen = arguments.closing;
+    node->as.call_node.arguments = arguments.arguments;
+
+    if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
+      node->location.end = node->as.call_node.message.end;
+    } else {
+      node->location.end = arguments.closing.end;
+    }
+  }
 
   return node;
 }
@@ -3364,7 +3384,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_GLOBAL_VARIABLE:
       return yp_node_global_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_IDENTIFIER:
-      return parse_local_read_or_call(parser);
+      return parse_identifier(parser);
     case YP_TOKEN_IMAGINARY_NUMBER:
       return yp_node_imaginary_literal_create(parser, &parser->previous);
     case YP_TOKEN_INSTANCE_VARIABLE:
@@ -3610,16 +3630,17 @@ parse_expression_prefix(yp_parser_t *parser) {
       switch (parser->current.type) {
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
-          yp_token_t identifier = parser->previous;
+          receiver = parse_vcall(parser);
 
           if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
-            receiver = parse_local_read_or_call(parser);
             operator = parser->previous;
 
             expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
             name = parser->previous;
           } else {
-            name = identifier;
+            yp_node_destroy(parser, receiver);
+            receiver = NULL;
+            name = parser->previous;
           }
           break;
         }
@@ -3687,8 +3708,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         case YP_TOKEN_PARENTHESIS_LEFT: {
           parser_lex(parser);
           yp_token_t lparen = parser->previous;
-
-          yp_node_t* expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse receiver.");
+          yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse receiver.");
 
           expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected closing ')' for receiver.");
           yp_token_t rparen = parser->previous;

@@ -1211,6 +1211,42 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a(*); b(*); end"
   end
 
+  test "def with identifier receiver" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      expression("a"),
+      DOT("."),
+      IDENTIFIER("b"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a.b\nend"
+  end
+
+  test "def with local variable identifier receiver" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "a = 1; def a\nend"
+  end
+
   test "def with colon_colon nil receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
