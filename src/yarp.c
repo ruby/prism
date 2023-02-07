@@ -4463,6 +4463,9 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_token_t rparen = not_provided(parser);
 
       yp_node_t *arguments = yp_arguments_node_create(parser);
+
+      accept(parser, YP_TOKEN_NEWLINE);
+
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
       yp_arguments_node_append(arguments, argument);
 
