@@ -112,6 +112,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "[*a]"
   end
 
+  test "empty array literal" do
+    assert_parses ArrayNode(BRACKET_LEFT("["), [], BRACKET_RIGHT("]")), "[\n]\n"
+  end
+
   test "empty parenteses" do
     assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
   end
@@ -3124,6 +3128,10 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "{ a => b, **c }"
+  end
+
+  test "parses empty hash with statements after it" do
+    assert_parses HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")), "{\n}\n"
   end
 
   test "begin with rescue and ensure statements" do
