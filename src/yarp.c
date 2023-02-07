@@ -1214,7 +1214,9 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         case '\n':
-          parser->lex_state = YP_LEX_STATE_BEG;
+          if (!(parser->lex_state & YP_LEX_STATE_BEG)) {
+            parser->lex_state = YP_LEX_STATE_BEG;
+          }
           parser->command_start = true;
           return YP_TOKEN_NEWLINE;
 
