@@ -1,0 +1,111 @@
+{
+  "name": "yarp-lsp",
+  "displayName": "yarp-lsp",
+  "description": "VS Code plugin for connecting with the YARP LSP",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:ruby"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "yarp-lsp.start",
+        "title": "YARP LSP: Start"
+      },
+      {
+        "command": "yarp-lsp.stop",
+        "title": "YARP LSP: Stop"
+      },
+      {
+        "command": "yarp-lsp.restart",
+        "title": "YARP LSP: Restart"
+      }
+    ],
+    "configuration": [
+      {
+        "type": "object",
+        "title": "YARP",
+        "properties": {
+          "yarp-lsp.ignoreFiles": {
+            "default": "",
+            "markdownDescription": "A glob pattern of files to ignore for formatting.",
+            "type": "string"
+          }
+        }
+      },
+      {
+        "type": "object",
+        "title": "Advanced",
+        "properties": {
+          "yarp-lsp.advanced.commandPath": {
+            "default": "",
+            "markdownDescription": "Absolute path to stree executable. Overrides default search order.\n\nSupports variables `${userHome}`, `${pathSeparator}`, and `${cwd}`",
+            "type": "string"
+          }
+        }
+      }
+    ],
+    "colors": []
+  },
+  "scripts": {
+    "clean": "rm -rf ./out",
+    "compile": "yarn run esbuild-base --sourcemap",
+    "esbuild-base": "esbuild --bundle --external:vscode --external:vscode-languageclient --format=cjs --outfile=out/extension.js --platform=node src/extension.ts",
+    "lint": "eslint .",
+    "package": "vsce package --no-yarn --githubBranch main",
+    "publish": "vsce publish --no-yarn --githubBranch main",
+    "test": "node ./out/test/runTest.js",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc --watch -p ./",
+    "vscode:prepublish": "yarn run esbuild-base -- --minify",
+    "watch": "yarn run esbuild-base --sourcemap --watch"
+  },
+  "dependencies": {
+    "vscode-languageclient": "8.0.2"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.68.0",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "@vscode/test-electron": "^2.2.0",
+    "esbuild": "^0.17.6",
+    "eslint": "^8.22.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.4",
+    "vsce": "^2.9.2"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "@typescript-eslint/naming-convention": "warn",
+        "@typescript-eslint/semi": "warn",
+        "curly": "warn",
+        "eqeqeq": "warn",
+        "no-throw-literal": "warn",
+        "semi": "off"
+    },
+    "ignorePatterns": [
+        "out",
+        "dist",
+        "**/*.d.ts"
+    ]
+  }
+}
