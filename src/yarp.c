@@ -3229,14 +3229,14 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
+      while (accept(parser, YP_TOKEN_NEWLINE));
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
-        while (accept(parser, YP_TOKEN_NEWLINE));
-
         if (yp_array_node_size(array) != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
+          while (accept(parser, YP_TOKEN_NEWLINE));
         }
 
-        while (accept(parser, YP_TOKEN_NEWLINE));
+
         yp_node_t *element;
 
         if (accept(parser, YP_TOKEN_STAR)) {
@@ -3284,7 +3284,6 @@ parse_expression_prefix(yp_parser_t *parser) {
           expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
           while (accept(parser, YP_TOKEN_NEWLINE));
         }
-
 
         yp_node_t *element;
 

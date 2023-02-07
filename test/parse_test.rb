@@ -112,6 +112,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "[*a]"
   end
 
+  test "empty array literal" do
+    assert_parses ArrayNode(BRACKET_LEFT("["), [], BRACKET_RIGHT("]")), "[\n]\n"
+  end
+
   test "empty parenteses" do
     assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
   end
