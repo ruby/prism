@@ -3278,14 +3278,14 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *node = yp_node_hash_node_create(parser, &opening, &opening);
 
+      while (accept(parser, YP_TOKEN_NEWLINE));
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
-        while (accept(parser, YP_TOKEN_NEWLINE));
-
         if (node->as.hash_node.elements.size != 0) {
           expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
+          while (accept(parser, YP_TOKEN_NEWLINE));
         }
 
-        while (accept(parser, YP_TOKEN_NEWLINE));
+
         yp_node_t *element;
 
         switch (parser->current.type) {

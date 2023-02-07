@@ -3126,6 +3126,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "{ a => b, **c }"
   end
 
+  test "parses empty hash with statements after it" do
+    assert_parses HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")), "{\n}\n"
+  end
+
   test "begin with rescue and ensure statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
