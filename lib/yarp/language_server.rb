@@ -95,8 +95,6 @@ module YARP
           write(id: request[:id], result: contents ? diagnostics(contents) : nil)
         in { method: %r{\$/.+} }
           # ignored
-        else
-          raise ArgumentError, "Unhandled: #{request}"
         end
       end
     end
