@@ -3290,6 +3290,25 @@ class ParseTest < Test::Unit::TestCase
     refute YARP.parse("#encoding: utf8").errors.empty?
   end
 
+  test "symbol to proc argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolToProcNode(
+           AMPERSAND("&"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      "foo"
+    )
+
+    assert_parses expected, "foo(&:hi)"
+  end
+
   private
 
   def assert_serializes(expected, source)

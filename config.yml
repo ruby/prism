@@ -668,6 +668,18 @@ nodes:
             bar(...)
             ^^^^^^^^
           end
+  - name: SymbolToProcNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: body
+        type: node
+    location: operator->body
+    comment: |
+      Represents symbol to proc node
+
+          map(&:call)
+              ^^^^^^
   - name: ForwardingParameterNode
     child_nodes:
       - name: operator

@@ -2624,6 +2624,12 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
     return yp_node_star_node_create(parser, &parser->previous, expression);
   }
 
+  if (accept(parser, YP_TOKEN_AMPERSAND)) {
+    yp_token_t operator = parser->previous;
+    yp_node_t *expr = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+    return yp_node_symbol_to_proc_node_create(parser, &operator, expr);
+  }
+
   return parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
 }
 
