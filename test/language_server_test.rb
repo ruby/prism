@@ -5,6 +5,47 @@ require "yarp/language_server"
 
 module YARP
   class LanguageServerTest < Test::Unit::TestCase
+    module Request
+      # Represents a hash pattern.
+      class Shape
+        attr_reader :values
+
+        def initialize(values)
+          @values = values
+        end
+
+        def ===(other)
+          values.all? do |key, value|
+            value == :any ? other.key?(key) : value === other[key]
+          end
+        end
+      end
+
+      # Represents an array pattern.
+      class Tuple
+        attr_reader :values
+
+        def initialize(values)
+          @values = values
+        end
+
+        def ===(other)
+          values.each_with_index.all? { |value, index| value === other[index] }
+        end
+      end
+
+      def self.[](value)
+        case value
+        when Array
+          Tuple.new(value.map { |child| self[child] })
+        when Hash
+          Shape.new(value.transform_values { |child| self[child] })
+        else
+          value
+        end
+      end
+    end
+
     class Initialize < Struct.new(:id)
       def to_hash
         { method: "initialize", id: id }
@@ -69,7 +110,7 @@ module YARP
           Shutdown.new(3)
         ])
 
-        shape = LanguageServer::Request[[
+        shape = Request[[
           { id: 1, result: { capabilities: Hash } },
           { id: 3, result: {} }
         ]]
@@ -87,7 +128,7 @@ module YARP
     def test_clean_shutdown
       responses = run_server([Initialize.new(1), Shutdown.new(2)])
 
-      shape = LanguageServer::Request[[
+      shape = Request[[
         { id: 1, result: { capabilities: Hash } },
         { id: 2, result: {} }
       ]]
@@ -101,7 +142,7 @@ module YARP
         Shutdown.new(3)
       ])
 
-      shape = LanguageServer::Request[[
+      shape = Request[[
         { id: 1, result: { capabilities: Hash } },
         { id: 3, result: {} }
       ]]
@@ -119,7 +160,7 @@ module YARP
         Shutdown.new(3)
       ])
 
-      shape = LanguageServer::Request[[
+      shape = Request[[
         { id: 1, result: { capabilities: Hash } },
         { id: 2, result: :any },
         { id: 3, result: {} }

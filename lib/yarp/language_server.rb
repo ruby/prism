@@ -9,46 +9,22 @@ module YARP
   # language server protocol. It can be invoked by running the yarp-lsp
   # bin script (bin/yarp-lsp)
   class LanguageServer
-    module Request
-      # Represents a hash pattern.
-      class Shape
-        attr_reader :values
+    GITHUB_TEMPLATE = <<~TEMPLATE
+    Reporting issue with error `%{error}`.
 
-        def initialize(values)
-          @values = values
-        end
+    ## Expected behavior
+    <!-- TODO: Briefly explain what the expected behavior should be on this example. -->
 
-        def ===(other)
-          values.all? do |key, value|
-            value == :any ? other.key?(key) : value === other[key]
-          end
-        end
-      end
+    ## Actual behavior
+    <!-- TODO: Describe here what actually happened. -->
 
-      # Represents an array pattern.
-      class Tuple
-        attr_reader :values
+    ## Steps to reproduce the problem
+    <!-- TODO: Describe how we can reproduce the problem. -->
 
-        def initialize(values)
-          @values = values
-        end
+    ## Additional information
+    <!-- TODO: Include any additional information, such as screenshots. -->
 
-        def ===(other)
-          values.each_with_index.all? { |value, index| value === other[index] }
-        end
-      end
-
-      def self.[](value)
-        case value
-        when Array
-          Tuple.new(value.map { |child| self[child] })
-        when Hash
-          Shape.new(value.transform_values { |child| self[child] })
-        else
-          value
-        end
-      end
-    end
+    TEMPLATE
 
     attr_reader :input, :output
 
@@ -90,9 +66,11 @@ module YARP
         in { method: "textDocument/didClose", params: { textDocument: { uri: } } }
           store.delete(uri)
         in { method: "textDocument/diagnostic", id:, params: { textDocument: { uri: } } }
-          uri = request.dig(:params, :textDocument, :uri)
           contents = store[uri]
-          write(id: request[:id], result: contents ? diagnostics(contents) : nil)
+          write(id: id, result: contents ? diagnostics(contents) : nil)
+        in { method: "textDocument/codeAction", id:, params: { textDocument: { uri: }, context: { diagnostics: }}}
+          contents = store[uri]
+          write(id: id, result: contents ? code_actions(contents, diagnostics) : nil)
         in { method: %r{\$/.+} }
           # ignored
         end
@@ -104,6 +82,11 @@ module YARP
 
     def capabilities
       {
+        codeActionProvider: {
+          codeActionKinds: [
+            'quickfix',
+          ],
+        },
         diagnosticProvider: {
           interFileDependencies: false,
           workspaceDiagnostics: false,
@@ -111,14 +94,27 @@ module YARP
         textDocumentSync: {
           change: 1,
           openClose: true
-        }
+        },
       }
     end
 
-    def write(value)
-      response = value.merge(jsonrpc: "2.0").to_json
-      output.print("Content-Length: #{response.bytesize}\r\n\r\n#{response}")
-      output.flush
+    def code_actions(source, diagnostics)
+      diagnostics.map do |diagnostic|
+        message = diagnostic[:message]
+        issue_content = URI.encode_www_form_component(GITHUB_TEMPLATE % {error: message})
+        issue_link = "https://github.com/Shopify/yarp/issues/new?&labels=Bug&body=#{issue_content}"
+
+        {
+          title: "Report incorrect error: `#{diagnostic[:message]}` ",
+          kind: "quickfix",
+          diagnostics: [diagnostic],
+          command: {
+            title: "Report incorrect error",
+            command: "vscode.open",
+            arguments: [issue_link]
+          }
+        }
+      end
     end
 
     def diagnostics(source)
@@ -160,8 +156,10 @@ module YARP
       }
     end
 
-    def log(message)
-      write(method: "window/logMessage", params: { type: 4, message: message })
+    def write(value)
+      response = value.merge(jsonrpc: "2.0").to_json
+      output.print("Content-Length: #{response.bytesize}\r\n\r\n#{response}")
+      output.flush
     end
   end
 end
