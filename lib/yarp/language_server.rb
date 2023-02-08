@@ -124,7 +124,7 @@ module YARP
     def diagnostics(source)
       offsets = Hash.new do |hash, key|
         slice = source.byteslice(...key)
-        lineno = slice.count("\n") + 1
+        lineno = slice.count("\n")
 
         char = slice.length
         newline = source.rindex("\n", [char - 1, 0].max) || -1
