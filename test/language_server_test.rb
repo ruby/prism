@@ -145,14 +145,13 @@ module YARP
       end
     end
 
-    def run_server(messages, print_width: LanguageServer::DEFAULT_PRINT_WIDTH)
+    def run_server(messages)
       input = StringIO.new(messages.map { |message| write(message) }.join)
       output = StringIO.new
 
       LanguageServer.new(
         input: input,
         output: output,
-        print_width: print_width
       ).run
 
       read(output.tap(&:rewind))

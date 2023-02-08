@@ -9,8 +9,6 @@ module YARP
   # language server protocol. It can be invoked by running the yarp-lsp
   # bin script (bin/yarp-lsp)
   class LanguageServer
-    DEFAULT_PRINT_WIDTH = 80
-
     module Request
       # Represents a hash pattern.
       class Shape
@@ -52,16 +50,14 @@ module YARP
       end
     end
 
-    attr_reader :input, :output, :print_width
+    attr_reader :input, :output
 
     def initialize(
       input: $stdin,
-      output: $stdout,
-      print_width: DEFAULT_PRINT_WIDTH
+      output: $stdout
     )
       @input = input.binmode
       @output = output.binmode
-      @print_width = print_width
     end
 
     # rubocop:disable Layout/LineLength
