@@ -127,22 +127,38 @@ module YARP
       output.flush
     end
 
-    def diagnostics(contents)
-      parse_output = YARP.parse(contents)
-      { 
+    def diagnostics(source)
+      offsets = Hash.new do |hash, key|
+        slice = source.byteslice(...key)
+        lineno = slice.count("\n") + 1
+
+        char = slice.length
+        newline = source.rindex("\n", [char - 1, 0].max) || -1
+        hash[key] = { line: lineno, character: char - newline - 1 }
+      end
+
+      parse_output = YARP.parse(source)
+
+      {
         kind: "full",
         items: [
           *parse_output.errors.map do |error|
             {
-              #range: error.location,
+              range: {
+                start: offsets[error.location.start_offset],
+                end: offsets[error.location.end_offset],
+              },
               message: error.message,
               severity: 1,
             }
           end,
           *parse_output.warnings.map do |warning|
             {
-              #range: warning.location,
-              #message: warning.message,
+              range: {
+                start: offsets[warning.location.start_offset],
+                end: offsets[warning.location.end_offset],
+              },
+              message: warning.message,
               severity: 2,
             }
           end,
