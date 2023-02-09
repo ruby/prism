@@ -33,6 +33,7 @@ export async function activate(context: ExtensionContext) {
     commands.registerCommand("yarp-lsp.start", startLanguageServer),
     commands.registerCommand("yarp-lsp.stop", stopLanguageServer),
     commands.registerCommand("yarp-lsp.restart", restartLanguageServer),
+    commands.registerCommand("yarp-lsp.report", reportIssue)
   );
 
   // We're returning a Promise from this function that will start the Ruby
@@ -188,6 +189,36 @@ export async function activate(context: ExtensionContext) {
     outputChannel.appendLine("Restarting language server...");
     await stopLanguageServer();
     await startLanguageServer();
+  }
+
+  // This function is called when a user wants to report an issue they have
+  // have found while writing Ruby code. If the user has selected code in the
+  // editor, this will be included as a snippet on the issue.
+  async function reportIssue() {
+    let issueContent = `
+## Expected behavior
+<!-- TODO: Briefly explain what the expected behavior should be on this example. -->
+
+## Actual behavior
+<!-- TODO: Describe here what actually happened. -->
+
+## Steps to reproduce the problem
+<!-- TODO: Describe how we can reproduce the problem. -->
+
+## Additional information
+<!-- TODO: Include any additional information, such as screenshots. -->
+    `;
+
+    const selection = window.activeTextEditor?.selection;
+    if (selection) {
+      const text = window.activeTextEditor?.document.getText(selection);
+
+      if (text) {
+        issueContent = "### Code snippet causing error\n``` ruby\n" + text + "\n```\n" + issueContent;
+      }
+    }
+
+    commands.executeCommand('vscode.open', `https://github.com/Shopify/yarp/issues/new?&labels=Bug&body=${encodeURIComponent(issueContent)}`);
   }
 }
 

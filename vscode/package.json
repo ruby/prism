@@ -17,15 +17,19 @@
     "commands": [
       {
         "command": "yarp-lsp.start",
-        "title": "YARP LSP: Start"
+        "title": "YARP: Start"
       },
       {
         "command": "yarp-lsp.stop",
-        "title": "YARP LSP: Stop"
+        "title": "YARP: Stop"
       },
       {
         "command": "yarp-lsp.restart",
-        "title": "YARP LSP: Restart"
+        "title": "YARP: Restart"
+      },
+      {
+        "command": "yarp-lsp.report",
+        "title": "YARP: Report issue"
       }
     ],
     "configuration": [
@@ -52,7 +56,16 @@
         }
       }
     ],
-    "colors": []
+    "colors": [],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorHasSelection && editorLangId == ruby",
+          "command": "yarp-lsp.report",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "clean": "rm -rf ./out",
