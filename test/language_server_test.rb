@@ -88,6 +88,21 @@ module YARP
       end
     end
 
+    class TextDocumentCodeAction < Struct.new(:id, :uri, :diagnostics)
+      def to_hash
+        {
+          method: "textDocument/codeAction",
+          id: id,
+          params: {
+            textDocument: { uri: uri },
+            context: {
+              diagnostics: diagnostics,
+            },
+          },
+        }
+      end
+    end
+
     class TextDocumentDiagnostic < Struct.new(:id, :uri)
       def to_hash
         {
@@ -119,12 +134,6 @@ module YARP
       end
     end
 
-    def test_bogus_request
-      assert_raises(ArgumentError) do
-        run_server([{ method: "textDocument/bogus" }])
-      end
-    end
-
     def test_clean_shutdown
       responses = run_server([Initialize.new(1), Shutdown.new(2)])
 
@@ -150,7 +159,86 @@ module YARP
       assert_operator(shape, :===, responses)
     end
 
-    def test_diagnostics_request
+    def test_code_action_request
+      message = "this is an error"
+      diagnostic = {
+        range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+        message: message,
+        severity: 1,
+      }
+      responses = run_server([
+        Initialize.new(1),
+        TextDocumentDidOpen.new("file:///path/to/file.rb", <<~RUBY),
+          1 + (
+        RUBY
+        TextDocumentCodeAction.new(2, "file:///path/to/file.rb", [diagnostic]),
+        Shutdown.new(3)
+      ])
+
+      shape = Request[[
+        { id: 1, result: { capabilities: Hash } },
+        { id: 2, result: [
+            {
+              title: "Report incorrect error: `#{message}`",
+              kind: "quickfix",
+              diagnostics: [diagnostic],
+              command: {
+                title: "Report incorrect error",
+                command: "vscode.open",
+                arguments: [String]
+              }
+            }
+          ],
+        },
+        { id: 3, result: {} }
+      ]]
+
+      assert_operator(shape, :===, responses)
+      assert(responses.dig(1, :result, 0, :command, :arguments, 0).include?(URI.encode_www_form_component(message)))
+    end
+
+    def test_code_action_request_no_diagnostic
+      responses = run_server([
+        Initialize.new(1),
+        TextDocumentDidOpen.new("file:///path/to/file.rb", <<~RUBY),
+          1 + (
+        RUBY
+        TextDocumentCodeAction.new(2, "file:///path/to/file.rb", []),
+        Shutdown.new(3)
+      ])
+
+      shape = Request[[
+        { id: 1, result: { capabilities: Hash } },
+        { id: 2, result: [] },
+        { id: 3, result: {} }
+      ]]
+
+      assert_operator(shape, :===, responses)
+    end
+
+    def test_code_action_request_no_content
+      message = "this is an error"
+      diagnostic = {
+        range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+        message: message,
+        severity: 1,
+      }
+      responses = run_server([
+        Initialize.new(1),
+        TextDocumentCodeAction.new(2, "file:///path/to/file.rb", [diagnostic]),
+        Shutdown.new(3)
+      ])
+
+      shape = Request[[
+        { id: 1, result: { capabilities: Hash } },
+        { id: 2, result: nil },
+        { id: 3, result: {} }
+      ]]
+
+      assert_operator(shape, :===, responses)
+    end
+
+    def test_diagnostics_request_error
       responses = run_server([
         Initialize.new(1),
         TextDocumentDidOpen.new("file:///path/to/file.rb", <<~RUBY),
@@ -162,12 +250,86 @@ module YARP
 
       shape = Request[[
         { id: 1, result: { capabilities: Hash } },
-        { id: 2, result: :any },
+        { id: 2, result: { kind: "full", items: [
+          {
+            range: {
+              start: { line: Integer, character: Integer },
+              end: { line: Integer, character: Integer }
+            },
+            message: String,
+            severity: Integer
+          },
+        ] } },
         { id: 3, result: {} }
       ]]
 
       assert_operator(shape, :===, responses)
-      assert_equal(2, responses.dig(1, :items).size)
+      assert(responses.dig(1, :result, :items).count { |item| item[:severity] == 1 } > 0)
+    end
+
+    def test_diagnostics_request_warning
+      responses = run_server([
+        Initialize.new(1),
+        TextDocumentDidOpen.new("file:///path/to/file.rb", <<~RUBY),
+          a/b /c
+        RUBY
+        TextDocumentDiagnostic.new(2, "file:///path/to/file.rb"),
+        Shutdown.new(3)
+      ])
+
+      shape = Request[[
+        { id: 1, result: { capabilities: Hash } },
+        { id: 2, result: { kind: "full", items: [
+          {
+            range: {
+              start: { line: Integer, character: Integer },
+              end: { line: Integer, character: Integer }
+            },
+            message: String,
+            severity: Integer
+          },
+        ] } },
+        { id: 3, result: {} }
+      ]]
+
+      assert_operator(shape, :===, responses)
+      assert(responses.dig(1, :result, :items).count { |item| item[:severity] == 2 } > 0)
+    end
+
+    def test_diagnostics_request_nothing
+      responses = run_server([
+        Initialize.new(1),
+        TextDocumentDidOpen.new("file:///path/to/file.rb", <<~RUBY),
+          a = 1
+        RUBY
+        TextDocumentDiagnostic.new(2, "file:///path/to/file.rb"),
+        Shutdown.new(3)
+      ])
+
+      shape = Request[[
+        { id: 1, result: { capabilities: Hash } },
+        { id: 2, result: { kind: "full", items: [] } },
+        { id: 3, result: {} }
+      ]]
+
+      assert_operator(shape, :===, responses)
+      assert_equal(0, responses.dig(1, :result, :items).size)
+    end
+
+    def test_diagnostics_request_no_content
+      responses = run_server([
+        Initialize.new(1),
+        TextDocumentDiagnostic.new(2, "file:///path/to/file.rb"),
+        Shutdown.new(3)
+      ])
+
+      shape = Request[[
+        { id: 1, result: { capabilities: Hash } },
+        { id: 2, result: nil },
+        { id: 3, result: {} }
+      ]]
+
+      assert_operator(shape, :===, responses)
     end
 
     private

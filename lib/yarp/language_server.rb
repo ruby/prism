@@ -58,6 +58,7 @@ module YARP
         in { method: "shutdown" } # tolerate missing ID to be a good citizen
           store.clear
           write(id: request[:id], result: {})
+        in { method: "exit"}
           return
         in { method: "textDocument/didChange", params: { textDocument: { uri: }, contentChanges: [{ text: }, *] } }
           store[uri] = text
@@ -105,7 +106,7 @@ module YARP
         issue_link = "https://github.com/Shopify/yarp/issues/new?&labels=Bug&body=#{issue_content}"
 
         {
-          title: "Report incorrect error: `#{diagnostic[:message]}` ",
+          title: "Report incorrect error: `#{diagnostic[:message]}`",
           kind: "quickfix",
           diagnostics: [diagnostic],
           command: {
