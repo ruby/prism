@@ -43,8 +43,7 @@ export async function activate(context: ExtensionContext) {
   // There's a bit of complexity here. Basically, we try to locate
   // an YARP executable in three places, in order of preference:
   //   1. Explicit path from advanced settings, if provided
-  //   2. Somewhere in $PATH that contains "ruby" in the director
-  //   3. Anywhere in $PATH (i.e. system gem)
+  //   2. Anywhere in $PATH
   //
   // None of these approaches is perfect. System gem might be correct if the
   // right environment variables are set, but it's a bit of a prayer. Bundled
@@ -84,26 +83,6 @@ export async function activate(context: ExtensionContext) {
         }
       } catch {
         outputChannel.appendLine(`Ignoring bogus commandPath (${value} does not exist).`);
-      }
-    }
-
-    // Otherwise, we're going to try parsing the PATH environment variable to
-    // find the executable.
-    const executablePaths = await Promise.all((process.env.PATH || "")
-      .split(path.delimiter)
-      .filter((directory) => directory.includes("ruby"))
-      .map((directory) => {
-        const executablePath = path.join(directory, "yarp-lsp");
-
-        return fs.promises.stat(executablePath).then(
-          (stat) => stat.isFile() ? executablePath : null,
-          () => null
-        );
-      }));
-
-    for (const executablePath of executablePaths) {
-      if (executablePath) {
-        return { command: executablePath, args };
       }
     }
 
