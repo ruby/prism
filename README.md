@@ -60,3 +60,8 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Extension](docs/extension.md)
 * [Ripper](docs/ripper.md)
 * [Serialization](docs/serialization.md)
+
+
+## VSCode Extension
+
+See the [vscode/README.md](vscode/README.md) file for more information and installation instructions.
