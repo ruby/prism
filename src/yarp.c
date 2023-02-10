@@ -2603,61 +2603,66 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 
 // parse hash assocs either in method keyword arguments
 // or in hash literals.
-static void
-parse_bare_assoc(yp_parser_t *parser, yp_node_t *hash) {
-    while (accept(parser, YP_TOKEN_NEWLINE));
+static bool
+parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
+  while (accept(parser, YP_TOKEN_NEWLINE));
 
-    if (hash->as.hash_node.elements.size != 0) {
-      expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
+  if (hash->as.hash_node.elements.size != 0) {
+    expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
+  }
+
+  while (accept(parser, YP_TOKEN_NEWLINE));
+  yp_node_t *element;
+
+  switch (parser->current.type) {
+    case YP_TOKEN_STAR_STAR: {
+      parser_lex(parser);
+      yp_token_t operator = parser->previous;
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
+
+      element = yp_assoc_splat_node_create(parser, &operator, value);
+      break;
     }
+    case YP_TOKEN_LABEL: {
+      parser_lex(parser);
+      yp_token_t label = {
+        .type = YP_TOKEN_LABEL,
+        .start = parser->previous.start,
+        .end = parser->previous.end - 1
+      };
 
-    while (accept(parser, YP_TOKEN_NEWLINE));
-    yp_node_t *element;
+      yp_token_t opening = not_provided(parser);
+      yp_token_t closing = {
+        .type = YP_TOKEN_LABEL_END,
+        .start = label.end,
+        .end = label.end + 1
+      };
 
-    switch (parser->current.type) {
-      case YP_TOKEN_STAR_STAR: {
-        parser_lex(parser);
-        yp_token_t operator = parser->previous;
-        yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
+      yp_node_t *key = yp_node_symbol_node_create(parser, &opening, &label, &closing);
+      yp_token_t operator = not_provided(parser);
 
-        element = yp_assoc_splat_node_create(parser, &operator, value);
-        break;
-      }
-      case YP_TOKEN_LABEL: {
-        parser_lex(parser);
-        yp_token_t label = {
-  	.type = YP_TOKEN_LABEL,
-  	.start = parser->previous.start,
-  	.end = parser->previous.end - 1
-        };
-
-        yp_token_t opening = not_provided(parser);
-        yp_token_t closing = {
-  	.type = YP_TOKEN_LABEL_END,
-  	.start = label.end,
-  	.end = label.end + 1
-        };
-
-        yp_node_t *key = yp_node_symbol_node_create(parser, &opening, &label, &closing);
-        yp_token_t operator = not_provided(parser);
-
-        yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after the label in hash.");
-        element = yp_assoc_node_create(parser, key, &operator, value);
-        break;
-      }
-      default: {
-        yp_node_t *key = parse_expression(parser, BINDING_POWER_NONE, "Expected a key in the hash literal.");
-
-        expect(parser, YP_TOKEN_EQUAL_GREATER, "expected a => between the key and the value in the hash.");
-        yp_token_t operator = parser->previous;
-        yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
-
-        element = yp_assoc_node_create(parser, key, &operator, value);
-        break;
-      }
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after the label in hash.");
+      element = yp_assoc_node_create(parser, key, &operator, value);
+      break;
     }
+    default: {
+      yp_node_t *key = parse_expression(parser, BINDING_POWER_NONE, "Expected a key in the hash literal.");
+      if (key->type == YP_NODE_MISSING_NODE) {
+        yp_node_destroy(parser, key);
+        return false;
+      }
 
-    yp_node_list_append(parser, hash, &hash->as.hash_node.elements, element);
+      expect(parser, YP_TOKEN_EQUAL_GREATER, "expected a => between the key and the value in the hash.");
+      yp_token_t operator = parser->previous;
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+
+      element = yp_assoc_node_create(parser, key, &operator, value);
+      break;
+    }
+  }
+
+  yp_node_list_append(parser, hash, &hash->as.hash_node.elements, element);
+  return true;
 }
 
 // Parse an individual argument.
@@ -2704,32 +2709,36 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       argument = yp_node_hash_node_create(parser, &opening, &closing);
 
       while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-	parse_bare_assoc(parser, argument);
+        if (!parse_assoc(parser, argument)) {
+          break;
+        }
       }
     } else {
       argument = parse_argument(parser, arguments);
 
       if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-	// finish parsing the one we are part way through
-	yp_token_t operator = parser->previous;
-	yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
-	argument = yp_assoc_node_create(parser, argument, &operator, value);
-	// Then parse more if we have a comma
-	if (accept(parser, YP_TOKEN_COMMA)) {
-	  yp_token_t opening = not_provided(parser);
-	  yp_token_t closing = not_provided(parser);
+        // finish parsing the one we are part way through
+        yp_token_t operator = parser->previous;
+        yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+        argument = yp_assoc_node_create(parser, argument, &operator, value);
 
-	  argument = yp_node_hash_node_create(parser, &opening, &closing);
+        // Then parse more if we have a comma
+        if (accept(parser, YP_TOKEN_COMMA)) {
+          yp_token_t opening = not_provided(parser);
+          yp_token_t closing = not_provided(parser);
 
-	  while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-	    parse_bare_assoc(parser, argument);
-	  }
-	}
+          argument = yp_node_hash_node_create(parser, &opening, &closing);
+
+          while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+            if (!parse_assoc(parser, argument)) {
+              break;
+            }
+          }
+        }
       }
     }
 
     yp_arguments_node_append(arguments, argument);
-
     if (argument->type == YP_NODE_MISSING_NODE) break;
   }
 }
@@ -3369,8 +3378,11 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *node = yp_node_hash_node_create(parser, &opening, &opening);
 
+      while (accept(parser, YP_TOKEN_NEWLINE));
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
-        parse_bare_assoc(parser, node);
+        if (!parse_assoc(parser, node)) {
+          break;
+        }
       }
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
