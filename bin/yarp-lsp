@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.expand_path("../lib", __dir__))
+
+require "yarp"
+require "yarp/language_server"
+
+YARP::LanguageServer.new.run
