@@ -53,7 +53,7 @@ export async function activate(context: ExtensionContext) {
   // Explicit path varies between machines/users and is also victim to the
   // oversimplification problem.
   async function getServerOptions(args: string[]): Promise<Executable> {
-    const advancedConfig = workspace.getConfiguration("yarp-lsp.advanced");
+    const advancedConfig = workspace.getConfiguration("yarp-lsp");
     let value = advancedConfig.get<string>("commandPath");
 
     // If a value is given on the command line, attempt to use it.
@@ -97,19 +97,9 @@ export async function activate(context: ExtensionContext) {
       return; // preserve idempotency
     }
 
-    // The top-level configuration group is yarp. Broadly useful settings
-    // are under that group.
-    const config = workspace.getConfiguration("yarp");
-
     // The args are going to be passed to the yarp executable. It's important
     // that it lines up with what the CLI expects.
-    const args = [];
-
-    // Configure ignore files if any.
-    const ignoreFiles = config.get<string>("ignoreFiles");
-    if (ignoreFiles) {
-      args.push(`--ignore-files=${ignoreFiles}`);
-    }
+    const args: string[] = [];
 
     const run = await getServerOptions(args);
     outputChannel.appendLine(`Starting language server: ${run.command} ${run.args?.join(" ")}`);

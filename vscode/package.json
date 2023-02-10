@@ -41,18 +41,7 @@
         "type": "object",
         "title": "YARP",
         "properties": {
-          "yarp-lsp.ignoreFiles": {
-            "default": "",
-            "markdownDescription": "A glob pattern of files to ignore for formatting.",
-            "type": "string"
-          }
-        }
-      },
-      {
-        "type": "object",
-        "title": "Advanced",
-        "properties": {
-          "yarp-lsp.advanced.commandPath": {
+          "yarp-lsp.commandPath": {
             "default": "",
             "markdownDescription": "Absolute path to stree executable. Overrides default search order.\n\nSupports variables `${userHome}`, `${pathSeparator}`, and `${cwd}`",
             "type": "string"
