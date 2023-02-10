@@ -3290,6 +3290,32 @@ class ParseTest < Test::Unit::TestCase
     refute YARP.parse("#encoding: utf8").errors.empty?
   end
 
+  test "multiline string addition" do
+    expected = CallNode(
+      StringNode(
+        STRING_BEGIN("\""),
+        STRING_CONTENT("foo"),
+        STRING_END("\""),
+        "foo"
+      ),
+      nil,
+      PLUS("+"),
+      nil,
+      ArgumentsNode(
+        [StringNode(
+           STRING_BEGIN("\""),
+           STRING_CONTENT("bar"),
+           STRING_END("\""),
+           "bar"
+         )]
+      ),
+      nil,
+      "+"
+    )
+
+    assert_parses expected, "\"foo\" +\n\"bar\""
+  end
+
   private
 
   def assert_serializes(expected, source)
