@@ -448,6 +448,22 @@ nodes:
 
           foo.bar
           ^^^^^^^
+  - name: BlockNode
+    child_nodes:
+      - name: start_keyword
+        type: token
+      - name: arguments
+        type: node?
+      - name: statements
+        type: node?
+      - name: end_keyword
+        type: token
+    location: start_keyword->end_keyword
+    comment: |
+      represents a block of ruby code
+
+      [1,2, 3].each { |i| puts x }
+                    ^^^^^^^^^^^^^^
   - name: ClassNode
     child_nodes:
       - name: scope

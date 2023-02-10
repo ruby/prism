@@ -3446,6 +3446,115 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "\"foo\" +\n\n\"bar\""
   end
 
+  test "each block curly braces" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, "x"),
+      DOT("."),
+      IDENTIFIER("each"),
+      nil,
+      ArgumentsNode([BlockNode(BRACE_LEFT("{"), nil, nil, BRACE_RIGHT("}"))]),
+      nil,
+      "each"
+    )
+
+    assert_parses expected, "x.each { }"
+  end
+
+  test "method call with block with one argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [BlockNode(
+           BRACE_LEFT("{"),
+           ParametersNode(
+             [RequiredParameterNode(IDENTIFIER("x"))],
+             [],
+             nil,
+             [],
+             nil,
+             nil
+           ),
+           nil,
+           BRACE_RIGHT("}")
+         )]
+      ),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo { |x| }"
+  end
+
+  test "method call with block and arguments" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [BlockNode(
+           BRACE_LEFT("{"),
+           ParametersNode(
+             [RequiredParameterNode(IDENTIFIER("x"))],
+             [OptionalParameterNode(
+                IDENTIFIER("y"),
+                EQUAL("="),
+                IntegerLiteral(INTEGER("2"))
+              )],
+             nil,
+             [KeywordParameterNode(LABEL("z:"))],
+             nil,
+             nil
+           ),
+           Statements([LocalVariableRead(IDENTIFIER("x"))]),
+           BRACE_RIGHT("}")
+         )]
+      ),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo { |x, y = 2, z:| x }"
+  end
+
+  test "block with normal args before the block" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, "x"),
+      DOT("."),
+      IDENTIFIER("reduce"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [BlockNode(
+           BRACE_LEFT("{"),
+           ParametersNode(
+             [RequiredParameterNode(IDENTIFIER("x")),
+              RequiredParameterNode(IDENTIFIER("memo"))],
+             [],
+             nil,
+             [],
+             nil,
+             nil
+           ),
+           Statements(
+             [OperatorAssignmentNode(
+                LocalVariableRead(IDENTIFIER("memo")),
+                PLUS_EQUAL("+="),
+                LocalVariableRead(IDENTIFIER("x"))
+              )]
+           ),
+           BRACE_RIGHT("}")
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      "reduce"
+    )
+
+    assert_parses expected, "x.reduce(0) { |x, memo| memo += x }"
+  end
+
   private
 
   def assert_serializes(expected, source)

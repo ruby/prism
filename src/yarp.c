@@ -297,6 +297,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
     case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
+    case YP_CONTEXT_BLOCK_BRACES: return "BLOCK_BRACES";
     case YP_CONTEXT_FOR: return "FOR";
     case YP_CONTEXT_IF: return "IF";
     case YP_CONTEXT_MAIN: return "MAIN";
@@ -2259,6 +2260,8 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
+    case YP_CONTEXT_BLOCK_BRACES:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
     case YP_CONTEXT_PARENS:
       return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
     case YP_CONTEXT_BEGIN:
@@ -2752,71 +2755,6 @@ typedef struct {
   yp_token_t closing;
 } yp_arguments_t;
 
-// Parse a list of arguments and their surrounding parentheses if they are
-// present.
-static void
-parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
-  switch (parser->current.type) {
-    case YP_TOKEN_EOF:
-    case YP_TOKEN_BRACE_RIGHT:
-    case YP_TOKEN_BRACKET_RIGHT:
-    case YP_TOKEN_COLON:
-    case YP_TOKEN_COMMA:
-    case YP_TOKEN_EMBEXPR_END:
-    case YP_TOKEN_EQUAL_GREATER:
-    case YP_TOKEN_KEYWORD_DO:
-    case YP_TOKEN_KEYWORD_END:
-    case YP_TOKEN_KEYWORD_IN:
-    case YP_TOKEN_NEWLINE:
-    case YP_TOKEN_PARENTHESIS_RIGHT:
-    case YP_TOKEN_SEMICOLON: {
-      // The reason we need this short-circuit is because we're using the
-      // binding powers table to tell us if the subsequent token could
-      // potentially be an argument. If there _is_ a binding power for one of
-      // these tokens, then we should remove it from this list and let it be
-      // handled by the default case below.
-      assert(binding_powers[parser->current.type].left == BINDING_POWER_UNSET);
-
-      arguments->opening = not_provided(parser);
-      arguments->closing = not_provided(parser);
-      arguments->arguments = NULL;
-
-      break;
-    }
-    case YP_TOKEN_PARENTHESIS_LEFT: {
-      parser_lex(parser);
-      arguments->opening = parser->previous;
-
-      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-        arguments->arguments = NULL;
-        arguments->closing = parser->previous;
-      } else {
-        arguments->arguments = yp_arguments_node_create(parser);
-        parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
-        arguments->closing = parser->previous;
-      }
-      break;
-    }
-    default: {
-      arguments->opening = not_provided(parser);
-      arguments->closing = not_provided(parser);
-
-      if (binding_powers[parser->current.type].left == BINDING_POWER_UNSET) {
-        // If we get here, then the subsequent token cannot be used as an infix
-        // operator. In this case we assume the subsequent token is part of an
-        // argument to this method call.
-        arguments->arguments = yp_arguments_node_create(parser);
-        parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
-      } else {
-        arguments->arguments = NULL;
-      }
-
-      break;
-    }
-  }
-}
-
 // Parse a list of parameters on a method definition.
 static yp_node_t *
 parse_parameters(yp_parser_t *parser) {
@@ -2944,6 +2882,99 @@ parse_parameters(yp_parser_t *parser) {
   }
 
   return params;
+}
+
+// Parse a list of arguments and their surrounding parentheses if they are
+// present.
+static void
+parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
+  switch (parser->current.type) {
+    case YP_TOKEN_EOF:
+    case YP_TOKEN_BRACE_RIGHT:
+    case YP_TOKEN_BRACKET_RIGHT:
+    case YP_TOKEN_COLON:
+    case YP_TOKEN_COMMA:
+    case YP_TOKEN_EMBEXPR_END:
+    case YP_TOKEN_EQUAL_GREATER:
+    case YP_TOKEN_KEYWORD_DO:
+    case YP_TOKEN_KEYWORD_END:
+    case YP_TOKEN_KEYWORD_IN:
+    case YP_TOKEN_NEWLINE:
+    case YP_TOKEN_PARENTHESIS_RIGHT:
+    case YP_TOKEN_SEMICOLON: {
+      // The reason we need this short-circuit is because we're using the
+      // binding powers table to tell us if the subsequent token could
+      // potentially be an argument. If there _is_ a binding power for one of
+      // these tokens, then we should remove it from this list and let it be
+      // handled by the default case below.
+      assert(binding_powers[parser->current.type].left == BINDING_POWER_UNSET);
+
+      arguments->opening = not_provided(parser);
+      arguments->closing = not_provided(parser);
+      arguments->arguments = NULL;
+
+      break;
+    }
+    case YP_TOKEN_PARENTHESIS_LEFT: {
+      parser_lex(parser);
+      arguments->opening = parser->previous;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+        arguments->arguments = NULL;
+        arguments->closing = parser->previous;
+      } else {
+        arguments->arguments = yp_node_arguments_node_create(parser);
+        parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
+        arguments->closing = parser->previous;
+      }
+      break;
+    }
+    default: {
+      arguments->opening = not_provided(parser);
+      arguments->closing = not_provided(parser);
+
+      if (binding_powers[parser->current.type].left == BINDING_POWER_UNSET) {
+        // If we get here, then the subsequent token cannot be used as an infix
+        // operator. In this case we assume the subsequent token is part of an
+        // argument to this method call.
+        arguments->arguments = yp_node_arguments_node_create(parser);
+        parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
+      } else {
+        arguments->arguments = NULL;
+      }
+
+      break;
+    }
+  }
+
+  if (accept(parser, YP_TOKEN_BRACE_LEFT)) {
+    not_provided(parser);
+    not_provided(parser);
+
+    yp_token_t opening = parser->previous;
+
+    accept(parser, YP_TOKEN_NEWLINE);
+
+    yp_node_t *block_arguments = NULL;
+    if (accept(parser, YP_TOKEN_PIPE)) {
+      block_arguments = parse_parameters(parser);
+      expect(parser, YP_TOKEN_PIPE, "expected block arguements to end with '|'.");
+    }
+
+    accept(parser, YP_TOKEN_NEWLINE);
+    arguments->arguments =  yp_node_arguments_node_create(parser);
+
+    yp_node_t *statements = NULL;
+    if (parser->current.type != YP_TOKEN_BRACE_RIGHT) {
+      statements = parse_statements(parser, YP_CONTEXT_BLOCK_BRACES);
+    }
+
+    expect(parser, YP_TOKEN_BRACE_RIGHT, "expected block beginning with '{' to end with '}'.");
+
+    yp_node_t *block = yp_node_block_node_create(parser, &opening, block_arguments, statements, &parser->previous);
+    yp_node_list_append(parser, arguments->arguments, &arguments->arguments->as.arguments_node.arguments, block);
+  }
 }
 
 static inline yp_node_t *
