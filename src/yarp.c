@@ -3260,7 +3260,6 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parentheses;
 
       if (!match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_EOF)) {
-        accept(parser, YP_TOKEN_NEWLINE);
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PARENS);
         parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
       } else {
@@ -3827,9 +3826,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *parent_scope = parser->current_scope;
       parser->current_scope = scope;
 
-      accept(parser, YP_TOKEN_SEMICOLON);
-      accept(parser, YP_TOKEN_NEWLINE);
-
+      accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_FOR);
       parser->current_scope = parent_scope;
 
@@ -4457,13 +4454,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     case YP_TOKEN_SLASH:
     case YP_TOKEN_STAR:
     case YP_TOKEN_STAR_STAR: {
+      while (accept(parser, YP_TOKEN_NEWLINE));
+
       yp_token_t call_operator = not_provided(parser);
       yp_token_t lparen = not_provided(parser);
       yp_token_t rparen = not_provided(parser);
-
       yp_node_t *arguments = yp_arguments_node_create(parser);
-
-      accept(parser, YP_TOKEN_NEWLINE);
 
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
       yp_arguments_node_append(arguments, argument);

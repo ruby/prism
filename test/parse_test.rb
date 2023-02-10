@@ -3313,7 +3313,7 @@ class ParseTest < Test::Unit::TestCase
       "+"
     )
 
-    assert_parses expected, "\"foo\" +\n\"bar\""
+    assert_parses expected, "\"foo\" +\n\n\"bar\""
   end
 
   private
