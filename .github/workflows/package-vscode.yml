@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  release:
+    runs-on: shopify-ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: actions/setup-node@v3
+        name: Use Node.js 17.x
+        with:
+          node-version: "17"
+
+      - run: cd vscode
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
+      - name: 📦 Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: 🔨 Package
+        run: yarn run package
+
+      - name: Set vsix path
+        id: set-vsix-path
+        run: |
+          echo ::set-output name=vsix_path::$(ls *.vsix)
+
+      - name: Upload assets to release
+        uses: Shopify/upload-to-release@master
+        with:
+          name: ${{ steps.set-vsix-path.outputs.vsix_path }}
+          path: ${{ steps.set-vsix-path.outputs.vsix_path }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
