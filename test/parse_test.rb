@@ -1051,6 +1051,528 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def m a, b:, **nil\nend"
   end
 
+  test "def + without parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      PLUS("+"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def +\nend"
+  end
+
+  test "def + with parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      PLUS("+"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode([], [], nil, [], nil, nil),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def +()\nend"
+  end
+
+  test "def - without parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      MINUS("-"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def -\nend"
+  end
+
+  test "def - with parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      MINUS("-"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode([], [], nil, [], nil, nil),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def -()\nend"
+  end
+
+  test "def == without parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      EQUAL_EQUAL("=="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def ==\nend"
+  end
+
+  test "def == with parentheses" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      EQUAL_EQUAL("=="),
+      PARENTHESIS_LEFT("("),
+      ParametersNode([], [], nil, [], nil, nil),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def ==()\nend"
+  end
+
+  test "def |" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      PIPE("|"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def |\nend"
+  end
+
+  test "def ^" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      CARET("^"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def ^\nend"
+  end
+
+  test "def &" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      AMPERSAND("&"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def &\nend"
+  end
+
+  test "def <=>" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      LESS_EQUAL_GREATER("<=>"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def <=>\nend"
+  end
+
+  test "def ==" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      EQUAL_EQUAL("=="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def ==\nend"
+  end
+
+  test "def ===" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      EQUAL_EQUAL_EQUAL("==="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def ===\nend"
+  end
+
+  test "def =~" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      EQUAL_TILDE("=~"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def =~\nend"
+  end
+
+  test "def !~" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      BANG_TILDE("!~"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def !~\nend"
+  end
+
+  test "def >" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      GREATER(">"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def >\nend"
+  end
+
+  test "def >=" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      GREATER_EQUAL(">="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def >=\nend"
+  end
+
+  test "def <" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      LESS("<"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def <\nend"
+  end
+
+  test "def <=" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      LESS_EQUAL("<="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def <=\nend"
+  end
+
+  test "def !=" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      BANG_EQUAL("!="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def !=\nend"
+  end
+
+  test "def <<" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      LESS_LESS("<<"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def <<\nend"
+  end
+
+  test "def >>" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      GREATER_GREATER(">>"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def >>\nend"
+  end
+
+  test "def *" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      STAR("*"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def *\nend"
+  end
+
+  test "def /" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      SLASH("/"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def /\nend"
+  end
+
+  test "def %" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      PERCENT("%"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def %\nend"
+  end
+
+  test "def **" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      STAR_STAR("**"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def **\nend"
+  end
+
+  test "def !" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      BANG("!"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def !\nend"
+  end
+
+  test "def ~" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      TILDE("~"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def ~\nend"
+  end
+
+  test "def +@" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      PLUS_AT("+@"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def +@\nend"
+  end
+
+  test "def -@" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      MINUS_AT("-@"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def -@\nend"
+  end
+
   test "method call with label keyword args" do
     expected = CallNode(
       nil,
@@ -1646,6 +2168,9 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "def with literal expression as receiver" do
+    # TODO: This is not true.
+    # irb(main):015:0> Parser::CurrentRuby.parse "def (1).a\nend"
+    # (string):1:6: error: cannot define a singleton method for a literal
     expected = DefNode(
       KEYWORD_DEF("def"),
       ParenthesesNode(

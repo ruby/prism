@@ -3707,18 +3707,51 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *receiver = NULL;
       yp_token_t operator = not_provided(parser);
-      yp_token_t name;
+      yp_token_t name = not_provided(parser);
 
       switch (parser->current.type) {
+        case YP_TOKEN_AMPERSAND:
+        case YP_TOKEN_BANG_TILDE:
+        case YP_TOKEN_CARET:
+        case YP_TOKEN_BANG_EQUAL:
+        case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+        case YP_TOKEN_EQUAL_EQUAL:
+        case YP_TOKEN_EQUAL_TILDE:
+        case YP_TOKEN_GREATER:
+        case YP_TOKEN_GREATER_EQUAL:
+        case YP_TOKEN_LESS_EQUAL_GREATER:
+        case YP_TOKEN_LESS:
+        case YP_TOKEN_LESS_EQUAL:
+        case YP_TOKEN_BANG:
+        case YP_TOKEN_TILDE:
+        case YP_TOKEN_PLUS_AT:
+        case YP_TOKEN_MINUS:
+        case YP_TOKEN_MINUS_AT:
+        case YP_TOKEN_STAR:
+        case YP_TOKEN_STAR_STAR:
+        case YP_TOKEN_PIPE:
+        case YP_TOKEN_SLASH:
+        case YP_TOKEN_LESS_LESS:
+        case YP_TOKEN_PERCENT:
+        case YP_TOKEN_GREATER_GREATER:
+        case YP_TOKEN_PLUS: {
+          parser_lex(parser);
+          name = parser->previous;
+          break;
+        }
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
           receiver = parse_vcall(parser);
 
           if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
             operator = parser->previous;
-
-            expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
-            name = parser->previous;
+            if (accept_any(parser, 2, YP_TOKEN_IDENTIFIER, YP_TOKEN_PLUS)) {
+              name = parser->previous;
+            } else {
+              // TODO: Add error?
+            }
+            // expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
+            // name = parser->previous;
           } else {
             yp_node_destroy(parser, receiver);
             receiver = NULL;
@@ -3780,8 +3813,13 @@ parse_expression_prefix(yp_parser_t *parser) {
             }
 
             operator = parser->previous;
-            expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
-            name = parser->previous;
+            if (accept_any(parser, 2, YP_TOKEN_IDENTIFIER, YP_TOKEN_PLUS)) {
+              name = parser->previous;
+            } else {
+              // Add error?
+            }
+            // expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
+            // name = parser->previous;
           } else {
             name = identifier;
           }
@@ -3851,7 +3889,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       parser->current_scope = parent_scope;
-      return yp_node_def_node_create(parser, &def_keyword, receiver, &operator,&name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope);
+      return yp_node_def_node_create(parser, &def_keyword, receiver, &operator, &name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       yp_token_t keyword = parser->previous;
