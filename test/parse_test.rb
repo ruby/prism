@@ -1664,9 +1664,6 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "def with literal expression as receiver" do
-    # TODO: This is not true.
-    # irb(main):015:0> Parser::CurrentRuby.parse "def (1).a\nend"
-    # (string):1:6: error: cannot define a singleton method for a literal
     expected = DefNode(
       KEYWORD_DEF("def"),
       ParenthesesNode(
