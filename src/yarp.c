@@ -3349,6 +3349,46 @@ parse_identifier(yp_parser_t *parser) {
   return node;
 }
 
+static inline yp_token_t
+parse_method_definition_name(yp_parser_t *parser) {
+  switch (parser->current.type) {
+    case YP_TOKEN_AMPERSAND:
+    case YP_TOKEN_BACKTICK:
+    case YP_TOKEN_BANG_EQUAL:
+    case YP_TOKEN_BANG_TILDE:
+    case YP_TOKEN_BANG:
+    case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL:
+    case YP_TOKEN_BRACKET_LEFT_RIGHT:
+    case YP_TOKEN_CARET:
+    case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+    case YP_TOKEN_EQUAL_EQUAL:
+    case YP_TOKEN_EQUAL_TILDE:
+    case YP_TOKEN_GREATER_EQUAL:
+    case YP_TOKEN_GREATER_GREATER:
+    case YP_TOKEN_GREATER:
+    case YP_TOKEN_IDENTIFIER:
+    case YP_TOKEN_LESS_EQUAL_GREATER:
+    case YP_TOKEN_LESS_EQUAL:
+    case YP_TOKEN_LESS_LESS:
+    case YP_TOKEN_LESS:
+    case YP_TOKEN_MINUS_AT:
+    case YP_TOKEN_MINUS:
+    case YP_TOKEN_PERCENT:
+    case YP_TOKEN_PIPE:
+    case YP_TOKEN_PLUS_AT:
+    case YP_TOKEN_PLUS:
+    case YP_TOKEN_SLASH:
+    case YP_TOKEN_STAR_STAR:
+    case YP_TOKEN_STAR:
+    case YP_TOKEN_TILDE: {
+      parser_lex(parser);
+      return parser->previous;
+    }
+    default:
+      return not_provided(parser);
+  }
+}
+
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser) {
@@ -3749,13 +3789,10 @@ parse_expression_prefix(yp_parser_t *parser) {
 
           if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
             operator = parser->previous;
-            if (accept_any(parser, 2, YP_TOKEN_IDENTIFIER, YP_TOKEN_PLUS)) {
-              name = parser->previous;
-            } else {
-              // TODO: Add error?
+            name = parse_method_definition_name(parser);
+            if (name.type == YP_TOKEN_MISSING) {
+              yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
             }
-            // expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
-            // name = parser->previous;
           } else {
             yp_node_destroy(parser, receiver);
             receiver = NULL;
@@ -3817,13 +3854,10 @@ parse_expression_prefix(yp_parser_t *parser) {
             }
 
             operator = parser->previous;
-            if (accept_any(parser, 2, YP_TOKEN_IDENTIFIER, YP_TOKEN_PLUS)) {
-              name = parser->previous;
-            } else {
-              // Add error?
+            name = parse_method_definition_name(parser);
+            if (name.type == YP_TOKEN_MISSING) {
+              yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
             }
-            // expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
-            // name = parser->previous;
           } else {
             name = identifier;
           }

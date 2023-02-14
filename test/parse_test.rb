@@ -818,6 +818,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a b\nend"
   end
 
+  test "def + with required parameter" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      PLUS("+"),
+      nil,
+      ParametersNode([RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([IDENTIFIER("b")])
+    )
+
+    assert_parses expected, "def + b\nend"
+  end
+
   test "def with multiple required parameters" do
     expected = DefNode(
       KEYWORD_DEF("def"),
@@ -1919,6 +1937,24 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def a.b\nend"
+  end
+
+  test "def - with identifier receiver" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      expression("a"),
+      DOT("."),
+      MINUS("-"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def a.-;end"
   end
 
   test "def with local variable identifier receiver" do
