@@ -447,6 +447,43 @@ char_is_ascii_printable(const char c) {
   return ascii_printable_chars[(unsigned char) c];
 }
 
+static inline bool
+token_type_is_operator(yp_token_type_t type) {
+  switch (type) {
+    case YP_TOKEN_AMPERSAND:
+    case YP_TOKEN_BACKTICK:
+    case YP_TOKEN_BANG_EQUAL:
+    case YP_TOKEN_BANG_TILDE:
+    case YP_TOKEN_BANG:
+    case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL:
+    case YP_TOKEN_BRACKET_LEFT_RIGHT:
+    case YP_TOKEN_CARET:
+    case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+    case YP_TOKEN_EQUAL_EQUAL:
+    case YP_TOKEN_EQUAL_TILDE:
+    case YP_TOKEN_GREATER_EQUAL:
+    case YP_TOKEN_GREATER_GREATER:
+    case YP_TOKEN_GREATER:
+    case YP_TOKEN_LESS_EQUAL_GREATER:
+    case YP_TOKEN_LESS_EQUAL:
+    case YP_TOKEN_LESS_LESS:
+    case YP_TOKEN_LESS:
+    case YP_TOKEN_MINUS_AT:
+    case YP_TOKEN_MINUS:
+    case YP_TOKEN_PERCENT:
+    case YP_TOKEN_PIPE:
+    case YP_TOKEN_PLUS_AT:
+    case YP_TOKEN_PLUS:
+    case YP_TOKEN_SLASH:
+    case YP_TOKEN_STAR_STAR:
+    case YP_TOKEN_STAR:
+    case YP_TOKEN_TILDE:
+      return true;
+    default:
+      return false;
+  }
+}
+
 /******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
@@ -3408,42 +3445,11 @@ parse_identifier(yp_parser_t *parser) {
 
 static inline yp_token_t
 parse_method_definition_name(yp_parser_t *parser) {
-  switch (parser->current.type) {
-    case YP_TOKEN_AMPERSAND:
-    case YP_TOKEN_BACKTICK:
-    case YP_TOKEN_BANG_EQUAL:
-    case YP_TOKEN_BANG_TILDE:
-    case YP_TOKEN_BANG:
-    case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL:
-    case YP_TOKEN_BRACKET_LEFT_RIGHT:
-    case YP_TOKEN_CARET:
-    case YP_TOKEN_EQUAL_EQUAL_EQUAL:
-    case YP_TOKEN_EQUAL_EQUAL:
-    case YP_TOKEN_EQUAL_TILDE:
-    case YP_TOKEN_GREATER_EQUAL:
-    case YP_TOKEN_GREATER_GREATER:
-    case YP_TOKEN_GREATER:
-    case YP_TOKEN_IDENTIFIER:
-    case YP_TOKEN_LESS_EQUAL_GREATER:
-    case YP_TOKEN_LESS_EQUAL:
-    case YP_TOKEN_LESS_LESS:
-    case YP_TOKEN_LESS:
-    case YP_TOKEN_MINUS_AT:
-    case YP_TOKEN_MINUS:
-    case YP_TOKEN_PERCENT:
-    case YP_TOKEN_PIPE:
-    case YP_TOKEN_PLUS_AT:
-    case YP_TOKEN_PLUS:
-    case YP_TOKEN_SLASH:
-    case YP_TOKEN_STAR_STAR:
-    case YP_TOKEN_STAR:
-    case YP_TOKEN_TILDE: {
-      parser_lex(parser);
-      return parser->previous;
-    }
-    default:
-      return not_provided(parser);
+  if (token_type_is_operator(parser->current.type) || parser->current.type == YP_TOKEN_IDENTIFIER) {
+    parser_lex(parser);
+    return parser->previous;
   }
+  return not_provided(parser);
 }
 
 // Parse an expression that begins with the previous node that we just lexed.
@@ -3806,140 +3812,112 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t operator = not_provided(parser);
       yp_token_t name = not_provided(parser);
 
-      switch (parser->current.type) {
-        case YP_TOKEN_AMPERSAND:
-        case YP_TOKEN_BACKTICK:
-        case YP_TOKEN_BANG_EQUAL:
-        case YP_TOKEN_BANG_TILDE:
-        case YP_TOKEN_BANG:
-        case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL:
-        case YP_TOKEN_BRACKET_LEFT_RIGHT:
-        case YP_TOKEN_CARET:
-        case YP_TOKEN_EQUAL_EQUAL_EQUAL:
-        case YP_TOKEN_EQUAL_EQUAL:
-        case YP_TOKEN_EQUAL_TILDE:
-        case YP_TOKEN_GREATER_EQUAL:
-        case YP_TOKEN_GREATER_GREATER:
-        case YP_TOKEN_GREATER:
-        case YP_TOKEN_LESS_EQUAL_GREATER:
-        case YP_TOKEN_LESS_EQUAL:
-        case YP_TOKEN_LESS_LESS:
-        case YP_TOKEN_LESS:
-        case YP_TOKEN_MINUS_AT:
-        case YP_TOKEN_MINUS:
-        case YP_TOKEN_PERCENT:
-        case YP_TOKEN_PIPE:
-        case YP_TOKEN_PLUS_AT:
-        case YP_TOKEN_PLUS:
-        case YP_TOKEN_SLASH:
-        case YP_TOKEN_STAR_STAR:
-        case YP_TOKEN_STAR:
-        case YP_TOKEN_TILDE:
-        {
-          parser_lex(parser);
-          name = parser->previous;
-          break;
-        }
-        case YP_TOKEN_IDENTIFIER: {
-          parser_lex(parser);
-          receiver = parse_vcall(parser);
+      if (token_type_is_operator(parser->current.type)) {
+        parser_lex(parser);
+        name = parser->previous;
+      } else {
+        switch (parser->current.type) {
+          case YP_TOKEN_IDENTIFIER: {
+            parser_lex(parser);
+            receiver = parse_vcall(parser);
 
-          if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
-            operator = parser->previous;
-            name = parse_method_definition_name(parser);
-            if (name.type == YP_TOKEN_MISSING) {
-              yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
+            if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
+              operator = parser->previous;
+              name = parse_method_definition_name(parser);
+              if (name.type == YP_TOKEN_MISSING) {
+                yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
+              }
+            } else {
+              yp_node_destroy(parser, receiver);
+              receiver = NULL;
+              name = parser->previous;
             }
-          } else {
-            yp_node_destroy(parser, receiver);
-            receiver = NULL;
+            break;
+          }
+          case YP_TOKEN_CONSTANT:
+          case YP_TOKEN_INSTANCE_VARIABLE:
+          case YP_TOKEN_CLASS_VARIABLE:
+          case YP_TOKEN_GLOBAL_VARIABLE:
+          case YP_TOKEN_KEYWORD_NIL:
+          case YP_TOKEN_KEYWORD_SELF:
+          case YP_TOKEN_KEYWORD_TRUE:
+          case YP_TOKEN_KEYWORD_FALSE:
+          case YP_TOKEN_KEYWORD___FILE__:
+          case YP_TOKEN_KEYWORD___LINE__:
+          case YP_TOKEN_KEYWORD___ENCODING__: {
+            parser_lex(parser);
+            yp_token_t identifier = parser->previous;
+
+            if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
+              switch (identifier.type) {
+                case YP_TOKEN_CONSTANT:
+                  receiver = yp_node_constant_read_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_INSTANCE_VARIABLE:
+                  receiver = yp_node_instance_variable_read_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_CLASS_VARIABLE:
+                  receiver = yp_node_class_variable_read_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_GLOBAL_VARIABLE:
+                  receiver = yp_node_global_variable_read_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD_NIL:
+                  receiver = yp_node_nil_node_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD_SELF:
+                  receiver = yp_node_self_node_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD_TRUE:
+                  receiver = yp_node_true_node_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD_FALSE:
+                  receiver = yp_node_false_node_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD___FILE__:
+                  receiver = yp_node_source_file_node_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD___LINE__:
+                  receiver = yp_node_source_line_node_create(parser, &identifier);
+                  break;
+                case YP_TOKEN_KEYWORD___ENCODING__:
+                  receiver = yp_node_source_encoding_node_create(parser, &identifier);
+                  break;
+                default:
+                  break;
+              }
+
+              operator = parser->previous;
+              name = parse_method_definition_name(parser);
+              if (name.type == YP_TOKEN_MISSING) {
+                yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
+              }
+            } else {
+              name = identifier;
+            }
+            break;
+          }
+          case YP_TOKEN_PARENTHESIS_LEFT: {
+            parser_lex(parser);
+            yp_token_t lparen = parser->previous;
+            yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse receiver.");
+
+            expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected closing ')' for receiver.");
+            yp_token_t rparen = parser->previous;
+
+            expect_any(parser, "Expected '.' or '::' after receiver", 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON);
+            operator = parser->previous;
+
+            receiver = yp_node_parentheses_node_create(parser, &lparen, expression, &rparen);
+
+            expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
             name = parser->previous;
+            break;
           }
-          break;
+          default:
+            name = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+            break;
         }
-        case YP_TOKEN_CONSTANT:
-        case YP_TOKEN_INSTANCE_VARIABLE:
-        case YP_TOKEN_CLASS_VARIABLE:
-        case YP_TOKEN_GLOBAL_VARIABLE:
-        case YP_TOKEN_KEYWORD_NIL:
-        case YP_TOKEN_KEYWORD_SELF:
-        case YP_TOKEN_KEYWORD_TRUE:
-        case YP_TOKEN_KEYWORD_FALSE:
-        case YP_TOKEN_KEYWORD___FILE__:
-        case YP_TOKEN_KEYWORD___LINE__:
-        case YP_TOKEN_KEYWORD___ENCODING__: {
-          parser_lex(parser);
-          yp_token_t identifier = parser->previous;
-
-          if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
-            switch (identifier.type) {
-              case YP_TOKEN_CONSTANT:
-                receiver = yp_node_constant_read_create(parser, &identifier);
-                break;
-              case YP_TOKEN_INSTANCE_VARIABLE:
-                receiver = yp_node_instance_variable_read_create(parser, &identifier);
-                break;
-              case YP_TOKEN_CLASS_VARIABLE:
-                receiver = yp_node_class_variable_read_create(parser, &identifier);
-                break;
-              case YP_TOKEN_GLOBAL_VARIABLE:
-                receiver = yp_node_global_variable_read_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD_NIL:
-                receiver = yp_node_nil_node_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD_SELF:
-                receiver = yp_node_self_node_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD_TRUE:
-                receiver = yp_node_true_node_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD_FALSE:
-                receiver = yp_node_false_node_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD___FILE__:
-                receiver = yp_node_source_file_node_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD___LINE__:
-                receiver = yp_node_source_line_node_create(parser, &identifier);
-                break;
-              case YP_TOKEN_KEYWORD___ENCODING__:
-                receiver = yp_node_source_encoding_node_create(parser, &identifier);
-                break;
-              default:
-                break;
-            }
-
-            operator = parser->previous;
-            name = parse_method_definition_name(parser);
-            if (name.type == YP_TOKEN_MISSING) {
-              yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
-            }
-          } else {
-            name = identifier;
-          }
-          break;
-        }
-        case YP_TOKEN_PARENTHESIS_LEFT: {
-          parser_lex(parser);
-          yp_token_t lparen = parser->previous;
-          yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse receiver.");
-
-          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected closing ')' for receiver.");
-          yp_token_t rparen = parser->previous;
-
-          expect_any(parser, "Expected '.' or '::' after receiver", 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON);
-          operator = parser->previous;
-
-          receiver = yp_node_parentheses_node_create(parser, &lparen, expression, &rparen);
-
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
-          name = parser->previous;
-          break;
-        }
-        default:
-          name = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
-          break;
       }
 
       yp_token_t lparen;
