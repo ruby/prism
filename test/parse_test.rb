@@ -1573,6 +1573,42 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def -@\nend"
   end
 
+  test "def []" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      BRACKET_LEFT_RIGHT("[]"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def []\nend"
+  end
+
+  test "def []=" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      BRACKET_LEFT_RIGHT_EQUAL("[]="),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def []=\nend"
+  end
+
   test "method call with label keyword args" do
     expected = CallNode(
       nil,
@@ -2212,6 +2248,42 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def (a)::b\nend"
+  end
+
+  test "def + with self receiver" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      SelfNode(KEYWORD_SELF("self")),
+      DOT("."),
+      PLUS("+"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def self.+\nend"
+  end
+
+  test "def - with self receiver" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      SelfNode(KEYWORD_SELF("self")),
+      DOT("."),
+      MINUS("-"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def self.-\nend"
   end
 
   test "defined? without parentheses" do

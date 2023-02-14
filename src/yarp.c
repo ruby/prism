@@ -3711,30 +3711,34 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       switch (parser->current.type) {
         case YP_TOKEN_AMPERSAND:
-        case YP_TOKEN_BANG_TILDE:
-        case YP_TOKEN_CARET:
+        case YP_TOKEN_BACKTICK:
         case YP_TOKEN_BANG_EQUAL:
+        case YP_TOKEN_BANG_TILDE:
+        case YP_TOKEN_BANG:
+        case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL:
+        case YP_TOKEN_BRACKET_LEFT_RIGHT:
+        case YP_TOKEN_CARET:
         case YP_TOKEN_EQUAL_EQUAL_EQUAL:
         case YP_TOKEN_EQUAL_EQUAL:
         case YP_TOKEN_EQUAL_TILDE:
-        case YP_TOKEN_GREATER:
         case YP_TOKEN_GREATER_EQUAL:
-        case YP_TOKEN_LESS_EQUAL_GREATER:
-        case YP_TOKEN_LESS:
-        case YP_TOKEN_LESS_EQUAL:
-        case YP_TOKEN_BANG:
-        case YP_TOKEN_TILDE:
-        case YP_TOKEN_PLUS_AT:
-        case YP_TOKEN_MINUS:
-        case YP_TOKEN_MINUS_AT:
-        case YP_TOKEN_STAR:
-        case YP_TOKEN_STAR_STAR:
-        case YP_TOKEN_PIPE:
-        case YP_TOKEN_SLASH:
-        case YP_TOKEN_LESS_LESS:
-        case YP_TOKEN_PERCENT:
         case YP_TOKEN_GREATER_GREATER:
-        case YP_TOKEN_PLUS: {
+        case YP_TOKEN_GREATER:
+        case YP_TOKEN_LESS_EQUAL_GREATER:
+        case YP_TOKEN_LESS_EQUAL:
+        case YP_TOKEN_LESS_LESS:
+        case YP_TOKEN_LESS:
+        case YP_TOKEN_MINUS_AT:
+        case YP_TOKEN_MINUS:
+        case YP_TOKEN_PERCENT:
+        case YP_TOKEN_PIPE:
+        case YP_TOKEN_PLUS_AT:
+        case YP_TOKEN_PLUS:
+        case YP_TOKEN_SLASH:
+        case YP_TOKEN_STAR_STAR:
+        case YP_TOKEN_STAR:
+        case YP_TOKEN_TILDE:
+        {
           parser_lex(parser);
           name = parser->previous;
           break;
