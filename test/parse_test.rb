@@ -3635,7 +3635,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       nil,
       nil,
-      IDENTIFIER("a"),
+      PLUS("+"),
       nil,
       ParametersNode([], [], nil, [], KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("b")), nil),
       nil,
@@ -3682,24 +3682,6 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def ==\nend"
-  end
-
-  test "def == with parentheses" do
-    expected = DefNode(
-      KEYWORD_DEF("def"),
-      nil,
-      nil,
-      EQUAL_EQUAL("=="),
-      PARENTHESIS_LEFT("("),
-      ParametersNode([], [], nil, [], nil, nil),
-      PARENTHESIS_RIGHT(")"),
-      nil,
-      Statements([]),
-      KEYWORD_END("end"),
-      Scope([])
-    )
-
-    assert_parses expected, "def ==()\nend"
   end
 
   test "def |" do
@@ -3772,24 +3754,6 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def <=>\nend"
-  end
-
-  test "def ==" do
-    expected = DefNode(
-      KEYWORD_DEF("def"),
-      nil,
-      nil,
-      EQUAL_EQUAL("=="),
-      nil,
-      ParametersNode([], [], nil, [], nil, nil),
-      nil,
-      nil,
-      Statements([]),
-      KEYWORD_END("end"),
-      Scope([])
-    )
-
-    assert_parses expected, "def ==\nend"
   end
 
   test "def ===" do
