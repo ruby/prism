@@ -4134,6 +4134,42 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def self.+\nend"
   end
 
+  test "def `" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      BACKTICK("`"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def `\nend"
+  end
+
+  test "def self.`" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      SelfNode(KEYWORD_SELF("self")),
+      DOT("."),
+      BACKTICK("`"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def self.`\nend"
+  end
+
   test "def % with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),

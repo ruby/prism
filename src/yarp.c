@@ -1415,13 +1415,17 @@ lex_token_type(yp_parser_t *parser) {
 
         // xstring literal
         case '`': {
-          yp_lex_mode_t lex_mode = {
-            .mode = YP_LEX_STRING,
-            .as.string.terminator = '`',
-            .as.string.interpolation = true
-          };
+          if (!lex_state_p(parser, YP_LEX_STATE_FNAME|YP_LEX_STATE_DOT)) {
+            yp_lex_mode_t lex_mode = {
+              .mode = YP_LEX_STRING,
+              .as.string.terminator = '`',
+              .as.string.interpolation = true
+            };
 
-          lex_mode_push(parser, lex_mode);
+            lex_mode_push(parser, lex_mode);
+          } else {
+            parser_set_lex_state(parser, YP_LEX_STATE_ENDFN);
+          }
           return YP_TOKEN_BACKTICK;
         }
 
