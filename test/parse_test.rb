@@ -1219,8 +1219,8 @@ class ParseTest < Test::Unit::TestCase
         [HashNode(
            nil,
            [AssocSplatNode(
-              STAR_STAR("**"),
-              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+              Location(22, 24)
             ),
             AssocNode(
               SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
@@ -1246,8 +1246,8 @@ class ParseTest < Test::Unit::TestCase
         [HashNode(
            nil,
            [AssocSplatNode(
-              STAR_STAR("**"),
-              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+              Location(22, 24)
             ),
             AssocNode(
               SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
@@ -1279,8 +1279,8 @@ class ParseTest < Test::Unit::TestCase
               SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
             ),
             AssocSplatNode(
-              STAR_STAR("**"),
-              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+              Location(29, 31)
             ),
             AssocNode(
               SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
@@ -3509,7 +3509,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), nil, expression("b")),
         AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), nil, expression("d")),
-        AssocSplatNode(STAR_STAR("**"), expression("e")),
+        AssocSplatNode(expression("e"), Location(14, 16)),
         AssocNode(SymbolNode(nil, LABEL("f"), LABEL_END(":")), nil, expression("g")),
       ],
       BRACE_RIGHT("}")
@@ -3527,8 +3527,8 @@ class ParseTest < Test::Unit::TestCase
          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
        ),
        AssocSplatNode(
-         STAR_STAR("**"),
          CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c"),
+         Location(10, 12)
        )],
       BRACE_RIGHT("}")
     )

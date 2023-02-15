@@ -186,8 +186,11 @@ yp_assoc_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_n
       .end = value->location.end
     },
     .as.assoc_splat_node = {
-      .operator = *operator,
-      .value = value
+      .value = value,
+      .operator_loc = {
+        .start = operator->start,
+        .end = operator->end
+      }
     }
   };
 

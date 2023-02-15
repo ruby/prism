@@ -360,11 +360,11 @@ nodes:
             ^^^^^^
   - name: AssocSplatNode
     child_nodes:
-      - name: operator
-        type: token
       - name: value
         type: node
-    location: operator->value
+      - name: operator_loc
+        type: location
+    location: operator_loc->value
     comment: |
       Represents a splat in a hash literal.
 
@@ -590,9 +590,9 @@ nodes:
         type: node
       - name: rparen
         type: token?
-      - name: keyword_location
+      - name: keyword_loc
         type: location
-    location: keyword_location->rparen|value
+    location: keyword_loc->rparen|value
     comment: |
       Represents the use of the `defined?` keyword.
 
