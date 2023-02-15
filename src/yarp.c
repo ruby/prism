@@ -1447,7 +1447,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // xstring literal
         case '`': {
-          if (!lex_state_p(parser, YP_LEX_STATE_FNAME|YP_LEX_STATE_DOT)) {
+          if (!lex_state_operator_p(parser)) {
             yp_lex_mode_t lex_mode = {
               .mode = YP_LEX_STRING,
               .as.string.terminator = '`',
