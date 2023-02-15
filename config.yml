@@ -394,11 +394,11 @@ nodes:
           ^^^^^
   - name: BlockParameterNode
     child_nodes:
-      - name: operator
-        type: token
       - name: name
         type: token?
-    location: operator->name|operator
+      - name: operator_loc
+        type: location
+    location: operator_loc->name|operator_loc
     comment: |
       Represents a block parameter to a method, block, or lambda definition.
 
