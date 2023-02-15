@@ -1220,6 +1220,16 @@ lex_token_type(yp_parser_t *parser) {
               space_seen = true;
             }
             break;
+          case '\\':
+            if (parser->current.end[1] == '\n') {
+              parser->current.end += 2;
+              space_seen = true;
+            } else if (char_is_non_newline_whitespace(*parser->current.end)) {
+              parser->current.end += 2;
+            } else {
+              chomping = false;
+            }
+            break;
           default:
             chomping = false;
             break;
@@ -1636,10 +1646,6 @@ lex_token_type(yp_parser_t *parser) {
               match(parser, '@'))
             return YP_TOKEN_TILDE_AT;
           return YP_TOKEN_TILDE;
-
-        // TODO
-        case '\\':
-          return YP_TOKEN_INVALID;
 
         // % %= %i %I %q %Q %w %W
         case '%':
@@ -4404,30 +4410,42 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_STRING_BEGIN: {
       yp_token_t opening = parser->previous;
+      yp_node_t *node;
+      yp_token_t content;
 
-      if (lex_mode.as.string.interpolation) {
-        yp_token_t content;
-        if (parse_string_without_interpolation(parser, YP_TOKEN_STRING_END, &content)) {
-          return yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_ALL);
+      if (!lex_mode.as.string.interpolation) {
+        if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
+          content = parser->previous;
+        } else {
+          content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
         }
 
-        yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &opening);
-        yp_node_list_t *parts = &interpolated->as.interpolated_string_node.parts;
-        parse_interpolated_string_parts(parser, YP_TOKEN_STRING_END, interpolated, parts);
-        expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated string.");
-        interpolated->as.interpolated_string_node.closing = parser->previous;
-        return interpolated;
-      }
-
-      yp_token_t content;
-      if (accept(parser, YP_TOKEN_STRING_CONTENT)) {
-        content = parser->previous;
+        expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
+        node = yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_MINIMAL);
+      } else if (parse_string_without_interpolation(parser, YP_TOKEN_STRING_END, &content)) {
+        node = yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_ALL);
       } else {
-        content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
+        node = yp_node_interpolated_string_node_create(parser, &opening, &opening);
+
+        yp_node_list_t *parts = &node->as.interpolated_string_node.parts;
+        parse_interpolated_string_parts(parser, YP_TOKEN_STRING_END, node, parts);
+
+        expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated string.");
+        node->as.interpolated_string_node.closing = parser->previous;
       }
 
-      expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_MINIMAL);
+      // If there's a string immediately following this string, then it's a
+      // concatenatation. In this case we'll parse the next string and create a
+      // node in the tree that concatenates the two strings.
+      if (parser->current.type == YP_TOKEN_STRING_BEGIN) {
+        return yp_node_string_concat_node_create(
+          parser,
+          node,
+          parse_expression(parser, BINDING_POWER_CALL, "Expected string on the right side of concatenation.")
+        );
+      } else {
+        return node;
+      }
     }
     case YP_TOKEN_SYMBOL_BEGIN:
       return parse_symbol(parser, lex_mode.mode);
