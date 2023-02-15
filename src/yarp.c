@@ -3075,7 +3075,8 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
         switch (parser->current.type) {
           case YP_TOKEN_COMMA:
-          case YP_TOKEN_PARENTHESIS_RIGHT: {
+          case YP_TOKEN_PARENTHESIS_RIGHT:
+          case YP_TOKEN_PIPE: {
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
             yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
             break;
@@ -3233,7 +3234,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
 
     yp_node_t *block_arguments = NULL;
     if (accept(parser, YP_TOKEN_PIPE)) {
-      block_arguments = parse_parameters(parser);
+      block_arguments = parse_parameters(parser, false);
       expect(parser, YP_TOKEN_PIPE, "expected block arguements to end with '|'.");
     }
 

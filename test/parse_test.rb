@@ -821,6 +821,8 @@ class ParseTest < Test::Unit::TestCase
   test "def with keyword parameter (no parenthesis)" do
     expected = DefNode(
       KEYWORD_DEF("def"),
+      nil,
+      nil,
       IDENTIFIER("a"),
       nil,
       ParametersNode([], [], nil, [KeywordParameterNode(LABEL("b:"), nil)], nil, nil),
@@ -837,6 +839,8 @@ class ParseTest < Test::Unit::TestCase
   test "def with keyword parameter (parenthesis)" do
     expected = DefNode(
       KEYWORD_DEF("def"),
+      nil,
+      nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ParametersNode([], [], nil, [KeywordParameterNode(LABEL("b:"), nil)], nil, nil),
@@ -935,6 +939,8 @@ class ParseTest < Test::Unit::TestCase
   test "def with optional keyword parameters (no parenthesis)" do
     expected = DefNode(
       KEYWORD_DEF("def"),
+      nil,
+      nil,
       IDENTIFIER("a"),
       nil,
       ParametersNode(
@@ -958,6 +964,8 @@ class ParseTest < Test::Unit::TestCase
   test "def with optional keyword parameters (parenthesis)" do
     expected = DefNode(
       KEYWORD_DEF("def"),
+      nil,
+      nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ParametersNode(
@@ -981,6 +989,8 @@ class ParseTest < Test::Unit::TestCase
   test "def with optional keyword parameters and line break" do
     expected = DefNode(
       KEYWORD_DEF("def"),
+      nil,
+      nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ParametersNode(
@@ -3771,7 +3781,7 @@ class ParseTest < Test::Unit::TestCase
                 IntegerLiteral(INTEGER("2"))
               )],
              nil,
-             [KeywordParameterNode(LABEL("z:"))],
+             [KeywordParameterNode(LABEL("z:"), nil)],
              nil,
              nil
            ),
