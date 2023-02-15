@@ -578,6 +578,12 @@ lex_state_operator_p(yp_parser_t *parser) {
   return lex_state_p(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT);
 }
 
+// Set the state of the lexer. This is defined as a function to be able to put a breakpoint in it.
+static inline void
+lex_state_set(yp_parser_t *parser, yp_lex_state_t state) {
+  parser->lex_state = state;
+}
+
 /******************************************************************************/
 /* Specific token lexers                                                      */
 /******************************************************************************/
@@ -796,15 +802,15 @@ static bool
 lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool modifier_allowed) {
   if (strncmp(parser->current.start, value, strlen(value)) == 0) {
     if (parser->lex_state & YP_LEX_STATE_FNAME) {
-      parser->lex_state = YP_LEX_STATE_ENDFN;
+      lex_state_set(parser, YP_LEX_STATE_ENDFN);
     } else {
-      parser->lex_state = state;
+      lex_state_set(parser, state);
       if (state == YP_LEX_STATE_BEG) {
         parser->command_start = true;
       }
 
       if (!(parser->lex_state & (YP_LEX_STATE_BEG | YP_LEX_STATE_LABELED | YP_LEX_STATE_CLASS)) && modifier_allowed) {
-        parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+        lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
       }
     }
 
@@ -943,7 +949,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
   // the string and we can safely return string content.
   if (pound + 1 >= parser->end) {
     parser->current.end = pound;
-    parser->lex_state = YP_LEX_STATE_BEG;
+    lex_state_set(parser, YP_LEX_STATE_BEG);
     return YP_TOKEN_STRING_CONTENT;
   }
 
@@ -955,7 +961,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // In this case we may have hit an embedded instance or class variable.
       if (pound + 2 >= parser->end) {
         parser->current.end = pound + 1;
-        parser->lex_state = YP_LEX_STATE_BEG;
+        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -970,7 +976,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // already consumed content.
         if (pound > parser->current.end) {
           parser->current.end = pound;
-          parser->lex_state = YP_LEX_STATE_BEG;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -978,7 +984,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // and then switch to the embedded variable lex mode.
         lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
         parser->current.end = pound + 1;
-        parser->lex_state = YP_LEX_STATE_BEG;
+        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_EMBVAR;
       }
 
@@ -994,7 +1000,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // that content as string content first.
       if (pound > parser->current.end) {
         parser->current.end = pound;
-        parser->lex_state = YP_LEX_STATE_BEG;
+        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -1002,7 +1008,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // the embedded variable lex mode.
       lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
       parser->current.end = pound + 1;
-      parser->lex_state = YP_LEX_STATE_BEG;
+      lex_state_set(parser, YP_LEX_STATE_BEG);
       return YP_TOKEN_EMBVAR;
     case '{':
       // In this case it's the start of an embedded expression. If we have
@@ -1010,7 +1016,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // content first.
       if (pound > parser->current.end) {
         parser->current.end = pound;
-        parser->lex_state = YP_LEX_STATE_BEG;
+        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -1056,7 +1062,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 //
 static yp_token_type_t
 lex_question_mark(yp_parser_t *parser) {
-  parser->lex_state = YP_LEX_STATE_END;
+  lex_state_set(parser, YP_LEX_STATE_END);
 
   switch (*parser->current.end) {
     case '\n':
@@ -1252,30 +1258,30 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         case '\n':
-          parser->lex_state = YP_LEX_STATE_BEG;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
           parser->command_start = true;
           return YP_TOKEN_NEWLINE;
 
         // ,
         case ',':
-          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           return YP_TOKEN_COMMA;
 
         // (
         case '(':
-          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_PARENTHESIS_LEFT;
 
         // )
         case ')':
-          parser->lex_state = YP_LEX_STATE_ENDFN;
+          lex_state_set(parser, YP_LEX_STATE_ENDFN);
           yp_state_stack_pop(&parser->do_loop_stack);
           return YP_TOKEN_PARENTHESIS_RIGHT;
 
         // ;
         case ';':
-          parser->lex_state = YP_LEX_STATE_BEG;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
           parser->command_start = true;
           return YP_TOKEN_SEMICOLON;
 
@@ -1283,21 +1289,21 @@ lex_token_type(yp_parser_t *parser) {
         case '[':
           if (lex_state_operator_p(parser)) {
             if (match(parser, ']')) {
-              parser->lex_state = YP_LEX_STATE_ARG;
+              lex_state_set(parser, YP_LEX_STATE_ARG);
               return match(parser, '=') ? YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL : YP_TOKEN_BRACKET_LEFT_RIGHT;
             }
 
-            parser->lex_state = YP_LEX_STATE_ARG | YP_LEX_STATE_LABEL;
+            lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABEL);
             return YP_TOKEN_BRACKET_LEFT;
           }
 
-          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_BRACKET_LEFT;
 
         // ]
         case ']':
-          parser->lex_state = YP_LEX_STATE_END;
+          lex_state_set(parser, YP_LEX_STATE_END);
           yp_state_stack_pop(&parser->do_loop_stack);
           return YP_TOKEN_BRACKET_RIGHT;
 
@@ -1305,7 +1311,7 @@ lex_token_type(yp_parser_t *parser) {
         case '{':
           if (parser->previous.type == YP_TOKEN_MINUS_GREATER) return YP_TOKEN_LAMBDA_BEGIN;
 
-          parser->lex_state = YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL;
+          lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_BRACE_LEFT;
 
@@ -1318,7 +1324,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_EMBEXPR_END;
           }
 
-          parser->lex_state = YP_LEX_STATE_END;
+          lex_state_set(parser, YP_LEX_STATE_END);
           return YP_TOKEN_BRACE_RIGHT;
 
         // * ** **= *=
@@ -1328,17 +1334,17 @@ lex_token_type(yp_parser_t *parser) {
               return YP_TOKEN_STAR_STAR_EQUAL;
             }
             if (lex_state_operator_p(parser)) {
-              parser->lex_state = YP_LEX_STATE_ARG;
+              lex_state_set(parser, YP_LEX_STATE_ARG);
             } else {
-              parser->lex_state = YP_LEX_STATE_BEG;
+              lex_state_set(parser, YP_LEX_STATE_BEG);
             }
             return YP_TOKEN_STAR_STAR;
           }
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
           return match(parser, '=') ? YP_TOKEN_STAR_EQUAL : YP_TOKEN_STAR;
 
@@ -1369,9 +1375,9 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '>')) return YP_TOKEN_EQUAL_GREATER;
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
 
           if (match(parser, '~')) return YP_TOKEN_EQUAL_TILDE;
@@ -1391,26 +1397,26 @@ lex_token_type(yp_parser_t *parser) {
             }
 
             if (lex_state_operator_p(parser)) {
-              parser->lex_state = YP_LEX_STATE_ARG;
+              lex_state_set(parser, YP_LEX_STATE_ARG);
             } else {
-              parser->lex_state = YP_LEX_STATE_BEG;
+              lex_state_set(parser, YP_LEX_STATE_BEG);
             }
             return YP_TOKEN_LESS_LESS;
           }
 
           if (match(parser, '=')) {
             if (lex_state_operator_p(parser)) {
-              parser->lex_state = YP_LEX_STATE_ARG;
+              lex_state_set(parser, YP_LEX_STATE_ARG);
             } else {
-              parser->lex_state = YP_LEX_STATE_BEG;
+              lex_state_set(parser, YP_LEX_STATE_BEG);
             }
             return match(parser, '>') ? YP_TOKEN_LESS_EQUAL_GREATER : YP_TOKEN_LESS_EQUAL;
           }
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
           return YP_TOKEN_LESS;
 
@@ -1418,17 +1424,17 @@ lex_token_type(yp_parser_t *parser) {
         case '>':
           if (match(parser, '>')) {
             if (lex_state_operator_p(parser)) {
-              parser->lex_state = YP_LEX_STATE_ARG;
+              lex_state_set(parser, YP_LEX_STATE_ARG);
             } else {
-              parser->lex_state = YP_LEX_STATE_BEG;
+              lex_state_set(parser, YP_LEX_STATE_BEG);
             }
             return match(parser, '=') ? YP_TOKEN_GREATER_GREATER_EQUAL : YP_TOKEN_GREATER_GREATER;
           }
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
 
           return match(parser, '=') ? YP_TOKEN_GREATER_EQUAL : YP_TOKEN_GREATER;
@@ -1456,7 +1462,7 @@ lex_token_type(yp_parser_t *parser) {
 
             lex_mode_push(parser, lex_mode);
           } else {
-            parser->lex_state = YP_LEX_STATE_ENDFN;
+            lex_state_set(parser, YP_LEX_STATE_ENDFN);
           }
           return YP_TOKEN_BACKTICK;
         }
@@ -1484,7 +1490,7 @@ lex_token_type(yp_parser_t *parser) {
               return YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL;
             }
 
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
             return YP_TOKEN_AMPERSAND_AMPERSAND;
           }
 
@@ -1497,9 +1503,9 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
 
           return YP_TOKEN_AMPERSAND;
@@ -1515,14 +1521,14 @@ lex_token_type(yp_parser_t *parser) {
           if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
 
           if (parser->lex_state == YP_LEX_STATE_BEG && char_is_decimal_number(*parser->current.end)) {
-            parser->lex_state = YP_LEX_STATE_END;
+            lex_state_set(parser, YP_LEX_STATE_END);
             return lex_numeric(parser);
           }
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
           return YP_TOKEN_PLUS;
 
@@ -1535,20 +1541,20 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_MINUS_AT;
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
           return YP_TOKEN_MINUS;
 
         // . .. ...
         case '.':
           if (match(parser, '.')) {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
             return match(parser, '.') ? YP_TOKEN_DOT_DOT_DOT : YP_TOKEN_DOT_DOT;
           }
 
-          parser->lex_state = YP_LEX_STATE_DOT;
+          lex_state_set(parser, YP_LEX_STATE_DOT);
           return YP_TOKEN_DOT;
 
         // integer
@@ -1563,20 +1569,20 @@ lex_token_type(yp_parser_t *parser) {
         case '8':
         case '9': {
           yp_token_type_t type = lex_numeric(parser);
-          parser->lex_state = YP_LEX_STATE_END;
+          lex_state_set(parser, YP_LEX_STATE_END);
           return type;
         }
 
         // :: symbol
         case ':':
           if (match(parser, ':')) {
-            parser->lex_state = YP_LEX_STATE_DOT;
+            lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_COLON_COLON;
           }
 
           if (char_is_identifier(parser, parser->current.end)) {
             lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
-            parser->lex_state = YP_LEX_STATE_FNAME;
+            lex_state_set(parser, YP_LEX_STATE_FNAME);
             return YP_TOKEN_SYMBOL_BEGIN;
           }
 
@@ -1589,7 +1595,7 @@ lex_token_type(yp_parser_t *parser) {
 
             lex_mode_push(parser, lex_mode);
             parser->current.end++;
-            parser->lex_state = YP_LEX_STATE_FNAME;
+            lex_state_set(parser, YP_LEX_STATE_FNAME);
             return YP_TOKEN_SYMBOL_BEGIN;
           }
 
@@ -1603,7 +1609,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (match(parser, '=')) {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
             return YP_TOKEN_SLASH_EQUAL;
           }
 
@@ -1614,9 +1620,9 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
 
           return YP_TOKEN_SLASH;
@@ -1624,9 +1630,9 @@ lex_token_type(yp_parser_t *parser) {
         // ^ ^=
         case '^':
           if (lex_state_operator_p(parser)) {
-            parser->lex_state = YP_LEX_STATE_ARG;
+            lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
           }
           return match(parser, '=') ? YP_TOKEN_CARET_EQUAL : YP_TOKEN_CARET;
 
@@ -1759,7 +1765,7 @@ lex_token_type(yp_parser_t *parser) {
             lex_mode_pop(parser);
           }
 
-          parser->lex_state = YP_LEX_STATE_END;
+          lex_state_set(parser, YP_LEX_STATE_END);
           return type;
         }
 
@@ -1767,7 +1773,7 @@ lex_token_type(yp_parser_t *parser) {
         case '@': {
           yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
           size_t width;
-          parser->lex_state = parser->lex_state & YP_LEX_STATE_FNAME ? YP_LEX_STATE_ENDFN : YP_LEX_STATE_END;
+          lex_state_set(parser, parser->lex_state & YP_LEX_STATE_FNAME ? YP_LEX_STATE_ENDFN : YP_LEX_STATE_END);
           if ((width = char_is_identifier_start(parser, parser->current.end))) {
             parser->current.end += width;
 
@@ -1815,21 +1821,21 @@ lex_token_type(yp_parser_t *parser) {
           // colon, then we can return a label token.
           if ((parser->current.end[0] == ':') && (parser->current.end[1] != ':')) {
             parser->current.end++;
-            parser->lex_state = YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED;
+            lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
             return YP_TOKEN_LABEL;
           }
 
           if (type == YP_TOKEN_IDENTIFIER || type == YP_TOKEN_CONSTANT) {
             if (parser->lex_state & (YP_LEX_STATE_BEG_ANY | YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_DOT)) {
               if (previous_command_start) {
-                parser->lex_state = YP_LEX_STATE_CMDARG;
+                lex_state_set(parser, YP_LEX_STATE_CMDARG);
               } else {
-                parser->lex_state = YP_LEX_STATE_ARG;
+                lex_state_set(parser, YP_LEX_STATE_ARG);
               }
             } else if (lex_state_operator_p(parser)) {
-              parser->lex_state = YP_LEX_STATE_ENDFN;
+              lex_state_set(parser, YP_LEX_STATE_ENDFN);
             } else {
-              parser->lex_state = YP_LEX_STATE_END;
+              lex_state_set(parser, YP_LEX_STATE_END);
             }
           }
 
@@ -1838,7 +1844,7 @@ lex_token_type(yp_parser_t *parser) {
             (type == YP_TOKEN_IDENTIFIER) &&
             current_scope_has_local(parser, &parser->current)
           ) {
-            parser->lex_state = YP_LEX_STATE_END|YP_LEX_STATE_LABEL;
+            lex_state_set(parser, YP_LEX_STATE_END|YP_LEX_STATE_LABEL);
           }
 
           return type;
@@ -1939,7 +1945,7 @@ lex_token_type(yp_parser_t *parser) {
             parser->current.end = breakpoint + 1;
             lex_mode_pop(parser);
 
-            parser->lex_state = YP_LEX_STATE_END;
+            lex_state_set(parser, YP_LEX_STATE_END);
             return YP_TOKEN_STRING_END;
         }
       }
@@ -2013,7 +2019,7 @@ lex_token_type(yp_parser_t *parser) {
             }
 
             lex_mode_pop(parser);
-            parser->lex_state = YP_LEX_STATE_END;
+            lex_state_set(parser, YP_LEX_STATE_END);
             return YP_TOKEN_REGEXP_END;
           }
         }
@@ -2075,7 +2081,7 @@ lex_token_type(yp_parser_t *parser) {
             parser->current.end = breakpoint + 1;
             lex_mode_pop(parser);
 
-            parser->lex_state = YP_LEX_STATE_END;
+            lex_state_set(parser, YP_LEX_STATE_END);
             return YP_TOKEN_STRING_END;
         }
       }
@@ -2097,7 +2103,7 @@ lex_token_type(yp_parser_t *parser) {
 
           yp_token_type_t type = lex_identifier(parser);
 
-          parser->lex_state = YP_LEX_STATE_ENDFN;
+          lex_state_set(parser, YP_LEX_STATE_ENDFN);
           return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
         }
       }
@@ -3781,7 +3787,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       if (match_type_p(parser, YP_TOKEN_LESS)) {
         inheritance_operator = parser->current;
-        parser->lex_state = YP_LEX_STATE_BEG;
+        lex_state_set(parser, YP_LEX_STATE_BEG);
         parser->command_start = true;
         parser_lex(parser);
         superclass = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a superclass after `<`.");
