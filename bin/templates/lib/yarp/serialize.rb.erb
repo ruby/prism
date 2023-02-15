@@ -30,7 +30,7 @@ module YARP
       private
 
       def load_token
-        number = io.read(1)
+        number = io.read(1).unpack1("C")
         location = load_location
 
         type =

@@ -4181,7 +4181,13 @@ parse_expression_prefix(yp_parser_t *parser) {
         rparen = not_provided(parser);
       }
 
-      return yp_node_defined_node_create(parser, &(yp_location_t) { .start = keyword.start, .end = keyword.end }, &lparen, expression, &rparen);
+      return yp_node_defined_node_create(
+        parser,
+        &lparen,
+        expression,
+        &rparen,
+        &(yp_location_t) { .start = keyword.start, .end = keyword.end }
+      );
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;

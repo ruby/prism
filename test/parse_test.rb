@@ -1823,19 +1823,19 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "defined? without parentheses" do
-    assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil), "defined? 1"
+    assert_parses DefinedNode(nil, expression("1"), nil, Location(0, 8)), "defined? 1"
   end
 
   test "defined? with parentheses" do
-    assert_parses DefinedNode(KEYWORD_DEFINED("defined?"), PARENTHESIS_LEFT("("), expression("1"), PARENTHESIS_RIGHT(")")), "defined?(1)"
+    assert_parses DefinedNode(PARENTHESIS_LEFT("("), expression("1"), PARENTHESIS_RIGHT(")"), Location(0, 8)), "defined?(1)"
   end
 
   test "defined? binding power" do
     expected =
       AndNode(
-        DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("1"), nil),
+        DefinedNode(nil, expression("1"), nil, Location(0, 8)),
         KEYWORD_AND("and"),
-        DefinedNode(KEYWORD_DEFINED("defined?"), nil, expression("2"), nil)
+        DefinedNode(nil, expression("2"), nil, Location(15, 23))
       )
 
     assert_parses expected, "defined? 1 and defined? 2"

@@ -10,8 +10,16 @@ module YARP
       @end_offset = end_offset
     end
 
+    def deconstruct_keys(keys)
+      { start_offset: start_offset, end_offset: end_offset }
+    end
+
     def pretty_print(q)
       q.text("(#{start_offset}..#{end_offset})")
+    end
+
+    def ==(other)
+      other in Location[start_offset: ^(start_offset), end_offset: ^(end_offset)]
     end
 
     def self.null
