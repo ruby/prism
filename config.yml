@@ -868,12 +868,18 @@ nodes:
     child_nodes:
       - name: name
         type: token
+      - name: value
+        type: node?
     location: name
     comment: |
-      Represents an required keyword parameter to a method, block, or lambda definition.
+      Represents a keyword parameter to a method, block, or lambda definition.
 
           def a(b:)
                 ^^
+          end
+
+          def a(b: 1)
+                ^^^^
           end
   - name: KeywordRestParameterNode
     child_nodes:

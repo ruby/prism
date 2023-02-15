@@ -818,6 +818,38 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a b\nend"
   end
 
+  test "def with keyword parameter (no parenthesis)" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [KeywordParameterNode(LABEL("b:"), nil)], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([LABEL("b")])
+    )
+
+    assert_parses expected, "def a b:\nend"
+  end
+
+  test "def with keyword parameter (parenthesis)" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode([], [], nil, [KeywordParameterNode(LABEL("b:"), nil)], nil, nil),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([LABEL("b")])
+    )
+
+    assert_parses expected, "def a(b:)\nend"
+  end
+
   test "def with multiple required parameters" do
     expected = DefNode(
       KEYWORD_DEF("def"),
@@ -898,6 +930,79 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def a b = 1, c = 2\nend"
+  end
+
+  test "def with optional keyword parameters (no parenthesis)" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode(
+        [],
+        [KeywordParameterNode(LABEL("c:"), expression("1"))],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        nil,
+        nil
+      ),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([LABEL("b"), LABEL("c")])
+    )
+
+    assert_parses expected, "def a b:, c: 1 \nend"
+  end
+
+  test "def with optional keyword parameters (parenthesis)" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode(
+        [],
+        [KeywordParameterNode(LABEL("c:"), expression("1"))],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        nil,
+        nil
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([LABEL("b"), LABEL("c")])
+    )
+
+    assert_parses expected, "def a(b:, c: 1)\nend"
+  end
+
+  test "def with optional keyword parameters and line break" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ParametersNode(
+        [],
+        [KeywordParameterNode(LABEL("b:"), expression("1"))],
+        nil,
+        [KeywordParameterNode(LABEL("c:"), nil)],
+        nil,
+        nil
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([LABEL("b"), LABEL("c")])
+    )
+
+    assert_parses expected, <<~RUBY
+      def a(b:
+        1, c:)
+      end
+    RUBY
   end
 
   test "def with rest parameter" do
@@ -1037,7 +1142,7 @@ class ParseTest < Test::Unit::TestCase
         [RequiredParameterNode(IDENTIFIER("a"))],
         [],
         nil,
-        [KeywordParameterNode(LABEL("b:"))],
+        [KeywordParameterNode(LABEL("b:"), nil)],
         NoKeywordsParameterNode(KEYWORD_NIL("nil")),
         nil
       ),
