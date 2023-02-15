@@ -176,7 +176,7 @@ yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *oper
 
 // Allocate and initialize a new assoc splat node.
 static yp_node_t *
-yp_assoc_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *value) {
+yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token_t *operator) {
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -186,8 +186,11 @@ yp_assoc_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_n
       .end = value->location.end
     },
     .as.assoc_splat_node = {
-      .operator = *operator,
-      .value = value
+      .value = value,
+      .operator_loc = {
+        .start = operator->start,
+        .end = operator->end
+      }
     }
   };
 
@@ -245,7 +248,7 @@ yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
 
 // Allocate and initialize a new BlockParameterNode node.
 static yp_node_t *
-yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
+yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -255,8 +258,11 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, 
       .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
     },
     .as.block_parameter_node = {
-      .operator = *operator,
-      .name = *name
+      .name = *name,
+      .operator_loc = {
+        .start = operator->start,
+        .end = operator->end
+      }
     }
   };
 
@@ -2871,7 +2877,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
       yp_token_t operator = parser->previous;
       yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
 
-      element = yp_assoc_splat_node_create(parser, &operator, value);
+      element = yp_assoc_splat_node_create(parser, value, &operator);
       break;
     }
     case YP_TOKEN_LABEL: {
@@ -3024,7 +3030,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
           name = not_provided(parser);
         }
 
-        yp_node_t *param = yp_block_parameter_node_create(parser, &operator, &name);
+        yp_node_t *param = yp_block_parameter_node_create(parser, &name, &operator);
         params->as.parameters_node.block = param;
 
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
@@ -4181,7 +4187,13 @@ parse_expression_prefix(yp_parser_t *parser) {
         rparen = not_provided(parser);
       }
 
-      return yp_node_defined_node_create(parser, &keyword, &lparen, expression, &rparen);
+      return yp_node_defined_node_create(
+        parser,
+        &lparen,
+        expression,
+        &rparen,
+        &(yp_location_t) { .start = keyword.start, .end = keyword.end }
+      );
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       yp_token_t keyword = parser->previous;

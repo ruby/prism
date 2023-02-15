@@ -57,6 +57,13 @@ class StringParam < Struct.new(:name)
   def java_type = "byte[]"
 end
 
+# This represents a parameter to a node that is a location.
+class LocationParam < Struct.new(:name)
+  def param = "const yp_location_t *#{name}"
+  def rbs_class = "Location"
+  def java_type = "Location"
+end
+
 # This class represents a node in the tree, configured by the config.yml file in
 # YAML format. It contains information about the name of the node, the various
 # child nodes it contains, and how to obtain the location of the node in the
@@ -90,6 +97,8 @@ class NodeType
           OptionalTokenParam.new(name)
         when "token[]"
           TokenListParam.new(name)
+        when "location"
+          LocationParam.new(name)
         else
           raise "Unknown param type: #{param["type"].inspect}"
         end
@@ -123,6 +132,7 @@ class NodeType
     in TokenParam then "#{param.name}->start"
     in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
     in NodeListParam | TokenListParam then "0"
+    in LocationParam then "#{param.name}->start"
     else
       raise "Unknown param type: #{param.inspect}"
     end
@@ -135,6 +145,7 @@ class NodeType
     in TokenParam then "#{param.name}->end"
     in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
     in NodeListParam | TokenListParam then "0"
+    in LocationParam then "#{param.name}->end"
     else
       raise "Unknown param type: #{param.inspect}"
     end

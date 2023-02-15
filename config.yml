@@ -360,11 +360,11 @@ nodes:
             ^^^^^^
   - name: AssocSplatNode
     child_nodes:
-      - name: operator
-        type: token
       - name: value
         type: node
-    location: operator->value
+      - name: operator_loc
+        type: location
+    location: operator_loc->value
     comment: |
       Represents a splat in a hash literal.
 
@@ -394,11 +394,11 @@ nodes:
           ^^^^^
   - name: BlockParameterNode
     child_nodes:
-      - name: operator
-        type: token
       - name: name
         type: token?
-    location: operator->name|operator
+      - name: operator_loc
+        type: location
+    location: operator_loc->name|operator_loc
     comment: |
       Represents a block parameter to a method, block, or lambda definition.
 
@@ -584,15 +584,15 @@ nodes:
           ^^^^^^^^^^
   - name: DefinedNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: lparen
         type: token?
       - name: value
         type: node
       - name: rparen
         type: token?
-    location: keyword->rparen|value
+      - name: keyword_loc
+        type: location
+    location: keyword_loc->rparen|value
     comment: |
       Represents the use of the `defined?` keyword.
 
