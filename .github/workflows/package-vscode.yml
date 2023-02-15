@@ -13,25 +13,18 @@ jobs:
         name: Checkout
 
       - uses: actions/setup-node@v3
-        name: Use Node.js 17.x
+        name: Use Node.js 18.x
         with:
-          node-version: "17"
-
-      - run: cd vscode
-
-      - name: Setup yarn
-        run: npm install -g yarn
-
-      - name: 📦 Install dependencies
-        run: yarn --frozen-lockfile
+          node-version: "18.x"
+          cache: yarn
 
       - name: 🔨 Package
-        run: yarn run package
-
-      - name: Set vsix path
-        id: set-vsix-path
+        working-directory: ./vscode
         run: |
+          yarn --frozen-lockfile
+          yarn run package
           echo ::set-output name=vsix_path::$(ls *.vsix)
+
 
       - name: Upload assets to release
         uses: Shopify/upload-to-release@master
