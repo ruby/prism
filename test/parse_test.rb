@@ -2267,7 +2267,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "%q string interpolation disallowed" do
-    assert_parses StringNode(STRING_BEGIN("%q{"), STRING_CONTENT("abc"), STRING_END("}")), "%q{abc}"
+    assert_parses StringNode(STRING_BEGIN("%q{"), STRING_CONTENT("abc"), STRING_END("}"), "abc"), "%q{abc}"
   end
 
   test "string interpolation allowed, but not used" do
@@ -2275,20 +2275,22 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "%Q string interpolation allowed, but not used" do
-    expected = InterpolatedStringNode(
+    expected = StringNode(
       STRING_BEGIN("%Q{"),
-      [StringNode(nil, STRING_CONTENT("abc"), nil)],
-      STRING_END("}")
+      STRING_CONTENT("abc"),
+      STRING_END("}"),
+      "abc"
     )
 
     assert_parses expected, "%Q{abc}"
   end
 
   test "% string interpolation allowed, but not used" do
-    expected = InterpolatedStringNode(
+    expected = StringNode(
       STRING_BEGIN("%{"),
-      [StringNode(nil, STRING_CONTENT("abc"), nil)],
-      STRING_END("}")
+      STRING_CONTENT("abc"),
+      STRING_END("}"),
+      "abc"
     )
 
     assert_parses expected, "%{abc}"
@@ -2320,13 +2322,13 @@ class ParseTest < Test::Unit::TestCase
     expected = InterpolatedStringNode(
       STRING_BEGIN("%Q{"),
       [
-        StringNode(nil, STRING_CONTENT("aaa "), nil),
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
           Statements([CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, "bbb")]),
           EMBEXPR_END("}")
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil)
+        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")
       ],
       STRING_END("}")
     )
@@ -2338,13 +2340,13 @@ class ParseTest < Test::Unit::TestCase
     expected = InterpolatedStringNode(
       STRING_BEGIN("%{"),
       [
-        StringNode(nil, STRING_CONTENT("aaa "), nil),
+        StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
           Statements([CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, "bbb")]),
           EMBEXPR_END("}")
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil)
+        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")
       ],
       STRING_END("}")
     )
@@ -2353,26 +2355,31 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "% string with any non-closing token" do
-    %w[! @ # $ % ^ & * _ + - | \\ : ; " ' , . ~ ? / `].each do |token|
-      expected = InterpolatedStringNode(
+    %w[! @ $ % ^ & * _ + - | : ; " ' , . ~ ? / `].each do |token|
+      expected = StringNode(
         STRING_BEGIN("%#{token}"),
-        [StringNode(nil, STRING_CONTENT("abc"), nil)],
-        STRING_END(token)
+        STRING_CONTENT("abc"),
+        STRING_END(token),
+        "abc"
       )
 
       assert_parses expected, "%#{token}abc#{token}"
     end
+
+    # \\
+    # #
   end
 
   test "% string with any closing token" do
-    [["{", "}"], ["[", "]"], ["(", ")"]].each do |(open, close)|
-      expected = InterpolatedStringNode(
-        STRING_BEGIN("%#{open}"),
-        [StringNode(nil, STRING_CONTENT("abc"), nil)],
-        STRING_END(close)
+    [["{", "}"], ["[", "]"], ["(", ")"]].each do |(opening, closing)|
+      expected = StringNode(
+        STRING_BEGIN("%#{opening}"),
+        STRING_CONTENT("abc"),
+        STRING_END(closing),
+        "abc"
       )
 
-      assert_parses expected, "%#{open}abc#{close}"
+      assert_parses expected, "%#{opening}abc#{closing}"
     end
   end
 
