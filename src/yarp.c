@@ -2110,42 +2110,42 @@ lex_token_type(yp_parser_t *parser) {
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
       while (breakpoint != NULL) {
-        switch (*breakpoint) {
-          case '\\':
-            // If we hit escapes, then we need to treat the next token
-            // literally. In this case we'll skip past the next character and
-            // find the next breakpoint.
-            breakpoint = strpbrk(breakpoint + 2, breakpoints);
-            break;
-          case '#': {
-            yp_token_type_t type = lex_interpolation(parser, breakpoint);
-            if (type != YP_TOKEN_NOT_PROVIDED) return type;
-
-            // If we haven't returned at this point then we had something
-            // that looked like an interpolated class or instance variable
-            // like "#@" but wasn't actually. In this case we'll just skip
-            // to the next breakpoint.
-            breakpoint = strpbrk(parser->current.end, breakpoints);
-            break;
+        // Note that we have to check the terminator here first because we could
+        // potentially be parsing a % string that has a # character as the
+        // terminator.
+        if (*breakpoint == parser->lex_modes.current->as.string.terminator) {
+          // Here we've hit the terminator. If we have already consumed content
+          // then we need to return that content as string content first.
+          if (breakpoint > parser->current.end) {
+            parser->current.end = breakpoint;
+            return YP_TOKEN_STRING_CONTENT;
           }
-          default:
-            assert(*breakpoint == parser->lex_modes.current->as.string.terminator);
 
-            // Here we've hit the terminator. If we have already consumed
-            // content then we need to return that content as string content
-            // first.
-            if (breakpoint > parser->current.end) {
-              parser->current.end = breakpoint;
-              return YP_TOKEN_STRING_CONTENT;
-            }
+          // Otherwise we need to switch back to the parent lex mode and
+          // return the end of the string.
+          parser->current.end = breakpoint + 1;
+          lex_mode_pop(parser);
 
-            // Otherwise we need to switch back to the parent lex mode and
-            // return the end of the string.
-            parser->current.end = breakpoint + 1;
-            lex_mode_pop(parser);
+          parser->lex_state = YP_LEX_STATE_END;
+          return YP_TOKEN_STRING_END;
+        }
 
-            parser->lex_state = YP_LEX_STATE_END;
-            return YP_TOKEN_STRING_END;
+        if (*breakpoint == '\\') {
+          // If we hit escapes, then we need to treat the next token literally.
+          // In this case we'll skip past the next character and find the next
+          // breakpoint.
+          breakpoint = strpbrk(breakpoint + 2, breakpoints);
+        } else {
+          assert(*breakpoint == '#');
+
+          yp_token_type_t type = lex_interpolation(parser, breakpoint);
+          if (type != YP_TOKEN_NOT_PROVIDED) return type;
+
+          // If we haven't returned at this point then we had something that
+          // looked like an interpolated class or instance variable like "#@"
+          // but wasn't actually. In this case we'll just skip to the next
+          // breakpoint.
+          breakpoint = strpbrk(parser->current.end, breakpoints);
         }
       }
 

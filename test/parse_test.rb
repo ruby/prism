@@ -2355,7 +2355,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "% string with any non-closing token" do
-    %w[! @ $ % ^ & * _ + - | : ; " ' , . ~ ? / `].each do |token|
+    %w[! @ $ % ^ & * _ + - | : ; " ' , . ~ ? / ` # \\].each do |token|
       expected = StringNode(
         STRING_BEGIN("%#{token}"),
         STRING_CONTENT("abc"),
@@ -2365,9 +2365,6 @@ class ParseTest < Test::Unit::TestCase
 
       assert_parses expected, "%#{token}abc#{token}"
     end
-
-    # \\
-    # #
   end
 
   test "% string with any closing token" do
