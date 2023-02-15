@@ -2497,6 +2497,10 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SymbolNode(SYMBOL_BEGIN(":"), CLASS_VARIABLE("@@a"), nil), ":@@a"
   end
 
+  test "symbol with global variable" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), GLOBAL_VARIABLE("$a"), nil), ":$a"
+  end
+
   test "symbol list" do
     expected = ArrayNode(
       PERCENT_LOWER_I("%i["),

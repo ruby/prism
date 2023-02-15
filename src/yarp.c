@@ -2187,10 +2187,19 @@ lex_token_type(yp_parser_t *parser) {
       // Now, look at the next character to see what kind of symbol we can find.
       switch (*parser->current.end++) {
         case '@': {
-          lex_state_set(parser, YP_LEX_STATE_ENDFN);
           yp_token_type_t type = lex_at_variable(parser);
 
+          lex_state_set(parser, YP_LEX_STATE_ENDFN);
           lex_mode_pop(parser);
+
+          return type;
+        }
+        case '$': {
+          yp_token_type_t type = lex_global_variable(parser);
+
+          lex_state_set(parser, YP_LEX_STATE_END);
+          lex_mode_pop(parser);
+
           return type;
         }
         default: {
