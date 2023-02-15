@@ -3311,15 +3311,19 @@ parse_undef_argument(yp_parser_t *parser) {
   }
 }
 
-// Parse an argument to alias which can either be a bare word, a
-// symbol, an interpolated symbol or a global variable.
+// Parse an argument to alias which can either be a bare word, a symbol, an
+// interpolated symbol or a global variable. If this is the first argument, then
+// we need to set the lex state to YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM
+// between the first and second arguments.
 static inline yp_node_t *
 parse_alias_argument(yp_parser_t *parser, bool first) {
   switch (parser->current.type) {
     case YP_TOKEN_IDENTIFIER: {
-      parser->lex_state = YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM;
-      parser_lex(parser);
+      if (first) {
+        parser->lex_state = YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM;
+      }
 
+      parser_lex(parser);
       yp_token_t opening = not_provided(parser);
       yp_token_t closing = not_provided(parser);
 
@@ -3328,12 +3332,16 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
     case YP_TOKEN_SYMBOL_BEGIN: {
       int mode = parser->lex_modes.current->mode;
       parser_lex(parser);
-      return parse_symbol(parser, mode, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
+
+      return parse_symbol(parser, mode, first ? YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM : YP_LEX_STATE_NONE);
     }
     case YP_TOKEN_BACK_REFERENCE:
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE: {
-      parser->lex_state = YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM;
+      if (first) {
+        parser->lex_state = YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM;
+      }
+
       parser_lex(parser);
       return yp_node_global_variable_read_create(parser, &parser->previous);
     }
