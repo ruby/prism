@@ -1386,6 +1386,18 @@ nodes:
 
           "foo #{bar} baz"
            ^^^^      ^^^^
+  - name: StringConcatNode
+    child_nodes:
+      - name: left
+        type: node
+      - name: right
+        type: node
+    location: left->right
+    comment: |
+      Represents the use of compile-time string concatenation.
+
+          "foo" "bar"
+          ^^^^^^^^^^^
   - name: SuperNode
     child_nodes:
       - name: keyword
