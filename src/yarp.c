@@ -608,6 +608,11 @@ lex_state_beg_p(yp_parser_t *parser) {
   return lex_state_p(parser, YP_LEX_STATE_BEG_ANY) || lex_states_p(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
 }
 
+static inline bool
+lex_state_end_p(yp_parser_t *parser) {{
+  return lex_state_p(parser, YP_LEX_STATE_END_ANY);
+}}
+
 // This is the equivalent of IS_AFTER_OPERATOR in CRuby.
 static inline bool
 lex_state_operator_p(yp_parser_t *parser) {
@@ -1219,6 +1224,32 @@ lex_question_mark(yp_parser_t *parser) {
   }
 }
 
+// Lex a variable that starts with an @ sign (either an instance or class
+// variable).
+static yp_token_type_t
+lex_at_variable(yp_parser_t *parser) {
+  yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
+  size_t width;
+
+  if ((width = char_is_identifier_start(parser, parser->current.end))) {
+    parser->current.end += width;
+
+    while ((width = char_is_identifier(parser, parser->current.end))) {
+      parser->current.end += width;
+    }
+
+    // If we're lexing an embedded variable, then we need to pop back
+    // into the parent lex context.
+    if (parser->lex_modes.current->mode == YP_LEX_EMBVAR) {
+      lex_mode_pop(parser);
+    }
+
+    return type;
+  }
+
+  return YP_TOKEN_INVALID;
+}
+
 static bool
 current_scope_has_local(yp_parser_t * parser, yp_token_t * token) {
   return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
@@ -1418,12 +1449,14 @@ lex_token_type(yp_parser_t *parser) {
             }
           }
 
-          if (match(parser, '>')) return YP_TOKEN_EQUAL_GREATER;
-
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
             lex_state_set(parser, YP_LEX_STATE_BEG);
+          }
+
+          if (match(parser, '>')) {
+            return YP_TOKEN_EQUAL_GREATER;
           }
 
           if (match(parser, '~')) return YP_TOKEN_EQUAL_TILDE;
@@ -1626,10 +1659,9 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_COLON_COLON;
           }
 
-          if (char_is_identifier(parser, parser->current.end)) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
-            lex_state_set(parser, YP_LEX_STATE_FNAME);
-            return YP_TOKEN_SYMBOL_BEGIN;
+          if (lex_state_end_p(parser) || char_is_whitespace(*parser->current.end) || (*parser->current.end == '#')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_COLON;
           }
 
           if ((*parser->current.end == '"') || (*parser->current.end == '\'')) {
@@ -1641,11 +1673,12 @@ lex_token_type(yp_parser_t *parser) {
 
             lex_mode_push(parser, lex_mode);
             parser->current.end++;
-            lex_state_set(parser, YP_LEX_STATE_FNAME);
-            return YP_TOKEN_SYMBOL_BEGIN;
+          } else {
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
           }
 
-          return YP_TOKEN_COLON;
+          lex_state_set(parser, YP_LEX_STATE_FNAME);
+          return YP_TOKEN_SYMBOL_BEGIN;
 
         // / /=
         case '/':
@@ -1839,28 +1872,9 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         // instance variable, class variable
-        case '@': {
-          yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
-          size_t width;
+        case '@':
           lex_state_set(parser, parser->lex_state & YP_LEX_STATE_FNAME ? YP_LEX_STATE_ENDFN : YP_LEX_STATE_END);
-          if ((width = char_is_identifier_start(parser, parser->current.end))) {
-            parser->current.end += width;
-
-            while ((width = char_is_identifier(parser, parser->current.end))) {
-              parser->current.end += width;
-            }
-
-            // If we're lexing an embedded variable, then we need to pop back
-            // into the parent lex context.
-            if (parser->lex_modes.current->mode == YP_LEX_EMBVAR) {
-              lex_mode_pop(parser);
-            }
-
-            return type;
-          }
-
-          return YP_TOKEN_INVALID;
-        }
+          return lex_at_variable(parser);
 
         default: {
           // If this isn't the beginning of an identifier, then it's an invalid
@@ -2164,21 +2178,39 @@ lex_token_type(yp_parser_t *parser) {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
 
-      // Lex as far as we can into the symbol.
-      if (parser->current.end < parser->end) {
-        if (char_is_identifier_start(parser, parser->current.end)) {
-          parser->current.end++;
+      // If we get here then we have the start of a symbol with no content. In
+      // that case return an invalid token.
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_INVALID;
+      }
+
+      // Now, look at the next character to see what kind of symbol we can find.
+      switch (*parser->current.end++) {
+        case '@': {
+          lex_state_set(parser, YP_LEX_STATE_ENDFN);
+          yp_token_type_t type = lex_at_variable(parser);
+
+          lex_mode_pop(parser);
+          return type;
+        }
+        default: {
+          // If this isn't the beginning of an identifier, then it's an invalid
+          // token as we've exhausted all of the other options.
+          size_t width = char_is_identifier_start(parser, parser->current.start);
+          if (!width) return YP_TOKEN_INVALID;
+
+          parser->current.end = parser->current.start + width;
           lex_mode_pop(parser);
 
           yp_token_type_t type = lex_identifier(parser);
-
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
+
           return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
         }
       }
 
-      // If we get here then we have the start of a symbol with no content. In
-      // that case return an invalid token.
+      // If we got here, then we have a symbol followed by something we don't
+      // understand. In that case we'll just return an invalid token.
       return YP_TOKEN_INVALID;
     }
   }

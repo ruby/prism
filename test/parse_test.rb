@@ -2485,6 +2485,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil), ":a"
   end
 
+  test "symbol with keyword" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), KEYWORD_DO("do"), nil), ":do"
+  end
+
+  test "symbol with instance variable" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), INSTANCE_VARIABLE("@a"), nil), ":@a"
+  end
+
+  test "symbol with class variable" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), CLASS_VARIABLE("@@a"), nil), ":@@a"
+  end
+
   test "symbol list" do
     expected = ArrayNode(
       PERCENT_LOWER_I("%i["),
