@@ -609,9 +609,9 @@ lex_state_beg_p(yp_parser_t *parser) {
 }
 
 static inline bool
-lex_state_end_p(yp_parser_t *parser) {{
+lex_state_end_p(yp_parser_t *parser) {
   return lex_state_p(parser, YP_LEX_STATE_END_ANY);
-}}
+}
 
 // This is the equivalent of IS_AFTER_OPERATOR in CRuby.
 static inline bool
@@ -2184,22 +2184,67 @@ lex_token_type(yp_parser_t *parser) {
         return YP_TOKEN_INVALID;
       }
 
+      lex_state_set(parser, YP_LEX_STATE_ENDFN);
+      lex_mode_pop(parser);
+
       // Now, look at the next character to see what kind of symbol we can find.
       switch (*parser->current.end++) {
+        case '&':
+          return YP_TOKEN_AMPERSAND;
+        case '`':
+          return YP_TOKEN_BACKTICK;
+        case '!':
+          if (match(parser, '@')) return YP_TOKEN_BANG_AT;
+          if (match(parser, '~')) return YP_TOKEN_BANG_TILDE;
+          return YP_TOKEN_BANG;
+        case '[':
+          if (match(parser, ']')) {
+            if (match(parser, '=')) return YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
+            return YP_TOKEN_BRACKET_LEFT_RIGHT;
+          }
+          return YP_TOKEN_INVALID;
+        case '^':
+          return YP_TOKEN_CARET;
+        case '=':
+          if (match(parser, '=')) {
+            if (match(parser, '=')) return YP_TOKEN_EQUAL_EQUAL_EQUAL;
+            return YP_TOKEN_EQUAL_EQUAL;
+          }
+          if (match(parser, '~')) return YP_TOKEN_EQUAL_TILDE;
+          return YP_TOKEN_INVALID;
+        case '>':
+          if (match(parser, '=')) return YP_TOKEN_GREATER_EQUAL;
+          if (match(parser, '>')) return YP_TOKEN_GREATER_GREATER;
+          return YP_TOKEN_GREATER;
+        case '<':
+          if (match(parser, '=')) {
+            if (match(parser, '>')) return YP_TOKEN_LESS_EQUAL_GREATER;
+            return YP_TOKEN_LESS_EQUAL;
+          }
+          if (match(parser, '<')) return YP_TOKEN_LESS_LESS;
+          return YP_TOKEN_LESS;
+        case '-':
+          return match(parser, '@') ? YP_TOKEN_MINUS_AT : YP_TOKEN_MINUS;
+        case '%':
+          return YP_TOKEN_PERCENT;
+        case '|':
+          return YP_TOKEN_PIPE;
+        case '+':
+          return match(parser, '@') ? YP_TOKEN_PLUS_AT : YP_TOKEN_PLUS;
+        case '/':
+          return YP_TOKEN_SLASH;
+        case '*':
+          return match(parser, '*') ? YP_TOKEN_STAR_STAR : YP_TOKEN_STAR;
+        case '~':
+          return match(parser, '@') ? YP_TOKEN_TILDE_AT : YP_TOKEN_TILDE;
         case '@': {
           yp_token_type_t type = lex_at_variable(parser);
-
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
-          lex_mode_pop(parser);
-
           return type;
         }
         case '$': {
           yp_token_type_t type = lex_global_variable(parser);
-
           lex_state_set(parser, YP_LEX_STATE_END);
-          lex_mode_pop(parser);
-
           return type;
         }
         default: {
@@ -2209,8 +2254,6 @@ lex_token_type(yp_parser_t *parser) {
           if (!width) return YP_TOKEN_INVALID;
 
           parser->current.end = parser->current.start + width;
-          lex_mode_pop(parser);
-
           yp_token_type_t type = lex_identifier(parser);
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
 
