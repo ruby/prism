@@ -2485,6 +2485,61 @@ class ParseTest < Test::Unit::TestCase
     assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil), ":a"
   end
 
+  test "symbol with keyword" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), KEYWORD_DO("do"), nil), ":do"
+  end
+
+  test "symbol with instance variable" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), INSTANCE_VARIABLE("@a"), nil), ":@a"
+  end
+
+  test "symbol with class variable" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), CLASS_VARIABLE("@@a"), nil), ":@@a"
+  end
+
+  test "symbol with global variable" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), GLOBAL_VARIABLE("$a"), nil), ":$a"
+  end
+
+  test "symbol with operators" do
+    operators = {
+      "&" => :AMPERSAND,
+      "`" => :BACKTICK,
+      "!@" => :BANG_AT,
+      "!~" => :BANG_TILDE,
+      "!" => :BANG,
+      "[]" => :BRACKET_LEFT_RIGHT,
+      "[]=" => :BRACKET_LEFT_RIGHT_EQUAL,
+      "^" => :CARET,
+      "==" => :EQUAL_EQUAL,
+      "===" => :EQUAL_EQUAL_EQUAL,
+      "=~" => :EQUAL_TILDE,
+      ">=" => :GREATER_EQUAL,
+      ">>" => :GREATER_GREATER,
+      ">" => :GREATER,
+      "<=>" => :LESS_EQUAL_GREATER,
+      "<=" => :LESS_EQUAL,
+      "<<" => :LESS_LESS,
+      "<" => :LESS,
+      "-@" => :MINUS_AT,
+      "-" => :MINUS,
+      "%" => :PERCENT,
+      "|" => :PIPE,
+      "+@" => :PLUS_AT,
+      "+" => :PLUS,
+      "/" => :SLASH,
+      "**" => :STAR_STAR,
+      "*" => :STAR,
+      "~@" => :TILDE_AT,
+      "~" => :TILDE
+    }
+
+    operators.each do |operator, method_name|
+      contents = method(method_name).call(operator)
+      assert_parses SymbolNode(SYMBOL_BEGIN(":"), contents, nil), ":#{operator}"
+    end
+  end
+
   test "symbol list" do
     expected = ArrayNode(
       PERCENT_LOWER_I("%i["),
