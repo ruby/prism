@@ -1327,7 +1327,7 @@ lex_token_type(yp_parser_t *parser) {
             if (match(parser, '=')) {
               return YP_TOKEN_STAR_STAR_EQUAL;
             }
-            if (parser->lex_state == YP_LEX_STATE_FNAME) {
+            if (lex_state_operator_p(parser)) {
               parser->lex_state = YP_LEX_STATE_ARG;
             } else {
               parser->lex_state = YP_LEX_STATE_BEG;
@@ -1335,7 +1335,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_STAR_STAR;
           }
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1368,7 +1368,7 @@ lex_token_type(yp_parser_t *parser) {
 
           if (match(parser, '>')) return YP_TOKEN_EQUAL_GREATER;
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1390,7 +1390,7 @@ lex_token_type(yp_parser_t *parser) {
               parser->command_start = true;
             }
 
-            if (parser->lex_state == YP_LEX_STATE_FNAME) {
+            if (lex_state_operator_p(parser)) {
               parser->lex_state = YP_LEX_STATE_ARG;
             } else {
               parser->lex_state = YP_LEX_STATE_BEG;
@@ -1399,7 +1399,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (match(parser, '=')) {
-            if (parser->lex_state == YP_LEX_STATE_FNAME) {
+            if (lex_state_operator_p(parser)) {
               parser->lex_state = YP_LEX_STATE_ARG;
             } else {
               parser->lex_state = YP_LEX_STATE_BEG;
@@ -1407,7 +1407,7 @@ lex_token_type(yp_parser_t *parser) {
             return match(parser, '>') ? YP_TOKEN_LESS_EQUAL_GREATER : YP_TOKEN_LESS_EQUAL;
           }
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1417,7 +1417,7 @@ lex_token_type(yp_parser_t *parser) {
         // > >> >>= >=
         case '>':
           if (match(parser, '>')) {
-            if (parser->lex_state == YP_LEX_STATE_FNAME) {
+            if (lex_state_operator_p(parser)) {
               parser->lex_state = YP_LEX_STATE_ARG;
             } else {
               parser->lex_state = YP_LEX_STATE_BEG;
@@ -1425,7 +1425,7 @@ lex_token_type(yp_parser_t *parser) {
             return match(parser, '=') ? YP_TOKEN_GREATER_GREATER_EQUAL : YP_TOKEN_GREATER_GREATER;
           }
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1496,7 +1496,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_AMPERSAND_EQUAL;
           }
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1519,7 +1519,7 @@ lex_token_type(yp_parser_t *parser) {
             return lex_numeric(parser);
           }
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1534,7 +1534,7 @@ lex_token_type(yp_parser_t *parser) {
               match(parser, '@'))
             return YP_TOKEN_MINUS_AT;
 
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1623,7 +1623,7 @@ lex_token_type(yp_parser_t *parser) {
 
         // ^ ^=
         case '^':
-          if (parser->lex_state == YP_LEX_STATE_FNAME) {
+          if (lex_state_operator_p(parser)) {
             parser->lex_state = YP_LEX_STATE_ARG;
           } else {
             parser->lex_state = YP_LEX_STATE_BEG;
@@ -1826,7 +1826,7 @@ lex_token_type(yp_parser_t *parser) {
               } else {
                 parser->lex_state = YP_LEX_STATE_ARG;
               }
-            } else if (parser->lex_state == YP_LEX_STATE_FNAME) {
+            } else if (lex_state_operator_p(parser)) {
               parser->lex_state = YP_LEX_STATE_ENDFN;
             } else {
               parser->lex_state = YP_LEX_STATE_END;
