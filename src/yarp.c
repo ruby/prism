@@ -319,6 +319,22 @@ yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new SelfNode node.
+static yp_node_t *
+yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_SELF_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 /******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
@@ -4437,7 +4453,7 @@ parse_expression_prefix(yp_parser_t *parser) {
                   receiver = yp_node_nil_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD_SELF:
-                  receiver = yp_node_self_node_create(parser, &identifier);
+                  receiver = yp_self_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD_TRUE:
                   receiver = yp_node_true_node_create(parser, &identifier);
@@ -4703,7 +4719,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_retry_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_SELF:
       parser_lex(parser);
-      return yp_node_self_node_create(parser, &parser->previous);
+      return yp_self_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_TRUE:
       parser_lex(parser);
       return yp_node_true_node_create(parser, &parser->previous);

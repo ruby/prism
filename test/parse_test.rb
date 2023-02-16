@@ -1553,7 +1553,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -2022,7 +2022,7 @@ class ParseTest < Test::Unit::TestCase
           Statements([NilNode(KEYWORD_NIL("nil"))]),
           ElseNode(
             KEYWORD_ELSE("else"),
-            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            Statements([SelfNode()]),
             KEYWORD_END("end")
           ),
           nil
@@ -2425,7 +2425,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "self" do
-    assert_parses SelfNode(KEYWORD_SELF("self")), "self"
+    assert_parses SelfNode(), "self"
   end
 
   test "source encoding" do
@@ -2967,7 +2967,7 @@ class ParseTest < Test::Unit::TestCase
           Statements([NilNode(KEYWORD_NIL("nil"))]),
           ElseNode(
             KEYWORD_ELSE("else"),
-            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            Statements([SelfNode()]),
             KEYWORD_END("end")
           ),
           nil
@@ -4441,7 +4441,7 @@ class ParseTest < Test::Unit::TestCase
   test "def + with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       PLUS("+"),
       nil,
@@ -4477,7 +4477,7 @@ class ParseTest < Test::Unit::TestCase
   test "def self.`" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       BACKTICK("`"),
       nil,
@@ -4495,7 +4495,7 @@ class ParseTest < Test::Unit::TestCase
   test "def % with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       PLUS("+"),
       nil,
@@ -4531,7 +4531,7 @@ class ParseTest < Test::Unit::TestCase
   test "def ensure with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       KEYWORD_ENSURE("ensure"),
       nil,

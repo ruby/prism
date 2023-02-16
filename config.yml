@@ -1320,10 +1320,6 @@ nodes:
       Represents the local variables within a given lexical scope. These are
       attached to nodes where a new scope is created.
   - name: SelfNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the `self` keyword.
 
