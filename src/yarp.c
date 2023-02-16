@@ -147,6 +147,7 @@ yp_array_node_append(yp_node_t *node, yp_node_t *element) {
 // Set the closing token and end location of an array node.
 static inline void
 yp_array_node_close_set(yp_node_t *node, const yp_token_t *closing) {
+  assert(closing->type == YP_TOKEN_BRACKET_RIGHT || closing->type == YP_TOKEN_STRING_END || closing->type == YP_TOKEN_MISSING);
   node->location.end = closing->end;
   node->as.array_node.closing = *closing;
 }
@@ -175,6 +176,7 @@ yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *oper
 // Allocate and initialize a new assoc splat node.
 static yp_node_t *
 yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token_t *operator) {
+  assert(operator->type == YP_TOKEN_STAR_STAR);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -198,6 +200,7 @@ yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token
 // Allocate and initialize new a begin node.
 static yp_node_t *
 yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_node_t *statements) {
+  assert(begin_keyword->type == YP_TOKEN_KEYWORD_BEGIN);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -240,6 +243,7 @@ yp_begin_node_ensure_clause_set(yp_node_t *node, yp_node_t *ensure_clause) {
 // Set the end keyword and end location of a begin node.
 static inline void
 yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
+  assert(end_keyword->type == YP_TOKEN_KEYWORD_END || end_keyword->type == YP_TOKEN_MISSING);
   node->location.end = end_keyword->end;
   node->as.begin_node.end_keyword = *end_keyword;
 }
