@@ -69,6 +69,9 @@ typedef struct yp_lex_mode {
     // inside of a string with the # shorthand.
     YP_LEX_EMBVAR,
 
+    // This state is used when you are inside the content of a heredoc.
+    YP_LEX_HEREDOC,
+
     // This state is used when we are lexing a list of tokens, as in a %w word
     // list literal or a %i symbol list literal.
     YP_LEX_LIST,
@@ -116,6 +119,17 @@ typedef struct yp_lex_mode {
       // Whether or not interpolation is allowed in this symbol.
       bool interpolation;
     } symbol;
+
+    struct {
+      // These pointers point to the beginning and end of the heredoc
+      // identifier.
+      const char *ident_start;
+      uint32_t ident_length;
+
+      // This is the pointer to the character where lexing should resume once
+      // the heredoc has been completely processed.
+      const char *next_start;
+    } heredoc;
   } as;
 
   // The previous lex state so that it knows how to pop.
@@ -233,6 +247,17 @@ struct yp_parser {
   const char *end;     // the pointer to the end of the source
   yp_token_t previous; // the previous token we were considering
   yp_token_t current;  // the current token we're considering
+
+  // This is a special field set on the parser when we need the parser to jump
+  // to a specific location when lexing the next token, as opposed to just using
+  // the end of the previous token. Normally this is NULL.
+  const char *next_start;
+
+  // This field indicates the end of a heredoc whose identifier was found on the
+  // current line. If another heredoc is found on the same line, then this will
+  // be moved forward to the end of that heredoc. If no heredocs are found on a
+  // line then this is NULL.
+  const char *heredoc_end;
 
   yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t warning_list;             // the list of warnings that have been found while parsing

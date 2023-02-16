@@ -1912,6 +1912,73 @@ class ParseTest < Test::Unit::TestCase
     assert_parses GlobalVariableWrite(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), "$abc = 1"
   end
 
+  test "heredocs" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n")],
+      HEREDOC_END("EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-EOF\n  a\nEOF\n"
+  end
+
+  test "heredocs with multiple lines" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n  b\n"), nil, "  a\n  b\n")],
+      HEREDOC_END("EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-EOF\n  a\n  b\nEOF\n"
+  end
+
+  test "heredocs with interpolation" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-EOF\n  a\n\#{b}\nEOF\n"
+  end
+
+  test "heredocs on the same line" do
+    expected = CallNode(
+      HeredocNode(
+        HEREDOC_START("<<-FIRST"),
+        [StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n")],
+        HEREDOC_END("FIRST\n"),
+        0
+      ),
+      nil,
+      PLUS("+"),
+      nil,
+      ArgumentsNode(
+        [HeredocNode(
+           HEREDOC_START("<<-SECOND"),
+           [StringNode(nil, STRING_CONTENT("  b\n"), nil, "  b\n")],
+           HEREDOC_END("SECOND\n"),
+           0
+         )]
+      ),
+      nil,
+      "+"
+    )
+
+    assert_parses expected, "<<-FIRST + <<-SECOND\n  a\nFIRST\n  b\nSECOND\n"
+  end
+
   test "identifier" do
     assert_parses CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"), "a"
   end

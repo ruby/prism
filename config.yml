@@ -100,6 +100,10 @@ tokens:
     comment: ">>="
   - name: GLOBAL_VARIABLE
     comment: "a global variable"
+  - name: HEREDOC_END
+    comment: "the end of a heredoc"
+  - name: HEREDOC_START
+    comment: "the start of a heredoc"
   - name: IDENTIFIER
     comment: "an identifier"
   - name: IMAGINARY_NUMBER
@@ -742,6 +746,24 @@ nodes:
       Represents a hash literal.
 
           { a => b }
+          ^^^^^^^^^^
+  - name: HeredocNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token
+      - name: dedent
+        type: integer
+    location: opening->closing
+    comment: |
+      Represents the use of a heredoc.
+
+          <<~HERE
+            Content.
+          HERE
           ^^^^^^^^^^
   - name: IfNode
     child_nodes:
