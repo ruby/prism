@@ -900,8 +900,6 @@ lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool m
   if (strncmp(parser->current.start, value, strlen(value)) == 0) {
     if (parser->lex_state & YP_LEX_STATE_FNAME) {
       lex_state_set(parser, YP_LEX_STATE_ENDFN);
-    } else if (parser->lex_state == YP_LEX_STATE_DOT) {
-      lex_state_set(parser, YP_LEX_STATE_ENDFN);
     } else {
       lex_state_set(parser, state);
       if (state == YP_LEX_STATE_BEG) {
