@@ -86,7 +86,7 @@ class NodeType
     @human = type.downcase
 
     @params =
-      config.fetch("child_nodes").map do |param|
+      config.fetch("child_nodes", []).map do |param|
         name = param.fetch("name")
 
         case param.fetch("type")
@@ -114,7 +114,7 @@ class NodeType
       end
 
     @location =
-      config.fetch("location").then do |location|
+      config.fetch("location", "provided").then do |location|
         if location == "provided"
           @location_provided = true
           "*location"

@@ -100,9 +100,9 @@ module YARP
       end
     end
 
-    def visit_integer_literal(node)
+    def visit_integer_node(node)
       bounds(node)
-      visit_token(node.value)
+      on_int(source[node.location.start_offset...node.location.end_offset])
     end
 
     def visit_statements(node)
@@ -116,8 +116,6 @@ module YARP
       bounds(node)
 
       case node.type
-      when :INTEGER
-        on_int(node.value)
       when :MINUS
         on_op(node.value)
       when :PLUS

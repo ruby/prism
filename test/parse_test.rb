@@ -84,7 +84,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       BRACKET_LEFT("["),
       [
-        IntegerLiteral(INTEGER("1")),
+        IntegerNode(INTEGER("1")),
         FloatLiteral(FLOAT("1.0")),
         RationalLiteral(RATIONAL_NUMBER("1r")),
         ImaginaryLiteral(IMAGINARY_NUMBER("1i"))
@@ -126,11 +126,11 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_LEFT("("),
       Statements(
         [CallNode(
-           IntegerLiteral(INTEGER("1")),
+           IntegerNode(INTEGER("1")),
            nil,
            PLUS("+"),
            nil,
-           ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+           ArgumentsNode([IntegerNode(INTEGER("1"))]),
            nil,
            "+"
          )]
@@ -504,7 +504,7 @@ class ParseTest < Test::Unit::TestCase
       DOT("."),
       EQUAL("="),
       nil,
-      ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+      ArgumentsNode([IntegerNode(INTEGER("1"))]),
       nil,
       "bar="
     )
@@ -611,7 +611,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("a"),
           EQUAL("="),
-          IntegerLiteral(INTEGER("1"))
+          IntegerNode(INTEGER("1"))
         )
       ]),
       KEYWORD_END("end")
@@ -631,7 +631,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("a"),
           EQUAL("="),
-          IntegerLiteral(INTEGER("1"))
+          IntegerNode(INTEGER("1"))
         )
       ]),
       KEYWORD_END("end")
@@ -688,7 +688,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ConstantPathWriteNode(
       ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A"))),
       EQUAL("="),
-      IntegerLiteral(INTEGER("1"))
+      IntegerNode(INTEGER("1"))
     )
 
     assert_parses expected, "::A = 1"
@@ -712,7 +712,7 @@ class ParseTest < Test::Unit::TestCase
         ConstantRead(CONSTANT("B"))
       ),
       EQUAL("="),
-      IntegerLiteral(INTEGER("1"))
+      IntegerNode(INTEGER("1"))
     )
 
     assert_parses expected, "::A::B = 1"
@@ -1270,7 +1270,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ArgumentsNode(
-        [IntegerLiteral(INTEGER("123")),
+        [IntegerNode(INTEGER("123")),
          HashNode(
            BRACE_LEFT("{"),
            [AssocNode(
@@ -1356,8 +1356,8 @@ class ParseTest < Test::Unit::TestCase
            IDENTIFIER("b"),
            PARENTHESIS_LEFT("("),
            ArgumentsNode(
-             [IntegerLiteral(INTEGER("1")),
-              IntegerLiteral(INTEGER("2")),
+             [IntegerNode(INTEGER("1")),
+              IntegerNode(INTEGER("2")),
               ForwardingArgumentsNode(DOT_DOT_DOT("..."))]
            ),
            PARENTHESIS_RIGHT(")"),
@@ -1783,7 +1783,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       ParenthesesNode(
         PARENTHESIS_LEFT("("),
-        IntegerLiteral(INTEGER("1")),
+        IntegerNode(INTEGER("1")),
         PARENTHESIS_RIGHT(")")
       ),
       DOT("."),
@@ -2060,7 +2060,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("a"),
           EQUAL("="),
-          IntegerLiteral(INTEGER("1"))
+          IntegerNode(INTEGER("1"))
         )
       ]),
       KEYWORD_END("end")
@@ -2758,7 +2758,7 @@ class ParseTest < Test::Unit::TestCase
          [SymbolNode(nil, STRING_CONTENT("b"), nil),
           StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
-            Statements([IntegerLiteral(INTEGER("1"))]),
+            Statements([IntegerNode(INTEGER("1"))]),
             EMBEXPR_END("}")
           )],
          nil
@@ -2767,7 +2767,7 @@ class ParseTest < Test::Unit::TestCase
          nil,
          [StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
-            Statements([IntegerLiteral(INTEGER("2"))]),
+            Statements([IntegerNode(INTEGER("2"))]),
             EMBEXPR_END("}")
           ),
           SymbolNode(nil, STRING_CONTENT("c"), nil)],
@@ -2778,7 +2778,7 @@ class ParseTest < Test::Unit::TestCase
          [SymbolNode(nil, STRING_CONTENT("d"), nil),
           StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
-            Statements([IntegerLiteral(INTEGER("3"))]),
+            Statements([IntegerNode(INTEGER("3"))]),
             EMBEXPR_END("}")
           ),
           SymbolNode(nil, STRING_CONTENT("f"), nil)],
@@ -3220,11 +3220,11 @@ class ParseTest < Test::Unit::TestCase
       expression("self"),
       Statements(
         [CallNode(
-          IntegerLiteral(INTEGER("1")),
+          IntegerNode(INTEGER("1")),
           nil,
           PLUS("+"),
           nil,
-          ArgumentsNode([IntegerLiteral(INTEGER("2"))]),
+          ArgumentsNode([IntegerNode(INTEGER("2"))]),
           nil,
           "+"
         )]
@@ -3346,9 +3346,9 @@ class ParseTest < Test::Unit::TestCase
         NilNode(KEYWORD_NIL("nil"))
       ),
       QUESTION_MARK("?"),
-      IntegerLiteral(INTEGER("1")),
+      IntegerNode(INTEGER("1")),
       COLON(":"),
-      IntegerLiteral(INTEGER("2"))
+      IntegerNode(INTEGER("2"))
     )
 
     assert_parses expected, "foo rescue nil ? 1 : 2"
@@ -3358,7 +3358,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      OrNode(NilNode(KEYWORD_NIL("nil")), PIPE_PIPE("||"), IntegerLiteral(INTEGER("1")))
+      OrNode(NilNode(KEYWORD_NIL("nil")), PIPE_PIPE("||"), IntegerNode(INTEGER("1")))
     )
 
     assert_parses expected, "foo rescue nil || 1"
@@ -3845,7 +3845,7 @@ class ParseTest < Test::Unit::TestCase
              [OptionalParameterNode(
                 IDENTIFIER("y"),
                 EQUAL("="),
-                IntegerLiteral(INTEGER("2"))
+                IntegerNode(INTEGER("2"))
               )],
              nil,
              [KeywordParameterNode(LABEL("z:"), nil)],
