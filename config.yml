@@ -297,13 +297,12 @@ tokens:
 nodes:
   - name: AliasNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: new_name
         type: node
       - name: old_name
         type: node
-    location: keyword->old_name
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `alias` keyword.
 

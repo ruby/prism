@@ -39,6 +39,7 @@ yp_node_list_append2(yp_node_list_t *list, yp_node_t *node) {
 // Allocate and initialize a new alias node.
 static yp_node_t *
 yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *new_name, yp_node_t *old_name) {
+  assert(keyword->type == YP_TOKEN_KEYWORD_ALIAS);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -48,9 +49,12 @@ yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
       .end = old_name->location.end
     },
     .as.alias_node = {
-      .keyword = *keyword,
       .new_name = new_name,
-      .old_name = old_name
+      .old_name = old_name,
+      .keyword_loc = {
+        .start = keyword->start,
+        .end = keyword->end
+      }
     }
   };
 

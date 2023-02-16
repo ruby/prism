@@ -34,9 +34,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias bare" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(nil, IDENTIFIER("foo"), nil),
-      SymbolNode(nil, IDENTIFIER("bar"), nil)
+      SymbolNode(nil, IDENTIFIER("bar"), nil),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias foo bar"
@@ -44,9 +44,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias symbols" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil),
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil)
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias :foo :bar"
@@ -54,9 +54,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias global variables" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       GlobalVariableRead(GLOBAL_VARIABLE("$foo")),
-      GlobalVariableRead(GLOBAL_VARIABLE("$bar"))
+      GlobalVariableRead(GLOBAL_VARIABLE("$bar")),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias $foo $bar"
@@ -64,9 +64,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias backreference global variables" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       GlobalVariableRead(GLOBAL_VARIABLE("$a")),
-      GlobalVariableRead(BACK_REFERENCE("$'"))
+      GlobalVariableRead(BACK_REFERENCE("$'")),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias $a $'"
@@ -2778,16 +2778,16 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias with dynamic symbol" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'")),
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"))
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
+      Location(0, 5)
     )
+
     assert_parses expected, "alias :'abc' :'def'"
   end
 
   test "alias with dynamic symbol with interpolation" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       InterpolatedSymbolNode(
         SYMBOL_BEGIN(":\""),
         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
@@ -2798,8 +2798,10 @@ class ParseTest < Test::Unit::TestCase
          )],
         STRING_END("\"")
       ),
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"))
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
+      Location(0, 5)
     )
+
     assert_parses expected, "alias :\"abc\#{1}\" :'def'"
   end
 
@@ -2837,10 +2839,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias with %s symbol" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]")),
-      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]"))
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]")),
+      Location(0, 5)
     )
+
     assert_parses expected, "alias %s[abc] %s[def]"
   end
 
