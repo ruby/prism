@@ -1163,10 +1163,6 @@ nodes:
           1.0r
           ^^^^
   - name: RedoNode
-    child_nodes:
-      - name: value
-        type: token
-    location: value
     comment: |
       Represents the use of the `redo` keyword.
 

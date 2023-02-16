@@ -2216,7 +2216,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "redo" do
-    assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
+    assert_parses RedoNode(), "redo"
   end
 
   test "xstring, `, no interpolation" do

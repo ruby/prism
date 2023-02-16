@@ -367,6 +367,22 @@ yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new RedoNode node.
+static yp_node_t *
+yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_REDO_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new SelfNode node.
 static yp_node_t *
 yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -4777,7 +4793,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_node_nil_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_REDO:
       parser_lex(parser);
-      return yp_node_redo_node_create(parser, &parser->previous);
+      return yp_redo_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_RETRY:
       parser_lex(parser);
       return yp_node_retry_node_create(parser, &parser->previous);
