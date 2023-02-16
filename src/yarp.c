@@ -1511,7 +1511,7 @@ lex_token_type(yp_parser_t *parser) {
             ) {
               const char *end = parser->current.end;
 
-              match(parser, '-') || match(parser, '~');
+              (void) (match(parser, '-') || match(parser, '~'));
               const char *ident_start = parser->current.end;
 
               size_t width = char_is_identifier(parser, parser->current.end);
