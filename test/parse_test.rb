@@ -260,64 +260,56 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "break" do
-    expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      nil,
-    )
+    expected = BreakNode(nil, Location(0, 5))
 
     assert_parses expected, "break"
   end
 
   test "break 1" do
-    expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("1"),
-      ]),
-    )
+    expected = BreakNode(ArgumentsNode([expression("1")]), Location(0, 5))
+
     assert_parses expected, "break 1"
   end
 
   test "break 1, 2, 3" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         expression("1"),
         expression("2"),
         expression("3"),
       ]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break 1, 2, 3"
   end
 
   test "break 1, 2,\n3" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         expression("1"),
         expression("2"),
         expression("3"),
       ]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break 1, 2,\n3"
   end
 
   test "break()" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("()"),
-      ]),
+      ArgumentsNode([expression("()")]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break()"
   end
 
   test "break(1)" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("(1)"),
-      ]),
+      ArgumentsNode([expression("(1)")]),
+      Location(0, 5)
     )
 
     assert_parses expected, "break(1)"
@@ -325,36 +317,36 @@ class ParseTest < Test::Unit::TestCase
 
   test "break (1), (2), (3)" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         expression("(1)"),
         expression("(2)"),
         expression("(3)"),
       ]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break (1), (2), (3)"
   end
 
   test "break [1, 2, 3]" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("[1, 2, 3]"),
-      ]),
+      ArgumentsNode([expression("[1, 2, 3]")]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break [1, 2, 3]"
   end
 
   test "break multiple statements inside of parentheses" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         ParenthesesNode(
           PARENTHESIS_LEFT("("),
           Statements([expression("1"), expression("2")]),
           PARENTHESIS_RIGHT(")")
         )
-      ])
+      ]),
+      Location(0, 5)
     )
 
     assert_parses expected, <<~RUBY

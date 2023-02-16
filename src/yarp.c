@@ -289,8 +289,11 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
       .end = (arguments == NULL ? keyword->end : arguments->location.end)
     },
     .as.break_node = {
-      .keyword = *keyword,
-      .arguments = arguments
+      .arguments = arguments,
+      .keyword_loc = {
+        .start = keyword->start,
+        .end = keyword->end
+      }
     }
   };
 

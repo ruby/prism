@@ -410,11 +410,10 @@ nodes:
           end
   - name: BreakNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: arguments
         type: node?
-    location: keyword->arguments|keyword
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `break` keyword.
 
