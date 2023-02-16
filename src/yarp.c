@@ -1,6 +1,4 @@
 #include "yarp.h"
-#include "ast.h"
-#include "node.h"
 
 #define STRINGIZE0(expr) #expr
 #define STRINGIZE(expr) STRINGIZE0(expr)
