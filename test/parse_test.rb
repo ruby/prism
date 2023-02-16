@@ -84,8 +84,8 @@ class ParseTest < Test::Unit::TestCase
     expected = ArrayNode(
       BRACKET_LEFT("["),
       [
-        IntegerNode(INTEGER("1")),
-        FloatLiteral(FLOAT("1.0")),
+        IntegerNode(),
+        FloatNode(),
         RationalLiteral(RATIONAL_NUMBER("1r")),
         ImaginaryLiteral(IMAGINARY_NUMBER("1i"))
       ],
@@ -1901,7 +1901,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "float" do
-    assert_parses FloatLiteral(FLOAT("1.0")), "1.0"
+    assert_parses FloatNode(), "1.0"
   end
 
   test "global variable read" do
