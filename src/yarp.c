@@ -1450,10 +1450,15 @@ lex_token_type(yp_parser_t *parser) {
 
         // ! != !~ !@
         case '!':
+          if (lex_state_operator_p(parser)) {
+            lex_state_set(parser, YP_LEX_STATE_ARG);
+            if (match(parser, '@')) return YP_TOKEN_BANG_AT;
+          } else {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+          }
+
           if (match(parser, '=')) return YP_TOKEN_BANG_EQUAL;
           if (match(parser, '~')) return YP_TOKEN_BANG_TILDE;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@'))
-            return YP_TOKEN_BANG_AT;
           return YP_TOKEN_BANG;
 
         // = => =~ == === =begin
@@ -1671,17 +1676,24 @@ lex_token_type(yp_parser_t *parser) {
 
         // - -= -@
         case '-':
-          if (match(parser, '>')) return YP_TOKEN_MINUS_GREATER;
-          if (match(parser, '=')) return YP_TOKEN_MINUS_EQUAL;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
-              match(parser, '@'))
-            return YP_TOKEN_MINUS_AT;
-
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
-          } else {
-            lex_state_set(parser, YP_LEX_STATE_BEG);
+            if (match(parser, '@')) return YP_TOKEN_MINUS_AT;
+
+            return YP_TOKEN_MINUS;
           }
+
+          if (match(parser, '=')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_MINUS_EQUAL;
+          }
+
+          if (match(parser, '>')) {
+            lex_state_set(parser, YP_LEX_STATE_ENDFN);
+            return YP_TOKEN_MINUS_GREATER;
+          }
+
+          lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_MINUS;
 
         // . .. ...
