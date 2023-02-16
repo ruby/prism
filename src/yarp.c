@@ -482,6 +482,31 @@ yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *oper
   return node;
 }
 
+// Allocate and initialize a new OperatorAndAssignmentNode node.
+static yp_node_t *
+yp_operator_and_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+  assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_OPERATOR_AND_ASSIGNMENT_NODE,
+    .location = {
+      .start = target->location.start,
+      .end = value->location.end
+    },
+    .as.operator_and_assignment_node = {
+      .target = target,
+      .value = value,
+      .operator_loc = {
+        .start = operator->start,
+        .end = operator->end
+      }
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new RationalNode node.
 static yp_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -5523,7 +5548,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
-      return yp_node_operator_and_assignment_node_create(parser, node, &token, value);
+      return yp_operator_and_assignment_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_PIPE_PIPE_EQUAL: {
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");

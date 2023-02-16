@@ -2155,7 +2155,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "operator and assignment" do
-    assert_parses OperatorAndAssignmentNode(expression("a"), AMPERSAND_AMPERSAND_EQUAL("&&="), expression("b")), "a &&= b"
+    assert_parses OperatorAndAssignmentNode(expression("a"), expression("b"), Location(2, 5)), "a &&= b"
   end
 
   test "operator or assignment" do

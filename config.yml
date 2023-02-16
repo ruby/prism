@@ -979,11 +979,10 @@ nodes:
     child_nodes:
       - name: target
         type: node
-      - name: operator
-        type: token
       - name: value
         type: node
-    location: target->value
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `&&=` operator for assignment.
 
