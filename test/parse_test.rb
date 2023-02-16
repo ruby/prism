@@ -4443,6 +4443,42 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def self.+\nend"
   end
 
+  test "def def" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      nil,
+      nil,
+      KEYWORD_DEF("def"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def def\nend"
+  end
+
+  test "def ensure with self receiver" do
+    expected = DefNode(
+      KEYWORD_DEF("def"),
+      SelfNode(KEYWORD_SELF("self")),
+      DOT("."),
+      KEYWORD_ENSURE("ensure"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      nil,
+      nil,
+      Statements([]),
+      KEYWORD_END("end"),
+      Scope([])
+    )
+
+    assert_parses expected, "def self.ensure\nend"
+  end
+
   private
 
   def assert_serializes(expected, source)
