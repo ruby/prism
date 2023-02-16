@@ -766,11 +766,7 @@ nodes:
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
-  - name: ImaginaryLiteral
-    child_nodes:
-      - name: value
-        type: token
-    location: value
+  - name: ImaginaryNode
     comment: |
       Represents an imaginary number literal.
 

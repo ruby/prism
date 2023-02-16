@@ -379,6 +379,23 @@ yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new ImaginaryNode node.
+static yp_node_t *
+yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_IMAGINARY_NUMBER);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_IMAGINARY_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new IntegerNode node.
 static yp_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -4357,7 +4374,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       parser_lex(parser);
-      return yp_node_imaginary_literal_create(parser, &parser->previous);
+      return yp_imaginary_node_create(parser, &parser->previous);
     case YP_TOKEN_INSTANCE_VARIABLE:
       parser_lex(parser);
       return yp_node_instance_variable_read_create(parser, &parser->previous);

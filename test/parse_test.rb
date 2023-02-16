@@ -83,12 +83,7 @@ class ParseTest < Test::Unit::TestCase
   test "array literal" do
     expected = ArrayNode(
       BRACKET_LEFT("["),
-      [
-        IntegerNode(),
-        FloatNode(),
-        RationalNode(),
-        ImaginaryLiteral(IMAGINARY_NUMBER("1i"))
-      ],
+      [IntegerNode(), FloatNode(), RationalNode(), ImaginaryNode()],
       BRACKET_RIGHT("]")
     )
 
@@ -2032,7 +2027,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "imaginary" do
-    assert_parses ImaginaryLiteral(IMAGINARY_NUMBER("1i")), "1i"
+    assert_parses ImaginaryNode(), "1i"
   end
 
   test "instance variable read" do
