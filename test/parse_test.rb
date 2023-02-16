@@ -1508,7 +1508,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with colon_colon nil receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      NilNode(KEYWORD_NIL("nil")),
+      NilNode(),
       COLON_COLON("::"),
       IDENTIFIER("a"),
       nil,
@@ -1526,7 +1526,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with nil receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      NilNode(KEYWORD_NIL("nil")),
+      NilNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -2009,8 +2009,8 @@ class ParseTest < Test::Unit::TestCase
         Statements([FalseNode()]),
         IfNode(
           KEYWORD_ELSIF("elsif"),
-          NilNode(KEYWORD_NIL("nil")),
-          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          NilNode(),
+          Statements([NilNode()]),
           ElseNode(
             KEYWORD_ELSE("else"),
             Statements([SelfNode()]),
@@ -2167,7 +2167,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "nil" do
-    assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
+    assert_parses NilNode(), "nil"
   end
 
   test "or keyword" do
@@ -2956,8 +2956,8 @@ class ParseTest < Test::Unit::TestCase
         Statements([FalseNode()]),
         IfNode(
           KEYWORD_ELSIF("elsif"),
-          NilNode(KEYWORD_NIL("nil")),
-          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          NilNode(),
+          Statements([NilNode()]),
           ElseNode(
             KEYWORD_ELSE("else"),
             Statements([SelfNode()]),
@@ -3324,7 +3324,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      NilNode(KEYWORD_NIL("nil"))
+      NilNode()
     )
 
     assert_parses expected, "foo rescue nil"
@@ -3336,7 +3336,7 @@ class ParseTest < Test::Unit::TestCase
       RescueModifierNode(
         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
         KEYWORD_RESCUE("rescue"),
-        NilNode(KEYWORD_NIL("nil"))
+        NilNode()
       ),
       QUESTION_MARK("?"),
       IntegerNode(),
@@ -3351,7 +3351,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      OrNode(NilNode(KEYWORD_NIL("nil")), PIPE_PIPE("||"), IntegerNode())
+      OrNode(NilNode(), PIPE_PIPE("||"), IntegerNode())
     )
 
     assert_parses expected, "foo rescue nil || 1"

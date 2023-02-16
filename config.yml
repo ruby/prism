@@ -915,8 +915,6 @@ nodes:
           foo = 1
           ^^^^^^^
   - name: MissingNode
-    child_nodes: []
-    location: provided
     comment: |
       Represents a node that is missing from the source and results in a syntax
       error.
@@ -961,10 +959,6 @@ nodes:
           next 1
           ^^^^^^
   - name: NilNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `nil` keyword.
 

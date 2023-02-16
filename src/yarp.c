@@ -413,6 +413,23 @@ yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new NilNode node.
+static yp_node_t *
+yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_NIL);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_NIL_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new RationalNode node.
 static yp_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -4693,7 +4710,7 @@ parse_expression_prefix(yp_parser_t *parser) {
                   receiver = yp_node_global_variable_read_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD_NIL:
-                  receiver = yp_node_nil_node_create(parser, &identifier);
+                  receiver = yp_nil_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD_SELF:
                   receiver = yp_self_node_create(parser, &identifier);
@@ -4952,7 +4969,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_NIL:
       parser_lex(parser);
-      return yp_node_nil_node_create(parser, &parser->previous);
+      return yp_nil_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_REDO:
       parser_lex(parser);
       return yp_redo_node_create(parser, &parser->previous);
