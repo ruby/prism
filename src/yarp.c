@@ -892,7 +892,7 @@ lex_identifier(yp_parser_t *parser) {
       width++;
 
       if (parser->lex_state != YP_LEX_STATE_DOT) {
-        if (width == 8 && lex_keyword(parser, "defined?", YP_LEX_STATE_NONE, false)) {
+        if (width == 8 && lex_keyword(parser, "defined?", YP_LEX_STATE_ARG, false)) {
           return YP_TOKEN_KEYWORD_DEFINED;
         }
       }
@@ -1392,9 +1392,26 @@ lex_token_type(yp_parser_t *parser) {
 
         // {
         case '{':
-          if (parser->previous.type == YP_TOKEN_MINUS_GREATER) return YP_TOKEN_LAMBDA_BEGIN;
+          if (parser->previous.type == YP_TOKEN_MINUS_GREATER) {
+            // This { begins a lambda
+            return YP_TOKEN_LAMBDA_BEGIN;
+          } else if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
+            // This { begins a hash literal
+            lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
+          } else if (lex_state_p(parser, YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_END | YP_LEX_STATE_ENDFN)) {
+            // This { begins a block
+            parser->command_start = true;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+          } else if (lex_state_p(parser, YP_LEX_STATE_ENDARG)) {
+            // This { begins a block on a command
+            parser->command_start = true;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+          } else {
+            // This { begins a block
+            parser->command_start = true;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+          }
 
-          lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_BRACE_LEFT;
 
@@ -1597,24 +1614,59 @@ lex_token_type(yp_parser_t *parser) {
 
         // | || ||= |=
         case '|':
-          if (match(parser, '|')) return match(parser, '=') ? YP_TOKEN_PIPE_PIPE_EQUAL : YP_TOKEN_PIPE_PIPE;
-          return match(parser, '=') ? YP_TOKEN_PIPE_EQUAL : YP_TOKEN_PIPE;
+          if (match(parser, '|')) {
+            if (match(parser, '=')) {
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+              return YP_TOKEN_PIPE_PIPE_EQUAL;
+            }
 
-        // + += +@
-        case '+':
-          if (match(parser, '=')) return YP_TOKEN_PLUS_EQUAL;
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '@')) return YP_TOKEN_PLUS_AT;
+            if (lex_state_p(parser, YP_LEX_STATE_BEG)) {
+              parser->current.end--;
+              return YP_TOKEN_PIPE;
+            }
 
-          if (parser->lex_state == YP_LEX_STATE_BEG && char_is_decimal_number(*parser->current.end)) {
-            lex_state_set(parser, YP_LEX_STATE_END);
-            return lex_numeric(parser);
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_PIPE_PIPE;
+          }
+
+          if (match(parser, '=')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_PIPE_EQUAL;
           }
 
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
-            lex_state_set(parser, YP_LEX_STATE_BEG);
+            lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           }
+
+          return YP_TOKEN_PIPE;
+
+        // + += +@
+        case '+':
+          if (lex_state_operator_p(parser)) {
+            lex_state_set(parser, YP_LEX_STATE_ARG);
+            if (match(parser, '@')) return YP_TOKEN_PLUS_AT;
+
+            return YP_TOKEN_PLUS;
+          }
+
+          if (match(parser, '=')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_PLUS_EQUAL;
+          }
+
+          if (lex_state_beg_p(parser)) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+
+            if (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end)) {
+              return lex_numeric(parser);
+            }
+
+            return YP_TOKEN_PLUS;
+          }
+
+          lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_PLUS;
 
         // - -= -@
@@ -1915,7 +1967,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (type == YP_TOKEN_IDENTIFIER || type == YP_TOKEN_CONSTANT) {
-            if (parser->lex_state & (YP_LEX_STATE_BEG_ANY | YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_DOT)) {
+            if (lex_state_p(parser, YP_LEX_STATE_BEG_ANY | YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_DOT)) {
               if (previous_command_start) {
                 lex_state_set(parser, YP_LEX_STATE_CMDARG);
               } else {
@@ -2096,6 +2148,7 @@ lex_token_type(yp_parser_t *parser) {
                 case 'i':
                 case 'm':
                 case 'n':
+                case 'o':
                 case 's':
                 case 'u':
                 case 'x':
@@ -4024,8 +4077,12 @@ parse_expression_prefix(yp_parser_t *parser) {
             parser_lex(parser);
             receiver = parse_vcall(parser);
 
-            if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
+            if ((parser->current.type == YP_TOKEN_DOT) || (parser->current.type == YP_TOKEN_COLON_COLON)) {
+              lex_state_set(parser, YP_LEX_STATE_FNAME);
+
+              parser_lex(parser);
               operator = parser->previous;
+
               name = parse_method_definition_name(parser);
               if (name.type == YP_TOKEN_MISSING) {
                 yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
@@ -4051,7 +4108,12 @@ parse_expression_prefix(yp_parser_t *parser) {
             parser_lex(parser);
             yp_token_t identifier = parser->previous;
 
-            if (accept_any(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
+            if ((parser->current.type == YP_TOKEN_DOT) || (parser->current.type == YP_TOKEN_COLON_COLON)) {
+              lex_state_set(parser, YP_LEX_STATE_FNAME);
+
+              parser_lex(parser);
+              operator = parser->previous;
+
               switch (identifier.type) {
                 case YP_TOKEN_CONSTANT:
                   receiver = yp_node_constant_read_create(parser, &identifier);
@@ -4090,7 +4152,6 @@ parse_expression_prefix(yp_parser_t *parser) {
                   break;
               }
 
-              operator = parser->previous;
               name = parse_method_definition_name(parser);
               if (name.type == YP_TOKEN_MISSING) {
                 yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
@@ -4108,6 +4169,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected closing ')' for receiver.");
             yp_token_t rparen = parser->previous;
 
+            lex_state_set(parser, YP_LEX_STATE_FNAME);
             expect_any(parser, "Expected '.' or '::' after receiver", 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON);
             operator = parser->previous;
 
@@ -4559,8 +4621,10 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *node = yp_node_interpolated_regular_expression_node_create(parser, &opening, &opening);
       yp_node_list_t *parts = &node->as.interpolated_regular_expression_node.parts;
+
       parse_interpolated_string_parts(parser, YP_TOKEN_REGEXP_END, node, parts);
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
+
       node->as.interpolated_regular_expression_node.closing = parser->previous;
       return node;
     }
