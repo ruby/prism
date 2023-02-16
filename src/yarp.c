@@ -1515,13 +1515,6 @@ lex_token_type(yp_parser_t *parser) {
                 parser->current.end += width;
               }
 
-              const char *body_start = (const char *) memchr(parser->current.end, '\n', parser->end - parser->current.end);
-              if (body_start == NULL) {
-                // If there is no newline after the heredoc identifier, then
-                // this is not a valid heredoc declaration.
-                return YP_TOKEN_INVALID;
-              }
-
               lex_mode_push(parser, (yp_lex_mode_t) {
                 .mode = YP_LEX_HEREDOC,
                 .as.heredoc = {
@@ -1531,7 +1524,20 @@ lex_token_type(yp_parser_t *parser) {
                 }
               });
 
-              parser->next_start = body_start + 1;
+              if (parser->next_newline == NULL) {
+                const char *body_start = (const char *) memchr(parser->current.end, '\n', parser->end - parser->current.end);
+
+                if (body_start == NULL) {
+                  // If there is no newline after the heredoc identifier, then
+                  // this is not a valid heredoc declaration.
+                  return YP_TOKEN_INVALID;
+                }
+
+                parser->next_start = body_start + 1;
+              } else {
+                parser->next_start = parser->next_newline;
+              }
+
               return YP_TOKEN_HEREDOC_START;
             } else {
               lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -2295,10 +2301,10 @@ lex_token_type(yp_parser_t *parser) {
         if (matched) {
           parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
           parser->next_newline = parser->current.end;
-        }
 
-        lex_mode_pop(parser);
-        return YP_TOKEN_HEREDOC_END;
+          lex_mode_pop(parser);
+          return YP_TOKEN_HEREDOC_END;
+        }
       }
 
       // Otherwise we'll be parsing string content. These are the places where

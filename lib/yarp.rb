@@ -370,17 +370,28 @@ module YARP
         case state
         when :default
           tokens << token
-          state = :heredoc_opened if event == :on_heredoc_beg
+
+          if event == :on_heredoc_beg
+            state = :heredoc_opened
+            heredoc << []
+          end
         when :heredoc_opened
-          heredoc << token
+          heredoc.last << token
           state = :heredoc_closed if event == :on_heredoc_end
         when :heredoc_closed
           tokens << token
 
-          if event == :on_nl
-            tokens.concat(heredoc)
+          case event
+          when :on_nl
+            heredoc.each do |heredoc_tokens|
+              tokens.concat(heredoc_tokens)
+            end
+
             heredoc.clear
             state = :default
+          when :on_heredoc_beg
+            state = :heredoc_opened
+            heredoc << []
           end
         end
       end
