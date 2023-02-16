@@ -86,7 +86,7 @@ class ParseTest < Test::Unit::TestCase
       [
         IntegerNode(),
         FloatNode(),
-        RationalLiteral(RATIONAL_NUMBER("1r")),
+        RationalNode(),
         ImaginaryLiteral(IMAGINARY_NUMBER("1i"))
       ],
       BRACKET_RIGHT("]")
@@ -2212,7 +2212,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "rational" do
-    assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
+    assert_parses RationalNode(), "1r"
   end
 
   test "redo" do
