@@ -413,6 +413,30 @@ yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new NextNode node.
+static yp_node_t *
+yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
+  assert(keyword->type == YP_TOKEN_KEYWORD_NEXT);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_NEXT_NODE,
+    .location = {
+      .start = keyword->start,
+      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+    },
+    .as.next_node = {
+      .keyword_loc = {
+        .start = keyword->start,
+        .end = keyword->end
+      },
+      .arguments = arguments
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new NilNode node.
 static yp_node_t *
 yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -4565,7 +4589,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         case YP_TOKEN_KEYWORD_BREAK:
           return yp_break_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_NEXT:
-          return yp_node_next_node_create(parser, &keyword, arguments);
+          return yp_next_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_RETURN:
           return yp_node_return_node_create(parser, &keyword, arguments);
         default:

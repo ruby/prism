@@ -2061,101 +2061,77 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "next" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      nil,
-    )
-
-    assert_parses expected, "next"
+    assert_parses NextNode(nil, Location(0, 4)), "next"
   end
 
   test "next 1" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("1"),
-      ]),
-    )
+    expected = NextNode(ArgumentsNode([expression("1")]), Location(0, 4))
+
     assert_parses expected, "next 1"
   end
 
   test "next 1, 2, 3" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("1"),
-        expression("2"),
-        expression("3"),
-      ]),
+      ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next 1, 2, 3"
   end
 
   test "next 1, 2,\n3" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("1"),
-        expression("2"),
-        expression("3"),
-      ]),
+      ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next 1, 2,\n3"
   end
 
   test "next()" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("()"),
-      ]),
-    )
+    expected = NextNode(ArgumentsNode([expression("()")]), Location(0, 4))
+
     assert_parses expected, "next()"
   end
 
   test "next(1)" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("(1)"),
-      ]),
-    )
+    expected = NextNode(ArgumentsNode([expression("(1)"),]), Location(0, 4))
 
     assert_parses expected, "next(1)"
   end
 
   test "next (1), (2), (3)" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
       ArgumentsNode([
         expression("(1)"),
         expression("(2)"),
         expression("(3)"),
       ]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next (1), (2), (3)"
   end
 
   test "next [1, 2, 3]" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("[1, 2, 3]"),
-      ]),
+      ArgumentsNode([expression("[1, 2, 3]")]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next [1, 2, 3]"
   end
 
   test "next multiple statements inside of parentheses" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
       ArgumentsNode([
         ParenthesesNode(
           PARENTHESIS_LEFT("("),
           Statements([expression("1"), expression("2")]),
           PARENTHESIS_RIGHT(")")
         )
-      ])
+      ]),
+      Location(0, 4)
     )
 
     assert_parses expected, <<~RUBY
