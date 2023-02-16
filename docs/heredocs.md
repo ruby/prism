@@ -30,3 +30,7 @@ On every newline within the body of a heredoc, we check to see if it matches the
 ## 4. Lexing the rest of the line
 
 Once the heredoc has been lexed, the lexer will resume lexing from the `next_start` field. Lexing will continue until the next newline character. When the next newline character is found, it will check to see if the `heredoc_end` field is set. If it is it will skip to that point, unset the field, and continue lexing.
+
+## Compatibility with Ripper
+
+The order in which tokens are emitted is different from that of Ripper. Ripper emits each token in the file in the order in which it appears. YARP instead will emit the tokens that makes the most sense for the lexer, using the process described above. Therefore to line things up, `YARP.lex_compat` will shuffle the tokens around to match Ripper's output.
