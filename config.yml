@@ -1469,10 +1469,6 @@ nodes:
           foo ? bar : baz
           ^^^^^^^^^^^^^^^
   - name: TrueNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the literal `true` keyword.
 

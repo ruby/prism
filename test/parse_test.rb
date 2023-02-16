@@ -1571,7 +1571,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with true receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      TrueNode(KEYWORD_TRUE("true")),
+      TrueNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -2010,8 +2010,8 @@ class ParseTest < Test::Unit::TestCase
   test "if elsif" do
     expected = IfNode(
       KEYWORD_IF("if"),
-      TrueNode(KEYWORD_TRUE("true")),
-      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      TrueNode(),
+      Statements([TrueNode()]),
       IfNode(
         KEYWORD_ELSIF("elsif"),
         FalseNode(KEYWORD_FALSE("false")),
@@ -2888,7 +2888,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "true" do
-    assert_parses TrueNode(KEYWORD_TRUE("true")), "true"
+    assert_parses TrueNode(), "true"
   end
 
   test "unary !" do
@@ -2955,8 +2955,8 @@ class ParseTest < Test::Unit::TestCase
   test "unless elsif" do
     expected = UnlessNode(
       KEYWORD_UNLESS("unless"),
-      TrueNode(KEYWORD_TRUE("true")),
-      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      TrueNode(),
+      Statements([TrueNode()]),
       IfNode(
         KEYWORD_ELSIF("elsif"),
         FalseNode(KEYWORD_FALSE("false")),
