@@ -669,10 +669,6 @@ nodes:
           for i in a end
           ^^^^^^^^^^^^^^
   - name: ForwardingArgumentsNode
-    child_nodes:
-      - name: operator
-        type: token
-    location: operator
     comment: |
       Represents forwarding all arguments to this method to another method.
 

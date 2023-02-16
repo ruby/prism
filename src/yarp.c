@@ -319,6 +319,22 @@ yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new ForwardingArgumentsNode node.
+static yp_node_t *
+yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_FORWARDING_ARGUMENTS_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new IntegerNode node.
 static yp_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -3283,7 +3299,7 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
     if (!current_scope_has_local(parser, &parser->previous)) {
       yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
     }
-    return yp_node_forwarding_arguments_node_create(parser, &parser->previous);
+    return yp_forwarding_arguments_node_create(parser, &parser->previous);
   }
 
   if (accept(parser, YP_TOKEN_STAR)) {

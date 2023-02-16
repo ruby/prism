@@ -1319,7 +1319,7 @@ class ParseTest < Test::Unit::TestCase
            nil,
            IDENTIFIER("b"),
            PARENTHESIS_LEFT("("),
-           ArgumentsNode([ForwardingArgumentsNode(DOT_DOT_DOT("..."))]),
+           ArgumentsNode([ForwardingArgumentsNode()]),
            PARENTHESIS_RIGHT(")"),
            "b"
          )]
@@ -1358,7 +1358,7 @@ class ParseTest < Test::Unit::TestCase
            ArgumentsNode(
              [IntegerNode(INTEGER("1")),
               IntegerNode(INTEGER("2")),
-              ForwardingArgumentsNode(DOT_DOT_DOT("..."))]
+              ForwardingArgumentsNode()]
            ),
            PARENTHESIS_RIGHT(")"),
            "b"
@@ -1400,7 +1400,7 @@ class ParseTest < Test::Unit::TestCase
                    nil,
                    IDENTIFIER("b"),
                    PARENTHESIS_LEFT("("),
-                   ArgumentsNode([ForwardingArgumentsNode(DOT_DOT_DOT("..."))]),
+                   ArgumentsNode([ForwardingArgumentsNode()]),
                    PARENTHESIS_RIGHT(")"),
                    "b"
                  )]
