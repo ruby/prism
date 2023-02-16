@@ -121,8 +121,14 @@ typedef struct yp_lex_mode {
     } symbol;
 
     struct {
-      // This is the heredoc node that we are currently filling in.
-      yp_node_t *node;
+      // These pointers point to the beginning and end of the heredoc
+      // identifier.
+      const char *ident_start;
+      uint32_t ident_length;
+
+      // This is the pointer to the character where lexing should resume once
+      // the heredoc has been completely processed.
+      const char *next_start;
     } heredoc;
   } as;
 
@@ -242,6 +248,12 @@ struct yp_parser {
   yp_token_t previous; // the previous token we were considering
   yp_token_t current;  // the current token we're considering
 
+  // When we hit a newline, we need to check this point to see if it is set. If
+  // it is, then we need to jump to this point and continue lexing from there.
+  // This is to accommodate heredocs.
+  const char *next_start;
+  const char *next_newline;
+
   yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t warning_list;             // the list of warnings that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
@@ -263,10 +275,6 @@ struct yp_parser {
   // This is an optional callback that can be attached to the parser that will
   // be called whenever a new token is lexed by the parser.
   yp_lex_callback_t *lex_callback;
-
-  // This is the current heredoc where we have found the declaration but have
-  // not yet parsed the body.
-  yp_node_t *current_heredoc;
 };
 
 #endif // YARP_PARSER_H
