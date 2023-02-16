@@ -344,6 +344,24 @@ yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token
   return node;
 }
 
+// Allocate and initialize a new ForwardingParameterNode node.
+static yp_node_t *
+yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_DOT_DOT_DOT);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_FORWARDING_PARAMETER_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
+
 // Allocate and initialize a new ForwardingSuper node.
 static yp_node_t *
 yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -3570,7 +3588,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
         parser_lex(parser);
 
         yp_token_list_append(&parser->current_scope->as.scope.locals, &parser->previous);
-        yp_node_t *param = yp_node_forwarding_parameter_node_create(parser, &parser->previous);
+        yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
         params->as.parameters_node.keyword_rest = param;
 
         if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;

@@ -1094,7 +1094,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("a"),
       nil,
-      ParametersNode([], [], nil, [], ForwardingParameterNode(DOT_DOT_DOT("...")), nil),
+      ParametersNode([], [], nil, [], ForwardingParameterNode(), nil),
       nil,
       nil,
       Statements([]),
@@ -1308,7 +1308,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [],
-        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        ForwardingParameterNode(),
         nil
       ),
       PARENTHESIS_RIGHT(")"),
@@ -1344,7 +1344,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [],
-        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        ForwardingParameterNode(),
         nil
       ),
       PARENTHESIS_RIGHT(")"),
@@ -1379,7 +1379,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [],
-        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        ForwardingParameterNode(),
         nil
       ),
       PARENTHESIS_RIGHT(")"),

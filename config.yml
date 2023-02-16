@@ -677,10 +677,6 @@ nodes:
             ^^^^^^^^
           end
   - name: ForwardingParameterNode
-    child_nodes:
-      - name: operator
-        type: token
-    location: operator
     comment: |
       Represents the use of the forwarding parameter in a method, block, or lambda declaration.
 
