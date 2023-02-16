@@ -454,6 +454,34 @@ yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new NoKeywordsParameterNode node.
+static yp_node_t *
+yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *keyword) {
+  assert(operator->type == YP_TOKEN_STAR_STAR);
+  assert(keyword->type == YP_TOKEN_KEYWORD_NIL);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_NO_KEYWORDS_PARAMETER_NODE,
+    .location = {
+      .start = operator->start,
+      .end = keyword->end
+    },
+    .as.no_keywords_parameter_node = {
+      .operator_loc = {
+        .start = operator->start,
+        .end = operator->end
+      },
+      .keyword_loc = {
+        .start = keyword->start,
+        .end = keyword->end
+      }
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new RationalNode node.
 static yp_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -3740,12 +3768,12 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
       case YP_TOKEN_STAR_STAR: {
         parser_lex(parser);
 
+        yp_token_t operator = parser->previous;
         yp_node_t *param;
 
         if (accept(parser, YP_TOKEN_KEYWORD_NIL)) {
-          param = yp_node_no_keywords_parameter_node_create(parser, &parser->previous);
+          param = yp_no_keywords_parameter_node_create(parser, &operator, &parser->previous);
         } else {
-          yp_token_t operator = parser->previous;
           yp_token_t name;
 
           if (accept(parser, YP_TOKEN_IDENTIFIER)) {

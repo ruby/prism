@@ -1148,7 +1148,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [KeywordParameterNode(LABEL("b:"), nil)],
-        NoKeywordsParameterNode(KEYWORD_NIL("nil")),
+        NoKeywordsParameterNode(Location(13, 15), Location(15, 18)),
         nil
       ),
       nil,
