@@ -2312,7 +2312,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "retry" do
-    assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
+    assert_parses RetryNode(), "retry"
   end
 
   test "return" do
