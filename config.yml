@@ -635,10 +635,6 @@ nodes:
             bar
           end
   - name: FalseNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the literal `false` keyword.
 

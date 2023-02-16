@@ -1589,7 +1589,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with false receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      FalseNode(KEYWORD_FALSE("false")),
+      FalseNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1897,7 +1897,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "false" do
-    assert_parses FalseNode(KEYWORD_FALSE("false")), "false"
+    assert_parses FalseNode(), "false"
   end
 
   test "float" do
@@ -2014,8 +2014,8 @@ class ParseTest < Test::Unit::TestCase
       Statements([TrueNode()]),
       IfNode(
         KEYWORD_ELSIF("elsif"),
-        FalseNode(KEYWORD_FALSE("false")),
-        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        FalseNode(),
+        Statements([FalseNode()]),
         IfNode(
           KEYWORD_ELSIF("elsif"),
           NilNode(KEYWORD_NIL("nil")),
@@ -2959,8 +2959,8 @@ class ParseTest < Test::Unit::TestCase
       Statements([TrueNode()]),
       IfNode(
         KEYWORD_ELSIF("elsif"),
-        FalseNode(KEYWORD_FALSE("false")),
-        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        FalseNode(),
+        Statements([FalseNode()]),
         IfNode(
           KEYWORD_ELSIF("elsif"),
           NilNode(KEYWORD_NIL("nil")),

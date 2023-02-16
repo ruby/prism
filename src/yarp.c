@@ -287,6 +287,22 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
   return node;
 }
 
+// Allocate and initialize a new FalseNode node.
+static yp_node_t *
+yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_FALSE_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new FloatNode node.
 static yp_node_t *
 yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -4475,7 +4491,7 @@ parse_expression_prefix(yp_parser_t *parser) {
                   receiver = yp_true_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD_FALSE:
-                  receiver = yp_node_false_node_create(parser, &identifier);
+                  receiver = yp_false_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD___FILE__:
                   receiver = yp_node_source_file_node_create(parser, &identifier);
@@ -4614,7 +4630,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       parser_lex(parser);
-      return yp_node_false_node_create(parser, &parser->previous);
+      return yp_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_FOR: {
       parser_lex(parser);
       yp_token_t for_keyword = parser->previous;
