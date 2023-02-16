@@ -3932,13 +3932,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return parse_identifier(parser);
     case YP_TOKEN_HEREDOC_START: {
       yp_node_t *node = yp_node_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
-
-      expect(parser, YP_TOKEN_STRING_CONTENT, "Expected string content for heredoc.");
-      yp_token_t content_start = not_provided(parser);
-      yp_token_t content_end = not_provided(parser);
-
-      yp_node_t *content = yp_node_string_node_create_and_unescape(parser, &content_start, &parser->previous, &content_end, YP_UNESCAPE_ALL);
-      yp_node_list_append(parser, node, &node->as.heredoc_node.parts, content);
+      parse_interpolated_string_parts(parser, YP_TOKEN_HEREDOC_END, node, &node->as.heredoc_node.parts);
 
       expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
       node->as.heredoc_node.closing = parser->previous;
