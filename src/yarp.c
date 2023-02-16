@@ -1163,6 +1163,8 @@ lex_token_type(yp_parser_t *parser) {
       // space has been eaten before the start of the next token.
       bool space_seen = false;
 
+      parser->current.full_start = parser->current.end;
+
       // First, we're going to skip past any whitespace at the front of the next
       // token.
       bool chomping = true;
@@ -2176,6 +2178,10 @@ parser_lex(yp_parser_t *parser) {
 
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
+
+  fprintf(stderr, "---\n");
+  fprintf(stderr, "Full Start:%s\n", parser->current.full_start);
+  fprintf(stderr, "Start:%s\n", parser->current.start);
   if (parser->lex_callback) parser_lex_callback(parser);
 
   while (match_any_type_p(parser, 4, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
@@ -4784,7 +4790,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
       },
     .start = source,
     .end = source + size,
-    .current = {.start = source, .end = source},
+    .current = {.start = source, .end = source, .full_start = source},
     .current_scope = NULL,
     .current_context = NULL,
     .recovering = false,
