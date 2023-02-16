@@ -1915,12 +1915,12 @@ class ParseTest < Test::Unit::TestCase
   test "heredocs" do
     expected = HeredocNode(
       HEREDOC_START("<<-EOF"),
-      [STRING_CONTENT("  a\n")],
-      HEREDOC_END("EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n")],
+      HEREDOC_END("EOF\n"),
       0
     )
 
-    assert_parses expected, "<<-EOF\n  a\nEOF"
+    assert_parses expected, "<<-EOF\n  a\nEOF\n"
   end
 
   test "identifier" do
