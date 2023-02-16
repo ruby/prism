@@ -688,10 +688,6 @@ nodes:
                   ^^^
           end
   - name: ForwardingSuperNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `super` keyword without parentheses or arguments.
 

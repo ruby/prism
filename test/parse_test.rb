@@ -2644,7 +2644,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "super" do
-    assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
+    assert_parses ForwardingSuperNode(), "super"
   end
 
   test "super()" do

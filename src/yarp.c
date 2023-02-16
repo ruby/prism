@@ -344,6 +344,23 @@ yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token
   return node;
 }
 
+// Allocate and initialize a new ForwardingSuper node.
+static yp_node_t *
+yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_SUPER);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_FORWARDING_SUPER_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new IntegerNode node.
 static yp_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -499,19 +516,19 @@ yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
 
 // Allocate and initialize a new UndefNode node.
 static yp_node_t *
-yp_undef_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
-  assert(keyword->type == YP_TOKEN_KEYWORD_UNDEF);
+yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_UNDEF);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
     .type = YP_NODE_UNDEF_NODE,
     .location = {
-      .start = keyword->start,
-      .end = keyword->end
+      .start = token->start,
+      .end = token->end
     },
     .as.undef_node.keyword_loc = {
-      .start = keyword->start,
-      .end = keyword->end
+      .start = token->start,
+      .end = token->end
     }
   };
 
@@ -4514,7 +4531,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       switch (keyword.type) {
         case YP_TOKEN_KEYWORD_SUPER:
           if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
-            return yp_node_forwarding_super_node_create(parser, &keyword);
+            return yp_forwarding_super_node_create(parser, &keyword);
           } else {
             return yp_node_super_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
           }
