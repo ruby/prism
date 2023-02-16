@@ -247,6 +247,7 @@ yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
 // Allocate and initialize a new BlockParameterNode node.
 static yp_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {
+  assert(operator->type == YP_TOKEN_NOT_PROVIDED || operator->type == YP_TOKEN_AMPERSAND);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -270,6 +271,7 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, cons
 // Allocate and initialize a new BreakNode node.
 static yp_node_t *
 yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
+  assert(keyword->type == YP_TOKEN_KEYWORD_BREAK);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -290,6 +292,7 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 // Allocate and initialize a new FalseNode node.
 static yp_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_FALSE);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -306,6 +309,7 @@ yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new FloatNode node.
 static yp_node_t *
 yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_FLOAT);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -322,6 +326,7 @@ yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new ForwardingArgumentsNode node.
 static yp_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_DOT_DOT_DOT);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -338,6 +343,7 @@ yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token
 // Allocate and initialize a new IntegerNode node.
 static yp_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_INTEGER);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -354,6 +360,7 @@ yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new RationalNode node.
 static yp_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_RATIONAL_NUMBER);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -370,6 +377,7 @@ yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new RedoNode node.
 static yp_node_t *
 yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_REDO);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -386,6 +394,7 @@ yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new RetryNode node.
 static yp_node_t *
 yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_RETRY);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -402,6 +411,7 @@ yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new SelfNode node.
 static yp_node_t *
 yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_SELF);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -415,9 +425,61 @@ yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new SourceEncodingNode node.
+static yp_node_t *
+yp_source_encoding_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD___ENCODING__);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_SOURCE_ENCODING_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
+// Allocate and initialize a new SourceFileNode node.
+static yp_node_t *
+yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD___FILE__);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_SOURCE_FILE_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
+// Allocate and initialize a new SourceLineNode node.
+static yp_node_t *
+yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD___LINE__);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_SOURCE_LINE_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new TrueNode node.
 static yp_node_t *
 yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_KEYWORD_TRUE);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -4236,13 +4298,13 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_integer_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___ENCODING__:
       parser_lex(parser);
-      return yp_node_source_encoding_node_create(parser, &parser->previous);
+      return yp_source_encoding_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___FILE__:
       parser_lex(parser);
-      return yp_node_source_file_node_create(parser, &parser->previous);
+      return yp_source_file_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___LINE__:
       parser_lex(parser);
-      return yp_node_source_line_node_create(parser, &parser->previous);
+      return yp_source_line_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_ALIAS: {
       parser_lex(parser);
       yp_token_t keyword = parser->previous;
@@ -4558,13 +4620,13 @@ parse_expression_prefix(yp_parser_t *parser) {
                   receiver = yp_false_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD___FILE__:
-                  receiver = yp_node_source_file_node_create(parser, &identifier);
+                  receiver = yp_source_file_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD___LINE__:
-                  receiver = yp_node_source_line_node_create(parser, &identifier);
+                  receiver = yp_source_line_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_KEYWORD___ENCODING__:
-                  receiver = yp_node_source_encoding_node_create(parser, &identifier);
+                  receiver = yp_source_encoding_node_create(parser, &identifier);
                   break;
                 default:
                   break;

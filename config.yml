@@ -1306,30 +1306,18 @@ nodes:
           self
           ^^^^
   - name: SourceEncodingNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `__ENCODING__` keyword.
 
           __ENCODING__
           ^^^^^^^^^^^^
   - name: SourceFileNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `__FILE__` keyword.
 
           __FILE__
           ^^^^^^^^
   - name: SourceLineNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `__LINE__` keyword.
 

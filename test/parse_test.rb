@@ -1675,7 +1675,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with __FILE__ receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SourceFileNode(KEYWORD___FILE__("__FILE__")),
+      SourceFileNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1693,7 +1693,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with __LINE__ receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SourceLineNode(KEYWORD___LINE__("__LINE__")),
+      SourceLineNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1711,7 +1711,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with __ENCODING__ receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")),
+      SourceEncodingNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -2425,15 +2425,15 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "source encoding" do
-    assert_parses SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")), "__ENCODING__"
+    assert_parses SourceEncodingNode(), "__ENCODING__"
   end
 
   test "source file" do
-    assert_parses SourceFileNode(KEYWORD___FILE__("__FILE__")), "__FILE__"
+    assert_parses SourceFileNode(), "__FILE__"
   end
 
   test "source line" do
-    assert_parses SourceLineNode(KEYWORD___LINE__("__LINE__")), "__LINE__"
+    assert_parses SourceLineNode(), "__LINE__"
   end
 
   test "string empty" do
