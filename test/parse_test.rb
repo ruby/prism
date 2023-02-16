@@ -34,9 +34,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias bare" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(nil, IDENTIFIER("foo"), nil),
-      SymbolNode(nil, IDENTIFIER("bar"), nil)
+      SymbolNode(nil, IDENTIFIER("bar"), nil),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias foo bar"
@@ -44,9 +44,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias symbols" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil),
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil)
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias :foo :bar"
@@ -54,9 +54,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias global variables" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       GlobalVariableRead(GLOBAL_VARIABLE("$foo")),
-      GlobalVariableRead(GLOBAL_VARIABLE("$bar"))
+      GlobalVariableRead(GLOBAL_VARIABLE("$bar")),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias $foo $bar"
@@ -64,9 +64,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias backreference global variables" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       GlobalVariableRead(GLOBAL_VARIABLE("$a")),
-      GlobalVariableRead(BACK_REFERENCE("$'"))
+      GlobalVariableRead(BACK_REFERENCE("$'")),
+      Location(0, 5)
     )
 
     assert_parses expected, "alias $a $'"
@@ -83,12 +83,7 @@ class ParseTest < Test::Unit::TestCase
   test "array literal" do
     expected = ArrayNode(
       BRACKET_LEFT("["),
-      [
-        IntegerLiteral(INTEGER("1")),
-        FloatLiteral(FLOAT("1.0")),
-        RationalLiteral(RATIONAL_NUMBER("1r")),
-        ImaginaryLiteral(IMAGINARY_NUMBER("1i"))
-      ],
+      [IntegerNode(), FloatNode(), RationalNode(), ImaginaryNode()],
       BRACKET_RIGHT("]")
     )
 
@@ -126,11 +121,11 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_LEFT("("),
       Statements(
         [CallNode(
-           IntegerLiteral(INTEGER("1")),
+           IntegerNode(),
            nil,
            PLUS("+"),
            nil,
-           ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+           ArgumentsNode([IntegerNode()]),
            nil,
            "+"
          )]
@@ -265,64 +260,56 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "break" do
-    expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      nil,
-    )
+    expected = BreakNode(nil, Location(0, 5))
 
     assert_parses expected, "break"
   end
 
   test "break 1" do
-    expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("1"),
-      ]),
-    )
+    expected = BreakNode(ArgumentsNode([expression("1")]), Location(0, 5))
+
     assert_parses expected, "break 1"
   end
 
   test "break 1, 2, 3" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         expression("1"),
         expression("2"),
         expression("3"),
       ]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break 1, 2, 3"
   end
 
   test "break 1, 2,\n3" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         expression("1"),
         expression("2"),
         expression("3"),
       ]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break 1, 2,\n3"
   end
 
   test "break()" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("()"),
-      ]),
+      ArgumentsNode([expression("()")]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break()"
   end
 
   test "break(1)" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("(1)"),
-      ]),
+      ArgumentsNode([expression("(1)")]),
+      Location(0, 5)
     )
 
     assert_parses expected, "break(1)"
@@ -330,36 +317,36 @@ class ParseTest < Test::Unit::TestCase
 
   test "break (1), (2), (3)" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         expression("(1)"),
         expression("(2)"),
         expression("(3)"),
       ]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break (1), (2), (3)"
   end
 
   test "break [1, 2, 3]" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
-      ArgumentsNode([
-        expression("[1, 2, 3]"),
-      ]),
+      ArgumentsNode([expression("[1, 2, 3]")]),
+      Location(0, 5)
     )
+
     assert_parses expected, "break [1, 2, 3]"
   end
 
   test "break multiple statements inside of parentheses" do
     expected = BreakNode(
-      KEYWORD_BREAK("break"),
       ArgumentsNode([
         ParenthesesNode(
           PARENTHESIS_LEFT("("),
           Statements([expression("1"), expression("2")]),
           PARENTHESIS_RIGHT(")")
         )
-      ])
+      ]),
+      Location(0, 5)
     )
 
     assert_parses expected, <<~RUBY
@@ -504,7 +491,7 @@ class ParseTest < Test::Unit::TestCase
       DOT("."),
       EQUAL("="),
       nil,
-      ArgumentsNode([IntegerLiteral(INTEGER("1"))]),
+      ArgumentsNode([IntegerNode()]),
       nil,
       "bar="
     )
@@ -611,7 +598,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("a"),
           EQUAL("="),
-          IntegerLiteral(INTEGER("1"))
+          IntegerNode()
         )
       ]),
       KEYWORD_END("end")
@@ -631,7 +618,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("a"),
           EQUAL("="),
-          IntegerLiteral(INTEGER("1"))
+          IntegerNode()
         )
       ]),
       KEYWORD_END("end")
@@ -688,7 +675,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ConstantPathWriteNode(
       ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A"))),
       EQUAL("="),
-      IntegerLiteral(INTEGER("1"))
+      IntegerNode()
     )
 
     assert_parses expected, "::A = 1"
@@ -712,7 +699,7 @@ class ParseTest < Test::Unit::TestCase
         ConstantRead(CONSTANT("B"))
       ),
       EQUAL("="),
-      IntegerLiteral(INTEGER("1"))
+      IntegerNode()
     )
 
     assert_parses expected, "::A::B = 1"
@@ -1094,7 +1081,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("a"),
       nil,
-      ParametersNode([], [], nil, [], ForwardingParameterNode(DOT_DOT_DOT("...")), nil),
+      ParametersNode([], [], nil, [], ForwardingParameterNode(), nil),
       nil,
       nil,
       Statements([]),
@@ -1153,7 +1140,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [KeywordParameterNode(LABEL("b:"), nil)],
-        NoKeywordsParameterNode(KEYWORD_NIL("nil")),
+        NoKeywordsParameterNode(Location(13, 15), Location(15, 18)),
         nil
       ),
       nil,
@@ -1270,7 +1257,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ArgumentsNode(
-        [IntegerLiteral(INTEGER("123")),
+        [IntegerNode(),
          HashNode(
            BRACE_LEFT("{"),
            [AssocNode(
@@ -1308,7 +1295,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [],
-        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        ForwardingParameterNode(),
         nil
       ),
       PARENTHESIS_RIGHT(")"),
@@ -1319,7 +1306,7 @@ class ParseTest < Test::Unit::TestCase
            nil,
            IDENTIFIER("b"),
            PARENTHESIS_LEFT("("),
-           ArgumentsNode([ForwardingArgumentsNode(DOT_DOT_DOT("..."))]),
+           ArgumentsNode([ForwardingArgumentsNode()]),
            PARENTHESIS_RIGHT(")"),
            "b"
          )]
@@ -1344,7 +1331,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [],
-        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        ForwardingParameterNode(),
         nil
       ),
       PARENTHESIS_RIGHT(")"),
@@ -1355,11 +1342,7 @@ class ParseTest < Test::Unit::TestCase
            nil,
            IDENTIFIER("b"),
            PARENTHESIS_LEFT("("),
-           ArgumentsNode(
-             [IntegerLiteral(INTEGER("1")),
-              IntegerLiteral(INTEGER("2")),
-              ForwardingArgumentsNode(DOT_DOT_DOT("..."))]
-           ),
+           ArgumentsNode([IntegerNode(), IntegerNode(), ForwardingArgumentsNode()]),
            PARENTHESIS_RIGHT(")"),
            "b"
          )]
@@ -1383,7 +1366,7 @@ class ParseTest < Test::Unit::TestCase
         [],
         nil,
         [],
-        ForwardingParameterNode(DOT_DOT_DOT("...")),
+        ForwardingParameterNode(),
         nil
       ),
       PARENTHESIS_RIGHT(")"),
@@ -1400,7 +1383,7 @@ class ParseTest < Test::Unit::TestCase
                    nil,
                    IDENTIFIER("b"),
                    PARENTHESIS_LEFT("("),
-                   ArgumentsNode([ForwardingArgumentsNode(DOT_DOT_DOT("..."))]),
+                   ArgumentsNode([ForwardingArgumentsNode()]),
                    PARENTHESIS_RIGHT(")"),
                    "b"
                  )]
@@ -1517,7 +1500,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with colon_colon nil receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      NilNode(KEYWORD_NIL("nil")),
+      NilNode(),
       COLON_COLON("::"),
       IDENTIFIER("a"),
       nil,
@@ -1535,7 +1518,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with nil receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      NilNode(KEYWORD_NIL("nil")),
+      NilNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1553,7 +1536,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1571,7 +1554,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with true receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      TrueNode(KEYWORD_TRUE("true")),
+      TrueNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1589,7 +1572,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with false receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      FalseNode(KEYWORD_FALSE("false")),
+      FalseNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1679,7 +1662,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with __FILE__ receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SourceFileNode(KEYWORD___FILE__("__FILE__")),
+      SourceFileNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1697,7 +1680,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with __LINE__ receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SourceLineNode(KEYWORD___LINE__("__LINE__")),
+      SourceLineNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1715,7 +1698,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with __ENCODING__ receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")),
+      SourceEncodingNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -1783,7 +1766,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_DEF("def"),
       ParenthesesNode(
         PARENTHESIS_LEFT("("),
-        IntegerLiteral(INTEGER("1")),
+        IntegerNode(),
         PARENTHESIS_RIGHT(")")
       ),
       DOT("."),
@@ -1897,11 +1880,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "false" do
-    assert_parses FalseNode(KEYWORD_FALSE("false")), "false"
+    assert_parses FalseNode(), "false"
   end
 
   test "float" do
-    assert_parses FloatLiteral(FLOAT("1.0")), "1.0"
+    assert_parses FloatNode(), "1.0"
   end
 
   test "global variable read" do
@@ -2010,19 +1993,19 @@ class ParseTest < Test::Unit::TestCase
   test "if elsif" do
     expected = IfNode(
       KEYWORD_IF("if"),
-      TrueNode(KEYWORD_TRUE("true")),
-      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      TrueNode(),
+      Statements([TrueNode()]),
       IfNode(
         KEYWORD_ELSIF("elsif"),
-        FalseNode(KEYWORD_FALSE("false")),
-        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        FalseNode(),
+        Statements([FalseNode()]),
         IfNode(
           KEYWORD_ELSIF("elsif"),
-          NilNode(KEYWORD_NIL("nil")),
-          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          NilNode(),
+          Statements([NilNode()]),
           ElseNode(
             KEYWORD_ELSE("else"),
-            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            Statements([SelfNode()]),
             KEYWORD_END("end")
           ),
           nil
@@ -2036,7 +2019,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "imaginary" do
-    assert_parses ImaginaryLiteral(IMAGINARY_NUMBER("1i")), "1i"
+    assert_parses ImaginaryNode(), "1i"
   end
 
   test "instance variable read" do
@@ -2060,7 +2043,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("a"),
           EQUAL("="),
-          IntegerLiteral(INTEGER("1"))
+          IntegerNode()
         )
       ]),
       KEYWORD_END("end")
@@ -2070,101 +2053,77 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "next" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      nil,
-    )
-
-    assert_parses expected, "next"
+    assert_parses NextNode(nil, Location(0, 4)), "next"
   end
 
   test "next 1" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("1"),
-      ]),
-    )
+    expected = NextNode(ArgumentsNode([expression("1")]), Location(0, 4))
+
     assert_parses expected, "next 1"
   end
 
   test "next 1, 2, 3" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("1"),
-        expression("2"),
-        expression("3"),
-      ]),
+      ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next 1, 2, 3"
   end
 
   test "next 1, 2,\n3" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("1"),
-        expression("2"),
-        expression("3"),
-      ]),
+      ArgumentsNode([expression("1"), expression("2"), expression("3")]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next 1, 2,\n3"
   end
 
   test "next()" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("()"),
-      ]),
-    )
+    expected = NextNode(ArgumentsNode([expression("()")]), Location(0, 4))
+
     assert_parses expected, "next()"
   end
 
   test "next(1)" do
-    expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("(1)"),
-      ]),
-    )
+    expected = NextNode(ArgumentsNode([expression("(1)"),]), Location(0, 4))
 
     assert_parses expected, "next(1)"
   end
 
   test "next (1), (2), (3)" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
       ArgumentsNode([
         expression("(1)"),
         expression("(2)"),
         expression("(3)"),
       ]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next (1), (2), (3)"
   end
 
   test "next [1, 2, 3]" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
-      ArgumentsNode([
-        expression("[1, 2, 3]"),
-      ]),
+      ArgumentsNode([expression("[1, 2, 3]")]),
+      Location(0, 4)
     )
+
     assert_parses expected, "next [1, 2, 3]"
   end
 
   test "next multiple statements inside of parentheses" do
     expected = NextNode(
-      KEYWORD_NEXT("next"),
       ArgumentsNode([
         ParenthesesNode(
           PARENTHESIS_LEFT("("),
           Statements([expression("1"), expression("2")]),
           PARENTHESIS_RIGHT(")")
         )
-      ])
+      ]),
+      Location(0, 4)
     )
 
     assert_parses expected, <<~RUBY
@@ -2176,7 +2135,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "nil" do
-    assert_parses NilNode(KEYWORD_NIL("nil")), "nil"
+    assert_parses NilNode(), "nil"
   end
 
   test "or keyword" do
@@ -2188,7 +2147,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "operator and assignment" do
-    assert_parses OperatorAndAssignmentNode(expression("a"), AMPERSAND_AMPERSAND_EQUAL("&&="), expression("b")), "a &&= b"
+    assert_parses OperatorAndAssignmentNode(expression("a"), expression("b"), Location(2, 5)), "a &&= b"
   end
 
   test "operator or assignment" do
@@ -2216,11 +2175,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "rational" do
-    assert_parses RationalLiteral(RATIONAL_NUMBER("1r")), "1r"
+    assert_parses RationalNode(), "1r"
   end
 
   test "redo" do
-    assert_parses RedoNode(KEYWORD_REDO("redo")), "redo"
+    assert_parses RedoNode(), "redo"
   end
 
   test "xstring, `, no interpolation" do
@@ -2316,7 +2275,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "retry" do
-    assert_parses RetryNode(KEYWORD_RETRY("retry")), "retry"
+    assert_parses RetryNode(), "retry"
   end
 
   test "return" do
@@ -2425,19 +2384,19 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "self" do
-    assert_parses SelfNode(KEYWORD_SELF("self")), "self"
+    assert_parses SelfNode(), "self"
   end
 
   test "source encoding" do
-    assert_parses SourceEncodingNode(KEYWORD___ENCODING__("__ENCODING__")), "__ENCODING__"
+    assert_parses SourceEncodingNode(), "__ENCODING__"
   end
 
   test "source file" do
-    assert_parses SourceFileNode(KEYWORD___FILE__("__FILE__")), "__FILE__"
+    assert_parses SourceFileNode(), "__FILE__"
   end
 
   test "source line" do
-    assert_parses SourceLineNode(KEYWORD___LINE__("__LINE__")), "__LINE__"
+    assert_parses SourceLineNode(), "__LINE__"
   end
 
   test "string empty" do
@@ -2648,7 +2607,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "super" do
-    assert_parses ForwardingSuperNode(KEYWORD_SUPER("super")), "super"
+    assert_parses ForwardingSuperNode(), "super"
   end
 
   test "super()" do
@@ -2758,7 +2717,7 @@ class ParseTest < Test::Unit::TestCase
          [SymbolNode(nil, STRING_CONTENT("b"), nil),
           StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
-            Statements([IntegerLiteral(INTEGER("1"))]),
+            Statements([IntegerNode()]),
             EMBEXPR_END("}")
           )],
          nil
@@ -2767,7 +2726,7 @@ class ParseTest < Test::Unit::TestCase
          nil,
          [StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
-            Statements([IntegerLiteral(INTEGER("2"))]),
+            Statements([IntegerNode()]),
             EMBEXPR_END("}")
           ),
           SymbolNode(nil, STRING_CONTENT("c"), nil)],
@@ -2778,7 +2737,7 @@ class ParseTest < Test::Unit::TestCase
          [SymbolNode(nil, STRING_CONTENT("d"), nil),
           StringInterpolatedNode(
             EMBEXPR_BEGIN("\#{"),
-            Statements([IntegerLiteral(INTEGER("3"))]),
+            Statements([IntegerNode()]),
             EMBEXPR_END("}")
           ),
           SymbolNode(nil, STRING_CONTENT("f"), nil)],
@@ -2811,16 +2770,16 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias with dynamic symbol" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'")),
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"))
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
+      Location(0, 5)
     )
+
     assert_parses expected, "alias :'abc' :'def'"
   end
 
   test "alias with dynamic symbol with interpolation" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       InterpolatedSymbolNode(
         SYMBOL_BEGIN(":\""),
         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
@@ -2831,32 +2790,36 @@ class ParseTest < Test::Unit::TestCase
          )],
         STRING_END("\"")
       ),
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"))
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
+      Location(0, 5)
     )
+
     assert_parses expected, "alias :\"abc\#{1}\" :'def'"
   end
 
   test "undef with dynamic symbols" do
     expected = UndefNode(
-      KEYWORD_UNDEF("undef"),
-      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))]
+      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))],
+      Location(0, 5)
     )
     assert_parses expected, "undef :'abc'"
   end
 
   test "undef with dynamic symbols with interpolation" do
     expected = UndefNode(
-      KEYWORD_UNDEF("undef"),
-      [InterpolatedSymbolNode(
-         SYMBOL_BEGIN(":\""),
-         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
-          StringInterpolatedNode(
-            EMBEXPR_BEGIN("\#{"),
-            Statements([expression("1")]),
-            EMBEXPR_END("}")
-          )],
-         STRING_END("\"")
-       )]
+      [
+        InterpolatedSymbolNode(
+          SYMBOL_BEGIN(":\""),
+          [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
+            StringInterpolatedNode(
+              EMBEXPR_BEGIN("\#{"),
+              Statements([expression("1")]),
+              EMBEXPR_END("}")
+            )],
+          STRING_END("\"")
+        )
+      ],
+      Location(0, 5)
     )
     assert_parses expected, "undef :\"abc\#{1}\""
   end
@@ -2868,10 +2831,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias with %s symbol" do
     expected = AliasNode(
-      KEYWORD_ALIAS("alias"),
       SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]")),
-      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]"))
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]")),
+      Location(0, 5)
     )
+
     assert_parses expected, "alias %s[abc] %s[def]"
   end
 
@@ -2888,7 +2852,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "true" do
-    assert_parses TrueNode(KEYWORD_TRUE("true")), "true"
+    assert_parses TrueNode(), "true"
   end
 
   test "unary !" do
@@ -2904,25 +2868,25 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "undef bare" do
-    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil)]), "undef a"
+    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil)], Location(0, 5)), "undef a"
   end
 
   test "undef bare, multiple" do
-    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)]), "undef a, b"
+    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)], Location(0, 5)), "undef a, b"
   end
 
   test "undef symbol" do
-    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)]), "undef :a"
+    assert_parses UndefNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)], Location(0, 5)), "undef :a"
   end
 
   test "undef symbol, multiple" do
     expected = UndefNode(
-      KEYWORD_UNDEF("undef"),
       [
         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil)
-      ]
+      ],
+      Location(0, 5)
     )
 
     assert_parses expected, "undef :a, :b, :c"
@@ -2955,19 +2919,19 @@ class ParseTest < Test::Unit::TestCase
   test "unless elsif" do
     expected = UnlessNode(
       KEYWORD_UNLESS("unless"),
-      TrueNode(KEYWORD_TRUE("true")),
-      Statements([TrueNode(KEYWORD_TRUE("true"))]),
+      TrueNode(),
+      Statements([TrueNode()]),
       IfNode(
         KEYWORD_ELSIF("elsif"),
-        FalseNode(KEYWORD_FALSE("false")),
-        Statements([FalseNode(KEYWORD_FALSE("false"))]),
+        FalseNode(),
+        Statements([FalseNode()]),
         IfNode(
           KEYWORD_ELSIF("elsif"),
-          NilNode(KEYWORD_NIL("nil")),
-          Statements([NilNode(KEYWORD_NIL("nil"))]),
+          NilNode(),
+          Statements([NilNode()]),
           ElseNode(
             KEYWORD_ELSE("else"),
-            Statements([SelfNode(KEYWORD_SELF("self"))]),
+            Statements([SelfNode()]),
             KEYWORD_END("end")
           ),
           nil
@@ -3220,11 +3184,11 @@ class ParseTest < Test::Unit::TestCase
       expression("self"),
       Statements(
         [CallNode(
-          IntegerLiteral(INTEGER("1")),
+          IntegerNode(),
           nil,
           PLUS("+"),
           nil,
-          ArgumentsNode([IntegerLiteral(INTEGER("2"))]),
+          ArgumentsNode([IntegerNode()]),
           nil,
           "+"
         )]
@@ -3331,7 +3295,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      NilNode(KEYWORD_NIL("nil"))
+      NilNode()
     )
 
     assert_parses expected, "foo rescue nil"
@@ -3343,12 +3307,12 @@ class ParseTest < Test::Unit::TestCase
       RescueModifierNode(
         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
         KEYWORD_RESCUE("rescue"),
-        NilNode(KEYWORD_NIL("nil"))
+        NilNode()
       ),
       QUESTION_MARK("?"),
-      IntegerLiteral(INTEGER("1")),
+      IntegerNode(),
       COLON(":"),
-      IntegerLiteral(INTEGER("2"))
+      IntegerNode()
     )
 
     assert_parses expected, "foo rescue nil ? 1 : 2"
@@ -3358,7 +3322,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      OrNode(NilNode(KEYWORD_NIL("nil")), PIPE_PIPE("||"), IntegerLiteral(INTEGER("1")))
+      OrNode(NilNode(), PIPE_PIPE("||"), IntegerNode())
     )
 
     assert_parses expected, "foo rescue nil || 1"
@@ -3845,7 +3809,7 @@ class ParseTest < Test::Unit::TestCase
              [OptionalParameterNode(
                 IDENTIFIER("y"),
                 EQUAL("="),
-                IntegerLiteral(INTEGER("2"))
+                IntegerNode()
               )],
              nil,
              [KeywordParameterNode(LABEL("z:"), nil)],
@@ -4441,7 +4405,7 @@ class ParseTest < Test::Unit::TestCase
   test "def + with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       PLUS("+"),
       nil,
@@ -4477,7 +4441,7 @@ class ParseTest < Test::Unit::TestCase
   test "def self.`" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       BACKTICK("`"),
       nil,
@@ -4495,7 +4459,7 @@ class ParseTest < Test::Unit::TestCase
   test "def % with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       PLUS("+"),
       nil,
@@ -4531,7 +4495,7 @@ class ParseTest < Test::Unit::TestCase
   test "def ensure with self receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      SelfNode(KEYWORD_SELF("self")),
+      SelfNode(),
       DOT("."),
       KEYWORD_ENSURE("ensure"),
       nil,

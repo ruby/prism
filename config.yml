@@ -297,13 +297,12 @@ tokens:
 nodes:
   - name: AliasNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: new_name
         type: node
       - name: old_name
         type: node
-    location: keyword->old_name
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `alias` keyword.
 
@@ -411,11 +410,10 @@ nodes:
           end
   - name: BreakNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: arguments
         type: node?
-    location: keyword->arguments|keyword
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `break` keyword.
 
@@ -635,20 +633,12 @@ nodes:
             bar
           end
   - name: FalseNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the literal `false` keyword.
 
           false
           ^^^^^
-  - name: FloatLiteral
-    child_nodes:
-      - name: value
-        type: token
-    location: value
+  - name: FloatNode
     comment: |
       Represents a floating point number literal.
 
@@ -677,10 +667,6 @@ nodes:
           for i in a end
           ^^^^^^^^^^^^^^
   - name: ForwardingArgumentsNode
-    child_nodes:
-      - name: operator
-        type: token
-    location: operator
     comment: |
       Represents forwarding all arguments to this method to another method.
 
@@ -689,10 +675,6 @@ nodes:
             ^^^^^^^^
           end
   - name: ForwardingParameterNode
-    child_nodes:
-      - name: operator
-        type: token
-    location: operator
     comment: |
       Represents the use of the forwarding parameter in a method, block, or lambda declaration.
 
@@ -700,10 +682,6 @@ nodes:
                   ^^^
           end
   - name: ForwardingSuperNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `super` keyword without parentheses or arguments.
 
@@ -786,11 +764,7 @@ nodes:
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
-  - name: ImaginaryLiteral
-    child_nodes:
-      - name: value
-        type: token
-    location: value
+  - name: ImaginaryNode
     comment: |
       Represents an imaginary number literal.
 
@@ -820,11 +794,7 @@ nodes:
 
           @foo = 1
           ^^^^^^^^
-  - name: IntegerLiteral
-    child_nodes:
-      - name: value
-        type: token
-    location: value
+  - name: IntegerNode
     comment: |
       Represents an integer number literal.
 
@@ -943,8 +913,6 @@ nodes:
           foo = 1
           ^^^^^^^
   - name: MissingNode
-    child_nodes: []
-    location: provided
     comment: |
       Represents a node that is missing from the source and results in a syntax
       error.
@@ -978,21 +946,16 @@ nodes:
         ^^^^^^^
   - name: NextNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: arguments
         type: node?
-    location: keyword->arguments|keyword
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `next` keyword.
 
           next 1
           ^^^^^^
   - name: NilNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `nil` keyword.
 
@@ -1000,9 +963,10 @@ nodes:
           ^^^
   - name: NoKeywordsParameterNode
     child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
+      - name: operator_loc
+        type: location
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of `**nil` inside method arguments.
 
@@ -1013,11 +977,10 @@ nodes:
     child_nodes:
       - name: target
         type: node
-      - name: operator
-        type: token
       - name: value
         type: node
-    location: target->value
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `&&=` operator for assignment.
 
@@ -1172,21 +1135,13 @@ nodes:
 
           c if a =~ /left/ ... b =~ /right/
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  - name: RationalLiteral
-    child_nodes:
-      - name: value
-        type: token
-    location: value
+  - name: RationalNode
     comment: |
       Represents a rational number literal.
 
           1.0r
           ^^^^
   - name: RedoNode
-    child_nodes:
-      - name: value
-        type: token
-    location: value
     comment: |
       Represents the use of the `redo` keyword.
 
@@ -1278,10 +1233,6 @@ nodes:
           [*a]
            ^^
   - name: RetryNode
-    child_nodes:
-      - name: value
-        type: token
-    location: value
     comment: |
       Represents the use of the `retry` keyword.
 
@@ -1328,40 +1279,24 @@ nodes:
       Represents the local variables within a given lexical scope. These are
       attached to nodes where a new scope is created.
   - name: SelfNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the `self` keyword.
 
           self
           ^^^^
   - name: SourceEncodingNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `__ENCODING__` keyword.
 
           __ENCODING__
           ^^^^^^^^^^^^
   - name: SourceFileNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `__FILE__` keyword.
 
           __FILE__
           ^^^^^^^^
   - name: SourceLineNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the `__LINE__` keyword.
 
@@ -1481,10 +1416,6 @@ nodes:
           foo ? bar : baz
           ^^^^^^^^^^^^^^^
   - name: TrueNode
-    child_nodes:
-      - name: keyword
-        type: token
-    location: keyword
     comment: |
       Represents the use of the literal `true` keyword.
 
@@ -1492,11 +1423,10 @@ nodes:
           ^^^^
   - name: UndefNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: names
         type: node[]
-    location: keyword->names
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `undef` keyword.
 
