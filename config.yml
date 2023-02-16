@@ -1444,11 +1444,10 @@ nodes:
           ^^^^
   - name: UndefNode
     child_nodes:
-      - name: keyword
-        type: token
       - name: names
         type: node[]
-    location: keyword->names
+      - name: keyword_loc
+        type: location
     comment: |
       Represents the use of the `undef` keyword.
 

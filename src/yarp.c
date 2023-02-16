@@ -497,6 +497,35 @@ yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new UndefNode node.
+static yp_node_t *
+yp_undef_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
+  assert(keyword->type == YP_TOKEN_KEYWORD_UNDEF);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_UNDEF_NODE,
+    .location = {
+      .start = keyword->start,
+      .end = keyword->end
+    },
+    .as.undef_node.keyword_loc = {
+      .start = keyword->start,
+      .end = keyword->end
+    }
+  };
+
+  yp_node_list_init(&node->as.undef_node.names);
+  return node;
+}
+
+// Append a name to an undef node.
+static void
+yp_undef_node_append(yp_node_t *node, yp_node_t *name) {
+  node->location.end = name->location.end;
+  yp_node_list_append2(&node->as.undef_node.names, name);
+}
+
 /******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
@@ -4798,19 +4827,18 @@ parse_expression_prefix(yp_parser_t *parser) {
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {
       parser_lex(parser);
-      yp_token_t keyword = parser->previous;
-      yp_node_t *undef = yp_node_undef_node_create(parser, &keyword);
+      yp_node_t *undef = yp_undef_node_create(parser, &parser->previous);
 
       yp_node_t *name = parse_undef_argument(parser);
       if (name->type == YP_NODE_MISSING_NODE) return undef;
 
-      yp_node_list_append(parser, undef, &undef->as.undef_node.names, name);
+      yp_undef_node_append(undef, name);
 
       while (accept(parser, YP_TOKEN_COMMA)) {
         name = parse_undef_argument(parser);
         if (name->type == YP_NODE_MISSING_NODE) return undef;
 
-        yp_node_list_append(parser, undef, &undef->as.undef_node.names, name);
+        yp_undef_node_append(undef, name);
       }
 
       return undef;

@@ -2834,25 +2834,27 @@ class ParseTest < Test::Unit::TestCase
 
   test "undef with dynamic symbols" do
     expected = UndefNode(
-      KEYWORD_UNDEF("undef"),
-      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))]
+      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))],
+      Location(0, 5)
     )
     assert_parses expected, "undef :'abc'"
   end
 
   test "undef with dynamic symbols with interpolation" do
     expected = UndefNode(
-      KEYWORD_UNDEF("undef"),
-      [InterpolatedSymbolNode(
-         SYMBOL_BEGIN(":\""),
-         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
-          StringInterpolatedNode(
-            EMBEXPR_BEGIN("\#{"),
-            Statements([expression("1")]),
-            EMBEXPR_END("}")
-          )],
-         STRING_END("\"")
-       )]
+      [
+        InterpolatedSymbolNode(
+          SYMBOL_BEGIN(":\""),
+          [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
+            StringInterpolatedNode(
+              EMBEXPR_BEGIN("\#{"),
+              Statements([expression("1")]),
+              EMBEXPR_END("}")
+            )],
+          STRING_END("\"")
+        )
+      ],
+      Location(0, 5)
     )
     assert_parses expected, "undef :\"abc\#{1}\""
   end
@@ -2900,25 +2902,25 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "undef bare" do
-    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil)]), "undef a"
+    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil)], Location(0, 5)), "undef a"
   end
 
   test "undef bare, multiple" do
-    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)]), "undef a, b"
+    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)], Location(0, 5)), "undef a, b"
   end
 
   test "undef symbol" do
-    assert_parses UndefNode(KEYWORD_UNDEF("undef"), [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)]), "undef :a"
+    assert_parses UndefNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)], Location(0, 5)), "undef :a"
   end
 
   test "undef symbol, multiple" do
     expected = UndefNode(
-      KEYWORD_UNDEF("undef"),
       [
         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil)
-      ]
+      ],
+      Location(0, 5)
     )
 
     assert_parses expected, "undef :a, :b, :c"

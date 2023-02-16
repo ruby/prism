@@ -49,6 +49,11 @@ class LocationTest < Test::Unit::TestCase
     assert_location(YARP::BreakNode, "break(foo)")
   end
 
+  test "UndefNode" do
+    assert_location(YARP::UndefNode, "undef foo")
+    assert_location(YARP::UndefNode, "undef foo, bar")
+  end
+
   private
 
   def assert_location(kind, source, expected = 0...source.length)
