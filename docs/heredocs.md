@@ -12,6 +12,8 @@ When a heredoc identifier is encountered in the regular process of lexing, we pu
 
 We also set the special `parser.next_start` field which is a pointer to the place in the source where we should start lexing the next token. This is set to the pointer of the character immediately following the next newline.
 
+Note that if the `parser.heredoc_end` field is already set, then it means we have already encountered a heredoc on this line. In that case the `parser.next_start` field will be set to the `parser.heredoc_end` field. This is because we want to skip past the heredoc previous heredocs on this line and instead lex the body of this heredoc.
+
 ## 2. Lexing the body
 
 The next time the lexer is asked for a token, it will be in the `YP_LEX_HEREDOC` mode. In this mode we are lexing the body of the heredoc. It will start by checking if the `next_start` field is set. If it is, then this is the first token within the body of the heredoc so we'll start lexing from there. Otherwise we'll start lexing from the end of the previous token.
@@ -27,4 +29,4 @@ On every newline within the body of a heredoc, we check to see if it matches the
 
 ## 4. Lexing the rest of the line
 
-Once the heredoc has been lexed, the lexer will resume lexing from the `next_start` field.
+Once the heredoc has been lexed, the lexer will resume lexing from the `next_start` field. Lexing will continue until the next newline character. When the next newline character is found, it will check to see if the `heredoc_end` field is set. If it is it will skip to that point, unset the field, and continue lexing.

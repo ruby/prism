@@ -2337,8 +2337,37 @@ lex_token_type(yp_parser_t *parser) {
       while (breakpoint != NULL) {
         switch (*breakpoint) {
           case '\n':
-            parser->current.end = breakpoint + 1;
-            return YP_TOKEN_STRING_CONTENT;
+            // If we have hit a newline that is followed by a valid terminator,
+            // then we need to return the content of the heredoc here as string
+            // content. Then, the next time a token is lexed, it will match
+            // again and return the end of the heredoc.
+            if (
+              (breakpoint + 1 + ident_length < parser->end) &&
+              (strncmp(breakpoint + 1, ident_start, ident_length) == 0)
+            ) {
+              // Heredoc terminators must be followed by a newline to be valid.
+              if (breakpoint[1 + ident_length] == '\n') {
+                parser->current.end = breakpoint + 1;
+                return YP_TOKEN_STRING_CONTENT;
+              }
+
+              // They can also be followed by a carriage return and then a
+              // newline. Be sure here that we don't accidentally read off the
+              // end.
+              if (
+                (breakpoint + 1 + ident_length + 1 < parser->end) &&
+                (breakpoint[1 + ident_length] == '\r') &&
+                (breakpoint[1 + ident_length + 1] == '\n')
+              ) {
+                parser->current.end = breakpoint + 2;
+                return YP_TOKEN_STRING_CONTENT;
+              }
+            }
+
+            // Otherwise we hit a newline and it wasn't followed by a
+            // terminator, so we can continue parsing.
+            breakpoint = strpbrk(breakpoint + 1, breakpoints);
+            break;
           case '\\':
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
