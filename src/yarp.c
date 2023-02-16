@@ -1354,10 +1354,10 @@ lex_token_type(yp_parser_t *parser) {
           parser->command_start = true;
 
           // If the special resume flag is set, then we need to jump ahead.
-          if (parser->next_newline != NULL) {
-            assert(parser->next_newline <= parser->end);
-            parser->next_start = parser->next_newline;
-            parser->next_newline = NULL;
+          if (parser->heredoc_end != NULL) {
+            assert(parser->heredoc_end <= parser->end);
+            parser->next_start = parser->heredoc_end;
+            parser->heredoc_end = NULL;
           }
 
           return YP_TOKEN_NEWLINE;
@@ -1524,7 +1524,7 @@ lex_token_type(yp_parser_t *parser) {
                 }
               });
 
-              if (parser->next_newline == NULL) {
+              if (parser->heredoc_end == NULL) {
                 const char *body_start = (const char *) memchr(parser->current.end, '\n', parser->end - parser->current.end);
 
                 if (body_start == NULL) {
@@ -1535,7 +1535,7 @@ lex_token_type(yp_parser_t *parser) {
 
                 parser->next_start = body_start + 1;
               } else {
-                parser->next_start = parser->next_newline;
+                parser->next_start = parser->heredoc_end;
               }
 
               return YP_TOKEN_HEREDOC_START;
@@ -2300,7 +2300,7 @@ lex_token_type(yp_parser_t *parser) {
 
         if (matched) {
           parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-          parser->next_newline = parser->current.end;
+          parser->heredoc_end = parser->current.end;
 
           lex_mode_pop(parser);
           return YP_TOKEN_HEREDOC_END;
@@ -5301,7 +5301,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .end = source + size,
     .current = { .start = source, .end = source },
     .next_start = NULL,
-    .next_newline = NULL,
+    .heredoc_end = NULL,
     .current_scope = NULL,
     .current_context = NULL,
     .recovering = false,

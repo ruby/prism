@@ -248,11 +248,16 @@ struct yp_parser {
   yp_token_t previous; // the previous token we were considering
   yp_token_t current;  // the current token we're considering
 
-  // When we hit a newline, we need to check this point to see if it is set. If
-  // it is, then we need to jump to this point and continue lexing from there.
-  // This is to accommodate heredocs.
+  // This is a special field set on the parser when we need the parser to jump
+  // to a specific location when lexing the next token, as opposed to just using
+  // the end of the previous token. Normally this is NULL.
   const char *next_start;
-  const char *next_newline;
+
+  // This field indicates the end of a heredoc whose identifier was found on the
+  // current line. If another heredoc is found on the same line, then this will
+  // be moved forward to the end of that heredoc. If no heredocs are found on a
+  // line then this is NULL.
+  const char *heredoc_end;
 
   yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t warning_list;             // the list of warnings that have been found while parsing

@@ -23,7 +23,7 @@ Lexing these fields is extremely similar to lexing an interpolated string. The o
 On every newline within the body of a heredoc, we check to see if it matches the terminator followed by a newline or a carriage return and a newline. If it does, then we pop the lex mode off the stack and set a couple of fields on the parser:
 
 * `next_start`: This is set to the value that we previously stored on the heredoc to indicate where the lexer should resume lexing when it is done with this heredoc.
-* `next_newline`: This is set to the end of the heredoc. When a newline character is found, this indicates that the lexer should skip past to this next point.
+* `heredoc_end`: This is set to the end of the heredoc. When a newline character is found, this indicates that the lexer should skip past to this next point.
 
 ## 4. Lexing the rest of the line
 
