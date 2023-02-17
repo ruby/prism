@@ -3575,14 +3575,13 @@ context_pop(yp_parser_t *parser) {
 typedef enum {
   BINDING_POWER_UNSET = 0,       // used to indicate this token cannot be used as an infix operator
   BINDING_POWER_NONE = 1,
-  BINDING_POWER_BRACES,          // braces
   BINDING_POWER_MODIFIER,        // if unless until while
   BINDING_POWER_COMPOSITION,     // and or
   BINDING_POWER_NOT,             // not
   BINDING_POWER_DEFINED,         // defined?
   BINDING_POWER_ASSIGNMENT,      // = += -= *= /= %= &= |= ^= &&= ||= <<= >>= **=
-  BINDING_POWER_TERNARY,         // ?:
   BINDING_POWER_MODIFIER_RESCUE, // rescue
+  BINDING_POWER_TERNARY,         // ?:
   BINDING_POWER_RANGE,           // .. ...
   BINDING_POWER_LOGICAL_OR,      // ||
   BINDING_POWER_LOGICAL_AND,     // &&
@@ -3593,9 +3592,9 @@ typedef enum {
   BINDING_POWER_SHIFT,           // << >>
   BINDING_POWER_TERM,            // + -
   BINDING_POWER_FACTOR,          // * / %
-  BINDING_POWER_UMINUS,          // unary minus
+  BINDING_POWER_UMINUS,          // -@
   BINDING_POWER_EXPONENT,        // **
-  BINDING_POWER_UNARY,           // ! ~ +
+  BINDING_POWER_UNARY,           // ! ~ +@
   BINDING_POWER_INDEX,           // [] []=
   BINDING_POWER_CALL,            // :: .
 } binding_power_t;
@@ -3613,9 +3612,6 @@ typedef struct {
   { precedence, precedence }
 
 binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
-  // {}
-  [YP_TOKEN_BRACE_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_BRACES),
-
   // if unless until while
   [YP_TOKEN_KEYWORD_IF] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
   [YP_TOKEN_KEYWORD_UNLESS] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER),
@@ -3642,11 +3638,11 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_STAR_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
   [YP_TOKEN_STAR_STAR_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
 
-  // ?:
-  [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(BINDING_POWER_TERNARY),
-
   // rescue
   [YP_TOKEN_KEYWORD_RESCUE] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER_RESCUE),
+
+  // ?:
+  [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(BINDING_POWER_TERNARY),
 
   // .. ...
   [YP_TOKEN_DOT_DOT] = LEFT_ASSOCIATIVE(BINDING_POWER_RANGE),
@@ -3699,8 +3695,7 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_BANG] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
   [YP_TOKEN_TILDE] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
 
-  // []
-  [YP_TOKEN_BRACKET_LEFT_RIGHT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
+  // [
   [YP_TOKEN_BRACKET_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
 
   // :: . &.
@@ -4167,6 +4162,7 @@ static void
 parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_block) {
   switch (parser->current.type) {
     case YP_TOKEN_EOF:
+    case YP_TOKEN_BRACE_LEFT:
     case YP_TOKEN_BRACE_RIGHT:
     case YP_TOKEN_BRACKET_RIGHT:
     case YP_TOKEN_COLON:
@@ -5981,8 +5977,19 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         return yp_call_node_shorthand_create(parser, node, &operator, &arguments);
       }
 
-      expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
-      yp_token_t message = parser->previous;
+      yp_token_t message;
+
+      if (
+        token_type_is_operator(parser->current.type) ||
+        token_type_is_keyword(parser->current.type) ||
+        parser->current.type == YP_TOKEN_IDENTIFIER
+      ) {
+        parser_lex(parser);
+        message = parser->previous;
+      } else {
+        yp_diagnostic_list_append(&parser->error_list, "Expected a valid method name", parser->previous.end - parser->start);
+        message = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+      }
 
       parse_arguments_list(parser, &arguments, true);
       return yp_call_node_call_create(parser, node, &operator, &message, &arguments);

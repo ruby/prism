@@ -3371,16 +3371,16 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "rescue modifier within a ternary operator" do
-    expected = Ternary(
-      RescueModifierNode(
-        CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-        KEYWORD_RESCUE("rescue"),
-        NilNode()
-      ),
-      QUESTION_MARK("?"),
-      IntegerNode(),
-      COLON(":"),
-      IntegerNode()
+    expected = RescueModifierNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+      KEYWORD_RESCUE("rescue"),
+      Ternary(
+        NilNode(),
+        QUESTION_MARK("?"),
+        IntegerNode(),
+        COLON(":"),
+        IntegerNode()
+      )
     )
 
     assert_parses expected, "foo rescue nil ? 1 : 2"
