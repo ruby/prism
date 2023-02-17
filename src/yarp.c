@@ -300,6 +300,58 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
   return node;
 }
 
+static yp_node_t *
+yp_call_node_create(yp_parser_t *parser) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_CALL_NODE,
+    .location = {
+      .start = parser->start,
+      .end = parser->start
+    },
+    .as.call_node = {
+      .receiver = NULL,
+      .call_operator = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
+      .message = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
+      .lparen = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
+      .arguments = NULL,
+      .rparen = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start }
+    }
+  };
+
+  return node;
+}
+
+// Allocate and initialize a new CallNode node from a vcall.
+static yp_node_t *
+yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message) {
+  yp_node_t *node = yp_call_node_create(parser);
+
+  node->location.start = message->start;
+  node->location.end = message->end;
+
+  node->as.call_node.message = *message;
+  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
+
+  return node;
+}
+
+// Allocate and initialize a new CallNode node from a unary operator expression.
+static yp_node_t *
+yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *receiver) {
+  yp_node_t *node = yp_call_node_create(parser);
+
+  node->location.start = operator->start;
+  node->location.end = receiver->location.end;
+
+  node->as.call_node.receiver = receiver;
+  node->as.call_node.message = *operator;
+  yp_string_shared_init(&node->as.call_node.name, operator->start, operator->end);
+
+  return node;
+}
+
 // Allocate and initialize a new FalseNode node.
 static yp_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -4279,15 +4331,7 @@ parse_vcall(yp_parser_t *parser) {
     return yp_node_local_variable_read_create(parser, &parser->previous);
   }
 
-  yp_token_t message = parser->previous;
-  yp_token_t operator = not_provided(parser);
-  yp_token_t opening = not_provided(parser);
-  yp_token_t closing = not_provided(parser);
-
-  yp_node_t *node = yp_node_call_node_create(parser, NULL, &operator, &message, &opening, NULL, &closing);
-  yp_string_shared_init(&node->as.call_node.name, message.start, message.end);
-
-  return node;
+  return yp_call_node_vcall_create(parser, &parser->previous);
 }
 
 static yp_node_t *
@@ -5343,15 +5387,11 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE: {
       parser_lex(parser);
-      yp_token_t operator_token = parser->previous;
 
-      yp_token_t lparen = not_provided(parser);
-      yp_token_t rparen = not_provided(parser);
-      yp_token_t call_operator = not_provided(parser);
+      yp_token_t operator = parser->previous;
       yp_node_t *receiver = parse_expression(parser, binding_powers[parser->previous.type].right, "Expected a receiver after unary operator.");
+      yp_node_t *node = yp_call_node_unary_create(parser, &operator, receiver);
 
-      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
-      yp_string_shared_init(&node->as.call_node.name, operator_token.start, operator_token.end);
       return node;
     }
     case YP_TOKEN_MINUS: {

@@ -56,6 +56,12 @@ module YARP
       assert_location(BreakNode, "break(foo)")
     end
 
+    test "CallNode" do
+      assert_location(CallNode, "foo")
+      assert_location(CallNode, "~foo")
+      assert_location(CallNode, "!foo")
+    end
+
     test "NextNode" do
       assert_location(NextNode, "next")
       assert_location(NextNode, "next foo")
