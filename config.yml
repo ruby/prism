@@ -350,10 +350,10 @@ nodes:
     child_nodes:
       - name: key
         type: node
-      - name: operator
-        type: token?
       - name: value
         type: node
+      - name: operator
+        type: token?
     location: key->value
     comment: |
       Represents a hash key/value pair.

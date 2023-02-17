@@ -1162,15 +1162,19 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ArgumentsNode(
-        [HashNode(
-           nil,
-           [AssocNode(
-              SymbolNode(nil, LABEL("there"), LABEL_END(":")),
-              nil,
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
-            )],
-           nil
-         )]
+        [
+          HashNode(
+            nil,
+            [
+              AssocNode(
+                SymbolNode(nil, LABEL("there"), LABEL_END(":")),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                nil
+              )
+            ],
+            nil
+          )
+        ]
       ),
       nil,
       "hi"
@@ -1186,11 +1190,13 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ArgumentsNode(
-        [AssocNode(
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-           EQUAL_GREATER("=>"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
-         )]
+        [
+          AssocNode(
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+            EQUAL_GREATER("=>")
+          )
+        ]
       ),
       nil,
       "hi"
@@ -1205,19 +1211,23 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ArgumentsNode(
-        [HashNode(
-           nil,
-           [AssocSplatNode(
-              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
-              Location(22, 24)
-            ),
-            AssocNode(
-              SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
-              nil,
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil)
-            )],
-           nil
-         )]
+        [
+          HashNode(
+            nil,
+            [
+              AssocSplatNode(
+                HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+                Location(22, 24)
+              ),
+              AssocNode(
+                SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil),
+                nil
+              )
+            ],
+            nil
+          )
+        ]
       ),
       nil,
       "hi"
@@ -1232,19 +1242,23 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [HashNode(
-           nil,
-           [AssocSplatNode(
-              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
-              Location(22, 24)
-            ),
-            AssocNode(
-              SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
-              nil,
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil)
-            )],
-           nil
-         )]
+        [
+          HashNode(
+            nil,
+            [
+              AssocSplatNode(
+                HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+                Location(22, 24)
+              ),
+              AssocNode(
+                SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil),
+                nil
+              )
+            ],
+            nil
+          )
+        ]
       ),
       PARENTHESIS_RIGHT(")"),
       "hi"
@@ -1259,25 +1273,29 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ArgumentsNode(
-        [IntegerNode(),
-         HashNode(
-           BRACE_LEFT("{"),
-           [AssocNode(
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-              EQUAL_GREATER("=>"),
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil)
-            ),
-            AssocSplatNode(
-              HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
-              Location(29, 31)
-            ),
-            AssocNode(
-              SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
-              nil,
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil)
-            )],
-           BRACE_RIGHT("}")
-         )]
+        [
+          IntegerNode(),
+          HashNode(
+            BRACE_LEFT("{"),
+            [
+              AssocNode(
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                EQUAL_GREATER("=>")
+              ),
+              AssocSplatNode(
+                HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+                Location(29, 31)
+              ),
+              AssocNode(
+                SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil),
+                nil
+              )
+            ],
+            BRACE_RIGHT("}")
+          )
+        ]
       ),
       nil,
       "hi"
@@ -3524,16 +3542,18 @@ class ParseTest < Test::Unit::TestCase
   test "parses hash with hashrocket keys" do
     expected = HashNode(
       BRACE_LEFT("{"),
-      [AssocNode(
-        CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
-        EQUAL_GREATER("=>"),
-        CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b")
-      ),
-      AssocNode(
-        CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c"),
-        EQUAL_GREATER("=>"),
-        CallNode(nil, nil, IDENTIFIER("d"), nil, nil, nil, "d")
-      )],
+      [
+        AssocNode(
+          CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
+          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
+          EQUAL_GREATER("=>")
+        ),
+        AssocNode(
+          CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c"),
+          CallNode(nil, nil, IDENTIFIER("d"), nil, nil, nil, "d"),
+          EQUAL_GREATER("=>")
+        )
+      ],
       BRACE_RIGHT("}")
     )
 
@@ -3544,10 +3564,10 @@ class ParseTest < Test::Unit::TestCase
     expected = HashNode(
       BRACE_LEFT("{"),
       [
-        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), nil, expression("b")),
-        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), nil, expression("d")),
+        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), expression("b"), nil),
+        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), expression("d"), nil),
         AssocSplatNode(expression("e"), Location(14, 16)),
-        AssocNode(SymbolNode(nil, LABEL("f"), LABEL_END(":")), nil, expression("g")),
+        AssocNode(SymbolNode(nil, LABEL("f"), LABEL_END(":")), expression("g"), nil),
       ],
       BRACE_RIGHT("}")
     )
@@ -3558,15 +3578,17 @@ class ParseTest < Test::Unit::TestCase
   test "parses hash with splat" do
     expected = HashNode(
       BRACE_LEFT("{"),
-      [AssocNode(
-         CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
-         EQUAL_GREATER("=>"),
-         CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
-       ),
-       AssocSplatNode(
-         CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c"),
-         Location(10, 12)
-       )],
+      [
+        AssocNode(
+          CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, "a"),
+          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, "b"),
+          EQUAL_GREATER("=>")
+        ),
+        AssocSplatNode(
+          CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, "c"),
+          Location(10, 12)
+        )
+      ],
       BRACE_RIGHT("}")
     )
 

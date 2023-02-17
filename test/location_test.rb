@@ -27,6 +27,7 @@ module YARP
 
     test "AssocNode" do
       assert_location(AssocNode, "{ foo: :bar }", 2...11) { |node| node.elements.first }
+      assert_location(AssocNode, "{ :foo => :bar }", 2...14) { |node| node.elements.first }
     end
 
     test "AssocSplatNode" do
