@@ -6138,6 +6138,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_call_node_aref_create(parser, node, &arguments);
     }
     default:
+      assert(false && "unreachable");
       return node;
   }
 }
