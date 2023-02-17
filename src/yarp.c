@@ -310,6 +310,17 @@ typedef struct {
   yp_token_t closing;
 } yp_arguments_t;
 
+// Initialize a stack-allocated yp_arguments_t struct to its default values and
+// return it.
+static inline yp_arguments_t
+yp_arguments() {
+  return (yp_arguments_t) {
+    .opening = { .type = YP_TOKEN_NOT_PROVIDED, .start = 0, .end = 0 },
+    .arguments = NULL,
+    .closing = { .type = YP_TOKEN_NOT_PROVIDED, .start = 0, .end = 0 }
+  };
+}
+
 // Allocate and initialize a new CallNode node. This sets everything to NULL or
 // YP_TOKEN_NOT_PROVIDED as appropriate such that its values can be overridden
 // in the various specializations of this function.
@@ -352,6 +363,31 @@ yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t 
   node->as.call_node.arguments = arguments;
 
   yp_string_shared_init(&node->as.call_node.name, operator->start, operator->end);
+  return node;
+}
+
+// Allocate and initialize a new CallNode node from a call expression.
+static yp_node_t *
+yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *operator, yp_token_t *message, yp_arguments_t *arguments) {
+  yp_node_t *node = yp_call_node_create(parser);
+
+  node->location.start = receiver->location.start;
+  if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
+    node->location.end = arguments->closing.end;
+  } else if (arguments->arguments != NULL) {
+    node->location.end = arguments->arguments->location.end;
+  } else {
+    node->location.end = message->end;
+  }
+
+  node->as.call_node.receiver = receiver;
+  node->as.call_node.call_operator = *operator;
+  node->as.call_node.message = *message;
+  node->as.call_node.lparen = arguments->opening;
+  node->as.call_node.arguments = arguments->arguments;
+  node->as.call_node.rparen = arguments->closing;
+
+  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
   return node;
 }
 
@@ -4381,7 +4417,7 @@ parse_identifier(yp_parser_t *parser) {
   yp_node_t *node = parse_vcall(parser);
 
   if (node->type == YP_NODE_CALL_NODE) {
-    yp_arguments_t arguments;
+    yp_arguments_t arguments = yp_arguments();
     parse_arguments_list(parser, &arguments);
 
     node->as.call_node.lparen = arguments.opening;
@@ -4510,7 +4546,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       // If a constant is immediately followed by parentheses, then this is in
       // fact a method call, not a constant read.
       if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        yp_arguments_t arguments;
+        yp_arguments_t arguments = yp_arguments();
         parse_arguments_list(parser, &arguments);
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
@@ -4741,7 +4777,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
 
       yp_token_t keyword = parser->previous;
-      yp_arguments_t arguments;
+      yp_arguments_t arguments = yp_arguments();
       parse_arguments_list(parser, &arguments);
 
       switch (keyword.type) {
@@ -5717,25 +5753,24 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
       yp_token_t call_operator = parser->previous;
+      yp_arguments_t arguments = yp_arguments();
 
       // This if statement handles the foo.() syntax.
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        yp_token_t lparen = parser->previous;
-        yp_token_t rparen;
+        arguments.opening = parser->previous;
         yp_token_t message = not_provided(parser);
 
-        yp_node_t *arguments;
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          rparen = parser->previous;
-          arguments = NULL;
+          arguments.closing = parser->previous;
         } else {
-          arguments = yp_arguments_node_create(parser);
-          parse_arguments(parser, arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+          arguments.arguments = yp_arguments_node_create(parser);
+          parse_arguments(parser, arguments.arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+
           expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after arguments.");
-          rparen = parser->previous;
+          arguments.closing = parser->previous;
         }
 
-        yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &lparen, arguments, &rparen);
+        yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
         yp_string_constant_init(&next_node->as.call_node.name, "call", 4);
         return next_node;
       }
@@ -5743,12 +5778,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
       yp_token_t message = parser->previous;
 
-      yp_arguments_t arguments;
       parse_arguments_list(parser, &arguments);
-
-      yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
-      yp_string_shared_init(&next_node->as.call_node.name, message.start, message.end);
-      return next_node;
+      return yp_call_node_call_create(parser, node, &call_operator, &message, &arguments);
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
