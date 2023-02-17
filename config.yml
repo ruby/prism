@@ -339,7 +339,6 @@ nodes:
         type: token
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -354,7 +353,6 @@ nodes:
         type: node
       - name: operator
         type: token?
-    location: key->value
     comment: |
       Represents a hash key/value pair.
 
@@ -366,7 +364,6 @@ nodes:
         type: node
       - name: operator_loc
         type: location
-    location: operator_loc->value
     comment: |
       Represents a splat in a hash literal.
 
@@ -416,7 +413,6 @@ nodes:
         type: token?
       - name: operator_loc
         type: location
-    location: operator_loc->name|operator_loc
     comment: |
       Represents a block parameter to a method, block, or lambda definition.
 
