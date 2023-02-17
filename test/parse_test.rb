@@ -3627,7 +3627,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("foo"),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT("["),
       nil,
       ArgumentsNode([expression("bar")]),
       nil,
@@ -3641,7 +3641,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("foo"),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT_EQUAL("["),
       nil,
       ArgumentsNode([expression("bar"), expression("baz")]),
       nil,
@@ -3655,7 +3655,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("foo"),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT("["),
       nil,
       ArgumentsNode([expression("bar"), expression("baz")]),
       nil,
@@ -3669,7 +3669,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("foo"),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT_EQUAL("["),
       nil,
       ArgumentsNode([expression("bar"), expression("baz"), expression("qux")]),
       nil,
@@ -3684,14 +3684,14 @@ class ParseTest < Test::Unit::TestCase
       CallNode(
         expression("foo"),
         nil,
-        BRACKET_LEFT_RIGHT(""),
+        BRACKET_LEFT_RIGHT("["),
         nil,
         ArgumentsNode([expression("bar")]),
         nil,
         "[]"
       ),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT("["),
       nil,
       ArgumentsNode([expression("baz")]),
       nil,
@@ -3706,14 +3706,14 @@ class ParseTest < Test::Unit::TestCase
       CallNode(
         expression("foo"),
         nil,
-        BRACKET_LEFT_RIGHT(""),
+        BRACKET_LEFT_RIGHT("["),
         nil,
         ArgumentsNode([expression("bar")]),
         nil,
         "[]"
       ),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT_EQUAL("["),
       nil,
       ArgumentsNode([expression("baz"), expression("qux")]),
       nil,
@@ -3727,13 +3727,13 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("foo"),
       nil,
-      BRACKET_LEFT_RIGHT(""),
+      BRACKET_LEFT_RIGHT("["),
       nil,
       ArgumentsNode([
         CallNode(
           expression("bar"),
           nil,
-          BRACKET_LEFT_RIGHT(""),
+          BRACKET_LEFT_RIGHT_EQUAL("["),
           nil,
           ArgumentsNode([expression("baz"), expression("qux")]),
           nil,
