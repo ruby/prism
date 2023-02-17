@@ -58,8 +58,12 @@ module YARP
 
     test "CallNode" do
       assert_location(CallNode, "foo")
-      assert_location(CallNode, "~foo")
       assert_location(CallNode, "!foo")
+      assert_location(CallNode, "~foo")
+      assert_location(CallNode, "+foo")
+      assert_location(CallNode, "-foo")
+      assert_location(CallNode, "foo + bar")
+      assert_location(CallNode, "foo -\n  bar")
     end
 
     test "NextNode" do
