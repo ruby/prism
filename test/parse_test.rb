@@ -3727,7 +3727,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar, baz] = qux"
   end
 
-  test "chained #[] calls " do
+  test "chained #[] calls" do
     expected = CallNode(
       CallNode(
         expression("foo"),
@@ -3751,7 +3751,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar][baz]"
   end
 
-  test "chained #[] and #[]= calls " do
+  test "chained #[] and #[]= calls" do
     expected = CallNode(
       CallNode(
         expression("foo"),
@@ -3775,7 +3775,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar][baz] = qux"
   end
 
-  test "nested #[] and #[]= calls " do
+  test "nested #[] and #[]= calls" do
     expected = CallNode(
       expression("foo"),
       nil,
@@ -3799,6 +3799,26 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "foo[bar[baz] = qux]"
+  end
+
+  test "#[] call with block" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT("["),
+      BRACKET_LEFT("["),
+      ArgumentsNode([expression("bar")]),
+      BRACKET_RIGHT("]"),
+      BlockNode(
+        BRACE_LEFT("{"),
+        nil,
+        Statements([expression("baz")]),
+        BRACE_RIGHT("}")
+      ),
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar] { baz }"
   end
 
   test "encoding magic comment" do

@@ -4166,6 +4166,30 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
   return params;
 }
 
+// Parse a block.
+static yp_node_t *
+parse_block(yp_parser_t *parser) {
+  yp_token_t opening = parser->previous;
+
+  accept(parser, YP_TOKEN_NEWLINE);
+
+  yp_node_t *arguments = NULL;
+  if (accept(parser, YP_TOKEN_PIPE)) {
+    arguments = parse_parameters(parser, false);
+    expect(parser, YP_TOKEN_PIPE, "Expected block arguements to end with '|'.");
+  }
+
+  accept(parser, YP_TOKEN_NEWLINE);
+
+  yp_node_t *statements = NULL;
+  if (parser->current.type != YP_TOKEN_BRACE_RIGHT) {
+    statements = parse_statements(parser, YP_CONTEXT_BLOCK_BRACES);
+  }
+
+  expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected block beginning with '{' to end with '}'.");
+  return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
+}
+
 // Parse a list of arguments and their surrounding parentheses if they are
 // present.
 static void
@@ -4224,25 +4248,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
   // node that starts with a {. If there is, then we can parse it and add it to
   // the arguments.
   if (accepts_block && accept(parser, YP_TOKEN_BRACE_LEFT)) {
-    yp_token_t opening = parser->previous;
-
-    accept(parser, YP_TOKEN_NEWLINE);
-    yp_node_t *block_arguments = NULL;
-
-    if (accept(parser, YP_TOKEN_PIPE)) {
-      block_arguments = parse_parameters(parser, false);
-      expect(parser, YP_TOKEN_PIPE, "expected block arguements to end with '|'.");
-    }
-
-    accept(parser, YP_TOKEN_NEWLINE);
-    yp_node_t *statements = NULL;
-
-    if (parser->current.type != YP_TOKEN_BRACE_RIGHT) {
-      statements = parse_statements(parser, YP_CONTEXT_BLOCK_BRACES);
-    }
-
-    expect(parser, YP_TOKEN_BRACE_RIGHT, "expected block beginning with '{' to end with '}'.");
-    arguments->block = yp_node_block_node_create(parser, &opening, block_arguments, statements, &parser->previous);
+    arguments->block = parse_block(parser);
   }
 }
 
@@ -5785,7 +5791,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         case YP_NODE_CALL_NODE: {
           // If we have no arguments to the call node and we have an equals
           // sign then this is either a method call or a local variable write.
-          if ((node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL)) {
+          if (
+            (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
+            (node->as.call_node.arguments == NULL) &&
+            (node->as.call_node.block == NULL)
+          ) {
             if (node->as.call_node.receiver == NULL) {
               // When we get here, we have a local variable write, because it
               // was previously marked as a method call but now we have an =.
@@ -5840,7 +5850,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           // If there is no call operator and the message is "[]" then this is
           // an aref expression, and we can transform it into an aset
           // expression.
-          if ((node->as.call_node.call_operator.type == YP_TOKEN_NOT_PROVIDED) && (node->as.call_node.message.type == YP_TOKEN_BRACKET_LEFT_RIGHT)) {
+          if (
+            (node->as.call_node.call_operator.type == YP_TOKEN_NOT_PROVIDED) &&
+            (node->as.call_node.message.type == YP_TOKEN_BRACKET_LEFT_RIGHT) &&
+            (node->as.call_node.block == NULL)
+          ) {
             node->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
 
             yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value for the call after =.");
@@ -6144,6 +6158,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       parse_arguments(parser, arguments.arguments, YP_TOKEN_BRACKET_RIGHT);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
       arguments.closing = parser->previous;
+
+      // If we're at the end of the arguments, we can now check if there is a
+      // block node that starts with a {. If there is, then we can parse it and
+      // add it to the arguments.
+      if (accept(parser, YP_TOKEN_BRACE_LEFT)) {
+        arguments.block = parse_block(parser);
+      }
 
       return yp_call_node_aref_create(parser, node, &arguments);
     }

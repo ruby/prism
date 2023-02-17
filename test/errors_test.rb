@@ -247,7 +247,7 @@ class ErrorsTest < Test::Unit::TestCase
       "each"
     )
 
-    assert_errors expected, "x.each { x end", ["expected block beginning with '{' to end with '}'."]
+    assert_errors expected, "x.each { x end", ["Expected block beginning with '{' to end with '}'."]
   end
 
   private
