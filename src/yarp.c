@@ -415,6 +415,24 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
   return node;
 }
 
+// Allocate and initialize a new CallNode node from a call to a method name
+// without a receiver that could not have been a local variable read.
+static yp_node_t *
+yp_call_node_fcall_create(yp_parser_t *parser, yp_token_t *message, yp_arguments_t *arguments) {
+  yp_node_t *node = yp_call_node_create(parser);
+
+  node->location.start = message->start;
+  node->location.end = arguments->closing.end;
+
+  node->as.call_node.message = *message;
+  node->as.call_node.opening = arguments->opening;
+  node->as.call_node.arguments = arguments->arguments;
+  node->as.call_node.closing = arguments->closing;
+
+  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
+  return node;
+}
+
 // Allocate and initialize a new CallNode node from a not expression.
 static yp_node_t *
 yp_call_node_not_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments) {
@@ -437,6 +455,24 @@ yp_call_node_not_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *me
   return node;
 }
 
+// Allocate and initialize a new CallNode node from a call shorthand expression.
+static yp_node_t *
+yp_call_node_shorthand_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *operator, yp_arguments_t *arguments) {
+  yp_node_t *node = yp_call_node_create(parser);
+
+  node->location.start = receiver->location.start;
+  node->location.end = arguments->closing.end;
+
+  node->as.call_node.receiver = receiver;
+  node->as.call_node.call_operator = *operator;
+  node->as.call_node.opening = arguments->opening;
+  node->as.call_node.arguments = arguments->arguments;
+  node->as.call_node.closing = arguments->closing;
+
+  yp_string_constant_init(&node->as.call_node.name, "call", 4);
+  return node;
+}
+
 // Allocate and initialize a new CallNode node from a unary operator expression.
 static yp_node_t *
 yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *receiver, const char *name) {
@@ -449,24 +485,6 @@ yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *
   node->as.call_node.message = *operator;
 
   yp_string_constant_init(&node->as.call_node.name, name, strnlen(name, 2));
-  return node;
-}
-
-// Allocate and initialize a new CallNode node from a call to a method name
-// without a receiver that could not have been a local variable read.
-static yp_node_t *
-yp_call_node_fcall_create(yp_parser_t *parser, yp_token_t *message, yp_arguments_t *arguments) {
-  yp_node_t *node = yp_call_node_create(parser);
-
-  node->location.start = message->start;
-  node->location.end = arguments->closing.end;
-
-  node->as.call_node.message = *message;
-  node->as.call_node.opening = arguments->opening;
-  node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.closing = arguments->closing;
-
-  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
   return node;
 }
 
@@ -5809,13 +5827,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     }
     case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
-      yp_token_t call_operator = parser->previous;
+      yp_token_t operator = parser->previous;
       yp_arguments_t arguments = yp_arguments();
 
       // This if statement handles the foo.() syntax.
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         arguments.opening = parser->previous;
-        yp_token_t message = not_provided(parser);
 
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           arguments.closing = parser->previous;
@@ -5827,16 +5844,14 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           arguments.closing = parser->previous;
         }
 
-        yp_node_t *next_node = yp_node_call_node_create(parser, node, &call_operator, &message, &arguments.opening, arguments.arguments, &arguments.closing);
-        yp_string_constant_init(&next_node->as.call_node.name, "call", 4);
-        return next_node;
+        return yp_call_node_shorthand_create(parser, node, &operator, &arguments);
       }
 
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
       yp_token_t message = parser->previous;
 
       parse_arguments_list(parser, &arguments);
-      return yp_call_node_call_create(parser, node, &call_operator, &message, &arguments);
+      return yp_call_node_call_create(parser, node, &operator, &message, &arguments);
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {

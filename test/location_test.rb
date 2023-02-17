@@ -58,6 +58,16 @@ module YARP
 
     test "CallNode" do
       assert_location(CallNode, "foo")
+      assert_location(CallNode, "foo?")
+      assert_location(CallNode, "foo!")
+
+      assert_location(CallNode, "foo()")
+      assert_location(CallNode, "foo?()")
+      assert_location(CallNode, "foo!()")
+
+      assert_location(CallNode, "foo(bar)")
+      assert_location(CallNode, "foo?(bar)")
+      assert_location(CallNode, "foo!(bar)")
 
       assert_location(CallNode, "!foo")
       assert_location(CallNode, "~foo")
@@ -78,9 +88,19 @@ module YARP
       assert_location(CallNode, "foo.bar()")
       assert_location(CallNode, "foo.bar(baz)")
 
+      assert_location(CallNode, "foo&.bar")
+      assert_location(CallNode, "foo&.bar()")
+      assert_location(CallNode, "foo&.bar(baz)")
+
       assert_location(CallNode, "foo[]")
       assert_location(CallNode, "foo[bar]")
       assert_location(CallNode, "foo[bar, baz]")
+
+      assert_location(CallNode, "foo.()")
+      assert_location(CallNode, "foo.(bar)")
+
+      assert_location(CallNode, "foo&.()")
+      assert_location(CallNode, "foo&.(bar)")
     end
 
     test "NextNode" do

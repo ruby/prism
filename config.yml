@@ -450,7 +450,6 @@ nodes:
         type: token?
       - name: name
         type: string
-    location: receiver|message->closing|arguments|message
     comment: |
       Represents a method call, in all of the various forms that that can take.
 
