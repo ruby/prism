@@ -3842,9 +3842,9 @@ class ParseTest < Test::Unit::TestCase
       DOT("."),
       IDENTIFIER("each"),
       nil,
-      ArgumentsNode([BlockNode(BRACE_LEFT("{"), nil, nil, BRACE_RIGHT("}"))]),
       nil,
       nil,
+      BlockNode(BRACE_LEFT("{"), nil, nil, BRACE_RIGHT("}")),
       "each"
     )
 
@@ -3857,23 +3857,21 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("foo"),
       nil,
-      ArgumentsNode(
-        [BlockNode(
-           BRACE_LEFT("{"),
-           ParametersNode(
-             [RequiredParameterNode(IDENTIFIER("x"))],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           nil,
-           BRACE_RIGHT("}")
-         )]
+      nil,
+      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("x"))],
+          [],
+          nil,
+          [],
+          nil,
+          nil
+        ),
+        nil,
+        BRACE_RIGHT("}")
       ),
-      nil,
-      nil,
       "foo"
     )
 
@@ -3886,27 +3884,25 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("foo"),
       nil,
-      ArgumentsNode(
-        [BlockNode(
-           BRACE_LEFT("{"),
-           ParametersNode(
-             [RequiredParameterNode(IDENTIFIER("x"))],
-             [OptionalParameterNode(
-                IDENTIFIER("y"),
-                EQUAL("="),
-                IntegerNode()
-              )],
-             nil,
-             [KeywordParameterNode(LABEL("z:"), nil)],
-             nil,
-             nil
-           ),
-           Statements([LocalVariableRead(IDENTIFIER("x"))]),
-           BRACE_RIGHT("}")
-         )]
+      nil,
+      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("x"))],
+          [OptionalParameterNode(
+            IDENTIFIER("y"),
+            EQUAL("="),
+            IntegerNode()
+          )],
+          nil,
+          [KeywordParameterNode(LABEL("z:"), nil)],
+          nil,
+          nil
+        ),
+        Statements([LocalVariableRead(IDENTIFIER("x"))]),
+        BRACE_RIGHT("}")
       ),
-      nil,
-      nil,
       "foo"
     )
 
@@ -3919,30 +3915,28 @@ class ParseTest < Test::Unit::TestCase
       DOT("."),
       IDENTIFIER("reduce"),
       PARENTHESIS_LEFT("("),
-      ArgumentsNode(
-        [BlockNode(
-           BRACE_LEFT("{"),
-           ParametersNode(
-             [RequiredParameterNode(IDENTIFIER("x")),
-              RequiredParameterNode(IDENTIFIER("memo"))],
-             [],
-             nil,
-             [],
-             nil,
-             nil
-           ),
-           Statements(
-             [OperatorAssignmentNode(
-                LocalVariableRead(IDENTIFIER("memo")),
-                PLUS_EQUAL("+="),
-                LocalVariableRead(IDENTIFIER("x"))
-              )]
-           ),
-           BRACE_RIGHT("}")
-         )]
-      ),
+      ArgumentsNode([IntegerNode()]),
       PARENTHESIS_RIGHT(")"),
-      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("x")),
+          RequiredParameterNode(IDENTIFIER("memo"))],
+          [],
+          nil,
+          [],
+          nil,
+          nil
+        ),
+        Statements(
+          [OperatorAssignmentNode(
+            LocalVariableRead(IDENTIFIER("memo")),
+            PLUS_EQUAL("+="),
+            LocalVariableRead(IDENTIFIER("x"))
+          )]
+        ),
+        BRACE_RIGHT("}")
+      ),
       "reduce"
     )
 

@@ -236,16 +236,14 @@ class ErrorsTest < Test::Unit::TestCase
       DOT("."),
       IDENTIFIER("each"),
       nil,
-      ArgumentsNode(
-        [BlockNode(
-           BRACE_LEFT("{"),
-           nil,
-           Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
-           MISSING("")
-         )]
+      nil,
+      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        nil,
+        Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
+        MISSING("")
       ),
-      nil,
-      nil,
       "each"
     )
 

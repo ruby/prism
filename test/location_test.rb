@@ -42,7 +42,7 @@ module YARP
     end
 
     test "BlockNode" do
-      assert_location(BlockNode, "foo {}", 4...6) { |node| node.arguments.arguments.last }
+      assert_location(BlockNode, "foo {}", 4...6, &:block)
     end
 
     test "BlockParameterNode" do
@@ -134,6 +134,10 @@ module YARP
       assert_location(ClassVariableWriteNode, "@@foo = bar")
     end
 
+    test "ForwardingSuperNode" do
+      assert_location(ForwardingSuperNode, "super")
+    end
+
     test "InstanceVariableReadNode" do
       assert_location(InstanceVariableReadNode, "@foo")
     end
@@ -147,6 +151,15 @@ module YARP
       assert_location(NextNode, "next foo")
       assert_location(NextNode, "next foo, bar")
       assert_location(NextNode, "next(foo)")
+    end
+
+    test "SuperNode" do
+      assert_location(SuperNode, "super foo")
+      assert_location(SuperNode, "super foo, bar")
+
+      assert_location(SuperNode, "super()")
+      assert_location(SuperNode, "super(foo)")
+      assert_location(SuperNode, "super(foo, bar)")
     end
 
     test "UndefNode" do
