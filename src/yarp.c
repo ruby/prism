@@ -350,7 +350,7 @@ yp_call_node_create(yp_parser_t *parser) {
 // Allocate and initialize a new CallNode node from an aref or an aset
 // expression.
 static yp_node_t *
-yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments, bool aref) {
+yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments) {
   yp_node_t *node = yp_call_node_create(parser);
 
   node->location.start = receiver->location.start;
@@ -358,7 +358,7 @@ yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *m
 
   node->as.call_node.receiver = receiver;
   node->as.call_node.message = (yp_token_t) {
-    .type = aref ? YP_TOKEN_BRACKET_LEFT_RIGHT : YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL,
+    .type = YP_TOKEN_BRACKET_LEFT_RIGHT,
     .start = message->start,
     .end = message->end
   };
@@ -367,8 +367,7 @@ yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *m
   node->as.call_node.arguments = arguments->arguments;
   node->as.call_node.rparen = arguments->closing;
 
-  const char *name = aref ? "[]" : "[]=";
-  yp_string_constant_init(&node->as.call_node.name, name, strnlen(name, 3));
+  yp_string_constant_init(&node->as.call_node.name, "[]", 2);
   return node;
 }
 
@@ -5619,11 +5618,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return result;
         }
         case YP_NODE_CALL_NODE: {
-          if (node->as.call_node.lparen.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL) {
-            // If we have no arguments to the call node and we have an equals
-            // sign then this is either a method call or a local variable write.
+          // If we have no arguments to the call node and we have an equals
+          // sign then this is either a method call or a local variable write.
+          if ((node->as.call_node.lparen.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL)) {
             if (node->as.call_node.receiver == NULL) {
-              // When we get here, we have a local varaible write, because it
+              // When we get here, we have a local variable write, because it
               // was previously marked as a method call but now we have an =.
               // This looks like:
               //
@@ -5675,6 +5674,22 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
 
             return next_node;
+          }
+
+          // If there is no call operator and the message is "[]" then this is
+          // an aref expression, and we can transform it into an aset
+          // expression.
+          if ((node->as.call_node.call_operator.type == YP_TOKEN_NOT_PROVIDED) && (node->as.call_node.message.type == YP_TOKEN_BRACKET_LEFT_RIGHT)) {
+            node->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
+
+            yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value for the call after =.");
+            yp_arguments_node_append(node->as.call_node.arguments, argument);
+
+            // Free the previous name and replace it with "[]=".
+            yp_string_free(&node->as.call_node.name);
+            yp_string_constant_init(&node->as.call_node.name, "[]=", 3);
+
+            return node;
           }
 
           // If there are arguments on the call node, then it can't be a method
@@ -5911,14 +5926,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       parse_arguments(parser, arguments.arguments, YP_TOKEN_BRACKET_RIGHT);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
 
-      if (accept(parser, YP_TOKEN_EQUAL)) {
-        yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
-        yp_arguments_node_append(arguments.arguments, argument);
-
-        return yp_call_node_aref_create(parser, node, &message, &arguments, false);
-      }
-
-      return yp_call_node_aref_create(parser, node, &message, &arguments, true);
+      return yp_call_node_aref_create(parser, node, &message, &arguments);
     }
     default:
       return node;
