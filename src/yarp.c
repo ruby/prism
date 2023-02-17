@@ -338,9 +338,9 @@ yp_call_node_create(yp_parser_t *parser) {
       .receiver = NULL,
       .call_operator = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
       .message = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
-      .lparen = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
+      .opening = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
       .arguments = NULL,
-      .rparen = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start }
+      .closing = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start }
     }
   };
 
@@ -363,9 +363,9 @@ yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_arguments_
     .end = arguments->opening.end
   };
 
-  node->as.call_node.lparen = arguments->opening;
+  node->as.call_node.opening = arguments->opening;
   node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.rparen = arguments->closing;
+  node->as.call_node.closing = arguments->closing;
 
   yp_string_constant_init(&node->as.call_node.name, "[]", 2);
   return node;
@@ -407,9 +407,9 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
   node->as.call_node.receiver = receiver;
   node->as.call_node.call_operator = *operator;
   node->as.call_node.message = *message;
-  node->as.call_node.lparen = arguments->opening;
+  node->as.call_node.opening = arguments->opening;
   node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.rparen = arguments->closing;
+  node->as.call_node.closing = arguments->closing;
 
   yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
   return node;
@@ -429,9 +429,9 @@ yp_call_node_not_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *me
 
   node->as.call_node.receiver = receiver;
   node->as.call_node.message = *message;
-  node->as.call_node.lparen = arguments->opening;
+  node->as.call_node.opening = arguments->opening;
   node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.rparen = arguments->closing;
+  node->as.call_node.closing = arguments->closing;
 
   yp_string_constant_init(&node->as.call_node.name, "!", 1);
   return node;
@@ -462,9 +462,9 @@ yp_call_node_fcall_create(yp_parser_t *parser, yp_token_t *message, yp_arguments
   node->location.end = arguments->closing.end;
 
   node->as.call_node.message = *message;
-  node->as.call_node.lparen = arguments->opening;
+  node->as.call_node.opening = arguments->opening;
   node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.rparen = arguments->closing;
+  node->as.call_node.closing = arguments->closing;
 
   yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
   return node;
@@ -4466,9 +4466,9 @@ parse_identifier(yp_parser_t *parser) {
     yp_arguments_t arguments = yp_arguments();
     parse_arguments_list(parser, &arguments);
 
-    node->as.call_node.lparen = arguments.opening;
-    node->as.call_node.rparen = arguments.closing;
+    node->as.call_node.opening = arguments.opening;
     node->as.call_node.arguments = arguments.arguments;
+    node->as.call_node.closing = arguments.closing;
 
     if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
       node->location.end = node->as.call_node.message.end;
@@ -5641,7 +5641,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         case YP_NODE_CALL_NODE: {
           // If we have no arguments to the call node and we have an equals
           // sign then this is either a method call or a local variable write.
-          if ((node->as.call_node.lparen.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL)) {
+          if ((node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED && node->as.call_node.arguments == NULL)) {
             if (node->as.call_node.receiver == NULL) {
               // When we get here, we have a local variable write, because it
               // was previously marked as a method call but now we have an =.
