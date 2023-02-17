@@ -136,6 +136,7 @@ module YARP
 
     test "ForwardingSuperNode" do
       assert_location(ForwardingSuperNode, "super")
+      assert_location(ForwardingSuperNode, "super {}")
     end
 
     test "InstanceVariableReadNode" do
@@ -160,6 +161,8 @@ module YARP
       assert_location(SuperNode, "super()")
       assert_location(SuperNode, "super(foo)")
       assert_location(SuperNode, "super(foo, bar)")
+
+      assert_location(SuperNode, "super() {}")
     end
 
     test "UndefNode" do

@@ -634,7 +634,7 @@ yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token
 
 // Allocate and initialize a new ForwardingSuper node.
 static yp_node_t *
-yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token) {
+yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token, yp_arguments_t *arguments) {
   assert(token->type == YP_TOKEN_KEYWORD_SUPER);
   yp_node_t *node = yp_node_alloc(parser);
 
@@ -642,9 +642,9 @@ yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token) {
     .type = YP_NODE_FORWARDING_SUPER_NODE,
     .location = {
       .start = token->start,
-      .end = token->end
+      .end = arguments->block != NULL ? arguments->block->location.end : token->end
     },
-    .as.forwarding_super_node.block = NULL
+    .as.forwarding_super_node.block = arguments->block
   };
 
   return node;
@@ -930,6 +930,41 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
     .location = {
       .start = token->start,
       .end = token->end
+    }
+  };
+
+  return node;
+}
+
+// Allocate and initialize a new SuperNode node.
+yp_node_t *
+yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_t *arguments) {
+  assert(keyword->type == YP_TOKEN_KEYWORD_SUPER);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  const char *end;
+  if (arguments->block != NULL) {
+    end = arguments->block->location.end;
+  } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
+    end = arguments->closing.end;
+  } else if (arguments->arguments != NULL) {
+    end = arguments->arguments->location.end;
+  } else {
+    assert(false && "unreachable");
+  }
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_SUPER_NODE,
+    .location = {
+      .start = keyword->start,
+      .end = end,
+    },
+    .as.super_node = {
+      .keyword = *keyword,
+      .lparen = arguments->opening,
+      .arguments = arguments->arguments,
+      .rparen = arguments->closing,
+      .block = arguments->block
     }
   };
 
@@ -4129,7 +4164,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 // Parse a list of arguments and their surrounding parentheses if they are
 // present.
 static void
-parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
+parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_block) {
   switch (parser->current.type) {
     case YP_TOKEN_EOF:
     case YP_TOKEN_BRACE_RIGHT:
@@ -4182,7 +4217,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
   // If we're at the end of the arguments, we can now check if there is a block
   // node that starts with a {. If there is, then we can parse it and add it to
   // the arguments.
-  if (accept(parser, YP_TOKEN_BRACE_LEFT)) {
+  if (accepts_block && accept(parser, YP_TOKEN_BRACE_LEFT)) {
     yp_token_t opening = parser->previous;
 
     accept(parser, YP_TOKEN_NEWLINE);
@@ -4568,7 +4603,7 @@ parse_identifier(yp_parser_t *parser) {
 
   if (node->type == YP_NODE_CALL_NODE) {
     yp_arguments_t arguments = yp_arguments();
-    parse_arguments_list(parser, &arguments);
+    parse_arguments_list(parser, &arguments, true);
 
     node->as.call_node.opening = arguments.opening;
     node->as.call_node.arguments = arguments.arguments;
@@ -4700,7 +4735,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       // fact a method call, not a constant read.
       if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         yp_arguments_t arguments = yp_arguments();
-        parse_arguments_list(parser, &arguments);
+        parse_arguments_list(parser, &arguments, true);
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
@@ -4925,27 +4960,27 @@ parse_expression_prefix(yp_parser_t *parser) {
           assert(false && "unreachable");
       }
     }
-    case YP_TOKEN_KEYWORD_SUPER:
+    case YP_TOKEN_KEYWORD_SUPER: {
+      parser_lex(parser);
+
+      yp_token_t keyword = parser->previous;
+      yp_arguments_t arguments = yp_arguments();
+      parse_arguments_list(parser, &arguments, true);
+
+      if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
+        return yp_forwarding_super_node_create(parser, &keyword, &arguments);
+      }
+
+      return yp_super_node_create(parser, &keyword, &arguments);
+    }
     case YP_TOKEN_KEYWORD_YIELD: {
       parser_lex(parser);
 
       yp_token_t keyword = parser->previous;
       yp_arguments_t arguments = yp_arguments();
-      parse_arguments_list(parser, &arguments);
+      parse_arguments_list(parser, &arguments, false);
 
-      switch (keyword.type) {
-        case YP_TOKEN_KEYWORD_SUPER:
-          if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
-            return yp_forwarding_super_node_create(parser, &keyword);
-          } else {
-            return yp_node_super_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing, NULL);
-          }
-        case YP_TOKEN_KEYWORD_YIELD:
-          return yp_node_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
-        default:
-          // Cannot hit here.
-          return NULL;
-      }
+      return yp_node_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);
@@ -5949,7 +5984,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after '.'");
       yp_token_t message = parser->previous;
 
-      parse_arguments_list(parser, &arguments);
+      parse_arguments_list(parser, &arguments, true);
       return yp_call_node_call_create(parser, node, &operator, &message, &arguments);
     }
     case YP_TOKEN_DOT_DOT:
@@ -6037,7 +6072,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           // like Foo::Bar().
           if (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) {
             yp_arguments_t arguments = yp_arguments();
-            parse_arguments_list(parser, &arguments);
+            parse_arguments_list(parser, &arguments, true);
             return yp_call_node_call_create(parser, node, &delimiter, &parser->previous, &arguments);
           }
 
@@ -6051,14 +6086,14 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           // If we have an identifier following a '::' operator, then it is for
           // sure a method call.
           yp_arguments_t arguments = yp_arguments();
-          parse_arguments_list(parser, &arguments);
+          parse_arguments_list(parser, &arguments, true);
           return yp_call_node_call_create(parser, node, &delimiter, &parser->previous, &arguments);
         }
         case YP_TOKEN_PARENTHESIS_LEFT: {
           // If we have a parenthesis following a '::' operator, then it is the
           // method call shorthand. That would look like Foo::(bar).
           yp_arguments_t arguments = yp_arguments();
-          parse_arguments_list(parser, &arguments);
+          parse_arguments_list(parser, &arguments, true);
 
           return yp_call_node_shorthand_create(parser, node, &delimiter, &arguments);
         }
