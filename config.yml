@@ -1489,7 +1489,6 @@ nodes:
         type: token
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents an xstring literal with no interpolation.
 

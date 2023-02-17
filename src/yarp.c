@@ -937,7 +937,7 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate and initialize a new SuperNode node.
-yp_node_t *
+static yp_node_t *
 yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_SUPER);
   yp_node_t *node = yp_node_alloc(parser);
@@ -1015,6 +1015,27 @@ static void
 yp_undef_node_append(yp_node_t *node, yp_node_t *name) {
   node->location.end = name->location.end;
   yp_node_list_append2(&node->as.undef_node.names, name);
+}
+
+// Allocate and initialize a new XStringNode node.
+static yp_node_t *
+yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_X_STRING_NODE,
+    .location = {
+      .start = opening->start,
+      .end = closing->end
+    },
+    .as.x_string_node = {
+      .opening = *opening,
+      .content = *content,
+      .closing = *closing
+    }
+  };
+
+  return node;
 }
 
 /******************************************************************************/
@@ -5644,15 +5665,18 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_token_t opening = parser->previous;
       yp_token_t content;
+
       if (parse_string_without_interpolation(parser, YP_TOKEN_STRING_END, &content)) {
-        return yp_node_x_string_node_create(parser, &opening, &content, &parser->previous);
+        return yp_xstring_node_create(parser, &opening, &content, &parser->previous);
       }
 
       yp_node_t *node = yp_node_interpolated_x_string_node_create(parser, &opening, &opening);
       yp_node_list_t *parts = &node->as.interpolated_x_string_node.parts;
       parse_interpolated_string_parts(parser, YP_TOKEN_STRING_END, node, parts);
+
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an xstring.");
       node->as.interpolated_x_string_node.closing = parser->previous;
+
       return node;
     }
     case YP_TOKEN_BANG: {

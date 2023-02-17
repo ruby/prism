@@ -170,6 +170,11 @@ module YARP
       assert_location(UndefNode, "undef foo, bar")
     end
 
+    test "XStringNode" do
+      assert_location(XStringNode, "`foo`")
+      assert_location(XStringNode, "%x[foo]")
+    end
+
     private
 
     def assert_location(kind, source, expected = 0...source.length)
