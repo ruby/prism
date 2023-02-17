@@ -5942,7 +5942,22 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
       switch (parser->current.type) {
         case YP_TOKEN_CONSTANT: {
-          yp_node_t *child = parse_expression(parser, binding_power, "Expected a value after '::'");
+          parser_lex(parser);
+
+          // If we have a constant immediately following a '::' operator, then
+          // this can either be a constant path or a method call, depending on
+          // what follows the constant.
+          //
+          // If we have parentheses, then this is a method call. That would look
+          // like Foo::Bar().
+          if (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) {
+            yp_arguments_t arguments = yp_arguments();
+            parse_arguments_list(parser, &arguments);
+            return yp_call_node_call_create(parser, node, &delimiter, &parser->previous, &arguments);
+          }
+
+          // Otherwise, this is a constant path. That would look like Foo::Bar.
+          yp_node_t *child = yp_node_constant_read_create(parser, &parser->previous);
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
         case YP_TOKEN_IDENTIFIER: {

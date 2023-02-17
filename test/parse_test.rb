@@ -643,13 +643,13 @@ class ParseTest < Test::Unit::TestCase
 
   test "constant path with multiple levels" do
     expected = ConstantPathNode(
-      ConstantRead(CONSTANT("A")),
-      COLON_COLON("::"),
       ConstantPathNode(
-        ConstantRead(CONSTANT("B")),
+        ConstantRead(CONSTANT("A")),
         COLON_COLON("::"),
-        ConstantRead(CONSTANT("C"))
-      )
+        ConstantRead(CONSTANT("B"))
+      ),
+      COLON_COLON("::"),
+      ConstantRead(CONSTANT("C"))
     )
 
     assert_parses expected, "A::B::C"

@@ -84,6 +84,9 @@ module YARP
       assert_location(CallNode, "Foo()")
       assert_location(CallNode, "Foo(bar)")
 
+      assert_location(CallNode, "Foo::Bar()")
+      assert_location(CallNode, "Foo::Bar(baz)")
+
       assert_location(CallNode, "foo.bar")
       assert_location(CallNode, "foo.bar()")
       assert_location(CallNode, "foo.bar(baz)")
