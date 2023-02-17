@@ -1072,15 +1072,14 @@ nodes:
           ^^^^^^^^^
   - name: PostExecutionNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: opening
-        type: token
       - name: statements
         type: node
-      - name: closing
-        type: token
-    location: keyword->closing
+      - name: keyword_loc
+        type: location
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents the use of the `END` keyword.
 
@@ -1088,15 +1087,14 @@ nodes:
           ^^^^^^^^^^^^^
   - name: PreExecutionNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: opening
-        type: token
       - name: statements
         type: node
-      - name: closing
-        type: token
-    location: keyword->closing
+      - name: keyword_loc
+        type: location
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents the use of the `END` keyword.
 

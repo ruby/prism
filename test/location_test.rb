@@ -154,6 +154,14 @@ module YARP
       assert_location(NextNode, "next(foo)")
     end
 
+    test "PostExecutionNode" do
+      assert_location(PostExecutionNode, "END { foo }")
+    end
+
+    test "PreExecutionNode" do
+      assert_location(PreExecutionNode, "BEGIN { foo }")
+    end
+
     test "SuperNode" do
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")

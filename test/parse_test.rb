@@ -2217,11 +2217,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "post execution" do
-    assert_parses PostExecutionNode(KEYWORD_END_UPCASE("END"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "END { 1 }"
+    assert_parses PostExecutionNode(Statements([expression("1")]), Location(0, 3), Location(4, 5), Location(8, 9)), "END { 1 }"
   end
 
   test "pre execution" do
-    assert_parses PreExecutionNode(KEYWORD_BEGIN_UPCASE("BEGIN"), BRACE_LEFT("{"), Statements([expression("1")]), BRACE_RIGHT("}")), "BEGIN { 1 }"
+    assert_parses PreExecutionNode(Statements([expression("1")]), Location(0, 5), Location(6, 7), Location(10, 11)), "BEGIN { 1 }"
   end
 
   test "range inclusive" do

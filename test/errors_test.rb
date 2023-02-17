@@ -65,10 +65,10 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "pre execution missing {" do
     expected = PreExecutionNode(
-      KEYWORD_BEGIN_UPCASE("BEGIN"),
-      MISSING(""),
       Statements([expression("1")]),
-      BRACE_RIGHT("}")
+      Location(0, 5),
+      Location(5, 5),
+      Location(8, 9)
     )
 
     assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
@@ -76,8 +76,6 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "pre execution context" do
     expected = PreExecutionNode(
-      KEYWORD_BEGIN_UPCASE("BEGIN"),
-      BRACE_LEFT("{"),
       Statements([
         CallNode(
           expression("1"),
@@ -90,7 +88,9 @@ class ErrorsTest < Test::Unit::TestCase
           "+"
         )
       ]),
-      BRACE_RIGHT("}")
+      Location(0, 5),
+      Location(6, 7),
+      Location(12, 13)
     )
 
     assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]
