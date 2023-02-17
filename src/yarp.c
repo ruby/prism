@@ -340,7 +340,8 @@ yp_call_node_create(yp_parser_t *parser) {
       .message = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
       .opening = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
       .arguments = NULL,
-      .closing = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start }
+      .closing = { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start },
+      .block = NULL
     }
   };
 
@@ -622,7 +623,8 @@ yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token) {
     .location = {
       .start = token->start,
       .end = token->end
-    }
+    },
+    .as.forwarding_super_node.block = NULL
   };
 
   return node;
@@ -4927,7 +4929,7 @@ parse_expression_prefix(yp_parser_t *parser) {
           if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
             return yp_forwarding_super_node_create(parser, &keyword);
           } else {
-            return yp_node_super_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
+            return yp_node_super_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing, NULL);
           }
         case YP_TOKEN_KEYWORD_YIELD:
           return yp_node_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
@@ -5793,6 +5795,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
             yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value for the call after =.");
             yp_arguments_node_append(node->as.call_node.arguments, argument);
+
+            node->location.end = argument->location.end;
 
             // Free the previous name and replace it with "[]=".
             yp_string_free(&node->as.call_node.name);

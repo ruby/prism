@@ -111,6 +111,10 @@ module YARP
       assert_location(CallNode, "foo[bar]")
       assert_location(CallNode, "foo[bar, baz]")
 
+      assert_location(CallNode, "foo[] = 1")
+      assert_location(CallNode, "foo[bar] = 1")
+      assert_location(CallNode, "foo[bar, baz] = 1")
+
       assert_location(CallNode, "foo.()")
       assert_location(CallNode, "foo.(bar)")
 

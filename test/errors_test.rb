@@ -86,6 +86,7 @@ class ErrorsTest < Test::Unit::TestCase
           nil,
           ArgumentsNode([MissingNode()]),
           nil,
+          nil,
           "+"
         )
       ]),
@@ -231,7 +232,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "block beginning with '{' and ending with 'end'" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, "x"),
+      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x"),
       DOT("."),
       IDENTIFIER("each"),
       nil,
@@ -239,10 +240,11 @@ class ErrorsTest < Test::Unit::TestCase
         [BlockNode(
            BRACE_LEFT("{"),
            nil,
-           Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, "x")]),
+           Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
            MISSING("")
          )]
       ),
+      nil,
       nil,
       "each"
     )

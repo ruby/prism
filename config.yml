@@ -443,6 +443,8 @@ nodes:
         type: node?
       - name: closing
         type: token?
+      - name: block
+        type: node?
       - name: name
         type: string
     comment: |
@@ -670,6 +672,9 @@ nodes:
                   ^^^
           end
   - name: ForwardingSuperNode
+    child_nodes:
+      - name: block
+        type: node?
     comment: |
       Represents the use of the `super` keyword without parentheses or arguments.
 
@@ -1354,7 +1359,9 @@ nodes:
         type: node?
       - name: rparen
         type: token?
-    location: keyword->rparen|arguments|lparen|keyword
+      - name: block
+        type: node?
+    location: keyword->block|rparen|arguments|lparen|keyword
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.
 
