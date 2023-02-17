@@ -10,6 +10,7 @@ module YARP
 
     test "AndNode" do
       assert_location(AndNode, "foo and bar")
+      assert_location(AndNode, "foo && bar")
     end
 
     test "ArgumentsNode" do
@@ -26,6 +27,7 @@ module YARP
 
     test "AssocNode" do
       assert_location(AssocNode, "{ foo: :bar }", 2...11) { |node| node.elements.first }
+      assert_location(AssocNode, "{ :foo => :bar }", 2...14) { |node| node.elements.first }
     end
 
     test "AssocSplatNode" do
@@ -39,6 +41,10 @@ module YARP
       assert_location(BeginNode, "begin foo rescue bar\nelse baz\nensure qux end")
     end
 
+    test "BlockNode" do
+      assert_location(BlockNode, "foo {}", 4...6) { |node| node.arguments.arguments.last }
+    end
+
     test "BlockParameterNode" do
       assert_location(BlockParameterNode, "def foo(&bar) end", 8...12) { |node| node.parameters.block }
     end
@@ -48,6 +54,72 @@ module YARP
       assert_location(BreakNode, "break foo")
       assert_location(BreakNode, "break foo, bar")
       assert_location(BreakNode, "break(foo)")
+    end
+
+    test "CallNode" do
+      assert_location(CallNode, "foo")
+      assert_location(CallNode, "foo?")
+      assert_location(CallNode, "foo!")
+
+      assert_location(CallNode, "foo()")
+      assert_location(CallNode, "foo?()")
+      assert_location(CallNode, "foo!()")
+
+      assert_location(CallNode, "foo(bar)")
+      assert_location(CallNode, "foo?(bar)")
+      assert_location(CallNode, "foo!(bar)")
+
+      assert_location(CallNode, "!foo")
+      assert_location(CallNode, "~foo")
+      assert_location(CallNode, "+foo")
+      assert_location(CallNode, "-foo")
+
+      assert_location(CallNode, "not foo")
+      assert_location(CallNode, "not(foo)")
+      assert_location(CallNode, "not()")
+
+      assert_location(CallNode, "foo + bar")
+      assert_location(CallNode, "foo -\n  bar")
+
+      assert_location(CallNode, "Foo()")
+      assert_location(CallNode, "Foo(bar)")
+
+      assert_location(CallNode, "Foo::Bar()")
+      assert_location(CallNode, "Foo::Bar(baz)")
+
+      assert_location(CallNode, "Foo::bar")
+      assert_location(CallNode, "Foo::bar()")
+      assert_location(CallNode, "Foo::bar(baz)")
+
+      assert_location(CallNode, "Foo.bar")
+      assert_location(CallNode, "Foo.bar()")
+      assert_location(CallNode, "Foo.bar(baz)")
+
+      assert_location(CallNode, "foo::bar")
+      assert_location(CallNode, "foo::bar()")
+      assert_location(CallNode, "foo::bar(baz)")
+
+      assert_location(CallNode, "foo.bar")
+      assert_location(CallNode, "foo.bar()")
+      assert_location(CallNode, "foo.bar(baz)")
+
+      assert_location(CallNode, "foo&.bar")
+      assert_location(CallNode, "foo&.bar()")
+      assert_location(CallNode, "foo&.bar(baz)")
+
+      assert_location(CallNode, "foo[]")
+      assert_location(CallNode, "foo[bar]")
+      assert_location(CallNode, "foo[bar, baz]")
+
+      assert_location(CallNode, "foo.()")
+      assert_location(CallNode, "foo.(bar)")
+
+      assert_location(CallNode, "foo&.()")
+      assert_location(CallNode, "foo&.(bar)")
+
+      assert_location(CallNode, "foo::()")
+      assert_location(CallNode, "foo::(bar)")
+      assert_location(CallNode, "foo::(bar, baz)")
     end
 
     test "NextNode" do

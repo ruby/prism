@@ -84,7 +84,7 @@ module YARP
     end
 
     def visit_call_node(node)
-      if !node.lparen && node.arguments.arguments.length == 1
+      if !node.opening && node.arguments.arguments.length == 1
         bounds(node.message)
         visit_token(node.message)
 
