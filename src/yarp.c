@@ -5612,10 +5612,12 @@ parse_expression_prefix(yp_parser_t *parser) {
 
 static inline yp_node_t *
 parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t binding_power) {
-  yp_token_t token = parser->previous;
+  yp_token_t token = parser->current;
 
   switch (token.type) {
     case YP_TOKEN_EQUAL: {
+      parser_lex(parser);
+
       switch (node->type) {
         case YP_NODE_CLASS_VARIABLE_READ: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the class variable after =.");
@@ -5741,10 +5743,14 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       }
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
+      parser_lex(parser);
+
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
       return yp_operator_and_assignment_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_PIPE_PIPE_EQUAL: {
+      parser_lex(parser);
+
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
       return yp_node_operator_or_assignment_node_create(parser, node, &token, value);
     }
@@ -5759,16 +5765,22 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     case YP_TOKEN_SLASH_EQUAL:
     case YP_TOKEN_STAR_EQUAL:
     case YP_TOKEN_STAR_STAR_EQUAL: {
+      parser_lex(parser);
+
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_node_operator_assignment_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND:
     case YP_TOKEN_KEYWORD_AND: {
+      parser_lex(parser);
+
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_and_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_KEYWORD_OR:
     case YP_TOKEN_PIPE_PIPE: {
+      parser_lex(parser);
+
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_node_or_node_create(parser, node, &token, right);
     }
@@ -5820,6 +5832,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     case YP_TOKEN_SLASH:
     case YP_TOKEN_STAR:
     case YP_TOKEN_STAR_STAR: {
+      parser_lex(parser);
       while (accept(parser, YP_TOKEN_NEWLINE));
 
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
@@ -5827,6 +5840,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     }
     case YP_TOKEN_AMPERSAND_DOT:
     case YP_TOKEN_DOT: {
+      parser_lex(parser);
       yp_token_t operator = parser->previous;
       yp_arguments_t arguments = yp_arguments();
 
@@ -5855,10 +5869,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
+      parser_lex(parser);
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_node_range_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_KEYWORD_IF: {
+      parser_lex(parser);
       yp_node_t *statements = yp_node_statements_create(parser);
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
@@ -5868,6 +5884,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_if_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_UNLESS: {
+      parser_lex(parser);
       yp_node_t *statements = yp_node_statements_create(parser);
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
@@ -5877,6 +5894,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_unless_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_UNTIL: {
+      parser_lex(parser);
       yp_node_t *statements = yp_node_statements_create(parser);
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
@@ -5884,6 +5902,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_until_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
+      parser_lex(parser);
       yp_node_t *statements = yp_node_statements_create(parser);
       yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
@@ -5891,6 +5910,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_while_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_QUESTION_MARK: {
+      parser_lex(parser);
       yp_node_t *true_expression = parse_expression(parser, binding_power, "Expected a value after '?'");
 
       if (parser->recovering) {
@@ -5917,6 +5937,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
     }
     case YP_TOKEN_COLON_COLON: {
+      parser_lex(parser);
       yp_token_t delimiter = parser->previous;
 
       switch (parser->current.type) {
@@ -5926,6 +5947,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         }
         case YP_TOKEN_IDENTIFIER: {
           yp_node_t *call = parse_expression(parser, binding_power, "Expected a value after '::'");
+
           call->as.call_node.call_operator = delimiter;
           call->as.call_node.receiver = node;
           return call;
@@ -5944,12 +5966,15 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       }
     }
     case YP_TOKEN_KEYWORD_RESCUE: {
+      parser_lex(parser);
       accept(parser, YP_TOKEN_NEWLINE);
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
 
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_BRACKET_LEFT: {
+      parser_lex(parser);
+
       yp_arguments_t arguments = yp_arguments();
       arguments.opening = parser->previous;
       arguments.arguments = yp_arguments_node_create(parser);
@@ -5988,7 +6013,6 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
   // operator. If it can, then we'll parse it using parse_expression_infix.
   binding_powers_t current_binding_powers;
   while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
-    parser_lex(parser);
     node = parse_expression_infix(parser, node, current_binding_powers.right);
   }
 
