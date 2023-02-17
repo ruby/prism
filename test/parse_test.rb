@@ -3628,9 +3628,9 @@ class ParseTest < Test::Unit::TestCase
       expression("foo"),
       nil,
       BRACKET_LEFT_RIGHT("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([expression("bar")]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]"
     )
 
@@ -3642,9 +3642,9 @@ class ParseTest < Test::Unit::TestCase
       expression("foo"),
       nil,
       BRACKET_LEFT_RIGHT_EQUAL("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([expression("bar"), expression("baz")]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]="
     )
 
@@ -3656,9 +3656,9 @@ class ParseTest < Test::Unit::TestCase
       expression("foo"),
       nil,
       BRACKET_LEFT_RIGHT("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([expression("bar"), expression("baz")]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]"
     )
 
@@ -3670,9 +3670,9 @@ class ParseTest < Test::Unit::TestCase
       expression("foo"),
       nil,
       BRACKET_LEFT_RIGHT_EQUAL("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([expression("bar"), expression("baz"), expression("qux")]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]="
     )
 
@@ -3685,16 +3685,16 @@ class ParseTest < Test::Unit::TestCase
         expression("foo"),
         nil,
         BRACKET_LEFT_RIGHT("["),
-        nil,
+        BRACKET_LEFT("["),
         ArgumentsNode([expression("bar")]),
-        nil,
+        BRACKET_RIGHT("]"),
         "[]"
       ),
       nil,
       BRACKET_LEFT_RIGHT("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([expression("baz")]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]"
     )
 
@@ -3707,16 +3707,16 @@ class ParseTest < Test::Unit::TestCase
         expression("foo"),
         nil,
         BRACKET_LEFT_RIGHT("["),
-        nil,
+        BRACKET_LEFT("["),
         ArgumentsNode([expression("bar")]),
-        nil,
+        BRACKET_RIGHT("]"),
         "[]"
       ),
       nil,
       BRACKET_LEFT_RIGHT_EQUAL("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([expression("baz"), expression("qux")]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]="
     )
 
@@ -3728,19 +3728,19 @@ class ParseTest < Test::Unit::TestCase
       expression("foo"),
       nil,
       BRACKET_LEFT_RIGHT("["),
-      nil,
+      BRACKET_LEFT("["),
       ArgumentsNode([
         CallNode(
           expression("bar"),
           nil,
           BRACKET_LEFT_RIGHT_EQUAL("["),
-          nil,
+          BRACKET_LEFT("["),
           ArgumentsNode([expression("baz"), expression("qux")]),
-          nil,
+          BRACKET_RIGHT("]"),
           "[]="
         ),
       ]),
-      nil,
+      BRACKET_RIGHT("]"),
       "[]"
     )
 

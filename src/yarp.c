@@ -350,7 +350,7 @@ yp_call_node_create(yp_parser_t *parser) {
 // Allocate and initialize a new CallNode node from an aref or an aset
 // expression.
 static yp_node_t *
-yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments) {
+yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_arguments_t *arguments) {
   yp_node_t *node = yp_call_node_create(parser);
 
   node->location.start = receiver->location.start;
@@ -359,8 +359,8 @@ yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *m
   node->as.call_node.receiver = receiver;
   node->as.call_node.message = (yp_token_t) {
     .type = YP_TOKEN_BRACKET_LEFT_RIGHT,
-    .start = message->start,
-    .end = message->end
+    .start = arguments->opening.start,
+    .end = arguments->opening.end
   };
 
   node->as.call_node.lparen = arguments->opening;
@@ -5935,15 +5935,15 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_BRACKET_LEFT: {
-      yp_token_t message = parser->previous;
-
       yp_arguments_t arguments = yp_arguments();
+      arguments.opening = parser->previous;
       arguments.arguments = yp_arguments_node_create(parser);
 
       parse_arguments(parser, arguments.arguments, YP_TOKEN_BRACKET_RIGHT);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
+      arguments.closing = parser->previous;
 
-      return yp_call_node_aref_create(parser, node, &message, &arguments);
+      return yp_call_node_aref_create(parser, node, &arguments);
     }
     default:
       return node;
