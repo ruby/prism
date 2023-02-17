@@ -4143,7 +4143,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
         arguments->arguments = NULL;
         arguments->closing = parser->previous;
       } else {
-        arguments->arguments = yp_node_arguments_node_create(parser);
+        arguments->arguments = yp_arguments_node_create(parser);
         parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
         arguments->closing = parser->previous;
@@ -4158,7 +4158,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
         // If we get here, then the subsequent token cannot be used as an infix
         // operator. In this case we assume the subsequent token is part of an
         // argument to this method call.
-        arguments->arguments = yp_node_arguments_node_create(parser);
+        arguments->arguments = yp_arguments_node_create(parser);
         parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
       } else {
         arguments->arguments = NULL;
@@ -4183,7 +4183,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments) {
     }
 
     accept(parser, YP_TOKEN_NEWLINE);
-    arguments->arguments =  yp_node_arguments_node_create(parser);
+    arguments->arguments =  yp_arguments_node_create(parser);
 
     yp_node_t *statements = NULL;
     if (parser->current.type != YP_TOKEN_BRACE_RIGHT) {
