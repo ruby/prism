@@ -10,6 +10,7 @@ module YARP
 
     test "AndNode" do
       assert_location(AndNode, "foo and bar")
+      assert_location(AndNode, "foo && bar")
     end
 
     test "ArgumentsNode" do
