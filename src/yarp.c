@@ -5650,30 +5650,26 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             //
             // When it was parsed in the prefix position, foo.bar was seen as a
             // method call with no arguments. Now we have an =, so we know it's
-            // a method call with an argument.
-            yp_token_t lparen = not_provided(parser);
-            yp_token_t rparen = not_provided(parser);
+            // a method call with an argument. In this case we will create the
+            // arguments node, parse the argument, and add it to the list.
+            node->as.call_node.arguments = yp_arguments_node_create(parser);
 
-            yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the call after =.");
-            yp_node_t *arguments = yp_arguments_node_create(parser);
-            yp_arguments_node_append(arguments, value);
+            yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value for the call after =.");
+            yp_arguments_node_append(node->as.call_node.arguments, argument);
 
-            yp_node_t *next_node = yp_node_call_node_create(
-              parser,
-              node->as.call_node.receiver,
-              &node->as.call_node.call_operator,
-              &token,
-              &lparen,
-              arguments,
-              &rparen
-            );
+            // The method name needs to change. If we previously had foo, we now
+            // need foo=. In this case we'll allocate a new owned string, copy
+            // the previous method name in, and append an =.
+            size_t length = yp_string_length(&node->as.call_node.name);
+            char *name = malloc(length + 1);
+            sprintf(name, "%.*s=", (int) length, yp_string_source(&node->as.call_node.name));
 
-            int length = node->as.call_node.message.end - node->as.call_node.message.start;
-            yp_string_t *name = &next_node->as.call_node.name;
-            yp_string_owned_init(name, malloc(length + 1), length + 1);
-            sprintf(name->as.owned.source, "%.*s=", length, node->as.call_node.message.start);
+            // Now switch the name to the new string.
+            yp_string_free(&node->as.call_node.name);
+            yp_string_owned_init(&node->as.call_node.name, name, length + 1);
 
-            return next_node;
+            node->as.call_node.message = token;
+            return node;
           }
 
           // If there is no call operator and the message is "[]" then this is
