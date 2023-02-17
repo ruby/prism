@@ -2505,7 +2505,7 @@ lex_token_type(yp_parser_t *parser) {
               return lex_numeric(parser);
             }
 
-            return YP_TOKEN_PLUS;
+            return YP_TOKEN_UPLUS;
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -2528,6 +2528,11 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, '>')) {
             lex_state_set(parser, YP_LEX_STATE_ENDFN);
             return YP_TOKEN_MINUS_GREATER;
+          }
+
+          if (lex_state_beg_p(parser)) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_UMINUS;
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -3115,6 +3120,7 @@ lex_token_type(yp_parser_t *parser) {
           parser->heredoc_end = parser->current.end;
 
           lex_mode_pop(parser);
+          lex_state_set(parser, YP_LEX_STATE_END);
           return YP_TOKEN_HEREDOC_END;
         }
       }
@@ -3688,12 +3694,16 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_SLASH] = LEFT_ASSOCIATIVE(BINDING_POWER_FACTOR),
   [YP_TOKEN_STAR] = LEFT_ASSOCIATIVE(BINDING_POWER_FACTOR),
 
+  // -@
+  [YP_TOKEN_UMINUS] = RIGHT_ASSOCIATIVE(BINDING_POWER_UMINUS),
+
   // **
   [YP_TOKEN_STAR_STAR] = RIGHT_ASSOCIATIVE(BINDING_POWER_EXPONENT),
 
-  // ! ~
+  // ! ~ +@
   [YP_TOKEN_BANG] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
   [YP_TOKEN_TILDE] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
+  [YP_TOKEN_UPLUS] = RIGHT_ASSOCIATIVE(BINDING_POWER_UNARY),
 
   // [
   [YP_TOKEN_BRACKET_LEFT] = LEFT_ASSOCIATIVE(BINDING_POWER_INDEX),
@@ -5657,7 +5667,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return node;
     }
-    case YP_TOKEN_MINUS: {
+    case YP_TOKEN_UMINUS: {
       parser_lex(parser);
 
       yp_token_t operator = parser->previous;
@@ -5666,7 +5676,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return node;
     }
-    case YP_TOKEN_PLUS: {
+    case YP_TOKEN_UPLUS: {
       parser_lex(parser);
 
       yp_token_t operator = parser->previous;

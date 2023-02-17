@@ -2923,7 +2923,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "unary -" do
-    assert_parses CallNode(expression("1"), nil, MINUS("-"), nil, nil, nil, nil, "-@"), "-1"
+    assert_parses CallNode(expression("1"), nil, UMINUS("-"), nil, nil, nil, nil, "-@"), "-1"
   end
 
   test "unary ~" do
@@ -4589,6 +4589,36 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def self.ensure\nend"
+  end
+
+  test "unary minus precedence" do
+    expected = CallNode(
+      expression("-foo"),
+      nil,
+      STAR("*"),
+      nil,
+      ArgumentsNode([expression("bar")]),
+      nil,
+      nil,
+      "*"
+    )
+
+    assert_parses expected, "-foo*bar"
+  end
+
+  test "unary plus precedence" do
+    expected = CallNode(
+      expression("+foo"),
+      nil,
+      STAR_STAR("**"),
+      nil,
+      ArgumentsNode([expression("bar")]),
+      nil,
+      nil,
+      "**"
+    )    
+
+    assert_parses expected, "+foo**bar"
   end
 
   private

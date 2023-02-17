@@ -290,6 +290,10 @@ tokens:
     comment: "~"
   - name: TILDE_AT
     comment: "~@"
+  - name: UMINUS
+    comment: "-@"
+  - name: UPLUS
+    comment: "+@"
   - name: WORDS_SEP
     comment: "a separator between words in a list"
   - name: __END__
