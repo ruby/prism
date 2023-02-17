@@ -5961,11 +5961,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
         case YP_TOKEN_IDENTIFIER: {
-          yp_node_t *call = parse_expression(parser, binding_power, "Expected a value after '::'");
+          parser_lex(parser);
 
-          call->as.call_node.call_operator = delimiter;
-          call->as.call_node.receiver = node;
-          return call;
+          // If we have an identifier following a '::' operator, then it is for
+          // sure a method call.
+          yp_arguments_t arguments = yp_arguments();
+          parse_arguments_list(parser, &arguments);
+          return yp_call_node_call_create(parser, node, &delimiter, &parser->previous, &arguments);
         }
         default: {
           uint32_t position = delimiter.end - parser->start;
