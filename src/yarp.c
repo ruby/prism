@@ -420,7 +420,7 @@ static yp_node_t *
 yp_call_node_not_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments) {
   yp_node_t *node = yp_call_node_create(parser);
 
-  node->location.start = receiver->location.start;
+  node->location.start = message->start;
   if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     node->location.end = arguments->closing.end;
   } else {
@@ -5163,15 +5163,20 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_token_t message = parser->previous;
       yp_arguments_t arguments = yp_arguments();
-      yp_node_t *receiver;
+      yp_node_t *receiver = NULL;
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         arguments.opening = parser->previous;
-        receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
 
-        if (!parser->recovering) {
-          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
+        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           arguments.closing = parser->previous;
+        } else {
+          receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
+
+          if (!parser->recovering) {
+            expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
+            arguments.closing = parser->previous;
+          }
         }
       } else {
         receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
