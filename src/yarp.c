@@ -523,6 +523,7 @@ yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token)
 // Initialize a new ClassVariableWriteNode node from a ClassVariableRead node.
 static yp_node_t *
 yp_class_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token_t *operator, yp_node_t *value) {
+  assert(node->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
   node->type = YP_NODE_CLASS_VARIABLE_WRITE_NODE;
 
   node->as.class_variable_write_node.name_loc = (yp_location_t) {
@@ -640,6 +641,45 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
       .end = token->end
     }
   };
+
+  return node;
+}
+
+// Allocate and initialize a new InstanceVariableReadNode node.
+static yp_node_t *
+yp_instance_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_INSTANCE_VARIABLE);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_INSTANCE_VARIABLE_READ_NODE,
+    .location = {
+      .start = token->start,
+      .end = token->end
+    }
+  };
+
+  return node;
+}
+
+// Initialize a new InstanceVariableWriteNode node from an InstanceVariableRead node.
+static yp_node_t *
+yp_instance_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token_t *operator, yp_node_t *value) {
+  assert(node->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
+  node->type = YP_NODE_INSTANCE_VARIABLE_WRITE_NODE;
+
+  node->as.instance_variable_write_node.name_loc = (yp_location_t) {
+    .start = node->location.start,
+    .end = node->location.end
+  };
+
+  node->as.instance_variable_write_node.operator_loc = (yp_location_t) {
+    .start = operator->start,
+    .end = operator->end
+  };
+
+  node->location.end = value->location.end;
+  node->as.instance_variable_write_node.value = value;
 
   return node;
 }
@@ -4422,7 +4462,7 @@ parse_string_part(yp_parser_t *parser) {
         // In this case an instance variable is being interpolated. We'll
         // create an instance variable read node.
         case YP_TOKEN_INSTANCE_VARIABLE:
-          return yp_node_instance_variable_read_create(parser, &parser->previous);
+          return yp_instance_variable_read_node_create(parser, &parser->previous);
         // In this case a class variable is being interpolated. We'll create a
         // class variable read node.
         case YP_TOKEN_CLASS_VARIABLE:
@@ -4696,7 +4736,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_imaginary_node_create(parser, &parser->previous);
     case YP_TOKEN_INSTANCE_VARIABLE:
       parser_lex(parser);
-      return yp_node_instance_variable_read_create(parser, &parser->previous);
+      return yp_instance_variable_read_node_create(parser, &parser->previous);
     case YP_TOKEN_INTEGER:
       parser_lex(parser);
       return yp_integer_node_create(parser, &parser->previous);
@@ -5003,7 +5043,7 @@ parse_expression_prefix(yp_parser_t *parser) {
                   receiver = yp_node_constant_read_create(parser, &identifier);
                   break;
                 case YP_TOKEN_INSTANCE_VARIABLE:
-                  receiver = yp_node_instance_variable_read_create(parser, &identifier);
+                  receiver = yp_instance_variable_read_node_create(parser, &identifier);
                   break;
                 case YP_TOKEN_CLASS_VARIABLE:
                   receiver = yp_class_variable_read_node_create(parser, &identifier);
@@ -5685,13 +5725,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           yp_node_destroy(parser, read);
           return result;
         }
-        case YP_NODE_INSTANCE_VARIABLE_READ: {
+        case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the instance variable after =.");
-          yp_node_t *read = node;
-
-          yp_node_t *result = yp_node_instance_variable_write_create(parser, &node->as.instance_variable_read.name, &token, value);
-          yp_node_destroy(parser, read);
-          return result;
+          yp_instance_variable_write_node_init(parser, node, &token, value);
+          return node;
         }
         case YP_NODE_CALL_NODE: {
           // If we have no arguments to the call node and we have an equals

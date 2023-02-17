@@ -759,25 +759,20 @@ nodes:
 
           1.0i
           ^^^^
-  - name: InstanceVariableRead
-    child_nodes:
-      - name: name
-        type: token
-    location: name
+  - name: InstanceVariableReadNode
     comment: |
       Represents referencing an instance variable.
 
           @foo
           ^^^^
-  - name: InstanceVariableWrite
+  - name: InstanceVariableWriteNode
     child_nodes:
-      - name: name
-        type: token
-      - name: operator
-        type: token
+      - name: name_loc
+        type: location
       - name: value
         type: node
-    location: name->value
+      - name: operator_loc
+        type: location
     comment: |
       Represents writing to an instance variable.
 

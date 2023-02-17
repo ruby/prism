@@ -1628,7 +1628,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with instance variable receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      InstanceVariableRead(INSTANCE_VARIABLE("@var")),
+      InstanceVariableReadNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,
@@ -2043,11 +2043,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "instance variable read" do
-    assert_parses InstanceVariableRead(INSTANCE_VARIABLE("@abc")), "@abc"
+    assert_parses InstanceVariableReadNode(), "@abc"
   end
 
   test "instance variable write" do
-    assert_parses InstanceVariableWrite(INSTANCE_VARIABLE("@abc"), EQUAL("="), expression("1")), "@abc = 1"
+    assert_parses InstanceVariableWriteNode(Location(0, 4), expression("1"), Location(5, 6)), "@abc = 1"
   end
 
   test "local variable write" do
