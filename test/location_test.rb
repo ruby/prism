@@ -116,6 +116,10 @@ module YARP
 
       assert_location(CallNode, "foo&.()")
       assert_location(CallNode, "foo&.(bar)")
+
+      assert_location(CallNode, "foo::()")
+      assert_location(CallNode, "foo::(bar)")
+      assert_location(CallNode, "foo::(bar, baz)")
     end
 
     test "NextNode" do

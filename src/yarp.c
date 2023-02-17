@@ -5969,6 +5969,14 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           parse_arguments_list(parser, &arguments);
           return yp_call_node_call_create(parser, node, &delimiter, &parser->previous, &arguments);
         }
+        case YP_TOKEN_PARENTHESIS_LEFT: {
+          // If we have a parenthesis following a '::' operator, then it is the
+          // method call shorthand. That would look like Foo::(bar).
+          yp_arguments_t arguments = yp_arguments();
+          parse_arguments_list(parser, &arguments);
+
+          return yp_call_node_shorthand_create(parser, node, &delimiter, &arguments);
+        }
         default: {
           uint32_t position = delimiter.end - parser->start;
           yp_diagnostic_list_append(&parser->error_list, "Expected identifier or constant after '::'", position);
