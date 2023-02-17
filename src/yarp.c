@@ -415,6 +415,28 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
   return node;
 }
 
+// Allocate and initialize a new CallNode node from a not expression.
+static yp_node_t *
+yp_call_node_not_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments) {
+  yp_node_t *node = yp_call_node_create(parser);
+
+  node->location.start = receiver->location.start;
+  if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
+    node->location.end = arguments->closing.end;
+  } else {
+    node->location.end = receiver->location.end;
+  }
+
+  node->as.call_node.receiver = receiver;
+  node->as.call_node.message = *message;
+  node->as.call_node.lparen = arguments->opening;
+  node->as.call_node.arguments = arguments->arguments;
+  node->as.call_node.rparen = arguments->closing;
+
+  yp_string_constant_init(&node->as.call_node.name, "!", 1);
+  return node;
+}
+
 // Allocate and initialize a new CallNode node from a unary operator expression.
 static yp_node_t *
 yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *receiver, const char *name) {
@@ -5138,30 +5160,24 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_KEYWORD_NOT: {
       parser_lex(parser);
-      yp_token_t operator_token = parser->previous;
 
-      yp_token_t lparen;
+      yp_token_t message = parser->previous;
+      yp_arguments_t arguments = yp_arguments();
+      yp_node_t *receiver;
+
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        lparen = parser->previous;
+        arguments.opening = parser->previous;
+        receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
+
+        if (!parser->recovering) {
+          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
+          arguments.closing = parser->previous;
+        }
       } else {
-        lparen = not_provided(parser);
+        receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
       }
 
-      yp_node_t *receiver = parse_expression(parser, BINDING_POWER_DEFINED, "Expected expression after `not`.");
-
-      yp_token_t rparen;
-      if (!parser->recovering && lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
-        rparen = parser->previous;
-      } else {
-        rparen = not_provided(parser);
-      }
-
-      yp_token_t call_operator = not_provided(parser);
-      yp_node_t *node = yp_node_call_node_create(parser, receiver, &call_operator, &operator_token, &lparen, NULL, &rparen);
-      yp_string_constant_init(&node->as.call_node.name, "!", 1);
-
-      return node;
+      return yp_call_node_not_create(parser, receiver, &message, &arguments);
     }
     case YP_TOKEN_KEYWORD_UNLESS:
       parser_lex(parser);
