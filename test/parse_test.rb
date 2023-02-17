@@ -630,11 +630,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "class variable read" do
-    assert_parses ClassVariableRead(CLASS_VARIABLE("@@abc")), "@@abc"
+    assert_parses ClassVariableReadNode(), "@@abc"
   end
 
   test "class variable write" do
-    assert_parses ClassVariableWrite(CLASS_VARIABLE("@@abc"), EQUAL("="), expression("1")), "@@abc = 1"
+    assert_parses ClassVariableWriteNode(Location(0, 5), expression("1"), Location(6, 7)), "@@abc = 1"
   end
 
   test "constant path" do
@@ -1646,7 +1646,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with class variable receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
-      ClassVariableRead(CLASS_VARIABLE("@@var")),
+      ClassVariableReadNode(),
       DOT("."),
       IDENTIFIER("a"),
       nil,

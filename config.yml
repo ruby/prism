@@ -486,25 +486,20 @@ nodes:
 
           class Foo end
           ^^^^^^^^^^^^^
-  - name: ClassVariableRead
-    child_nodes:
-      - name: name
-        type: token
-    location: name
+  - name: ClassVariableReadNode
     comment: |
       Represents referencing a class variable.
 
           @@foo
           ^^^^^
-  - name: ClassVariableWrite
+  - name: ClassVariableWriteNode
     child_nodes:
-      - name: name
-        type: token
-      - name: operator
-        type: token
+      - name: name_loc
+        type: location
       - name: value
         type: node
-    location: name->value
+      - name: operator_loc
+        type: location
     comment: |
       Represents writing to a class variable.
 
