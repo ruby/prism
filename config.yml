@@ -325,7 +325,6 @@ nodes:
     child_nodes:
       - name: arguments
         type: node[]
-    location: arguments
     comment: |
       Represents a set of arguments to a method or a keyword.
 
@@ -339,7 +338,6 @@ nodes:
         type: token
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -354,7 +352,6 @@ nodes:
         type: node
       - name: operator
         type: token?
-    location: key->value
     comment: |
       Represents a hash key/value pair.
 
@@ -366,7 +363,6 @@ nodes:
         type: node
       - name: operator_loc
         type: location
-    location: operator_loc->value
     comment: |
       Represents a splat in a hash literal.
 
@@ -416,7 +412,6 @@ nodes:
         type: token?
       - name: operator_loc
         type: location
-    location: operator_loc->name|operator_loc
     comment: |
       Represents a block parameter to a method, block, or lambda definition.
 
@@ -486,25 +481,20 @@ nodes:
 
           class Foo end
           ^^^^^^^^^^^^^
-  - name: ClassVariableRead
-    child_nodes:
-      - name: name
-        type: token
-    location: name
+  - name: ClassVariableReadNode
     comment: |
       Represents referencing a class variable.
 
           @@foo
           ^^^^^
-  - name: ClassVariableWrite
+  - name: ClassVariableWriteNode
     child_nodes:
-      - name: name
-        type: token
-      - name: operator
-        type: token
+      - name: name_loc
+        type: location
       - name: value
         type: node
-    location: name->value
+      - name: operator_loc
+        type: location
     comment: |
       Represents writing to a class variable.
 
@@ -768,25 +758,20 @@ nodes:
 
           1.0i
           ^^^^
-  - name: InstanceVariableRead
-    child_nodes:
-      - name: name
-        type: token
-    location: name
+  - name: InstanceVariableReadNode
     comment: |
       Represents referencing an instance variable.
 
           @foo
           ^^^^
-  - name: InstanceVariableWrite
+  - name: InstanceVariableWriteNode
     child_nodes:
-      - name: name
-        type: token
-      - name: operator
-        type: token
+      - name: name_loc
+        type: location
       - name: value
         type: node
-    location: name->value
+      - name: operator_loc
+        type: location
     comment: |
       Represents writing to an instance variable.
 

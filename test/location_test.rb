@@ -122,6 +122,22 @@ module YARP
       assert_location(CallNode, "foo::(bar, baz)")
     end
 
+    test "ClassVariableReadNode" do
+      assert_location(ClassVariableReadNode, "@@foo")
+    end
+
+    test "ClassVariableWriteNode" do
+      assert_location(ClassVariableWriteNode, "@@foo = bar")
+    end
+
+    test "InstanceVariableReadNode" do
+      assert_location(InstanceVariableReadNode, "@foo")
+    end
+
+    test "InstanceVariableWriteNode" do
+      assert_location(InstanceVariableWriteNode, "@foo = bar")
+    end
+
     test "NextNode" do
       assert_location(NextNode, "next")
       assert_location(NextNode, "next foo")
