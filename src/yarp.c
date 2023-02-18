@@ -4016,7 +4016,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
 
 // Parse an individual argument.
 static yp_node_t *
-parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
+parse_argument(yp_parser_t *parser, yp_node_t *arguments, bool parsed_double_splat_argument) {
   if (accept(parser, YP_TOKEN_DOT_DOT_DOT)) {
     if (!current_scope_has_local(parser, &parser->previous)) {
       yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
@@ -4033,8 +4033,11 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
       }
       return yp_node_star_node_create(parser, &previous, NULL);
     }
+    if (parsed_double_splat_argument) {
+      yp_diagnostic_list_append(&parser->error_list, "Unexpected splat argument after double splat.", parser->current.start - parser->start);
+    }
     yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
-    return yp_node_star_node_create(parser, &parser->previous, expression);
+    return yp_node_star_node_create(parser, &previous, expression);
   }
 
   return parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
@@ -4043,14 +4046,20 @@ parse_argument(yp_parser_t *parser, yp_node_t *arguments) {
 // Parse a list of arguments.
 static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
+  bool parsed_double_splat_argument = false;
+  bool parsed_block_argument = false;
+
   while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
     if (yp_arguments_node_size(arguments) > 0) {
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
 
+    if (parsed_block_argument) {
+      yp_diagnostic_list_append(&parser->error_list, "Unexpected argument after block argument.", parser->current.start - parser->start);
+    }
+
     yp_node_t *argument;
 
-    // start of kwargs
     if (parser->current.type == YP_TOKEN_LABEL) {
       yp_token_t opening = not_provided(parser);
       yp_token_t closing = not_provided(parser);
@@ -4062,8 +4071,18 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
           break;
         }
       }
+    } else if (accept(parser, YP_TOKEN_STAR_STAR)) {
+      yp_token_t operator = parser->previous;
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
+      argument = yp_node_keyword_star_node_create(parser, &operator, value);
+      parsed_double_splat_argument = true;
+    } else if (accept(parser, YP_TOKEN_AMPERSAND)) {
+      yp_token_t operator = parser->previous;
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
+      argument = yp_node_block_argument_node_create(parser, &operator, value);
+      parsed_block_argument = true;
     } else {
-      argument = parse_argument(parser, arguments);
+      argument = parse_argument(parser, arguments, parsed_double_splat_argument);
 
       if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
         // finish parsing the one we are part way through
