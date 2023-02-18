@@ -668,6 +668,30 @@ nodes:
             bar(...)
             ^^^^^^^^
           end
+  - name: KeywordStarNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: expression
+        type: node
+    location: operator->expression
+    comment: |
+      Represents keyword splat method arguments.
+
+          bar(**kwargs)
+          ^^^^^^^^^^^
+  - name: BlockArgumentNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: expression
+        type: node
+    location: operator->expression
+    comment: |
+      Represents block method arguments.
+
+          bar(&args)
+          ^^^^^^^^^^
   - name: ForwardingParameterNode
     comment: |
       Represents the use of the forwarding parameter in a method, block, or lambda declaration.

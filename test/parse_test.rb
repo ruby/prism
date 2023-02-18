@@ -604,6 +604,66 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a.b c, d"
   end
 
+  test "call with splat arguments" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [StarNode(
+           STAR("*"),
+           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "a"
+    )
+
+    assert_parses expected, "a(*args)"
+  end
+
+  test "call with double splat arguments" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [KeywordStarNode(
+           STAR_STAR("**"),
+           expression("kwargs")
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "a"
+    )
+
+    assert_parses expected, "a(**kwargs)"
+  end
+
+  test "call with block arguments" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [BlockArgumentNode(
+           AMPERSAND("&"),
+           expression("block")
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "a"
+    )
+
+    assert_parses expected, "a(&block)"
+  end
+
   test "character literal" do
     assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil, "a"), "?a"
   end
@@ -1458,7 +1518,10 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [StarNode(IDENTIFIER("rest"), CallNode(nil, nil, IDENTIFIER("rest"), nil, nil, nil, nil, "rest"))]
+        [StarNode(
+           STAR("*"),
+           CallNode(nil, nil, IDENTIFIER("rest"), nil, nil, nil, nil, "rest")
+         )]
       ),
       PARENTHESIS_RIGHT(")"),
       nil,
@@ -4636,7 +4699,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       "**"
-    )    
+    )
 
     assert_parses expected, "+foo**bar"
   end

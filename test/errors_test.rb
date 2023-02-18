@@ -250,6 +250,110 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "x.each { x end", ["Expected block beginning with '{' to end with '}'."]
   end
 
+  test "double splat followed by splat argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [KeywordStarNode(
+           STAR_STAR("**"),
+           CallNode(nil, nil, IDENTIFIER("kwargs"), nil, nil, nil, nil, "kwargs")
+         ),
+         StarNode(
+           STAR("*"),
+           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "a"
+    )
+
+    assert_errors expected, "a(**kwargs, *args)", ["Unexpected splat argument after double splat."]
+  end
+
+  test "arguments after block" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [BlockArgumentNode(
+           AMPERSAND("&"),
+           CallNode(nil, nil, IDENTIFIER("block"), nil, nil, nil, nil, "block")
+         ),
+         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "a"
+    )
+
+    assert_errors expected, "a(&block, foo)", ["Unexpected argument after block argument."]
+  end
+
+  test "arguments binding power for and" do
+    expected = AndNode(
+      CallNode(
+        nil,
+        nil,
+        IDENTIFIER("foo"),
+        PARENTHESIS_LEFT("("),
+        ArgumentsNode(
+          [StarNode(
+             STAR("*"),
+             CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")
+           ),
+           MissingNode()]
+        ),
+        MISSING(""),
+        nil,
+        "foo"
+      ),
+      CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
+      KEYWORD_AND("and")
+    )
+
+    assert_errors expected, "foo(*bar and baz)", [
+      "Expected a ',' to delimit arguments.",
+      "Expected to be able to parse an argument.",
+      "Expected a ')' to close the argument list."
+    ]
+  end
+
+
+  test "splat argument after keyword argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+              nil
+            )],
+           nil
+         ),
+         StarNode(
+           STAR("*"),
+           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "a"
+    )
+
+    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Expected a ',' to delimit arguments."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
