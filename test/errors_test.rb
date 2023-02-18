@@ -65,10 +65,10 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "pre execution missing {" do
     expected = PreExecutionNode(
-      KEYWORD_BEGIN_UPCASE("BEGIN"),
-      MISSING(""),
       Statements([expression("1")]),
-      BRACE_RIGHT("}")
+      Location(0, 5),
+      Location(5, 5),
+      Location(8, 9)
     )
 
     assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
@@ -76,8 +76,6 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "pre execution context" do
     expected = PreExecutionNode(
-      KEYWORD_BEGIN_UPCASE("BEGIN"),
-      BRACE_LEFT("{"),
       Statements([
         CallNode(
           expression("1"),
@@ -86,10 +84,13 @@ class ErrorsTest < Test::Unit::TestCase
           nil,
           ArgumentsNode([MissingNode()]),
           nil,
+          nil,
           "+"
         )
       ]),
-      BRACE_RIGHT("}")
+      Location(0, 5),
+      Location(6, 7),
+      Location(12, 13)
     )
 
     assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]
@@ -231,23 +232,22 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "block beginning with '{' and ending with 'end'" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, "x"),
+      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x"),
       DOT("."),
       IDENTIFIER("each"),
       nil,
-      ArgumentsNode(
-        [BlockNode(
-           BRACE_LEFT("{"),
-           nil,
-           Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, "x")]),
-           MISSING("")
-         )]
-      ),
       nil,
+      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        nil,
+        Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
+        MISSING("")
+      ),
       "each"
     )
 
-    assert_errors expected, "x.each { x end", ["expected block beginning with '{' to end with '}'."]
+    assert_errors expected, "x.each { x end", ["Expected block beginning with '{' to end with '}'."]
   end
 
   private

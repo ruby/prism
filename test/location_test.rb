@@ -42,7 +42,7 @@ module YARP
     end
 
     test "BlockNode" do
-      assert_location(BlockNode, "foo {}", 4...6) { |node| node.arguments.arguments.last }
+      assert_location(BlockNode, "foo {}", 4...6, &:block)
     end
 
     test "BlockParameterNode" do
@@ -111,6 +111,10 @@ module YARP
       assert_location(CallNode, "foo[bar]")
       assert_location(CallNode, "foo[bar, baz]")
 
+      assert_location(CallNode, "foo[] = 1")
+      assert_location(CallNode, "foo[bar] = 1")
+      assert_location(CallNode, "foo[bar, baz] = 1")
+
       assert_location(CallNode, "foo.()")
       assert_location(CallNode, "foo.(bar)")
 
@@ -130,6 +134,11 @@ module YARP
       assert_location(ClassVariableWriteNode, "@@foo = bar")
     end
 
+    test "ForwardingSuperNode" do
+      assert_location(ForwardingSuperNode, "super")
+      assert_location(ForwardingSuperNode, "super {}")
+    end
+
     test "InstanceVariableReadNode" do
       assert_location(InstanceVariableReadNode, "@foo")
     end
@@ -145,9 +154,33 @@ module YARP
       assert_location(NextNode, "next(foo)")
     end
 
+    test "PostExecutionNode" do
+      assert_location(PostExecutionNode, "END { foo }")
+    end
+
+    test "PreExecutionNode" do
+      assert_location(PreExecutionNode, "BEGIN { foo }")
+    end
+
+    test "SuperNode" do
+      assert_location(SuperNode, "super foo")
+      assert_location(SuperNode, "super foo, bar")
+
+      assert_location(SuperNode, "super()")
+      assert_location(SuperNode, "super(foo)")
+      assert_location(SuperNode, "super(foo, bar)")
+
+      assert_location(SuperNode, "super() {}")
+    end
+
     test "UndefNode" do
       assert_location(UndefNode, "undef foo")
       assert_location(UndefNode, "undef foo, bar")
+    end
+
+    test "XStringNode" do
+      assert_location(XStringNode, "`foo`")
+      assert_location(XStringNode, "%x[foo]")
     end
 
     private

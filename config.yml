@@ -290,6 +290,10 @@ tokens:
     comment: "~"
   - name: TILDE_AT
     comment: "~@"
+  - name: UMINUS
+    comment: "-@"
+  - name: UPLUS
+    comment: "+@"
   - name: WORDS_SEP
     comment: "a separator between words in a list"
   - name: __END__
@@ -443,6 +447,8 @@ nodes:
         type: node?
       - name: closing
         type: token?
+      - name: block
+        type: node?
       - name: name
         type: string
     comment: |
@@ -670,6 +676,9 @@ nodes:
                   ^^^
           end
   - name: ForwardingSuperNode
+    child_nodes:
+      - name: block
+        type: node?
     comment: |
       Represents the use of the `super` keyword without parentheses or arguments.
 
@@ -1063,15 +1072,14 @@ nodes:
           ^^^^^^^^^
   - name: PostExecutionNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: opening
-        type: token
       - name: statements
         type: node
-      - name: closing
-        type: token
-    location: keyword->closing
+      - name: keyword_loc
+        type: location
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents the use of the `END` keyword.
 
@@ -1079,15 +1087,14 @@ nodes:
           ^^^^^^^^^^^^^
   - name: PreExecutionNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: opening
-        type: token
       - name: statements
         type: node
-      - name: closing
-        type: token
-    location: keyword->closing
+      - name: keyword_loc
+        type: location
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents the use of the `END` keyword.
 
@@ -1354,7 +1361,9 @@ nodes:
         type: node?
       - name: rparen
         type: token?
-    location: keyword->rparen|arguments|lparen|keyword
+      - name: block
+        type: node?
+    location: keyword->block|rparen|arguments|lparen|keyword
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.
 
@@ -1478,7 +1487,6 @@ nodes:
         type: token
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents an xstring literal with no interpolation.
 
