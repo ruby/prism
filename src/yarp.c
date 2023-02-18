@@ -4014,35 +4014,6 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
   return true;
 }
 
-// Parse an individual argument.
-static yp_node_t *
-parse_argument(yp_parser_t *parser, yp_node_t *arguments, bool parsed_double_splat_argument) {
-  if (accept(parser, YP_TOKEN_DOT_DOT_DOT)) {
-    if (!current_scope_has_local(parser, &parser->previous)) {
-      yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
-    }
-    return yp_forwarding_arguments_node_create(parser, &parser->previous);
-  }
-
-  if (accept(parser, YP_TOKEN_STAR)) {
-    yp_token_t previous = parser->previous;
-
-    if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_COMMA)) {
-      if (!current_scope_has_local(parser, &parser->previous)) {
-        yp_diagnostic_list_append(&parser->error_list, "unexpected * when parent method is not forwarding.", parser->previous.start - parser->start);
-      }
-      return yp_node_star_node_create(parser, &previous, NULL);
-    }
-    if (parsed_double_splat_argument) {
-      yp_diagnostic_list_append(&parser->error_list, "Unexpected splat argument after double splat.", parser->current.start - parser->start);
-    }
-    yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
-    return yp_node_star_node_create(parser, &previous, expression);
-  }
-
-  return parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
-}
-
 // Parse a list of arguments.
 static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
@@ -4060,49 +4031,95 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
 
     yp_node_t *argument;
 
-    if (parser->current.type == YP_TOKEN_LABEL) {
-      yp_token_t opening = not_provided(parser);
-      yp_token_t closing = not_provided(parser);
+    switch (parser->current.type) {
+      case YP_TOKEN_LABEL: {
+        yp_token_t opening = not_provided(parser);
+        yp_token_t closing = not_provided(parser);
 
-      argument = yp_node_hash_node_create(parser, &opening, &closing);
+        argument = yp_node_hash_node_create(parser, &opening, &closing);
 
-      while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-        if (!parse_assoc(parser, argument)) {
-          break;
+        while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+          if (!parse_assoc(parser, argument)) {
+            break;
+          }
         }
+
+        break;
       }
-    } else if (accept(parser, YP_TOKEN_STAR_STAR)) {
-      yp_token_t operator = parser->previous;
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-      argument = yp_node_keyword_star_node_create(parser, &operator, value);
-      parsed_double_splat_argument = true;
-    } else if (accept(parser, YP_TOKEN_AMPERSAND)) {
-      yp_token_t operator = parser->previous;
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-      argument = yp_node_block_argument_node_create(parser, &operator, value);
-      parsed_block_argument = true;
-    } else {
-      argument = parse_argument(parser, arguments, parsed_double_splat_argument);
-
-      if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-        // finish parsing the one we are part way through
+      case YP_TOKEN_STAR_STAR: {
+        parser_lex(parser);
         yp_token_t operator = parser->previous;
-        yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
-        argument = yp_assoc_node_create(parser, argument, &operator, value);
+        yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
 
-        // Then parse more if we have a comma
-        if (accept(parser, YP_TOKEN_COMMA)) {
-          yp_token_t opening = not_provided(parser);
-          yp_token_t closing = not_provided(parser);
+        argument = yp_node_keyword_star_node_create(parser, &operator, value);
+        parsed_double_splat_argument = true;
+        break;
+      }
+      case YP_TOKEN_AMPERSAND: {
+        parser_lex(parser);
+        yp_token_t operator = parser->previous;
+        yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
 
-          argument = yp_node_hash_node_create(parser, &opening, &closing);
+        argument = yp_node_block_argument_node_create(parser, &operator, value);
+        parsed_block_argument = true;
+        break;
+      }
+      case YP_TOKEN_DOT_DOT_DOT: {
+        parser_lex(parser);
 
-          while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-            if (!parse_assoc(parser, argument)) {
-              break;
+        if (!current_scope_has_local(parser, &parser->previous)) {
+          yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
+        }
+
+        argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
+        break;
+      }
+      case YP_TOKEN_STAR: {
+        parser_lex(parser);
+        yp_token_t previous = parser->previous;
+
+        if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_COMMA)) {
+          if (!current_scope_has_local(parser, &parser->previous)) {
+            yp_diagnostic_list_append(&parser->error_list, "unexpected * when parent method is not forwarding.", parser->previous.start - parser->start);
+          }
+
+          argument = yp_node_star_node_create(parser, &previous, NULL);
+        } else {
+          if (parsed_double_splat_argument) {
+            yp_diagnostic_list_append(&parser->error_list, "Unexpected splat argument after double splat.", parser->current.start - parser->start);
+          }
+
+          yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
+          argument = yp_node_star_node_create(parser, &previous, expression);
+        }
+
+        break;
+      }
+      default: {
+        argument = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+
+        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+          // finish parsing the one we are part way through
+          yp_token_t operator = parser->previous;
+          yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+          argument = yp_assoc_node_create(parser, argument, &operator, value);
+
+          // Then parse more if we have a comma
+          if (accept(parser, YP_TOKEN_COMMA)) {
+            yp_token_t opening = not_provided(parser);
+            yp_token_t closing = not_provided(parser);
+
+            argument = yp_node_hash_node_create(parser, &opening, &closing);
+
+            while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+              if (!parse_assoc(parser, argument)) {
+                break;
+              }
             }
           }
         }
+
+        break;
       }
     }
 
