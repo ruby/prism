@@ -664,6 +664,32 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a(&block)"
   end
 
+  test "call with arg followed by kwarg" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("some_func"),
+      nil,
+      ArgumentsNode(
+        [IntegerNode(),
+         HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("kwarg"), LABEL_END(":")),
+              IntegerNode(),
+              nil
+            )],
+           nil
+         )]
+      ),
+      nil,
+      nil,
+      "some_func"
+    )
+
+    assert_parses expected, "some_func 1, kwarg: 2"
+  end
+
   test "character literal" do
     assert_parses StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil, "a"), "?a"
   end
