@@ -1559,6 +1559,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a(*); b(*); end"
   end
 
+  test "method call in multiple lines" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo(:a,\n\n\t\s:b\n)"
+  end
+
   test "def with identifier receiver" do
     expected = DefNode(
       KEYWORD_DEF("def"),
