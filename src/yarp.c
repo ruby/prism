@@ -4791,12 +4791,15 @@ parse_expression_prefix(yp_parser_t *parser) {
           // [*splat]
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_star_node_create(parser, &parser->previous, expression);
+        } else if (parser->current.type == YP_TOKEN_BRACKET_RIGHT) {
+          break;
         } else {
           element = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an element for the array.");
         }
 
         yp_array_node_append(array, element);
         if (element->type == YP_NODE_MISSING_NODE) break;
+        while (accept(parser, YP_TOKEN_NEWLINE));
       }
 
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
