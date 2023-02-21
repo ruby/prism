@@ -4066,6 +4066,44 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "x.reduce(0) { |x, memo| memo += x }"
   end
 
+  test "method call with block with one argument and statement" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("x"))],
+          [],
+          nil,
+          [],
+          nil,
+          nil
+        ),
+        Statements(
+          [CallNode(
+             nil,
+             nil,
+             IDENTIFIER("puts"),
+             nil,
+             ArgumentsNode([LocalVariableRead(IDENTIFIER("x"))]),
+             nil,
+             nil,
+             "puts"
+           )]
+        ),
+        BRACE_RIGHT("}")
+      ),
+      "foo"
+    )
+
+    assert_parses expected, "foo { |x| puts x}"
+  end
+
   test "def + without parentheses" do
     expected = DefNode(
       KEYWORD_DEF("def"),

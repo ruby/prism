@@ -2562,6 +2562,9 @@ lex_token_type(yp_parser_t *parser) {
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
+            if (lex_state_p(parser, YP_LEX_STATE_ARG)) {
+              parser->command_start = true;
+            }
             lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           }
 
@@ -4355,7 +4358,11 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
         // operator. In this case we assume the subsequent token is part of an
         // argument to this method call.
         arguments->arguments = yp_arguments_node_create(parser);
-        parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
+        if (parser->current_context->context == YP_CONTEXT_BLOCK_BRACES) {
+          parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF|YP_TOKEN_BRACE_RIGHT);
+        } else {
+          parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
+        }
       }
 
       break;
