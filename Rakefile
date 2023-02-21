@@ -53,13 +53,10 @@ end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
-if RbConfig::CONFIG["host_os"] =~ /darwin/
-  so_ext = "dylib"
-else
-  so_ext = "so"
-end
-CLOBBER << "build/librubyparser.#{so_ext}"
-CLOBBER << "lib/yarp.so"
+
+dylib_extension = RbConfig::CONFIG["host_os"].match?(/darwin/) ? "dylib" : "so"
+CLOBBER << "build/librubyparser.#{dylib_extension}"
+CLOBBER << "lib/yarp.#{dylib_extension}"
 
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"
@@ -78,13 +75,6 @@ task lex: :compile do
   results = { passing: [], failing: [] }
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
 
-  accepted_encodings = [
-    Encoding::ASCII_8BIT,
-    Encoding::ISO_8859_9,
-    Encoding::US_ASCII,
-    Encoding::UTF_8
-  ]
-
   filepaths =
     if ENV["FILEPATHS"]
       Dir[ENV["FILEPATHS"]]
@@ -95,27 +85,13 @@ task lex: :compile do
   filepaths.each do |filepath|
     source = File.read(filepath)
 
-    # If this file can't be parsed at all, then don't try to compare it to
-    # ripper's output.
-    ripper = Ripper.new(source).tap(&:parse)
-    next if ripper.error?
-
-    # If this file has an encoding that we don't support, then don't try to
-    # compare it to ripper's output.
-    unless accepted_encodings.include?(ripper.encoding)
+    if YARP.lex_ripper(source) == YARP.lex_compat(source)
+      print colorize.call(32, ".")
+      results[:passing] << filepath
+    else
       print colorize.call(31, "E")
       results[:failing] << filepath
-      next
     end
-
-    result =
-      YARP.lex_ripper(source).zip(YARP.lex_compat(source)).all? do |(ripper, yarp)|
-        break false if yarp.nil?
-        ripper == yarp
-      end
-
-    print result ? colorize.call(32, ".") : colorize.call(31, "E")
-    results[result ? :passing : :failing] << filepath
   end
 
   puts "\n\nPASSING=#{results[:passing].length}\nFAILING=#{results[:failing].length}"

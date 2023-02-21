@@ -6430,6 +6430,7 @@ yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_dec
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser) {
   yp_diagnostic_list_free(&parser->error_list);
+  yp_diagnostic_list_free(&parser->warning_list);
   yp_list_free(&parser->comment_list);
 }
 
