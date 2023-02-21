@@ -2211,14 +2211,6 @@ lex_token_type(yp_parser_t *parser) {
           // fallthrough
         }
 
-        // case '\n':
-        //   if (lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL)) {
-        //     parser->command_start = false;
-        //   } else {
-        //     lex_state_set(parser, YP_LEX_STATE_BEG);
-        //     parser->command_start = true;
-        //   }
-
         case '\n': {
           bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
 
