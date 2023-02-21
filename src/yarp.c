@@ -4317,7 +4317,9 @@ parse_block(yp_parser_t *parser) {
   yp_node_t *arguments = NULL;
   if (accept(parser, YP_TOKEN_PIPE)) {
     arguments = parse_parameters(parser, false);
-    expect(parser, YP_TOKEN_PIPE, "Expected block arguements to end with '|'.");
+
+    parser->command_start = true;
+    expect(parser, YP_TOKEN_PIPE, "Expected block arguments to end with '|'.");
   }
 
   accept(parser, YP_TOKEN_NEWLINE);
