@@ -4042,6 +4042,8 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
 
+    while (accept(parser, YP_TOKEN_NEWLINE));
+
     if (parsed_block_argument) {
       yp_diagnostic_list_append(&parser->error_list, "Unexpected argument after block argument.", parser->current.start - parser->start);
     }
@@ -4140,6 +4142,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       }
     }
 
+    while (accept(parser, YP_TOKEN_NEWLINE));
     yp_arguments_node_append(arguments, argument);
     if (argument->type == YP_NODE_MISSING_NODE) break;
   }
