@@ -2201,6 +2201,7 @@ lex_token_type(yp_parser_t *parser) {
             parser->current.end++;
           }
           (void) match(parser, '\n');
+          parser->command_start = previous_command_start;
           return YP_TOKEN_COMMENT;
 
         case '\r': {
@@ -2216,6 +2217,7 @@ lex_token_type(yp_parser_t *parser) {
 
           if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
             // This is an ignored newline.
+            parser->command_start = previous_command_start;
           } else {
             // This is a normal newline.
             lex_state_set(parser, YP_LEX_STATE_BEG);
