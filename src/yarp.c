@@ -2211,22 +2211,34 @@ lex_token_type(yp_parser_t *parser) {
           // fallthrough
         }
 
-        case '\n':
-          if (lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL)) {
-            parser->command_start = false;
+        // case '\n':
+        //   if (lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL)) {
+        //     parser->command_start = false;
+        //   } else {
+        //     lex_state_set(parser, YP_LEX_STATE_BEG);
+        //     parser->command_start = true;
+        //   }
+
+        case '\n': {
+          bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
+
+          if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
+            // This is an ignored newline.
           } else {
+            // This is a normal newline.
             lex_state_set(parser, YP_LEX_STATE_BEG);
             parser->command_start = true;
-          }
 
-          // If the special resume flag is set, then we need to jump ahead.
-          if (parser->heredoc_end != NULL) {
-            assert(parser->heredoc_end <= parser->end);
-            parser->next_start = parser->heredoc_end;
-            parser->heredoc_end = NULL;
+            // If the special resume flag is set, then we need to jump ahead.
+            if (parser->heredoc_end != NULL) {
+              assert(parser->heredoc_end <= parser->end);
+              parser->next_start = parser->heredoc_end;
+              parser->heredoc_end = NULL;
+            }
           }
 
           return YP_TOKEN_NEWLINE;
+        }
 
         // ,
         case ',':
@@ -2277,8 +2289,12 @@ lex_token_type(yp_parser_t *parser) {
         case '{':
           if (parser->previous.type == YP_TOKEN_MINUS_GREATER) {
             // This { begins a lambda
+            parser->command_start = true;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
             return YP_TOKEN_LAMBDA_BEGIN;
-          } else if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
+          }
+
+          if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
             // This { begins a hash literal
             lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           } else if (lex_state_p(parser, YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_END | YP_LEX_STATE_ENDFN)) {
@@ -2290,9 +2306,8 @@ lex_token_type(yp_parser_t *parser) {
             parser->command_start = true;
             lex_state_set(parser, YP_LEX_STATE_BEG);
           } else {
-            // This { begins a block
-            parser->command_start = true;
-            lex_state_set(parser, YP_LEX_STATE_BEG);
+            // This { begins a hash literal
+            lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           }
 
           yp_state_stack_push(&parser->do_loop_stack, false);
@@ -3954,8 +3969,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   return statements;
 }
 
-// parse hash assocs either in method keyword arguments
-// or in hash literals.
+// Parse hash assocs either in method keyword arguments or in hash literals.
 static bool
 parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
   while (accept(parser, YP_TOKEN_NEWLINE));
@@ -3965,6 +3979,13 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
   }
 
   while (accept(parser, YP_TOKEN_NEWLINE));
+
+  // If we hit a }, then we're done parsing the hash. Note that this is after
+  // parsing the comma, so that we can have a trailing comma.
+  if (match_type_p(parser, YP_TOKEN_BRACE_RIGHT)) {
+    return true;
+  }
+
   yp_node_t *element;
 
   switch (parser->current.type) {
@@ -4792,6 +4813,11 @@ parse_expression_prefix(yp_parser_t *parser) {
           while (accept(parser, YP_TOKEN_NEWLINE));
         }
 
+        // If we have a right bracket immediately following a comma, this is
+        // allowed since it's a trailing comma. In this case we can break out of
+        // the loop.
+        if (match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) break;
+
         yp_node_t *element;
 
         if (accept(parser, YP_TOKEN_STAR)) {
@@ -4804,6 +4830,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
         yp_array_node_append(array, element);
         if (element->type == YP_NODE_MISSING_NODE) break;
+        while (accept(parser, YP_TOKEN_NEWLINE));
       }
 
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
@@ -5904,13 +5931,18 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         }
         case YP_NODE_LOCAL_VARIABLE_READ: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
-          yp_node_t *read = node;
 
           yp_token_t name = node->as.local_variable_read.name;
           yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
-          yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
-          yp_node_destroy(parser, read);
-          return result;
+
+          node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
+          node->location.end = value->location.end;
+
+          node->as.local_variable_write.name = name;
+          node->as.local_variable_write.operator = token;
+          node->as.local_variable_write.value = value;
+
+          return node;
         }
         case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the instance variable after =.");
@@ -5936,14 +5968,18 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
               // method call with no receiver and no arguments. Now we have an
               // =, so we know it's a local variable write.
               yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
-              yp_node_t *read = node;
 
               yp_token_t name = node->as.call_node.message;
               yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
-              yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
-              yp_node_destroy(parser, read);
-              return result;
+              node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
+              node->location.end = value->location.end;
+
+              node->as.local_variable_write.name = name;
+              node->as.local_variable_write.operator = token;
+              node->as.local_variable_write.value = value;
+
+              return node;
             }
 
             // When we get here, we have a method call, because it was

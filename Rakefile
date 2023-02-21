@@ -92,18 +92,6 @@ task lex: :compile do
       Dir["vendor/spec/**/*.rb"]
     end
 
-  # There are a couple of files that always cause infinite loops or segfaults.
-  # So we have to skip them for now.
-  filepaths.reject! do |filepath|
-    if filepath == "vendor/spec/library/abbrev/abbrev_spec.rb" || filepath.start_with?("vendor/spec/core/range/")
-      print colorize.call(31, "E")
-      results[:failing] << filepath
-      true
-    else
-      false
-    end
-  end
-
   filepaths.each do |filepath|
     source = File.read(filepath)
 
