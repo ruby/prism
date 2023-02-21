@@ -3950,8 +3950,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
   return statements;
 }
 
-// parse hash assocs either in method keyword arguments
-// or in hash literals.
+// Parse hash assocs either in method keyword arguments or in hash literals.
 static bool
 parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
   while (accept(parser, YP_TOKEN_NEWLINE));
@@ -5897,13 +5896,18 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         }
         case YP_NODE_LOCAL_VARIABLE_READ: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
-          yp_node_t *read = node;
 
           yp_token_t name = node->as.local_variable_read.name;
           yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
-          yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
-          yp_node_destroy(parser, read);
-          return result;
+
+          node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
+          node->location.end = value->location.end;
+
+          node->as.local_variable_write.name = name;
+          node->as.local_variable_write.operator = token;
+          node->as.local_variable_write.value = value;
+
+          return node;
         }
         case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the instance variable after =.");
@@ -5929,14 +5933,18 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
               // method call with no receiver and no arguments. Now we have an
               // =, so we know it's a local variable write.
               yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
-              yp_node_t *read = node;
 
               yp_token_t name = node->as.call_node.message;
               yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
 
-              yp_node_t *result = yp_node_local_variable_write_create(parser, &name, &token, value);
-              yp_node_destroy(parser, read);
-              return result;
+              node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
+              node->location.end = value->location.end;
+
+              node->as.local_variable_write.name = name;
+              node->as.local_variable_write.operator = token;
+              node->as.local_variable_write.value = value;
+
+              return node;
             }
 
             // When we get here, we have a method call, because it was
