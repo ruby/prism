@@ -13,13 +13,14 @@ yp_diagnostic_list_append(yp_list_t *list, const char *message, uint32_t positio
 // Deallocate the internal state of the given diagnostic list.
 void
 yp_diagnostic_list_free(yp_list_t *list) {
-  yp_list_node_t *node = list->head;
-  yp_list_node_t *next;
+  yp_list_node_t *node, *next;
 
-  while (node != NULL) {
+  for (node = list->head; node != NULL; node = next) {
     next = node->next;
-    yp_string_free(&((yp_diagnostic_t *) node)->message);
-    free(node);
-    node = next;
+
+    yp_diagnostic_t *diagnostic = (yp_diagnostic_t *) node;
+    yp_string_free(&diagnostic->message);
+
+    free(diagnostic);
   }
 }

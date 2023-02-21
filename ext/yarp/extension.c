@@ -128,7 +128,7 @@ lex_source(source_t *source) {
   };
 
   parser.lex_callback = &lex_callback;
-  yp_parse(&parser);
+  yp_node_destroy(&parser, yp_parse(&parser));
   yp_parser_free(&parser);
 
   return ary;
