@@ -2211,18 +2211,26 @@ lex_token_type(yp_parser_t *parser) {
           // fallthrough
         }
 
-        case '\n':
-          lex_state_set(parser, YP_LEX_STATE_BEG);
-          parser->command_start = true;
+        case '\n': {
+          bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
 
-          // If the special resume flag is set, then we need to jump ahead.
-          if (parser->heredoc_end != NULL) {
-            assert(parser->heredoc_end <= parser->end);
-            parser->next_start = parser->heredoc_end;
-            parser->heredoc_end = NULL;
+          if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
+            // This is an ignored newline.
+          } else {
+            // This is a normal newline.
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            parser->command_start = true;
+
+            // If the special resume flag is set, then we need to jump ahead.
+            if (parser->heredoc_end != NULL) {
+              assert(parser->heredoc_end <= parser->end);
+              parser->next_start = parser->heredoc_end;
+              parser->heredoc_end = NULL;
+            }
           }
 
           return YP_TOKEN_NEWLINE;
+        }
 
         // ,
         case ',':
@@ -2273,8 +2281,12 @@ lex_token_type(yp_parser_t *parser) {
         case '{':
           if (parser->previous.type == YP_TOKEN_MINUS_GREATER) {
             // This { begins a lambda
+            parser->command_start = true;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
             return YP_TOKEN_LAMBDA_BEGIN;
-          } else if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
+          }
+
+          if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
             // This { begins a hash literal
             lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           } else if (lex_state_p(parser, YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_END | YP_LEX_STATE_ENDFN)) {
@@ -2286,9 +2298,8 @@ lex_token_type(yp_parser_t *parser) {
             parser->command_start = true;
             lex_state_set(parser, YP_LEX_STATE_BEG);
           } else {
-            // This { begins a block
-            parser->command_start = true;
-            lex_state_set(parser, YP_LEX_STATE_BEG);
+            // This { begins a hash literal
+            lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           }
 
           yp_state_stack_push(&parser->do_loop_stack, false);
@@ -3960,6 +3971,13 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
   }
 
   while (accept(parser, YP_TOKEN_NEWLINE));
+
+  // If we hit a }, then we're done parsing the hash. Note that this is after
+  // parsing the comma, so that we can have a trailing comma.
+  if (match_type_p(parser, YP_TOKEN_BRACE_RIGHT)) {
+    return true;
+  }
+
   yp_node_t *element;
 
   switch (parser->current.type) {
@@ -4784,14 +4802,17 @@ parse_expression_prefix(yp_parser_t *parser) {
           while (accept(parser, YP_TOKEN_NEWLINE));
         }
 
+        // If we have a right bracket immediately following a comma, this is
+        // allowed since it's a trailing comma. In this case we can break out of
+        // the loop.
+        if (match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) break;
+
         yp_node_t *element;
 
         if (accept(parser, YP_TOKEN_STAR)) {
           // [*splat]
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_star_node_create(parser, &parser->previous, expression);
-        } else if (parser->current.type == YP_TOKEN_BRACKET_RIGHT) {
-          break;
         } else {
           element = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an element for the array.");
         }
