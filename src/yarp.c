@@ -6426,12 +6426,25 @@ yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_dec
   parser->encoding_decode_callback = callback;
 }
 
+// Free all of the memory associated with the comment list.
+static inline void
+yp_comment_list_free(yp_list_t *list) {
+  yp_list_node_t *node, *next;
+
+  for (node = list->head; node != NULL; node = next) {
+    next = node->next;
+
+    yp_comment_t *comment = (yp_comment_t *) node;
+    free(comment);
+  }
+}
+
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser) {
   yp_diagnostic_list_free(&parser->error_list);
   yp_diagnostic_list_free(&parser->warning_list);
-  yp_list_free(&parser->comment_list);
+  yp_comment_list_free(&parser->comment_list);
 }
 
 // Get the next token type and set its value on the current pointer.
