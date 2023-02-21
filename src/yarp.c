@@ -5996,7 +5996,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             // need foo=. In this case we'll allocate a new owned string, copy
             // the previous method name in, and append an =.
             size_t length = yp_string_length(&node->as.call_node.name);
-            char *name = malloc(length + 1);
+            char *name = malloc(length + 2);
             sprintf(name, "%.*s=", (int) length, yp_string_source(&node->as.call_node.name));
 
             // Now switch the name to the new string.
