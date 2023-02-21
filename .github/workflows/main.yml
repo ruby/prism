@@ -22,3 +22,20 @@ jobs:
 
     - name: Run Ruby tests
       run: bundle exec rake
+
+  memcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: sudo apt-get install -y valgrind
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+
+    - name: Run Ruby tests with valgrind
+      run: bundle exec rake test:valgrind

@@ -3,6 +3,9 @@
 require "rake/extensiontask"
 require "rake/testtask"
 require "rake/clean"
+require "ruby_memcheck"
+
+RubyMemcheck.config(binary_name: "yarp")
 
 task compile: :make
 
@@ -13,10 +16,16 @@ Rake::ExtensionTask.new(:compile) do |ext|
   ext.gem_spec = Gem::Specification.load("yarp.gemspec")
 end
 
-Rake::TestTask.new(test: :compile) do |t|
+test_config = lambda do |t|
   t.libs << "test"
   t.libs << "lib"
   t.test_files = FileList["test/**/*_test.rb"]
+end
+
+Rake::TestTask.new(test: :compile, &test_config)
+
+namespace :test do
+  RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
 end
 
 task default: :test
