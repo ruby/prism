@@ -27,7 +27,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: sudo apt-get install -y valgrind
+    - name: Install valgrind from source
+      run: |
+        sudo apt-get install -y libc6-dbg
+        wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
+        tar xvf valgrind-3.20.0.tar.bz2
+        cd valgrind-3.20.0
+        ./configure
+        make
+        sudo make install
 
     - uses: actions/checkout@v2
 
