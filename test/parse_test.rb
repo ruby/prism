@@ -2037,6 +2037,54 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-EOF\n  a\n  b\nEOF\n"
   end
 
+  test "heredocs with single quotes" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-'EOF'"),
+      [StringNode(nil, STRING_CONTENT("  a \#{1}\n"), nil, "  a \#{1}\n")],
+      HEREDOC_END("EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-'EOF'\n  a \#{1}\nEOF\n"
+  end
+
+  test "heredocs with double quotes" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-\"EOF\""),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-\"EOF\"\n  a\n\#{b}\nEOF\n"
+  end
+
+  test "heredocs with backticks" do
+    expected = InterpolatedXStringNode(
+      HEREDOC_START("<<-`EOF`"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n")
+    )
+
+    assert_parses expected, "<<-`EOF`\n  a\n\#{b}\nEOF\n"
+  end
+
   test "heredocs with interpolation" do
     expected = HeredocNode(
       HEREDOC_START("<<-EOF"),
