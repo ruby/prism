@@ -2394,17 +2394,23 @@ lex_token_type(yp_parser_t *parser) {
               const char *end = parser->current.end;
 
               yp_heredoc_quote_t quote = YP_HEREDOC_QUOTE_NONE;
+              yp_heredoc_indent_t indent = YP_HEREDOC_INDENT_NONE;
 
-              (void) (match(parser, '-') || match(parser, '~'));
+              if (match(parser, '-')) {
+                indent = YP_HEREDOC_INDENT_DASH;
+              }
+              else if (match(parser, '~')) {
+                indent = YP_HEREDOC_INDENT_TILDE;
+              }
 
               if (match(parser, '`')) {
-                  quote = YP_HEREDOC_QUOTE_BACKTICK;
+                quote = YP_HEREDOC_QUOTE_BACKTICK;
               }
               else if (match(parser, '"')) {
-                  quote = YP_HEREDOC_QUOTE_DOUBLE;
+                quote = YP_HEREDOC_QUOTE_DOUBLE;
               }
               else if (match(parser, '\'')) {
-                  quote = YP_HEREDOC_QUOTE_SINGLE;
+                quote = YP_HEREDOC_QUOTE_SINGLE;
               }
 
               const char *ident_start = parser->current.end;
@@ -2435,7 +2441,8 @@ lex_token_type(yp_parser_t *parser) {
                     .ident_start = ident_start,
                     .ident_length = ident_length,
                     .next_start = parser->current.end,
-                    .quote = quote
+                    .quote = quote,
+                    .indent = indent
                   }
                 });
 
@@ -3226,25 +3233,33 @@ lex_token_type(yp_parser_t *parser) {
 
       // If we are immediately following a newline and we have hit the
       // terminator, then we need to return the ending of the heredoc.
-      if ((parser->current.start[-1] == '\n') &&
-           (strncmp(parser->current.start, ident_start, ident_length) == 0)) {
-        bool matched = false;
-
-        if (parser->current.start[ident_length] == '\n') {
-          parser->current.end = parser->current.start + ident_length + 1;
-          matched = true;
-        } else if ((parser->current.start[ident_length] == '\r') && (parser->current.start[ident_length + 1] == '\n')) {
-          parser->current.end = parser->current.start + ident_length + 2;
-          matched = true;
+      if (parser->current.start[-1] == '\n') {
+        const char *start = parser->current.start;
+        if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
+          while (start < parser->end && char_is_non_newline_whitespace(*start)) {
+              start++;
+          }
         }
 
-        if (matched) {
-          parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-          parser->heredoc_end = parser->current.end;
+        if (strncmp(start, ident_start, ident_length) == 0) {
+          bool matched = false;
 
-          lex_mode_pop(parser);
-          lex_state_set(parser, YP_LEX_STATE_END);
-          return YP_TOKEN_HEREDOC_END;
+          if (start[ident_length] == '\n') {
+              parser->current.end = start + ident_length + 1;
+              matched = true;
+          } else if ((start[ident_length] == '\r') && (start[ident_length + 1] == '\n')) {
+              parser->current.end = start + ident_length + 2;
+              matched = true;
+          }
+
+          if (matched) {
+              parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+              parser->heredoc_end = parser->current.end;
+
+              lex_mode_pop(parser);
+              lex_state_set(parser, YP_LEX_STATE_END);
+              return YP_TOKEN_HEREDOC_END;
+          }
         }
       }
 
@@ -3260,17 +3275,24 @@ lex_token_type(yp_parser_t *parser) {
 
       while (breakpoint != NULL) {
         switch (*breakpoint) {
-          case '\n':
+          case '\n': {
+            const char *start = breakpoint + 1;
+            if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
+              while (start < parser->end && char_is_non_newline_whitespace(*start)) {
+                start++;
+              }
+            }
+
             // If we have hit a newline that is followed by a valid terminator,
             // then we need to return the content of the heredoc here as string
             // content. Then, the next time a token is lexed, it will match
             // again and return the end of the heredoc.
             if (
-              (breakpoint + 1 + ident_length < parser->end) &&
-              (strncmp(breakpoint + 1, ident_start, ident_length) == 0)
+              (start + ident_length < parser->end) &&
+              (strncmp(start, ident_start, ident_length) == 0)
             ) {
               // Heredoc terminators must be followed by a newline to be valid.
-              if (breakpoint[1 + ident_length] == '\n') {
+              if (start[ident_length] == '\n') {
                 parser->current.end = breakpoint + 1;
                 return YP_TOKEN_STRING_CONTENT;
               }
@@ -3279,11 +3301,11 @@ lex_token_type(yp_parser_t *parser) {
               // newline. Be sure here that we don't accidentally read off the
               // end.
               if (
-                (breakpoint + 1 + ident_length + 1 < parser->end) &&
-                (breakpoint[1 + ident_length] == '\r') &&
-                (breakpoint[1 + ident_length + 1] == '\n')
+                (start + ident_length + 1 < parser->end) &&
+                (start[ident_length] == '\r') &&
+                (start[ident_length + 1] == '\n')
               ) {
-                parser->current.end = breakpoint + 2;
+                parser->current.end = breakpoint + 1;
                 return YP_TOKEN_STRING_CONTENT;
               }
             }
@@ -3292,6 +3314,7 @@ lex_token_type(yp_parser_t *parser) {
             // terminator, so we can continue parsing.
             breakpoint = strpbrk(breakpoint + 1, breakpoints);
             break;
+          }
           case '\\':
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
