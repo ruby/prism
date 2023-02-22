@@ -5,9 +5,7 @@
 #include <stdint.h>
 
 // A struct that represents a stack of bools.
-typedef struct {
-  uint32_t value;
-} yp_state_stack_t;
+typedef uint32_t yp_state_stack_t;
 
 // Initializes the state stack to an empty stack.
 void
