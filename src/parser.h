@@ -126,6 +126,12 @@ typedef struct yp_lex_mode {
       const char *ident_start;
       uint32_t ident_length;
 
+      // Whether or not interpolation is allowed in this heredoc.
+      bool interpolation;
+
+      // Whether this heredoc is an xstring.
+      bool xstring;
+
       // This is the pointer to the character where lexing should resume once
       // the heredoc has been completely processed.
       const char *next_start;

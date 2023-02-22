@@ -2380,10 +2380,18 @@ lex_token_type(yp_parser_t *parser) {
             ) {
               const char *end = parser->current.end;
 
-              (void) (match(parser, '-') || match(parser, '~'));
-              const char *ident_start = parser->current.end;
+              bool interpolation = true;
+              bool xstring = false;
 
+              (void) (match(parser, '-') || match(parser, '~'));
+
+              if (match(parser, '`')) {
+                  xstring = true;
+              }
+
+              const char *ident_start = parser->current.end;
               size_t width = char_is_identifier(parser, parser->current.end);
+
               if (width == 0) {
                 parser->current.end = end;
               } else {
@@ -2391,12 +2399,22 @@ lex_token_type(yp_parser_t *parser) {
                   parser->current.end += width;
                 }
 
+                size_t ident_length = parser->current.end - ident_start;
+
+                if (xstring) {
+                    if (!match(parser, '`')) {
+                        // TODO: RAISE
+                    }
+                }
+
                 lex_mode_push(parser, (yp_lex_mode_t) {
                   .mode = YP_LEX_HEREDOC,
                   .as.heredoc = {
                     .ident_start = ident_start,
-                    .ident_length = parser->current.end - ident_start,
-                    .next_start = parser->current.end
+                    .ident_length = ident_length,
+                    .next_start = parser->current.end,
+                    .interpolation = interpolation,
+                    .xstring = xstring
                   }
                 });
 
@@ -3187,7 +3205,8 @@ lex_token_type(yp_parser_t *parser) {
 
       // If we are immediately following a newline and we have hit the
       // terminator, then we need to return the ending of the heredoc.
-      if ((parser->current.start[-1] == '\n') && (strncmp(parser->current.start, ident_start, ident_length) == 0)) {
+      if ((parser->current.start[-1] == '\n') &&
+           (strncmp(parser->current.start, ident_start, ident_length) == 0)) {
         bool matched = false;
 
         if (parser->current.start[ident_length] == '\n') {
@@ -4892,19 +4911,36 @@ parse_expression_prefix(yp_parser_t *parser) {
       return parse_identifier(parser);
     case YP_TOKEN_HEREDOC_START: {
       parser_lex(parser);
-      yp_node_t *node = yp_node_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+      yp_node_t *node;
+
+      if (parser->lex_modes.current->as.heredoc.xstring) {
+        node = yp_node_interpolated_x_string_node_create(parser, &parser->previous, &parser->previous);
+      }
+      else {
+        node = yp_node_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+      }
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
         parser_lex(parser);
 
         yp_node_t *part;
         if ((part = parse_string_part(parser)) != NULL) {
-          yp_node_list_append(parser, node, &node->as.heredoc_node.parts, part);
+          if (parser->lex_modes.current->as.heredoc.xstring) {
+            yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+          }
+          else {
+            yp_node_list_append(parser, node, &node->as.heredoc_node.parts, part);
+          }
         }
       }
 
       expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
-      node->as.heredoc_node.closing = parser->previous;
+      if (parser->lex_modes.current->as.heredoc.xstring) {
+        node->as.interpolated_x_string_node.closing = parser->previous;
+      }
+      else {
+        node->as.heredoc_node.closing = parser->previous;
+      }
 
       return node;
     }
