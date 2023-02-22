@@ -2380,7 +2380,7 @@ lex_token_type(yp_parser_t *parser) {
             ) {
               const char *end = parser->current.end;
 
-              yp_heredoc_quote_t quote;
+              yp_heredoc_quote_t quote = YP_HEREDOC_QUOTE_NONE;
 
               (void) (match(parser, '-') || match(parser, '~'));
 
@@ -2389,6 +2389,9 @@ lex_token_type(yp_parser_t *parser) {
               }
               else if (match(parser, '"')) {
                   quote = YP_HEREDOC_QUOTE_DOUBLE;
+              }
+              else if (match(parser, '\'')) {
+                  quote = YP_HEREDOC_QUOTE_SINGLE;
               }
 
               const char *ident_start = parser->current.end;
@@ -2407,6 +2410,9 @@ lex_token_type(yp_parser_t *parser) {
                         // TODO: RAISE
                 }
                 else if (quote == YP_HEREDOC_QUOTE_DOUBLE && !match(parser, '"')) {
+                        // TODO: RAISE
+                }
+                else if (quote == YP_HEREDOC_QUOTE_SINGLE && !match(parser, '\'')) {
                         // TODO: RAISE
                 }
 
@@ -3233,6 +3239,10 @@ lex_token_type(yp_parser_t *parser) {
       // we need to split up the content of the heredoc. We'll use strpbrk to
       // find the first of these characters.
       char breakpoints[] = "\n\\#";
+      if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
+        breakpoints[2] = '\0';
+      }
+
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
       while (breakpoint != NULL) {
