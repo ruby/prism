@@ -2123,6 +2123,27 @@ current_scope_has_local(yp_parser_t * parser, yp_token_t * token) {
   return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
 }
 
+static inline void
+lex_newline(yp_parser_t *parser, bool previous_command_start) {
+  bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
+
+  if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
+    // This is an ignored newline.
+    parser->command_start = previous_command_start;
+  } else {
+    // This is a normal newline.
+    lex_state_set(parser, YP_LEX_STATE_BEG);
+    parser->command_start = true;
+
+    // If the special resume flag is set, then we need to jump ahead.
+    if (parser->heredoc_end != NULL) {
+      assert(parser->heredoc_end <= parser->end);
+      parser->next_start = parser->heredoc_end;
+      parser->heredoc_end = NULL;
+    }
+  }
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -2212,24 +2233,7 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         case '\n': {
-          bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
-
-          if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
-            // This is an ignored newline.
-            parser->command_start = previous_command_start;
-          } else {
-            // This is a normal newline.
-            lex_state_set(parser, YP_LEX_STATE_BEG);
-            parser->command_start = true;
-
-            // If the special resume flag is set, then we need to jump ahead.
-            if (parser->heredoc_end != NULL) {
-              assert(parser->heredoc_end <= parser->end);
-              parser->next_start = parser->heredoc_end;
-              parser->heredoc_end = NULL;
-            }
-          }
-
+          lex_newline(parser, previous_command_start);
           return YP_TOKEN_NEWLINE;
         }
 
@@ -3571,7 +3575,9 @@ match_any_type_p(yp_parser_t *parser, size_t count, ...) {
 // Optionally call out to the lex callback if one is provided.
 static inline void
 parser_lex_callback(yp_parser_t *parser) {
-  parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
+  if (parser->lex_callback) {
+    parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
+  }
 }
 
 // Called when the parser requires a new token. The parser maintains a moving
@@ -3587,9 +3593,10 @@ static void
 parser_lex(yp_parser_t *parser) {
   assert(parser->current.end <= parser->end);
 
+  bool previous_command_start = parser->command_start;
   parser->previous = parser->current;
   parser->current.type = lex_token_type(parser);
-  if (parser->lex_callback) parser_lex_callback(parser);
+  parser_lex_callback(parser);
 
   while (match_any_type_p(parser, 4, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
     switch (parser->current.type) {
@@ -3600,19 +3607,17 @@ parser_lex(yp_parser_t *parser) {
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         parser_lex_magic_comments(parser);
-        parser->current.type = lex_token_type(parser);
-        if (parser->lex_callback) parser_lex_callback(parser);
-
-        break;
+        parser->current.type = YP_TOKEN_NEWLINE;
+        lex_newline(parser, previous_command_start);
+        return;
       }
       case YP_TOKEN___END__: {
         yp_comment_t *comment = parser_comment(parser, YP_COMMENT___END__);
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
-        parser->current.type = lex_token_type(parser);
-        if (parser->lex_callback) parser_lex_callback(parser);
-
-        break;
+        parser->current.type = YP_TOKEN_EOF;
+        lex_newline(parser, previous_command_start);
+        return;
       }
       case YP_TOKEN_EMBDOC_BEGIN: {
         yp_comment_t *comment = parser_comment(parser, YP_COMMENT_EMBDOC);
@@ -3621,7 +3626,7 @@ parser_lex(yp_parser_t *parser) {
         // the end of the embedded document.
         do {
           parser->current.type = lex_token_type(parser);
-          if (parser->lex_callback) parser_lex_callback(parser);
+          parser_lex_callback(parser);
         } while (!match_any_type_p(parser, 2, YP_TOKEN_EMBDOC_END, YP_TOKEN_EOF));
 
         comment->end = parser->current.end - parser->start;
@@ -3630,21 +3635,22 @@ parser_lex(yp_parser_t *parser) {
         if (match_type_p(parser, YP_TOKEN_EOF)) {
           yp_diagnostic_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
         } else {
-          parser->current.type = lex_token_type(parser);
-          if (parser->lex_callback) parser_lex_callback(parser);
+          lex_newline(parser, parser->command_start);
+          parser->current.type = YP_TOKEN_NEWLINE;
         }
-        break;
+
+        return;
       }
       case YP_TOKEN_INVALID: {
         // If we found an invalid token, then we're going to add an error to the
         // parser and keep lexing.
         yp_diagnostic_list_append(&parser->error_list, "Invalid token", parser->current.start - parser->start);
         parser->current.type = lex_token_type(parser);
-        if (parser->lex_callback) parser_lex_callback(parser);
-        break;
+        parser_lex_callback(parser);
+        return;
       }
       default:
-        break;
+        return;
     }
   }
 }
@@ -6518,13 +6524,6 @@ yp_parser_free(yp_parser_t *parser) {
   yp_diagnostic_list_free(&parser->error_list);
   yp_diagnostic_list_free(&parser->warning_list);
   yp_comment_list_free(&parser->comment_list);
-}
-
-// Get the next token type and set its value on the current pointer.
-__attribute__((__visibility__("default"))) extern void
-yp_lex_token(yp_parser_t *parser) {
-  parser->previous = parser->current;
-  parser->current.type = lex_token_type(parser);
 }
 
 // Parse the Ruby source associated with the given parser and return the tree.

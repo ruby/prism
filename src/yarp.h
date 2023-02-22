@@ -48,10 +48,6 @@ yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_dec
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser);
 
-// Get the next token type and set its value on the current pointer.
-__attribute__((__visibility__("default"))) extern void
-yp_lex_token(yp_parser_t *parser);
-
 // Parse the Ruby source associated with the given parser and return the tree.
 __attribute__((__visibility__("default"))) extern yp_node_t *
 yp_parse(yp_parser_t *parser);
