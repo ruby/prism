@@ -2387,6 +2387,9 @@ lex_token_type(yp_parser_t *parser) {
               if (match(parser, '`')) {
                   quote = YP_HEREDOC_QUOTE_BACKTICK;
               }
+              else if (match(parser, '"')) {
+                  quote = YP_HEREDOC_QUOTE_DOUBLE;
+              }
 
               const char *ident_start = parser->current.end;
               size_t width = char_is_identifier(parser, parser->current.end);
@@ -2400,10 +2403,11 @@ lex_token_type(yp_parser_t *parser) {
 
                 size_t ident_length = parser->current.end - ident_start;
 
-                if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-                    if (!match(parser, '`')) {
+                if (quote == YP_HEREDOC_QUOTE_BACKTICK && !match(parser, '`')) {
                         // TODO: RAISE
-                    }
+                }
+                else if (quote == YP_HEREDOC_QUOTE_DOUBLE && !match(parser, '"')) {
+                        // TODO: RAISE
                 }
 
                 lex_mode_push(parser, (yp_lex_mode_t) {
