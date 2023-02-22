@@ -1926,7 +1926,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // content first.
       if (pound > parser->current.end) {
         parser->current.end = pound;
-        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -3237,7 +3236,7 @@ lex_token_type(yp_parser_t *parser) {
         const char *start = parser->current.start;
         if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
           while (start < parser->end && char_is_non_newline_whitespace(*start)) {
-              start++;
+            start++;
           }
         }
 
@@ -3245,20 +3244,20 @@ lex_token_type(yp_parser_t *parser) {
           bool matched = false;
 
           if (start[ident_length] == '\n') {
-              parser->current.end = start + ident_length + 1;
-              matched = true;
+            parser->current.end = start + ident_length + 1;
+            matched = true;
           } else if ((start[ident_length] == '\r') && (start[ident_length + 1] == '\n')) {
-              parser->current.end = start + ident_length + 2;
-              matched = true;
+            parser->current.end = start + ident_length + 2;
+            matched = true;
           }
 
           if (matched) {
-              parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-              parser->heredoc_end = parser->current.end;
+            parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+            parser->heredoc_end = parser->current.end;
 
-              lex_mode_pop(parser);
-              lex_state_set(parser, YP_LEX_STATE_END);
-              return YP_TOKEN_HEREDOC_END;
+            lex_mode_pop(parser);
+            lex_state_set(parser, YP_LEX_STATE_END);
+            return YP_TOKEN_HEREDOC_END;
           }
         }
       }

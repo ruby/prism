@@ -329,7 +329,28 @@ module YARP
       __END__: :on___end__
     }.freeze
 
-    private_constant :RIPPER
+    # A heredoc in this case is a list of tokens that belong to the body of the
+    # heredoc that should be appended onto the list of tokens when the heredoc
+    # closes.
+    class Heredoc
+      attr_reader :state, :tokens
+
+      def initialize(state)
+        @state = state
+        @tokens = []
+      end
+
+      def <<(token)
+        tokens << token
+      end
+
+      def to_a
+        tokens.last[3] = state
+        tokens
+      end
+    end
+
+    private_constant :RIPPER, :Heredoc
 
     attr_reader :source, :offsets
 
@@ -349,15 +370,17 @@ module YARP
       tokens = []
 
       state = :default
-      heredoc = []
+      heredocs = []
 
       YARP.lex(source).each do |(token, lex_state)|
         event = RIPPER.fetch(token.type)
+        lex_state = Ripper::Lexer::State.new(lex_state)
+
         token = [
           location_for(token.location.start_offset),
           event,
           value_for(event, token.value),
-          Ripper::Lexer::State.new(lex_state)
+          lex_state
         ]
 
         # The order in which tokens appear in our lexer is different from the
@@ -375,25 +398,25 @@ module YARP
 
           if event == :on_heredoc_beg
             state = :heredoc_opened
-            heredoc << []
+            heredocs << Heredoc.new(lex_state)
           end
         when :heredoc_opened
-          heredoc.last << token
+          heredocs.last << token
           state = :heredoc_closed if event == :on_heredoc_end
         when :heredoc_closed
           tokens << token
 
           case event
           when :on_nl
-            heredoc.each do |heredoc_tokens|
-              tokens.concat(heredoc_tokens)
+            heredocs.each do |heredoc|
+              tokens.concat(heredoc.to_a)
             end
 
-            heredoc.clear
+            heredocs.clear
             state = :default
           when :on_heredoc_beg
             state = :heredoc_opened
-            heredoc << []
+            heredocs << Heredoc.new(lex_state)
           end
         end
       end
