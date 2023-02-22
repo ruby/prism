@@ -2380,13 +2380,12 @@ lex_token_type(yp_parser_t *parser) {
             ) {
               const char *end = parser->current.end;
 
-              bool interpolation = true;
-              bool xstring = false;
+              yp_heredoc_quote_t quote;
 
               (void) (match(parser, '-') || match(parser, '~'));
 
               if (match(parser, '`')) {
-                  xstring = true;
+                  quote = YP_HEREDOC_QUOTE_BACKTICK;
               }
 
               const char *ident_start = parser->current.end;
@@ -2401,7 +2400,7 @@ lex_token_type(yp_parser_t *parser) {
 
                 size_t ident_length = parser->current.end - ident_start;
 
-                if (xstring) {
+                if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
                     if (!match(parser, '`')) {
                         // TODO: RAISE
                     }
@@ -2413,8 +2412,7 @@ lex_token_type(yp_parser_t *parser) {
                     .ident_start = ident_start,
                     .ident_length = ident_length,
                     .next_start = parser->current.end,
-                    .interpolation = interpolation,
-                    .xstring = xstring
+                    .quote = quote
                   }
                 });
 
@@ -4912,8 +4910,9 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_HEREDOC_START: {
       parser_lex(parser);
       yp_node_t *node;
+      yp_heredoc_quote_t quote = parser->lex_modes.current->as.heredoc.quote;
 
-      if (parser->lex_modes.current->as.heredoc.xstring) {
+      if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node = yp_node_interpolated_x_string_node_create(parser, &parser->previous, &parser->previous);
       }
       else {
@@ -4925,7 +4924,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
         yp_node_t *part;
         if ((part = parse_string_part(parser)) != NULL) {
-          if (parser->lex_modes.current->as.heredoc.xstring) {
+          if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
             yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
           }
           else {
@@ -4935,7 +4934,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
-      if (parser->lex_modes.current->as.heredoc.xstring) {
+      if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node->as.interpolated_x_string_node.closing = parser->previous;
       }
       else {
