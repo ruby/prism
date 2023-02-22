@@ -3607,8 +3607,9 @@ parser_lex(yp_parser_t *parser) {
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         parser_lex_magic_comments(parser);
-        parser->current.type = YP_TOKEN_NEWLINE;
+
         lex_newline(parser, previous_command_start);
+        parser->current.type = YP_TOKEN_NEWLINE;
         return;
       }
       case YP_TOKEN___END__: {
@@ -4203,7 +4204,10 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       }
     }
 
-    while (accept(parser, YP_TOKEN_NEWLINE));
+    if (terminator != YP_TOKEN_EOF) {
+      while (accept(parser, YP_TOKEN_NEWLINE));
+    }
+
     yp_arguments_node_append(arguments, argument);
     if (argument->type == YP_NODE_MISSING_NODE) break;
   }
