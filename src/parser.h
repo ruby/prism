@@ -55,6 +55,12 @@ typedef enum {
   YP_HEREDOC_QUOTE_BACKTICK,
 } yp_heredoc_quote_t;
 
+typedef enum {
+  YP_HEREDOC_INDENT_NONE,
+  YP_HEREDOC_INDENT_DASH,
+  YP_HEREDOC_INDENT_TILDE,
+} yp_heredoc_indent_t;
+
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
 // a string, the first token that we return is a TOKEN_STRING_BEGIN token. After
@@ -134,6 +140,7 @@ typedef struct yp_lex_mode {
       uint32_t ident_length;
 
       yp_heredoc_quote_t quote;
+      yp_heredoc_indent_t indent;
 
       // This is the pointer to the character where lexing should resume once
       // the heredoc has been completely processed.

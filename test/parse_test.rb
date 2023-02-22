@@ -2143,6 +2143,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-`EOF`\n  a\n\#{b}\nEOF\n"
   end
 
+  test "heredocs with dashes" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n  b\n"), nil, "  a\n  b\n")],
+      HEREDOC_END("  EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-EOF\n  a\n  b\n  EOF\n"
+  end
+
   test "heredocs with interpolation" do
     expected = HeredocNode(
       HEREDOC_START("<<-EOF"),
