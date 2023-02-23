@@ -22,3 +22,28 @@ jobs:
 
     - name: Run Ruby tests
       run: bundle exec rake
+
+  memcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install valgrind from source
+      run: |
+        sudo apt-get install -y libc6-dbg
+        wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
+        tar xvf valgrind-3.20.0.tar.bz2
+        cd valgrind-3.20.0
+        ./configure
+        make
+        sudo make install
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+
+    - name: Run Ruby tests with valgrind
+      run: bundle exec rake test:valgrind

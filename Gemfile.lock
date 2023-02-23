@@ -1,10 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    mini_portile2 (2.8.1)
+    nokogiri (1.14.2)
+      mini_portile2 (~> 2.8.0)
+      racc (~> 1.4)
     power_assert (2.0.1)
+    racc (1.6.2)
     rake (13.0.6)
     rake-compiler (1.2.0)
       rake
+    ruby_memcheck (1.2.0)
+      nokogiri
     test-unit (3.5.3)
       power_assert
 
@@ -14,6 +21,7 @@ PLATFORMS
 DEPENDENCIES
   rake
   rake-compiler
+  ruby_memcheck
   test-unit
 
 RUBY VERSION
