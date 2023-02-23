@@ -1128,6 +1128,8 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_UNLESS: return "UNLESS";
     case YP_CONTEXT_UNTIL: return "UNTIL";
     case YP_CONTEXT_WHILE: return "WHILE";
+    case YP_CONTEXT_LAMBDA_BRACES: return "LAMBDA_BRACES";
+    case YP_CONTEXT_LAMBDA_DO_END: return "LAMBDA_DO_END";
   }
   return NULL;
 }
@@ -2244,12 +2246,14 @@ lex_token_type(yp_parser_t *parser) {
 
         // (
         case '(':
+          parser->enclosure_nesting++;
           lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
           return YP_TOKEN_PARENTHESIS_LEFT;
 
         // )
         case ')':
+          parser->enclosure_nesting--;
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
           yp_state_stack_pop(&parser->do_loop_stack);
           return YP_TOKEN_PARENTHESIS_RIGHT;
@@ -2260,10 +2264,13 @@ lex_token_type(yp_parser_t *parser) {
           parser->command_start = true;
           return YP_TOKEN_SEMICOLON;
 
-        // [ []
+        // [ [] []=
         case '[':
+          parser->enclosure_nesting++;
+
           if (lex_state_operator_p(parser)) {
             if (match(parser, ']')) {
+              parser->enclosure_nesting--;
               lex_state_set(parser, YP_LEX_STATE_ARG);
               return match(parser, '=') ? YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL : YP_TOKEN_BRACKET_LEFT_RIGHT;
             }
@@ -2278,20 +2285,21 @@ lex_token_type(yp_parser_t *parser) {
 
         // ]
         case ']':
+          parser->enclosure_nesting--;
           lex_state_set(parser, YP_LEX_STATE_END);
           yp_state_stack_pop(&parser->do_loop_stack);
           return YP_TOKEN_BRACKET_RIGHT;
 
         // {
-        case '{':
-          if (parser->previous.type == YP_TOKEN_MINUS_GREATER) {
+        case '{': {
+          yp_token_type_t type = YP_TOKEN_BRACE_LEFT;
+
+          if (parser->enclosure_nesting == parser->lambda_enclosure_nesting) {
             // This { begins a lambda
             parser->command_start = true;
             lex_state_set(parser, YP_LEX_STATE_BEG);
-            return YP_TOKEN_LAMBDA_BEGIN;
-          }
-
-          if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
+            type = YP_TOKEN_LAMBDA_BEGIN;
+          } else if (lex_state_p(parser, YP_LEX_STATE_LABELED)) {
             // This { begins a hash literal
             lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           } else if (lex_state_p(parser, YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_END | YP_LEX_STATE_ENDFN)) {
@@ -2307,11 +2315,14 @@ lex_token_type(yp_parser_t *parser) {
             lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           }
 
+          parser->enclosure_nesting++;
           yp_state_stack_push(&parser->do_loop_stack, false);
-          return YP_TOKEN_BRACE_LEFT;
+          return type;
+        }
 
         // }
         case '}':
+          parser->enclosure_nesting--;
           yp_state_stack_pop(&parser->do_loop_stack);
 
           if (parser->lex_modes.current->mode == YP_LEX_EMBEXPR) {
@@ -3689,6 +3700,10 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_RESCUE_ELSE:
       return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_LAMBDA_BRACES:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
+    case YP_CONTEXT_LAMBDA_DO_END:
+      return token->type == YP_TOKEN_KEYWORD_END;
   }
 
   return false;
@@ -4456,6 +4471,34 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
   if (accepts_block && accept(parser, YP_TOKEN_BRACE_LEFT)) {
     arguments->block = parse_block(parser);
   }
+}
+
+// Parse a list of parameters and local on a block definition.
+static yp_node_t *
+parse_block_parameters(yp_parser_t *parser) {
+  yp_node_t *block_params = parse_parameters(parser, false);
+
+  yp_node_t *parameters = yp_node_block_var_node_create(parser, block_params);
+
+  if (accept(parser, YP_TOKEN_SEMICOLON)) {
+    bool parsing = true;
+
+    while (parsing) {
+      if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+        yp_token_t name = parser->previous;
+        yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        yp_token_list_append(&parameters->as.block_var_node.locals, &name);
+
+        if (!accept(parser, YP_TOKEN_COMMA)) {
+          parsing = false;
+        }
+      } else {
+        parsing = false;
+      }
+    }
+  }
+
+  return parameters;
 }
 
 static inline yp_node_t *
@@ -5916,6 +5959,49 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return node;
     }
+    case YP_TOKEN_MINUS_GREATER: {
+      parser->lambda_enclosure_nesting = parser->enclosure_nesting;
+
+      parser_lex(parser);
+      yp_token_t lparen;
+      yp_token_t rparen;
+
+      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        lparen = parser->previous;
+      } else {
+        lparen = not_provided(parser);
+      }
+
+      yp_node_t *parent_scope = parser->current_scope;
+      yp_node_t *scope = yp_node_scope_create(parser);
+      parser->current_scope = scope;
+
+      yp_node_t *parameters = parse_block_parameters(parser);
+
+      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+        rparen = parser->previous;
+      } else {
+        rparen = not_provided(parser);
+      }
+
+      parser->current_scope = parent_scope;
+      yp_node_t *body;
+
+      if (accept(parser, YP_TOKEN_LAMBDA_BEGIN)) {
+        body = parse_statements(parser, YP_CONTEXT_LAMBDA_BRACES);
+        expect(parser, YP_TOKEN_BRACE_RIGHT, "Expecting '}' to close lambda block.");
+      } else if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
+        body = parse_statements(parser, YP_CONTEXT_LAMBDA_DO_END);
+        expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
+      } else {
+        body = NULL;
+        debug_token(&parser->current);
+      }
+
+      parser->lambda_enclosure_nesting = -1;
+      return yp_node_lambda_node_create(parser, &lparen, parameters, &rparen, body);
+    }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
 
@@ -6474,6 +6560,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   *parser = (yp_parser_t) {
     .lex_state = YP_LEX_STATE_BEG,
     .command_start = true,
+    .enclosure_nesting = 0,
+    .lambda_enclosure_nesting = -1,
     .lex_modes =
       {
         .index = 0,

@@ -4821,6 +4821,177 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "+foo**bar"
   end
 
+  test "simple stabby lambda with braces" do
+    expected = LambdaNode(
+      nil,
+      BlockVarNode(
+        ParametersNode([], [], nil, [], nil, nil),
+        []
+      ),
+      nil,
+      Statements([expression("foo")])
+    )
+
+    assert_parses expected, "-> { foo }"
+  end
+
+  test "simple stabby lambda with do...end" do
+    expected = LambdaNode(
+      nil,
+      BlockVarNode(
+        ParametersNode([], [], nil, [], nil, nil),
+        []
+      ),
+      nil,
+      Statements([expression("foo")])
+    )
+
+    assert_parses expected, "-> do; foo; end"
+  end
+
+  test "stabby lambda with parameters with braces" do
+    expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [OptionalParameterNode(
+            IDENTIFIER("b"),
+            EQUAL("="),
+            IntegerNode()
+          )],
+          RestParameterNode(STAR("*"), IDENTIFIER("e")),
+          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
+          KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
+          BlockParameterNode(IDENTIFIER("g"), Location(31, 32))
+        ),
+        []
+      ),
+      PARENTHESIS_RIGHT(")"),
+      Statements([expression("a")])
+    )
+
+    assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) { a }"
+  end
+
+  test "stabby lambda with non-parenthesised parameters with braces" do
+    expected = LambdaNode(
+      nil,
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [OptionalParameterNode(
+            IDENTIFIER("b"),
+            EQUAL("="),
+            IntegerNode()
+          )],
+          nil,
+          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
+          nil,
+          BlockParameterNode(IDENTIFIER("e"), Location(21, 22))
+        ),
+        []
+      ),
+      nil,
+      Statements([expression("a")])
+    )
+
+    assert_parses expected, "-> a, b = 1, c:, d:, &e { a }"
+  end
+
+  test "stabby lambda with parameters with do..end" do
+    expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [OptionalParameterNode(
+            IDENTIFIER("b"),
+            EQUAL("="),
+            IntegerNode()
+          )],
+          RestParameterNode(STAR("*"), IDENTIFIER("e")),
+          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
+          KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
+          BlockParameterNode(IDENTIFIER("g"), Location(31, 32))
+        ),
+        []
+      ),
+      PARENTHESIS_RIGHT(")"),
+      Statements([expression("a")])
+    )
+
+    assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) do\n  a\nend"
+  end
+
+  test "nested lambdas" do
+    expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [],
+          nil,
+          [],
+          nil,
+          nil
+        ),
+        []
+      ),
+      PARENTHESIS_RIGHT(")"),
+      Statements(
+        [LambdaNode(
+          nil,
+          BlockVarNode(
+            ParametersNode(
+              [RequiredParameterNode(IDENTIFIER("b"))],
+              [],
+              nil,
+              [],
+              nil,
+              nil
+            ),
+            []
+          ),
+          nil,
+          Statements([CallNode(
+            expression("a"),
+            nil,
+            STAR("*"),
+            nil,
+            ArgumentsNode([expression("b")]),
+            nil,
+            nil,
+            "*"
+          )])
+        )]
+      )
+    )
+
+    assert_parses expected, "-> (a) { -> b { a * b } }"
+  end
+
+  test "lambdas with block locals" do
+    expected = LambdaNode(
+      PARENTHESIS_LEFT("("),
+      BlockVarNode(
+        ParametersNode(
+          [RequiredParameterNode(IDENTIFIER("a"))],
+          [],
+          nil,
+          [],
+          nil,
+          nil
+        ),
+        [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      Statements([expression("b")])
+    )
+
+    assert_parses expected, "-> (a; b, c, d) { b }"
+  end
+
   private
 
   def assert_serializes(expected, source)

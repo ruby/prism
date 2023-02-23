@@ -422,6 +422,18 @@ nodes:
           def a(&b)
                 ^^
           end
+  - name: BlockVarNode
+    child_nodes:
+      - name: parameters
+        type: node
+      - name: locals
+        type: token[]
+    location: parameters->locals
+    comment: |
+      Represents a block variable declaration.
+
+          -> (a, b = 1; local) { }
+              ^^^^^^^^^^^^^^^
   - name: BreakNode
     child_nodes:
       - name: arguments
@@ -902,6 +914,22 @@ nodes:
           def a(**b)
                 ^^^
           end
+  - name: LambdaNode
+    child_nodes:
+      - name: lparen
+        type: token?
+      - name: parameters
+        type: node
+      - name: rparen
+        type: token?
+      - name: statements
+        type: node
+    location: parameters->statements|lparen->statements
+    comment: |
+      Represents using a lambda literal (not the lambda method call).
+
+          ->(value) { value * 2 }
+          ^^^^^^^^^^^^^^^^^^^^^^^
   - name: LocalVariableRead
     child_nodes:
       - name: name
