@@ -1337,6 +1337,11 @@ class ParseTest < Test::Unit::TestCase
           HashNode(
             nil,
             [
+              AssocNode(
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                EQUAL_GREATER("=>")
+              ),
               AssocSplatNode(
                 HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
                 Location(22, 24)
@@ -1370,6 +1375,11 @@ class ParseTest < Test::Unit::TestCase
           HashNode(
             nil,
             [
+              AssocNode(
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                EQUAL_GREATER("=>")
+              ),
               AssocSplatNode(
                 HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
                 Location(22, 24)
@@ -4823,6 +4833,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "simple stabby lambda with braces" do
     expected = LambdaNode(
+      Scope([]),
       nil,
       BlockVarNode(
         ParametersNode([], [], nil, [], nil, nil),
@@ -4837,6 +4848,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "simple stabby lambda with do...end" do
     expected = LambdaNode(
+      Scope([]),
       nil,
       BlockVarNode(
         ParametersNode([], [], nil, [], nil, nil),
@@ -4851,6 +4863,15 @@ class ParseTest < Test::Unit::TestCase
 
   test "stabby lambda with parameters with braces" do
     expected = LambdaNode(
+      Scope([
+        IDENTIFIER("a"),
+        IDENTIFIER("b"),
+        LABEL("c"),
+        LABEL("d"),
+        IDENTIFIER("e"),
+        IDENTIFIER("f"),
+        IDENTIFIER("g")
+      ]),
       PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
@@ -4876,6 +4897,13 @@ class ParseTest < Test::Unit::TestCase
 
   test "stabby lambda with non-parenthesised parameters with braces" do
     expected = LambdaNode(
+      Scope([
+        IDENTIFIER("a"),
+        IDENTIFIER("b"),
+        LABEL("c"),
+        LABEL("d"),
+        IDENTIFIER("e"),
+      ]),
       nil,
       BlockVarNode(
         ParametersNode(
@@ -4901,6 +4929,15 @@ class ParseTest < Test::Unit::TestCase
 
   test "stabby lambda with parameters with do..end" do
     expected = LambdaNode(
+      Scope([
+        IDENTIFIER("a"),
+        IDENTIFIER("b"),
+        LABEL("c"),
+        LABEL("d"),
+        IDENTIFIER("e"),
+        IDENTIFIER("f"),
+        IDENTIFIER("g")
+      ]),
       PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
@@ -4926,6 +4963,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "nested lambdas" do
     expected = LambdaNode(
+      Scope([IDENTIFIER("a")]),
       PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(
@@ -4941,6 +4979,7 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_RIGHT(")"),
       Statements(
         [LambdaNode(
+          Scope([IDENTIFIER("b")]),
           nil,
           BlockVarNode(
             ParametersNode(
@@ -4973,6 +5012,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "lambdas with block locals" do
     expected = LambdaNode(
+      Scope([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]),
       PARENTHESIS_LEFT("("),
       BlockVarNode(
         ParametersNode(

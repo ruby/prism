@@ -916,6 +916,8 @@ nodes:
           end
   - name: LambdaNode
     child_nodes:
+      - name: scope
+        type: node
       - name: lparen
         type: token?
       - name: parameters

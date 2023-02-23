@@ -4201,11 +4201,13 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
           argument = yp_assoc_node_create(parser, argument, &operator, value);
 
           // Then parse more if we have a comma
-          if (accept(parser, YP_TOKEN_COMMA)) {
+          if (match_type_p(parser, YP_TOKEN_COMMA)) {
             yp_token_t opening = not_provided(parser);
             yp_token_t closing = not_provided(parser);
 
-            argument = yp_node_hash_node_create(parser, &opening, &closing);
+            yp_node_t *bare_hash = yp_node_hash_node_create(parser, &opening, &closing);
+            yp_node_list_append(parser, bare_hash, &bare_hash->as.hash_node.elements, argument);
+            argument = bare_hash;
 
             while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
               if (!parse_assoc(parser, argument)) {
@@ -5151,6 +5153,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
+        yp_node_destroy(parser, statements);
         rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
@@ -5552,13 +5555,8 @@ parse_expression_prefix(yp_parser_t *parser) {
         do_keyword = not_provided(parser);
       }
 
-      yp_node_t *scope = yp_node_scope_create(parser);
-      yp_node_t *parent_scope = parser->current_scope;
-      parser->current_scope = scope;
-
       accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_FOR);
-      parser->current_scope = parent_scope;
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close for loop.");
       yp_token_t end_keyword = parser->previous;
@@ -5991,16 +5989,14 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (accept(parser, YP_TOKEN_LAMBDA_BEGIN)) {
         body = parse_statements(parser, YP_CONTEXT_LAMBDA_BRACES);
         expect(parser, YP_TOKEN_BRACE_RIGHT, "Expecting '}' to close lambda block.");
-      } else if (accept(parser, YP_TOKEN_KEYWORD_DO)) {
+      } else {
+        expect(parser, YP_TOKEN_KEYWORD_DO, "Expected a 'do' keyword or a '{' to open lambda block.");
         body = parse_statements(parser, YP_CONTEXT_LAMBDA_DO_END);
         expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
-      } else {
-        body = NULL;
-        debug_token(&parser->current);
       }
 
       parser->lambda_enclosure_nesting = -1;
-      return yp_node_lambda_node_create(parser, &lparen, parameters, &rparen, body);
+      return yp_node_lambda_node_create(parser, scope, &lparen, parameters, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
