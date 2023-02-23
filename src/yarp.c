@@ -563,6 +563,51 @@ yp_class_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token
   return node;
 }
 
+// Allocate and initialize a new DefNode node.
+static yp_node_t *
+yp_def_node_create(
+  yp_parser_t *parser,
+  yp_node_t *receiver,
+  const yp_token_t *operator,
+  const yp_token_t *name,
+  const yp_token_t *lparen,
+  yp_node_t *parameters,
+  const yp_token_t *rparen,
+  const yp_token_t *equal,
+  yp_node_t *statements,
+  const yp_token_t *end_keyword,
+  yp_node_t *scope,
+  const yp_token_t *def_keyword
+) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_DEF_NODE,
+    .location = {
+      .start = def_keyword->start,
+      .end = (end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end)
+    },
+    .as.def_node = {
+      .receiver = receiver,
+      .operator = *operator,
+      .name = *name,
+      .lparen = *lparen,
+      .parameters = parameters,
+      .rparen = *rparen,
+      .equal = *equal,
+      .statements = statements,
+      .end_keyword = *end_keyword,
+      .scope = scope,
+      .def_keyword_loc = {
+        .start = def_keyword->start,
+        .end = def_keyword->end
+      },
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new FalseNode node.
 static yp_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -5489,7 +5534,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       parser->current_scope = parent_scope;
-      return yp_node_def_node_create(parser, &def_keyword, receiver, &operator, &name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope);
+      return yp_def_node_create(parser, receiver, &operator, &name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope, &def_keyword);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       parser_lex(parser);

@@ -561,8 +561,6 @@ nodes:
           ^^^
   - name: DefNode
     child_nodes:
-      - name: def_keyword
-        type: token
       - name: receiver
         type: node?
       - name: operator
@@ -583,7 +581,8 @@ nodes:
         type: token?
       - name: scope
         type: node
-    location: def_keyword->end_keyword|statements
+      - name: def_keyword_loc
+        type: location
     comment: |
       Represents a method definition.
 
