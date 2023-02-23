@@ -250,6 +250,11 @@ typedef struct {
 struct yp_parser {
   yp_lex_state_t lex_state; // the current state of the lexer
   bool command_start;       // whether or not we're at the beginning of a command
+  int enclosure_nesting;    // tracks the current nesting of (), [], and {}
+
+  // Used to temporarily track the nesting of enclosures to determine if a { is
+  // the beginning of a lambda following the parameters of a lambda.
+  int lambda_enclosure_nesting;
 
   // the stack used to determine if a do keyword belongs to the predicate of a
   // while, until, or for loop

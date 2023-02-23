@@ -4858,12 +4858,12 @@ class ParseTest < Test::Unit::TestCase
           [OptionalParameterNode(
             IDENTIFIER("b"),
             EQUAL("="),
-            IntegerLiteral(INTEGER("1"))
+            IntegerNode()
           )],
           RestParameterNode(STAR("*"), IDENTIFIER("e")),
-          [KeywordParameterNode(LABEL("c:")), KeywordParameterNode(LABEL("d:"))],
+          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
           KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
-          BlockParameterNode(AMPERSAND("&"), IDENTIFIER("g"))
+          BlockParameterNode(IDENTIFIER("g"), Location(31, 32))
         ),
         []
       ),
@@ -4883,12 +4883,12 @@ class ParseTest < Test::Unit::TestCase
           [OptionalParameterNode(
             IDENTIFIER("b"),
             EQUAL("="),
-            IntegerLiteral(INTEGER("1"))
+            IntegerNode()
           )],
           nil,
-          [KeywordParameterNode(LABEL("c:")), KeywordParameterNode(LABEL("d:"))],
+          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
           nil,
-          BlockParameterNode(AMPERSAND("&"), IDENTIFIER("e"))
+          BlockParameterNode(IDENTIFIER("e"), Location(21, 22))
         ),
         []
       ),
@@ -4908,12 +4908,12 @@ class ParseTest < Test::Unit::TestCase
           [OptionalParameterNode(
             IDENTIFIER("b"),
             EQUAL("="),
-            IntegerLiteral(INTEGER("1"))
+            IntegerNode()
           )],
           RestParameterNode(STAR("*"), IDENTIFIER("e")),
-          [KeywordParameterNode(LABEL("c:")), KeywordParameterNode(LABEL("d:"))],
+          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
           KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
-          BlockParameterNode(AMPERSAND("&"), IDENTIFIER("g"))
+          BlockParameterNode(IDENTIFIER("g"), Location(31, 32))
         ),
         []
       ),
@@ -4960,6 +4960,7 @@ class ParseTest < Test::Unit::TestCase
             STAR("*"),
             nil,
             ArgumentsNode([expression("b")]),
+            nil,
             nil,
             "*"
           )])
