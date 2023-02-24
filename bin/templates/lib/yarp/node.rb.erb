@@ -63,10 +63,6 @@ module YARP
   module DSL
     private
 
-    def Location(start_offset, end_offset)
-      Location.new(start_offset, end_offset)
-    end
-
     <%- nodes.each do |node| -%>
 
     # Create a new <%= node.name %> node

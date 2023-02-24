@@ -567,47 +567,42 @@ yp_class_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token
 static yp_node_t *
 yp_def_node_create(
   yp_parser_t *parser,
-  yp_node_t *receiver,
-  const yp_token_t *operator,
   const yp_token_t *name,
+  yp_node_t *receiver,
   yp_node_t *parameters,
-  const yp_token_t *equal,
   yp_node_t *statements,
-  const yp_token_t *end_keyword,
   yp_node_t *scope,
   const yp_token_t *def_keyword,
+  const yp_token_t *operator,
   const yp_token_t *lparen,
-  const yp_token_t *rparen
+  const yp_token_t *rparen,
+  const yp_token_t *equal,
+  const yp_token_t *end_keyword
 ) {
   yp_node_t *node = yp_node_alloc(parser);
+  const char *end;
+
+  if (end_keyword->type == YP_TOKEN_NOT_PROVIDED) {
+    end = statements->location.end;
+  } else {
+    end = end_keyword->end;
+  }
 
   *node = (yp_node_t) {
     .type = YP_NODE_DEF_NODE,
-    .location = {
-      .start = def_keyword->start,
-      .end = (end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end)
-    },
+    .location = { .start = def_keyword->start, .end = end },
     .as.def_node = {
-      .receiver = receiver,
-      .operator = *operator,
       .name = *name,
+      .receiver = receiver,
       .parameters = parameters,
-      .equal = *equal,
       .statements = statements,
-      .end_keyword = *end_keyword,
       .scope = scope,
-      .def_keyword_loc = {
-        .start = def_keyword->start,
-        .end = def_keyword->end
-      },
-      .lparen_loc = {
-        .start = lparen->start,
-        .end = lparen->end
-      },
-      .rparen_loc = {
-        .start = rparen->start,
-        .end = rparen->end
-      }
+      .def_keyword_loc = { .start = def_keyword->start, .end = def_keyword->end },
+      .operator_loc = { .start = operator->start, .end = operator->end },
+      .lparen_loc = { .start = lparen->start, .end = lparen->end },
+      .rparen_loc = { .start = rparen->start, .end = rparen->end },
+      .equal_loc = { .start = equal->start, .end = equal->end },
+      .end_keyword_loc = { .start = end_keyword->start, .end = end_keyword->end }
     }
   };
 
@@ -5540,7 +5535,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       parser->current_scope = parent_scope;
-      return yp_def_node_create(parser, receiver, &operator, &name, params, &equal, statements, &end_keyword, scope, &def_keyword, &lparen, &rparen);
+      return yp_def_node_create(parser, &name, receiver, params, statements, scope, &def_keyword, &operator, &lparen, &rparen, &equal, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       parser_lex(parser);
