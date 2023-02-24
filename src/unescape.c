@@ -327,6 +327,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \c?          delete, ASCII 7Fh (DEL)
           // \cx          control character, where x is an ASCII printable character
           case 'c':
+            if (backslash + 2 >= end) {
+              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              cursor = end;
+              break;
+            }
+
             switch (backslash[2]) {
               case '\\':
                 if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_ascii_printable(backslash[5])) {
@@ -358,6 +364,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \C-x         control character, where x is an ASCII printable character
           // \C-?         delete, ASCII 7Fh (DEL)
           case 'C':
+            if (backslash + 2 >= end) {
+              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              cursor = end;
+              break;
+            }
+
             if (backslash[2] != '-' || !char_is_ascii_printable(backslash[3])) {
               yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
               cursor = backslash + 2;
@@ -371,6 +383,12 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \M-\cx       meta control character, where x is an ASCII printable character
           // \M-x         meta character, where x is an ASCII printable character
           case 'M': {
+            if (backslash + 2 >= end) {
+              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              cursor = end;
+              break;
+            }
+
             if (backslash[2] != '-') {
               yp_diagnostic_list_append(error_list, "Invalid meta escape sequence", backslash - value);
               cursor = backslash + 2;
@@ -413,11 +431,19 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
         break;
     }
 
-    backslash = memchr(cursor, '\\', end - cursor);
+    if (end > cursor) {
+      backslash = memchr(cursor, '\\', end - cursor);
+    } else {
+      backslash = NULL;
+    }
   }
 
   // We need to copy the final segment of the string after the last escape.
-  memcpy(dest + dest_length, cursor, end - cursor);
+  if (end > cursor) {
+    memcpy(dest + dest_length, cursor, end - cursor);
+  } else {
+    cursor = end;
+  }
 
   // We also need to update the length at the end. This is because every escape
   // reduces the length of the final string, and we don't want garbage at the

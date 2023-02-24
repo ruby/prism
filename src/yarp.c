@@ -1763,14 +1763,14 @@ lex_global_variable(yp_parser_t *parser) {
     case '9':
       do {
         parser->current.end++;
-      } while (char_is_decimal_number(*parser->current.end));
+      } while (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end));
       return YP_TOKEN_NTH_REFERENCE;
 
     default:
       if (char_is_identifier(parser, parser->current.end)) {
         do {
           parser->current.end++;
-        } while (char_is_identifier(parser, parser->current.end));
+        } while (parser->current.end < parser->end && char_is_identifier(parser, parser->current.end));
         return YP_TOKEN_GLOBAL_VARIABLE;
       }
 
@@ -4194,7 +4194,10 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
   bool parsed_double_splat_argument = false;
   bool parsed_block_argument = false;
 
-  while (!match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+  while (
+    !match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
+    !context_terminator(parser->current_context->context, &parser->current)
+  ) {
     if (yp_arguments_node_size(arguments) > 0) {
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
@@ -4210,10 +4213,9 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       case YP_TOKEN_LABEL: {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
-
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
-        while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+        while (!match_any_type_p(parser, 5, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT)) {
           if (!parse_assoc(parser, argument)) {
             break;
           }
@@ -4855,25 +4857,33 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //                 ^^^^^
     case YP_TOKEN_EMBVAR: {
-      parser_lex(parser);
-
-      switch (parser->previous.type) {
+      switch (parser->current.type) {
         // In this case a global variable is being interpolated. We'll create
         // a global variable read node.
         case YP_TOKEN_BACK_REFERENCE:
         case YP_TOKEN_GLOBAL_VARIABLE:
         case YP_TOKEN_NTH_REFERENCE:
+          parser_lex(parser);
           return yp_node_global_variable_read_create(parser, &parser->previous);
         // In this case an instance variable is being interpolated. We'll
         // create an instance variable read node.
         case YP_TOKEN_INSTANCE_VARIABLE:
+          parser_lex(parser);
           return yp_instance_variable_read_node_create(parser, &parser->previous);
         // In this case a class variable is being interpolated. We'll create a
         // class variable read node.
         case YP_TOKEN_CLASS_VARIABLE:
+          parser_lex(parser);
           return yp_class_variable_read_node_create(parser, &parser->previous);
+        // We can hit here if we got an invalid token. In that case we'll not
+        // attempt to lex this token and instead just return a missing node.
         default:
-          assert(false && "Unexpected token type for an interpolated variable.");
+          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a valid embedded variable.");
+
+          return yp_node_missing_node_create(parser, &(yp_location_t) {
+            .start = parser->current.start,
+            .end = parser->current.end
+          });
       }
     }
     default:
