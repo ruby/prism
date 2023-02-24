@@ -3377,11 +3377,22 @@ lex_token_type(yp_parser_t *parser) {
         }
       }
 
+      // If we're in a tilde heredoc, we need to calculate the minimum amount of leading
+      // whitespace so that we can "ignore" this amount of whitespace on all lines in the
+      // heredoc.
+      //
+      // In order to calculate the minimum amount of whitespace, we find the end of the
+      // heredoc, and then iterate from the start until the end, counting the whitespace
+      // on every line and using the `ignored_whitespace` field on the heredoc struct to
+      // track the minimum whitespace we see.
       if (heredoc_struct.indent == YP_HEREDOC_INDENT_TILDE &&
               heredoc_struct.ignored_whitespace == -1) {
         int min_non_newline_whitespace = heredoc_struct.ignored_whitespace;
 
         const char *end_of_heredoc = parser->current.end - 1;
+
+        // Increment the end_of_heredoc pointer until we find something that matches the
+        // start
         while(strncmp(end_of_heredoc, ident_start, ident_length) != 0) {
             end_of_heredoc++;
             if (end_of_heredoc >= parser->end) {
@@ -3395,11 +3406,13 @@ lex_token_type(yp_parser_t *parser) {
         while(heredoc_position < end_of_heredoc) {
             int non_newline_whitespace = 0;
 
+            // Count the whitespace after each newline
             while(char_is_non_newline_whitespace(*heredoc_position)) {
                 non_newline_whitespace++;
                 heredoc_position++;
             }
 
+            // Set the ignored_whitespace if it's less than our existing minimum
             if (non_newline_whitespace < min_non_newline_whitespace || min_non_newline_whitespace < 0) {
                 min_non_newline_whitespace = non_newline_whitespace;
             }
@@ -3408,6 +3421,8 @@ lex_token_type(yp_parser_t *parser) {
         }
 
         parser->lex_modes.current->as.heredoc.ignored_whitespace = min_non_newline_whitespace;
+
+        // We use `newline_was_last_breakpoint` to let us know if we should ignore whitespace
         parser->lex_modes.current->as.heredoc.newline_was_last_breakpoint = true;
       }
 
@@ -3422,23 +3437,27 @@ lex_token_type(yp_parser_t *parser) {
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
       while (breakpoint != NULL) {
-          if (heredoc_struct.indent == YP_HEREDOC_INDENT_TILDE &&
-                  heredoc_struct.newline_was_last_breakpoint) {
-              yp_token_type_t whitespace_type = lex_heredoc_whitespace(parser);
+        // Ignore whitespace if we're in a tilde heredoc, and we last saw a newline
+        if (heredoc_struct.indent == YP_HEREDOC_INDENT_TILDE &&
+                heredoc_struct.newline_was_last_breakpoint) {
+            yp_token_type_t whitespace_type = lex_heredoc_whitespace(parser);
 
-              if (whitespace_type != YP_TOKEN_INVALID) {
-                  parser->current.type = whitespace_type;
+            if (whitespace_type != YP_TOKEN_INVALID) {
+                parser->current.type = whitespace_type;
 
-                  if (parser->lex_callback) parser_lex_callback(parser);
-                  parser->current.start = parser->current.end;
-              }
+                if (parser->lex_callback) parser_lex_callback(parser);
+                parser->current.start = parser->current.end;
+            }
 
-              parser->lex_modes.current->as.heredoc.newline_was_last_breakpoint = false;
-          }
+            parser->lex_modes.current->as.heredoc.newline_was_last_breakpoint = false;
+        }
 
         switch (*breakpoint) {
           case '\n': {
+            // Set newline_was_last_breakpoint to trigger ignoring whitespace before
+            // the next breakpoint
             parser->lex_modes.current->as.heredoc.newline_was_last_breakpoint = true;
+
             const char *start = breakpoint + 1;
 
             if (heredoc_struct.indent != YP_HEREDOC_INDENT_NONE) {
