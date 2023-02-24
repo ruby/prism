@@ -2224,6 +2224,12 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
   }
 }
 
+// Optionally call out to the lex callback if one is provided.
+static inline void
+parser_lex_callback(yp_parser_t *parser) {
+  parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -3404,7 +3410,7 @@ lex_token_type(yp_parser_t *parser) {
 
             // Otherwise we hit a newline and it wasn't followed by a
             // terminator, so we can continue parsing.
-            breakpoint = strpbrk(breakpoint + 1, breakpoints);
+            breakpoint = strpbrk(start, breakpoints);
             break;
           }
           case '\\':
@@ -3659,14 +3665,6 @@ match_any_type_p(yp_parser_t *parser, size_t count, ...) {
 
   va_end(types);
   return false;
-}
-
-// Optionally call out to the lex callback if one is provided.
-static inline void
-parser_lex_callback(yp_parser_t *parser) {
-  if (parser->lex_callback) {
-    parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
-  }
 }
 
 // Called when the parser requires a new token. The parser maintains a moving
