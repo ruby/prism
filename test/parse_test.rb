@@ -2212,6 +2212,76 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-EOF\n  a\n  b\n  EOF\n"
   end
 
+  test "heredocs with tildes" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("a\n"), nil, "a\n"),
+        StringNode(nil, STRING_CONTENT("b\n"), nil, "b\n")
+      ],
+      HEREDOC_END("  EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n  b\n  EOF\n"
+  end
+
+  test "heredocs with tildes and first string indented more" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT(" a\n"), nil, " a\n"),
+        StringNode(nil, STRING_CONTENT("b\n"), nil, "b\n")
+      ],
+      HEREDOC_END("  EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<~EOF\n   a\n  b\n  EOF\n"
+  end
+
+  test "heredocs with tildes and second string indented more" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("a\n"), nil, "a\n"),
+        StringNode(nil, STRING_CONTENT(" b\n"), nil, " b\n")
+      ],
+      HEREDOC_END("  EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n   b\n  EOF\n"
+  end
+
+  test "heredocs with tildes and interpolation" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("a\n"), nil, "a\n"),
+       StringNode(nil, STRING_CONTENT("1\n"), nil, "1\n")
+      ],
+      HEREDOC_END("  EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n  #{1}\n  EOF\n"
+  end
+
+  test "heredocs with tildes, interpolation and indentation" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("a\n"), nil, "a\n"),
+       StringNode(nil, STRING_CONTENT(" 1\n"), nil, " 1\n")
+      ],
+      HEREDOC_END("  EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n   #{1}\n  EOF\n"
+  end
+
   test "heredocs with interpolation" do
     expected = HeredocNode(
       HEREDOC_START("<<-EOF"),
