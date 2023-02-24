@@ -61,6 +61,24 @@ typedef enum {
   YP_HEREDOC_INDENT_TILDE,
 } yp_heredoc_indent_t;
 
+typedef struct {
+  // These pointers point to the beginning and end of the heredoc
+  // identifier.
+  const char *ident_start;
+  uint32_t ident_length;
+
+  uint32_t ignored_whitespace;
+
+  yp_heredoc_quote_t quote;
+  yp_heredoc_indent_t indent;
+
+  bool newline_was_last_breakpoint;
+
+  // This is the pointer to the character where lexing should resume once
+  // the heredoc has been completely processed.
+  const char *next_start;
+} heredoc_struct_t;
+
 // When lexing Ruby source, the lexer has a small amount of state to tell which
 // kind of token it is currently lexing. For example, when we find the start of
 // a string, the first token that we return is a TOKEN_STRING_BEGIN token. After
@@ -133,23 +151,7 @@ typedef struct yp_lex_mode {
       bool interpolation;
     } symbol;
 
-    struct {
-      // These pointers point to the beginning and end of the heredoc
-      // identifier.
-      const char *ident_start;
-      uint32_t ident_length;
-
-      uint32_t ignored_whitespace;
-
-      yp_heredoc_quote_t quote;
-      yp_heredoc_indent_t indent;
-
-      bool newline_was_last_breakpoint;
-
-      // This is the pointer to the character where lexing should resume once
-      // the heredoc has been completely processed.
-      const char *next_start;
-    } heredoc;
+    heredoc_struct_t heredoc;
   } as;
 
   // The previous lex state so that it knows how to pop.

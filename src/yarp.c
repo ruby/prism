@@ -3338,16 +3338,18 @@ lex_token_type(yp_parser_t *parser) {
         parser->next_start = NULL;
       }
 
+      heredoc_struct_t heredoc_struct = parser->lex_modes.current->as.heredoc;
+
       // Now let's grab the information about the identifier off of the current
       // lex mode.
-      const char *ident_start = parser->lex_modes.current->as.heredoc.ident_start;
-      uint32_t ident_length = parser->lex_modes.current->as.heredoc.ident_length;
+      const char *ident_start = heredoc_struct.ident_start;
+      uint32_t ident_length = heredoc_struct.ident_length;
 
       // If we are immediately following a newline and we have hit the
       // terminator, then we need to return the ending of the heredoc.
       if (parser->current.start[-1] == '\n') {
         const char *start = parser->current.start;
-        if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
+        if (heredoc_struct.indent != YP_HEREDOC_INDENT_NONE) {
           while (start < parser->end && char_is_non_newline_whitespace(*start)) {
             start++;
           }
@@ -3365,7 +3367,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (matched) {
-            parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+            parser->next_start = heredoc_struct.next_start;
             parser->heredoc_end = parser->current.end;
 
             lex_mode_pop(parser);
@@ -3375,9 +3377,9 @@ lex_token_type(yp_parser_t *parser) {
         }
       }
 
-      if (parser->lex_modes.current->as.heredoc.indent == YP_HEREDOC_INDENT_TILDE &&
-              parser->lex_modes.current->as.heredoc.ignored_whitespace == -1) {
-        int min_non_newline_whitespace = parser->lex_modes.current->as.heredoc.ignored_whitespace;
+      if (heredoc_struct.indent == YP_HEREDOC_INDENT_TILDE &&
+              heredoc_struct.ignored_whitespace == -1) {
+        int min_non_newline_whitespace = heredoc_struct.ignored_whitespace;
 
         const char *end_of_heredoc = parser->current.end - 1;
         while(strncmp(end_of_heredoc, ident_start, ident_length) != 0) {
@@ -3413,15 +3415,15 @@ lex_token_type(yp_parser_t *parser) {
       // we need to split up the content of the heredoc. We'll use strpbrk to
       // find the first of these characters.
       char breakpoints[] = "\n\\#";
-      if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
+      if (heredoc_struct.quote == YP_HEREDOC_QUOTE_SINGLE) {
         breakpoints[2] = '\0';
       }
 
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
       while (breakpoint != NULL) {
-          if (parser->lex_modes.current->as.heredoc.indent == YP_HEREDOC_INDENT_TILDE &&
-                  parser->lex_modes.current->as.heredoc.newline_was_last_breakpoint) {
+          if (heredoc_struct.indent == YP_HEREDOC_INDENT_TILDE &&
+                  heredoc_struct.newline_was_last_breakpoint) {
               yp_token_type_t whitespace_type = lex_heredoc_whitespace(parser);
 
               if (whitespace_type != YP_TOKEN_INVALID) {
@@ -3439,7 +3441,7 @@ lex_token_type(yp_parser_t *parser) {
             parser->lex_modes.current->as.heredoc.newline_was_last_breakpoint = true;
             const char *start = breakpoint + 1;
 
-            if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
+            if (heredoc_struct.indent != YP_HEREDOC_INDENT_NONE) {
               while (start < parser->end && char_is_non_newline_whitespace(*start)) {
                 start++;
               }
@@ -3472,7 +3474,7 @@ lex_token_type(yp_parser_t *parser) {
               }
             }
 
-            if (parser->lex_modes.current->as.heredoc.indent == YP_HEREDOC_INDENT_TILDE) {
+            if (heredoc_struct.indent == YP_HEREDOC_INDENT_TILDE) {
                 parser->current.end = breakpoint + 1;
                 return YP_TOKEN_STRING_CONTENT;
             }
