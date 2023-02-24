@@ -260,6 +260,10 @@ struct yp_parser {
   // while, until, or for loop
   yp_state_stack_t do_loop_stack;
 
+  // the stack used to determine if a do keyword belongs to the beginning of a
+  // block
+  yp_state_stack_t accepts_block_stack;
+
   struct {
     yp_lex_mode_t *current;                 // the current mode of the lexer
     yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes

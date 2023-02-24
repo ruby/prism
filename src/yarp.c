@@ -6387,19 +6387,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       yp_arguments_t arguments = yp_arguments();
 
       // This if statement handles the foo.() syntax.
-      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        arguments.opening = parser->previous;
-
-        if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          arguments.closing = parser->previous;
-        } else {
-          arguments.arguments = yp_arguments_node_create(parser);
-          parse_arguments(parser, arguments.arguments, YP_TOKEN_PARENTHESIS_RIGHT);
-
-          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after arguments.");
-          arguments.closing = parser->previous;
-        }
-
+      if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        parse_arguments_list(parser, &arguments, true);
         return yp_call_node_shorthand_create(parser, node, &operator, &arguments);
       }
 
@@ -6655,6 +6644,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   };
 
   yp_state_stack_init(&parser->do_loop_stack);
+  yp_state_stack_init(&parser->accepts_block_stack);
   yp_list_init(&parser->warning_list);
   yp_list_init(&parser->error_list);
   yp_list_init(&parser->comment_list);
