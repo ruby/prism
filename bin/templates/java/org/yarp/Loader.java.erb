@@ -87,6 +87,15 @@ public class Loader {
         return new Nodes.Location(startOffset, endOffset);
     }
 
+    private Nodes.Location loadOptionalLocation() {
+        if (buffer.get(buffer.position()) != 0) {
+            return loadLocation();
+        } else {
+            buffer.position(buffer.position() + 1); // continue after the 0 byte
+            return null;
+        }
+    }
+
     private int loadInteger() {
         return buffer.getInt();
     }
@@ -110,6 +119,7 @@ public class Loader {
                     when TokenListParam then "loadTokens()"
                     when OptionalTokenParam then "loadOptionalToken()"
                     when LocationParam then "loadLocation()"
+                    when OptionalLocationParam then "loadOptionalLocation()"
                     when IntegerParam then "loadInteger()"
                     else raise
                     end

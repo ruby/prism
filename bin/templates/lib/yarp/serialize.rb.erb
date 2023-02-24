@@ -67,6 +67,13 @@ module YARP
         Location.new(start_offset, end_offset)
       end
 
+      def load_optional_location
+        if io.read(1).unpack1("C") != 0
+          io.pos -= 1
+          load_location
+        end
+      end
+
       def load_node
         type, _length = io.read(5).unpack("CL")
         location = load_location
@@ -83,6 +90,7 @@ module YARP
           when TokenListParam then "io.read(4).unpack1(\"L\").times.map { load_token }"
           when OptionalTokenParam then "load_optional_token"
           when LocationParam then "load_location"
+          when OptionalLocationParam then "load_optional_location"
           when IntegerParam then "io.read(4).unpack1(\"L\")"
           else raise
           end

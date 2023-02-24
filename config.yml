@@ -561,29 +561,28 @@ nodes:
           ^^^
   - name: DefNode
     child_nodes:
-      - name: def_keyword
+      - name: name
         type: token
       - name: receiver
         type: node?
-      - name: operator
-        type: token?
-      - name: name
-        type: token
-      - name: lparen
-        type: token?
       - name: parameters
         type: node
-      - name: rparen
-        type: token?
-      - name: equal
-        type: token?
       - name: statements
         type: node
-      - name: end_keyword
-        type: token?
       - name: scope
         type: node
-    location: def_keyword->end_keyword|statements
+      - name: def_keyword_loc
+        type: location
+      - name: operator_loc
+        type: location?
+      - name: lparen_loc
+        type: location?
+      - name: rparen_loc
+        type: location?
+      - name: equal_loc
+        type: location?
+      - name: end_keyword_loc
+        type: location?
     comment: |
       Represents a method definition.
 

@@ -69,6 +69,12 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       }
       <%- when LocationParam -%>
       serialize_location(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
+      <%- when OptionalLocationParam -%>
+      if (node->as.<%= node.human %>.<%= param.name %>.start == parser->start) {
+        yp_buffer_append_u8(buffer, 0);
+      } else {
+        serialize_location(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
+      }
       <%- when IntegerParam -%>
       yp_buffer_append_int(buffer, node->as.<%= node.human %>.<%= param.name %>);
       <%- else -%>

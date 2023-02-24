@@ -66,9 +66,9 @@ class ErrorsTest < Test::Unit::TestCase
   test "pre execution missing {" do
     expected = PreExecutionNode(
       Statements([expression("1")]),
-      Location(0, 5),
-      Location(5, 5),
-      Location(8, 9)
+      YARP::Location.new(0, 5),
+      YARP::Location.new(5, 5),
+      YARP::Location.new(8, 9)
     )
 
     assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
@@ -88,9 +88,9 @@ class ErrorsTest < Test::Unit::TestCase
           "+"
         )
       ]),
-      Location(0, 5),
-      Location(6, 7),
-      Location(12, 13)
+      YARP::Location.new(0, 5),
+      YARP::Location.new(6, 7),
+      YARP::Location.new(12, 13)
     )
 
     assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]

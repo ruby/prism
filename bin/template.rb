@@ -64,6 +64,13 @@ class LocationParam < Struct.new(:name)
   def java_type = "Location"
 end
 
+# This represents a parameter to a node that is a location that is optional.
+class OptionalLocationParam < Struct.new(:name)
+  def param = "const yp_location_t *#{name}"
+  def rbs_class = "Location?"
+  def java_type = "Location"
+end
+
 # This represents an integer parameter.
 class IntegerParam < Struct.new(:name)
   def param = "int #{name}"
@@ -106,6 +113,8 @@ class NodeType
           TokenListParam.new(name)
         when "location"
           LocationParam.new(name)
+        when "location?"
+          OptionalLocationParam.new(name)
         when "integer"
           IntegerParam.new(name)
         else
@@ -142,6 +151,7 @@ class NodeType
     in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
     in NodeListParam | TokenListParam then "0"
     in LocationParam then "#{param.name}->start"
+    in OptionalLocationParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
     else
       raise "Unknown param type: #{param.inspect}"
     end
@@ -155,6 +165,7 @@ class NodeType
     in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
     in NodeListParam | TokenListParam then "0"
     in LocationParam then "#{param.name}->end"
+    in OptionalLocationParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
     else
       raise "Unknown param type: #{param.inspect}"
     end

@@ -563,6 +563,52 @@ yp_class_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token
   return node;
 }
 
+// Allocate and initialize a new DefNode node.
+static yp_node_t *
+yp_def_node_create(
+  yp_parser_t *parser,
+  const yp_token_t *name,
+  yp_node_t *receiver,
+  yp_node_t *parameters,
+  yp_node_t *statements,
+  yp_node_t *scope,
+  const yp_token_t *def_keyword,
+  const yp_token_t *operator,
+  const yp_token_t *lparen,
+  const yp_token_t *rparen,
+  const yp_token_t *equal,
+  const yp_token_t *end_keyword
+) {
+  yp_node_t *node = yp_node_alloc(parser);
+  const char *end;
+
+  if (end_keyword->type == YP_TOKEN_NOT_PROVIDED) {
+    end = statements->location.end;
+  } else {
+    end = end_keyword->end;
+  }
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_DEF_NODE,
+    .location = { .start = def_keyword->start, .end = end },
+    .as.def_node = {
+      .name = *name,
+      .receiver = receiver,
+      .parameters = parameters,
+      .statements = statements,
+      .scope = scope,
+      .def_keyword_loc = { .start = def_keyword->start, .end = def_keyword->end },
+      .operator_loc = { .start = operator->start, .end = operator->end },
+      .lparen_loc = { .start = lparen->start, .end = lparen->end },
+      .rparen_loc = { .start = rparen->start, .end = rparen->end },
+      .equal_loc = { .start = equal->start, .end = equal->end },
+      .end_keyword_loc = { .start = end_keyword->start, .end = end_keyword->end }
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new FalseNode node.
 static yp_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -5489,7 +5535,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       parser->current_scope = parent_scope;
-      return yp_node_def_node_create(parser, &def_keyword, receiver, &operator, &name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope);
+      return yp_def_node_create(parser, &name, receiver, params, statements, scope, &def_keyword, &operator, &lparen, &rparen, &equal, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       parser_lex(parser);
