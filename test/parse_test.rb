@@ -3515,13 +3515,13 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       expression("i"),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      nil,
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_parses expected, "for i in 1..10\ni\nend"
@@ -3529,13 +3529,13 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with do keyword" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       expression("i"),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      KEYWORD_DO_LOOP("do"),
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      Location(),
+      Location()
     )
 
     assert_parses expected, "for i in 1..10 do\ni\nend"
@@ -3543,13 +3543,13 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop no newlines" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       expression("i"),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      nil,
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_parses expected, "for i in 1..10 i end"
@@ -3557,13 +3557,13 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with semicolons" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       expression("i"),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      nil,
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_parses expected, "for i in 1..10; i; end"
@@ -3571,16 +3571,16 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 2 indexes" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       MultiTargetNode([
         expression("i"),
         expression("j"),
       ]),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      nil,
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_parses expected, "for i,j in 1..10\ni\nend"
@@ -3588,17 +3588,17 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 3 indexes" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       MultiTargetNode([
         expression("i"),
         expression("j"),
         expression("k"),
       ]),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      nil,
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_parses expected, "for i,j,k in 1..10\ni\nend"

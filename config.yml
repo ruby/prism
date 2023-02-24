@@ -651,21 +651,20 @@ nodes:
           ^^^
   - name: ForNode
     child_nodes:
-      - name: for_keyword
-        type: token
       - name: index
         type: node
-      - name: in_keyword
-        type: token
       - name: collection
         type: node
-      - name: do_keyword
-        type: token?
       - name: statements
         type: node
-      - name: end_keyword
-        type: token
-    location: for_keyword->statements
+      - name: for_keyword_loc
+        type: location
+      - name: in_keyword_loc
+        type: location
+      - name: do_keyword_loc
+        type: location?
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents the use of the `for` keyword.
 

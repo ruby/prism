@@ -37,13 +37,13 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "for loops index missing" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       MissingNode(),
-      KEYWORD_IN("in"),
       expression("1..10"),
-      nil,
       Statements([expression("i")]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_errors expected, "for in 1..10\ni\nend", ["Expected index after for."]
@@ -51,13 +51,13 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "for loops only end" do
     expected = ForNode(
-      KEYWORD_FOR("for"),
       MissingNode(),
-      MISSING(""),
       MissingNode(),
-      nil,
       Statements([]),
-      KEYWORD_END("end"),
+      Location(),
+      Location(),
+      nil,
+      Location()
     )
 
     assert_errors expected, "for end", ["Expected index after for.", "Expected keyword in.", "Expected collection."]
@@ -66,9 +66,9 @@ class ErrorsTest < Test::Unit::TestCase
   test "pre execution missing {" do
     expected = PreExecutionNode(
       Statements([expression("1")]),
-      YARP::Location.new(0, 5),
-      YARP::Location.new(5, 5),
-      YARP::Location.new(8, 9)
+      Location(),
+      Location(),
+      Location()
     )
 
     assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
@@ -88,9 +88,9 @@ class ErrorsTest < Test::Unit::TestCase
           "+"
         )
       ]),
-      YARP::Location.new(0, 5),
-      YARP::Location.new(6, 7),
-      YARP::Location.new(12, 13)
+      Location(),
+      Location(),
+      Location()
     )
 
     assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]
@@ -367,5 +367,10 @@ class ErrorsTest < Test::Unit::TestCase
   def expression(source)
     YARP.parse(source) => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
     node
+  end
+
+  # This method is just named this way to mirror the other DSL methods.
+  def Location()
+    YARP::Location.new(0, 0)
   end
 end
