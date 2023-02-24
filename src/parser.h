@@ -165,29 +165,30 @@ typedef struct yp_parser yp_parser_t;
 // error recovery so that we can pop back to a previous context when we hit a
 // token that is understood by a parent context but not by the current context.
 typedef enum {
-  YP_CONTEXT_MAIN,        // the top level context
-  YP_CONTEXT_PREEXE,      // a BEGIN block
-  YP_CONTEXT_POSTEXE,     // an END block
-  YP_CONTEXT_MODULE,      // a module declaration
-  YP_CONTEXT_CLASS,       // a class declaration
-  YP_CONTEXT_DEF,         // a method definition
-  YP_CONTEXT_IF,          // an if statement
-  YP_CONTEXT_ELSIF,       // an elsif clause
-  YP_CONTEXT_UNLESS,      // an unless statement
-  YP_CONTEXT_ELSE,        // an else clause
-  YP_CONTEXT_WHILE,       // a while statement
-  YP_CONTEXT_UNTIL,       // an until statement
-  YP_CONTEXT_EMBEXPR,     // an interpolated expression
-  YP_CONTEXT_BLOCK_BRACES,      // expressions in block arguments using braces
-  YP_CONTEXT_BEGIN,       // a begin statement
-  YP_CONTEXT_SCLASS,      // a singleton class definition
-  YP_CONTEXT_FOR,         // a for loop
-  YP_CONTEXT_PARENS,      // a parenthesized expression
-  YP_CONTEXT_ENSURE,      // an ensure statement
-  YP_CONTEXT_RESCUE,      // a rescue statement
-  YP_CONTEXT_RESCUE_ELSE, // a rescue else statement
-  YP_CONTEXT_LAMBDA_BRACES, // a lambda expression with braces
-  YP_CONTEXT_LAMBDA_DO_END, // a lambda expression with do..end
+  YP_CONTEXT_MAIN,           // the top level context
+  YP_CONTEXT_PREEXE,         // a BEGIN block
+  YP_CONTEXT_POSTEXE,        // an END block
+  YP_CONTEXT_MODULE,         // a module declaration
+  YP_CONTEXT_CLASS,          // a class declaration
+  YP_CONTEXT_DEF,            // a method definition
+  YP_CONTEXT_IF,             // an if statement
+  YP_CONTEXT_ELSIF,          // an elsif clause
+  YP_CONTEXT_UNLESS,         // an unless statement
+  YP_CONTEXT_ELSE,           // an else clause
+  YP_CONTEXT_WHILE,          // a while statement
+  YP_CONTEXT_UNTIL,          // an until statement
+  YP_CONTEXT_EMBEXPR,        // an interpolated expression
+  YP_CONTEXT_BLOCK_BRACES,   // expressions in block arguments using braces
+  YP_CONTEXT_BLOCK_KEYWORDS, // expressions in block arguments using do..end
+  YP_CONTEXT_BEGIN,          // a begin statement
+  YP_CONTEXT_SCLASS,         // a singleton class definition
+  YP_CONTEXT_FOR,            // a for loop
+  YP_CONTEXT_PARENS,         // a parenthesized expression
+  YP_CONTEXT_ENSURE,         // an ensure statement
+  YP_CONTEXT_RESCUE,         // a rescue statement
+  YP_CONTEXT_RESCUE_ELSE,    // a rescue else statement
+  YP_CONTEXT_LAMBDA_BRACES,  // a lambda expression with braces
+  YP_CONTEXT_LAMBDA_DO_END,  // a lambda expression with do..end
 } yp_context_t;
 
 // This is a node in a linked list of contexts.
@@ -259,6 +260,10 @@ struct yp_parser {
   // the stack used to determine if a do keyword belongs to the predicate of a
   // while, until, or for loop
   yp_state_stack_t do_loop_stack;
+
+  // the stack used to determine if a do keyword belongs to the beginning of a
+  // block
+  yp_state_stack_t accepts_block_stack;
 
   struct {
     yp_lex_mode_t *current;                 // the current mode of the lexer
