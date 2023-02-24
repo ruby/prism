@@ -3927,6 +3927,46 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar]"
   end
 
+  test "block with braces on #[] call" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT("["),
+      BRACKET_LEFT("["),
+      ArgumentsNode([expression("bar")]),
+      BRACKET_RIGHT("]"),
+      BlockNode(
+        BRACE_LEFT("{"),
+        nil,
+        Statements([expression("baz")]),
+        BRACE_RIGHT("}")
+      ),
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar] { baz }"
+  end
+
+  test "block with keywords on #[] call" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT("["),
+      BRACKET_LEFT("["),
+      ArgumentsNode([expression("bar")]),
+      BRACKET_RIGHT("]"),
+      BlockNode(
+        KEYWORD_DO("do"),
+        nil,
+        Statements([expression("baz")]),
+        KEYWORD_END("end")
+      ),
+      "[]"
+    )
+
+    assert_parses expected, "foo[bar] do\nbaz\nend"
+  end
+
   test "simple #[]= call" do
     expected = CallNode(
       expression("foo"),
@@ -5099,6 +5139,69 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "-> (a; b, c, d) { b }"
+  end
+
+  test "blocks with keywords" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      nil,
+      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      "foo"
+    )
+
+    assert_parses expected, "foo do end"
+  end
+
+  test "blocks with keywords on commands with arguments" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode([expression("bar")]),
+      nil,
+      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      "foo"
+    )
+
+    assert_parses expected, "foo bar do end"
+  end
+
+  test "blocks with keywords on nested commands with arguments" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode([expression("bar baz")]),
+      nil,
+      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      "foo"
+    )
+
+    assert_parses expected, "foo bar baz do end"
+  end
+
+  test "blocks with keywords on arguments within parentheses" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode([
+        expression("bar"),
+        ParenthesesNode(PARENTHESIS_LEFT("("), Statements([expression("baz do end")]), PARENTHESIS_RIGHT(")"))
+      ]),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo bar, (baz do end)"
   end
 
   private
