@@ -643,6 +643,37 @@ yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return node;
 }
 
+// Allocate and initialize a new ForNode node.
+static yp_node_t *
+yp_for_node_create(
+  yp_parser_t *parser,
+  yp_node_t *index,
+  yp_node_t *collection,
+  yp_node_t *statements,
+  const yp_token_t *for_keyword,
+  const yp_token_t *in_keyword,
+  const yp_token_t *do_keyword,
+  const yp_token_t *end_keyword
+) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_FOR_NODE,
+    .location = { .start = for_keyword->start, .end = statements->location.end },
+    .as.for_node = {
+      .index = index,
+      .collection = collection,
+      .statements = statements,
+      .for_keyword_loc = { .start = for_keyword->start, .end = for_keyword->end },
+      .in_keyword_loc = { .start = in_keyword->start, .end = in_keyword->end },
+      .do_keyword_loc = { .start = do_keyword->start, .end = do_keyword->end },
+      .end_keyword_loc = { .start = end_keyword->start, .end = end_keyword->end }
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new ForwardingArgumentsNode node.
 static yp_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -5607,7 +5638,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close for loop.");
       yp_token_t end_keyword = parser->previous;
 
-      return yp_node_for_node_create(parser, &for_keyword, index, &in_keyword, collection, &do_keyword, statements, &end_keyword);
+      return yp_for_node_create(parser, index, collection, statements, &for_keyword, &in_keyword, &do_keyword, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_IF:
       parser_lex(parser);
