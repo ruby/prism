@@ -231,6 +231,7 @@ module YARP
       HEREDOC_END: :on_heredoc_end,
       HEREDOC_START: :on_heredoc_beg,
       IDENTIFIER: :on_ident,
+      IGNORED_SPACE: :on_ignored_sp,
       IMAGINARY_NUMBER: :on_imaginary,
       INTEGER: :on_int,
       INSTANCE_VARIABLE: :on_ivar,

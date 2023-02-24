@@ -106,6 +106,8 @@ tokens:
     comment: "the start of a heredoc"
   - name: IDENTIFIER
     comment: "an identifier"
+  - name: IGNORED_SPACE
+    comment: "in a tilde heredoc"
   - name: IMAGINARY_NUMBER
     comment: "an imaginary number literal"
   - name: INSTANCE_VARIABLE
