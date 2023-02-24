@@ -94,12 +94,17 @@ task lex: :compile do
   filepaths.each do |filepath|
     source = File.read(filepath)
 
-    if YARP.lex_ripper(source) == YARP.lex_compat(source)
-      print colorize.call(32, ".")
-      results[:passing] << filepath
-    else
-      print colorize.call(31, "E")
-      results[:failing] << filepath
+    begin
+      if YARP.lex_ripper(source) == YARP.lex_compat(source)
+        print colorize.call(32, ".")
+        results[:passing] << filepath
+      else
+        print colorize.call(31, "E")
+        results[:failing] << filepath
+      end
+    rescue ArgumentError => e
+      puts "\nError in #{filepath}"
+      raise e
     end
   end
 
