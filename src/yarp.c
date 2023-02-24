@@ -1920,6 +1920,18 @@ current_token_starts_line(yp_parser_t *parser) {
   return (parser->current.start == parser->start) || (parser->current.start[-1] == '\n');
 }
 
+static yp_token_type_t
+lex_heredoc_whitespace(yp_parser_t *parser) {
+  uint32_t whitespace = parser->lex_modes.current->as.heredoc.ignored_whitespace;
+
+  if (whitespace != 0 && parser->current.end + whitespace <= parser->end) {
+      parser->current.end += whitespace;
+      return YP_TOKEN_IGNORED_SPACE;
+  }
+
+  return YP_TOKEN_INVALID;
+}
+
 // When we hit a # while lexing something like a string, we need to potentially
 // handle interpolation. This function performs that check. It returns a token
 // type representing what it found. Those cases are:
@@ -2540,7 +2552,9 @@ lex_token_type(yp_parser_t *parser) {
                     .ident_length = ident_length,
                     .next_start = parser->current.end,
                     .quote = quote,
-                    .indent = indent
+                    .indent = indent,
+                    .ignored_whitespace = -1,
+                    .newline_was_last_breakpoint = true
                   }
                 });
 
