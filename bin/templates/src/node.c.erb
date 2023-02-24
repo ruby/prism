@@ -191,7 +191,7 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
       yp_node_list_memsize(&node->as.<%= node.human %>.<%= param.name %>, memsize);
       <%- when TokenListParam -%>
       memsize->memsize += yp_token_list_memsize(&node->as.<%= node.human %>.<%= param.name %>);
-      <%- when LocationParam -%>
+      <%- when LocationParam, OptionalLocationParam -%>
       memsize->memsize += sizeof(yp_location_t);
       <%- when IntegerParam -%>
       memsize->memsize += sizeof(int);

@@ -14,7 +14,7 @@ results =
           4
         when "node", "node?"
           8
-        when "location"
+        when "location", "location?"
           16
         when "node[]", "string", "token", "token?", "token[]"
           24

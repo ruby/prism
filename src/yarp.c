@@ -570,14 +570,14 @@ yp_def_node_create(
   yp_node_t *receiver,
   const yp_token_t *operator,
   const yp_token_t *name,
-  const yp_token_t *lparen,
   yp_node_t *parameters,
-  const yp_token_t *rparen,
   const yp_token_t *equal,
   yp_node_t *statements,
   const yp_token_t *end_keyword,
   yp_node_t *scope,
-  const yp_token_t *def_keyword
+  const yp_token_t *def_keyword,
+  const yp_token_t *lparen,
+  const yp_token_t *rparen
 ) {
   yp_node_t *node = yp_node_alloc(parser);
 
@@ -591,9 +591,7 @@ yp_def_node_create(
       .receiver = receiver,
       .operator = *operator,
       .name = *name,
-      .lparen = *lparen,
       .parameters = parameters,
-      .rparen = *rparen,
       .equal = *equal,
       .statements = statements,
       .end_keyword = *end_keyword,
@@ -602,6 +600,14 @@ yp_def_node_create(
         .start = def_keyword->start,
         .end = def_keyword->end
       },
+      .lparen_loc = {
+        .start = lparen->start,
+        .end = lparen->end
+      },
+      .rparen_loc = {
+        .start = rparen->start,
+        .end = rparen->end
+      }
     }
   };
 
@@ -5534,7 +5540,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       }
 
       parser->current_scope = parent_scope;
-      return yp_def_node_create(parser, receiver, &operator, &name, &lparen, params, &rparen, &equal, statements, &end_keyword, scope, &def_keyword);
+      return yp_def_node_create(parser, receiver, &operator, &name, params, &equal, statements, &end_keyword, scope, &def_keyword, &lparen, &rparen);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       parser_lex(parser);

@@ -567,12 +567,8 @@ nodes:
         type: token?
       - name: name
         type: token
-      - name: lparen
-        type: token?
       - name: parameters
         type: node
-      - name: rparen
-        type: token?
       - name: equal
         type: token?
       - name: statements
@@ -583,6 +579,10 @@ nodes:
         type: node
       - name: def_keyword_loc
         type: location
+      - name: lparen_loc
+        type: location?
+      - name: rparen_loc
+        type: location?
     comment: |
       Represents a method definition.
 

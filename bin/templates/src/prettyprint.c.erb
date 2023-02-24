@@ -64,7 +64,7 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
       <%- when LocationParam -%>
       prettyprint_location(buffer, parser, &node->as.<%= node.human %>.<%= param.name %>);
       <%- when OptionalLocationParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %>.start == 0) {
+      if (node->as.<%= node.human %>.<%= param.name %>.start == parser->start) {
         yp_buffer_append_str(buffer, "nil", 3);
       } else {
         prettyprint_location(buffer, parser, &node->as.<%= node.human %>.<%= param.name %>);
