@@ -5342,7 +5342,7 @@ parse_expression_prefix(yp_parser_t *parser) {
           // If parsing the argument resulted in error recovery, then we can
           // stop parsing the arguments entirely now.
           if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
-          if (accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) break;
+          if (match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) break;
 
           expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
           accept(parser, YP_TOKEN_NEWLINE);

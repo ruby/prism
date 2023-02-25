@@ -5204,6 +5204,38 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo bar, (baz do end)"
   end
 
+  test "trailing return conditional in list of statements" do
+    expected = DefNode(
+      IDENTIFIER("hi"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements(
+        [ReturnNode(
+           KEYWORD_RETURN("return"),
+           ArgumentsNode(
+             [IfNode(
+                KEYWORD_IF("if"),
+                TrueNode(),
+                Statements([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)]),
+                nil,
+                nil
+              )]
+           )
+         ),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil)]
+      ),
+      Scope([]),
+      Location(),
+      nil,
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_parses expected, "def hi\nreturn :hi if true\n:bye\nend"
+  end
+  
   private
 
   def assert_serializes(expected, source)
