@@ -3442,7 +3442,11 @@ lex_token_type(yp_parser_t *parser) {
         return YP_TOKEN_INVALID;
       }
 
-      lex_state_set(parser, YP_LEX_STATE_ENDFN);
+      if (lex_state_p(parser, YP_LEX_STATE_FNAME)) {
+        lex_state_set(parser, YP_LEX_STATE_ARG);
+      } else {
+        lex_state_set(parser, YP_LEX_STATE_ENDFN);
+      }
       lex_mode_pop(parser);
 
       // Now, look at the next character to see what kind of symbol we can find.
