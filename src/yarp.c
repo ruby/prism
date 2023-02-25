@@ -4215,7 +4215,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
-        while (!match_any_type_p(parser, 5, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT)) {
+        while (!match_any_type_p(parser, 6, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO)) {
           if (!parse_assoc(parser, argument)) {
             break;
           }
