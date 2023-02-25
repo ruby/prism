@@ -4474,6 +4474,10 @@ parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
 
+  yp_node_t *scope = yp_node_scope_create(parser);
+  yp_node_t *parent_scope = parser->current_scope;
+  parser->current_scope = scope;
+
   yp_node_t *arguments = NULL;
   if (accept(parser, YP_TOKEN_PIPE)) {
     arguments = parse_parameters(parser, false);
@@ -4499,6 +4503,7 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
+  parser->current_scope = parent_scope;
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
 
