@@ -3888,6 +3888,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")), "{\n}\n"
   end
 
+  test "parses hash without final comma" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), expression("b"), nil),
+        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), expression("d"), nil),
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{
+      a: b,
+      c: d\n\n\n
+    }"
+  end
+
   test "begin with rescue and ensure statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
