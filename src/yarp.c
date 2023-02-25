@@ -2660,6 +2660,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (match(parser, '.')) {
+            lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_AMPERSAND_DOT;
           }
 
