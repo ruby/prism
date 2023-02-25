@@ -4203,6 +4203,11 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     }
 
     while (accept(parser, YP_TOKEN_NEWLINE));
+
+    if (parser->current.type == YP_TOKEN_PARENTHESIS_RIGHT) {
+      break;
+    }
+
     if (parsed_block_argument) {
       yp_diagnostic_list_append(&parser->error_list, "Unexpected argument after block argument.", parser->current.start - parser->start);
     }
@@ -4537,7 +4542,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
         arguments->closing = parser->previous;
       } else {
         arguments->arguments = yp_arguments_node_create(parser);
-
+        while (accept(parser, YP_TOKEN_NEWLINE));
         yp_state_stack_push(&parser->accepts_block_stack, true);
         parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");

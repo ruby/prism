@@ -1657,6 +1657,33 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def a(*); b(*); end"
   end
 
+  test "method call in multiple lines with parenthesis" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "
+    foo(
+      :a,
+      :b
+      )"
+
+    assert_parses expected, "
+    foo(:a,
+      :b,
+      )"
+  end
+
   test "method call in multiple lines" do
     expected = CallNode(
       nil,
