@@ -795,6 +795,39 @@ nodes:
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
+  - name: CaseNode
+    child_nodes:
+      - name: case_keyword
+        type: token
+      - name: predicate
+        type: node
+      - name: conditions
+        type: node[]
+      - name: consequent
+        type: node?
+      - name: end_keyword
+        type: token
+    location: case_keyword->end_keyword
+    comment: |
+      Represents the case node
+
+      case true
+      ^^^^^^^^^
+      end
+  - name: WhenNode
+    child_nodes:
+      - name: when_keyword
+        type: token
+      - name: conditions
+        type: node[]
+      - name: statements
+        type: node?
+    location: when_keyword->statements|conditions
+    comment: |
+      case true
+      when true
+      ^^^^^^^^^
+      end
   - name: ImaginaryNode
     comment: |
       Represents an imaginary number literal.
