@@ -2051,7 +2051,11 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 //
 static yp_token_type_t
 lex_question_mark(yp_parser_t *parser) {
-  lex_state_set(parser, YP_LEX_STATE_END);
+  if (lex_state_p(parser, YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_END_ANY)) {
+    lex_state_set(parser, YP_LEX_STATE_BEG);
+  } else {
+    lex_state_set(parser, YP_LEX_STATE_END);
+  }
 
   switch (*parser->current.end) {
     case '\n':
