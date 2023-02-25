@@ -1675,6 +1675,50 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo(:a,\n\n\t\s:b\n)"
   end
 
+  test "method call with trailing comma" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo(:a,\n:b,\n)"
+  end
+
+  test "method call with trailing keyword argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil),
+              nil
+            )],
+           nil
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo(\n:a,\nb: :c,\n)"
+  end
+
   test "def with identifier receiver" do
     expected = DefNode(
       IDENTIFIER("b"),
