@@ -3152,6 +3152,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "a ? b : c"
   end
 
+  test "ternary with symbols" do
+    expected = Ternary(
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hey"), nil),
+      QUESTION_MARK("?"),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
+      COLON(":"),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil)
+    )
+
+    assert_parses expected, ":hey ? :hi : :there"
+  end
+
   test "true" do
     assert_parses TrueNode(), "true"
   end

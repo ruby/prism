@@ -2059,6 +2059,7 @@ lex_question_mark(yp_parser_t *parser) {
       // TODO: this is wrong. We need to track the state for the lexer on
       // whether or not the ? operator is allowed here. For now, we're depending
       // on space characters.
+      lex_state_set(parser, YP_LEX_STATE_BEG);
       return YP_TOKEN_QUESTION_MARK;
     case '\t':
     case '\v':
