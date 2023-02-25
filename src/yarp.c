@@ -4503,6 +4503,7 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
+  yp_node_destroy(parser, scope);
   parser->current_scope = parent_scope;
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
