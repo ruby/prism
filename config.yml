@@ -369,7 +369,7 @@ nodes:
   - name: BeginNode
     child_nodes:
       - name: begin_keyword
-        type: token
+        type: token?
       - name: statements
         type: node
       - name: rescue_clause
@@ -380,7 +380,7 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
-    location: begin_keyword->ensure_clause|end_keyword|statements
+    location: begin_keyword|statements->ensure_clause|end_keyword|statements
     comment: |
       Represents a begin statement.
 
