@@ -2660,6 +2660,7 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (match(parser, '.')) {
+            lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_AMPERSAND_DOT;
           }
 
@@ -4120,7 +4121,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 
 // Parse hash assocs either in method keyword arguments or in hash literals.
 static bool
-parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
+parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
   while (accept(parser, YP_TOKEN_NEWLINE));
 
   if (hash->as.hash_node.elements.size != 0) {
@@ -4131,7 +4132,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
 
   // If we hit a }, then we're done parsing the hash. Note that this is after
   // parsing the comma, so that we can have a trailing comma.
-  if (match_type_p(parser, YP_TOKEN_BRACE_RIGHT)) {
+  if (match_type_p(parser, terminator)) {
     return true;
   }
 
@@ -4185,6 +4186,8 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash) {
   }
 
   yp_node_list_append(parser, hash, &hash->as.hash_node.elements, element);
+
+  while (accept(parser, YP_TOKEN_NEWLINE));
   return true;
 }
 
@@ -4194,6 +4197,8 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
   bool parsed_double_splat_argument = false;
   bool parsed_block_argument = false;
 
+  while (accept(parser, YP_TOKEN_NEWLINE));
+  
   while (
     !match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
     !context_terminator(parser->current_context->context, &parser->current)
@@ -4203,6 +4208,13 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     }
 
     while (accept(parser, YP_TOKEN_NEWLINE));
+
+    // finish with trailing comma in argument list.
+    if (match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) ||
+        context_terminator(parser->current_context->context, &parser->current)) {
+      break;
+    }
+
     if (parsed_block_argument) {
       yp_diagnostic_list_append(&parser->error_list, "Unexpected argument after block argument.", parser->current.start - parser->start);
     }
@@ -4215,8 +4227,8 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
-        while (!match_any_type_p(parser, 5, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT)) {
-          if (!parse_assoc(parser, argument)) {
+        while (!match_any_type_p(parser, 6, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO)) {
+          if (!parse_assoc(parser, argument, YP_TOKEN_PARENTHESIS_RIGHT)) {
             break;
           }
         }
@@ -4291,7 +4303,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
             argument = bare_hash;
 
             while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-              if (!parse_assoc(parser, argument)) {
+              if (!parse_assoc(parser, argument, YP_TOKEN_BRACE_RIGHT)) {
                 break;
               }
             }
@@ -4474,6 +4486,10 @@ parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
 
+  yp_node_t *scope = yp_node_scope_create(parser);
+  yp_node_t *parent_scope = parser->current_scope;
+  parser->current_scope = scope;
+
   yp_node_t *arguments = NULL;
   if (accept(parser, YP_TOKEN_PIPE)) {
     arguments = parse_parameters(parser, false);
@@ -4499,6 +4515,8 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
+  yp_node_destroy(parser, scope);
+  parser->current_scope = parent_scope;
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
 
@@ -5080,7 +5098,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       while (accept(parser, YP_TOKEN_NEWLINE));
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
-        if (!parse_assoc(parser, node)) {
+        if (!parse_assoc(parser, node, YP_TOKEN_BRACE_RIGHT)) {
           break;
         }
       }

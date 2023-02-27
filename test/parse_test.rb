@@ -1675,6 +1675,50 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo(:a,\n\n\t\s:b\n)"
   end
 
+  test "method call with trailing comma" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo(:a,\n:b,\n)"
+  end
+
+  test "method call with trailing keyword argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil),
+              nil
+            )],
+           nil
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo(\n:a,\nb: :c,\n)"
+  end
+
   test "def with identifier receiver" do
     expected = DefNode(
       IDENTIFIER("b"),
@@ -3888,6 +3932,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")), "{\n}\n"
   end
 
+  test "parses hash without final comma" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), expression("b"), nil),
+        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), expression("d"), nil),
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{
+      a: b,
+      c: d\n\n\n
+    }"
+  end
+
   test "begin with rescue and ensure statements" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
@@ -5235,7 +5295,50 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "def hi\nreturn :hi if true\n:bye\nend"
   end
-  
+
+  test "method call with hash and a do block" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode([
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+        HashNode(
+          nil,
+          [AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              TrueNode(),
+              nil
+            )],
+          nil
+        )
+      ]),
+      nil,
+      BlockNode(
+        KEYWORD_DO("do"),
+        ParametersNode([
+          RequiredParameterNode(IDENTIFIER("a")),
+          RequiredParameterNode(IDENTIFIER("b"))
+          ], [], nil, [], nil, nil),
+        Statements([
+          CallNode(
+            nil,
+            nil, IDENTIFIER("puts"),
+            nil,
+            ArgumentsNode([LocalVariableRead(IDENTIFIER("a"))]),
+            nil,
+            nil,
+            "puts"
+          )]),
+        KEYWORD_END("end")
+      ),
+      "foo"
+    )
+
+    assert_parses expected, "foo :a, b: true do |a, b| puts a end"
+  end
+
   private
 
   def assert_serializes(expected, source)
