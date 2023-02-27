@@ -217,7 +217,6 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "def with multiple statements receiver" do
     assert_errors expression("def (\na\nb\n).c; end"), "def (\na\nb\n).c; end", [
-      "Expected to be able to parse receiver.",
       "Expected closing ')' for receiver.",
       "Expected '.' or '::' after receiver",
       "Expected a method name after receiver.",

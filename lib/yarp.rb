@@ -162,18 +162,11 @@ module YARP
     end
   end
 
-  # This lexes with the Ripper lex. It drops any space events and normalizes all
-  # ignored newlines into regular newlines.
+  # This lexes with the Ripper lex. It drops any space events but otherwise
+  # returns the same tokens.
   def self.lex_ripper(source)
     Ripper.lex(source).each_with_object([]) do |token, tokens|
-      case token[1]
-      when :on_ignored_nl
-        tokens << [token[0], :on_nl, token[2], token[3]]
-      when :on_sp
-        # skip
-      else
-        tokens << token
-      end
+      tokens << token unless token[1] == :on_sp
     end
   end
 
@@ -231,6 +224,7 @@ module YARP
       HEREDOC_END: :on_heredoc_end,
       HEREDOC_START: :on_heredoc_beg,
       IDENTIFIER: :on_ident,
+      IGNORED_NEWLINE: :on_ignored_nl,
       IMAGINARY_NUMBER: :on_imaginary,
       INTEGER: :on_int,
       INSTANCE_VARIABLE: :on_ivar,

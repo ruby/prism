@@ -1790,6 +1790,7 @@ lex_global_variable(yp_parser_t *parser) {
 static bool
 lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool modifier_allowed) {
   yp_lex_state_t last_state = parser->lex_state;
+
   if (strncmp(parser->current.start, value, strlen(value)) == 0) {
     if (parser->lex_state & YP_LEX_STATE_FNAME) {
       lex_state_set(parser, YP_LEX_STATE_ENDFN);
@@ -2204,13 +2205,15 @@ current_scope_has_local(yp_parser_t * parser, yp_token_t * token) {
   return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
 }
 
-static inline void
+static inline yp_token_type_t
 lex_newline(yp_parser_t *parser, bool previous_command_start) {
   bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
 
   if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
     // This is an ignored newline.
     parser->command_start = previous_command_start;
+
+    return YP_TOKEN_IGNORED_NEWLINE;
   } else {
     // This is a normal newline.
     lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -2222,6 +2225,8 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
       parser->next_start = parser->heredoc_end;
       parser->heredoc_end = NULL;
     }
+
+    return YP_TOKEN_NEWLINE;
   }
 }
 
@@ -2313,10 +2318,8 @@ lex_token_type(yp_parser_t *parser) {
           // fallthrough
         }
 
-        case '\n': {
-          lex_newline(parser, previous_command_start);
-          return YP_TOKEN_NEWLINE;
-        }
+        case '\n':
+          return lex_newline(parser, previous_command_start);
 
         // ,
         case ',':
@@ -3689,8 +3692,12 @@ parser_lex(yp_parser_t *parser) {
   parser->current.type = lex_token_type(parser);
   parser_lex_callback(parser);
 
-  while (match_any_type_p(parser, 4, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
+  while (match_any_type_p(parser, 5, YP_TOKEN_IGNORED_NEWLINE, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
     switch (parser->current.type) {
+      case YP_TOKEN_IGNORED_NEWLINE:
+        parser->current.type = lex_token_type(parser);
+        parser_lex_callback(parser);
+        break;
       case YP_TOKEN_COMMENT: {
         // If we found a comment while lexing, then we're going to add it to the
         // list of comments in the file and keep lexing.
@@ -3699,16 +3706,15 @@ parser_lex(yp_parser_t *parser) {
 
         parser_lex_magic_comments(parser);
 
-        lex_newline(parser, previous_command_start);
-        parser->current.type = YP_TOKEN_NEWLINE;
-        return;
+        parser->current.type = lex_newline(parser, previous_command_start);
+        break;
       }
       case YP_TOKEN___END__: {
         yp_comment_t *comment = parser_comment(parser, YP_COMMENT___END__);
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
+        (void) lex_newline(parser, previous_command_start);
         parser->current.type = YP_TOKEN_EOF;
-        lex_newline(parser, previous_command_start);
         return;
       }
       case YP_TOKEN_EMBDOC_BEGIN: {
@@ -3727,11 +3733,9 @@ parser_lex(yp_parser_t *parser) {
         if (match_type_p(parser, YP_TOKEN_EOF)) {
           yp_diagnostic_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
         } else {
-          lex_newline(parser, parser->command_start);
-          parser->current.type = YP_TOKEN_NEWLINE;
+          parser->current.type = lex_newline(parser, parser->command_start);
         }
-
-        return;
+        break;
       }
       case YP_TOKEN_INVALID: {
         // If we found an invalid token, then we're going to add an error to the
@@ -3766,9 +3770,10 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_ENSURE:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_IF:
-    case YP_CONTEXT_UNLESS:
     case YP_CONTEXT_ELSIF:
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_UNLESS:
+      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_EMBEXPR:
       return token->type == YP_TOKEN_EMBEXPR_END;
     case YP_CONTEXT_BLOCK_BRACES:
@@ -4187,8 +4192,8 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
   }
 
   yp_node_list_append(parser, hash, &hash->as.hash_node.elements, element);
-
   while (accept(parser, YP_TOKEN_NEWLINE));
+
   return true;
 }
 
@@ -4402,6 +4407,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
             yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
             break;
           }
+          case YP_TOKEN_SEMICOLON:
           case YP_TOKEN_NEWLINE: {
             if (!uses_parentheses) {
               yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
@@ -4599,7 +4605,6 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
 static yp_node_t *
 parse_block_parameters(yp_parser_t *parser) {
   yp_node_t *block_params = parse_parameters(parser, false);
-
   yp_node_t *parameters = yp_node_block_var_node_create(parser, block_params);
 
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
@@ -5592,6 +5597,9 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        lex_state_set(parser, YP_LEX_STATE_BEG);
+        parser->command_start = true;
+
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
         rparen = parser->previous;
       } else {
@@ -5603,6 +5611,11 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       if (endless_definition) {
         equal = parser->previous;
+      } else if (lparen.type == YP_TOKEN_NOT_PROVIDED) {
+        equal = not_provided(parser);
+        lex_state_set(parser, YP_LEX_STATE_BEG);
+        parser->command_start = true;
+        expect_any(parser, "Expected a terminator after the parameters", 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       } else {
         equal = not_provided(parser);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);

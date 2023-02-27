@@ -745,7 +745,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end")
     )
 
-    assert_parses expected, "class A < B a = 1 end"
+    assert_parses expected, "class A < B\na = 1\nend"
   end
 
   test "class variable read" do
@@ -956,7 +956,7 @@ class ParseTest < Test::Unit::TestCase
       Location()
     )
 
-    assert_parses expected, "def a b:\nend"
+    assert_parses expected, "def a b:; end"
   end
 
   test "def with keyword parameter (parenthesis)" do
@@ -1179,13 +1179,13 @@ class ParseTest < Test::Unit::TestCase
       Scope([STAR("*")]),
       Location(),
       nil,
-      nil,
-      nil,
+      Location(),
+      Location(),
       nil,
       Location()
     )
 
-    assert_parses expected, "def a *\nend"
+    assert_parses expected, "def a(*)\nend"
   end
 
   test "def with keyword rest parameter" do
@@ -1204,13 +1204,13 @@ class ParseTest < Test::Unit::TestCase
       Scope([IDENTIFIER("b")]),
       Location(),
       nil,
-      nil,
-      nil,
+      Location(),
+      Location(),
       nil,
       Location()
     )
 
-    assert_parses expected, "def a **b\nend"
+    assert_parses expected, "def a(**b)\nend"
   end
 
   test "def with keyword rest parameter without name" do
@@ -1229,13 +1229,13 @@ class ParseTest < Test::Unit::TestCase
       Scope([]),
       Location(),
       nil,
-      nil,
-      nil,
+      Location(),
+      Location(),
       nil,
       Location()
     )
 
-    assert_parses expected, "def a **\nend"
+    assert_parses expected, "def a(**)\nend"
   end
 
   test "def with forwarding parameter" do
@@ -1247,13 +1247,13 @@ class ParseTest < Test::Unit::TestCase
       Scope([DOT_DOT_DOT("...")]),
       Location(),
       nil,
-      nil,
-      nil,
+      Location(),
+      Location(),
       nil,
       Location()
     )
 
-    assert_parses expected, "def a ...\nend"
+    assert_parses expected, "def a(...)\nend"
   end
 
   test "def with block parameter" do
@@ -1297,13 +1297,13 @@ class ParseTest < Test::Unit::TestCase
       Scope([]),
       Location(),
       nil,
-      nil,
-      nil,
+      Location(),
+      Location(),
       nil,
       Location()
     )
 
-    assert_parses expected, "def a &\nend"
+    assert_parses expected, "def a(&)\nend"
   end
 
   test "def with **nil" do
@@ -1314,21 +1314,21 @@ class ParseTest < Test::Unit::TestCase
         [RequiredParameterNode(IDENTIFIER("a"))],
         [],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [],
         NoKeywordsParameterNode(Location(), Location()),
         nil
       ),
       Statements([]),
-      Scope([IDENTIFIER("a"), LABEL("b")]),
+      Scope([IDENTIFIER("a")]),
       Location(),
       nil,
-      nil,
-      nil,
+      Location(),
+      Location(),
       nil,
       Location()
     )
 
-    assert_parses expected, "def m a, b:, **nil\nend"
+    assert_parses expected, "def m(a, **nil)\nend"
   end
 
   test "method call with label keyword args" do
@@ -3261,34 +3261,6 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "unless true\n1 else 2 end"
   end
 
-  test "unless elsif" do
-    expected = UnlessNode(
-      KEYWORD_UNLESS("unless"),
-      TrueNode(),
-      Statements([TrueNode()]),
-      IfNode(
-        KEYWORD_ELSIF("elsif"),
-        FalseNode(),
-        Statements([FalseNode()]),
-        IfNode(
-          KEYWORD_ELSIF("elsif"),
-          NilNode(),
-          Statements([NilNode()]),
-          ElseNode(
-            KEYWORD_ELSE("else"),
-            Statements([SelfNode()]),
-            KEYWORD_END("end")
-          ),
-          nil
-        ),
-        nil
-      ),
-      KEYWORD_END("end")
-    )
-
-    assert_parses expected, "unless true then true elsif false then false elsif nil then nil else self end"
-  end
-
   test "until" do
     assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "until true; 1; end"
   end
@@ -3596,7 +3568,7 @@ class ParseTest < Test::Unit::TestCase
       Location()
     )
 
-    assert_parses expected, "for i in 1..10 i end"
+    assert_parses expected, "for i in 1..10; i; end"
   end
 
   test "for loop with semicolons" do
@@ -5035,9 +5007,9 @@ class ParseTest < Test::Unit::TestCase
       Scope([
         IDENTIFIER("a"),
         IDENTIFIER("b"),
-        LABEL("c"),
+        IDENTIFIER("c"),
         LABEL("d"),
-        IDENTIFIER("e"),
+        LABEL("e"),
         IDENTIFIER("f"),
         IDENTIFIER("g")
       ]),
@@ -5050,8 +5022,8 @@ class ParseTest < Test::Unit::TestCase
             EQUAL("="),
             IntegerNode()
           )],
-          RestParameterNode(STAR("*"), IDENTIFIER("e")),
-          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
+          RestParameterNode(STAR("*"), IDENTIFIER("c")),
+          [KeywordParameterNode(LABEL("d:"), nil), KeywordParameterNode(LABEL("e:"), nil)],
           KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
           BlockParameterNode(IDENTIFIER("g"), Location())
         ),
@@ -5061,7 +5033,7 @@ class ParseTest < Test::Unit::TestCase
       Statements([expression("a")])
     )
 
-    assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) { a }"
+    assert_parses expected, "-> (a, b = 1, *c, d:, e:, **f, &g) { a }"
   end
 
   test "stabby lambda with non-parenthesised parameters with braces" do
@@ -5101,9 +5073,9 @@ class ParseTest < Test::Unit::TestCase
       Scope([
         IDENTIFIER("a"),
         IDENTIFIER("b"),
-        LABEL("c"),
+        IDENTIFIER("c"),
         LABEL("d"),
-        IDENTIFIER("e"),
+        LABEL("e"),
         IDENTIFIER("f"),
         IDENTIFIER("g")
       ]),
@@ -5116,8 +5088,8 @@ class ParseTest < Test::Unit::TestCase
             EQUAL("="),
             IntegerNode()
           )],
-          RestParameterNode(STAR("*"), IDENTIFIER("e")),
-          [KeywordParameterNode(LABEL("c:"), nil), KeywordParameterNode(LABEL("d:"), nil)],
+          RestParameterNode(STAR("*"), IDENTIFIER("c")),
+          [KeywordParameterNode(LABEL("d:"), nil), KeywordParameterNode(LABEL("e:"), nil)],
           KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
           BlockParameterNode(IDENTIFIER("g"), Location())
         ),
@@ -5127,7 +5099,7 @@ class ParseTest < Test::Unit::TestCase
       Statements([expression("a")])
     )
 
-    assert_parses expected, "-> (a, b = 1, c:, d:, *e, **f, &g) do\n  a\nend"
+    assert_parses expected, "-> (a, b = 1, *c, d:, e:, **f, &g) do\n  a\nend"
   end
 
   test "nested lambdas" do
@@ -5347,6 +5319,8 @@ class ParseTest < Test::Unit::TestCase
   end
 
   def assert_parses(expected, source)
+    refute_nil Ripper.sexp_raw(source)
+
     assert_equal expected, expression(source)
     assert_serializes expected, source
 
