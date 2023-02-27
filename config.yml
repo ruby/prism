@@ -612,7 +612,7 @@ nodes:
       - name: else_keyword
         type: token
       - name: statements
-        type: node
+        type: node?
       - name: end_keyword
         type: token
     location: else_keyword->end_keyword
