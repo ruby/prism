@@ -81,7 +81,8 @@ task lex: :compile do
   require "yarp"
   require "ripper"
 
-  results = { passing: [], failing: [] }
+  passing = 0
+  failing = 0
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
 
   filepaths =
@@ -97,10 +98,10 @@ task lex: :compile do
     begin
       if YARP.lex_ripper(source) == YARP.lex_compat(source)
         print colorize.call(32, ".")
-        results[:passing] << filepath
+        passing += 1
       else
         print colorize.call(31, "E")
-        results[:failing] << filepath
+        failing += 1
       end
     rescue ArgumentError => e
       puts "\nError in #{filepath}"
@@ -108,5 +109,11 @@ task lex: :compile do
     end
   end
 
-  puts "\n\nPASSING=#{results[:passing].length}\nFAILING=#{results[:failing].length}"
+  puts <<~RESULTS
+
+
+    PASSING=#{passing}
+    FAILING=#{failing}
+    PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
+  RESULTS
 end

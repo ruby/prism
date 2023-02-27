@@ -1877,7 +1877,7 @@ lex_identifier(yp_parser_t *parser) {
         if (lex_keyword(parser, "self", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_SELF;
         if (lex_keyword(parser, "then", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_THEN;
         if (lex_keyword(parser, "true", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_TRUE;
-        if (lex_keyword(parser, "when", YP_LEX_STATE_NONE, false)) return YP_TOKEN_KEYWORD_WHEN;
+        if (lex_keyword(parser, "when", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_WHEN;
         break;
       case 5:
         if (lex_keyword(parser, "alias", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, false)) {
@@ -5238,43 +5238,42 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
       yp_token_t case_keyword = parser->previous;
       yp_node_t * predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected a value after case keyword.");
-
       yp_token_t temp_token = not_provided(parser);
 
-      while(accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
-
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {
         return yp_node_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous);
       }
 
       yp_node_t *case_node = yp_node_case_node_create(parser, &case_keyword, predicate, NULL, &temp_token);
 
-      while(accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
-	yp_token_t when_keyword = parser->previous;
-
+      while (accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
+        yp_token_t when_keyword = parser->previous;
         yp_node_t *when_node = yp_node_when_node_create(parser, &when_keyword, NULL);
 
-        while(!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+        do {
           if (when_node->as.when_node.conditions.size != 0) {
             expect(parser, YP_TOKEN_COMMA, "Expected Comma between when conditions.");
           }
 
           yp_node_t * condition = parse_expression(parser, BINDING_POWER_NONE, "Expected a value after when keyword.");
           yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, condition);
-        }
+
+          if (condition->type == YP_NODE_MISSING_NODE) break;
+        } while (!accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_KEYWORD_THEN));
 
         if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
           when_node->as.when_node.statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
         }
+
         yp_node_list_append(parser, case_node, &case_node->as.case_node.conditions, when_node);
       }
 
-      while(accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
-
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
         yp_token_t else_keyword = parser->previous;
-
         yp_node_t *else_node;
+
         if (!match_type_p(parser, YP_TOKEN_KEYWORD_END)) {
           else_node = yp_node_else_node_create(parser, &else_keyword, parse_statements(parser, YP_CONTEXT_CASE_WHEN), &parser->previous);
         } else {

@@ -5310,7 +5310,7 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "foo :a, b: true do |a, b| puts a end"
   end
-  
+
   test "basic case when syntax" do
     expected = CaseNode(
       KEYWORD_CASE("case"),
@@ -5336,7 +5336,7 @@ class ParseTest < Test::Unit::TestCase
          [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)],
          nil
        )],
-      ElseNode(KEYWORD_ELSE("else"), Statements([]), NEWLINE("\n")),
+      ElseNode(KEYWORD_ELSE("else"), nil, KEYWORD_END("end")),
       KEYWORD_END("end")
     )
 
