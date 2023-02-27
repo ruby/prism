@@ -1684,6 +1684,10 @@ lex_global_variable(yp_parser_t *parser) {
       } while (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end));
       return YP_TOKEN_NTH_REFERENCE;
 
+    case '-':
+      parser->current.end++;
+      // fallthrough
+
     default:
       if (char_is_identifier(parser, parser->current.end)) {
         do {
@@ -2648,7 +2652,7 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_PIPE;
 
         // + += +@
-        case '+':
+        case '+': {
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
             if (match(parser, '@')) return YP_TOKEN_UPLUS;
@@ -2665,7 +2669,9 @@ lex_token_type(yp_parser_t *parser) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
 
             if (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end)) {
-              return lex_numeric(parser);
+              yp_token_type_t type = lex_numeric(parser);
+              lex_state_set(parser, YP_LEX_STATE_END);
+              return type;
             }
 
             return YP_TOKEN_UPLUS;
@@ -2673,6 +2679,7 @@ lex_token_type(yp_parser_t *parser) {
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_PLUS;
+        }
 
         // - -= -@
         case '-':
