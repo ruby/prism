@@ -4919,6 +4919,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         if (element->type == YP_NODE_MISSING_NODE) break;
       }
 
+      accept(parser, YP_TOKEN_NEWLINE);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
       yp_array_node_close_set(array, &parser->previous);
 
