@@ -4128,13 +4128,9 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 // Parse hash assocs either in method keyword arguments or in hash literals.
 static bool
 parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
-  while (accept(parser, YP_TOKEN_NEWLINE));
-
   if (hash->as.hash_node.elements.size != 0) {
     expect(parser, YP_TOKEN_COMMA, "expected a comma between hash entries.");
   }
-
-  while (accept(parser, YP_TOKEN_NEWLINE));
 
   // If we hit a }, then we're done parsing the hash. Note that this is after
   // parsing the comma, so that we can have a trailing comma.
@@ -4192,8 +4188,6 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
   }
 
   yp_node_list_append(parser, hash, &hash->as.hash_node.elements, element);
-  while (accept(parser, YP_TOKEN_NEWLINE));
-
   return true;
 }
 
@@ -4203,8 +4197,6 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
   bool parsed_double_splat_argument = false;
   bool parsed_block_argument = false;
 
-  while (accept(parser, YP_TOKEN_NEWLINE));
-  
   while (
     !match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
     !context_terminator(parser->current_context->context, &parser->current)
@@ -4212,8 +4204,6 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     if (yp_arguments_node_size(arguments) > 0) {
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
-
-    while (accept(parser, YP_TOKEN_NEWLINE));
 
     // finish with trailing comma in argument list.
     if (match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) ||
@@ -4320,10 +4310,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       }
     }
 
-    if (terminator != YP_TOKEN_EOF) {
-      while (accept(parser, YP_TOKEN_NEWLINE));
-    }
-
+    if (terminator != YP_TOKEN_EOF) accept(parser, YP_TOKEN_NEWLINE);
     yp_arguments_node_append(arguments, argument);
     if (argument->type == YP_NODE_MISSING_NODE) break;
   }
@@ -4412,10 +4399,10 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
             if (!uses_parentheses) {
               yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
               yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
-              break;
             } else {
-              accept(parser, YP_TOKEN_NEWLINE);
+              parsing = false;
             }
+            break;
           }
           default: {
             yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a default value for the keyword parameter.");
@@ -5043,11 +5030,9 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
-      while (accept(parser, YP_TOKEN_NEWLINE));
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
         if (yp_array_node_size(array) != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
-          while (accept(parser, YP_TOKEN_NEWLINE));
         }
 
         // If we have a right bracket immediately following a comma, this is
@@ -5067,7 +5052,6 @@ parse_expression_prefix(yp_parser_t *parser) {
 
         yp_array_node_append(array, element);
         if (element->type == YP_NODE_MISSING_NODE) break;
-        while (accept(parser, YP_TOKEN_NEWLINE));
       }
 
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
@@ -5102,11 +5086,9 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t opening = parser->previous;
       yp_node_t *node = yp_node_hash_node_create(parser, &opening, &opening);
 
-      while (accept(parser, YP_TOKEN_NEWLINE));
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
-        if (!parse_assoc(parser, node, YP_TOKEN_BRACE_RIGHT)) {
-          break;
-        }
+        if (!parse_assoc(parser, node, YP_TOKEN_BRACE_RIGHT)) break;
+        accept(parser, YP_TOKEN_NEWLINE);
       }
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
@@ -6441,7 +6423,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
     case YP_TOKEN_STAR:
     case YP_TOKEN_STAR_STAR: {
       parser_lex(parser);
-      while (accept(parser, YP_TOKEN_NEWLINE));
 
       yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
       return yp_call_node_binary_create(parser, node, &token, argument);
