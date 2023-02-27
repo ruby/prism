@@ -2353,7 +2353,7 @@ lex_token_type(yp_parser_t *parser) {
         case '!':
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
-            if (match(parser, '@')) return YP_TOKEN_BANG_AT;
+            if (match(parser, '@')) return YP_TOKEN_BANG;
           } else {
             lex_state_set(parser, YP_LEX_STATE_BEG);
           }
@@ -2627,7 +2627,7 @@ lex_token_type(yp_parser_t *parser) {
         case '+':
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
-            if (match(parser, '@')) return YP_TOKEN_PLUS_AT;
+            if (match(parser, '@')) return YP_TOKEN_UPLUS;
 
             return YP_TOKEN_PLUS;
           }
@@ -2654,7 +2654,7 @@ lex_token_type(yp_parser_t *parser) {
         case '-':
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
-            if (match(parser, '@')) return YP_TOKEN_MINUS_AT;
+            if (match(parser, '@')) return YP_TOKEN_UMINUS;
 
             return YP_TOKEN_MINUS;
           }
@@ -4528,13 +4528,12 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // This macro allows you to define a case statement for all of the operators.
 // It's meant to be used in a switch statement.
 #define YP_CASE_OPERATOR YP_TOKEN_AMPERSAND: case YP_TOKEN_BACKTICK: case YP_TOKEN_BANG_EQUAL: \
-  case YP_TOKEN_BANG_TILDE: case YP_TOKEN_BANG_AT: case YP_TOKEN_BANG: case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL: \
+  case YP_TOKEN_BANG_TILDE: case YP_TOKEN_BANG: case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL: \
   case YP_TOKEN_BRACKET_LEFT_RIGHT: case YP_TOKEN_CARET: case YP_TOKEN_EQUAL_EQUAL_EQUAL: case YP_TOKEN_EQUAL_EQUAL: \
   case YP_TOKEN_EQUAL_TILDE: case YP_TOKEN_GREATER_EQUAL: case YP_TOKEN_GREATER_GREATER: case YP_TOKEN_GREATER: \
   case YP_TOKEN_LESS_EQUAL_GREATER: case YP_TOKEN_LESS_EQUAL: case YP_TOKEN_LESS_LESS: case YP_TOKEN_LESS: \
-  case YP_TOKEN_MINUS_AT: case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS_AT: \
-  case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: \
-  case YP_TOKEN_UMINUS: case YP_TOKEN_UPLUS
+  case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: \
+  case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UPLUS
 
 static yp_node_t *
 parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {

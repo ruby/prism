@@ -2987,7 +2987,7 @@ class ParseTest < Test::Unit::TestCase
     operators = {
       "&" => :AMPERSAND,
       "`" => :BACKTICK,
-      "!@" => :BANG_AT,
+      "!@" => :BANG,
       "!~" => :BANG_TILDE,
       "!" => :BANG,
       "[]" => :BRACKET_LEFT_RIGHT,
@@ -3003,11 +3003,11 @@ class ParseTest < Test::Unit::TestCase
       "<=" => :LESS_EQUAL,
       "<<" => :LESS_LESS,
       "<" => :LESS,
-      "-@" => :MINUS_AT,
+      "-@" => :UMINUS,
       "-" => :MINUS,
       "%" => :PERCENT,
       "|" => :PIPE,
-      "+@" => :PLUS_AT,
+      "+@" => :UPLUS,
       "+" => :PLUS,
       "/" => :SLASH,
       "**" => :STAR_STAR,
@@ -4764,7 +4764,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "def +@" do
     expected = DefNode(
-      PLUS_AT("+@"),
+      UPLUS("+@"),
       nil,
       ParametersNode([], [], nil, [], nil, nil),
       Statements([]),
@@ -4782,7 +4782,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "def -@" do
     expected = DefNode(
-      MINUS_AT("-@"),
+      UMINUS("-@"),
       nil,
       ParametersNode([], [], nil, [], nil, nil),
       Statements([]),

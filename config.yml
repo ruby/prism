@@ -23,9 +23,7 @@ tokens:
   - name: BACKTICK
     comment: "`"
   - name: BANG
-    comment: "!"
-  - name: BANG_AT
-    comment: "!@"
+    comment: "! or !@"
   - name: BANG_EQUAL
     comment: "!="
   - name: BANG_TILDE
@@ -216,8 +214,6 @@ tokens:
     comment: "<<="
   - name: MINUS
     comment: "-"
-  - name: MINUS_AT
-    comment: "-@"
   - name: MINUS_EQUAL
     comment: "-="
   - name: MINUS_GREATER
@@ -254,8 +250,6 @@ tokens:
     comment: "||="
   - name: PLUS
     comment: "+"
-  - name: PLUS_AT
-    comment: "+@"
   - name: PLUS_EQUAL
     comment: "+="
   - name: QUESTION_MARK
