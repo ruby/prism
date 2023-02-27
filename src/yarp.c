@@ -1470,6 +1470,11 @@ lex_state_beg_p(yp_parser_t *parser) {
 }
 
 static inline bool
+lex_state_arg_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_ARG_ANY);
+}
+
+static inline bool
 lex_state_end_p(yp_parser_t *parser) {
   return lex_state_p(parser, YP_LEX_STATE_END_ANY);
 }
@@ -1725,7 +1730,7 @@ lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool m
 }
 
 static yp_token_type_t
-lex_identifier(yp_parser_t *parser) {
+lex_identifier(yp_parser_t *parser, bool previous_command_start) {
   // Lex as far as we can into the current identifier.
   size_t width;
   while ((width = char_is_identifier(parser, parser->current.end))) {
@@ -1737,15 +1742,9 @@ lex_identifier(yp_parser_t *parser) {
   width = parser->current.end - parser->current.start;
 
   if (parser->current.end < parser->end) {
-    // If we're in a position where we can accept a = at the end of an
-    // identifier, then we'll optionally accept it.
-    if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) && match(parser, '=')) {
-      return YP_TOKEN_IDENTIFIER;
-    }
-
-    // Else we'll attempt to extend the identifier by a ! or ?. Then we'll check
-    // if we're returning the defined? keyword or just an identifier.
     if ((parser->current.end[1] != '=') && (match(parser, '!') || match(parser, '?'))) {
+      // First we'll attempt to extend the identifier by a ! or ?. Then we'll
+      // check if we're returning the defined? keyword or just an identifier.
       width++;
 
       if (parser->lex_state != YP_LEX_STATE_DOT) {
@@ -1755,6 +1754,21 @@ lex_identifier(yp_parser_t *parser) {
       }
 
       return YP_TOKEN_IDENTIFIER;
+    } else if (lex_state_p(parser, YP_LEX_STATE_FNAME) && parser->current.end[1] != '~' && parser->current.end[1] != '>' && (parser->current.end[1] != '=' || parser->current.end[2] == '>') && match(parser, '=')) {
+      // If we're in a position where we can accept a = at the end of an
+      // identifier, then we'll optionally accept it.
+      return YP_TOKEN_IDENTIFIER;
+    }
+
+    if (
+      ((lex_state_p(parser, YP_LEX_STATE_LABEL | YP_LEX_STATE_ENDFN) && !previous_command_start) || lex_state_arg_p(parser)) &&
+      parser->current.end[0] == ':' && parser->current.end[1] != ':'
+    ) {
+      // If we're in a position where we can accept a : at the end of an
+      // identifier, then we'll optionally accept it.
+      lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
+      (void) match(parser, ':');
+      return YP_TOKEN_LABEL;
     }
   }
 
@@ -1792,9 +1806,7 @@ lex_identifier(yp_parser_t *parser) {
         if (lex_keyword(parser, "when", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_WHEN;
         break;
       case 5:
-        if (lex_keyword(parser, "alias", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, false)) {
-          return YP_TOKEN_KEYWORD_ALIAS;
-        }
+        if (lex_keyword(parser, "alias", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, false)) return YP_TOKEN_KEYWORD_ALIAS;
         if (lex_keyword(parser, "begin", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_BEGIN;
         if (lex_keyword(parser, "BEGIN", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_BEGIN_UPCASE;
         if (lex_keyword(parser, "break", YP_LEX_STATE_MID, false)) return YP_TOKEN_KEYWORD_BREAK;
@@ -1824,6 +1836,7 @@ lex_identifier(yp_parser_t *parser) {
         break;
     }
   }
+
   char start = parser->current.start[0];
   return start >= 'A' && start <= 'Z' ? YP_TOKEN_CONSTANT : YP_TOKEN_IDENTIFIER;
 }
@@ -2945,7 +2958,7 @@ lex_token_type(yp_parser_t *parser) {
           if (!width) return YP_TOKEN_INVALID;
 
           parser->current.end = parser->current.start + width;
-          yp_token_type_t type = lex_identifier(parser);
+          yp_token_type_t type = lex_identifier(parser, previous_command_start);
 
           // If we've hit a __END__ and it was at the start of the line or the
           // start of the file and it is followed by either a \n or a \r\n, then
@@ -2961,14 +2974,6 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           yp_lex_state_t last_state = parser->lex_state;
-
-          // If we're lexing in a place that allows labels and we've hit a
-          // colon, then we can return a label token.
-          if ((parser->current.end[0] == ':') && (parser->current.end[1] != ':')) {
-            parser->current.end++;
-            lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
-            return YP_TOKEN_LABEL;
-          }
 
           if (type == YP_TOKEN_IDENTIFIER || type == YP_TOKEN_CONSTANT) {
             if (lex_state_p(parser, YP_LEX_STATE_BEG_ANY | YP_LEX_STATE_ARG_ANY | YP_LEX_STATE_DOT)) {
