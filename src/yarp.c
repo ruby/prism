@@ -1178,6 +1178,47 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
 }
 
 /******************************************************************************/
+/* Scope-related functions                                                    */
+/******************************************************************************/
+
+// Allocate and initialize a new scope. Push it onto the scope stack.
+static void
+yp_parser_scope_push(yp_parser_t *parser, bool top) {
+  yp_node_t *node = yp_node_scope_create(parser);
+  yp_scope_t *scope = (yp_scope_t *) malloc(sizeof(yp_scope_t));
+  *scope = (yp_scope_t) { .node = node, .top = top, .previous = parser->current_scope };
+  parser->current_scope = scope;
+}
+
+// Check if the current scope has a given local variables.
+static bool
+yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
+  yp_scope_t *scope = parser->current_scope;
+
+  while (scope != NULL) {
+    if (yp_token_list_includes(&scope->node->as.scope.locals, token)) return true;
+    if (scope->top) break;
+    scope = scope->previous;
+  }
+
+  return false;
+}
+
+// Add a local variable to the current scope.
+static void
+yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
+  yp_token_list_append(&parser->current_scope->node->as.scope.locals, token);
+}
+
+// Pop the current scope off the scope stack.
+static void
+yp_parser_scope_pop(yp_parser_t *parser) {
+  yp_scope_t *scope = parser->current_scope;
+  parser->current_scope = scope->previous;
+  free(scope);
+}
+
+/******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
 
@@ -1304,7 +1345,7 @@ __attribute__((unused)) static void
 debug_scope(yp_parser_t *parser) {
   fprintf(stderr, "SCOPE:\n");
 
-  yp_token_list_t token_list = parser->current_scope->as.scope.locals;
+  yp_token_list_t token_list = parser->current_scope->node->as.scope.locals;
   for (size_t index = 0; index < token_list.size; index++) {
     debug_token(&token_list.tokens[index]);
   }
@@ -1684,6 +1725,10 @@ lex_global_variable(yp_parser_t *parser) {
       } while (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end));
       return YP_TOKEN_NTH_REFERENCE;
 
+    case '-':
+      parser->current.end++;
+      // fallthrough
+
     default:
       if (char_is_identifier(parser, parser->current.end)) {
         do {
@@ -1929,6 +1974,8 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       lex_state_set(parser, YP_LEX_STATE_BEG);
       return YP_TOKEN_EMBVAR;
     case '{':
+      parser->enclosure_nesting++;
+
       // In this case it's the start of an embedded expression. If we have
       // already consumed content, then we need to return that content as string
       // content first.
@@ -1939,7 +1986,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 
       // Otherwise we'll skip past the #{ and begin lexing the embedded
       // expression.
-      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR, .as.embexpr.state = parser->lex_state });
       parser->current.end = pound + 2;
       parser->command_start = true;
       yp_state_stack_push(&parser->do_loop_stack, false);
@@ -2133,11 +2180,6 @@ lex_at_variable(yp_parser_t *parser) {
   }
 
   return YP_TOKEN_INVALID;
-}
-
-static bool
-current_scope_has_local(yp_parser_t * parser, yp_token_t * token) {
-  return yp_token_list_includes(&parser->current_scope->as.scope.locals, token);
 }
 
 static inline yp_token_type_t
@@ -2646,7 +2688,7 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_PIPE;
 
         // + += +@
-        case '+':
+        case '+': {
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
             if (match(parser, '@')) return YP_TOKEN_UPLUS;
@@ -2663,7 +2705,9 @@ lex_token_type(yp_parser_t *parser) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
 
             if (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end)) {
-              return lex_numeric(parser);
+              yp_token_type_t type = lex_numeric(parser);
+              lex_state_set(parser, YP_LEX_STATE_END);
+              return type;
             }
 
             return YP_TOKEN_UPLUS;
@@ -2671,6 +2715,7 @@ lex_token_type(yp_parser_t *parser) {
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_PLUS;
+        }
 
         // - -= -@
         case '-':
@@ -2990,11 +3035,11 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (
-            !(last_state & (YP_LEX_STATE_DOT|YP_LEX_STATE_FNAME)) &&
+            !(last_state & (YP_LEX_STATE_DOT | YP_LEX_STATE_FNAME)) &&
             (type == YP_TOKEN_IDENTIFIER) &&
-            current_scope_has_local(parser, &parser->current)
+            yp_parser_local_p(parser, &parser->current)
           ) {
-            lex_state_set(parser, YP_LEX_STATE_END|YP_LEX_STATE_LABEL);
+            lex_state_set(parser, YP_LEX_STATE_END | YP_LEX_STATE_LABEL);
           }
 
           return type;
@@ -4090,7 +4135,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
       case YP_TOKEN_DOT_DOT_DOT: {
         parser_lex(parser);
 
-        if (!current_scope_has_local(parser, &parser->previous)) {
+        if (!yp_parser_local_p(parser, &parser->previous)) {
           yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
         }
 
@@ -4102,7 +4147,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         yp_token_t previous = parser->previous;
 
         if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_COMMA)) {
-          if (!current_scope_has_local(parser, &parser->previous)) {
+          if (!yp_parser_local_p(parser, &parser->previous)) {
             yp_diagnostic_list_append(&parser->error_list, "unexpected * when parent method is not forwarding.", parser->previous.start - parser->start);
           }
 
@@ -4170,7 +4215,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
-          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+          yp_parser_local_add(parser, &name);
         } else {
           name = not_provided(parser);
         }
@@ -4184,7 +4229,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
       case YP_TOKEN_DOT_DOT_DOT: {
         parser_lex(parser);
 
-        yp_token_list_append(&parser->current_scope->as.scope.locals, &parser->previous);
+        yp_parser_local_add(parser, &parser->previous);
         yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
         params->as.parameters_node.keyword_rest = param;
 
@@ -4195,7 +4240,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
         parser_lex(parser);
 
         yp_token_t name = parser->previous;
-        yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        yp_parser_local_add(parser, &name);
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
           yp_token_t operator = parser->previous;
@@ -4222,7 +4267,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
         yp_token_t name = parser->previous;
         yp_token_t local = name;
         local.end -= 1;
-        yp_token_list_append(&parser->current_scope->as.scope.locals, &local);
+        yp_parser_local_add(parser, &local);
 
         switch (parser->current.type) {
           case YP_TOKEN_COMMA:
@@ -4266,10 +4311,10 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
-          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+          yp_parser_local_add(parser, &name);
         } else {
-          yp_token_list_append(&parser->current_scope->as.scope.locals, &operator);
           name = not_provided(parser);
+          yp_parser_local_add(parser, &operator);
         }
 
         yp_node_t *param = yp_node_rest_parameter_node_create(parser, &operator, &name);
@@ -4290,7 +4335,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
           if (accept(parser, YP_TOKEN_IDENTIFIER)) {
             name = parser->previous;
-            yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+            yp_parser_local_add(parser, &name);
           } else {
             name = not_provided(parser);
           }
@@ -4318,11 +4363,9 @@ parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
 
-  yp_node_t *scope = yp_node_scope_create(parser);
-  yp_node_t *parent_scope = parser->current_scope;
-  parser->current_scope = scope;
-
+  yp_parser_scope_push(parser, false);
   yp_node_t *arguments = NULL;
+
   if (accept(parser, YP_TOKEN_PIPE)) {
     arguments = parse_parameters(parser, false);
 
@@ -4347,8 +4390,8 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
-  yp_node_destroy(parser, scope);
-  parser->current_scope = parent_scope;
+  yp_node_destroy(parser, parser->current_scope->node);
+  yp_parser_scope_pop(parser);
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
 
@@ -4438,7 +4481,7 @@ parse_block_parameters(yp_parser_t *parser) {
     while (parsing) {
       if (accept(parser, YP_TOKEN_IDENTIFIER)) {
         yp_token_t name = parser->previous;
-        yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+        yp_parser_local_add(parser, &name);
         yp_token_list_append(&parameters->as.block_var_node.locals, &name);
 
         if (!accept(parser, YP_TOKEN_COMMA)) {
@@ -4600,10 +4643,13 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
+          yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
           parser_lex(parser);
 
           yp_token_t opening = parser->previous;
           yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+          lex_state_set(parser, state);
           expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
 
           yp_node_t *part = yp_node_string_interpolated_node_create(parser, &opening, statements, &parser->previous);
@@ -4732,9 +4778,12 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
+      yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
+
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
 
+      lex_state_set(parser, state);
       expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
       yp_token_t closing = parser->previous;
 
@@ -4851,7 +4900,7 @@ parse_vcall(yp_parser_t *parser) {
     (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
     (parser->previous.end[-1] != '!') &&
     (parser->previous.end[-1] != '?') &&
-    yp_token_list_includes(&parser->current_scope->as.scope.locals, &parser->previous)
+    yp_parser_local_p(parser, &parser->previous)
   ) {
     return yp_node_local_variable_read_create(parser, &parser->previous);
   }
@@ -5190,20 +5239,21 @@ parse_expression_prefix(yp_parser_t *parser) {
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
           yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
 
-          if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_EQUAL_GREATER)) break;
+          if (match_any_type_p(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_EQUAL_GREATER)) break;
           expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
         }
 
-        if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
+        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
           rescue->as.rescue_node.equal_greater = parser->previous;
 
           expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
           rescue->as.rescue_node.exception_variable = parser->previous;
+          yp_parser_local_add(parser, &parser->previous);
         }
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
         yp_node_destroy(parser, statements);
+
         rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
@@ -5330,15 +5380,13 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expected to find an expression after `<<`.");
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-        yp_node_t *scope = yp_node_scope_create(parser);
-        yp_node_t *parent_scope = parser->current_scope;
-        parser->current_scope = scope;
+        yp_parser_scope_push(parser, true);
 
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_SCLASS);
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
-        parser->current_scope = parent_scope;
+        yp_node_t *scope = parser->current_scope->node;
+        yp_parser_scope_pop(parser);
         return yp_node_s_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
@@ -5357,14 +5405,12 @@ parse_expression_prefix(yp_parser_t *parser) {
         superclass = NULL;
       }
 
-      yp_node_t *scope = yp_node_scope_create(parser);
-      yp_node_t *parent_scope = parser->current_scope;
-      parser->current_scope = scope;
-
+      yp_parser_scope_push(parser, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_CLASS);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
-      parser->current_scope = parent_scope;
+      yp_node_t *scope = parser->current_scope->node;
+      yp_parser_scope_pop(parser);
       return yp_node_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_DEF: {
@@ -5505,9 +5551,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         lparen = not_provided(parser);
       }
 
-      yp_node_t *parent_scope = parser->current_scope;
-      yp_node_t *scope = yp_node_scope_create(parser);
-      parser->current_scope = scope;
+      yp_parser_scope_push(parser, true);
       yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
@@ -5545,7 +5589,8 @@ parse_expression_prefix(yp_parser_t *parser) {
         end_keyword = parser->previous;
       }
 
-      parser->current_scope = parent_scope;
+      yp_node_t *scope = parser->current_scope->node;
+      yp_parser_scope_pop(parser);
       return yp_def_node_create(parser, &name, receiver, params, statements, scope, &def_keyword, &operator, &lparen, &rparen, &equal, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
@@ -5685,12 +5730,11 @@ parse_expression_prefix(yp_parser_t *parser) {
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
       }
 
-      yp_node_t *scope = yp_node_scope_create(parser);
-      yp_node_t *parent_scope = parser->current_scope;
-      parser->current_scope = scope;
-
+      yp_parser_scope_push(parser, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_MODULE);
-      parser->current_scope = parent_scope;
+
+      yp_node_t *scope = parser->current_scope->node;
+      yp_parser_scope_pop(parser);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
       return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
@@ -5802,10 +5846,15 @@ parse_expression_prefix(yp_parser_t *parser) {
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
+              yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
+
               parser_lex(parser);
               yp_token_t embexpr_opening = parser->previous;
               yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+              lex_state_set(parser, state);
               expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+
               yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
               break;
             }
@@ -5896,6 +5945,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
+            yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
             parser_lex(parser);
 
             if (current == NULL) {
@@ -5922,6 +5972,8 @@ parse_expression_prefix(yp_parser_t *parser) {
 
             yp_token_t embexpr_opening = parser->previous;
             yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+            lex_state_set(parser, state);
             expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
 
             yp_token_t embexpr_closing = parser->previous;
@@ -6027,10 +6079,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         lparen = not_provided(parser);
       }
 
-      yp_node_t *parent_scope = parser->current_scope;
-      yp_node_t *scope = yp_node_scope_create(parser);
-      parser->current_scope = scope;
-
+      yp_parser_scope_push(parser, false);
       yp_node_t *parameters = parse_block_parameters(parser);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
@@ -6040,8 +6089,8 @@ parse_expression_prefix(yp_parser_t *parser) {
         rparen = not_provided(parser);
       }
 
-      parser->current_scope = parent_scope;
       yp_node_t *body;
+      parser->lambda_enclosure_nesting = -1;
 
       if (accept(parser, YP_TOKEN_LAMBDA_BEGIN)) {
         body = parse_statements(parser, YP_CONTEXT_LAMBDA_BRACES);
@@ -6052,7 +6101,8 @@ parse_expression_prefix(yp_parser_t *parser) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
       }
 
-      parser->lambda_enclosure_nesting = -1;
+      yp_node_t *scope = parser->current_scope->node;
+      yp_parser_scope_pop(parser);
       return yp_node_lambda_node_create(parser, scope, &lparen, parameters, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
@@ -6150,7 +6200,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
 
           yp_token_t name = node->as.local_variable_read.name;
-          yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+          yp_parser_local_add(parser, &name);
 
           node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
           node->location.end = value->location.end;
@@ -6187,7 +6237,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
               yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
 
               yp_token_t name = node->as.call_node.message;
-              yp_token_list_append(&parser->current_scope->as.scope.locals, &name);
+              yp_parser_local_add(parser, &name);
 
               node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
               node->location.end = value->location.end;
@@ -6316,12 +6366,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         yp_token_t *content = &node->as.regular_expression_node.content;
         assert(yp_regexp_named_capture_group_names(content->start, content->end - content->start, &named_captures));
 
-        yp_token_list_t *locals = &parser->current_scope->as.scope.locals;
         for (size_t index = 0; index < named_captures.length; index++) {
           yp_string_t *name = &named_captures.strings[index];
           assert(name->type == YP_STRING_SHARED);
 
-          yp_token_list_append(locals, &(yp_token_t) {
+          yp_parser_local_add(parser, &(yp_token_t) {
             .type = YP_TOKEN_IDENTIFIER,
             .start = name->as.shared.start,
             .end = name->as.shared.end
@@ -6579,12 +6628,14 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-  yp_node_t *scope = yp_node_scope_create(parser);
-  parser->current_scope = scope;
-
+  yp_parser_scope_push(parser, true);
   parser_lex(parser);
 
-  return yp_node_program_create(parser, scope, parse_statements(parser, YP_CONTEXT_MAIN));
+  yp_node_t *statements = parse_statements(parser, YP_CONTEXT_MAIN);
+  yp_node_t *scope = parser->current_scope->node;
+  yp_parser_scope_pop(parser);
+
+  return yp_node_program_create(parser, scope, statements);
 }
 
 /******************************************************************************/
