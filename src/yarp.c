@@ -1789,6 +1789,7 @@ lex_global_variable(yp_parser_t *parser) {
 //
 static bool
 lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool modifier_allowed) {
+  yp_lex_state_t last_state = parser->lex_state;
   if (strncmp(parser->current.start, value, strlen(value)) == 0) {
     if (parser->lex_state & YP_LEX_STATE_FNAME) {
       lex_state_set(parser, YP_LEX_STATE_ENDFN);
@@ -1798,7 +1799,7 @@ lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool m
         parser->command_start = true;
       }
 
-      if (!(parser->lex_state & (YP_LEX_STATE_BEG | YP_LEX_STATE_LABELED | YP_LEX_STATE_CLASS)) && modifier_allowed) {
+      if (!(last_state & (YP_LEX_STATE_BEG | YP_LEX_STATE_LABELED | YP_LEX_STATE_CLASS)) && modifier_allowed) {
         lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
       }
     }
