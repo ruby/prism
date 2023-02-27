@@ -1966,15 +1966,24 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 //
 static yp_token_type_t
 lex_question_mark(yp_parser_t *parser) {
+  if (lex_state_end_p(parser)) {
+    lex_state_set(parser, YP_LEX_STATE_BEG);
+    return YP_TOKEN_QUESTION_MARK;
+  }
+
+  if (parser->current.end == parser->end) {
+    yp_diagnostic_list_append(&parser->error_list, "incomplete character syntax", parser->current.start - parser->start);
+    return YP_TOKEN_INVALID;
+  }
+
+  if (char_is_whitespace(*parser->current.end)) {
+    lex_state_set(parser, YP_LEX_STATE_BEG);
+    return YP_TOKEN_QUESTION_MARK;
+  }
+
   lex_state_set(parser, YP_LEX_STATE_END);
 
   switch (*parser->current.end) {
-    case '\n':
-    case ' ':
-      // TODO: this is wrong. We need to track the state for the lexer on
-      // whether or not the ? operator is allowed here. For now, we're depending
-      // on space characters.
-      return YP_TOKEN_QUESTION_MARK;
     case '\t':
     case '\v':
     case '\f':
