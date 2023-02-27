@@ -4224,7 +4224,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
-        while (!match_any_type_p(parser, 5, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT)) {
+        while (!match_any_type_p(parser, 6, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO)) {
           if (!parse_assoc(parser, argument, YP_TOKEN_PARENTHESIS_RIGHT)) {
             break;
           }
@@ -4483,6 +4483,10 @@ parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
 
+  yp_node_t *scope = yp_node_scope_create(parser);
+  yp_node_t *parent_scope = parser->current_scope;
+  parser->current_scope = scope;
+
   yp_node_t *arguments = NULL;
   if (accept(parser, YP_TOKEN_PIPE)) {
     arguments = parse_parameters(parser, false);
@@ -4508,6 +4512,8 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
+  yp_node_destroy(parser, scope);
+  parser->current_scope = parent_scope;
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
 
