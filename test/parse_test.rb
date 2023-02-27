@@ -5030,7 +5030,7 @@ class ParseTest < Test::Unit::TestCase
         []
       ),
       PARENTHESIS_RIGHT(")"),
-      Statements([expression("a")])
+      Statements([LocalVariableRead(IDENTIFIER("a"))])
     )
 
     assert_parses expected, "-> (a, b = 1, *c, d:, e:, **f, &g) { a }"
@@ -5062,7 +5062,7 @@ class ParseTest < Test::Unit::TestCase
         []
       ),
       nil,
-      Statements([expression("a")])
+      Statements([LocalVariableRead(IDENTIFIER("a"))])
     )
 
     assert_parses expected, "-> a, b = 1, c:, d:, &e { a }"
@@ -5096,7 +5096,7 @@ class ParseTest < Test::Unit::TestCase
         []
       ),
       PARENTHESIS_RIGHT(")"),
-      Statements([expression("a")])
+      Statements([LocalVariableRead(IDENTIFIER("a"))])
     )
 
     assert_parses expected, "-> (a, b = 1, *c, d:, e:, **f, &g) do\n  a\nend"
@@ -5135,11 +5135,11 @@ class ParseTest < Test::Unit::TestCase
           ),
           nil,
           Statements([CallNode(
-            expression("a"),
+            LocalVariableRead(IDENTIFIER("a")),
             nil,
             STAR("*"),
             nil,
-            ArgumentsNode([expression("b")]),
+            ArgumentsNode([LocalVariableRead(IDENTIFIER("b"))]),
             nil,
             nil,
             "*"
@@ -5167,7 +5167,7 @@ class ParseTest < Test::Unit::TestCase
         [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
       ),
       PARENTHESIS_RIGHT(")"),
-      Statements([expression("b")])
+      Statements([LocalVariableRead(IDENTIFIER("b"))])
     )
 
     assert_parses expected, "-> (a; b, c, d) { b }"

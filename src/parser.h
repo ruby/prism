@@ -246,6 +246,21 @@ typedef struct {
   void (*callback)(void *data, yp_parser_t *parser, yp_token_t *token);
 } yp_lex_callback_t;
 
+// This struct represents a node in a linked list of scopes. Some scopes can see
+// into their parent scopes, while others cannot.
+typedef struct yp_scope {
+  // A pointer to the node that holds the tokens that correspond to the locals
+  // in the given scope.
+  yp_node_t *node;
+
+  // A boolean indicating whether or not this scope can see into its parent. If
+  // top is true, then the scope cannot see into its parent.
+  bool top;
+
+  // A pointer to the previous scope in the linked list.
+  struct yp_scope *previous;
+} yp_scope_t;
+
 // This struct represents the overall parser. It contains a reference to the
 // source file, as well as pointers that indicate where in the source it's
 // currently parsing. It also contains the most recent and current token that
@@ -292,7 +307,7 @@ struct yp_parser {
   yp_list_t comment_list;             // the list of comments that have been found while parsing
   yp_list_t warning_list;             // the list of warnings that have been found while parsing
   yp_list_t error_list;               // the list of errors that have been found while parsing
-  yp_node_t *current_scope;           // the current local scope
+  yp_scope_t *current_scope;          // the current local scope
 
   yp_context_node_t *current_context; // the current parsing context
   bool recovering; // whether or not we're currently recovering from a syntax error
