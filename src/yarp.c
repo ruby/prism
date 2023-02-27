@@ -6056,6 +6056,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser->current_scope = scope;
 
       yp_node_t *parameters = parse_block_parameters(parser);
+      parser->lambda_enclosure_nesting = -1;
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
@@ -6076,7 +6077,6 @@ parse_expression_prefix(yp_parser_t *parser) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
       }
 
-      parser->lambda_enclosure_nesting = -1;
       return yp_node_lambda_node_create(parser, scope, &lparen, parameters, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
