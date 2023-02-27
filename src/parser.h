@@ -95,11 +95,7 @@ typedef struct yp_lex_mode {
 
     // This state is used when we are lexing a string or a string-like token, as
     // in string content with either quote or an xstring.
-    YP_LEX_STRING,
-
-    // This state is used when a symbol has already been begun (e.g., by a
-    // colon) and we still need to lex the rest of the symbol.
-    YP_LEX_SYMBOL,
+    YP_LEX_STRING
   } mode;
 
   union {

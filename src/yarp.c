@@ -1256,7 +1256,6 @@ debug_lex_mode(yp_parser_t *parser) {
     case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
     case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
     case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
-    case YP_LEX_SYMBOL: fprintf(stderr, "lexing in SYMBOL mode\n"); return;
   }
 }
 
@@ -2812,8 +2811,6 @@ lex_token_type(yp_parser_t *parser) {
 
             lex_mode_push(parser, lex_mode);
             parser->current.end++;
-          } else {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_SYMBOL });
           }
 
           lex_state_set(parser, YP_LEX_STATE_FNAME);
@@ -2856,9 +2853,13 @@ lex_token_type(yp_parser_t *parser) {
 
         // ~ ~@
         case '~':
-          if ((parser->previous.type == YP_TOKEN_KEYWORD_DEF || parser->previous.type == YP_TOKEN_DOT) &&
-              match(parser, '@'))
-            return YP_TOKEN_TILDE_AT;
+          if (lex_state_operator_p(parser)) {
+            lex_state_set(parser, YP_LEX_STATE_ARG);
+          } else {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+          }
+
+          (void) match(parser, '@');
           return YP_TOKEN_TILDE;
 
         // % %= %i %I %q %Q %w %W
@@ -3437,97 +3438,6 @@ lex_token_type(yp_parser_t *parser) {
       // heredoc. In that case we'll return the EOF token.
       parser->current.end = parser->end;
       return YP_TOKEN_EOF;
-    }
-    case YP_LEX_SYMBOL: {
-      // First, we'll set to start of this token to be the current end.
-      parser->current.start = parser->current.end;
-
-      // If we get here then we have the start of a symbol with no content. In
-      // that case return an invalid token.
-      if (parser->current.end >= parser->end) {
-        return YP_TOKEN_INVALID;
-      }
-
-      lex_state_set(parser, YP_LEX_STATE_ENDFN);
-      lex_mode_pop(parser);
-
-      // Now, look at the next character to see what kind of symbol we can find.
-      switch (*parser->current.end++) {
-        case '&':
-          return YP_TOKEN_AMPERSAND;
-        case '`':
-          return YP_TOKEN_BACKTICK;
-        case '!':
-          if (match(parser, '@')) return YP_TOKEN_BANG_AT;
-          if (match(parser, '~')) return YP_TOKEN_BANG_TILDE;
-          return YP_TOKEN_BANG;
-        case '[':
-          if (match(parser, ']')) {
-            if (match(parser, '=')) return YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
-            return YP_TOKEN_BRACKET_LEFT_RIGHT;
-          }
-          return YP_TOKEN_INVALID;
-        case '^':
-          return YP_TOKEN_CARET;
-        case '=':
-          if (match(parser, '=')) {
-            if (match(parser, '=')) return YP_TOKEN_EQUAL_EQUAL_EQUAL;
-            return YP_TOKEN_EQUAL_EQUAL;
-          }
-          if (match(parser, '~')) return YP_TOKEN_EQUAL_TILDE;
-          return YP_TOKEN_INVALID;
-        case '>':
-          if (match(parser, '=')) return YP_TOKEN_GREATER_EQUAL;
-          if (match(parser, '>')) return YP_TOKEN_GREATER_GREATER;
-          return YP_TOKEN_GREATER;
-        case '<':
-          if (match(parser, '=')) {
-            if (match(parser, '>')) return YP_TOKEN_LESS_EQUAL_GREATER;
-            return YP_TOKEN_LESS_EQUAL;
-          }
-          if (match(parser, '<')) return YP_TOKEN_LESS_LESS;
-          return YP_TOKEN_LESS;
-        case '-':
-          return match(parser, '@') ? YP_TOKEN_MINUS_AT : YP_TOKEN_MINUS;
-        case '%':
-          return YP_TOKEN_PERCENT;
-        case '|':
-          return YP_TOKEN_PIPE;
-        case '+':
-          return match(parser, '@') ? YP_TOKEN_PLUS_AT : YP_TOKEN_PLUS;
-        case '/':
-          return YP_TOKEN_SLASH;
-        case '*':
-          return match(parser, '*') ? YP_TOKEN_STAR_STAR : YP_TOKEN_STAR;
-        case '~':
-          return match(parser, '@') ? YP_TOKEN_TILDE_AT : YP_TOKEN_TILDE;
-        case '@': {
-          yp_token_type_t type = lex_at_variable(parser);
-          lex_state_set(parser, YP_LEX_STATE_ENDFN);
-          return type;
-        }
-        case '$': {
-          yp_token_type_t type = lex_global_variable(parser);
-          lex_state_set(parser, YP_LEX_STATE_END);
-          return type;
-        }
-        default: {
-          // If this isn't the beginning of an identifier, then it's an invalid
-          // token as we've exhausted all of the other options.
-          size_t width = char_is_identifier_start(parser, parser->current.start);
-          if (!width) return YP_TOKEN_INVALID;
-
-          parser->current.end = parser->current.start + width;
-          yp_token_type_t type = lex_identifier(parser);
-          lex_state_set(parser, YP_LEX_STATE_ENDFN);
-
-          return match(parser, '=') ? YP_TOKEN_IDENTIFIER : type;
-        }
-      }
-
-      // If we got here, then we have a symbol followed by something we don't
-      // understand. In that case we'll just return an invalid token.
-      return YP_TOKEN_INVALID;
     }
   }
 
@@ -4694,19 +4604,106 @@ static yp_node_t *
 parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
   yp_token_t opening = parser->previous;
 
-  if (mode == YP_LEX_SYMBOL) {
+  if (mode != YP_LEX_STRING) {
     if (next_state != YP_LEX_STATE_NONE) parser->lex_state = next_state;
+    yp_token_t symbol;
 
-    yp_token_t symbol = parser->current;
-    parser_lex(parser);
+    switch (parser->current.type) {
+      case YP_TOKEN_IDENTIFIER:
+      case YP_TOKEN_CONSTANT:
+      case YP_TOKEN_INSTANCE_VARIABLE:
+      case YP_TOKEN_CLASS_VARIABLE:
+      case YP_TOKEN_GLOBAL_VARIABLE:
+      case YP_TOKEN_NTH_REFERENCE:
+      case YP_TOKEN_BACK_REFERENCE:
+      case YP_TOKEN_KEYWORD___ENCODING__:
+      case YP_TOKEN_KEYWORD___FILE__:
+      case YP_TOKEN_KEYWORD___LINE__:
+      case YP_TOKEN_KEYWORD_ALIAS:
+      case YP_TOKEN_KEYWORD_AND:
+      case YP_TOKEN_KEYWORD_BEGIN_UPCASE:
+      case YP_TOKEN_KEYWORD_BEGIN:
+      case YP_TOKEN_KEYWORD_BREAK:
+      case YP_TOKEN_KEYWORD_CASE:
+      case YP_TOKEN_KEYWORD_CLASS:
+      case YP_TOKEN_KEYWORD_DEF:
+      case YP_TOKEN_KEYWORD_DEFINED:
+      case YP_TOKEN_KEYWORD_DO:
+      case YP_TOKEN_KEYWORD_ELSE:
+      case YP_TOKEN_KEYWORD_ELSIF:
+      case YP_TOKEN_KEYWORD_END_UPCASE:
+      case YP_TOKEN_KEYWORD_END:
+      case YP_TOKEN_KEYWORD_ENSURE:
+      case YP_TOKEN_KEYWORD_FALSE:
+      case YP_TOKEN_KEYWORD_FOR:
+      case YP_TOKEN_KEYWORD_IF:
+      case YP_TOKEN_KEYWORD_IN:
+      case YP_TOKEN_KEYWORD_MODULE:
+      case YP_TOKEN_KEYWORD_NEXT:
+      case YP_TOKEN_KEYWORD_NIL:
+      case YP_TOKEN_KEYWORD_NOT:
+      case YP_TOKEN_KEYWORD_OR:
+      case YP_TOKEN_KEYWORD_REDO:
+      case YP_TOKEN_KEYWORD_RESCUE:
+      case YP_TOKEN_KEYWORD_RETRY:
+      case YP_TOKEN_KEYWORD_RETURN:
+      case YP_TOKEN_KEYWORD_SELF:
+      case YP_TOKEN_KEYWORD_SUPER:
+      case YP_TOKEN_KEYWORD_THEN:
+      case YP_TOKEN_KEYWORD_TRUE:
+      case YP_TOKEN_KEYWORD_UNDEF:
+      case YP_TOKEN_KEYWORD_UNLESS:
+      case YP_TOKEN_KEYWORD_UNTIL:
+      case YP_TOKEN_KEYWORD_WHEN:
+      case YP_TOKEN_KEYWORD_WHILE:
+      case YP_TOKEN_KEYWORD_YIELD:
+        parser_lex(parser);
+        symbol = parser->previous;
+        break;
+      case YP_TOKEN_AMPERSAND:
+      case YP_TOKEN_BACKTICK:
+      case YP_TOKEN_BANG_AT:
+      case YP_TOKEN_BANG_EQUAL:
+      case YP_TOKEN_BANG_TILDE:
+      case YP_TOKEN_BANG:
+      case YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL:
+      case YP_TOKEN_BRACKET_LEFT_RIGHT:
+      case YP_TOKEN_CARET:
+      case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+      case YP_TOKEN_EQUAL_EQUAL:
+      case YP_TOKEN_EQUAL_TILDE:
+      case YP_TOKEN_GREATER_EQUAL:
+      case YP_TOKEN_GREATER_GREATER:
+      case YP_TOKEN_GREATER:
+      case YP_TOKEN_LESS_EQUAL_GREATER:
+      case YP_TOKEN_LESS_EQUAL:
+      case YP_TOKEN_LESS_LESS:
+      case YP_TOKEN_LESS:
+      case YP_TOKEN_MINUS_AT:
+      case YP_TOKEN_MINUS:
+      case YP_TOKEN_PERCENT:
+      case YP_TOKEN_PIPE:
+      case YP_TOKEN_PLUS_AT:
+      case YP_TOKEN_PLUS:
+      case YP_TOKEN_SLASH:
+      case YP_TOKEN_STAR_STAR:
+      case YP_TOKEN_STAR:
+      case YP_TOKEN_TILDE:
+      case YP_TOKEN_UMINUS:
+      case YP_TOKEN_UPLUS:
+        lex_state_set(parser, YP_LEX_STATE_ENDFN);
+        parser_lex(parser);
+        symbol = parser->previous;
+        break;
+      default:
+        expect(parser, YP_TOKEN_IDENTIFIER, "Expected symbol.");
+        symbol = parser->previous;
+        break;
+    }
 
     yp_token_t closing = not_provided(parser);
     return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
   }
-
-  // If we're not in YP_LEX_SYMBOL, then we should be in YP_LEX_STRING, because
-  // the lexer determined this was a dynamic symbol node.
-  assert(mode == YP_LEX_STRING);
 
   if (parser->lex_modes.current->as.string.interpolation) {
     yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);

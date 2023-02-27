@@ -3012,7 +3012,7 @@ class ParseTest < Test::Unit::TestCase
       "/" => :SLASH,
       "**" => :STAR_STAR,
       "*" => :STAR,
-      "~@" => :TILDE_AT,
+      "~@" => :TILDE,
       "~" => :TILDE
     }
 

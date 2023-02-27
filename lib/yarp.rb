@@ -316,7 +316,6 @@ module YARP
       STRING_END: :on_tstring_end,
       SYMBOL_BEGIN: :on_symbeg,
       TILDE: :on_op,
-      TILDE_AT: :on_op,
       UMINUS: :on_op,
       UPLUS: :on_op,
       WORDS_SEP: :on_words_sep,

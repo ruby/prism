@@ -289,9 +289,7 @@ tokens:
   - name: SYMBOL_BEGIN
     comment: "the beginning of a symbol"
   - name: TILDE
-    comment: "~"
-  - name: TILDE_AT
-    comment: "~@"
+    comment: "~ or ~@"
   - name: UMINUS
     comment: "-@"
   - name: UPLUS
