@@ -2992,11 +2992,11 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (
-            !(last_state & (YP_LEX_STATE_DOT|YP_LEX_STATE_FNAME)) &&
+            !(last_state & (YP_LEX_STATE_DOT | YP_LEX_STATE_FNAME)) &&
             (type == YP_TOKEN_IDENTIFIER) &&
             current_scope_has_local(parser, &parser->current)
           ) {
-            lex_state_set(parser, YP_LEX_STATE_END|YP_LEX_STATE_LABEL);
+            lex_state_set(parser, YP_LEX_STATE_END | YP_LEX_STATE_LABEL);
           }
 
           return type;
@@ -5198,20 +5198,21 @@ parse_expression_prefix(yp_parser_t *parser) {
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
           yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
 
-          if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_EQUAL_GREATER)) break;
+          if (match_any_type_p(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_EQUAL_GREATER)) break;
           expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
         }
 
-        if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
+        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
           rescue->as.rescue_node.equal_greater = parser->previous;
 
           expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
           rescue->as.rescue_node.exception_variable = parser->previous;
+          yp_token_list_append(&parser->current_scope->as.scope.locals, &parser->previous);
         }
 
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
         yp_node_destroy(parser, statements);
+
         rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
