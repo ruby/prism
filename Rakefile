@@ -102,6 +102,7 @@ task lex: :compile do
       else
         print colorize.call(31, "E")
         failing += 1
+        puts "\n#{filepath}"
       end
     rescue ArgumentError => e
       puts "\nError in #{filepath}"
