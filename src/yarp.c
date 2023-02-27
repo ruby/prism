@@ -1929,6 +1929,8 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       lex_state_set(parser, YP_LEX_STATE_BEG);
       return YP_TOKEN_EMBVAR;
     case '{':
+      parser->enclosure_nesting++;
+
       // In this case it's the start of an embedded expression. If we have
       // already consumed content, then we need to return that content as string
       // content first.
@@ -1939,7 +1941,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 
       // Otherwise we'll skip past the #{ and begin lexing the embedded
       // expression.
-      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
+      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR, .as.embexpr.state = parser->lex_state });
       parser->current.end = pound + 2;
       parser->command_start = true;
       yp_state_stack_push(&parser->do_loop_stack, false);
@@ -4600,10 +4602,13 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
+          yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
           parser_lex(parser);
 
           yp_token_t opening = parser->previous;
           yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+          lex_state_set(parser, state);
           expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
 
           yp_node_t *part = yp_node_string_interpolated_node_create(parser, &opening, statements, &parser->previous);
@@ -4732,9 +4737,12 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
+      yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
+
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
 
+      lex_state_set(parser, state);
       expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
       yp_token_t closing = parser->previous;
 
@@ -5802,10 +5810,15 @@ parse_expression_prefix(yp_parser_t *parser) {
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
+              yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
+
               parser_lex(parser);
               yp_token_t embexpr_opening = parser->previous;
               yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+              lex_state_set(parser, state);
               expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+
               yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &parser->previous));
               break;
             }
@@ -5896,6 +5909,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
+            yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
             parser_lex(parser);
 
             if (current == NULL) {
@@ -5922,6 +5936,8 @@ parse_expression_prefix(yp_parser_t *parser) {
 
             yp_token_t embexpr_opening = parser->previous;
             yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+            lex_state_set(parser, state);
             expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
 
             yp_token_t embexpr_closing = parser->previous;

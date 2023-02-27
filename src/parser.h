@@ -100,6 +100,11 @@ typedef struct yp_lex_mode {
 
   union {
     struct {
+      // The state of the parser before the embedded expression was lexed.
+      yp_lex_state_t state;
+    } embexpr;
+
+    struct {
       // This is the terminator of the list literal.
       char terminator;
 
