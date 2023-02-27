@@ -4186,6 +4186,8 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
   }
 
   yp_node_list_append(parser, hash, &hash->as.hash_node.elements, element);
+
+  while (accept(parser, YP_TOKEN_NEWLINE));
   return true;
 }
 
