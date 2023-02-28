@@ -4119,8 +4119,8 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
-        while (!match_any_type_p(parser, 6, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO)) {
-          if (!parse_assoc(parser, argument, YP_TOKEN_PARENTHESIS_RIGHT)) {
+        while (!match_any_type_p(parser, 7, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
+          if (!parse_assoc(parser, argument, terminator)) {
             break;
           }
         }
@@ -4195,7 +4195,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
             argument = bare_hash;
 
             while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-              if (!parse_assoc(parser, argument, YP_TOKEN_BRACE_RIGHT)) {
+              if (!parse_assoc(parser, argument, terminator)) {
                 break;
               }
             }
@@ -6255,6 +6255,37 @@ parse_expression_prefix(yp_parser_t *parser) {
 }
 
 static inline yp_node_t *
+parse_assignment_value(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
+  yp_node_t *value = parse_expression(parser, binding_power, message);
+
+  if (match_type_p(parser, YP_TOKEN_COMMA)) {
+    yp_token_t opening = not_provided(parser);
+    yp_token_t closing = not_provided(parser);
+    yp_node_t *array = yp_array_node_create(parser, &opening, &closing);
+
+    yp_array_node_append(array, value);
+    value = array;
+
+    while (!match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
+      expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit elements in the array.");
+      yp_node_t *element;
+
+      if (accept(parser, YP_TOKEN_STAR)) {
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
+        element = yp_node_star_node_create(parser, &parser->previous, expression);
+      } else {
+        element = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an element for the array.");
+      }
+
+      yp_array_node_append(array, element);
+      if (element->type == YP_NODE_MISSING_NODE) break;
+    }
+  }
+
+  return value;
+}
+
+static inline yp_node_t *
 parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t binding_power) {
   yp_token_t token = parser->current;
 
@@ -6264,17 +6295,17 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
       switch (node->type) {
         case YP_NODE_CLASS_VARIABLE_READ_NODE: {
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the class variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the class variable after =.");
           yp_class_variable_write_node_init(parser, node, &token, value);
           return node;
         }
         case YP_NODE_CONSTANT_PATH_NODE:
         case YP_NODE_CONSTANT_READ: {
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the constant after =.");
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the constant after =.");
           return yp_node_constant_path_write_node_create(parser, node, &token, value);
         }
         case YP_NODE_GLOBAL_VARIABLE_READ: {
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the global variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the global variable after =.");
           yp_node_t *read = node;
 
           yp_node_t *result = yp_node_global_variable_write_create(parser, &node->as.global_variable_read.name, &token, value);
@@ -6282,7 +6313,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return result;
         }
         case YP_NODE_LOCAL_VARIABLE_READ: {
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the local variable after =.");
 
           yp_token_t name = node->as.local_variable_read.name;
           yp_parser_local_add(parser, &name);
@@ -6297,7 +6328,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           return node;
         }
         case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
-          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the instance variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the instance variable after =.");
           yp_instance_variable_write_node_init(parser, node, &token, value);
           return node;
         }
@@ -6319,7 +6350,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
               // When it was parsed in the prefix position, foo was seen as a
               // method call with no receiver and no arguments. Now we have an
               // =, so we know it's a local variable write.
-              yp_node_t *value = parse_expression(parser, binding_power, "Expected a value for the local variable after =.");
+              yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the local variable after =.");
 
               yp_token_t name = node->as.call_node.message;
               yp_parser_local_add(parser, &name);
@@ -6346,7 +6377,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             // arguments node, parse the argument, and add it to the list.
             node->as.call_node.arguments = yp_arguments_node_create(parser);
 
-            yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value for the call after =.");
+            yp_node_t *argument = parse_assignment_value(parser, binding_power, "Expected a value for the call after =.");
             yp_arguments_node_append(node->as.call_node.arguments, argument);
 
             // The method name needs to change. If we previously had foo, we now
@@ -6374,7 +6405,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           ) {
             node->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
 
-            yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value for the call after =.");
+            yp_node_t *argument = parse_assignment_value(parser, binding_power, "Expected a value for the call after =.");
             yp_arguments_node_append(node->as.call_node.arguments, argument);
 
             node->location.end = argument->location.end;
@@ -6382,7 +6413,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
             // Free the previous name and replace it with "[]=".
             yp_string_free(&node->as.call_node.name);
             yp_string_constant_init(&node->as.call_node.name, "[]=", 3);
-
             return node;
           }
 

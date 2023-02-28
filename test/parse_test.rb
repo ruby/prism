@@ -5808,6 +5808,80 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo { |a| break } == 42"
   end
 
+  test "multiple assignment on class variable" do
+    expected = ClassVariableWriteNode(
+      Location(),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      Location()
+    )
+
+    assert_parses expected, "@@foo = 1, 2"
+  end
+
+  test "multiple assignment on constant" do
+    expected = ConstantPathWriteNode(
+      ConstantRead(CONSTANT("Foo")),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "Foo = 1, 2"
+  end
+
+  test "multiple assignment on constant path" do
+    expected = ConstantPathWriteNode(
+      ConstantPathNode(
+        ConstantRead(CONSTANT("Foo")),
+        COLON_COLON("::"),
+        ConstantRead(CONSTANT("Bar"))
+      ),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "Foo::Bar = 1, 2"
+  end
+
+  test "multiple assignment on global variable" do
+    expected = GlobalVariableWrite(
+      GLOBAL_VARIABLE("$foo"),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "$foo = 1, 2"
+  end
+
+  test "multiple assignment on local variable (known)" do
+    expected = LocalVariableWrite(
+      IDENTIFIER("foo"),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo = 1; foo = 1, 2"
+  end
+
+  test "multiple assignment on local variable (unknown)" do
+    expected = LocalVariableWrite(
+      IDENTIFIER("foo"),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo = 1, 2"
+  end
+
+  test "multiple assignment on instance variable" do
+    expected = InstanceVariableWriteNode(
+      Location(),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      Location()
+    )
+
+    assert_parses expected, "@foo = 1, 2"
+  end
+
   private
 
   def assert_serializes(expected, source)

@@ -93,6 +93,7 @@ task lex: :compile do
     end
 
   filepaths.each do |filepath|
+    puts filepath if ENV["VERBOSE"]
     source = File.read(filepath)
 
     begin

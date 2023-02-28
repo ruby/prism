@@ -333,9 +333,9 @@ nodes:
       - name: elements
         type: node[]
       - name: opening
-        type: token
+        type: token?
       - name: closing
-        type: token
+        type: token?
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -1013,8 +1013,8 @@ nodes:
     comment: |
       Represents a multi-left-hand expression.
 
-        a, b, c = 1, 2, 3
-        ^^^^^^^
+          a, b, c = 1, 2, 3
+          ^^^^^^^
   - name: NextNode
     child_nodes:
       - name: arguments
