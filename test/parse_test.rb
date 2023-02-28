@@ -5406,6 +5406,26 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "case this; when FooBar, BazBonk; end"
   end
 
+  test "block with back reference" do
+    expected = CallNode(
+      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+      DOT("."),
+      IDENTIFIER("map"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        BRACE_LEFT("{"),
+        nil,
+        Statements([GlobalVariableRead(BACK_REFERENCE("$&"))]),
+        BRACE_RIGHT("}")
+      ),
+      "map"
+    )
+
+    assert_parses expected, "foo.map { $& }"
+  end
+
   private
 
   def assert_serializes(expected, source)
