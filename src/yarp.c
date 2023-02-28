@@ -4122,19 +4122,19 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, binding_power_t bind
     return first_target;
   }
 
-  yp_node_t *multi_target = yp_node_multi_target_node_create(parser, &operator, NULL);
+  yp_node_t *multi_write = yp_node_multi_write_node_create(parser, &operator, NULL);
   yp_node_t *target;
 
-  yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, first_target);
+  yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, first_target);
 
   while (accept(parser, YP_TOKEN_COMMA)) {
     target = parse_expression(parser, binding_power, "Expected another expression after ','.");
     target = parse_target(parser, target, &operator, NULL);
 
-    yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, target);
+    yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, target);
   }
 
-  return multi_target;
+  return multi_write;
 }
 
 // Parse a list of statements separated by newlines or semicolons.
@@ -5309,7 +5309,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_node_t *node = yp_class_variable_read_node_create(parser, &parser->previous);
 
       if (match_type_p(parser, YP_TOKEN_COMMA)) {
-        node = parse_targets(parser, node, BINDING_POWER_NONE);
+        node = parse_targets(parser, node, BINDING_POWER_INDEX);
       }
 
       return node;
@@ -5342,9 +5342,16 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_float_node_create(parser, &parser->previous);
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE:
-    case YP_TOKEN_BACK_REFERENCE:
+    case YP_TOKEN_BACK_REFERENCE: {
       parser_lex(parser);
-      return yp_node_global_variable_read_create(parser, &parser->previous);
+      yp_node_t *node = yp_node_global_variable_read_create(parser, &parser->previous);
+
+      if (match_type_p(parser, YP_TOKEN_COMMA)) {
+        node = parse_targets(parser, node, BINDING_POWER_INDEX);
+      }
+
+      return node;
+    }
     case YP_TOKEN_IDENTIFIER:
       parser_lex(parser);
       return parse_identifier(parser);
@@ -5387,9 +5394,16 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_IMAGINARY_NUMBER:
       parser_lex(parser);
       return yp_imaginary_node_create(parser, &parser->previous);
-    case YP_TOKEN_INSTANCE_VARIABLE:
+    case YP_TOKEN_INSTANCE_VARIABLE: {
       parser_lex(parser);
-      return yp_instance_variable_read_node_create(parser, &parser->previous);
+      yp_node_t *node = yp_instance_variable_read_node_create(parser, &parser->previous);
+
+      if (match_type_p(parser, YP_TOKEN_COMMA)) {
+        node = parse_targets(parser, node, BINDING_POWER_INDEX);
+      }
+
+      return node;
+    }
     case YP_TOKEN_INTEGER:
       parser_lex(parser);
       return yp_integer_node_create(parser, &parser->previous);
@@ -6475,10 +6489,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
           return parse_target(parser, node, &token, value);
         }
-        case YP_NODE_MULTI_TARGET_NODE: {
+        case YP_NODE_MULTI_WRITE_NODE: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
-          node->as.multi_target_node.operator = token;
-          node->as.multi_target_node.value = value;
+          node->as.multi_write_node.operator = token;
+          node->as.multi_write_node.value = value;
           node->location.end = value->location.end;
           return node;
         }

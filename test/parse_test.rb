@@ -3746,7 +3746,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 2 indexes" do
     expected = ForNode(
-      MultiTargetNode(
+      MultiWriteNode(
         [
           LocalVariableWrite(IDENTIFIER("i"), nil, nil),
           LocalVariableWrite(IDENTIFIER("j"), nil, nil)
@@ -3767,7 +3767,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 3 indexes" do
     expected = ForNode(
-      MultiTargetNode(
+      MultiWriteNode(
         [
           LocalVariableWrite(IDENTIFIER("i"), nil, nil),
           LocalVariableWrite(IDENTIFIER("j"), nil, nil),
@@ -5816,7 +5816,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo { |a| break } == 42"
   end
 
-  test "multiple assignment on class variable" do
+  test "multiple assignment on class variable (left-hand side)" do
+    expected = MultiWriteNode(
+      [
+        ClassVariableWriteNode(Location(), nil, nil),
+        ClassVariableWriteNode(Location(), nil, nil)
+      ],
+      EQUAL("="),
+      IntegerNode()
+    )
+
+    assert_parses expected, "@@foo, @@bar = 1"
+  end
+
+  test "multiple assignment on class variable (right-hand side)" do
     expected = ClassVariableWriteNode(
       Location(),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
@@ -5826,7 +5839,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "@@foo = 1, 2"
   end
 
-  test "multiple assignment on constant" do
+  test "multiple assignment on constant (right-hand side)" do
     expected = ConstantPathWriteNode(
       ConstantRead(CONSTANT("Foo")),
       EQUAL("="),
@@ -5850,7 +5863,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "Foo::Bar = 1, 2"
   end
 
-  test "multiple assignment on global variable" do
+  test "multiple assignment on global variable (left-hand side)" do
+    expected = MultiWriteNode(
+      [
+        GlobalVariableWrite(GLOBAL_VARIABLE("$foo"), nil, nil),
+        GlobalVariableWrite(GLOBAL_VARIABLE("$bar"), nil, nil)
+      ],
+      EQUAL("="),
+      IntegerNode()
+    )    
+
+    assert_parses expected, "$foo, $bar = 1"
+  end
+
+  test "multiple assignment on global variable (right-hand side)" do
     expected = GlobalVariableWrite(
       GLOBAL_VARIABLE("$foo"),
       EQUAL("="),
@@ -5860,7 +5886,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "$foo = 1, 2"
   end
 
-  test "multiple assignment on local variable (known)" do
+  test "multiple assignment on local variable (known, right-hand side)" do
     expected = LocalVariableWrite(
       IDENTIFIER("foo"),
       EQUAL("="),
@@ -5870,7 +5896,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo = 1; foo = 1, 2"
   end
 
-  test "multiple assignment on local variable (unknown)" do
+  test "multiple assignment on local variable (unknown, right-hand side)" do
     expected = LocalVariableWrite(
       IDENTIFIER("foo"),
       EQUAL("="),
@@ -5880,7 +5906,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo = 1, 2"
   end
 
-  test "multiple assignment on instance variable" do
+  test "multiple assignment on instance variable (left-hand side)" do
+    expected = MultiWriteNode(
+      [
+        InstanceVariableWriteNode(Location(), nil, nil),
+        InstanceVariableWriteNode(Location(), nil, nil)
+      ],
+      EQUAL("="),
+      IntegerNode()
+    )
+
+    assert_parses expected, "@foo, @bar = 1"
+  end
+
+  test "multiple assignment on instance variable (right-hand side)" do
     expected = InstanceVariableWriteNode(
       Location(),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),

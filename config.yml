@@ -1005,7 +1005,7 @@ nodes:
 
           module Foo end
           ^^^^^^^^^^^^^^
-  - name: MultiTargetNode
+  - name: MultiWriteNode
     child_nodes:
       - name: targets
         type: node[]
