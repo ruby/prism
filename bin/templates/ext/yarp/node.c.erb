@@ -24,8 +24,8 @@ token_type(yp_token_t *token) {
 }
 
 static VALUE
-yp_string_new(yp_string_t *string) {
-  return rb_str_new(yp_string_source(string), yp_string_length(string));
+yp_string_new(yp_string_t *string, rb_encoding *encoding) {
+  return rb_enc_str_new(yp_string_source(string), yp_string_length(string), encoding);
 }
 
 VALUE
@@ -59,7 +59,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
         rb_ary_push(argv[<%= index %>], yp_node_new(parser, node->as.<%= node.human %>.<%= param.name %>.nodes[index], encoding));
       }
       <%- when StringParam -%>
-      argv[<%= index %>] = yp_string_new(&node->as.<%= node.human %>.<%= param.name %>);
+      argv[<%= index %>] = yp_string_new(&node->as.<%= node.human %>.<%= param.name %>, encoding);
       <%- when TokenParam -%>
       argv[<%= index %>] = yp_token_new(parser, &node->as.<%= node.human %>.<%= param.name %>, encoding);
       <%- when OptionalTokenParam -%>

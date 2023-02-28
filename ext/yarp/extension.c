@@ -212,6 +212,8 @@ parse_source(source_t *source) {
   yp_parser_init(&parser, source->source, source->size);
 
   yp_node_t *node = yp_parse(&parser);
+  rb_encoding *encoding = rb_enc_find(parser.encoding.name);
+
   VALUE comments = rb_ary_new();
   VALUE errors = rb_ary_new();
   VALUE warnings = rb_ary_new();
@@ -243,8 +245,10 @@ parse_source(source_t *source) {
   for (yp_diagnostic_t *error = (yp_diagnostic_t *) parser.error_list.head; error != NULL;
        error = (yp_diagnostic_t *) error->node.next) {
     VALUE location_argv[] = { LONG2FIX(error->start), LONG2FIX(error->end) };
-    VALUE error_argv[] = { rb_str_new(yp_string_source(&error->message), yp_string_length(&error->message)),
-                           rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+    VALUE error_argv[] = {
+      rb_enc_str_new(yp_string_source(&error->message), yp_string_length(&error->message), encoding),
+      rb_class_new_instance(2, location_argv, rb_cYARPLocation)
+    };
 
     rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
   }
@@ -252,13 +256,14 @@ parse_source(source_t *source) {
   for (yp_diagnostic_t *warning = (yp_diagnostic_t *) parser.warning_list.head; warning != NULL;
        warning = (yp_diagnostic_t *) warning->node.next) {
     VALUE location_argv[] = { LONG2FIX(warning->start), LONG2FIX(warning->end) };
-    VALUE warning_argv[] = { rb_str_new(yp_string_source(&warning->message), yp_string_length(&warning->message)),
-                             rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+    VALUE warning_argv[] = {
+      rb_enc_str_new(yp_string_source(&warning->message), yp_string_length(&warning->message), encoding),
+      rb_class_new_instance(2, location_argv, rb_cYARPLocation)
+    };
 
     rb_ary_push(warnings, rb_class_new_instance(2, warning_argv, rb_cYARPParseWarning));
   }
 
-  rb_encoding *encoding = rb_enc_find(parser.encoding.name);
   VALUE result_argv[] = { yp_node_new(&parser, node, encoding), comments, errors, warnings };
   VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
 
