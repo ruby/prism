@@ -3955,7 +3955,15 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end"),
     )
 
-    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nrescue AnotherException, OneMoreException => ex\nc\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception => ex
+        b
+      rescue AnotherException, OneMoreException => ex
+        c
+      end
+    RUBY
   end
 
   test "ensure statements" do
@@ -4080,6 +4088,37 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
+  end
+
+  test "blocks with rescues" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        KEYWORD_DO("do"),
+        nil,
+        BeginNode(
+          nil,
+          Statements([]),
+          RescueNode(KEYWORD_RESCUE("rescue"), [], nil, nil, Statements([]), nil),
+          nil,
+          nil,
+          KEYWORD_END("end")
+        ),
+        KEYWORD_END("end")
+      ),
+      "foo"
+    )
+
+    assert_parses expected, <<~RUBY
+      foo do
+      rescue
+      end
+    RUBY
   end
 
   test "simple #[] call" do
