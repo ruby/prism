@@ -5440,6 +5440,34 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "Kernel.Integer(10)"
   end
 
+  test "block with braces and break" do
+    expected = CallNode(
+      CallNode(
+        nil,
+        nil,
+        IDENTIFIER("foo"),
+        nil,
+        nil,
+        nil,
+        BlockNode(
+          BRACE_LEFT("{"),
+          nil,
+          Statements([BreakNode(ArgumentsNode([IntegerNode()]), Location())]),
+          BRACE_RIGHT("}")
+        ),
+        "foo"
+      ),
+      nil,
+      EQUAL_EQUAL("=="),
+      nil,
+      ArgumentsNode([IntegerNode()]),
+      nil,
+      nil,
+      "=="
+    )
+    assert_parses expected, "foo { break 42 } == 42"
+  end
+
   private
 
   def assert_serializes(expected, source)
