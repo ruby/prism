@@ -747,7 +747,124 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "class A < B\na = 1\nend"
   end
+  
+  test "class with rescue, else, ensure" do
+    expected = ClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      nil,
+      nil,
+      BeginNode(
+        nil,
+        Statements([]),
+        RescueNode(KEYWORD_RESCUE("rescue"), [], nil, nil, Statements([]), nil),
+        ElseNode(KEYWORD_ELSE("else"), Statements([]), SEMICOLON(";")),
+        EnsureNode(KEYWORD_ENSURE("ensure"), Statements([]), KEYWORD_END("end")),
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
 
+    assert_parses expected, "class A; rescue; else; ensure; end"
+  end
+
+  test "class with ensure" do
+    expected = ClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      nil,
+      nil,
+      BeginNode(
+        nil,
+        Statements([]),
+        nil,
+        nil,
+        EnsureNode(KEYWORD_ENSURE("ensure"), Statements([]), KEYWORD_END("end")),
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "class A; ensure; end"
+  end
+
+  test "sclass with rescue, else, ensure" do
+    expected = ClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      nil,
+      nil,
+      Statements(
+        [SClassNode(
+           Scope([]),
+           KEYWORD_CLASS("class"),
+           LESS_LESS("<<"),
+           SelfNode(),
+           BeginNode(
+             nil,
+             Statements([]),
+             RescueNode(
+               KEYWORD_RESCUE("rescue"),
+               [],
+               nil,
+               nil,
+               Statements([]),
+               nil
+             ),
+             ElseNode(KEYWORD_ELSE("else"), Statements([]), SEMICOLON(";")),
+             EnsureNode(
+               KEYWORD_ENSURE("ensure"),
+               Statements([]),
+               KEYWORD_END("end")
+             ),
+             KEYWORD_END("end")
+           ),
+           KEYWORD_END("end")
+         )]
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "class A; class << self; rescue; else; ensure; end; end"
+  end
+
+  test "sclass with ensure" do
+    expected = ClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      ConstantRead(CONSTANT("A")),
+      nil,
+      nil,
+      Statements(
+        [SClassNode(
+           Scope([]),
+           KEYWORD_CLASS("class"),
+           LESS_LESS("<<"),
+           SelfNode(),
+           BeginNode(
+             nil,
+             Statements([]),
+             nil,
+             nil,
+             EnsureNode(
+               KEYWORD_ENSURE("ensure"),
+               Statements([]),
+               KEYWORD_END("end")
+             ),
+             KEYWORD_END("end")
+           ),
+           KEYWORD_END("end")
+         )]
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "class A; class << self; ensure; end; end"
+  end
+  
   test "class variable read" do
     assert_parses ClassVariableReadNode(), "@@abc"
   end
@@ -2392,6 +2509,27 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "module A a = 1 end"
   end
 
+  test "module with rescue, else ensure" do
+    expected = ModuleNode(
+      Scope([IDENTIFIER("x")]),
+      KEYWORD_MODULE("module"),
+      ConstantRead(CONSTANT("A")),
+      BeginNode(
+        nil,
+        Statements(
+          [LocalVariableWrite(IDENTIFIER("x"), EQUAL("="), IntegerNode())]
+        ),
+        RescueNode(KEYWORD_RESCUE("rescue"), [], nil, nil, Statements([]), nil),
+        nil,
+        nil,
+        KEYWORD_END("end")
+      ),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "module A\n x = 1; rescue; end"
+  end
+  
   test "next" do
     assert_parses NextNode(nil, Location()), "next"
   end
@@ -3417,7 +3555,7 @@ class ParseTest < Test::Unit::TestCase
         Statements([CallNode(nil, nil, IDENTIFIER("d"), nil, nil, nil, nil, "d")]),
         KEYWORD_END("end")
       ),
-      nil
+      KEYWORD_END("end")
     )
 
     assert_parses expected, "begin; a; rescue; b; else; c; ensure; d; end"
@@ -3831,7 +3969,7 @@ class ParseTest < Test::Unit::TestCase
         Statements([expression("b")]),
         KEYWORD_END("end"),
       ),
-      nil
+      KEYWORD_END("end")
     )
 
     assert_parses expected, "begin\na\nensure\nb\nend"
@@ -3938,7 +4076,7 @@ class ParseTest < Test::Unit::TestCase
         Statements([expression("b")]),
         KEYWORD_END("end"),
       ),
-      nil,
+      KEYWORD_END("end")
     )
 
     assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
@@ -4939,6 +5077,56 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def def\nend"
   end
 
+  test "def with rescue, else, ensure" do
+    expected = DefNode(
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      BeginNode(
+        nil,
+        Statements([]),
+        RescueNode(KEYWORD_RESCUE("rescue"), [], nil, nil, Statements([]), nil),
+        ElseNode(KEYWORD_ELSE("else"), Statements([]), SEMICOLON(";")),
+        EnsureNode(KEYWORD_ENSURE("ensure"), Statements([]), KEYWORD_END("end")),
+        KEYWORD_END("end")
+      ),
+      Scope([]),
+      Location(),
+      nil,
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_parses expected, "def a; rescue; else; ensure; end"
+  end
+
+  test "def with ensure" do
+    expected = DefNode(
+      IDENTIFIER("a"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      BeginNode(
+        nil,
+        Statements([]),
+        nil,
+        nil,
+        EnsureNode(KEYWORD_ENSURE("ensure"), Statements([]), KEYWORD_END("end")),
+        KEYWORD_END("end")
+      ),
+      Scope([]),
+      Location(),
+      nil,
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_parses expected, "def a; ensure; end"
+  end
+
   test "def ensure with self receiver" do
     expected = DefNode(
       KEYWORD_ENSURE("ensure"),
@@ -5186,6 +5374,44 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "-> (a; b, c, d) { b }"
+  end
+
+  test "lambdas with rescue, else, ensure" do
+    expected = LambdaNode(
+      Scope([]),
+      nil,
+      BlockVarNode(ParametersNode([], [], nil, [], nil, nil), []),
+      nil,
+      BeginNode(
+        nil,
+        Statements([]),
+        RescueNode(KEYWORD_RESCUE("rescue"), [], nil, nil, Statements([]), nil),
+        ElseNode(KEYWORD_ELSE("else"), Statements([]), KEYWORD_ELSE("else")),
+        EnsureNode(KEYWORD_ENSURE("ensure"), Statements([]), KEYWORD_END("end")),
+        KEYWORD_END("end")
+      )
+    )
+
+    assert_parses expected, "-> do\nrescue\nelse\nensure\nend"
+  end
+
+  test "lambdas with ensure" do
+    expected = LambdaNode(
+      Scope([]),
+      nil,
+      BlockVarNode(ParametersNode([], [], nil, [], nil, nil), []),
+      nil,
+      BeginNode(
+        nil,
+        Statements([]),
+        nil,
+        nil,
+        EnsureNode(KEYWORD_ENSURE("ensure"), Statements([]), KEYWORD_END("end")),
+        KEYWORD_END("end")
+      )
+    )
+
+    assert_parses expected, "-> do\nensure\nend"
   end
 
   test "blocks with keywords" do
