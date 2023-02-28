@@ -13,10 +13,10 @@
 #define EXPECTED_YARP_VERSION "0.2.0"
 
 VALUE
-yp_token_new(yp_parser_t *parser, yp_token_t *token);
+yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding);
 
 VALUE
-yp_node_new(yp_parser_t *parser, yp_node_t *node);
+yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding);
 
 void
 Init_yarp_pack(void);

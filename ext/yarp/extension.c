@@ -105,14 +105,61 @@ dump_file(VALUE self, VALUE filepath) {
   return value;
 }
 
+typedef struct {
+  VALUE tokens;
+  rb_encoding *encoding;
+} lex_data_t;
+
+static yp_encoding_t yp_encoding_ascii = {
+  .name = "ascii",
+  .alnum_char = yp_encoding_ascii_alnum_char,
+  .alpha_char = yp_encoding_ascii_alpha_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_9 = {
+  .name = "iso-8859-9",
+  .alnum_char = yp_encoding_iso_8859_9_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_9_alpha_char
+};
+
+static yp_encoding_t yp_encoding_utf_8 = {
+  .name = "utf-8",
+  .alnum_char = yp_encoding_utf_8_alnum_char,
+  .alpha_char = yp_encoding_utf_8_alpha_char
+};
+
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
+  lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
+
   VALUE yields = rb_ary_new_capa(2);
-  rb_ary_push(yields, yp_token_new(parser, token));
+  rb_ary_push(yields, yp_token_new(parser, token, lex_data->encoding));
   rb_ary_push(yields, INT2FIX(parser->lex_state));
 
-  VALUE ary = (VALUE) data;
-  rb_ary_push(ary, yields);
+  rb_ary_push(lex_data->tokens, yields);
+}
+
+static yp_encoding_t *
+lex_encoding_callback(yp_parser_t *parser, const char *start, size_t width) {
+  char compare[width + 1];
+  sprintf(compare, "%.*s", (int) width, start);
+
+#define ENCODING(value, prebuilt) \
+  if (width == sizeof(value) - 1 && strncasecmp(compare, value, sizeof(value) - 1) == 0) { \
+    lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data; \
+    lex_data->encoding = rb_enc_find(prebuilt.name); \
+    return &prebuilt; \
+  }
+
+  ENCODING("ascii", yp_encoding_ascii);
+  ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
+  ENCODING("utf-8", yp_encoding_utf_8);
+  ENCODING("binary", yp_encoding_ascii);
+  ENCODING("us-ascii", yp_encoding_ascii);
+
+#undef ENCODING
+
+  return NULL;
 }
 
 // Return an array of tokens corresponding to the given source.
@@ -120,10 +167,16 @@ static VALUE
 lex_source(source_t *source) {
   yp_parser_t parser;
   yp_parser_init(&parser, source->source, source->size);
+  yp_parser_register_encoding_decode_callback(&parser, lex_encoding_callback);
 
-  VALUE ary = rb_ary_new();
+  lex_data_t lex_data = {
+    .tokens = rb_ary_new(),
+    .encoding = rb_utf8_encoding()
+  };
+
+  void *data = (void *) &lex_data;
   yp_lex_callback_t lex_callback = (yp_lex_callback_t) {
-    .data = (void *) ary,
+    .data = data,
     .callback = lex_token,
   };
 
@@ -131,7 +184,7 @@ lex_source(source_t *source) {
   yp_node_destroy(&parser, yp_parse(&parser));
   yp_parser_free(&parser);
 
-  return ary;
+  return lex_data.tokens;
 }
 
 // Return an array of tokens corresponding to the given string.
@@ -205,7 +258,8 @@ parse_source(source_t *source) {
     rb_ary_push(warnings, rb_class_new_instance(2, warning_argv, rb_cYARPParseWarning));
   }
 
-  VALUE result_argv[] = { yp_node_new(&parser, node), comments, errors, warnings };
+  rb_encoding *encoding = rb_enc_find(parser.encoding.name);
+  VALUE result_argv[] = { yp_node_new(&parser, node, encoding), comments, errors, warnings };
   VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
 
   yp_node_destroy(&parser, node);

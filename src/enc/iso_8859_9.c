@@ -1,6 +1,6 @@
 #include "yp_encoding.h"
 
-size_t
+__attribute__((__visibility__("default"))) extern size_t
 yp_encoding_iso_8859_9_alpha_char(const char *c) {
   const unsigned char v = *c;
 
@@ -16,7 +16,7 @@ yp_encoding_iso_8859_9_alpha_char(const char *c) {
   );
 }
 
-size_t
+__attribute__((__visibility__("default"))) extern size_t
 yp_encoding_iso_8859_9_alnum_char(const char *c) {
   const unsigned char v = *c;
 

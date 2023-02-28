@@ -1502,7 +1502,7 @@ unicode_codepoint_match(unicode_codepoint_t codepoint, unicode_codepoint_t *code
 }
 
 static unicode_codepoint_t
-utf_8_codepoint(const char *c, size_t *width) {
+utf_8_codepoint(const unsigned char *c, size_t *width) {
   if ((c[0] >> 7) == 0b0) {
     // 0xxxxxxx
     *width = 1;
@@ -1526,16 +1526,20 @@ utf_8_codepoint(const char *c, size_t *width) {
   return 0;
 }
 
-size_t
+__attribute__((__visibility__("default"))) extern size_t
 yp_encoding_utf_8_alpha_char(const char *c) {
   size_t width;
-  unicode_codepoint_t codepoint = utf_8_codepoint(c, &width);
+  const unsigned char *uc = (const unsigned char *) c;
+
+  unicode_codepoint_t codepoint = utf_8_codepoint(uc, &width);
   return (codepoint && unicode_codepoint_match(codepoint, unicode_alpha_codepoints, UNICODE_ALPHA_CODEPOINTS_LENGTH)) ? width : 0;
 }
 
-size_t
+__attribute__((__visibility__("default"))) extern size_t
 yp_encoding_utf_8_alnum_char(const char *c) {
   size_t width;
-  unicode_codepoint_t codepoint = utf_8_codepoint(c, &width);
+  const unsigned char *uc = (const unsigned char *) c;
+
+  unicode_codepoint_t codepoint = utf_8_codepoint(uc, &width);
   return (codepoint && unicode_codepoint_match(codepoint, unicode_alnum_codepoints, UNICODE_ALNUM_CODEPOINTS_LENGTH)) ? width : 0;
 }

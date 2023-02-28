@@ -3423,16 +3423,19 @@ lex_token_type(yp_parser_t *parser) {
 /******************************************************************************/
 
 static yp_encoding_t yp_encoding_ascii = {
+  .name = "ascii",
   .alnum_char = yp_encoding_ascii_alnum_char,
   .alpha_char = yp_encoding_ascii_alpha_char
 };
 
 static yp_encoding_t yp_encoding_iso_8859_9 = {
+  .name = "iso-8859-9",
   .alnum_char = yp_encoding_iso_8859_9_alnum_char,
   .alpha_char = yp_encoding_iso_8859_9_alpha_char
 };
 
 static yp_encoding_t yp_encoding_utf_8 = {
+  .name = "utf-8",
   .alnum_char = yp_encoding_utf_8_alnum_char,
   .alpha_char = yp_encoding_utf_8_alpha_char
 };
@@ -3467,7 +3470,19 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     }
     size_t width = end - start;
 
-    // First, we're going to loop through each of the encodings that we handle
+    // First, we're going to call out to a user-defined callback if one was
+    // provided. If they return an encoding struct that we can use, then we'll
+    // use that here.
+    if (parser->encoding_decode_callback != NULL) {
+      yp_encoding_t *encoding = parser->encoding_decode_callback(parser, start, width);
+
+      if (encoding != NULL) {
+        parser->encoding = *encoding;
+        return;
+      }
+    }
+
+    // Next, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
     if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
@@ -3482,14 +3497,6 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     ENCODING("us-ascii", yp_encoding_ascii);
 
 #undef ENCODING
-
-    // Otherwise, we're going to call out to a user-defined callback. If they
-    // return an encoding struct that we can use, then we'll use that here.
-    yp_encoding_t *encoding = parser->encoding_decode_callback(start, width);
-    if (encoding != NULL) {
-      parser->encoding = *encoding;
-      return;
-    }
 
     // If nothing was returned by this point, then we've got an issue because we
     // didn't understand the encoding that the user was trying to use. In this
@@ -6644,14 +6651,6 @@ parse_program(yp_parser_t *parser) {
 /* External functions                                                         */
 /******************************************************************************/
 
-// By default, the parser will not attempt to decode any more encodings than are
-// already hard-coded into the parser. This function provides the default
-// implementation so that the parser always has a valid function pointer.
-static yp_encoding_t *
-undecodeable(const char *name, size_t length) {
-  return NULL;
-}
-
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
@@ -6675,7 +6674,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .current_context = NULL,
     .recovering = false,
     .encoding = yp_encoding_utf_8,
-    .encoding_decode_callback = undecodeable,
+    .encoding_decode_callback = NULL,
     .lex_callback = NULL
   };
 
