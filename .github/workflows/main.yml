@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: recursive
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
@@ -23,6 +25,8 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
 
+    - name: Run lex comparison
+      run: bundle exec rake lex
   memcheck:
     runs-on: ubuntu-latest
 
