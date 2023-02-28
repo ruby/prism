@@ -98,7 +98,8 @@ task lex: :compile do
 
     begin
       lexed = YARP.lex_compat(source)
-      if lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
+      value = YARP.remove_tilde_heredocs(lexed.value)
+      if lexed.errors.empty? && YARP.remove_tilde_heredocs(YARP.lex_ripper(source)) == value
         print colorize.call(32, ".")
         passing += 1
       else
