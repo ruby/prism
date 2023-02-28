@@ -3746,10 +3746,14 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 2 indexes" do
     expected = ForNode(
-      MultiTargetNode([
-        LocalVariableWrite(IDENTIFIER("i"), nil, nil),
-        LocalVariableWrite(IDENTIFIER("j"), nil, nil)
-      ]),
+      MultiTargetNode(
+        [
+          LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+          LocalVariableWrite(IDENTIFIER("j"), nil, nil)
+        ],
+        nil,
+        nil
+      ),
       expression("1..10"),
       Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
@@ -3763,11 +3767,15 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 3 indexes" do
     expected = ForNode(
-      MultiTargetNode([
-        LocalVariableWrite(IDENTIFIER("i"), nil, nil),
-        LocalVariableWrite(IDENTIFIER("j"), nil, nil),
-        LocalVariableWrite(IDENTIFIER("k"), nil, nil)
-      ]),
+      MultiTargetNode(
+        [
+          LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+          LocalVariableWrite(IDENTIFIER("j"), nil, nil),
+          LocalVariableWrite(IDENTIFIER("k"), nil, nil)
+        ],
+        nil,
+        nil
+      ),
       expression("1..10"),
       Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),

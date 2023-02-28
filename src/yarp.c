@@ -4122,7 +4122,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, binding_power_t bind
     return first_target;
   }
 
-  yp_node_t *multi_target = yp_node_multi_target_node_create(parser);
+  yp_node_t *multi_target = yp_node_multi_target_node_create(parser, &operator, NULL);
   yp_node_t *target;
 
   yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, first_target);
@@ -5304,9 +5304,16 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_ALL);
     }
-    case YP_TOKEN_CLASS_VARIABLE:
+    case YP_TOKEN_CLASS_VARIABLE: {
       parser_lex(parser);
-      return yp_class_variable_read_node_create(parser, &parser->previous);
+      yp_node_t *node = yp_class_variable_read_node_create(parser, &parser->previous);
+
+      if (match_type_p(parser, YP_TOKEN_COMMA)) {
+        node = parse_targets(parser, node, BINDING_POWER_NONE);
+      }
+
+      return node;
+    }
     case YP_TOKEN_CONSTANT: {
       parser_lex(parser);
       yp_token_t constant = parser->previous;
@@ -6467,6 +6474,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
         case YP_NODE_CALL_NODE: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
           return parse_target(parser, node, &token, value);
+        }
+        case YP_NODE_MULTI_TARGET_NODE: {
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
+          node->as.multi_target_node.operator = token;
+          node->as.multi_target_node.value = value;
+          node->location.end = value->location.end;
+          return node;
         }
         default:
           // In this case we have an = sign, but we don't know what it's for. We

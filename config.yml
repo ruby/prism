@@ -1009,12 +1009,16 @@ nodes:
     child_nodes:
       - name: targets
         type: node[]
+      - name: operator
+        type: token?
+      - name: value
+        type: node?
     location: targets
     comment: |
-      Represents a multi-left-hand expression.
+      Represents a multi-target expression.
 
           a, b, c = 1, 2, 3
-          ^^^^^^^
+          ^^^^^^^^^^^^^^^^^
   - name: NextNode
     child_nodes:
       - name: arguments
