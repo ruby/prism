@@ -219,15 +219,17 @@ typedef struct yp_comment {
 // Each callback should return the number of bytes, or 0 if the next bytes are
 // invalid for the encoding and type.
 typedef struct {
+  const char *name;
   size_t (*alpha_char)(const char *c);
   size_t (*alnum_char)(const char *c);
+  bool (*isupper_char)(const char *c);
 } yp_encoding_t;
 
 // When an encoding is encountered that isn't understood by YARP, we provide
 // the ability here to call out to a user-defined function to get an encoding
 // struct. If the function returns something that isn't NULL, we set that to
 // our encoding and use it to parse identifiers.
-typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(const char *name, size_t width);
+typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(yp_parser_t *parser, const char *name, size_t width);
 
 // When you are lexing through a file, the lexer needs all of the information
 // that the parser additionally provides (for example, the local table). So if
