@@ -222,6 +222,7 @@ typedef struct {
   const char *name;
   size_t (*alpha_char)(const char *c);
   size_t (*alnum_char)(const char *c);
+  bool (*isupper_char)(const char *c);
 } yp_encoding_t;
 
 // When an encoding is encountered that isn't understood by YARP, we provide

@@ -1,24 +1,41 @@
 #include "yp_encoding.h"
 
+// Each element of the following table contains a bitfield that indicates a
+// piece of information about the corresponding ISO-8859-9 character.
+static unsigned char yp_encoding_iso_8859_9_table[256] = {
+  //  0      1      2      3      4      5      6      7      8      9      A      B      C      D      E      F
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, // 0x
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, // 1x
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, // 2x
+  0b010, 0b010, 0b010, 0b010, 0b010, 0b010, 0b010, 0b010, 0b010, 0b010, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, // 3x
+  0b000, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, // 4x
+  0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b000, 0b000, 0b000, 0b000, 0b000, // 5x
+  0b000, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, // 6x
+  0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b000, 0b000, 0b000, 0b000, 0b000, // 7x
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, // 8x
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, // 9x
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b000, 0b011, 0b000, 0b000, 0b000, 0b000, 0b000, // Ax
+  0b000, 0b000, 0b000, 0b000, 0b000, 0b011, 0b000, 0b000, 0b000, 0b000, 0b011, 0b000, 0b000, 0b000, 0b000, 0b000, // Bx
+  0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, // Cx
+  0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b000, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b111, 0b011, // Dx
+  0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, // Ex
+  0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b000, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, 0b011, // Fx
+};
+
 __attribute__((__visibility__("default"))) extern size_t
 yp_encoding_iso_8859_9_alpha_char(const char *c) {
   const unsigned char v = *c;
-
-  return (
-    (v >= 0x41 && v <= 0x5A) ||
-    (v >= 0x61 && v <= 0x7A) ||
-    (v == 0xAA) ||
-    (v == 0xB5) ||
-    (v == 0xBA) ||
-    (v >= 0xC0 && v <= 0xD6) ||
-    (v >= 0xD8 && v <= 0xF6) ||
-    (v >= 0xF8 && v <= 0xFF)
-  );
+  return (yp_encoding_iso_8859_9_table[v] & YP_ENCODING_ALPHABETIC_BIT) ? 1 : 0;
 }
 
 __attribute__((__visibility__("default"))) extern size_t
 yp_encoding_iso_8859_9_alnum_char(const char *c) {
   const unsigned char v = *c;
+  return (yp_encoding_iso_8859_9_table[v] & YP_ENCODING_ALPHANUMERIC_BIT) ? 1 : 0;
+}
 
-  return ((v >= 0x30 && v <= 0x39) || yp_encoding_iso_8859_9_alpha_char(c));
+__attribute__((__visibility__("default"))) extern bool
+yp_encoding_iso_8859_9_isupper_char(const char *c) {
+  const unsigned char v = *c;
+  return (yp_encoding_iso_8859_9_table[v] & YP_ENCODING_UPPERCASE_BIT) ? true : false;
 }

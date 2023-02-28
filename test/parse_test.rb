@@ -4146,6 +4146,21 @@ class ParseTest < Test::Unit::TestCase
     refute YARP.parse("#encoding: utf8").errors.empty?
   end
 
+  test "encoding isupper" do
+    expected = ArrayNode(
+      [
+        SymbolNode(SYMBOL_BEGIN(":"), CONSTANT("Υ"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ά"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ŗ"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ρ"), nil)
+      ],
+      BRACKET_LEFT("["),
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[:Υ, :ά, :ŗ, :ρ]"
+  end
+
   test "multiline string addition" do
     expected = CallNode(
       StringNode(

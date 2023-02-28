@@ -1882,8 +1882,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
     }
   }
 
-  char start = parser->current.start[0];
-  return start >= 'A' && start <= 'Z' ? YP_TOKEN_CONSTANT : YP_TOKEN_IDENTIFIER;
+  return parser->encoding.isupper_char(parser->current.start) ? YP_TOKEN_CONSTANT : YP_TOKEN_IDENTIFIER;
 }
 
 // Returns true if the current token that the parser is considering is at the
@@ -3425,19 +3424,22 @@ lex_token_type(yp_parser_t *parser) {
 static yp_encoding_t yp_encoding_ascii = {
   .name = "ascii",
   .alnum_char = yp_encoding_ascii_alnum_char,
-  .alpha_char = yp_encoding_ascii_alpha_char
+  .alpha_char = yp_encoding_ascii_alpha_char,
+  .isupper_char = yp_encoding_ascii_isupper_char
 };
 
 static yp_encoding_t yp_encoding_iso_8859_9 = {
   .name = "iso-8859-9",
   .alnum_char = yp_encoding_iso_8859_9_alnum_char,
-  .alpha_char = yp_encoding_iso_8859_9_alpha_char
+  .alpha_char = yp_encoding_iso_8859_9_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_9_isupper_char
 };
 
 static yp_encoding_t yp_encoding_utf_8 = {
   .name = "utf-8",
   .alnum_char = yp_encoding_utf_8_alnum_char,
-  .alpha_char = yp_encoding_utf_8_alpha_char
+  .alpha_char = yp_encoding_utf_8_alpha_char,
+  .isupper_char = yp_encoding_utf_8_isupper_char
 };
 
 // Here we're going to check if this is a "magic" comment, and perform whatever

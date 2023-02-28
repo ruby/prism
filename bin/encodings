@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+def table(range, encoding)
+  puts "//  #{(0...16).map { |value| value.to_s(16).upcase }.join("      ")}"
+
+  range.each_slice(16).with_index do |slice, row_index|
+    row =
+      slice.map do |codepoint|
+        character = codepoint.chr(encoding)
+
+        value = 0
+        value |= (1 << 0) if character.match?(/[[:alpha:]]/)
+        value |= (1 << 1) if character.match?(/[[:alnum:]]/)
+        value |= (1 << 2) if character.match?(/[[:upper:]]/)
+
+        "0b%03b," % value
+      end
+
+    puts "#{row.join(" ")} // #{row_index.to_s(16).upcase}x"
+  end
+end
+
+def unicode(codepoints)
+  previous = nil
+  groups =
+    codepoints.slice_before do |codepoint|
+      (!previous.nil? && (codepoint - previous) != 1).tap { previous = codepoint }
+    end
+
+  groups.flat_map do |group|
+    ["0x#{group.first.to_s(16).upcase}", "0x#{group.last.to_s(16).upcase}"]
+  end
+end
+
+puts "ASCII"
+puts "=========="
+table((0...128), Encoding::US_ASCII)
+
+puts "\nISO-8859-9"
+puts "=========="
+table((0...256), Encoding::ISO8859_9)
+
+puts "\nUTF-8"
+puts "=========="
+
+range = (0...0x10FFFF).map { begin; _1.chr(Encoding::UTF_8); _1; rescue RangeError; nil; end }.compact
+
+alpha = unicode(range.select { _1.chr(Encoding::UTF_8).match?(/[[:alpha:]]/) })
+puts "#define UNICODE_ALPHA_CODEPOINTS_LENGTH #{alpha.length}"
+puts "unicode_codepoint_t unicode_alpha_codepoints[UNICODE_ALPHA_CODEPOINTS_LENGTH] = {"
+alpha.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
+puts "};"
+
+alnum = unicode(range.select { _1.chr(Encoding::UTF_8).match?(/[[:alnum:]]/) })
+puts "\n#define UNICODE_ALNUM_CODEPOINTS_LENGTH #{alnum.length}"
+puts "unicode_codepoint_t unicode_alnum_codepoints[UNICODE_ALNUM_CODEPOINTS_LENGTH] = {"
+alnum.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
+puts "};"
+
+isupper = unicode(range.select { _1.chr(Encoding::UTF_8).match?(/[[:upper:]]/) })
+puts "\n#define UNICODE_ISUPPER_CODEPOINTS_LENGTH #{isupper.length}"
+puts "unicode_codepoint_t unicode_isupper_codepoints[UNICODE_ISUPPER_CODEPOINTS_LENGTH] = {"
+isupper.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
+puts "};"
