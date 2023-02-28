@@ -357,14 +357,14 @@ class ErrorsTest < Test::Unit::TestCase
 
   def assert_errors(expected, source, errors)
     result = YARP.parse(source)
-    result => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
+    result => YARP::ParseResult[value: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
 
     assert_equal expected, node
     assert_equal errors, result.errors.map(&:message)
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
+    YARP.parse(source) => YARP::ParseResult[value: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
     node
   end
 

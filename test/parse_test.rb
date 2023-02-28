@@ -6,7 +6,7 @@ class ParseTest < Test::Unit::TestCase
   include YARP::DSL
 
   test "empty string" do
-    YARP.parse("") => YARP::ParseResult[node: YARP::Program[statements: YARP::Statements[body: []]]]
+    YARP.parse("") => YARP::ParseResult[value: YARP::Program[statements: YARP::Statements[body: []]]]
   end
 
   test "comment inline" do
@@ -5535,16 +5535,17 @@ class ParseTest < Test::Unit::TestCase
     assert_equal expected, expression(source)
     assert_serializes expected, source
 
-    YARP.lex_ripper(source).zip(YARP.lex_compat(source)).each do |(ripper, yarp)|
+    YARP.lex_compat(source) => { errors: [], warnings: [], value: tokens }
+    YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
       assert_equal ripper[0...-1], yarp[0...-1]
     end
   end
 
   def expression(source)
     result = YARP.parse(source)
-    assert_empty result.errors, PP.pp(result.node, +"")
+    assert_empty result.errors, PP.pp(result.value, +"")
 
-    result.node => YARP::Program[statements: YARP::Statements[body: [*, node]]]
+    result.value => YARP::Program[statements: YARP::Statements[body: [*, node]]]
     node
   end
 

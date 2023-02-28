@@ -14,7 +14,7 @@ Every entry in `config.yml` will generate a Ruby class as well as the code that 
 
 * `YARP.dump(source)` - parse the syntax tree corresponding to the given source string and serialize it to a string
 * `YARP.dump_file(filepath)` - parse the syntax tree corresponding to the given source file and serialize it to a string
-* `YARP.lex(source)` - parse the tokens corresponding to the given source string and return them as an array
-* `YARP.lex_file(filepath)` - parse the tokens corresponding to the given source file and return them as an array
-* `YARP.parse(source)` - parse the syntax tree corresponding to the given source string and return it
-* `YARP.parse_file(filepath)` - parse the syntax tree corresponding to the given source file and return it
+* `YARP.lex(source)` - parse the tokens corresponding to the given source string and return them as an array within a parse result
+* `YARP.lex_file(filepath)` - parse the tokens corresponding to the given source file and return them as an array within a parse result
+* `YARP.parse(source)` - parse the syntax tree corresponding to the given source string and return it within a parse result
+* `YARP.parse_file(filepath)` - parse the syntax tree corresponding to the given source file and return it within a parse result

@@ -96,7 +96,8 @@ task lex: :compile do
     source = File.read(filepath)
 
     begin
-      if YARP.lex_ripper(source) == YARP.lex_compat(source)
+      lexed = YARP.lex_compat(source)
+      if lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
         print colorize.call(32, ".")
         passing += 1
       else
