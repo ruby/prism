@@ -17,7 +17,7 @@ module YARP
       attr_reader :source, :io
 
       def initialize(source, io)
-        @source = source
+        @source = source.b
         @io = io
       end
 
@@ -40,7 +40,12 @@ module YARP
           <%- end -%>
           end
 
-        Token.new(type, source[location.start_offset...location.end_offset], location)
+        # This is wrong, we should be dumping and loading the encoding. For now,
+        # we assume that the source is UTF-8.
+        range = source[location.start_offset...location.end_offset]
+        range.force_encoding(Encoding::UTF_8)
+
+        Token.new(type, range, location)
       end
 
       def load_optional_node
@@ -59,7 +64,7 @@ module YARP
 
       def load_string
         length = io.read(4).unpack1("L")
-        io.read(length)
+        io.read(length).encode(Encoding::UTF_8)
       end
 
       def load_location
