@@ -5070,6 +5070,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       return yp_float_node_create(parser, &parser->previous);
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE:
+    case YP_TOKEN_BACK_REFERENCE:
       parser_lex(parser);
       return yp_node_global_variable_read_create(parser, &parser->previous);
     case YP_TOKEN_IDENTIFIER:
