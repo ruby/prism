@@ -5413,12 +5413,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
 
       if (indent == YP_HEREDOC_INDENT_TILDE) {
+	// Tilde heredocs trim the leading whitespace of all lines to the minimum amount of leading
+	// whitespace. We need to calculate the minimum amount of leading whitespace
 	int min_whitespace = -1;
-
-	char breakpoints[] = "\n\\#";
-	if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
-	  breakpoints[2] = '\0';
-	}
 
 	for (int i = 0; i < node_list->size; i++) {
 	  yp_node_t *node = node_list->nodes[i];
@@ -5426,7 +5423,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 	  if (node->type == YP_NODE_STRING_NODE && *node->as.string_node.content.start != '\n') {
 	    int cur_whitespace;
 	    const char *cur_char = node->as.string_node.content.start;
+
 	    while (cur_char && cur_char < node->as.string_node.content.end) {
+	      // Any empty newlines aren't included in the minimum whitespace calculation
 	      while(cur_char < node->as.string_node.content.end && *cur_char == '\n') {
 		cur_char++;
 	      }
@@ -5447,6 +5446,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 	      }
 
 	      cur_char = strpbrk(cur_char + 1, "\n");
+
 	      if (cur_char) {
 		cur_char++;
 	      }
@@ -5454,11 +5454,10 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 	  }
 	}
 
-	// Look at prev node
-	// Do something with interpolation
 	if (min_whitespace > 0) {
 	  node->as.heredoc_node.dedent = min_whitespace;
 
+	  // Iterate over all nodes, and trim whitespace accordingly
 	  for (int i = 0; i < node_list->size; i++) {
 	    yp_node_t *node = node_list->nodes[i];
 
@@ -5467,6 +5466,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 		{
 		  yp_string_t *node_str = &node->as.string_node.unescaped;
 
+		  // We convert all strings to be "owned" to make it simpler to manipulate memory
 		  if (node_str->type != YP_STRING_OWNED) {
 		    size_t length = yp_string_length(node_str);
 		    const char *original = yp_string_source(node_str);
@@ -5477,11 +5477,13 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 		  const char *cur_char = node_str->as.owned.source;
 		  size_t new_size = node_str->as.owned.length;
 
-		  if (i == 0 || node_list->nodes[i - 1]->type == YP_NODE_STRING_NODE) {
+		  // Account for whitespace on the first line
+		  if (i == 0) {
 		    cur_char += min_whitespace;
 		    new_size -= min_whitespace;
 		  }
 
+		  // Construct a new string, with which we'll replace the existing string
 		  char new_str[node_str->as.owned.length];
 		  int new_str_index = 0;
 
@@ -5490,6 +5492,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 		    new_str_index++;
 		    cur_char++;
 
+		    // Skip over the whitespace
 		    if(cur_char[-1] == '\n' && cur_char[0] != '\n' &&
 			cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
 		      cur_char += min_whitespace;
@@ -5497,6 +5500,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 		    }
 		  }
 
+		  // Copy over the new string
 		  memcpy(node_str->as.owned.source, new_str, new_size);
 		  node_str->as.owned.length = new_size;
 		}
@@ -5505,13 +5509,11 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 		  break;
 		}
 	      default:
-		// RAISE
+		// Unexpected
 		break;
 	    }
-
 	  }
 	}
-
       }
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
