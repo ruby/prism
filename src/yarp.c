@@ -3655,6 +3655,7 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_SCLASS:
     case YP_CONTEXT_LAMBDA_DO_END:
     case YP_CONTEXT_DEF:
+    case YP_CONTEXT_BLOCK_KEYWORDS:
       return token->type == YP_TOKEN_KEYWORD_END || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ENSURE;
     case YP_CONTEXT_WHILE:
     case YP_CONTEXT_UNTIL:
@@ -3673,8 +3674,6 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_EMBEXPR_END;
     case YP_CONTEXT_BLOCK_BRACES:
       return token->type == YP_TOKEN_BRACE_RIGHT;
-    case YP_CONTEXT_BLOCK_KEYWORDS:
-      return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_PARENS:
       return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
     case YP_CONTEXT_BEGIN:
@@ -4365,6 +4364,101 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
   return params;
 }
 
+// Parse any number of rescue clauses. This will form a linked list of if
+// nodes pointing to each other from the top.
+static inline void
+parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
+  yp_node_t *current = NULL;
+
+  while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
+    yp_token_t rescue_keyword = parser->previous;
+
+    yp_token_t exception_variable = not_provided(parser);
+    yp_token_t equal_greater = not_provided(parser);
+    yp_node_t *statements = yp_node_statements_create(parser);
+    yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, &exception_variable, statements, NULL);
+    yp_node_destroy(parser, statements);
+
+    if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
+      while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
+        yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
+
+        // If we hit a newline, then this is the end of the rescue expression. We
+        // can continue on to parse the statements.
+        if (accept(parser, YP_TOKEN_NEWLINE)) {
+          break;
+        }
+
+        // If we hit a `=>` then we're going to parse the exception variable. Once
+        // we've done that, we'll break out of the loop and parse the statements.
+        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+          rescue->as.rescue_node.equal_greater = parser->previous;
+
+          expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
+          rescue->as.rescue_node.exception_variable = parser->previous;
+          break;
+        }
+
+        expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
+      }
+    } else if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+      rescue->as.rescue_node.equal_greater = parser->previous;
+
+      expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
+      rescue->as.rescue_node.exception_variable = parser->previous;
+    }
+
+    rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    if (current == NULL) {
+      yp_begin_node_rescue_clause_set(parent_node, rescue);
+    } else {
+      current->as.rescue_node.consequent = rescue;
+    }
+
+    current = rescue;
+  }
+
+  if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
+    yp_token_t else_keyword = parser->previous;
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_RESCUE_ELSE);
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    yp_node_t *else_clause = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
+    yp_begin_node_else_clause_set(parent_node, else_clause);
+  }
+
+  if (accept(parser, YP_TOKEN_KEYWORD_ENSURE)) {
+    yp_token_t ensure_keyword = parser->previous;
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    yp_node_t *ensure_statements = parse_statements(parser, YP_CONTEXT_ENSURE);
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    yp_node_t *ensure_clause = yp_node_ensure_node_create(parser, &ensure_keyword, ensure_statements, &parser->current);
+    yp_begin_node_ensure_clause_set(parent_node, ensure_clause);
+  }
+
+  if (parser->current.type == YP_TOKEN_KEYWORD_END) {
+    yp_begin_node_end_keyword_set(parent_node, &parser->current);
+  } else {
+    yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+    yp_begin_node_end_keyword_set(parent_node, &end_keyword);
+  }
+}
+
+static inline yp_node_t *
+parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
+  yp_token_t no_begin_token = not_provided(parser);
+  yp_node_t *begin_node = yp_begin_node_create(parser, &no_begin_token, statements);
+  parse_rescues(parser, begin_node);
+  return begin_node;
+}
+
 // Parse a block.
 static yp_node_t *
 parse_block(yp_parser_t *parser) {
@@ -4384,6 +4478,7 @@ parse_block(yp_parser_t *parser) {
   accept(parser, YP_TOKEN_NEWLINE);
 
   yp_node_t *statements = NULL;
+
   if (opening.type == YP_TOKEN_BRACE_LEFT) {
     if (parser->current.type != YP_TOKEN_BRACE_RIGHT) {
       statements = parse_statements(parser, YP_CONTEXT_BLOCK_BRACES);
@@ -4393,6 +4488,10 @@ parse_block(yp_parser_t *parser) {
   } else {
     if (parser->current.type != YP_TOKEN_KEYWORD_END) {
       statements = parse_statements(parser, YP_CONTEXT_BLOCK_KEYWORDS);
+
+      if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
+        statements = parse_rescues_as_begin(parser, statements);
+      }
     }
 
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
@@ -4952,100 +5051,6 @@ parse_method_definition_name(yp_parser_t *parser) {
     default:
       return not_provided(parser);
   }
-}
-
-// Parse any number of rescue clauses. This will form a linked list of if
-// nodes pointing to each other from the top.
-static inline void
-parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
-  yp_node_t *current = NULL;
-
-  while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
-    yp_token_t rescue_keyword = parser->previous;
-
-    yp_token_t exception_variable = not_provided(parser);
-    yp_token_t equal_greater = not_provided(parser);
-    yp_node_t *statements = yp_node_statements_create(parser);
-    yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, &exception_variable, statements, NULL);
-    yp_node_destroy(parser, statements);
-
-    if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-      while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
-        yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
-
-        // If we hit a newline, then this is the end of the rescue expression. We
-        // can continue on to parse the statements.
-        if (accept(parser, YP_TOKEN_NEWLINE)) {
-          break;
-        }
-
-        // If we hit a `=>` then we're going to parse the exception variable. Once
-        // we've done that, we'll break out of the loop and parse the statements.
-        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-          rescue->as.rescue_node.equal_greater = parser->previous;
-
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
-          rescue->as.rescue_node.exception_variable = parser->previous;
-        }
-
-        expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
-      }
-    } else if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-      rescue->as.rescue_node.equal_greater = parser->previous;
-
-      expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
-      rescue->as.rescue_node.exception_variable = parser->previous;
-    }
-
-    rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-    if (current == NULL) {
-      yp_begin_node_rescue_clause_set(parent_node, rescue);
-    } else {
-      current->as.rescue_node.consequent = rescue;
-    }
-
-    current = rescue;
-  }
-
-  if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
-    yp_token_t else_keyword = parser->previous;
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-    yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_RESCUE_ELSE);
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-    yp_node_t *else_clause = yp_node_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
-    yp_begin_node_else_clause_set(parent_node, else_clause);
-  }
-
-  if (accept(parser, YP_TOKEN_KEYWORD_ENSURE)) {
-    yp_token_t ensure_keyword = parser->previous;
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-    yp_node_t *ensure_statements = parse_statements(parser, YP_CONTEXT_ENSURE);
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-    yp_node_t *ensure_clause = yp_node_ensure_node_create(parser, &ensure_keyword, ensure_statements, &parser->current);
-    yp_begin_node_ensure_clause_set(parent_node, ensure_clause);
-  }
-
-  if (parser->current.type == YP_TOKEN_KEYWORD_END) {
-    yp_begin_node_end_keyword_set(parent_node, &parser->current);
-  } else {
-    yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
-    yp_begin_node_end_keyword_set(parent_node, &end_keyword);
-  }
-}
-
-static inline yp_node_t *
-parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
-  yp_token_t no_begin_token = not_provided(parser);
-  yp_node_t *begin_node = yp_begin_node_create(parser, &no_begin_token, statements);
-  parse_rescues(parser, begin_node);
-  return begin_node;
 }
 
 // Parse an expression that begins with the previous node that we just lexed.
