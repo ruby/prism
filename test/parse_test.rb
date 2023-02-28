@@ -5339,7 +5339,7 @@ class ParseTest < Test::Unit::TestCase
       ElseNode(
         KEYWORD_ELSE("else"),
         Statements([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]),
-        NEWLINE("\n")
+        KEYWORD_END("end")
       ),
       KEYWORD_END("end")
     )
