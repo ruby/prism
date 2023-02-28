@@ -5201,7 +5201,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_node_t *else_node;
 
         if (!match_type_p(parser, YP_TOKEN_KEYWORD_END)) {
-          else_node = yp_node_else_node_create(parser, &else_keyword, parse_statements(parser, YP_CONTEXT_CASE_WHEN), &parser->current);
+          else_node = yp_node_else_node_create(parser, &else_keyword, parse_statements(parser, YP_CONTEXT_ELSE), &parser->current);
         } else {
           else_node = yp_node_else_node_create(parser, &else_keyword, NULL, &parser->current);
         }
