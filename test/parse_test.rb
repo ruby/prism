@@ -5336,11 +5336,15 @@ class ParseTest < Test::Unit::TestCase
          [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)],
          nil
        )],
-      ElseNode(KEYWORD_ELSE("else"), nil, KEYWORD_END("end")),
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        Statements([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]),
+        NEWLINE("\n")
+      ),
       KEYWORD_END("end")
     )
 
-    assert_parses expected, "case :hi\nwhen :hi\nelse\nend"
+    assert_parses expected, "case :hi\nwhen :hi\nelse\n:b\nend"
   end
 
   test "case when statements" do
