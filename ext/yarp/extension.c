@@ -110,26 +110,20 @@ typedef struct {
   rb_encoding *encoding;
 } lex_data_t;
 
-static yp_encoding_t yp_encoding_ascii = {
-  .name = "ascii",
-  .alnum_char = yp_encoding_ascii_alnum_char,
-  .alpha_char = yp_encoding_ascii_alpha_char,
-  .isupper_char = yp_encoding_ascii_isupper_char
-};
+static yp_encoding_t yp_encoding_ascii = { .name = "ascii",
+                                           .alnum_char = yp_encoding_ascii_alnum_char,
+                                           .alpha_char = yp_encoding_ascii_alpha_char,
+                                           .isupper_char = yp_encoding_ascii_isupper_char };
 
-static yp_encoding_t yp_encoding_iso_8859_9 = {
-  .name = "iso-8859-9",
-  .alnum_char = yp_encoding_iso_8859_9_alnum_char,
-  .alpha_char = yp_encoding_iso_8859_9_alpha_char,
-  .isupper_char = yp_encoding_iso_8859_9_isupper_char
-};
+static yp_encoding_t yp_encoding_iso_8859_9 = { .name = "iso-8859-9",
+                                                .alnum_char = yp_encoding_iso_8859_9_alnum_char,
+                                                .alpha_char = yp_encoding_iso_8859_9_alpha_char,
+                                                .isupper_char = yp_encoding_iso_8859_9_isupper_char };
 
-static yp_encoding_t yp_encoding_utf_8 = {
-  .name = "utf-8",
-  .alnum_char = yp_encoding_utf_8_alnum_char,
-  .alpha_char = yp_encoding_utf_8_alpha_char,
-  .isupper_char = yp_encoding_utf_8_isupper_char
-};
+static yp_encoding_t yp_encoding_utf_8 = { .name = "utf-8",
+                                           .alnum_char = yp_encoding_utf_8_alnum_char,
+                                           .alpha_char = yp_encoding_utf_8_alpha_char,
+                                           .isupper_char = yp_encoding_utf_8_isupper_char };
 
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
@@ -147,11 +141,11 @@ lex_encoding_callback(yp_parser_t *parser, const char *start, size_t width) {
   char compare[width + 1];
   sprintf(compare, "%.*s", (int) width, start);
 
-#define ENCODING(value, prebuilt) \
-  if (width == sizeof(value) - 1 && strncasecmp(compare, value, sizeof(value) - 1) == 0) { \
-    lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data; \
-    lex_data->encoding = rb_enc_find(prebuilt.name); \
-    return &prebuilt; \
+#define ENCODING(value, prebuilt)                                                                                      \
+  if (width == sizeof(value) - 1 && strncasecmp(compare, value, sizeof(value) - 1) == 0) {                             \
+    lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;                                                  \
+    lex_data->encoding = rb_enc_find(prebuilt.name);                                                                   \
+    return &prebuilt;                                                                                                  \
   }
 
   ENCODING("ascii", yp_encoding_ascii);
@@ -172,10 +166,7 @@ lex_source(source_t *source) {
   yp_parser_init(&parser, source->source, source->size);
   yp_parser_register_encoding_decode_callback(&parser, lex_encoding_callback);
 
-  lex_data_t lex_data = {
-    .tokens = rb_ary_new(),
-    .encoding = rb_utf8_encoding()
-  };
+  lex_data_t lex_data = { .tokens = rb_ary_new(), .encoding = rb_utf8_encoding() };
 
   void *data = (void *) &lex_data;
   yp_lex_callback_t lex_callback = (yp_lex_callback_t) {
@@ -248,10 +239,9 @@ parse_source(source_t *source) {
   for (yp_diagnostic_t *error = (yp_diagnostic_t *) parser.error_list.head; error != NULL;
        error = (yp_diagnostic_t *) error->node.next) {
     VALUE location_argv[] = { LONG2FIX(error->start), LONG2FIX(error->end) };
-    VALUE error_argv[] = {
-      rb_enc_str_new(yp_string_source(&error->message), yp_string_length(&error->message), encoding),
-      rb_class_new_instance(2, location_argv, rb_cYARPLocation)
-    };
+    VALUE error_argv[] = { rb_enc_str_new(yp_string_source(&error->message), yp_string_length(&error->message),
+                                          encoding),
+                           rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
 
     rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
   }
@@ -259,10 +249,9 @@ parse_source(source_t *source) {
   for (yp_diagnostic_t *warning = (yp_diagnostic_t *) parser.warning_list.head; warning != NULL;
        warning = (yp_diagnostic_t *) warning->node.next) {
     VALUE location_argv[] = { LONG2FIX(warning->start), LONG2FIX(warning->end) };
-    VALUE warning_argv[] = {
-      rb_enc_str_new(yp_string_source(&warning->message), yp_string_length(&warning->message), encoding),
-      rb_class_new_instance(2, location_argv, rb_cYARPLocation)
-    };
+    VALUE warning_argv[] = { rb_enc_str_new(yp_string_source(&warning->message), yp_string_length(&warning->message),
+                                            encoding),
+                             rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
 
     rb_ary_push(warnings, rb_class_new_instance(2, warning_argv, rb_cYARPParseWarning));
   }
