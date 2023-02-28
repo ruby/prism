@@ -5440,7 +5440,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "Kernel.Integer(10)"
   end
 
-  test "block with braces and break" do
+  test "block with braces and break with arguments" do
     expected = CallNode(
       CallNode(
         nil,
@@ -5466,6 +5466,41 @@ class ParseTest < Test::Unit::TestCase
       "=="
     )
     assert_parses expected, "foo { break 42 } == 42"
+  end
+
+  test "block with braces and break without arguments" do
+    expected = CallNode(
+      CallNode(
+        nil,
+        nil,
+        IDENTIFIER("foo"),
+        nil,
+        nil,
+        nil,
+        BlockNode(
+          BRACE_LEFT("{"),
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("a"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          Statements([BreakNode(ArgumentsNode([]), Location())]),
+          BRACE_RIGHT("}")
+        ),
+        "foo"
+      ),
+      nil,
+      EQUAL_EQUAL("=="),
+      nil,
+      ArgumentsNode([IntegerNode()]),
+      nil,
+      nil,
+      "=="
+    )
+    assert_parses expected, "foo { |a| break } == 42"
   end
 
   private
