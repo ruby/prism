@@ -73,17 +73,17 @@ module YARP
   # the AST, any comments that were encounters, and any errors that were
   # encountered.
   class ParseResult
-    attr_reader :node, :comments, :errors, :warnings
+    attr_reader :value, :comments, :errors, :warnings
 
-    def initialize(node, comments, errors, warnings)
-      @node = node
+    def initialize(value, comments, errors, warnings)
+      @value = value
       @comments = comments
       @errors = errors
       @warnings = warnings
     end
 
     def deconstruct_keys(keys)
-      { node: node, comments: comments, errors: errors, warnings: warnings }
+      { value: value, comments: comments, errors: errors, warnings: warnings }
     end
 
     def success?
@@ -356,13 +356,14 @@ module YARP
       end
     end
 
-    def tokens
+    def result
       tokens = []
 
       state = :default
       heredocs = []
 
-      YARP.lex(source).each do |(token, lex_state)|
+      result = YARP.lex(source)
+      result.value.each do |(token, lex_state)|
         event = RIPPER.fetch(token.type)
         lex_state = Ripper::Lexer::State.new(lex_state)
 
@@ -411,7 +412,7 @@ module YARP
         end
       end
 
-      tokens[0...-1]
+      ParseResult.new(tokens[0...-1], result.comments, result.errors, result.warnings)
     end
 
     private
@@ -453,7 +454,7 @@ module YARP
   # The only difference is that since we don't keep track of lexer state in the
   # same way, it's going to always return the NONE state.
   def self.lex_compat(source)
-    LexCompat.new(source).tokens
+    LexCompat.new(source).result
   end
 
   # Load the serialized AST using the source as a reference into a tree.

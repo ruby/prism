@@ -72,7 +72,7 @@ module YARP
     end
 
     def parse
-      result.node.accept(self) unless error?
+      result.value.accept(self) unless error?
     end
 
     ############################################################################
