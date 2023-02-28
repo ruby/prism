@@ -5380,12 +5380,22 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       parser_lex(parser);
       yp_node_t *node;
       yp_heredoc_quote_t quote = parser->lex_modes.current->as.heredoc.quote;
+      yp_heredoc_indent_t indent = parser->lex_modes.current->as.heredoc.indent;
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node = yp_node_interpolated_x_string_node_create(parser, &parser->previous, &parser->previous);
       }
       else {
         node = yp_node_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+      }
+
+      yp_node_list_t *node_list;
+
+      if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+        node_list = &node->as.interpolated_x_string_node.parts;
+      }
+      else {
+        node_list = &node->as.heredoc_node.parts;
       }
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
@@ -5401,12 +5411,116 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       }
 
       expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
+
+      if (indent == YP_HEREDOC_INDENT_TILDE) {
+	int min_whitespace = -1;
+
+	char breakpoints[] = "\n\\#";
+	if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
+	  breakpoints[2] = '\0';
+	}
+
+	for (int i = 0; i < node_list->size; i++) {
+	  yp_node_t *node = node_list->nodes[i];
+
+	  if (node->type == YP_NODE_STRING_NODE && *node->as.string_node.content.start != '\n') {
+	    int cur_whitespace;
+	    const char *cur_char = node->as.string_node.content.start;
+	    while (cur_char && cur_char < node->as.string_node.content.end) {
+	      while(cur_char < node->as.string_node.content.end && *cur_char == '\n') {
+		cur_char++;
+	      }
+
+	      if (cur_char == node->as.string_node.content.end) {
+		break;
+	      }
+
+	      cur_whitespace = 0;
+
+	      while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
+		cur_char++;
+		cur_whitespace++;
+	      }
+
+	      if (cur_whitespace < min_whitespace || min_whitespace == -1) {
+		min_whitespace = cur_whitespace;
+	      }
+
+	      cur_char = strpbrk(cur_char + 1, "\n");
+	      if (cur_char) {
+		cur_char++;
+	      }
+	    }
+	  }
+	}
+
+	// Look at prev node
+	// Do something with interpolation
+	if (min_whitespace > 0) {
+	  node->as.heredoc_node.dedent = min_whitespace;
+
+	  for (int i = 0; i < node_list->size; i++) {
+	    yp_node_t *node = node_list->nodes[i];
+
+	    switch (node->type) {
+	      case YP_NODE_STRING_NODE:
+		{
+		  yp_string_t *node_str = &node->as.string_node.unescaped;
+
+		  if (node_str->type != YP_STRING_OWNED) {
+		    size_t length = yp_string_length(node_str);
+		    const char *original = yp_string_source(node_str);
+		    yp_string_owned_init(node_str, malloc(length), length);
+		    memcpy(node_str->as.owned.source, original, length);
+		  }
+
+		  const char *cur_char = node_str->as.owned.source;
+		  size_t new_size = node_str->as.owned.length;
+
+		  if (i == 0 || node_list->nodes[i - 1]->type == YP_NODE_STRING_NODE) {
+		    cur_char += min_whitespace;
+		    new_size -= min_whitespace;
+		  }
+
+		  char new_str[node_str->as.owned.length];
+		  int new_str_index = 0;
+
+		  while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
+		    new_str[new_str_index] = cur_char[0];
+		    new_str_index++;
+		    cur_char++;
+
+		    if(cur_char[-1] == '\n' && cur_char[0] != '\n' &&
+			cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
+		      cur_char += min_whitespace;
+		      new_size -= min_whitespace;
+		    }
+		  }
+
+		  memcpy(node_str->as.owned.source, new_str, new_size);
+		  node_str->as.owned.length = new_size;
+		}
+	      case YP_NODE_INTERPOLATED_STRING_NODE:
+		{
+		  break;
+		}
+	      default:
+		// RAISE
+		break;
+	    }
+
+	  }
+	}
+
+      }
+
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node->as.interpolated_x_string_node.closing = parser->previous;
       }
       else {
         node->as.heredoc_node.closing = parser->previous;
       }
+
 
       return node;
     }
