@@ -3662,7 +3662,7 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_ENSURE:
       return token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_CASE_WHEN:
-      return token->type == YP_TOKEN_KEYWORD_WHEN || token->type == YP_TOKEN_KEYWORD_END;
+      return token->type == YP_TOKEN_KEYWORD_WHEN || token->type == YP_TOKEN_KEYWORD_END || token->type == YP_TOKEN_KEYWORD_ELSE;
     case YP_CONTEXT_IF:
     case YP_CONTEXT_ELSIF:
       return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
@@ -5211,7 +5211,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         yp_node_t *else_node;
 
         if (!match_type_p(parser, YP_TOKEN_KEYWORD_END)) {
-          else_node = yp_node_else_node_create(parser, &else_keyword, parse_statements(parser, YP_CONTEXT_CASE_WHEN), &parser->previous);
+          else_node = yp_node_else_node_create(parser, &else_keyword, parse_statements(parser, YP_CONTEXT_ELSE), &parser->current);
         } else {
           else_node = yp_node_else_node_create(parser, &else_keyword, NULL, &parser->current);
         }
