@@ -5426,6 +5426,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo.map { $& }"
   end
 
+  test "calls with constants" do
+    expected = CallNode(
+      ConstantRead(CONSTANT("Kernel")),
+      DOT("."),
+      CONSTANT("Integer"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode([IntegerNode()]),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "Integer"
+    )
+    assert_parses expected, "Kernel.Integer(10)"
+  end
+
   private
 
   def assert_serializes(expected, source)

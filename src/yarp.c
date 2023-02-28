@@ -6426,6 +6426,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       switch (parser->current.type) {
         case YP_CASE_OPERATOR:
         case YP_CASE_KEYWORD:
+        case YP_TOKEN_CONSTANT:
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
           message = parser->previous;
