@@ -504,9 +504,9 @@ nodes:
       - name: name_loc
         type: location
       - name: value
-        type: node
+        type: node?
       - name: operator_loc
-        type: location
+        type: location?
     comment: |
       Represents writing to a class variable.
 
@@ -531,10 +531,10 @@ nodes:
       - name: target
         type: node
       - name: operator
-        type: token
+        type: token?
       - name: value
-        type: node
-    location: target->value
+        type: node?
+    location: target->value|target
     comment: |
       Represents writing to a constant.
 
@@ -727,10 +727,10 @@ nodes:
       - name: name
         type: token
       - name: operator
-        type: token
+        type: token?
       - name: value
-        type: node
-    location: name->value
+        type: node?
+    location: name->value|name
     comment: |
       Represents writing to a global variable.
 
@@ -839,9 +839,9 @@ nodes:
       - name: name_loc
         type: location
       - name: value
-        type: node
+        type: node?
       - name: operator_loc
-        type: location
+        type: location?
     comment: |
       Represents writing to an instance variable.
 
@@ -974,10 +974,10 @@ nodes:
       - name: name
         type: token
       - name: operator
-        type: token
+        type: token?
       - name: value
-        type: node
-    location: name->value
+        type: node?
+    location: name->value|name
     comment: |
       Represents writing to a local variable.
 

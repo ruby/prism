@@ -691,8 +691,10 @@ yp_class_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token
     .end = operator->end
   };
 
-  node->location.end = value->location.end;
-  node->as.class_variable_write_node.value = value;
+  if (value != NULL) {
+    node->location.end = value->location.end;
+    node->as.class_variable_write_node.value = value;
+  }
 
   return node;
 }
@@ -911,8 +913,10 @@ yp_instance_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_to
     .end = operator->end
   };
 
-  node->location.end = value->location.end;
-  node->as.instance_variable_write_node.value = value;
+  if (value != NULL) {
+    node->as.instance_variable_write_node.value = value;
+    node->location.end = value->location.end;
+  }
 
   return node;
 }
@@ -3961,6 +3965,146 @@ not_provided(yp_parser_t *parser) {
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
 
+// Convert the given node into a valid target node.
+static yp_node_t *
+parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_node_t *value) {
+  switch (target->type) {
+    case YP_NODE_MISSING_NODE:
+      return target;
+    case YP_NODE_CLASS_VARIABLE_READ_NODE:
+      yp_class_variable_write_node_init(parser, target, operator, value);
+      return target;
+    case YP_NODE_CONSTANT_PATH_NODE:
+    case YP_NODE_CONSTANT_READ:
+      return yp_node_constant_path_write_node_create(parser, target, operator, value);
+    case YP_NODE_GLOBAL_VARIABLE_READ: {
+      yp_node_t *result = yp_node_global_variable_write_create(parser, &target->as.global_variable_read.name, operator, value);
+      yp_node_destroy(parser, target);
+      return result;
+    }
+    case YP_NODE_LOCAL_VARIABLE_READ: {
+      yp_token_t name = target->as.local_variable_read.name;
+      yp_parser_local_add(parser, &name);
+
+      memset(target, 0, sizeof(yp_node_t));
+
+      target->type = YP_NODE_LOCAL_VARIABLE_WRITE;
+      target->as.local_variable_write.name = name;
+      target->as.local_variable_write.operator = *operator;
+
+      if (value != NULL) {
+        target->as.local_variable_write.value = value;
+        target->location.end = value->location.end;
+      }
+
+      return target;
+    }
+    case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
+      yp_instance_variable_write_node_init(parser, target, operator, value);
+      return target;
+    case YP_NODE_CALL_NODE: {
+      // If we have no arguments to the call node and we need this to be a
+      // target then this is either a method call or a local variable write.
+      if (
+        (target->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
+        (target->as.call_node.arguments == NULL) &&
+        (target->as.call_node.block == NULL)
+      ) {
+        if (target->as.call_node.receiver == NULL) {
+          // When we get here, we have a local variable write, because it
+          // was previously marked as a method call but now we have an =.
+          // This looks like:
+          //
+          //     foo = 1
+          //
+          // When it was parsed in the prefix position, foo was seen as a
+          // method call with no receiver and no arguments. Now we have an
+          // =, so we know it's a local variable write.
+          yp_token_t name = target->as.call_node.message;
+          yp_parser_local_add(parser, &name);
+
+          // Not entirely sure why we need to clear this out, but it seems that
+          // something about the memory layout in the union is causing the type
+          // to have a problem if we don't.
+          memset(target, 0, sizeof(yp_node_t));
+
+          target->type = YP_NODE_LOCAL_VARIABLE_WRITE;
+          target->as.local_variable_write.name = name;
+          target->as.local_variable_write.operator = *operator;
+
+          if (value != NULL) {
+            target->as.local_variable_write.value = value;
+            target->location.end = value->location.end;
+          }
+
+          return target;
+        }
+
+        // When we get here, we have a method call, because it was
+        // previously marked as a method call but now we have an =. This
+        // looks like:
+        //
+        //     foo.bar = 1
+        //
+        // When it was parsed in the prefix position, foo.bar was seen as a
+        // method call with no arguments. Now we have an =, so we know it's
+        // a method call with an argument. In this case we will create the
+        // arguments node, parse the argument, and add it to the list.
+        if (value) {
+          target->as.call_node.arguments = yp_arguments_node_create(parser);
+          yp_arguments_node_append(target->as.call_node.arguments, value);
+        }
+
+        // The method name needs to change. If we previously had foo, we now
+        // need foo=. In this case we'll allocate a new owned string, copy
+        // the previous method name in, and append an =.
+        size_t length = yp_string_length(&target->as.call_node.name);
+        char *name = malloc(length + 2);
+        sprintf(name, "%.*s=", (int) length, yp_string_source(&target->as.call_node.name));
+
+        // Now switch the name to the new string.
+        yp_string_free(&target->as.call_node.name);
+        yp_string_owned_init(&target->as.call_node.name, name, length + 1);
+
+        target->as.call_node.message = *operator;
+        return target;
+      }
+
+      // If there is no call operator and the message is "[]" then this is
+      // an aref expression, and we can transform it into an aset
+      // expression.
+      if (
+        (target->as.call_node.call_operator.type == YP_TOKEN_NOT_PROVIDED) &&
+        (target->as.call_node.message.type == YP_TOKEN_BRACKET_LEFT_RIGHT) &&
+        (target->as.call_node.block == NULL)
+      ) {
+        target->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
+
+        if (value != NULL) {
+          yp_arguments_node_append(target->as.call_node.arguments, value);
+          target->location.end = value->location.end;
+        }
+
+        // Free the previous name and replace it with "[]=".
+        yp_string_free(&target->as.call_node.name);
+        yp_string_constant_init(&target->as.call_node.name, "[]=", 3);
+        return target;
+      }
+
+      // If there are arguments on the call node, then it can't be a method
+      // call ending with = or a local variable write, so it must be a
+      // syntax error. In this case we'll fall through to our default
+      // handling.
+    }
+    default:
+      // In this case we have a node that we don't know how to convert into a
+      // target. We need to treat it as an error. For now, we'll mark it as an
+      // error and just skip right past it.
+      yp_diagnostic_list_append(&parser->error_list, "Unexpected `='.", parser->previous.start - parser->start);
+      return target;
+  }
+}
+
 // Parse a list of targets for assignment. This is used in the case of a for
 // loop or a multi-assignment. For example, in the following code:
 //
@@ -3970,8 +4114,9 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 // The targets are `foo` and `bar`. This function will either return a single
 // target node or a multi-target node.
 static yp_node_t *
-parse_targets(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
-  yp_node_t *first_target = parse_expression(parser, binding_power, message);
+parse_targets(yp_parser_t *parser, yp_node_t *first_target, binding_power_t binding_power) {
+  yp_token_t operator = not_provided(parser);
+  first_target = parse_target(parser, first_target, &operator, NULL);
 
   if (!match_type_p(parser, YP_TOKEN_COMMA)) {
     return first_target;
@@ -3983,7 +4128,9 @@ parse_targets(yp_parser_t *parser, binding_power_t binding_power, const char *me
   yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, first_target);
 
   while (accept(parser, YP_TOKEN_COMMA)) {
-    target = parse_expression(parser, binding_power, message);
+    target = parse_expression(parser, binding_power, "Expected another expression after ','.");
+    target = parse_target(parser, target, &operator, NULL);
+
     yp_node_list_append(parser, multi_target, &multi_target->as.multi_target_node.targets, target);
   }
 
@@ -5704,7 +5851,9 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_KEYWORD_FOR: {
       parser_lex(parser);
       yp_token_t for_keyword = parser->previous;
-      yp_node_t *index = parse_targets(parser, BINDING_POWER_INDEX, "Expected index after for.");
+
+      yp_node_t *first_target = parse_expression(parser, BINDING_POWER_INDEX, "Expected index after for.");
+      yp_node_t *index = parse_targets(parser, first_target, BINDING_POWER_INDEX);
 
       expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
       yp_token_t in_keyword = parser->previous;
@@ -6296,130 +6445,28 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
       switch (node->type) {
         case YP_NODE_CLASS_VARIABLE_READ_NODE: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the class variable after =.");
-          yp_class_variable_write_node_init(parser, node, &token, value);
-          return node;
+          return parse_target(parser, node, &token, value);
         }
         case YP_NODE_CONSTANT_PATH_NODE:
         case YP_NODE_CONSTANT_READ: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the constant after =.");
-          return yp_node_constant_path_write_node_create(parser, node, &token, value);
+          return parse_target(parser, node, &token, value);
         }
         case YP_NODE_GLOBAL_VARIABLE_READ: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the global variable after =.");
-          yp_node_t *read = node;
-
-          yp_node_t *result = yp_node_global_variable_write_create(parser, &node->as.global_variable_read.name, &token, value);
-          yp_node_destroy(parser, read);
-          return result;
+          return parse_target(parser, node, &token, value);
         }
         case YP_NODE_LOCAL_VARIABLE_READ: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the local variable after =.");
-
-          yp_token_t name = node->as.local_variable_read.name;
-          yp_parser_local_add(parser, &name);
-
-          node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
-          node->location.end = value->location.end;
-
-          node->as.local_variable_write.name = name;
-          node->as.local_variable_write.operator = token;
-          node->as.local_variable_write.value = value;
-
-          return node;
+          return parse_target(parser, node, &token, value);
         }
         case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
           yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the instance variable after =.");
-          yp_instance_variable_write_node_init(parser, node, &token, value);
-          return node;
+          return parse_target(parser, node, &token, value);
         }
         case YP_NODE_CALL_NODE: {
-          // If we have no arguments to the call node and we have an equals
-          // sign then this is either a method call or a local variable write.
-          if (
-            (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
-            (node->as.call_node.arguments == NULL) &&
-            (node->as.call_node.block == NULL)
-          ) {
-            if (node->as.call_node.receiver == NULL) {
-              // When we get here, we have a local variable write, because it
-              // was previously marked as a method call but now we have an =.
-              // This looks like:
-              //
-              //     foo = 1
-              //
-              // When it was parsed in the prefix position, foo was seen as a
-              // method call with no receiver and no arguments. Now we have an
-              // =, so we know it's a local variable write.
-              yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the local variable after =.");
-
-              yp_token_t name = node->as.call_node.message;
-              yp_parser_local_add(parser, &name);
-
-              node->type = YP_NODE_LOCAL_VARIABLE_WRITE;
-              node->location.end = value->location.end;
-
-              node->as.local_variable_write.name = name;
-              node->as.local_variable_write.operator = token;
-              node->as.local_variable_write.value = value;
-
-              return node;
-            }
-
-            // When we get here, we have a method call, because it was
-            // previously marked as a method call but now we have an =. This
-            // looks like:
-            //
-            //     foo.bar = 1
-            //
-            // When it was parsed in the prefix position, foo.bar was seen as a
-            // method call with no arguments. Now we have an =, so we know it's
-            // a method call with an argument. In this case we will create the
-            // arguments node, parse the argument, and add it to the list.
-            node->as.call_node.arguments = yp_arguments_node_create(parser);
-
-            yp_node_t *argument = parse_assignment_value(parser, binding_power, "Expected a value for the call after =.");
-            yp_arguments_node_append(node->as.call_node.arguments, argument);
-
-            // The method name needs to change. If we previously had foo, we now
-            // need foo=. In this case we'll allocate a new owned string, copy
-            // the previous method name in, and append an =.
-            size_t length = yp_string_length(&node->as.call_node.name);
-            char *name = malloc(length + 2);
-            sprintf(name, "%.*s=", (int) length, yp_string_source(&node->as.call_node.name));
-
-            // Now switch the name to the new string.
-            yp_string_free(&node->as.call_node.name);
-            yp_string_owned_init(&node->as.call_node.name, name, length + 1);
-
-            node->as.call_node.message = token;
-            return node;
-          }
-
-          // If there is no call operator and the message is "[]" then this is
-          // an aref expression, and we can transform it into an aset
-          // expression.
-          if (
-            (node->as.call_node.call_operator.type == YP_TOKEN_NOT_PROVIDED) &&
-            (node->as.call_node.message.type == YP_TOKEN_BRACKET_LEFT_RIGHT) &&
-            (node->as.call_node.block == NULL)
-          ) {
-            node->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
-
-            yp_node_t *argument = parse_assignment_value(parser, binding_power, "Expected a value for the call after =.");
-            yp_arguments_node_append(node->as.call_node.arguments, argument);
-
-            node->location.end = argument->location.end;
-
-            // Free the previous name and replace it with "[]=".
-            yp_string_free(&node->as.call_node.name);
-            yp_string_constant_init(&node->as.call_node.name, "[]=", 3);
-            return node;
-          }
-
-          // If there are arguments on the call node, then it can't be a method
-          // call ending with = or a local variable write, so it must be a
-          // syntax error. In this case we'll fall through to our default
-          // handling.
+          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
+          return parse_target(parser, node, &token, value);
         }
         default:
           // In this case we have an = sign, but we don't know what it's for. We

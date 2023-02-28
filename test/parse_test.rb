@@ -3690,9 +3690,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3704,9 +3704,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with do keyword" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       Location(),
@@ -3718,9 +3718,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop no newlines" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3732,9 +3732,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with semicolons" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3747,11 +3747,11 @@ class ParseTest < Test::Unit::TestCase
   test "for loop with 2 indexes" do
     expected = ForNode(
       MultiTargetNode([
-        expression("i"),
-        expression("j"),
+        LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+        LocalVariableWrite(IDENTIFIER("j"), nil, nil)
       ]),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3764,12 +3764,12 @@ class ParseTest < Test::Unit::TestCase
   test "for loop with 3 indexes" do
     expected = ForNode(
       MultiTargetNode([
-        expression("i"),
-        expression("j"),
-        expression("k"),
+        LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+        LocalVariableWrite(IDENTIFIER("j"), nil, nil),
+        LocalVariableWrite(IDENTIFIER("k"), nil, nil)
       ]),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
