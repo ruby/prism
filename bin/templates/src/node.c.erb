@@ -43,7 +43,10 @@ yp_token_list_includes(yp_token_list_t *token_list, yp_token_t *token) {
   for (size_t index = 0; index < token_list->size; index++) {
     yp_token_t current_token = token_list->tokens[index];
 
-    if (memcmp(current_token.start, token->start, length) == 0) {
+    if (
+      ((current_token.end - current_token.start) == length) &&
+      (memcmp(current_token.start, token->start, length) == 0)
+    ) {
       return true;
     }
   }

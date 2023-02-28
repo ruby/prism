@@ -9,6 +9,141 @@ char* yp_version(void) {
 }
 
 /******************************************************************************/
+/* Debugging                                                                  */
+/******************************************************************************/
+
+__attribute__((unused)) static const char *
+debug_context(yp_context_t context) {
+  switch (context) {
+    case YP_CONTEXT_BEGIN: return "BEGIN";
+    case YP_CONTEXT_CLASS: return "CLASS";
+    case YP_CONTEXT_CASE_WHEN: return "CASE WHEN";
+    case YP_CONTEXT_DEF: return "DEF";
+    case YP_CONTEXT_ENSURE: return "ENSURE";
+    case YP_CONTEXT_ELSE: return "ELSE";
+    case YP_CONTEXT_ELSIF: return "ELSIF";
+    case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
+    case YP_CONTEXT_BLOCK_BRACES: return "BLOCK_BRACES";
+    case YP_CONTEXT_BLOCK_KEYWORDS: return "BLOCK_KEYWORDS";
+    case YP_CONTEXT_FOR: return "FOR";
+    case YP_CONTEXT_IF: return "IF";
+    case YP_CONTEXT_MAIN: return "MAIN";
+    case YP_CONTEXT_MODULE: return "MODULE";
+    case YP_CONTEXT_PARENS: return "PARENS";
+    case YP_CONTEXT_POSTEXE: return "POSTEXE";
+    case YP_CONTEXT_PREEXE: return "PREEXE";
+    case YP_CONTEXT_RESCUE: return "RESCUE";
+    case YP_CONTEXT_RESCUE_ELSE: return "RESCUE ELSE";
+    case YP_CONTEXT_SCLASS: return "SCLASS";
+    case YP_CONTEXT_UNLESS: return "UNLESS";
+    case YP_CONTEXT_UNTIL: return "UNTIL";
+    case YP_CONTEXT_WHILE: return "WHILE";
+    case YP_CONTEXT_LAMBDA_BRACES: return "LAMBDA_BRACES";
+    case YP_CONTEXT_LAMBDA_DO_END: return "LAMBDA_DO_END";
+  }
+  return NULL;
+}
+
+__attribute__((unused)) static void
+debug_contexts(yp_parser_t *parser) {
+  yp_context_node_t *context_node = parser->current_context;
+  fprintf(stderr, "CONTEXTS: ");
+
+  if (context_node != NULL) {
+    while (context_node != NULL) {
+      fprintf(stderr, "%s", debug_context(context_node->context));
+      context_node = context_node->prev;
+      if (context_node != NULL) {
+        fprintf(stderr, " <- ");
+      }
+    }
+  } else {
+    fprintf(stderr, "NONE");
+  }
+
+  fprintf(stderr, "\n");
+}
+
+__attribute__((unused)) static void
+debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
+  yp_buffer_t buffer;
+  yp_buffer_init(&buffer);
+  yp_prettyprint(parser, node, &buffer);
+
+  fprintf(stderr, "%s\n%.*s\n", message, (int) buffer.length, buffer.value);
+  yp_buffer_free(&buffer);
+}
+
+__attribute__((unused)) static void
+debug_lex_mode(yp_parser_t *parser) {
+  yp_lex_mode_t *lex_mode = parser->lex_modes.current;
+
+  switch (lex_mode->mode) {
+    case YP_LEX_DEFAULT: fprintf(stderr, "lexing in DEFAULT mode\n"); return;
+    case YP_LEX_EMBDOC: fprintf(stderr, "lexing in EMBDOC mode\n"); return;
+    case YP_LEX_EMBEXPR: fprintf(stderr, "lexing in EMBEXPR mode\n"); return;
+    case YP_LEX_EMBVAR: fprintf(stderr, "lexing in EMBVAR mode\n"); return;
+    case YP_LEX_HEREDOC: fprintf(stderr, "lexing in HEREDOC mode\n"); return;
+    case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
+    case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
+    case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
+  }
+}
+
+__attribute__((unused)) static void
+debug_state(yp_parser_t *parser) {
+  fprintf(stderr, "STATE: ");
+  bool first = true;
+
+  if (parser->lex_state == YP_LEX_STATE_NONE) {
+    fprintf(stderr, "NONE\n");
+    return;
+  }
+
+#define CHECK_STATE(state) \
+  if (parser->lex_state & state) { \
+    if (!first) fprintf(stderr, "|"); \
+    fprintf(stderr, "%s", #state); \
+    first = false; \
+  }
+
+  CHECK_STATE(YP_LEX_STATE_BEG)
+  CHECK_STATE(YP_LEX_STATE_END)
+  CHECK_STATE(YP_LEX_STATE_ENDARG)
+  CHECK_STATE(YP_LEX_STATE_ENDFN)
+  CHECK_STATE(YP_LEX_STATE_ARG)
+  CHECK_STATE(YP_LEX_STATE_CMDARG)
+  CHECK_STATE(YP_LEX_STATE_MID)
+  CHECK_STATE(YP_LEX_STATE_FNAME)
+  CHECK_STATE(YP_LEX_STATE_DOT)
+  CHECK_STATE(YP_LEX_STATE_CLASS)
+  CHECK_STATE(YP_LEX_STATE_LABEL)
+  CHECK_STATE(YP_LEX_STATE_LABELED)
+  CHECK_STATE(YP_LEX_STATE_FITEM)
+
+#undef CHECK_STATE
+
+  fprintf(stderr, "\n");
+}
+
+__attribute__((unused)) static void
+debug_token(yp_token_t * token) {
+  fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
+}
+
+__attribute__((unused)) static void
+debug_scope(yp_parser_t *parser) {
+  fprintf(stderr, "SCOPE:\n");
+
+  yp_token_list_t token_list = parser->current_scope->node->as.scope.locals;
+  for (size_t index = 0; index < token_list.size; index++) {
+    debug_token(&token_list.tokens[index]);
+  }
+
+  fprintf(stderr, "\n");
+}
+
+/******************************************************************************/
 /* Node initializers                                                          */
 /******************************************************************************/
 
@@ -1215,141 +1350,6 @@ yp_parser_scope_pop(yp_parser_t *parser) {
   yp_scope_t *scope = parser->current_scope;
   parser->current_scope = scope->previous;
   free(scope);
-}
-
-/******************************************************************************/
-/* Debugging                                                                  */
-/******************************************************************************/
-
-__attribute__((unused)) static const char *
-debug_context(yp_context_t context) {
-  switch (context) {
-    case YP_CONTEXT_BEGIN: return "BEGIN";
-    case YP_CONTEXT_CLASS: return "CLASS";
-    case YP_CONTEXT_CASE_WHEN: return "CASE WHEN";
-    case YP_CONTEXT_DEF: return "DEF";
-    case YP_CONTEXT_ENSURE: return "ENSURE";
-    case YP_CONTEXT_ELSE: return "ELSE";
-    case YP_CONTEXT_ELSIF: return "ELSIF";
-    case YP_CONTEXT_EMBEXPR: return "EMBEXPR";
-    case YP_CONTEXT_BLOCK_BRACES: return "BLOCK_BRACES";
-    case YP_CONTEXT_BLOCK_KEYWORDS: return "BLOCK_KEYWORDS";
-    case YP_CONTEXT_FOR: return "FOR";
-    case YP_CONTEXT_IF: return "IF";
-    case YP_CONTEXT_MAIN: return "MAIN";
-    case YP_CONTEXT_MODULE: return "MODULE";
-    case YP_CONTEXT_PARENS: return "PARENS";
-    case YP_CONTEXT_POSTEXE: return "POSTEXE";
-    case YP_CONTEXT_PREEXE: return "PREEXE";
-    case YP_CONTEXT_RESCUE: return "RESCUE";
-    case YP_CONTEXT_RESCUE_ELSE: return "RESCUE ELSE";
-    case YP_CONTEXT_SCLASS: return "SCLASS";
-    case YP_CONTEXT_UNLESS: return "UNLESS";
-    case YP_CONTEXT_UNTIL: return "UNTIL";
-    case YP_CONTEXT_WHILE: return "WHILE";
-    case YP_CONTEXT_LAMBDA_BRACES: return "LAMBDA_BRACES";
-    case YP_CONTEXT_LAMBDA_DO_END: return "LAMBDA_DO_END";
-  }
-  return NULL;
-}
-
-__attribute__((unused)) static void
-debug_contexts(yp_parser_t *parser) {
-  yp_context_node_t *context_node = parser->current_context;
-  fprintf(stderr, "CONTEXTS: ");
-
-  if (context_node != NULL) {
-    while (context_node != NULL) {
-      fprintf(stderr, "%s", debug_context(context_node->context));
-      context_node = context_node->prev;
-      if (context_node != NULL) {
-        fprintf(stderr, " <- ");
-      }
-    }
-  } else {
-    fprintf(stderr, "NONE");
-  }
-
-  fprintf(stderr, "\n");
-}
-
-__attribute__((unused)) static void
-debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
-  yp_buffer_t buffer;
-  yp_buffer_init(&buffer);
-  yp_prettyprint(parser, node, &buffer);
-
-  fprintf(stderr, "%s\n%.*s\n", message, (int) buffer.length, buffer.value);
-  yp_buffer_free(&buffer);
-}
-
-__attribute__((unused)) static void
-debug_lex_mode(yp_parser_t *parser) {
-  yp_lex_mode_t *lex_mode = parser->lex_modes.current;
-
-  switch (lex_mode->mode) {
-    case YP_LEX_DEFAULT: fprintf(stderr, "lexing in DEFAULT mode\n"); return;
-    case YP_LEX_EMBDOC: fprintf(stderr, "lexing in EMBDOC mode\n"); return;
-    case YP_LEX_EMBEXPR: fprintf(stderr, "lexing in EMBEXPR mode\n"); return;
-    case YP_LEX_EMBVAR: fprintf(stderr, "lexing in EMBVAR mode\n"); return;
-    case YP_LEX_HEREDOC: fprintf(stderr, "lexing in HEREDOC mode\n"); return;
-    case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
-    case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
-    case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
-  }
-}
-
-__attribute__((unused)) static void
-debug_state(yp_parser_t *parser) {
-  fprintf(stderr, "STATE: ");
-  bool first = true;
-
-  if (parser->lex_state == YP_LEX_STATE_NONE) {
-    fprintf(stderr, "NONE\n");
-    return;
-  }
-
-#define CHECK_STATE(state) \
-  if (parser->lex_state & state) { \
-    if (!first) fprintf(stderr, "|"); \
-    fprintf(stderr, "%s", #state); \
-    first = false; \
-  }
-
-  CHECK_STATE(YP_LEX_STATE_BEG)
-  CHECK_STATE(YP_LEX_STATE_END)
-  CHECK_STATE(YP_LEX_STATE_ENDARG)
-  CHECK_STATE(YP_LEX_STATE_ENDFN)
-  CHECK_STATE(YP_LEX_STATE_ARG)
-  CHECK_STATE(YP_LEX_STATE_CMDARG)
-  CHECK_STATE(YP_LEX_STATE_MID)
-  CHECK_STATE(YP_LEX_STATE_FNAME)
-  CHECK_STATE(YP_LEX_STATE_DOT)
-  CHECK_STATE(YP_LEX_STATE_CLASS)
-  CHECK_STATE(YP_LEX_STATE_LABEL)
-  CHECK_STATE(YP_LEX_STATE_LABELED)
-  CHECK_STATE(YP_LEX_STATE_FITEM)
-
-#undef CHECK_STATE
-
-  fprintf(stderr, "\n");
-}
-
-__attribute__((unused)) static void
-debug_token(yp_token_t * token) {
-  fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
-}
-
-__attribute__((unused)) static void
-debug_scope(yp_parser_t *parser) {
-  fprintf(stderr, "SCOPE:\n");
-
-  yp_token_list_t token_list = parser->current_scope->node->as.scope.locals;
-  for (size_t index = 0; index < token_list.size; index++) {
-    debug_token(&token_list.tokens[index]);
-  }
-
-  fprintf(stderr, "\n");
 }
 
 /******************************************************************************/
@@ -4959,6 +4959,7 @@ parse_method_definition_name(yp_parser_t *parser) {
 static inline void
 parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
   yp_node_t *current = NULL;
+
   while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
     yp_token_t rescue_keyword = parser->previous;
 
@@ -4966,25 +4967,37 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     yp_token_t equal_greater = not_provided(parser);
     yp_node_t *statements = yp_node_statements_create(parser);
     yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, &exception_variable, statements, NULL);
+    yp_node_destroy(parser, statements);
 
-    while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-      yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
-      yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
+    if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
+      while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
+        yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
 
-      if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_EQUAL_GREATER)) break;
-      expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
-    }
+        // If we hit a newline, then this is the end of the rescue expression. We
+        // can continue on to parse the statements.
+        if (accept(parser, YP_TOKEN_NEWLINE)) {
+          break;
+        }
 
-    if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
+        // If we hit a `=>` then we're going to parse the exception variable. Once
+        // we've done that, we'll break out of the loop and parse the statements.
+        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+          rescue->as.rescue_node.equal_greater = parser->previous;
+
+          expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
+          rescue->as.rescue_node.exception_variable = parser->previous;
+        }
+
+        expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
+      }
+    } else if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
       rescue->as.rescue_node.equal_greater = parser->previous;
 
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
       rescue->as.rescue_node.exception_variable = parser->previous;
     }
 
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-
-    yp_node_destroy(parser, statements);
     rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
     accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
@@ -4993,6 +5006,7 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     } else {
       current->as.rescue_node.consequent = rescue;
     }
+
     current = rescue;
   }
 
@@ -5014,16 +5028,16 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     yp_node_t *ensure_statements = parse_statements(parser, YP_CONTEXT_ENSURE);
     accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-    yp_node_t *ensure_clause = yp_node_ensure_node_create(
-                                                          parser,
-                                                          &ensure_keyword,
-                                                          ensure_statements,
-                                                          &parser->current
-                                                          );
-    
+    yp_node_t *ensure_clause = yp_node_ensure_node_create(parser, &ensure_keyword, ensure_statements, &parser->current);
     yp_begin_node_ensure_clause_set(parent_node, ensure_clause);
   }
-  yp_begin_node_end_keyword_set(parent_node, &parser->current);
+
+  if (parser->current.type == YP_TOKEN_KEYWORD_END) {
+    yp_begin_node_end_keyword_set(parent_node, &parser->current);
+  } else {
+    yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
+    yp_begin_node_end_keyword_set(parent_node, &end_keyword);
+  }
 }
 
 static inline yp_node_t *
@@ -5312,7 +5326,6 @@ parse_expression_prefix(yp_parser_t *parser) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       yp_node_t *begin_node = yp_begin_node_create(parser, &begin_keyword, begin_statements);
-
       parse_rescues(parser, begin_node);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
@@ -6108,6 +6121,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     }
     case YP_TOKEN_MINUS_GREATER: {
       parser->lambda_enclosure_nesting = parser->enclosure_nesting;
+      yp_state_stack_push(&parser->accepts_block_stack, true);
 
       parser_lex(parser);
       yp_token_t lparen;
@@ -6147,6 +6161,7 @@ parse_expression_prefix(yp_parser_t *parser) {
 
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
+      yp_state_stack_pop(&parser->accepts_block_stack);
       return yp_node_lambda_node_create(parser, scope, &lparen, parameters, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
