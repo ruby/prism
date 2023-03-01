@@ -3732,31 +3732,34 @@ context_pop(yp_parser_t *parser) {
 // These are the various precedence rules. Because we are using a Pratt parser,
 // they are named binding power to represent the manner in which nodes are bound
 // together in the stack.
+//
+// We increment by 2 because we want to leave room for the infix operators to
+// specify their associativity by adding or subtracting one.
 typedef enum {
-  BINDING_POWER_UNSET = 0,       // used to indicate this token cannot be used as an infix operator
-  BINDING_POWER_NONE = 1,
-  BINDING_POWER_MODIFIER,        // if unless until while
-  BINDING_POWER_COMPOSITION,     // and or
-  BINDING_POWER_NOT,             // not
-  BINDING_POWER_DEFINED,         // defined?
-  BINDING_POWER_ASSIGNMENT,      // = += -= *= /= %= &= |= ^= &&= ||= <<= >>= **=
-  BINDING_POWER_MODIFIER_RESCUE, // rescue
-  BINDING_POWER_TERNARY,         // ?:
-  BINDING_POWER_RANGE,           // .. ...
-  BINDING_POWER_LOGICAL_OR,      // ||
-  BINDING_POWER_LOGICAL_AND,     // &&
-  BINDING_POWER_EQUALITY,        // <=> == === != =~ !~
-  BINDING_POWER_COMPARISON,      // > >= < <=
-  BINDING_POWER_BITWISE_OR,      // | ^
-  BINDING_POWER_BITWISE_AND,     // &
-  BINDING_POWER_SHIFT,           // << >>
-  BINDING_POWER_TERM,            // + -
-  BINDING_POWER_FACTOR,          // * / %
-  BINDING_POWER_UMINUS,          // -@
-  BINDING_POWER_EXPONENT,        // **
-  BINDING_POWER_UNARY,           // ! ~ +@
-  BINDING_POWER_INDEX,           // [] []=
-  BINDING_POWER_CALL,            // :: .
+  BINDING_POWER_UNSET = 0,            // used to indicate this token cannot be used as an infix operator
+  BINDING_POWER_STATEMENT = 2,
+  BINDING_POWER_MODIFIER = 4,         // if unless until while
+  BINDING_POWER_COMPOSITION = 6,      // and or
+  BINDING_POWER_NOT = 8,              // not
+  BINDING_POWER_DEFINED = 10,         // defined?
+  BINDING_POWER_ASSIGNMENT = 12,      // = += -= *= /= %= &= |= ^= &&= ||= <<= >>= **=
+  BINDING_POWER_MODIFIER_RESCUE = 14, // rescue
+  BINDING_POWER_TERNARY = 16,         // ?:
+  BINDING_POWER_RANGE = 18,           // .. ...
+  BINDING_POWER_LOGICAL_OR = 20,      // ||
+  BINDING_POWER_LOGICAL_AND = 22,     // &&
+  BINDING_POWER_EQUALITY = 24,        // <=> == === != =~ !~
+  BINDING_POWER_COMPARISON = 26,      // > >= < <=
+  BINDING_POWER_BITWISE_OR = 28,      // | ^
+  BINDING_POWER_BITWISE_AND = 30,     // &
+  BINDING_POWER_SHIFT = 32,           // << >>
+  BINDING_POWER_TERM = 34,            // + -
+  BINDING_POWER_FACTOR = 36,          // * / %
+  BINDING_POWER_UMINUS = 38,          // -@
+  BINDING_POWER_EXPONENT = 40,        // **
+  BINDING_POWER_UNARY = 42,           // ! ~ +@
+  BINDING_POWER_INDEX = 44,           // [] []=
+  BINDING_POWER_CALL = 46,            // :: .
 } binding_power_t;
 
 // This struct represents a set of binding powers used for a given token. They
@@ -4000,7 +4003,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
       continue;
     }
 
-    yp_node_t *node = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an expression.");
+    yp_node_t *node = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
     yp_node_list_append(parser, statements, &statements->as.statements.body, node);
 
     // If we're recovering from a syntax error, then we need to stop parsing the
@@ -4038,7 +4041,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
     case YP_TOKEN_STAR_STAR: {
       parser_lex(parser);
       yp_token_t operator = parser->previous;
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after ** in hash.");
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after ** in hash.");
 
       element = yp_assoc_splat_node_create(parser, value, &operator);
       break;
@@ -4061,12 +4064,12 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
       yp_node_t *key = yp_node_symbol_node_create(parser, &opening, &label, &closing);
       yp_token_t operator = not_provided(parser);
 
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected an expression after the label in hash.");
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after the label in hash.");
       element = yp_assoc_node_create(parser, key, &operator, value);
       break;
     }
     default: {
-      yp_node_t *key = parse_expression(parser, BINDING_POWER_NONE, "Expected a key in the hash literal.");
+      yp_node_t *key = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a key in the hash literal.");
       if (key->type == YP_NODE_MISSING_NODE) {
         yp_node_destroy(parser, key);
         return false;
@@ -4074,7 +4077,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
 
       expect(parser, YP_TOKEN_EQUAL_GREATER, "expected a => between the key and the value in the hash.");
       yp_token_t operator = parser->previous;
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
 
       element = yp_assoc_node_create(parser, key, &operator, value);
       break;
@@ -4175,12 +4178,12 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         break;
       }
       default: {
-        argument = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+        argument = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
 
         if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
           // finish parsing the one we are part way through
           yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected a value in the hash literal.");
+          yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
           argument = yp_assoc_node_create(parser, argument, &operator, value);
 
           // Then parse more if we have a comma
@@ -4255,7 +4258,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
           yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a default value for the parameter.");
+          yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a default value for the parameter.");
 
           yp_node_t *param = yp_node_optional_parameter_node_create(parser, &name, &operator, value);
           yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
@@ -4299,8 +4302,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
             break;
           }
           default: {
-            yp_node_t *value = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a default value for the keyword parameter.");
-
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a default value for the keyword parameter.");
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
             yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
 
@@ -4385,12 +4387,12 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
 
     if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
       while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a class.");
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a class.");
         yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
 
         // If we hit a newline, then this is the end of the rescue expression. We
         // can continue on to parse the statements.
-        if (accept(parser, YP_TOKEN_NEWLINE)) {
+        if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_KEYWORD_THEN)) {
           break;
         }
 
@@ -4611,7 +4613,7 @@ static inline yp_node_t *
 parse_conditional(yp_parser_t *parser, yp_context_t context) {
   yp_token_t keyword = parser->previous;
 
-  yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a predicate for the conditional.");
+  yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a predicate for the conditional.");
   accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
   yp_node_t *statements = parse_statements(parser, context);
@@ -4640,7 +4642,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
     yp_token_t elsif_keyword = parser->previous;
 
-    yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a predicate for the elsif clause.");
+    yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
     accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
     yp_node_t *statements = parse_statements(parser, YP_CONTEXT_ELSIF);
@@ -5281,7 +5283,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_KEYWORD_CASE: {
       parser_lex(parser);
       yp_token_t case_keyword = parser->previous;
-      yp_node_t * predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected a value after case keyword.");
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
       yp_token_t temp_token = not_provided(parser);
 
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -5300,7 +5302,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             expect(parser, YP_TOKEN_COMMA, "Expected Comma between when conditions.");
           }
 
-          yp_node_t * condition = parse_expression(parser, BINDING_POWER_NONE, "Expected a value after when keyword.");
+          yp_node_t *condition = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after when keyword.");
           yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, condition);
 
           if (condition->type == YP_NODE_MISSING_NODE) break;
@@ -5374,17 +5376,13 @@ parse_expression_prefix(yp_parser_t *parser) {
         arguments = yp_arguments_node_create(parser);
 
         while (!match_type_p(parser, YP_TOKEN_EOF) && !context_terminator(parser->current_context->context, &parser->current)) {
-          yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse an argument.");
+          yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
           yp_arguments_node_append(arguments, expression);
 
           // If parsing the argument resulted in error recovery, then we can
           // stop parsing the arguments entirely now.
           if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
-          if (match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) break;
-          if (context_terminator(parser->current_context->context, &parser->current)) break;
-
-          expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit arguments.");
-          accept(parser, YP_TOKEN_NEWLINE);
+          if (!accept(parser, YP_TOKEN_COMMA)) break;
         }
       }
 
@@ -5452,9 +5450,11 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_type_p(parser, YP_TOKEN_LESS)) {
         inheritance_operator = parser->current;
         lex_state_set(parser, YP_LEX_STATE_BEG);
+
         parser->command_start = true;
         parser_lex(parser);
-        superclass = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a superclass after `<`.");
+
+        superclass = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a superclass after `<`.");
       } else {
         inheritance_operator = not_provided(parser);
         superclass = NULL;
@@ -5579,7 +5579,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         case YP_TOKEN_PARENTHESIS_LEFT: {
           parser_lex(parser);
           yp_token_t lparen = parser->previous;
-          yp_node_t *expression = parse_expression(parser, BINDING_POWER_NONE, "Expected to be able to parse receiver.");
+          yp_node_t *expression = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to be able to parse receiver.");
 
           expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected closing ')' for receiver.");
           yp_token_t rparen = parser->previous;
@@ -5783,15 +5783,27 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
 
       yp_token_t module_keyword = parser->previous;
-      yp_node_t *name = parse_expression(parser, BINDING_POWER_NONE, "Expected to find a module name after `module`.");
+      yp_node_t *name;
+
+      expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `module`.");
+      name = yp_node_constant_read_create(parser, &parser->previous);
 
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
-      if (parser->recovering) {
+      if (parser->previous.type == YP_TOKEN_MISSING) {
         yp_node_t *scope = yp_node_scope_create(parser);
         yp_node_t *statements = yp_node_statements_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
+      }
+
+      while (accept(parser, YP_TOKEN_COLON_COLON)) {
+        yp_token_t double_colon = parser->previous;
+
+        expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
+        yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
+
+        name = yp_node_constant_path_node_create(parser, name, &double_colon, constant);
       }
 
       yp_parser_scope_push(parser, true);
@@ -5828,7 +5840,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
 
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected predicate expression after `until`.");
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected predicate expression after `until`.");
       yp_state_stack_pop(&parser->do_loop_stack);
 
       accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -5845,7 +5857,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
 
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_NONE, "Expected predicate expression after `while`.");
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected predicate expression after `while`.");
       yp_state_stack_pop(&parser->do_loop_stack);
 
       accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);

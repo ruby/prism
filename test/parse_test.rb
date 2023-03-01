@@ -5542,21 +5542,21 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("hi"),
       nil,
       ParametersNode([], [], nil, [], nil, nil),
-      Statements(
-        [ReturnNode(
-           KEYWORD_RETURN("return"),
-           ArgumentsNode(
-             [IfNode(
-                KEYWORD_IF("if"),
-                TrueNode(),
-                Statements([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)]),
-                nil,
-                nil
-              )]
-           )
-         ),
-         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil)]
-      ),
+      Statements([
+        IfNode(
+          KEYWORD_IF("if"),
+          TrueNode(),
+          Statements([
+            ReturnNode(
+              KEYWORD_RETURN("return"),
+              ArgumentsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)])
+            )
+          ]),
+          nil,
+          nil
+        ),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil)
+      ]),
       Scope([]),
       Location(),
       nil,
