@@ -4088,7 +4088,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
   bool parsed_block_argument = false;
 
   while (
-    !match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
+    !match_any_type_p(parser, 6, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
     !context_terminator(parser->current_context->context, &parser->current)
   ) {
     if (yp_arguments_node_size(arguments) > 0) {
@@ -5427,7 +5427,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
-        
+
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
         yp_node_t *scope = parser->current_scope->node;
@@ -5456,7 +5456,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
       }
-      
+
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
       yp_node_t *scope = parser->current_scope->node;
@@ -5790,7 +5790,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
       }
-      
+
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
 

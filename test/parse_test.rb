@@ -747,7 +747,7 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "class A < B\na = 1\nend"
   end
-  
+
   test "class with rescue, else, ensure" do
     expected = ClassNode(
       Scope([]),
@@ -864,7 +864,7 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "class A; class << self; ensure; end; end"
   end
-  
+
   test "class variable read" do
     assert_parses ClassVariableReadNode(), "@@abc"
   end
@@ -2475,6 +2475,27 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "if true then true elsif false then false elsif nil then nil else self end"
   end
 
+  test "if then call" do
+    expected = IfNode(
+      KEYWORD_IF("if"),
+      CallNode(
+        nil,
+        nil,
+        IDENTIFIER("exit_loop"),
+        nil,
+        ArgumentsNode([]),
+        nil,
+        nil,
+        "exit_loop"
+      ),
+      Statements([BreakNode(ArgumentsNode([IntegerNode()]), Location())]),
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "if exit_loop then break 42 end"
+  end
+
   test "imaginary" do
     assert_parses ImaginaryNode(), "1i"
   end
@@ -2529,7 +2550,7 @@ class ParseTest < Test::Unit::TestCase
 
     assert_parses expected, "module A\n x = 1; rescue; end"
   end
-  
+
   test "next" do
     assert_parses NextNode(nil, Location()), "next"
   end
