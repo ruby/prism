@@ -8,6 +8,10 @@ char* yp_version(void) {
   return YP_VERSION_MACRO;
 }
 
+#define DEBUG_MODE 0
+
+#if DEBUG_MODE
+
 /******************************************************************************/
 /* Debugging                                                                  */
 /******************************************************************************/
@@ -142,6 +146,8 @@ debug_scope(yp_parser_t *parser) {
 
   fprintf(stderr, "\n");
 }
+
+#endif
 
 /******************************************************************************/
 /* Node initializers                                                          */
@@ -1530,6 +1536,20 @@ static inline void
 lex_state_set(yp_parser_t *parser, yp_lex_state_t state) {
   parser->lex_state = state;
 }
+
+#if DEBUG_MODE
+static inline void
+debug_lex_state_set(yp_parser_t *parser, yp_lex_state_t state, char const * caller_name, int line_number) {
+  fprintf(stderr, "Caller: %s:%d\nPrevious: ", caller_name, line_number);
+  debug_state(parser);
+  lex_state_set(parser, state);
+  fprintf(stderr, "Now: ");
+  debug_state(parser);
+  fprintf(stderr, "\n");
+}
+
+#define lex_state_set(parser, state) debug_lex_state_set(parser, state, __func__, __LINE__)
+#endif
 
 /******************************************************************************/
 /* Specific token lexers                                                      */
