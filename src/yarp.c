@@ -4614,7 +4614,7 @@ static inline yp_node_t *
 parse_conditional(yp_parser_t *parser, yp_context_t context) {
   yp_token_t keyword = parser->previous;
 
-  yp_node_t *predicate = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a predicate for the conditional.");
+  yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a predicate for the conditional.");
   accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
   yp_node_t *statements = parse_statements(parser, context);
@@ -4643,7 +4643,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
     yp_token_t elsif_keyword = parser->previous;
 
-    yp_node_t *predicate = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a predicate for the elsif clause.");
+    yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
     accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
     yp_node_t *statements = parse_statements(parser, YP_CONTEXT_ELSIF);
@@ -5284,7 +5284,7 @@ parse_expression_prefix(yp_parser_t *parser) {
     case YP_TOKEN_KEYWORD_CASE: {
       parser_lex(parser);
       yp_token_t case_keyword = parser->previous;
-      yp_node_t * predicate = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected a value after case keyword.");
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
       yp_token_t temp_token = not_provided(parser);
 
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -5303,7 +5303,7 @@ parse_expression_prefix(yp_parser_t *parser) {
             expect(parser, YP_TOKEN_COMMA, "Expected Comma between when conditions.");
           }
 
-          yp_node_t * condition = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected a value after when keyword.");
+          yp_node_t *condition = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after when keyword.");
           yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, condition);
 
           if (condition->type == YP_NODE_MISSING_NODE) break;
@@ -5377,7 +5377,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         arguments = yp_arguments_node_create(parser);
 
         while (!match_type_p(parser, YP_TOKEN_EOF) && !context_terminator(parser->current_context->context, &parser->current)) {
-          yp_node_t *expression = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to be able to parse an argument.");
+          yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
           yp_arguments_node_append(arguments, expression);
 
           // If parsing the argument resulted in error recovery, then we can
@@ -5455,9 +5455,11 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_type_p(parser, YP_TOKEN_LESS)) {
         inheritance_operator = parser->current;
         lex_state_set(parser, YP_LEX_STATE_BEG);
+
         parser->command_start = true;
         parser_lex(parser);
-        superclass = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a superclass after `<`.");
+
+        superclass = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a superclass after `<`.");
       } else {
         inheritance_operator = not_provided(parser);
         superclass = NULL;
