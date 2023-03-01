@@ -2967,11 +2967,10 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           if (match(parser, '=')) {
-            parser->lex_state = YP_LEX_STATE_BEG;
+            lex_state_set(parser, YP_LEX_STATE_BEG);
             return YP_TOKEN_PERCENT_EQUAL;
           }
-
-          parser->lex_state = lex_state_operator_p(parser) ? YP_LEX_STATE_ARG : YP_LEX_STATE_BEG;
+          lex_state_set(parser, lex_state_operator_p(parser) ? YP_LEX_STATE_ARG : YP_LEX_STATE_BEG);
           return YP_TOKEN_PERCENT;
         }
 
@@ -4704,7 +4703,9 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
   yp_token_t opening = parser->previous;
 
   if (mode != YP_LEX_STRING) {
-    if (next_state != YP_LEX_STATE_NONE) parser->lex_state = next_state;
+    if (next_state != YP_LEX_STATE_NONE) {
+      lex_state_set(parser, next_state);
+    }
     yp_token_t symbol;
 
     switch (parser->current.type) {
@@ -4769,7 +4770,9 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
       }
     }
 
-    if (next_state != YP_LEX_STATE_NONE) parser->lex_state = next_state;
+    if (next_state != YP_LEX_STATE_NONE) {
+      lex_state_set(parser, next_state);
+    }
     expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
 
     interpolated->as.interpolated_symbol_node.closing = parser->previous;
@@ -4783,7 +4786,9 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
     content = (yp_token_t) { .type = YP_TOKEN_STRING_CONTENT, .start = parser->previous.end, .end = parser->previous.end };
   }
 
-  if (next_state != YP_LEX_STATE_NONE) parser->lex_state = next_state;
+  if (next_state != YP_LEX_STATE_NONE) {
+    lex_state_set(parser, next_state);
+  }
   expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a dynamic symbol.");
 
   return yp_node_symbol_node_create(parser, &opening, &content, &parser->previous);
@@ -4826,7 +4831,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
   switch (parser->current.type) {
     case YP_TOKEN_IDENTIFIER: {
       if (first) {
-        parser->lex_state = YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM;
+        lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
       }
 
       parser_lex(parser);
@@ -4845,7 +4850,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE: {
       if (first) {
-        parser->lex_state = YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM;
+        lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
       }
 
       parser_lex(parser);
@@ -5427,7 +5432,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
-        
+
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
         yp_node_t *scope = parser->current_scope->node;
@@ -5456,7 +5461,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
       }
-      
+
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
       yp_node_t *scope = parser->current_scope->node;
@@ -5790,7 +5795,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
       }
-      
+
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
 
