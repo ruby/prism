@@ -363,9 +363,22 @@ module YARP
       heredocs = []
 
       result = YARP.lex(source)
+      previous_state = nil
       result.value.each do |(token, lex_state)|
         event = RIPPER.fetch(token.type)
-        lex_state = Ripper::Lexer::State.new(lex_state)
+        lex_state =
+          # On regex end, Ripper scans and then sets end state, so
+          # the ripper lexed output is begin, when it should be end.
+          # YARP sets lex state correctly to end state, but we want
+          # to be able to compare against Ripper's lexed state.
+          # So here, if it's a regexp end token, we output the state
+          # as the previous state, solely for the sake of comparison
+          if event == :on_regexp_end
+            previous_state
+          else
+            Ripper::Lexer::State.new(lex_state)
+          end
+
 
         token = [
           location_for(token.location.start_offset),
@@ -373,6 +386,8 @@ module YARP
           value_for(event, token.value),
           lex_state
         ]
+
+        previous_state = lex_state
 
         # The order in which tokens appear in our lexer is different from the
         # order that they appear in Ripper. When we hit the declaration of a
