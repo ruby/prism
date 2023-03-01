@@ -1859,7 +1859,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
         if (lex_keyword(parser, "BEGIN", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_BEGIN_UPCASE;
         if (lex_keyword(parser, "break", YP_LEX_STATE_MID, false)) return YP_TOKEN_KEYWORD_BREAK;
         if (lex_keyword(parser, "class", YP_LEX_STATE_CLASS, false)) return YP_TOKEN_KEYWORD_CLASS;
-        if (lex_keyword(parser, "elsif", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_ELSIF;
+        if (lex_keyword(parser, "elsif", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_ELSIF;
         if (lex_keyword(parser, "false", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_FALSE;
         if (lex_keyword(parser, "retry", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_RETRY;
         if (lex_keyword(parser, "super", YP_LEX_STATE_ARG, false)) return YP_TOKEN_KEYWORD_SUPER;
@@ -4916,6 +4916,7 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
+          assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
           yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
           parser_lex(parser);
 
@@ -5055,6 +5056,7 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
+      assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
       yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
 
       yp_token_t opening = parser->previous;
@@ -6126,6 +6128,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
+              assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
               yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
 
               parser_lex(parser);
@@ -6225,6 +6228,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
+            assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
             yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
             parser_lex(parser);
 

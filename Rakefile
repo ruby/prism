@@ -93,6 +93,7 @@ task lex: :compile do
     end
 
   filepaths.each do |filepath|
+    print "#{filepath} " if ENV["CI"]
     source = File.read(filepath)
 
     begin
@@ -105,6 +106,8 @@ task lex: :compile do
         print colorize.call(31, "E")
         failing += 1
       end
+
+      puts if ENV["CI"]
     rescue ArgumentError => e
       puts "\nError in #{filepath}"
       raise e

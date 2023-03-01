@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +19,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: head
+        ruby-version: 3.2
         bundler-cache: true
 
     - name: Run Ruby tests
@@ -47,7 +46,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: head
+        ruby-version: 3.2
         bundler-cache: true
 
     - name: Run Ruby tests with valgrind
