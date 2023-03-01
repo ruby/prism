@@ -2776,7 +2776,6 @@ lex_token_type(yp_parser_t *parser) {
             } else {
               lex_state_set(parser, YP_LEX_STATE_DOT);
             }
-            lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_COLON_COLON;
           }
 
