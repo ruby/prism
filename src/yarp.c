@@ -4041,7 +4041,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
     case YP_TOKEN_STAR_STAR: {
       parser_lex(parser);
       yp_token_t operator = parser->previous;
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected an expression after ** in hash.");
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after ** in hash.");
 
       element = yp_assoc_splat_node_create(parser, value, &operator);
       break;
@@ -4064,12 +4064,12 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
       yp_node_t *key = yp_node_symbol_node_create(parser, &opening, &label, &closing);
       yp_token_t operator = not_provided(parser);
 
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected an expression after the label in hash.");
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after the label in hash.");
       element = yp_assoc_node_create(parser, key, &operator, value);
       break;
     }
     default: {
-      yp_node_t *key = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected a key in the hash literal.");
+      yp_node_t *key = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a key in the hash literal.");
       if (key->type == YP_NODE_MISSING_NODE) {
         yp_node_destroy(parser, key);
         return false;
@@ -4077,7 +4077,7 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
 
       expect(parser, YP_TOKEN_EQUAL_GREATER, "expected a => between the key and the value in the hash.");
       yp_token_t operator = parser->previous;
-      yp_node_t *value = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected a value in the hash literal.");
+      yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
 
       element = yp_assoc_node_create(parser, key, &operator, value);
       break;
@@ -4178,12 +4178,12 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         break;
       }
       default: {
-        argument = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to be able to parse an argument.");
+        argument = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
 
         if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
           // finish parsing the one we are part way through
           yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected a value in the hash literal.");
+          yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
           argument = yp_assoc_node_create(parser, argument, &operator, value);
 
           // Then parse more if we have a comma
@@ -4258,7 +4258,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
           yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a default value for the parameter.");
+          yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a default value for the parameter.");
 
           yp_node_t *param = yp_node_optional_parameter_node_create(parser, &name, &operator, value);
           yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
@@ -4302,8 +4302,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
             break;
           }
           default: {
-            yp_node_t *value = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a default value for the keyword parameter.");
-
+            yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a default value for the keyword parameter.");
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
             yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
 
