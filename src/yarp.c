@@ -5841,7 +5841,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
 
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected predicate expression after `until`.");
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected predicate expression after `until`.");
       yp_state_stack_pop(&parser->do_loop_stack);
 
       accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -5858,7 +5858,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
 
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected predicate expression after `while`.");
+      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected predicate expression after `while`.");
       yp_state_stack_pop(&parser->do_loop_stack);
 
       accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
