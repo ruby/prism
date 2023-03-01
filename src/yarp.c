@@ -2771,6 +2771,11 @@ lex_token_type(yp_parser_t *parser) {
         // :: symbol
         case ':':
           if (match(parser, ':')) {
+            if (lex_state_beg_p(parser) || lex_state_p(parser, YP_LEX_STATE_CLASS) || (lex_state_p(parser, YP_LEX_STATE_ARG_ANY) && space_seen)) {
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+            } else {
+              lex_state_set(parser, YP_LEX_STATE_DOT);
+            }
             lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_COLON_COLON;
           }
@@ -5427,7 +5432,7 @@ parse_expression_prefix(yp_parser_t *parser) {
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
-        
+
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
         yp_node_t *scope = parser->current_scope->node;
@@ -5456,7 +5461,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
       }
-      
+
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
       yp_node_t *scope = parser->current_scope->node;
@@ -5790,7 +5795,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
       }
-      
+
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
 
