@@ -1267,8 +1267,8 @@ nodes:
         type: node[]
       - name: equal_greater
         type: token?
-      - name: exception_variable
-        type: token?
+      - name: exception
+        type: node?
       - name: statements
         type: node
       - name: consequent

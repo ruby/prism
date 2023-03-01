@@ -4525,10 +4525,9 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
   while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
     yp_token_t rescue_keyword = parser->previous;
 
-    yp_token_t exception_variable = not_provided(parser);
     yp_token_t equal_greater = not_provided(parser);
     yp_node_t *statements = yp_node_statements_create(parser);
-    yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, &exception_variable, statements, NULL);
+    yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, NULL, statements, NULL);
     yp_node_destroy(parser, statements);
 
     if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
@@ -4547,8 +4546,11 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
         if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
           rescue->as.rescue_node.equal_greater = parser->previous;
 
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
-          rescue->as.rescue_node.exception_variable = parser->previous;
+          yp_node_t *node = parse_expression(parser, BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
+          yp_token_t operator = not_provided(parser);
+          node = parse_target(parser, node, &operator, NULL);
+
+          rescue->as.rescue_node.exception = node;
           break;
         }
 
@@ -4557,8 +4559,11 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     } else if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
       rescue->as.rescue_node.equal_greater = parser->previous;
 
-      expect(parser, YP_TOKEN_IDENTIFIER, "Expected variable name after `=>` in rescue statement");
-      rescue->as.rescue_node.exception_variable = parser->previous;
+      yp_node_t *node = parse_expression(parser, BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
+      yp_token_t operator = not_provided(parser);
+      node = parse_target(parser, node, &operator, NULL);
+
+      rescue->as.rescue_node.exception = node;
     }
 
     rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);

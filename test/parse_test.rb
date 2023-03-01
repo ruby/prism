@@ -3874,7 +3874,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         nil,
       ),
@@ -3883,7 +3883,13 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end"),
     )
 
-    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception => ex
+        b
+      end
+    RUBY
   end
 
   test "begin with rescue statement and exception list" do
@@ -3914,7 +3920,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception")), ConstantRead(CONSTANT("CustomException"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         nil
       ),
@@ -3923,7 +3929,13 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end"),
     )
 
-    assert_parses expected, "begin\na\nrescue Exception, CustomException => ex\nb\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception, CustomException => ex
+        b
+      end
+    RUBY
   end
 
   test "begin with multiple rescue statements" do
@@ -3968,13 +3980,13 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         RescueNode(
           KEYWORD_RESCUE("rescue"),
           [ConstantRead(CONSTANT("AnotherException")), ConstantRead(CONSTANT("OneMoreException"))],
           EQUAL_GREATER("=>"),
-          IDENTIFIER("ex"),
+          LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
           Statements([expression("c")]),
           nil
         )
@@ -4103,7 +4115,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         nil
       ),
@@ -4116,7 +4128,15 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end")
     )
 
-    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception => ex
+        b
+      ensure
+        b
+      end
+    RUBY
   end
 
   test "blocks with rescues" do

@@ -93,7 +93,6 @@ task lex: :compile do
     end
 
   filepaths.each do |filepath|
-    puts filepath if ENV["VERBOSE"]
     source = File.read(filepath)
 
     begin
@@ -102,6 +101,7 @@ task lex: :compile do
         print colorize.call(32, ".")
         passing += 1
       else
+        warn(filepath) if ENV["VERBOSE"]
         print colorize.call(31, "E")
         failing += 1
       end
