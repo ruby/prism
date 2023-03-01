@@ -5456,6 +5456,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
 	if (min_whitespace > 0) {
 	  node->as.heredoc_node.dedent = min_whitespace;
+	  const char *left_bound = node->as.heredoc_node.opening.start;
 
 	  // Iterate over all nodes, and trim whitespace accordingly
 	  for (int i = 0; i < node_list->size; i++) {
@@ -5492,8 +5493,12 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 		    new_str_index++;
 		    cur_char++;
 
+		    if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
+		      break;
+		    }
+
 		    // Skip over the whitespace
-		    if(cur_char[-1] == '\n' && cur_char[0] != '\n' &&
+		    if((cur_char == left_bound || cur_char[-1] == '\n') && cur_char[0] != '\n' &&
 			cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
 		      cur_char += min_whitespace;
 		      new_size -= min_whitespace;
