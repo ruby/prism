@@ -2771,6 +2771,11 @@ lex_token_type(yp_parser_t *parser) {
         // :: symbol
         case ':':
           if (match(parser, ':')) {
+            if (lex_state_beg_p(parser) || lex_state_p(parser, YP_LEX_STATE_CLASS) || (lex_state_p(parser, YP_LEX_STATE_ARG_ANY) && space_seen)) {
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+            } else {
+              lex_state_set(parser, YP_LEX_STATE_DOT);
+            }
             lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_COLON_COLON;
           }
