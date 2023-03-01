@@ -6428,7 +6428,7 @@ static inline yp_node_t *
 parse_assignment_value(yp_parser_t *parser, binding_power_t previous_binding_power, binding_power_t binding_power, const char *message) {
   yp_node_t *value = parse_expression(parser, binding_power, message);
 
-  if (previous_binding_power == BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
+  if (previous_binding_power == BINDING_POWER_STATEMENT && accept(parser, YP_TOKEN_COMMA)) {
     yp_token_t opening = not_provided(parser);
     yp_token_t closing = not_provided(parser);
     yp_node_t *array = yp_array_node_create(parser, &opening, &closing);
@@ -6436,8 +6436,7 @@ parse_assignment_value(yp_parser_t *parser, binding_power_t previous_binding_pow
     yp_array_node_append(array, value);
     value = array;
 
-    while (!match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-      expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit elements in the array.");
+    do {
       yp_node_t *element;
 
       if (accept(parser, YP_TOKEN_STAR)) {
@@ -6449,7 +6448,7 @@ parse_assignment_value(yp_parser_t *parser, binding_power_t previous_binding_pow
 
       yp_array_node_append(array, element);
       if (element->type == YP_NODE_MISSING_NODE) break;
-    }
+    } while (accept(parser, YP_TOKEN_COMMA));
   }
 
   return value;
