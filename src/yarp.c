@@ -4388,12 +4388,12 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
 
     if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
       while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-        yp_node_t *expression = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a class.");
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a class.");
         yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
 
         // If we hit a newline, then this is the end of the rescue expression. We
         // can continue on to parse the statements.
-        if (accept(parser, YP_TOKEN_NEWLINE)) {
+        if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_KEYWORD_THEN)) {
           break;
         }
 
