@@ -5213,7 +5213,7 @@ parse_method_definition_name(yp_parser_t *parser) {
 
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
-parse_expression_prefix(yp_parser_t *parser) {
+parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
   yp_lex_mode_t lex_mode = *parser->lex_modes.current;
 
   switch (parser->current.type) {
@@ -5308,7 +5308,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
       yp_node_t *node = yp_class_variable_read_node_create(parser, &parser->previous);
 
-      if (match_type_p(parser, YP_TOKEN_COMMA)) {
+      if (binding_power == BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, BINDING_POWER_INDEX);
       }
 
@@ -5346,7 +5346,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
       yp_node_t *node = yp_node_global_variable_read_create(parser, &parser->previous);
 
-      if (match_type_p(parser, YP_TOKEN_COMMA)) {
+      if (binding_power == BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, BINDING_POWER_INDEX);
       }
 
@@ -5398,7 +5398,7 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
       yp_node_t *node = yp_instance_variable_read_node_create(parser, &parser->previous);
 
-      if (match_type_p(parser, YP_TOKEN_COMMA)) {
+      if (binding_power == BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, BINDING_POWER_INDEX);
       }
 
@@ -6425,10 +6425,10 @@ parse_expression_prefix(yp_parser_t *parser) {
 }
 
 static inline yp_node_t *
-parse_assignment_value(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
+parse_assignment_value(yp_parser_t *parser, binding_power_t previous_binding_power, binding_power_t binding_power, const char *message) {
   yp_node_t *value = parse_expression(parser, binding_power, message);
 
-  if (match_type_p(parser, YP_TOKEN_COMMA)) {
+  if (previous_binding_power == BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
     yp_token_t opening = not_provided(parser);
     yp_token_t closing = not_provided(parser);
     yp_node_t *array = yp_array_node_create(parser, &opening, &closing);
@@ -6456,7 +6456,7 @@ parse_assignment_value(yp_parser_t *parser, binding_power_t binding_power, const
 }
 
 static inline yp_node_t *
-parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t binding_power) {
+parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t previous_binding_power, binding_power_t binding_power) {
   yp_token_t token = parser->current;
 
   switch (token.type) {
@@ -6465,32 +6465,32 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 
       switch (node->type) {
         case YP_NODE_CLASS_VARIABLE_READ_NODE: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the class variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the class variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_CONSTANT_PATH_NODE:
         case YP_NODE_CONSTANT_READ: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the constant after =.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the constant after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_GLOBAL_VARIABLE_READ: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the global variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the global variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_LOCAL_VARIABLE_READ: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the local variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the local variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value for the instance variable after =.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the instance variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_CALL_NODE: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_MULTI_WRITE_NODE: {
-          yp_node_t *value = parse_assignment_value(parser, binding_power, "Expected a value after '='.");
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
           node->as.multi_write_node.operator = token;
           node->as.multi_write_node.value = value;
           node->location.end = value->location.end;
@@ -6797,7 +6797,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t bin
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message) {
   yp_token_t recovery = parser->previous;
-  yp_node_t *node = parse_expression_prefix(parser);
+  yp_node_t *node = parse_expression_prefix(parser, binding_power);
 
   // If we found a syntax error, then the type of node returned by
   // parse_expression_prefix is going to be a missing node. In that case we need
@@ -6809,9 +6809,11 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 
   // Otherwise we'll look and see if the next token can be parsed as an infix
   // operator. If it can, then we'll parse it using parse_expression_infix.
+  binding_power_t previous_binding_power = binding_power;
   binding_powers_t current_binding_powers;
   while (current_binding_powers = binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
-    node = parse_expression_infix(parser, node, current_binding_powers.right);
+    node = parse_expression_infix(parser, node, previous_binding_power, current_binding_powers.right);
+    previous_binding_power = current_binding_powers.right;
   }
 
   return node;

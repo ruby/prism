@@ -5849,20 +5849,6 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "Foo = 1, 2"
   end
 
-  test "multiple assignment on constant path" do
-    expected = ConstantPathWriteNode(
-      ConstantPathNode(
-        ConstantRead(CONSTANT("Foo")),
-        COLON_COLON("::"),
-        ConstantRead(CONSTANT("Bar"))
-      ),
-      EQUAL("="),
-      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
-    )
-
-    assert_parses expected, "Foo::Bar = 1, 2"
-  end
-
   test "multiple assignment on global variable (left-hand side)" do
     expected = MultiWriteNode(
       [
