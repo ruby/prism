@@ -5326,7 +5326,13 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
-      return yp_node_constant_read_create(parser, &parser->previous);
+      yp_node_t *node = yp_node_constant_read_create(parser, &parser->previous);
+
+      if ((binding_power == BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
+        node = parse_targets(parser, node, BINDING_POWER_INDEX);
+      }
+
+      return node;
     }
     case YP_TOKEN_COLON_COLON: {
       parser_lex(parser);
@@ -5335,7 +5341,13 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
 
       yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
-      return yp_node_constant_path_node_create(parser, NULL, &delimiter, constant);
+      yp_node_t *node = yp_node_constant_path_node_create(parser, NULL, &delimiter, constant);
+
+      if ((binding_power == BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
+        node = parse_targets(parser, node, BINDING_POWER_INDEX);
+      }
+
+      return node;
     }
     case YP_TOKEN_FLOAT:
       parser_lex(parser);
@@ -5352,9 +5364,16 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_IDENTIFIER:
+    case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
-      return parse_identifier(parser);
+      yp_node_t *node = parse_identifier(parser);
+
+      if ((binding_power == BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
+        node = parse_targets(parser, node, BINDING_POWER_INDEX);
+      }
+
+      return node;
+    }
     case YP_TOKEN_HEREDOC_START: {
       parser_lex(parser);
       yp_node_t *node;
