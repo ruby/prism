@@ -20,15 +20,15 @@ class ErrorsTest < Test::Unit::TestCase
       Scope([]),
       KEYWORD_MODULE("module"),
       ConstantRead(CONSTANT("Parent")),
-      Statements([
-        ModuleNode(
-          Scope([]),
-          KEYWORD_MODULE("module"),
-          MissingNode(),
-          Statements([]),
-          MISSING("")
-        )
-      ]),
+      Statements(
+        [ModuleNode(
+           Scope([]),
+           KEYWORD_MODULE("module"),
+           ConstantRead(MISSING("")),
+           Statements([]),
+           MISSING("")
+         )]
+      ),
       KEYWORD_END("end")
     )
 

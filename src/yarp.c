@@ -5784,15 +5784,27 @@ parse_expression_prefix(yp_parser_t *parser) {
       parser_lex(parser);
 
       yp_token_t module_keyword = parser->previous;
-      yp_node_t *name = parse_expression(parser, BINDING_POWER_STATEMENT, "Expected to find a module name after `module`.");
+      yp_node_t *name;
+
+      expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `module`.");
+      name = yp_node_constant_read_create(parser, &parser->previous);
 
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
-      if (parser->recovering) {
+      if (parser->previous.type == YP_TOKEN_MISSING) {
         yp_node_t *scope = yp_node_scope_create(parser);
         yp_node_t *statements = yp_node_statements_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
+      }
+
+      while (accept(parser, YP_TOKEN_COLON_COLON)) {
+        yp_token_t double_colon = parser->previous;
+
+        expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
+        yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
+
+        name = yp_node_constant_path_node_create(parser, name, &double_colon, constant);
       }
 
       yp_parser_scope_push(parser, true);
