@@ -5198,6 +5198,16 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
           // [*splat]
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_star_node_create(parser, &parser->previous, expression);
+        } else if (match_type_p(parser, YP_TOKEN_LABEL)) {
+          yp_token_t opening = not_provided(parser);
+          yp_token_t closing = not_provided(parser);
+          element = yp_node_hash_node_create(parser, &opening, &closing);
+
+          while (!match_any_type_p(parser, 8, YP_TOKEN_EOF, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
+            if (!parse_assoc(parser, element, YP_TOKEN_EOF)) {
+              break;
+            }
+          }
         } else {
           element = parse_expression(parser, BINDING_POWER_DEFINED, "Expected an element for the array.");
         }
