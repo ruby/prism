@@ -2473,6 +2473,82 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-EOF\n  a\n\#{b}\nEOF\n"
   end
 
+  test "tilde heredocs with interpolation same spacing" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n" + "  "), nil, "a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n  \#{b}\nEOF\n"
+  end
+
+  test "tilde heredocs with interpolation different spacing" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n" + " "), nil, " a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      1
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n \#{b}\nEOF\n"
+  end
+
+  test "tilde heredocs with content before interpolation, on same line" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a "), nil, "a "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([IntegerNode()]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a \#{1}\nEOF\n"
+  end
+
+  test "tilde heredocs with content after interpolation, on same line" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  "), nil, ""),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([IntegerNode()]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT(" a\n"), nil, " a\n"),
+      ],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  \#{1} a\nEOF\n"
+  end
+
   test "heredocs on the same line" do
     expected = CallNode(
       HeredocNode(

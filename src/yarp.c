@@ -5420,7 +5420,10 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 	for (int i = 0; i < node_list->size; i++) {
 	  yp_node_t *node = node_list->nodes[i];
 
-	  if (node->type == YP_NODE_STRING_NODE && *node->as.string_node.content.start != '\n') {
+	  if (node->type == YP_NODE_STRING_NODE && *node->as.string_node.content.start != '\n' &&
+	      // If the previous node wasn't a string node, we don't want to trim whitespace
+	      (i == 0 || node_list->nodes[i-1]->type == YP_NODE_STRING_NODE)
+	     ) {
 	    int cur_whitespace;
 	    const char *cur_char = node->as.string_node.content.start;
 
