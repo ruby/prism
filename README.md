@@ -58,9 +58,10 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Design](docs/design.md)
 * [Encoding](docs/encoding.md)
 * [Extension](docs/extension.md)
+* [Heredocs](docs/heredocs.md)
+* [Mapping](docs/mapping.md)
 * [Ripper](docs/ripper.md)
 * [Serialization](docs/serialization.md)
-
 
 ## VSCode Extension
 
