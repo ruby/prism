@@ -123,6 +123,20 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "[:a, :b,\n:c,1,\n\n\n\n:d,\n]"
   end
 
+  test "array literal with newlines without trailing comma" do
+    expected = ArrayNode(
+      [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil),
+        IntegerNode(),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil)],
+      BRACKET_LEFT("["),
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[:a, :b,\n:c,1,\n\n\n\n:d\n\n\n]"
+  end
+
   test "array literal with labels" do
     expected = ArrayNode(
       [HashNode(

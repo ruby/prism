@@ -5208,6 +5208,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
+        // Handle the case where we don't have a comma and we have a newline followed by a right bracket.
+        if (accept(parser, YP_TOKEN_NEWLINE) && match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) break;
+
         if (yp_array_node_size(array) != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
         }
