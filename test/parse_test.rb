@@ -3690,9 +3690,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3704,9 +3704,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with do keyword" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       Location(),
@@ -3718,9 +3718,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop no newlines" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3732,9 +3732,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with semicolons" do
     expected = ForNode(
-      expression("i"),
+      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3746,12 +3746,16 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 2 indexes" do
     expected = ForNode(
-      MultiTargetNode([
-        expression("i"),
-        expression("j"),
-      ]),
+      MultiWriteNode(
+        [
+          LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+          LocalVariableWrite(IDENTIFIER("j"), nil, nil)
+        ],
+        nil,
+        nil
+      ),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3763,13 +3767,17 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with 3 indexes" do
     expected = ForNode(
-      MultiTargetNode([
-        expression("i"),
-        expression("j"),
-        expression("k"),
-      ]),
+      MultiWriteNode(
+        [
+          LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+          LocalVariableWrite(IDENTIFIER("j"), nil, nil),
+          LocalVariableWrite(IDENTIFIER("k"), nil, nil)
+        ],
+        nil,
+        nil
+      ),
       expression("1..10"),
-      Statements([expression("i")]),
+      Statements([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -3866,7 +3874,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         nil,
       ),
@@ -3875,7 +3883,13 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end"),
     )
 
-    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception => ex
+        b
+      end
+    RUBY
   end
 
   test "begin with rescue statement and exception list" do
@@ -3906,7 +3920,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception")), ConstantRead(CONSTANT("CustomException"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         nil
       ),
@@ -3915,7 +3929,13 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end"),
     )
 
-    assert_parses expected, "begin\na\nrescue Exception, CustomException => ex\nb\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception, CustomException => ex
+        b
+      end
+    RUBY
   end
 
   test "begin with multiple rescue statements" do
@@ -3960,13 +3980,13 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         RescueNode(
           KEYWORD_RESCUE("rescue"),
           [ConstantRead(CONSTANT("AnotherException")), ConstantRead(CONSTANT("OneMoreException"))],
           EQUAL_GREATER("=>"),
-          IDENTIFIER("ex"),
+          LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
           Statements([expression("c")]),
           nil
         )
@@ -4095,7 +4115,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        IDENTIFIER("ex"),
+        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
         Statements([expression("b")]),
         nil
       ),
@@ -4108,7 +4128,15 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_END("end")
     )
 
-    assert_parses expected, "begin\na\nrescue Exception => ex\nb\nensure\nb\nend"
+    assert_parses expected, <<~RUBY
+      begin
+        a
+      rescue Exception => ex
+        b
+      ensure
+        b
+      end
+    RUBY
   end
 
   test "blocks with rescues" do
@@ -5806,6 +5834,105 @@ class ParseTest < Test::Unit::TestCase
       "=="
     )
     assert_parses expected, "foo { |a| break } == 42"
+  end
+
+  test "multiple assignment on class variable (left-hand side)" do
+    expected = MultiWriteNode(
+      [
+        ClassVariableWriteNode(Location(), nil, nil),
+        ClassVariableWriteNode(Location(), nil, nil)
+      ],
+      EQUAL("="),
+      IntegerNode()
+    )
+
+    assert_parses expected, "@@foo, @@bar = 1"
+  end
+
+  test "multiple assignment on class variable (right-hand side)" do
+    expected = ClassVariableWriteNode(
+      Location(),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      Location()
+    )
+
+    assert_parses expected, "@@foo = 1, 2"
+  end
+
+  test "multiple assignment on constant (right-hand side)" do
+    expected = ConstantPathWriteNode(
+      ConstantRead(CONSTANT("Foo")),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "Foo = 1, 2"
+  end
+
+  test "multiple assignment on global variable (left-hand side)" do
+    expected = MultiWriteNode(
+      [
+        GlobalVariableWrite(GLOBAL_VARIABLE("$foo"), nil, nil),
+        GlobalVariableWrite(GLOBAL_VARIABLE("$bar"), nil, nil)
+      ],
+      EQUAL("="),
+      IntegerNode()
+    )    
+
+    assert_parses expected, "$foo, $bar = 1"
+  end
+
+  test "multiple assignment on global variable (right-hand side)" do
+    expected = GlobalVariableWrite(
+      GLOBAL_VARIABLE("$foo"),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "$foo = 1, 2"
+  end
+
+  test "multiple assignment on local variable (known, right-hand side)" do
+    expected = LocalVariableWrite(
+      IDENTIFIER("foo"),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo = 1; foo = 1, 2"
+  end
+
+  test "multiple assignment on local variable (unknown, right-hand side)" do
+    expected = LocalVariableWrite(
+      IDENTIFIER("foo"),
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo = 1, 2"
+  end
+
+  test "multiple assignment on instance variable (left-hand side)" do
+    expected = MultiWriteNode(
+      [
+        InstanceVariableWriteNode(Location(), nil, nil),
+        InstanceVariableWriteNode(Location(), nil, nil)
+      ],
+      EQUAL("="),
+      IntegerNode()
+    )
+
+    assert_parses expected, "@foo, @bar = 1"
+  end
+
+  test "multiple assignment on instance variable (right-hand side)" do
+    expected = InstanceVariableWriteNode(
+      Location(),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      Location()
+    )
+
+    assert_parses expected, "@foo = 1, 2"
   end
 
   private

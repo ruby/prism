@@ -445,17 +445,7 @@ module YARP
     end
 
     def value_for(event, value)
-      case event
-      when :on_comment, :on_tstring_content
-        # Ripper unescapes string content and comments, so we need to do the
-        # same here. We're going to attempt to force it into UTF-8, but if
-        # that doesn't work we'll just use the plain value.
-        begin
-          value.force_encoding("UTF-8").unicode_normalize
-        rescue ArgumentError
-          value
-        end
-      when :on___end__
+      if event == :on___end__
         # Ripper doesn't include the rest of the token in the event, so we
         # need to trim it down to just the first newline.
         value[0..value.index("\n")]

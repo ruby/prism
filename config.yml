@@ -333,9 +333,9 @@ nodes:
       - name: elements
         type: node[]
       - name: opening
-        type: token
+        type: token?
       - name: closing
-        type: token
+        type: token?
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -504,9 +504,9 @@ nodes:
       - name: name_loc
         type: location
       - name: value
-        type: node
+        type: node?
       - name: operator_loc
-        type: location
+        type: location?
     comment: |
       Represents writing to a class variable.
 
@@ -531,10 +531,10 @@ nodes:
       - name: target
         type: node
       - name: operator
-        type: token
+        type: token?
       - name: value
-        type: node
-    location: target->value
+        type: node?
+    location: target->value|target
     comment: |
       Represents writing to a constant.
 
@@ -727,10 +727,10 @@ nodes:
       - name: name
         type: token
       - name: operator
-        type: token
+        type: token?
       - name: value
-        type: node
-    location: name->value
+        type: node?
+    location: name->value|name
     comment: |
       Represents writing to a global variable.
 
@@ -839,9 +839,9 @@ nodes:
       - name: name_loc
         type: location
       - name: value
-        type: node
+        type: node?
       - name: operator_loc
-        type: location
+        type: location?
     comment: |
       Represents writing to an instance variable.
 
@@ -974,10 +974,10 @@ nodes:
       - name: name
         type: token
       - name: operator
-        type: token
+        type: token?
       - name: value
-        type: node
-    location: name->value
+        type: node?
+    location: name->value|name
     comment: |
       Represents writing to a local variable.
 
@@ -1005,16 +1005,20 @@ nodes:
 
           module Foo end
           ^^^^^^^^^^^^^^
-  - name: MultiTargetNode
+  - name: MultiWriteNode
     child_nodes:
       - name: targets
         type: node[]
+      - name: operator
+        type: token?
+      - name: value
+        type: node?
     location: targets
     comment: |
-      Represents a multi-left-hand expression.
+      Represents a multi-target expression.
 
-        a, b, c = 1, 2, 3
-        ^^^^^^^
+          a, b, c = 1, 2, 3
+          ^^^^^^^^^^^^^^^^^
   - name: NextNode
     child_nodes:
       - name: arguments
@@ -1263,8 +1267,8 @@ nodes:
         type: node[]
       - name: equal_greater
         type: token?
-      - name: exception_variable
-        type: token?
+      - name: exception
+        type: node?
       - name: statements
         type: node
       - name: consequent
