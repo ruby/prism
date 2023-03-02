@@ -2289,13 +2289,18 @@ lex_token_type(yp_parser_t *parser) {
           parser->current.end--;
           return YP_TOKEN_EOF;
 
-        case '#': // comments
-          while (*parser->current.end != '\n' && *parser->current.end != '\0') {
-            parser->current.end++;
+        case '#': { // comments
+          const char *ending = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+          while (ending && ending < parser->end && *ending != '\n') {
+            ending = memchr(ending + 1, '\n', parser->end - ending);
           }
+
+          parser->current.end = ending == NULL ? parser->end : ending;
           (void) match(parser, '\n');
+
           parser->command_start = previous_command_start;
           return YP_TOKEN_COMMENT;
+        }
 
         case '\r': {
           // The only way to get here is if this is immediately followed by a
@@ -7035,6 +7040,12 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   yp_list_init(&parser->warning_list);
   yp_list_init(&parser->error_list);
   yp_list_init(&parser->comment_list);
+
+  // If the first three bytes of the source are the UTF-8 BOM, then we'll skip
+  // over them.
+  if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
+    parser->current.end += 3;
+  }
 }
 
 // Register a callback that will be called when YARP encounters a magic comment

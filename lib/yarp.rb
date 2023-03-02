@@ -364,6 +364,15 @@ module YARP
 
       result = YARP.lex(source)
       previous_state = nil
+
+      # If there's a UTF-8 byte-order mark as the start of the file, then ripper
+      # sets every token's on the first line back by 6 bytes. It also keeps the
+      # byte order mark in the first token's value. This is weird, and I don't
+      # want to mirror that in our parser. So instead, we'll match up the values
+      # here, and then match up the locations as we process the tokens.
+      bom = source.bytes[0..2] == [0xEF, 0xBB, 0xBF]
+      result.value[0][0].value.prepend("\xEF\xBB\xBF") if bom
+
       result.value.each do |(token, lex_state)|
         event = RIPPER.fetch(token.type)
         lex_state =
@@ -379,9 +388,11 @@ module YARP
             Ripper::Lexer::State.new(lex_state)
           end
 
+        (lineno, column) = location_for(token.location.start_offset)
+        column -= 6 if bom && lineno == 1
 
         token = [
-          location_for(token.location.start_offset),
+          [lineno, column],
           event,
           value_for(event, token.value),
           lex_state
