@@ -373,17 +373,36 @@ module YARP
       bom = source.bytes[0..2] == [0xEF, 0xBB, 0xBF]
       result.value[0][0].value.prepend("\xEF\xBB\xBF") if bom
 
-      result.value.each do |(token, lex_state)|
+      result.value.each_with_index do |(token, lex_state), index|
         event = RIPPER.fetch(token.type)
         lex_state =
-          # On regex end, Ripper scans and then sets end state, so
-          # the ripper lexed output is begin, when it should be end.
-          # YARP sets lex state correctly to end state, but we want
-          # to be able to compare against Ripper's lexed state.
-          # So here, if it's a regexp end token, we output the state
-          # as the previous state, solely for the sake of comparison
+          # On regex end, Ripper scans and then sets end state, so the ripper
+          # lexed output is begin, when it should be end. YARP sets lex state
+          # correctly to end state, but we want to be able to compare against
+          # Ripper's lexed state. So here, if it's a regexp end token, we output
+          # the state as the previous state, solely for the sake of comparison.
           if event == :on_regexp_end
-            previous_state
+            previous_token = result.value[index - 1][0]
+
+            if RIPPER.fetch(previous_token.type) == :on_embexpr_end
+              # If the previous token is embexpr_end, then we have to do even
+              # more processing. The end of an embedded expression sets the
+              # state to the state that it had at the beginning of the embedded
+              # expression. So we have to go and find that state and set it
+              # here.
+              counter = 1
+              current_index = index - 1
+
+              until counter == 0
+                current_index -= 1
+                current_event = RIPPER.fetch(result.value[current_index][0].type)
+                counter += { on_embexpr_beg: -1, on_embexpr_end: 1 }[current_event] || 0
+              end
+
+              Ripper::Lexer::State.new(result.value[current_index][1])
+            else
+              previous_state
+            end
           else
             Ripper::Lexer::State.new(lex_state)
           end
