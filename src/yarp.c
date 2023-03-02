@@ -2193,6 +2193,13 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
     // This is an ignored newline.
     parser->command_start = previous_command_start;
 
+    // If the special resume flag is set, then we need to jump ahead.
+    if (parser->heredoc_end != NULL) {
+      assert(parser->heredoc_end <= parser->end);
+      parser->next_start = parser->heredoc_end;
+      parser->heredoc_end = NULL;
+    }
+
     return YP_TOKEN_IGNORED_NEWLINE;
   } else {
     // This is a normal newline.
@@ -2602,17 +2609,28 @@ lex_token_type(yp_parser_t *parser) {
 
         // xstring literal
         case '`': {
-          if (!lex_state_operator_p(parser)) {
-            yp_lex_mode_t lex_mode = {
-              .mode = YP_LEX_STRING,
-              .as.string.terminator = '`',
-              .as.string.interpolation = true
-            };
-
-            lex_mode_push(parser, lex_mode);
-          } else {
+          if (lex_state_p(parser, YP_LEX_STATE_FNAME)) {
             lex_state_set(parser, YP_LEX_STATE_ENDFN);
+            return YP_TOKEN_BACKTICK;
           }
+
+          if (lex_state_p(parser, YP_LEX_STATE_DOT)) {
+            if (previous_command_start) {
+              lex_state_set(parser, YP_LEX_STATE_CMDARG);
+            } else {
+              lex_state_set(parser, YP_LEX_STATE_ARG);
+            }
+
+            return YP_TOKEN_BACKTICK;
+          }
+
+          yp_lex_mode_t lex_mode = {
+            .mode = YP_LEX_STRING,
+            .as.string.terminator = '`',
+            .as.string.interpolation = true
+          };
+
+          lex_mode_push(parser, lex_mode);
           return YP_TOKEN_BACKTICK;
         }
 
@@ -2635,21 +2653,23 @@ lex_token_type(yp_parser_t *parser) {
         // & && &&= &=
         case '&':
           if (match(parser, '&')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+
             if (match(parser, '=')) {
               return YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL;
             }
 
-            lex_state_set(parser, YP_LEX_STATE_BEG);
             return YP_TOKEN_AMPERSAND_AMPERSAND;
+          }
+
+          if (match(parser, '=')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_AMPERSAND_EQUAL;
           }
 
           if (match(parser, '.')) {
             lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_AMPERSAND_DOT;
-          }
-
-          if (match(parser, '=')) {
-            return YP_TOKEN_AMPERSAND_EQUAL;
           }
 
           if (lex_state_operator_p(parser)) {
@@ -2841,12 +2861,12 @@ lex_token_type(yp_parser_t *parser) {
         // ~ ~@
         case '~':
           if (lex_state_operator_p(parser)) {
+            (void) match(parser, '@');
             lex_state_set(parser, YP_LEX_STATE_ARG);
           } else {
             lex_state_set(parser, YP_LEX_STATE_BEG);
           }
 
-          (void) match(parser, '@');
           return YP_TOKEN_TILDE;
 
         // % %= %i %I %q %Q %w %W
@@ -3136,7 +3156,7 @@ lex_token_type(yp_parser_t *parser) {
             // In this case we've hit the terminator. If we've hit the
             // terminator and we've already skipped past content, then we can
             // return a list node.
-            if (breakpoint > parser->current.end) {
+            if (breakpoint > parser->current.start) {
               parser->current.end = breakpoint;
               return YP_TOKEN_STRING_CONTENT;
             }
@@ -3192,7 +3212,7 @@ lex_token_type(yp_parser_t *parser) {
             // Here we've hit the terminator. If we have already consumed
             // content then we need to return that content as string content
             // first.
-            if (breakpoint > parser->current.end) {
+            if (breakpoint > parser->current.start) {
               parser->current.end = breakpoint;
               return YP_TOKEN_STRING_CONTENT;
             }
@@ -3255,7 +3275,7 @@ lex_token_type(yp_parser_t *parser) {
         if (*breakpoint == parser->lex_modes.current->as.string.terminator) {
           // Here we've hit the terminator. If we have already consumed content
           // then we need to return that content as string content first.
-          if (breakpoint > parser->current.end) {
+          if (breakpoint > parser->current.start) {
             parser->current.end = breakpoint;
             return YP_TOKEN_STRING_CONTENT;
           }
@@ -3620,7 +3640,8 @@ parser_lex(yp_parser_t *parser) {
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         (void) lex_newline(parser, previous_command_start);
-        parser->current.type = YP_TOKEN_EOF;
+        parser->current.type = lex_token_type(parser);
+        parser_lex_callback(parser);
         return;
       }
       case YP_TOKEN_EMBDOC_BEGIN: {
@@ -4917,6 +4938,8 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
+          lex_state_set(parser, YP_LEX_STATE_BEG);
+
           assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
           yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
           parser_lex(parser);
@@ -5059,6 +5082,8 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
+      lex_state_set(parser, YP_LEX_STATE_BEG);
+
       assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
       yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
 
@@ -6071,6 +6096,8 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+
               assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
               yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
 
@@ -6171,6 +6198,8 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+
             assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
             yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
             parser_lex(parser);
