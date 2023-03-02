@@ -7032,6 +7032,12 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   yp_list_init(&parser->warning_list);
   yp_list_init(&parser->error_list);
   yp_list_init(&parser->comment_list);
+
+  // If the first three bytes of the source are the UTF-8 BOM, then we'll skip
+  // over them.
+  if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
+    parser->current.end += 3;
+  }
 }
 
 // Register a callback that will be called when YARP encounters a magic comment
