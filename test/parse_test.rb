@@ -76,6 +76,58 @@ class ParseTest < Test::Unit::TestCase
     assert_parses AndNode(expression("1"), expression("2"), KEYWORD_AND("and")), "1 and 2"
   end
 
+  test "and & or keyword with calls" do
+    expected = OrNode(
+      AndNode(
+        CallNode(
+          nil,
+          nil,
+          IDENTIFIER("ruby_version_is"),
+          nil,
+          ArgumentsNode(
+            [StringNode(
+               STRING_BEGIN("'"),
+               STRING_CONTENT("3"),
+               STRING_END("'"),
+               "3"
+             )]
+          ),
+          nil,
+          nil,
+          "ruby_version_is"
+        ),
+        CallNode(
+          nil,
+          nil,
+          IDENTIFIER("platform_is"),
+          nil,
+          ArgumentsNode(
+            [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("windows"), nil)]
+          ),
+          nil,
+          nil,
+          "platform_is"
+        ),
+        KEYWORD_AND("and")
+      ),
+      KEYWORD_OR("or"),
+      CallNode(
+        nil,
+        nil,
+        IDENTIFIER("foo"),
+        nil,
+        ArgumentsNode(
+          [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+        ),
+        nil,
+        nil,
+        "foo"
+      )
+    )
+    assert_parses expected, "ruby_version_is '3' and platform_is :windows or foo :a, :b"
+  end
+
   test "and operator" do
     assert_parses AndNode(expression("1"), expression("2"), AMPERSAND_AMPERSAND("&&")), "1 && 2"
   end
@@ -5877,7 +5929,7 @@ class ParseTest < Test::Unit::TestCase
       ],
       EQUAL("="),
       IntegerNode()
-    )    
+    )
 
     assert_parses expected, "$foo, $bar = 1"
   end
