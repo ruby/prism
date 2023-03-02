@@ -5628,8 +5628,8 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         yp_token_t operator = parser->previous;
         yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expected to find an expression after `<<`.");
 
-        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         yp_parser_scope_push(parser, true);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_SCLASS);
 
@@ -5685,29 +5685,31 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       switch (parser->current.type) {
         case YP_CASE_OPERATOR:
+          yp_parser_scope_push(parser, true);
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
           parser_lex(parser);
           name = parser->previous;
           break;
         case YP_TOKEN_IDENTIFIER: {
+          yp_parser_scope_push(parser, true);
           parser_lex(parser);
-          receiver = parse_vcall(parser);
 
-          if ((parser->current.type == YP_TOKEN_DOT) || (parser->current.type == YP_TOKEN_COLON_COLON)) {
+          if (match_any_type_p(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
+            receiver = parse_vcall(parser);
+
             lex_state_set(parser, YP_LEX_STATE_FNAME);
-
             parser_lex(parser);
-            operator = parser->previous;
 
+            operator = parser->previous;
             name = parse_method_definition_name(parser);
+
             if (name.type == YP_TOKEN_MISSING) {
               yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
             }
           } else {
-            yp_node_destroy(parser, receiver);
-            receiver = NULL;
             name = parser->previous;
           }
+
           break;
         }
         case YP_TOKEN_CONSTANT:
@@ -5721,12 +5723,12 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         case YP_TOKEN_KEYWORD___FILE__:
         case YP_TOKEN_KEYWORD___LINE__:
         case YP_TOKEN_KEYWORD___ENCODING__: {
+          yp_parser_scope_push(parser, true);
           parser_lex(parser);
           yp_token_t identifier = parser->previous;
 
-          if ((parser->current.type == YP_TOKEN_DOT) || (parser->current.type == YP_TOKEN_COLON_COLON)) {
+          if (match_any_type_p(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
             lex_state_set(parser, YP_LEX_STATE_FNAME);
-
             parser_lex(parser);
             operator = parser->previous;
 
@@ -5791,12 +5793,15 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
           receiver = yp_node_parentheses_node_create(parser, &lparen, expression, &rparen);
 
+          yp_parser_scope_push(parser, true);
           expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
           name = parser->previous;
           break;
         }
         default:
+          yp_parser_scope_push(parser, true);
           name = parse_method_definition_name(parser);
+
           if (name.type == YP_TOKEN_MISSING) {
             yp_diagnostic_list_append(&parser->error_list, "Expected a method name after receiver.", parser->previous.end - parser->start);
           }
@@ -5812,7 +5817,6 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         lparen = not_provided(parser);
       }
 
-      yp_parser_scope_push(parser, true);
       yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
@@ -6634,27 +6638,30 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
 
   switch (token.type) {
     case YP_TOKEN_EQUAL: {
-      parser_lex(parser);
-
       switch (node->type) {
         case YP_NODE_CLASS_VARIABLE_READ_NODE: {
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the class variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_CONSTANT_PATH_NODE:
         case YP_NODE_CONSTANT_READ: {
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the constant after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_GLOBAL_VARIABLE_READ: {
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the global variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_LOCAL_VARIABLE_READ: {
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the local variable after =.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the instance variable after =.");
           return parse_target(parser, node, &token, value);
         }
@@ -6672,10 +6679,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
             yp_parser_local_add(parser, &node->as.call_node.message);
           }
 
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_MULTI_WRITE_NODE: {
+          parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
           node->as.multi_write_node.operator = token;
           node->as.multi_write_node.value = value;
@@ -6683,6 +6692,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
           return node;
         }
         default:
+          parser_lex(parser);
+
           // In this case we have an = sign, but we don't know what it's for. We
           // need to treat it as an error. For now, we'll mark it as an error
           // and just skip right past it.
