@@ -5550,17 +5550,30 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t keyword = parser->previous;
       yp_node_t *arguments = NULL;
 
-      if (!accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-        arguments = yp_arguments_node_create(parser);
+      if (
+        !accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
+        !context_terminator(parser->current_context->context, &parser->current)
+      ) {
+        // If the next token is not a statement terminator or the end of the
+        // file then it is either an argument or a modifier to the keyword. We
+        // should only parse an argument if it is an argument, which we can
+        // determine by looking at the next token's infix binding power. If it
+        // is unset (it can't be used as an infix operator) then it's definitely
+        // an argument. Otherwise we'll check if it's >= BINDING_POWER_RANGE,
+        // which would mean it's part of the expression.
+        binding_power_t binding_power = binding_powers[parser->current.type].left;
 
-        while (!match_type_p(parser, YP_TOKEN_EOF) && !context_terminator(parser->current_context->context, &parser->current)) {
-          yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-          yp_arguments_node_append(arguments, expression);
+        if (binding_power == BINDING_POWER_UNSET || binding_power >= BINDING_POWER_RANGE) {
+          arguments = yp_arguments_node_create(parser);
 
-          // If parsing the argument resulted in error recovery, then we can
-          // stop parsing the arguments entirely now.
-          if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
-          if (!accept(parser, YP_TOKEN_COMMA)) break;
+          do {
+            yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
+            yp_arguments_node_append(arguments, expression);
+
+            // If parsing the argument resulted in error recovery, then we can
+            // stop parsing the arguments entirely now.
+            if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
+          } while (accept(parser, YP_TOKEN_COMMA));
         }
       }
 
