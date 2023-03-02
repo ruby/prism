@@ -1345,7 +1345,9 @@ yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
 // Add a local variable to the current scope.
 static void
 yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
-  yp_token_list_append(&parser->current_scope->node->as.scope.locals, token);
+  if (!yp_token_list_includes(&parser->current_scope->node->as.scope.locals, token)) {
+    yp_token_list_append(&parser->current_scope->node->as.scope.locals, token);
+  }
 }
 
 // Pop the current scope off the scope stack.
@@ -6657,6 +6659,19 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_CALL_NODE: {
+          // If we have no arguments to the call node and we need this to be a
+          // target then this is either a method call or a local variable write.
+          // This _must_ happen before the value is parsed because it could be
+          // referenced in the value.
+          if (
+            (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
+            (node->as.call_node.arguments == NULL) &&
+            (node->as.call_node.block == NULL) &&
+            (node->as.call_node.receiver == NULL)
+          ) {
+            yp_parser_local_add(parser, &node->as.call_node.message);
+          }
+
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
           return parse_target(parser, node, &token, value);
         }
