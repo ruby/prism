@@ -413,7 +413,7 @@ module YARP
           tokens << token
 
           case event
-          when :on_nl
+          when :on_nl, :on_ignored_nl
             heredocs.each do |heredoc|
               tokens.concat(heredoc.to_a)
             end
