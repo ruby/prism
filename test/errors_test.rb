@@ -338,7 +338,7 @@ class ErrorsTest < Test::Unit::TestCase
       "a"
     )
 
-    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Expected a ',' to delimit arguments."]
+    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal."]
   end
 
   private

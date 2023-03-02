@@ -5640,6 +5640,74 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo :a, b: true do |a, b| puts a end"
   end
 
+  test "method call without parenthesis with hash and a block argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+              TrueNode(),
+              nil
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              FalseNode(),
+              nil
+            )],
+           nil
+         ),
+         BlockArgumentNode(
+           AMPERSAND("&"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
+         )]
+      ),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo a: true, b: false, &:block"
+  end
+
+  test "method call with parenthesis with hash and a block argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [HashNode(
+           BRACE_LEFT("{"),
+           [AssocNode(
+              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+              TrueNode(),
+              nil
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              FalseNode(),
+              nil
+            )],
+           BRACE_RIGHT("}")
+         ),
+         BlockArgumentNode(
+           AMPERSAND("&"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo({ a: true, b: false, }, &:block)"
+  end
+
   test "basic case when syntax" do
     expected = CaseNode(
       KEYWORD_CASE("case"),
@@ -5877,7 +5945,7 @@ class ParseTest < Test::Unit::TestCase
       ],
       EQUAL("="),
       IntegerNode()
-    )    
+    )
 
     assert_parses expected, "$foo, $bar = 1"
   end

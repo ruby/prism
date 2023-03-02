@@ -4189,6 +4189,10 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
     return true;
   }
 
+  if (match_type_p(parser, YP_TOKEN_AMPERSAND)) {
+    return false;
+  }
+
   yp_node_t *element;
 
   switch (parser->current.type) {
@@ -4247,12 +4251,14 @@ static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
   bool parsed_double_splat_argument = false;
   bool parsed_block_argument = false;
+  bool parsed_assoc = false;
 
   while (
     !match_any_type_p(parser, 6, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
     !context_terminator(parser->current_context->context, &parser->current)
   ) {
-    if (yp_arguments_node_size(arguments) > 0) {
+    // Don't expect a comma if we have already parsed hash assocs.
+    if ((yp_arguments_node_size(arguments) > 0) && !parsed_assoc) {
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }
 
@@ -4279,7 +4285,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
             break;
           }
         }
-
+        parsed_assoc = true;
         break;
       }
       case YP_TOKEN_STAR_STAR: {
