@@ -2289,13 +2289,18 @@ lex_token_type(yp_parser_t *parser) {
           parser->current.end--;
           return YP_TOKEN_EOF;
 
-        case '#': // comments
-          while (*parser->current.end != '\n' && *parser->current.end != '\0') {
-            parser->current.end++;
+        case '#': { // comments
+          const char *ending = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+          while (ending && ending < parser->end && *ending != '\n') {
+            ending = memchr(ending + 1, '\n', parser->end - ending);
           }
+
+          parser->current.end = ending == NULL ? parser->end : ending;
           (void) match(parser, '\n');
+
           parser->command_start = previous_command_start;
           return YP_TOKEN_COMMENT;
+        }
 
         case '\r': {
           // The only way to get here is if this is immediately followed by a
