@@ -123,6 +123,29 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "[:a, :b,\n:c,1,\n\n\n\n:d,\n]"
   end
 
+  test "array literal with labels" do
+    expected = ArrayNode(
+      [HashNode(
+        nil,
+        [AssocNode(
+           SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+           ArrayNode(
+             [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil)],
+             BRACKET_LEFT("["),
+             BRACKET_RIGHT("]")
+           ),
+           nil
+         )],
+        nil
+      )],
+     BRACKET_LEFT("["),
+     BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[a: [:b, :c]]"
+  end
+
   test "empty array literal" do
     assert_parses ArrayNode([], BRACKET_LEFT("["), BRACKET_RIGHT("]")), "[\n]\n"
   end
@@ -5877,7 +5900,7 @@ class ParseTest < Test::Unit::TestCase
       ],
       EQUAL("="),
       IntegerNode()
-    )    
+    )
 
     assert_parses expected, "$foo, $bar = 1"
   end
