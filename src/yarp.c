@@ -5517,8 +5517,18 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       if (!accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
         arguments = yp_arguments_node_create(parser);
-
-        while (!match_type_p(parser, YP_TOKEN_EOF) && !context_terminator(parser->current_context->context, &parser->current)) {
+        while (
+          !match_any_type_p(
+            parser, 6,
+            YP_TOKEN_KEYWORD_IF,
+            YP_TOKEN_KEYWORD_UNLESS,
+            YP_TOKEN_KEYWORD_WHILE,
+            YP_TOKEN_KEYWORD_UNTIL,
+            YP_TOKEN_KEYWORD_RESCUE,
+            YP_TOKEN_EOF
+          ) &&
+          !context_terminator(parser->current_context->context, &parser->current)
+        ) {
           yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
           yp_arguments_node_append(arguments, expression);
 

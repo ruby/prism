@@ -2431,6 +2431,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")]), nil, nil), "1 if true"
   end
 
+  test "if modifier after break" do
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([BreakNode(ArgumentsNode([]), Location())]), nil, nil), "break if true"
+  end
+
+  test "if modifier after next" do
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([NextNode(ArgumentsNode([]), Location())]), nil, nil), "next if true"
+  end
+
+  test "if modifier after return" do
+    assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([ReturnNode(KEYWORD_RETURN("return"), ArgumentsNode([]))]), nil, nil), "return if true"
+  end
+
   test "if else" do
     expected = IfNode(
       KEYWORD_IF("if"),
@@ -3404,6 +3416,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")]), nil, nil), "1 unless true"
   end
 
+  test "unless modifier after break" do
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([BreakNode(ArgumentsNode([]), Location())]), nil, nil), "break unless true"
+  end
+
+  test "unless modifier after next" do
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([NextNode(ArgumentsNode([]), Location())]), nil, nil), "next unless true"
+  end
+
+  test "unless modifier after return" do
+    assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([ReturnNode(KEYWORD_RETURN("return"), ArgumentsNode([]))]), nil, nil), "return unless true"
+  end
+
   test "unless else" do
     expected = UnlessNode(
       KEYWORD_UNLESS("unless"),
@@ -3428,12 +3452,36 @@ class ParseTest < Test::Unit::TestCase
     assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "1 until true"
   end
 
+  test "until modifier after break" do
+    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([BreakNode(ArgumentsNode([]), Location())])), "break until true"
+  end
+
+  test "until modifier after next" do
+    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([NextNode(ArgumentsNode([]), Location())])), "next until true"
+  end
+
+  test "until modifier after return" do
+    assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([ReturnNode(KEYWORD_RETURN("return"), ArgumentsNode([]))])), "return until true"
+  end
+
   test "while" do
     assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "while true; 1; end"
   end
 
   test "while modifier" do
     assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "1 while true"
+  end
+
+  test "while modifier after break" do
+    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([BreakNode(ArgumentsNode([]), Location())])), "break while true"
+  end
+
+  test "while modifier after next" do
+    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([NextNode(ArgumentsNode([]), Location())])), "next while true"
+  end
+
+  test "while modifier after return" do
+    assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([ReturnNode(KEYWORD_RETURN("return"), ArgumentsNode([]))])), "return while true"
   end
 
   test "yield" do
@@ -3822,6 +3870,36 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "foo rescue nil || 1"
+  end
+
+  test "rescue modifier after break" do
+    expected = RescueModifierNode(
+      BreakNode(ArgumentsNode([]), Location()),
+      KEYWORD_RESCUE("rescue"),
+      NilNode()
+    )
+
+    assert_parses expected, "break rescue nil"
+  end
+
+  test "rescue modifier after next" do
+    expected = RescueModifierNode(
+      NextNode(ArgumentsNode([]), Location()),
+      KEYWORD_RESCUE("rescue"),
+      NilNode()
+    )
+
+    assert_parses expected, "next rescue nil"
+  end
+
+  test "rescue modifier after return" do
+    expected = RescueModifierNode(
+      ReturnNode(KEYWORD_RETURN("return"), ArgumentsNode([])),
+      KEYWORD_RESCUE("rescue"),
+      NilNode()
+    )
+
+    assert_parses expected, "return rescue nil"
   end
 
   test "begin with rescue statement" do
@@ -5877,7 +5955,7 @@ class ParseTest < Test::Unit::TestCase
       ],
       EQUAL("="),
       IntegerNode()
-    )    
+    )
 
     assert_parses expected, "$foo, $bar = 1"
   end
