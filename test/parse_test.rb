@@ -6234,6 +6234,35 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo { |a| break } == 42"
   end
 
+  test "multiple assignment on array reference" do
+    expected = MultiWriteNode(
+      [CallNode(
+         expression("foo"),
+         nil,
+         BRACKET_LEFT_RIGHT_EQUAL("["),
+         BRACKET_LEFT("["),
+         ArgumentsNode([IntegerNode()]),
+         BRACKET_RIGHT("]"),
+         nil,
+         "[]="
+       ),
+       CallNode(
+         expression("bar"),
+         nil,
+         BRACKET_LEFT_RIGHT_EQUAL("["),
+         BRACKET_LEFT("["),
+         ArgumentsNode([IntegerNode()]),
+         BRACKET_RIGHT("]"),
+         nil,
+         "[]="
+       )],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo[0], bar[0] = 1, 2"
+  end
+
   test "multiple assignment on class variable (left-hand side)" do
     expected = MultiWriteNode(
       [

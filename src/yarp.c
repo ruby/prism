@@ -5377,7 +5377,6 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       }
 
       yp_node_t *node = yp_node_constant_read_create(parser, &parser->previous);
-
       if ((binding_power == BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, BINDING_POWER_INDEX);
       }
@@ -7149,6 +7148,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
       parse_arguments(parser, arguments.arguments, YP_TOKEN_BRACKET_RIGHT);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
       arguments.closing = parser->previous;
+
+      // If we have a comma after the closing bracket then this is a multiple
+      // assignment and we should parse the targets.
+      if (previous_binding_power == BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
+        yp_node_t *aref = yp_call_node_aref_create(parser, node, &arguments);
+        return parse_targets(parser, aref, BINDING_POWER_INDEX);
+      }
 
       // If we're at the end of the arguments, we can now check if there is a
       // block node that starts with a {. If there is, then we can parse it and
