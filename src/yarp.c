@@ -7101,7 +7101,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
     }
     case YP_TOKEN_QUESTION_MARK: {
       parser_lex(parser);
-      yp_node_t *true_expression = parse_expression(parser, binding_power, "Expected a value after '?'");
+      yp_node_t *true_expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after '?'");
 
       if (parser->recovering) {
         // If parsing the true expression of this ternary resulted in a syntax
@@ -7122,7 +7122,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
       expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
 
       yp_token_t colon = parser->previous;
-      yp_node_t *false_expression = parse_expression(parser, binding_power, "Expected a value after ':'");
+      yp_node_t *false_expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after ':'");
 
       return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
     }
