@@ -1485,6 +1485,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def m(a, **nil)\nend"
   end
 
+  test "def with constant name" do
+    expected = DefNode(
+      CONSTANT("Array_function"),
+      SelfNode(),
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements([]),
+      Scope([]),
+      Location(),
+      Location(),
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_parses expected, "def self.Array_function; end"
+  end
+
   test "method call with label keyword args" do
     expected = CallNode(
       nil,
