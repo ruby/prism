@@ -2910,6 +2910,58 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), nil), "1..."
   end
 
+  test "unary ! on argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [CallNode(
+           expression("bar"),
+           nil,
+           BANG("!"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "!"
+         )]
+      ),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo !bar"
+  end
+
+  test "unary ~ on argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [CallNode(
+           expression("bar"),
+           nil,
+           TILDE("~"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "~"
+         )]
+      ),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo ~bar"
+  end
+
   test "rational" do
     assert_parses RationalNode(), "1r"
   end

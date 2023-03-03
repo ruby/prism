@@ -4753,10 +4753,12 @@ token_begins_expression_p(yp_token_type_t type) {
       return false;
     case YP_TOKEN_UMINUS:
     case YP_TOKEN_UPLUS:
-      // These two tokens actually do have binding power associated with them so
-      // that we can correctly place unary minus and plus into the precedence
-      // order. But we want them to be marked as beginning an expression, so we
-      // need to special case them here.
+    case YP_TOKEN_BANG:
+    case YP_TOKEN_TILDE:
+      // These unary tokens actually do have binding power associated with them
+      // so that we can correctly place them into the precedence order. But we
+      // want them to be marked as beginning an expression, so we need to
+      // special case them here.
       return true;
     default:
       return binding_powers[type].left == BINDING_POWER_UNSET;
