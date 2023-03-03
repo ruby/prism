@@ -2506,18 +2506,12 @@ lex_token_type(yp_parser_t *parser) {
 
         // = => =~ == === =begin
         case '=':
-          if (current_token_starts_line(parser)) {
-            if (strncmp(parser->current.end, "begin\n", 6) == 0) {
-              parser->current.end += 6;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
-              return YP_TOKEN_EMBDOC_BEGIN;
-            }
+          if (current_token_starts_line(parser) && strncmp(parser->current.end, "begin", 5) == 0 && char_is_whitespace(parser->current.end[5])) {
+            const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+            parser->current.end = newline == NULL ? parser->end : newline + 1;
 
-            if (strncmp(parser->current.end, "begin\r\n", 7) == 0) {
-              parser->current.end += 7;
-              lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
-              return YP_TOKEN_EMBDOC_BEGIN;
-            }
+            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
+            return YP_TOKEN_EMBDOC_BEGIN;
           }
 
           if (lex_state_operator_p(parser)) {
