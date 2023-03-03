@@ -4521,7 +4521,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
 
 // Parse a list of parameters on a method definition.
 static yp_node_t *
-parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
+parse_parameters(yp_parser_t *parser, bool uses_parentheses, binding_power_t binding_power) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
   bool parsing = true;
 
@@ -4564,7 +4564,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
           yp_token_t operator = parser->previous;
-          yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a default value for the parameter.");
+          yp_node_t *value = parse_expression(parser, binding_power, "Expected to find a default value for the parameter.");
 
           yp_node_t *param = yp_node_optional_parameter_node_create(parser, &name, &operator, value);
           yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
@@ -4608,7 +4608,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses) {
             break;
           }
           default: {
-            yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to find a default value for the keyword parameter.");
+            yp_node_t *value = parse_expression(parser, binding_power, "Expected to find a default value for the keyword parameter.");
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
             yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
 
@@ -4776,6 +4776,23 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
   return begin_node;
 }
 
+// Parse a list of parameters and local on a block definition.
+static yp_node_t *
+parse_block_parameters(yp_parser_t *parser) {
+  yp_node_t *block_params = parse_parameters(parser, false, BINDING_POWER_INDEX);
+  yp_node_t *parameters = yp_node_block_var_node_create(parser, block_params);
+
+  if (accept(parser, YP_TOKEN_SEMICOLON)) {
+    do {
+      expect(parser, YP_TOKEN_IDENTIFIER, "Expected a local variable name.");
+      yp_parser_local_add(parser, &parser->previous);
+      yp_token_list_append(&parameters->as.block_var_node.locals, &parser->previous);
+    } while (accept(parser, YP_TOKEN_COMMA));
+  }
+
+  return parameters;
+}
+
 // Parse a block.
 static yp_node_t *
 parse_block(yp_parser_t *parser) {
@@ -4786,8 +4803,7 @@ parse_block(yp_parser_t *parser) {
   yp_node_t *arguments = NULL;
 
   if (accept(parser, YP_TOKEN_PIPE)) {
-    arguments = parse_parameters(parser, false);
-
+    arguments = parse_block_parameters(parser);
     parser->command_start = true;
     expect(parser, YP_TOKEN_PIPE, "Expected block arguments to end with '|'.");
   }
@@ -4860,33 +4876,6 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
       arguments->block = parse_block(parser);
     }
   }
-}
-
-// Parse a list of parameters and local on a block definition.
-static yp_node_t *
-parse_block_parameters(yp_parser_t *parser) {
-  yp_node_t *block_params = parse_parameters(parser, false);
-  yp_node_t *parameters = yp_node_block_var_node_create(parser, block_params);
-
-  if (accept(parser, YP_TOKEN_SEMICOLON)) {
-    bool parsing = true;
-
-    while (parsing) {
-      if (accept(parser, YP_TOKEN_IDENTIFIER)) {
-        yp_token_t name = parser->previous;
-        yp_parser_local_add(parser, &name);
-        yp_token_list_append(&parameters->as.block_var_node.locals, &name);
-
-        if (!accept(parser, YP_TOKEN_COMMA)) {
-          parsing = false;
-        }
-      } else {
-        parsing = false;
-      }
-    }
-  }
-
-  return parameters;
 }
 
 static inline yp_node_t *
@@ -6047,7 +6036,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         lparen = not_provided(parser);
       }
 
-      yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT);
+      yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT, BINDING_POWER_DEFINED);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         lex_state_set(parser, YP_LEX_STATE_BEG);
