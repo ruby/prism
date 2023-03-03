@@ -5763,7 +5763,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_node_t *arguments = NULL;
 
       if (
-        !accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
+        !match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
         !context_terminator(parser->current_context->context, &parser->current)
       ) {
         // If the next token is not a statement terminator or the end of the
