@@ -5996,8 +5996,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
           receiver = yp_node_parentheses_node_create(parser, &lparen, expression, &rparen);
 
           yp_parser_scope_push(parser, true);
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a method name after receiver.");
-          name = parser->previous;
+          name = parse_method_definition_name(parser);
           break;
         }
         default:
