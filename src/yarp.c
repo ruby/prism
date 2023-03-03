@@ -4560,6 +4560,31 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
   }
 }
 
+static yp_node_t *
+parse_required_destructured_parameter(yp_parser_t *parser) {
+  expect(parser, YP_TOKEN_PARENTHESIS_LEFT, "Expected '(' to start a required parameter.");
+  yp_token_t opening = parser->previous;
+  yp_node_t *node = yp_node_required_destructured_parameter_node_create(parser, &opening, &opening);
+
+  do {
+    if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
+
+    expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier for a required parameter.");
+    yp_token_t name = parser->previous;
+
+    yp_node_t *param = yp_node_required_parameter_node_create(parser, &name);
+    yp_parser_local_add(parser, &name);
+
+    yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
+  } while (accept(parser, YP_TOKEN_COMMA));
+
+  expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' to end a required parameter.");
+  node->as.required_destructured_parameter_node.closing = parser->previous;
+  node->location.end = parser->previous.end;
+
+  return node;
+}
+
 // Parse a list of parameters on a method definition.
 static yp_node_t *
 parse_parameters(yp_parser_t *parser, bool uses_parentheses, binding_power_t binding_power) {
@@ -4568,6 +4593,13 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, binding_power_t bin
 
   while (parsing) {
     switch (parser->current.type) {
+      case YP_TOKEN_PARENTHESIS_LEFT: {
+        yp_node_t *param = parse_required_destructured_parameter(parser);
+        yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
+
+        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
+        break;
+      }
       case YP_TOKEN_AMPERSAND: {
         parser_lex(parser);
 

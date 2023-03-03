@@ -1245,6 +1245,21 @@ nodes:
           def a(b)
                 ^
           end
+  - name: RequiredDestructuredParameterNode
+    child_nodes:
+      - name: parameters
+        type: node[]
+      - name: opening
+        type: token
+      - name: closing
+        type: token
+    location: parameters
+    comment: |
+      Represents a destructured required parameter node.
+
+          def foo((bar, baz))
+                  ^^^^^^^^^^
+          end
   - name: RescueModifierNode
     child_nodes:
       - name: expression
