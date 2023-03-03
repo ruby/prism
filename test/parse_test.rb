@@ -2902,6 +2902,14 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RangeNode(nil, DOT_DOT_DOT("..."), expression("2")), "...2"
   end
 
+  test "range inclusive without an end" do
+    assert_parses RangeNode(expression("1"), DOT_DOT(".."), nil), "1.."
+  end
+
+  test "range exclusive without an end" do
+    assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), nil), "1..."
+  end
+
   test "rational" do
     assert_parses RationalNode(), "1r"
   end
