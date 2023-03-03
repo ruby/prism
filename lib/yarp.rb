@@ -194,6 +194,10 @@ module YARP
         event: ^(event),
         value: ^(value),
         state: ^(state)
+      ] or other in LexedToken[
+        location: ^(location),
+        event: :on_comment,
+        value: ^(value)
       ]
     end
 
