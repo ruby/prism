@@ -6388,7 +6388,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
+          if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
         }
+
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
 
         yp_token_t opening = not_provided(parser);
@@ -6413,6 +6415,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%I` list.");
+          if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
         }
 
         yp_token_t dynamic_symbol_opening = not_provided(parser);
@@ -6482,6 +6485,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
           accept(parser, YP_TOKEN_WORDS_SEP);
         } else {
           expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the strings in a `%w` list.");
+          if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
         }
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%w` list.");
 
