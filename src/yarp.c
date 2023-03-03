@@ -1385,7 +1385,13 @@ char_is_hexadecimal_number(const char c) {
 
 static inline size_t
 char_is_identifier_start(yp_parser_t *parser, const char *c) {
-  return (*c == '_') ? 1 : parser->encoding.alpha_char(c);
+  if (*c == '_') {
+    return 1;
+  } else if (((unsigned char) *c) > 127) {
+    return 1;
+  } else {
+    return parser->encoding.alpha_char(c);
+  }
 }
 
 static inline size_t
@@ -1395,6 +1401,8 @@ char_is_identifier(yp_parser_t *parser, const char *c) {
   if ((width = parser->encoding.alnum_char(c))) {
     return width;
   } else if (*c == '_') {
+    return 1;
+  } else if (((unsigned char) *c) > 127) {
     return 1;
   } else {
     return 0;
