@@ -4270,16 +4270,21 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
   return true;
 }
 
+static inline
+bool should_parse_argument(yp_parser_t *parser, yp_token_type_t terminator) {
+  binding_power_t binding_power = binding_powers[parser->current.type].left;
+  return !match_any_type_p(parser, 6, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
+    !context_terminator(parser->current_context->context, &parser->current) &&
+    (binding_power == BINDING_POWER_UNSET || binding_power >= BINDING_POWER_RANGE);
+}
+
 // Parse a list of arguments.
 static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
   bool parsed_double_splat_argument = false;
   bool parsed_block_argument = false;
 
-  while (
-    !match_any_type_p(parser, 6, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
-    !context_terminator(parser->current_context->context, &parser->current)
-  ) {
+  while (should_parse_argument(parser, terminator)) {
     if (yp_arguments_node_size(arguments) > 0) {
       expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
     }

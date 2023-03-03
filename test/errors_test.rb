@@ -293,8 +293,7 @@ class ErrorsTest < Test::Unit::TestCase
           [StarNode(
              STAR("*"),
              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")
-           ),
-           MissingNode()]
+           )]
         ),
         MISSING(""),
         nil,
@@ -305,8 +304,6 @@ class ErrorsTest < Test::Unit::TestCase
     )
 
     assert_errors expected, "foo(*bar and baz)", [
-      "Expected a ',' to delimit arguments.",
-      "Expected to be able to parse an argument.",
       "Expected a ')' to close the argument list."
     ]
   end
