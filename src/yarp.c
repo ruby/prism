@@ -2220,6 +2220,14 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
   }
 }
 
+// Optionally call out to the lex callback if one is provided.
+static inline void
+parser_lex_callback(yp_parser_t *parser) {
+  if (parser->lex_callback) {
+    parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
+  }
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -2313,8 +2321,37 @@ lex_token_type(yp_parser_t *parser) {
           // fallthrough
         }
 
-        case '\n':
+        case '\n': {
+          // Here we need to look ahead and see if there is a call operator
+          // (either . or &.) that starts the next line. If there is, then this
+          // is going to become an ignored newline and we're going to instead
+          // return the call operator.
+          const char *next_content = parser->current.end + strspn(parser->current.end, " \t\f\r\v");
+
+          if (next_content < parser->end) {
+            if (next_content[0] == '.') {
+              parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
+              parser_lex_callback(parser);
+
+              lex_state_set(parser, YP_LEX_STATE_DOT);
+              parser->current.start = next_content;
+              parser->current.end = next_content + 1;
+              return YP_TOKEN_DOT;
+            }
+
+            if (next_content + 1 < parser->end && next_content[0] == '&' && next_content[1] == '.') {
+              parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
+              parser_lex_callback(parser);
+
+              lex_state_set(parser, YP_LEX_STATE_DOT);
+              parser->current.start = next_content;
+              parser->current.end = next_content + 2;
+              return YP_TOKEN_AMPERSAND_DOT;
+            }
+          }
+
           return lex_newline(parser, previous_command_start);
+        }
 
         // ,
         case ',':
@@ -3602,14 +3639,6 @@ match_any_type_p(yp_parser_t *parser, size_t count, ...) {
 
   va_end(types);
   return false;
-}
-
-// Optionally call out to the lex callback if one is provided.
-static inline void
-parser_lex_callback(yp_parser_t *parser) {
-  if (parser->lex_callback) {
-    parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
-  }
 }
 
 // Called when the parser requires a new token. The parser maintains a moving
