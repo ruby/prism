@@ -2228,6 +2228,21 @@ parser_lex_callback(yp_parser_t *parser) {
   }
 }
 
+// static inline void
+// debug_yp_state_stack_push(yp_state_stack_t *stack, bool value, char const *caller_name, int caller_line) {
+//   fprintf(stderr, "[%s:%d] pushing %d onto stack %p\n", caller_name, caller_line, value, &stack);
+//   yp_state_stack_push(stack, value);
+// }
+
+// static inline void
+// debug_yp_state_stack_pop(yp_state_stack_t *stack, char const *caller_name, int caller_line) {
+//   fprintf(stderr, "[%s:%d] popping from stack %p\n", caller_name, caller_line, &stack);
+//   yp_state_stack_pop(stack);
+// }
+
+// #define yp_state_stack_push(stack, value) debug_yp_state_stack_push(stack, value, __func__, __LINE__)
+// #define yp_state_stack_pop(stack) debug_yp_state_stack_pop(stack, __func__, __LINE__)
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -6159,11 +6174,11 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       yp_node_t *first_target = parse_expression(parser, BINDING_POWER_INDEX, "Expected index after for.");
       yp_node_t *index = parse_targets(parser, first_target, BINDING_POWER_INDEX);
+      yp_state_stack_push(&parser->do_loop_stack, true);
 
       expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
       yp_token_t in_keyword = parser->previous;
 
-      yp_state_stack_push(&parser->do_loop_stack, true);
       yp_node_t *collection = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected collection.");
       yp_state_stack_pop(&parser->do_loop_stack);
 
