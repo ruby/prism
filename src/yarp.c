@@ -4823,6 +4823,7 @@ parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
 
+  yp_state_stack_push(&parser->accepts_block_stack, true);
   yp_parser_scope_push(parser, false);
   yp_node_t *arguments = NULL;
 
@@ -4856,6 +4857,8 @@ parse_block(yp_parser_t *parser) {
 
   yp_node_destroy(parser, parser->current_scope->node);
   yp_parser_scope_pop(parser);
+  yp_state_stack_pop(&parser->accepts_block_stack);
+
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
 
