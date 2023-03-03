@@ -5890,13 +5890,12 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       if (accept(parser, YP_TOKEN_LESS_LESS)) {
         yp_token_t operator = parser->previous;
-        yp_node_t *expression = parse_expression(parser, BINDING_POWER_CALL, "Expected to find an expression after `<<`.");
+        yp_node_t *expression = parse_expression(parser, BINDING_POWER_NOT, "Expected to find an expression after `<<`.");
 
         yp_parser_scope_push(parser, true);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_SCLASS);
-
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
