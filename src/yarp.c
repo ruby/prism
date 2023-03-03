@@ -4711,11 +4711,25 @@ parse_block(yp_parser_t *parser) {
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
 }
 
-// Parse a list of arguments and their surrounding parentheses if they are
-// present.
-static void
-parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_block) {
-  switch (parser->current.type) {
+// This function controls whether or not we will attempt to parse an expression
+// beginning at the subsequent token. It is used when we are in a context where
+// an expression is optional.
+//
+// For example, looking at a range object when we've already lexed the operator,
+// we need to know if we should attempt to parse an expression on the right.
+//
+// For another example, if we've parsed an identifier or a method call and we do
+// not have parentheses, then the next token may be the start of an argument or
+// it may not.
+//
+// CRuby parsers that are generated would resolve this by using a lookahead and
+// potentially backtracking. We attempt to do this by just looking at the next
+// token and making a decision based on that. I am not sure if this is going to
+// work in all cases, it may need to be refactored later. But it appears to work
+// for now.
+static inline bool
+token_begins_expression_p(yp_token_type_t type) {
+  switch (type) {
     case YP_TOKEN_EOF:
     case YP_TOKEN_BRACE_LEFT:
     case YP_TOKEN_BRACE_RIGHT:
@@ -4729,48 +4743,57 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     case YP_TOKEN_KEYWORD_IN:
     case YP_TOKEN_NEWLINE:
     case YP_TOKEN_PARENTHESIS_RIGHT:
-    case YP_TOKEN_SEMICOLON: {
+    case YP_TOKEN_SEMICOLON:
       // The reason we need this short-circuit is because we're using the
       // binding powers table to tell us if the subsequent token could
-      // potentially be an argument. If there _is_ a binding power for one of
-      // these tokens, then we should remove it from this list and let it be
-      // handled by the default case below.
-      assert(binding_powers[parser->current.type].left == BINDING_POWER_UNSET);
-      break;
+      // potentially be the start of an expression . If there _is_ a binding
+      // power for one of these tokens, then we should remove it from this list
+      // and let it be handled by the default case below.
+      assert(binding_powers[type].left == BINDING_POWER_UNSET);
+      return false;
+    case YP_TOKEN_UMINUS:
+    case YP_TOKEN_UPLUS:
+    case YP_TOKEN_BANG:
+    case YP_TOKEN_TILDE:
+      // These unary tokens actually do have binding power associated with them
+      // so that we can correctly place them into the precedence order. But we
+      // want them to be marked as beginning an expression, so we need to
+      // special case them here.
+      return true;
+    default:
+      return binding_powers[type].left == BINDING_POWER_UNSET;
+  }
+}
+
+// Parse a list of arguments and their surrounding parentheses if they are
+// present.
+static void
+parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_block) {
+  if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+    arguments->opening = parser->previous;
+
+    if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+      arguments->closing = parser->previous;
+    } else {
+      arguments->arguments = yp_arguments_node_create(parser);
+
+      yp_state_stack_push(&parser->accepts_block_stack, true);
+      parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+      expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
+      yp_state_stack_pop(&parser->accepts_block_stack);
+
+      arguments->closing = parser->previous;
     }
-    case YP_TOKEN_PARENTHESIS_LEFT: {
-      parser_lex(parser);
-      arguments->opening = parser->previous;
+  } else if (token_begins_expression_p(parser->current.type)) {
+    yp_state_stack_push(&parser->accepts_block_stack, false);
 
-      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-        arguments->closing = parser->previous;
-      } else {
-        arguments->arguments = yp_arguments_node_create(parser);
+    // If we get here, then the subsequent token cannot be used as an infix
+    // operator. In this case we assume the subsequent token is part of an
+    // argument to this method call.
+    arguments->arguments = yp_arguments_node_create(parser);
+    parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
 
-        yp_state_stack_push(&parser->accepts_block_stack, true);
-        parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
-        yp_state_stack_pop(&parser->accepts_block_stack);
-
-        arguments->closing = parser->previous;
-      }
-      break;
-    }
-    default: {
-      if (binding_powers[parser->current.type].left == BINDING_POWER_UNSET) {
-        yp_state_stack_push(&parser->accepts_block_stack, false);
-
-        // If we get here, then the subsequent token cannot be used as an infix
-        // operator. In this case we assume the subsequent token is part of an
-        // argument to this method call.
-        arguments->arguments = yp_arguments_node_create(parser);
-        parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
-
-        yp_state_stack_pop(&parser->accepts_block_stack);
-      }
-
-      break;
-    }
+    yp_state_stack_pop(&parser->accepts_block_stack);
   }
 
   // If we're at the end of the arguments, we can now check if there is a block
@@ -6981,7 +7004,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
       parser_lex(parser);
-      yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
+
+      yp_node_t *right = NULL;
+      if (token_begins_expression_p(parser->current.type)) {
+        right = parse_expression(parser, binding_power, "Expected a value after the operator.");
+      }
+
       return yp_node_range_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_KEYWORD_IF: {
