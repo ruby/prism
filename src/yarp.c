@@ -31,6 +31,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_MODULE: return "MODULE";
     case YP_CONTEXT_PARENS: return "PARENS";
     case YP_CONTEXT_POSTEXE: return "POSTEXE";
+    case YP_CONTEXT_PREDICATE: return "PREDICATE";
     case YP_CONTEXT_PREEXE: return "PREEXE";
     case YP_CONTEXT_RESCUE: return "RESCUE";
     case YP_CONTEXT_RESCUE_ELSE: return "RESCUE ELSE";
@@ -3726,6 +3727,8 @@ context_terminator(yp_context_t context, yp_token_t *token) {
       return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
     case YP_CONTEXT_LAMBDA_BRACES:
       return token->type == YP_TOKEN_BRACE_RIGHT;
+    case YP_CONTEXT_PREDICATE:
+      return token->type == YP_TOKEN_KEYWORD_THEN || token->type == YP_TOKEN_NEWLINE || token->type == YP_TOKEN_SEMICOLON;
   }
 
   return false;
@@ -4213,9 +4216,12 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
 
   // If we hit a }, then we're done parsing the hash. Note that this is after
   // parsing the comma, so that we can have a trailing comma.
-  if (match_type_p(parser, terminator)) {
-    return true;
-  }
+  if (match_type_p(parser, terminator)) return true;
+
+  // We need to explicitly handle the ampersand here in case we're parsing a
+  // bare hash and have a subsequent block argument. We _should_ be handling
+  // this with the context enum, but that's for a future refactor.
+  if (match_type_p(parser, YP_TOKEN_AMPERSAND)) return false;
 
   yp_node_t *element;
 
@@ -4270,31 +4276,25 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
   return true;
 }
 
-static inline
-bool should_parse_argument(yp_parser_t *parser, yp_token_type_t terminator) {
-  binding_power_t binding_power = binding_powers[parser->current.type].left;
-  return !match_any_type_p(parser, 6, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
-    !context_terminator(parser->current_context->context, &parser->current) &&
-    (binding_power == BINDING_POWER_UNSET || binding_power >= BINDING_POWER_RANGE);
-}
-
 // Parse a list of arguments.
 static void
 parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
-  bool parsed_double_splat_argument = false;
+  binding_power_t binding_power = binding_powers[parser->current.type].left;
+
+  // First we need to check if the next token is one that could be the start of
+  // an argument. If it's not, then we can just return.
+  if (
+    match_any_type_p(parser, 2, terminator, YP_TOKEN_EOF) ||
+    (binding_power != BINDING_POWER_UNSET && binding_power < BINDING_POWER_RANGE) ||
+    context_terminator(parser->current_context->context, &parser->current)
+  ) {
+    return;
+  }
+
+  bool parsed_bare_hash = false;
   bool parsed_block_argument = false;
 
-  while (should_parse_argument(parser, terminator)) {
-    if (yp_arguments_node_size(arguments) > 0) {
-      expect(parser, YP_TOKEN_COMMA, "Expected a ',' to delimit arguments.");
-    }
-
-    // finish with trailing comma in argument list.
-    if (match_any_type_p(parser, 5, terminator, YP_TOKEN_KEYWORD_DO, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) ||
-        context_terminator(parser->current_context->context, &parser->current)) {
-      break;
-    }
-
+  while (!match_type_p(parser, YP_TOKEN_EOF)) {
     if (parsed_block_argument) {
       yp_diagnostic_list_append(&parser->error_list, "Unexpected argument after block argument.", parser->current.start - parser->start);
     }
@@ -4302,26 +4302,17 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     yp_node_t *argument;
 
     switch (parser->current.type) {
+      case YP_TOKEN_STAR_STAR:
       case YP_TOKEN_LABEL: {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
         while (!match_any_type_p(parser, 7, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          if (!parse_assoc(parser, argument, terminator)) {
-            break;
-          }
+          if (!parse_assoc(parser, argument, terminator)) break;
         }
 
-        break;
-      }
-      case YP_TOKEN_STAR_STAR: {
-        parser_lex(parser);
-        yp_token_t operator = parser->previous;
-        yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-
-        argument = yp_node_keyword_star_node_create(parser, &operator, value);
-        parsed_double_splat_argument = true;
+        parsed_bare_hash = true;
         break;
       }
       case YP_TOKEN_AMPERSAND: {
@@ -4354,7 +4345,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
 
           argument = yp_node_star_node_create(parser, &previous, NULL);
         } else {
-          if (parsed_double_splat_argument) {
+          if (parsed_bare_hash) {
             yp_diagnostic_list_append(&parser->error_list, "Unexpected splat argument after double splat.", parser->current.start - parser->start);
           }
 
@@ -4383,20 +4374,40 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
             argument = bare_hash;
 
             while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-              if (!parse_assoc(parser, argument, terminator)) {
-                break;
-              }
+              if (!parse_assoc(parser, argument, terminator)) break;
             }
           }
+
+          parsed_bare_hash = true;
         }
 
         break;
       }
     }
 
-    if (terminator != YP_TOKEN_EOF) accept(parser, YP_TOKEN_NEWLINE);
     yp_arguments_node_append(arguments, argument);
-    if (argument->type == YP_NODE_MISSING_NODE) break;
+
+    // If parsing the argument failed, we need to stop parsing arguments.
+    if (argument->type == YP_NODE_MISSING_NODE || parser->recovering) break;
+
+    // If the terminator of these arguments is not EOF, then we have a specific
+    // token we're looking for. In that case we can accept a newline here
+    // because it is not functioning as a statement terminator.
+    if (terminator != YP_TOKEN_EOF) accept(parser, YP_TOKEN_NEWLINE);
+
+    if (parser->previous.type == YP_TOKEN_COMMA && parsed_bare_hash) {
+      // If we previously were on a comma and we just parsed a bare hash, then
+      // we want to continue parsing arguments. This is because the comma was
+      // grabbed up by the hash parser.
+    } else {
+      // If there is no comma at the end of the argument list then we're done
+      // parsing arguments and can break out of this loop.
+      if (!accept(parser, YP_TOKEN_COMMA)) break;
+    }
+
+    // If we hit the terminator, then that means we have a trailing comma so we
+    // can accept that output as well.
+    if (match_type_p(parser, terminator)) break;
   }
 }
 
@@ -4805,8 +4816,10 @@ static inline yp_node_t *
 parse_conditional(yp_parser_t *parser, yp_context_t context) {
   yp_token_t keyword = parser->previous;
 
+  context_push(parser, YP_CONTEXT_PREDICATE);
   yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected to find a predicate for the conditional.");
   accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+  context_pop(parser);
 
   yp_node_t *statements = parse_statements(parser, context);
   accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -6970,7 +6983,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'if'");
       yp_token_t end_keyword = not_provided(parser);
-
       return yp_node_if_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
     }
     case YP_TOKEN_KEYWORD_UNLESS: {

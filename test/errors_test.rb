@@ -244,9 +244,22 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [KeywordStarNode(
-           STAR_STAR("**"),
-           CallNode(nil, nil, IDENTIFIER("kwargs"), nil, nil, nil, nil, "kwargs")
+        [HashNode(
+           nil,
+           [AssocSplatNode(
+              CallNode(
+                nil,
+                nil,
+                IDENTIFIER("kwargs"),
+                nil,
+                nil,
+                nil,
+                nil,
+                "kwargs"
+              ),
+              Location()
+            )],
+           nil
          ),
          StarNode(
            STAR("*"),
@@ -258,7 +271,7 @@ class ErrorsTest < Test::Unit::TestCase
       "a"
     )
 
-    assert_errors expected, "a(**kwargs, *args)", ["Unexpected splat argument after double splat."]
+    assert_errors expected, "a(**kwargs, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
   end
 
   test "arguments after block" do
@@ -335,7 +348,7 @@ class ErrorsTest < Test::Unit::TestCase
       "a"
     )
 
-    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Expected a ',' to delimit arguments."]
+    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
   end
 
   private
