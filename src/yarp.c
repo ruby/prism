@@ -5194,6 +5194,7 @@ parse_method_definition_name(yp_parser_t *parser) {
   switch (parser->current.type) {
     case YP_CASE_OPERATOR:
     case YP_CASE_KEYWORD:
+    case YP_TOKEN_CONSTANT:
     case YP_TOKEN_IDENTIFIER:
       parser_lex(parser);
       return parser->previous;
