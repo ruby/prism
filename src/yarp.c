@@ -4264,21 +4264,45 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, binding_power_t bind
   yp_node_t *target;
 
   yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, first_target);
+  bool has_splat = false;
 
   while (accept(parser, YP_TOKEN_COMMA)) {
-    if (!token_begins_expression_p(parser->current.type)) {
-      // If we get here, then we have a trailing , in a multi write node. We
-      // need to indicate this somehow in the tree, so we'll add an anonymous
-      // splat.
-      yp_node_t *splat = yp_node_star_node_create(parser, &parser->previous, NULL);
+    if (accept(parser, YP_TOKEN_STAR)) {
+      // Here we have a splat operator. It can have a name or be anonymous. It
+      // can be the final target or be in the middle if there haven't been any
+      // others yet.
+
+      if (has_splat) {
+        yp_diagnostic_list_append(&parser->error_list, "Multiple splats in multi-assignment.", parser->previous.start - parser->start);
+      }
+
+      yp_token_t star_operator = parser->previous;
+      yp_node_t *name = NULL;
+
+      if (token_begins_expression_p(parser->current.type)) {
+        yp_token_t operator = not_provided(parser);
+        name = parse_expression(parser, binding_power, "Expected an expression after '*'.");
+        name = parse_target(parser, name, &operator, NULL);
+      }
+
+      yp_node_t *splat = yp_node_star_node_create(parser, &star_operator, name);
       yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, splat);
-      return multi_write;
+      has_splat = true;
+    } else {
+      if (!token_begins_expression_p(parser->current.type)) {
+        // If we get here, then we have a trailing , in a multi write node. We
+        // need to indicate this somehow in the tree, so we'll add an anonymous
+        // splat.
+        yp_node_t *splat = yp_node_star_node_create(parser, &parser->previous, NULL);
+        yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, splat);
+        return multi_write;
+      }
+
+      target = parse_expression(parser, binding_power, "Expected another expression after ','.");
+      target = parse_target(parser, target, &operator, NULL);
+
+      yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, target);
     }
-
-    target = parse_expression(parser, binding_power, "Expected another expression after ','.");
-    target = parse_target(parser, target, &operator, NULL);
-
-    yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, target);
   }
 
   return multi_write;
