@@ -2340,6 +2340,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-EOF\n  a\nEOF\n"
   end
 
+  test "tilde heredocs" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n"), nil, "a\n")],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a\nEOF\n"
+  end
+
   test "heredocs with multiple lines" do
     expected = HeredocNode(
       HEREDOC_START("<<-EOF"),
@@ -2351,6 +2362,28 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-EOF\n  a\n  b\nEOF\n"
   end
 
+  test "tilde heredocs with multiple lines" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n  b\n"), nil, "a\nb\n")],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n  b\nEOF\n"
+  end
+
+  test "tilde heredocs with multiple lines and different indentations" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("  a\n   b\n"), nil, "a\n b\n")],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n   b\nEOF\n"
+  end
+
   test "heredocs with single quotes" do
     expected = HeredocNode(
       HEREDOC_START("<<-'EOF'"),
@@ -2360,6 +2393,17 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "<<-'EOF'\n  a \#{1}\nEOF\n"
+  end
+
+  test "tilde heredocs with single quotes" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~'EOF'"),
+      [StringNode(nil, STRING_CONTENT("  a \#{1}\n"), nil, "a \#{1}\n")],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~'EOF'\n  a \#{1}\nEOF\n"
   end
 
   test "heredocs with double quotes" do
@@ -2427,6 +2471,82 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "<<-EOF\n  a\n\#{b}\nEOF\n"
+  end
+
+  test "tilde heredocs with interpolation same spacing" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n" + "  "), nil, "a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n  \#{b}\nEOF\n"
+  end
+
+  test "tilde heredocs with interpolation different spacing" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n" + " "), nil, " a\n"),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      1
+    )
+
+    assert_parses expected, "<<~EOF\n  a\n \#{b}\nEOF\n"
+  end
+
+  test "tilde heredocs with content before interpolation, on same line" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a "), nil, "a "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([IntegerNode()]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
+      ],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  a \#{1}\nEOF\n"
+  end
+
+  test "tilde heredocs with content after interpolation, on same line" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  "), nil, ""),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          Statements([IntegerNode()]),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT(" a\n"), nil, " a\n"),
+      ],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n  \#{1} a\nEOF\n"
   end
 
   test "heredocs on the same line" do
@@ -6168,7 +6288,9 @@ class ParseTest < Test::Unit::TestCase
     assert_serializes expected, source
 
     YARP.lex_compat(source) => { errors: [], warnings: [], value: tokens }
-    YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
+    YARP.remove_tilde_heredocs(YARP.lex_ripper(source)).zip(
+      YARP.remove_tilde_heredocs(tokens)
+    ).each do |(ripper, yarp)|
       assert_equal ripper[0...-1], yarp[0...-1]
     end
   end

@@ -492,6 +492,31 @@ module YARP
     LexCompat.new(source).result
   end
 
+  def self.token_is_tilde_heredoc?(token)
+    token[2][2] == "~"
+  end
+  private_class_method :token_is_tilde_heredoc?
+
+  # We handle tilde heredocs in the parsing phase, not the lexing phase
+  # However, we want to preserve the usefulness of comparing lexed results
+  # This method allows us to sanitize lexing so we can ignore any differences
+  # in the tilde heredocs
+  def self.remove_tilde_heredocs(tokens)
+    res = []
+
+    ignoring_tokens = false
+    tokens.each do |token|
+      if token[1] == :on_heredoc_beg && token_is_tilde_heredoc?(token)
+        ignoring_tokens = true
+      elsif token[1] == :on_heredoc_end
+        ignoring_tokens = false
+      elsif !ignoring_tokens
+        res << token
+      end
+    end
+    res
+  end
+
   # Load the serialized AST using the source as a reference into a tree.
   def self.load(source, serialized)
     Serialize.load(source, serialized)
