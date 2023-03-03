@@ -96,6 +96,12 @@ task lex: :compile do
     print "#{filepath} " if ENV["CI"]
     source = File.read(filepath)
 
+    # We're going to skip over any files that Ripper can't parse because it
+    # means there are syntax errors.
+    ripper = Ripper.new(source)
+    ripper.parse
+    next if ripper.error?
+
     begin
       lexed = YARP.lex_compat(source)
       value = YARP.remove_tilde_heredocs(lexed.value)
