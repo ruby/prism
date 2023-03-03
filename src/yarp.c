@@ -4216,9 +4216,12 @@ parse_assoc(yp_parser_t *parser, yp_node_t *hash, yp_token_type_t terminator) {
 
   // If we hit a }, then we're done parsing the hash. Note that this is after
   // parsing the comma, so that we can have a trailing comma.
-  if (match_type_p(parser, terminator)) {
-    return true;
-  }
+  if (match_type_p(parser, terminator)) return true;
+
+  // We need to explicitly handle the ampersand here in case we're parsing a
+  // bare hash and have a subsequent block argument. We _should_ be handling
+  // this with the context enum, but that's for a future refactor.
+  if (match_type_p(parser, YP_TOKEN_AMPERSAND)) return false;
 
   yp_node_t *element;
 
@@ -4288,7 +4291,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     return;
   }
 
-  bool parsed_double_splat_argument = false;
+  bool parsed_bare_hash = false;
   bool parsed_block_argument = false;
 
   while (!match_type_p(parser, YP_TOKEN_EOF)) {
@@ -4299,26 +4302,17 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     yp_node_t *argument;
 
     switch (parser->current.type) {
+      case YP_TOKEN_STAR_STAR:
       case YP_TOKEN_LABEL: {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
 
         while (!match_any_type_p(parser, 7, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          if (!parse_assoc(parser, argument, terminator)) {
-            break;
-          }
+          if (!parse_assoc(parser, argument, terminator)) break;
         }
 
-        break;
-      }
-      case YP_TOKEN_STAR_STAR: {
-        parser_lex(parser);
-        yp_token_t operator = parser->previous;
-        yp_node_t *value = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-
-        argument = yp_node_keyword_star_node_create(parser, &operator, value);
-        parsed_double_splat_argument = true;
+        parsed_bare_hash = true;
         break;
       }
       case YP_TOKEN_AMPERSAND: {
@@ -4351,7 +4345,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
 
           argument = yp_node_star_node_create(parser, &previous, NULL);
         } else {
-          if (parsed_double_splat_argument) {
+          if (parsed_bare_hash) {
             yp_diagnostic_list_append(&parser->error_list, "Unexpected splat argument after double splat.", parser->current.start - parser->start);
           }
 
@@ -4380,11 +4374,11 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
             argument = bare_hash;
 
             while (!match_any_type_p(parser, 4, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF)) {
-              if (!parse_assoc(parser, argument, terminator)) {
-                break;
-              }
+              if (!parse_assoc(parser, argument, terminator)) break;
             }
           }
+
+          parsed_bare_hash = true;
         }
 
         break;
@@ -4401,9 +4395,15 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
     // because it is not functioning as a statement terminator.
     if (terminator != YP_TOKEN_EOF) accept(parser, YP_TOKEN_NEWLINE);
 
-    // If there is no comma at the end of the argument list then we're done
-    // parsing arguments and can break out of this loop.
-    if (!accept(parser, YP_TOKEN_COMMA)) break;
+    if (parser->previous.type == YP_TOKEN_COMMA && parsed_bare_hash) {
+      // If we previously were on a comma and we just parsed a bare hash, then
+      // we want to continue parsing arguments. This is because the comma was
+      // grabbed up by the hash parser.
+    } else {
+      // If there is no comma at the end of the argument list then we're done
+      // parsing arguments and can break out of this loop.
+      if (!accept(parser, YP_TOKEN_COMMA)) break;
+    }
 
     // If we hit the terminator, then that means we have a trailing comma so we
     // can accept that output as well.

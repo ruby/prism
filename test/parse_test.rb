@@ -682,9 +682,22 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [KeywordStarNode(
-           STAR_STAR("**"),
-           expression("kwargs")
+        [HashNode(
+           nil,
+           [AssocSplatNode(
+              CallNode(
+                nil,
+                nil,
+                IDENTIFIER("kwargs"),
+                nil,
+                nil,
+                nil,
+                nil,
+                "kwargs"
+              ),
+              Location()
+            )],
+           nil
          )]
       ),
       PARENTHESIS_RIGHT(")"),
@@ -6152,6 +6165,74 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "return rescue nil"
+  end
+
+  test "method call without parenthesis with hash and a block argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+              TrueNode(),
+              nil
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              FalseNode(),
+              nil
+            )],
+           nil
+         ),
+         BlockArgumentNode(
+           AMPERSAND("&"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
+         )]
+      ),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo a: true, b: false, &:block"
+  end
+
+  test "method call with parenthesis with hash and a block argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [HashNode(
+           BRACE_LEFT("{"),
+           [AssocNode(
+              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+              TrueNode(),
+              nil
+            ),
+            AssocNode(
+              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              FalseNode(),
+              nil
+            )],
+           BRACE_RIGHT("}")
+         ),
+         BlockArgumentNode(
+           AMPERSAND("&"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo({ a: true, b: false, }, &:block)"
   end
 
   private

@@ -244,9 +244,22 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [KeywordStarNode(
-           STAR_STAR("**"),
-           CallNode(nil, nil, IDENTIFIER("kwargs"), nil, nil, nil, nil, "kwargs")
+        [HashNode(
+           nil,
+           [AssocSplatNode(
+              CallNode(
+                nil,
+                nil,
+                IDENTIFIER("kwargs"),
+                nil,
+                nil,
+                nil,
+                nil,
+                "kwargs"
+              ),
+              Location()
+            )],
+           nil
          ),
          StarNode(
            STAR("*"),
@@ -258,7 +271,7 @@ class ErrorsTest < Test::Unit::TestCase
       "a"
     )
 
-    assert_errors expected, "a(**kwargs, *args)", ["Unexpected splat argument after double splat."]
+    assert_errors expected, "a(**kwargs, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
   end
 
   test "arguments after block" do
@@ -311,38 +324,31 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "splat argument after keyword argument" do
     expected = CallNode(
-      CallNode(
-        nil,
-        nil,
-        IDENTIFIER("a"),
-        PARENTHESIS_LEFT("("),
-        ArgumentsNode([
-          HashNode(
-            nil,
-            [AssocNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [HashNode(
+           nil,
+           [AssocNode(
               SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
               CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
               nil
             )],
-            nil
-          )
-        ]),
-        MISSING(""),
-        nil,
-        "a"
+           nil
+         ),
+         StarNode(
+           STAR("*"),
+           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+         )]
       ),
+      PARENTHESIS_RIGHT(")"),
       nil,
-      STAR("*"),
-      nil,
-      ArgumentsNode([
-        CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
-      ]),
-      nil,
-      nil,
-      "*"
+      "a"
     )
 
-    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Expected a ')' to close the argument list."]
+    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
   end
 
   private
