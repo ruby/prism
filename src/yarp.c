@@ -5372,6 +5372,14 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       return node;
     }
+    case YP_TOKEN_DOT_DOT:
+    case YP_TOKEN_DOT_DOT_DOT: {
+      yp_token_t operator = parser->current;
+      parser_lex(parser);
+
+      yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
+      return yp_node_range_node_create(parser, NULL, &operator, right);
+    }
     case YP_TOKEN_FLOAT:
       parser_lex(parser);
       return yp_float_node_create(parser, &parser->previous);
