@@ -2471,7 +2471,15 @@ class ParseTest < Test::Unit::TestCase
   test "if modifier with arguments" do
     expected = IfNode(
       KEYWORD_IF("if"),
-      CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+      AndNode(
+        OrNode(
+          CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+          KEYWORD_OR("or"),
+          CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
+        ),
+        CallNode(nil, nil, IDENTIFIER("qux"), nil, nil, nil, nil, "qux"),
+        KEYWORD_AND("and"),
+      ),
       Statements(
         [CallNode(
           nil,
@@ -2490,7 +2498,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil
     )
-    assert_parses expected, "foo :a, :b if bar?"
+    assert_parses expected, "foo :a, :b if bar? or baz and qux"
   end
 
   test "if else" do
