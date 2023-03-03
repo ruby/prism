@@ -24,15 +24,18 @@ class ErrorsTest < Test::Unit::TestCase
         [ModuleNode(
            Scope([]),
            KEYWORD_MODULE("module"),
-           ConstantRead(MISSING("")),
+           MissingNode(),
            Statements([]),
-           MISSING("")
+           KEYWORD_END("end")
          )]
       ),
-      KEYWORD_END("end")
+      MISSING("")
     )
 
-    assert_errors expected, "module Parent module end", ["Expected to find a module name after `module`."]
+    assert_errors expected, "module Parent module end", [
+      "Expected to find a module name after `module`.",
+      "Expected `end` to close `module` statement.",
+    ]
   end
 
   test "for loops index missing" do

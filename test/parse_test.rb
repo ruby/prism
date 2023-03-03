@@ -2567,6 +2567,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "module A a = 1 end"
   end
 
+  test "module constant path" do
+    expected = ModuleNode(
+      Scope([]),
+      KEYWORD_MODULE("module"),
+      ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("Foo"))),
+      Statements([]),
+      KEYWORD_END("end")
+    )
+    assert_parses expected, "module ::Foo end"
+  end
+
   test "module with rescue, else ensure" do
     expected = ModuleNode(
       Scope([IDENTIFIER("x")]),
