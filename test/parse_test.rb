@@ -2468,6 +2468,31 @@ class ParseTest < Test::Unit::TestCase
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([expression("1")]), nil, nil), "1 if true"
   end
 
+  test "if modifier with arguments" do
+    expected = IfNode(
+      KEYWORD_IF("if"),
+      CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+      Statements(
+        [CallNode(
+          nil,
+          nil,
+          IDENTIFIER("foo"),
+          nil,
+          ArgumentsNode([
+          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+          ]),
+          nil,
+          nil,
+          "foo"
+         )]
+      ),
+      nil,
+      nil
+    )
+    assert_parses expected, "foo :a, :b if bar?"
+  end
+
   test "if else" do
     expected = IfNode(
       KEYWORD_IF("if"),
@@ -3441,6 +3466,31 @@ class ParseTest < Test::Unit::TestCase
     assert_parses UnlessNode(KEYWORD_UNLESS("unless"), expression("true"), Statements([expression("1")]), nil, nil), "1 unless true"
   end
 
+  test "unless modifier with arguments" do
+    expected = UnlessNode(
+      KEYWORD_UNLESS("unless"),
+      CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+      Statements(
+        [CallNode(
+          nil,
+          nil,
+          IDENTIFIER("foo"),
+          nil,
+          ArgumentsNode([
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+          ]),
+          nil,
+          nil,
+          "foo"
+         )]
+      ),
+      nil,
+      nil
+    )
+    assert_parses expected, "foo :a, :b unless bar?"
+  end
+
   test "unless else" do
     expected = UnlessNode(
       KEYWORD_UNLESS("unless"),
@@ -3465,12 +3515,58 @@ class ParseTest < Test::Unit::TestCase
     assert_parses UntilNode(KEYWORD_UNTIL("until"), expression("true"), Statements([expression("1")])), "1 until true"
   end
 
+  test "until modifier with arguments" do
+    expected = UntilNode(
+      KEYWORD_UNTIL("until"),
+      CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+      Statements(
+        [CallNode(
+          nil,
+          nil,
+          IDENTIFIER("foo"),
+          nil,
+          ArgumentsNode([
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+          ]),
+          nil,
+          nil,
+          "foo"
+         )]
+      )
+    )
+    assert_parses expected, "foo :a, :b until bar?"
+  end
+
   test "while" do
     assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "while true; 1; end"
   end
 
   test "while modifier" do
     assert_parses WhileNode(KEYWORD_WHILE("while"), expression("true"), Statements([expression("1")])), "1 while true"
+  end
+
+  test "while modifier with arguments" do
+    expected = WhileNode(
+      KEYWORD_WHILE("while"),
+      CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+      Statements(
+        [CallNode(
+          nil,
+          nil,
+          IDENTIFIER("foo"),
+          nil,
+          ArgumentsNode([
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+          ]),
+          nil,
+          nil,
+          "foo"
+         )]
+      )
+    )
+    assert_parses expected, "foo :a, :b while bar?"
   end
 
   test "yield" do
