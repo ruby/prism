@@ -2887,7 +2887,11 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_INVALID;
           }
 
-          if (lex_state_beg_p(parser) || (lex_state_p(parser, YP_LEX_STATE_FITEM) && (*parser->current.end == 's'))) {
+          if (
+            lex_state_beg_p(parser) ||
+            (lex_state_p(parser, YP_LEX_STATE_FITEM) && (*parser->current.end == 's')) ||
+            (lex_state_arg_p(parser) && space_seen && !char_is_non_newline_whitespace(*parser->current.end))
+          ) {
             if (!parser->encoding.alnum_char(parser->current.end)) {
               lex_mode_push(parser, (yp_lex_mode_t) {
                 .mode = YP_LEX_STRING,

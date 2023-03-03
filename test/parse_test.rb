@@ -3226,6 +3226,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%{abc}"
   end
 
+  test "% string in arg state with space seen" do
+    expected = CallNode(
+      expression("foo"),
+      DOT("."),
+      IDENTIFIER("bar"),
+      nil,
+      ArgumentsNode([StringNode(STRING_BEGIN("%{"), STRING_CONTENT("baz"), STRING_END("}"), "baz")]),
+      nil,
+      nil,
+      "bar"
+    )
+
+    assert_parses expected, "foo.bar %{baz}"
+  end
+
   test "string interpolation allowed, sed" do
     expected = InterpolatedStringNode(
       STRING_BEGIN("\""),
