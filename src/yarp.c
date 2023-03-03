@@ -6290,7 +6290,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
-      if (parser->previous.type == YP_TOKEN_MISSING) {
+      if (name->type == YP_NODE_MISSING_NODE) {
         yp_node_t *scope = yp_node_scope_create(parser);
         yp_node_t *statements = yp_node_statements_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
