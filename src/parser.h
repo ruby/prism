@@ -173,6 +173,7 @@ typedef enum {
   YP_CONTEXT_CLASS,          // a class declaration
   YP_CONTEXT_CASE_WHEN,      // a case when statements
   YP_CONTEXT_DEF,            // a method definition
+  YP_CONTEXT_PREDICATE,      // a predicate inside an if/elsif/unless statement
   YP_CONTEXT_IF,             // an if statement
   YP_CONTEXT_ELSIF,          // an elsif clause
   YP_CONTEXT_UNLESS,         // an unless statement

@@ -311,31 +311,38 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "splat argument after keyword argument" do
     expected = CallNode(
-      nil,
-      nil,
-      IDENTIFIER("a"),
-      PARENTHESIS_LEFT("("),
-      ArgumentsNode(
-        [HashNode(
-           nil,
-           [AssocNode(
+      CallNode(
+        nil,
+        nil,
+        IDENTIFIER("a"),
+        PARENTHESIS_LEFT("("),
+        ArgumentsNode([
+          HashNode(
+            nil,
+            [AssocNode(
               SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
               CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
               nil
             )],
-           nil
-         ),
-         StarNode(
-           STAR("*"),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
-         )]
+            nil
+          )
+        ]),
+        MISSING(""),
+        nil,
+        "a"
       ),
-      PARENTHESIS_RIGHT(")"),
       nil,
-      "a"
+      STAR("*"),
+      nil,
+      ArgumentsNode([
+        CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+      ]),
+      nil,
+      nil,
+      "*"
     )
 
-    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Expected a ',' to delimit arguments."]
+    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Expected a ')' to close the argument list."]
   end
 
   private
