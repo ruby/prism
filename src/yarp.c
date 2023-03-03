@@ -4085,14 +4085,15 @@ parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char 
 static inline bool
 token_begins_expression_p(yp_token_type_t type) {
   switch (type) {
-    case YP_TOKEN_EOF:
     case YP_TOKEN_BRACE_LEFT:
     case YP_TOKEN_BRACE_RIGHT:
     case YP_TOKEN_BRACKET_RIGHT:
     case YP_TOKEN_COLON:
     case YP_TOKEN_COMMA:
     case YP_TOKEN_EMBEXPR_END:
+    case YP_TOKEN_EOF:
     case YP_TOKEN_EQUAL_GREATER:
+    case YP_TOKEN_LAMBDA_BEGIN:
     case YP_TOKEN_KEYWORD_DO:
     case YP_TOKEN_KEYWORD_END:
     case YP_TOKEN_KEYWORD_IN:
@@ -4681,7 +4682,11 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, binding_power_t bin
             break;
           }
           default: {
-            yp_node_t *value = parse_expression(parser, binding_power, "Expected to find a default value for the keyword parameter.");
+            yp_node_t *value = NULL;
+            if (token_begins_expression_p(parser->current.type)) {
+              value = parse_expression(parser, binding_power, "Expected to find a default value for the keyword parameter.");
+            }
+
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
             yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
 
