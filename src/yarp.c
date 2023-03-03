@@ -4020,6 +4020,60 @@ not_provided(yp_parser_t *parser) {
 static yp_node_t *
 parse_expression(yp_parser_t *parser, binding_power_t binding_power, const char *message);
 
+// This function controls whether or not we will attempt to parse an expression
+// beginning at the subsequent token. It is used when we are in a context where
+// an expression is optional.
+//
+// For example, looking at a range object when we've already lexed the operator,
+// we need to know if we should attempt to parse an expression on the right.
+//
+// For another example, if we've parsed an identifier or a method call and we do
+// not have parentheses, then the next token may be the start of an argument or
+// it may not.
+//
+// CRuby parsers that are generated would resolve this by using a lookahead and
+// potentially backtracking. We attempt to do this by just looking at the next
+// token and making a decision based on that. I am not sure if this is going to
+// work in all cases, it may need to be refactored later. But it appears to work
+// for now.
+static inline bool
+token_begins_expression_p(yp_token_type_t type) {
+  switch (type) {
+    case YP_TOKEN_EOF:
+    case YP_TOKEN_BRACE_LEFT:
+    case YP_TOKEN_BRACE_RIGHT:
+    case YP_TOKEN_BRACKET_RIGHT:
+    case YP_TOKEN_COLON:
+    case YP_TOKEN_COMMA:
+    case YP_TOKEN_EMBEXPR_END:
+    case YP_TOKEN_EQUAL_GREATER:
+    case YP_TOKEN_KEYWORD_DO:
+    case YP_TOKEN_KEYWORD_END:
+    case YP_TOKEN_KEYWORD_IN:
+    case YP_TOKEN_NEWLINE:
+    case YP_TOKEN_PARENTHESIS_RIGHT:
+    case YP_TOKEN_SEMICOLON:
+      // The reason we need this short-circuit is because we're using the
+      // binding powers table to tell us if the subsequent token could
+      // potentially be the start of an expression . If there _is_ a binding
+      // power for one of these tokens, then we should remove it from this list
+      // and let it be handled by the default case below.
+      assert(binding_powers[type].left == BINDING_POWER_UNSET);
+      return false;
+    case YP_TOKEN_UMINUS:
+    case YP_TOKEN_UPLUS:
+    case YP_TOKEN_BANG:
+    case YP_TOKEN_TILDE:
+      // These unary tokens actually do have binding power associated with them
+      // so that we can correctly place them into the precedence order. But we
+      // want them to be marked as beginning an expression, so we need to
+      // special case them here.
+      return true;
+    default:
+      return binding_powers[type].left == BINDING_POWER_UNSET;
+  }
+}
+
 // Convert the given node into a valid target node.
 static yp_node_t *
 parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_node_t *value) {
@@ -4183,6 +4237,15 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, binding_power_t bind
   yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, first_target);
 
   while (accept(parser, YP_TOKEN_COMMA)) {
+    if (!token_begins_expression_p(parser->current.type)) {
+      // If we get here, then we have a trailing , in a multi write node. We
+      // need to indicate this somehow in the tree, so we'll add an anonymous
+      // splat.
+      yp_node_t *splat = yp_node_star_node_create(parser, &parser->previous, NULL);
+      yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, splat);
+      return multi_write;
+    }
+
     target = parse_expression(parser, binding_power, "Expected another expression after ','.");
     target = parse_target(parser, target, &operator, NULL);
 
@@ -4725,60 +4788,6 @@ parse_block(yp_parser_t *parser) {
   yp_node_destroy(parser, parser->current_scope->node);
   yp_parser_scope_pop(parser);
   return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
-}
-
-// This function controls whether or not we will attempt to parse an expression
-// beginning at the subsequent token. It is used when we are in a context where
-// an expression is optional.
-//
-// For example, looking at a range object when we've already lexed the operator,
-// we need to know if we should attempt to parse an expression on the right.
-//
-// For another example, if we've parsed an identifier or a method call and we do
-// not have parentheses, then the next token may be the start of an argument or
-// it may not.
-//
-// CRuby parsers that are generated would resolve this by using a lookahead and
-// potentially backtracking. We attempt to do this by just looking at the next
-// token and making a decision based on that. I am not sure if this is going to
-// work in all cases, it may need to be refactored later. But it appears to work
-// for now.
-static inline bool
-token_begins_expression_p(yp_token_type_t type) {
-  switch (type) {
-    case YP_TOKEN_EOF:
-    case YP_TOKEN_BRACE_LEFT:
-    case YP_TOKEN_BRACE_RIGHT:
-    case YP_TOKEN_BRACKET_RIGHT:
-    case YP_TOKEN_COLON:
-    case YP_TOKEN_COMMA:
-    case YP_TOKEN_EMBEXPR_END:
-    case YP_TOKEN_EQUAL_GREATER:
-    case YP_TOKEN_KEYWORD_DO:
-    case YP_TOKEN_KEYWORD_END:
-    case YP_TOKEN_KEYWORD_IN:
-    case YP_TOKEN_NEWLINE:
-    case YP_TOKEN_PARENTHESIS_RIGHT:
-    case YP_TOKEN_SEMICOLON:
-      // The reason we need this short-circuit is because we're using the
-      // binding powers table to tell us if the subsequent token could
-      // potentially be the start of an expression . If there _is_ a binding
-      // power for one of these tokens, then we should remove it from this list
-      // and let it be handled by the default case below.
-      assert(binding_powers[type].left == BINDING_POWER_UNSET);
-      return false;
-    case YP_TOKEN_UMINUS:
-    case YP_TOKEN_UPLUS:
-    case YP_TOKEN_BANG:
-    case YP_TOKEN_TILDE:
-      // These unary tokens actually do have binding power associated with them
-      // so that we can correctly place them into the precedence order. But we
-      // want them to be marked as beginning an expression, so we need to
-      // special case them here.
-      return true;
-    default:
-      return binding_powers[type].left == BINDING_POWER_UNSET;
-  }
 }
 
 // Parse a list of arguments and their surrounding parentheses if they are
