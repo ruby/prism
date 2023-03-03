@@ -6373,6 +6373,25 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo({ a: true, b: false, }, &:block)"
   end
 
+  test "aset with multiple assignment" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT_EQUAL("["),
+      BRACKET_LEFT("["),
+      ArgumentsNode([
+        expression("bar"),
+        expression("baz"),
+        ArrayNode([IntegerNode(), IntegerNode(), IntegerNode()], nil, nil)
+      ]),
+      BRACKET_RIGHT("]"),
+      nil,
+      "[]="
+    )
+
+    assert_parses expected, "foo[bar, baz] = 1, 2, 3"
+  end
+
   private
 
   def assert_serializes(expected, source)
