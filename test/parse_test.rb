@@ -3590,6 +3590,44 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "alias :\"abc\#{1}\" :'def'"
   end
 
+  test "alias operator" do
+    expected = AliasNode(
+      SymbolNode(nil, IDENTIFIER("foo"), nil),
+      SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil),
+      Location()
+    )
+
+    assert_parses expected, "alias foo <=>"
+  end
+
+  test "alias keyword" do
+    expected = AliasNode(
+      SymbolNode(nil, IDENTIFIER("foo"), nil),
+      SymbolNode(nil, KEYWORD_IF("if"), nil),
+      Location()
+    )
+
+    assert_parses expected, "alias foo if"
+  end
+
+  test "undef operator" do
+    expected = UndefNode(
+      [SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil)],
+      Location()
+    )
+
+    assert_parses expected, "undef <=>"
+  end
+
+  test "undef keyword" do
+    expected = UndefNode(
+      [SymbolNode(nil, KEYWORD_IF("if"), nil)],
+      Location()
+    )
+
+    assert_parses expected, "undef if"
+  end
+
   test "undef with dynamic symbols" do
     expected = UndefNode(
       [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))],

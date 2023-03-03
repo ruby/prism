@@ -5037,6 +5037,8 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
 static inline yp_node_t *
 parse_undef_argument(yp_parser_t *parser) {
   switch (parser->current.type) {
+    case YP_CASE_OPERATOR:
+    case YP_CASE_KEYWORD:
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
 
@@ -5067,6 +5069,8 @@ parse_undef_argument(yp_parser_t *parser) {
 static inline yp_node_t *
 parse_alias_argument(yp_parser_t *parser, bool first) {
   switch (parser->current.type) {
+    case YP_CASE_OPERATOR:
+    case YP_CASE_KEYWORD:
     case YP_TOKEN_IDENTIFIER: {
       if (first) {
         lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
