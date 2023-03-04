@@ -23,6 +23,19 @@ __attribute__((__visibility__("default"))) extern bool
 yp_encoding_ascii_isupper_char(const char *c);
 
 /******************************************************************************/
+/* Big5                                                                       */
+/******************************************************************************/
+
+__attribute__((__visibility__("default"))) extern size_t
+yp_encoding_big5_alpha_char(const char *c);
+
+__attribute__((__visibility__("default"))) extern size_t
+yp_encoding_big5_alnum_char(const char *c);
+
+__attribute__((__visibility__("default"))) extern bool
+yp_encoding_big5_isupper_char(const char *c);
+
+/******************************************************************************/
 /* ISO-8859-9                                                                 */
 /******************************************************************************/
 
