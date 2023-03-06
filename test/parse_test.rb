@@ -169,6 +169,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "[a: [:b, :c]]"
   end
 
+  test "array literal with hash with rockets" do
+    expected = ArrayNode(
+      [HashNode(nil, [AssocNode(expression("foo"), expression("bar"), EQUAL_GREATER("=>"))], nil)],
+      BRACKET_LEFT("["),
+      BRACKET_RIGHT("]")
+    )
+
+    assert_parses expected, "[foo => bar]"
+  end
+
   test "empty array literal" do
     assert_parses ArrayNode([], BRACKET_LEFT("["), BRACKET_RIGHT("]")), "[\n]\n"
   end
@@ -177,8 +187,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
   end
 
-
-  test "parentesized expression" do
+  test "parenthesized expression" do
     expected = ParenthesesNode(
       PARENTHESIS_LEFT("("),
       Statements(
