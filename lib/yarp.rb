@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "delegate"
+
 module YARP
   # This represents a location in the source corresponding to a node or token.
   class Location
@@ -165,8 +167,43 @@ module YARP
   # This lexes with the Ripper lex. It drops any space events but otherwise
   # returns the same tokens.
   def self.lex_ripper(source)
-    Ripper.lex(source).each_with_object([]) do |token, tokens|
-      tokens << token unless token[1] == :on_sp
+    Ripper.lex(source).each_with_object([]) do |token_arr, tokens|
+      token = LexedToken.new(token_arr)
+      tokens << token unless token.event == :on_sp
+    end
+  end
+
+  class LexedToken < SimpleDelegator
+    def location
+      self[0]
+    end
+
+    def event
+      self[1]
+    end
+
+    def value
+      self[2]
+    end
+
+    def state
+      self[3]
+    end
+
+    def state=(val)
+      self[3] = val
+    end
+
+    def ==(other)
+      if event == :on_comment
+        location == other.location && event == other.event && value == other.value
+      else
+        super
+      end
+    end
+
+    def is_tilde_heredoc?
+      value[2] == "~"
     end
   end
 
@@ -335,7 +372,7 @@ module YARP
       end
 
       def to_a
-        tokens.last[3] = state
+        tokens.last.state = state
         tokens
       end
     end
@@ -410,12 +447,14 @@ module YARP
         (lineno, column) = location_for(token.location.start_offset)
         column -= 6 if bom && lineno == 1
 
-        token = [
-          [lineno, column],
-          event,
-          value_for(event, token.value),
-          lex_state
-        ]
+        token = LexedToken.new(
+          [
+            [lineno, column],
+            event,
+            value_for(event, token.value),
+            lex_state
+          ]
+        )
 
         previous_state = lex_state
 
@@ -492,11 +531,6 @@ module YARP
     LexCompat.new(source).result
   end
 
-  def self.token_is_tilde_heredoc?(token)
-    token[2][2] == "~"
-  end
-  private_class_method :token_is_tilde_heredoc?
-
   # We handle tilde heredocs in the parsing phase, not the lexing phase
   # However, we want to preserve the usefulness of comparing lexed results
   # This method allows us to sanitize lexing so we can ignore any differences
@@ -506,9 +540,9 @@ module YARP
 
     ignoring_tokens = false
     tokens.each do |token|
-      if token[1] == :on_heredoc_beg && token_is_tilde_heredoc?(token)
+      if token.event == :on_heredoc_beg && token.is_tilde_heredoc?
         ignoring_tokens = true
-      elsif token[1] == :on_heredoc_end
+      elsif token.event == :on_heredoc_end
         ignoring_tokens = false
       elsif !ignoring_tokens
         res << token
