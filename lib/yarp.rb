@@ -168,63 +168,42 @@ module YARP
   # returns the same tokens.
   def self.lex_ripper(source)
     Ripper.lex(source).each_with_object([]) do |token_arr, tokens|
-      token = LexedToken.new(*token_arr)
+      token = LexedToken.new(token_arr)
       tokens << token unless token.event == :on_sp
     end
   end
 
   class LexedToken < SimpleDelegator
-    attr_reader :location, :event, :value
-    attr_accessor :state
-
-    def initialize(location, event, value, state)
-      @location = location
-      @event = event
-      @value = value
-      @state = state
+    def location
+      self[0]
     end
 
-    def [](index)
-      inspect[index]
+    def event
+      self[1]
+    end
+
+    def value
+      self[2]
+    end
+
+    def state
+      self[3]
+    end
+
+    def state=(val)
+      self[3] = val
     end
 
     def ==(other)
-      other in LexedToken[
-        location: ^(location),
-        event: ^(event),
-        value: ^(value),
-        state: ^(state)
-      ] or other in LexedToken[
-        location: ^(location),
-        event: :on_comment,
-        value: ^(value)
-      ]
+      if event == :on_comment
+        location == other.location && event == other.event && value == other.value
+      else
+        super
+      end
     end
 
     def is_tilde_heredoc?
       value[2] == "~"
-    end
-
-    def inspect
-      [@location, @event, @value, @state]
-    end
-
-    def deconstruct_keys(keys)
-      { location: location, event: event, value: value, state: state }
-    end
-
-    def pretty_print(q)
-      q.group do
-        q.text("#{self.class.name.split("::").last}(")
-        q.nest(2) do
-          deconstructed = deconstruct_keys([])
-
-          q.breakable("")
-          q.seplist(deconstructed, lambda { q.comma_breakable }, :each_value) { |value| q.pp(value) }
-        end
-        q.breakable("")
-        q.text(")")
-      end
     end
   end
 
@@ -469,10 +448,12 @@ module YARP
         column -= 6 if bom && lineno == 1
 
         token = LexedToken.new(
-          [lineno, column],
-          event,
-          value_for(event, token.value),
-          lex_state
+          [
+            [lineno, column],
+            event,
+            value_for(event, token.value),
+            lex_state
+          ]
         )
 
         previous_state = lex_state
