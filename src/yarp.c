@@ -6185,10 +6185,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_token_t module_keyword = parser->previous;
-      yp_node_t *name;
-
-      expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `module`.");
-      name = yp_node_constant_read_create(parser, &parser->previous);
+      yp_node_t *name = parse_expression(parser, BINDING_POWER_CALL, "Expected to find a module name after `module`.");
 
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
