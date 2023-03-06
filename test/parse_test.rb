@@ -6542,6 +6542,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo[bar, baz] = 1, 2, 3"
   end
 
+  test "empty %w list with whitespace" do
+    expected = ArrayNode(
+      [],
+      PERCENT_LOWER_W("%w{"),
+      STRING_END("}")
+    )
+
+    assert_parses expected, "%w{    }"
+  end
+
   private
 
   def assert_serializes(expected, source)

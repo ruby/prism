@@ -6352,6 +6352,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
+      // skip all leading whitespaces
+      accept(parser, YP_TOKEN_WORDS_SEP);
+
       while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         if (yp_array_node_size(array) == 0) {
           accept(parser, YP_TOKEN_WORDS_SEP);
