@@ -5087,10 +5087,10 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UPLUS
 
 static yp_node_t *
-parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
+parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_state) {
   yp_token_t opening = parser->previous;
 
-  if (mode != YP_LEX_STRING) {
+  if (lex_mode->mode != YP_LEX_STRING) {
     if (next_state != YP_LEX_STATE_NONE) {
       lex_state_set(parser, next_state);
     }
@@ -5123,7 +5123,10 @@ parse_symbol(yp_parser_t *parser, int mode, yp_lex_state_t next_state) {
     return yp_node_symbol_node_create(parser, &opening, &symbol, &closing);
   }
 
-  if (parser->lex_modes.current->as.string.interpolation) {
+  // If we weren't in a string in the previous check then we have to be now.
+  assert(lex_mode->mode == YP_LEX_STRING);
+
+  if (lex_mode->as.string.interpolation) {
     yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
 
     while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
@@ -5201,9 +5204,9 @@ parse_undef_argument(yp_parser_t *parser) {
       return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
     }
     case YP_TOKEN_SYMBOL_BEGIN: {
-      int mode = parser->lex_modes.current->mode;
+      yp_lex_mode_t *lex_mode = parser->lex_modes.current;
       parser_lex(parser);
-      return parse_symbol(parser, mode, YP_LEX_STATE_NONE);
+      return parse_symbol(parser, lex_mode, YP_LEX_STATE_NONE);
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, "Expected a bare word or symbol argument.", parser->current.start - parser->start);
@@ -5236,10 +5239,10 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
       return yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
     }
     case YP_TOKEN_SYMBOL_BEGIN: {
-      int mode = parser->lex_modes.current->mode;
+      yp_lex_mode_t *lex_mode = parser->lex_modes.current;
       parser_lex(parser);
 
-      return parse_symbol(parser, mode, first ? YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM : YP_LEX_STATE_NONE);
+      return parse_symbol(parser, lex_mode, first ? YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM : YP_LEX_STATE_NONE);
     }
     case YP_TOKEN_BACK_REFERENCE:
     case YP_TOKEN_NTH_REFERENCE:
@@ -5404,7 +5407,7 @@ parse_method_definition_name(yp_parser_t *parser) {
 // Parse an expression that begins with the previous node that we just lexed.
 static inline yp_node_t *
 parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
-  yp_lex_mode_t lex_mode = *parser->lex_modes.current;
+  yp_lex_mode_t *lex_mode = parser->lex_modes.current;
 
   switch (parser->current.type) {
     case YP_TOKEN_BRACKET_LEFT: {
@@ -6852,7 +6855,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         };
 
         node = yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_NONE);
-      } else if (!lex_mode.as.string.interpolation) {
+      } else if (!lex_mode->as.string.interpolation) {
         // If we don't accept interpolation then we only expect there to be a
         // single string content token immediately after the opening delimiter.
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected string content after opening delimiter.");
@@ -6920,7 +6923,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
     }
     case YP_TOKEN_SYMBOL_BEGIN:
       parser_lex(parser);
-      return parse_symbol(parser, lex_mode.mode, YP_LEX_STATE_NONE);
+      return parse_symbol(parser, lex_mode, YP_LEX_STATE_NONE);
     default:
       if (context_recoverable(parser, &parser->current)) {
         parser->recovering = true;

@@ -3761,6 +3761,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, ":'abc'"
   end
 
+  test "dynamic symbol with immediate interpolation" do
+    expected = InterpolatedSymbolNode(
+      SYMBOL_BEGIN(":\""),
+      [
+        StringInterpolatedNode(
+         EMBEXPR_BEGIN("\#{"),
+         Statements([expression("var")]),
+         EMBEXPR_END("}")
+       )
+      ],
+      STRING_END("\"")
+    )
+
+    assert_parses expected, ":\"\#{var}\""
+  end
+
   test "dynamic symbol with interpolation" do
     expected = InterpolatedSymbolNode(
       SYMBOL_BEGIN(":\""),
