@@ -3242,6 +3242,15 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "return 1"
   end
 
+  test "return *1" do
+    expected = ReturnNode(
+      KEYWORD_RETURN("return"),
+      ArgumentsNode([StarNode(STAR("*"), IntegerNode())])
+    )
+
+    assert_parses expected, "return *1"
+  end
+
   test "return 1, 2, 3" do
     expected = ReturnNode(
       KEYWORD_RETURN("return"),
