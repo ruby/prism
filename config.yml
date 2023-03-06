@@ -34,6 +34,8 @@ tokens:
     comment: "}"
   - name: BRACKET_LEFT
     comment: "["
+  - name: BRACKET_LEFT_ARRAY
+    comment: "[ for the beginning of an array"
   - name: BRACKET_LEFT_RIGHT
     comment: "[]"
   - name: BRACKET_LEFT_RIGHT_EQUAL

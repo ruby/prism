@@ -224,6 +224,7 @@ module YARP
       BRACE_LEFT: :on_lbrace,
       BRACE_RIGHT: :on_rbrace,
       BRACKET_LEFT: :on_lbracket,
+      BRACKET_LEFT_ARRAY: :on_lbracket,
       BRACKET_LEFT_RIGHT: :on_op,
       BRACKET_LEFT_RIGHT_EQUAL: :on_op,
       BRACKET_RIGHT: :on_rbracket,

@@ -2411,6 +2411,7 @@ lex_token_type(yp_parser_t *parser) {
         // [ [] []=
         case '[':
           parser->enclosure_nesting++;
+          yp_token_type_t type = YP_TOKEN_BRACKET_LEFT;
 
           if (lex_state_operator_p(parser)) {
             if (match(parser, ']')) {
@@ -2420,12 +2421,16 @@ lex_token_type(yp_parser_t *parser) {
             }
 
             lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABEL);
-            return YP_TOKEN_BRACKET_LEFT;
+            return type;
+          }
+
+          if (lex_state_beg_p(parser) || (lex_state_arg_p(parser) && (space_seen || lex_state_p(parser, YP_LEX_STATE_LABELED)))) {
+            type = YP_TOKEN_BRACKET_LEFT_ARRAY;
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
-          return YP_TOKEN_BRACKET_LEFT;
+          return type;
 
         // ]
         case ']':
@@ -5449,7 +5454,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
   yp_lex_mode_t *lex_mode = parser->lex_modes.current;
 
   switch (parser->current.type) {
-    case YP_TOKEN_BRACKET_LEFT: {
+    case YP_TOKEN_BRACKET_LEFT_ARRAY: {
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
@@ -5457,7 +5462,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
         // Handle the case where we don't have a comma and we have a newline followed by a right bracket.
-        if (accept(parser, YP_TOKEN_NEWLINE) && match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) break;
+        if (accept(parser, YP_TOKEN_NEWLINE) && match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
+          break;
+        }
 
         if (yp_array_node_size(array) != 0) {
           expect(parser, YP_TOKEN_COMMA, "Expected a separator for the elements in an array.");
