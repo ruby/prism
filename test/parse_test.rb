@@ -32,6 +32,15 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
   end
 
+  test "comment embedded document with content on same line" do
+    source = <<~RUBY
+      =begin other stuff
+      =end
+    RUBY
+
+    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
+  end
+
   test "alias bare" do
     expected = AliasNode(
       SymbolNode(nil, IDENTIFIER("foo"), nil),
@@ -203,7 +212,7 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "(a; b; c)"
   end
 
-  test "parentesized with empty statements" do
+  test "parenthesized with empty statements" do
     assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "(\n;\n;\n)"
   end
 
@@ -518,6 +527,34 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "a(b, c)"
+  end
+
+  test "call on subsequent line" do
+    expected = CallNode(
+      CallNode(
+        expression("foo"),
+        DOT("."),
+        IDENTIFIER("bar"),
+        nil,
+        nil,
+        nil,
+        nil,
+        "bar"
+      ),
+      AMPERSAND_DOT("&."),
+      IDENTIFIER("baz"),
+      nil,
+      nil,
+      nil,
+      nil,
+      "baz"
+    )
+
+    assert_parses expected, <<~RUBY
+      foo
+        .bar
+        &.baz
+    RUBY
   end
 
   test "call nested with parentheses and no arguments" do
@@ -840,6 +877,31 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "class A; ensure; end"
   end
 
+  test "sclass binding power" do
+    expected = SClassNode(
+      Scope([]),
+      KEYWORD_CLASS("class"),
+      LESS_LESS("<<"),
+      CallNode(
+        expression("foo"),
+        nil,
+        KEYWORD_NOT("not"),
+        nil,
+        nil,
+        nil,
+        nil,
+        "!"
+      ),
+      Statements([]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, <<~RUBY
+      class << not foo
+      end
+    RUBY
+  end
+
   test "sclass with rescue, else, ensure" do
     expected = ClassNode(
       Scope([]),
@@ -1099,6 +1161,36 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "def a b\nend"
+  end
+
+  test "def with destructured required parameter" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredDestructuredParameterNode(
+           [RequiredParameterNode(IDENTIFIER("bar")),
+            RequiredParameterNode(IDENTIFIER("baz"))],
+           PARENTHESIS_LEFT("("),
+           PARENTHESIS_RIGHT(")")
+         )],
+        [],
+        nil,
+        [],
+        nil,
+        nil
+      ),
+      Statements([]),
+      Scope([IDENTIFIER("bar"), IDENTIFIER("baz")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+
+    assert_parses expected, "def foo((bar, baz))\nend"
   end
 
   test "def with keyword parameter (no parenthesis)" do
@@ -2222,6 +2314,32 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def (c = b).a\nend"
   end
 
+  test "def with constant method name on parentheses receiver" do
+    expected = DefNode(
+      CONSTANT("C"),
+      ParenthesesNode(
+        PARENTHESIS_LEFT("("),
+        LocalVariableWrite(
+          IDENTIFIER("a"),
+          EQUAL("="),
+          expression("b")
+        ),
+        PARENTHESIS_RIGHT(")")
+      ),
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements([]),
+      Scope([]),
+      Location(),
+      Location(),
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_parses expected, "def (a = b).C\nend"
+  end
+
   test "def with literal expression as receiver" do
     expected = DefNode(
       IDENTIFIER("a"),
@@ -2751,15 +2869,38 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "module A a = 1 end"
   end
 
-  test "module constant path" do
+  test "module with top-level constant" do
     expected = ModuleNode(
       Scope([]),
       KEYWORD_MODULE("module"),
-      ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("Foo"))),
+      ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(CONSTANT("A"))),
       Statements([]),
       KEYWORD_END("end")
     )
-    assert_parses expected, "module ::Foo end"
+
+    assert_parses expected, <<~RUBY
+      module ::A
+      end
+    RUBY
+  end
+
+  test "module with constant path on variable" do
+    expected = ModuleNode(
+      Scope([]),
+      KEYWORD_MODULE("module"),
+      ConstantPathNode(
+        expression("m"),
+        COLON_COLON("::"),
+        ConstantRead(CONSTANT("M"))
+      ),
+      Statements([]),
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, <<~RUBY
+      module m::M
+      end
+    RUBY
   end
 
   test "module with rescue, else ensure" do
@@ -2785,6 +2926,10 @@ class ParseTest < Test::Unit::TestCase
 
   test "next" do
     assert_parses NextNode(nil, Location()), "next"
+  end
+
+  test "next with newline" do
+    assert_parses IntegerNode(), "next\n1"
   end
 
   test "next 1" do
@@ -3350,6 +3495,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%w[a b c]"
   end
 
+  test "string list with trailing newline" do
+    expected = ArrayNode(
+      [StringNode(nil, STRING_CONTENT("a"), nil, "a"),
+       StringNode(nil, STRING_CONTENT("b"), nil, "b"),
+       StringNode(nil, STRING_CONTENT("c"), nil, "c")],
+      PERCENT_LOWER_W("%w["),
+      STRING_END("]")
+    )
+
+    assert_parses expected, <<~RUBY
+      %w[
+        a
+        b
+        c
+      ]
+    RUBY
+  end
+
   test "string list with interpolation allowed but not used" do
     expected = ArrayNode(
       [
@@ -3439,6 +3602,10 @@ class ParseTest < Test::Unit::TestCase
 
   test "symbol" do
     assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil), ":a"
+  end
+
+  test "symbol with emoji" do
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("👍"), nil), ":👍"
   end
 
   test "symbol with keyword" do
@@ -3697,15 +3864,31 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "ternary" do
-    expected = Ternary(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-      QUESTION_MARK("?"),
-      CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
-      COLON(":"),
-      CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")
-    )
+    expected = Ternary(expression("a"), QUESTION_MARK("?"), expression("b"), COLON(":"), expression("c"))
 
     assert_parses expected, "a ? b : c"
+  end
+
+  test "ternary binding power" do
+    expected = Ternary(
+      expression("a"),
+      QUESTION_MARK("?"),
+      DefinedNode(
+        nil,
+        expression("b"),
+        nil,
+        Location()
+      ),
+      COLON(":"),
+      DefinedNode(
+        nil,
+        expression("c"),
+        nil,
+        Location()
+      )
+    )
+
+    assert_parses expected, "a ? defined? b : defined? c"
   end
 
   test "true" do
@@ -4594,6 +4777,93 @@ class ParseTest < Test::Unit::TestCase
     RUBY
   end
 
+  test "blocks within other blocks" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        KEYWORD_DO("do"),
+        nil,
+        Statements(
+          [CallNode(
+             nil,
+             nil,
+             IDENTIFIER("bar"),
+             nil,
+             nil,
+             nil,
+             BlockNode(
+               KEYWORD_DO("do"),
+               nil,
+               Statements(
+                 [CallNode(
+                    nil,
+                    nil,
+                    IDENTIFIER("baz"),
+                    nil,
+                    nil,
+                    nil,
+                    BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                    "baz"
+                  )]
+               ),
+               KEYWORD_END("end")
+             ),
+             "bar"
+           )]
+        ),
+        KEYWORD_END("end")
+      ),
+      "foo"
+    )
+
+    assert_parses expected, <<~RUBY
+      foo do
+        bar do
+          baz do
+          end
+        end
+      end
+    RUBY
+  end
+
+  test "blocks with parameters that have default values" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        KEYWORD_DO("do"),
+        BlockVarNode(
+          ParametersNode(
+            [],
+            [OptionalParameterNode(IDENTIFIER("a"), EQUAL("="), expression("b[1]"))],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
+        ),
+        nil,
+        KEYWORD_END("end")
+      ),
+      "foo"
+    )
+
+    assert_parses expected, <<~RUBY
+      foo do |a = b[1]|
+      end
+    RUBY
+  end
+
   test "simple #[] call" do
     expected = CallNode(
       expression("foo"),
@@ -4863,13 +5133,16 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         BRACE_LEFT("{"),
-        ParametersNode(
-          [RequiredParameterNode(IDENTIFIER("x"))],
-          [],
-          nil,
-          [],
-          nil,
-          nil
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("x"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
         ),
         nil,
         BRACE_RIGHT("}")
@@ -4890,17 +5163,20 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         BRACE_LEFT("{"),
-        ParametersNode(
-          [RequiredParameterNode(IDENTIFIER("x"))],
-          [OptionalParameterNode(
-            IDENTIFIER("y"),
-            EQUAL("="),
-            IntegerNode()
-          )],
-          nil,
-          [KeywordParameterNode(LABEL("z:"), nil)],
-          nil,
-          nil
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("x"))],
+            [OptionalParameterNode(
+              IDENTIFIER("y"),
+              EQUAL("="),
+              IntegerNode()
+            )],
+            nil,
+            [KeywordParameterNode(LABEL("z:"), nil)],
+            nil,
+            nil
+          ),
+          []
         ),
         Statements([LocalVariableRead(IDENTIFIER("x"))]),
         BRACE_RIGHT("}")
@@ -4921,14 +5197,17 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_RIGHT(")"),
       BlockNode(
         BRACE_LEFT("{"),
-        ParametersNode(
-          [RequiredParameterNode(IDENTIFIER("x")),
-          RequiredParameterNode(IDENTIFIER("memo"))],
-          [],
-          nil,
-          [],
-          nil,
-          nil
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("x")),
+            RequiredParameterNode(IDENTIFIER("memo"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
         ),
         Statements(
           [OperatorAssignmentNode(
@@ -6042,10 +6321,17 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         KEYWORD_DO("do"),
-        ParametersNode([
-          RequiredParameterNode(IDENTIFIER("a")),
-          RequiredParameterNode(IDENTIFIER("b"))
-          ], [], nil, [], nil, nil),
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
+        ),
         Statements([
           CallNode(
             nil,
@@ -6236,13 +6522,16 @@ class ParseTest < Test::Unit::TestCase
         nil,
         BlockNode(
           BRACE_LEFT("{"),
-          ParametersNode(
-            [RequiredParameterNode(IDENTIFIER("a"))],
-            [],
-            nil,
-            [],
-            nil,
-            nil
+          BlockVarNode(
+            ParametersNode(
+              [RequiredParameterNode(IDENTIFIER("a"))],
+              [],
+              nil,
+              [],
+              nil,
+              nil
+            ),
+            []
           ),
           Statements([BreakNode(nil, Location())]),
           BRACE_RIGHT("}")
@@ -6386,6 +6675,39 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "@foo = 1, 2"
+  end
+
+  test "multiple assignment trailing comma" do
+    expected = MultiWriteNode(
+      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(COMMA(","), nil)],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo, = 1, 2"
+  end
+
+  test "multiple assignment trailing anonymous star" do
+    expected = MultiWriteNode(
+      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(STAR("*"), nil)],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo, * = 1, 2"
+  end
+
+  test "multiple assignment trailing star" do
+    expected = MultiWriteNode(
+      [
+        LocalVariableWrite(IDENTIFIER("foo"), nil, nil),
+        StarNode(STAR("*"), LocalVariableWrite(IDENTIFIER("bar"), nil, nil))
+      ],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo, *bar = 1, 2"
   end
 
   test "if modifier after break" do

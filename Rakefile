@@ -80,10 +80,23 @@ task lex: :compile do
   $:.unshift(File.expand_path("lib", __dir__))
   require "yarp"
   require "ripper"
+  require "timeout"
 
   passing = 0
   failing = 0
+
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
+
+  pass_filepath = ->(filepath) {
+    print colorize.call(32, ".")
+    passing += 1
+  }
+
+  fail_filepath = ->(filepath) {
+    warn(filepath) if ENV["VERBOSE"]
+    print colorize.call(31, "E")
+    failing += 1
+  }
 
   filepaths =
     if ENV["FILEPATHS"]
@@ -92,32 +105,27 @@ task lex: :compile do
       Dir["vendor/spec/**/*.rb"]
     end
 
-  filepaths.each do |filepath|
+  filepaths.each.with_index(1) do |filepath, index|
     print "#{filepath} " if ENV["CI"]
     source = File.read(filepath)
 
-    # We're going to skip over any files that Ripper can't parse because it
-    # means there are syntax errors.
-    ripper = Ripper.new(source)
-    ripper.parse
-    next if ripper.error?
-
     begin
-      lexed = YARP.lex_compat(source)
-      value = YARP.remove_tilde_heredocs(lexed.value)
-      if lexed.errors.empty? && YARP.remove_tilde_heredocs(YARP.lex_ripper(source)) == value
-        print colorize.call(32, ".")
-        passing += 1
-      else
-        warn(filepath) if ENV["VERBOSE"]
-        print colorize.call(31, "E")
-        failing += 1
-      end
+      Timeout.timeout(5) do
+        lexed = YARP.lex_compat(source)
+        value = YARP.remove_tilde_heredocs(lexed.value)
 
-      puts if ENV["CI"]
-    rescue ArgumentError => e
-      puts "\nError in #{filepath}"
-      raise e
+        if lexed.errors.empty? && YARP.remove_tilde_heredocs(YARP.lex_ripper(source)) == value
+          pass_filepath.call(filepath)
+        else
+          fail_filepath.call(filepath)
+        end
+
+        puts if ENV["CI"]
+      rescue
+        fail_filepath.call(filepath)
+      end
+    rescue Timeout::Error
+      fail_filepath.call(filepath)
     end
   end
 

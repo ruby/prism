@@ -21,15 +21,27 @@ def table(range, encoding)
   end
 end
 
-def unicode(codepoints)
-  previous = nil
-  groups =
-    codepoints.slice_before do |codepoint|
-      (!previous.nil? && (codepoint - previous) != 1).tap { previous = codepoint }
-    end
+def lists(name, range, encoding)
+  range = range.map { begin; _1.chr(Encoding::UTF_8); _1; rescue RangeError; nil; end }.compact
 
-  groups.flat_map do |group|
-    ["0x#{group.first.to_s(16).upcase}", "0x#{group.last.to_s(16).upcase}"]
+  { alpha: /[[:alpha:]]/, alnum: /[[:alnum:]]/, isupper: /[[:upper:]]/ }.map do |kind, regex|
+    codepoints = range.select { _1.chr(Encoding::UTF_8).match?(regex) }
+
+    previous = nil
+    groups =
+      codepoints.slice_before do |codepoint|
+        (!previous.nil? && (codepoint - previous) != 1).tap { previous = codepoint }
+      end
+
+    matched =
+      groups.flat_map do |group|
+        ["0x#{group.first.to_s(16).upcase}", "0x#{group.last.to_s(16).upcase}"]
+      end
+
+    puts "\n#define #{name.upcase}_#{kind.upcase}_CODEPOINTS_LENGTH #{matched.length}"
+    puts "#{name}_codepoint_t #{name}_#{kind}_codepoints[#{name.upcase}_#{kind.upcase}_CODEPOINTS_LENGTH] = {"
+    matched.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
+    puts "};"
   end
 end
 
@@ -41,25 +53,10 @@ puts "\nISO-8859-9"
 puts "=========="
 table((0...256), Encoding::ISO8859_9)
 
+puts "\nBig5"
+puts "=========="
+lists("big5", (0...0x10000), Encoding::Big5)
+
 puts "\nUTF-8"
 puts "=========="
-
-range = (0...0x10FFFF).map { begin; _1.chr(Encoding::UTF_8); _1; rescue RangeError; nil; end }.compact
-
-alpha = unicode(range.select { _1.chr(Encoding::UTF_8).match?(/[[:alpha:]]/) })
-puts "#define UNICODE_ALPHA_CODEPOINTS_LENGTH #{alpha.length}"
-puts "unicode_codepoint_t unicode_alpha_codepoints[UNICODE_ALPHA_CODEPOINTS_LENGTH] = {"
-alpha.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
-puts "};"
-
-alnum = unicode(range.select { _1.chr(Encoding::UTF_8).match?(/[[:alnum:]]/) })
-puts "\n#define UNICODE_ALNUM_CODEPOINTS_LENGTH #{alnum.length}"
-puts "unicode_codepoint_t unicode_alnum_codepoints[UNICODE_ALNUM_CODEPOINTS_LENGTH] = {"
-alnum.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
-puts "};"
-
-isupper = unicode(range.select { _1.chr(Encoding::UTF_8).match?(/[[:upper:]]/) })
-puts "\n#define UNICODE_ISUPPER_CODEPOINTS_LENGTH #{isupper.length}"
-puts "unicode_codepoint_t unicode_isupper_codepoints[UNICODE_ISUPPER_CODEPOINTS_LENGTH] = {"
-isupper.each_slice(2) { |slice| puts "  #{slice.join(", ")}," }
-puts "};"
+lists("utf8", (0...0x110000), Encoding::UTF_8)
