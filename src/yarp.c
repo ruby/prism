@@ -1451,9 +1451,24 @@ match(yp_parser_t *parser, char value) {
   return false;
 }
 
+// Returns the incrementor character that should be used to increment the
+// nesting count if one is possible.
+static inline char
+incrementor(const char start) {
+  switch (start) {
+    case '(':
+    case '[':
+    case '{':
+    case '<':
+      return start;
+    default:
+      return '\0';
+  }
+}
+
 // Returns the matching character that should be used to terminate a list
 // beginning with the given character.
-static char
+static inline char
 terminator(const char start) {
   switch (start) {
     case '(':
@@ -2959,9 +2974,13 @@ lex_token_type(yp_parser_t *parser) {
             switch (*parser->current.end) {
               case 'i': {
                 parser->current.end++;
+                const char delimiter = *parser->current.end++;
+
                 yp_lex_mode_t lex_mode = {
                   .mode = YP_LEX_LIST,
-                  .as.list.terminator = terminator(*parser->current.end++),
+                  .as.list.incrementor = incrementor(delimiter),
+                  .as.list.terminator = terminator(delimiter),
+                  .as.list.nesting = 0,
                   .as.list.interpolation = false
                 };
 
@@ -2970,9 +2989,13 @@ lex_token_type(yp_parser_t *parser) {
               }
               case 'I': {
                 parser->current.end++;
+                const char delimiter = *parser->current.end++;
+
                 yp_lex_mode_t lex_mode = {
                   .mode = YP_LEX_LIST,
-                  .as.list.terminator = terminator(*parser->current.end++),
+                  .as.list.incrementor = incrementor(delimiter),
+                  .as.list.terminator = terminator(delimiter),
+                  .as.list.nesting = 0,
                   .as.list.interpolation = true
                 };
 
@@ -3024,9 +3047,13 @@ lex_token_type(yp_parser_t *parser) {
               }
               case 'w': {
                 parser->current.end++;
+                const char delimiter = *parser->current.end++;
+
                 yp_lex_mode_t lex_mode = {
                   .mode = YP_LEX_LIST,
-                  .as.list.terminator = terminator(*parser->current.end++),
+                  .as.list.incrementor = incrementor(delimiter),
+                  .as.list.terminator = terminator(delimiter),
+                  .as.list.nesting = 0,
                   .as.list.interpolation = false
                 };
 
@@ -3035,9 +3062,13 @@ lex_token_type(yp_parser_t *parser) {
               }
               case 'W': {
                 parser->current.end++;
+                const char delimiter = *parser->current.end++;
+
                 yp_lex_mode_t lex_mode = {
                   .mode = YP_LEX_LIST,
-                  .as.list.terminator = terminator(*parser->current.end++),
+                  .as.list.incrementor = incrementor(delimiter),
+                  .as.list.terminator = terminator(delimiter),
+                  .as.list.nesting = 0,
                   .as.list.interpolation = true
                 };
 
@@ -3179,13 +3210,21 @@ lex_token_type(yp_parser_t *parser) {
 
       // These are the places where we need to split up the content of the list.
       // We'll use strpbrk to find the first of these characters.
-      char breakpoints[] = " \\ \t\f\r\v\n\0";
-      breakpoints[0] = parser->lex_modes.current->as.list.terminator;
+      char breakpoints[] = "\\ \t\f\r\v\n\0\0\0";
+
+      // Now we'll add the terminator to the list of breakpoints.
+      size_t index = 7;
+      breakpoints[index++] = parser->lex_modes.current->as.list.terminator;
 
       // If interpolation is allowed, then we're going to check for the #
       // character. Otherwise we'll only look for escapes and the terminator.
       if (parser->lex_modes.current->as.list.interpolation) {
-        breakpoints[8] = '#';
+        breakpoints[index++] = '#';
+      }
+
+      // If there is an incrementor, then we'll check for that as well.
+      if (parser->lex_modes.current->as.list.incrementor != '\0') {
+        breakpoints[index++] = parser->lex_modes.current->as.list.incrementor;
       }
 
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
@@ -3219,9 +3258,27 @@ lex_token_type(yp_parser_t *parser) {
             break;
           }
           default:
-            // In this case we've hit the terminator. If we've hit the
-            // terminator and we've already skipped past content, then we can
-            // return a list node.
+            if (*breakpoint == parser->lex_modes.current->as.list.incrementor) {
+              // If we've hit the incrementor, then we need to skip past it and
+              // find the next breakpoint.
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              parser->lex_modes.current->as.list.nesting++;
+              break;
+            }
+
+            // In this case we've hit the terminator.
+            assert(*breakpoint == parser->lex_modes.current->as.list.terminator);
+
+            // If this terminator doesn't actually close the list, then we need
+            // to continue on past it.
+            if (parser->lex_modes.current->as.list.nesting > 0) {
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              parser->lex_modes.current->as.list.nesting--;
+              break;
+            }
+
+            // If we've hit the terminator and we've already skipped past
+            // content, then we can return a list node.
             if (breakpoint > parser->current.start) {
               parser->current.end = breakpoint;
               return YP_TOKEN_STRING_CONTENT;

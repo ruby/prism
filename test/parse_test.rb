@@ -3495,6 +3495,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%w[a b c]"
   end
 
+  test "string list with incrementor" do
+    expected = ArrayNode(
+      [StringNode(nil, STRING_CONTENT("a[]"), nil, "a[]"),
+       StringNode(nil, STRING_CONTENT("b[[]]"), nil, "b[[]]"),
+       StringNode(nil, STRING_CONTENT("c[]"), nil, "c[]")],
+      PERCENT_LOWER_W("%w["),
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%w[a[] b[[]] c[]]"
+  end
+
   test "string list with trailing newline" do
     expected = ArrayNode(
       [StringNode(nil, STRING_CONTENT("a"), nil, "a"),

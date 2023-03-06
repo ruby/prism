@@ -105,8 +105,15 @@ typedef struct yp_lex_mode {
     } embexpr;
 
     struct {
+      // When lexing a list, it takes into account balancing the terminator if
+      // the terminator is one of (), [], {}, or <>.
+      char incrementor;
+
       // This is the terminator of the list literal.
       char terminator;
+
+      // This keeps track of the nesting level of the list.
+      size_t nesting;
 
       // Whether or not interpolation is allowed in this list.
       bool interpolation;
