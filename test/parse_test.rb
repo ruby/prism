@@ -4863,13 +4863,16 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         BRACE_LEFT("{"),
-        ParametersNode(
-          [RequiredParameterNode(IDENTIFIER("x"))],
-          [],
-          nil,
-          [],
-          nil,
-          nil
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("x"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
         ),
         nil,
         BRACE_RIGHT("}")
@@ -4890,17 +4893,20 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         BRACE_LEFT("{"),
-        ParametersNode(
-          [RequiredParameterNode(IDENTIFIER("x"))],
-          [OptionalParameterNode(
-            IDENTIFIER("y"),
-            EQUAL("="),
-            IntegerNode()
-          )],
-          nil,
-          [KeywordParameterNode(LABEL("z:"), nil)],
-          nil,
-          nil
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("x"))],
+            [OptionalParameterNode(
+              IDENTIFIER("y"),
+              EQUAL("="),
+              IntegerNode()
+            )],
+            nil,
+            [KeywordParameterNode(LABEL("z:"), nil)],
+            nil,
+            nil
+          ),
+          []
         ),
         Statements([LocalVariableRead(IDENTIFIER("x"))]),
         BRACE_RIGHT("}")
@@ -4921,14 +4927,17 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_RIGHT(")"),
       BlockNode(
         BRACE_LEFT("{"),
-        ParametersNode(
-          [RequiredParameterNode(IDENTIFIER("x")),
-          RequiredParameterNode(IDENTIFIER("memo"))],
-          [],
-          nil,
-          [],
-          nil,
-          nil
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("x")),
+            RequiredParameterNode(IDENTIFIER("memo"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
         ),
         Statements(
           [OperatorAssignmentNode(
@@ -6042,10 +6051,17 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         KEYWORD_DO("do"),
-        ParametersNode([
-          RequiredParameterNode(IDENTIFIER("a")),
-          RequiredParameterNode(IDENTIFIER("b"))
-          ], [], nil, [], nil, nil),
+        BlockVarNode(
+          ParametersNode(
+            [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))],
+            [],
+            nil,
+            [],
+            nil,
+            nil
+          ),
+          []
+        ),
         Statements([
           CallNode(
             nil,
@@ -6236,13 +6252,16 @@ class ParseTest < Test::Unit::TestCase
         nil,
         BlockNode(
           BRACE_LEFT("{"),
-          ParametersNode(
-            [RequiredParameterNode(IDENTIFIER("a"))],
-            [],
-            nil,
-            [],
-            nil,
-            nil
+          BlockVarNode(
+            ParametersNode(
+              [RequiredParameterNode(IDENTIFIER("a"))],
+              [],
+              nil,
+              [],
+              nil,
+              nil
+            ),
+            []
           ),
           Statements([BreakNode(nil, Location())]),
           BRACE_RIGHT("}")
@@ -6386,6 +6405,39 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "@foo = 1, 2"
+  end
+
+  test "multiple assignment trailing comma" do
+    expected = MultiWriteNode(
+      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(COMMA(","), nil)],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo, = 1, 2"
+  end
+
+  test "multiple assignment trailing anonymous star" do
+    expected = MultiWriteNode(
+      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(STAR("*"), nil)],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo, * = 1, 2"
+  end
+
+  test "multiple assignment trailing star" do
+    expected = MultiWriteNode(
+      [
+        LocalVariableWrite(IDENTIFIER("foo"), nil, nil),
+        StarNode(STAR("*"), LocalVariableWrite(IDENTIFIER("bar"), nil, nil))
+      ],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+    )
+
+    assert_parses expected, "foo, *bar = 1, 2"
   end
 
   test "if modifier after break" do

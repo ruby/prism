@@ -34,7 +34,7 @@ class ErrorsTest < Test::Unit::TestCase
 
     assert_errors expected, "module Parent module end", [
       "Expected to find a module name after `module`.",
-      "Expected `end` to close `module` statement.",
+      "Expected `end` to close `module` statement."
     ]
   end
 
@@ -201,8 +201,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "def with expression receiver and no identifier" do
     assert_errors expression("def (a); end"), "def (a); end", [
-      "Expected '.' or '::' after receiver",
-      "Expected a method name after receiver.",
+      "Expected '.' or '::' after receiver"
     ]
   end
 
@@ -210,7 +209,6 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("def (\na\nb\n).c; end"), "def (\na\nb\n).c; end", [
       "Expected closing ')' for receiver.",
       "Expected '.' or '::' after receiver",
-      "Expected a method name after receiver.",
       "Expected to be able to parse an expression.",
       "Expected `end` to close `def` statement.",
     ]
