@@ -4590,20 +4590,59 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
   }
 }
 
+// Required parameters on method, block, and lambda declarations can be
+// destructured using parentheses. This looks like:
+//
+//     def foo((bar, baz))
+//     end
+//
+// It can recurse infinitely down, and splats are allowed to group arguments.
 static yp_node_t *
 parse_required_destructured_parameter(yp_parser_t *parser) {
   expect(parser, YP_TOKEN_PARENTHESIS_LEFT, "Expected '(' to start a required parameter.");
+
   yp_token_t opening = parser->previous;
   yp_node_t *node = yp_node_required_destructured_parameter_node_create(parser, &opening, &opening);
+  bool parsed_splat;
 
   do {
-    if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) break;
+    yp_node_t *param;
 
-    expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier for a required parameter.");
-    yp_token_t name = parser->previous;
+    if (node->as.required_destructured_parameter_node.parameters.size > 0 && match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+      if (parsed_splat) {
+        yp_diagnostic_list_append(&parser->error_list, "Unexpected splat after splat.", parser->previous.start - parser->start);
+      }
 
-    yp_node_t *param = yp_node_required_parameter_node_create(parser, &name);
-    yp_parser_local_add(parser, &name);
+      param = yp_node_star_node_create(parser, &parser->previous, NULL);
+      yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
+      break;
+    }
+
+    if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+      param = parse_required_destructured_parameter(parser);
+    } else if (accept(parser, YP_TOKEN_STAR)) {
+      if (parsed_splat) {
+        yp_diagnostic_list_append(&parser->error_list, "Unexpected splat after splat.", parser->previous.start - parser->start);
+      }
+
+      yp_token_t star = parser->previous;
+      yp_node_t *value = NULL;
+
+      if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+        yp_token_t name = parser->previous;
+        value = yp_node_required_parameter_node_create(parser, &name);
+        yp_parser_local_add(parser, &name);
+      }
+
+      param = yp_node_star_node_create(parser, &star, value);
+      parsed_splat = true;
+    } else {
+      expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier for a required parameter.");
+      yp_token_t name = parser->previous;
+
+      param = yp_node_required_parameter_node_create(parser, &name);
+      yp_parser_local_add(parser, &name);
+    }
 
     yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
   } while (accept(parser, YP_TOKEN_COMMA));
