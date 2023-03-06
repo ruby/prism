@@ -26,15 +26,14 @@ class ErrorsTest < Test::Unit::TestCase
            KEYWORD_MODULE("module"),
            MissingNode(),
            Statements([]),
-           KEYWORD_END("end")
+           MISSING("")
          )]
       ),
-      MISSING("")
+      KEYWORD_END("end")
     )
 
     assert_errors expected, "module Parent module end", [
-      "Expected to find a module name after `module`.",
-      "Expected `end` to close `module` statement."
+      "Expected to find a module name after `module`."
     ]
   end
 
