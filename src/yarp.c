@@ -5905,15 +5905,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
         if (binding_power == BINDING_POWER_UNSET || binding_power >= BINDING_POWER_RANGE) {
           arguments = yp_arguments_node_create(parser);
-
-          do {
-            yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-            yp_arguments_node_append(arguments, expression);
-
-            // If parsing the argument resulted in error recovery, then we can
-            // stop parsing the arguments entirely now.
-            if (expression->type == YP_NODE_MISSING_NODE || parser->recovering) break;
-          } while (accept(parser, YP_TOKEN_COMMA));
+          parse_arguments(parser, arguments, YP_TOKEN_EOF);
         }
       }
 
