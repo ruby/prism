@@ -1575,11 +1575,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   if (*parser->current.end == '.') {
     if ((parser->current.end + 1 < parser->end) && char_is_decimal_number(parser->current.end[1])) {
       parser->current.end += 2;
-      while (char_is_decimal_number(*parser->current.end)) {
-        parser->current.end++;
-        match(parser, '_');
-      }
-
+      parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
       type = YP_TOKEN_FLOAT;
     } else {
       // If we had a . and then something else, then it's not a float suffix on
@@ -1595,11 +1591,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
 
     if (char_is_decimal_number(*parser->current.end)) {
       parser->current.end++;
-      while (char_is_decimal_number(*parser->current.end)) {
-        parser->current.end++;
-        match(parser, '_');
-      }
-
+      parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
       type = YP_TOKEN_FLOAT;
     } else {
       return YP_TOKEN_INVALID;
@@ -1618,28 +1610,35 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0d1111 is a decimal number
       case 'd':
       case 'D':
-        if (!char_is_decimal_number(*++parser->current.end)) return YP_TOKEN_INVALID;
-        while (char_is_decimal_number(*parser->current.end)) {
-          parser->current.end++;
-          match(parser, '_');
+        if (char_is_decimal_number(*++parser->current.end)) {
+          parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
+        } else {
+          yp_diagnostic_list_append(&parser->error_list, "invalid decimal number", parser->current.start - parser->start);
         }
+
         break;
 
       // 0b1111 is a binary number
       case 'b':
       case 'B':
-        if (!char_is_binary_number(*++parser->current.end)) return YP_TOKEN_INVALID;
-        while (char_is_binary_number(*parser->current.end)) {
-          parser->current.end++;
-          match(parser, '_');
+        if (char_is_binary_number(*++parser->current.end)) {
+          parser->current.end += strspn(parser->current.end, "01_");
+        } else {
+          yp_diagnostic_list_append(&parser->error_list, "invalid binary number", parser->current.start - parser->start);
         }
+
         break;
 
       // 0o1111 is an octal number
       case 'o':
       case 'O':
-        if (!char_is_octal_number(*++parser->current.end)) return YP_TOKEN_INVALID;
-        // fall through
+        if (char_is_octal_number(*++parser->current.end)) {
+          yp_diagnostic_list_append(&parser->error_list, "invalid octal number", parser->current.start - parser->start);
+        } else {
+          parser->current.end += strspn(parser->current.end, "01234567_");
+        }
+
+        break;
 
       // 01111 is an octal number
       case '_':
@@ -1651,21 +1650,18 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '5':
       case '6':
       case '7':
-        match(parser, '_');
-        while (char_is_octal_number(*parser->current.end)) {
-          parser->current.end++;
-          match(parser, '_');
-        }
+        parser->current.end += strspn(parser->current.end, "01234567_");
         break;
 
       // 0x1111 is a hexadecimal number
       case 'x':
       case 'X':
-        if (!char_is_hexadecimal_number(*++parser->current.end)) return YP_TOKEN_INVALID;
-        while (char_is_hexadecimal_number(*parser->current.end)) {
-          parser->current.end++;
-          match(parser, '_');
+        if (char_is_hexadecimal_number(*++parser->current.end)) {
+          parser->current.end += strspn(parser->current.end, "0123456789abcdefABCDEF_");
+        } else {
+          yp_diagnostic_list_append(&parser->error_list, "invalid hexadecimal number", parser->current.start - parser->start);
         }
+
         break;
 
       // 0.xxx is a float
@@ -1684,11 +1680,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
   } else {
     // If it didn't start with a 0, then we'll lex as far as we can into a
     // decimal number.
-    match(parser, '_');
-    while (char_is_decimal_number(*parser->current.end)) {
-      parser->current.end++;
-      match(parser, '_');
-    }
+    parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
 
     // Afterward, we'll lex as far as we can into an optional float suffix.
     type = lex_optional_float_suffix(parser);
@@ -1696,7 +1688,10 @@ lex_numeric_prefix(yp_parser_t *parser) {
 
   // If the last character that we consumed was an underscore, then this is
   // actually an invalid integer value, and we should return an invalid token.
-  if (parser->current.end[-1] == '_') return YP_TOKEN_INVALID;
+  if (parser->current.end[-1] == '_') {
+    yp_diagnostic_list_append(&parser->error_list, "number literal cannot end with a `_`", (parser->current.end - 1) - parser->start);
+  }
+
   return type;
 }
 
@@ -1704,10 +1699,8 @@ static yp_token_type_t
 lex_numeric(yp_parser_t *parser) {
   yp_token_type_t type = lex_numeric_prefix(parser);
 
-  if (type != YP_TOKEN_INVALID) {
-    if (match(parser, 'r')) type = YP_TOKEN_RATIONAL_NUMBER;
-    if (match(parser, 'i')) type = YP_TOKEN_IMAGINARY_NUMBER;
-  }
+  if (match(parser, 'r')) type = YP_TOKEN_RATIONAL_NUMBER;
+  if (match(parser, 'i')) type = YP_TOKEN_IMAGINARY_NUMBER;
 
   return type;
 }
@@ -1750,9 +1743,7 @@ lex_global_variable(yp_parser_t *parser) {
     case '7':
     case '8':
     case '9':
-      do {
-        parser->current.end++;
-      } while (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end));
+      parser->current.end += strspn(parser->current.end, "0123456789");
       return YP_TOKEN_NTH_REFERENCE;
 
     case '-':
@@ -2124,10 +2115,10 @@ lex_question_mark(yp_parser_t *parser) {
           // \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
           parser->current.end++;
           if (match(parser, '{')) {
-            while (parser->current.end < parser->end && char_is_whitespace(*parser->current.end)) parser->current.end++;
+            parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
             while (!match(parser, '}')) {
-              while (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-              while (parser->current.end < parser->end && char_is_whitespace(*parser->current.end)) parser->current.end++;
+              parser->current.end += strspn(parser->current.end, "0123456789abcdefABCDEF");
+              parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
             }
           } else {
             for (size_t index = 0; index < 4; index++) {
@@ -2364,7 +2355,8 @@ lex_token_type(yp_parser_t *parser) {
           // (either . or &.) that starts the next line. If there is, then this
           // is going to become an ignored newline and we're going to instead
           // return the call operator.
-          const char *next_content = parser->current.end + strspn(parser->current.end, " \t\f\r\v");
+          const char *next_content = parser->current.end;
+          next_content += yp_strspn_inline_whitespace(parser->current.end, parser->end - parser->current.end);
 
           if (next_content < parser->end) {
             if (next_content[0] == '.') {
@@ -3187,7 +3179,8 @@ lex_token_type(yp_parser_t *parser) {
 
       // Otherwise, we'll parse until the end of the line and return a line of
       // embedded documentation.
-      while ((parser->current.end < parser->end) && (*parser->current.end++ != '\n'));
+      const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+      parser->current.end = newline == NULL ? parser->end : newline + 1;
 
       // If we've still got content, then we'll return a line of embedded
       // documentation.
@@ -3203,7 +3196,7 @@ lex_token_type(yp_parser_t *parser) {
       // If there's any whitespace at the start of the list, then we're going to
       // trim it off the beginning and create a new token.
       size_t whitespace;
-      if ((whitespace = strspn(parser->current.end, " \t\f\r\v\n")) > 0) {
+      if ((whitespace = yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end)) > 0) {
         parser->current.end += whitespace;
         return YP_TOKEN_WORDS_SEP;
       }
@@ -3342,26 +3335,8 @@ lex_token_type(yp_parser_t *parser) {
 
             // Since we've hit the terminator of the regular expression, we now
             // need to parse the options.
-            bool options = true;
             parser->current.end = breakpoint + 1;
-
-            while (options) {
-              switch (*parser->current.end) {
-                case 'e':
-                case 'i':
-                case 'm':
-                case 'n':
-                case 'o':
-                case 's':
-                case 'u':
-                case 'x':
-                  parser->current.end++;
-                  break;
-                default:
-                  options = false;
-                  break;
-              }
-            }
+            parser->current.end += strspn(parser->current.end, "eimnosux");
 
             lex_mode_pop(parser);
             lex_state_set(parser, YP_LEX_STATE_END);
@@ -3456,9 +3431,7 @@ lex_token_type(yp_parser_t *parser) {
       if (parser->current.start[-1] == '\n') {
         const char *start = parser->current.start;
         if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
-          while (start < parser->end && char_is_non_newline_whitespace(*start)) {
-            start++;
-          }
+          start += yp_strspn_inline_whitespace(start, parser->end - start);
         }
 
         if (strncmp(start, ident_start, ident_length) == 0) {
@@ -3498,9 +3471,7 @@ lex_token_type(yp_parser_t *parser) {
           case '\n': {
             const char *start = breakpoint + 1;
             if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
-              while (start < parser->end && char_is_non_newline_whitespace(*start)) {
-                start++;
-              }
+              start += yp_strspn_inline_whitespace(start, parser->end - start);
             }
 
             // If we have hit a newline that is followed by a valid terminator,
@@ -3611,29 +3582,21 @@ static yp_encoding_t yp_encoding_utf_8 = {
 static void
 parser_lex_magic_comments(yp_parser_t *parser) {
   const char *start = parser->current.start + 1;
-  while (char_is_non_newline_whitespace(*start) && start < parser->end) {
-    start++;
-  }
+  start += yp_strspn_inline_whitespace(start, parser->end - start);
 
   if (strncmp(start, "-*-", 3) == 0) {
     start += 3;
-    while (char_is_non_newline_whitespace(*start) && start < parser->end) {
-      start++;
-    }
+    start += yp_strspn_inline_whitespace(start, parser->end - start);
   }
 
   // There is a lot TODO here to make it more accurately reflect encoding
   // parsing, but for now this gets us closer.
   if (strncmp(start, "encoding:", 9) == 0) {
     start += 9;
-    while (char_is_non_newline_whitespace(*start) && start < parser->end) {
-      start++;
-    }
+    start += yp_strspn_inline_whitespace(start, parser->end - start);
 
-    const char *end = start;
-    while (!char_is_whitespace(*end) && end < parser->end) {
-      end++;
-    }
+    const char *end = strpbrk(start, " \t\f\r\v\n");
+    end = end == NULL ? parser->end : end;
     size_t width = end - start;
 
     // First, we're going to call out to a user-defined callback if one was
