@@ -3065,7 +3065,7 @@ lex_token_type(yp_parser_t *parser) {
               } else {
                 lex_state_set(parser, YP_LEX_STATE_ARG);
               }
-            } else if (lex_state_operator_p(parser)) {
+            } else if (parser->lex_state == YP_LEX_STATE_FNAME) {
               lex_state_set(parser, YP_LEX_STATE_ENDFN);
             } else {
               lex_state_set(parser, YP_LEX_STATE_END);
@@ -6129,7 +6129,9 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
       yp_undef_node_append(undef, name);
 
-      while (accept(parser, YP_TOKEN_COMMA)) {
+      while (match_type_p(parser, YP_TOKEN_COMMA)) {
+        lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
+        parser_lex(parser);
         name = parse_undef_argument(parser);
         if (name->type == YP_NODE_MISSING_NODE) return undef;
 
