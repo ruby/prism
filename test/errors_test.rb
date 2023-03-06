@@ -351,6 +351,32 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
   end
 
+  test "module definition in method body" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements(
+        [ModuleNode(
+           Scope([]),
+           KEYWORD_MODULE("module"),
+           ConstantRead(CONSTANT("A")),
+           Statements([]),
+           KEYWORD_END("end")
+         )]
+      ),
+      Scope([]),
+      Location(),
+      nil,
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_errors expected, "def foo;module A;end;end", ["Module definition in method body"]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

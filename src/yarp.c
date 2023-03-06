@@ -6205,6 +6205,11 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_parser_scope_pop(parser);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
+
+      if (parser->current_context->context == YP_CONTEXT_DEF) {
+        yp_diagnostic_list_append(&parser->error_list, "Module definition in method body", parser->current.start - parser->start);
+      }
+
       return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_NIL:
