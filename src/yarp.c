@@ -3775,6 +3775,18 @@ context_pop(yp_parser_t *parser) {
   }
 }
 
+static bool
+context_p(yp_parser_t *parser, yp_context_t context) {
+  yp_context_node_t *context_node = parser->current_context;
+
+  while (context_node != NULL) {
+    if (context_node->context == context) return true;
+    context_node = context_node->prev;
+  }
+
+  return false;
+}
+
 // These are the various precedence rules. Because we are using a Pratt parser,
 // they are named binding power to represent the manner in which nodes are bound
 // together in the stack.
@@ -6207,6 +6219,11 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_parser_scope_pop(parser);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
+
+      if (context_p(parser, YP_CONTEXT_DEF)) {
+        yp_diagnostic_list_append(&parser->error_list, "Module definition in method body", parser->current.start - parser->start);
+      }
+
       return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_NIL:
