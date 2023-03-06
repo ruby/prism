@@ -7141,6 +7141,15 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
       return yp_node_or_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_EQUAL_TILDE: {
+      // Note that we _must_ parse the value before adding the local variables
+      // in order to properly mirror the behavior of Ruby. For example,
+      //
+      //     /(?<foo>bar)/ =~ foo
+      //
+      // In this case, `foo` should be a method call and not a local yet.
+      parser_lex(parser);
+      yp_node_t *argument = parse_expression(parser, binding_power, "Expected a value after the operator.");
+
       // If the receiver of this =~ is a regular expression node, then we need
       // to introduce local variables for it based on its named capture groups.
       if (node->type == YP_NODE_REGULAR_EXPRESSION_NODE) {
@@ -7164,8 +7173,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
         yp_string_list_free(&named_captures);
       }
 
-      // Here we're going to fall through to our other operators because this
-      // will become a call node.
+      return yp_call_node_binary_create(parser, node, &token, argument);
     }
     case YP_TOKEN_BANG_EQUAL:
     case YP_TOKEN_BANG_TILDE:
