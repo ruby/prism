@@ -6546,6 +6546,18 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "case this; when FooBar, BazBonk; end"
   end
 
+  test "case when with splat" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      nil,
+      [WhenNode(KEYWORD_WHEN("when"), [StarNode(STAR("*"), expression("foo"))], nil)],
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "case; when *foo; end"
+  end
+
   test "block with back reference" do
     expected = CallNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
