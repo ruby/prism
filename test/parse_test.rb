@@ -2826,16 +2826,7 @@ class ParseTest < Test::Unit::TestCase
   test "if then call" do
     expected = IfNode(
       KEYWORD_IF("if"),
-      CallNode(
-        nil,
-        nil,
-        IDENTIFIER("exit_loop"),
-        nil,
-        ArgumentsNode([]),
-        nil,
-        nil,
-        "exit_loop"
-      ),
+      expression("exit_loop"),
       Statements([BreakNode(ArgumentsNode([IntegerNode()]), Location())]),
       nil,
       KEYWORD_END("end")
@@ -6410,6 +6401,22 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "case :hi\nwhen :hi\nend"
+  end
+
+  test "case without predicate" do
+    expected = CaseNode(
+      KEYWORD_CASE("case"),
+      nil,
+      [WhenNode(KEYWORD_WHEN("when"), [expression("foo == bar")], nil)],
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, <<~RUBY
+      case
+      when foo == bar
+      end
+    RUBY
   end
 
   test "case with else" do
