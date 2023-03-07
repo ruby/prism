@@ -2531,6 +2531,50 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<~EOF\n  a\n  b\nEOF\n"
   end
 
+  test "tilde heredocs with multiple tabs" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("\t\t\ta\n\t\tb\n"), nil, "\ta\nb\n")],
+      HEREDOC_END("EOF\n"),
+      16
+    )
+
+    assert_parses expected, "<<~EOF\n\t\t\ta\n\t\tb\nEOF\n"
+  end
+
+  test "tilde heredocs with tabs and shortest string first" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("\ta\n\t b\n"), nil, "a\n b\n")],
+      HEREDOC_END("EOF\n"),
+      8
+    )
+
+    assert_parses expected, "<<~EOF\n\ta\n\t b\nEOF\n"
+  end
+
+  test "tilde heredocs with tabs and shortest string second" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("\t a\n\tb\n"), nil, " a\nb\n")],
+      HEREDOC_END("EOF\n"),
+      8
+    )
+
+    assert_parses expected, "<<~EOF\n\t a\n\tb\nEOF\n"
+  end
+
+  test "tilde heredocs where tabs become spaces" do
+    expected = HeredocNode(
+      HEREDOC_START("<<~EOF"),
+      [StringNode(nil, STRING_CONTENT("\ta\n  b\n\t\tc\n"), nil, "\ta\nb\n\t\tc\n")],
+      HEREDOC_END("EOF\n"),
+      2
+    )
+
+    assert_parses expected, "<<~EOF\n\ta\n  b\n\t\tc\nEOF\n"
+  end
+
   test "tilde heredocs with multiple lines and different indentations" do
     expected = HeredocNode(
       HEREDOC_START("<<~EOF"),
