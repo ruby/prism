@@ -2109,7 +2109,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
 
       // Otherwise we'll skip past the #{ and begin lexing the embedded
       // expression.
-      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR, .as.embexpr.state = parser->lex_state });
+      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
       parser->current.end = pound + 2;
       parser->command_start = true;
       yp_state_stack_push(&parser->do_loop_stack, false);
@@ -5190,18 +5190,16 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
         case YP_TOKEN_STRING_CONTENT: {
           parser_lex(parser);
 
-          yp_token_t opening = not_provided(parser);;
-          yp_token_t closing = not_provided(parser);;
+          yp_token_t opening = not_provided(parser);
+          yp_token_t closing = not_provided(parser);
           yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
 
           yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, part);
           break;
         }
         case YP_TOKEN_EMBEXPR_BEGIN: {
+          yp_lex_state_t state = parser->lex_state;
           lex_state_set(parser, YP_LEX_STATE_BEG);
-
-          assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
-          yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
           parser_lex(parser);
 
           yp_token_t opening = parser->previous;
@@ -5346,12 +5344,10 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
+      yp_lex_state_t state = parser->lex_state;
       lex_state_set(parser, YP_LEX_STATE_BEG);
-
-      assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
-      yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
-
       parser_lex(parser);
+
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
 
@@ -6543,12 +6539,10 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
               break;
             }
             case YP_TOKEN_EMBEXPR_BEGIN: {
+              yp_lex_state_t state = parser->lex_state;
               lex_state_set(parser, YP_LEX_STATE_BEG);
-
-              assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
-              yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
-
               parser_lex(parser);
+
               yp_token_t embexpr_opening = parser->previous;
               yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
 
@@ -6649,10 +6643,8 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
+            yp_lex_state_t state = parser->lex_state;
             lex_state_set(parser, YP_LEX_STATE_BEG);
-
-            assert(parser->lex_modes.current->mode == YP_LEX_EMBEXPR);
-            yp_lex_state_t state = parser->lex_modes.current->as.embexpr.state;
             parser_lex(parser);
 
             if (current == NULL) {
