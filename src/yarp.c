@@ -5790,23 +5790,17 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
                   first_iteration = false;
                   int trimmed_whitespace = min_whitespace;
 
-                  while (trimmed_whitespace > 0 &&
-                      cur_char[0] != '\n' &&
-                      cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
-                    if (cur_char[0] == '\t') {
-                      if (trimmed_whitespace < YP_TAB_WHITESPACE_SIZE) {
-                        break;
-                      }
-
-                      cur_char += 1;
-                      new_size -= 1;
+                  while (trimmed_whitespace > 0 && cur_char[0] != '\n' && cur_char < (node_str->as.owned.source + node_str->as.owned.length)) {
+                    if (*cur_char == '\t') {
+                      if (trimmed_whitespace < YP_TAB_WHITESPACE_SIZE) break;
                       trimmed_whitespace -= YP_TAB_WHITESPACE_SIZE;
                     }
                     else {
-                      cur_char += min_whitespace;
-                      new_size -= min_whitespace;
-                      trimmed_whitespace -= min_whitespace;
+                      trimmed_whitespace--;
                     }
+
+                    cur_char++;
+                    new_size--;
                   }
                 }
               }
