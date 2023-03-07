@@ -4,6 +4,8 @@
 #define YP_STRINGIZE(expr) YP_STRINGIZE0(expr)
 #define YP_VERSION_MACRO YP_STRINGIZE(YP_VERSION_MAJOR) "." YP_STRINGIZE(YP_VERSION_MINOR) "." YP_STRINGIZE(YP_VERSION_PATCH)
 
+#define YP_TAB_WHITESPACE_SIZE 8
+
 char* yp_version(void) {
   return YP_VERSION_MACRO;
 }
@@ -5722,10 +5724,15 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
               cur_whitespace = 0;
 
-              while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
-                cur_char++;
-                cur_whitespace++;
-              }
+	      while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
+		if (cur_char[0] == '\t') {
+		  cur_whitespace += YP_TAB_WHITESPACE_SIZE;
+		}
+		else {
+		  cur_whitespace++;
+		}
+		cur_char++;
+	      }
 
               if (cur_whitespace < min_whitespace || min_whitespace == -1) {
                 min_whitespace = cur_whitespace;
@@ -5742,7 +5749,6 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
         if (min_whitespace > 0) {
           node->as.heredoc_node.dedent = min_whitespace;
-          const char *left_bound = node->as.heredoc_node.opening.start;
 
           // Iterate over all nodes, and trim whitespace accordingly
           for (int i = 0; i < node_list->size; i++) {
@@ -5764,32 +5770,48 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
                   const char *cur_char = node_str->as.owned.source;
                   size_t new_size = node_str->as.owned.length;
 
-                  // Account for whitespace on the first line
-                  if (i == 0) {
-                    cur_char += min_whitespace;
-                    new_size -= min_whitespace;
-                  }
-
                   // Construct a new string, with which we'll replace the existing string
                   char new_str[node_str->as.owned.length];
                   int new_str_index = 0;
 
+		  bool first_iteration = (i == 0);
+
                   while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
-                    new_str[new_str_index] = cur_char[0];
-                    new_str_index++;
-                    cur_char++;
+		    if (!first_iteration) {
+		      new_str[new_str_index] = cur_char[0];
+		      new_str_index++;
+		      cur_char++;
 
-                    if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
-                      break;
-                    }
+		      if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
+			break;
+		      }
+		    }
 
-                    // Skip over the whitespace
-                    if((cur_char == left_bound || cur_char[-1] == '\n') && cur_char[0] != '\n' &&
-                        cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
-                      cur_char += min_whitespace;
-                      new_size -= min_whitespace;
-                    }
-                  }
+		    // Skip over the whitespace
+		    if (first_iteration || cur_char[-1] == '\n') {
+		      first_iteration = false;
+		      int trimmed_whitespace = min_whitespace;
+
+		      while (trimmed_whitespace > 0 &&
+			  cur_char[0] != '\n' &&
+			  cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
+			if (cur_char[0] == '\t') {
+			  if (trimmed_whitespace < YP_TAB_WHITESPACE_SIZE) {
+			    break;
+			  }
+
+			  cur_char += 1;
+			  new_size -= 1;
+			  trimmed_whitespace -= YP_TAB_WHITESPACE_SIZE;
+			}
+			else {
+			  cur_char += min_whitespace;
+			  new_size -= min_whitespace;
+			  trimmed_whitespace -= min_whitespace;
+			}
+		      }
+		    }
+		  }
 
                   // Copy over the new string
                   memcpy(node_str->as.owned.source, new_str, new_size);
