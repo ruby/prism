@@ -197,6 +197,17 @@ module YARP
     def ==(other)
       if event == :on_comment
         location == other.location && event == other.event && value == other.value
+      elsif event == :on_ident
+        left, right = [self[3], other[3]].map(&:to_i).sort
+
+        # In the event that we're comparing identifiers, we're going to allow a
+        # little divergence. Ripper doesn't account for local variables
+        # introduced through named captures in regexes.
+        if [Ripper::EXPR_ARG, Ripper::EXPR_CMDARG].include?(left) && right == Ripper::EXPR_END | Ripper::EXPR_LABEL
+          self[0...-1] == other[0...-1]
+        else
+          super
+        end
       else
         super
       end
