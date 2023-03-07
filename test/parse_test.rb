@@ -6955,7 +6955,7 @@ class ParseTest < Test::Unit::TestCase
     YARP.remove_tilde_heredocs(YARP.lex_ripper(source)).zip(
       YARP.remove_tilde_heredocs(tokens)
     ).each do |(ripper, yarp)|
-      assert_equal ripper[0...-1], yarp[0...-1]
+      assert_equal ripper, yarp
     end
   end
 

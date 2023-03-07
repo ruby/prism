@@ -15,9 +15,9 @@ source = File.read(filepath)
 ripper = YARP.remove_tilde_heredocs(YARP.lex_ripper(source))
 yarp = YARP.remove_tilde_heredocs(YARP.lex_compat(source).value)
 
-[yarp.length, ripper.length].max.times do |i|
-  left = ripper[i]
-  right = yarp[i]
+[yarp.length, ripper.length].max.times do |index|
+  left = ripper[index]
+  right = yarp[index]
 
   color = left == right ? "38;5;102" : "1;31"
   puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect]
