@@ -3148,6 +3148,7 @@ lex_token_type(yp_parser_t *parser) {
                 };
 
                 lex_mode_push(parser, lex_mode);
+                lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
                 return YP_TOKEN_SYMBOL_BEGIN;
               }
               case 'w': {
