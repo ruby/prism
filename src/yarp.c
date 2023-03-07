@@ -5877,9 +5877,20 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_t *when_node = yp_node_when_node_create(parser, &when_keyword, NULL);
 
         do {
-          yp_node_t *condition = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after when keyword.");
-          yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, condition);
-          if (condition->type == YP_NODE_MISSING_NODE) break;
+          if (accept(parser, YP_TOKEN_STAR)) {
+            yp_token_t operator = parser->previous;
+            yp_node_t *expression = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after `*' operator.");
+
+            yp_node_t *star_node = yp_node_star_node_create(parser, &operator, expression);
+            yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, star_node);
+
+            if (expression->type == YP_NODE_MISSING_NODE) break;
+          } else {
+            yp_node_t *condition = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after when keyword.");
+            yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, condition);
+
+            if (condition->type == YP_NODE_MISSING_NODE) break;
+          }
         } while (accept(parser, YP_TOKEN_COMMA));
 
         expect_any(parser, "Expected a delimiter after the predicates of a `when` clause.", 3, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE, YP_TOKEN_KEYWORD_THEN);
