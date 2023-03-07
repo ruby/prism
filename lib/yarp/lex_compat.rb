@@ -244,6 +244,8 @@ module YARP
       # some extra manipulation on the tokens to make them match Ripper's
       # output by mirroring the dedent logic that Ripper uses.
       class DedentingHeredoc
+        TAB_WIDTH = 8
+
         attr_reader :state, :tokens, :dedent_next, :dedent
 
         def initialize(state)
@@ -260,7 +262,8 @@ module YARP
         def <<(token)
           if dedent_next && token.event == :on_tstring_content && token.value.start_with?(/\s/)
             token.value.split("\n").each do |line|
-              @dedent = [dedent, line[/\A\s*/].length].compact.min
+              leading = line[/\A\s*/]
+              @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
             end
           end
 
@@ -281,7 +284,6 @@ module YARP
           # each line of plain string content tokens.
           results = []
           dedent_next = true
-          dedent_value = " " * dedent
 
           tokens.each do |token|
             # Notice that the structure of this conditional largely matches the
@@ -301,9 +303,26 @@ module YARP
                 # on_ignored_sp token and remove the dedent from the beginning
                 # of the line.
                 if dedent_next || index > 0
-                  line.delete_prefix!(dedent_value)
-                  results << Token.new([[lineno, 0], :on_ignored_sp, dedent_value, token[3]])
-                  column += dedent
+                  deleting = 0
+                  deleted_chars = []
+
+                  # Gather up all of the characters that we're going to delete,
+                  # stopping when you hit a character that would put you over
+                  # the dedent amount.
+                  line.each_char do |char|
+                    break if (deleting += char == "\t" ? TAB_WIDTH : 1) > dedent
+                    deleted_chars << char
+                  end
+
+                  # If we have something to delete, then delete it from the
+                  # string and insert an on_ignored_sp token.
+                  if deleted_chars.any?
+                    ignored = deleted_chars.join
+                    line.delete_prefix!(ignored)
+
+                    results << Token.new([[lineno, 0], :on_ignored_sp, ignored, token[3]])
+                    column += ignored.length
+                  end
                 end
 
                 results << Token.new([[lineno, column], token[1], line, token[3]]) unless line.empty?

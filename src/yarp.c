@@ -5724,15 +5724,15 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
 
               cur_whitespace = 0;
 
-	      while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
-		if (cur_char[0] == '\t') {
-		  cur_whitespace += YP_TAB_WHITESPACE_SIZE;
-		}
-		else {
-		  cur_whitespace++;
-		}
-		cur_char++;
-	      }
+              while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
+                if (cur_char[0] == '\t') {
+                  cur_whitespace += YP_TAB_WHITESPACE_SIZE;
+                }
+                else {
+                  cur_whitespace++;
+                }
+                cur_char++;
+              }
 
               if (cur_whitespace < min_whitespace || min_whitespace == -1) {
                 min_whitespace = cur_whitespace;
@@ -5754,76 +5754,66 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
           for (int i = 0; i < node_list->size; i++) {
             yp_node_t *node = node_list->nodes[i];
 
-            switch (node->type) {
-              case YP_NODE_STRING_NODE:
-                {
-                  yp_string_t *node_str = &node->as.string_node.unescaped;
+            if (node->type == YP_NODE_STRING_NODE) {
+              yp_string_t *node_str = &node->as.string_node.unescaped;
 
-                  // We convert all strings to be "owned" to make it simpler to manipulate memory
-                  if (node_str->type != YP_STRING_OWNED) {
-                    size_t length = yp_string_length(node_str);
-                    const char *original = yp_string_source(node_str);
-                    yp_string_owned_init(node_str, malloc(length), length);
-                    memcpy(node_str->as.owned.source, original, length);
+              // We convert all strings to be "owned" to make it simpler to manipulate memory
+              if (node_str->type != YP_STRING_OWNED) {
+                size_t length = yp_string_length(node_str);
+                const char *original = yp_string_source(node_str);
+                yp_string_owned_init(node_str, malloc(length), length);
+                memcpy(node_str->as.owned.source, original, length);
+              }
+
+              const char *cur_char = node_str->as.owned.source;
+              size_t new_size = node_str->as.owned.length;
+
+              // Construct a new string, with which we'll replace the existing string
+              char new_str[node_str->as.owned.length];
+              int new_str_index = 0;
+
+              bool first_iteration = (i == 0);
+
+              while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
+                if (!first_iteration) {
+                  new_str[new_str_index] = cur_char[0];
+                  new_str_index++;
+                  cur_char++;
+
+                  if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
+                    break;
                   }
-
-                  const char *cur_char = node_str->as.owned.source;
-                  size_t new_size = node_str->as.owned.length;
-
-                  // Construct a new string, with which we'll replace the existing string
-                  char new_str[node_str->as.owned.length];
-                  int new_str_index = 0;
-
-		  bool first_iteration = (i == 0);
-
-                  while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
-		    if (!first_iteration) {
-		      new_str[new_str_index] = cur_char[0];
-		      new_str_index++;
-		      cur_char++;
-
-		      if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
-			break;
-		      }
-		    }
-
-		    // Skip over the whitespace
-		    if (first_iteration || cur_char[-1] == '\n') {
-		      first_iteration = false;
-		      int trimmed_whitespace = min_whitespace;
-
-		      while (trimmed_whitespace > 0 &&
-			  cur_char[0] != '\n' &&
-			  cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
-			if (cur_char[0] == '\t') {
-			  if (trimmed_whitespace < YP_TAB_WHITESPACE_SIZE) {
-			    break;
-			  }
-
-			  cur_char += 1;
-			  new_size -= 1;
-			  trimmed_whitespace -= YP_TAB_WHITESPACE_SIZE;
-			}
-			else {
-			  cur_char += min_whitespace;
-			  new_size -= min_whitespace;
-			  trimmed_whitespace -= min_whitespace;
-			}
-		      }
-		    }
-		  }
-
-                  // Copy over the new string
-                  memcpy(node_str->as.owned.source, new_str, new_size);
-                  node_str->as.owned.length = new_size;
                 }
-              case YP_NODE_INTERPOLATED_STRING_NODE:
-                {
-                  break;
+
+                // Skip over the whitespace
+                if (first_iteration || cur_char[-1] == '\n') {
+                  first_iteration = false;
+                  int trimmed_whitespace = min_whitespace;
+
+                  while (trimmed_whitespace > 0 &&
+                      cur_char[0] != '\n' &&
+                      cur_char != (node_str->as.owned.source + node_str->as.owned.length)) {
+                    if (cur_char[0] == '\t') {
+                      if (trimmed_whitespace < YP_TAB_WHITESPACE_SIZE) {
+                        break;
+                      }
+
+                      cur_char += 1;
+                      new_size -= 1;
+                      trimmed_whitespace -= YP_TAB_WHITESPACE_SIZE;
+                    }
+                    else {
+                      cur_char += min_whitespace;
+                      new_size -= min_whitespace;
+                      trimmed_whitespace -= min_whitespace;
+                    }
+                  }
                 }
-              default:
-                // Unexpected
-                break;
+              }
+
+              // Copy over the new string
+              memcpy(node_str->as.owned.source, new_str, new_size);
+              node_str->as.owned.length = new_size;
             }
           }
         }
