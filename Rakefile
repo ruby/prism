@@ -104,7 +104,7 @@ task lex: :compile do
     source = File.read(filepath)
 
     begin
-      Timeout.timeout(5) do
+      Timeout.timeout(1) do
         lexed = YARP.lex_compat(source)
 
         if lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
