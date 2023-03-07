@@ -100,11 +100,6 @@ typedef struct yp_lex_mode {
 
   union {
     struct {
-      // The state of the parser before the embedded expression was lexed.
-      yp_lex_state_t state;
-    } embexpr;
-
-    struct {
       // When lexing a list, it takes into account balancing the terminator if
       // the terminator is one of (), [], {}, or <>.
       char incrementor;
