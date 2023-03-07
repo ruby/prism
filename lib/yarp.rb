@@ -502,15 +502,13 @@ module YARP
 
     private
 
-    def location_for(start_offset)
-      line_number, line_offset =
-        offsets.each_with_index.detect do |(offset, line)|
-          break [line, offsets[line - 1]] if start_offset < offset
-        end
+    def location_for(value)
+      line_number = offsets.bsearch_index { |offset| offset > value }
+      line_offset = offsets[line_number - 1] if line_number
 
       [
         line_number || offsets.length - 1,
-        start_offset - (line_offset || offsets.last)
+        value - (line_offset || offsets.last)
       ]
     end
 
