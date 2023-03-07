@@ -5145,6 +5145,90 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: \
   case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UPLUS
 
+// Parse a node that is part of a string. If the subsequent tokens cannot be
+// parsed as a string part, then NULL is returned.
+static yp_node_t *
+parse_string_part(yp_parser_t *parser) {
+  switch (parser->current.type) {
+    // Here the lexer has returned to us plain string content. In this case
+    // we'll create a string node that has no opening or closing and return that
+    // as the part. These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //      ^^^^      ^     ^^^^
+    case YP_TOKEN_STRING_CONTENT: {
+      parser_lex(parser);
+
+      yp_token_t opening = not_provided(parser);
+      yp_token_t closing = not_provided(parser);
+
+      return yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+    }
+    // Here the lexer has returned the beginning of an embedded expression. In
+    // that case we'll parse the inner statements and return that as the part.
+    // These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //          ^^^^^^
+    case YP_TOKEN_EMBEXPR_BEGIN: {
+      yp_lex_state_t state = parser->lex_state;
+      lex_state_set(parser, YP_LEX_STATE_BEG);
+      parser_lex(parser);
+
+      yp_token_t opening = parser->previous;
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+
+      lex_state_set(parser, state);
+      expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
+      yp_token_t closing = parser->previous;
+
+      return yp_node_string_interpolated_node_create(parser, &opening, statements, &closing);
+    }
+    // Here the lexer has returned the beginning of an embedded variable. In
+    // that case we'll parse the variable and create an appropriate node for it
+    // and then return that node. These kinds of parts look like:
+    //
+    //     "aaa #{bbb} #@ccc ddd"
+    //                 ^^^^^
+    case YP_TOKEN_EMBVAR: {
+      parser_lex(parser);
+
+      switch (parser->current.type) {
+        // In this case a global variable is being interpolated. We'll create
+        // a global variable read node.
+        case YP_TOKEN_BACK_REFERENCE:
+        case YP_TOKEN_GLOBAL_VARIABLE:
+        case YP_TOKEN_NTH_REFERENCE:
+          parser_lex(parser);
+          return yp_node_global_variable_read_create(parser, &parser->previous);
+        // In this case an instance variable is being interpolated. We'll
+        // create an instance variable read node.
+        case YP_TOKEN_INSTANCE_VARIABLE:
+          parser_lex(parser);
+          return yp_instance_variable_read_node_create(parser, &parser->previous);
+        // In this case a class variable is being interpolated. We'll create a
+        // class variable read node.
+        case YP_TOKEN_CLASS_VARIABLE:
+          parser_lex(parser);
+          return yp_class_variable_read_node_create(parser, &parser->previous);
+        // We can hit here if we got an invalid token. In that case we'll not
+        // attempt to lex this token and instead just return a missing node.
+        default:
+          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a valid embedded variable.");
+
+          return yp_node_missing_node_create(parser, &(yp_location_t) {
+            .start = parser->current.start,
+            .end = parser->current.end
+          });
+      }
+    }
+    default:
+      parser_lex(parser);
+      yp_diagnostic_list_append(&parser->error_list, "Could not understand string part", parser->previous.start - parser->start);
+      return NULL;
+  }
+}
+
 static yp_node_t *
 parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_state) {
   yp_token_t opening = parser->previous;
@@ -5189,35 +5273,9 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
     yp_node_t *interpolated = yp_node_interpolated_symbol_node_create(parser, &opening, &opening);
 
     while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
-      switch (parser->current.type) {
-        case YP_TOKEN_STRING_CONTENT: {
-          parser_lex(parser);
-
-          yp_token_t opening = not_provided(parser);
-          yp_token_t closing = not_provided(parser);
-          yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-
-          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, part);
-          break;
-        }
-        case YP_TOKEN_EMBEXPR_BEGIN: {
-          yp_lex_state_t state = parser->lex_state;
-          lex_state_set(parser, YP_LEX_STATE_BEG);
-          parser_lex(parser);
-
-          yp_token_t opening = parser->previous;
-          yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-
-          lex_state_set(parser, state);
-          expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-
-          yp_node_t *part = yp_node_string_interpolated_node_create(parser, &opening, statements, &parser->previous);
-          yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, part);
-          break;
-        }
-        default:
-          fprintf(stderr, "Could not understand token type %s in an interpolated symbol\n", yp_token_type_to_str(parser->previous.type));
-          return NULL;
+      yp_node_t *part = parse_string_part(parser);
+      if (part != NULL) {
+        yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, part);
       }
     }
 
@@ -5318,90 +5376,6 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
         .start = parser->current.start,
         .end = parser->current.end
       });
-  }
-}
-
-// Parse a node that is part of a string. If the subsequent tokens cannot be
-// parsed as a string part, then NULL is returned.
-static yp_node_t *
-parse_string_part(yp_parser_t *parser) {
-  switch (parser->current.type) {
-    // Here the lexer has returned to us plain string content. In this case
-    // we'll create a string node that has no opening or closing and return that
-    // as the part. These kinds of parts look like:
-    //
-    //     "aaa #{bbb} #@ccc ddd"
-    //      ^^^^      ^     ^^^^
-    case YP_TOKEN_STRING_CONTENT: {
-      parser_lex(parser);
-
-      yp_token_t opening = not_provided(parser);
-      yp_token_t closing = not_provided(parser);
-
-      return yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-    }
-    // Here the lexer has returned the beginning of an embedded expression. In
-    // that case we'll parse the inner statements and return that as the part.
-    // These kinds of parts look like:
-    //
-    //     "aaa #{bbb} #@ccc ddd"
-    //          ^^^^^^
-    case YP_TOKEN_EMBEXPR_BEGIN: {
-      yp_lex_state_t state = parser->lex_state;
-      lex_state_set(parser, YP_LEX_STATE_BEG);
-      parser_lex(parser);
-
-      yp_token_t opening = parser->previous;
-      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-
-      lex_state_set(parser, state);
-      expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-      yp_token_t closing = parser->previous;
-
-      return yp_node_string_interpolated_node_create(parser, &opening, statements, &closing);
-    }
-    // Here the lexer has returned the beginning of an embedded variable. In
-    // that case we'll parse the variable and create an appropriate node for it
-    // and then return that node. These kinds of parts look like:
-    //
-    //     "aaa #{bbb} #@ccc ddd"
-    //                 ^^^^^
-    case YP_TOKEN_EMBVAR: {
-      parser_lex(parser);
-
-      switch (parser->current.type) {
-        // In this case a global variable is being interpolated. We'll create
-        // a global variable read node.
-        case YP_TOKEN_BACK_REFERENCE:
-        case YP_TOKEN_GLOBAL_VARIABLE:
-        case YP_TOKEN_NTH_REFERENCE:
-          parser_lex(parser);
-          return yp_node_global_variable_read_create(parser, &parser->previous);
-        // In this case an instance variable is being interpolated. We'll
-        // create an instance variable read node.
-        case YP_TOKEN_INSTANCE_VARIABLE:
-          parser_lex(parser);
-          return yp_instance_variable_read_node_create(parser, &parser->previous);
-        // In this case a class variable is being interpolated. We'll create a
-        // class variable read node.
-        case YP_TOKEN_CLASS_VARIABLE:
-          parser_lex(parser);
-          return yp_class_variable_read_node_create(parser, &parser->previous);
-        // We can hit here if we got an invalid token. In that case we'll not
-        // attempt to lex this token and instead just return a missing node.
-        default:
-          expect(parser, YP_TOKEN_IDENTIFIER, "Expected a valid embedded variable.");
-
-          return yp_node_missing_node_create(parser, &(yp_location_t) {
-            .start = parser->current.start,
-            .end = parser->current.end
-          });
-      }
-    }
-    default:
-      parser_lex(parser);
-      yp_diagnostic_list_append(&parser->error_list, "Could not understand string part", parser->previous.start - parser->start);
-      return NULL;
   }
 }
 
