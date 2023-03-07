@@ -796,7 +796,7 @@ nodes:
       - name: case_keyword
         type: token
       - name: predicate
-        type: node
+        type: node?
       - name: conditions
         type: node[]
       - name: consequent
@@ -805,10 +805,11 @@ nodes:
         type: token
     location: case_keyword->end_keyword
     comment: |
-      Represents the case node
+      Represents the use of a case statement.
 
       case true
       ^^^^^^^^^
+      when false
       end
   - name: WhenNode
     child_nodes:

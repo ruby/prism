@@ -4131,6 +4131,7 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_KEYWORD_DO:
     case YP_TOKEN_KEYWORD_END:
     case YP_TOKEN_KEYWORD_IN:
+    case YP_TOKEN_KEYWORD_THEN:
     case YP_TOKEN_NEWLINE:
     case YP_TOKEN_PARENTHESIS_RIGHT:
     case YP_TOKEN_SEMICOLON:
@@ -5867,14 +5868,20 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_CASE: {
       parser_lex(parser);
       yp_token_t case_keyword = parser->previous;
-      yp_node_t *predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
-      yp_token_t temp_token = not_provided(parser);
+      yp_node_t *predicate;
 
-      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      if (accept(parser, YP_TOKEN_SEMICOLON) || match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_END)) {
+        predicate = NULL;
+      } else {
+        predicate = parse_expression(parser, BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
+        expect_any(parser, "Expected a delimiter after the predicate in a case statement.", 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      }
+
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {
         return yp_node_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous);
       }
 
+      yp_token_t temp_token = not_provided(parser);
       yp_node_t *case_node = yp_node_case_node_create(parser, &case_keyword, predicate, NULL, &temp_token);
 
       while (accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
@@ -5882,15 +5889,12 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         yp_node_t *when_node = yp_node_when_node_create(parser, &when_keyword, NULL);
 
         do {
-          if (when_node->as.when_node.conditions.size != 0) {
-            expect(parser, YP_TOKEN_COMMA, "Expected Comma between when conditions.");
-          }
-
           yp_node_t *condition = parse_expression(parser, BINDING_POWER_DEFINED, "Expected a value after when keyword.");
           yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, condition);
-
           if (condition->type == YP_NODE_MISSING_NODE) break;
-        } while (!accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_KEYWORD_THEN));
+        } while (accept(parser, YP_TOKEN_COMMA));
+
+        expect_any(parser, "Expected a delimiter after the predicates of a `when` clause.", 3, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE, YP_TOKEN_KEYWORD_THEN);
 
         if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
           when_node->as.when_node.statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
