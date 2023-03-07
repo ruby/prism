@@ -17,8 +17,9 @@ debug_context(yp_context_t context) {
   switch (context) {
     case YP_CONTEXT_BEGIN: return "BEGIN";
     case YP_CONTEXT_CLASS: return "CLASS";
-    case YP_CONTEXT_CASE_WHEN: return "CASE WHEN";
+    case YP_CONTEXT_CASE_WHEN: return "CASE_WHEN";
     case YP_CONTEXT_DEF: return "DEF";
+    case YP_CONTEXT_DEF_PARAMS: return "DEF_PARAMS";
     case YP_CONTEXT_ENSURE: return "ENSURE";
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
@@ -34,7 +35,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_PREDICATE: return "PREDICATE";
     case YP_CONTEXT_PREEXE: return "PREEXE";
     case YP_CONTEXT_RESCUE: return "RESCUE";
-    case YP_CONTEXT_RESCUE_ELSE: return "RESCUE ELSE";
+    case YP_CONTEXT_RESCUE_ELSE: return "RESCUE_ELSE";
     case YP_CONTEXT_SCLASS: return "SCLASS";
     case YP_CONTEXT_UNLESS: return "UNLESS";
     case YP_CONTEXT_UNTIL: return "UNTIL";
@@ -1485,6 +1486,108 @@ terminator(const char start) {
 }
 
 /******************************************************************************/
+/* Context manipulations                                                      */
+/******************************************************************************/
+
+static bool
+context_terminator(yp_context_t context, yp_token_t *token) {
+  switch (context) {
+    case YP_CONTEXT_MAIN:
+    case YP_CONTEXT_DEF_PARAMS:
+      return token->type == YP_TOKEN_EOF;
+    case YP_CONTEXT_PREEXE:
+    case YP_CONTEXT_POSTEXE:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
+    case YP_CONTEXT_MODULE:
+    case YP_CONTEXT_CLASS:
+    case YP_CONTEXT_SCLASS:
+    case YP_CONTEXT_LAMBDA_DO_END:
+    case YP_CONTEXT_DEF:
+    case YP_CONTEXT_BLOCK_KEYWORDS:
+      return token->type == YP_TOKEN_KEYWORD_END || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ENSURE;
+    case YP_CONTEXT_WHILE:
+    case YP_CONTEXT_UNTIL:
+    case YP_CONTEXT_ELSE:
+    case YP_CONTEXT_FOR:
+    case YP_CONTEXT_ENSURE:
+      return token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_CASE_WHEN:
+      return token->type == YP_TOKEN_KEYWORD_WHEN || token->type == YP_TOKEN_KEYWORD_END || token->type == YP_TOKEN_KEYWORD_ELSE;
+    case YP_CONTEXT_IF:
+    case YP_CONTEXT_ELSIF:
+      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_UNLESS:
+      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_EMBEXPR:
+      return token->type == YP_TOKEN_EMBEXPR_END;
+    case YP_CONTEXT_BLOCK_BRACES:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
+    case YP_CONTEXT_PARENS:
+      return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
+    case YP_CONTEXT_BEGIN:
+    case YP_CONTEXT_RESCUE:
+      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_RESCUE_ELSE:
+      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
+    case YP_CONTEXT_LAMBDA_BRACES:
+      return token->type == YP_TOKEN_BRACE_RIGHT;
+    case YP_CONTEXT_PREDICATE:
+      return token->type == YP_TOKEN_KEYWORD_THEN || token->type == YP_TOKEN_NEWLINE || token->type == YP_TOKEN_SEMICOLON;
+  }
+
+  return false;
+}
+
+static bool
+context_recoverable(yp_parser_t *parser, yp_token_t *token) {
+  yp_context_node_t *context_node = parser->current_context;
+
+  while (context_node != NULL) {
+    if (context_terminator(context_node->context, token)) return true;
+    context_node = context_node->prev;
+  }
+
+  return false;
+}
+
+static void
+context_push(yp_parser_t *parser, yp_context_t context) {
+  yp_context_node_t *context_node = (yp_context_node_t *) malloc(sizeof(yp_context_node_t));
+  *context_node = (yp_context_node_t) { .context = context, .prev = NULL };
+
+  if (parser->current_context == NULL) {
+    parser->current_context = context_node;
+  } else {
+    context_node->prev = parser->current_context;
+    parser->current_context = context_node;
+  }
+}
+
+static void
+context_pop(yp_parser_t *parser) {
+  if (parser->current_context->prev == NULL) {
+    free(parser->current_context);
+    parser->current_context = NULL;
+  } else {
+    yp_context_node_t *prev = parser->current_context->prev;
+    free(parser->current_context);
+    parser->current_context = prev;
+  }
+}
+
+static bool
+context_p(yp_parser_t *parser, yp_context_t context) {
+  yp_context_node_t *context_node = parser->current_context;
+
+  while (context_node != NULL) {
+    if (context_node->context == context) return true;
+    context_node = context_node->prev;
+  }
+
+  return false;
+}
+
+/******************************************************************************/
 /* Lex mode manipulations                                                     */
 /******************************************************************************/
 
@@ -2844,8 +2947,13 @@ lex_token_type(yp_parser_t *parser) {
         // . .. ...
         case '.':
           if (match(parser, '.')) {
+            if (match(parser, '.')) {
+              lex_state_set(parser, context_p(parser, YP_CONTEXT_DEF_PARAMS) ? YP_LEX_STATE_ENDARG : YP_LEX_STATE_BEG);
+              return YP_TOKEN_DOT_DOT_DOT;
+            }
+
             lex_state_set(parser, YP_LEX_STATE_BEG);
-            return match(parser, '.') ? YP_TOKEN_DOT_DOT_DOT : YP_TOKEN_DOT_DOT;
+            return YP_TOKEN_DOT_DOT;
           }
 
           lex_state_set(parser, YP_LEX_STATE_DOT);
@@ -3768,103 +3876,6 @@ parser_lex(yp_parser_t *parser) {
         return;
     }
   }
-}
-
-static bool
-context_terminator(yp_context_t context, yp_token_t *token) {
-  switch (context) {
-    case YP_CONTEXT_MAIN:
-      return token->type == YP_TOKEN_EOF;
-    case YP_CONTEXT_PREEXE:
-    case YP_CONTEXT_POSTEXE:
-      return token->type == YP_TOKEN_BRACE_RIGHT;
-    case YP_CONTEXT_MODULE:
-    case YP_CONTEXT_CLASS:
-    case YP_CONTEXT_SCLASS:
-    case YP_CONTEXT_LAMBDA_DO_END:
-    case YP_CONTEXT_DEF:
-    case YP_CONTEXT_BLOCK_KEYWORDS:
-      return token->type == YP_TOKEN_KEYWORD_END || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ENSURE;
-    case YP_CONTEXT_WHILE:
-    case YP_CONTEXT_UNTIL:
-    case YP_CONTEXT_ELSE:
-    case YP_CONTEXT_FOR:
-    case YP_CONTEXT_ENSURE:
-      return token->type == YP_TOKEN_KEYWORD_END;
-    case YP_CONTEXT_CASE_WHEN:
-      return token->type == YP_TOKEN_KEYWORD_WHEN || token->type == YP_TOKEN_KEYWORD_END || token->type == YP_TOKEN_KEYWORD_ELSE;
-    case YP_CONTEXT_IF:
-    case YP_CONTEXT_ELSIF:
-      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_ELSIF || token->type == YP_TOKEN_KEYWORD_END;
-    case YP_CONTEXT_UNLESS:
-      return token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
-    case YP_CONTEXT_EMBEXPR:
-      return token->type == YP_TOKEN_EMBEXPR_END;
-    case YP_CONTEXT_BLOCK_BRACES:
-      return token->type == YP_TOKEN_BRACE_RIGHT;
-    case YP_CONTEXT_PARENS:
-      return token->type == YP_TOKEN_PARENTHESIS_RIGHT;
-    case YP_CONTEXT_BEGIN:
-    case YP_CONTEXT_RESCUE:
-      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_RESCUE || token->type == YP_TOKEN_KEYWORD_ELSE || token->type == YP_TOKEN_KEYWORD_END;
-    case YP_CONTEXT_RESCUE_ELSE:
-      return token->type == YP_TOKEN_KEYWORD_ENSURE || token->type == YP_TOKEN_KEYWORD_END;
-    case YP_CONTEXT_LAMBDA_BRACES:
-      return token->type == YP_TOKEN_BRACE_RIGHT;
-    case YP_CONTEXT_PREDICATE:
-      return token->type == YP_TOKEN_KEYWORD_THEN || token->type == YP_TOKEN_NEWLINE || token->type == YP_TOKEN_SEMICOLON;
-  }
-
-  return false;
-}
-
-static bool
-context_recoverable(yp_parser_t *parser, yp_token_t *token) {
-  yp_context_node_t *context_node = parser->current_context;
-
-  while (context_node != NULL) {
-    if (context_terminator(context_node->context, token)) return true;
-    context_node = context_node->prev;
-  }
-
-  return false;
-}
-
-static void
-context_push(yp_parser_t *parser, yp_context_t context) {
-  yp_context_node_t *context_node = (yp_context_node_t *) malloc(sizeof(yp_context_node_t));
-  *context_node = (yp_context_node_t) { .context = context, .prev = NULL };
-
-  if (parser->current_context == NULL) {
-    parser->current_context = context_node;
-  } else {
-    context_node->prev = parser->current_context;
-    parser->current_context = context_node;
-  }
-}
-
-static void
-context_pop(yp_parser_t *parser) {
-  if (parser->current_context->prev == NULL) {
-    free(parser->current_context);
-    parser->current_context = NULL;
-  } else {
-    yp_context_node_t *prev = parser->current_context->prev;
-    free(parser->current_context);
-    parser->current_context = prev;
-  }
-}
-
-static bool
-context_p(yp_parser_t *parser, yp_context_t context) {
-  yp_context_node_t *context_node = parser->current_context;
-
-  while (context_node != NULL) {
-    if (context_node->context == context) return true;
-    context_node = context_node->prev;
-  }
-
-  return false;
 }
 
 // These are the various precedence rules. Because we are using a Pratt parser,
@@ -6072,6 +6083,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t operator = not_provided(parser);
       yp_token_t name = not_provided(parser);
 
+      context_push(parser, YP_CONTEXT_DEF_PARAMS);
       parser_lex(parser);
 
       switch (parser->current.type) {
@@ -6234,6 +6246,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       }
 
+      context_pop(parser);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_DEF);
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
