@@ -6996,9 +6996,7 @@ class ParseTest < Test::Unit::TestCase
     assert_serializes expected, source
 
     YARP.lex_compat(source) => { errors: [], warnings: [], value: tokens }
-    YARP.remove_tilde_heredocs(YARP.lex_ripper(source)).zip(
-      YARP.remove_tilde_heredocs(tokens)
-    ).each do |(ripper, yarp)|
+    YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
       assert_equal ripper, yarp
     end
   end

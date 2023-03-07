@@ -86,12 +86,6 @@ task lex: :compile do
   failing = 0
 
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
-
-  pass_filepath = ->(filepath) {
-    print colorize.call(32, ".")
-    passing += 1
-  }
-
   fail_filepath = ->(filepath) {
     warn(filepath) if ENV["VERBOSE"]
     print colorize.call(31, "E")
@@ -112,10 +106,10 @@ task lex: :compile do
     begin
       Timeout.timeout(5) do
         lexed = YARP.lex_compat(source)
-        value = YARP.remove_tilde_heredocs(lexed.value)
 
-        if lexed.errors.empty? && YARP.remove_tilde_heredocs(YARP.lex_ripper(source)) == value
-          pass_filepath.call(filepath)
+        if lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
+          print colorize.call(32, ".")
+          passing += 1
         else
           fail_filepath.call(filepath)
         end
