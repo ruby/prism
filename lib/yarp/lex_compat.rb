@@ -166,24 +166,24 @@ module YARP
       def location
         self[0]
       end
-  
+
       def event
         self[1]
       end
-  
+
       def value
         self[2]
       end
-  
+
       def state
         self[3]
       end
-  
+
       def state=(val)
         self[3] = val
       end
     end
-  
+
     # Ripper doesn't include the rest of the token in the event, so we need to
     # trim it down to just the content on the first line when comparing.
     class EndContentToken < Token
@@ -191,7 +191,7 @@ module YARP
         [self[0], self[1], self[2][0..self[2].index("\n")], self[3]] == other
       end
     end
-  
+
     # It is extremely non obvious which state the parser is in when comments get
     # dispatched. Because of this we don't both comparing state when comparing
     # against other comment tokens.
@@ -407,7 +407,7 @@ module YARP
             # output the state as the previous state, solely for the sake of
             # comparison.
             previous_token = result_value[index - 1][0]
-            lex_state = 
+            lex_state =
               if RIPPER.fetch(previous_token.type) == :on_embexpr_end
                 # If the previous token is embexpr_end, then we have to do even
                 # more processing. The end of an embedded expression sets the
@@ -459,7 +459,7 @@ module YARP
           tokens << token
 
           case event
-          when :on_nl, :on_ignored_nl
+          when :on_nl, :on_ignored_nl, :on_comment
             heredocs.each do |heredoc|
               tokens.concat(heredoc.to_a)
             end

@@ -2778,6 +2778,19 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "<<-FIRST + <<-SECOND\n  a\nFIRST\n  b\nSECOND\n"
   end
 
+  test "heredocs with comment on the same line" do
+    expected = HeredocNode(
+      HEREDOC_START("<<-EOF"),
+      [
+        StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
+      ],
+      HEREDOC_END("EOF\n"),
+      0
+    )
+
+    assert_parses expected, "<<-EOF #comment\n  a\nEOF\n"
+  end
+
   test "identifier" do
     assert_parses CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"), "a"
   end
