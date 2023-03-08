@@ -3080,15 +3080,15 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "operator and assignment" do
-    assert_parses OperatorAndAssignmentNode(expression("a"), expression("b"), Location()), "a &&= b"
+    assert_parses OperatorAndAssignmentNode(LocalVariableWrite(IDENTIFIER("a"), nil, nil), expression("b"), Location()), "a &&= b"
   end
 
   test "operator or assignment" do
-    assert_parses OperatorOrAssignmentNode(expression("a"), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
+    assert_parses OperatorOrAssignmentNode(LocalVariableWrite(IDENTIFIER("a"), nil, nil), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
   end
 
   test "operator assignment" do
-    assert_parses OperatorAssignmentNode(expression("a"), PLUS_EQUAL("+="), expression("b")), "a += b"
+    assert_parses OperatorAssignmentNode(LocalVariableWrite(IDENTIFIER("a"), nil, nil), PLUS_EQUAL("+="), expression("b")), "a += b"
   end
 
   test "post execution" do
@@ -5305,7 +5305,7 @@ class ParseTest < Test::Unit::TestCase
         ),
         Statements(
           [OperatorAssignmentNode(
-            LocalVariableRead(IDENTIFIER("memo")),
+            LocalVariableWrite(IDENTIFIER("memo"), nil, nil),
             PLUS_EQUAL("+="),
             LocalVariableRead(IDENTIFIER("x"))
           )]

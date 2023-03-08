@@ -662,6 +662,18 @@ yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message) {
   return node;
 }
 
+// Returns whether or not this call node is a "vcall" (a call to a method name
+// without a receiver that could also have been a local variable read).
+static inline bool
+yp_call_node_vcall_p(yp_node_t *node) {
+  return (
+    (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
+    (node->as.call_node.arguments == NULL) &&
+    (node->as.call_node.block == NULL) &&
+    (node->as.call_node.receiver == NULL)
+  );
+}
+
 // Allocate and initialize a new ClassVariableReadNode node.
 static yp_node_t *
 yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -3936,20 +3948,20 @@ binding_powers_t binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_KEYWORD_OR] = LEFT_ASSOCIATIVE(BINDING_POWER_COMPOSITION),
 
   // &&= &= ^= = >>= <<= -= %= |= += /= *= **=
-  [YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_AMPERSAND_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_CARET_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_GREATER_GREATER_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_LESS_LESS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_MINUS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_PERCENT_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_PIPE_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_PIPE_PIPE_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_PLUS_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_SLASH_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_STAR_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
-  [YP_TOKEN_STAR_STAR_EQUAL] = RIGHT_ASSOCIATIVE(BINDING_POWER_ASSIGNMENT),
+  [YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_AMPERSAND_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_CARET_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_GREATER_GREATER_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_LESS_LESS_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_MINUS_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_PERCENT_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_PIPE_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_PIPE_PIPE_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_PLUS_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_SLASH_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_STAR_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
+  [YP_TOKEN_STAR_STAR_EQUAL] = { BINDING_POWER_UNARY, BINDING_POWER_ASSIGNMENT },
 
   // rescue
   [YP_TOKEN_KEYWORD_RESCUE] = LEFT_ASSOCIATIVE(BINDING_POWER_MODIFIER_RESCUE),
@@ -4206,6 +4218,11 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
       yp_instance_variable_write_node_init(parser, target, operator, value);
+      return target;
+    case YP_NODE_MULTI_WRITE_NODE:
+      target->as.multi_write_node.operator = *operator;
+      target->as.multi_write_node.value = value;
+      target->location.end = value->location.end;
       return target;
     case YP_NODE_CALL_NODE: {
       // If we have no arguments to the call node and we need this to be a
@@ -5145,6 +5162,12 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: \
   case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UPLUS
 
+// This macro allows you to define a case statement for all of the nodes that
+// can be transformed into write targets.
+#define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
+  case YP_NODE_CONSTANT_READ: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ: \
+  case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE
+
 // Parse a node that is part of a string. If the subsequent tokens cannot be
 // parsed as a string part, then NULL is returned.
 static yp_node_t *
@@ -5959,17 +5982,7 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t keyword = parser->previous;
       yp_node_t *arguments = NULL;
 
-      if (
-        !match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF) &&
-        !context_terminator(parser->current_context->context, &parser->current)
-      ) {
-        // If the next token is not a statement terminator or the end of the
-        // file then it is either an argument or a modifier to the keyword. We
-        // should only parse an argument if it is an argument, which we can
-        // determine by looking at the next token's infix binding power. If it
-        // is unset (it can't be used as an infix operator) then it's definitely
-        // an argument. Otherwise we'll check if it's >= BINDING_POWER_RANGE,
-        // which would mean it's part of the expression.
+      if (token_begins_expression_p(parser->current.type) || (parser->current.type == YP_TOKEN_STAR)) {
         binding_power_t binding_power = binding_powers[parser->current.type].left;
 
         if (binding_power == BINDING_POWER_UNSET || binding_power >= BINDING_POWER_RANGE) {
@@ -7037,57 +7050,21 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
   switch (token.type) {
     case YP_TOKEN_EQUAL: {
       switch (node->type) {
-        case YP_NODE_CLASS_VARIABLE_READ_NODE: {
-          parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the class variable after =.");
-          return parse_target(parser, node, &token, value);
-        }
-        case YP_NODE_CONSTANT_PATH_NODE:
-        case YP_NODE_CONSTANT_READ: {
-          parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the constant after =.");
-          return parse_target(parser, node, &token, value);
-        }
-        case YP_NODE_GLOBAL_VARIABLE_READ: {
-          parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the global variable after =.");
-          return parse_target(parser, node, &token, value);
-        }
-        case YP_NODE_LOCAL_VARIABLE_READ: {
-          parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the local variable after =.");
-          return parse_target(parser, node, &token, value);
-        }
-        case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
-          parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value for the instance variable after =.");
-          return parse_target(parser, node, &token, value);
-        }
         case YP_NODE_CALL_NODE: {
           // If we have no arguments to the call node and we need this to be a
           // target then this is either a method call or a local variable write.
           // This _must_ happen before the value is parsed because it could be
           // referenced in the value.
-          if (
-            (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
-            (node->as.call_node.arguments == NULL) &&
-            (node->as.call_node.block == NULL) &&
-            (node->as.call_node.receiver == NULL)
-          ) {
+          if (yp_call_node_vcall_p(node)) {
             yp_parser_local_add(parser, &node->as.call_node.message);
           }
 
-          parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
-          return parse_target(parser, node, &token, value);
+          // fallthrough
         }
-        case YP_NODE_MULTI_WRITE_NODE: {
+        case YP_CASE_WRITABLE: {
           parser_lex(parser);
-          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after '='.");
-          node->as.multi_write_node.operator = token;
-          node->as.multi_write_node.value = value;
-          node->location.end = value->location.end;
-          return node;
+          yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
+          return parse_target(parser, node, &token, value);
         }
         default:
           parser_lex(parser);
@@ -7100,16 +7077,66 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
       }
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
-      parser_lex(parser);
+      switch (node->type) {
+        case YP_NODE_CALL_NODE: {
+          // If we have no arguments to the call node and we need this to be a
+          // target then this is either a method call or a local variable write.
+          // This _must_ happen before the value is parsed because it could be
+          // referenced in the value.
+          if (yp_call_node_vcall_p(node)) {
+            yp_parser_local_add(parser, &node->as.call_node.message);
+          }
 
-      yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
-      return yp_operator_and_assignment_node_create(parser, node, &token, value);
+          // fallthrough
+        }
+        case YP_CASE_WRITABLE: {
+          yp_token_t operator = not_provided(parser);
+          node = parse_target(parser, node, &operator, NULL);
+
+          parser_lex(parser);
+          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+          return yp_operator_and_assignment_node_create(parser, node, &token, value);
+        }
+        default:
+          parser_lex(parser);
+
+          // In this case we have an &&= sign, but we don't know what it's for.
+          // We need to treat it as an error. For now, we'll mark it as an error
+          // and just skip right past it.
+          yp_diagnostic_list_append(&parser->error_list, "Unexpected `&&='.", parser->previous.start - parser->start);
+          return node;
+      }
     }
     case YP_TOKEN_PIPE_PIPE_EQUAL: {
-      parser_lex(parser);
+      switch (node->type) {
+        case YP_NODE_CALL_NODE: {
+          // If we have no arguments to the call node and we need this to be a
+          // target then this is either a method call or a local variable write.
+          // This _must_ happen before the value is parsed because it could be
+          // referenced in the value.
+          if (yp_call_node_vcall_p(node)) {
+            yp_parser_local_add(parser, &node->as.call_node.message);
+          }
 
-      yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
-      return yp_node_operator_or_assignment_node_create(parser, node, &token, value);
+          // fallthrough
+        }
+        case YP_CASE_WRITABLE: {
+          yp_token_t operator = not_provided(parser);
+          node = parse_target(parser, node, &operator, NULL);
+
+          parser_lex(parser);
+          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+          return yp_node_operator_or_assignment_node_create(parser, node, &token, value);
+        }
+        default:
+          parser_lex(parser);
+
+          // In this case we have an ||= sign, but we don't know what it's for.
+          // We need to treat it as an error. For now, we'll mark it as an error
+          // and just skip right past it.
+          yp_diagnostic_list_append(&parser->error_list, "Unexpected `||='.", parser->previous.start - parser->start);
+          return node;
+      }
     }
     case YP_TOKEN_AMPERSAND_EQUAL:
     case YP_TOKEN_CARET_EQUAL:
@@ -7122,10 +7149,35 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, binding_power_t pre
     case YP_TOKEN_SLASH_EQUAL:
     case YP_TOKEN_STAR_EQUAL:
     case YP_TOKEN_STAR_STAR_EQUAL: {
-      parser_lex(parser);
+      switch (node->type) {
+        case YP_NODE_CALL_NODE: {
+          // If we have no arguments to the call node and we need this to be a
+          // target then this is either a method call or a local variable write.
+          // This _must_ happen before the value is parsed because it could be
+          // referenced in the value.
+          if (yp_call_node_vcall_p(node)) {
+            yp_parser_local_add(parser, &node->as.call_node.message);
+          }
 
-      yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
-      return yp_node_operator_assignment_node_create(parser, node, &token, value);
+          // fallthrough
+        }
+        case YP_CASE_WRITABLE: {
+          yp_token_t operator = not_provided(parser);
+          node = parse_target(parser, node, &operator, NULL);
+
+          parser_lex(parser);
+          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
+          return yp_node_operator_assignment_node_create(parser, node, &token, value);
+        }
+        default:
+          parser_lex(parser);
+
+          // In this case we have an operator but we don't know what it's for.
+          // We need to treat it as an error. For now, we'll mark it as an error
+          // and just skip right past it.
+          yp_diagnostic_list_append(&parser->error_list, "Unexpected operator.", parser->previous.start - parser->start);
+          return node;
+      }
     }
     case YP_TOKEN_AMPERSAND_AMPERSAND:
     case YP_TOKEN_KEYWORD_AND: {
@@ -7555,6 +7607,7 @@ yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
 
 #undef YP_CASE_KEYWORD
 #undef YP_CASE_OPERATOR
+#undef YP_CASE_WRITABLE
 #undef YP_STRINGIZE
 #undef YP_STRINGIZE0
 #undef YP_VERSION_MACRO
