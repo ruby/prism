@@ -262,6 +262,9 @@ module YARP
         def <<(token)
           if dedent_next && token.event == :on_tstring_content && token.value.start_with?(/\s/)
             token.value.split("\n").each do |line|
+              # Blank lines don't count toward the dedent.
+              next if line.empty?
+
               leading = line[/\A\s*/]
               @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
             end
@@ -299,10 +302,10 @@ module YARP
                 column = token[0][1]
 
                 # If we are supposed to dedent this line or if this is not the
-                # first line of the string, then we need to insert an
-                # on_ignored_sp token and remove the dedent from the beginning
-                # of the line.
-                if dedent_next || index > 0
+                # first line of the string and this line isn't entirely blank,
+                # then we need to insert an on_ignored_sp token and remove the
+                # dedent from the beginning of the line.
+                if line != "\n" && (dedent_next || index > 0)
                   deleting = 0
                   deleted_chars = []
 
@@ -321,7 +324,7 @@ module YARP
                     line.delete_prefix!(ignored)
 
                     results << Token.new([[lineno, 0], :on_ignored_sp, ignored, token[3]])
-                    column += ignored.length
+                    column = ignored.length
                   end
                 end
 
