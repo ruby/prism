@@ -4327,6 +4327,24 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def foo(bar) = 123"
   end
 
+  test "endless method definition binding" do
+    expected = DefNode(
+      IDENTIFIER("bar"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      Statements([IntegerNode()]),
+      Scope([]),
+      Location(),
+      nil,
+      nil,
+      nil,
+      Location(),
+      nil
+    )
+
+    assert_parses expected, "def foo = 1\ndef bar = 2\n"
+  end
+
   test "singleton class defintion" do
     expected = SClassNode(
       Scope([]),

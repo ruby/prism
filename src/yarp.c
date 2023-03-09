@@ -6254,10 +6254,22 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       context_pop(parser);
-      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_DEF);
+      yp_node_t *statements;
 
-      if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-        statements = parse_rescues_as_begin(parser, statements);
+      if (endless_definition) {
+        context_push(parser, YP_CONTEXT_DEF);
+        statements = yp_node_statements_create(parser);
+
+        yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse body of endless method definition.");
+        yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
+
+        context_pop(parser);
+      } else {
+        statements = parse_statements(parser, YP_CONTEXT_DEF);
+
+        if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
+          statements = parse_rescues_as_begin(parser, statements);
+        }
       }
 
       yp_token_t end_keyword;
