@@ -1285,7 +1285,7 @@ nodes:
     child_nodes:
       - name: rescue_keyword
         type: token
-      - name: exception_classes
+      - name: exceptions
         type: node[]
       - name: equal_greater
         type: token?
@@ -1299,9 +1299,11 @@ nodes:
     comment: |
       Represents a rescue statement.
 
+          begin
           rescue
             foo
           ^^^^^^
+          end
   - name: RestParameterNode
     child_nodes:
       - name: operator
