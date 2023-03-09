@@ -2408,7 +2408,18 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "defined? with parentheses" do
-    assert_parses DefinedNode(PARENTHESIS_LEFT("("), expression("1"), PARENTHESIS_RIGHT(")"), Location()), "defined?(1)"
+    expected = DefinedNode(
+      PARENTHESIS_LEFT("("),
+      AndNode(
+        CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+        CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+        KEYWORD_AND("and")
+      ),
+      PARENTHESIS_RIGHT(")"),
+      Location()
+    )
+
+    assert_parses expected, "defined?(foo and bar)"
   end
 
   test "defined? binding power" do

@@ -4157,6 +4157,7 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_EQUAL_GREATER:
     case YP_TOKEN_LAMBDA_BEGIN:
     case YP_TOKEN_KEYWORD_DO:
+    case YP_TOKEN_KEYWORD_DO_LOOP:
     case YP_TOKEN_KEYWORD_END:
     case YP_TOKEN_KEYWORD_IN:
     case YP_TOKEN_KEYWORD_THEN:
@@ -6300,22 +6301,25 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_DEFINED: {
       parser_lex(parser);
       yp_token_t keyword = parser->previous;
+
       yp_token_t lparen;
+      yp_token_t rparen;
+      yp_node_t *expression;
 
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         lparen = parser->previous;
+        expression = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected expression after `defined?`.");
+
+        if (parser->recovering) {
+          rparen = not_provided(parser);
+        } else {
+          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'defined?' expression.");
+          rparen = parser->previous;
+        }
       } else {
         lparen = not_provided(parser);
-      }
-
-      yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected expression after `defined?`.");
-      yp_token_t rparen;
-
-      if (!parser->recovering && lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'defined?' expression.");
-        rparen = parser->previous;
-      } else {
         rparen = not_provided(parser);
+        expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected expression after `defined?`.");
       }
 
       return yp_node_defined_node_create(
