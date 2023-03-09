@@ -2603,8 +2603,10 @@ lex_token_type(yp_parser_t *parser) {
         case '*':
           if (match(parser, '*')) {
             if (match(parser, '=')) {
+              lex_state_set(parser, YP_LEX_STATE_BEG);
               return YP_TOKEN_STAR_STAR_EQUAL;
             }
+
             if (lex_state_operator_p(parser)) {
               lex_state_set(parser, YP_LEX_STATE_ARG);
             } else {
@@ -2618,6 +2620,7 @@ lex_token_type(yp_parser_t *parser) {
           } else {
             lex_state_set(parser, YP_LEX_STATE_BEG);
           }
+
           return match(parser, '=') ? YP_TOKEN_STAR_EQUAL : YP_TOKEN_STAR;
 
         // ! != !~ !@
