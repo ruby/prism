@@ -6850,6 +6850,19 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo, *bar = 1, 2"
   end
 
+  test "assignment with immediate *" do
+    expected = LocalVariableWrite(
+      IDENTIFIER("foo"),
+      EQUAL("="),
+      StarNode(
+        STAR("*"),
+        CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")
+      )
+    )
+
+    assert_parses expected, "foo = *bar"
+  end
+
   test "if modifier after break" do
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), Statements([BreakNode(nil, Location())]), nil, nil), "break if true"
   end

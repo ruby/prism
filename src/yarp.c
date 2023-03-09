@@ -7033,7 +7033,16 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
 static inline yp_node_t *
 parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_power, yp_binding_power_t binding_power, const char *message) {
-  yp_node_t *value = parse_expression(parser, binding_power, message);
+  yp_node_t *value;
+
+  if (accept(parser, YP_TOKEN_STAR)) {
+    yp_token_t operator = parser->previous;
+    yp_node_t *expression = parse_expression(parser, binding_power, "Expected an expression after `*'.");
+
+    value = yp_node_star_node_create(parser, &operator, expression);
+  } else {
+    value = parse_expression(parser, binding_power, message);
+  }
 
   if (previous_binding_power == YP_BINDING_POWER_STATEMENT && accept(parser, YP_TOKEN_COMMA)) {
     yp_token_t opening = not_provided(parser);
