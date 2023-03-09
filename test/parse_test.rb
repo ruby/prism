@@ -7053,6 +7053,12 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%w{    }"
   end
 
+  test "numbers" do
+    %w[0 1 2 0b0 0b1 0b10 0d0 0d1 0d2 00 01 02 0o0 0o1 0o2 0x0 0x1 0x2].each do |number|
+      assert_parses IntegerNode(), number
+    end
+  end
+
   private
 
   def assert_serializes(expected, source)

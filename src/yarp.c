@@ -1750,9 +1750,9 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'o':
       case 'O':
         if (char_is_octal_number(*++parser->current.end)) {
-          yp_diagnostic_list_append(&parser->error_list, "invalid octal number", parser->current.start - parser->start);
+          parser->current.end += yp_strspn_octal_number(parser->current.end, parser->end - parser->current.end);
         } else {
-          parser->current.end += strspn(parser->current.end, "01234567_");
+          yp_diagnostic_list_append(&parser->error_list, "invalid octal number", parser->current.start - parser->start);
         }
 
         break;
@@ -1767,7 +1767,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '5':
       case '6':
       case '7':
-        parser->current.end += strspn(parser->current.end, "01234567_");
+        parser->current.end += yp_strspn_octal_number(parser->current.end, parser->end - parser->current.end);
         break;
 
       // 0x1111 is a hexadecimal number
