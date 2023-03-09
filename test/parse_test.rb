@@ -1008,6 +1008,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses ConstantPathNode(ConstantRead(CONSTANT("A")), COLON_COLON("::"), ConstantRead(CONSTANT("B"))), "A::B"
   end
 
+  test "constants that are methods" do
+    expected = CallNode(
+      nil,
+      nil,
+      CONSTANT("Foo"),
+      nil,
+      ArgumentsNode([IntegerNode()]),
+      nil,
+      nil,
+      "Foo"
+    )
+
+    assert_parses expected, "Foo 1"
+  end
+
   test "constant path with multiple levels" do
     expected = ConstantPathNode(
       ConstantPathNode(

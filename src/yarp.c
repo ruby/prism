@@ -5650,14 +5650,20 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       // If a constant is immediately followed by parentheses, then this is in
       // fact a method call, not a constant read.
-      if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+      if (
+        match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type))
+      ) {
         yp_arguments_t arguments = yp_arguments();
         parse_arguments_list(parser, &arguments, true);
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
       yp_node_t *node = yp_node_constant_read_create(parser, &parser->previous);
+
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
+        // If we get here, then we have a comma immediately following a
+        // constant, so we're going to parse this as a multiple assignment.
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
       }
 
