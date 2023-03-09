@@ -6260,7 +6260,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         context_push(parser, YP_CONTEXT_DEF);
         statements = yp_node_statements_create(parser);
 
-        yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse body of endless method definition.");
+        yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse body of endless method definition.");
         yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
 
         context_pop(parser);
