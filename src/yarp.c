@@ -5982,7 +5982,11 @@ parse_expression_prefix(yp_parser_t *parser, binding_power_t binding_power) {
       yp_token_t keyword = parser->previous;
       yp_node_t *arguments = NULL;
 
-      if (token_begins_expression_p(parser->current.type) || (parser->current.type == YP_TOKEN_STAR)) {
+      if (
+        token_begins_expression_p(parser->current.type) ||
+        (parser->current.type == YP_TOKEN_STAR) ||
+        (parser->current.type == YP_TOKEN_BRACE_LEFT)
+      ) {
         binding_power_t binding_power = binding_powers[parser->current.type].left;
 
         if (binding_power == BINDING_POWER_UNSET || binding_power >= BINDING_POWER_RANGE) {
