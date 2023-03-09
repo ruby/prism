@@ -4363,7 +4363,10 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
     return first_target;
   }
 
-  yp_node_t *multi_write = yp_node_multi_write_node_create(parser, &operator, NULL);
+  yp_location_t lparen_loc = { .start = parser->start, .end = parser->start };
+  yp_location_t rparen_loc = lparen_loc;
+
+  yp_node_t *multi_write = yp_node_multi_write_node_create(parser, &operator, NULL, &lparen_loc, &rparen_loc);
   yp_node_t *target;
 
   yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, first_target);
@@ -4391,6 +4394,38 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
       yp_node_t *splat = yp_node_star_node_create(parser, &star_operator, name);
       yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, splat);
       has_splat = true;
+    } else if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+      // Here we have a parenthesized list of targets. We'll recurse down into
+      // the parentheses by calling parse_targets again and then finish out the
+      // node when it returns.
+
+      yp_token_t lparen = parser->previous;
+      yp_node_t *first_child_target = parse_expression(parser, binding_power, "Expected an expression after '('.");
+      yp_node_t *child_target = parse_targets(parser, first_child_target, binding_power);
+
+      expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected an ')' after multi-assignment.");
+      yp_token_t rparen = parser->previous;
+
+      if (child_target->type == YP_NODE_MULTI_WRITE_NODE) {
+        target = child_target;
+        target->as.multi_write_node.lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
+        target->as.multi_write_node.rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
+      } else {
+        yp_token_t operator = not_provided(parser);
+
+        target = yp_node_multi_write_node_create(
+          parser,
+          &operator,
+          NULL,
+          &(yp_location_t) { .start = lparen.start, .end = lparen.end },
+          &(yp_location_t) { .start = rparen.start, .end = rparen.end }
+        );
+
+        yp_node_list_append(parser, target, &target->as.multi_write_node.targets, child_target);
+      }
+
+      target->location.end = rparen.end;
+      yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, target);
     } else {
       if (!token_begins_expression_p(parser->current.type)) {
         // If we get here, then we have a trailing , in a multi write node. We

@@ -4507,6 +4507,8 @@ class ParseTest < Test::Unit::TestCase
           LocalVariableWrite(IDENTIFIER("j"), nil, nil)
         ],
         nil,
+        nil,
+        nil,
         nil
       ),
       expression("1..10"),
@@ -4528,6 +4530,8 @@ class ParseTest < Test::Unit::TestCase
           LocalVariableWrite(IDENTIFIER("j"), nil, nil),
           LocalVariableWrite(IDENTIFIER("k"), nil, nil)
         ],
+        nil,
+        nil,
         nil,
         nil
       ),
@@ -6727,28 +6731,32 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment on array reference" do
     expected = MultiWriteNode(
-      [CallNode(
-         expression("foo"),
-         nil,
-         BRACKET_LEFT_RIGHT_EQUAL("["),
-         BRACKET_LEFT("["),
-         ArgumentsNode([IntegerNode()]),
-         BRACKET_RIGHT("]"),
-         nil,
-         "[]="
-       ),
-       CallNode(
-         expression("bar"),
-         nil,
-         BRACKET_LEFT_RIGHT_EQUAL("["),
-         BRACKET_LEFT("["),
-         ArgumentsNode([IntegerNode()]),
-         BRACKET_RIGHT("]"),
-         nil,
-         "[]="
-       )],
+      [
+        CallNode(
+          expression("foo"),
+          nil,
+          BRACKET_LEFT_RIGHT_EQUAL("["),
+          BRACKET_LEFT("["),
+          ArgumentsNode([IntegerNode()]),
+          BRACKET_RIGHT("]"),
+          nil,
+          "[]="
+        ),
+        CallNode(
+          expression("bar"),
+          nil,
+          BRACKET_LEFT_RIGHT_EQUAL("["),
+          BRACKET_LEFT("["),
+          ArgumentsNode([IntegerNode()]),
+          BRACKET_RIGHT("]"),
+          nil,
+          "[]="
+        )
+      ],
       EQUAL("="),
-      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      nil,
+      nil
     )
 
     assert_parses expected, "foo[0], bar[0] = 1, 2"
@@ -6761,7 +6769,9 @@ class ParseTest < Test::Unit::TestCase
         ClassVariableWriteNode(Location(), nil, nil)
       ],
       EQUAL("="),
-      IntegerNode()
+      IntegerNode(),
+      nil,
+      nil
     )
 
     assert_parses expected, "@@foo, @@bar = 1"
@@ -6794,7 +6804,9 @@ class ParseTest < Test::Unit::TestCase
         GlobalVariableWrite(GLOBAL_VARIABLE("$bar"), nil, nil)
       ],
       EQUAL("="),
-      IntegerNode()
+      IntegerNode(),
+      nil,
+      nil
     )
 
     assert_parses expected, "$foo, $bar = 1"
@@ -6837,7 +6849,9 @@ class ParseTest < Test::Unit::TestCase
         InstanceVariableWriteNode(Location(), nil, nil)
       ],
       EQUAL("="),
-      IntegerNode()
+      IntegerNode(),
+      nil,
+      nil
     )
 
     assert_parses expected, "@foo, @bar = 1"
@@ -6857,7 +6871,9 @@ class ParseTest < Test::Unit::TestCase
     expected = MultiWriteNode(
       [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(COMMA(","), nil)],
       EQUAL("="),
-      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      nil,
+      nil
     )
 
     assert_parses expected, "foo, = 1, 2"
@@ -6867,7 +6883,9 @@ class ParseTest < Test::Unit::TestCase
     expected = MultiWriteNode(
       [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(STAR("*"), nil)],
       EQUAL("="),
-      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      nil,
+      nil
     )
 
     assert_parses expected, "foo, * = 1, 2"
@@ -6880,10 +6898,43 @@ class ParseTest < Test::Unit::TestCase
         StarNode(STAR("*"), LocalVariableWrite(IDENTIFIER("bar"), nil, nil))
       ],
       EQUAL("="),
-      ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      nil,
+      nil
     )
 
     assert_parses expected, "foo, *bar = 1, 2"
+  end
+
+  test "multiple assignment with destructuring" do
+    expected = MultiWriteNode(
+      [
+        LocalVariableWrite(IDENTIFIER("foo"), nil, nil),
+        MultiWriteNode(
+          [
+            LocalVariableWrite(IDENTIFIER("bar"), nil, nil),
+            LocalVariableWrite(IDENTIFIER("baz"), nil, nil)
+          ],
+          nil,
+          nil,
+          Location(),
+          Location()
+        )
+      ],
+      EQUAL("="),
+      ArrayNode(
+        [
+          IntegerNode(),
+          ArrayNode([IntegerNode(), IntegerNode()], BRACKET_LEFT_ARRAY("["), BRACKET_RIGHT("]"))
+        ],
+        nil,
+        nil
+      ),
+      nil,
+      nil
+    )
+
+    assert_parses expected, "foo, (bar, baz) = 1, [2, 3]"
   end
 
   test "assignment with immediate *" do
