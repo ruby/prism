@@ -271,7 +271,7 @@ class ErrorsTest < Test::Unit::TestCase
       "a"
     )
 
-    assert_errors expected, "a(**kwargs, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
+    assert_errors expected, "a(**kwargs, *args)", ["Unexpected splat argument after double splat."]
   end
 
   test "arguments after block" do
@@ -348,7 +348,7 @@ class ErrorsTest < Test::Unit::TestCase
       "a"
     )
 
-    assert_errors expected, "a(foo: bar, *args)", ["Expected a key in the hash literal.", "Unexpected splat argument after double splat."]
+    assert_errors expected, "a(foo: bar, *args)", ["Unexpected splat argument after double splat."]
   end
 
   test "module definition in method body" do
