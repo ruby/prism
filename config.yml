@@ -448,7 +448,7 @@ nodes:
       - name: call_operator
         type: token?
       - name: message
-        type: token
+        type: token?
       - name: opening
         type: token?
       - name: arguments

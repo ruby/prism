@@ -468,7 +468,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("a"),
       DOT("."),
-      NOT_PROVIDED(""),
+      nil,
       PARENTHESIS_LEFT("("),
       nil,
       PARENTHESIS_RIGHT(")"),
@@ -483,7 +483,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("a"),
       DOT("."),
-      NOT_PROVIDED(""),
+      nil,
       PARENTHESIS_LEFT("("),
       ArgumentsNode([expression("1"), expression("2"), expression("3")]),
       PARENTHESIS_RIGHT(")"),
@@ -610,7 +610,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
       DOT("."),
-      EQUAL("="),
+      IDENTIFIER("bar"),
       nil,
       ArgumentsNode([IntegerNode()]),
       nil,
@@ -640,7 +640,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CallNode(
       expression("a"),
       AMPERSAND_DOT("&."),
-      NOT_PROVIDED(""),
+      nil,
       PARENTHESIS_LEFT("("),
       nil,
       PARENTHESIS_RIGHT(")"),
@@ -6955,6 +6955,21 @@ class ParseTest < Test::Unit::TestCase
     )
 
     assert_parses expected, "foo, (bar, baz) = 1, [2, 3]"
+  end
+
+  test "multiple assignment with calls" do
+    expected = MultiWriteNode(
+      [
+        CallNode(expression("foo"), DOT("."), IDENTIFIER("foo"), nil, nil, nil, nil, "foo="),
+        CallNode(expression("bar"), DOT("."), IDENTIFIER("bar"), nil, nil, nil, nil, "bar=")
+      ],
+      EQUAL("="),
+      ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+      nil,
+      nil
+    )
+
+    assert_parses expected, "foo.foo, bar.bar = 1, 2"
   end
 
   test "assignment with immediate *" do

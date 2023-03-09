@@ -4307,7 +4307,6 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         yp_string_free(&target->as.call_node.name);
         yp_string_owned_init(&target->as.call_node.name, name, length + 1);
 
-        target->as.call_node.message = *operator;
         return target;
       }
 
@@ -7347,7 +7346,18 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       }
 
       parse_arguments_list(parser, &arguments, true);
-      return yp_call_node_call_create(parser, node, &operator, &message, &arguments);
+      yp_node_t *call = yp_call_node_call_create(parser, node, &operator, &message, &arguments);
+
+      if (
+        (previous_binding_power == YP_BINDING_POWER_STATEMENT) &&
+        arguments.arguments == NULL &&
+        arguments.opening.type == YP_TOKEN_NOT_PROVIDED &&
+        match_type_p(parser, YP_TOKEN_COMMA)
+      ) {
+        return parse_targets(parser, call, YP_BINDING_POWER_INDEX);
+      } else {
+        return call;
+      }
     }
     case YP_TOKEN_DOT_DOT:
     case YP_TOKEN_DOT_DOT_DOT: {
