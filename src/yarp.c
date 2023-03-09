@@ -4927,40 +4927,55 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, NULL, statements, NULL);
     yp_node_destroy(parser, statements);
 
-    if (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-      while (match_type_p(parser, YP_TOKEN_CONSTANT)) {
-        yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to find a class.");
-        yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exception_classes, expression);
+    switch (parser->current.type) {
+      case YP_TOKEN_EQUAL_GREATER: {
+        // Here we have an immediate => after the rescue keyword, in which case
+        // we're going to have an empty list of exceptions to rescue (which
+        // implies StandardError).
+        parser_lex(parser);
+        rescue->as.rescue_node.equal_greater = parser->previous;
 
-        // If we hit a newline, then this is the end of the rescue expression. We
-        // can continue on to parse the statements.
-        if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_KEYWORD_THEN)) {
-          break;
-        }
+        yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
+        yp_token_t operator = not_provided(parser);
+        node = parse_target(parser, node, &operator, NULL);
 
-        // If we hit a `=>` then we're going to parse the exception variable. Once
-        // we've done that, we'll break out of the loop and parse the statements.
-        if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-          rescue->as.rescue_node.equal_greater = parser->previous;
-
-          yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
-          yp_token_t operator = not_provided(parser);
-          node = parse_target(parser, node, &operator, NULL);
-
-          rescue->as.rescue_node.exception = node;
-          break;
-        }
-
-        expect(parser, YP_TOKEN_COMMA, "Expected an ',' to delimit exception classes.");
+        rescue->as.rescue_node.exception = node;
+        break;
       }
-    } else if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-      rescue->as.rescue_node.equal_greater = parser->previous;
+      case YP_TOKEN_NEWLINE:
+      case YP_TOKEN_SEMICOLON:
+      case YP_TOKEN_KEYWORD_THEN:
+        // Here we have a terminator for the rescue keyword, in which case we're
+        // going to just continue on.
+        break;
+      default: {
+        if (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_STAR)) {
+          // Here we have something that could be an exception expression, so
+          // we'll attempt to parse it here and any others delimited by commas.
 
-      yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
-      yp_token_t operator = not_provided(parser);
-      node = parse_target(parser, node, &operator, NULL);
+          do {
+            yp_node_t *expression = parse_starred_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to find a rescued expression.");
+            yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exceptions, expression);
 
-      rescue->as.rescue_node.exception = node;
+            // If we hit a newline, then this is the end of the rescue expression. We
+            // can continue on to parse the statements.
+            if (accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_KEYWORD_THEN)) break;
+
+            // If we hit a `=>` then we're going to parse the exception variable. Once
+            // we've done that, we'll break out of the loop and parse the statements.
+            if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+              rescue->as.rescue_node.equal_greater = parser->previous;
+
+              yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
+              yp_token_t operator = not_provided(parser);
+              node = parse_target(parser, node, &operator, NULL);
+
+              rescue->as.rescue_node.exception = node;
+              break;
+            }
+          } while (accept(parser, YP_TOKEN_COMMA));
+        }
+      }
     }
 
     rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);

@@ -118,7 +118,7 @@ class ParseTest < Test::Unit::TestCase
       [
         StarNode(
           IDENTIFIER("a"),
-          CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a")
+          expression("a")
         )
       ],
       BRACKET_LEFT_ARRAY("["),
@@ -222,9 +222,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ParenthesesNode(
       PARENTHESIS_LEFT("("),
       Statements(
-        [CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-         CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
-         CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")]
+        [expression("a"),
+         expression("b"),
+         expression("c")]
       ),
       PARENTHESIS_RIGHT(")")
     )
@@ -466,7 +466,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "call with .() shorthand" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
+      expression("a"),
       DOT("."),
       NOT_PROVIDED(""),
       PARENTHESIS_LEFT("("),
@@ -1024,7 +1024,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "constant path with variable parent" do
     expected = ConstantPathNode(
-      CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
+      expression("a"),
       COLON_COLON("::"),
       ConstantRead(CONSTANT("B"))
     )
@@ -2290,7 +2290,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       ParenthesesNode(
         PARENTHESIS_LEFT("("),
-        CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+        expression("b"),
         PARENTHESIS_RIGHT(")")
       ),
       ParametersNode([], [], nil, [], nil, nil),
@@ -2315,7 +2315,7 @@ class ParseTest < Test::Unit::TestCase
         LocalVariableWrite(
           IDENTIFIER("c"),
           EQUAL("="),
-          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")
+          expression("b")
         ),
         PARENTHESIS_RIGHT(")")
       ),
@@ -2386,7 +2386,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("b"),
       ParenthesesNode(
         PARENTHESIS_LEFT("("),
-        CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
+        expression("a"),
         PARENTHESIS_RIGHT(")")
       ),
       ParametersNode([], [], nil, [], nil, nil),
@@ -2651,7 +2651,7 @@ class ParseTest < Test::Unit::TestCase
         StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
-          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          Statements([expression("b")]),
           EMBEXPR_END("}")
         ),
         StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
@@ -2670,7 +2670,7 @@ class ParseTest < Test::Unit::TestCase
         StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
-          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          Statements([expression("b")]),
           EMBEXPR_END("}")
         ),
         StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
@@ -2699,7 +2699,7 @@ class ParseTest < Test::Unit::TestCase
         StringNode(nil, STRING_CONTENT("  a\n"), nil, "  a\n"),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
-          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          Statements([expression("b")]),
           EMBEXPR_END("}")
         ),
         StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
@@ -2718,7 +2718,7 @@ class ParseTest < Test::Unit::TestCase
         StringNode(nil, STRING_CONTENT("  a\n" + "  "), nil, "a\n"),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
-          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          Statements([expression("b")]),
           EMBEXPR_END("}")
         ),
         StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
@@ -2737,7 +2737,7 @@ class ParseTest < Test::Unit::TestCase
         StringNode(nil, STRING_CONTENT("  a\n" + " "), nil, " a\n"),
         StringInterpolatedNode(
           EMBEXPR_BEGIN("\#{"),
-          Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+          Statements([expression("b")]),
           EMBEXPR_END("}")
         ),
         StringNode(nil, STRING_CONTENT("\n"), nil, "\n")
@@ -2828,7 +2828,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "identifier" do
-    assert_parses CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"), "a"
+    assert_parses expression("a"), "a"
   end
 
   test "if" do
@@ -4270,18 +4270,18 @@ class ParseTest < Test::Unit::TestCase
   test "begin rescue, else" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
-      Statements([CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a")]),
+      Statements([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
         [],
         nil,
         nil,
-        Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+        Statements([expression("b")]),
         nil
       ),
       ElseNode(
         KEYWORD_ELSE("else"),
-        Statements([CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")]),
+        Statements([expression("c")]),
         SEMICOLON(";")
       ),
       nil,
@@ -4291,21 +4291,41 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "begin; a; rescue; b; else; c; end"
   end
 
+  test "rescue with *" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      Statements([expression("a")]),
+      RescueNode(
+        KEYWORD_RESCUE("rescue"),
+        [StarNode(STAR("*"), expression("b"))],
+        nil,
+        nil,
+        Statements([]),
+        nil
+      ),
+      nil,
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, "begin; a; rescue *b; end"
+  end
+
   test "begin rescue, else and ensure" do
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
-      Statements([CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a")]),
+      Statements([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
         [],
         nil,
         nil,
-        Statements([CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]),
+        Statements([expression("b")]),
         nil
       ),
       ElseNode(
         KEYWORD_ELSE("else"),
-        Statements([CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")]),
+        Statements([expression("c")]),
         SEMICOLON(";")
       ),
       EnsureNode(
@@ -4795,12 +4815,12 @@ class ParseTest < Test::Unit::TestCase
       BRACE_LEFT("{"),
       [
         AssocNode(
-          CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+          expression("a"),
+          expression("b"),
           EQUAL_GREATER("=>")
         ),
         AssocNode(
-          CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c"),
+          expression("c"),
           CallNode(nil, nil, IDENTIFIER("d"), nil, nil, nil, nil, "d"),
           EQUAL_GREATER("=>")
         )
@@ -4831,12 +4851,12 @@ class ParseTest < Test::Unit::TestCase
       BRACE_LEFT("{"),
       [
         AssocNode(
-          CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-          CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+          expression("a"),
+          expression("b"),
           EQUAL_GREATER("=>")
         ),
         AssocSplatNode(
-          CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c"),
+          expression("c"),
           Location()
         )
       ],
