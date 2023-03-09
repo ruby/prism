@@ -2412,6 +2412,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "defined? 1 and defined? 2"
   end
 
+  test "defined? with %=" do
+    expected = DefinedNode(
+      PARENTHESIS_LEFT("("),
+      OperatorAssignmentNode(
+        LocalVariableWrite(IDENTIFIER("x"), nil, nil),
+        PERCENT_EQUAL("%="),
+        IntegerNode()
+      ),
+      PARENTHESIS_RIGHT(")"),
+      Location()
+    )
+
+    assert_parses expected, "defined?(x %= 2)"
+  end
+
   test "not without parentheses" do
     expected = CallNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),

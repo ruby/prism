@@ -3075,7 +3075,11 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_INVALID;
           }
 
-          if (
+          if (!lex_state_beg_p(parser) && match(parser, '=')) {
+            lex_state_set(parser, YP_LEX_STATE_BEG);
+            return YP_TOKEN_PERCENT_EQUAL;
+          }
+          else if(
             lex_state_beg_p(parser) ||
             (lex_state_p(parser, YP_LEX_STATE_FITEM) && (*parser->current.end == 's')) ||
             (lex_state_arg_p(parser) && space_seen && !char_is_non_newline_whitespace(*parser->current.end))
@@ -3212,10 +3216,6 @@ lex_token_type(yp_parser_t *parser) {
             }
           }
 
-          if (match(parser, '=')) {
-            lex_state_set(parser, YP_LEX_STATE_BEG);
-            return YP_TOKEN_PERCENT_EQUAL;
-          }
           lex_state_set(parser, lex_state_operator_p(parser) ? YP_LEX_STATE_ARG : YP_LEX_STATE_BEG);
           return YP_TOKEN_PERCENT;
         }
