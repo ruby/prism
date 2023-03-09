@@ -1016,6 +1016,10 @@ nodes:
         type: token?
       - name: value
         type: node?
+      - name: lparen_loc
+        type: location?
+      - name: rparen_loc
+        type: location?
     location: targets
     comment: |
       Represents a multi-target expression.
