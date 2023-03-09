@@ -4184,6 +4184,19 @@ token_begins_expression_p(yp_token_type_t type) {
   }
 }
 
+// Parse an expression with the given binding power that may be optionally
+// prefixed by the * operator.
+static yp_node_t *
+parse_starred_expression(yp_parser_t *parser, yp_binding_power_t binding_power, const char *message) {
+  if (accept(parser, YP_TOKEN_STAR)) {
+    yp_token_t operator = parser->previous;
+    yp_node_t *expression = parse_expression(parser, binding_power, "Expected expression after `*'.");
+    return yp_node_star_node_create(parser, &operator, expression);
+  }
+
+  return parse_expression(parser, binding_power, message);
+}
+
 // Convert the given node into a valid target node.
 static yp_node_t *
 parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_node_t *value) {
@@ -7033,7 +7046,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
 static inline yp_node_t *
 parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_power, yp_binding_power_t binding_power, const char *message) {
-  yp_node_t *value = parse_expression(parser, binding_power, message);
+  yp_node_t *value = parse_starred_expression(parser, binding_power, message);
 
   if (previous_binding_power == YP_BINDING_POWER_STATEMENT && accept(parser, YP_TOKEN_COMMA)) {
     yp_token_t opening = not_provided(parser);
@@ -7044,15 +7057,7 @@ parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_
     value = array;
 
     do {
-      yp_node_t *element;
-
-      if (accept(parser, YP_TOKEN_STAR)) {
-        yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
-        element = yp_node_star_node_create(parser, &parser->previous, expression);
-      } else {
-        element = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an element for the array.");
-      }
-
+      yp_node_t *element = parse_starred_expression(parser, binding_power, "Expected an element for the array.");
       yp_array_node_append(array, element);
       if (element->type == YP_NODE_MISSING_NODE) break;
     } while (accept(parser, YP_TOKEN_COMMA));
