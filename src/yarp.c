@@ -5290,7 +5290,7 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
         symbol = parser->previous;
         break;
       case YP_CASE_OPERATOR:
-        lex_state_set(parser, YP_LEX_STATE_ENDFN);
+        lex_state_set(parser, next_state == YP_LEX_STATE_NONE ? YP_LEX_STATE_ENDFN : next_state);
         parser_lex(parser);
         symbol = parser->previous;
         break;

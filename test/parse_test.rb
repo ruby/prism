@@ -61,6 +61,16 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "alias :foo :bar"
   end
 
+  test "alias symbol operator" do
+    expected = AliasNode(
+      SymbolNode(SYMBOL_BEGIN(":"), EQUAL_EQUAL("=="), nil),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("eql?"), nil),
+      Location()
+    )
+
+    assert_parses expected, "alias :== :eql?"
+  end
+
   test "alias global variables" do
     expected = AliasNode(
       GlobalVariableRead(GLOBAL_VARIABLE("$foo")),
