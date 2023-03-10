@@ -1679,10 +1679,16 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ArgumentsNode(
         [
-          AssocNode(
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
-            EQUAL_GREATER("=>")
+          HashNode(
+            nil,
+            [
+              AssocNode(
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                EQUAL_GREATER("=>")
+              )
+            ],
+            nil
           )
         ]
       ),

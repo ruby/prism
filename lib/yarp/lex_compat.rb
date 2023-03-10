@@ -111,6 +111,7 @@ module YARP
       KEYWORD_WHILE: :on_kw,
       KEYWORD_YIELD: :on_kw,
       LABEL: :on_label,
+      LABEL_END: :on_label_end,
       LAMBDA_BEGIN: :on_tlambeg,
       LESS: :on_op,
       LESS_EQUAL: :on_op,
