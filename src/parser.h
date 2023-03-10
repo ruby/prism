@@ -50,9 +50,9 @@ typedef enum {
 
 typedef enum {
   YP_HEREDOC_QUOTE_NONE,
-  YP_HEREDOC_QUOTE_SINGLE,
-  YP_HEREDOC_QUOTE_DOUBLE,
-  YP_HEREDOC_QUOTE_BACKTICK,
+  YP_HEREDOC_QUOTE_SINGLE = '\'',
+  YP_HEREDOC_QUOTE_DOUBLE = '"',
+  YP_HEREDOC_QUOTE_BACKTICK = '`',
 } yp_heredoc_quote_t;
 
 typedef enum {
