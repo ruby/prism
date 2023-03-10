@@ -244,10 +244,15 @@ yp_regexp_parse_character_set(yp_regexp_parser_t *parser) {
 // A left bracket can either mean a POSIX class or a character set.
 static bool
 yp_regexp_parse_lbracket(yp_regexp_parser_t *parser) {
+  const char *reset = parser->cursor;
+
   if ((parser->cursor + 2 < parser->end) && parser->cursor[0] == '[' && parser->cursor[1] == ':') {
     parser->cursor++;
-    return yp_regexp_parse_posix_class(parser);
+    if (yp_regexp_parse_posix_class(parser)) return true;
+
+    parser->cursor = reset;
   }
+
   return yp_regexp_parse_character_set(parser);
 }
 
