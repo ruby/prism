@@ -2696,20 +2696,21 @@ lex_token_type(yp_parser_t *parser) {
               if (width == 0) {
                 parser->current.end = end;
               } else {
-                while ((width = char_is_identifier(parser, parser->current.end))) {
-                  parser->current.end += width;
+                if (quote == YP_HEREDOC_QUOTE_NONE) {
+                  while ((width = char_is_identifier(parser, parser->current.end))) {
+                    parser->current.end += width;
+                  }
+                } else {
+                  // If we have quotes, then we're going to go until we find the
+                  // end quote.
+                  while (parser->current.end < parser->end && *parser->current.end != quote) {
+                    parser->current.end++;
+                  }
                 }
 
                 size_t ident_length = parser->current.end - ident_start;
-
-                if (quote == YP_HEREDOC_QUOTE_BACKTICK && !match(parser, '`')) {
-                        // TODO: RAISE
-                }
-                else if (quote == YP_HEREDOC_QUOTE_DOUBLE && !match(parser, '"')) {
-                        // TODO: RAISE
-                }
-                else if (quote == YP_HEREDOC_QUOTE_SINGLE && !match(parser, '\'')) {
-                        // TODO: RAISE
+                if (quote != YP_HEREDOC_QUOTE_NONE && !match(parser, quote)) {
+                  // TODO: handle unterminated heredoc
                 }
 
                 lex_mode_push(parser, (yp_lex_mode_t) {

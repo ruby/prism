@@ -232,6 +232,8 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
   // For each escape found in the source string, we will handle it and update
   // the moving cursor->backslash window.
   while (backslash != NULL && backslash < end) {
+    assert(dest_length < length);
+
     // This is the size of the segment of the string from the previous escape
     // or the start of the string to the current escape.
     size_t segment_size = backslash - cursor;
@@ -291,11 +293,15 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
           // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           case 'u': {
-            if (backslash[2] == '{') {
+            if ((backslash + 2) < end && backslash[2] == '{') {
               const char *unicode_cursor = backslash + 3;
               while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
 
+              assert(dest_length < length);
+
               while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
+                assert(dest_length < length);
+
                 const char *unicode_start = unicode_cursor;
                 while ((unicode_cursor < end) && char_is_hexadecimal_number(*unicode_cursor)) unicode_cursor++;
 
@@ -310,7 +316,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
               break;
             }
 
-            if (char_is_hexadecimal_numbers(backslash + 2, 4)) {
+            if ((backslash + 2) < end && char_is_hexadecimal_numbers(backslash + 2, 4)) {
               uint32_t value;
               unescape_unicode(backslash + 2, 4, &value);
 
