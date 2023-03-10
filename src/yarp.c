@@ -2134,7 +2134,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // At this point we're sure that we've either hit an embedded instance
         // or class variable. In this case we'll first need to check if we've
         // already consumed content.
-        if (pound > parser->current.end) {
+        if (pound > parser->current.start) {
           parser->current.end = pound;
           lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_STRING_CONTENT;
@@ -2158,7 +2158,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // In this case we've hit an embedded global variable. First check to see
       // if we've already consumed content. If we have, then we need to return
       // that content as string content first.
-      if (pound > parser->current.end) {
+      if (pound > parser->current.start) {
         parser->current.end = pound;
         lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
@@ -2176,7 +2176,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // In this case it's the start of an embedded expression. If we have
       // already consumed content, then we need to return that content as string
       // content first.
-      if (pound > parser->current.end) {
+      if (pound > parser->current.start) {
         parser->current.end = pound;
         return YP_TOKEN_STRING_CONTENT;
       }
