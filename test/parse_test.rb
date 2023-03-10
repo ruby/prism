@@ -194,7 +194,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "empty parentheses" do
-    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "()"
+    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "()"
   end
 
   test "parenthesized expression" do
@@ -231,8 +231,8 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "(a; b; c)"
   end
 
-  test "parenthesized with empty statements" do
-    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), Statements([]), PARENTHESIS_RIGHT(")")), "(\n;\n;\n)"
+  test "parentheses with empty statements" do
+    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "(\n;\n;\n)"
   end
 
   test "binary !=" do
