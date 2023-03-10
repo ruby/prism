@@ -96,7 +96,12 @@ task lex: :compile do
     if ENV["FILEPATHS"]
       Dir[ENV["FILEPATHS"]]
     else
-      Dir["vendor/spec/**/*.rb"] - ["vendor/spec/command_line/fixtures/bad_syntax.rb", "vendor/spec/core/process/fixtures/kill.rb", "vendor/spec/core/regexp/shared/new.rb", "vendor/spec/language/regexp/interpolation_spec.rb", "vendor/spec/language/string_spec.rb"]
+      Dir["vendor/spec/**/*.rb"] - [
+        "vendor/spec/command_line/fixtures/bad_syntax.rb",
+        "vendor/spec/core/regexp/shared/new.rb",
+        "vendor/spec/language/regexp/interpolation_spec.rb",
+        "vendor/spec/language/string_spec.rb"
+      ]
     end
 
   filepaths.each.with_index(1) do |filepath, index|

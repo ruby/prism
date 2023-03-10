@@ -120,9 +120,16 @@ typedef struct yp_lex_mode {
     } regexp;
 
     struct {
+      // When lexing a string, it takes into account balancing the terminator if
+      // the terminator is one of (), [], {}, or <>.
+      char incrementor;
+
       // This is the terminator of the string. It is typically either a single
       // or double quote.
       char terminator;
+
+      // This keeps track of the nesting level of the string.
+      size_t nesting;
 
       // Whether or not interpolation is allowed in this string.
       bool interpolation;
