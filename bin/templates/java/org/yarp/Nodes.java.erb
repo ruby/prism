@@ -51,7 +51,7 @@ public abstract class Nodes {
     <%= "#{node.comment.split("\n").map { |line| "// #{line}" }.join("\n    ")}\n" if node.comment -%>
     public static final class <%= node.name -%> extends Node {
         <%-node.params.each do |param| -%>
-        public final <%= param.java_type %> <%= param.name %>;
+        public final <%= param.java_type %> <%= param.name %>;<%= ' // optional' if param.class.name.start_with?('Optional') %>
         <%- end -%>
 
         public <%=node.name -%>(<%= (node.params.map { "#{_1.java_type} #{_1.name}" } + ["int startOffset", "int endOffset"]).join(", ") %>) {
