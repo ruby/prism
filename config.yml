@@ -1151,7 +1151,7 @@ nodes:
       - name: opening
         type: token
       - name: statements
-        type: node
+        type: node?
       - name: closing
         type: token
     location: opening->closing

@@ -4240,9 +4240,23 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       return target;
     case YP_NODE_MULTI_WRITE_NODE:
       target->as.multi_write_node.operator = *operator;
-      target->as.multi_write_node.value = value;
-      target->location.end = value->location.end;
+
+      if (value != NULL) {
+        target->as.multi_write_node.value = value;
+        target->location.end = value->location.end;
+      }
+
       return target;
+    case YP_NODE_STAR_NODE: {
+      if (target->as.star_node.expression != NULL) {
+        target->as.star_node.expression = parse_target(parser, target->as.star_node.expression, operator, value);
+      }
+
+      yp_node_t *multi_write = yp_node_multi_write_node_create(parser, operator, value, &(yp_location_t) { .start = parser->start, .end = parser->start }, &(yp_location_t) { .start = parser->start, .end = parser->start });
+      yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, target);
+
+      return multi_write;
+    }
     case YP_NODE_CALL_NODE: {
       // If we have no arguments to the call node and we need this to be a
       // target then this is either a method call or a local variable write.
@@ -4399,8 +4413,8 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
       // node when it returns.
 
       yp_token_t lparen = parser->previous;
-      yp_node_t *first_child_target = parse_expression(parser, binding_power, "Expected an expression after '('.");
-      yp_node_t *child_target = parse_targets(parser, first_child_target, binding_power);
+      yp_node_t *first_child_target = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected an expression after '('.");
+      yp_node_t *child_target = parse_targets(parser, first_child_target, YP_BINDING_POWER_STATEMENT);
 
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected an ')' after multi-assignment.");
       yp_token_t rparen = parser->previous;
@@ -5586,22 +5600,78 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
-      yp_node_t *parentheses;
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      while (accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE));
 
-      if (!match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_EOF)) {
-        yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PARENS);
-        parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
-      } else {
-        yp_node_t *statements = yp_node_statements_create(parser);
-        parentheses = yp_node_parentheses_node_create(parser, &opening, statements, &opening);
+      // If this is the end of the file or we match a right parenthesis, then
+      // we have an empty parentheses node, and we can immediately return.
+      if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_EOF)) {
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
+        return yp_node_parentheses_node_create(parser, &opening, NULL, &parser->previous);
       }
 
+      // Otherwise, we're going to parse the first statement in the list of
+      // statements within the parentheses.
+      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
+      while (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
+
+      // If we hit a right parenthesis, then we're done parsing the parentheses
+      // node, and we can check which kind of node we should return.
+      if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+        yp_state_stack_pop(&parser->accepts_block_stack);
+
+        // If we have a single statement and are ending on a right parenthesis,
+        // then we need to check if this is possibly a multiple assignment node.
+        if (
+          binding_power == YP_BINDING_POWER_STATEMENT &&
+          statement->type == YP_NODE_MULTI_WRITE_NODE &&
+          match_any_type_p(parser, 2, YP_TOKEN_COMMA, YP_TOKEN_EQUAL)
+        ) {
+          statement->as.multi_write_node.lparen_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          statement->as.multi_write_node.rparen_loc = (yp_location_t) { .start = parser->previous.start, .end = parser->previous.end };
+          return parse_targets(parser, statement, YP_BINDING_POWER_INDEX);
+        }
+
+        // If we have a single statement and are ending on a right parenthesis
+        // and we didn't return a multiple assignment node, then we can return a
+        // regular parentheses node now.
+        yp_node_t *statements = yp_node_statements_create(parser);
+        yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
+
+        return yp_node_parentheses_node_create(parser, &opening, statements, &parser->previous);
+      }
+
+      // If we have more than one statement in the set of parentheses, then we
+      // are going to parse all of them as a list of statements. We'll do that
+      // here.
+      context_push(parser, YP_CONTEXT_PARENS);
+      yp_node_t *statements = yp_node_statements_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
+
+      while (!match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+        // Ignore semicolon without statements before them
+        if (accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE)) continue;
+
+        yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
+        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+
+        // If we're recovering from a syntax error, then we need to stop parsing the
+        // statements now.
+        if (parser->recovering) {
+          // If this is the level of context where the recovery has happened, then
+          // we can mark the parser as done recovering.
+          if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) parser->recovering = false;
+          break;
+        }
+
+        if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
+      } 
+
+      context_pop(parser);
       yp_state_stack_pop(&parser->accepts_block_stack);
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
-      parentheses->as.parentheses_node.closing = parser->previous;
-      parentheses->location.end = parser->previous.end;
-      return parentheses;
+
+      return yp_node_parentheses_node_create(parser, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_BRACE_LEFT: {
       parser_lex(parser);
@@ -6911,6 +6981,29 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
+    case YP_TOKEN_STAR: {
+      parser_lex(parser);
+
+      // * operators at the beginning of expressions are only valid in the
+      // context of a multiple assignment. We enforce that here. We'll still lex
+      // past it though and create a missing node place.
+      if (binding_power != YP_BINDING_POWER_STATEMENT) {
+        return yp_node_missing_node_create(parser, &(yp_location_t) {
+          .start = parser->previous.start,
+          .end = parser->previous.end,
+        });
+      }
+
+      yp_token_t operator = parser->previous;
+      yp_node_t *name = NULL;
+
+      if (token_begins_expression_p(parser->current.type)) {
+        name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an expression after '*'.");
+      }
+
+      yp_node_t *splat = yp_node_star_node_create(parser, &operator, name);
+      return parse_targets(parser, splat, YP_BINDING_POWER_INDEX);
+    }
     case YP_TOKEN_BANG: {
       parser_lex(parser);
 
@@ -7134,6 +7227,18 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
           return parse_target(parser, node, &token, value);
+        }
+        case YP_NODE_STAR_NODE: {
+          switch (node->as.star_node.expression->type) {
+            case YP_CASE_WRITABLE: {
+              parser_lex(parser);
+              yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
+              return parse_target(parser, node, &token, value);
+            }
+            default: {}
+          }
+
+          // fallthrough
         }
         default:
           parser_lex(parser);

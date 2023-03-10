@@ -131,15 +131,15 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "unterminated parenthesized expression" do
-    assert_errors expression('(1 + 2'), '(1 + 2', ["Expected a closing parenthesis."]
+    assert_errors expression('(1 + 2'), '(1 + 2', ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
   end
 
   test "(1, 2, 3)" do
-    assert_errors expression("(1, 2, 3)"), "(1, 2, 3)", ["Expected a closing parenthesis."]
+    assert_errors expression("(1, 2, 3)"), "(1, 2, 3)", ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
   end
 
   test "return(1, 2, 3)" do
-    errors = ["Expected a closing parenthesis."]
+    errors = ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
 
     assert_errors expression("return(1, 2, 3)"), "return(1, 2, 3)", errors
   end
@@ -149,7 +149,7 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "next(1, 2, 3)" do
-    errors = ["Expected a closing parenthesis."]
+    errors = ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
 
     assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", errors
   end
@@ -159,7 +159,7 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "break(1, 2, 3)" do
-    errors = ["Expected a closing parenthesis."]
+    errors = ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
 
     assert_errors expression("break(1, 2, 3)"), "break(1, 2, 3)", errors
   end
