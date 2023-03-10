@@ -133,6 +133,10 @@ typedef struct yp_lex_mode {
 
       // Whether or not interpolation is allowed in this string.
       bool interpolation;
+
+      // Whether or not at the end of the string we should allow a :, which
+      // would indicate this was a dynamic symbol instead of a string.
+      bool label_allowed;
     } string;
 
     struct {

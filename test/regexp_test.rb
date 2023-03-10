@@ -57,8 +57,8 @@ class RegexpTest < Test::Unit::TestCase
     refute_nil(YARP.named_captures("[[:^digit:]]"))
   end
 
-  test "invalid character classes" do
-    assert_nil(YARP.named_captures("[[:foo]]"))
+  test "invalid posix character classes should fall back to regular classes" do
+    refute_nil(YARP.named_captures("[[:foo]]"))
   end
 
   test "character sets" do
