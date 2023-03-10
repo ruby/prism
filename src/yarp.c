@@ -4248,7 +4248,9 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
 
       return target;
     case YP_NODE_STAR_NODE: {
-      target->as.star_node.expression = parse_target(parser, target->as.star_node.expression, operator, value);
+      if (target->as.star_node.expression != NULL) {
+        target->as.star_node.expression = parse_target(parser, target->as.star_node.expression, operator, value);
+      }
 
       yp_node_t *multi_write = yp_node_multi_write_node_create(parser, operator, value, &(yp_location_t) { .start = parser->start, .end = parser->start }, &(yp_location_t) { .start = parser->start, .end = parser->start });
       yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, target);
@@ -4411,8 +4413,8 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
       // node when it returns.
 
       yp_token_t lparen = parser->previous;
-      yp_node_t *first_child_target = parse_expression(parser, binding_power, "Expected an expression after '('.");
-      yp_node_t *child_target = parse_targets(parser, first_child_target, binding_power);
+      yp_node_t *first_child_target = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected an expression after '('.");
+      yp_node_t *child_target = parse_targets(parser, first_child_target, YP_BINDING_POWER_STATEMENT);
 
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected an ')' after multi-assignment.");
       yp_token_t rparen = parser->previous;
@@ -5623,7 +5625,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (
           binding_power == YP_BINDING_POWER_STATEMENT &&
           statement->type == YP_NODE_MULTI_WRITE_NODE &&
-          match_type_p(parser, YP_TOKEN_COMMA)
+          match_any_type_p(parser, 2, YP_TOKEN_COMMA, YP_TOKEN_EQUAL)
         ) {
           statement->as.multi_write_node.lparen_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
           statement->as.multi_write_node.rparen_loc = (yp_location_t) { .start = parser->previous.start, .end = parser->previous.end };
@@ -6993,9 +6995,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       yp_token_t operator = parser->previous;
-      yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an expression after '*'.");
-      yp_node_t *splat = yp_node_star_node_create(parser, &operator, name);
+      yp_node_t *name = NULL;
 
+      if (token_begins_expression_p(parser->current.type)) {
+        name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an expression after '*'.");
+      }
+
+      yp_node_t *splat = yp_node_star_node_create(parser, &operator, name);
       return parse_targets(parser, splat, YP_BINDING_POWER_INDEX);
     }
     case YP_TOKEN_BANG: {
