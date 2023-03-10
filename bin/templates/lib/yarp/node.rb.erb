@@ -31,7 +31,7 @@ module YARP
     def child_nodes
       [<%= node.params.filter_map { |param|
         case param
-        when NodeParam, OptionalNodeParam then param.name
+        when SingleNodeParam then param.name
         when NodeListParam then "*#{param.name}"
         end
       }.join(", ") %>]
