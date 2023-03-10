@@ -4657,7 +4657,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
         yp_token_t operator = not_provided(parser);
         yp_node_t *value = NULL;
 
-        if (token_begins_expression_p(parser->current.type)) {
+        if (token_begins_expression_p(parser->current.type) || parser->current.type == YP_TOKEN_BRACE_LEFT) {
           value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after the label in hash.");
         }
 
@@ -4782,16 +4782,16 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
 
         if (yp_symbol_node_label_p(argument) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-          yp_token_t opening = not_provided(parser);
-          yp_token_t closing = not_provided(parser);
-          yp_node_t *bare_hash = yp_node_hash_node_create(parser, &opening, &closing);
-
           yp_token_t operator;
           if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
             operator = parser->previous;
           } else {
             operator = not_provided(parser);
           }
+
+          yp_token_t opening = not_provided(parser);
+          yp_token_t closing = not_provided(parser);
+          yp_node_t *bare_hash = yp_node_hash_node_create(parser, &opening, &closing);
 
           // Finish parsing the one we are part way through
           yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
