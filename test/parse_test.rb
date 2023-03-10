@@ -3488,6 +3488,17 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "%Q{abc}"
   end
 
+  test "% string with nesting" do
+    expected = StringNode(
+      STRING_BEGIN("%["),
+      STRING_CONTENT("foo[]"),
+      STRING_END("]"),
+      "foo[]"
+    )
+
+    assert_parses expected, "%[foo[]]"
+  end
+
   test "% string interpolation allowed, but not used" do
     expected = StringNode(
       STRING_BEGIN("%{"),
