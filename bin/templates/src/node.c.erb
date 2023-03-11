@@ -13,6 +13,13 @@ yp_node_alloc(yp_parser_t *parser) {
   return (yp_node_t *) malloc(sizeof(yp_node_t));
 }
 
+// Clear the node but preserves the location.
+void yp_node_clear(yp_node_t *node) {
+  yp_location_t location = node->location;
+  memset(node, 0, sizeof(yp_node_t));
+  node->location = location;
+}
+
 // Initialize a yp_token_list_t with its default values.
 void
 yp_token_list_init(yp_token_list_t *token_list) {
