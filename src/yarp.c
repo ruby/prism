@@ -81,17 +81,30 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
 __attribute__((unused)) static void
 debug_lex_mode(yp_parser_t *parser) {
   yp_lex_mode_t *lex_mode = parser->lex_modes.current;
+  bool first = true;
 
-  switch (lex_mode->mode) {
-    case YP_LEX_DEFAULT: fprintf(stderr, "lexing in DEFAULT mode\n"); return;
-    case YP_LEX_EMBDOC: fprintf(stderr, "lexing in EMBDOC mode\n"); return;
-    case YP_LEX_EMBEXPR: fprintf(stderr, "lexing in EMBEXPR mode\n"); return;
-    case YP_LEX_EMBVAR: fprintf(stderr, "lexing in EMBVAR mode\n"); return;
-    case YP_LEX_HEREDOC: fprintf(stderr, "lexing in HEREDOC mode\n"); return;
-    case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
-    case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
-    case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
+  while (lex_mode != NULL) {
+    if (first) {
+      first = false;
+    } else {
+      fprintf(stderr, " <- ");
+    }
+
+    switch (lex_mode->mode) {
+      case YP_LEX_DEFAULT: fprintf(stderr, "DEFAULT"); break;
+      case YP_LEX_EMBDOC: fprintf(stderr, "EMBDOC"); break;
+      case YP_LEX_EMBEXPR: fprintf(stderr, "EMBEXPR"); break;
+      case YP_LEX_EMBVAR: fprintf(stderr, "EMBVAR"); break;
+      case YP_LEX_HEREDOC: fprintf(stderr, "HEREDOC"); break;
+      case YP_LEX_LIST: fprintf(stderr, "LIST (terminator=%c, interpolation=%d)", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); break;
+      case YP_LEX_REGEXP: fprintf(stderr, "REGEXP (terminator=%c)", lex_mode->as.regexp.terminator); break;
+      case YP_LEX_STRING: fprintf(stderr, "STRING (terminator=%c, interpolation=%d)", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); break;
+    }
+
+    lex_mode = lex_mode->prev;
   }
+
+  fprintf(stderr, "\n");
 }
 
 __attribute__((unused)) static void
