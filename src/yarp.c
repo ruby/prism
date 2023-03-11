@@ -3067,9 +3067,10 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, ':')) {
             if (lex_state_beg_p(parser) || lex_state_p(parser, YP_LEX_STATE_CLASS) || (lex_state_p(parser, YP_LEX_STATE_ARG_ANY) && space_seen)) {
               lex_state_set(parser, YP_LEX_STATE_BEG);
-            } else {
-              lex_state_set(parser, YP_LEX_STATE_DOT);
+              return YP_TOKEN_UCOLON_COLON;
             }
+
+            lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_COLON_COLON;
           }
 
@@ -4313,7 +4314,7 @@ token_begins_expression_p(yp_token_type_t type) {
       // and let it be handled by the default case below.
       assert(yp_binding_powers[type].left == YP_BINDING_POWER_UNSET);
       return false;
-    case YP_TOKEN_COLON_COLON:
+    case YP_TOKEN_UCOLON_COLON:
     case YP_TOKEN_UMINUS:
     case YP_TOKEN_UPLUS:
     case YP_TOKEN_BANG:
@@ -5264,7 +5265,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
 
       arguments->closing = parser->previous;
     }
-  } else if (token_begins_expression_p(parser->current.type) && !match_any_type_p(parser, 2, YP_TOKEN_COLON_COLON, YP_TOKEN_BRACE_LEFT)) {
+  } else if (token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
     yp_state_stack_push(&parser->accepts_block_stack, false);
 
     // If we get here, then the subsequent token cannot be used as an infix
@@ -5881,7 +5882,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // fact a method call, not a constant read.
       if (
         match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_any_type_p(parser, 2, YP_TOKEN_BRACE_LEFT, YP_TOKEN_COLON_COLON))
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT))
       ) {
         yp_arguments_t arguments = yp_arguments();
         parse_arguments_list(parser, &arguments, true);
@@ -5898,7 +5899,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_COLON_COLON: {
+    case YP_TOKEN_UCOLON_COLON: {
       parser_lex(parser);
 
       yp_token_t delimiter = parser->previous;

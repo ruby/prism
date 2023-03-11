@@ -286,6 +286,8 @@ tokens:
     comment: "the beginning of a symbol"
   - name: TILDE
     comment: "~ or ~@"
+  - name: UCOLON_COLON
+    comment: "unary ::"
   - name: UMINUS
     comment: "-@"
   - name: UPLUS
