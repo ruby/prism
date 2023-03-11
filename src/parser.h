@@ -342,6 +342,11 @@ struct yp_parser {
   // This is an optional callback that can be attached to the parser that will
   // be called whenever a new token is lexed by the parser.
   yp_lex_callback_t *lex_callback;
+
+  // A boolean that tracks whether or not we should potentially consider comment
+  // tokens to be magic comments. This becomes false after anything other than
+  // comment tokens have been seen.
+  bool consider_magic_comments;
 };
 
 #endif // YARP_PARSER_H

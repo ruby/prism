@@ -2414,6 +2414,10 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
 // Optionally call out to the lex callback if one is provided.
 static inline void
 parser_lex_callback(yp_parser_t *parser) {
+  if (parser->consider_magic_comments && parser->current.type != YP_TOKEN_COMMENT) {
+    parser->consider_magic_comments = false;
+  }
+
   if (parser->lex_callback) {
     parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
   }
@@ -3989,7 +3993,9 @@ parser_lex(yp_parser_t *parser) {
         yp_comment_t *comment = parser_comment(parser, YP_COMMENT_INLINE);
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
-        parser_lex_magic_comments(parser);
+        if (parser->consider_magic_comments) {
+          parser_lex_magic_comments(parser);
+        }
 
         parser->current.type = lex_newline(parser, previous_command_start);
         break;
@@ -7892,7 +7898,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .recovering = false,
     .encoding = yp_encoding_utf_8,
     .encoding_decode_callback = NULL,
-    .lex_callback = NULL
+    .lex_callback = NULL,
+    .consider_magic_comments = true
   };
 
   yp_state_stack_init(&parser->do_loop_stack);
