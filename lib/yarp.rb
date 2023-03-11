@@ -130,7 +130,9 @@ module YARP
   class Node
     def pretty_print(q)
       q.group do
-        q.text("#{self.class.name.split("::").last}(")
+        q.text(self.class.name.split("::").last)
+        self.location.pretty_print(q)
+        q.text("(")
         q.nest(2) do
           deconstructed = deconstruct_keys([])
           deconstructed.delete(:location)
