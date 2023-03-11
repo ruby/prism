@@ -2659,7 +2659,9 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           parser->enclosure_nesting++;
+          parser->brace_nesting++;
           yp_state_stack_push(&parser->do_loop_stack, false);
+
           return type;
         }
 
@@ -2668,11 +2670,12 @@ lex_token_type(yp_parser_t *parser) {
           parser->enclosure_nesting--;
           yp_state_stack_pop(&parser->do_loop_stack);
 
-          if (parser->lex_modes.current->mode == YP_LEX_EMBEXPR) {
+          if ((parser->lex_modes.current->mode == YP_LEX_EMBEXPR) && (parser->brace_nesting == 0)) {
             lex_mode_pop(parser);
             return YP_TOKEN_EMBEXPR_END;
           }
 
+          parser->brace_nesting--;
           lex_state_set(parser, YP_LEX_STATE_END);
           return YP_TOKEN_BRACE_RIGHT;
 
@@ -5475,13 +5478,18 @@ parse_string_part(yp_parser_t *parser) {
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
       yp_lex_state_t state = parser->lex_state;
+      int brace_nesting = parser->brace_nesting;
+
+      parser->brace_nesting = 0;
       lex_state_set(parser, YP_LEX_STATE_BEG);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
 
+      parser->brace_nesting = brace_nesting;
       lex_state_set(parser, state);
+
       expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
       yp_token_t closing = parser->previous;
 
@@ -7931,6 +7939,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .command_start = true,
     .enclosure_nesting = 0,
     .lambda_enclosure_nesting = -1,
+    .brace_nesting = 0,
     .lex_modes =
       {
         .index = 0,

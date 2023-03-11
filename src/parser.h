@@ -290,6 +290,10 @@ struct yp_parser {
   // the beginning of a lambda following the parameters of a lambda.
   int lambda_enclosure_nesting;
 
+  // Used to track the nesting of braces to ensure we get the correct value when
+  // we are interpolating blocks with braces.
+  int brace_nesting;
+
   // the stack used to determine if a do keyword belongs to the predicate of a
   // while, until, or for loop
   yp_state_stack_t do_loop_stack;
