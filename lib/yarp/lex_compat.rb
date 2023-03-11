@@ -303,30 +303,40 @@ module YARP
                 lineno = token[0][0] + index
                 column = token[0][1]
 
+                if line == "\n" && (dedent_next || index > 0)
+                  column = 0
+                end
+
                 # If we are supposed to dedent this line or if this is not the
                 # first line of the string and this line isn't entirely blank,
                 # then we need to insert an on_ignored_sp token and remove the
                 # dedent from the beginning of the line.
-                if line != "\n" && (dedent_next || index > 0)
-                  deleting = 0
-                  deleted_chars = []
+                if dedent_next || index > 0
+                  if line == "\n"
+                    # Blank lines do not count toward common leading whitespace
+                    # calculation and do not need to be dedented.
+                    column = 0
+                  else
+                    deleting = 0
+                    deleted_chars = []
 
-                  # Gather up all of the characters that we're going to delete,
-                  # stopping when you hit a character that would put you over
-                  # the dedent amount.
-                  line.each_char do |char|
-                    break if (deleting += char == "\t" ? TAB_WIDTH : 1) > dedent
-                    deleted_chars << char
-                  end
+                    # Gather up all of the characters that we're going to
+                    # delete, stopping when you hit a character that would put
+                    # you over the dedent amount.
+                    line.each_char do |char|
+                      break if (deleting += char == "\t" ? TAB_WIDTH : 1) > dedent
+                      deleted_chars << char
+                    end
 
-                  # If we have something to delete, then delete it from the
-                  # string and insert an on_ignored_sp token.
-                  if deleted_chars.any?
-                    ignored = deleted_chars.join
-                    line.delete_prefix!(ignored)
+                    # If we have something to delete, then delete it from the
+                    # string and insert an on_ignored_sp token.
+                    if deleted_chars.any?
+                      ignored = deleted_chars.join
+                      line.delete_prefix!(ignored)
 
-                    results << Token.new([[lineno, 0], :on_ignored_sp, ignored, token[3]])
-                    column = ignored.length
+                      results << Token.new([[lineno, 0], :on_ignored_sp, ignored, token[3]])
+                      column = ignored.length
+                    end
                   end
                 end
 
