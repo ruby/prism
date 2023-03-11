@@ -3103,7 +3103,13 @@ lex_token_type(yp_parser_t *parser) {
         // / /=
         case '/':
           if (lex_state_beg_p(parser)) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
+            lex_mode_push(parser, (yp_lex_mode_t) {
+              .mode = YP_LEX_REGEXP,
+              .as.regexp.incrementor = '\0',
+              .as.regexp.terminator = '/',
+              .as.regexp.nesting = 0
+            });
+
             return YP_TOKEN_REGEXP_BEGIN;
           }
 
@@ -3114,7 +3120,14 @@ lex_token_type(yp_parser_t *parser) {
 
           if (lex_state_p(parser, YP_LEX_STATE_ARG) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
             yp_diagnostic_list_append(&parser->warning_list, "ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after `/' operator", parser->current.start - parser->start);
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
+
+            lex_mode_push(parser, (yp_lex_mode_t) {
+              .mode = YP_LEX_REGEXP,
+              .as.regexp.incrementor = '\0',
+              .as.regexp.terminator = '/',
+              .as.regexp.nesting = 0
+            });
+
             return YP_TOKEN_REGEXP_BEGIN;
           }
 
@@ -3212,12 +3225,17 @@ lex_token_type(yp_parser_t *parser) {
               }
               case 'r': {
                 parser->current.end++;
+
                 yp_lex_mode_t lex_mode = {
                   .mode = YP_LEX_REGEXP,
-                  .as.regexp.terminator = terminator(*parser->current.end++)
+                  .as.regexp.incrementor = incrementor(*parser->current.end),
+                  .as.regexp.terminator = terminator(*parser->current.end),
+                  .as.regexp.nesting = 0
                 };
 
                 lex_mode_push(parser, lex_mode);
+                parser->current.end++;
+
                 return YP_TOKEN_REGEXP_BEGIN;
               }
               case 'q': {
@@ -3535,8 +3553,12 @@ lex_token_type(yp_parser_t *parser) {
       // These are the places where we need to split up the content of the
       // regular expression. We'll use strpbrk to find the first of these
       // characters.
-      char breakpoints[] = " \\#";
-      breakpoints[0] = parser->lex_modes.current->as.regexp.terminator;
+      char breakpoints[] = "\\#\0\0";
+
+      breakpoints[2] = parser->lex_modes.current->as.regexp.terminator;
+      if (parser->lex_modes.current->as.regexp.incrementor != '\0') {
+        breakpoints[3] = parser->lex_modes.current->as.regexp.incrementor;
+      }
 
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
@@ -3560,7 +3582,21 @@ lex_token_type(yp_parser_t *parser) {
             break;
           }
           default: {
+            if (*breakpoint == parser->lex_modes.current->as.regexp.incrementor) {
+              // If we've hit the incrementor, then we need to skip past it and
+              // find the next breakpoint.
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              parser->lex_modes.current->as.regexp.nesting++;
+              break;
+            }
+
             assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
+
+            if (parser->lex_modes.current->as.regexp.nesting > 0) {
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              parser->lex_modes.current->as.regexp.nesting--;
+              break;
+            }
 
             // Here we've hit the terminator. If we have already consumed
             // content then we need to return that content as string content

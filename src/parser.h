@@ -115,8 +115,15 @@ typedef struct yp_lex_mode {
     } list;
 
     struct {
+      // When lexing a regular expression, it takes into account balancing the
+      // terminator if the terminator is one of (), [], {}, or <>.
+      char incrementor;
+
       // This is the terminator of the regular expression.
       char terminator;
+
+      // This keeps track of the nesting level of the regular expression.
+      size_t nesting;
     } regexp;
 
     struct {
@@ -138,14 +145,6 @@ typedef struct yp_lex_mode {
       // would indicate this was a dynamic symbol instead of a string.
       bool label_allowed;
     } string;
-
-    struct {
-      // This is the terminator of the symbol.
-      char terminator;
-
-      // Whether or not interpolation is allowed in this symbol.
-      bool interpolation;
-    } symbol;
 
     struct {
       // These pointers point to the beginning and end of the heredoc
