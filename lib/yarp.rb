@@ -111,7 +111,9 @@ module YARP
 
     def pretty_print(q)
       q.group do
-        q.text("#{type}(")
+        q.text(type.to_s)
+        self.location.pretty_print(q)
+        q.text("(")
         q.nest(2) do
           q.breakable("")
           q.pp(value)
