@@ -6004,6 +6004,20 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
       yp_node_t *node = parse_identifier(parser);
 
+      // If an identifier is followed by something that looks like an argument,
+      // then this is in fact a method call, not a local read.
+      if (
+        node->type == YP_NODE_LOCAL_VARIABLE_READ &&
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT))
+      ) {
+        yp_arguments_t arguments = yp_arguments();
+        parse_arguments_list(parser, &arguments, true);
+
+        yp_node_t *fcall = yp_call_node_fcall_create(parser, &node->as.local_variable_read.name, &arguments);
+        yp_node_destroy(parser, node);
+        return fcall;
+      }
+
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
       }
