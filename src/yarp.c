@@ -1524,6 +1524,28 @@ char_is_ascii_printable(const char c) {
   return ascii_printable_chars[(unsigned char) c];
 }
 
+#define BIT(c, idx) (((c) / 32 - 1 == idx) ? (1U << ((c) % 32)) : 0)
+#define PUNCT(idx) ( \
+        BIT('~', idx) | BIT('*', idx) | BIT('$', idx) | BIT('?', idx) | \
+        BIT('!', idx) | BIT('@', idx) | BIT('/', idx) | BIT('\\', idx) | \
+        BIT(';', idx) | BIT(',', idx) | BIT('.', idx) | BIT('=', idx) | \
+        BIT(':', idx) | BIT('<', idx) | BIT('>', idx) | BIT('\"', idx) | \
+        BIT('&', idx) | BIT('`', idx) | BIT('\'', idx) | BIT('+', idx) | \
+        BIT('0', idx))
+
+const unsigned int yp_global_name_punctuation_hash[(0x7e - 0x20 + 31) / 32] = { PUNCT(0), PUNCT(1), PUNCT(2) };
+
+#undef BIT
+#undef PUNCT
+
+static inline bool
+char_is_global_name_punctuation(const char c) {
+  const unsigned int i = c;
+  if (i <= 0x20 || 0x7e < i) return false;
+
+  return (yp_global_name_punctuation_hash[(i - 0x20) / 32] >> (c % 32)) & 1;
+}
+
 /******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
@@ -2168,7 +2190,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // and then switch to the embedded variable lex mode.
         lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
         parser->current.end = pound + 1;
-        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_EMBVAR;
       }
 
@@ -2179,21 +2200,52 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       return YP_TOKEN_NOT_PROVIDED;
     }
     case '$':
-      // In this case we've hit an embedded global variable. First check to see
-      // if we've already consumed content. If we have, then we need to return
-      // that content as string content first.
-      if (pound > parser->current.start) {
-        parser->current.end = pound;
+      // In this case we may have hit an embedded global variable. If there's
+      // not enough room, then we'll just return string content.
+      if (pound + 2 >= parser->end) {
+        parser->current.end = pound + 1;
         lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
-      // Otherwise, we need to return the embedded variable token and switch to
-      // the embedded variable lex mode.
-      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
+      // Now we need to check if this could possibly be a global variable.
+      const char *check = pound + 2;
+
+      if (pound[2] == '-') {
+        if (pound + 3 >= parser->end) {
+          parser->current.end = pound + 2;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
+          return YP_TOKEN_STRING_CONTENT;
+        }
+
+        check++;
+      }
+
+      if (
+        char_is_identifier_start(parser, check) ||
+        char_is_decimal_number(*check) ||
+        char_is_global_name_punctuation(*check)
+      ) {
+        // In this case we've hit an embedded global variable. First check to see
+        // if we've already consumed content. If we have, then we need to return
+        // that content as string content first.
+        if (pound > parser->current.start) {
+          parser->current.end = pound;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
+          return YP_TOKEN_STRING_CONTENT;
+        }
+
+        // Otherwise, we need to return the embedded variable token and switch to
+        // the embedded variable lex mode.
+        lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
+        parser->current.end = pound + 1;
+        return YP_TOKEN_EMBVAR;
+      }
+
+      // In this case we've hit a #$ that does not indicate a global variable.
+      // In this case we'll continue lexing past it.
       parser->current.end = pound + 1;
-      lex_state_set(parser, YP_LEX_STATE_BEG);
-      return YP_TOKEN_EMBVAR;
+      return YP_TOKEN_NOT_PROVIDED;
     case '{':
       parser->enclosure_nesting++;
 
