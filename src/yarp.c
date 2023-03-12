@@ -2003,6 +2003,17 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
       // check if we're returning the defined? keyword or just an identifier.
       width++;
 
+      if (
+        ((lex_state_p(parser, YP_LEX_STATE_LABEL | YP_LEX_STATE_ENDFN) && !previous_command_start) || lex_state_arg_p(parser)) &&
+        parser->current.end[0] == ':' && parser->current.end[1] != ':'
+      ) {
+        // If we're in a position where we can accept a : at the end of an
+        // identifier, then we'll optionally accept it.
+        lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
+        (void) match(parser, ':');
+        return YP_TOKEN_LABEL;
+      }
+
       if (parser->lex_state != YP_LEX_STATE_DOT) {
         if (width == 8 && lex_keyword(parser, "defined?", YP_LEX_STATE_ARG, false)) {
           return YP_TOKEN_KEYWORD_DEFINED;
