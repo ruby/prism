@@ -1812,7 +1812,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'b':
       case 'B':
         if (char_is_binary_number(*++parser->current.end)) {
-          parser->current.end += strspn(parser->current.end, "01_");
+          parser->current.end += yp_strspn_binary_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, "invalid binary number", parser->current.start - parser->start);
         }
@@ -1847,7 +1847,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'x':
       case 'X':
         if (char_is_hexadecimal_number(*++parser->current.end)) {
-          parser->current.end += strspn(parser->current.end, "0123456789abcdefABCDEF_");
+          parser->current.end += yp_strspn_hexidecimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, "invalid hexadecimal number", parser->current.start - parser->start);
         }
@@ -1933,7 +1933,7 @@ lex_global_variable(yp_parser_t *parser) {
     case '7':
     case '8':
     case '9':
-      parser->current.end += strspn(parser->current.end, "0123456789");
+      parser->current.end += yp_strspn_decimal_digit(parser->current.end, parser->end - parser->current.end);
       return YP_TOKEN_NTH_REFERENCE;
 
     case '-':
@@ -2318,7 +2318,7 @@ lex_question_mark(yp_parser_t *parser) {
           if (match(parser, '{')) {
             parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
             while (!match(parser, '}')) {
-              parser->current.end += strspn(parser->current.end, "0123456789abcdefABCDEF");
+              parser->current.end += yp_strspn_hexidecimal_digit(parser->current.end, parser->current.end - parser->end);
               parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
             }
           } else {
