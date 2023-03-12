@@ -392,6 +392,18 @@ nodes:
             foo
           end
           ^^^^^
+  - name: BlockArgumentNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: expression
+        type: node
+    location: operator->expression
+    comment: |
+      Represents block method arguments.
+
+          bar(&args)
+          ^^^^^^^^^^
   - name: BlockNode
     child_nodes:
       - name: start_keyword
@@ -475,6 +487,26 @@ nodes:
 
           foo.bar
           ^^^^^^^
+  - name: CaseNode
+    child_nodes:
+      - name: case_keyword
+        type: token
+      - name: predicate
+        type: node?
+      - name: conditions
+        type: node[]
+      - name: consequent
+        type: node?
+      - name: end_keyword
+        type: token
+    location: case_keyword->end_keyword
+    comment: |
+      Represents the use of a case statement.
+
+      case true
+      ^^^^^^^^^
+      when false
+      end
   - name: ClassNode
     child_nodes:
       - name: scope
@@ -676,30 +708,6 @@ nodes:
             bar(...)
             ^^^^^^^^
           end
-  - name: KeywordStarNode
-    child_nodes:
-      - name: operator
-        type: token
-      - name: expression
-        type: node
-    location: operator->expression
-    comment: |
-      Represents keyword splat method arguments.
-
-          bar(**kwargs)
-          ^^^^^^^^^^^
-  - name: BlockArgumentNode
-    child_nodes:
-      - name: operator
-        type: token
-      - name: expression
-        type: node
-    location: operator->expression
-    comment: |
-      Represents block method arguments.
-
-          bar(&args)
-          ^^^^^^^^^^
   - name: ForwardingParameterNode
     comment: |
       Represents the use of the forwarding parameter in a method, block, or lambda declaration.
@@ -793,40 +801,6 @@ nodes:
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
-  - name: CaseNode
-    child_nodes:
-      - name: case_keyword
-        type: token
-      - name: predicate
-        type: node?
-      - name: conditions
-        type: node[]
-      - name: consequent
-        type: node?
-      - name: end_keyword
-        type: token
-    location: case_keyword->end_keyword
-    comment: |
-      Represents the use of a case statement.
-
-      case true
-      ^^^^^^^^^
-      when false
-      end
-  - name: WhenNode
-    child_nodes:
-      - name: when_keyword
-        type: token
-      - name: conditions
-        type: node[]
-      - name: statements
-        type: node?
-    location: when_keyword->statements|conditions
-    comment: |
-      case true
-      when true
-      ^^^^^^^^^
-      end
   - name: ImaginaryNode
     comment: |
       Represents an imaginary number literal.
@@ -872,20 +846,6 @@ nodes:
 
           /foo #{bar} baz/
           ^^^^^^^^^^^^^^^^
-  - name: InterpolatedXStringNode
-    child_nodes:
-      - name: opening
-        type: token
-      - name: parts
-        type: node[]
-      - name: closing
-        type: token
-    location: opening->closing
-    comment: |
-      Represents an xstring literal that contains interpolation.
-
-          `foo #{bar} baz`
-          ^^^^^^^^^^^^^^^^
   - name: InterpolatedStringNode
     child_nodes:
       - name: opening
@@ -914,6 +874,20 @@ nodes:
 
           :"foo #{bar} baz"
           ^^^^^^^^^^^^^^^^^
+  - name: InterpolatedXStringNode
+    child_nodes:
+      - name: opening
+        type: token
+      - name: parts
+        type: node[]
+      - name: closing
+        type: token
+    location: opening->closing
+    comment: |
+      Represents an xstring literal that contains interpolation.
+
+          `foo #{bar} baz`
+          ^^^^^^^^^^^^^^^^
   - name: KeywordParameterNode
     child_nodes:
       - name: name
@@ -944,6 +918,18 @@ nodes:
           def a(**b)
                 ^^^
           end
+  - name: KeywordStarNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: expression
+        type: node
+    location: operator->expression
+    comment: |
+      Represents keyword splat method arguments.
+
+          bar(**kwargs)
+          ^^^^^^^^^^^
   - name: LambdaNode
     child_nodes:
       - name: scope
@@ -1243,17 +1229,6 @@ nodes:
 
           /foo/i
           ^^^^^^
-  - name: RequiredParameterNode
-    child_nodes:
-      - name: name
-        type: token
-    location: name
-    comment: |
-      Represents a required parameter to a method, block, or lambda definition.
-
-          def a(b)
-                ^
-          end
   - name: RequiredDestructuredParameterNode
     child_nodes:
       - name: parameters
@@ -1268,6 +1243,17 @@ nodes:
 
           def foo((bar, baz))
                   ^^^^^^^^^^
+          end
+  - name: RequiredParameterNode
+    child_nodes:
+      - name: name
+        type: token
+    location: name
+    comment: |
+      Represents a required parameter to a method, block, or lambda definition.
+
+          def a(b)
+                ^
           end
   - name: RescueModifierNode
     child_nodes:
@@ -1319,18 +1305,6 @@ nodes:
           def a(*b)
                 ^^
           end
-  - name: SplatNode
-    child_nodes:
-      - name: operator
-        type: token
-      - name: expression
-        type: node?
-    location: operator->expression|operator
-    comment: |
-      Represents array splats.
-
-          [*a]
-           ^^
   - name: RetryNode
     comment: |
       Represents the use of the `retry` keyword.
@@ -1401,6 +1375,18 @@ nodes:
 
           __LINE__
           ^^^^^^^^
+  - name: SplatNode
+    child_nodes:
+      - name: operator
+        type: token
+      - name: expression
+        type: node?
+    location: operator->expression|operator
+    comment: |
+      Represents the use of the splat operator.
+
+          [*a]
+           ^^
   - name: StatementsNode
     child_nodes:
       - name: body
@@ -1411,6 +1397,18 @@ nodes:
 
           foo; bar; baz
           ^^^^^^^^^^^^^
+  - name: StringConcatNode
+    child_nodes:
+      - name: left
+        type: node
+      - name: right
+        type: node
+    location: left->right
+    comment: |
+      Represents the use of compile-time string concatenation.
+
+          "foo" "bar"
+          ^^^^^^^^^^^
   - name: StringInterpolatedNode
     child_nodes:
       - name: opening
@@ -1448,18 +1446,6 @@ nodes:
 
           "foo #{bar} baz"
            ^^^^      ^^^^
-  - name: StringConcatNode
-    child_nodes:
-      - name: left
-        type: node
-      - name: right
-        type: node
-    location: left->right
-    comment: |
-      Represents the use of compile-time string concatenation.
-
-          "foo" "bar"
-          ^^^^^^^^^^^
   - name: SuperNode
     child_nodes:
       - name: keyword
@@ -1571,6 +1557,20 @@ nodes:
 
           until foo do bar end
           ^^^^^^^^^^^^^^^^^^^^
+  - name: WhenNode
+    child_nodes:
+      - name: when_keyword
+        type: token
+      - name: conditions
+        type: node[]
+      - name: statements
+        type: node?
+    location: when_keyword->statements|conditions
+    comment: |
+      case true
+      when true
+      ^^^^^^^^^
+      end
   - name: WhileNode
     child_nodes:
       - name: keyword
