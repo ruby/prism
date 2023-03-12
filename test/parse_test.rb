@@ -1365,9 +1365,12 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [],
-        [KeywordParameterNode(LABEL("c:"), expression("1"))],
+        [],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [
+          KeywordParameterNode(LABEL("b:"), nil),
+          KeywordParameterNode(LABEL("c:"), expression("1"))
+        ],
         nil,
         nil
       ),
@@ -1390,9 +1393,12 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [],
-        [KeywordParameterNode(LABEL("c:"), expression("1"))],
+        [],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [
+          KeywordParameterNode(LABEL("b:"), nil),
+          KeywordParameterNode(LABEL("c:"), expression("1"))
+        ],
         nil,
         nil
       ),
@@ -1415,9 +1421,12 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [],
-        [KeywordParameterNode(LABEL("b:"), expression("1"))],
+        [],
         nil,
-        [KeywordParameterNode(LABEL("c:"), nil)],
+        [
+          KeywordParameterNode(LABEL("b:"), expression("1")),
+          KeywordParameterNode(LABEL("c:"), nil)
+        ],
         nil,
         nil
       ),

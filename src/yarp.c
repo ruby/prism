@@ -4963,15 +4963,12 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 static yp_node_t *
 parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t binding_power) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
-  bool parsing = true;
 
-  while (parsing) {
+  do {
     switch (parser->current.type) {
       case YP_TOKEN_PARENTHESIS_LEFT: {
         yp_node_t *param = parse_required_destructured_parameter(parser);
         yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
-
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_AMPERSAND: {
@@ -4989,8 +4986,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
 
         yp_node_t *param = yp_block_parameter_node_create(parser, &name, &operator);
         params->as.parameters_node.block = param;
-
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_DOT_DOT_DOT: {
@@ -4999,8 +4994,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         yp_parser_local_add(parser, &parser->previous);
         yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
         params->as.parameters_node.keyword_rest = param;
-
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
@@ -5025,7 +5018,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
           yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
         }
 
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_LABEL: {
@@ -5046,12 +5038,12 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
           }
           case YP_TOKEN_SEMICOLON:
           case YP_TOKEN_NEWLINE: {
-            if (!uses_parentheses) {
-              yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
-              yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
-            } else {
-              parsing = false;
+            if (uses_parentheses) {
+              return params;
             }
+
+            yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
+            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
             break;
           }
           default: {
@@ -5061,7 +5053,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
             }
 
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
-            yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
+            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
 
             // If parsing the value of the parameter resulted in error recovery,
             // then we can put a missing node in its place and stop parsing the
@@ -5070,7 +5062,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
           }
         }
 
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_STAR: {
@@ -5089,7 +5080,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
 
         yp_node_t *param = yp_node_rest_parameter_node_create(parser, &operator, &name);
         params->as.parameters_node.rest = param;
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_STAR_STAR: {
@@ -5114,15 +5104,16 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         }
 
         params->as.parameters_node.keyword_rest = param;
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
-      default: {
-        parsing = false;
-        break;
-      }
+      default:
+        return params;
     }
-  }
+
+    if (uses_parentheses) {
+      accept(parser, YP_TOKEN_NEWLINE);
+    }
+  } while (accept(parser, YP_TOKEN_COMMA));
 
   return params;
 }
