@@ -116,7 +116,7 @@ class ParseTest < Test::Unit::TestCase
   test "array with splat" do
     expected = ArrayNode(
       [
-        StarNode(
+        SplatNode(
           IDENTIFIER("a"),
           expression("a")
         )
@@ -718,7 +718,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [StarNode(
+        [SplatNode(
            STAR("*"),
            CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
          )]
@@ -1931,7 +1931,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [StarNode(
+        [SplatNode(
            STAR("*"),
            CallNode(nil, nil, IDENTIFIER("rest"), nil, nil, nil, nil, "rest")
          )]
@@ -1955,7 +1955,7 @@ class ParseTest < Test::Unit::TestCase
             nil,
             IDENTIFIER("b"),
             PARENTHESIS_LEFT("("),
-            ArgumentsNode([StarNode(STAR("*"), nil)]),
+            ArgumentsNode([SplatNode(STAR("*"), nil)]),
             PARENTHESIS_RIGHT(")"),
             nil,
             "b"
@@ -3359,7 +3359,7 @@ class ParseTest < Test::Unit::TestCase
   test "return *1" do
     expected = ReturnNode(
       KEYWORD_RETURN("return"),
-      ArgumentsNode([StarNode(STAR("*"), IntegerNode())])
+      ArgumentsNode([SplatNode(STAR("*"), IntegerNode())])
     )
 
     assert_parses expected, "return *1"
@@ -4329,7 +4329,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [StarNode(STAR("*"), expression("b"))],
+        [SplatNode(STAR("*"), expression("b"))],
         nil,
         nil,
         StatementsNode([]),
@@ -6673,7 +6673,7 @@ class ParseTest < Test::Unit::TestCase
     expected = CaseNode(
       KEYWORD_CASE("case"),
       nil,
-      [WhenNode(KEYWORD_WHEN("when"), [StarNode(STAR("*"), expression("foo"))], nil)],
+      [WhenNode(KEYWORD_WHEN("when"), [SplatNode(STAR("*"), expression("foo"))], nil)],
       nil,
       KEYWORD_END("end")
     )
@@ -6921,7 +6921,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment trailing comma" do
     expected = MultiWriteNode(
-      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(COMMA(","), nil)],
+      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), SplatNode(COMMA(","), nil)],
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
       nil,
@@ -6933,7 +6933,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment trailing anonymous star" do
     expected = MultiWriteNode(
-      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), StarNode(STAR("*"), nil)],
+      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), SplatNode(STAR("*"), nil)],
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
       nil,
@@ -6947,7 +6947,7 @@ class ParseTest < Test::Unit::TestCase
     expected = MultiWriteNode(
       [
         LocalVariableWrite(IDENTIFIER("foo"), nil, nil),
-        StarNode(STAR("*"), LocalVariableWrite(IDENTIFIER("bar"), nil, nil))
+        SplatNode(STAR("*"), LocalVariableWrite(IDENTIFIER("bar"), nil, nil))
       ],
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
@@ -7008,7 +7008,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LocalVariableWrite(
       IDENTIFIER("foo"),
       EQUAL("="),
-      StarNode(
+      SplatNode(
         STAR("*"),
         CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")
       )

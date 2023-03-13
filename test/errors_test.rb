@@ -261,7 +261,7 @@ class ErrorsTest < Test::Unit::TestCase
             )],
            nil
          ),
-         StarNode(
+         SplatNode(
            STAR("*"),
            CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
          )]
@@ -303,7 +303,7 @@ class ErrorsTest < Test::Unit::TestCase
         IDENTIFIER("foo"),
         PARENTHESIS_LEFT("("),
         ArgumentsNode(
-          [StarNode(
+          [SplatNode(
              STAR("*"),
              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")
            )]
@@ -338,7 +338,7 @@ class ErrorsTest < Test::Unit::TestCase
             )],
            nil
          ),
-         StarNode(
+         SplatNode(
            STAR("*"),
            CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
          )]

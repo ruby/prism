@@ -1317,7 +1317,7 @@ nodes:
           def a(*b)
                 ^^
           end
-  - name: StarNode
+  - name: SplatNode
     child_nodes:
       - name: operator
         type: token
