@@ -115,8 +115,15 @@ typedef struct yp_lex_mode {
     } list;
 
     struct {
+      // When lexing a regular expression, it takes into account balancing the
+      // terminator if the terminator is one of (), [], {}, or <>.
+      char incrementor;
+
       // This is the terminator of the regular expression.
       char terminator;
+
+      // This keeps track of the nesting level of the regular expression.
+      size_t nesting;
     } regexp;
 
     struct {
@@ -138,14 +145,6 @@ typedef struct yp_lex_mode {
       // would indicate this was a dynamic symbol instead of a string.
       bool label_allowed;
     } string;
-
-    struct {
-      // This is the terminator of the symbol.
-      char terminator;
-
-      // Whether or not interpolation is allowed in this symbol.
-      bool interpolation;
-    } symbol;
 
     struct {
       // These pointers point to the beginning and end of the heredoc
@@ -291,6 +290,10 @@ struct yp_parser {
   // the beginning of a lambda following the parameters of a lambda.
   int lambda_enclosure_nesting;
 
+  // Used to track the nesting of braces to ensure we get the correct value when
+  // we are interpolating blocks with braces.
+  int brace_nesting;
+
   // the stack used to determine if a do keyword belongs to the predicate of a
   // while, until, or for loop
   yp_state_stack_t do_loop_stack;
@@ -342,6 +345,11 @@ struct yp_parser {
   // This is an optional callback that can be attached to the parser that will
   // be called whenever a new token is lexed by the parser.
   yp_lex_callback_t *lex_callback;
+
+  // A boolean that tracks whether or not we should potentially consider comment
+  // tokens to be magic comments. This becomes false after anything other than
+  // comment tokens have been seen.
+  bool consider_magic_comments;
 };
 
 #endif // YARP_PARSER_H

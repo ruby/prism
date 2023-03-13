@@ -1052,12 +1052,12 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "top-level constant read" do
-    assert_parses ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(CONSTANT("A"))), "::A"
+    assert_parses ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))), "::A"
   end
 
   test "top-level constant assignment" do
     expected = ConstantPathWriteNode(
-      ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
       EQUAL("="),
       IntegerNode()
     )
@@ -1067,7 +1067,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "top-level constant path read" do
     expected = ConstantPathNode(
-      ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
       COLON_COLON("::"),
       ConstantReadNode(CONSTANT("B"))
     )
@@ -1078,7 +1078,7 @@ class ParseTest < Test::Unit::TestCase
   test "top-level constant path assignment" do
     expected = ConstantPathWriteNode(
       ConstantPathNode(
-        ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+        ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
         COLON_COLON("::"),
         ConstantReadNode(CONSTANT("B"))
       ),
@@ -1091,7 +1091,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "top level constant with method inside" do
     expected = CallNode(
-      ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
       COLON_COLON("::"),
       IDENTIFIER("foo"),
       nil,
@@ -1365,9 +1365,12 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [],
-        [KeywordParameterNode(LABEL("c:"), expression("1"))],
+        [],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [
+          KeywordParameterNode(LABEL("b:"), nil),
+          KeywordParameterNode(LABEL("c:"), expression("1"))
+        ],
         nil,
         nil
       ),
@@ -1390,9 +1393,12 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [],
-        [KeywordParameterNode(LABEL("c:"), expression("1"))],
+        [],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [
+          KeywordParameterNode(LABEL("b:"), nil),
+          KeywordParameterNode(LABEL("c:"), expression("1"))
+        ],
         nil,
         nil
       ),
@@ -1415,9 +1421,12 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [],
-        [KeywordParameterNode(LABEL("b:"), expression("1"))],
+        [],
         nil,
-        [KeywordParameterNode(LABEL("c:"), nil)],
+        [
+          KeywordParameterNode(LABEL("b:"), expression("1")),
+          KeywordParameterNode(LABEL("c:"), nil)
+        ],
         nil,
         nil
       ),
@@ -2987,7 +2996,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([]),
       KEYWORD_MODULE("module"),
-      ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
       StatementsNode([]),
       KEYWORD_END("end")
     )

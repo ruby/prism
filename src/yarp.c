@@ -81,17 +81,30 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
 __attribute__((unused)) static void
 debug_lex_mode(yp_parser_t *parser) {
   yp_lex_mode_t *lex_mode = parser->lex_modes.current;
+  bool first = true;
 
-  switch (lex_mode->mode) {
-    case YP_LEX_DEFAULT: fprintf(stderr, "lexing in DEFAULT mode\n"); return;
-    case YP_LEX_EMBDOC: fprintf(stderr, "lexing in EMBDOC mode\n"); return;
-    case YP_LEX_EMBEXPR: fprintf(stderr, "lexing in EMBEXPR mode\n"); return;
-    case YP_LEX_EMBVAR: fprintf(stderr, "lexing in EMBVAR mode\n"); return;
-    case YP_LEX_HEREDOC: fprintf(stderr, "lexing in HEREDOC mode\n"); return;
-    case YP_LEX_LIST: fprintf(stderr, "lexing in LIST mode (terminator=%c, interpolation=%d)\n", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); return;
-    case YP_LEX_REGEXP: fprintf(stderr, "lexing in REGEXP mode (terminator=%c)\n", lex_mode->as.regexp.terminator); return;
-    case YP_LEX_STRING: fprintf(stderr, "lexing in STRING mode (terminator=%c, interpolation=%d)\n", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); return;
+  while (lex_mode != NULL) {
+    if (first) {
+      first = false;
+    } else {
+      fprintf(stderr, " <- ");
+    }
+
+    switch (lex_mode->mode) {
+      case YP_LEX_DEFAULT: fprintf(stderr, "DEFAULT"); break;
+      case YP_LEX_EMBDOC: fprintf(stderr, "EMBDOC"); break;
+      case YP_LEX_EMBEXPR: fprintf(stderr, "EMBEXPR"); break;
+      case YP_LEX_EMBVAR: fprintf(stderr, "EMBVAR"); break;
+      case YP_LEX_HEREDOC: fprintf(stderr, "HEREDOC"); break;
+      case YP_LEX_LIST: fprintf(stderr, "LIST (terminator=%c, interpolation=%d)", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); break;
+      case YP_LEX_REGEXP: fprintf(stderr, "REGEXP (terminator=%c)", lex_mode->as.regexp.terminator); break;
+      case YP_LEX_STRING: fprintf(stderr, "STRING (terminator=%c, interpolation=%d)", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); break;
+    }
+
+    lex_mode = lex_mode->prev;
   }
+
+  fprintf(stderr, "\n");
 }
 
 __attribute__((unused)) static void
@@ -1511,6 +1524,28 @@ char_is_ascii_printable(const char c) {
   return ascii_printable_chars[(unsigned char) c];
 }
 
+#define BIT(c, idx) (((c) / 32 - 1 == idx) ? (1U << ((c) % 32)) : 0)
+#define PUNCT(idx) ( \
+        BIT('~', idx) | BIT('*', idx) | BIT('$', idx) | BIT('?', idx) | \
+        BIT('!', idx) | BIT('@', idx) | BIT('/', idx) | BIT('\\', idx) | \
+        BIT(';', idx) | BIT(',', idx) | BIT('.', idx) | BIT('=', idx) | \
+        BIT(':', idx) | BIT('<', idx) | BIT('>', idx) | BIT('\"', idx) | \
+        BIT('&', idx) | BIT('`', idx) | BIT('\'', idx) | BIT('+', idx) | \
+        BIT('0', idx))
+
+const unsigned int yp_global_name_punctuation_hash[(0x7e - 0x20 + 31) / 32] = { PUNCT(0), PUNCT(1), PUNCT(2) };
+
+#undef BIT
+#undef PUNCT
+
+static inline bool
+char_is_global_name_punctuation(const char c) {
+  const unsigned int i = c;
+  if (i <= 0x20 || 0x7e < i) return false;
+
+  return (yp_global_name_punctuation_hash[(i - 0x20) / 32] >> (c % 32)) & 1;
+}
+
 /******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
@@ -1799,7 +1834,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'b':
       case 'B':
         if (char_is_binary_number(*++parser->current.end)) {
-          parser->current.end += strspn(parser->current.end, "01_");
+          parser->current.end += yp_strspn_binary_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, "invalid binary number", parser->current.start - parser->start);
         }
@@ -1834,7 +1869,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'x':
       case 'X':
         if (char_is_hexadecimal_number(*++parser->current.end)) {
-          parser->current.end += strspn(parser->current.end, "0123456789abcdefABCDEF_");
+          parser->current.end += yp_strspn_hexidecimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, "invalid hexadecimal number", parser->current.start - parser->start);
         }
@@ -1920,7 +1955,7 @@ lex_global_variable(yp_parser_t *parser) {
     case '7':
     case '8':
     case '9':
-      parser->current.end += strspn(parser->current.end, "0123456789");
+      parser->current.end += yp_strspn_decimal_digit(parser->current.end, parser->end - parser->current.end);
       return YP_TOKEN_NTH_REFERENCE;
 
     case '-':
@@ -1989,6 +2024,17 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
       // First we'll attempt to extend the identifier by a ! or ?. Then we'll
       // check if we're returning the defined? keyword or just an identifier.
       width++;
+
+      if (
+        ((lex_state_p(parser, YP_LEX_STATE_LABEL | YP_LEX_STATE_ENDFN) && !previous_command_start) || lex_state_arg_p(parser)) &&
+        parser->current.end[0] == ':' && parser->current.end[1] != ':'
+      ) {
+        // If we're in a position where we can accept a : at the end of an
+        // identifier, then we'll optionally accept it.
+        lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
+        (void) match(parser, ':');
+        return YP_TOKEN_LABEL;
+      }
 
       if (parser->lex_state != YP_LEX_STATE_DOT) {
         if (width == 8 && lex_keyword(parser, "defined?", YP_LEX_STATE_ARG, false)) {
@@ -2144,7 +2190,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // and then switch to the embedded variable lex mode.
         lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
         parser->current.end = pound + 1;
-        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_EMBVAR;
       }
 
@@ -2155,21 +2200,52 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       return YP_TOKEN_NOT_PROVIDED;
     }
     case '$':
-      // In this case we've hit an embedded global variable. First check to see
-      // if we've already consumed content. If we have, then we need to return
-      // that content as string content first.
-      if (pound > parser->current.start) {
-        parser->current.end = pound;
+      // In this case we may have hit an embedded global variable. If there's
+      // not enough room, then we'll just return string content.
+      if (pound + 2 >= parser->end) {
+        parser->current.end = pound + 1;
         lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
-      // Otherwise, we need to return the embedded variable token and switch to
-      // the embedded variable lex mode.
-      lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
+      // Now we need to check if this could possibly be a global variable.
+      const char *check = pound + 2;
+
+      if (pound[2] == '-') {
+        if (pound + 3 >= parser->end) {
+          parser->current.end = pound + 2;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
+          return YP_TOKEN_STRING_CONTENT;
+        }
+
+        check++;
+      }
+
+      if (
+        char_is_identifier_start(parser, check) ||
+        char_is_decimal_number(*check) ||
+        char_is_global_name_punctuation(*check)
+      ) {
+        // In this case we've hit an embedded global variable. First check to see
+        // if we've already consumed content. If we have, then we need to return
+        // that content as string content first.
+        if (pound > parser->current.start) {
+          parser->current.end = pound;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
+          return YP_TOKEN_STRING_CONTENT;
+        }
+
+        // Otherwise, we need to return the embedded variable token and switch to
+        // the embedded variable lex mode.
+        lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
+        parser->current.end = pound + 1;
+        return YP_TOKEN_EMBVAR;
+      }
+
+      // In this case we've hit a #$ that does not indicate a global variable.
+      // In this case we'll continue lexing past it.
       parser->current.end = pound + 1;
-      lex_state_set(parser, YP_LEX_STATE_BEG);
-      return YP_TOKEN_EMBVAR;
+      return YP_TOKEN_NOT_PROVIDED;
     case '{':
       parser->enclosure_nesting++;
 
@@ -2294,7 +2370,7 @@ lex_question_mark(yp_parser_t *parser) {
           if (match(parser, '{')) {
             parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
             while (!match(parser, '}')) {
-              parser->current.end += strspn(parser->current.end, "0123456789abcdefABCDEF");
+              parser->current.end += yp_strspn_hexidecimal_digit(parser->current.end, parser->current.end - parser->end);
               parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
             }
           } else {
@@ -2414,6 +2490,10 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
 // Optionally call out to the lex callback if one is provided.
 static inline void
 parser_lex_callback(yp_parser_t *parser) {
+  if (parser->consider_magic_comments && parser->current.type != YP_TOKEN_COMMENT) {
+    parser->consider_magic_comments = false;
+  }
+
   if (parser->lex_callback) {
     parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
   }
@@ -2642,7 +2722,9 @@ lex_token_type(yp_parser_t *parser) {
           }
 
           parser->enclosure_nesting++;
+          parser->brace_nesting++;
           yp_state_stack_push(&parser->do_loop_stack, false);
+
           return type;
         }
 
@@ -2651,11 +2733,12 @@ lex_token_type(yp_parser_t *parser) {
           parser->enclosure_nesting--;
           yp_state_stack_pop(&parser->do_loop_stack);
 
-          if (parser->lex_modes.current->mode == YP_LEX_EMBEXPR) {
+          if ((parser->lex_modes.current->mode == YP_LEX_EMBEXPR) && (parser->brace_nesting == 0)) {
             lex_mode_pop(parser);
             return YP_TOKEN_EMBEXPR_END;
           }
 
+          parser->brace_nesting--;
           lex_state_set(parser, YP_LEX_STATE_END);
           return YP_TOKEN_BRACE_RIGHT;
 
@@ -3067,9 +3150,10 @@ lex_token_type(yp_parser_t *parser) {
           if (match(parser, ':')) {
             if (lex_state_beg_p(parser) || lex_state_p(parser, YP_LEX_STATE_CLASS) || (lex_state_p(parser, YP_LEX_STATE_ARG_ANY) && space_seen)) {
               lex_state_set(parser, YP_LEX_STATE_BEG);
-            } else {
-              lex_state_set(parser, YP_LEX_STATE_DOT);
+              return YP_TOKEN_UCOLON_COLON;
             }
+
+            lex_state_set(parser, YP_LEX_STATE_DOT);
             return YP_TOKEN_COLON_COLON;
           }
 
@@ -3098,7 +3182,13 @@ lex_token_type(yp_parser_t *parser) {
         // / /=
         case '/':
           if (lex_state_beg_p(parser)) {
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
+            lex_mode_push(parser, (yp_lex_mode_t) {
+              .mode = YP_LEX_REGEXP,
+              .as.regexp.incrementor = '\0',
+              .as.regexp.terminator = '/',
+              .as.regexp.nesting = 0
+            });
+
             return YP_TOKEN_REGEXP_BEGIN;
           }
 
@@ -3109,7 +3199,14 @@ lex_token_type(yp_parser_t *parser) {
 
           if (lex_state_p(parser, YP_LEX_STATE_ARG) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
             yp_diagnostic_list_append(&parser->warning_list, "ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after `/' operator", parser->current.start - parser->start);
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_REGEXP, .as.regexp.terminator = '/' });
+
+            lex_mode_push(parser, (yp_lex_mode_t) {
+              .mode = YP_LEX_REGEXP,
+              .as.regexp.incrementor = '\0',
+              .as.regexp.terminator = '/',
+              .as.regexp.nesting = 0
+            });
+
             return YP_TOKEN_REGEXP_BEGIN;
           }
 
@@ -3207,12 +3304,17 @@ lex_token_type(yp_parser_t *parser) {
               }
               case 'r': {
                 parser->current.end++;
+
                 yp_lex_mode_t lex_mode = {
                   .mode = YP_LEX_REGEXP,
-                  .as.regexp.terminator = terminator(*parser->current.end++)
+                  .as.regexp.incrementor = incrementor(*parser->current.end),
+                  .as.regexp.terminator = terminator(*parser->current.end),
+                  .as.regexp.nesting = 0
                 };
 
                 lex_mode_push(parser, lex_mode);
+                parser->current.end++;
+
                 return YP_TOKEN_REGEXP_BEGIN;
               }
               case 'q': {
@@ -3530,8 +3632,12 @@ lex_token_type(yp_parser_t *parser) {
       // These are the places where we need to split up the content of the
       // regular expression. We'll use strpbrk to find the first of these
       // characters.
-      char breakpoints[] = " \\#";
-      breakpoints[0] = parser->lex_modes.current->as.regexp.terminator;
+      char breakpoints[] = "\\#\0\0";
+
+      breakpoints[2] = parser->lex_modes.current->as.regexp.terminator;
+      if (parser->lex_modes.current->as.regexp.incrementor != '\0') {
+        breakpoints[3] = parser->lex_modes.current->as.regexp.incrementor;
+      }
 
       char *breakpoint = strpbrk(parser->current.end, breakpoints);
 
@@ -3555,7 +3661,21 @@ lex_token_type(yp_parser_t *parser) {
             break;
           }
           default: {
+            if (*breakpoint == parser->lex_modes.current->as.regexp.incrementor) {
+              // If we've hit the incrementor, then we need to skip past it and
+              // find the next breakpoint.
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              parser->lex_modes.current->as.regexp.nesting++;
+              break;
+            }
+
             assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
+
+            if (parser->lex_modes.current->as.regexp.nesting > 0) {
+              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              parser->lex_modes.current->as.regexp.nesting--;
+              break;
+            }
 
             // Here we've hit the terminator. If we have already consumed
             // content then we need to return that content as string content
@@ -3988,7 +4108,9 @@ parser_lex(yp_parser_t *parser) {
         yp_comment_t *comment = parser_comment(parser, YP_COMMENT_INLINE);
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
-        parser_lex_magic_comments(parser);
+        if (parser->consider_magic_comments) {
+          parser_lex_magic_comments(parser);
+        }
 
         parser->current.type = lex_newline(parser, previous_command_start);
         break;
@@ -4313,7 +4435,7 @@ token_begins_expression_p(yp_token_type_t type) {
       // and let it be handled by the default case below.
       assert(yp_binding_powers[type].left == YP_BINDING_POWER_UNSET);
       return false;
-    case YP_TOKEN_COLON_COLON:
+    case YP_TOKEN_UCOLON_COLON:
     case YP_TOKEN_UMINUS:
     case YP_TOKEN_UPLUS:
     case YP_TOKEN_BANG:
@@ -4904,15 +5026,12 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 static yp_node_t *
 parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t binding_power) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
-  bool parsing = true;
 
-  while (parsing) {
+  do {
     switch (parser->current.type) {
       case YP_TOKEN_PARENTHESIS_LEFT: {
         yp_node_t *param = parse_required_destructured_parameter(parser);
         yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
-
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_AMPERSAND: {
@@ -4930,8 +5049,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
 
         yp_node_t *param = yp_block_parameter_node_create(parser, &name, &operator);
         params->as.parameters_node.block = param;
-
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_DOT_DOT_DOT: {
@@ -4940,8 +5057,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         yp_parser_local_add(parser, &parser->previous);
         yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
         params->as.parameters_node.keyword_rest = param;
-
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
@@ -4966,7 +5081,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
           yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
         }
 
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_LABEL: {
@@ -4987,12 +5101,12 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
           }
           case YP_TOKEN_SEMICOLON:
           case YP_TOKEN_NEWLINE: {
-            if (!uses_parentheses) {
-              yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
-              yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
-            } else {
-              parsing = false;
+            if (uses_parentheses) {
+              return params;
             }
+
+            yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
+            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
             break;
           }
           default: {
@@ -5002,7 +5116,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
             }
 
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
-            yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
+            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
 
             // If parsing the value of the parameter resulted in error recovery,
             // then we can put a missing node in its place and stop parsing the
@@ -5011,7 +5125,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
           }
         }
 
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_STAR: {
@@ -5030,7 +5143,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
 
         yp_node_t *param = yp_node_rest_parameter_node_create(parser, &operator, &name);
         params->as.parameters_node.rest = param;
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
       case YP_TOKEN_STAR_STAR: {
@@ -5055,15 +5167,16 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         }
 
         params->as.parameters_node.keyword_rest = param;
-        if (!accept(parser, YP_TOKEN_COMMA)) parsing = false;
         break;
       }
-      default: {
-        parsing = false;
-        break;
-      }
+      default:
+        return params;
     }
-  }
+
+    if (uses_parentheses) {
+      accept(parser, YP_TOKEN_NEWLINE);
+    }
+  } while (accept(parser, YP_TOKEN_COMMA));
 
   return params;
 }
@@ -5264,7 +5377,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
 
       arguments->closing = parser->previous;
     }
-  } else if (token_begins_expression_p(parser->current.type) && !match_any_type_p(parser, 2, YP_TOKEN_COLON_COLON, YP_TOKEN_BRACE_LEFT)) {
+  } else if (token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
     yp_state_stack_push(&parser->accepts_block_stack, false);
 
     // If we get here, then the subsequent token cannot be used as an infix
@@ -5419,13 +5532,18 @@ parse_string_part(yp_parser_t *parser) {
     //          ^^^^^^
     case YP_TOKEN_EMBEXPR_BEGIN: {
       yp_lex_state_t state = parser->lex_state;
+      int brace_nesting = parser->brace_nesting;
+
+      parser->brace_nesting = 0;
       lex_state_set(parser, YP_LEX_STATE_BEG);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
 
+      parser->brace_nesting = brace_nesting;
       lex_state_set(parser, state);
+
       expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
       yp_token_t closing = parser->previous;
 
@@ -5881,7 +5999,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // fact a method call, not a constant read.
       if (
         match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_any_type_p(parser, 2, YP_TOKEN_BRACE_LEFT, YP_TOKEN_COLON_COLON))
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT))
       ) {
         yp_arguments_t arguments = yp_arguments();
         parse_arguments_list(parser, &arguments, true);
@@ -5898,7 +6016,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_COLON_COLON: {
+    case YP_TOKEN_UCOLON_COLON: {
       parser_lex(parser);
 
       yp_token_t delimiter = parser->previous;
@@ -5939,6 +6057,20 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
       yp_node_t *node = parse_identifier(parser);
+
+      // If an identifier is followed by something that looks like an argument,
+      // then this is in fact a method call, not a local read.
+      if (
+        node->type == YP_NODE_LOCAL_VARIABLE_READ_NODE &&
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT))
+      ) {
+        yp_arguments_t arguments = yp_arguments();
+        parse_arguments_list(parser, &arguments, true);
+
+        yp_node_t *fcall = yp_call_node_fcall_create(parser, &node->as.local_variable_read_node.name, &arguments);
+        yp_node_destroy(parser, node);
+        return fcall;
+      }
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -7875,6 +8007,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .command_start = true,
     .enclosure_nesting = 0,
     .lambda_enclosure_nesting = -1,
+    .brace_nesting = 0,
     .lex_modes =
       {
         .index = 0,
@@ -7891,7 +8024,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .recovering = false,
     .encoding = yp_encoding_utf_8,
     .encoding_decode_callback = NULL,
-    .lex_callback = NULL
+    .lex_callback = NULL,
+    .consider_magic_comments = true
   };
 
   yp_state_stack_init(&parser->do_loop_stack);

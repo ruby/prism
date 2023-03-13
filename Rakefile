@@ -99,8 +99,7 @@ task lex: :compile do
       Dir["vendor/spec/**/*.rb"] - [
         "vendor/spec/command_line/fixtures/bad_syntax.rb",
         "vendor/spec/core/regexp/shared/new.rb",
-        "vendor/spec/language/regexp/interpolation_spec.rb",
-        "vendor/spec/language/string_spec.rb"
+        "vendor/spec/language/regexp/interpolation_spec.rb"
       ]
     end
 
@@ -137,4 +136,32 @@ task lex: :compile do
   RESULTS
 
   exit(1) if failing > 0
+end
+
+desc "Lint config.yml"
+task :lint do
+  require "yaml"
+  config = YAML.safe_load_file("config.yml")
+
+  tokens = config.fetch("tokens")[4..].map { |token| token.fetch("name") }
+  if tokens.sort != tokens
+    warn("Tokens are not sorted alphabetically")
+
+    tokens.sort.zip(tokens).each do |(sorted, unsorted)|
+      warn("Expected #{sorted} got #{unsorted}") if sorted != unsorted
+    end
+
+    exit(1)
+  end
+
+  nodes = config.fetch("nodes").map { |node| node.fetch("name") }
+  if nodes.sort != nodes
+    warn("Nodes are not sorted alphabetically")
+
+    nodes.sort.zip(nodes).each do |(sorted, unsorted)|
+      warn("Expected #{sorted} got #{unsorted}") if sorted != unsorted
+    end
+
+    exit(1)
+  end
 end
