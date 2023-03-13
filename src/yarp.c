@@ -4142,7 +4142,7 @@ parser_lex(yp_parser_t *parser) {
         if (match_type_p(parser, YP_TOKEN_EOF)) {
           yp_diagnostic_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
         } else {
-          parser->current.type = lex_newline(parser, parser->command_start);
+          parser->current.type = lex_newline(parser, previous_command_start);
         }
         break;
       }
