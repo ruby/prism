@@ -3324,7 +3324,7 @@ class ParseTest < Test::Unit::TestCase
         ),
         # This is the important bit of the test here, that this is a local
         # variable and not a method call.
-        LocalVariableRead(IDENTIFIER("foo"))
+        LocalVariableReadNode(IDENTIFIER("foo"))
       ],
       BRACKET_LEFT_ARRAY("["),
       BRACKET_RIGHT("]")
@@ -4499,7 +4499,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ForNode(
       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -4513,7 +4513,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ForNode(
       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
       Location(),
       Location(),
       Location(),
@@ -4527,7 +4527,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ForNode(
       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -4541,7 +4541,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ForNode(
       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -4564,7 +4564,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       expression("1..10"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -4588,7 +4588,7 @@ class ParseTest < Test::Unit::TestCase
         nil
       ),
       expression("1..10"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
       Location(),
       Location(),
       nil,
@@ -5382,7 +5382,7 @@ class ParseTest < Test::Unit::TestCase
           ),
           []
         ),
-        StatementsNode([LocalVariableRead(IDENTIFIER("x"))]),
+        StatementsNode([LocalVariableReadNode(IDENTIFIER("x"))]),
         BRACE_RIGHT("}")
       ),
       "foo"
@@ -5417,7 +5417,7 @@ class ParseTest < Test::Unit::TestCase
           [OperatorAssignmentNode(
             LocalVariableWriteNode(IDENTIFIER("memo"), nil, nil),
             PLUS_EQUAL("+="),
-            LocalVariableRead(IDENTIFIER("x"))
+            LocalVariableReadNode(IDENTIFIER("x"))
           )]
         ),
         BRACE_RIGHT("}")
@@ -6228,7 +6228,7 @@ class ParseTest < Test::Unit::TestCase
         []
       ),
       PARENTHESIS_RIGHT(")"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("a"))])
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
     )
 
     assert_parses expected, "-> (a, b = 1, *c, d:, e:, **f, &g) { a }"
@@ -6260,7 +6260,7 @@ class ParseTest < Test::Unit::TestCase
         []
       ),
       nil,
-      StatementsNode([LocalVariableRead(IDENTIFIER("a"))])
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
     )
 
     assert_parses expected, "-> a, b = 1, c:, d:, &e { a }"
@@ -6294,7 +6294,7 @@ class ParseTest < Test::Unit::TestCase
         []
       ),
       PARENTHESIS_RIGHT(")"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("a"))])
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
     )
 
     assert_parses expected, "-> (a, b = 1, *c, d:, e:, **f, &g) do\n  a\nend"
@@ -6333,11 +6333,11 @@ class ParseTest < Test::Unit::TestCase
           ),
           nil,
           StatementsNode([CallNode(
-            LocalVariableRead(IDENTIFIER("a")),
+            LocalVariableReadNode(IDENTIFIER("a")),
             nil,
             STAR("*"),
             nil,
-            ArgumentsNode([LocalVariableRead(IDENTIFIER("b"))]),
+            ArgumentsNode([LocalVariableReadNode(IDENTIFIER("b"))]),
             nil,
             nil,
             "*"
@@ -6365,7 +6365,7 @@ class ParseTest < Test::Unit::TestCase
         [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
       ),
       PARENTHESIS_RIGHT(")"),
-      StatementsNode([LocalVariableRead(IDENTIFIER("b"))])
+      StatementsNode([LocalVariableReadNode(IDENTIFIER("b"))])
     )
 
     assert_parses expected, "-> (a; b, c, d) { b }"
@@ -6541,7 +6541,7 @@ class ParseTest < Test::Unit::TestCase
             nil,
             nil, IDENTIFIER("puts"),
             nil,
-            ArgumentsNode([LocalVariableRead(IDENTIFIER("a"))]),
+            ArgumentsNode([LocalVariableReadNode(IDENTIFIER("a"))]),
             nil,
             nil,
             "puts"

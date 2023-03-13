@@ -4358,8 +4358,8 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       yp_node_destroy(parser, target);
       return result;
     }
-    case YP_NODE_LOCAL_VARIABLE_READ: {
-      yp_token_t name = target->as.local_variable_read.name;
+    case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
+      yp_token_t name = target->as.local_variable_read_node.name;
       yp_parser_local_add(parser, &name);
 
       memset(target, 0, sizeof(yp_node_t));
@@ -5389,7 +5389,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // This macro allows you to define a case statement for all of the nodes that
 // can be transformed into write targets.
 #define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
-  case YP_NODE_CONSTANT_READ: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ: \
+  case YP_NODE_CONSTANT_READ: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
   case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE
 
 // Parse a node that is part of a string. If the subsequent tokens cannot be
@@ -5635,7 +5635,7 @@ parse_vcall(yp_parser_t *parser) {
     (parser->previous.end[-1] != '?') &&
     yp_parser_local_p(parser, &parser->previous)
   ) {
-    return yp_node_local_variable_read_create(parser, &parser->previous);
+    return yp_node_local_variable_read_node_create(parser, &parser->previous);
   }
 
   return yp_call_node_vcall_create(parser, &parser->previous);

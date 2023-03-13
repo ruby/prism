@@ -960,7 +960,7 @@ nodes:
 
           ->(value) { value * 2 }
           ^^^^^^^^^^^^^^^^^^^^^^^
-  - name: LocalVariableRead
+  - name: LocalVariableReadNode
     child_nodes:
       - name: name
         type: token
