@@ -2208,7 +2208,9 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         return YP_TOKEN_STRING_CONTENT;
       }
 
-      // Now we need to check if this could possibly be a global variable.
+      // This is the character that we're going to check to see if it is the
+      // start of an identifier that would indicate that this is a global
+      // variable.
       const char *check = pound + 2;
 
       if (pound[2] == '-') {
@@ -2221,22 +2223,25 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         check++;
       }
 
+      // If the character that we're going to check is the start of an
+      // identifier, or we don't have a - and the character is a decimal number
+      // or a global name punctuation character, then we've hit an embedded
+      // global variable.
       if (
         char_is_identifier_start(parser, check) ||
-        char_is_decimal_number(*check) ||
-        char_is_global_name_punctuation(*check)
+        (pound[2] != '-' && (char_is_decimal_number(pound[2]) || char_is_global_name_punctuation(pound[2])))
       ) {
-        // In this case we've hit an embedded global variable. First check to see
-        // if we've already consumed content. If we have, then we need to return
-        // that content as string content first.
+        // In this case we've hit an embedded global variable. First check to
+        // see if we've already consumed content. If we have, then we need to
+        // return that content as string content first.
         if (pound > parser->current.start) {
           parser->current.end = pound;
           lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_STRING_CONTENT;
         }
 
-        // Otherwise, we need to return the embedded variable token and switch to
-        // the embedded variable lex mode.
+        // Otherwise, we need to return the embedded variable token and switch
+        // to the embedded variable lex mode.
         lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBVAR });
         parser->current.end = pound + 1;
         return YP_TOKEN_EMBVAR;
