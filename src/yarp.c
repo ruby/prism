@@ -6898,10 +6898,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
       return yp_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNTIL: {
-      parser_lex(parser);
-
-      yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
+      parser_lex(parser);
+      yp_token_t keyword = parser->previous;
 
       yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected predicate expression after `until`.");
       yp_state_stack_pop(&parser->do_loop_stack);
@@ -6915,10 +6914,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_node_until_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
-      parser_lex(parser);
-
-      yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
+      parser_lex(parser);
+      yp_token_t keyword = parser->previous;
 
       yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected predicate expression after `while`.");
       yp_state_stack_pop(&parser->do_loop_stack);
