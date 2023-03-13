@@ -38,7 +38,7 @@ module YARP
       def _dispatch_event_new
         []
       end
-  
+
       def _dispatch_event_push(list, item)
         list << item
         list
@@ -105,7 +105,7 @@ module YARP
       on_int(source[node.location.start_offset...node.location.end_offset])
     end
 
-    def visit_statements(node)
+    def visit_statements_node(node)
       bounds(node)
       node.body.inject(on_stmts_new) do |stmts, stmt|
         on_stmts_add(stmts, visit(stmt))

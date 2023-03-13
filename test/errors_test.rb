@@ -20,12 +20,12 @@ class ErrorsTest < Test::Unit::TestCase
       Scope([]),
       KEYWORD_MODULE("module"),
       ConstantRead(CONSTANT("Parent")),
-      Statements(
+      StatementsNode(
         [ModuleNode(
            Scope([]),
            KEYWORD_MODULE("module"),
            MissingNode(),
-           Statements([]),
+           StatementsNode([]),
            MISSING("")
          )]
       ),
@@ -41,7 +41,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ForNode(
       MissingNode(),
       expression("1..10"),
-      Statements([expression("i")]),
+      StatementsNode([expression("i")]),
       Location(),
       Location(),
       nil,
@@ -55,7 +55,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ForNode(
       MissingNode(),
       MissingNode(),
-      Statements([]),
+      StatementsNode([]),
       Location(),
       Location(),
       nil,
@@ -67,7 +67,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "pre execution missing {" do
     expected = PreExecutionNode(
-      Statements([expression("1")]),
+      StatementsNode([expression("1")]),
       Location(),
       Location(),
       Location()
@@ -78,7 +78,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "pre execution context" do
     expected = PreExecutionNode(
-      Statements([
+      StatementsNode([
         CallNode(
           expression("1"),
           nil,
@@ -228,7 +228,7 @@ class ErrorsTest < Test::Unit::TestCase
       BlockNode(
         BRACE_LEFT("{"),
         nil,
-        Statements([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
+        StatementsNode([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
         MISSING("")
       ),
       "each"
@@ -356,12 +356,12 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode([], [], nil, [], nil, nil),
-      Statements(
+      StatementsNode(
         [ModuleNode(
            Scope([]),
            KEYWORD_MODULE("module"),
            ConstantRead(CONSTANT("A")),
-           Statements([]),
+           StatementsNode([]),
            KEYWORD_END("end")
          )]
       ),
@@ -382,7 +382,7 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode([], [], nil, [], nil, nil),
-      Statements(
+      StatementsNode(
         [CallNode(
            nil,
            nil,
@@ -393,12 +393,12 @@ class ErrorsTest < Test::Unit::TestCase
            BlockNode(
              KEYWORD_DO("do"),
              nil,
-             Statements(
+             StatementsNode(
                [ModuleNode(
                   Scope([]),
                   KEYWORD_MODULE("module"),
                   ConstantRead(CONSTANT("Foo")),
-                  Statements([]),
+                  StatementsNode([]),
                   KEYWORD_END("end")
                 )]
              ),
@@ -431,14 +431,14 @@ class ErrorsTest < Test::Unit::TestCase
     assert_nil Ripper.sexp_raw(source)
 
     result = YARP.parse(source)
-    result => YARP::ParseResult[value: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
+    result => YARP::ParseResult[value: YARP::Program[statements: YARP::StatementsNode[body: [*, node]]]]
 
     assert_equal expected, node
     assert_equal errors, result.errors.map(&:message)
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::ParseResult[value: YARP::Program[statements: YARP::Statements[body: [*, node]]]]
+    YARP.parse(source) => YARP::ParseResult[value: YARP::Program[statements: YARP::StatementsNode[body: [*, node]]]]
     node
   end
 

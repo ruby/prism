@@ -1399,7 +1399,7 @@ nodes:
 
           __LINE__
           ^^^^^^^^
-  - name: Statements
+  - name: StatementsNode
     child_nodes:
       - name: body
         type: node[]
