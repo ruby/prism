@@ -2865,6 +2865,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), StatementsNode([expression("1")]), nil, KEYWORD_END("end")), "if true; 1; end"
   end
 
+  test "if with then" do
+    expected = IfNode(
+      KEYWORD_IF("if"),
+      expression("foo"),
+      StatementsNode([expression("bar")]),
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, <<~RUBY
+      if foo
+      then bar
+      end
+    RUBY
+  end
+
   test "if modifier" do
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), StatementsNode([expression("1")]), nil, nil), "1 if true"
   end
