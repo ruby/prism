@@ -99,8 +99,7 @@ task lex: :compile do
       Dir["vendor/spec/**/*.rb"] - [
         "vendor/spec/command_line/fixtures/bad_syntax.rb",
         "vendor/spec/core/regexp/shared/new.rb",
-        "vendor/spec/language/regexp/interpolation_spec.rb",
-        "vendor/spec/language/string_spec.rb"
+        "vendor/spec/language/regexp/interpolation_spec.rb"
       ]
     end
 
