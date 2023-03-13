@@ -288,6 +288,10 @@ tokens:
     comment: "~ or ~@"
   - name: UCOLON_COLON
     comment: "unary ::"
+  - name: UDOT_DOT
+    comment: "unary .."
+  - name: UDOT_DOT_DOT
+    comment: "unary ..."
   - name: UMINUS
     comment: "-@"
   - name: UPLUS

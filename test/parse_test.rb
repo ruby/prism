@@ -1554,7 +1554,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], ForwardingParameterNode(), nil),
       StatementsNode([]),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -1850,7 +1850,7 @@ class ParseTest < Test::Unit::TestCase
           )
         ]
       ),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -1883,7 +1883,7 @@ class ParseTest < Test::Unit::TestCase
           )
         ]
       ),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -1929,7 +1929,7 @@ class ParseTest < Test::Unit::TestCase
           )
         ]
       ),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -3248,7 +3248,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(
           SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
-          RangeNode(nil, DOT_DOT(".."), expression("bar")),
+          RangeNode(nil, UDOT_DOT(".."), expression("bar")),
           nil
         )
       ],
@@ -3264,7 +3264,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(
           SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
-          RangeNode(nil, DOT_DOT_DOT("..."), expression("bar")),
+          RangeNode(nil, UDOT_DOT_DOT("..."), expression("bar")),
           nil
         )
       ],
@@ -3275,11 +3275,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "range inclusive without a begin" do
-    assert_parses RangeNode(nil, DOT_DOT(".."), expression("2")), "..2"
+    assert_parses RangeNode(nil, UDOT_DOT(".."), expression("2")), "..2"
   end
 
   test "range exclusive without a begin" do
-    assert_parses RangeNode(nil, DOT_DOT_DOT("..."), expression("2")), "...2"
+    assert_parses RangeNode(nil, UDOT_DOT_DOT("..."), expression("2")), "...2"
   end
 
   test "range inclusive without an end" do

@@ -851,7 +851,7 @@ yp_for_node_create(
 // Allocate and initialize a new ForwardingArgumentsNode node.
 static yp_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_DOT_DOT_DOT);
+  assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -868,7 +868,7 @@ yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token
 // Allocate and initialize a new ForwardingParameterNode node.
 static yp_node_t *
 yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_DOT_DOT_DOT);
+  assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -3117,19 +3117,27 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_MINUS;
 
         // . .. ...
-        case '.':
+        case '.': {
+          bool beg_p = lex_state_beg_p(parser);
+
           if (match(parser, '.')) {
             if (match(parser, '.')) {
-              lex_state_set(parser, context_p(parser, YP_CONTEXT_DEF_PARAMS) ? YP_LEX_STATE_ENDARG : YP_LEX_STATE_BEG);
-              return YP_TOKEN_DOT_DOT_DOT;
+              if (context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
+                lex_state_set(parser, YP_LEX_STATE_ENDARG);
+                return YP_TOKEN_UDOT_DOT_DOT;
+              }
+
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+              return beg_p ? YP_TOKEN_UDOT_DOT_DOT : YP_TOKEN_DOT_DOT_DOT;
             }
 
             lex_state_set(parser, YP_LEX_STATE_BEG);
-            return YP_TOKEN_DOT_DOT;
+            return beg_p ? YP_TOKEN_UDOT_DOT : YP_TOKEN_DOT_DOT;
           }
 
           lex_state_set(parser, YP_LEX_STATE_DOT);
           return YP_TOKEN_DOT;
+        }
 
         // integer
         case '0':
@@ -4444,8 +4452,8 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_UPLUS:
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE:
-    case YP_TOKEN_DOT_DOT:
-    case YP_TOKEN_DOT_DOT_DOT:
+    case YP_TOKEN_UDOT_DOT:
+    case YP_TOKEN_UDOT_DOT_DOT:
       // These unary tokens actually do have binding power associated with them
       // so that we can correctly place them into the precedence order. But we
       // want them to be marked as beginning an expression, so we need to
@@ -4875,7 +4883,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         parsed_block_argument = true;
         break;
       }
-      case YP_TOKEN_DOT_DOT_DOT: {
+      case YP_TOKEN_UDOT_DOT_DOT: {
         parser_lex(parser);
 
         if (!yp_parser_local_p(parser, &parser->previous)) {
@@ -5057,7 +5065,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         params->as.parameters_node.block = param;
         break;
       }
-      case YP_TOKEN_DOT_DOT_DOT: {
+      case YP_TOKEN_UDOT_DOT_DOT: {
         parser_lex(parser);
 
         yp_parser_local_add(parser, &parser->previous);
@@ -6043,8 +6051,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_DOT_DOT:
-    case YP_TOKEN_DOT_DOT_DOT: {
+    case YP_TOKEN_UDOT_DOT:
+    case YP_TOKEN_UDOT_DOT_DOT: {
       yp_token_t operator = parser->current;
       parser_lex(parser);
 
