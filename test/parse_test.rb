@@ -3242,6 +3242,38 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), expression("2")), "1...2"
   end
 
+  test "range inclusive in hash" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(
+          SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+          RangeNode(nil, DOT_DOT(".."), expression("bar")),
+          nil
+        )
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{ foo: ..bar }"
+  end
+
+  test "range exclusive in hash" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(
+          SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+          RangeNode(nil, DOT_DOT_DOT("..."), expression("bar")),
+          nil
+        )
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{ foo: ...bar }"
+  end
+
   test "range inclusive without a begin" do
     assert_parses RangeNode(nil, DOT_DOT(".."), expression("2")), "..2"
   end

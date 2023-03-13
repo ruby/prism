@@ -4444,6 +4444,8 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_UPLUS:
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE:
+    case YP_TOKEN_DOT_DOT:
+    case YP_TOKEN_DOT_DOT_DOT:
       // These unary tokens actually do have binding power associated with them
       // so that we can correctly place them into the precedence order. But we
       // want them to be marked as beginning an expression, so we need to
