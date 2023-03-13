@@ -6820,7 +6820,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           arguments.closing = parser->previous;
         } else {
-          receiver = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected expression after `not`.");
+          receiver = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected expression after `not`.");
 
           if (!parser->recovering) {
             expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");

@@ -2548,7 +2548,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "not with parentheses" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+      AndNode(expression("foo"), expression("bar"), KEYWORD_AND("and")),
       nil,
       KEYWORD_NOT("not"),
       PARENTHESIS_LEFT("("),
@@ -2558,7 +2558,7 @@ class ParseTest < Test::Unit::TestCase
       "!"
     )
 
-    assert_parses expected, "not(foo)"
+    assert_parses expected, "not(foo and bar)"
   end
 
   test "not binding power" do
@@ -7304,7 +7304,7 @@ class ParseTest < Test::Unit::TestCase
     assert_equal expected, expression(source)
     assert_serializes expected, source
 
-    YARP.lex_compat(source) => { errors: [], warnings: [], value: tokens }
+    YARP.lex_compat(source) => { errors: [], value: tokens }
     YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
       assert_equal ripper, yarp
     end
