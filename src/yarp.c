@@ -7073,6 +7073,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
+
+      // This is the current node that we are parsing that will be added to the
+      // list of elements.
       yp_node_t *current = NULL;
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
@@ -7092,32 +7095,51 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             break;
           }
           case YP_TOKEN_STRING_CONTENT: {
-            parser_lex(parser);
-
             if (current == NULL) {
               // If we hit content and the current node is NULL, then this is
               // the first string content we've seen. In that case we're going
               // to create a new string node and set that to the current.
-              yp_token_t opening = not_provided(parser);
-              yp_token_t closing = not_provided(parser);
-              current = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+              current = parse_string_part(parser);
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit string content and the current node is an
               // interpolated string, then we need to append the string content
               // to the list of child nodes.
-              yp_token_t opening = not_provided(parser);
-              yp_token_t closing = not_provided(parser);
-              yp_node_t *next_string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-              yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, next_string);
+              yp_node_t *part = parse_string_part(parser);
+              yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+            } else {
+              assert(false && "unreachable");
             }
 
             break;
           }
-          case YP_TOKEN_EMBEXPR_BEGIN: {
-            yp_lex_state_t state = parser->lex_state;
-            lex_state_set(parser, YP_LEX_STATE_BEG);
-            parser_lex(parser);
+          case YP_TOKEN_EMBVAR: {
+            if (current == NULL) {
+              // If we hit an embedded variable and the current node is NULL,
+              // then this is the start of a new string. We'll set the current
+              // node to a new interpolated string.
+              yp_token_t opening = not_provided(parser);
+              yp_token_t closing = not_provided(parser);
+              current = yp_node_interpolated_string_node_create(parser, &opening, &closing);
+            } else if (current->type == YP_NODE_STRING_NODE) {
+              // If we hit an embedded variable and the current node is a string
+              // node, then we'll convert the current into an interpolated
+              // string and add the string node to the list of parts.
+              yp_token_t opening = not_provided(parser);
+              yp_token_t closing = not_provided(parser);
+              yp_node_t *interpolated = yp_node_interpolated_string_node_create(parser, &opening, &closing);
 
+              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, current);
+              current = interpolated;
+            } else {
+              // If we hit an embedded variable and the current node is an
+              // interpolated string, then we'll just add the embedded variable.
+            }
+
+            yp_node_t *part = parse_string_part(parser);
+            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+            break;
+          }
+          case YP_TOKEN_EMBEXPR_BEGIN: {
             if (current == NULL) {
               // If we hit an embedded expression and the current node is NULL,
               // then this is the start of a new string. We'll set the current
@@ -7138,17 +7160,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit an embedded expression and the current node is an
               // interpolated string, then we'll just continue on.
+            } else {
+              assert(false && "unreachable");
             }
 
-            yp_token_t embexpr_opening = parser->previous;
-            yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-
-            lex_state_set(parser, state);
-            expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
-
-            yp_token_t embexpr_closing = parser->previous;
-            yp_node_t *interpolated = yp_node_string_interpolated_node_create(parser, &embexpr_opening, statements, &embexpr_closing);
-            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, interpolated);
+            yp_node_t *part = parse_string_part(parser);
+            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
             break;
           }
           default:
