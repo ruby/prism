@@ -4351,7 +4351,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       yp_class_variable_write_node_init(parser, target, operator, value);
       return target;
     case YP_NODE_CONSTANT_PATH_NODE:
-    case YP_NODE_CONSTANT_READ:
+    case YP_NODE_CONSTANT_READ_NODE:
       return yp_node_constant_path_write_node_create(parser, target, operator, value);
     case YP_NODE_GLOBAL_VARIABLE_READ: {
       yp_node_t *result = yp_node_global_variable_write_create(parser, &target->as.global_variable_read.name, operator, value);
@@ -5389,7 +5389,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // This macro allows you to define a case statement for all of the nodes that
 // can be transformed into write targets.
 #define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
-  case YP_NODE_CONSTANT_READ: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
+  case YP_NODE_CONSTANT_READ_NODE: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
   case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE
 
 // Parse a node that is part of a string. If the subsequent tokens cannot be
@@ -5888,7 +5888,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
-      yp_node_t *node = yp_node_constant_read_create(parser, &parser->previous);
+      yp_node_t *node = yp_node_constant_read_node_create(parser, &parser->previous);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         // If we get here, then we have a comma immediately following a
@@ -5904,7 +5904,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t delimiter = parser->previous;
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
 
-      yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
+      yp_node_t *constant = yp_node_constant_read_node_create(parser, &parser->previous);
       yp_node_t *node = yp_node_constant_path_node_create(parser, NULL, &delimiter, constant);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
@@ -6426,7 +6426,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             switch (identifier.type) {
               case YP_TOKEN_CONSTANT:
-                receiver = yp_node_constant_read_create(parser, &identifier);
+                receiver = yp_node_constant_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_INSTANCE_VARIABLE:
                 receiver = yp_instance_variable_read_node_create(parser, &identifier);
@@ -6714,7 +6714,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t double_colon = parser->previous;
 
         expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
-        yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
+        yp_node_t *constant = yp_node_constant_read_node_create(parser, &parser->previous);
 
         name = yp_node_constant_path_node_create(parser, name, &double_colon, constant);
       }
@@ -7745,7 +7745,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           }
 
           // Otherwise, this is a constant path. That would look like Foo::Bar.
-          yp_node_t *child = yp_node_constant_read_create(parser, &parser->previous);
+          yp_node_t *child = yp_node_constant_read_node_create(parser, &parser->previous);
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
         case YP_TOKEN_IDENTIFIER: {

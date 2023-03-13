@@ -7,7 +7,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "constant path with invalid token after" do
     expected = ConstantPathNode(
-      ConstantRead(CONSTANT("A")),
+      ConstantReadNode(CONSTANT("A")),
       COLON_COLON("::"),
       MissingNode()
     )
@@ -19,7 +19,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([]),
       KEYWORD_MODULE("module"),
-      ConstantRead(CONSTANT("Parent")),
+      ConstantReadNode(CONSTANT("Parent")),
       StatementsNode(
         [ModuleNode(
            Scope([]),
@@ -177,12 +177,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "top level constant with downcased identifier" do
-    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(MISSING("")))
+    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(MISSING("")))
     assert_errors expected, "::foo", ["Expected a constant after ::."]
   end
 
   test "top level constant starting with downcased identifier" do
-    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantRead(MISSING("")))
+    expected = ConstantPathNode(nil, COLON_COLON("::"), ConstantReadNode(MISSING("")))
     assert_errors expected, "::foo::A", ["Expected a constant after ::."]
   end
 
@@ -360,7 +360,7 @@ class ErrorsTest < Test::Unit::TestCase
         [ModuleNode(
            Scope([]),
            KEYWORD_MODULE("module"),
-           ConstantRead(CONSTANT("A")),
+           ConstantReadNode(CONSTANT("A")),
            StatementsNode([]),
            KEYWORD_END("end")
          )]
@@ -397,7 +397,7 @@ class ErrorsTest < Test::Unit::TestCase
                [ModuleNode(
                   Scope([]),
                   KEYWORD_MODULE("module"),
-                  ConstantRead(CONSTANT("Foo")),
+                  ConstantReadNode(CONSTANT("Foo")),
                   StatementsNode([]),
                   KEYWORD_END("end")
                 )]

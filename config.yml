@@ -545,7 +545,7 @@ nodes:
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
-  - name: ConstantRead
+  - name: ConstantReadNode
     child_nodes:
       - name: name
         type: token
