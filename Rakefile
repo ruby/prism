@@ -101,7 +101,12 @@ task lex: :compile do
 
     unless File.directory?(dirpath)
       FileUtils.mkdir_p(dirpath)
-      sh "git clone --depth 1 #{target.fetch("repo")} #{dirpath}"
+      Dir.chdir(dirpath) do
+        sh "git init"
+        sh "git remote add origin #{target.fetch("repo")}"
+        sh "git fetch --depth=1 origin #{target.fetch("sha")}"
+        sh "git reset --hard FETCH_HEAD"
+      end
     end
 
     filepaths = Dir[File.join(dirpath, "**", "*.rb")]
