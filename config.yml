@@ -714,7 +714,7 @@ nodes:
 
           super
           ^^^^^
-  - name: GlobalVariableRead
+  - name: GlobalVariableReadNode
     child_nodes:
       - name: name
         type: token
@@ -724,7 +724,7 @@ nodes:
 
           $foo
           ^^^^
-  - name: GlobalVariableWrite
+  - name: GlobalVariableWriteNode
     child_nodes:
       - name: name
         type: token

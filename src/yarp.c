@@ -4353,8 +4353,8 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_CONSTANT_PATH_NODE:
     case YP_NODE_CONSTANT_READ_NODE:
       return yp_node_constant_path_write_node_create(parser, target, operator, value);
-    case YP_NODE_GLOBAL_VARIABLE_READ: {
-      yp_node_t *result = yp_node_global_variable_write_create(parser, &target->as.global_variable_read.name, operator, value);
+    case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
+      yp_node_t *result = yp_node_global_variable_write_node_create(parser, &target->as.global_variable_read_node.name, operator, value);
       yp_node_destroy(parser, target);
       return result;
     }
@@ -5389,7 +5389,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // This macro allows you to define a case statement for all of the nodes that
 // can be transformed into write targets.
 #define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
-  case YP_NODE_CONSTANT_READ_NODE: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
+  case YP_NODE_CONSTANT_READ_NODE: case YP_NODE_GLOBAL_VARIABLE_READ_NODE: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
   case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE
 
 // Parse a node that is part of a string. If the subsequent tokens cannot be
@@ -5447,7 +5447,7 @@ parse_string_part(yp_parser_t *parser) {
         case YP_TOKEN_GLOBAL_VARIABLE:
         case YP_TOKEN_NTH_REFERENCE:
           parser_lex(parser);
-          return yp_node_global_variable_read_create(parser, &parser->previous);
+          return yp_node_global_variable_read_node_create(parser, &parser->previous);
         // In this case an instance variable is being interpolated. We'll
         // create an instance variable read node.
         case YP_TOKEN_INSTANCE_VARIABLE:
@@ -5614,7 +5614,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
       }
 
       parser_lex(parser);
-      return yp_node_global_variable_read_create(parser, &parser->previous);
+      return yp_node_global_variable_read_node_create(parser, &parser->previous);
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, "Expected a bare word, symbol or global variable argument.", parser->current.start - parser->start);
@@ -5928,7 +5928,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_BACK_REFERENCE: {
       parser_lex(parser);
-      yp_node_t *node = yp_node_global_variable_read_create(parser, &parser->previous);
+      yp_node_t *node = yp_node_global_variable_read_node_create(parser, &parser->previous);
 
       if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -6148,9 +6148,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
           break;
         }
-        case YP_NODE_GLOBAL_VARIABLE_READ: {
-          if (right->type == YP_NODE_GLOBAL_VARIABLE_READ) {
-            if (right->as.global_variable_read.name.type == YP_TOKEN_NTH_REFERENCE) {
+        case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
+          if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
+            if (right->as.global_variable_read_node.name.type == YP_TOKEN_NTH_REFERENCE) {
               yp_diagnostic_list_append(&parser->error_list, "Can't make alias for number variables.", parser->previous.start - parser->start);
             }
           } else {
@@ -6435,7 +6435,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_class_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_GLOBAL_VARIABLE:
-                receiver = yp_node_global_variable_read_create(parser, &identifier);
+                receiver = yp_node_global_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_NIL:
                 receiver = yp_nil_node_create(parser, &identifier);

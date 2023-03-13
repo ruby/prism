@@ -73,8 +73,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias global variables" do
     expected = AliasNode(
-      GlobalVariableRead(GLOBAL_VARIABLE("$foo")),
-      GlobalVariableRead(GLOBAL_VARIABLE("$bar")),
+      GlobalVariableReadNode(GLOBAL_VARIABLE("$foo")),
+      GlobalVariableReadNode(GLOBAL_VARIABLE("$bar")),
       Location()
     )
 
@@ -83,8 +83,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias backreference global variables" do
     expected = AliasNode(
-      GlobalVariableRead(GLOBAL_VARIABLE("$a")),
-      GlobalVariableRead(BACK_REFERENCE("$'")),
+      GlobalVariableReadNode(GLOBAL_VARIABLE("$a")),
+      GlobalVariableReadNode(BACK_REFERENCE("$'")),
       Location()
     )
 
@@ -2237,7 +2237,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with global variable receiver" do
     expected = DefNode(
       IDENTIFIER("a"),
-      GlobalVariableRead(GLOBAL_VARIABLE("$var")),
+      GlobalVariableReadNode(GLOBAL_VARIABLE("$var")),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
       Scope([]),
@@ -2537,11 +2537,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "global variable read" do
-    assert_parses GlobalVariableRead(GLOBAL_VARIABLE("$abc")), "$abc"
+    assert_parses GlobalVariableReadNode(GLOBAL_VARIABLE("$abc")), "$abc"
   end
 
   test "global variable write" do
-    assert_parses GlobalVariableWrite(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), "$abc = 1"
+    assert_parses GlobalVariableWriteNode(GLOBAL_VARIABLE("$abc"), EQUAL("="), expression("1")), "$abc = 1"
   end
 
   test "heredocs" do
@@ -6692,7 +6692,7 @@ class ParseTest < Test::Unit::TestCase
       BlockNode(
         BRACE_LEFT("{"),
         nil,
-        StatementsNode([GlobalVariableRead(BACK_REFERENCE("$&"))]),
+        StatementsNode([GlobalVariableReadNode(BACK_REFERENCE("$&"))]),
         BRACE_RIGHT("}")
       ),
       "map"
@@ -6852,8 +6852,8 @@ class ParseTest < Test::Unit::TestCase
   test "multiple assignment on global variable (left-hand side)" do
     expected = MultiWriteNode(
       [
-        GlobalVariableWrite(GLOBAL_VARIABLE("$foo"), nil, nil),
-        GlobalVariableWrite(GLOBAL_VARIABLE("$bar"), nil, nil)
+        GlobalVariableWriteNode(GLOBAL_VARIABLE("$foo"), nil, nil),
+        GlobalVariableWriteNode(GLOBAL_VARIABLE("$bar"), nil, nil)
       ],
       EQUAL("="),
       IntegerNode(),
@@ -6865,7 +6865,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "multiple assignment on global variable (right-hand side)" do
-    expected = GlobalVariableWrite(
+    expected = GlobalVariableWriteNode(
       GLOBAL_VARIABLE("$foo"),
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
