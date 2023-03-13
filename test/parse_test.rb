@@ -822,7 +822,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       StatementsNode([
-        LocalVariableWrite(
+        LocalVariableWriteNode(
           IDENTIFIER("a"),
           EQUAL("="),
           IntegerNode()
@@ -842,7 +842,7 @@ class ParseTest < Test::Unit::TestCase
       LESS("<"),
       ConstantRead(CONSTANT("B")),
       StatementsNode([
-        LocalVariableWrite(
+        LocalVariableWriteNode(
           IDENTIFIER("a"),
           EQUAL("="),
           IntegerNode()
@@ -2333,7 +2333,7 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       ParenthesesNode(
         PARENTHESIS_LEFT("("),
-        LocalVariableWrite(
+        LocalVariableWriteNode(
           IDENTIFIER("c"),
           EQUAL("="),
           expression("b")
@@ -2359,7 +2359,7 @@ class ParseTest < Test::Unit::TestCase
       CONSTANT("C"),
       ParenthesesNode(
         PARENTHESIS_LEFT("("),
-        LocalVariableWrite(
+        LocalVariableWriteNode(
           IDENTIFIER("a"),
           EQUAL("="),
           expression("b")
@@ -2458,7 +2458,7 @@ class ParseTest < Test::Unit::TestCase
     expected = DefinedNode(
       PARENTHESIS_LEFT("("),
       OperatorAssignmentNode(
-        LocalVariableWrite(IDENTIFIER("x"), nil, nil),
+        LocalVariableWriteNode(IDENTIFIER("x"), nil, nil),
         PERCENT_EQUAL("%="),
         IntegerNode()
       ),
@@ -2962,7 +2962,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "local variable write" do
-    assert_parses LocalVariableWrite(IDENTIFIER("abc"), EQUAL("="), expression("1")), "abc = 1"
+    assert_parses LocalVariableWriteNode(IDENTIFIER("abc"), EQUAL("="), expression("1")), "abc = 1"
   end
 
   test "module" do
@@ -2971,7 +2971,7 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_MODULE("module"),
       ConstantRead(CONSTANT("A")),
       StatementsNode([
-        LocalVariableWrite(
+        LocalVariableWriteNode(
           IDENTIFIER("a"),
           EQUAL("="),
           IntegerNode()
@@ -3025,7 +3025,7 @@ class ParseTest < Test::Unit::TestCase
       BeginNode(
         nil,
         StatementsNode(
-          [LocalVariableWrite(IDENTIFIER("x"), EQUAL("="), IntegerNode())]
+          [LocalVariableWriteNode(IDENTIFIER("x"), EQUAL("="), IntegerNode())]
         ),
         RescueNode(KEYWORD_RESCUE("rescue"), [], nil, nil, StatementsNode([]), nil),
         nil,
@@ -3137,15 +3137,15 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "operator and assignment" do
-    assert_parses OperatorAndAssignmentNode(LocalVariableWrite(IDENTIFIER("a"), nil, nil), expression("b"), Location()), "a &&= b"
+    assert_parses OperatorAndAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), expression("b"), Location()), "a &&= b"
   end
 
   test "operator or assignment" do
-    assert_parses OperatorOrAssignmentNode(LocalVariableWrite(IDENTIFIER("a"), nil, nil), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
+    assert_parses OperatorOrAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
   end
 
   test "operator assignment" do
-    assert_parses OperatorAssignmentNode(LocalVariableWrite(IDENTIFIER("a"), nil, nil), PLUS_EQUAL("+="), expression("b")), "a += b"
+    assert_parses OperatorAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), PLUS_EQUAL("+="), expression("b")), "a += b"
   end
 
   test "post execution" do
@@ -4497,7 +4497,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop" do
     expected = ForNode(
-      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+      LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
       StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
@@ -4511,7 +4511,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with do keyword" do
     expected = ForNode(
-      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+      LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
       StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
@@ -4525,7 +4525,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop no newlines" do
     expected = ForNode(
-      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+      LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
       StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
@@ -4539,7 +4539,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "for loop with semicolons" do
     expected = ForNode(
-      LocalVariableWrite(IDENTIFIER("i"), nil, nil),
+      LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
       expression("1..10"),
       StatementsNode([LocalVariableRead(IDENTIFIER("i"))]),
       Location(),
@@ -4555,8 +4555,8 @@ class ParseTest < Test::Unit::TestCase
     expected = ForNode(
       MultiWriteNode(
         [
-          LocalVariableWrite(IDENTIFIER("i"), nil, nil),
-          LocalVariableWrite(IDENTIFIER("j"), nil, nil)
+          LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
+          LocalVariableWriteNode(IDENTIFIER("j"), nil, nil)
         ],
         nil,
         nil,
@@ -4578,9 +4578,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ForNode(
       MultiWriteNode(
         [
-          LocalVariableWrite(IDENTIFIER("i"), nil, nil),
-          LocalVariableWrite(IDENTIFIER("j"), nil, nil),
-          LocalVariableWrite(IDENTIFIER("k"), nil, nil)
+          LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
+          LocalVariableWriteNode(IDENTIFIER("j"), nil, nil),
+          LocalVariableWriteNode(IDENTIFIER("k"), nil, nil)
         ],
         nil,
         nil,
@@ -4685,7 +4685,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
+        LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
         nil,
       ),
@@ -4731,7 +4731,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception")), ConstantRead(CONSTANT("CustomException"))],
         EQUAL_GREATER("=>"),
-        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
+        LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
         nil
       ),
@@ -4791,13 +4791,13 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
+        LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
         RescueNode(
           KEYWORD_RESCUE("rescue"),
           [ConstantRead(CONSTANT("AnotherException")), ConstantRead(CONSTANT("OneMoreException"))],
           EQUAL_GREATER("=>"),
-          LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
+          LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
           StatementsNode([expression("c")]),
           nil
         )
@@ -4926,7 +4926,7 @@ class ParseTest < Test::Unit::TestCase
         KEYWORD_RESCUE("rescue"),
         [ConstantRead(CONSTANT("Exception"))],
         EQUAL_GREATER("=>"),
-        LocalVariableWrite(IDENTIFIER("ex"), nil, nil),
+        LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
         nil
       ),
@@ -5415,7 +5415,7 @@ class ParseTest < Test::Unit::TestCase
         ),
         StatementsNode(
           [OperatorAssignmentNode(
-            LocalVariableWrite(IDENTIFIER("memo"), nil, nil),
+            LocalVariableWriteNode(IDENTIFIER("memo"), nil, nil),
             PLUS_EQUAL("+="),
             LocalVariableRead(IDENTIFIER("x"))
           )]
@@ -6875,7 +6875,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "multiple assignment on local variable (known, right-hand side)" do
-    expected = LocalVariableWrite(
+    expected = LocalVariableWriteNode(
       IDENTIFIER("foo"),
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
@@ -6885,7 +6885,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "multiple assignment on local variable (unknown, right-hand side)" do
-    expected = LocalVariableWrite(
+    expected = LocalVariableWriteNode(
       IDENTIFIER("foo"),
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
@@ -6921,7 +6921,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment trailing comma" do
     expected = MultiWriteNode(
-      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), SplatNode(COMMA(","), nil)],
+      [LocalVariableWriteNode(IDENTIFIER("foo"), nil, nil), SplatNode(COMMA(","), nil)],
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
       nil,
@@ -6933,7 +6933,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment trailing anonymous star" do
     expected = MultiWriteNode(
-      [LocalVariableWrite(IDENTIFIER("foo"), nil, nil), SplatNode(STAR("*"), nil)],
+      [LocalVariableWriteNode(IDENTIFIER("foo"), nil, nil), SplatNode(STAR("*"), nil)],
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
       nil,
@@ -6946,8 +6946,8 @@ class ParseTest < Test::Unit::TestCase
   test "multiple assignment trailing star" do
     expected = MultiWriteNode(
       [
-        LocalVariableWrite(IDENTIFIER("foo"), nil, nil),
-        SplatNode(STAR("*"), LocalVariableWrite(IDENTIFIER("bar"), nil, nil))
+        LocalVariableWriteNode(IDENTIFIER("foo"), nil, nil),
+        SplatNode(STAR("*"), LocalVariableWriteNode(IDENTIFIER("bar"), nil, nil))
       ],
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
@@ -6961,11 +6961,11 @@ class ParseTest < Test::Unit::TestCase
   test "multiple assignment with destructuring" do
     expected = MultiWriteNode(
       [
-        LocalVariableWrite(IDENTIFIER("foo"), nil, nil),
+        LocalVariableWriteNode(IDENTIFIER("foo"), nil, nil),
         MultiWriteNode(
           [
-            LocalVariableWrite(IDENTIFIER("bar"), nil, nil),
-            LocalVariableWrite(IDENTIFIER("baz"), nil, nil)
+            LocalVariableWriteNode(IDENTIFIER("bar"), nil, nil),
+            LocalVariableWriteNode(IDENTIFIER("baz"), nil, nil)
           ],
           nil,
           nil,
@@ -7005,7 +7005,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "assignment with immediate *" do
-    expected = LocalVariableWrite(
+    expected = LocalVariableWriteNode(
       IDENTIFIER("foo"),
       EQUAL("="),
       SplatNode(

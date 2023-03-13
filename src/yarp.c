@@ -4364,12 +4364,12 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
 
       memset(target, 0, sizeof(yp_node_t));
 
-      target->type = YP_NODE_LOCAL_VARIABLE_WRITE;
-      target->as.local_variable_write.name = name;
-      target->as.local_variable_write.operator = *operator;
+      target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+      target->as.local_variable_write_node.name = name;
+      target->as.local_variable_write_node.operator = *operator;
 
       if (value != NULL) {
-        target->as.local_variable_write.value = value;
+        target->as.local_variable_write_node.value = value;
         target->location.end = value->location.end;
       }
 
@@ -4423,12 +4423,12 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // to have a problem if we don't.
           memset(target, 0, sizeof(yp_node_t));
 
-          target->type = YP_NODE_LOCAL_VARIABLE_WRITE;
-          target->as.local_variable_write.name = name;
-          target->as.local_variable_write.operator = *operator;
+          target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+          target->as.local_variable_write_node.name = name;
+          target->as.local_variable_write_node.operator = *operator;
 
           if (value != NULL) {
-            target->as.local_variable_write.value = value;
+            target->as.local_variable_write_node.value = value;
             target->location.end = value->location.end;
           }
 

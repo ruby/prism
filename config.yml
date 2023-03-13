@@ -972,7 +972,7 @@ nodes:
 
           foo
           ^^^
-  - name: LocalVariableWrite
+  - name: LocalVariableWriteNode
     child_nodes:
       - name: name
         type: token
