@@ -3242,6 +3242,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), expression("2")), "1...2"
   end
 
+  test "range exclusive in aref" do
+    expected = CallNode(
+      expression("foo"),
+      nil,
+      BRACKET_LEFT_RIGHT("["),
+      BRACKET_LEFT("["),
+      ArgumentsNode([RangeNode(nil, UDOT_DOT_DOT("..."), IntegerNode())]),
+      BRACKET_RIGHT("]"),
+      nil,
+      "[]"
+    )
+
+    assert_parses expected, "foo[...2]"
+  end
+
   test "range inclusive in hash" do
     expected = HashNode(
       BRACE_LEFT("{"),

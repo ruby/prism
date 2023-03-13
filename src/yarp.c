@@ -4864,7 +4864,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
 
 // Parse a list of arguments.
 static void
-parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t terminator) {
+parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwarding, yp_token_type_t terminator) {
   yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
   // First we need to check if the next token is one that could be the start of
@@ -4910,16 +4910,6 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         parsed_block_argument = true;
         break;
       }
-      case YP_TOKEN_UDOT_DOT_DOT: {
-        parser_lex(parser);
-
-        if (!yp_parser_local_p(parser, &parser->previous)) {
-          yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
-        }
-
-        argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
-        break;
-      }
       case YP_TOKEN_STAR: {
         parser_lex(parser);
         yp_token_t previous = parser->previous;
@@ -4940,6 +4930,18 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         }
 
         break;
+      }
+      case YP_TOKEN_UDOT_DOT_DOT: {
+        if (accepts_forwarding) {
+          parser_lex(parser);
+
+          if (!yp_parser_local_p(parser, &parser->previous)) {
+            yp_diagnostic_list_append(&parser->error_list, "unexpected ... when parent method is not forwarding.", parser->previous.start - parser->start);
+          }
+
+          argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
+          break;
+        }
       }
       default: {
         argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
@@ -5417,7 +5419,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
       arguments->arguments = yp_arguments_node_create(parser);
 
       yp_state_stack_push(&parser->accepts_block_stack, true);
-      parse_arguments(parser, arguments->arguments, YP_TOKEN_PARENTHESIS_RIGHT);
+      parse_arguments(parser, arguments->arguments, true, YP_TOKEN_PARENTHESIS_RIGHT);
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
       yp_state_stack_pop(&parser->accepts_block_stack);
 
@@ -5430,7 +5432,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     // operator. In this case we assume the subsequent token is part of an
     // argument to this method call.
     arguments->arguments = yp_arguments_node_create(parser);
-    parse_arguments(parser, arguments->arguments, YP_TOKEN_EOF);
+    parse_arguments(parser, arguments->arguments, true, YP_TOKEN_EOF);
 
     yp_state_stack_pop(&parser->accepts_block_stack);
   }
@@ -6459,7 +6461,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         if (binding_power == YP_BINDING_POWER_UNSET || binding_power >= YP_BINDING_POWER_RANGE) {
           arguments = yp_arguments_node_create(parser);
-          parse_arguments(parser, arguments, YP_TOKEN_EOF);
+          parse_arguments(parser, arguments, false, YP_TOKEN_EOF);
         }
       }
 
@@ -8052,7 +8054,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       arguments.opening = parser->previous;
       arguments.arguments = yp_arguments_node_create(parser);
 
-      parse_arguments(parser, arguments.arguments, YP_TOKEN_BRACKET_RIGHT);
+      parse_arguments(parser, arguments.arguments, false, YP_TOKEN_BRACKET_RIGHT);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
       arguments.closing = parser->previous;
 
