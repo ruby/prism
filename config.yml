@@ -418,7 +418,7 @@ nodes:
           def a(&b)
                 ^^
           end
-  - name: BlockVarNode
+  - name: BlockParametersNode
     child_nodes:
       - name: parameters
         type: node

@@ -5045,7 +5045,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         KEYWORD_DO("do"),
-        BlockVarNode(
+        BlockParametersNode(
           ParametersNode(
             [],
             [OptionalParameterNode(IDENTIFIER("a"), EQUAL("="), expression("b[1]"))],
@@ -5337,7 +5337,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         BRACE_LEFT("{"),
-        BlockVarNode(
+        BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x"))],
             [],
@@ -5367,7 +5367,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         BRACE_LEFT("{"),
-        BlockVarNode(
+        BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x"))],
             [OptionalParameterNode(
@@ -5401,7 +5401,7 @@ class ParseTest < Test::Unit::TestCase
       PARENTHESIS_RIGHT(")"),
       BlockNode(
         BRACE_LEFT("{"),
-        BlockVarNode(
+        BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x")),
             RequiredParameterNode(IDENTIFIER("memo"))],
@@ -6174,7 +6174,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LambdaNode(
       Scope([]),
       nil,
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode([], [], nil, [], nil, nil),
         []
       ),
@@ -6189,7 +6189,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LambdaNode(
       Scope([]),
       nil,
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode([], [], nil, [], nil, nil),
         []
       ),
@@ -6212,7 +6212,7 @@ class ParseTest < Test::Unit::TestCase
         IDENTIFIER("g")
       ]),
       PARENTHESIS_LEFT("("),
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
           [OptionalParameterNode(
@@ -6244,7 +6244,7 @@ class ParseTest < Test::Unit::TestCase
         IDENTIFIER("e"),
       ]),
       nil,
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
           [OptionalParameterNode(
@@ -6278,7 +6278,7 @@ class ParseTest < Test::Unit::TestCase
         IDENTIFIER("g")
       ]),
       PARENTHESIS_LEFT("("),
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
           [OptionalParameterNode(
@@ -6304,7 +6304,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LambdaNode(
       Scope([IDENTIFIER("a")]),
       PARENTHESIS_LEFT("("),
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
           [],
@@ -6320,7 +6320,7 @@ class ParseTest < Test::Unit::TestCase
         [LambdaNode(
           Scope([IDENTIFIER("b")]),
           nil,
-          BlockVarNode(
+          BlockParametersNode(
             ParametersNode(
               [RequiredParameterNode(IDENTIFIER("b"))],
               [],
@@ -6353,7 +6353,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LambdaNode(
       Scope([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]),
       PARENTHESIS_LEFT("("),
-      BlockVarNode(
+      BlockParametersNode(
         ParametersNode(
           [RequiredParameterNode(IDENTIFIER("a"))],
           [],
@@ -6375,7 +6375,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LambdaNode(
       Scope([]),
       nil,
-      BlockVarNode(ParametersNode([], [], nil, [], nil, nil), []),
+      BlockParametersNode(ParametersNode([], [], nil, [], nil, nil), []),
       nil,
       BeginNode(
         nil,
@@ -6394,7 +6394,7 @@ class ParseTest < Test::Unit::TestCase
     expected = LambdaNode(
       Scope([]),
       nil,
-      BlockVarNode(ParametersNode([], [], nil, [], nil, nil), []),
+      BlockParametersNode(ParametersNode([], [], nil, [], nil, nil), []),
       nil,
       BeginNode(
         nil,
@@ -6525,7 +6525,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BlockNode(
         KEYWORD_DO("do"),
-        BlockVarNode(
+        BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))],
             [],
@@ -6754,7 +6754,7 @@ class ParseTest < Test::Unit::TestCase
         nil,
         BlockNode(
           BRACE_LEFT("{"),
-          BlockVarNode(
+          BlockParametersNode(
             ParametersNode(
               [RequiredParameterNode(IDENTIFIER("a"))],
               [],
