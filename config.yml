@@ -18,10 +18,10 @@ tokens:
     comment: "&."
   - name: AMPERSAND_EQUAL
     comment: "&="
-  - name: BACK_REFERENCE
-    comment: "a back reference"
   - name: BACKTICK
     comment: "`"
+  - name: BACK_REFERENCE
+    comment: "a back reference"
   - name: BANG
     comment: "! or !@"
   - name: BANG_EQUAL
@@ -90,6 +90,8 @@ tokens:
     comment: "=~"
   - name: FLOAT
     comment: "a floating point number"
+  - name: GLOBAL_VARIABLE
+    comment: "a global variable"
   - name: GREATER
     comment: ">"
   - name: GREATER_EQUAL
@@ -98,8 +100,6 @@ tokens:
     comment: ">>"
   - name: GREATER_GREATER_EQUAL
     comment: ">>="
-  - name: GLOBAL_VARIABLE
-    comment: "a global variable"
   - name: HEREDOC_END
     comment: "the end of a heredoc"
   - name: HEREDOC_START
@@ -114,12 +114,6 @@ tokens:
     comment: "an instance variable"
   - name: INTEGER
     comment: "an integer (any base)"
-  - name: KEYWORD___ENCODING__
-    comment: "__ENCODING__"
-  - name: KEYWORD___LINE__
-    comment: "__LINE__"
-  - name: KEYWORD___FILE__
-    comment: "__FILE__"
   - name: KEYWORD_ALIAS
     comment: "alias"
   - name: KEYWORD_AND
@@ -198,6 +192,12 @@ tokens:
     comment: "while"
   - name: KEYWORD_YIELD
     comment: "yield"
+  - name: KEYWORD___ENCODING__
+    comment: "__ENCODING__"
+  - name: KEYWORD___FILE__
+    comment: "__FILE__"
+  - name: KEYWORD___LINE__
+    comment: "__LINE__"
   - name: LABEL
     comment: "a label"
   - name: LABEL_END
@@ -1323,6 +1323,20 @@ nodes:
 
           return 1
           ^^^^^^^^
+  - name: Scope
+    child_nodes:
+      - name: locals
+        type: token[]
+    location: locals
+    comment: |
+      Represents the local variables within a given lexical scope. These are
+      attached to nodes where a new scope is created.
+  - name: SelfNode
+    comment: |
+      Represents the `self` keyword.
+
+          self
+          ^^^^
   - name: SingletonClassNode
     child_nodes:
       - name: scope
@@ -1343,20 +1357,6 @@ nodes:
 
           class << self end
           ^^^^^^^^^^^^^^^^^
-  - name: Scope
-    child_nodes:
-      - name: locals
-        type: token[]
-    location: locals
-    comment: |
-      Represents the local variables within a given lexical scope. These are
-      attached to nodes where a new scope is created.
-  - name: SelfNode
-    comment: |
-      Represents the `self` keyword.
-
-          self
-          ^^^^
   - name: SourceEncodingNode
     comment: |
       Represents the use of the `__ENCODING__` keyword.
