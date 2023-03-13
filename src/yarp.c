@@ -3197,7 +3197,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_SLASH_EQUAL;
           }
 
-          if (lex_state_p(parser, YP_LEX_STATE_ARG) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
+          if (lex_state_arg_p(parser) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
             yp_diagnostic_list_append(&parser->warning_list, "ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after `/' operator", parser->current.start - parser->start);
 
             lex_mode_push(parser, (yp_lex_mode_t) {

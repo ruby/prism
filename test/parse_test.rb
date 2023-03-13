@@ -3344,6 +3344,21 @@ class ParseTest < Test::Unit::TestCase
     assert_parses XStringNode(PERCENT_LOWER_X("%x["), STRING_CONTENT("foo"), STRING_END("]")), "%x[foo]"
   end
 
+  test "regular expression after method call" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode([RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("bar"), REGEXP_END("/"))]),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo /bar/"
+  end
+
   test "regular expression, /, no interpolation" do
     assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
   end
