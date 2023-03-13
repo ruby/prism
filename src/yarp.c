@@ -2834,12 +2834,14 @@ lex_token_type(yp_parser_t *parser) {
               }
 
               const char *ident_start = parser->current.end;
-              size_t width = char_is_identifier(parser, parser->current.end);
+              size_t width;
 
-              if (width == 0) {
+              if (quote == YP_HEREDOC_QUOTE_NONE && (width = char_is_identifier(parser, parser->current.end)) == 0) {
                 parser->current.end = end;
               } else {
                 if (quote == YP_HEREDOC_QUOTE_NONE) {
+                  parser->current.end += width;
+
                   while ((width = char_is_identifier(parser, parser->current.end))) {
                     parser->current.end += width;
                   }
