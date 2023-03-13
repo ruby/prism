@@ -6683,11 +6683,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         context_pop(parser);
       } else {
+        yp_state_stack_push(&parser->accepts_block_stack, true);
         statements = parse_statements(parser, YP_CONTEXT_DEF);
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
+
+        yp_state_stack_pop(&parser->accepts_block_stack);
       }
 
       yp_token_t end_keyword;

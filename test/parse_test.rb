@@ -2433,6 +2433,51 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def (a)::b\nend"
   end
 
+  test "def node allows blocks" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("private"),
+      nil,
+      ArgumentsNode(
+        [DefNode(
+           IDENTIFIER("foo"),
+           nil,
+           ParametersNode([], [], nil, [], nil, nil),
+           StatementsNode(
+             [CallNode(
+                nil,
+                nil,
+                IDENTIFIER("bar"),
+                nil,
+                nil,
+                nil,
+                BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                "bar"
+              )]
+           ),
+           Scope([]),
+           Location(),
+           nil,
+           nil,
+           nil,
+           nil,
+           Location()
+         )]
+      ),
+      nil,
+      nil,
+      "private"
+    )
+
+    assert_parses expected, <<~RUBY
+      private def foo
+        bar do
+        end
+      end
+    RUBY
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(nil, expression("1"), nil, Location()), "defined? 1"
   end
