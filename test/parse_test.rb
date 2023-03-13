@@ -41,6 +41,14 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
   end
 
+  test "comment embedded document with content on last line" do
+    assert_parses IntegerNode(), <<~RUBY
+      =begin
+      =end other stuff
+      1
+    RUBY
+  end
+
   test "alias bare" do
     expected = AliasNode(
       SymbolNode(nil, IDENTIFIER("foo"), nil),

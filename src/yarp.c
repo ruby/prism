@@ -3498,15 +3498,17 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_EMBDOC: {
       parser->current.start = parser->current.end;
 
-      // If we've hit the end of the embedded documentation then we'll return that token here.
-      if (strncmp(parser->current.end, "=end\n", 5) == 0) {
-        parser->current.end += 5;
-        lex_mode_pop(parser);
-        return YP_TOKEN_EMBDOC_END;
+      // If there is no possibility that we could find the end of the embedded
+      // documentation then we'll return an EOF token.
+      if (parser->current.end + 5 >= parser->end) {
+        return YP_TOKEN_EOF;
       }
 
-      if (strncmp(parser->current.end, "=end\r\n", 6) == 0) {
-        parser->current.end += 6;
+      // If we've hit the end of the embedded documentation then we'll return that token here.
+      if (strncmp(parser->current.end, "=end", 4) == 0 && char_is_whitespace(parser->current.end[4])) {
+        const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+        parser->current.end = newline == NULL ? parser->end : newline + 1;
+
         lex_mode_pop(parser);
         return YP_TOKEN_EMBDOC_END;
       }
