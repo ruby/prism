@@ -188,7 +188,7 @@ module YARP
     def assert_location(kind, source, expected = 0...source.length)
       YARP.parse(source) => ParseResult[comments: [], errors: [], value: node]
 
-      node => Program[statements: [*, node]]
+      node => ProgramNode[statements: [*, node]]
       node = yield node if block_given?
 
       assert_kind_of kind, node

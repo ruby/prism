@@ -418,7 +418,7 @@ nodes:
           def a(&b)
                 ^^
           end
-  - name: BlockVarNode
+  - name: BlockParametersNode
     child_nodes:
       - name: parameters
         type: node
@@ -545,7 +545,7 @@ nodes:
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
-  - name: ConstantRead
+  - name: ConstantReadNode
     child_nodes:
       - name: name
         type: token
@@ -714,7 +714,7 @@ nodes:
 
           super
           ^^^^^
-  - name: GlobalVariableRead
+  - name: GlobalVariableReadNode
     child_nodes:
       - name: name
         type: token
@@ -724,7 +724,7 @@ nodes:
 
           $foo
           ^^^^
-  - name: GlobalVariableWrite
+  - name: GlobalVariableWriteNode
     child_nodes:
       - name: name
         type: token
@@ -960,7 +960,7 @@ nodes:
 
           ->(value) { value * 2 }
           ^^^^^^^^^^^^^^^^^^^^^^^
-  - name: LocalVariableRead
+  - name: LocalVariableReadNode
     child_nodes:
       - name: name
         type: token
@@ -972,7 +972,7 @@ nodes:
 
           foo
           ^^^
-  - name: LocalVariableWrite
+  - name: LocalVariableWriteNode
     child_nodes:
       - name: name
         type: token
@@ -1190,7 +1190,7 @@ nodes:
 
           END { foo }
           ^^^^^^^^^^^
-  - name: Program
+  - name: ProgramNode
     child_nodes:
       - name: scope
         type: node
@@ -1317,7 +1317,7 @@ nodes:
           def a(*b)
                 ^^
           end
-  - name: StarNode
+  - name: SplatNode
     child_nodes:
       - name: operator
         type: token
@@ -1347,7 +1347,7 @@ nodes:
 
           return 1
           ^^^^^^^^
-  - name: SClassNode
+  - name: SingletonClassNode
     child_nodes:
       - name: scope
         type: node
@@ -1399,7 +1399,7 @@ nodes:
 
           __LINE__
           ^^^^^^^^
-  - name: Statements
+  - name: StatementsNode
     child_nodes:
       - name: body
         type: node[]
@@ -1496,7 +1496,7 @@ nodes:
 
           %i[foo]
              ^^^
-  - name: Ternary
+  - name: TernaryNode
     child_nodes:
       - name: predicate
         type: node

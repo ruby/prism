@@ -83,7 +83,7 @@ The following table shows how the various CRuby nodes are mapped to YARP nodes.
 | `NODE_POSTARG` | `YP_NODE_REQUIRED_PARAMETER_NODE` |
 | `NODE_ARGSCAT` | |
 | `NODE_ARGSPUSH` | |
-| `NODE_SPLAT` | `YP_NODE_STAR_NODE` |
+| `NODE_SPLAT` | `YP_NODE_SPLAT_NODE` |
 | `NODE_BLOCK_PASS` | `YP_NODE_BLOCK_ARGUMENT_NODE` |
 | `NODE_DEFN` | `YP_NODE_DEF_NODE` (with a null receiver) |
 | `NODE_DEFS` | `YP_NODE_DEF_NODE` (with a non-null receiver) |

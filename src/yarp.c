@@ -4335,7 +4335,7 @@ parse_starred_expression(yp_parser_t *parser, yp_binding_power_t binding_power, 
   if (accept(parser, YP_TOKEN_STAR)) {
     yp_token_t operator = parser->previous;
     yp_node_t *expression = parse_expression(parser, binding_power, "Expected expression after `*'.");
-    return yp_node_star_node_create(parser, &operator, expression);
+    return yp_node_splat_node_create(parser, &operator, expression);
   }
 
   return parse_expression(parser, binding_power, message);
@@ -4351,25 +4351,25 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       yp_class_variable_write_node_init(parser, target, operator, value);
       return target;
     case YP_NODE_CONSTANT_PATH_NODE:
-    case YP_NODE_CONSTANT_READ:
+    case YP_NODE_CONSTANT_READ_NODE:
       return yp_node_constant_path_write_node_create(parser, target, operator, value);
-    case YP_NODE_GLOBAL_VARIABLE_READ: {
-      yp_node_t *result = yp_node_global_variable_write_create(parser, &target->as.global_variable_read.name, operator, value);
+    case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
+      yp_node_t *result = yp_node_global_variable_write_node_create(parser, &target->as.global_variable_read_node.name, operator, value);
       yp_node_destroy(parser, target);
       return result;
     }
-    case YP_NODE_LOCAL_VARIABLE_READ: {
-      yp_token_t name = target->as.local_variable_read.name;
+    case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
+      yp_token_t name = target->as.local_variable_read_node.name;
       yp_parser_local_add(parser, &name);
 
       memset(target, 0, sizeof(yp_node_t));
 
-      target->type = YP_NODE_LOCAL_VARIABLE_WRITE;
-      target->as.local_variable_write.name = name;
-      target->as.local_variable_write.operator = *operator;
+      target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+      target->as.local_variable_write_node.name = name;
+      target->as.local_variable_write_node.operator = *operator;
 
       if (value != NULL) {
-        target->as.local_variable_write.value = value;
+        target->as.local_variable_write_node.value = value;
         target->location.end = value->location.end;
       }
 
@@ -4387,9 +4387,9 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       }
 
       return target;
-    case YP_NODE_STAR_NODE: {
-      if (target->as.star_node.expression != NULL) {
-        target->as.star_node.expression = parse_target(parser, target->as.star_node.expression, operator, value);
+    case YP_NODE_SPLAT_NODE: {
+      if (target->as.splat_node.expression != NULL) {
+        target->as.splat_node.expression = parse_target(parser, target->as.splat_node.expression, operator, value);
       }
 
       yp_node_t *multi_write = yp_node_multi_write_node_create(parser, operator, value, &(yp_location_t) { .start = parser->start, .end = parser->start }, &(yp_location_t) { .start = parser->start, .end = parser->start });
@@ -4423,12 +4423,12 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // to have a problem if we don't.
           memset(target, 0, sizeof(yp_node_t));
 
-          target->type = YP_NODE_LOCAL_VARIABLE_WRITE;
-          target->as.local_variable_write.name = name;
-          target->as.local_variable_write.operator = *operator;
+          target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+          target->as.local_variable_write_node.name = name;
+          target->as.local_variable_write_node.operator = *operator;
 
           if (value != NULL) {
-            target->as.local_variable_write.value = value;
+            target->as.local_variable_write_node.value = value;
             target->location.end = value->location.end;
           }
 
@@ -4544,7 +4544,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
         name = parse_target(parser, name, &operator, NULL);
       }
 
-      yp_node_t *splat = yp_node_star_node_create(parser, &star_operator, name);
+      yp_node_t *splat = yp_node_splat_node_create(parser, &star_operator, name);
       yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, splat);
       has_splat = true;
     } else if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
@@ -4584,7 +4584,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
         // If we get here, then we have a trailing , in a multi write node. We
         // need to indicate this somehow in the tree, so we'll add an anonymous
         // splat.
-        yp_node_t *splat = yp_node_star_node_create(parser, &parser->previous, NULL);
+        yp_node_t *splat = yp_node_splat_node_create(parser, &parser->previous, NULL);
         yp_node_list_append(parser, multi_write, &multi_write->as.multi_write_node.targets, splat);
         return multi_write;
       }
@@ -4603,7 +4603,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
 static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
   context_push(parser, context);
-  yp_node_t *statements = yp_node_statements_create(parser);
+  yp_node_t *statements = yp_node_statements_node_create(parser);
 
   while (!context_terminator(context, &parser->current)) {
     // Ignore semicolon without statements before them
@@ -4612,7 +4612,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
     }
 
     yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
-    yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+    yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
 
     // If we're recovering from a syntax error, then we need to stop parsing the
     // statements now.
@@ -4766,14 +4766,14 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
             yp_diagnostic_list_append(&parser->error_list, "unexpected * when parent method is not forwarding.", parser->previous.start - parser->start);
           }
 
-          argument = yp_node_star_node_create(parser, &previous, NULL);
+          argument = yp_node_splat_node_create(parser, &previous, NULL);
         } else {
           if (parsed_bare_hash) {
             yp_diagnostic_list_append(&parser->error_list, "Unexpected splat argument after double splat.", parser->current.start - parser->start);
           }
 
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
-          argument = yp_node_star_node_create(parser, &previous, expression);
+          argument = yp_node_splat_node_create(parser, &previous, expression);
         }
 
         break;
@@ -4859,7 +4859,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
         yp_diagnostic_list_append(&parser->error_list, "Unexpected splat after splat.", parser->previous.start - parser->start);
       }
 
-      param = yp_node_star_node_create(parser, &parser->previous, NULL);
+      param = yp_node_splat_node_create(parser, &parser->previous, NULL);
       yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
       break;
     }
@@ -4880,7 +4880,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
         yp_parser_local_add(parser, &name);
       }
 
-      param = yp_node_star_node_create(parser, &star, value);
+      param = yp_node_splat_node_create(parser, &star, value);
       parsed_splat = true;
     } else {
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier for a required parameter.");
@@ -5078,7 +5078,7 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     yp_token_t rescue_keyword = parser->previous;
 
     yp_token_t equal_greater = not_provided(parser);
-    yp_node_t *statements = yp_node_statements_create(parser);
+    yp_node_t *statements = yp_node_statements_node_create(parser);
     yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, NULL, statements, NULL);
     yp_node_destroy(parser, statements);
 
@@ -5187,13 +5187,13 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
 static yp_node_t *
 parse_block_parameters(yp_parser_t *parser) {
   yp_node_t *block_params = parse_parameters(parser, false, YP_BINDING_POWER_INDEX);
-  yp_node_t *parameters = yp_node_block_var_node_create(parser, block_params);
+  yp_node_t *parameters = yp_node_block_parameters_node_create(parser, block_params);
 
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
     do {
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a local variable name.");
       yp_parser_local_add(parser, &parser->previous);
-      yp_token_list_append(&parameters->as.block_var_node.locals, &parser->previous);
+      yp_token_list_append(&parameters->as.block_parameters_node.locals, &parser->previous);
     } while (accept(parser, YP_TOKEN_COMMA));
   }
 
@@ -5389,7 +5389,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // This macro allows you to define a case statement for all of the nodes that
 // can be transformed into write targets.
 #define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
-  case YP_NODE_CONSTANT_READ: case YP_NODE_GLOBAL_VARIABLE_READ: case YP_NODE_LOCAL_VARIABLE_READ: \
+  case YP_NODE_CONSTANT_READ_NODE: case YP_NODE_GLOBAL_VARIABLE_READ_NODE: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
   case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE
 
 // Parse a node that is part of a string. If the subsequent tokens cannot be
@@ -5447,7 +5447,7 @@ parse_string_part(yp_parser_t *parser) {
         case YP_TOKEN_GLOBAL_VARIABLE:
         case YP_TOKEN_NTH_REFERENCE:
           parser_lex(parser);
-          return yp_node_global_variable_read_create(parser, &parser->previous);
+          return yp_node_global_variable_read_node_create(parser, &parser->previous);
         // In this case an instance variable is being interpolated. We'll
         // create an instance variable read node.
         case YP_TOKEN_INSTANCE_VARIABLE:
@@ -5614,7 +5614,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
       }
 
       parser_lex(parser);
-      return yp_node_global_variable_read_create(parser, &parser->previous);
+      return yp_node_global_variable_read_node_create(parser, &parser->previous);
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, "Expected a bare word, symbol or global variable argument.", parser->current.start - parser->start);
@@ -5635,7 +5635,7 @@ parse_vcall(yp_parser_t *parser) {
     (parser->previous.end[-1] != '?') &&
     yp_parser_local_p(parser, &parser->previous)
   ) {
-    return yp_node_local_variable_read_create(parser, &parser->previous);
+    return yp_node_local_variable_read_node_create(parser, &parser->previous);
   }
 
   return yp_call_node_vcall_create(parser, &parser->previous);
@@ -5711,7 +5711,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         if (accept(parser, YP_TOKEN_STAR)) {
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
-          element = yp_node_star_node_create(parser, &parser->previous, expression);
+          element = yp_node_splat_node_create(parser, &parser->previous, expression);
         } else if (match_type_p(parser, YP_TOKEN_LABEL)) {
           yp_token_t opening = not_provided(parser);
           yp_token_t closing = not_provided(parser);
@@ -5795,8 +5795,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // If we have a single statement and are ending on a right parenthesis
         // and we didn't return a multiple assignment node, then we can return a
         // regular parentheses node now.
-        yp_node_t *statements = yp_node_statements_create(parser);
-        yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
+        yp_node_t *statements = yp_node_statements_node_create(parser);
+        yp_node_list_append(parser, statements, &statements->as.statements_node.body, statement);
 
         return yp_node_parentheses_node_create(parser, &opening, statements, &parser->previous);
       }
@@ -5805,15 +5805,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // are going to parse all of them as a list of statements. We'll do that
       // here.
       context_push(parser, YP_CONTEXT_PARENS);
-      yp_node_t *statements = yp_node_statements_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements_node.body, statement);
 
       while (!match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
         // Ignore semicolon without statements before them
         if (accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE)) continue;
 
         yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
-        yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+        yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
 
         // If we're recovering from a syntax error, then we need to stop parsing the
         // statements now.
@@ -5825,7 +5825,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
-      } 
+      }
 
       context_pop(parser);
       yp_state_stack_pop(&parser->accepts_block_stack);
@@ -5888,7 +5888,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
-      yp_node_t *node = yp_node_constant_read_create(parser, &parser->previous);
+      yp_node_t *node = yp_node_constant_read_node_create(parser, &parser->previous);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         // If we get here, then we have a comma immediately following a
@@ -5904,7 +5904,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t delimiter = parser->previous;
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
 
-      yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
+      yp_node_t *constant = yp_node_constant_read_node_create(parser, &parser->previous);
       yp_node_t *node = yp_node_constant_path_node_create(parser, NULL, &delimiter, constant);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
@@ -5928,7 +5928,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_BACK_REFERENCE: {
       parser_lex(parser);
-      yp_node_t *node = yp_node_global_variable_read_create(parser, &parser->previous);
+      yp_node_t *node = yp_node_global_variable_read_node_create(parser, &parser->previous);
 
       if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -6148,9 +6148,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
           break;
         }
-        case YP_NODE_GLOBAL_VARIABLE_READ: {
-          if (right->type == YP_NODE_GLOBAL_VARIABLE_READ) {
-            if (right->as.global_variable_read.name.type == YP_TOKEN_NTH_REFERENCE) {
+        case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
+          if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
+            if (right->as.global_variable_read_node.name.type == YP_TOKEN_NTH_REFERENCE) {
               yp_diagnostic_list_append(&parser->error_list, "Can't make alias for number variables.", parser->previous.start - parser->start);
             }
           } else {
@@ -6192,7 +6192,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_token_t operator = parser->previous;
             yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after `*' operator.");
 
-            yp_node_t *star_node = yp_node_star_node_create(parser, &operator, expression);
+            yp_node_t *star_node = yp_node_splat_node_create(parser, &operator, expression);
             yp_node_list_append(parser, case_node, &when_node->as.when_node.conditions, star_node);
 
             if (expression->type == YP_NODE_MISSING_NODE) break;
@@ -6332,7 +6332,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_node_t *scope = parser->current_scope->node;
         yp_parser_scope_pop(parser);
-        return yp_node_s_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
+        return yp_node_singleton_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
       yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_CALL, "Expected to find a class name after `class`.");
@@ -6426,7 +6426,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             switch (identifier.type) {
               case YP_TOKEN_CONSTANT:
-                receiver = yp_node_constant_read_create(parser, &identifier);
+                receiver = yp_node_constant_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_INSTANCE_VARIABLE:
                 receiver = yp_instance_variable_read_node_create(parser, &identifier);
@@ -6435,7 +6435,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_class_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_GLOBAL_VARIABLE:
-                receiver = yp_node_global_variable_read_create(parser, &identifier);
+                receiver = yp_node_global_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_NIL:
                 receiver = yp_nil_node_create(parser, &identifier);
@@ -6540,10 +6540,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       if (endless_definition) {
         context_push(parser, YP_CONTEXT_DEF);
-        statements = yp_node_statements_create(parser);
+        statements = yp_node_statements_node_create(parser);
 
         yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse body of endless method definition.");
-        yp_node_list_append(parser, statements, &statements->as.statements.body, statement);
+        yp_node_list_append(parser, statements, &statements->as.statements_node.body, statement);
 
         context_pop(parser);
       } else {
@@ -6705,7 +6705,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // name of the module, then we'll handle that here.
       if (name->type == YP_NODE_MISSING_NODE) {
         yp_node_t *scope = yp_node_scope_create(parser);
-        yp_node_t *statements = yp_node_statements_create(parser);
+        yp_node_t *statements = yp_node_statements_node_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
       }
@@ -6714,7 +6714,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t double_colon = parser->previous;
 
         expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
-        yp_node_t *constant = yp_node_constant_read_create(parser, &parser->previous);
+        yp_node_t *constant = yp_node_constant_read_node_create(parser, &parser->previous);
 
         name = yp_node_constant_path_node_create(parser, name, &double_colon, constant);
       }
@@ -7157,7 +7157,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an expression after '*'.");
       }
 
-      yp_node_t *splat = yp_node_star_node_create(parser, &operator, name);
+      yp_node_t *splat = yp_node_splat_node_create(parser, &operator, name);
       return parse_targets(parser, splat, YP_BINDING_POWER_INDEX);
     }
     case YP_TOKEN_BANG: {
@@ -7409,8 +7409,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
           return parse_target(parser, node, &token, value);
         }
-        case YP_NODE_STAR_NODE: {
-          switch (node->as.star_node.expression->type) {
+        case YP_NODE_SPLAT_NODE: {
+          switch (node->as.splat_node.expression->type) {
             case YP_CASE_WRITABLE: {
               parser_lex(parser);
               yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
@@ -7664,8 +7664,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_IF: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'if'");
       yp_token_t end_keyword = not_provided(parser);
@@ -7673,8 +7673,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_UNLESS: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'unless'");
       yp_token_t end_keyword = not_provided(parser);
@@ -7683,16 +7683,16 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_UNTIL: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
       return yp_node_until_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements.body, node);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
+      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
       return yp_node_while_node_create(parser, &token, predicate, statements);
@@ -7714,7 +7714,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           .end = colon.end,
         });
 
-        return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+        return yp_node_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
       }
 
       expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
@@ -7722,7 +7722,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_token_t colon = parser->previous;
       yp_node_t *false_expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after ':'");
 
-      return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+      return yp_node_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
     }
     case YP_TOKEN_COLON_COLON: {
       parser_lex(parser);
@@ -7745,7 +7745,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           }
 
           // Otherwise, this is a constant path. That would look like Foo::Bar.
-          yp_node_t *child = yp_node_constant_read_create(parser, &parser->previous);
+          yp_node_t *child = yp_node_constant_read_node_create(parser, &parser->previous);
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
         case YP_TOKEN_IDENTIFIER: {
@@ -7860,7 +7860,7 @@ parse_program(yp_parser_t *parser) {
   yp_node_t *scope = parser->current_scope->node;
   yp_parser_scope_pop(parser);
 
-  return yp_node_program_create(parser, scope, statements);
+  return yp_node_program_node_create(parser, scope, statements);
 }
 
 /******************************************************************************/
