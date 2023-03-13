@@ -4,36 +4,67 @@ on:
   push:
     branches:
       - main
-
   pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2
         bundler-cache: true
-
     - name: Lint config.yml
       run: bundle exec rake lint
-
     - name: Run Ruby tests
       run: bundle exec rake
 
-    - name: Run lex comparison
+  lex-ruby:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+    - name: Lex ruby/ruby
       run: bundle exec rake lex
+      env:
+        TARGET: ruby
+
+  lex-rails:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+    - name: Lex rails/rails
+      run: bundle exec rake lex
+      env:
+        TARGET: rails
+
+  lex-discourse:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+    - name: Lex discourse/discourse
+      run: bundle exec rake lex
+      env:
+        TARGET: discourse
 
   memcheck:
     runs-on: ubuntu-latest
-
     steps:
     - name: Install valgrind from source
       run: |
@@ -44,14 +75,11 @@ jobs:
         ./configure
         make
         sudo make install
-
     - uses: actions/checkout@v3
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2
         bundler-cache: true
-
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind

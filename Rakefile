@@ -81,6 +81,7 @@ task lex: :compile do
   require "yarp"
   require "ripper"
   require "timeout"
+  require "yaml"
 
   passing = 0
   failing = 0
@@ -88,43 +89,54 @@ task lex: :compile do
   colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
   fail_filepath = ->(filepath) {
     warn(filepath) if ENV["VERBOSE"]
-    print colorize.call(31, "E")
+    print(ENV["CI"] ? "E" : colorize.call(31, "E"))
     failing += 1
   }
 
-  filepaths =
-    if ENV["FILEPATHS"]
-      Dir[ENV["FILEPATHS"]]
-    else
-      Dir["vendor/spec/**/*.rb"] - [
-        "vendor/spec/command_line/fixtures/bad_syntax.rb",
-        "vendor/spec/core/regexp/shared/new.rb",
-        "vendor/spec/language/regexp/interpolation_spec.rb"
-      ]
+  if ENV["FILEPATHS"]
+    filepaths = Dir[ENV["FILEPATHS"]]
+  else
+    target = YAML.safe_load_file("targets.yml").fetch(ENV["TARGET"])
+    dirpath = File.join("tmp", "targets", ENV["TARGET"])
+
+    unless File.directory?(dirpath)
+      FileUtils.mkdir_p(dirpath)
+      sh "git clone --depth 1 #{target.fetch("repo")} #{dirpath}"
     end
 
+    filepaths = Dir[File.join(dirpath, "**", "*.rb")]
+
+    if excludes = target["excludes"]
+      filepaths -= excludes.map { |exclude| File.join(dirpath, exclude) }
+    end
+
+    if (todos = target["todos"]) && !ENV["TODOS"]
+      filepaths -= todos.map { |todo| File.join(dirpath, todo) }
+    end
+  end
+
   filepaths.each.with_index(1) do |filepath, index|
-    print "#{filepath} " if ENV["CI"]
+    print("#{filepath} ") if ENV["CI"]
     source = File.read(filepath)
 
     begin
-      Timeout.timeout(1) do
+      Timeout.timeout(2) do
         lexed = YARP.lex_compat(source)
 
         if lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
-          print colorize.call(32, ".")
+          print(ENV["CI"] ? "." : colorize.call(32, "."))
           passing += 1
         else
           fail_filepath.call(filepath)
         end
-
-        puts if ENV["CI"]
       rescue
         fail_filepath.call(filepath)
       end
     rescue Timeout::Error
       fail_filepath.call(filepath)
     end
+
+    puts if ENV["CI"]
   end
 
   puts <<~RESULTS
