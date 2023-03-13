@@ -125,7 +125,7 @@ module YARP
       end
     end
 
-    def visit_program(node)
+    def visit_program_node(node)
       bounds(node)
       on_program(visit(node.statements))
     end

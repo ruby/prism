@@ -431,14 +431,14 @@ class ErrorsTest < Test::Unit::TestCase
     assert_nil Ripper.sexp_raw(source)
 
     result = YARP.parse(source)
-    result => YARP::ParseResult[value: YARP::Program[statements: YARP::StatementsNode[body: [*, node]]]]
+    result => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
 
     assert_equal expected, node
     assert_equal errors, result.errors.map(&:message)
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::ParseResult[value: YARP::Program[statements: YARP::StatementsNode[body: [*, node]]]]
+    YARP.parse(source) => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
     node
   end
 

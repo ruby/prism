@@ -6,7 +6,7 @@ class ParseTest < Test::Unit::TestCase
   include YARP::DSL
 
   test "empty string" do
-    YARP.parse("") => YARP::ParseResult[value: YARP::Program[statements: YARP::StatementsNode[body: []]]]
+    YARP.parse("") => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: []]]]
   end
 
   test "comment inline" do
@@ -7201,7 +7201,7 @@ class ParseTest < Test::Unit::TestCase
   private
 
   def assert_serializes(expected, source)
-    YARP.load(source, YARP.dump(source)) => YARP::Program[statements: YARP::StatementsNode[body: [*, node]]]
+    YARP.load(source, YARP.dump(source)) => YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]
     assert_equal expected, node
   end
 
@@ -7221,7 +7221,7 @@ class ParseTest < Test::Unit::TestCase
     result = YARP.parse(source)
     assert_empty result.errors, PP.pp(result.value, +"")
 
-    result.value => YARP::Program[statements: YARP::StatementsNode[body: [*, node]]]
+    result.value => YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]
     node
   end
 

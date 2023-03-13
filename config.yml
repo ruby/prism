@@ -1190,7 +1190,7 @@ nodes:
 
           END { foo }
           ^^^^^^^^^^^
-  - name: Program
+  - name: ProgramNode
     child_nodes:
       - name: scope
         type: node

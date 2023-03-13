@@ -7860,7 +7860,7 @@ parse_program(yp_parser_t *parser) {
   yp_node_t *scope = parser->current_scope->node;
   yp_parser_scope_pop(parser);
 
-  return yp_node_program_create(parser, scope, statements);
+  return yp_node_program_node_create(parser, scope, statements);
 }
 
 /******************************************************************************/
