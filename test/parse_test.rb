@@ -7172,6 +7172,45 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "foo({ a: true, b: false, }, &:block)"
   end
 
+  test "method call with bare hash argument" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      PARENTHESIS_LEFT("("),
+      ArgumentsNode(
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+         HashNode(
+           nil,
+           [AssocNode(
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("h"), nil),
+              ArrayNode(
+                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("x"), nil),
+                 SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("y"), nil)],
+                BRACKET_LEFT_ARRAY("["),
+                BRACKET_RIGHT("]")
+              ),
+              EQUAL_GREATER("=>")
+            ),
+            AssocNode(
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
+              EQUAL_GREATER("=>")
+            )],
+           nil
+         ),
+         BlockArgumentNode(
+           AMPERSAND("&"),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil)
+         )]
+      ),
+      PARENTHESIS_RIGHT(")"),
+      nil,
+      "foo"
+    )
+    assert_parses expected, "foo(:a, :h => [:x, :y], :a => :b, &:bar)"
+  end
+
   test "aset with multiple assignment" do
     expected = CallNode(
       expression("foo"),
