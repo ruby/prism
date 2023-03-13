@@ -3969,7 +3969,7 @@ class ParseTest < Test::Unit::TestCase
         SymbolNode(nil, STRING_CONTENT("a"), nil),
         InterpolatedSymbolNode(
           nil,
-          [SymbolNode(nil, STRING_CONTENT("b"), nil),
+          [StringNode(nil, STRING_CONTENT("b"), nil, "b"),
             StringInterpolatedNode(
               EMBEXPR_BEGIN("\#{"),
               StatementsNode([IntegerNode()]),
@@ -3984,18 +3984,18 @@ class ParseTest < Test::Unit::TestCase
               StatementsNode([IntegerNode()]),
               EMBEXPR_END("}")
             ),
-            SymbolNode(nil, STRING_CONTENT("c"), nil)],
+            StringNode(nil, STRING_CONTENT("c"), nil, "c")],
           nil
         ),
         InterpolatedSymbolNode(
           nil,
-          [SymbolNode(nil, STRING_CONTENT("d"), nil),
+          [StringNode(nil, STRING_CONTENT("d"), nil, "d"),
             StringInterpolatedNode(
               EMBEXPR_BEGIN("\#{"),
               StatementsNode([IntegerNode()]),
               EMBEXPR_END("}")
             ),
-            SymbolNode(nil, STRING_CONTENT("f"), nil)],
+            StringNode(nil, STRING_CONTENT("f"), nil, "f")],
           nil
         )
       ],
