@@ -897,7 +897,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "sclass binding power" do
-    expected = SClassNode(
+    expected = SingletonClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
       LESS_LESS("<<"),
@@ -929,7 +929,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       StatementsNode(
-        [SClassNode(
+        [SingletonClassNode(
            Scope([]),
            KEYWORD_CLASS("class"),
            LESS_LESS("<<"),
@@ -970,7 +970,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       StatementsNode(
-        [SClassNode(
+        [SingletonClassNode(
            Scope([]),
            KEYWORD_CLASS("class"),
            LESS_LESS("<<"),
@@ -4434,7 +4434,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "singleton class defintion" do
-    expected = SClassNode(
+    expected = SingletonClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
       LESS_LESS("<<"),
@@ -4448,7 +4448,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "singleton class definition with method invocation for rhs" do
-    expected = SClassNode(
+    expected = SingletonClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
       LESS_LESS("<<"),
@@ -4471,7 +4471,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "singleton class defintion with statement" do
-    expected = SClassNode(
+    expected = SingletonClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
       LESS_LESS("<<"),

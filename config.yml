@@ -1347,7 +1347,7 @@ nodes:
 
           return 1
           ^^^^^^^^
-  - name: SClassNode
+  - name: SingletonClassNode
     child_nodes:
       - name: scope
         type: node
