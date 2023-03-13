@@ -4923,7 +4923,9 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
           argument = bare_hash;
 
           // Then parse more if we have a comma
-          if (accept(parser, YP_TOKEN_COMMA)) parse_assocs(parser, argument);
+          if (accept(parser, YP_TOKEN_COMMA) && !match_type_p(parser, YP_TOKEN_AMPERSAND)) {
+            parse_assocs(parser, argument);
+          }
 
           parsed_bare_hash = true;
         }
