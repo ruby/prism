@@ -5825,7 +5825,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
-      } 
+      }
 
       context_pop(parser);
       yp_state_stack_pop(&parser->accepts_block_stack);
@@ -7714,7 +7714,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           .end = colon.end,
         });
 
-        return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+        return yp_node_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
       }
 
       expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
@@ -7722,7 +7722,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_token_t colon = parser->previous;
       yp_node_t *false_expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after ':'");
 
-      return yp_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
+      return yp_node_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
     }
     case YP_TOKEN_COLON_COLON: {
       parser_lex(parser);

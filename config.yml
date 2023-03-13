@@ -1496,7 +1496,7 @@ nodes:
 
           %i[foo]
              ^^^
-  - name: Ternary
+  - name: TernaryNode
     child_nodes:
       - name: predicate
         type: node

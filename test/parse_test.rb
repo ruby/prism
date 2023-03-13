@@ -4026,13 +4026,13 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "ternary" do
-    expected = Ternary(expression("a"), QUESTION_MARK("?"), expression("b"), COLON(":"), expression("c"))
+    expected = TernaryNode(expression("a"), QUESTION_MARK("?"), expression("b"), COLON(":"), expression("c"))
 
     assert_parses expected, "a ? b : c"
   end
 
   test "ternary binding power" do
-    expected = Ternary(
+    expected = TernaryNode(
       expression("a"),
       QUESTION_MARK("?"),
       DefinedNode(
@@ -4613,7 +4613,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      Ternary(
+      TernaryNode(
         NilNode(),
         QUESTION_MARK("?"),
         IntegerNode(),
