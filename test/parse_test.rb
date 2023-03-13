@@ -41,6 +41,14 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
   end
 
+  test "comment embedded document with content on last line" do
+    assert_parses IntegerNode(), <<~RUBY
+      =begin
+      =end other stuff
+      1
+    RUBY
+  end
+
   test "alias bare" do
     expected = AliasNode(
       SymbolNode(nil, IDENTIFIER("foo"), nil),
@@ -1546,7 +1554,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], ForwardingParameterNode(), nil),
       StatementsNode([]),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -1842,7 +1850,7 @@ class ParseTest < Test::Unit::TestCase
           )
         ]
       ),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -1875,7 +1883,7 @@ class ParseTest < Test::Unit::TestCase
           )
         ]
       ),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -1921,7 +1929,7 @@ class ParseTest < Test::Unit::TestCase
           )
         ]
       ),
-      Scope([DOT_DOT_DOT("...")]),
+      Scope([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -2433,6 +2441,51 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "def (a)::b\nend"
   end
 
+  test "def node allows blocks" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("private"),
+      nil,
+      ArgumentsNode(
+        [DefNode(
+           IDENTIFIER("foo"),
+           nil,
+           ParametersNode([], [], nil, [], nil, nil),
+           StatementsNode(
+             [CallNode(
+                nil,
+                nil,
+                IDENTIFIER("bar"),
+                nil,
+                nil,
+                nil,
+                BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                "bar"
+              )]
+           ),
+           Scope([]),
+           Location(),
+           nil,
+           nil,
+           nil,
+           nil,
+           Location()
+         )]
+      ),
+      nil,
+      nil,
+      "private"
+    )
+
+    assert_parses expected, <<~RUBY
+      private def foo
+        bar do
+        end
+      end
+    RUBY
+  end
+
   test "defined? without parentheses" do
     assert_parses DefinedNode(nil, expression("1"), nil, Location()), "defined? 1"
   end
@@ -2495,7 +2548,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "not with parentheses" do
     expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+      AndNode(expression("foo"), expression("bar"), KEYWORD_AND("and")),
       nil,
       KEYWORD_NOT("not"),
       PARENTHESIS_LEFT("("),
@@ -2505,7 +2558,7 @@ class ParseTest < Test::Unit::TestCase
       "!"
     )
 
-    assert_parses expected, "not(foo)"
+    assert_parses expected, "not(foo and bar)"
   end
 
   test "not binding power" do
@@ -2865,6 +2918,22 @@ class ParseTest < Test::Unit::TestCase
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), StatementsNode([expression("1")]), nil, KEYWORD_END("end")), "if true; 1; end"
   end
 
+  test "if with then" do
+    expected = IfNode(
+      KEYWORD_IF("if"),
+      expression("foo"),
+      StatementsNode([expression("bar")]),
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_parses expected, <<~RUBY
+      if foo
+      then bar
+      end
+    RUBY
+  end
+
   test "if modifier" do
     assert_parses IfNode(KEYWORD_IF("if"), expression("true"), StatementsNode([expression("1")]), nil, nil), "1 if true"
   end
@@ -3173,12 +3242,44 @@ class ParseTest < Test::Unit::TestCase
     assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), expression("2")), "1...2"
   end
 
+  test "range inclusive in hash" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(
+          SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+          RangeNode(nil, UDOT_DOT(".."), expression("bar")),
+          nil
+        )
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{ foo: ..bar }"
+  end
+
+  test "range exclusive in hash" do
+    expected = HashNode(
+      BRACE_LEFT("{"),
+      [
+        AssocNode(
+          SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+          RangeNode(nil, UDOT_DOT_DOT("..."), expression("bar")),
+          nil
+        )
+      ],
+      BRACE_RIGHT("}")
+    )
+
+    assert_parses expected, "{ foo: ...bar }"
+  end
+
   test "range inclusive without a begin" do
-    assert_parses RangeNode(nil, DOT_DOT(".."), expression("2")), "..2"
+    assert_parses RangeNode(nil, UDOT_DOT(".."), expression("2")), "..2"
   end
 
   test "range exclusive without a begin" do
-    assert_parses RangeNode(nil, DOT_DOT_DOT("..."), expression("2")), "...2"
+    assert_parses RangeNode(nil, UDOT_DOT_DOT("..."), expression("2")), "...2"
   end
 
   test "range inclusive without an end" do
@@ -3273,6 +3374,21 @@ class ParseTest < Test::Unit::TestCase
 
   test "xstring with %x" do
     assert_parses XStringNode(PERCENT_LOWER_X("%x["), STRING_CONTENT("foo"), STRING_END("]")), "%x[foo]"
+  end
+
+  test "regular expression after method call" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode([RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("bar"), REGEXP_END("/"))]),
+      nil,
+      nil,
+      "foo"
+    )
+
+    assert_parses expected, "foo /bar/"
   end
 
   test "regular expression, /, no interpolation" do
@@ -7259,7 +7375,7 @@ class ParseTest < Test::Unit::TestCase
     assert_equal expected, expression(source)
     assert_serializes expected, source
 
-    YARP.lex_compat(source) => { errors: [], warnings: [], value: tokens }
+    YARP.lex_compat(source) => { errors: [], value: tokens }
     YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
       assert_equal ripper, yarp
     end

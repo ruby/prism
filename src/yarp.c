@@ -851,7 +851,7 @@ yp_for_node_create(
 // Allocate and initialize a new ForwardingArgumentsNode node.
 static yp_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_DOT_DOT_DOT);
+  assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -868,7 +868,7 @@ yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token
 // Allocate and initialize a new ForwardingParameterNode node.
 static yp_node_t *
 yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_DOT_DOT_DOT);
+  assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -2834,12 +2834,14 @@ lex_token_type(yp_parser_t *parser) {
               }
 
               const char *ident_start = parser->current.end;
-              size_t width = char_is_identifier(parser, parser->current.end);
+              size_t width;
 
-              if (width == 0) {
+              if (quote == YP_HEREDOC_QUOTE_NONE && (width = char_is_identifier(parser, parser->current.end)) == 0) {
                 parser->current.end = end;
               } else {
                 if (quote == YP_HEREDOC_QUOTE_NONE) {
+                  parser->current.end += width;
+
                   while ((width = char_is_identifier(parser, parser->current.end))) {
                     parser->current.end += width;
                   }
@@ -3115,19 +3117,27 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_MINUS;
 
         // . .. ...
-        case '.':
+        case '.': {
+          bool beg_p = lex_state_beg_p(parser);
+
           if (match(parser, '.')) {
             if (match(parser, '.')) {
-              lex_state_set(parser, context_p(parser, YP_CONTEXT_DEF_PARAMS) ? YP_LEX_STATE_ENDARG : YP_LEX_STATE_BEG);
-              return YP_TOKEN_DOT_DOT_DOT;
+              if (context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
+                lex_state_set(parser, YP_LEX_STATE_ENDARG);
+                return YP_TOKEN_UDOT_DOT_DOT;
+              }
+
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+              return beg_p ? YP_TOKEN_UDOT_DOT_DOT : YP_TOKEN_DOT_DOT_DOT;
             }
 
             lex_state_set(parser, YP_LEX_STATE_BEG);
-            return YP_TOKEN_DOT_DOT;
+            return beg_p ? YP_TOKEN_UDOT_DOT : YP_TOKEN_DOT_DOT;
           }
 
           lex_state_set(parser, YP_LEX_STATE_DOT);
           return YP_TOKEN_DOT;
+        }
 
         // integer
         case '0':
@@ -3197,7 +3207,7 @@ lex_token_type(yp_parser_t *parser) {
             return YP_TOKEN_SLASH_EQUAL;
           }
 
-          if (lex_state_p(parser, YP_LEX_STATE_ARG) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
+          if (lex_state_arg_p(parser) && space_seen && !char_is_non_newline_whitespace(*parser->current.end)) {
             yp_diagnostic_list_append(&parser->warning_list, "ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after `/' operator", parser->current.start - parser->start);
 
             lex_mode_push(parser, (yp_lex_mode_t) {
@@ -3498,15 +3508,17 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_EMBDOC: {
       parser->current.start = parser->current.end;
 
-      // If we've hit the end of the embedded documentation then we'll return that token here.
-      if (strncmp(parser->current.end, "=end\n", 5) == 0) {
-        parser->current.end += 5;
-        lex_mode_pop(parser);
-        return YP_TOKEN_EMBDOC_END;
+      // If there is no possibility that we could find the end of the embedded
+      // documentation then we'll return an EOF token.
+      if (parser->current.end + 5 >= parser->end) {
+        return YP_TOKEN_EOF;
       }
 
-      if (strncmp(parser->current.end, "=end\r\n", 6) == 0) {
-        parser->current.end += 6;
+      // If we've hit the end of the embedded documentation then we'll return that token here.
+      if (strncmp(parser->current.end, "=end", 4) == 0 && char_is_whitespace(parser->current.end[4])) {
+        const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+        parser->current.end = newline == NULL ? parser->end : newline + 1;
+
         lex_mode_pop(parser);
         return YP_TOKEN_EMBDOC_END;
       }
@@ -4140,7 +4152,7 @@ parser_lex(yp_parser_t *parser) {
         if (match_type_p(parser, YP_TOKEN_EOF)) {
           yp_diagnostic_list_append(&parser->error_list, "Unterminated embdoc", parser->current.start - parser->start);
         } else {
-          parser->current.type = lex_newline(parser, parser->command_start);
+          parser->current.type = lex_newline(parser, previous_command_start);
         }
         break;
       }
@@ -4440,6 +4452,8 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_UPLUS:
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE:
+    case YP_TOKEN_UDOT_DOT:
+    case YP_TOKEN_UDOT_DOT_DOT:
       // These unary tokens actually do have binding power associated with them
       // so that we can correctly place them into the precedence order. But we
       // want them to be marked as beginning an expression, so we need to
@@ -4869,7 +4883,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, yp_token_type_t termi
         parsed_block_argument = true;
         break;
       }
-      case YP_TOKEN_DOT_DOT_DOT: {
+      case YP_TOKEN_UDOT_DOT_DOT: {
         parser_lex(parser);
 
         if (!yp_parser_local_p(parser, &parser->previous)) {
@@ -5056,7 +5070,7 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         params->as.parameters_node.block = param;
         break;
       }
-      case YP_TOKEN_DOT_DOT_DOT: {
+      case YP_TOKEN_UDOT_DOT_DOT: {
         parser_lex(parser);
 
         yp_parser_local_add(parser, &parser->previous);
@@ -5412,7 +5426,11 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 
   context_push(parser, YP_CONTEXT_PREDICATE);
   yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the conditional.");
-  accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+  // Predicates are closed by a term, a "then", or a term and then a "then".
+  accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+  accept(parser, YP_TOKEN_KEYWORD_THEN);
+
   context_pop(parser);
 
   yp_node_t *statements = parse_statements(parser, context);
@@ -5440,9 +5458,11 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   // nodes pointing to each other from the top.
   while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
     yp_token_t elsif_keyword = parser->previous;
-
     yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
-    accept_any(parser, 3, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+
+    // Predicates are closed by a term, a "then", or a term and then a "then".
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+    accept(parser, YP_TOKEN_KEYWORD_THEN);
 
     yp_node_t *statements = parse_statements(parser, YP_CONTEXT_ELSIF);
     accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -6036,8 +6056,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_DOT_DOT:
-    case YP_TOKEN_DOT_DOT_DOT: {
+    case YP_TOKEN_UDOT_DOT:
+    case YP_TOKEN_UDOT_DOT_DOT: {
       yp_token_t operator = parser->current;
       parser_lex(parser);
 
@@ -6684,11 +6704,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         context_pop(parser);
       } else {
+        yp_state_stack_push(&parser->accepts_block_stack, true);
         statements = parse_statements(parser, YP_CONTEXT_DEF);
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
+
+        yp_state_stack_pop(&parser->accepts_block_stack);
       }
 
       yp_token_t end_keyword;
@@ -6816,7 +6839,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
           arguments.closing = parser->previous;
         } else {
-          receiver = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected expression after `not`.");
+          receiver = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected expression after `not`.");
 
           if (!parser->recovering) {
             expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
@@ -6890,10 +6913,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
       return yp_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNTIL: {
-      parser_lex(parser);
-
-      yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
+      parser_lex(parser);
+      yp_token_t keyword = parser->previous;
 
       yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected predicate expression after `until`.");
       yp_state_stack_pop(&parser->do_loop_stack);
@@ -6907,10 +6929,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_node_until_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
-      parser_lex(parser);
-
-      yp_token_t keyword = parser->previous;
       yp_state_stack_push(&parser->do_loop_stack, true);
+      parser_lex(parser);
+      yp_token_t keyword = parser->previous;
 
       yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected predicate expression after `while`.");
       yp_state_stack_pop(&parser->do_loop_stack);
