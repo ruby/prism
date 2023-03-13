@@ -20,5 +20,8 @@ yarp = YARP.lex_compat(source).value
   right = yarp[index]
 
   color = left == right ? "38;5;102" : "1;31"
-  puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect]
+
+  if !ENV["QUIET"] || (left != right)
+    puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect]
+  end
 end
