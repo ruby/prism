@@ -151,6 +151,11 @@ module YARP
       assert_location(ClassVariableWriteNode, "@@foo = bar")
     end
 
+    test "ConstantReadNode" do
+      assert_location(ConstantReadNode, "Foo")
+      assert_location(ConstantReadNode, "Foo::Bar", 5...8, &:child)
+    end
+
     test "FalseNode" do
       assert_location(FalseNode, "false")
     end

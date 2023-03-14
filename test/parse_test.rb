@@ -821,7 +821,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([IDENTIFIER("a")]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       StatementsNode([
@@ -841,9 +841,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([IDENTIFIER("a")]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       LESS("<"),
-      ConstantReadNode(CONSTANT("B")),
+      ConstantReadNode(),
       StatementsNode([
         LocalVariableWriteNode(
           IDENTIFIER("a"),
@@ -861,7 +861,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       BeginNode(
@@ -882,7 +882,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       BeginNode(
@@ -928,7 +928,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       StatementsNode(
@@ -969,7 +969,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       StatementsNode(
@@ -1008,7 +1008,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "constant path" do
-    assert_parses ConstantPathNode(ConstantReadNode(CONSTANT("A")), COLON_COLON("::"), ConstantReadNode(CONSTANT("B"))), "A::B"
+    assert_parses ConstantPathNode(ConstantReadNode(), COLON_COLON("::"), ConstantReadNode()), "A::B"
   end
 
   test "constants that are methods" do
@@ -1029,12 +1029,12 @@ class ParseTest < Test::Unit::TestCase
   test "constant path with multiple levels" do
     expected = ConstantPathNode(
       ConstantPathNode(
-        ConstantReadNode(CONSTANT("A")),
+        ConstantReadNode(),
         COLON_COLON("::"),
-        ConstantReadNode(CONSTANT("B"))
+        ConstantReadNode()
       ),
       COLON_COLON("::"),
-      ConstantReadNode(CONSTANT("C"))
+      ConstantReadNode()
     )
 
     assert_parses expected, "A::B::C"
@@ -1044,23 +1044,23 @@ class ParseTest < Test::Unit::TestCase
     expected = ConstantPathNode(
       expression("a"),
       COLON_COLON("::"),
-      ConstantReadNode(CONSTANT("B"))
+      ConstantReadNode()
     )
 
     assert_parses expected, "a::B"
   end
 
   test "constant read" do
-    assert_parses ConstantReadNode(CONSTANT("ABC")), "ABC"
+    assert_parses ConstantReadNode(), "ABC"
   end
 
   test "top-level constant read" do
-    assert_parses ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))), "::A"
+    assert_parses ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()), "::A"
   end
 
   test "top-level constant assignment" do
     expected = ConstantPathWriteNode(
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       EQUAL("="),
       IntegerNode()
     )
@@ -1070,9 +1070,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "top-level constant path read" do
     expected = ConstantPathNode(
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       COLON_COLON("::"),
-      ConstantReadNode(CONSTANT("B"))
+      ConstantReadNode()
     )
 
     assert_parses expected, "::A::B"
@@ -1081,9 +1081,9 @@ class ParseTest < Test::Unit::TestCase
   test "top-level constant path assignment" do
     expected = ConstantPathWriteNode(
       ConstantPathNode(
-        ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+        ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
         COLON_COLON("::"),
-        ConstantReadNode(CONSTANT("B"))
+        ConstantReadNode()
       ),
       EQUAL("="),
       IntegerNode()
@@ -1094,7 +1094,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "top level constant with method inside" do
     expected = CallNode(
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       COLON_COLON("::"),
       IDENTIFIER("foo"),
       nil,
@@ -1108,12 +1108,12 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "constant path write single" do
-    assert_parses ConstantPathWriteNode(ConstantReadNode(CONSTANT("A")), EQUAL("="), expression("1")), "A = 1"
+    assert_parses ConstantPathWriteNode(ConstantReadNode(), EQUAL("="), expression("1")), "A = 1"
   end
 
   test "constant path write multiple" do
     expected = ConstantPathWriteNode(
-      ConstantPathNode(ConstantReadNode(CONSTANT("A")), COLON_COLON("::"), ConstantReadNode(CONSTANT("B"))),
+      ConstantPathNode(ConstantReadNode(), COLON_COLON("::"), ConstantReadNode()),
       EQUAL("="),
       expression("1")
     )
@@ -2195,7 +2195,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with constant receiver" do
     expected = DefNode(
       IDENTIFIER("a"),
-      ConstantReadNode(CONSTANT("Const")),
+      ConstantReadNode(),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
       Scope([]),
@@ -3042,7 +3042,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([IDENTIFIER("a")]),
       KEYWORD_MODULE("module"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       StatementsNode([
         LocalVariableWriteNode(
           IDENTIFIER("a"),
@@ -3060,7 +3060,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([]),
       KEYWORD_MODULE("module"),
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       StatementsNode([]),
       KEYWORD_END("end")
     )
@@ -3078,7 +3078,7 @@ class ParseTest < Test::Unit::TestCase
       ConstantPathNode(
         expression("m"),
         COLON_COLON("::"),
-        ConstantReadNode(CONSTANT("M"))
+        ConstantReadNode()
       ),
       StatementsNode([]),
       KEYWORD_END("end")
@@ -3094,7 +3094,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([IDENTIFIER("x")]),
       KEYWORD_MODULE("module"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       BeginNode(
         nil,
         StatementsNode(
@@ -4798,7 +4798,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         nil,
         nil,
         StatementsNode([expression("b")]),
@@ -4818,7 +4818,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
@@ -4844,7 +4844,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception")), ConstantReadNode(CONSTANT("CustomException"))],
+        [ConstantReadNode(), ConstantReadNode()],
         nil,
         nil,
         StatementsNode([expression("b")]),
@@ -4864,7 +4864,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception")), ConstantReadNode(CONSTANT("CustomException"))],
+        [ConstantReadNode(), ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
@@ -4924,13 +4924,13 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
         RescueNode(
           KEYWORD_RESCUE("rescue"),
-          [ConstantReadNode(CONSTANT("AnotherException")), ConstantReadNode(CONSTANT("OneMoreException"))],
+          [ConstantReadNode(), ConstantReadNode()],
           EQUAL_GREATER("=>"),
           LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
           StatementsNode([expression("c")]),
@@ -5059,7 +5059,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
@@ -6793,7 +6793,7 @@ class ParseTest < Test::Unit::TestCase
       CallNode(nil, nil, IDENTIFIER("this"), nil, nil, nil, nil, "this"),
       [WhenNode(
          KEYWORD_WHEN("when"),
-         [ConstantReadNode(CONSTANT("FooBar")), ConstantReadNode(CONSTANT("BazBonk"))],
+         [ConstantReadNode(), ConstantReadNode()],
          nil
        )],
       nil,
@@ -6838,7 +6838,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "calls with constants" do
     expected = CallNode(
-      ConstantReadNode(CONSTANT("Kernel")),
+      ConstantReadNode(),
       DOT("."),
       CONSTANT("Integer"),
       PARENTHESIS_LEFT("("),
@@ -6976,7 +6976,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment on constant (right-hand side)" do
     expected = ConstantPathWriteNode(
-      ConstantReadNode(CONSTANT("Foo")),
+      ConstantReadNode(),
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
     )

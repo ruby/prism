@@ -579,10 +579,6 @@ nodes:
           Foo::Bar = 1
           ^^^^^^^^^^^^
   - name: ConstantReadNode
-    child_nodes:
-      - name: name
-        type: token
-    location: name
     comment: |
       Represents referencing a constant.
 

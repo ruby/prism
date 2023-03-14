@@ -845,6 +845,13 @@ yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp
   return node;
 }
 
+// Allocate and initialize a new ConstantReadNode node.
+static yp_node_t *
+yp_constant_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
+  assert(name->type == YP_TOKEN_CONSTANT || name->type == YP_TOKEN_MISSING);
+  return yp_node_create_from_token(parser, YP_NODE_CONSTANT_READ_NODE, name);
+}
+
 // Allocate and initialize a new DefNode node.
 static yp_node_t *
 yp_def_node_create(
@@ -5990,7 +5997,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
-      yp_node_t *node = yp_node_constant_read_node_create(parser, &parser->previous);
+      yp_node_t *node = yp_constant_read_node_create(parser, &parser->previous);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         // If we get here, then we have a comma immediately following a
@@ -6006,7 +6013,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t delimiter = parser->previous;
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
 
-      yp_node_t *constant = yp_node_constant_read_node_create(parser, &parser->previous);
+      yp_node_t *constant = yp_constant_read_node_create(parser, &parser->previous);
       yp_node_t *node = yp_node_constant_path_node_create(parser, NULL, &delimiter, constant);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
@@ -6542,7 +6549,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             switch (identifier.type) {
               case YP_TOKEN_CONSTANT:
-                receiver = yp_node_constant_read_node_create(parser, &identifier);
+                receiver = yp_constant_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_INSTANCE_VARIABLE:
                 receiver = yp_instance_variable_read_node_create(parser, &identifier);
@@ -6833,7 +6840,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t double_colon = parser->previous;
 
         expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
-        yp_node_t *constant = yp_node_constant_read_node_create(parser, &parser->previous);
+        yp_node_t *constant = yp_constant_read_node_create(parser, &parser->previous);
 
         name = yp_node_constant_path_node_create(parser, name, &double_colon, constant);
       }
@@ -7937,7 +7944,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           }
 
           // Otherwise, this is a constant path. That would look like Foo::Bar.
-          yp_node_t *child = yp_node_constant_read_node_create(parser, &parser->previous);
+          yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
           return yp_node_constant_path_node_create(parser, node, &delimiter, child);
         }
         case YP_TOKEN_IDENTIFIER: {
