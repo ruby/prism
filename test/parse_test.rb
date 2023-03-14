@@ -202,12 +202,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "empty parentheses" do
-    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "()"
+    assert_parses ParenthesesNode(nil, Location(), Location()), "()"
   end
 
   test "parenthesized expression" do
     expected = ParenthesesNode(
-      PARENTHESIS_LEFT("("),
       StatementsNode(
         [CallNode(
            IntegerNode(),
@@ -220,7 +219,8 @@ class ParseTest < Test::Unit::TestCase
            "+"
          )]
       ),
-      PARENTHESIS_RIGHT(")")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "(1 + 1)"
@@ -228,19 +228,19 @@ class ParseTest < Test::Unit::TestCase
 
   test "parentesized with multiple statements" do
     expected = ParenthesesNode(
-      PARENTHESIS_LEFT("("),
       StatementsNode(
         [expression("a"),
          expression("b"),
          expression("c")]
       ),
-      PARENTHESIS_RIGHT(")")
+      Location(),
+      Location()
     )
     assert_parses expected, "(a; b; c)"
   end
 
   test "parentheses with empty statements" do
-    assert_parses ParenthesesNode(PARENTHESIS_LEFT("("), nil, PARENTHESIS_RIGHT(")")), "(\n;\n;\n)"
+    assert_parses ParenthesesNode(nil, Location(), Location()), "(\n;\n;\n)"
   end
 
   test "binary !=" do
@@ -433,9 +433,9 @@ class ParseTest < Test::Unit::TestCase
     expected = BreakNode(
       ArgumentsNode([
         ParenthesesNode(
-          PARENTHESIS_LEFT("("),
           StatementsNode([expression("1"), expression("2")]),
-          PARENTHESIS_RIGHT(")")
+          Location(),
+          Location()
         )
       ]),
       Location()
@@ -2321,11 +2321,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with expression as receiver" do
     expected = DefNode(
       IDENTIFIER("a"),
-      ParenthesesNode(
-        PARENTHESIS_LEFT("("),
-        expression("b"),
-        PARENTHESIS_RIGHT(")")
-      ),
+      ParenthesesNode(expression("b"), Location(), Location()),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
       Scope([]),
@@ -2344,13 +2340,13 @@ class ParseTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("a"),
       ParenthesesNode(
-        PARENTHESIS_LEFT("("),
         LocalVariableWriteNode(
           IDENTIFIER("c"),
           EQUAL("="),
           expression("b")
         ),
-        PARENTHESIS_RIGHT(")")
+        Location(),
+        Location()
       ),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
@@ -2370,13 +2366,13 @@ class ParseTest < Test::Unit::TestCase
     expected = DefNode(
       CONSTANT("C"),
       ParenthesesNode(
-        PARENTHESIS_LEFT("("),
         LocalVariableWriteNode(
           IDENTIFIER("a"),
           EQUAL("="),
           expression("b")
         ),
-        PARENTHESIS_RIGHT(")")
+        Location(),
+        Location()
       ),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
@@ -2396,9 +2392,9 @@ class ParseTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("a"),
       ParenthesesNode(
-        PARENTHESIS_LEFT("("),
         IntegerNode(),
-        PARENTHESIS_RIGHT(")")
+        Location(),
+        Location()
       ),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
@@ -2418,9 +2414,9 @@ class ParseTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("b"),
       ParenthesesNode(
-        PARENTHESIS_LEFT("("),
         expression("a"),
-        PARENTHESIS_RIGHT(")")
+        Location(),
+        Location()
       ),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
@@ -2939,8 +2935,8 @@ class ParseTest < Test::Unit::TestCase
       AndNode(
         OrNode(
           CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
-          KEYWORD_OR("or"),
           CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
+          Location()
         ),
         CallNode(nil, nil, IDENTIFIER("qux"), nil, nil, nil, nil, "qux"),
         KEYWORD_AND("and"),
@@ -3181,9 +3177,9 @@ class ParseTest < Test::Unit::TestCase
     expected = NextNode(
       ArgumentsNode([
         ParenthesesNode(
-          PARENTHESIS_LEFT("("),
           StatementsNode([expression("1"), expression("2")]),
-          PARENTHESIS_RIGHT(")")
+          Location(),
+          Location()
         )
       ]),
       Location()
@@ -3202,11 +3198,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "or keyword" do
-    assert_parses OrNode(expression("1"), KEYWORD_OR("or"), expression("2")), "1 or 2"
+    assert_parses OrNode(expression("1"), expression("2"), Location()), "1 or 2"
   end
 
   test "or operator" do
-    assert_parses OrNode(expression("1"), PIPE_PIPE("||"), expression("2")), "1 || 2"
+    assert_parses OrNode(expression("1"), expression("2"), Location()), "1 || 2"
   end
 
   test "operator and assignment" do
@@ -3214,7 +3210,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "operator or assignment" do
-    assert_parses OperatorOrAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
+    assert_parses OperatorOrAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), expression("b"), Location()), "a ||= b"
   end
 
   test "operator assignment" do
@@ -3594,9 +3590,9 @@ class ParseTest < Test::Unit::TestCase
       KEYWORD_RETURN("return"),
       ArgumentsNode([
         ParenthesesNode(
-          PARENTHESIS_LEFT("("),
           StatementsNode([expression("1"), expression("2")]),
-          PARENTHESIS_RIGHT(")")
+          Location(),
+          Location()
         )
       ])
     )
@@ -4797,7 +4793,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      OrNode(NilNode(), PIPE_PIPE("||"), IntegerNode())
+      OrNode(NilNode(), IntegerNode(), Location())
     )
 
     assert_parses expected, "foo rescue nil || 1"
@@ -6630,7 +6626,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ArgumentsNode([
         expression("bar"),
-        ParenthesesNode(PARENTHESIS_LEFT("("), StatementsNode([expression("baz do end")]), PARENTHESIS_RIGHT(")"))
+        ParenthesesNode(StatementsNode([expression("baz do end")]), Location(), Location())
       ]),
       nil,
       nil,
