@@ -31,9 +31,7 @@ jobs:
         ruby-version: 3.2
         bundler-cache: true
     - name: Lex ruby/ruby
-      run: bundle exec rake lex
-      env:
-        TARGET: ruby
+      run: bundle exec rake lex:ruby
 
   lex-rails:
     runs-on: ubuntu-latest
@@ -45,9 +43,7 @@ jobs:
         ruby-version: 3.2
         bundler-cache: true
     - name: Lex rails/rails
-      run: bundle exec rake lex
-      env:
-        TARGET: rails
+      run: bundle exec rake lex:rails
 
   lex-discourse:
     runs-on: ubuntu-latest
@@ -59,9 +55,7 @@ jobs:
         ruby-version: 3.2
         bundler-cache: true
     - name: Lex discourse/discourse
-      run: bundle exec rake lex
-      env:
-        TARGET: discourse
+      run: bundle exec rake lex:discourse
 
   memcheck:
     runs-on: ubuntu-latest
