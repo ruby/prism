@@ -168,6 +168,12 @@ module YARP
       end
     end
 
+    test "ForwardingParameterNode" do
+      assert_location(ForwardingParameterNode, "def foo(...); end", 8...11) do |node|
+        node.parameters.keyword_rest
+      end
+    end
+
     test "ForwardingSuperNode" do
       assert_location(ForwardingSuperNode, "super")
       assert_location(ForwardingSuperNode, "super {}")
