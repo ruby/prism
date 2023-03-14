@@ -195,7 +195,7 @@ yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token)
 
 // Initialize a new ClassVariableWriteNode node from a ClassVariableRead node.
 yp_node_t *
-yp_class_variable_write_node_init(yp_parser_t *parser, yp_node_t *node, yp_token_t *oper, yp_node_t *value);
+yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp_node_t *node, yp_token_t *oper, yp_node_t *value);
 
 // Allocate and initialize a new DefNode node.
 yp_node_t *

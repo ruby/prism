@@ -3245,7 +3245,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_MISSING_NODE:
       return target;
     case YP_NODE_CLASS_VARIABLE_READ_NODE:
-      yp_class_variable_write_node_init(parser, target, operator, value);
+      yp_class_variable_read_node_to_class_variable_write_node(parser, target, operator, value);
       return target;
     case YP_NODE_CONSTANT_PATH_NODE:
     case YP_NODE_CONSTANT_READ_NODE:
