@@ -6,6 +6,7 @@ spec:
   todos:
     - core/regexp/shared/new.rb
     - language/regexp/interpolation_spec.rb
+
 ruby:
   repo: https://github.com/ruby/ruby
   sha: 309ff928f5470697d6def63c5dd45255d2a09e1d
@@ -57,9 +58,6 @@ ruby:
     - test/csv/test_patterns.rb
     - test/io/console/test_io_console.rb
     - test/irb/test_ruby_lex.rb
-    - test/openssl/test_ocsp.rb
-    - test/openssl/test_pkey_rsa.rb
-    - test/openssl/test_ssl.rb
     - test/openssl/test_x509name.rb
     - test/psych/test_parser.rb
     - test/psych/test_yaml.rb
@@ -72,18 +70,14 @@ ruby:
     - test/ruby/enc/test_shift_jis.rb
     - test/ruby/enc/test_windows_1251.rb
     - test/ruby/enc/test_windows_1252.rb
-    - test/ruby/test_basicinstructions.rb
     - test/ruby/test_call.rb
     - test/ruby/test_comparable.rb
     - test/ruby/test_dir.rb
     - test/ruby/test_dir_m17n.rb
     - test/ruby/test_file_exhaustive.rb
-    - test/ruby/test_fixnum.rb
     - test/ruby/test_ifunless.rb
     - test/ruby/test_iseq.rb
-    - test/ruby/test_lazy_enumerator.rb
     - test/ruby/test_literal.rb
-    - test/ruby/test_m17n_comb.rb
     - test/ruby/test_marshal.rb
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_module.rb
@@ -92,21 +86,17 @@ ruby:
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_process.rb
     - test/ruby/test_range.rb
-    - test/ruby/test_rational.rb
     - test/ruby/test_regexp.rb
     - test/ruby/test_require.rb
     - test/ruby/test_rubyoptions.rb
     - test/ruby/test_string.rb
     - test/ruby/test_struct.rb
     - test/ruby/test_syntax.rb
-    - test/ruby/test_thread_queue.rb
     - test/ruby/test_time_tz.rb
     - test/ruby/test_variable.rb
-    - test/rubygems/test_gem_specification.rb
     - test/zlib/test_zlib.rb
     - tool/enc-emoji4unicode.rb
     - tool/file2lastrev.rb
-    - tool/lib/core_assertions.rb
     - tool/lib/test/unit.rb
     - tool/lib/vcs.rb
     - tool/lib/webrick/httpresponse.rb
@@ -122,32 +112,20 @@ ruby:
     - tool/sync_default_gems.rb
     - tool/test/testunit/test_minitest_unit.rb
     - tool/transcode-tblgen.rb
+
 rails:
   repo: https://github.com/rails/rails
   sha: 8e3449908c59858384ae230d1416c7dcabc8c2dc
   todos:
     - actionpack/test/dispatch/content_disposition_test.rb
-    - actionpack/test/dispatch/executor_test.rb
-    - actionpack/test/dispatch/system_testing/driver_test.rb
     - actionview/lib/action_view/layouts.rb
-    - actionview/test/template/text_helper_test.rb
     - activerecord/lib/active_record/connection_adapters/abstract_mysql_adapter.rb
     - activerecord/lib/active_record/connection_adapters/postgresql/schema_statements.rb
     - activerecord/lib/active_record/connection_adapters/postgresql_adapter.rb
-    - activerecord/test/cases/adapters/mysql2/connection_test.rb
-    - activerecord/test/cases/adapters/postgresql/datatype_test.rb
-    - activerecord/test/cases/adapters/postgresql/referential_integrity_test.rb
-    - activerecord/test/cases/associations/has_many_associations_test.rb
-    - activerecord/test/cases/defaults_test.rb
-    - activesupport/test/core_ext/duration_test.rb
-    - activesupport/test/core_ext/numeric_ext_test.rb
-    - activesupport/test/core_ext/range_ext_test.rb
     - activesupport/test/core_ext/string_ext_test.rb
-    - activesupport/test/encrypted_configuration_test.rb
-    - guides/bug_report_templates/action_mailbox_gem.rb
-    - guides/bug_report_templates/action_mailbox_main.rb
     - railties/test/commands/routes_test.rb
     - railties/test/isolation/abstract_unit.rb
+
 discourse:
   repo: https://github.com/discourse/discourse
   sha: 964f37476dbbfb978bf99608a62d0da9ddf531fa
@@ -172,8 +150,6 @@ discourse:
     - plugins/chat/lib/chat_mailer.rb
     - plugins/chat/lib/extensions/user_notifications_extension.rb
     - plugins/chat/spec/plugin_spec.rb
-    - script/import_scripts/quandora/test/test_quandora_api.rb
-    - script/import_scripts/socialcast/test/test_socialcast_api.rb
     - script/import_scripts/yahoogroup.rb
     - spec/lib/discourse_spec.rb
     - spec/models/reviewable_spec.rb

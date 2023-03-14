@@ -111,7 +111,7 @@ task lex: :compile do
     end
 
     todos = target.fetch("todos", []).map { |todo| File.join(dirpath, todo) }
-    todo = todos.length
+    todo = todos.length if !ENV["TODOS"]
   end
 
   filepaths.each.with_index(1) do |filepath, index|
@@ -146,7 +146,7 @@ task lex: :compile do
   end
 
   puts("\n\n")
-  warn("Some files listed as todo are passing:\n  #{todos.join("\n  ")}") if todos.any?
+  puts("Some files listed as todo are passing:\n  #{todos.join("\n  ")}") if todos.any?
   puts(<<~RESULTS)
     PASSING=#{passing}
     FAILING=#{failing + todo}
