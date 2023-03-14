@@ -1019,6 +1019,27 @@ yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, con
   return node;
 }
 
+// Allocate and initialize new RangeNode node.
+yp_node_t *
+yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_RANGE_NODE,
+    .location = {
+      .start = (left == NULL ? operator->start : left->location.start),
+      .end = (right == NULL ? operator->end : right->location.end)
+    },
+    .as.range_node = {
+      .left = left,
+      .right = right,
+      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new RationalNode node.
 yp_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {

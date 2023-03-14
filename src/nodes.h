@@ -273,6 +273,10 @@ yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, co
 yp_node_t *
 yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing);
 
+// Allocate and initialize a new RangeNode node.
+yp_node_t *
+yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *oper, yp_node_t *right);
+
 // Allocate and initialize a new RationalNode node.
 yp_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token);

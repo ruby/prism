@@ -4825,7 +4825,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
-      return yp_node_range_node_create(parser, NULL, &operator, right);
+      return yp_range_node_create(parser, NULL, &operator, right);
     }
     case YP_TOKEN_FLOAT:
       parser_lex(parser);
@@ -6656,7 +6656,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       }
 
-      return yp_node_range_node_create(parser, node, &token, right);
+      return yp_range_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_KEYWORD_IF: {
       parser_lex(parser);

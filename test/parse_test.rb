@@ -3230,11 +3230,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "range inclusive" do
-    assert_parses RangeNode(expression("1"), DOT_DOT(".."), expression("2")), "1..2"
+    assert_parses RangeNode(expression("1"), expression("2"), Location()), "1..2"
   end
 
   test "range exclusive" do
-    assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), expression("2")), "1...2"
+    assert_parses RangeNode(expression("1"), expression("2"), Location()), "1...2"
   end
 
   test "range exclusive in aref" do
@@ -3243,7 +3243,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BRACKET_LEFT_RIGHT("["),
       BRACKET_LEFT("["),
-      ArgumentsNode([RangeNode(nil, UDOT_DOT_DOT("..."), IntegerNode())]),
+      ArgumentsNode([RangeNode(nil, IntegerNode(), Location())]),
       BRACKET_RIGHT("]"),
       nil,
       "[]"
@@ -3258,7 +3258,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(
           SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
-          RangeNode(nil, UDOT_DOT(".."), expression("bar")),
+          RangeNode(nil, expression("bar"), Location()),
           nil
         )
       ],
@@ -3274,7 +3274,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(
           SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
-          RangeNode(nil, UDOT_DOT_DOT("..."), expression("bar")),
+          RangeNode(nil, expression("bar"), Location()),
           nil
         )
       ],
@@ -3285,19 +3285,19 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "range inclusive without a begin" do
-    assert_parses RangeNode(nil, UDOT_DOT(".."), expression("2")), "..2"
+    assert_parses RangeNode(nil, expression("2"), Location()), "..2"
   end
 
   test "range exclusive without a begin" do
-    assert_parses RangeNode(nil, UDOT_DOT_DOT("..."), expression("2")), "...2"
+    assert_parses RangeNode(nil, expression("2"), Location()), "...2"
   end
 
   test "range inclusive without an end" do
-    assert_parses RangeNode(expression("1"), DOT_DOT(".."), nil), "1.."
+    assert_parses RangeNode(expression("1"), nil, Location()), "1.."
   end
 
   test "range exclusive without an end" do
-    assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), nil), "1..."
+    assert_parses RangeNode(expression("1"), nil, Location()), "1..."
   end
 
   test "unary ! on argument" do

@@ -219,6 +219,17 @@ module YARP
       assert_location(PreExecutionNode, "BEGIN { foo }")
     end
 
+    test "RangeNode" do
+      assert_location(RangeNode, "1..2")
+      assert_location(RangeNode, "1...2")
+
+      assert_location(RangeNode, "..2")
+      assert_location(RangeNode, "...2")
+
+      assert_location(RangeNode, "1..")
+      assert_location(RangeNode, "1...")
+    end
+
     test "SuperNode" do
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")

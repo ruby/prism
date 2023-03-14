@@ -1189,11 +1189,10 @@ nodes:
     child_nodes:
       - name: left
         type: node?
-      - name: range_operator
-        type: token
       - name: right
         type: node?
-    location: left|range_operator->right|range_operator
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `..` or `...` operators.
 
