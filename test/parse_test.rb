@@ -778,12 +778,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
-      ArgumentsNode(
-        [BlockArgumentNode(
-           AMPERSAND("&"),
-           expression("block")
-         )]
-      ),
+      ArgumentsNode([BlockArgumentNode(expression("block"), Location())]),
       PARENTHESIS_RIGHT(")"),
       nil,
       "a"
@@ -826,7 +821,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([IDENTIFIER("a")]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       StatementsNode([
@@ -846,9 +841,9 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([IDENTIFIER("a")]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       LESS("<"),
-      ConstantReadNode(CONSTANT("B")),
+      ConstantReadNode(),
       StatementsNode([
         LocalVariableWriteNode(
           IDENTIFIER("a"),
@@ -866,7 +861,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       BeginNode(
@@ -887,7 +882,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       BeginNode(
@@ -933,7 +928,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       StatementsNode(
@@ -974,7 +969,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ClassNode(
       Scope([]),
       KEYWORD_CLASS("class"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       nil,
       nil,
       StatementsNode(
@@ -1013,7 +1008,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "constant path" do
-    assert_parses ConstantPathNode(ConstantReadNode(CONSTANT("A")), COLON_COLON("::"), ConstantReadNode(CONSTANT("B"))), "A::B"
+    assert_parses ConstantPathNode(ConstantReadNode(), COLON_COLON("::"), ConstantReadNode()), "A::B"
   end
 
   test "constants that are methods" do
@@ -1034,12 +1029,12 @@ class ParseTest < Test::Unit::TestCase
   test "constant path with multiple levels" do
     expected = ConstantPathNode(
       ConstantPathNode(
-        ConstantReadNode(CONSTANT("A")),
+        ConstantReadNode(),
         COLON_COLON("::"),
-        ConstantReadNode(CONSTANT("B"))
+        ConstantReadNode()
       ),
       COLON_COLON("::"),
-      ConstantReadNode(CONSTANT("C"))
+      ConstantReadNode()
     )
 
     assert_parses expected, "A::B::C"
@@ -1049,23 +1044,23 @@ class ParseTest < Test::Unit::TestCase
     expected = ConstantPathNode(
       expression("a"),
       COLON_COLON("::"),
-      ConstantReadNode(CONSTANT("B"))
+      ConstantReadNode()
     )
 
     assert_parses expected, "a::B"
   end
 
   test "constant read" do
-    assert_parses ConstantReadNode(CONSTANT("ABC")), "ABC"
+    assert_parses ConstantReadNode(), "ABC"
   end
 
   test "top-level constant read" do
-    assert_parses ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))), "::A"
+    assert_parses ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()), "::A"
   end
 
   test "top-level constant assignment" do
     expected = ConstantPathWriteNode(
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       EQUAL("="),
       IntegerNode()
     )
@@ -1075,9 +1070,9 @@ class ParseTest < Test::Unit::TestCase
 
   test "top-level constant path read" do
     expected = ConstantPathNode(
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       COLON_COLON("::"),
-      ConstantReadNode(CONSTANT("B"))
+      ConstantReadNode()
     )
 
     assert_parses expected, "::A::B"
@@ -1086,9 +1081,9 @@ class ParseTest < Test::Unit::TestCase
   test "top-level constant path assignment" do
     expected = ConstantPathWriteNode(
       ConstantPathNode(
-        ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+        ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
         COLON_COLON("::"),
-        ConstantReadNode(CONSTANT("B"))
+        ConstantReadNode()
       ),
       EQUAL("="),
       IntegerNode()
@@ -1099,7 +1094,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "top level constant with method inside" do
     expected = CallNode(
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       COLON_COLON("::"),
       IDENTIFIER("foo"),
       nil,
@@ -1113,12 +1108,12 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "constant path write single" do
-    assert_parses ConstantPathWriteNode(ConstantReadNode(CONSTANT("A")), EQUAL("="), expression("1")), "A = 1"
+    assert_parses ConstantPathWriteNode(ConstantReadNode(), EQUAL("="), expression("1")), "A = 1"
   end
 
   test "constant path write multiple" do
     expected = ConstantPathWriteNode(
-      ConstantPathNode(ConstantReadNode(CONSTANT("A")), COLON_COLON("::"), ConstantReadNode(CONSTANT("B"))),
+      ConstantPathNode(ConstantReadNode(), COLON_COLON("::"), ConstantReadNode()),
       EQUAL("="),
       expression("1")
     )
@@ -2200,7 +2195,7 @@ class ParseTest < Test::Unit::TestCase
   test "def with constant receiver" do
     expected = DefNode(
       IDENTIFIER("a"),
-      ConstantReadNode(CONSTANT("Const")),
+      ConstantReadNode(),
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
       Scope([]),
@@ -2460,7 +2455,7 @@ class ParseTest < Test::Unit::TestCase
                 nil,
                 nil,
                 nil,
-                BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                BlockNode(nil, nil, Location(), Location()),
                 "bar"
               )]
            ),
@@ -3047,7 +3042,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([IDENTIFIER("a")]),
       KEYWORD_MODULE("module"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       StatementsNode([
         LocalVariableWriteNode(
           IDENTIFIER("a"),
@@ -3065,7 +3060,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([]),
       KEYWORD_MODULE("module"),
-      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(CONSTANT("A"))),
+      ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
       StatementsNode([]),
       KEYWORD_END("end")
     )
@@ -3083,7 +3078,7 @@ class ParseTest < Test::Unit::TestCase
       ConstantPathNode(
         expression("m"),
         COLON_COLON("::"),
-        ConstantReadNode(CONSTANT("M"))
+        ConstantReadNode()
       ),
       StatementsNode([]),
       KEYWORD_END("end")
@@ -3099,7 +3094,7 @@ class ParseTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([IDENTIFIER("x")]),
       KEYWORD_MODULE("module"),
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       BeginNode(
         nil,
         StatementsNode(
@@ -3235,11 +3230,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "range inclusive" do
-    assert_parses RangeNode(expression("1"), DOT_DOT(".."), expression("2")), "1..2"
+    assert_parses RangeNode(expression("1"), expression("2"), Location()), "1..2"
   end
 
   test "range exclusive" do
-    assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), expression("2")), "1...2"
+    assert_parses RangeNode(expression("1"), expression("2"), Location()), "1...2"
   end
 
   test "range exclusive in aref" do
@@ -3248,7 +3243,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       BRACKET_LEFT_RIGHT("["),
       BRACKET_LEFT("["),
-      ArgumentsNode([RangeNode(nil, UDOT_DOT_DOT("..."), IntegerNode())]),
+      ArgumentsNode([RangeNode(nil, IntegerNode(), Location())]),
       BRACKET_RIGHT("]"),
       nil,
       "[]"
@@ -3263,7 +3258,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(
           SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
-          RangeNode(nil, UDOT_DOT(".."), expression("bar")),
+          RangeNode(nil, expression("bar"), Location()),
           nil
         )
       ],
@@ -3279,7 +3274,7 @@ class ParseTest < Test::Unit::TestCase
       [
         AssocNode(
           SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
-          RangeNode(nil, UDOT_DOT_DOT("..."), expression("bar")),
+          RangeNode(nil, expression("bar"), Location()),
           nil
         )
       ],
@@ -3290,19 +3285,19 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "range inclusive without a begin" do
-    assert_parses RangeNode(nil, UDOT_DOT(".."), expression("2")), "..2"
+    assert_parses RangeNode(nil, expression("2"), Location()), "..2"
   end
 
   test "range exclusive without a begin" do
-    assert_parses RangeNode(nil, UDOT_DOT_DOT("..."), expression("2")), "...2"
+    assert_parses RangeNode(nil, expression("2"), Location()), "...2"
   end
 
   test "range inclusive without an end" do
-    assert_parses RangeNode(expression("1"), DOT_DOT(".."), nil), "1.."
+    assert_parses RangeNode(expression("1"), nil, Location()), "1.."
   end
 
   test "range exclusive without an end" do
-    assert_parses RangeNode(expression("1"), DOT_DOT_DOT("..."), nil), "1..."
+    assert_parses RangeNode(expression("1"), nil, Location()), "1..."
   end
 
   test "unary ! on argument" do
@@ -4803,7 +4798,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         nil,
         nil,
         StatementsNode([expression("b")]),
@@ -4823,7 +4818,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
@@ -4849,7 +4844,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception")), ConstantReadNode(CONSTANT("CustomException"))],
+        [ConstantReadNode(), ConstantReadNode()],
         nil,
         nil,
         StatementsNode([expression("b")]),
@@ -4869,7 +4864,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception")), ConstantReadNode(CONSTANT("CustomException"))],
+        [ConstantReadNode(), ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
@@ -4929,13 +4924,13 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
         RescueNode(
           KEYWORD_RESCUE("rescue"),
-          [ConstantReadNode(CONSTANT("AnotherException")), ConstantReadNode(CONSTANT("OneMoreException"))],
+          [ConstantReadNode(), ConstantReadNode()],
           EQUAL_GREATER("=>"),
           LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
           StatementsNode([expression("c")]),
@@ -5064,7 +5059,7 @@ class ParseTest < Test::Unit::TestCase
       StatementsNode([expression("a")]),
       RescueNode(
         KEYWORD_RESCUE("rescue"),
-        [ConstantReadNode(CONSTANT("Exception"))],
+        [ConstantReadNode()],
         EQUAL_GREATER("=>"),
         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
         StatementsNode([expression("b")]),
@@ -5099,7 +5094,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         nil,
         BeginNode(
           nil,
@@ -5109,7 +5103,8 @@ class ParseTest < Test::Unit::TestCase
           nil,
           KEYWORD_END("end")
         ),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5130,7 +5125,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         nil,
         StatementsNode(
           [CallNode(
@@ -5141,7 +5135,6 @@ class ParseTest < Test::Unit::TestCase
              nil,
              nil,
              BlockNode(
-               KEYWORD_DO("do"),
                nil,
                StatementsNode(
                  [CallNode(
@@ -5151,16 +5144,18 @@ class ParseTest < Test::Unit::TestCase
                     nil,
                     nil,
                     nil,
-                    BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                    BlockNode(nil, nil, Location(), Location()),
                     "baz"
                   )]
                ),
-               KEYWORD_END("end")
+               Location(),
+               Location()
              ),
              "bar"
            )]
         ),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5184,7 +5179,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         BlockParametersNode(
           ParametersNode(
             [],
@@ -5197,7 +5191,8 @@ class ParseTest < Test::Unit::TestCase
           []
         ),
         nil,
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5232,10 +5227,10 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("bar")]),
       BRACKET_RIGHT("]"),
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([expression("baz")]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "[]"
     )
@@ -5252,10 +5247,10 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("bar")]),
       BRACKET_RIGHT("]"),
       BlockNode(
-        KEYWORD_DO("do"),
         nil,
         StatementsNode([expression("baz")]),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "[]"
     )
@@ -5391,10 +5386,10 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("bar")]),
       BRACKET_RIGHT("]"),
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([expression("baz")]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "[]"
     )
@@ -5460,7 +5455,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       nil,
-      BlockNode(BRACE_LEFT("{"), nil, nil, BRACE_RIGHT("}")),
+      BlockNode(nil, nil, Location(), Location()),
       "each"
     )
 
@@ -5476,7 +5471,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x"))],
@@ -5489,7 +5483,8 @@ class ParseTest < Test::Unit::TestCase
           []
         ),
         nil,
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5506,7 +5501,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x"))],
@@ -5523,7 +5517,8 @@ class ParseTest < Test::Unit::TestCase
           []
         ),
         StatementsNode([LocalVariableReadNode(IDENTIFIER("x"))]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5540,7 +5535,6 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([IntegerNode()]),
       PARENTHESIS_RIGHT(")"),
       BlockNode(
-        BRACE_LEFT("{"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x")),
@@ -5560,7 +5554,8 @@ class ParseTest < Test::Unit::TestCase
             LocalVariableReadNode(IDENTIFIER("x"))
           )]
         ),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "reduce"
     )
@@ -6557,7 +6552,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       nil,
-      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      BlockNode(nil, nil, Location(), Location()),
       "foo"
     )
 
@@ -6572,7 +6567,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ArgumentsNode([expression("bar")]),
       nil,
-      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      BlockNode(nil, nil, Location(), Location()),
       "foo"
     )
 
@@ -6587,7 +6582,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ArgumentsNode([expression("bar baz")]),
       nil,
-      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      BlockNode(nil, nil, Location(), Location()),
       "foo"
     )
 
@@ -6664,7 +6659,6 @@ class ParseTest < Test::Unit::TestCase
       ]),
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))],
@@ -6686,7 +6680,8 @@ class ParseTest < Test::Unit::TestCase
             nil,
             "puts"
           )]),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -6696,7 +6691,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "basic case when syntax" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6704,7 +6698,8 @@ class ParseTest < Test::Unit::TestCase
          nil
        )],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case :hi\nwhen :hi\nend"
@@ -6712,11 +6707,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "case without predicate" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       nil,
       [WhenNode(KEYWORD_WHEN("when"), [expression("foo == bar")], nil)],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, <<~RUBY
@@ -6728,7 +6723,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "case with else" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6740,7 +6734,8 @@ class ParseTest < Test::Unit::TestCase
         StatementsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]),
         KEYWORD_END("end")
       ),
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case :hi\nwhen :hi\nelse\n:b\nend"
@@ -6748,7 +6743,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "case when statements" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       TrueNode(),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6787,7 +6781,8 @@ class ParseTest < Test::Unit::TestCase
          )
        )],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case true; when true; puts :hi; when false; puts :bye; end"
@@ -6795,15 +6790,15 @@ class ParseTest < Test::Unit::TestCase
 
   test "case with multiple conditions" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       CallNode(nil, nil, IDENTIFIER("this"), nil, nil, nil, nil, "this"),
       [WhenNode(
          KEYWORD_WHEN("when"),
-         [ConstantReadNode(CONSTANT("FooBar")), ConstantReadNode(CONSTANT("BazBonk"))],
+         [ConstantReadNode(), ConstantReadNode()],
          nil
        )],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case this; when FooBar, BazBonk; end"
@@ -6811,11 +6806,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "case when with splat" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       nil,
       [WhenNode(KEYWORD_WHEN("when"), [SplatNode(STAR("*"), expression("foo"))], nil)],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case; when *foo; end"
@@ -6830,10 +6825,10 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([GlobalVariableReadNode(BACK_REFERENCE("$&"))]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "map"
     )
@@ -6843,7 +6838,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "calls with constants" do
     expected = CallNode(
-      ConstantReadNode(CONSTANT("Kernel")),
+      ConstantReadNode(),
       DOT("."),
       CONSTANT("Integer"),
       PARENTHESIS_LEFT("("),
@@ -6865,10 +6860,10 @@ class ParseTest < Test::Unit::TestCase
         nil,
         nil,
         BlockNode(
-          BRACE_LEFT("{"),
           nil,
           StatementsNode([BreakNode(ArgumentsNode([IntegerNode()]), Location())]),
-          BRACE_RIGHT("}")
+          Location(),
+          Location()
         ),
         "foo"
       ),
@@ -6893,7 +6888,6 @@ class ParseTest < Test::Unit::TestCase
         nil,
         nil,
         BlockNode(
-          BRACE_LEFT("{"),
           BlockParametersNode(
             ParametersNode(
               [RequiredParameterNode(IDENTIFIER("a"))],
@@ -6906,7 +6900,8 @@ class ParseTest < Test::Unit::TestCase
             []
           ),
           StatementsNode([BreakNode(nil, Location())]),
-          BRACE_RIGHT("}")
+          Location(),
+          Location()
         ),
         "foo"
       ),
@@ -6981,7 +6976,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "multiple assignment on constant (right-hand side)" do
     expected = ConstantPathWriteNode(
-      ConstantReadNode(CONSTANT("Foo")),
+      ConstantReadNode(),
       EQUAL("="),
       ArrayNode([IntegerNode(), IntegerNode()], nil, nil)
     )
@@ -7242,24 +7237,23 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ArgumentsNode(
-        [HashNode(
-           nil,
-           [AssocNode(
-              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
-              TrueNode(),
-              nil
-            ),
-            AssocNode(
-              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
-              FalseNode(),
-              nil
-            )],
-           nil
-         ),
-         BlockArgumentNode(
-           AMPERSAND("&"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
-         )]
+        [
+          HashNode(
+            nil,
+            [AssocNode(
+                SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+                TrueNode(),
+                nil
+              ),
+              AssocNode(
+                SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+                FalseNode(),
+                nil
+              )],
+            nil
+          ),
+          BlockArgumentNode(SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil), Location())
+        ]
       ),
       nil,
       nil,
@@ -7291,8 +7285,8 @@ class ParseTest < Test::Unit::TestCase
            BRACE_RIGHT("}")
          ),
          BlockArgumentNode(
-           AMPERSAND("&"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil),
+           Location()
          )]
       ),
       PARENTHESIS_RIGHT(")"),
@@ -7331,8 +7325,8 @@ class ParseTest < Test::Unit::TestCase
            nil
          ),
          BlockArgumentNode(
-           AMPERSAND("&"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil)
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil),
+           Location()
          )]
       ),
       PARENTHESIS_RIGHT(")"),

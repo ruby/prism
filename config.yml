@@ -388,7 +388,6 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
-    location: begin_keyword|statements->ensure_clause|end_keyword|statements
     comment: |
       Represents a begin statement.
 
@@ -398,11 +397,10 @@ nodes:
           ^^^^^
   - name: BlockArgumentNode
     child_nodes:
-      - name: operator
-        type: token
       - name: expression
         type: node
-    location: operator->expression
+      - name: operator_loc
+        type: location
     comment: |
       Represents block method arguments.
 
@@ -410,15 +408,14 @@ nodes:
           ^^^^^^^^^^
   - name: BlockNode
     child_nodes:
-      - name: start_keyword
-        type: token
-      - name: arguments
+      - name: parameters
         type: node?
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
-    location: start_keyword->end_keyword
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents a block of ruby code.
 
@@ -442,7 +439,6 @@ nodes:
         type: node
       - name: locals
         type: token[]
-    location: parameters->locals
     comment: |
       Represents a block variable declaration.
 
@@ -493,17 +489,16 @@ nodes:
           ^^^^^^^
   - name: CaseNode
     child_nodes:
-      - name: case_keyword
-        type: token
       - name: predicate
         type: node?
       - name: conditions
         type: node[]
       - name: consequent
         type: node?
-      - name: end_keyword
-        type: token
-    location: case_keyword->end_keyword
+      - name: case_keyword_loc
+        type: location
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents the use of a case statement.
 
@@ -584,10 +579,6 @@ nodes:
           Foo::Bar = 1
           ^^^^^^^^^^^^
   - name: ConstantReadNode
-    child_nodes:
-      - name: name
-        type: token
-    location: name
     comment: |
       Represents referencing a constant.
 
@@ -1194,11 +1185,10 @@ nodes:
     child_nodes:
       - name: left
         type: node?
-      - name: range_operator
-        type: token
       - name: right
         type: node?
-    location: left|range_operator->right|range_operator
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `..` or `...` operators.
 

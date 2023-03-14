@@ -7,7 +7,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "constant path with invalid token after" do
     expected = ConstantPathNode(
-      ConstantReadNode(CONSTANT("A")),
+      ConstantReadNode(),
       COLON_COLON("::"),
       MissingNode()
     )
@@ -19,7 +19,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ModuleNode(
       Scope([]),
       KEYWORD_MODULE("module"),
-      ConstantReadNode(CONSTANT("Parent")),
+      ConstantReadNode(),
       StatementsNode(
         [ModuleNode(
            Scope([]),
@@ -177,12 +177,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "top level constant with downcased identifier" do
-    expected = ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(MISSING("")))
+    expected = ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode())
     assert_errors expected, "::foo", ["Expected a constant after ::."]
   end
 
   test "top level constant starting with downcased identifier" do
-    expected = ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode(MISSING("")))
+    expected = ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode())
     assert_errors expected, "::foo::A", ["Expected a constant after ::."]
   end
 
@@ -226,10 +226,10 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
-        MISSING("")
+        Location(),
+        Location()
       ),
       "each"
     )
@@ -280,13 +280,10 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
-      ArgumentsNode(
-        [BlockArgumentNode(
-           AMPERSAND("&"),
-           CallNode(nil, nil, IDENTIFIER("block"), nil, nil, nil, nil, "block")
-         ),
-         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")]
-      ),
+      ArgumentsNode([
+        BlockArgumentNode(expression("block"), Location()),
+        expression("foo")
+      ]),
       PARENTHESIS_RIGHT(")"),
       nil,
       "a"
@@ -360,7 +357,7 @@ class ErrorsTest < Test::Unit::TestCase
         [ModuleNode(
            Scope([]),
            KEYWORD_MODULE("module"),
-           ConstantReadNode(CONSTANT("A")),
+           ConstantReadNode(),
            StatementsNode([]),
            KEYWORD_END("end")
          )]
@@ -391,18 +388,18 @@ class ErrorsTest < Test::Unit::TestCase
            nil,
            nil,
            BlockNode(
-             KEYWORD_DO("do"),
              nil,
              StatementsNode(
                [ModuleNode(
                   Scope([]),
                   KEYWORD_MODULE("module"),
-                  ConstantReadNode(CONSTANT("Foo")),
+                  ConstantReadNode(),
                   StatementsNode([]),
                   KEYWORD_END("end")
                 )]
              ),
-             KEYWORD_END("end")
+             Location(),
+             Location()
            ),
            "bar"
          )]

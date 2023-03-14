@@ -41,12 +41,22 @@ module YARP
       assert_location(BeginNode, "begin foo rescue bar\nelse baz\nensure qux end")
     end
 
+    test "BlockArgumentNode" do
+      assert_location(BlockArgumentNode, "foo(&bar)", 4...8) { |node| node.arguments.arguments.last }
+    end
+
     test "BlockNode" do
       assert_location(BlockNode, "foo {}", 4...6, &:block)
+      assert_location(BlockNode, "foo do end", 4...10, &:block)
     end
 
     test "BlockParameterNode" do
       assert_location(BlockParameterNode, "def foo(&bar) end", 8...12) { |node| node.parameters.block }
+    end
+
+    test "BlockParametersNode" do
+      assert_location(BlockParametersNode, "foo { |bar| baz }", 7...10) { |node| node.block.parameters }
+      assert_location(BlockParametersNode, "foo { |bar; baz| baz }", 7...15) { |node| node.block.parameters }
     end
 
     test "BreakNode" do
@@ -126,6 +136,13 @@ module YARP
       assert_location(CallNode, "foo::(bar, baz)")
     end
 
+    test "CaseNode" do
+      assert_location(CaseNode, "case foo; when bar; end")
+      assert_location(CaseNode, "case foo; when bar; else; end")
+      assert_location(CaseNode, "case foo; when bar; when baz; end")
+      assert_location(CaseNode, "case foo; when bar; when baz; else; end")
+    end
+
     test "ClassVariableReadNode" do
       assert_location(ClassVariableReadNode, "@@foo")
     end
@@ -134,9 +151,47 @@ module YARP
       assert_location(ClassVariableWriteNode, "@@foo = bar")
     end
 
+    test "ConstantReadNode" do
+      assert_location(ConstantReadNode, "Foo")
+      assert_location(ConstantReadNode, "Foo::Bar", 5...8, &:child)
+    end
+
+    test "FalseNode" do
+      assert_location(FalseNode, "false")
+    end
+
+    test "FloatNode" do
+      assert_location(FloatNode, "0.0")
+      assert_location(FloatNode, "1.0")
+      assert_location(FloatNode, "1.0e10")
+      assert_location(FloatNode, "1.0e-10")
+    end
+
+    test "ForNode" do
+      assert_location(ForNode, "for foo in bar; end")
+      assert_location(ForNode, "for foo, bar in baz do end")
+    end
+
+    test "ForwardingArgumentsNode" do
+      assert_location(ForwardingArgumentsNode, "def foo(...); bar(...); end", 18...21) do |node|
+        node.statements.body.first.arguments.arguments.first
+      end
+    end
+
+    test "ForwardingParameterNode" do
+      assert_location(ForwardingParameterNode, "def foo(...); end", 8...11) do |node|
+        node.parameters.keyword_rest
+      end
+    end
+
     test "ForwardingSuperNode" do
       assert_location(ForwardingSuperNode, "super")
       assert_location(ForwardingSuperNode, "super {}")
+    end
+
+    test "ImaginaryNode" do
+      assert_location(ImaginaryNode, "1i")
+      assert_location(ImaginaryNode, "1ri")
     end
 
     test "InstanceVariableReadNode" do
@@ -145,6 +200,18 @@ module YARP
 
     test "InstanceVariableWriteNode" do
       assert_location(InstanceVariableWriteNode, "@foo = bar")
+    end
+
+    test "IntegerNode" do
+      assert_location(IntegerNode, "0")
+      assert_location(IntegerNode, "1")
+      assert_location(IntegerNode, "1_000")
+      assert_location(IntegerNode, "0x1")
+      assert_location(IntegerNode, "0x1_000")
+      assert_location(IntegerNode, "0b1")
+      assert_location(IntegerNode, "0b1_000")
+      assert_location(IntegerNode, "0o1")
+      assert_location(IntegerNode, "0o1_000")
     end
 
     test "NextNode" do
@@ -162,6 +229,46 @@ module YARP
       assert_location(PreExecutionNode, "BEGIN { foo }")
     end
 
+    test "RangeNode" do
+      assert_location(RangeNode, "1..2")
+      assert_location(RangeNode, "1...2")
+
+      assert_location(RangeNode, "..2")
+      assert_location(RangeNode, "...2")
+
+      assert_location(RangeNode, "1..")
+      assert_location(RangeNode, "1...")
+    end
+
+    test "RationalNode" do
+      assert_location(RationalNode, "1r")
+      assert_location(RationalNode, "1.0r")
+    end
+
+    test "RedoNode" do
+      assert_location(RedoNode, "redo")
+    end
+
+    test "RetryNode" do
+      assert_location(RetryNode, "retry")
+    end
+
+    test "SelfNode" do
+      assert_location(SelfNode, "self")
+    end
+
+    test "SourceEncodingNode" do
+      assert_location(SourceEncodingNode, "__ENCODING__")
+    end
+
+    test "SourceFileNode" do
+      assert_location(SourceFileNode, "__FILE__")
+    end
+
+    test "SourceLineNode" do
+      assert_location(SourceLineNode, "__LINE__")
+    end
+
     test "SuperNode" do
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")
@@ -171,6 +278,10 @@ module YARP
       assert_location(SuperNode, "super(foo, bar)")
 
       assert_location(SuperNode, "super() {}")
+    end
+
+    test "TrueNode" do
+      assert_location(TrueNode, "true")
     end
 
     test "UndefNode" do
