@@ -162,6 +162,12 @@ module YARP
       assert_location(FloatNode, "1.0e-10")
     end
 
+    test "ForwardingArgumentsNode" do
+      assert_location(ForwardingArgumentsNode, "def foo(...); bar(...); end", 18...21) do |node|
+        node.statements.body.first.arguments.arguments.first
+      end
+    end
+
     test "ForwardingSuperNode" do
       assert_location(ForwardingSuperNode, "super")
       assert_location(ForwardingSuperNode, "super {}")
