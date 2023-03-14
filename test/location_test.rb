@@ -151,6 +151,17 @@ module YARP
       assert_location(ClassVariableWriteNode, "@@foo = bar")
     end
 
+    test "FalseNode" do
+      assert_location(FalseNode, "false")
+    end
+
+    test "FloatNode" do
+      assert_location(FloatNode, "0.0")
+      assert_location(FloatNode, "1.0")
+      assert_location(FloatNode, "1.0e10")
+      assert_location(FloatNode, "1.0e-10")
+    end
+
     test "ForwardingSuperNode" do
       assert_location(ForwardingSuperNode, "super")
       assert_location(ForwardingSuperNode, "super {}")
