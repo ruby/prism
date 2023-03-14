@@ -1387,7 +1387,6 @@ nodes:
     child_nodes:
       - name: body
         type: node[]
-    location: body
     comment: |
       Represents a set of statements contained within some scope.
 
@@ -1544,9 +1543,9 @@ nodes:
         type: token
       - name: predicate
         type: node
-      - name: statement
+      - name: statements
         type: node
-    location: keyword->statement
+    location: keyword->statements
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
@@ -1575,9 +1574,9 @@ nodes:
         type: token
       - name: predicate
         type: node
-      - name: statement
+      - name: statements
         type: node
-    location: keyword->statement
+    location: keyword->statements
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 

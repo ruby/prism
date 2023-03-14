@@ -1244,6 +1244,31 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return yp_node_create_from_token(parser, YP_NODE_SOURCE_LINE_NODE, token);
 }
 
+// Allocate and initialize a new StatementsNode node.
+static yp_node_t *
+yp_statements_node_create(yp_parser_t *parser) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_STATEMENTS_NODE,
+    .location = YP_LOCATION_NULL_VALUE(parser)
+  };
+
+  yp_node_list_init(&node->as.statements_node.body);
+  return node;
+}
+
+// Append a new node to the given StatementsNode node's body.
+static void
+yp_statements_node_body_append(yp_node_t *node, yp_node_t *statement) {
+  if (node->as.statements_node.body.size == 0) {
+    node->location.start = statement->location.start;
+  }
+
+  yp_node_list_append2(&node->as.statements_node.body, statement);
+  node->location.end = statement->location.end;
+}
+
 // Check if the given node is a label in a hash.
 static bool
 yp_symbol_node_label_p(yp_node_t *node) {
@@ -4730,7 +4755,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
 static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
   context_push(parser, context);
-  yp_node_t *statements = yp_node_statements_node_create(parser);
+  yp_node_t *statements = yp_statements_node_create(parser);
 
   while (!context_terminator(context, &parser->current)) {
     // Ignore semicolon without statements before them
@@ -4739,7 +4764,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
     }
 
     yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
-    yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
+    yp_statements_node_body_append(statements, node);
 
     // If we're recovering from a syntax error, then we need to stop parsing the
     // statements now.
@@ -5203,7 +5228,7 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     yp_token_t rescue_keyword = parser->previous;
 
     yp_token_t equal_greater = not_provided(parser);
-    yp_node_t *statements = yp_node_statements_node_create(parser);
+    yp_node_t *statements = yp_statements_node_create(parser);
     yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, NULL, statements, NULL);
     yp_node_destroy(parser, statements);
 
@@ -5931,8 +5956,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // If we have a single statement and are ending on a right parenthesis
         // and we didn't return a multiple assignment node, then we can return a
         // regular parentheses node now.
-        yp_node_t *statements = yp_node_statements_node_create(parser);
-        yp_node_list_append(parser, statements, &statements->as.statements_node.body, statement);
+        yp_node_t *statements = yp_statements_node_create(parser);
+        yp_statements_node_body_append(statements, statement);
 
         return yp_node_parentheses_node_create(parser, &opening, statements, &parser->previous);
       }
@@ -5941,15 +5966,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // are going to parse all of them as a list of statements. We'll do that
       // here.
       context_push(parser, YP_CONTEXT_PARENS);
-      yp_node_t *statements = yp_node_statements_node_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements_node.body, statement);
+      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_statements_node_body_append(statements, statement);
 
       while (!match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
         // Ignore semicolon without statements before them
         if (accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE)) continue;
 
         yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
-        yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
+        yp_statements_node_body_append(statements, node);
 
         // If we're recovering from a syntax error, then we need to stop parsing the
         // statements now.
@@ -6690,10 +6715,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       if (endless_definition) {
         context_push(parser, YP_CONTEXT_DEF);
-        statements = yp_node_statements_node_create(parser);
+        statements = yp_statements_node_create(parser);
 
         yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse body of endless method definition.");
-        yp_node_list_append(parser, statements, &statements->as.statements_node.body, statement);
+        yp_statements_node_body_append(statements, statement);
 
         context_pop(parser);
       } else {
@@ -6858,7 +6883,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // name of the module, then we'll handle that here.
       if (name->type == YP_NODE_MISSING_NODE) {
         yp_node_t *scope = yp_node_scope_create(parser);
-        yp_node_t *statements = yp_node_statements_node_create(parser);
+        yp_node_t *statements = yp_statements_node_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
       }
@@ -7890,8 +7915,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_IF: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_node_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
+      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'if'");
       yp_token_t end_keyword = not_provided(parser);
@@ -7899,8 +7924,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_UNLESS: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_node_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
+      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'unless'");
       yp_token_t end_keyword = not_provided(parser);
@@ -7909,16 +7934,16 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_UNTIL: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_node_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
+      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
       return yp_node_until_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       parser_lex(parser);
-      yp_node_t *statements = yp_node_statements_node_create(parser);
-      yp_node_list_append(parser, statements, &statements->as.statements_node.body, node);
+      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
       return yp_node_while_node_create(parser, &token, predicate, statements);

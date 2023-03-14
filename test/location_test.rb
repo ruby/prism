@@ -269,6 +269,50 @@ module YARP
       assert_location(SourceLineNode, "__LINE__")
     end
 
+    test "StatementsNode" do
+      assert_location(StatementsNode, "foo { 1 }", 6...7) { |node| node.block.statements }
+
+      assert_location(StatementsNode, "(1)", 1...2, &:statements)
+
+      assert_location(StatementsNode, "def foo; 1; end", 9...10, &:statements)
+      assert_location(StatementsNode, "def foo = 1", 10...11, &:statements)
+      assert_location(StatementsNode, "def foo; 1\n2; end", 9...12, &:statements)
+
+      assert_location(StatementsNode, "if foo; bar; end", 8...11, &:statements)
+      assert_location(StatementsNode, "foo if bar", 0...3, &:statements)
+
+      assert_location(StatementsNode, "if foo; foo; elsif bar; bar; end", 24...27) { |node| node.consequent.statements }
+      assert_location(StatementsNode, "if foo; foo; else; bar; end", 19...22) { |node| node.consequent.statements }
+
+      assert_location(StatementsNode, "unless foo; bar; end", 12...15, &:statements)
+      assert_location(StatementsNode, "foo unless bar", 0...3, &:statements)
+
+      assert_location(StatementsNode, "case; when foo; bar; end", 16...19) { |node| node.conditions.first.statements }
+
+      assert_location(StatementsNode, "while foo; bar; end", 11...14, &:statements)
+      assert_location(StatementsNode, "foo while bar", 0...3, &:statements)
+
+      assert_location(StatementsNode, "until foo; bar; end", 11...14, &:statements)
+      assert_location(StatementsNode, "foo until bar", 0...3, &:statements)
+
+      assert_location(StatementsNode, "for foo in bar; baz; end", 16...19, &:statements)
+
+      assert_location(StatementsNode, "begin; foo; end", 7...10, &:statements)
+      assert_location(StatementsNode, "begin; rescue; foo; end", 15...18) { |node| node.rescue_clause.statements }
+      assert_location(StatementsNode, "begin; ensure; foo; end", 15...18) { |node| node.ensure_clause.statements }
+      assert_location(StatementsNode, "begin; else; foo; end", 13...16) { |node| node.else_clause.statements }
+
+      assert_location(StatementsNode, "class Foo; foo; end", 11...14, &:statements)
+      assert_location(StatementsNode, "module Foo; foo; end", 12...15, &:statements)
+      assert_location(StatementsNode, "class << self; foo; end", 15...18, &:statements)
+
+      assert_location(StatementsNode, "-> { foo }", 5...8, &:statements)
+      assert_location(StatementsNode, "BEGIN { foo }", 8...11, &:statements)
+      assert_location(StatementsNode, "END { foo }", 6...9, &:statements)
+
+      assert_location(StatementsNode, "\"\#{foo}\"", 3...6) { |node| node.parts.first.statements }
+    end
+
     test "SuperNode" do
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")
