@@ -61,12 +61,6 @@ yp_token_list_free(yp_token_list_t *token_list) {
   }
 }
 
-// Initiailize a list of nodes.
-static void
-yp_node_list_init(yp_node_list_t *node_list) {
-  *node_list = (yp_node_list_t) { .nodes = NULL, .size = 0, .capacity = 0 };
-}
-
 static void
 yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize);
 

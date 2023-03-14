@@ -13,6 +13,7 @@
 #include "util/yp_strspn.h"
 #include "ast.h"
 #include "diagnostic.h"
+#include "nodes.h"
 #include "pack.h"
 #include "parser.h"
 #include "regexp.h"
