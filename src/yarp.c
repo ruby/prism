@@ -8048,6 +8048,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_BRACKET_LEFT: {
+      yp_state_stack_push(&parser->accepts_block_stack, true);
       parser_lex(parser);
 
       yp_arguments_t arguments = yp_arguments();
@@ -8055,6 +8056,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       arguments.arguments = yp_arguments_node_create(parser);
 
       parse_arguments(parser, arguments.arguments, false, YP_TOKEN_BRACKET_RIGHT);
+      yp_state_stack_pop(&parser->accepts_block_stack);
+
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
       arguments.closing = parser->previous;
 

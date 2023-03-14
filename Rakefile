@@ -85,16 +85,11 @@ task lex: :compile do
 
   passing = 0
   failing = 0
-
-  colorize = ->(code, string) { "\033[#{code}m#{string}\033[0m" }
-  fail_filepath = ->(filepath) {
-    warn(filepath) if ENV["VERBOSE"]
-    print(ENV["CI"] ? "E" : colorize.call(31, "E"))
-    failing += 1
-  }
+  todo = 0
 
   if ENV["FILEPATHS"]
     filepaths = Dir[ENV["FILEPATHS"]]
+    todos = []
   else
     target = YAML.safe_load_file("targets.yml").fetch(ENV["TARGET"])
     dirpath = File.join("tmp", "targets", ENV["TARGET"])
@@ -115,41 +110,47 @@ task lex: :compile do
       filepaths -= excludes.map { |exclude| File.join(dirpath, exclude) }
     end
 
-    if (todos = target["todos"]) && !ENV["TODOS"]
-      filepaths -= todos.map { |todo| File.join(dirpath, todo) }
-    end
+    todos = target.fetch("todos", []).map { |todo| File.join(dirpath, todo) }
+    todo = todos.length
   end
 
   filepaths.each.with_index(1) do |filepath, index|
     print("#{filepath} ") if ENV["CI"]
+
     source = File.read(filepath)
-
-    begin
-      Timeout.timeout(2) do
-        lexed = YARP.lex_compat(source)
-
-        if lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
-          print(ENV["CI"] ? "." : colorize.call(32, "."))
-          passing += 1
-        else
-          fail_filepath.call(filepath)
+    passed =
+      begin
+        Timeout.timeout(5) do
+          lexed = YARP.lex_compat(source)
+          lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
+        rescue
+          false
         end
-      rescue
-        fail_filepath.call(filepath)
+      rescue Timeout::Error
+        false
       end
-    rescue Timeout::Error
-      fail_filepath.call(filepath)
+
+    if passed
+      print(ENV["CI"] ? "." : "\033[32m.\033[0m")
+      passing += 1
+    else
+      todos.delete(filepath) if todos.include?(filepath)
+      next if !ENV["TODOS"]
+
+      warn(filepath) if ENV["VERBOSE"]
+      print(ENV["CI"] ? "E" : "\033[31mE\033[0m")
+      failing += 1
     end
 
     puts if ENV["CI"]
   end
 
-  puts <<~RESULTS
-
-
+  puts("\n\n")
+  warn("Some files listed as todo are passing:\n  #{todos.join("\n  ")}") if todos.any?
+  puts(<<~RESULTS)
     PASSING=#{passing}
-    FAILING=#{failing}
-    PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
+    FAILING=#{failing + todo}
+    PERCENT=#{(passing.to_f / (passing + failing + todo) * 100).round(2)}%
   RESULTS
 
   exit(1) if failing > 0
