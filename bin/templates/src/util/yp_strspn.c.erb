@@ -1,0 +1,53 @@
+<%-
+bits = {
+  WHITESPACE: ["\t", "\n", "\v", "\f", "\r", " "],
+  INLINE_WHITESPACE: ["\t", "\v", "\f", "\r", " "],
+  DECIMAL_DIGIT: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  HEXIDECIMAL_DIGIT: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F"],
+  BINARY_NUMBER: ["0", "1", "_"],
+  OCTAL_NUMBER: ["0", "1", "2", "3", "4", "5", "6", "7", "_"],
+  DECIMAL_NUMBER: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_"],
+  HEXIDECIMAL_NUMBER: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F", "_"]
+}
+
+table = ""
+(0...128).each_slice(16).with_index do |slice, row_index|
+  row =
+    slice.map do |codepoint|
+      character = codepoint.chr
+
+      value = 0
+      bits.each_value.with_index do |characters, bit_index|
+        value |= (1 << bit_index) if characters.include?(character)
+      end
+
+      "0b%08b," % value
+    end
+
+  table << "  #{row.join(" ")} // #{row_index.to_s(16).upcase}x\n"
+end
+-%>
+#include "yp_strspn.h"
+
+<%- bits.each_key.with_index do |name, bit_index| -%>
+<%= "#define YP_STRSPN_BIT_#{name} (1 << #{bit_index})" %>
+<%- end -%>
+
+const unsigned char yp_strspn_table[128] = {
+  //       <%= "#{(0...16).map { |value| value.to_s(16).upcase }.join("           ")}" %>
+<%= table %>};
+<%- bits.each do |name, characters| -%>
+
+// Returns the number of characters at the start of the string string that are a
+// <%= name.to_s.downcase.split("_").join(" ") %>. Disallows searching past the given maximum number of characters.
+size_t
+yp_strspn_<%= name.downcase %>(const char *string, size_t maximum) {
+  size_t size = 0;
+  while (size < maximum && (yp_strspn_table[(unsigned char) string[size]] & YP_STRSPN_BIT_<%= name %>)) size++;
+  return size;
+}
+<%- end -%>
+
+<%- bits.each_key.with_index do |name, bit_index| -%>
+<%= "#undef YP_STRSPN_BIT_#{name}" %>
+<%- end -%>
