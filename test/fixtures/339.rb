@@ -1,1 +1,0 @@
-foo.foo, bar.bar = 1, 2

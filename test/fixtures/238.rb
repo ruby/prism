@@ -1,2 +1,0 @@
-def self.a
-end

@@ -1,2 +1,0 @@
-def true.a
-end

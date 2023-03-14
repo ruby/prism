@@ -1,0 +1,57 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	alias.rb
+	arithmetic.rb
+	arrays.rb
+	begin_ensure.rb
+	begin_rescue.rb
+	blocks.rb
+	boolean_operators.rb
+	booleans.rb
+	break.rb
+	case.rb
+	classes.rb
+	comments.rb
+	constants.rb
+	dash_heredocs.rb
+	defined.rb
+	for.rb
+	global_variables.rb
+	hashes.rb
+	if.rb
+	integer_operations.rb
+	keyword_method_names.rb
+	keywords.rb
+	method_calls.rb
+	methods.rb
+	modules.rb
+	next.rb
+	nils.rb
+	non_alphanumeric_methods.rb
+	not.rb
+	numbers.rb
+	output
+	procs.rb
+	ranges.rb
+	regex.rb
+	rescue.rb
+	return.rb
+	strings.rb
+	super.rb
+	symbols.rb
+	ternary_operator.rb
+	test/fixtures/all.rb
+	tilde_heredocs.rb
+	todos
+	undef.rb
+	unless.rb
+	until.rb
+	variables.rb
+	while.rb
+	xstring.rb
+	yield.rb
+
+nothing added to commit but untracked files present (use "git add" to track)

@@ -1,1 +1,0 @@
-Kernel.Integer(10)

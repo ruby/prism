@@ -1,1 +1,0 @@
-a ? defined? b : defined? c

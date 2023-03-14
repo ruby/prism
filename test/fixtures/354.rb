@@ -1,1 +1,0 @@
-not foo and not bar

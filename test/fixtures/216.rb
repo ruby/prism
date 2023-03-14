@@ -1,2 +1,0 @@
-def $var.a
-end

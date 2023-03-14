@@ -1,1 +1,0 @@
-class A; class << self; rescue; else; ensure; end; end

@@ -1,1 +1,0 @@
-%Q{aaa #{bbb} ccc}

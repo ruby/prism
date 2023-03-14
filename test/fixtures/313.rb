@@ -1,1 +1,0 @@
-hi(:there => :friend, **{}, whatup: :dog)

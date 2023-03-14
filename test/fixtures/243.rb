@@ -1,1 +1,0 @@
-defined? 1 and defined? 2

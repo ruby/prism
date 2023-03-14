@@ -1,2 +1,0 @@
-module m::M
-end
