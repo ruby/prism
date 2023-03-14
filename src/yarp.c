@@ -5171,12 +5171,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       parser_lex(parser);
-
       yp_token_t keyword = parser->previous;
+
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'BEGIN'.");
       yp_token_t opening = parser->previous;
-
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_PREEXE);
+
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
       yp_token_t closing = parser->previous;
 
@@ -5523,12 +5523,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       parser_lex(parser);
-
       yp_token_t keyword = parser->previous;
+
       expect(parser, YP_TOKEN_BRACE_LEFT, "Expected '{' after 'END'.");
       yp_token_t opening = parser->previous;
-
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_POSTEXE);
+
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
       yp_token_t closing = parser->previous;
 
