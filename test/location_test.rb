@@ -229,6 +229,36 @@ module YARP
       assert_location(NoKeywordsParameterNode, "def foo(**nil); end", 8...13) { |node| node.parameters.keyword_rest }
     end
 
+    test "OperatorAndAssignmentNode" do
+      assert_location(OperatorAndAssignmentNode, "foo = 1; foo &&= bar", 9...20)
+
+      assert_location(OperatorAndAssignmentNode, "foo &&= bar")
+      assert_location(OperatorAndAssignmentNode, "foo.foo &&= bar")
+      assert_location(OperatorAndAssignmentNode, "foo[foo] &&= bar")
+
+      assert_location(OperatorAndAssignmentNode, "@foo &&= bar")
+      assert_location(OperatorAndAssignmentNode, "@@foo &&= bar")
+      assert_location(OperatorAndAssignmentNode, "$foo &&= bar")
+
+      assert_location(OperatorAndAssignmentNode, "Foo &&= bar")
+      assert_location(OperatorAndAssignmentNode, "Foo::Foo &&= bar")
+    end
+
+    test "OperatorOrAssignmentNode" do
+      assert_location(OperatorOrAssignmentNode, "foo = 1; foo ||= bar", 9...20)
+
+      assert_location(OperatorOrAssignmentNode, "foo ||= bar")
+      assert_location(OperatorOrAssignmentNode, "foo.foo ||= bar")
+      assert_location(OperatorOrAssignmentNode, "foo[foo] ||= bar")
+
+      assert_location(OperatorOrAssignmentNode, "@foo ||= bar")
+      assert_location(OperatorOrAssignmentNode, "@@foo ||= bar")
+      assert_location(OperatorOrAssignmentNode, "$foo ||= bar")
+
+      assert_location(OperatorOrAssignmentNode, "Foo ||= bar")
+      assert_location(OperatorOrAssignmentNode, "Foo::Foo ||= bar")
+    end
+
     test "PostExecutionNode" do
       assert_location(PostExecutionNode, "END { foo }")
     end

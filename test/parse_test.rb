@@ -3214,7 +3214,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "operator or assignment" do
-    assert_parses OperatorOrAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), PIPE_PIPE_EQUAL("||="), expression("b")), "a ||= b"
+    assert_parses OperatorOrAssignmentNode(LocalVariableWriteNode(IDENTIFIER("a"), nil, nil), expression("b"), Location()), "a ||= b"
   end
 
   test "operator assignment" do

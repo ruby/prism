@@ -1130,6 +1130,28 @@ yp_operator_and_assignment_node_create(yp_parser_t *parser, yp_node_t *target, c
   return node;
 }
 
+// Allocate and initialize a new OperatorOrAssignmentNode node.
+static yp_node_t *
+yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+  assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_OPERATOR_OR_ASSIGNMENT_NODE,
+    .location = {
+      .start = target->location.start,
+      .end = value->location.end
+    },
+    .as.operator_or_assignment_node = {
+      .target = target,
+      .value = value,
+      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new PostExecutionNode node.
 static yp_node_t *
 yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
@@ -4517,6 +4539,8 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       memset(target, 0, sizeof(yp_node_t));
 
       target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+      target->location.start = name.start;
+
       target->as.local_variable_write_node.name = name;
       target->as.local_variable_write_node.operator = *operator;
 
@@ -4576,6 +4600,8 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           memset(target, 0, sizeof(yp_node_t));
 
           target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+          target->location.start = name.start;
+
           target->as.local_variable_write_node.name = name;
           target->as.local_variable_write_node.operator = *operator;
 
@@ -7696,10 +7722,15 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // fallthrough
         }
         case YP_CASE_WRITABLE: {
+          parser_lex(parser);
+
           yp_token_t operator = not_provided(parser);
           node = parse_target(parser, node, &operator, NULL);
 
-          parser_lex(parser);
+          if (node->type == YP_NODE_MULTI_WRITE_NODE) {
+            yp_diagnostic_list_append(&parser->error_list, "Cannot use `&&=' on a multi-write.", parser->previous.start - parser->start);
+          }
+
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
           return yp_operator_and_assignment_node_create(parser, node, &token, value);
         }
@@ -7727,12 +7758,17 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // fallthrough
         }
         case YP_CASE_WRITABLE: {
+          parser_lex(parser);
+
           yp_token_t operator = not_provided(parser);
           node = parse_target(parser, node, &operator, NULL);
 
-          parser_lex(parser);
+          if (node->type == YP_NODE_MULTI_WRITE_NODE) {
+            yp_diagnostic_list_append(&parser->error_list, "Cannot use `||=' on a multi-write.", parser->previous.start - parser->start);
+          }
+
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
-          return yp_node_operator_or_assignment_node_create(parser, node, &token, value);
+          return yp_operator_or_assignment_node_create(parser, node, &token, value);
         }
         default:
           parser_lex(parser);
