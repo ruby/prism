@@ -4081,18 +4081,18 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
 // Parse a list of parameters and local on a block definition.
 static yp_node_t *
 parse_block_parameters(yp_parser_t *parser) {
-  yp_node_t *block_params = parse_parameters(parser, false, YP_BINDING_POWER_INDEX);
-  yp_node_t *parameters = yp_node_block_parameters_node_create(parser, block_params);
+  yp_node_t *parameters = parse_parameters(parser, false, YP_BINDING_POWER_INDEX);
+  yp_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters);
 
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
     do {
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a local variable name.");
       yp_parser_local_add(parser, &parser->previous);
-      yp_token_list_append(&parameters->as.block_parameters_node.locals, &parser->previous);
+      yp_block_parameters_node_append_local(block_parameters, &parser->previous);
     } while (accept(parser, YP_TOKEN_COMMA));
   }
 
-  return parameters;
+  return block_parameters;
 }
 
 // Parse a block.

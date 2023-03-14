@@ -54,6 +54,11 @@ module YARP
       assert_location(BlockParameterNode, "def foo(&bar) end", 8...12) { |node| node.parameters.block }
     end
 
+    test "BlockParametersNode" do
+      assert_location(BlockParametersNode, "foo { |bar| baz }", 7...10) { |node| node.block.parameters }
+      assert_location(BlockParametersNode, "foo { |bar; baz| baz }", 7...15) { |node| node.block.parameters }
+    end
+
     test "BreakNode" do
       assert_location(BreakNode, "break")
       assert_location(BreakNode, "break foo")

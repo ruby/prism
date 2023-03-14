@@ -37,6 +37,22 @@ yp_node_list_append2(yp_node_list_t *list, yp_node_t *node) {
   list->nodes[list->size++] = node;
 }
 
+// Initialize a yp_token_list_t with its default values.
+static void
+yp_token_list_init(yp_token_list_t *token_list) {
+  *token_list = (yp_token_list_t) { .tokens = NULL, .size = 0, .capacity = 0 };
+}
+
+// Append a token to the given list.
+static void
+yp_token_list_append(yp_token_list_t *token_list, const yp_token_t *token) {
+  if (token_list->size == token_list->capacity) {
+    token_list->capacity = token_list->capacity == 0 ? 1 : token_list->capacity * 2;
+    token_list->tokens = realloc(token_list->tokens, sizeof(yp_token_t) * token_list->capacity);
+  }
+  token_list->tokens[token_list->size++] = *token;
+}
+
 // Allocate the space for a new yp_node_t. Currently we're not using the
 // parser argument, but it's there to allow for the future possibility of
 // pre-allocating larger memory pools and then pulling from those here.
@@ -331,6 +347,30 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, cons
   };
 
   return node;
+}
+
+// Allocate and initialize a new BlockParametersNode node.
+yp_node_t *
+yp_block_parameters_node_create(yp_parser_t *parser, yp_node_t *parameters) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_BLOCK_PARAMETERS_NODE,
+    .location = YP_LOCATION_NODE_VALUE(parameters),
+    .as.block_parameters_node = {
+      .parameters = parameters
+    }
+  };
+
+  yp_token_list_init(&node->as.block_parameters_node.locals);
+  return node;
+}
+
+// Append a new block-local variable to a BlockParametersNode node.
+void
+yp_block_parameters_node_append_local(yp_node_t *node, const yp_token_t *local) {
+  yp_token_list_append(&node->as.block_parameters_node.locals, local);
+  node->location.end = local->end;
 }
 
 // Allocate and initialize a new BreakNode node.

@@ -99,6 +99,14 @@ yp_block_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *
 yp_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *oper);
 
+// Allocate and initialize a new BlockParametersNode node.
+yp_node_t *
+yp_block_parameters_node_create(yp_parser_t *parser, yp_node_t *parameters);
+
+// Append a new block-local variable to a BlockParametersNode node.
+void
+yp_block_parameters_node_append_local(yp_node_t *node, const yp_token_t *local);
+
 // Allocate and initialize a new BreakNode node.
 yp_node_t *
 yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments);

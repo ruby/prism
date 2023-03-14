@@ -439,7 +439,6 @@ nodes:
         type: node
       - name: locals
         type: token[]
-    location: parameters->locals
     comment: |
       Represents a block variable declaration.
 
