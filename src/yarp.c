@@ -3629,14 +3629,18 @@ lex_token_type(yp_parser_t *parser) {
         breakpoints[index++] = parser->lex_modes.current->as.list.incrementor;
       }
 
-      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+      const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
       while (breakpoint != NULL) {
         switch (*breakpoint) {
+          case '\0':
+            // If we hit a null byte, skip directly past it.
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+            break;
           case '\\':
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
             break;
           case ' ':
           case '\t':
@@ -3656,14 +3660,14 @@ lex_token_type(yp_parser_t *parser) {
             // that looked like an interpolated class or instance variable
             // like "#@" but wasn't actually. In this case we'll just skip
             // to the next breakpoint.
-            breakpoint = strpbrk(parser->current.end, breakpoints);
+            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
             break;
           }
           default:
             if (*breakpoint == parser->lex_modes.current->as.list.incrementor) {
               // If we've hit the incrementor, then we need to skip past it and
               // find the next breakpoint.
-              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
               parser->lex_modes.current->as.list.nesting++;
               break;
             }
@@ -3674,7 +3678,7 @@ lex_token_type(yp_parser_t *parser) {
             // If this terminator doesn't actually close the list, then we need
             // to continue on past it.
             if (parser->lex_modes.current->as.list.nesting > 0) {
-              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
               parser->lex_modes.current->as.list.nesting--;
               break;
             }
@@ -3714,15 +3718,19 @@ lex_token_type(yp_parser_t *parser) {
         breakpoints[3] = parser->lex_modes.current->as.regexp.incrementor;
       }
 
-      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+      const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
 
       while (breakpoint != NULL) {
         switch (*breakpoint) {
+          case '\0':
+            // If we hit a null byte, skip directly past it.
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+            break;
           case '\\':
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
             break;
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
@@ -3732,14 +3740,14 @@ lex_token_type(yp_parser_t *parser) {
             // that looked like an interpolated class or instance variable
             // like "#@" but wasn't actually. In this case we'll just skip
             // to the next breakpoint.
-            breakpoint = strpbrk(parser->current.end, breakpoints);
+            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
             break;
           }
           default: {
             if (*breakpoint == parser->lex_modes.current->as.regexp.incrementor) {
               // If we've hit the incrementor, then we need to skip past it and
               // find the next breakpoint.
-              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
               parser->lex_modes.current->as.regexp.nesting++;
               break;
             }
@@ -3747,7 +3755,7 @@ lex_token_type(yp_parser_t *parser) {
             assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
 
             if (parser->lex_modes.current->as.regexp.nesting > 0) {
-              breakpoint = strpbrk(breakpoint + 1, breakpoints);
+              breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
               parser->lex_modes.current->as.regexp.nesting--;
               break;
             }
@@ -3800,7 +3808,7 @@ lex_token_type(yp_parser_t *parser) {
         breakpoints[index++] = parser->lex_modes.current->as.string.incrementor;
       }
 
-      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+      const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
 
       while (breakpoint != NULL) {
         // If we hit the incrementor, then we'll increment then nesting and
@@ -3810,7 +3818,7 @@ lex_token_type(yp_parser_t *parser) {
           *breakpoint == parser->lex_modes.current->as.string.incrementor
         ) {
           parser->lex_modes.current->as.string.nesting++;
-          breakpoint = strpbrk(breakpoint + 1, breakpoints);
+          breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
           continue;
         }
 
@@ -3821,7 +3829,7 @@ lex_token_type(yp_parser_t *parser) {
           // If this terminator doesn't actually close the string, then we need
           // to continue on past it.
           if (parser->lex_modes.current->as.string.nesting > 0) {
-            breakpoint = strpbrk(breakpoint + 1, breakpoints);
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             parser->lex_modes.current->as.string.nesting--;
             continue;
           }
@@ -3853,22 +3861,30 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_STRING_END;
         }
 
-        if (*breakpoint == '\\') {
-          // If we hit escapes, then we need to treat the next token literally.
-          // In this case we'll skip past the next character and find the next
-          // breakpoint.
-          breakpoint = strpbrk(breakpoint + 2, breakpoints);
-        } else {
-          assert(*breakpoint == '#');
+        switch (*breakpoint) {
+          case '\0':
+            // Skip directly past the null character.
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+            break;
+          case '\\':
+            // If we hit escapes, then we need to treat the next token
+            // literally. In this case we'll skip past the next character and
+            // find the next breakpoint.
+            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+            break;
+          case '#': {
+            yp_token_type_t type = lex_interpolation(parser, breakpoint);
+            if (type != YP_TOKEN_NOT_PROVIDED) return type;
 
-          yp_token_type_t type = lex_interpolation(parser, breakpoint);
-          if (type != YP_TOKEN_NOT_PROVIDED) return type;
-
-          // If we haven't returned at this point then we had something that
-          // looked like an interpolated class or instance variable like "#@"
-          // but wasn't actually. In this case we'll just skip to the next
-          // breakpoint.
-          breakpoint = strpbrk(parser->current.end, breakpoints);
+            // If we haven't returned at this point then we had something that
+            // looked like an interpolated class or instance variable like "#@"
+            // but wasn't actually. In this case we'll just skip to the next
+            // breakpoint.
+            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+            break;
+          }
+          default:
+            assert(false && "unreachable");
         }
       }
 
@@ -3930,10 +3946,14 @@ lex_token_type(yp_parser_t *parser) {
         breakpoints[2] = '\0';
       }
 
-      char *breakpoint = strpbrk(parser->current.end, breakpoints);
+      const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
 
       while (breakpoint != NULL) {
         switch (*breakpoint) {
+          case '\0':
+            // Skip directly past the null character.
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+            break;
           case '\n': {
             const char *start = breakpoint + 1;
             if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
@@ -3969,14 +3989,14 @@ lex_token_type(yp_parser_t *parser) {
 
             // Otherwise we hit a newline and it wasn't followed by a
             // terminator, so we can continue parsing.
-            breakpoint = strpbrk(breakpoint + 1, breakpoints);
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
           }
           case '\\':
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = strpbrk(breakpoint + 2, breakpoints);
+            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
             break;
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
@@ -3986,9 +4006,11 @@ lex_token_type(yp_parser_t *parser) {
             // that looked like an interpolated class or instance variable
             // like "#@" but wasn't actually. In this case we'll just skip
             // to the next breakpoint.
-            breakpoint = strpbrk(parser->current.end, breakpoints);
+            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
             break;
           }
+          default:
+            assert(false && "unreachable");
         }
       }
 
@@ -4061,7 +4083,7 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     start += 9;
     start += yp_strspn_inline_whitespace(start, parser->end - start);
 
-    const char *end = strpbrk(start, " \t\f\r\v\n");
+    const char *end = yp_strpbrk(start, " \t\f\r\v\n", parser->end - start);
     end = end == NULL ? parser->end : end;
     size_t width = end - start;
 
@@ -6274,8 +6296,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 min_whitespace = cur_whitespace;
               }
 
-              cur_char = strpbrk(cur_char + 1, "\n");
-
+              cur_char = memchr(cur_char + 1, '\n', parser->end - (cur_char + 1));
               if (cur_char) {
                 cur_char++;
               }

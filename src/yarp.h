@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "util/yp_buffer.h"
+#include "util/yp_strpbrk.h"
 #include "util/yp_strspn.h"
 #include "ast.h"
 #include "diagnostic.h"
