@@ -136,6 +136,13 @@ module YARP
       assert_location(CallNode, "foo::(bar, baz)")
     end
 
+    test "CaseNode" do
+      assert_location(CaseNode, "case foo; when bar; end")
+      assert_location(CaseNode, "case foo; when bar; else; end")
+      assert_location(CaseNode, "case foo; when bar; when baz; end")
+      assert_location(CaseNode, "case foo; when bar; when baz; else; end")
+    end
+
     test "ClassVariableReadNode" do
       assert_location(ClassVariableReadNode, "@@foo")
     end

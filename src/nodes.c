@@ -604,6 +604,53 @@ yp_call_node_vcall_p(yp_node_t *node) {
   );
 }
 
+// Allocate and initialize a new CaseNode node.
+yp_node_t *
+yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_node_t *consequent, const yp_token_t *end_keyword) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_CASE_NODE,
+    .location = {
+      .start = case_keyword->start,
+      .end = end_keyword->end
+    },
+    .as.case_node = {
+      .predicate = predicate,
+      .consequent = consequent,
+      .case_keyword_loc = YP_LOCATION_TOKEN_VALUE(case_keyword),
+      .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
+    }
+  };
+
+  yp_node_list_init(&node->as.case_node.conditions);
+  return node;
+}
+
+// Append a new condition to a CaseNode node.
+void
+yp_case_node_condition_append(yp_node_t *node, yp_node_t *condition) {
+  assert(node->type == YP_NODE_CASE_NODE);
+  yp_node_list_append2(&node->as.case_node.conditions, condition);
+  node->location.end = condition->location.end;
+}
+
+// Set the consequent of a CaseNode node.
+void
+yp_case_node_consequent_set(yp_node_t *node, yp_node_t *consequent) {
+  assert(node->type == YP_NODE_CASE_NODE);
+  node->as.case_node.consequent = consequent;
+  node->location.end = consequent->location.end;
+}
+
+// Set the end location for a CaseNode node.
+void
+yp_case_node_end_keyword_loc_set(yp_node_t *node, const yp_token_t *end_keyword) {
+  assert(node->type == YP_NODE_CASE_NODE);
+  node->location.end = end_keyword->end;
+  node->as.case_node.end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
+}
+
 // Allocate and initialize a new ClassVariableReadNode node.
 yp_node_t *
 yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {

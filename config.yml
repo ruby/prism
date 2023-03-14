@@ -489,17 +489,16 @@ nodes:
           ^^^^^^^
   - name: CaseNode
     child_nodes:
-      - name: case_keyword
-        type: token
       - name: predicate
         type: node?
       - name: conditions
         type: node[]
       - name: consequent
         type: node?
-      - name: end_keyword
-        type: token
-    location: case_keyword->end_keyword
+      - name: case_keyword_loc
+        type: location
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents the use of a case statement.
 

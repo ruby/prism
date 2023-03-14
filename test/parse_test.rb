@@ -6691,7 +6691,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "basic case when syntax" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6699,7 +6698,8 @@ class ParseTest < Test::Unit::TestCase
          nil
        )],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case :hi\nwhen :hi\nend"
@@ -6707,11 +6707,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "case without predicate" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       nil,
       [WhenNode(KEYWORD_WHEN("when"), [expression("foo == bar")], nil)],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, <<~RUBY
@@ -6723,7 +6723,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "case with else" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6735,7 +6734,8 @@ class ParseTest < Test::Unit::TestCase
         StatementsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]),
         KEYWORD_END("end")
       ),
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case :hi\nwhen :hi\nelse\n:b\nend"
@@ -6743,7 +6743,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "case when statements" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       TrueNode(),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6782,7 +6781,8 @@ class ParseTest < Test::Unit::TestCase
          )
        )],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case true; when true; puts :hi; when false; puts :bye; end"
@@ -6790,7 +6790,6 @@ class ParseTest < Test::Unit::TestCase
 
   test "case with multiple conditions" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       CallNode(nil, nil, IDENTIFIER("this"), nil, nil, nil, nil, "this"),
       [WhenNode(
          KEYWORD_WHEN("when"),
@@ -6798,7 +6797,8 @@ class ParseTest < Test::Unit::TestCase
          nil
        )],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case this; when FooBar, BazBonk; end"
@@ -6806,11 +6806,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "case when with splat" do
     expected = CaseNode(
-      KEYWORD_CASE("case"),
       nil,
       [WhenNode(KEYWORD_WHEN("when"), [SplatNode(STAR("*"), expression("foo"))], nil)],
       nil,
-      KEYWORD_END("end")
+      Location(),
+      Location()
     )
 
     assert_parses expected, "case; when *foo; end"

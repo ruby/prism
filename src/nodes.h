@@ -11,6 +11,22 @@
 /* Helper functions                                                           */
 /******************************************************************************/
 
+// This is a special out parameter to the parse_arguments_list function that
+// includes opening and closing parentheses in addition to the arguments since
+// it's so common. It is handy to use when passing argument information to one
+// of the call node creation functions.
+typedef struct {
+  yp_token_t opening;
+  yp_node_t *arguments;
+  yp_token_t closing;
+  yp_node_t *block;
+} yp_arguments_t;
+
+// Initialize a stack-allocated yp_arguments_t struct to its default values and
+// return it.
+yp_arguments_t
+yp_arguments(yp_parser_t *parser);
+
 // Initiailize a list of nodes.
 void
 yp_node_list_init(yp_node_list_t *node_list);
@@ -111,22 +127,6 @@ yp_block_parameters_node_append_local(yp_node_t *node, const yp_token_t *local);
 yp_node_t *
 yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments);
 
-// This is a special out parameter to the parse_arguments_list function that
-// includes opening and closing parentheses in addition to the arguments since
-// it's so common. It is handy to use when passing argument information to one
-// of the call node creation functions.
-typedef struct {
-  yp_token_t opening;
-  yp_node_t *arguments;
-  yp_token_t closing;
-  yp_node_t *block;
-} yp_arguments_t;
-
-// Initialize a stack-allocated yp_arguments_t struct to its default values and
-// return it.
-yp_arguments_t
-yp_arguments();
-
 // Allocate and initialize a new CallNode node. This sets everything to NULL or
 // YP_TOKEN_NOT_PROVIDED as appropriate such that its values can be overridden
 // in the various specializations of this function.
@@ -172,6 +172,22 @@ yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message);
 // without a receiver that could also have been a local variable read).
 bool
 yp_call_node_vcall_p(yp_node_t *node);
+
+// Allocate and initialize a new CaseNode node.
+yp_node_t *
+yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_node_t *consequent, const yp_token_t *end_keyword);
+
+// Append a new condition to a CaseNode node.
+void
+yp_case_node_condition_append(yp_node_t *node, yp_node_t *condition);
+
+// Set the consequent of a CaseNode node.
+void
+yp_case_node_consequent_set(yp_node_t *node, yp_node_t *consequent);
+
+// Set the end location for a CaseNode node.
+void
+yp_case_node_end_keyword_loc_set(yp_node_t *node, const yp_token_t *end_keyword);
 
 // Allocate and initialize a new ClassVariableReadNode node.
 yp_node_t *
