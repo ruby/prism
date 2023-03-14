@@ -230,6 +230,35 @@ module YARP
       assert_location(RangeNode, "1...")
     end
 
+    test "RationalNode" do
+      assert_location(RationalNode, "1r")
+      assert_location(RationalNode, "1.0r")
+    end
+
+    test "RedoNode" do
+      assert_location(RedoNode, "redo")
+    end
+
+    test "RetryNode" do
+      assert_location(RetryNode, "retry")
+    end
+
+    test "SelfNode" do
+      assert_location(SelfNode, "self")
+    end
+
+    test "SourceEncodingNode" do
+      assert_location(SourceEncodingNode, "__ENCODING__")
+    end
+
+    test "SourceFileNode" do
+      assert_location(SourceFileNode, "__FILE__")
+    end
+
+    test "SourceLineNode" do
+      assert_location(SourceLineNode, "__LINE__")
+    end
+
     test "SuperNode" do
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")
@@ -239,6 +268,10 @@ module YARP
       assert_location(SuperNode, "super(foo, bar)")
 
       assert_location(SuperNode, "super() {}")
+    end
+
+    test "TrueNode" do
+      assert_location(TrueNode, "true")
     end
 
     test "UndefNode" do
