@@ -134,3 +134,74 @@ task lex: :compile do
   puts("\n\n#{lex_task.summary}")
   exit(1) if lex_task.failed?
 end
+
+desc "Lex against the most recent version of various rubygems"
+task "lex:rubygems": :compile do
+  $:.unshift(File.expand_path("../lib", __dir__))
+  require "net/http"
+  require "ripper"
+  require "rubygems/package"
+  require "tmpdir"
+  require "yarp"
+
+  queue = Queue.new
+  Gem::SpecFetcher.new.available_specs(:latest).first.each do |source, gems|
+    gems.each do |tuple|
+      gem_name = File.basename(tuple.spec_name, ".gemspec")
+      gem_url = source.uri.merge("/gems/#{gem_name}.gem")
+      queue << [gem_name, gem_url]
+    end
+  end
+
+  warn_failing = ENV.fetch("VERBOSE", false)
+  passing = 0
+  failing = 0
+
+  workers =
+    ENV.fetch("WORKERS", 16).times.map do
+      Thread.new do
+        Net::HTTP.start("rubygems.org", 443, use_ssl: true) do |http|
+          until queue.empty?
+            (gem_name, gem_url) = queue.shift
+
+            http.request(Net::HTTP::Get.new(gem_url)) do |response|
+              # Skip unexpected responses
+              next unless response.is_a?(Net::HTTPSuccess)
+
+              Dir.mktmpdir do |directory|
+                filepath = File.join(directory, "#{gem_name}.gem")
+                File.write(filepath, response.body)
+
+                begin
+                  Gem::Package.new(filepath).extract_files(directory, "[!~]*")
+
+                  lex_task = YARP::LexTask.new([])
+                  Dir[File.join(directory, "**", "*.rb")].each do |filepath|
+                    lex_task.compare(filepath)
+                  end
+
+                  if lex_task.failed?
+                    failing += 1
+                    print("\033[31mE\033[0m")
+                  else
+                    passing += 1
+                    warn(gem_name) if warn_failing
+                    print("\033[32m.\033[0m")
+                  end
+                rescue
+                  # If the gem fails to extract, we'll just skip it
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+  workers.each(&:join)
+  puts(<<~RESULTS)
+    PASSING=#{passing}
+    FAILING=#{failing}
+    PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
+  RESULTS
+end
