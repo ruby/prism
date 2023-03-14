@@ -1,0 +1,20 @@
+DefNode(
+  IDENTIFIER("a"),
+  nil,
+  ParametersNode(
+    [],
+    [],
+    nil,
+    [KeywordParameterNode(LABEL("b:"), nil)],
+    nil,
+    nil
+  ),
+  StatementsNode([]),
+  Scope([LABEL("b")]),
+  (0..3),
+  nil,
+  nil,
+  nil,
+  nil,
+  (10..13)
+)

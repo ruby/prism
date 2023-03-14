@@ -1,0 +1,31 @@
+DefNode(
+  IDENTIFIER("a"),
+  nil,
+  ParametersNode([], [], nil, [], nil, nil),
+  BeginNode(
+    nil,
+    StatementsNode([]),
+    RescueNode(
+      KEYWORD_RESCUE("rescue"),
+      [],
+      nil,
+      nil,
+      StatementsNode([]),
+      nil
+    ),
+    ElseNode(KEYWORD_ELSE("else"), StatementsNode([]), SEMICOLON(";")),
+    EnsureNode(
+      KEYWORD_ENSURE("ensure"),
+      StatementsNode([]),
+      KEYWORD_END("end")
+    ),
+    KEYWORD_END("end")
+  ),
+  Scope([]),
+  (0..3),
+  nil,
+  nil,
+  nil,
+  nil,
+  (29..32)
+)

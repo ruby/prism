@@ -1,0 +1,10 @@
+CallNode(
+  ConstantReadNode(),
+  DOT("."),
+  CONSTANT("Integer"),
+  PARENTHESIS_LEFT("("),
+  ArgumentsNode([IntegerNode()]),
+  PARENTHESIS_RIGHT(")"),
+  nil,
+  "Integer"
+)

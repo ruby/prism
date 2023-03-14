@@ -1,0 +1,1 @@
+ArrayNode([], BRACKET_LEFT_ARRAY("["), BRACKET_RIGHT("]"))

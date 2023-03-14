@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  PIPE("|"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "|"
+)

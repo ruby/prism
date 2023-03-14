@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  LESS("<"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "<"
+)

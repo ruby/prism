@@ -1,0 +1,1 @@
+def self.Array_function; end

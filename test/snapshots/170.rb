@@ -1,0 +1,20 @@
+DefNode(
+  PLUS("+"),
+  nil,
+  ParametersNode(
+    [],
+    [],
+    nil,
+    [],
+    KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("b")),
+    nil
+  ),
+  StatementsNode([]),
+  Scope([IDENTIFIER("b")]),
+  (0..3),
+  nil,
+  nil,
+  nil,
+  nil,
+  (10..13)
+)

@@ -1,0 +1,21 @@
+CallNode(
+  nil,
+  nil,
+  IDENTIFIER("foo"),
+  nil,
+  ArgumentsNode(
+    [CallNode(
+       CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+       nil,
+       TILDE("~"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "~"
+     )]
+  ),
+  nil,
+  nil,
+  "foo"
+)

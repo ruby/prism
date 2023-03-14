@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  EQUAL_EQUAL("=="),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "=="
+)

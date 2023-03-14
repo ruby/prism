@@ -1,0 +1,1 @@
+ConstantPathWriteNode(ConstantReadNode(), EQUAL("="), IntegerNode())

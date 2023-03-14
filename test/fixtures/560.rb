@@ -1,0 +1,1 @@
+while true; 1; end

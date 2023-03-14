@@ -1,0 +1,15 @@
+AliasNode(
+  SymbolNode(
+    SYMBOL_BEGIN(":'"),
+    STRING_CONTENT("abc"),
+    STRING_END("'"),
+    "abc"
+  ),
+  SymbolNode(
+    SYMBOL_BEGIN(":'"),
+    STRING_CONTENT("def"),
+    STRING_END("'"),
+    "def"
+  ),
+  (0..5)
+)

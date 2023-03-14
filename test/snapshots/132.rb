@@ -1,0 +1,28 @@
+CallNode(
+  nil,
+  nil,
+  IDENTIFIER("a"),
+  PARENTHESIS_LEFT("("),
+  ArgumentsNode(
+    [HashNode(
+       nil,
+       [AssocSplatNode(
+          CallNode(
+            nil,
+            nil,
+            IDENTIFIER("kwargs"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "kwargs"
+          ),
+          (2..4)
+        )],
+       nil
+     )]
+  ),
+  PARENTHESIS_RIGHT(")"),
+  nil,
+  "a"
+)

@@ -1,0 +1,1 @@
+def a; rescue; else; ensure; end

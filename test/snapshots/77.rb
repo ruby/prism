@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  BANG_EQUAL("!="),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "!="
+)

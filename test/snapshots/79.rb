@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  PERCENT("%"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "%"
+)

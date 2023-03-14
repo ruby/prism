@@ -1,0 +1,1 @@
+case true; when true; puts :hi; when false; puts :bye; end

@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  SLASH("/"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "/"
+)
