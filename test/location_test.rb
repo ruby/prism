@@ -225,6 +225,10 @@ module YARP
       assert_location(NilNode, "nil")
     end
 
+    test "NoKeywordsParameterNode" do
+      assert_location(NoKeywordsParameterNode, "def foo(**nil); end", 8...13) { |node| node.parameters.keyword_rest }
+    end
+
     test "PostExecutionNode" do
       assert_location(PostExecutionNode, "END { foo }")
     end
