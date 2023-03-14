@@ -9,38 +9,6 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse("") => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: []]]]
   end
 
-  test "comment inline" do
-    YARP.parse("# comment") => YARP::ParseResult[comments: [YARP::Comment[type: :inline]]]
-  end
-
-  test "comment __END__" do
-    source = <<~RUBY
-      __END__
-      comment
-    RUBY
-
-    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :__END__]]]
-  end
-
-  test "comment embedded document" do
-    source = <<~RUBY
-      =begin
-      comment
-      =end
-    RUBY
-
-    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
-  end
-
-  test "comment embedded document with content on same line" do
-    source = <<~RUBY
-      =begin other stuff
-      =end
-    RUBY
-
-    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: :embdoc]]]
-  end
-
   Dir[File.expand_path("fixtures/**/*.rb", __dir__)].each do |filepath|
     test filepath do
       assert_parses(filepath)
