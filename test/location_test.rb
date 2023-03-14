@@ -192,6 +192,18 @@ module YARP
       assert_location(InstanceVariableWriteNode, "@foo = bar")
     end
 
+    test "IntegerNode" do
+      assert_location(IntegerNode, "0")
+      assert_location(IntegerNode, "1")
+      assert_location(IntegerNode, "1_000")
+      assert_location(IntegerNode, "0x1")
+      assert_location(IntegerNode, "0x1_000")
+      assert_location(IntegerNode, "0b1")
+      assert_location(IntegerNode, "0b1_000")
+      assert_location(IntegerNode, "0o1")
+      assert_location(IntegerNode, "0o1_000")
+    end
+
     test "NextNode" do
       assert_location(NextNode, "next")
       assert_location(NextNode, "next foo")
