@@ -3344,7 +3344,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         // arguments node, parse the argument, and add it to the list.
         if (value) {
           target->as.call_node.arguments = yp_arguments_node_create(parser);
-          yp_arguments_node_append(target->as.call_node.arguments, value);
+          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
         }
 
         // The method name needs to change. If we previously had foo, we now
@@ -3372,7 +3372,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         target->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
 
         if (value != NULL) {
-          yp_arguments_node_append(target->as.call_node.arguments, value);
+          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
           target->location.end = value->location.end;
         }
 
@@ -3714,7 +3714,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
       }
     }
 
-    yp_arguments_node_append(arguments, argument);
+    yp_arguments_node_arguments_append(arguments, argument);
 
     // If parsing the argument failed, we need to stop parsing arguments.
     if (argument->type == YP_NODE_MISSING_NODE || parser->recovering) break;

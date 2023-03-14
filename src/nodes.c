@@ -139,7 +139,7 @@ yp_arguments_node_size(yp_node_t *node) {
 
 // Append an argument to an arguments node.
 void
-yp_arguments_node_append(yp_node_t *arguments, yp_node_t *argument) {
+yp_arguments_node_arguments_append(yp_node_t *arguments, yp_node_t *argument) {
   if (yp_arguments_node_size(arguments) == 0) {
     arguments->location.start = argument->location.start;
   }
@@ -459,7 +459,7 @@ yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t 
   node->as.call_node.message = *operator;
 
   yp_node_t *arguments = yp_arguments_node_create(parser);
-  yp_arguments_node_append(arguments, argument);
+  yp_arguments_node_arguments_append(arguments, argument);
   node->as.call_node.arguments = arguments;
 
   yp_string_shared_init(&node->as.call_node.name, operator->start, operator->end);
