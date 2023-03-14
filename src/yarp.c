@@ -1153,7 +1153,7 @@ yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, co
 }
 
 // Allocate and initialize a new OrNode node.
-yp_node_t *
+static yp_node_t *
 yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
   yp_node_t *node = yp_node_alloc(parser);
 
