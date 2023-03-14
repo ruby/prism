@@ -221,6 +221,10 @@ module YARP
       assert_location(NextNode, "next(foo)")
     end
 
+    test "NilNode" do
+      assert_location(NilNode, "nil")
+    end
+
     test "PostExecutionNode" do
       assert_location(PostExecutionNode, "END { foo }")
     end
