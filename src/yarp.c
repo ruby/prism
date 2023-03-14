@@ -928,7 +928,10 @@ yp_for_node_create(
 
   *node = (yp_node_t) {
     .type = YP_NODE_FOR_NODE,
-    .location = { .start = for_keyword->start, .end = statements->location.end },
+    .location = {
+      .start = for_keyword->start,
+      .end = end_keyword->end
+    },
     .as.for_node = {
       .index = index,
       .collection = collection,
