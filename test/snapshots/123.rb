@@ -1,0 +1,19 @@
+CallNode(
+  CallNode(
+    CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+    DOT("."),
+    IDENTIFIER("bar"),
+    nil,
+    nil,
+    nil,
+    nil,
+    "bar"
+  ),
+  AMPERSAND_DOT("&."),
+  IDENTIFIER("baz"),
+  nil,
+  nil,
+  nil,
+  nil,
+  "baz"
+)

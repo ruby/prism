@@ -1,0 +1,17 @@
+CallNode(
+  nil,
+  nil,
+  IDENTIFIER("foo"),
+  nil,
+  ArgumentsNode(
+    [RegularExpressionNode(
+       REGEXP_BEGIN("/"),
+       STRING_CONTENT("bar"),
+       REGEXP_END("/"),
+       "bar"
+     )]
+  ),
+  nil,
+  nil,
+  "foo"
+)

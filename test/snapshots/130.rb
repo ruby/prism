@@ -1,0 +1,21 @@
+CallNode(
+  nil,
+  nil,
+  IDENTIFIER("some_func"),
+  nil,
+  ArgumentsNode(
+    [IntegerNode(),
+     HashNode(
+       nil,
+       [AssocNode(
+          SymbolNode(nil, LABEL("kwarg"), LABEL_END(":"), "kwarg"),
+          IntegerNode(),
+          nil
+        )],
+       nil
+     )]
+  ),
+  nil,
+  nil,
+  "some_func"
+)

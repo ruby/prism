@@ -1,0 +1,1 @@
+x.reduce(0) { |x, memo| memo += x }

@@ -1,0 +1,16 @@
+ParenthesesNode(
+  StatementsNode(
+    [CallNode(
+       IntegerNode(),
+       nil,
+       PLUS("+"),
+       nil,
+       ArgumentsNode([IntegerNode()]),
+       nil,
+       nil,
+       "+"
+     )]
+  ),
+  (0..1),
+  (6..7)
+)

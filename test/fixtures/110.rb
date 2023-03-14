@@ -1,0 +1,3 @@
+foo do
+rescue
+end

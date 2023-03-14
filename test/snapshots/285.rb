@@ -1,0 +1,23 @@
+IfNode(
+  KEYWORD_IF("if"),
+  TrueNode(),
+  StatementsNode([TrueNode()]),
+  IfNode(
+    KEYWORD_ELSIF("elsif"),
+    FalseNode(),
+    StatementsNode([FalseNode()]),
+    IfNode(
+      KEYWORD_ELSIF("elsif"),
+      NilNode(),
+      StatementsNode([NilNode()]),
+      ElseNode(
+        KEYWORD_ELSE("else"),
+        StatementsNode([SelfNode()]),
+        KEYWORD_END("end")
+      ),
+      nil
+    ),
+    nil
+  ),
+  KEYWORD_END("end")
+)

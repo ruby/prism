@@ -1,0 +1,2 @@
+def @@var.a
+end

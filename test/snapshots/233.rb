@@ -1,0 +1,20 @@
+DefNode(
+  IDENTIFIER("a"),
+  nil,
+  ParametersNode(
+    [RequiredParameterNode(IDENTIFIER("b"))],
+    [],
+    nil,
+    [],
+    nil,
+    nil
+  ),
+  StatementsNode([]),
+  Scope([IDENTIFIER("b")]),
+  (0..3),
+  nil,
+  nil,
+  nil,
+  nil,
+  (8..11)
+)

@@ -1,0 +1,21 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  PLUS("+"),
+  nil,
+  ArgumentsNode(
+    [CallNode(
+       IntegerNode(),
+       nil,
+       STAR("*"),
+       nil,
+       ArgumentsNode([IntegerNode()]),
+       nil,
+       nil,
+       "*"
+     )]
+  ),
+  nil,
+  nil,
+  "+"
+)

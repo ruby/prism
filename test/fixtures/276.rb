@@ -1,0 +1,3 @@
+<<-EOF #comment
+  a
+EOF

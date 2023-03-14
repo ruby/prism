@@ -1,0 +1,2 @@
+class << not foo
+end

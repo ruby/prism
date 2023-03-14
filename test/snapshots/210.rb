@@ -1,0 +1,25 @@
+DefNode(
+  IDENTIFIER("foo"),
+  nil,
+  ParametersNode(
+    [RequiredDestructuredParameterNode(
+       [RequiredParameterNode(IDENTIFIER("bar")),
+        RequiredParameterNode(IDENTIFIER("baz"))],
+       PARENTHESIS_LEFT("("),
+       PARENTHESIS_RIGHT(")")
+     )],
+    [],
+    nil,
+    [],
+    nil,
+    nil
+  ),
+  StatementsNode([]),
+  Scope([IDENTIFIER("bar"), IDENTIFIER("baz")]),
+  (0..3),
+  nil,
+  (7..8),
+  (18..19),
+  nil,
+  (20..23)
+)

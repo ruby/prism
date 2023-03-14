@@ -1,0 +1,1 @@
+alias foo if

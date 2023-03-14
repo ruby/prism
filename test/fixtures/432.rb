@@ -1,0 +1,1 @@
+class A; class << self; ensure; end; end

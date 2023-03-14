@@ -1,0 +1,22 @@
+CallNode(
+  StringNode(
+    STRING_BEGIN("\""),
+    STRING_CONTENT("foo"),
+    STRING_END("\""),
+    "foo"
+  ),
+  nil,
+  PLUS("+"),
+  nil,
+  ArgumentsNode(
+    [StringNode(
+       STRING_BEGIN("\""),
+       STRING_CONTENT("bar"),
+       STRING_END("\""),
+       "bar"
+     )]
+  ),
+  nil,
+  nil,
+  "+"
+)

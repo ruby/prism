@@ -1,0 +1,2 @@
+def self.a
+end

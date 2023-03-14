@@ -1,0 +1,10 @@
+CallNode(
+  nil,
+  nil,
+  IDENTIFIER("a"),
+  PARENTHESIS_LEFT("("),
+  nil,
+  PARENTHESIS_RIGHT(")"),
+  nil,
+  "a"
+)

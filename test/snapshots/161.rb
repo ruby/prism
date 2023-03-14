@@ -1,0 +1,10 @@
+CallNode(
+  nil,
+  nil,
+  CONSTANT("Foo"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "Foo"
+)

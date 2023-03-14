@@ -1,0 +1,1 @@
+hi 123, { :there => :friend, **{}, whatup: :dog }

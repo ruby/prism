@@ -1,0 +1,19 @@
+SingletonClassNode(
+  Scope([]),
+  KEYWORD_CLASS("class"),
+  LESS_LESS("<<"),
+  SelfNode(),
+  StatementsNode(
+    [CallNode(
+       IntegerNode(),
+       nil,
+       PLUS("+"),
+       nil,
+       ArgumentsNode([IntegerNode()]),
+       nil,
+       nil,
+       "+"
+     )]
+  ),
+  KEYWORD_END("end")
+)

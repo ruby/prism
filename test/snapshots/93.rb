@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  EQUAL_TILDE("=~"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "=~"
+)

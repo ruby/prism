@@ -1,0 +1,2 @@
+def true.a
+end

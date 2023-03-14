@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  CARET("^"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "^"
+)

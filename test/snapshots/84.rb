@@ -1,0 +1,10 @@
+CallNode(
+  IntegerNode(),
+  nil,
+  MINUS("-"),
+  nil,
+  ArgumentsNode([IntegerNode()]),
+  nil,
+  nil,
+  "-"
+)

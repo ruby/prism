@@ -1,0 +1,1 @@
+defined?(foo and bar)
