@@ -4103,12 +4103,12 @@ parse_block(yp_parser_t *parser) {
 
   yp_state_stack_push(&parser->accepts_block_stack, true);
   yp_parser_scope_push(parser, false);
-  yp_node_t *arguments = NULL;
+  yp_node_t *parameters = NULL;
 
   if (accept(parser, YP_TOKEN_PIPE)) {
-    arguments = parse_block_parameters(parser);
+    parameters = parse_block_parameters(parser);
     parser->command_start = true;
-    expect(parser, YP_TOKEN_PIPE, "Expected block arguments to end with '|'.");
+    expect(parser, YP_TOKEN_PIPE, "Expected block parameters to end with '|'.");
   }
 
   accept(parser, YP_TOKEN_NEWLINE);
@@ -4137,7 +4137,7 @@ parse_block(yp_parser_t *parser) {
   yp_parser_scope_pop(parser);
   yp_state_stack_pop(&parser->accepts_block_stack);
 
-  return yp_node_block_node_create(parser, &opening, arguments, statements, &parser->previous);
+  return yp_block_node_create(parser, &opening, parameters, statements, &parser->previous);
 }
 
 // Parse a list of arguments and their surrounding parentheses if they are

@@ -91,6 +91,10 @@ yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword);
 yp_node_t *
 yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression);
 
+// Allocate and initialize new BlockNode node.
+yp_node_t *
+yp_block_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *parameters, yp_node_t *statements, const yp_token_t *closing);
+
 // Allocate and initialize a new BlockParameterNode node.
 yp_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *oper);

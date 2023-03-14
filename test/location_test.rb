@@ -47,6 +47,7 @@ module YARP
 
     test "BlockNode" do
       assert_location(BlockNode, "foo {}", 4...6, &:block)
+      assert_location(BlockNode, "foo do end", 4...10, &:block)
     end
 
     test "BlockParameterNode" do

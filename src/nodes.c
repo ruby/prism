@@ -293,6 +293,25 @@ yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, y
   return node;
 }
 
+// Allocate and initialize a new BlockNode node.
+yp_node_t *
+yp_block_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *parameters, yp_node_t *statements, const yp_token_t *closing) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_BLOCK_NODE,
+    .location = { .start = opening->start, .end = closing->end },
+    .as.block_node = {
+      .parameters = parameters,
+      .statements = statements,
+      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new BlockParameterNode node.
 yp_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {

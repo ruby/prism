@@ -226,10 +226,10 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
-        MISSING("")
+        Location(),
+        Location()
       ),
       "each"
     )
@@ -388,7 +388,6 @@ class ErrorsTest < Test::Unit::TestCase
            nil,
            nil,
            BlockNode(
-             KEYWORD_DO("do"),
              nil,
              StatementsNode(
                [ModuleNode(
@@ -399,7 +398,8 @@ class ErrorsTest < Test::Unit::TestCase
                   KEYWORD_END("end")
                 )]
              ),
-             KEYWORD_END("end")
+             Location(),
+             Location()
            ),
            "bar"
          )]

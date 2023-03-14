@@ -2455,7 +2455,7 @@ class ParseTest < Test::Unit::TestCase
                 nil,
                 nil,
                 nil,
-                BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                BlockNode(nil, nil, Location(), Location()),
                 "bar"
               )]
            ),
@@ -5094,7 +5094,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         nil,
         BeginNode(
           nil,
@@ -5104,7 +5103,8 @@ class ParseTest < Test::Unit::TestCase
           nil,
           KEYWORD_END("end")
         ),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5125,7 +5125,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         nil,
         StatementsNode(
           [CallNode(
@@ -5136,7 +5135,6 @@ class ParseTest < Test::Unit::TestCase
              nil,
              nil,
              BlockNode(
-               KEYWORD_DO("do"),
                nil,
                StatementsNode(
                  [CallNode(
@@ -5146,16 +5144,18 @@ class ParseTest < Test::Unit::TestCase
                     nil,
                     nil,
                     nil,
-                    BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+                    BlockNode(nil, nil, Location(), Location()),
                     "baz"
                   )]
                ),
-               KEYWORD_END("end")
+               Location(),
+               Location()
              ),
              "bar"
            )]
         ),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5179,7 +5179,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         BlockParametersNode(
           ParametersNode(
             [],
@@ -5192,7 +5191,8 @@ class ParseTest < Test::Unit::TestCase
           []
         ),
         nil,
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5227,10 +5227,10 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("bar")]),
       BRACKET_RIGHT("]"),
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([expression("baz")]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "[]"
     )
@@ -5247,10 +5247,10 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("bar")]),
       BRACKET_RIGHT("]"),
       BlockNode(
-        KEYWORD_DO("do"),
         nil,
         StatementsNode([expression("baz")]),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "[]"
     )
@@ -5386,10 +5386,10 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([expression("bar")]),
       BRACKET_RIGHT("]"),
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([expression("baz")]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "[]"
     )
@@ -5455,7 +5455,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       nil,
-      BlockNode(BRACE_LEFT("{"), nil, nil, BRACE_RIGHT("}")),
+      BlockNode(nil, nil, Location(), Location()),
       "each"
     )
 
@@ -5471,7 +5471,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x"))],
@@ -5484,7 +5483,8 @@ class ParseTest < Test::Unit::TestCase
           []
         ),
         nil,
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5501,7 +5501,6 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x"))],
@@ -5518,7 +5517,8 @@ class ParseTest < Test::Unit::TestCase
           []
         ),
         StatementsNode([LocalVariableReadNode(IDENTIFIER("x"))]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -5535,7 +5535,6 @@ class ParseTest < Test::Unit::TestCase
       ArgumentsNode([IntegerNode()]),
       PARENTHESIS_RIGHT(")"),
       BlockNode(
-        BRACE_LEFT("{"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("x")),
@@ -5555,7 +5554,8 @@ class ParseTest < Test::Unit::TestCase
             LocalVariableReadNode(IDENTIFIER("x"))
           )]
         ),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "reduce"
     )
@@ -6552,7 +6552,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       nil,
-      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      BlockNode(nil, nil, Location(), Location()),
       "foo"
     )
 
@@ -6567,7 +6567,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ArgumentsNode([expression("bar")]),
       nil,
-      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      BlockNode(nil, nil, Location(), Location()),
       "foo"
     )
 
@@ -6582,7 +6582,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       ArgumentsNode([expression("bar baz")]),
       nil,
-      BlockNode(KEYWORD_DO("do"), nil, nil, KEYWORD_END("end")),
+      BlockNode(nil, nil, Location(), Location()),
       "foo"
     )
 
@@ -6659,7 +6659,6 @@ class ParseTest < Test::Unit::TestCase
       ]),
       nil,
       BlockNode(
-        KEYWORD_DO("do"),
         BlockParametersNode(
           ParametersNode(
             [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))],
@@ -6681,7 +6680,8 @@ class ParseTest < Test::Unit::TestCase
             nil,
             "puts"
           )]),
-        KEYWORD_END("end")
+        Location(),
+        Location()
       ),
       "foo"
     )
@@ -6825,10 +6825,10 @@ class ParseTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        BRACE_LEFT("{"),
         nil,
         StatementsNode([GlobalVariableReadNode(BACK_REFERENCE("$&"))]),
-        BRACE_RIGHT("}")
+        Location(),
+        Location()
       ),
       "map"
     )
@@ -6860,10 +6860,10 @@ class ParseTest < Test::Unit::TestCase
         nil,
         nil,
         BlockNode(
-          BRACE_LEFT("{"),
           nil,
           StatementsNode([BreakNode(ArgumentsNode([IntegerNode()]), Location())]),
-          BRACE_RIGHT("}")
+          Location(),
+          Location()
         ),
         "foo"
       ),
@@ -6888,7 +6888,6 @@ class ParseTest < Test::Unit::TestCase
         nil,
         nil,
         BlockNode(
-          BRACE_LEFT("{"),
           BlockParametersNode(
             ParametersNode(
               [RequiredParameterNode(IDENTIFIER("a"))],
@@ -6901,7 +6900,8 @@ class ParseTest < Test::Unit::TestCase
             []
           ),
           StatementsNode([BreakNode(nil, Location())]),
-          BRACE_RIGHT("}")
+          Location(),
+          Location()
         ),
         "foo"
       ),

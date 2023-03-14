@@ -408,15 +408,14 @@ nodes:
           ^^^^^^^^^^
   - name: BlockNode
     child_nodes:
-      - name: start_keyword
-        type: token
-      - name: arguments
+      - name: parameters
         type: node?
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
-    location: start_keyword->end_keyword
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents a block of ruby code.
 
