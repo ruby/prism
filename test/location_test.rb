@@ -179,6 +179,11 @@ module YARP
       assert_location(ForwardingSuperNode, "super {}")
     end
 
+    test "ImaginaryNode" do
+      assert_location(ImaginaryNode, "1i")
+      assert_location(ImaginaryNode, "1ri")
+    end
+
     test "InstanceVariableReadNode" do
       assert_location(InstanceVariableReadNode, "@foo")
     end
