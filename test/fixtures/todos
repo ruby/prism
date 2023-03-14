@@ -1,3 +1,0 @@
-ship this PR
-break out actual test files (string.rb etc)
-write testing.md and describe new testing setup, and rake lex, bin/lex, bin/parse
