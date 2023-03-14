@@ -51,8 +51,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias bare" do
     expected = AliasNode(
-      SymbolNode(nil, IDENTIFIER("foo"), nil),
-      SymbolNode(nil, IDENTIFIER("bar"), nil),
+      SymbolNode(nil, IDENTIFIER("foo"), nil, "foo"),
+      SymbolNode(nil, IDENTIFIER("bar"), nil, "bar"),
       Location()
     )
 
@@ -61,8 +61,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias symbols" do
     expected = AliasNode(
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil),
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil, "foo"),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil, "bar"),
       Location()
     )
 
@@ -71,8 +71,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias symbol operator" do
     expected = AliasNode(
-      SymbolNode(SYMBOL_BEGIN(":"), EQUAL_EQUAL("=="), nil),
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("eql?"), nil),
+      SymbolNode(SYMBOL_BEGIN(":"), EQUAL_EQUAL("=="), nil, "=="),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("eql?"), nil, "eql?"),
       Location()
     )
 
@@ -138,11 +138,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "array literal with newlines" do
     expected = ArrayNode(
-      [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil),
+      [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c"),
         IntegerNode(),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil)],
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil, "d")],
       BRACKET_LEFT_ARRAY("["),
       BRACKET_RIGHT("]")
     )
@@ -152,11 +152,11 @@ class ParseTest < Test::Unit::TestCase
 
   test "array literal with newlines without trailing comma" do
     expected = ArrayNode(
-      [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil),
+      [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c"),
         IntegerNode(),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil)],
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil, "d")],
       BRACKET_LEFT_ARRAY("["),
       BRACKET_RIGHT("]")
     )
@@ -169,10 +169,10 @@ class ParseTest < Test::Unit::TestCase
       [HashNode(
         nil,
         [AssocNode(
-           SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+           SymbolNode(nil, LABEL("a"), LABEL_END(":"), "a"),
            ArrayNode(
-             [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil)],
+             [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c")],
              BRACKET_LEFT_ARRAY("["),
              BRACKET_RIGHT("]")
            ),
@@ -798,7 +798,7 @@ class ParseTest < Test::Unit::TestCase
          HashNode(
            nil,
            [AssocNode(
-              SymbolNode(nil, LABEL("kwarg"), LABEL_END(":")),
+              SymbolNode(nil, LABEL("kwarg"), LABEL_END(":"), "kwarg"),
               IntegerNode(),
               nil
             )],
@@ -1666,8 +1666,8 @@ class ParseTest < Test::Unit::TestCase
             nil,
             [
               AssocNode(
-                SymbolNode(nil, LABEL("there"), LABEL_END(":")),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                SymbolNode(nil, LABEL("there"), LABEL_END(":"), "there"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil, "friend"),
                 nil
               )
             ],
@@ -1695,8 +1695,8 @@ class ParseTest < Test::Unit::TestCase
             nil,
             [
               AssocNode(
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil, "there"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil, "friend"),
                 EQUAL_GREATER("=>")
               )
             ],
@@ -1723,8 +1723,8 @@ class ParseTest < Test::Unit::TestCase
             nil,
             [
               AssocNode(
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil, "there"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil, "friend"),
                 EQUAL_GREATER("=>")
               ),
               AssocSplatNode(
@@ -1732,8 +1732,8 @@ class ParseTest < Test::Unit::TestCase
                 Location()
               ),
               AssocNode(
-                SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil),
+                SymbolNode(nil, LABEL("whatup"), LABEL_END(":"), "whatup"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil, "dog"),
                 nil
               )
             ],
@@ -1761,8 +1761,8 @@ class ParseTest < Test::Unit::TestCase
             nil,
             [
               AssocNode(
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil, "there"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil, "friend"),
                 EQUAL_GREATER("=>")
               ),
               AssocSplatNode(
@@ -1770,8 +1770,8 @@ class ParseTest < Test::Unit::TestCase
                 Location()
               ),
               AssocNode(
-                SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil),
+                SymbolNode(nil, LABEL("whatup"), LABEL_END(":"), "whatup"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil, "dog"),
                 nil
               )
             ],
@@ -1800,8 +1800,8 @@ class ParseTest < Test::Unit::TestCase
             BRACE_LEFT("{"),
             [
               AssocNode(
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("there"), nil, "there"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("friend"), nil, "friend"),
                 EQUAL_GREATER("=>")
               ),
               AssocSplatNode(
@@ -1809,8 +1809,8 @@ class ParseTest < Test::Unit::TestCase
                 Location()
               ),
               AssocNode(
-                SymbolNode(nil, LABEL("whatup"), LABEL_END(":")),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil),
+                SymbolNode(nil, LABEL("whatup"), LABEL_END(":"), "whatup"),
+                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("dog"), nil, "dog"),
                 nil
               )
             ],
@@ -1993,8 +1993,8 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")]
       ),
       PARENTHESIS_RIGHT(")"),
       nil,
@@ -2011,8 +2011,8 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+         SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")]
       ),
       PARENTHESIS_RIGHT(")"),
       nil,
@@ -2029,12 +2029,12 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
          HashNode(
            nil,
            [AssocNode(
-              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil),
+              SymbolNode(nil, LABEL("b"), LABEL_END(":"), "b"),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c"),
               nil
             )],
            nil
@@ -2952,8 +2952,8 @@ class ParseTest < Test::Unit::TestCase
           IDENTIFIER("foo"),
           nil,
           ArgumentsNode([
-          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")
           ]),
           nil,
           nil,
@@ -3257,7 +3257,7 @@ class ParseTest < Test::Unit::TestCase
       BRACE_LEFT("{"),
       [
         AssocNode(
-          SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+          SymbolNode(nil, LABEL("foo"), LABEL_END(":"), "foo"),
           RangeNode(nil, expression("bar"), Location()),
           nil
         )
@@ -3273,7 +3273,7 @@ class ParseTest < Test::Unit::TestCase
       BRACE_LEFT("{"),
       [
         AssocNode(
-          SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+          SymbolNode(nil, LABEL("foo"), LABEL_END(":"), "foo"),
           RangeNode(nil, expression("bar"), Location()),
           nil
         )
@@ -3361,7 +3361,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "xstring, `, no interpolation" do
-    assert_parses XStringNode(BACKTICK("`"), STRING_CONTENT("foo"), STRING_END("`")), "`foo`"
+    assert_parses XStringNode(BACKTICK("`"), STRING_CONTENT("foo"), STRING_END("`"), "foo"), "`foo`"
   end
 
   test "xstring with interpolation" do
@@ -3382,8 +3382,19 @@ class ParseTest < Test::Unit::TestCase
     assert_parses expected, "`foo \#{bar} baz`"
   end
 
+  test "xstring with unescaped characters" do
+    assert_parses XStringNode(BACKTICK("`"), STRING_CONTENT("f\\oo"), STRING_END("`"), "f\\oo"), "`f\\oo`"
+  end
+
   test "xstring with %x" do
-    assert_parses XStringNode(PERCENT_LOWER_X("%x["), STRING_CONTENT("foo"), STRING_END("]")), "%x[foo]"
+    expected = XStringNode(
+      PERCENT_LOWER_X("%x["),
+      STRING_CONTENT("foo"),
+      STRING_END("]"),
+      "foo"
+    )
+
+    assert_parses expected, "%x[foo]"
   end
 
   test "regular expression after method call" do
@@ -3392,7 +3403,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("foo"),
       nil,
-      ArgumentsNode([RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("bar"), REGEXP_END("/"))]),
+      ArgumentsNode([RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("bar"), REGEXP_END("/"), "bar")]),
       nil,
       nil,
       "foo"
@@ -3402,7 +3413,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "regular expression, /, no interpolation" do
-    assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i")), "/abc/i"
+    assert_parses RegularExpressionNode(REGEXP_BEGIN("/"), STRING_CONTENT("abc"), REGEXP_END("/i"), "abc"), "/abc/i"
   end
 
   test "regular expression with interpolation" do
@@ -3437,7 +3448,18 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "regular expression with %r" do
-    assert_parses RegularExpressionNode(REGEXP_BEGIN("%r{"), STRING_CONTENT("abc"), REGEXP_END("}i")), "%r{abc}i"
+    assert_parses RegularExpressionNode(REGEXP_BEGIN("%r{"), STRING_CONTENT("abc"), REGEXP_END("}i"), "abc"), "%r{abc}i"
+  end
+
+  test "regular expression with escaped characters" do
+    expected = RegularExpressionNode(
+      REGEXP_BEGIN("/"),
+      STRING_CONTENT("a\\b"),
+      REGEXP_END("/"),
+      "a\b"
+    )
+
+    assert_parses expected, "/a\\b/"
   end
 
   test "regular expression with named capture groups" do
@@ -3447,7 +3469,8 @@ class ParseTest < Test::Unit::TestCase
           RegularExpressionNode(
             REGEXP_BEGIN("/"),
             STRING_CONTENT("(?<foo>bar)"),
-            REGEXP_END("/")
+            REGEXP_END("/"),
+            "(?<foo>bar)"
           ),
           nil,
           EQUAL_TILDE("=~"),
@@ -3882,27 +3905,27 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "symbol" do
-    assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil), ":a"
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), ":a"
   end
 
   test "symbol with emoji" do
-    assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("👍"), nil), ":👍"
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("👍"), nil, "👍"), ":👍"
   end
 
   test "symbol with keyword" do
-    assert_parses SymbolNode(SYMBOL_BEGIN(":"), KEYWORD_DO("do"), nil), ":do"
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), KEYWORD_DO("do"), nil, "do"), ":do"
   end
 
   test "symbol with instance variable" do
-    assert_parses SymbolNode(SYMBOL_BEGIN(":"), INSTANCE_VARIABLE("@a"), nil), ":@a"
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), INSTANCE_VARIABLE("@a"), nil, "@a"), ":@a"
   end
 
   test "symbol with class variable" do
-    assert_parses SymbolNode(SYMBOL_BEGIN(":"), CLASS_VARIABLE("@@a"), nil), ":@@a"
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), CLASS_VARIABLE("@@a"), nil, "@@a"), ":@@a"
   end
 
   test "symbol with global variable" do
-    assert_parses SymbolNode(SYMBOL_BEGIN(":"), GLOBAL_VARIABLE("$a"), nil), ":$a"
+    assert_parses SymbolNode(SYMBOL_BEGIN(":"), GLOBAL_VARIABLE("$a"), nil, "$a"), ":$a"
   end
 
   test "symbol with operators" do
@@ -3940,16 +3963,26 @@ class ParseTest < Test::Unit::TestCase
 
     operators.each do |operator, method_name|
       contents = method(method_name).call(operator)
-      assert_parses SymbolNode(SYMBOL_BEGIN(":"), contents, nil), ":#{operator}"
+      assert_parses SymbolNode(SYMBOL_BEGIN(":"), contents, nil, "#{operator}"), ":#{operator}"
     end
+  end
+
+  test "symbol with escaped characters" do
+    expected = ArrayNode(
+      [SymbolNode(nil, STRING_CONTENT("a\\b"), nil, "a\b")],
+      PERCENT_LOWER_I("%i["),
+      STRING_END("]")
+    )
+
+    assert_parses expected, "%i[a\\b]"
   end
 
   test "symbol list" do
     expected = ArrayNode(
       [
-        SymbolNode(nil, STRING_CONTENT("a"), nil),
-        SymbolNode(nil, STRING_CONTENT("b"), nil),
-        SymbolNode(nil, STRING_CONTENT("c"), nil)
+        SymbolNode(nil, STRING_CONTENT("a"), nil, "a"),
+        SymbolNode(nil, STRING_CONTENT("b"), nil, "b"),
+        SymbolNode(nil, STRING_CONTENT("c"), nil, "c")
       ],
       PERCENT_LOWER_I("%i["),
       STRING_END("]")
@@ -3961,10 +3994,10 @@ class ParseTest < Test::Unit::TestCase
   test "symbol list with ignored interpolation" do
     expected = ArrayNode(
       [
-        SymbolNode(nil, STRING_CONTENT("a"), nil),
-        SymbolNode(nil, STRING_CONTENT("b\#{1}"), nil),
-        SymbolNode(nil, STRING_CONTENT("\#{2}c"), nil),
-        SymbolNode(nil, STRING_CONTENT("d\#{3}f"), nil)
+        SymbolNode(nil, STRING_CONTENT("a"), nil, "a"),
+        SymbolNode(nil, STRING_CONTENT("b\#{1}"), nil, "b\#{1}"),
+        SymbolNode(nil, STRING_CONTENT("\#{2}c"), nil, "\#{2}c"),
+        SymbolNode(nil, STRING_CONTENT("d\#{3}f"), nil, "d\#{3}f")
       ],
       PERCENT_LOWER_I("%i["),
       STRING_END("]")
@@ -3976,7 +4009,7 @@ class ParseTest < Test::Unit::TestCase
   test "symbol list with interpreted interpolation" do
     expected = ArrayNode(
       [
-        SymbolNode(nil, STRING_CONTENT("a"), nil),
+        SymbolNode(nil, STRING_CONTENT("a"), nil, "a"),
         InterpolatedSymbolNode(
           nil,
           [StringNode(nil, STRING_CONTENT("b"), nil, "b"),
@@ -4017,7 +4050,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "dynamic symbol" do
-    expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))
+    expected = SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"), "abc")
     assert_parses expected, ":'abc'"
   end
 
@@ -4053,8 +4086,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias with dynamic symbol" do
     expected = AliasNode(
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'")),
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"), "abc"),
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"), "def"),
       Location()
     )
 
@@ -4073,7 +4106,7 @@ class ParseTest < Test::Unit::TestCase
          )],
         STRING_END("\"")
       ),
-      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'")),
+      SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("def"), STRING_END("'"), "def"),
       Location()
     )
 
@@ -4082,8 +4115,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias operator" do
     expected = AliasNode(
-      SymbolNode(nil, IDENTIFIER("foo"), nil),
-      SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil),
+      SymbolNode(nil, IDENTIFIER("foo"), nil, "foo"),
+      SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil, "<=>"),
       Location()
     )
 
@@ -4092,8 +4125,8 @@ class ParseTest < Test::Unit::TestCase
 
   test "alias keyword" do
     expected = AliasNode(
-      SymbolNode(nil, IDENTIFIER("foo"), nil),
-      SymbolNode(nil, KEYWORD_IF("if"), nil),
+      SymbolNode(nil, IDENTIFIER("foo"), nil, "foo"),
+      SymbolNode(nil, KEYWORD_IF("if"), nil, "if"),
       Location()
     )
 
@@ -4102,7 +4135,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "undef operator" do
     expected = UndefNode(
-      [SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil)],
+      [SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil, "<=>")],
       Location()
     )
 
@@ -4111,7 +4144,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "undef keyword" do
     expected = UndefNode(
-      [SymbolNode(nil, KEYWORD_IF("if"), nil)],
+      [SymbolNode(nil, KEYWORD_IF("if"), nil, "if")],
       Location()
     )
 
@@ -4120,7 +4153,7 @@ class ParseTest < Test::Unit::TestCase
 
   test "undef with dynamic symbols" do
     expected = UndefNode(
-      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"))],
+      [SymbolNode(SYMBOL_BEGIN(":'"), STRING_CONTENT("abc"), STRING_END("'"), "abc")],
       Location()
     )
     assert_parses expected, "undef :'abc'"
@@ -4146,14 +4179,14 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "%s symbol" do
-    expected = SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]"))
+    expected = SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]"), "abc")
     assert_parses expected, "%s[abc]"
   end
 
   test "alias with %s symbol" do
     expected = AliasNode(
-      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]")),
-      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]")),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("abc"), STRING_END("]"), "abc"),
+      SymbolNode(SYMBOL_BEGIN("%s["), STRING_CONTENT("def"), STRING_END("]"), "def"),
       Location()
     )
 
@@ -4205,23 +4238,23 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "undef bare" do
-    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil)], Location()), "undef a"
+    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil, "a")], Location()), "undef a"
   end
 
   test "undef bare, multiple" do
-    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil), SymbolNode(nil, IDENTIFIER("b"), nil)], Location()), "undef a, b"
+    assert_parses UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil, "a"), SymbolNode(nil, IDENTIFIER("b"), nil, "b")], Location()), "undef a, b"
   end
 
   test "undef symbol" do
-    assert_parses UndefNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil)], Location()), "undef :a"
+    assert_parses UndefNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")], Location()), "undef :a"
   end
 
   test "undef symbol, multiple" do
     expected = UndefNode(
       [
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil)
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c")
       ],
       Location()
     )
@@ -4248,8 +4281,8 @@ class ParseTest < Test::Unit::TestCase
           IDENTIFIER("foo"),
           nil,
           ArgumentsNode([
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")
           ]),
           nil,
           nil,
@@ -4297,8 +4330,8 @@ class ParseTest < Test::Unit::TestCase
           IDENTIFIER("foo"),
           nil,
           ArgumentsNode([
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")
           ]),
           nil,
           nil,
@@ -4328,8 +4361,8 @@ class ParseTest < Test::Unit::TestCase
           IDENTIFIER("foo"),
           nil,
           ArgumentsNode([
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")
           ]),
           nil,
           nil,
@@ -5002,10 +5035,10 @@ class ParseTest < Test::Unit::TestCase
     expected = HashNode(
       BRACE_LEFT("{"),
       [
-        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), expression("b"), nil),
-        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), expression("d"), nil),
+        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":"), "a"), expression("b"), nil),
+        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":"), "c"), expression("d"), nil),
         AssocSplatNode(expression("e"), Location()),
-        AssocNode(SymbolNode(nil, LABEL("f"), LABEL_END(":")), expression("g"), nil),
+        AssocNode(SymbolNode(nil, LABEL("f"), LABEL_END(":"), "f"), expression("g"), nil),
       ],
       BRACE_RIGHT("}")
     )
@@ -5041,8 +5074,8 @@ class ParseTest < Test::Unit::TestCase
     expected = HashNode(
       BRACE_LEFT("{"),
       [
-        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":")), expression("b"), nil),
-        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":")), expression("d"), nil),
+        AssocNode(SymbolNode(nil, LABEL("a"), LABEL_END(":"), "a"), expression("b"), nil),
+        AssocNode(SymbolNode(nil, LABEL("c"), LABEL_END(":"), "c"), expression("d"), nil),
       ],
       BRACE_RIGHT("}")
     )
@@ -5408,10 +5441,10 @@ class ParseTest < Test::Unit::TestCase
   test "encoding isupper" do
     expected = ArrayNode(
       [
-        SymbolNode(SYMBOL_BEGIN(":"), CONSTANT("Υ"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ά"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ŗ"), nil),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ρ"), nil)
+        SymbolNode(SYMBOL_BEGIN(":"), CONSTANT("Υ"), nil, "Υ"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ά"), nil, "ά"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ŗ"), nil, "ŗ"),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("ρ"), nil, "ρ")
       ],
       BRACKET_LEFT_ARRAY("["),
       BRACKET_RIGHT("]")
@@ -6619,13 +6652,13 @@ class ParseTest < Test::Unit::TestCase
           StatementsNode([
             ReturnNode(
               KEYWORD_RETURN("return"),
-              ArgumentsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)])
+              ArgumentsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")])
             )
           ]),
           nil,
           nil
         ),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil)
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil, "bye")
       ]),
       Scope([]),
       Location(),
@@ -6646,11 +6679,11 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ArgumentsNode([
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
         HashNode(
           nil,
           [AssocNode(
-              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              SymbolNode(nil, LABEL("b"), LABEL_END(":"), "b"),
               TrueNode(),
               nil
             )],
@@ -6691,10 +6724,10 @@ class ParseTest < Test::Unit::TestCase
 
   test "basic case when syntax" do
     expected = CaseNode(
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi"),
       [WhenNode(
          KEYWORD_WHEN("when"),
-         [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)],
+         [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")],
          nil
        )],
       nil,
@@ -6723,15 +6756,15 @@ class ParseTest < Test::Unit::TestCase
 
   test "case with else" do
     expected = CaseNode(
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil),
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi"),
       [WhenNode(
          KEYWORD_WHEN("when"),
-         [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)],
+         [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")],
          nil
        )],
       ElseNode(
         KEYWORD_ELSE("else"),
-        StatementsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil)]),
+        StatementsNode([SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")]),
         KEYWORD_END("end")
       ),
       Location(),
@@ -6754,7 +6787,7 @@ class ParseTest < Test::Unit::TestCase
               IDENTIFIER("puts"),
               nil,
               ArgumentsNode(
-                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil)]
+                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")]
               ),
               nil,
               nil,
@@ -6772,7 +6805,7 @@ class ParseTest < Test::Unit::TestCase
               IDENTIFIER("puts"),
               nil,
               ArgumentsNode(
-                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil)]
+                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil, "bye")]
               ),
               nil,
               nil,
@@ -7241,18 +7274,25 @@ class ParseTest < Test::Unit::TestCase
           HashNode(
             nil,
             [AssocNode(
-                SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+                SymbolNode(nil, LABEL("a"), LABEL_END(":"), "a"),
                 TrueNode(),
                 nil
               ),
               AssocNode(
-                SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+                SymbolNode(nil, LABEL("b"), LABEL_END(":"), "b"),
                 FalseNode(),
                 nil
               )],
             nil
           ),
-          BlockArgumentNode(SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil), Location())
+          BlockArgumentNode(
+            SymbolNode(
+              SYMBOL_BEGIN(":"),
+              IDENTIFIER("block"),
+              nil,
+              "block"
+            ), Location()
+          )
         ]
       ),
       nil,
@@ -7273,19 +7313,19 @@ class ParseTest < Test::Unit::TestCase
         [HashNode(
            BRACE_LEFT("{"),
            [AssocNode(
-              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+              SymbolNode(nil, LABEL("a"), LABEL_END(":"), "a"),
               TrueNode(),
               nil
             ),
             AssocNode(
-              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+              SymbolNode(nil, LABEL("b"), LABEL_END(":"), "b"),
               FalseNode(),
               nil
             )],
            BRACE_RIGHT("}")
          ),
          BlockArgumentNode(
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil, "block"),
            Location()
          )]
       ),
@@ -7304,28 +7344,28 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
+        [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
          HashNode(
            nil,
            [AssocNode(
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("h"), nil),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("h"), nil, "h"),
               ArrayNode(
-                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("x"), nil),
-                 SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("y"), nil)],
+                [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("x"), nil, "x"),
+                 SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("y"), nil, "y")],
                 BRACKET_LEFT_ARRAY("["),
                 BRACKET_RIGHT("]")
               ),
               EQUAL_GREATER("=>")
             ),
             AssocNode(
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil),
-              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+              SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
               EQUAL_GREATER("=>")
             )],
            nil
          ),
          BlockArgumentNode(
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil, "bar"),
            Location()
          )]
       ),
