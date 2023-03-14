@@ -1097,11 +1097,10 @@ nodes:
     child_nodes:
       - name: left
         type: node
-      - name: operator
-        type: token
       - name: right
         type: node
-    location: left->right
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `||` operator or the `or` keyword.
 

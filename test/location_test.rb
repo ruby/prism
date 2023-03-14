@@ -259,6 +259,11 @@ module YARP
       assert_location(OperatorOrAssignmentNode, "Foo::Foo ||= bar")
     end
 
+    test "OrNode" do
+      assert_location(OrNode, "foo || bar")
+      assert_location(OrNode, "foo or bar")
+    end
+
     test "PostExecutionNode" do
       assert_location(PostExecutionNode, "END { foo }")
     end

@@ -2939,8 +2939,8 @@ class ParseTest < Test::Unit::TestCase
       AndNode(
         OrNode(
           CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
-          KEYWORD_OR("or"),
           CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
+          Location()
         ),
         CallNode(nil, nil, IDENTIFIER("qux"), nil, nil, nil, nil, "qux"),
         KEYWORD_AND("and"),
@@ -3202,11 +3202,11 @@ class ParseTest < Test::Unit::TestCase
   end
 
   test "or keyword" do
-    assert_parses OrNode(expression("1"), KEYWORD_OR("or"), expression("2")), "1 or 2"
+    assert_parses OrNode(expression("1"), expression("2"), Location()), "1 or 2"
   end
 
   test "or operator" do
-    assert_parses OrNode(expression("1"), PIPE_PIPE("||"), expression("2")), "1 || 2"
+    assert_parses OrNode(expression("1"), expression("2"), Location()), "1 || 2"
   end
 
   test "operator and assignment" do
@@ -4797,7 +4797,7 @@ class ParseTest < Test::Unit::TestCase
     expected = RescueModifierNode(
       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
       KEYWORD_RESCUE("rescue"),
-      OrNode(NilNode(), PIPE_PIPE("||"), IntegerNode())
+      OrNode(NilNode(), IntegerNode(), Location())
     )
 
     assert_parses expected, "foo rescue nil || 1"
