@@ -15,13 +15,6 @@ ruby:
     - basictest/test.rb
     - benchmark/app_pentomino.rb
     - bootstraptest/runner.rb
-    - enc/trans/big5-hkscs-tbl.rb
-    - enc/trans/big5-uao-tbl.rb
-    - enc/trans/cp949-tbl.rb
-    - enc/trans/emoji-exchange-tbl.rb
-    - enc/trans/gb18030-tbl.rb
-    - enc/trans/gbk-tbl.rb
-    - enc/trans/utf8_mac-tbl.rb
     - ext/etc/mkconstants.rb
     - ext/extmk.rb
     - ext/psych/extconf.rb
@@ -37,7 +30,6 @@ ruby:
     - lib/mkmf.rb
     - lib/optparse.rb
     - lib/racc/statetransitiontable.rb
-    - lib/rdoc/markdown.rb
     - lib/rdoc/markup/pre_process.rb
     - lib/rdoc/markup/to_html.rb
     - lib/rdoc/token_stream.rb
@@ -47,7 +39,6 @@ ruby:
     - lib/rubygems/commands/install_command.rb
     - lib/rubygems/optparse/lib/optparse.rb
     - lib/syntax_suggest/block_expand.rb
-    - lib/unicode_normalize/tables.rb
     - lib/uri/http.rb
     - lib/uri/ws.rb
     - sample/mine.rb
@@ -184,7 +175,5 @@ discourse:
     - script/import_scripts/quandora/test/test_quandora_api.rb
     - script/import_scripts/socialcast/test/test_socialcast_api.rb
     - script/import_scripts/yahoogroup.rb
-    - script/memstats.rb
     - spec/lib/discourse_spec.rb
     - spec/models/reviewable_spec.rb
-    - spec/requests/tags_controller_spec.rb
