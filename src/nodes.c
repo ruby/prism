@@ -176,7 +176,7 @@ yp_array_node_size(yp_node_t *node) {
 
 // Append an argument to an array node.
 void
-yp_array_node_append(yp_node_t *node, yp_node_t *element) {
+yp_array_node_elements_append(yp_node_t *node, yp_node_t *element) {
   yp_node_list_append2(&node->as.array_node.elements, element);
 }
 

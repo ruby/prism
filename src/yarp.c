@@ -4652,7 +4652,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
         }
 
-        yp_array_node_append(array, element);
+        yp_array_node_elements_append(array, element);
         if (element->type == YP_NODE_MISSING_NODE) break;
       }
 
@@ -5726,7 +5726,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t closing = not_provided(parser);
 
         yp_node_t *symbol = yp_node_symbol_node_create(parser, &opening, &parser->previous, &closing);
-        yp_array_node_append(array, symbol);
+        yp_array_node_elements_append(array, symbol);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
@@ -5752,7 +5752,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             } else {
               // If we hit a separator after we've hit content, then we need to
               // append that content to the list and reset the current node.
-              yp_array_node_append(array, current);
+              yp_array_node_elements_append(array, current);
               current = NULL;
             }
 
@@ -5849,7 +5849,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       // If we have a current node, then we need to append it to the list.
       if (current) {
-        yp_array_node_append(array, current);
+        yp_array_node_elements_append(array, current);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%I` list.");
@@ -5877,7 +5877,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_NONE);
-        yp_array_node_append(array, string);
+        yp_array_node_elements_append(array, string);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
@@ -5903,7 +5903,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             } else {
               // If we hit a separator after we've hit content, then we need to
               // append that content to the list and reset the current node.
-              yp_array_node_append(array, current);
+              yp_array_node_elements_append(array, current);
               current = NULL;
             }
 
@@ -5993,7 +5993,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       // If we have a current node, then we need to append it to the list.
       if (current) {
-        yp_array_node_append(array, current);
+        yp_array_node_elements_append(array, current);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
@@ -6369,12 +6369,12 @@ parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_
     yp_token_t closing = not_provided(parser);
     yp_node_t *array = yp_array_node_create(parser, &opening, &closing);
 
-    yp_array_node_append(array, value);
+    yp_array_node_elements_append(array, value);
     value = array;
 
     do {
       yp_node_t *element = parse_starred_expression(parser, binding_power, "Expected an element for the array.");
-      yp_array_node_append(array, element);
+      yp_array_node_elements_append(array, element);
       if (element->type == YP_NODE_MISSING_NODE) break;
     } while (accept(parser, YP_TOKEN_COMMA));
   }
