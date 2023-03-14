@@ -2702,11 +2702,18 @@ lex_token_type(yp_parser_t *parser) {
           return YP_TOKEN_COMMA;
 
         // (
-        case '(':
+        case '(': {
+          yp_token_type_t type = YP_TOKEN_PARENTHESIS_LEFT;
+
+          if (space_seen && (lex_state_arg_p(parser) || parser->lex_state == (YP_LEX_STATE_END | YP_LEX_STATE_LABEL))) {
+            type = YP_TOKEN_PARENTHESIS_LEFT_PARENTHESES;
+          }
+
           parser->enclosure_nesting++;
           lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
           yp_state_stack_push(&parser->do_loop_stack, false);
-          return YP_TOKEN_PARENTHESIS_LEFT;
+          return type;
+        }
 
         // )
         case ')':
@@ -5985,7 +5992,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return array;
     }
-    case YP_TOKEN_PARENTHESIS_LEFT: {
+    case YP_TOKEN_PARENTHESIS_LEFT:
+    case YP_TOKEN_PARENTHESIS_LEFT_PARENTHESES: {
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;

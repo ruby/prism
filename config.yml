@@ -226,6 +226,8 @@ tokens:
     comment: "an nth global variable reference"
   - name: PARENTHESIS_LEFT
     comment: "("
+  - name: PARENTHESIS_LEFT_PARENTHESES
+    comment: "( for a parentheses node"
   - name: PARENTHESIS_RIGHT
     comment: ")"
   - name: PERCENT

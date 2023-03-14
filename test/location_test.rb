@@ -267,6 +267,7 @@ module YARP
     test "ParenthesesNode" do
       assert_location(ParenthesesNode, "()")
       assert_location(ParenthesesNode, "(foo)")
+      assert_location(ParenthesesNode, "foo (bar), baz", 4...9) { |node| node.arguments.arguments.first }
       assert_location(ParenthesesNode, "def (foo).bar; end", 4...9, &:receiver)
     end
 
