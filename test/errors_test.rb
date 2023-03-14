@@ -329,7 +329,7 @@ class ErrorsTest < Test::Unit::TestCase
         [HashNode(
            nil,
            [AssocNode(
-              SymbolNode(nil, LABEL("foo"), LABEL_END(":")),
+              SymbolNode(nil, LABEL("foo"), LABEL_END(":"), "foo"),
               CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
               nil
             )],
