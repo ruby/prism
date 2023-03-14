@@ -41,6 +41,10 @@ module YARP
       assert_location(BeginNode, "begin foo rescue bar\nelse baz\nensure qux end")
     end
 
+    test "BlockArgumentNode" do
+      assert_location(BlockArgumentNode, "foo(&bar)", 4...8) { |node| node.arguments.arguments.last }
+    end
+
     test "BlockNode" do
       assert_location(BlockNode, "foo {}", 4...6, &:block)
     end

@@ -388,7 +388,6 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
-    location: begin_keyword|statements->ensure_clause|end_keyword|statements
     comment: |
       Represents a begin statement.
 
@@ -398,11 +397,10 @@ nodes:
           ^^^^^
   - name: BlockArgumentNode
     child_nodes:
-      - name: operator
-        type: token
       - name: expression
         type: node
-    location: operator->expression
+      - name: operator_loc
+        type: location
     comment: |
       Represents block method arguments.
 

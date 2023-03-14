@@ -3640,7 +3640,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
         yp_token_t operator = parser->previous;
         yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
 
-        argument = yp_node_block_argument_node_create(parser, &operator, value);
+        argument = yp_block_argument_node_create(parser, &operator, value);
         parsed_block_argument = true;
         break;
       }

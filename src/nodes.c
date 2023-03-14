@@ -273,6 +273,26 @@ yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
   node->as.begin_node.end_keyword = *end_keyword;
 }
 
+// Allocate and initialize a new BlockArgumentNode node.
+yp_node_t *
+yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_BLOCK_ARGUMENT_NODE,
+    .location = {
+      .start = operator->start,
+      .end = expression->location.end
+    },
+    .as.block_argument_node = {
+      .expression = expression,
+      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new BlockParameterNode node.
 yp_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {

@@ -7,6 +7,10 @@
 #include "string.h"
 #include "unescape.h"
 
+/******************************************************************************/
+/* Helper functions                                                           */
+/******************************************************************************/
+
 // Initiailize a list of nodes.
 void
 yp_node_list_init(yp_node_list_t *node_list);
@@ -14,6 +18,10 @@ yp_node_list_init(yp_node_list_t *node_list);
 // Append a new node onto the end of the node list.
 void
 yp_node_list_append2(yp_node_list_t *list, yp_node_t *node);
+
+/******************************************************************************/
+/* Node-specific functions                                                    */
+/******************************************************************************/
 
 // Allocate and initialize a new alias node.
 yp_node_t *
@@ -78,6 +86,10 @@ yp_begin_node_ensure_clause_set(yp_node_t *node, yp_node_t *ensure_clause);
 // Set the end keyword and end location of a begin node.
 void
 yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword);
+
+// Allocate and initialize a new BlockArgumentNode node.
+yp_node_t *
+yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression);
 
 // Allocate and initialize a new BlockParameterNode node.
 yp_node_t *

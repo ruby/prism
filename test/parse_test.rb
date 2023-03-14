@@ -778,12 +778,7 @@ class ParseTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
-      ArgumentsNode(
-        [BlockArgumentNode(
-           AMPERSAND("&"),
-           expression("block")
-         )]
-      ),
+      ArgumentsNode([BlockArgumentNode(expression("block"), Location())]),
       PARENTHESIS_RIGHT(")"),
       nil,
       "a"
@@ -7242,24 +7237,23 @@ class ParseTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ArgumentsNode(
-        [HashNode(
-           nil,
-           [AssocNode(
-              SymbolNode(nil, LABEL("a"), LABEL_END(":")),
-              TrueNode(),
-              nil
-            ),
-            AssocNode(
-              SymbolNode(nil, LABEL("b"), LABEL_END(":")),
-              FalseNode(),
-              nil
-            )],
-           nil
-         ),
-         BlockArgumentNode(
-           AMPERSAND("&"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
-         )]
+        [
+          HashNode(
+            nil,
+            [AssocNode(
+                SymbolNode(nil, LABEL("a"), LABEL_END(":")),
+                TrueNode(),
+                nil
+              ),
+              AssocNode(
+                SymbolNode(nil, LABEL("b"), LABEL_END(":")),
+                FalseNode(),
+                nil
+              )],
+            nil
+          ),
+          BlockArgumentNode(SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil), Location())
+        ]
       ),
       nil,
       nil,
@@ -7291,8 +7285,8 @@ class ParseTest < Test::Unit::TestCase
            BRACE_RIGHT("}")
          ),
          BlockArgumentNode(
-           AMPERSAND("&"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil)
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("block"), nil),
+           Location()
          )]
       ),
       PARENTHESIS_RIGHT(")"),
@@ -7331,8 +7325,8 @@ class ParseTest < Test::Unit::TestCase
            nil
          ),
          BlockArgumentNode(
-           AMPERSAND("&"),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil)
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil),
+           Location()
          )]
       ),
       PARENTHESIS_RIGHT(")"),

@@ -280,13 +280,10 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
-      ArgumentsNode(
-        [BlockArgumentNode(
-           AMPERSAND("&"),
-           CallNode(nil, nil, IDENTIFIER("block"), nil, nil, nil, nil, "block")
-         ),
-         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")]
-      ),
+      ArgumentsNode([
+        BlockArgumentNode(expression("block"), Location()),
+        expression("foo")
+      ]),
       PARENTHESIS_RIGHT(")"),
       nil,
       "a"
