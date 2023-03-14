@@ -57,7 +57,7 @@ yp_arguments_node_size(yp_node_t *node);
 
 // Append an argument to an arguments node.
 void
-yp_arguments_node_arguments_append(yp_node_t *arguments, yp_node_t *argument);
+yp_arguments_node_arguments_append(yp_node_t *node, yp_node_t *argument);
 
 // Allocate and initialize a new ArrayNode node.
 yp_node_t *

@@ -134,17 +134,21 @@ yp_arguments_node_create(yp_parser_t *parser) {
 // Return the size of the given arguments node.
 size_t
 yp_arguments_node_size(yp_node_t *node) {
+  assert(node->type == YP_NODE_ARGUMENTS_NODE);
   return node->as.arguments_node.arguments.size;
 }
 
 // Append an argument to an arguments node.
 void
-yp_arguments_node_arguments_append(yp_node_t *arguments, yp_node_t *argument) {
-  if (yp_arguments_node_size(arguments) == 0) {
-    arguments->location.start = argument->location.start;
+yp_arguments_node_arguments_append(yp_node_t *node, yp_node_t *argument) {
+  assert(node->type == YP_NODE_ARGUMENTS_NODE);
+
+  if (yp_arguments_node_size(node) == 0) {
+    node->location.start = argument->location.start;
   }
-  arguments->location.end = argument->location.end;
-  yp_node_list_append2(&arguments->as.arguments_node.arguments, argument);
+
+  node->location.end = argument->location.end;
+  yp_node_list_append2(&node->as.arguments_node.arguments, argument);
 }
 
 // Allocate and initialize a new ArrayNode node.
@@ -171,12 +175,14 @@ yp_array_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_to
 // Return the size of the given array node.
 size_t
 yp_array_node_size(yp_node_t *node) {
+  assert(node->type == YP_NODE_ARRAY_NODE);
   return node->as.array_node.elements.size;
 }
 
 // Append an argument to an array node.
 void
 yp_array_node_elements_append(yp_node_t *node, yp_node_t *element) {
+  assert(node->type == YP_NODE_ARRAY_NODE);
   yp_node_list_append2(&node->as.array_node.elements, element);
 }
 
@@ -263,6 +269,9 @@ yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_no
 // Set the rescue clause and end location of a begin node.
 void
 yp_begin_node_rescue_clause_set(yp_node_t *node, yp_node_t *rescue_clause) {
+  assert(node->type == YP_NODE_BEGIN_NODE);
+  assert(rescue_clause->type == YP_NODE_RESCUE_NODE);
+
   node->location.end = rescue_clause->location.end;
   node->as.begin_node.rescue_clause = rescue_clause;
 }
@@ -270,6 +279,9 @@ yp_begin_node_rescue_clause_set(yp_node_t *node, yp_node_t *rescue_clause) {
 // Set the else clause and end location of a begin node.
 void
 yp_begin_node_else_clause_set(yp_node_t *node, yp_node_t *else_clause) {
+  assert(node->type == YP_NODE_BEGIN_NODE);
+  assert(else_clause->type == YP_NODE_ELSE_NODE);
+
   node->location.end = else_clause->location.end;
   node->as.begin_node.else_clause = else_clause;
 }
@@ -277,6 +289,9 @@ yp_begin_node_else_clause_set(yp_node_t *node, yp_node_t *else_clause) {
 // Set the ensure clause and end location of a begin node.
 void
 yp_begin_node_ensure_clause_set(yp_node_t *node, yp_node_t *ensure_clause) {
+  assert(node->type == YP_NODE_BEGIN_NODE);
+  assert(ensure_clause->type == YP_NODE_ENSURE_NODE);
+
   node->location.end = ensure_clause->location.end;
   node->as.begin_node.ensure_clause = ensure_clause;
 }
@@ -284,7 +299,9 @@ yp_begin_node_ensure_clause_set(yp_node_t *node, yp_node_t *ensure_clause) {
 // Set the end keyword and end location of a begin node.
 void
 yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
+  assert(node->type == YP_NODE_BEGIN_NODE);
   assert(end_keyword->type == YP_TOKEN_KEYWORD_END || end_keyword->type == YP_TOKEN_MISSING);
+
   node->location.end = end_keyword->end;
   node->as.begin_node.end_keyword = *end_keyword;
 }
@@ -369,6 +386,8 @@ yp_block_parameters_node_create(yp_parser_t *parser, yp_node_t *parameters) {
 // Append a new block-local variable to a BlockParametersNode node.
 void
 yp_block_parameters_node_append_local(yp_node_t *node, const yp_token_t *local) {
+  assert(node->type == YP_NODE_BLOCK_PARAMETERS_NODE);
+  assert(local->type == YP_TOKEN_IDENTIFIER);
   yp_token_list_append(&node->as.block_parameters_node.locals, local);
   node->location.end = local->end;
 }
@@ -596,6 +615,8 @@ yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message) {
 // without a receiver that could also have been a local variable read).
 bool
 yp_call_node_vcall_p(yp_node_t *node) {
+  assert(node->type == YP_NODE_CALL_NODE);
+
   return (
     (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
     (node->as.call_node.arguments == NULL) &&
@@ -631,6 +652,8 @@ yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node
 void
 yp_case_node_condition_append(yp_node_t *node, yp_node_t *condition) {
   assert(node->type == YP_NODE_CASE_NODE);
+  assert(condition->type == YP_NODE_WHEN_NODE);
+
   yp_node_list_append2(&node->as.case_node.conditions, condition);
   node->location.end = condition->location.end;
 }
@@ -639,6 +662,7 @@ yp_case_node_condition_append(yp_node_t *node, yp_node_t *condition) {
 void
 yp_case_node_consequent_set(yp_node_t *node, yp_node_t *consequent) {
   assert(node->type == YP_NODE_CASE_NODE);
+
   node->as.case_node.consequent = consequent;
   node->location.end = consequent->location.end;
 }
@@ -647,6 +671,7 @@ yp_case_node_consequent_set(yp_node_t *node, yp_node_t *consequent) {
 void
 yp_case_node_end_keyword_loc_set(yp_node_t *node, const yp_token_t *end_keyword) {
   assert(node->type == YP_NODE_CASE_NODE);
+
   node->location.end = end_keyword->end;
   node->as.case_node.end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
 }
