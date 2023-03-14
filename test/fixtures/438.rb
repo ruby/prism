@@ -1,1 +1,0 @@
--> do; foo; end

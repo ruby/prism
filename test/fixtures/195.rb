@@ -1,2 +1,0 @@
-def self.ensure
-end

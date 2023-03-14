@@ -1,0 +1,25 @@
+CallNode(
+  nil,
+  nil,
+  IDENTIFIER("foo"),
+  nil,
+  nil,
+  nil,
+  BlockNode(
+    BlockParametersNode(
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("x"))],
+        [],
+        nil,
+        [],
+        nil,
+        nil
+      ),
+      []
+    ),
+    nil,
+    (283..284),
+    (289..290)
+  ),
+  "foo"
+)

@@ -1,1 +1,0 @@
-alias %s[abc] %s[def]

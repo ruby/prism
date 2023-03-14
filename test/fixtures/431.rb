@@ -1,2 +1,0 @@
-class << not foo
-end

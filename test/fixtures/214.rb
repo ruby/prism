@@ -1,2 +1,0 @@
-def false.a
-end

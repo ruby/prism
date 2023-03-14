@@ -1,1 +1,0 @@
-alias :"abc#{1}" :'def'

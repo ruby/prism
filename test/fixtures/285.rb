@@ -1,1 +1,0 @@
-if true then true elsif false then false elsif nil then nil else self end

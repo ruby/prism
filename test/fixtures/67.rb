@@ -1,9 +1,0 @@
-begin
-a
-rescue
-b
-rescue
-c
-rescue
-d
-end
