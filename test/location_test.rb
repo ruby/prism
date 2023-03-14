@@ -264,6 +264,12 @@ module YARP
       assert_location(OrNode, "foo or bar")
     end
 
+    test "ParenthesesNode" do
+      assert_location(ParenthesesNode, "()")
+      assert_location(ParenthesesNode, "(foo)")
+      assert_location(ParenthesesNode, "def (foo).bar; end", 4...9, &:receiver)
+    end
+
     test "PostExecutionNode" do
       assert_location(PostExecutionNode, "END { foo }")
     end

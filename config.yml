@@ -1129,13 +1129,12 @@ nodes:
           end
   - name: ParenthesesNode
     child_nodes:
-      - name: opening
-        type: token
       - name: statements
         type: node?
-      - name: closing
-        type: token
-    location: opening->closing
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents a parentesized expression
 
