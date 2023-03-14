@@ -27,6 +27,7 @@ test-native/run-one
 /src/prettyprint.c
 /src/serialize.c
 /src/token_type.c
+/src/util/yp_strspn.c
 
 compile_commands.json
 .cache/

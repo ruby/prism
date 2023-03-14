@@ -3763,7 +3763,7 @@ lex_token_type(yp_parser_t *parser) {
             // Since we've hit the terminator of the regular expression, we now
             // need to parse the options.
             parser->current.end = breakpoint + 1;
-            parser->current.end += strspn(parser->current.end, "eimnosux");
+            parser->current.end += yp_strspn_regexp_option(parser->current.end, parser->end - parser->current.end);
 
             lex_mode_pop(parser);
             lex_state_set(parser, YP_LEX_STATE_END);
