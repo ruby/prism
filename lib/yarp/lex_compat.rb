@@ -304,7 +304,7 @@ module YARP
           # anything to dedent. If there isn't, then we can return the tokens
           # directly since no on_ignored_sp tokens need to be inserted.
           tokens.last.state = state
-          return tokens if dedent.nil? || dedent == 0
+          return tokens if dedent.nil?
 
           # Otherwise, we're going to run through each token in the list and
           # insert on_ignored_sp tokens for the amount of dedent that we need to
@@ -339,7 +339,7 @@ module YARP
                     # Blank lines do not count toward common leading whitespace
                     # calculation and do not need to be dedented.
                     column = 0
-                  else
+                  elsif dedent > 0
                     deleting = 0
                     deleted_chars = []
 
