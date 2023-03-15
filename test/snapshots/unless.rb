@@ -1,5 +1,5 @@
 UnlessNode(
-  KEYWORD_UNLESS("unless"),
+  KEYWORD_UNLESS_MODIFIER("unless"),
   CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
   StatementsNode(
     [CallNode(

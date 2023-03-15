@@ -1,5 +1,5 @@
 UntilNode(
-  KEYWORD_UNTIL("until"),
+  KEYWORD_UNTIL_MODIFIER("until"),
   CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
   StatementsNode(
     [CallNode(
