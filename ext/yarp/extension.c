@@ -145,9 +145,8 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding) {
 
   for (error = (yp_diagnostic_t *) parser->error_list.head; error != NULL;
        error = (yp_diagnostic_t *) error->node.next) {
-    VALUE location_argv[] = { LONG2FIX(error->start), LONG2FIX(error->end) };
-    VALUE error_argv[] = { rb_enc_str_new(yp_string_source(&error->message), yp_string_length(&error->message),
-                                          encoding),
+    VALUE location_argv[] = { LONG2FIX(error->start - parser->start), LONG2FIX(error->end - parser->start) };
+    VALUE error_argv[] = { rb_enc_str_new_cstr(error->message, encoding),
                            rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
 
     rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
@@ -164,9 +163,8 @@ parser_warnings(yp_parser_t *parser, rb_encoding *encoding) {
 
   for (warning = (yp_diagnostic_t *) parser->warning_list.head; warning != NULL;
        warning = (yp_diagnostic_t *) warning->node.next) {
-    VALUE location_argv[] = { LONG2FIX(warning->start), LONG2FIX(warning->end) };
-    VALUE warning_argv[] = { rb_enc_str_new(yp_string_source(&warning->message), yp_string_length(&warning->message),
-                                            encoding),
+    VALUE location_argv[] = { LONG2FIX(warning->start - parser->start), LONG2FIX(warning->end - parser->start) };
+    VALUE warning_argv[] = { rb_enc_str_new_cstr(warning->message, encoding),
                              rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
 
     rb_ary_push(warnings, rb_class_new_instance(2, warning_argv, rb_cYARPParseWarning));

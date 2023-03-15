@@ -325,7 +325,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
               break;
             }
 
-            yp_diagnostic_list_append(error_list, "Invalid Unicode escape sequence", backslash - value);
+            yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid Unicode escape sequence");
             cursor = backslash + 2;
             break;
           }
@@ -334,7 +334,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \cx          control character, where x is an ASCII printable character
           case 'c':
             if (backslash + 2 >= end) {
-              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
               cursor = end;
               break;
             }
@@ -342,7 +342,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
             switch (backslash[2]) {
               case '\\':
                 if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_ascii_printable(backslash[5])) {
-                  yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+                  yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
                   cursor = backslash + 3;
                   break;
                 }
@@ -356,7 +356,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
                 break;
               default: {
                 if (!char_is_ascii_printable(backslash[2])) {
-                  yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+                  yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
                   cursor = backslash + 2;
                   break;
                 }
@@ -371,13 +371,13 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \C-?         delete, ASCII 7Fh (DEL)
           case 'C':
             if (backslash + 2 >= end) {
-              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
               cursor = end;
               break;
             }
 
             if (backslash[2] != '-' || !char_is_ascii_printable(backslash[3])) {
-              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
               cursor = backslash + 2;
               break;
             }
@@ -390,13 +390,13 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
           // \M-x         meta character, where x is an ASCII printable character
           case 'M': {
             if (backslash + 2 >= end) {
-              yp_diagnostic_list_append(error_list, "Invalid control escape sequence", backslash - value);
+              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
               cursor = end;
               break;
             }
 
             if (backslash[2] != '-') {
-              yp_diagnostic_list_append(error_list, "Invalid meta escape sequence", backslash - value);
+              yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
               cursor = backslash + 2;
               break;
             }
@@ -414,7 +414,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
                 break;
               }
 
-              yp_diagnostic_list_append(error_list, "Invalid meta escape sequence", backslash - value);
+              yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
               cursor = backslash + 4;
               break;
             }
@@ -425,7 +425,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
               break;
             }
 
-            yp_diagnostic_list_append(error_list, "Invalid meta escape sequence", backslash - value);
+            yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
             cursor = backslash + 3;
           }
           // In this case we're escaping something that doesn't need escaping.
