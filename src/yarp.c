@@ -4197,8 +4197,8 @@ parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
   yp_comment_t *comment = (yp_comment_t *) malloc(sizeof(yp_comment_t));
   *comment = (yp_comment_t) {
     .type = type,
-    .start = parser->current.start - parser->start,
-    .end = parser->current.end - parser->start
+    .start = parser->current.start,
+    .end = parser->current.end
   };
 
   return comment;
@@ -4283,7 +4283,7 @@ parser_lex(yp_parser_t *parser) {
           parser_lex_callback(parser);
         } while (!match_any_type_p(parser, 2, YP_TOKEN_EMBDOC_END, YP_TOKEN_EOF));
 
-        comment->end = parser->current.end - parser->start;
+        comment->end = parser->current.end;
         yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
         if (match_type_p(parser, YP_TOKEN_EOF)) {
