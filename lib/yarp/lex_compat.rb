@@ -327,12 +327,20 @@ module YARP
               # Here we're going to split the string on newlines, but maintain
               # the newlines in the resulting array. We'll do that with a look
               # behind assertion.
-              token.value.split(/(?<=\n)/).each_with_index do |line, index|
+              splits = token.value.split(/(?<=\n)/)
+              index = 0
+
+              while index < splits.length
+                line = splits[index]
                 lineno = token[0][0] + index
                 column = token[0][1]
 
-                if line == "\n" && (dedent_next || index > 0)
-                  column = 0
+                # If the dedent is 0 and we're not supposed to dedent the next
+                # line or this line doesn't start with whitespace, then we
+                # should concatenate the rest of the string to match ripper.
+                if dedent == 0 && (!dedent_next || !line.start_with?(/\s/))
+                  line = splits[index..].join
+                  index = splits.length
                 end
 
                 # If we are supposed to dedent this line or if this is not the
@@ -369,6 +377,7 @@ module YARP
                 end
 
                 results << Token.new([[lineno, column], token[1], line, token[3]]) unless line.empty?
+                index += 1
               end
 
               dedent_next = true
