@@ -358,7 +358,7 @@ unescape(VALUE source, yp_unescape_type_t unescape_type) {
   yp_list_init(&error_list);
 
   yp_unescape(RSTRING_PTR(source), RSTRING_LEN(source), &string, unescape_type, &error_list);
-  if (yp_list_empty(&error_list)) {
+  if (yp_list_empty_p(&error_list)) {
     result = rb_str_new(yp_string_source(&string), yp_string_length(&string));
   } else {
     result = Qnil;
