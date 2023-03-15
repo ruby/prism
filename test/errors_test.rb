@@ -422,6 +422,29 @@ class ErrorsTest < Test::Unit::TestCase
     ", ["Module definition in method body"]
   end
 
+  test "bad arguments" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      StatementsNode([]),
+      Scope([]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+
+    assert_errors expected, "def foo(A, @a, $A, @@a);end", [
+      "Formal argument cannot be a constant",
+      "Formal argument cannot be an instance variable",
+      "Formal argument cannot be a global variable",
+      "Formal argument cannot be a class variable",
+    ]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
