@@ -112,7 +112,7 @@ parser_comments(yp_parser_t *parser) {
 
   for (yp_comment_t *comment = (yp_comment_t *) parser->comment_list.head; comment != NULL;
        comment = (yp_comment_t *) comment->node.next) {
-    VALUE location_argv[] = { LONG2FIX(comment->start), LONG2FIX(comment->end) };
+    VALUE location_argv[] = { LONG2FIX(comment->start - parser->start), LONG2FIX(comment->end - parser->start) };
     VALUE type;
 
     switch (comment->type) {
