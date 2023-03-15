@@ -1,5 +1,5 @@
 WhileNode(
-  KEYWORD_WHILE("while"),
+  KEYWORD_WHILE_MODIFIER("while"),
   CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
   StatementsNode(
     [CallNode(

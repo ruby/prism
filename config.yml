@@ -152,6 +152,8 @@ tokens:
     comment: "for"
   - name: KEYWORD_IF
     comment: "if"
+  - name: KEYWORD_IF_MODIFIER
+    comment: "if in the modifier form"
   - name: KEYWORD_IN
     comment: "in"
   - name: KEYWORD_MODULE
@@ -168,6 +170,8 @@ tokens:
     comment: "redo"
   - name: KEYWORD_RESCUE
     comment: "rescue"
+  - name: KEYWORD_RESCUE_MODIFIER
+    comment: "rescue in the modifier form"
   - name: KEYWORD_RETRY
     comment: "retry"
   - name: KEYWORD_RETURN
@@ -184,12 +188,18 @@ tokens:
     comment: "undef"
   - name: KEYWORD_UNLESS
     comment: "unless"
+  - name: KEYWORD_UNLESS_MODIFIER
+    comment: "unless in the modifier form"
   - name: KEYWORD_UNTIL
     comment: "until"
+  - name: KEYWORD_UNTIL_MODIFIER
+    comment: "until in the modifier form"
   - name: KEYWORD_WHEN
     comment: "when"
   - name: KEYWORD_WHILE
     comment: "while"
+  - name: KEYWORD_WHILE_MODIFIER
+    comment: "while in the modifier form"
   - name: KEYWORD_YIELD
     comment: "yield"
   - name: KEYWORD___ENCODING__

@@ -2034,8 +2034,8 @@ lex_global_variable(yp_parser_t *parser) {
 // * `width` - the length of the token
 // * `state` - the state that we should transition to if the token matches
 //
-static bool
-lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool modifier_allowed) {
+static yp_token_type_t
+lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, yp_token_type_t type, yp_token_type_t modifier_type) {
   yp_lex_state_t last_state = parser->lex_state;
 
   if (strncmp(parser->current.start, value, strlen(value)) == 0) {
@@ -2047,15 +2047,16 @@ lex_keyword(yp_parser_t *parser, const char *value, yp_lex_state_t state, bool m
         parser->command_start = true;
       }
 
-      if (!(last_state & (YP_LEX_STATE_BEG | YP_LEX_STATE_LABELED | YP_LEX_STATE_CLASS)) && modifier_allowed) {
+      if ((modifier_type != YP_TOKEN_EOF) && !(last_state & (YP_LEX_STATE_BEG | YP_LEX_STATE_LABELED | YP_LEX_STATE_CLASS))) {
         lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
+        return modifier_type;
       }
     }
 
-    return true;
+    return type;
   }
 
-  return false;
+  return YP_TOKEN_EOF;
 }
 
 static yp_token_type_t
@@ -2088,7 +2089,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
       }
 
       if (parser->lex_state != YP_LEX_STATE_DOT) {
-        if (width == 8 && lex_keyword(parser, "defined?", YP_LEX_STATE_ARG, false)) {
+        if (width == 8 && (lex_keyword(parser, "defined?", YP_LEX_STATE_ARG, YP_TOKEN_KEYWORD_DEFINED, YP_TOKEN_EOF) != YP_TOKEN_EOF)) {
           return YP_TOKEN_KEYWORD_DEFINED;
         }
       }
@@ -2113,66 +2114,68 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
   }
 
   if (parser->lex_state != YP_LEX_STATE_DOT) {
+    yp_token_type_t type;
+
     switch (width) {
       case 2:
-        if (lex_keyword(parser, "do", YP_LEX_STATE_BEG, false)) {
+        if (lex_keyword(parser, "do", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_DO, YP_TOKEN_EOF) != YP_TOKEN_EOF) {
           if (yp_state_stack_p(&parser->do_loop_stack)) {
             return YP_TOKEN_KEYWORD_DO_LOOP;
           }
           return YP_TOKEN_KEYWORD_DO;
         }
 
-        if (lex_keyword(parser, "if", YP_LEX_STATE_BEG, true)) return YP_TOKEN_KEYWORD_IF;
-        if (lex_keyword(parser, "in", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_IN;
-        if (lex_keyword(parser, "or", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_OR;
+        if ((type = lex_keyword(parser, "if", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_IF, YP_TOKEN_KEYWORD_IF_MODIFIER)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "in", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_IN, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "or", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_OR, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
         break;
       case 3:
-        if (lex_keyword(parser, "and", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_AND;
-        if (lex_keyword(parser, "def", YP_LEX_STATE_FNAME, false)) return YP_TOKEN_KEYWORD_DEF;
-        if (lex_keyword(parser, "end", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_END;
-        if (lex_keyword(parser, "END", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_END_UPCASE;
-        if (lex_keyword(parser, "for", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_FOR;
-        if (lex_keyword(parser, "nil", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_NIL;
-        if (lex_keyword(parser, "not", YP_LEX_STATE_ARG, false)) return YP_TOKEN_KEYWORD_NOT;
+        if ((type = lex_keyword(parser, "and", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_AND, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "def", YP_LEX_STATE_FNAME, YP_TOKEN_KEYWORD_DEF, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "end", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_END, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "END", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_END_UPCASE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "for", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_FOR, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "nil", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_NIL, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "not", YP_LEX_STATE_ARG, YP_TOKEN_KEYWORD_NOT, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
         break;
       case 4:
-        if (lex_keyword(parser, "case", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_CASE;
-        if (lex_keyword(parser, "else", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_ELSE;
-        if (lex_keyword(parser, "next", YP_LEX_STATE_MID, false)) return YP_TOKEN_KEYWORD_NEXT;
-        if (lex_keyword(parser, "redo", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_REDO;
-        if (lex_keyword(parser, "self", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_SELF;
-        if (lex_keyword(parser, "then", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_THEN;
-        if (lex_keyword(parser, "true", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_TRUE;
-        if (lex_keyword(parser, "when", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_WHEN;
+        if ((type = lex_keyword(parser, "case", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_CASE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "else", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "next", YP_LEX_STATE_MID, YP_TOKEN_KEYWORD_NEXT, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "redo", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_REDO, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "self", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_SELF, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "then", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "true", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_TRUE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "when", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
         break;
       case 5:
-        if (lex_keyword(parser, "alias", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, false)) return YP_TOKEN_KEYWORD_ALIAS;
-        if (lex_keyword(parser, "begin", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_BEGIN;
-        if (lex_keyword(parser, "BEGIN", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_BEGIN_UPCASE;
-        if (lex_keyword(parser, "break", YP_LEX_STATE_MID, false)) return YP_TOKEN_KEYWORD_BREAK;
-        if (lex_keyword(parser, "class", YP_LEX_STATE_CLASS, false)) return YP_TOKEN_KEYWORD_CLASS;
-        if (lex_keyword(parser, "elsif", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_ELSIF;
-        if (lex_keyword(parser, "false", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_FALSE;
-        if (lex_keyword(parser, "retry", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD_RETRY;
-        if (lex_keyword(parser, "super", YP_LEX_STATE_ARG, false)) return YP_TOKEN_KEYWORD_SUPER;
-        if (lex_keyword(parser, "undef", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, false)) return YP_TOKEN_KEYWORD_UNDEF;
-        if (lex_keyword(parser, "until", YP_LEX_STATE_BEG, true)) return YP_TOKEN_KEYWORD_UNTIL;
-        if (lex_keyword(parser, "while", YP_LEX_STATE_BEG, true)) return YP_TOKEN_KEYWORD_WHILE;
-        if (lex_keyword(parser, "yield", YP_LEX_STATE_ARG, false)) return YP_TOKEN_KEYWORD_YIELD;
+        if ((type = lex_keyword(parser, "alias", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, YP_TOKEN_KEYWORD_ALIAS, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "begin", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_BEGIN, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "BEGIN", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_BEGIN_UPCASE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "break", YP_LEX_STATE_MID, YP_TOKEN_KEYWORD_BREAK, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "class", YP_LEX_STATE_CLASS, YP_TOKEN_KEYWORD_CLASS, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "elsif", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_ELSIF, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "false", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_FALSE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "retry", YP_LEX_STATE_END, YP_TOKEN_KEYWORD_RETRY, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "super", YP_LEX_STATE_ARG, YP_TOKEN_KEYWORD_SUPER, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "undef", YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM, YP_TOKEN_KEYWORD_UNDEF, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "until", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_UNTIL, YP_TOKEN_KEYWORD_UNTIL_MODIFIER)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "while", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_WHILE, YP_TOKEN_KEYWORD_WHILE_MODIFIER)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "yield", YP_LEX_STATE_ARG, YP_TOKEN_KEYWORD_YIELD, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
         break;
       case 6:
-        if (lex_keyword(parser, "ensure", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_ENSURE;
-        if (lex_keyword(parser, "module", YP_LEX_STATE_BEG, false)) return YP_TOKEN_KEYWORD_MODULE;
-        if (lex_keyword(parser, "rescue", YP_LEX_STATE_MID, true)) return YP_TOKEN_KEYWORD_RESCUE;
-        if (lex_keyword(parser, "return", YP_LEX_STATE_MID, false)) return YP_TOKEN_KEYWORD_RETURN;
-        if (lex_keyword(parser, "unless", YP_LEX_STATE_BEG, true)) return YP_TOKEN_KEYWORD_UNLESS;
+        if ((type = lex_keyword(parser, "ensure", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "module", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_MODULE, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "rescue", YP_LEX_STATE_MID, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_RESCUE_MODIFIER)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "return", YP_LEX_STATE_MID, YP_TOKEN_KEYWORD_RETURN, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "unless", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_UNLESS, YP_TOKEN_KEYWORD_UNLESS_MODIFIER)) != YP_TOKEN_EOF) return type;
         break;
       case 8:
-        if (lex_keyword(parser, "__LINE__", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD___LINE__;
-        if (lex_keyword(parser, "__FILE__", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD___FILE__;
+        if ((type = lex_keyword(parser, "__LINE__", YP_LEX_STATE_END, YP_TOKEN_KEYWORD___LINE__, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
+        if ((type = lex_keyword(parser, "__FILE__", YP_LEX_STATE_END, YP_TOKEN_KEYWORD___FILE__, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
         break;
       case 12:
-        if (lex_keyword(parser, "__ENCODING__", YP_LEX_STATE_END, false)) return YP_TOKEN_KEYWORD___ENCODING__;
+        if ((type = lex_keyword(parser, "__ENCODING__", YP_LEX_STATE_END, YP_TOKEN_KEYWORD___ENCODING__, YP_TOKEN_EOF)) != YP_TOKEN_EOF) return type;
         break;
     }
   }
@@ -4350,10 +4353,10 @@ typedef struct {
 
 yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
   // if unless until while
-  [YP_TOKEN_KEYWORD_IF] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
-  [YP_TOKEN_KEYWORD_UNLESS] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
-  [YP_TOKEN_KEYWORD_UNTIL] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
-  [YP_TOKEN_KEYWORD_WHILE] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_IF_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_UNLESS_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_UNTIL_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_WHILE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
 
   // and or
   [YP_TOKEN_KEYWORD_AND] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_COMPOSITION),
@@ -4376,7 +4379,7 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_STAR_STAR_EQUAL] = BINDING_POWER_ASSIGNMENT,
 
   // rescue
-  [YP_TOKEN_KEYWORD_RESCUE] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER_RESCUE),
+  [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER_RESCUE),
 
   // ?:
   [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_TERNARY),
@@ -8064,7 +8067,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       return yp_range_node_create(parser, node, &token, right);
     }
-    case YP_TOKEN_KEYWORD_IF: {
+    case YP_TOKEN_KEYWORD_IF_MODIFIER: {
       parser_lex(parser);
       yp_node_t *statements = yp_statements_node_create(parser);
       yp_statements_node_body_append(statements, node);
@@ -8073,7 +8076,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_token_t end_keyword = not_provided(parser);
       return yp_node_if_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
     }
-    case YP_TOKEN_KEYWORD_UNLESS: {
+    case YP_TOKEN_KEYWORD_UNLESS_MODIFIER: {
       parser_lex(parser);
       yp_node_t *statements = yp_statements_node_create(parser);
       yp_statements_node_body_append(statements, node);
@@ -8083,7 +8086,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       return yp_node_unless_node_create(parser, &token, predicate, statements, NULL, &end_keyword);
     }
-    case YP_TOKEN_KEYWORD_UNTIL: {
+    case YP_TOKEN_KEYWORD_UNTIL_MODIFIER: {
       parser_lex(parser);
       yp_node_t *statements = yp_statements_node_create(parser);
       yp_statements_node_body_append(statements, node);
@@ -8091,7 +8094,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
       return yp_node_until_node_create(parser, &token, predicate, statements);
     }
-    case YP_TOKEN_KEYWORD_WHILE: {
+    case YP_TOKEN_KEYWORD_WHILE_MODIFIER: {
       parser_lex(parser);
       yp_node_t *statements = yp_statements_node_create(parser);
       yp_statements_node_body_append(statements, node);
@@ -8179,7 +8182,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         }
       }
     }
-    case YP_TOKEN_KEYWORD_RESCUE: {
+    case YP_TOKEN_KEYWORD_RESCUE_MODIFIER: {
       parser_lex(parser);
       accept(parser, YP_TOKEN_NEWLINE);
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
