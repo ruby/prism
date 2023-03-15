@@ -285,17 +285,22 @@ module YARP
         # whitespace on plain string content tokens. This allows us to later
         # remove that amount of whitespace from the beginning of each line.
         def <<(token)
-          if dedent_next && token.event == :on_tstring_content && token.value.start_with?(/\s/)
-            token.value.split("\n").each do |line|
+          if token.event == :on_tstring_content
+            token.value.split("\n").each_with_index do |line, index|
               # Blank lines don't count toward the dedent.
               next if line.empty?
 
-              leading = line[/\A\s*/]
-              @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
+              if dedent_next || index > 0
+                leading = line[/\A\s*/]
+                @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
+              end
             end
+
+            @dedent_next = true
+          else
+            @dedent_next = false
           end
 
-          @dedent_next = token.event == :on_tstring_content
           tokens << token
         end
 
@@ -304,7 +309,7 @@ module YARP
           # anything to dedent. If there isn't, then we can return the tokens
           # directly since no on_ignored_sp tokens need to be inserted.
           tokens.last.state = state
-          return tokens if dedent.nil? || dedent == 0
+          return tokens if dedent.nil?
 
           # Otherwise, we're going to run through each token in the list and
           # insert on_ignored_sp tokens for the amount of dedent that we need to
@@ -322,48 +327,57 @@ module YARP
               # Here we're going to split the string on newlines, but maintain
               # the newlines in the resulting array. We'll do that with a look
               # behind assertion.
-              token.value.split(/(?<=\n)/).each_with_index do |line, index|
+              splits = token.value.split(/(?<=\n)/)
+              index = 0
+
+              while index < splits.length
+                line = splits[index]
                 lineno = token[0][0] + index
                 column = token[0][1]
 
+                # Blank lines do not count toward common leading whitespace
+                # calculation and do not need to be dedented.
                 if line == "\n" && (dedent_next || index > 0)
                   column = 0
+                end
+
+                # If the dedent is 0 and we're not supposed to dedent the next
+                # line or this line doesn't start with whitespace, then we
+                # should concatenate the rest of the string to match ripper.
+                if dedent == 0 && (!dedent_next || !line.start_with?(/\s/))
+                  line = splits[index..].join
+                  index = splits.length
                 end
 
                 # If we are supposed to dedent this line or if this is not the
                 # first line of the string and this line isn't entirely blank,
                 # then we need to insert an on_ignored_sp token and remove the
                 # dedent from the beginning of the line.
-                if dedent_next || index > 0
-                  if line == "\n"
-                    # Blank lines do not count toward common leading whitespace
-                    # calculation and do not need to be dedented.
-                    column = 0
-                  else
-                    deleting = 0
-                    deleted_chars = []
+                if (line != "\n" && dedent > 0) && (dedent_next || index > 0)
+                  deleting = 0
+                  deleted_chars = []
 
-                    # Gather up all of the characters that we're going to
-                    # delete, stopping when you hit a character that would put
-                    # you over the dedent amount.
-                    line.each_char do |char|
-                      break if (deleting += char == "\t" ? TAB_WIDTH : 1) > dedent
-                      deleted_chars << char
-                    end
+                  # Gather up all of the characters that we're going to
+                  # delete, stopping when you hit a character that would put
+                  # you over the dedent amount.
+                  line.each_char do |char|
+                    break if (deleting += char == "\t" ? TAB_WIDTH : 1) > dedent
+                    deleted_chars << char
+                  end
 
-                    # If we have something to delete, then delete it from the
-                    # string and insert an on_ignored_sp token.
-                    if deleted_chars.any?
-                      ignored = deleted_chars.join
-                      line.delete_prefix!(ignored)
+                  # If we have something to delete, then delete it from the
+                  # string and insert an on_ignored_sp token.
+                  if deleted_chars.any?
+                    ignored = deleted_chars.join
+                    line.delete_prefix!(ignored)
 
-                      results << Token.new([[lineno, 0], :on_ignored_sp, ignored, token[3]])
-                      column = ignored.length
-                    end
+                    results << Token.new([[lineno, 0], :on_ignored_sp, ignored, token[3]])
+                    column = ignored.length
                   end
                 end
 
                 results << Token.new([[lineno, column], token[1], line, token[3]]) unless line.empty?
+                index += 1
               end
 
               dedent_next = true

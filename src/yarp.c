@@ -3605,7 +3605,7 @@ lex_token_type(yp_parser_t *parser) {
 
       // If there's any whitespace at the start of the list, then we're going to
       // trim it off the beginning and create a new token.
-      int whitespace;
+      size_t whitespace;
       if ((whitespace = yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end)) > 0) {
         parser->current.end += whitespace;
         return YP_TOKEN_WORDS_SEP;

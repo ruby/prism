@@ -54,10 +54,8 @@ ruby:
     - spec/syntax_suggest/unit/code_line_spec.rb
     - test/-ext-/bignum/test_pack.rb
     - test/csv/interface/test_read_write.rb
-    - test/csv/test_encodings.rb
     - test/csv/test_patterns.rb
     - test/io/console/test_io_console.rb
-    - test/irb/test_ruby_lex.rb
     - test/openssl/test_x509name.rb
     - test/psych/test_parser.rb
     - test/psych/test_yaml.rb
@@ -123,7 +121,6 @@ rails:
     - activerecord/lib/active_record/connection_adapters/postgresql/schema_statements.rb
     - activerecord/lib/active_record/connection_adapters/postgresql_adapter.rb
     - activesupport/test/core_ext/string_ext_test.rb
-    - railties/test/commands/routes_test.rb
     - railties/test/isolation/abstract_unit.rb
 
 discourse:
@@ -133,13 +130,9 @@ discourse:
     - app/controllers/admin/api_controller.rb
     - app/controllers/composer_controller.rb
     - app/jobs/scheduled/enqueue_suspect_users.rb
-    - app/models/about.rb
-    - app/models/category_tag_stat.rb
     - app/models/global_setting.rb
     - app/models/post.rb
-    - app/models/tag.rb
     - app/models/topic_thumbnail.rb
-    - app/services/badge_granter.rb
     - app/services/hashtag_autocomplete_service.rb
     - lib/discourse_dev/record.rb
     - lib/slug.rb
@@ -149,9 +142,7 @@ discourse:
     - plugins/chat/lib/chat_channel_fetcher.rb
     - plugins/chat/lib/chat_mailer.rb
     - plugins/chat/lib/extensions/user_notifications_extension.rb
-    - plugins/chat/spec/plugin_spec.rb
     - script/import_scripts/yahoogroup.rb
     - spec/lib/discourse_spec.rb
-    - spec/lib/tiny_japanese_segmenter_spec.rb
     - spec/models/reviewable_spec.rb
-    - spec/requests/tags_controller_spec.rb
+    - spec/requests/tags_controller_spec.rb E
