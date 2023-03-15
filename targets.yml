@@ -35,7 +35,6 @@ ruby:
     - lib/rdoc/markup/pre_process.rb
     - lib/rdoc/markup/to_html.rb
     - lib/rdoc/token_stream.rb
-    - lib/reline/config.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - lib/rubygems/commands/install_command.rb
