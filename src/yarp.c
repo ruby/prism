@@ -2386,18 +2386,6 @@ lex_question_mark(yp_parser_t *parser) {
       }
 
       switch (*parser->current.end) {
-        case 'a':
-        case 'b':
-        case 't':
-        case 'n':
-        case 'v':
-        case 'f':
-        case 'r':
-        case 'e':
-        case 's':
-        case '\\':
-          parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
         case '0':
         case '1':
         case '2':
@@ -2481,6 +2469,9 @@ lex_question_mark(yp_parser_t *parser) {
           }
           return YP_TOKEN_CHARACTER_LITERAL;
         default:
+          // In this case we have an escaped character that we don't have a
+          // special case for, so we can just skip over it.
+          parser->current.end++;
           return YP_TOKEN_CHARACTER_LITERAL;
       }
     default:
