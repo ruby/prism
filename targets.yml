@@ -13,47 +13,30 @@ ruby:
   excludes:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
   todos:
-    - basictest/test.rb
     - benchmark/app_lc_fizzbuzz.rb
-    - benchmark/app_pentomino.rb
-    - bootstraptest/runner.rb
     - ext/etc/mkconstants.rb
-    - ext/extmk.rb
-    - ext/psych/extconf.rb
     - ext/psych/lib/psych/scalar_scanner.rb
-    - ext/ripper/tools/dsl.rb
     - ext/socket/mkconstants.rb
     - lib/bundler/deployment.rb
     - lib/bundler/rubygems_gem_installer.rb
-    - lib/bundler/source_map.rb
     - lib/bundler/vendor/net-http-persistent/lib/net/http/persistent.rb
-    - lib/bundler/vendor/uri/lib/uri/http.rb
-    - lib/bundler/vendor/uri/lib/uri/ws.rb
-    - lib/mkmf.rb
     - lib/optparse.rb
-    - lib/rdoc/markup/pre_process.rb
-    - lib/rdoc/markup/to_html.rb
     - lib/rdoc/token_stream.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - lib/rubygems/commands/install_command.rb
     - lib/rubygems/optparse/lib/optparse.rb
     - lib/syntax_suggest/block_expand.rb
-    - lib/uri/http.rb
-    - lib/uri/ws.rb
     - sample/trick2015/kinaba/entry.rb
     - sample/trick2018/01-kinaba/entry.rb
     - sample/trick2018/05-tompng/entry.rb
-    - sample/trick2022/03-mame/entry.rb
     - spec/bundler/realworld/edgecases_spec.rb
-    - spec/mspec/tool/sync/sync-rubyspec.rb
     - spec/ruby/core/regexp/shared/new.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
     - spec/syntax_suggest/unit/code_line_spec.rb
     - test/-ext-/bignum/test_pack.rb
     - test/csv/interface/test_read_write.rb
     - test/csv/test_patterns.rb
-    - test/io/console/test_io_console.rb
     - test/openssl/test_x509name.rb
     - test/psych/test_parser.rb
     - test/psych/test_yaml.rb
@@ -77,36 +60,23 @@ ruby:
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_module.rb
     - test/ruby/test_objectspace.rb
-    - test/ruby/test_parse.rb
     - test/ruby/test_pattern_matching.rb
-    - test/ruby/test_process.rb
     - test/ruby/test_range.rb
     - test/ruby/test_regexp.rb
-    - test/ruby/test_require.rb
     - test/ruby/test_rubyoptions.rb
     - test/ruby/test_string.rb
-    - test/ruby/test_struct.rb
     - test/ruby/test_syntax.rb
     - test/ruby/test_time_tz.rb
     - test/ruby/test_variable.rb
     - test/zlib/test_zlib.rb
-    - tool/enc-emoji4unicode.rb
-    - tool/file2lastrev.rb
-    - tool/lib/test/unit.rb
-    - tool/lib/vcs.rb
-    - tool/lib/webrick/httpresponse.rb
     - tool/lib/webrick/ssl.rb
     - tool/merger.rb
     - tool/rbinstall.rb
-    - tool/redmine-backporter.rb
-    - tool/releng/gen-mail.rb
-    - tool/releng/update-www-meta.rb
     - tool/rjit/bindgen.rb
     - tool/ruby_vm/loaders/insns_def.rb
     - tool/ruby_vm/models/operands_unifications.rb
     - tool/sync_default_gems.rb
     - tool/test/testunit/test_minitest_unit.rb
-    - tool/transcode-tblgen.rb
 
 rails:
   repo: https://github.com/rails/rails
@@ -114,9 +84,6 @@ rails:
   todos:
     - actionpack/test/dispatch/content_disposition_test.rb
     - actionview/lib/action_view/layouts.rb
-    - activerecord/lib/active_record/connection_adapters/abstract_mysql_adapter.rb
-    - activerecord/lib/active_record/connection_adapters/postgresql/schema_statements.rb
-    - activerecord/lib/active_record/connection_adapters/postgresql_adapter.rb
     - activesupport/test/core_ext/string_ext_test.rb
     - railties/test/isolation/abstract_unit.rb
 
@@ -130,7 +97,6 @@ discourse:
     - app/models/post.rb
     - app/models/topic_thumbnail.rb
     - app/services/hashtag_autocomplete_service.rb
-    - lib/discourse_dev/record.rb
     - lib/slug.rb
     - lib/stylesheet/importer.rb
     - lib/upload_security.rb

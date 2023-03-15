@@ -2209,7 +2209,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
   // the string and we can safely return string content.
   if (pound + 1 >= parser->end) {
     parser->current.end = pound;
-    lex_state_set(parser, YP_LEX_STATE_BEG);
     return YP_TOKEN_STRING_CONTENT;
   }
 
@@ -2221,7 +2220,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // In this case we may have hit an embedded instance or class variable.
       if (pound + 2 >= parser->end) {
         parser->current.end = pound + 1;
-        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -2236,7 +2234,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // already consumed content.
         if (pound > parser->current.start) {
           parser->current.end = pound;
-          lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -2258,7 +2255,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // not enough room, then we'll just return string content.
       if (pound + 2 >= parser->end) {
         parser->current.end = pound + 1;
-        lex_state_set(parser, YP_LEX_STATE_BEG);
         return YP_TOKEN_STRING_CONTENT;
       }
 
@@ -2270,7 +2266,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       if (pound[2] == '-') {
         if (pound + 3 >= parser->end) {
           parser->current.end = pound + 2;
-          lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -2290,7 +2285,6 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
         // return that content as string content first.
         if (pound > parser->current.start) {
           parser->current.end = pound;
-          lex_state_set(parser, YP_LEX_STATE_BEG);
           return YP_TOKEN_STRING_CONTENT;
         }
 
@@ -5741,6 +5735,7 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //                 ^^^^^
     case YP_TOKEN_EMBVAR: {
+      lex_state_set(parser, YP_LEX_STATE_BEG);
       parser_lex(parser);
 
       switch (parser->current.type) {
@@ -7744,7 +7739,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_SYMBOL_BEGIN:
       parser_lex(parser);
-      return parse_symbol(parser, lex_mode, YP_LEX_STATE_NONE);
+      return parse_symbol(parser, lex_mode, YP_LEX_STATE_END);
     default:
       if (context_recoverable(parser, &parser->current)) {
         parser->recovering = true;
