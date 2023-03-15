@@ -5285,6 +5285,10 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         parser_lex(parser);
         yp_diagnostic_list_append(&parser->error_list, "Formal argument cannot be a constant", parser->previous.start - parser->start);
         break;
+      case YP_TOKEN_INSTANCE_VARIABLE:
+        parser_lex(parser);
+        yp_diagnostic_list_append(&parser->error_list, "Formal argument cannot be an instance variable", parser->previous.start - parser->start);
+        break;
       default:
         return params;
     }

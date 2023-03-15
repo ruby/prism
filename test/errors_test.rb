@@ -443,6 +443,26 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
+  test "instance variables in method parameters" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      StatementsNode([]),
+      Scope([]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+
+    assert_errors expected, "def foo(@a);end", [
+      "Formal argument cannot be an instance variable",
+    ]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
