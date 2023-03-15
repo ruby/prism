@@ -11,7 +11,7 @@ bits = {
 }
 
 table = ""
-(0...128).each_slice(16).with_index do |slice, row_index|
+(0...256).each_slice(16).with_index do |slice, row_index|
   row =
     slice.map do |codepoint|
       character = codepoint.chr
@@ -33,7 +33,7 @@ end
 <%= "#define YP_STRSPN_BIT_#{name} (1 << #{bit_index})" %>
 <%- end -%>
 
-const unsigned char yp_strspn_table[128] = {
+const unsigned char yp_strspn_table[256] = {
   //       <%= "#{(0...16).map { |value| value.to_s(16).upcase }.join("           ")}" %>
 <%= table %>};
 <%- bits.each do |name, characters| -%>
