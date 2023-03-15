@@ -422,6 +422,27 @@ class ErrorsTest < Test::Unit::TestCase
     ", ["Module definition in method body"]
   end
 
+  test "constants in method parameters" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([], [], nil, [], nil, nil),
+      StatementsNode([]),
+      Scope([]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+
+    assert_errors expected, "def foo(A, B);end", [
+      "Formal argument cannot be a constant",
+      "Formal argument cannot be a constant",
+    ]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

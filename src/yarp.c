@@ -5281,6 +5281,10 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         params->as.parameters_node.keyword_rest = param;
         break;
       }
+      case YP_TOKEN_CONSTANT:
+        parser_lex(parser);
+        yp_diagnostic_list_append(&parser->error_list, "Formal argument cannot be a constant", parser->previous.start - parser->start);
+        break;
       default:
         return params;
     }
