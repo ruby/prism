@@ -54,7 +54,6 @@ ruby:
     - spec/syntax_suggest/unit/code_line_spec.rb
     - test/-ext-/bignum/test_pack.rb
     - test/csv/interface/test_read_write.rb
-    - test/csv/test_encodings.rb
     - test/csv/test_patterns.rb
     - test/io/console/test_io_console.rb
     - test/openssl/test_x509name.rb
