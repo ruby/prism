@@ -41,8 +41,10 @@ const unsigned char yp_strspn_table[128] = {
 // Returns the number of characters at the start of the string string that are a
 // <%= name.to_s.downcase.split("_").join(" ") %>. Disallows searching past the given maximum number of characters.
 size_t
-yp_strspn_<%= name.downcase %>(const char *string, size_t maximum) {
+yp_strspn_<%= name.downcase %>(const char *string, int maximum) {
+  if (maximum <= 0) return 0;
   size_t size = 0;
+
   while (size < maximum && (yp_strspn_table[(unsigned char) string[size]] & YP_STRSPN_BIT_<%= name %>)) size++;
   return size;
 }
@@ -51,8 +53,10 @@ yp_strspn_<%= name.downcase %>(const char *string, size_t maximum) {
 // Returns the number of characters at the start of the string string that are a
 // binary number. Disallows searching past the given maximum number of characters.
 size_t
-yp_strspn_binary_number(const char *string, size_t maximum) {
+yp_strspn_binary_number(const char *string, int maximum) {
+  if (maximum <= 0) return 0;
   size_t size = 0;
+
   while (size < maximum && (string[size] == '0' || string[size] == '1' || string[size] == '_')) size++;
   return size;
 }

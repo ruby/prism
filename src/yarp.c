@@ -2062,7 +2062,7 @@ static yp_token_type_t
 lex_identifier(yp_parser_t *parser, bool previous_command_start) {
   // Lex as far as we can into the current identifier.
   size_t width;
-  while ((width = char_is_identifier(parser, parser->current.end))) {
+  while ((parser->current.end < parser->end) && (width = char_is_identifier(parser, parser->current.end))) {
     parser->current.end += width;
   }
 
@@ -2360,7 +2360,7 @@ lex_question_mark(yp_parser_t *parser) {
     return YP_TOKEN_QUESTION_MARK;
   }
 
-  if (parser->current.end == parser->end) {
+  if (parser->current.end >= parser->end) {
     yp_diagnostic_list_append(&parser->error_list, "incomplete character syntax", parser->current.start - parser->start);
     return YP_TOKEN_INVALID;
   }
@@ -2423,11 +2423,15 @@ lex_question_mark(yp_parser_t *parser) {
           // \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
           // \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
           parser->current.end++;
+
           if (match(parser, '{')) {
-            parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
-            while (!match(parser, '}')) {
-              parser->current.end += yp_strspn_hexidecimal_digit(parser->current.end, parser->current.end - parser->end);
-              parser->current.end += yp_strspn_whitespace(parser->current.end, parser->current.end - parser->end);
+            parser->current.end += yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end);
+            const char *previous = parser->current.end;
+
+            while (parser->current.end < parser->end && !match(parser, '}')) {
+              parser->current.end += yp_strspn_hexidecimal_digit(parser->current.end, parser->end - parser->current.end);
+              parser->current.end += yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end);
+              if (parser->current.end == previous) break;
             }
           } else {
             for (size_t index = 0; index < 4; index++) {
@@ -2598,7 +2602,7 @@ lex_token_type(yp_parser_t *parser) {
       // First, we're going to skip past any whitespace at the front of the next
       // token.
       bool chomping = true;
-      while (chomping) {
+      while (parser->current.end < parser->end && chomping) {
         switch (*parser->current.end) {
           case ' ':
           case '\t':
@@ -2633,6 +2637,12 @@ lex_token_type(yp_parser_t *parser) {
 
       // Next, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
+
+      // We'll check if we're at the end of the file. If we are, then we need to
+      // return the EOF token.
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_EOF;
+      }
 
       // Finally, we'll check the current character to determine the next token.
       switch (*parser->current.end++) {
@@ -3604,10 +3614,16 @@ lex_token_type(yp_parser_t *parser) {
 
       // If there's any whitespace at the start of the list, then we're going to
       // trim it off the beginning and create a new token.
-      size_t whitespace;
+      int whitespace;
       if ((whitespace = yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end)) > 0) {
         parser->current.end += whitespace;
         return YP_TOKEN_WORDS_SEP;
+      }
+
+      // We'll check if we're at the end of the file. If we are, then we need to
+      // return the EOF token.
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_EOF;
       }
 
       // These are the places where we need to split up the content of the list.
@@ -3708,6 +3724,12 @@ lex_token_type(yp_parser_t *parser) {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
 
+      // We'll check if we're at the end of the file. If we are, then we need to
+      // return the EOF token.
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_EOF;
+      }
+
       // These are the places where we need to split up the content of the
       // regular expression. We'll use strpbrk to find the first of these
       // characters.
@@ -3787,6 +3809,12 @@ lex_token_type(yp_parser_t *parser) {
     case YP_LEX_STRING: {
       // First, we'll set to start of this token to be the current end.
       parser->current.start = parser->current.end;
+
+      // We'll check if we're at the end of the file. If we are, then we need to
+      // return the EOF token.
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_EOF;
+      }
 
       // These are the places where we need to split up the content of the
       // string. We'll use strpbrk to find the first of these characters.
@@ -3901,6 +3929,12 @@ lex_token_type(yp_parser_t *parser) {
         parser->current.start = parser->next_start;
         parser->current.end = parser->next_start;
         parser->next_start = NULL;
+      }
+
+      // We'll check if we're at the end of the file. If we are, then we need to
+      // return the EOF token.
+      if (parser->current.end >= parser->end) {
+        return YP_TOKEN_EOF;
       }
 
       // Now let's grab the information about the identifier off of the current
