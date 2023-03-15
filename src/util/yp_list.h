@@ -57,7 +57,7 @@ yp_list_init(yp_list_t *list);
 
 // Returns true if the given list is empty.
 __attribute__((__visibility__("default"))) extern bool
-yp_list_empty(yp_list_t *list);
+yp_list_empty_p(yp_list_t *list);
 
 // Append a node to the given list.
 void
