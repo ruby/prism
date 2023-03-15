@@ -285,17 +285,22 @@ module YARP
         # whitespace on plain string content tokens. This allows us to later
         # remove that amount of whitespace from the beginning of each line.
         def <<(token)
-          if dedent_next && token.event == :on_tstring_content && token.value.start_with?(/\s/)
-            token.value.split("\n").each do |line|
+          if token.event == :on_tstring_content
+            token.value.split("\n").each_with_index do |line, index|
               # Blank lines don't count toward the dedent.
               next if line.empty?
 
-              leading = line[/\A\s*/]
-              @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
+              if dedent_next || index > 0
+                leading = line[/\A\s*/]
+                @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
+              end
             end
+
+            @dedent_next = true
+          else
+            @dedent_next = false
           end
 
-          @dedent_next = token.event == :on_tstring_content
           tokens << token
         end
 
