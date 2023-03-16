@@ -1645,6 +1645,105 @@ terminator(const char start) {
 }
 
 /******************************************************************************/
+/* Encoding-related functions                                                 */
+/******************************************************************************/
+
+static yp_encoding_t yp_encoding_ascii = {
+  .name = "ascii",
+  .alnum_char = yp_encoding_ascii_alnum_char,
+  .alpha_char = yp_encoding_ascii_alpha_char,
+  .isupper_char = yp_encoding_ascii_isupper_char
+};
+
+static yp_encoding_t yp_encoding_ascii_8bit = {
+  .name = "ascii-8bit",
+  .alnum_char = yp_encoding_ascii_alnum_char,
+  .alpha_char = yp_encoding_ascii_alpha_char,
+  .isupper_char = yp_encoding_ascii_isupper_char,
+};
+
+static yp_encoding_t yp_encoding_big5 = {
+  .name = "big5",
+  .alnum_char = yp_encoding_big5_alnum_char,
+  .alpha_char = yp_encoding_big5_alpha_char,
+  .isupper_char = yp_encoding_big5_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_9 = {
+  .name = "iso-8859-9",
+  .alnum_char = yp_encoding_iso_8859_9_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_9_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_9_isupper_char
+};
+
+static yp_encoding_t yp_encoding_utf_8 = {
+  .name = "utf-8",
+  .alnum_char = yp_encoding_utf_8_alnum_char,
+  .alpha_char = yp_encoding_utf_8_alpha_char,
+  .isupper_char = yp_encoding_utf_8_isupper_char
+};
+
+// Here we're going to check if this is a "magic" comment, and perform whatever
+// actions are necessary for it here.
+static void
+parser_lex_magic_comments(yp_parser_t *parser) {
+  const char *start = parser->current.start + 1;
+  start += yp_strspn_inline_whitespace(start, parser->end - start);
+
+  if (strncmp(start, "-*-", 3) == 0) {
+    start += 3;
+    start += yp_strspn_inline_whitespace(start, parser->end - start);
+  }
+
+  // There is a lot TODO here to make it more accurately reflect encoding
+  // parsing, but for now this gets us closer.
+  if (strncmp(start, "encoding:", 9) == 0) {
+    start += 9;
+    start += yp_strspn_inline_whitespace(start, parser->end - start);
+
+    const char *end = yp_strpbrk(start, " \t\f\r\v\n", parser->end - start);
+    end = end == NULL ? parser->end : end;
+    size_t width = end - start;
+
+    // First, we're going to call out to a user-defined callback if one was
+    // provided. If they return an encoding struct that we can use, then we'll
+    // use that here.
+    if (parser->encoding_decode_callback != NULL) {
+      yp_encoding_t *encoding = parser->encoding_decode_callback(parser, start, width);
+
+      if (encoding != NULL) {
+        parser->encoding = *encoding;
+        return;
+      }
+    }
+
+    // Next, we're going to loop through each of the encodings that we handle
+    // explicitly. If we found one that we understand, we'll use that value.
+#define ENCODING(value, prebuilt) \
+    if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
+      parser->encoding = prebuilt; \
+      return; \
+    }
+
+    ENCODING("ascii", yp_encoding_ascii);
+    ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
+    ENCODING("big5", yp_encoding_big5);
+    ENCODING("binary", yp_encoding_ascii_8bit);
+    ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
+    ENCODING("us-ascii", yp_encoding_ascii);
+    ENCODING("utf-8", yp_encoding_utf_8);
+
+#undef ENCODING
+
+    // If nothing was returned by this point, then we've got an issue because we
+    // didn't understand the encoding that the user was trying to use. In this
+    // case we'll keep using the default encoding but add an error to the
+    // parser to indicate an unsuccessful parse.
+    yp_diagnostic_list_append(&parser->error_list, start, end, "Could not understand the encoding specified in the magic comment.");
+  }
+}
+
+/******************************************************************************/
 /* Context manipulations                                                      */
 /******************************************************************************/
 
@@ -4099,105 +4198,6 @@ lex_token_type(yp_parser_t *parser) {
   // that out, so just returning a value here to make them happy.
   assert(false && "unreachable");
   return YP_TOKEN_EOF;
-}
-
-/******************************************************************************/
-/* Encoding-related functions                                                 */
-/******************************************************************************/
-
-static yp_encoding_t yp_encoding_ascii = {
-  .name = "ascii",
-  .alnum_char = yp_encoding_ascii_alnum_char,
-  .alpha_char = yp_encoding_ascii_alpha_char,
-  .isupper_char = yp_encoding_ascii_isupper_char
-};
-
-static yp_encoding_t yp_encoding_ascii_8bit = {
-  .name = "ascii-8bit",
-  .alnum_char = yp_encoding_ascii_alnum_char,
-  .alpha_char = yp_encoding_ascii_alpha_char,
-  .isupper_char = yp_encoding_ascii_isupper_char,
-};
-
-static yp_encoding_t yp_encoding_big5 = {
-  .name = "big5",
-  .alnum_char = yp_encoding_big5_alnum_char,
-  .alpha_char = yp_encoding_big5_alpha_char,
-  .isupper_char = yp_encoding_big5_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_9 = {
-  .name = "iso-8859-9",
-  .alnum_char = yp_encoding_iso_8859_9_alnum_char,
-  .alpha_char = yp_encoding_iso_8859_9_alpha_char,
-  .isupper_char = yp_encoding_iso_8859_9_isupper_char
-};
-
-static yp_encoding_t yp_encoding_utf_8 = {
-  .name = "utf-8",
-  .alnum_char = yp_encoding_utf_8_alnum_char,
-  .alpha_char = yp_encoding_utf_8_alpha_char,
-  .isupper_char = yp_encoding_utf_8_isupper_char
-};
-
-// Here we're going to check if this is a "magic" comment, and perform whatever
-// actions are necessary for it here.
-static void
-parser_lex_magic_comments(yp_parser_t *parser) {
-  const char *start = parser->current.start + 1;
-  start += yp_strspn_inline_whitespace(start, parser->end - start);
-
-  if (strncmp(start, "-*-", 3) == 0) {
-    start += 3;
-    start += yp_strspn_inline_whitespace(start, parser->end - start);
-  }
-
-  // There is a lot TODO here to make it more accurately reflect encoding
-  // parsing, but for now this gets us closer.
-  if (strncmp(start, "encoding:", 9) == 0) {
-    start += 9;
-    start += yp_strspn_inline_whitespace(start, parser->end - start);
-
-    const char *end = yp_strpbrk(start, " \t\f\r\v\n", parser->end - start);
-    end = end == NULL ? parser->end : end;
-    size_t width = end - start;
-
-    // First, we're going to call out to a user-defined callback if one was
-    // provided. If they return an encoding struct that we can use, then we'll
-    // use that here.
-    if (parser->encoding_decode_callback != NULL) {
-      yp_encoding_t *encoding = parser->encoding_decode_callback(parser, start, width);
-
-      if (encoding != NULL) {
-        parser->encoding = *encoding;
-        return;
-      }
-    }
-
-    // Next, we're going to loop through each of the encodings that we handle
-    // explicitly. If we found one that we understand, we'll use that value.
-#define ENCODING(value, prebuilt) \
-    if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
-      parser->encoding = prebuilt; \
-      return; \
-    }
-
-    ENCODING("ascii", yp_encoding_ascii);
-    ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
-    ENCODING("big5", yp_encoding_big5);
-    ENCODING("binary", yp_encoding_ascii_8bit);
-    ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
-    ENCODING("us-ascii", yp_encoding_ascii);
-    ENCODING("utf-8", yp_encoding_utf_8);
-
-#undef ENCODING
-
-    // If nothing was returned by this point, then we've got an issue because we
-    // didn't understand the encoding that the user was trying to use. In this
-    // case we'll keep using the default encoding but add an error to the
-    // parser to indicate an unsuccessful parse.
-    yp_diagnostic_list_append(&parser->error_list, start, end, "Could not understand the encoding specified in the magic comment.");
-  }
 }
 
 /******************************************************************************/
