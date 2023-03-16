@@ -1,6 +1,81 @@
-RegularExpressionNode(
-  REGEXP_BEGIN("/"),
-  STRING_CONTENT("abc"),
-  REGEXP_END("/i"),
-  "abc"
+ProgramNode(
+  Scope([IDENTIFIER("foo")]),
+  StatementsNode(
+    [CallNode(
+       nil,
+       nil,
+       IDENTIFIER("foo"),
+       nil,
+       ArgumentsNode(
+         [RegularExpressionNode(
+            REGEXP_BEGIN("/"),
+            STRING_CONTENT("bar"),
+            REGEXP_END("/"),
+            "bar"
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
+     ),
+     RegularExpressionNode(
+       REGEXP_BEGIN("%r{"),
+       STRING_CONTENT("abc"),
+       REGEXP_END("}i"),
+       "abc"
+     ),
+     RegularExpressionNode(
+       REGEXP_BEGIN("/"),
+       STRING_CONTENT("a\\b"),
+       REGEXP_END("/"),
+       "a\b"
+     ),
+     InterpolatedRegularExpressionNode(
+       REGEXP_BEGIN("/"),
+       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
+        GlobalVariableReadNode(GLOBAL_VARIABLE("$bbb"))],
+       REGEXP_END("/")
+     ),
+     InterpolatedRegularExpressionNode(
+       REGEXP_BEGIN("/"),
+       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
+        StringInterpolatedNode(
+          EMBEXPR_BEGIN("\#{"),
+          StatementsNode(
+            [CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, nil, "bbb")]
+          ),
+          EMBEXPR_END("}")
+        ),
+        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")],
+       REGEXP_END("/")
+     ),
+     ArrayNode(
+       [CallNode(
+          RegularExpressionNode(
+            REGEXP_BEGIN("/"),
+            STRING_CONTENT("(?<foo>bar)"),
+            REGEXP_END("/"),
+            "(?<foo>bar)"
+          ),
+          nil,
+          EQUAL_TILDE("=~"),
+          nil,
+          ArgumentsNode(
+            [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
+          ),
+          nil,
+          nil,
+          "=~"
+        ),
+        LocalVariableReadNode(IDENTIFIER("foo"))],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     RegularExpressionNode(
+       REGEXP_BEGIN("/"),
+       STRING_CONTENT("abc"),
+       REGEXP_END("/i"),
+       "abc"
+     )]
+  )
 )

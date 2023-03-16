@@ -1,1 +1,1 @@
-RangeNode(IntegerNode(), nil, (1..4))
+ProgramNode(Scope([]), StatementsNode([RangeNode(IntegerNode(), nil, (1..4))]))

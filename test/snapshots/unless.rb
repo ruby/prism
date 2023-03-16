@@ -1,21 +1,72 @@
-UnlessNode(
-  KEYWORD_UNLESS_MODIFIER("unless"),
-  CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+ProgramNode(
+  Scope([]),
   StatementsNode(
-    [CallNode(
+    [UnlessNode(
+       KEYWORD_UNLESS("unless"),
+       TrueNode(),
+       StatementsNode([IntegerNode()]),
        nil,
+       KEYWORD_END("end")
+     ),
+     UnlessNode(
+       KEYWORD_UNLESS("unless"),
+       TrueNode(),
+       StatementsNode([IntegerNode()]),
+       ElseNode(
+         KEYWORD_ELSE("else"),
+         StatementsNode([IntegerNode()]),
+         KEYWORD_END("end")
+       ),
+       KEYWORD_END("end")
+     ),
+     UnlessNode(
+       KEYWORD_UNLESS_MODIFIER("unless"),
+       TrueNode(),
+       StatementsNode([IntegerNode()]),
        nil,
-       IDENTIFIER("foo"),
+       nil
+     ),
+     UnlessNode(
+       KEYWORD_UNLESS_MODIFIER("unless"),
+       TrueNode(),
+       StatementsNode([BreakNode(nil, (62..67))]),
        nil,
-       ArgumentsNode(
-         [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-          SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")]
+       nil
+     ),
+     UnlessNode(
+       KEYWORD_UNLESS_MODIFIER("unless"),
+       TrueNode(),
+       StatementsNode([NextNode(nil, (81..85))]),
+       nil,
+       nil
+     ),
+     UnlessNode(
+       KEYWORD_UNLESS_MODIFIER("unless"),
+       TrueNode(),
+       StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
+       nil,
+       nil
+     ),
+     UnlessNode(
+       KEYWORD_UNLESS_MODIFIER("unless"),
+       CallNode(nil, nil, IDENTIFIER("bar?"), nil, nil, nil, nil, "bar?"),
+       StatementsNode(
+         [CallNode(
+            nil,
+            nil,
+            IDENTIFIER("foo"),
+            nil,
+            ArgumentsNode(
+              [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+               SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")]
+            ),
+            nil,
+            nil,
+            "foo"
+          )]
        ),
        nil,
-       nil,
-       "foo"
+       nil
      )]
-  ),
-  nil,
-  nil
+  )
 )

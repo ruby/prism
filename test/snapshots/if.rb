@@ -1,17 +1,116 @@
-IfNode(
-  KEYWORD_IF_MODIFIER("if"),
-  CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c"),
+ProgramNode(
+  Scope([]),
   StatementsNode(
     [IfNode(
+       KEYWORD_IF("if"),
+       TrueNode(),
+       StatementsNode([IntegerNode()]),
+       nil,
+       KEYWORD_END("end")
+     ),
+     IfNode(
+       KEYWORD_IF("if"),
+       TrueNode(),
+       StatementsNode([IntegerNode()]),
+       ElseNode(
+         KEYWORD_ELSE("else"),
+         StatementsNode([IntegerNode()]),
+         KEYWORD_END("end")
+       ),
+       KEYWORD_END("end")
+     ),
+     IfNode(
+       KEYWORD_IF("if"),
+       TrueNode(),
+       StatementsNode([TrueNode()]),
+       IfNode(
+         KEYWORD_ELSIF("elsif"),
+         FalseNode(),
+         StatementsNode([FalseNode()]),
+         IfNode(
+           KEYWORD_ELSIF("elsif"),
+           NilNode(),
+           StatementsNode([NilNode()]),
+           ElseNode(
+             KEYWORD_ELSE("else"),
+             StatementsNode([SelfNode()]),
+             KEYWORD_END("end")
+           ),
+           nil
+         ),
+         nil
+       ),
+       KEYWORD_END("end")
+     ),
+     IfNode(
        KEYWORD_IF_MODIFIER("if"),
-       CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+       TrueNode(),
+       StatementsNode([IntegerNode()]),
+       nil,
+       nil
+     ),
+     IfNode(
+       KEYWORD_IF_MODIFIER("if"),
+       TrueNode(),
+       StatementsNode([BreakNode(nil, (125..130))]),
+       nil,
+       nil
+     ),
+     IfNode(
+       KEYWORD_IF_MODIFIER("if"),
+       TrueNode(),
+       StatementsNode([NextNode(nil, (140..144))]),
+       nil,
+       nil
+     ),
+     IfNode(
+       KEYWORD_IF_MODIFIER("if"),
+       TrueNode(),
+       StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
+       nil,
+       nil
+     ),
+     IfNode(
+       KEYWORD_IF("if"),
+       CallNode(
+         nil,
+         nil,
+         IDENTIFIER("exit_loop"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "exit_loop"
+       ),
+       StatementsNode([BreakNode(ArgumentsNode([IntegerNode()]), (188..193))]),
+       nil,
+       KEYWORD_END("end")
+     ),
+     IfNode(
+       KEYWORD_IF("if"),
+       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
        StatementsNode(
-         [CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a")]
+         [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")]
+       ),
+       nil,
+       KEYWORD_END("end")
+     ),
+     IfNode(
+       KEYWORD_IF_MODIFIER("if"),
+       CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c"),
+       StatementsNode(
+         [IfNode(
+            KEYWORD_IF_MODIFIER("if"),
+            CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+            StatementsNode(
+              [CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a")]
+            ),
+            nil,
+            nil
+          )]
        ),
        nil,
        nil
      )]
-  ),
-  nil,
-  nil
+  )
 )
