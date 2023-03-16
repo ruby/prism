@@ -1,7 +1,27 @@
-SuperNode(
-  KEYWORD_SUPER("super"),
-  PARENTHESIS_LEFT("("),
-  ArgumentsNode([IntegerNode(), IntegerNode(), IntegerNode()]),
-  PARENTHESIS_RIGHT(")"),
-  nil
+ProgramNode(
+  Scope([]),
+  StatementsNode(
+    [ForwardingSuperNode(nil),
+     SuperNode(
+       KEYWORD_SUPER("super"),
+       PARENTHESIS_LEFT("("),
+       nil,
+       PARENTHESIS_RIGHT(")"),
+       nil
+     ),
+     SuperNode(
+       KEYWORD_SUPER("super"),
+       PARENTHESIS_LEFT("("),
+       ArgumentsNode([IntegerNode()]),
+       PARENTHESIS_RIGHT(")"),
+       nil
+     ),
+     SuperNode(
+       KEYWORD_SUPER("super"),
+       PARENTHESIS_LEFT("("),
+       ArgumentsNode([IntegerNode(), IntegerNode(), IntegerNode()]),
+       PARENTHESIS_RIGHT(")"),
+       nil
+     )]
+  )
 )

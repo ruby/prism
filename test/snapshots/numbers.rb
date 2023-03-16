@@ -1,1 +1,27 @@
-CallNode(IntegerNode(), nil, UMINUS("-"), nil, nil, nil, nil, "-@")
+ProgramNode(
+  Scope([]),
+  StatementsNode(
+    [IntegerNode(),
+     IntegerNode(),
+     FloatNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     IntegerNode(),
+     ImaginaryNode(),
+     RationalNode(),
+     CallNode(IntegerNode(), nil, UMINUS("-"), nil, nil, nil, nil, "-@")]
+  )
+)

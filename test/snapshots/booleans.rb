@@ -1,1 +1,1 @@
-TrueNode()
+ProgramNode(Scope([]), StatementsNode([FalseNode(), TrueNode()]))
