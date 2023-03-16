@@ -2502,36 +2502,36 @@ lex_at_variable(yp_parser_t *parser) {
   return YP_TOKEN_INVALID;
 }
 
+static yp_token_type_t
+lex_token_type(yp_parser_t *parser);
+
+static inline void
+parser_lex_callback(yp_parser_t *parser);
+
 static inline yp_token_type_t
 lex_newline(yp_parser_t *parser, bool previous_command_start) {
-  bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
+  // If the special resume flag is set, then we need to jump ahead.
+  if (parser->heredoc_end != NULL) {
+    assert(parser->heredoc_end <= parser->end);
+    parser->next_start = parser->heredoc_end;
+    parser->heredoc_end = NULL;
+  }
 
-  if (ignored || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
+  if ((lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED)) || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
     // This is an ignored newline.
     parser->command_start = previous_command_start;
 
-    // If the special resume flag is set, then we need to jump ahead.
-    if (parser->heredoc_end != NULL) {
-      assert(parser->heredoc_end <= parser->end);
-      parser->next_start = parser->heredoc_end;
-      parser->heredoc_end = NULL;
-    }
+    parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
+    parser_lex_callback(parser);
 
-    return YP_TOKEN_IGNORED_NEWLINE;
-  } else {
-    // This is a normal newline.
-    lex_state_set(parser, YP_LEX_STATE_BEG);
-    parser->command_start = true;
-
-    // If the special resume flag is set, then we need to jump ahead.
-    if (parser->heredoc_end != NULL) {
-      assert(parser->heredoc_end <= parser->end);
-      parser->next_start = parser->heredoc_end;
-      parser->heredoc_end = NULL;
-    }
-
-    return YP_TOKEN_NEWLINE;
+    return lex_token_type(parser);
   }
+
+  // This is a normal newline.
+  lex_state_set(parser, YP_LEX_STATE_BEG);
+  parser->command_start = true;
+
+  return YP_TOKEN_NEWLINE;
 }
 
 // Optionally call out to the lex callback if one is provided.
@@ -4253,12 +4253,8 @@ parser_lex(yp_parser_t *parser) {
   parser->current.type = lex_token_type(parser);
   parser_lex_callback(parser);
 
-  while (match_any_type_p(parser, 5, YP_TOKEN_IGNORED_NEWLINE, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
+  while (match_any_type_p(parser, 4, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
     switch (parser->current.type) {
-      case YP_TOKEN_IGNORED_NEWLINE:
-        parser->current.type = lex_token_type(parser);
-        parser_lex_callback(parser);
-        break;
       case YP_TOKEN_COMMENT: {
         // If we found a comment while lexing, then we're going to add it to the
         // list of comments in the file and keep lexing.
