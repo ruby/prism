@@ -2502,11 +2502,33 @@ lex_at_variable(yp_parser_t *parser) {
   return YP_TOKEN_INVALID;
 }
 
+// Optionally call out to the lex callback if one is provided.
+static inline void
+parser_lex_callback(yp_parser_t *parser) {
+  if (parser->consider_magic_comments && parser->current.type != YP_TOKEN_COMMENT) {
+    parser->consider_magic_comments = false;
+  }
+
+  if (parser->lex_callback) {
+    parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
+  }
+}
+
+// Return a new comment node of the specified type.
+static inline yp_comment_t *
+parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
+  yp_comment_t *comment = (yp_comment_t *) malloc(sizeof(yp_comment_t));
+  *comment = (yp_comment_t) {
+    .type = type,
+    .start = parser->current.start,
+    .end = parser->current.end
+  };
+
+  return comment;
+}
+
 static yp_token_type_t
 lex_token_type(yp_parser_t *parser);
-
-static inline void
-parser_lex_callback(yp_parser_t *parser);
 
 static inline yp_token_type_t
 lex_newline(yp_parser_t *parser, bool previous_command_start) {
@@ -2533,33 +2555,6 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
 
   return YP_TOKEN_NEWLINE;
 }
-
-// Optionally call out to the lex callback if one is provided.
-static inline void
-parser_lex_callback(yp_parser_t *parser) {
-  if (parser->consider_magic_comments && parser->current.type != YP_TOKEN_COMMENT) {
-    parser->consider_magic_comments = false;
-  }
-
-  if (parser->lex_callback) {
-    parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
-  }
-}
-
-// static inline void
-// debug_yp_state_stack_push(yp_state_stack_t *stack, bool value, char const *caller_name, int caller_line) {
-//   fprintf(stderr, "[%s:%d] pushing %d onto stack %p\n", caller_name, caller_line, value, &stack);
-//   yp_state_stack_push(stack, value);
-// }
-
-// static inline void
-// debug_yp_state_stack_pop(yp_state_stack_t *stack, char const *caller_name, int caller_line) {
-//   fprintf(stderr, "[%s:%d] popping from stack %p\n", caller_name, caller_line, &stack);
-//   yp_state_stack_pop(stack);
-// }
-
-// #define yp_state_stack_push(stack, value) debug_yp_state_stack_push(stack, value, __func__, __LINE__)
-// #define yp_state_stack_pop(stack) debug_yp_state_stack_pop(stack, __func__, __LINE__)
 
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
@@ -3549,7 +3544,13 @@ lex_token_type(yp_parser_t *parser) {
             (*parser->current.end == '\n' || (*parser->current.end == '\r' && parser->current.end[1] == '\n'))
           ) {
             parser->current.end = parser->end;
-            return YP_TOKEN___END__;
+            parser->current.type = YP_TOKEN___END__;
+            parser_lex_callback(parser);
+
+            yp_comment_t *comment = parser_comment(parser, YP_COMMENT___END__);
+            yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
+
+            return YP_TOKEN_EOF;
           }
 
           yp_lex_state_t last_state = parser->lex_state;
@@ -4199,19 +4200,6 @@ yp_node_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *
   return node;
 }
 
-// Return a new comment node of the specified type.
-static inline yp_comment_t *
-parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
-  yp_comment_t *comment = (yp_comment_t *) malloc(sizeof(yp_comment_t));
-  *comment = (yp_comment_t) {
-    .type = type,
-    .start = parser->current.start,
-    .end = parser->current.end
-  };
-
-  return comment;
-}
-
 // Returns true if the current token is of the specified type.
 static inline bool
 match_type_p(yp_parser_t *parser, yp_token_type_t type) {
@@ -4253,7 +4241,7 @@ parser_lex(yp_parser_t *parser) {
   parser->current.type = lex_token_type(parser);
   parser_lex_callback(parser);
 
-  while (match_any_type_p(parser, 4, YP_TOKEN_COMMENT, YP_TOKEN___END__, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
+  while (match_any_type_p(parser, 3, YP_TOKEN_COMMENT, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
     switch (parser->current.type) {
       case YP_TOKEN_COMMENT: {
         // If we found a comment while lexing, then we're going to add it to the
@@ -4267,15 +4255,6 @@ parser_lex(yp_parser_t *parser) {
 
         parser->current.type = lex_newline(parser, previous_command_start);
         break;
-      }
-      case YP_TOKEN___END__: {
-        yp_comment_t *comment = parser_comment(parser, YP_COMMENT___END__);
-        yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
-
-        (void) lex_newline(parser, previous_command_start);
-        parser->current.type = lex_token_type(parser);
-        parser_lex_callback(parser);
-        return;
       }
       case YP_TOKEN_EMBDOC_BEGIN: {
         yp_comment_t *comment = parser_comment(parser, YP_COMMENT_EMBDOC);
