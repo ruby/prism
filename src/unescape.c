@@ -5,11 +5,6 @@
 /******************************************************************************/
 
 static inline bool
-char_is_space(const char c) {
-  return c == ' ' || ('\t' <= c && c <= '\r');
-}
-
-static inline bool
 char_is_octal_number(const char c) {
   return c >= '0' && c <= '7';
 }
@@ -221,17 +216,17 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
       if ((backslash + 3) < end && backslash[2] == '{') {
         const char *unicode_cursor = backslash + 3;
-        while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
+        unicode_cursor += yp_strspn_whitespace(unicode_cursor, end - unicode_cursor);
 
         while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
           const char *unicode_start = unicode_cursor;
-          while ((unicode_cursor < end) && char_is_hexadecimal_number(*unicode_cursor)) unicode_cursor++;
+          unicode_cursor += yp_strspn_hexidecimal_digit(unicode_cursor, end - unicode_cursor);
 
           uint32_t value;
           unescape_unicode(unicode_start, unicode_cursor - unicode_start, &value);
           *dest_length += unescape_unicode_write(dest + *dest_length, value);
 
-          while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
+          unicode_cursor += yp_strspn_whitespace(unicode_cursor, end - unicode_cursor);
         }
 
         return unicode_cursor + 1;

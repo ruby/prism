@@ -9,6 +9,7 @@
 #include "diagnostic.h"
 #include "util/yp_list.h"
 #include "util/yp_string.h"
+#include "util/yp_strspn.h"
 
 // The type of unescape we are performing.
 typedef enum {
