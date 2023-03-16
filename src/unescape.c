@@ -1,4 +1,5 @@
 #include "unescape.h"
+#include <stdio.h>
 
 /******************************************************************************/
 /* Character checks                                                           */
@@ -171,6 +172,166 @@ unescape_unicode_write(char *destination, uint32_t value) {
   return 4;
 }
 
+// Read a specific escape sequence into the given destination.
+static const char *
+unescape(char *dest, size_t *dest_length, const char *backslash, const char *end, yp_list_t *error_list) {
+  switch (backslash[1]) {
+    // \a \b \e \f \n \r \s \t \v
+    case 'a':
+    case 'b':
+    case 'e':
+    case 'f':
+    case 'n':
+    case 'r':
+    case 's':
+    case 't':
+    case 'v':
+      dest[(*dest_length)++] = unescape_chars[(unsigned char) backslash[1]];
+      return backslash + 2;
+    // \nnn         octal bit pattern, where nnn is 1-3 octal digits ([0-7])
+    case '0': case '1': case '2': case '3': case '4':
+    case '5': case '6': case '7': case '8': case '9': {
+      unsigned char value;
+      const char *cursor = backslash + unescape_octal(backslash, &value);
+
+      dest[(*dest_length)++] = value;
+      return cursor;
+    }
+    // \xnn         hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
+    case 'x': {
+      unsigned char value;
+      const char *cursor = backslash + unescape_hexadecimal(backslash, &value);
+
+      dest[(*dest_length)++] = value;
+      return cursor;
+    }
+    // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+    // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
+    case 'u': {
+      if ((backslash + 3) < end && backslash[2] == '{') {
+        const char *unicode_cursor = backslash + 3;
+        while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
+
+        while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
+          const char *unicode_start = unicode_cursor;
+          while ((unicode_cursor < end) && char_is_hexadecimal_number(*unicode_cursor)) unicode_cursor++;
+
+          uint32_t value;
+          unescape_unicode(unicode_start, unicode_cursor - unicode_start, &value);
+          *dest_length += unescape_unicode_write(dest + *dest_length, value);
+
+          while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
+        }
+
+        return unicode_cursor + 1;
+      }
+
+      if ((backslash + 2) < end && char_is_hexadecimal_numbers(backslash + 2, 4)) {
+        uint32_t value;
+        unescape_unicode(backslash + 2, 4, &value);
+
+        *dest_length += unescape_unicode_write(dest + *dest_length, value);
+        return backslash + 6;
+      }
+
+      yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid Unicode escape sequence");
+      return backslash + 2;
+    }
+    // \c\M-x       meta control character, where x is an ASCII printable character
+    // \c?          delete, ASCII 7Fh (DEL)
+    // \cx          control character, where x is an ASCII printable character
+    case 'c':
+      if (backslash + 2 >= end) {
+        yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
+        return end;
+      }
+
+      switch (backslash[2]) {
+        case '\\':
+          if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_ascii_printable(backslash[5])) {
+            yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
+            return backslash + 3;
+          }
+
+          dest[(*dest_length)++] = meta_control_char(backslash[5]);
+          return backslash + 6;
+        case '?':
+          dest[(*dest_length)++] = 0x7f;
+          return backslash + 3;
+        default: {
+          if (!char_is_ascii_printable(backslash[2])) {
+            yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
+            return backslash + 2;
+          }
+
+          dest[(*dest_length)++] = control_char(backslash[2]);
+          return backslash + 3;
+        }
+      }
+    // \C-x         control character, where x is an ASCII printable character
+    // \C-?         delete, ASCII 7Fh (DEL)
+    case 'C':
+      if (backslash + 3 >= end) {
+        yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
+        return end;
+      }
+
+      if (backslash[2] != '-') {
+        yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
+        return backslash + 2;
+      }
+
+      if (!char_is_ascii_printable(backslash[3])) {
+        yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid control escape sequence");
+        return backslash + 2;
+      }
+
+      dest[(*dest_length)++] = backslash[3] == '?' ? 0x7f : control_char(backslash[3]);
+      return backslash + 4;
+    // \M-\C-x      meta control character, where x is an ASCII printable character
+    // \M-\cx       meta control character, where x is an ASCII printable character
+    // \M-x         meta character, where x is an ASCII printable character
+    case 'M': {
+      if (backslash + 2 >= end) {
+        yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
+        return end;
+      }
+
+      if (backslash[2] != '-') {
+        yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
+        return backslash + 2;
+      }
+
+      if (backslash[3] == '\\') {
+        if (backslash[4] == 'C' && backslash[5] == '-' && char_is_ascii_printable(backslash[6])) {
+          dest[(*dest_length)++] = backslash[6] == '?' ? meta_char(0x7f) : meta_control_char(backslash[6]);
+          return backslash + 7;
+        }
+
+        if (backslash[4] == 'c' && char_is_ascii_printable(backslash[5])) {
+          dest[(*dest_length)++] = backslash[5] == '?' ? meta_char(0x7f) : meta_control_char(backslash[5]);
+          return backslash + 6;
+        }
+
+        yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
+        return backslash + 4;
+      }
+
+      if (char_is_ascii_printable(backslash[3])) {
+        dest[(*dest_length)++] = meta_char(backslash[3]);
+        return backslash + 4;
+      }
+
+      yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
+      return backslash + 3;
+    }
+    // In this case we're escaping something that doesn't need escaping.
+    default:
+      dest[(*dest_length)++] = '\\';
+      return backslash + 1;
+  }
+}
+
 /******************************************************************************/
 /* Public functions and entrypoints                                           */
 /******************************************************************************/
@@ -260,180 +421,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
         // This is the only type of unescaping left. In this case we need to
         // handle all of the different unescapes.
         assert(unescape_type == YP_UNESCAPE_ALL);
-
-        switch (backslash[1]) {
-          // \a \b \e \f \n \r \s \t \v
-          case 'a':
-          case 'b':
-          case 'e':
-          case 'f':
-          case 'n':
-          case 'r':
-          case 's':
-          case 't':
-          case 'v':
-            dest[dest_length++] = unescape_chars[(unsigned char) backslash[1]];
-            cursor = backslash + 2;
-            break;
-          // \nnn         octal bit pattern, where nnn is 1-3 octal digits ([0-7])
-          case '0': case '1': case '2': case '3': case '4':
-          case '5': case '6': case '7': case '8': case '9': {
-            unsigned char value;
-            cursor = backslash + unescape_octal(backslash, &value);
-            dest[dest_length++] = value;
-            break;
-          }
-          // \xnn         hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
-          case 'x': {
-            unsigned char value;
-            cursor = backslash + unescape_hexadecimal(backslash, &value);
-            dest[dest_length++] = value;
-            break;
-          }
-          // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
-          // \unnnn       Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
-          case 'u': {
-            if ((backslash + 2) < end && backslash[2] == '{') {
-              const char *unicode_cursor = backslash + 3;
-              while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
-
-              assert(dest_length < length);
-
-              while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
-                assert(dest_length < length);
-
-                const char *unicode_start = unicode_cursor;
-                while ((unicode_cursor < end) && char_is_hexadecimal_number(*unicode_cursor)) unicode_cursor++;
-
-                uint32_t value;
-                unescape_unicode(unicode_start, unicode_cursor - unicode_start, &value);
-                dest_length += unescape_unicode_write(dest + dest_length, value);
-
-                while ((unicode_cursor < end) && char_is_space(*unicode_cursor)) unicode_cursor++;
-              }
-
-              cursor = unicode_cursor + 1;
-              break;
-            }
-
-            if ((backslash + 2) < end && char_is_hexadecimal_numbers(backslash + 2, 4)) {
-              uint32_t value;
-              unescape_unicode(backslash + 2, 4, &value);
-
-              cursor = backslash + 6;
-              dest_length += unescape_unicode_write(dest + dest_length, value);
-              break;
-            }
-
-            yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid Unicode escape sequence");
-            cursor = backslash + 2;
-            break;
-          }
-          // \c\M-x       meta control character, where x is an ASCII printable character
-          // \c?          delete, ASCII 7Fh (DEL)
-          // \cx          control character, where x is an ASCII printable character
-          case 'c':
-            if (backslash + 2 >= end) {
-              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
-              cursor = end;
-              break;
-            }
-
-            switch (backslash[2]) {
-              case '\\':
-                if (backslash[3] != 'M' || backslash[4] != '-' || !char_is_ascii_printable(backslash[5])) {
-                  yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
-                  cursor = backslash + 3;
-                  break;
-                }
-
-                cursor = backslash + 6;
-                dest[dest_length++] = meta_control_char(backslash[5]);
-                break;
-              case '?':
-                cursor = backslash + 3;
-                dest[dest_length++] = 0x7f;
-                break;
-              default: {
-                if (!char_is_ascii_printable(backslash[2])) {
-                  yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
-                  cursor = backslash + 2;
-                  break;
-                }
-
-                cursor = backslash + 3;
-                dest[dest_length++] = control_char(backslash[2]);
-                break;
-              }
-            }
-            break;
-          // \C-x         control character, where x is an ASCII printable character
-          // \C-?         delete, ASCII 7Fh (DEL)
-          case 'C':
-            if (backslash + 2 >= end) {
-              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
-              cursor = end;
-              break;
-            }
-
-            if (backslash[2] != '-' || !char_is_ascii_printable(backslash[3])) {
-              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
-              cursor = backslash + 2;
-              break;
-            }
-
-            cursor = backslash + 4;
-            dest[dest_length++] = backslash[3] == '?' ? 0x7f : control_char(backslash[3]);
-            break;
-          // \M-\C-x      meta control character, where x is an ASCII printable character
-          // \M-\cx       meta control character, where x is an ASCII printable character
-          // \M-x         meta character, where x is an ASCII printable character
-          case 'M': {
-            if (backslash + 2 >= end) {
-              yp_diagnostic_list_append(error_list, backslash, backslash + 1, "Invalid control escape sequence");
-              cursor = end;
-              break;
-            }
-
-            if (backslash[2] != '-') {
-              yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
-              cursor = backslash + 2;
-              break;
-            }
-
-            if (backslash[3] == '\\') {
-              if (backslash[4] == 'C' && backslash[5] == '-' && char_is_ascii_printable(backslash[6])) {
-                cursor = backslash + 7;
-                dest[dest_length++] = backslash[6] == '?' ? meta_char(0x7f) : meta_control_char(backslash[6]);
-                break;
-              }
-
-              if (backslash[4] == 'c' && char_is_ascii_printable(backslash[5])) {
-                cursor = backslash + 6;
-                dest[dest_length++] = backslash[5] == '?' ? meta_char(0x7f) : meta_control_char(backslash[5]);
-                break;
-              }
-
-              yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
-              cursor = backslash + 4;
-              break;
-            }
-
-            if (char_is_ascii_printable(backslash[3])) {
-              cursor = backslash + 4;
-              dest[dest_length++] = meta_char(backslash[3]);
-              break;
-            }
-
-            yp_diagnostic_list_append(error_list, backslash, backslash + 2, "Invalid meta escape sequence");
-            cursor = backslash + 3;
-          }
-          // In this case we're escaping something that doesn't need escaping.
-          default:
-            dest[dest_length++] = '\\';
-            cursor = backslash + 1;
-            break;
-        }
+        cursor = unescape(dest, &dest_length, backslash, end, error_list);
         break;
     }
 
