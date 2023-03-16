@@ -18,7 +18,6 @@ ruby:
     - ext/socket/mkconstants.rb
     - lib/bundler/deployment.rb
     - lib/bundler/rubygems_gem_installer.rb
-    - lib/bundler/vendor/net-http-persistent/lib/net/http/persistent.rb
     - lib/optparse.rb
     - lib/rdoc/token_stream.rb
     - lib/ruby_vm/rjit/assembler.rb
@@ -33,7 +32,6 @@ ruby:
     - spec/ruby/language/regexp/interpolation_spec.rb
     - spec/syntax_suggest/unit/code_line_spec.rb
     - test/-ext-/bignum/test_pack.rb
-    - test/csv/interface/test_read_write.rb
     - test/csv/test_patterns.rb
     - test/openssl/test_x509name.rb
     - test/psych/test_parser.rb
@@ -46,7 +44,6 @@ ruby:
     - test/ruby/enc/test_shift_jis.rb
     - test/ruby/enc/test_windows_1251.rb
     - test/ruby/enc/test_windows_1252.rb
-    - test/ruby/test_call.rb
     - test/ruby/test_comparable.rb
     - test/ruby/test_dir.rb
     - test/ruby/test_dir_m17n.rb
@@ -80,7 +77,6 @@ rails:
     - actionpack/test/dispatch/content_disposition_test.rb
     - actionview/lib/action_view/layouts.rb
     - activesupport/test/core_ext/string_ext_test.rb
-    - railties/test/isolation/abstract_unit.rb
 
 discourse:
   repo: https://github.com/discourse/discourse

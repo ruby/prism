@@ -494,9 +494,16 @@ ProgramNode(
      DefNode(
        IDENTIFIER("a"),
        nil,
-       ParametersNode([], [], RestParameterNode(STAR("*"), nil), [], nil, nil),
+       ParametersNode(
+         [],
+         [],
+         RestParameterNode(USTAR("*"), nil),
+         [],
+         nil,
+         nil
+       ),
        StatementsNode([]),
-       Scope([STAR("*")]),
+       Scope([USTAR("*")]),
        (480..483),
        nil,
        (485..486),
@@ -649,20 +656,27 @@ ProgramNode(
      DefNode(
        IDENTIFIER("a"),
        nil,
-       ParametersNode([], [], RestParameterNode(STAR("*"), nil), [], nil, nil),
+       ParametersNode(
+         [],
+         [],
+         RestParameterNode(USTAR("*"), nil),
+         [],
+         nil,
+         nil
+       ),
        StatementsNode(
          [CallNode(
             nil,
             nil,
             IDENTIFIER("b"),
             PARENTHESIS_LEFT("("),
-            ArgumentsNode([SplatNode(STAR("*"), nil)]),
+            ArgumentsNode([SplatNode(USTAR("*"), nil)]),
             PARENTHESIS_RIGHT(")"),
             nil,
             "b"
           )]
        ),
-       Scope([STAR("*")]),
+       Scope([USTAR("*")]),
        (650..653),
        nil,
        (655..656),

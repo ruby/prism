@@ -308,6 +308,8 @@ tokens:
     comment: "-@"
   - name: UPLUS
     comment: "+@"
+  - name: USTAR
+    comment: "unary *"
   - name: WORDS_SEP
     comment: "a separator between words in a list"
   - name: __END__

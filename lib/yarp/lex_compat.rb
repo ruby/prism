@@ -165,6 +165,7 @@ module YARP
       UDOT_DOT_DOT: :on_op,
       UMINUS: :on_op,
       UPLUS: :on_op,
+      USTAR: :on_op,
       WORDS_SEP: :on_words_sep,
       __END__: :on___end__
     }.freeze

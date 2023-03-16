@@ -12,7 +12,7 @@ ProgramNode(
      ),
      ReturnNode(
        KEYWORD_RETURN("return"),
-       ArgumentsNode([SplatNode(STAR("*"), IntegerNode())])
+       ArgumentsNode([SplatNode(USTAR("*"), IntegerNode())])
      ),
      ReturnNode(KEYWORD_RETURN("return"), ArgumentsNode([IntegerNode()])),
      ReturnNode(
