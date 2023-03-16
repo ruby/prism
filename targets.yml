@@ -4,7 +4,6 @@ spec:
   excludes:
     - command_line/fixtures/bad_syntax.rb
   todos:
-    - core/regexp/shared/new.rb
     - language/regexp/interpolation_spec.rb
 
 ruby:
@@ -31,7 +30,6 @@ ruby:
     - sample/trick2018/01-kinaba/entry.rb
     - sample/trick2018/05-tompng/entry.rb
     - spec/bundler/realworld/edgecases_spec.rb
-    - spec/ruby/core/regexp/shared/new.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
     - spec/syntax_suggest/unit/code_line_spec.rb
     - test/-ext-/bignum/test_pack.rb
@@ -44,7 +42,6 @@ ruby:
     - test/rdoc/test_rdoc_markup_to_html.rb
     - test/rdoc/test_rdoc_parser_ruby.rb
     - test/readline/test_readline.rb
-    - test/reline/yamatanooroti/test_rendering.rb
     - test/ruby/enc/test_euc_jp.rb
     - test/ruby/enc/test_shift_jis.rb
     - test/ruby/enc/test_windows_1251.rb
@@ -55,14 +52,12 @@ ruby:
     - test/ruby/test_dir_m17n.rb
     - test/ruby/test_file_exhaustive.rb
     - test/ruby/test_iseq.rb
-    - test/ruby/test_literal.rb
     - test/ruby/test_marshal.rb
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_module.rb
     - test/ruby/test_objectspace.rb
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_range.rb
-    - test/ruby/test_regexp.rb
     - test/ruby/test_rubyoptions.rb
     - test/ruby/test_string.rb
     - test/ruby/test_syntax.rb
