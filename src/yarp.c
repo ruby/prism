@@ -2741,16 +2741,9 @@ lex_token_type(yp_parser_t *parser) {
           case '\t':
           case '\f':
           case '\v':
+          case '\r':
             parser->current.end++;
             space_seen = true;
-            break;
-          case '\r':
-            if (parser->current.end[1] == '\n') {
-              chomping = false;
-            } else {
-              parser->current.end++;
-              space_seen = true;
-            }
             break;
           case '\\':
             if (parser->current.end[1] == '\n') {
@@ -2796,14 +2789,6 @@ lex_token_type(yp_parser_t *parser) {
 
           parser->command_start = previous_command_start;
           return YP_TOKEN_COMMENT;
-        }
-
-        case '\r': {
-          // The only way to get here is if this is immediately followed by a
-          // newline.
-          (void) match(parser, '\n');
-
-          // fallthrough
         }
 
         case '\n': {
