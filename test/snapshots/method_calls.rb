@@ -203,7 +203,7 @@ ProgramNode(
        PARENTHESIS_LEFT("("),
        ArgumentsNode(
          [SplatNode(
-            STAR("*"),
+            USTAR("*"),
             CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
           )]
        ),
@@ -354,7 +354,7 @@ ProgramNode(
        PARENTHESIS_LEFT("("),
        ArgumentsNode(
          [SplatNode(
-            STAR("*"),
+            USTAR("*"),
             CallNode(nil, nil, IDENTIFIER("rest"), nil, nil, nil, nil, "rest")
           )]
        ),

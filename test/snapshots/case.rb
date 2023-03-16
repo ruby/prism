@@ -59,7 +59,7 @@ ProgramNode(
        [WhenNode(
           KEYWORD_WHEN("when"),
           [SplatNode(
-             STAR("*"),
+             USTAR("*"),
              CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")
            )],
           nil

@@ -50,7 +50,7 @@ ProgramNode(
        RescueNode(
          KEYWORD_RESCUE("rescue"),
          [SplatNode(
-            STAR("*"),
+            USTAR("*"),
             CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")
           )],
          nil,

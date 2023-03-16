@@ -124,7 +124,7 @@ ProgramNode(
          ParametersNode(
            [RequiredParameterNode(IDENTIFIER("a"))],
            [OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), IntegerNode())],
-           RestParameterNode(STAR("*"), IDENTIFIER("c")),
+           RestParameterNode(USTAR("*"), IDENTIFIER("c")),
            [KeywordParameterNode(LABEL("d:"), nil),
             KeywordParameterNode(LABEL("e:"), nil)],
            KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
@@ -150,7 +150,7 @@ ProgramNode(
          ParametersNode(
            [RequiredParameterNode(IDENTIFIER("a"))],
            [OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), IntegerNode())],
-           RestParameterNode(STAR("*"), IDENTIFIER("c")),
+           RestParameterNode(USTAR("*"), IDENTIFIER("c")),
            [KeywordParameterNode(LABEL("d:"), nil),
             KeywordParameterNode(LABEL("e:"), nil)],
            KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
