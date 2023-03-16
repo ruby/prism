@@ -72,7 +72,7 @@ ProgramNode(
        [SymbolNode(nil, STRING_CONTENT("a"), nil, "a"),
         InterpolatedSymbolNode(
           nil,
-          [StringNode(nil, STRING_CONTENT("b"), nil, "b"),
+          [StringNode(nil, STRING_CONTENT("b"), nil, ""),
            StringInterpolatedNode(
              EMBEXPR_BEGIN("\#{"),
              StatementsNode([IntegerNode()]),
@@ -92,7 +92,7 @@ ProgramNode(
         ),
         InterpolatedSymbolNode(
           nil,
-          [StringNode(nil, STRING_CONTENT("d"), nil, "d"),
+          [StringNode(nil, STRING_CONTENT("d"), nil, ""),
            StringInterpolatedNode(
              EMBEXPR_BEGIN("\#{"),
              StatementsNode([IntegerNode()]),

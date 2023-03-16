@@ -1353,14 +1353,6 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
       .closing = node->as.symbol_node.closing
     }
   };
-
-  yp_unescape(
-    node->as.string_node.content.start,
-    node->as.string_node.content.end - node->as.string_node.content.start,
-    &node->as.string_node.unescaped,
-    YP_UNESCAPE_ALL,
-    &parser->error_list
-  );
 }
 
 // Allocate and initialize a new SuperNode node.
@@ -4038,12 +4030,14 @@ parser_lex(yp_parser_t *parser) {
             // If we hit a null byte, skip directly past it.
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
-          case '\\':
+          case '\\': {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
+            breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
+          }
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
             if (type != YP_TOKEN_NOT_PROVIDED) {
@@ -4186,12 +4180,15 @@ parser_lex(yp_parser_t *parser) {
             // Skip directly past the null character.
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
-          case '\\':
+          case '\\': {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+	    yp_unescape_type_t unescape_type = parser->lex_modes.current->as.string.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
+            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, unescape_type, &parser->error_list);
+            breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
+          }
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
             if (type != YP_TOKEN_NOT_PROVIDED) {
@@ -4320,16 +4317,18 @@ parser_lex(yp_parser_t *parser) {
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
           }
-          case '\\':
+          case '\\': {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
+            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
             if (breakpoint[1] == '\n') {
               breakpoint++;
             } else {
               breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
             }
             break;
+          }
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
             if (type != YP_TOKEN_NOT_PROVIDED) {
@@ -4373,28 +4372,28 @@ parser_lex(yp_parser_t *parser) {
 static yp_node_t *
 yp_node_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_regular_expression_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.regular_expression_node.unescaped, unescape_type, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.regular_expression_node.unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_node_symbol_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.symbol_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.symbol_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
@@ -7429,7 +7428,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
-        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_NONE);
+        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_MINIMAL);
         yp_array_node_elements_append(array, string);
       }
 

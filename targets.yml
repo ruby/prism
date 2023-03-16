@@ -3,8 +3,6 @@ spec:
   sha: f4d19bcc11ac68d40cdf64ddbcfcc82d3743476d
   excludes:
     - command_line/fixtures/bad_syntax.rb
-  todos:
-    - language/regexp/interpolation_spec.rb
 
 ruby:
   repo: https://github.com/ruby/ruby
@@ -16,7 +14,6 @@ ruby:
     - ext/psych/lib/psych/scalar_scanner.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
-    - spec/ruby/language/regexp/interpolation_spec.rb
     - test/csv/test_patterns.rb
     - test/psych/visitors/test_to_ruby.rb
     - test/readline/test_readline.rb
