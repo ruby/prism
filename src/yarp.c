@@ -92,7 +92,6 @@ debug_lex_mode(yp_parser_t *parser) {
 
     switch (lex_mode->mode) {
       case YP_LEX_DEFAULT: fprintf(stderr, "DEFAULT"); break;
-      case YP_LEX_EMBDOC: fprintf(stderr, "EMBDOC"); break;
       case YP_LEX_EMBEXPR: fprintf(stderr, "EMBEXPR"); break;
       case YP_LEX_EMBVAR: fprintf(stderr, "EMBVAR"); break;
       case YP_LEX_HEREDOC: fprintf(stderr, "HEREDOC"); break;
@@ -2556,6 +2555,55 @@ lex_newline(yp_parser_t *parser, bool previous_command_start) {
   return YP_TOKEN_NEWLINE;
 }
 
+// Lex out embedded documentation, and return when we have either hit the end of
+// the file or the end of the embedded documentation. This calls the callback
+// manually because only the lexer should see these tokens, not the parser.
+static yp_token_type_t
+lex_embdoc(yp_parser_t *parser) {
+  // First, lex out the EMBDOC_BEGIN token.
+  const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+  parser->current.end = newline == NULL ? parser->end : newline + 1;
+  parser->current.type = YP_TOKEN_EMBDOC_BEGIN;
+  parser_lex_callback(parser);
+
+  // Now, create a comment that is going to be attached to the parser.
+  yp_comment_t *comment = parser_comment(parser, YP_COMMENT_EMBDOC);
+
+  // Now, loop until we find the end of the embedded documentation or the end of
+  // the file.
+  while (parser->current.end + 5 < parser->end) {
+    parser->current.start = parser->current.end;
+
+    // If we've hit the end of the embedded documentation then we'll return that
+    // token here.
+    if (strncmp(parser->current.end, "=end", 4) == 0 && char_is_whitespace(parser->current.end[4])) {
+      const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+      parser->current.end = newline == NULL ? parser->end : newline + 1;
+      parser->current.type = YP_TOKEN_EMBDOC_END;
+      parser_lex_callback(parser);
+
+      comment->end = parser->current.end;
+      yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
+
+      return YP_TOKEN_EMBDOC_END;
+    }
+
+    // Otherwise, we'll parse until the end of the line and return a line of
+    // embedded documentation.
+    const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
+    parser->current.end = newline == NULL ? parser->end : newline + 1;
+    parser->current.type = YP_TOKEN_EMBDOC_LINE;
+    parser_lex_callback(parser);
+  }
+
+  yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unterminated embdoc");
+
+  comment->end = parser->current.end;
+  yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
+
+  return YP_TOKEN_EOF;
+}
+
 // This is the overall lexer function. It is responsible for advancing both
 // parser->current.start and parser->current.end such that they point to the
 // beginning and end of the next token. It should return the type of token that
@@ -2852,11 +2900,10 @@ lex_token_type(yp_parser_t *parser) {
         // = => =~ == === =begin
         case '=':
           if (current_token_starts_line(parser) && strncmp(parser->current.end, "begin", 5) == 0 && char_is_whitespace(parser->current.end[5])) {
-            const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
-            parser->current.end = newline == NULL ? parser->end : newline + 1;
+            yp_token_type_t type = lex_embdoc(parser);
+            if (type == YP_TOKEN_EOF) return type;
 
-            lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBDOC });
-            return YP_TOKEN_EMBDOC_BEGIN;
+            return lex_token_type(parser);
           }
 
           if (lex_state_operator_p(parser)) {
@@ -3581,36 +3628,6 @@ lex_token_type(yp_parser_t *parser) {
         }
       }
     }
-    case YP_LEX_EMBDOC: {
-      parser->current.start = parser->current.end;
-
-      // If there is no possibility that we could find the end of the embedded
-      // documentation then we'll return an EOF token.
-      if (parser->current.end + 5 >= parser->end) {
-        return YP_TOKEN_EOF;
-      }
-
-      // If we've hit the end of the embedded documentation then we'll return that token here.
-      if (strncmp(parser->current.end, "=end", 4) == 0 && char_is_whitespace(parser->current.end[4])) {
-        const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
-        parser->current.end = newline == NULL ? parser->end : newline + 1;
-
-        lex_mode_pop(parser);
-        return YP_TOKEN_EMBDOC_END;
-      }
-
-      // Otherwise, we'll parse until the end of the line and return a line of
-      // embedded documentation.
-      const char *newline = memchr(parser->current.end, '\n', parser->end - parser->current.end);
-      parser->current.end = newline == NULL ? parser->end : newline + 1;
-
-      // If we've still got content, then we'll return a line of embedded
-      // documentation.
-      if (parser->current.end < parser->end)
-        return YP_TOKEN_EMBDOC_LINE;
-
-      return YP_TOKEN_EOF;
-    }
     case YP_LEX_LIST: {
       // First we'll set the beginning of the token.
       parser->current.start = parser->current.end;
@@ -4241,7 +4258,7 @@ parser_lex(yp_parser_t *parser) {
   parser->current.type = lex_token_type(parser);
   parser_lex_callback(parser);
 
-  while (match_any_type_p(parser, 3, YP_TOKEN_COMMENT, YP_TOKEN_EMBDOC_BEGIN, YP_TOKEN_INVALID)) {
+  while (match_any_type_p(parser, 2, YP_TOKEN_COMMENT, YP_TOKEN_INVALID)) {
     switch (parser->current.type) {
       case YP_TOKEN_COMMENT: {
         // If we found a comment while lexing, then we're going to add it to the
@@ -4254,26 +4271,6 @@ parser_lex(yp_parser_t *parser) {
         }
 
         parser->current.type = lex_newline(parser, previous_command_start);
-        break;
-      }
-      case YP_TOKEN_EMBDOC_BEGIN: {
-        yp_comment_t *comment = parser_comment(parser, YP_COMMENT_EMBDOC);
-
-        // If we found an embedded document, then we need to lex until we find
-        // the end of the embedded document.
-        do {
-          parser->current.type = lex_token_type(parser);
-          parser_lex_callback(parser);
-        } while (!match_any_type_p(parser, 2, YP_TOKEN_EMBDOC_END, YP_TOKEN_EOF));
-
-        comment->end = parser->current.end;
-        yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
-
-        if (match_type_p(parser, YP_TOKEN_EOF)) {
-          yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unterminated embdoc");
-        } else {
-          parser->current.type = lex_newline(parser, previous_command_start);
-        }
         break;
       }
       case YP_TOKEN_INVALID: {
