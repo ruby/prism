@@ -66,21 +66,6 @@ char_is_ascii_printable(const char c) {
   return ascii_printable_chars[(unsigned char) c];
 }
 
-static inline unsigned char
-control_char(const char c) {
-  return c & 0x1f;
-}
-
-static inline unsigned char
-meta_char(const char c) {
-  return c | 0x80;
-}
-
-static inline unsigned char
-meta_control_char(const char c) {
-  return meta_char(control_char(c));
-}
-
 /******************************************************************************/
 /* Unescaping for segments                                                    */
 /******************************************************************************/
@@ -172,6 +157,28 @@ unescape_unicode_write(char *destination, uint32_t value) {
   return 4;
 }
 
+typedef enum {
+  YP_UNESCAPE_FLAG_NONE = 0,
+  YP_UNESCAPE_FLAG_CONTROL = 1,
+  YP_UNESCAPE_FLAG_META = 2
+} yp_unescape_flag_t;
+
+// Unescape a single character value based on the given flags.
+static const char
+unescape_char(const char value, const unsigned char flags) {
+  char unescaped = value;
+
+  if (flags & YP_UNESCAPE_FLAG_CONTROL) {
+    unescaped &= 0x1f;
+  }
+
+  if (flags & YP_UNESCAPE_FLAG_META) {
+    unescaped |= 0x80;
+  }
+
+  return unescaped;
+}
+
 // Read a specific escape sequence into the given destination.
 static const char *
 unescape(char *dest, size_t *dest_length, const char *backslash, const char *end, yp_list_t *error_list) {
@@ -253,7 +260,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
             return backslash + 3;
           }
 
-          dest[(*dest_length)++] = meta_control_char(backslash[5]);
+          dest[(*dest_length)++] = unescape_char(backslash[5], YP_UNESCAPE_FLAG_CONTROL | YP_UNESCAPE_FLAG_META);
           return backslash + 6;
         case '?':
           dest[(*dest_length)++] = 0x7f;
@@ -264,7 +271,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
             return backslash + 2;
           }
 
-          dest[(*dest_length)++] = control_char(backslash[2]);
+          dest[(*dest_length)++] = unescape_char(backslash[2], YP_UNESCAPE_FLAG_CONTROL);
           return backslash + 3;
         }
       }
@@ -286,7 +293,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
         return backslash + 2;
       }
 
-      dest[(*dest_length)++] = backslash[3] == '?' ? 0x7f : control_char(backslash[3]);
+      dest[(*dest_length)++] = backslash[3] == '?' ? 0x7f : unescape_char(backslash[3], YP_UNESCAPE_FLAG_CONTROL);
       return backslash + 4;
     // \M-\C-x      meta control character, where x is an ASCII printable character
     // \M-\cx       meta control character, where x is an ASCII printable character
@@ -304,12 +311,12 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
       if (backslash[3] == '\\') {
         if (backslash[4] == 'C' && backslash[5] == '-' && char_is_ascii_printable(backslash[6])) {
-          dest[(*dest_length)++] = backslash[6] == '?' ? meta_char(0x7f) : meta_control_char(backslash[6]);
+          dest[(*dest_length)++] = backslash[6] == '?' ? unescape_char(0x7f, YP_UNESCAPE_FLAG_META) : unescape_char(backslash[6], YP_UNESCAPE_FLAG_CONTROL | YP_UNESCAPE_FLAG_META);
           return backslash + 7;
         }
 
         if (backslash[4] == 'c' && char_is_ascii_printable(backslash[5])) {
-          dest[(*dest_length)++] = backslash[5] == '?' ? meta_char(0x7f) : meta_control_char(backslash[5]);
+          dest[(*dest_length)++] = backslash[5] == '?' ? unescape_char(0x7f, YP_UNESCAPE_FLAG_META) : unescape_char(backslash[5], YP_UNESCAPE_FLAG_CONTROL | YP_UNESCAPE_FLAG_META);
           return backslash + 6;
         }
 
@@ -318,7 +325,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
       }
 
       if (char_is_ascii_printable(backslash[3])) {
-        dest[(*dest_length)++] = meta_char(backslash[3]);
+        dest[(*dest_length)++] = unescape_char(backslash[3], YP_UNESCAPE_FLAG_META);
         return backslash + 4;
       }
 
