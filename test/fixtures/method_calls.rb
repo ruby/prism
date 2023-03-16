@@ -89,3 +89,7 @@ Kernel.Integer(10)
 x.each { }
 
 foo.map { $& }
+
+A::B::C :foo
+
+A::B::C(:foo)

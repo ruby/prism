@@ -33,3 +33,14 @@ foo[bar] { baz }
 foo { |x, y = 2, z:| x }
 
 foo { |x| }
+
+fork = 1
+fork do |a|
+end
+
+fork { |a| }
+
+C do
+end
+
+C {}
