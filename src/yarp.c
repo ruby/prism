@@ -1855,7 +1855,8 @@ lex_optional_float_suffix(yp_parser_t *parser) {
       parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
       type = YP_TOKEN_FLOAT;
     } else {
-      return YP_TOKEN_INVALID;
+      yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Missing exponent.");
+      type = YP_TOKEN_FLOAT;
     }
   }
 
@@ -2021,7 +2022,8 @@ lex_global_variable(yp_parser_t *parser) {
 
       // If we get here, then we have a $ followed by something that isn't
       // recognized as a global variable.
-      return YP_TOKEN_INVALID;
+      yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid global variable.");
+      return YP_TOKEN_GLOBAL_VARIABLE;
   }
 }
 
@@ -2357,7 +2359,7 @@ lex_question_mark(yp_parser_t *parser) {
 
   if (parser->current.end >= parser->end) {
     yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Incomplete character syntax.");
-    return YP_TOKEN_INVALID;
+    return YP_TOKEN_CHARACTER_LITERAL;
   }
 
   if (char_is_whitespace(*parser->current.end)) {
@@ -2488,17 +2490,19 @@ lex_at_variable(yp_parser_t *parser) {
     while ((width = char_is_identifier(parser, parser->current.end))) {
       parser->current.end += width;
     }
-
-    // If we're lexing an embedded variable, then we need to pop back
-    // into the parent lex context.
-    if (parser->lex_modes.current->mode == YP_LEX_EMBVAR) {
-      lex_mode_pop(parser);
-    }
-
-    return type;
+  } else if (type == YP_TOKEN_CLASS_VARIABLE) {
+    yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Incomplete class variable.");
+  } else {
+    yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Incomplete instance variable.");
   }
 
-  return YP_TOKEN_INVALID;
+  // If we're lexing an embedded variable, then we need to pop back into the
+  // parent lex context.
+  if (parser->lex_modes.current->mode == YP_LEX_EMBVAR) {
+    lex_mode_pop(parser);
+  }
+
+  return type;
 }
 
 // Optionally call out to the lex callback if one is provided.
@@ -2991,11 +2995,18 @@ lex_token_type(yp_parser_t *parser) {
 
                   if (body_start == NULL) {
                     // If there is no newline after the heredoc identifier, then
-                    // this is not a valid heredoc declaration.
-                    return YP_TOKEN_INVALID;
+                    // this is not a valid heredoc declaration. In this case we
+                    // will add an error, but we will still return a heredoc
+                    // start.
+                    yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unterminated heredoc.");
+                    body_start = parser->end;
+                  } else {
+                    // Otherwise, we want to indicate that the body of the
+                    // heredoc starts on the character after the next newline.
+                    body_start++;
                   }
 
-                  parser->next_start = body_start + 1;
+                  parser->next_start = body_start;
                 } else {
                   parser->next_start = parser->heredoc_end;
                 }
@@ -3372,7 +3383,7 @@ lex_token_type(yp_parser_t *parser) {
           // we have an invalid token.
           if (lex_state_beg_p(parser) && (parser->current.end >= parser->end)) {
             yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "unexpected end of input");
-            return YP_TOKEN_INVALID;
+            return YP_TOKEN_STRING_BEGIN;
           }
 
           if (!lex_state_beg_p(parser) && match(parser, '=')) {
@@ -3544,8 +3555,12 @@ lex_token_type(yp_parser_t *parser) {
                 return YP_TOKEN_PERCENT_LOWER_X;
               }
               default:
+                // If we get to this point, then we have a % that is completely
+                // unparseable. In this case we'll just drop it from the parser
+                // and skip past it and hope that the next token is something
+                // that we can parse.
                 yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "invalid %% token");
-                return YP_TOKEN_INVALID;
+                return lex_token_type(parser);
             }
           }
 
@@ -3573,10 +3588,15 @@ lex_token_type(yp_parser_t *parser) {
           return lex_at_variable(parser);
 
         default: {
-          // If this isn't the beginning of an identifier, then it's an invalid
-          // token as we've exhausted all of the other options.
           size_t width = char_is_identifier_start(parser, parser->current.start);
-          if (!width) return YP_TOKEN_INVALID;
+
+          // If this isn't the beginning of an identifier, then it's an invalid
+          // token as we've exhausted all of the other options. We'll skip past
+          // it and return the next token.
+          if (!width) {
+            yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid token.");
+            return lex_token_type(parser);
+          }
 
           parser->current.end = parser->current.start + width;
           yp_token_type_t type = lex_identifier(parser, previous_command_start);
@@ -4077,7 +4097,8 @@ lex_token_type(yp_parser_t *parser) {
 
   // We shouldn't be able to get here at all, but some compilers can't figure
   // that out, so just returning a value here to make them happy.
-  return YP_TOKEN_INVALID;
+  assert(false && "unreachable");
+  return YP_TOKEN_EOF;
 }
 
 /******************************************************************************/
@@ -4258,32 +4279,17 @@ parser_lex(yp_parser_t *parser) {
   parser->current.type = lex_token_type(parser);
   parser_lex_callback(parser);
 
-  while (match_any_type_p(parser, 2, YP_TOKEN_COMMENT, YP_TOKEN_INVALID)) {
-    switch (parser->current.type) {
-      case YP_TOKEN_COMMENT: {
-        // If we found a comment while lexing, then we're going to add it to the
-        // list of comments in the file and keep lexing.
-        yp_comment_t *comment = parser_comment(parser, YP_COMMENT_INLINE);
-        yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
+  while (match_type_p(parser, YP_TOKEN_COMMENT)) {
+    // If we found a comment while lexing, then we're going to add it to the
+    // list of comments in the file and keep lexing.
+    yp_comment_t *comment = parser_comment(parser, YP_COMMENT_INLINE);
+    yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
-        if (parser->consider_magic_comments) {
-          parser_lex_magic_comments(parser);
-        }
-
-        parser->current.type = lex_newline(parser, previous_command_start);
-        break;
-      }
-      case YP_TOKEN_INVALID: {
-        // If we found an invalid token, then we're going to add an error to the
-        // parser and keep lexing.
-        yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid token");
-        parser->current.type = lex_token_type(parser);
-        parser_lex_callback(parser);
-        return;
-      }
-      default:
-        return;
+    if (parser->consider_magic_comments) {
+      parser_lex_magic_comments(parser);
     }
+
+    parser->current.type = lex_newline(parser, previous_command_start);
   }
 }
 

@@ -11,19 +11,6 @@ location_new(yp_parser_t *parser, const char *start, const char *end) {
 }
 
 static VALUE
-token_type(yp_token_t *token) {
-  if (token->type == YP_TOKEN_INVALID) {
-    // We're going to special-case the invalid token here since that doesn't
-    // actually exist in Ripper. This is going to give us a little more
-    // information when our tests fail.
-    // fprintf(stderr, "Invalid token: %.*s\n", (int) (token.end - token.start), token.start);
-    return ID2SYM(rb_intern("INVALID"));
-  }
-
-  return ID2SYM(rb_intern(yp_token_type_to_str(token->type)));
-}
-
-static VALUE
 yp_string_new(yp_string_t *string, rb_encoding *encoding) {
   return rb_enc_str_new(yp_string_source(string), yp_string_length(string), encoding);
 }
@@ -31,7 +18,7 @@ yp_string_new(yp_string_t *string, rb_encoding *encoding) {
 VALUE
 yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding) {
   VALUE argv[] = {
-    token_type(token),
+    ID2SYM(rb_intern(yp_token_type_to_str(token->type))),
     rb_enc_str_new(token->start, token->end - token->start, encoding),
     location_new(parser, token->start, token->end)
   };
