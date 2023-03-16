@@ -1,15 +1,12 @@
 CallNode(
-  CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-  DOT("."),
-  IDENTIFIER("map"),
-  nil,
-  nil,
-  nil,
-  BlockNode(
-    nil,
-    StatementsNode([GlobalVariableReadNode(BACK_REFERENCE("$&"))]),
-    (716..717),
-    (721..722)
+  ConstantPathNode(ConstantReadNode(), COLON_COLON("::"), ConstantReadNode()),
+  COLON_COLON("::"),
+  CONSTANT("C"),
+  PARENTHESIS_LEFT("("),
+  ArgumentsNode(
+    [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil, "foo")]
   ),
-  "map"
+  PARENTHESIS_RIGHT(")"),
+  nil,
+  "C"
 )

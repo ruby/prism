@@ -6180,7 +6180,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // fact a method call, not a constant read.
       if (
         match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT))
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type)) ||
+        (yp_state_stack_p(&parser->accepts_block_stack) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);
@@ -6243,7 +6244,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // then this is in fact a method call, not a local read.
       if (
         node->type == YP_NODE_LOCAL_VARIABLE_READ_NODE &&
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT))
+        (
+          (binding_power <= YP_BINDING_POWER_ASSIGNMENT && token_begins_expression_p(parser->current.type)) ||
+          (yp_state_stack_p(&parser->accepts_block_stack) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
+        )
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);
@@ -8138,10 +8142,14 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           //
           // If we have parentheses, then this is a method call. That would look
           // like Foo::Bar().
-          if (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) {
+          if (
+            (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) ||
+            token_begins_expression_p(parser->current.type)
+          ) {
+            yp_token_t message = parser->previous;
             yp_arguments_t arguments = yp_arguments(parser);
-            parse_arguments_list(parser, &arguments, true);
-            return yp_call_node_call_create(parser, node, &delimiter, &parser->previous, &arguments);
+            parse_arguments_list(parser, &arguments, false);
+            return yp_call_node_call_create(parser, node, &delimiter, &message, &arguments);
           }
 
           // Otherwise, this is a constant path. That would look like Foo::Bar.
