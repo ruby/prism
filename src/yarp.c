@@ -1348,9 +1348,10 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
     .type = YP_NODE_STRING_NODE,
     .location = node->location,
     .as.string_node = {
-      .opening = node->as.symbol_node.opening,
-      .content = node->as.symbol_node.value,
-      .closing = node->as.symbol_node.closing
+      .opening   = node->as.symbol_node.opening,
+      .content   = node->as.symbol_node.value,
+      .closing   = node->as.symbol_node.closing,
+      .unescaped = node->as.symbol_node.unescaped
     }
   };
 }
