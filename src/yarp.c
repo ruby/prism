@@ -4249,7 +4249,11 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+            if (breakpoint[1] == '\n') {
+              breakpoint++;
+            } else {
+              breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+            }
             break;
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
