@@ -49,6 +49,19 @@ __attribute__((__visibility__("default"))) extern bool
 yp_encoding_iso_8859_9_isupper_char(const char *c);
 
 /******************************************************************************/
+/* ISO-8859-15                                                                */
+/******************************************************************************/
+
+__attribute__((__visibility__("default"))) extern size_t
+yp_encoding_iso_8859_15_alpha_char(const char *c);
+
+__attribute__((__visibility__("default"))) extern size_t
+yp_encoding_iso_8859_15_alnum_char(const char *c);
+
+__attribute__((__visibility__("default"))) extern bool
+yp_encoding_iso_8859_15_isupper_char(const char *c);
+
+/******************************************************************************/
 /* UTF-8                                                                      */
 /******************************************************************************/
 
