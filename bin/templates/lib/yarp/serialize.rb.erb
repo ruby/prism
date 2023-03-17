@@ -24,7 +24,7 @@ module YARP
 
       def load
         io.read(4) => "YARP"
-        io.read(3).unpack("C3") => [0, 2, 0]
+        io.read(3).unpack("C3") => [0, 4, 0]
         load_node
       end
 
