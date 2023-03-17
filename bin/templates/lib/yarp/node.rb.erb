@@ -44,11 +44,6 @@ module YARP
     def deconstruct_keys(keys)
       { <%= (node.params.map { |param| "#{param.name}: #{param.name}" } + ["location: location"]).join(", ") %> }
     end
-
-    # def ==(other: Object) -> bool
-    def ==(other)
-      other in <%= node.name %>[<%= node.params.map { |param| "#{param.name}: ^(#{param.name})" }.join(", ") %>]
-    end
   end
 
   <%- end -%>
@@ -63,6 +58,10 @@ module YARP
   module DSL
     private
 
+    # Create a new Location object
+    def Location(start_offset = 0, end_offset = 0)
+      Location.new(start_offset, end_offset)
+    end
     <%- nodes.each do |node| -%>
 
     # Create a new <%= node.name %> node
