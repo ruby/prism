@@ -129,9 +129,9 @@ module UnescapeTest
       end
     end
 
-    test "unnecessary escapes" do
-      assert_unescape_all("\\d", "\\d")
-      assert_unescape_all("\\g", "\\g")
+    test "escaping normal characters" do
+      assert_unescape_all("d", "\\d")
+      assert_unescape_all("g", "\\g")
     end
 
     private
