@@ -264,12 +264,15 @@ module YARP
 
           tokens.each_with_object([]) do |token, results|
             if token.event == :on_tstring_content
+              lineno = token[0][0]
+              column = token[0][1]
+
               # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind to
               # keep the delimiter in the result.
               token.value.split(/(?<=\\\n)/).each_with_index do |value, index|
-                lineno = token[0][0] + index
-                column = index > 0 ? 0 : token[0][1]
+                column = 0 if index > 0
                 results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
+                lineno += value.count("\n")
               end
             else
               results << token

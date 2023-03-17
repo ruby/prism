@@ -14,7 +14,6 @@ ruby:
   todos:
     - benchmark/app_lc_fizzbuzz.rb
     - ext/psych/lib/psych/scalar_scanner.rb
-    - lib/bundler/rubygems_gem_installer.rb
     - lib/optparse.rb
     - lib/rdoc/token_stream.rb
     - lib/ruby_vm/rjit/assembler.rb
@@ -29,7 +28,6 @@ ruby:
     - test/-ext-/bignum/test_pack.rb
     - test/csv/test_patterns.rb
     - test/openssl/test_x509name.rb
-    - test/psych/test_parser.rb
     - test/psych/visitors/test_to_ruby.rb
     - test/rdoc/test_rdoc_markup_to_html.rb
     - test/rdoc/test_rdoc_parser_ruby.rb
