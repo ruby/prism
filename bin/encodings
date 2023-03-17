@@ -53,6 +53,10 @@ puts "\nISO-8859-9"
 puts "=========="
 table((0...256), Encoding::ISO8859_9)
 
+puts "\nISO-8859-15"
+puts "=========="
+table((0...256), Encoding::ISO8859_15)
+
 puts "\nBig5"
 puts "=========="
 lists("big5", (0...0x10000), Encoding::Big5)

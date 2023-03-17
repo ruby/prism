@@ -19,7 +19,6 @@ ruby:
     - sample/trick2018/05-tompng/entry.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
     - test/csv/test_patterns.rb
-    - test/openssl/test_x509name.rb
     - test/psych/visitors/test_to_ruby.rb
     - test/readline/test_readline.rb
     - test/ruby/enc/test_euc_jp.rb
@@ -55,6 +54,7 @@ rails:
   sha: 8e3449908c59858384ae230d1416c7dcabc8c2dc
   todos:
     - actionpack/test/dispatch/content_disposition_test.rb
+    - activerecord/test/migrations/magic/1_currencies_have_symbols.rb
 
 discourse:
   repo: https://github.com/discourse/discourse

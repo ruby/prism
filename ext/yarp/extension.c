@@ -200,6 +200,11 @@ static yp_encoding_t yp_encoding_iso_8859_9 = { .name = "iso-8859-9",
                                                 .alpha_char = yp_encoding_iso_8859_9_alpha_char,
                                                 .isupper_char = yp_encoding_iso_8859_9_isupper_char };
 
+static yp_encoding_t yp_encoding_iso_8859_15 = { .name = "iso-8859-15",
+                                                 .alnum_char = yp_encoding_iso_8859_15_alnum_char,
+                                                 .alpha_char = yp_encoding_iso_8859_15_alpha_char,
+                                                 .isupper_char = yp_encoding_iso_8859_15_isupper_char };
+
 static yp_encoding_t yp_encoding_utf_8 = { .name = "utf-8",
                                            .alnum_char = yp_encoding_utf_8_alnum_char,
                                            .alpha_char = yp_encoding_utf_8_alpha_char,
@@ -233,6 +238,7 @@ lex_encoding_callback(yp_parser_t *parser, const char *start, size_t width) {
   ENCODING("big5", yp_encoding_big5);
   ENCODING("binary", yp_encoding_ascii_8bit);
   ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
+  ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
   ENCODING("us-ascii", yp_encoding_ascii);
   ENCODING("utf-8", yp_encoding_utf_8);
 
