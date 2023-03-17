@@ -14,7 +14,6 @@ ruby:
   todos:
     - benchmark/app_lc_fizzbuzz.rb
     - ext/psych/lib/psych/scalar_scanner.rb
-    - lib/rdoc/token_stream.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - lib/rubygems/commands/install_command.rb
