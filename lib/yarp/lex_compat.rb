@@ -332,7 +332,28 @@ module YARP
           # anything to dedent. If there isn't, then we can return the tokens
           # directly since no on_ignored_sp tokens need to be inserted.
           tokens.last.state = state
-          return tokens if dedent.nil?
+
+          # If every line in the heredoc is blank, we still need to split up the
+          # string content token into multiple tokens.
+          if dedent.nil?
+            results = []
+            tokens.each do |token|
+              if token.event == :on_tstring_content
+                lineno = token[0][0]
+                column = token[0][1]
+
+                token.value.split(/(?<=\n)/).each_with_index do |value, index|
+                  column = 0 if index > 0
+                  results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
+                  lineno += 1
+                end
+              else
+                results << token
+              end
+            end
+
+            return results
+          end
 
           # Otherwise, we're going to run through each token in the list and
           # insert on_ignored_sp tokens for the amount of dedent that we need to
