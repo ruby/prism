@@ -25,7 +25,6 @@ ruby:
     - test/ruby/enc/test_shift_jis.rb
     - test/ruby/enc/test_windows_1251.rb
     - test/ruby/enc/test_windows_1252.rb
-    - test/ruby/test_comparable.rb
     - test/ruby/test_dir.rb
     - test/ruby/test_dir_m17n.rb
     - test/ruby/test_file_exhaustive.rb
@@ -34,7 +33,6 @@ ruby:
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_module.rb
     - test/ruby/test_pattern_matching.rb
-    - test/ruby/test_range.rb
     - test/ruby/test_rubyoptions.rb
     - test/ruby/test_string.rb
     - test/ruby/test_syntax.rb
