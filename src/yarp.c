@@ -1706,8 +1706,15 @@ parser_lex_magic_comments(yp_parser_t *parser) {
 
   // There is a lot TODO here to make it more accurately reflect encoding
   // parsing, but for now this gets us closer.
+  size_t length = 0;
   if (strncmp(start, "encoding:", 9) == 0) {
-    start += 9;
+    length = 9;
+  } else if (strncmp(start, "coding:", 7) == 0) {
+    length = 7;
+  }
+
+  if (length != 0) {
+    start += length;
     start += yp_strspn_inline_whitespace(start, parser->end - start);
 
     const char *end = yp_strpbrk(start, " \t\f\r\v\n", parser->end - start);

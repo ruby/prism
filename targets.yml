@@ -19,7 +19,6 @@ ruby:
     - sample/trick2018/05-tompng/entry.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
     - test/csv/test_patterns.rb
-    - test/openssl/test_x509name.rb
     - test/psych/visitors/test_to_ruby.rb
     - test/readline/test_readline.rb
     - test/ruby/enc/test_euc_jp.rb
