@@ -6275,6 +6275,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
       yp_node_t *node = parse_identifier(parser);
 
+      // If we already have a call node, then we cannot convert it to a fcall.
+      if (node->type == YP_NODE_CALL_NODE) {
+        return node;
+      }
+
       // If an identifier is followed by something that looks like an argument,
       // then this is in fact a method call, not a local read.
       if (
