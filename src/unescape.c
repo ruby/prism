@@ -491,6 +491,9 @@ yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *str
   string->as.owned.length = dest_length + (end - cursor);
 }
 
+// This function is similar to yp_unescape_manipulate_string, except it doesn't
+// actually perform any string manipulations. Instead, it calculates how long
+// the unescaped character is, and returns that value
 __attribute__((__visibility__("default"))) extern int
 yp_unescape_calculate_difference(const char *backslash, size_t length, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
   assert(unescape_type != YP_UNESCAPE_NONE);
