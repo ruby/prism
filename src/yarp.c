@@ -1550,23 +1550,6 @@ char_is_whitespace(const char c) {
   return char_is_non_newline_whitespace(c) || c == '\n';
 }
 
-// This is a lookup table for whether or not an ASCII character is printable.
-static const bool ascii_printable_chars[] = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0
-};
-
-static inline bool
-char_is_ascii_printable(const char c) {
-  return ascii_printable_chars[(unsigned char) c];
-}
-
 #define BIT(c, idx) (((c) / 32 - 1 == idx) ? (1U << ((c) % 32)) : 0)
 #define PUNCT(idx) ( \
         BIT('~', idx) | BIT('*', idx) | BIT('$', idx) | BIT('?', idx) | \
@@ -2532,112 +2515,14 @@ lex_question_mark(yp_parser_t *parser) {
 
   lex_state_set(parser, YP_LEX_STATE_END);
 
-  switch (*parser->current.end) {
-    case '\t':
-    case '\v':
-    case '\f':
-    case '\r':
-      parser->current.end++;
-      return YP_TOKEN_CHARACTER_LITERAL;
-    case '\\':
-      parser->current.end++;
-      if (parser->current.end >= parser->end) {
-        return YP_TOKEN_CHARACTER_LITERAL;
-      }
-
-      switch (*parser->current.end) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-          // \nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
-          parser->current.end++;
-          if (parser->current.end < parser->end && char_is_octal_number(*parser->current.end)) parser->current.end++;
-          if (parser->current.end < parser->end && char_is_octal_number(*parser->current.end)) parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'x':
-          // \xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
-          parser->current.end++;
-          if (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-          if (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'u':
-          // \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
-          // \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
-          parser->current.end++;
-
-          if (match(parser, '{')) {
-            parser->current.end += yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end);
-            const char *previous = parser->current.end;
-
-            while (parser->current.end < parser->end && !match(parser, '}')) {
-              parser->current.end += yp_strspn_hexidecimal_digit(parser->current.end, parser->end - parser->current.end);
-              parser->current.end += yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end);
-              if (parser->current.end == previous) break;
-            }
-          } else {
-            for (size_t index = 0; index < 4; index++) {
-              if (char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-              else break;
-            }
-          }
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'c':
-          // \cx            control character, where x is an ASCII printable character
-          // \c\M-x         same as above
-          // \c?            delete, ASCII 7Fh (DEL)
-          parser->current.end++;
-
-          if (parser->current.end < parser->end) {
-            if (char_is_ascii_printable(*parser->current.end)) {
-              parser->current.end++;
-            } else if (match(parser, '\\') && match(parser, 'M') && match(parser, '-') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
-              parser->current.end++;
-            }
-          }
-
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'C':
-          // \C-x           control character, where x is an ASCII printable character
-          // \C-?           delete, ASCII 7Fh (DEL)
-          parser->current.end++;
-          if (match(parser, '-') && char_is_ascii_printable(*parser->current.end)) {
-            parser->current.end++;
-          }
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'M':
-          // \M-x           meta character, where x is an ASCII printable character
-          // \M-\C-x        meta control character, where x is an ASCII printable character
-          // \M-\cx         same as above
-          parser->current.end++;
-          if (match(parser, '-')) {
-            if (match(parser, '\\')) {
-              if (match(parser, 'C') && match(parser, '-') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
-                parser->current.end++;
-              } else if (match(parser, 'c') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
-                parser->current.end++;
-              }
-            } else if (char_is_ascii_printable(*parser->current.end)) {
-              parser->current.end++;
-            }
-          }
-          return YP_TOKEN_CHARACTER_LITERAL;
-        default:
-          // In this case we have an escaped character that we don't have a
-          // special case for, so we can just skip over it.
-          parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
-      }
-    default:
-      parser->current.end++;
-      return YP_TOKEN_CHARACTER_LITERAL;
+  if (parser->current.start[1] == '\\') {
+    int difference = yp_unescape_calculate_difference(parser->current.start + 1, parser->end - parser->current.start + 1, YP_UNESCAPE_ALL, &parser->error_list);
+    parser->current.end += difference;
   }
+  else {
+    parser->current.end++;
+  }
+  return YP_TOKEN_CHARACTER_LITERAL;
 }
 
 // Lex a variable that starts with an @ sign (either an instance or class
