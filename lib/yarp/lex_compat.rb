@@ -242,23 +242,16 @@ module YARP
           tokens.last.state = state
 
           tokens.each_with_object([]) do |token, results|
-            if token.event != :on_tstring_content
-              results << token
-              next
-            end
-
-            # Split on "\\\n" to mimic Ripper's behavior
-            values = token.value.split("\\\n")
-
-            values.each_with_index do |value, index|
-              lineno = token[0][0] + index
-              column = token[0][1]
-
-              if index < values.length - 1 # Not the last string
-                value = value + "\\\n" # Add the "\\\n" back to the string
+            if token.event == :on_tstring_content
+              # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind to
+              # keep the delimiter in the result.
+              token.value.split(/(?<=\\\n)/).each_with_index do |value, index|
+                lineno = token[0][0] + index
+                column = index > 0 ? 0 : token[0][1]
+                results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
               end
-
-              results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
+            else
+              results << token
             end
           end
         end

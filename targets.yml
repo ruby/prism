@@ -74,7 +74,6 @@ rails:
   sha: 8e3449908c59858384ae230d1416c7dcabc8c2dc
   todos:
     - actionpack/test/dispatch/content_disposition_test.rb
-    - actionview/lib/action_view/layouts.rb
 
 discourse:
   repo: https://github.com/discourse/discourse
