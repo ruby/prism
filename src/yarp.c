@@ -2790,37 +2790,37 @@ parser_lex(yp_parser_t *parser) {
         }
 
         case '\n': {
-          // Here we need to look ahead and see if there is a call operator
-          // (either . or &.) that starts the next line. If there is, then this
-          // is going to become an ignored newline and we're going to instead
-          // return the call operator.
-          const char *next_content = parser->current.end;
-          next_content += yp_strspn_inline_whitespace(parser->current.end, parser->end - parser->current.end);
+          if (parser->heredoc_end == NULL) {
+            // Here we need to look ahead and see if there is a call operator
+            // (either . or &.) that starts the next line. If there is, then this
+            // is going to become an ignored newline and we're going to instead
+            // return the call operator.
+            const char *next_content = parser->current.end;
+            next_content += yp_strspn_inline_whitespace(parser->current.end, parser->end - parser->current.end);
 
-          if (next_content < parser->end) {
-            if (next_content[0] == '.') {
-              parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
-              parser_lex_callback(parser);
+            if (next_content < parser->end) {
+              if (next_content[0] == '.') {
+                parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
+                parser_lex_callback(parser);
 
-              lex_state_set(parser, YP_LEX_STATE_DOT);
-              parser->current.start = next_content;
-              parser->current.end = next_content + 1;
-              LEX(YP_TOKEN_DOT);
+                lex_state_set(parser, YP_LEX_STATE_DOT);
+                parser->current.start = next_content;
+                parser->current.end = next_content + 1;
+                LEX(YP_TOKEN_DOT);
+              }
+
+              if (next_content + 1 < parser->end && next_content[0] == '&' && next_content[1] == '.') {
+                parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
+                parser_lex_callback(parser);
+
+                lex_state_set(parser, YP_LEX_STATE_DOT);
+                parser->current.start = next_content;
+                parser->current.end = next_content + 2;
+                LEX(YP_TOKEN_AMPERSAND_DOT);
+              }
             }
-
-            if (next_content + 1 < parser->end && next_content[0] == '&' && next_content[1] == '.') {
-              parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
-              parser_lex_callback(parser);
-
-              lex_state_set(parser, YP_LEX_STATE_DOT);
-              parser->current.start = next_content;
-              parser->current.end = next_content + 2;
-              LEX(YP_TOKEN_AMPERSAND_DOT);
-            }
-          }
-
-          // If the special resume flag is set, then we need to jump ahead.
-          if (parser->heredoc_end != NULL) {
+          } else {
+            // If the special resume flag is set, then we need to jump ahead.
             assert(parser->heredoc_end <= parser->end);
             parser->next_start = parser->heredoc_end;
             parser->heredoc_end = NULL;
