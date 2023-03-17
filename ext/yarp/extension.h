@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define EXPECTED_YARP_VERSION "0.2.0"
+#define EXPECTED_YARP_VERSION "0.4.0"
 
 VALUE
 yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding);
