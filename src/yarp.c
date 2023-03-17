@@ -2127,6 +2127,22 @@ lex_global_variable(yp_parser_t *parser) {
       parser->current.end++;
       return YP_TOKEN_BACK_REFERENCE;
 
+    case '0': {
+      parser->current.end++;
+      size_t width;
+
+      if ((width = char_is_identifier(parser, parser->current.end)) > 0) {
+        do {
+          parser->current.end += width;
+        } while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)));
+
+        // $0 isn't allowed to be followed by anything.
+        yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid global variable.");
+      }
+
+      return YP_TOKEN_GLOBAL_VARIABLE;
+    }
+
     case '1':
     case '2':
     case '3':
@@ -2137,24 +2153,27 @@ lex_global_variable(yp_parser_t *parser) {
     case '8':
     case '9':
       parser->current.end += yp_strspn_decimal_digit(parser->current.end, parser->end - parser->current.end);
-      return YP_TOKEN_NTH_REFERENCE;
+      return lex_state_p(parser, YP_LEX_STATE_FNAME) ? YP_TOKEN_GLOBAL_VARIABLE : YP_TOKEN_NTH_REFERENCE;
 
     case '-':
       parser->current.end++;
       // fallthrough
 
-    default:
-      if (char_is_identifier(parser, parser->current.end)) {
+    default: {
+      size_t width;
+
+      if ((width = char_is_identifier(parser, parser->current.end)) > 0) {
         do {
-          parser->current.end++;
-        } while (parser->current.end < parser->end && char_is_identifier(parser, parser->current.end));
-        return YP_TOKEN_GLOBAL_VARIABLE;
+          parser->current.end += width;
+        } while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)));
+      } else {
+        // If we get here, then we have a $ followed by something that isn't
+        // recognized as a global variable.
+        yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid global variable.");
       }
 
-      // If we get here, then we have a $ followed by something that isn't
-      // recognized as a global variable.
-      yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid global variable.");
       return YP_TOKEN_GLOBAL_VARIABLE;
+    }
   }
 }
 
@@ -6569,7 +6588,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
         case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
           if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
-            if (right->as.global_variable_read_node.name.type == YP_TOKEN_NTH_REFERENCE) {
+            yp_token_t *name = &right->as.global_variable_read_node.name;
+
+            if ((name->type == YP_TOKEN_GLOBAL_VARIABLE) && char_is_decimal_number(name->start[1]) && (name->start[1] != '0')) {
               yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Can't make alias for number variables.");
             }
           } else {
