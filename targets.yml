@@ -16,7 +16,6 @@ ruby:
     - ext/psych/lib/psych/scalar_scanner.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
-    - sample/trick2015/kinaba/entry.rb
     - sample/trick2018/01-kinaba/entry.rb
     - sample/trick2018/05-tompng/entry.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
