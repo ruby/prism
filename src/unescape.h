@@ -29,6 +29,9 @@ typedef enum {
 // Unescape the contents of the given token into the given string using the
 // given unescape mode.
 __attribute__((__visibility__("default"))) extern void
-yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list);
+yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list);
+
+__attribute__((__visibility__("default"))) extern int
+yp_unescape_calculate_difference(const char *value, size_t length, yp_unescape_type_t unescape_type, yp_list_t *error_list);
 
 #endif

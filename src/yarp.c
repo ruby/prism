@@ -1348,19 +1348,12 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
     .type = YP_NODE_STRING_NODE,
     .location = node->location,
     .as.string_node = {
-      .opening = node->as.symbol_node.opening,
-      .content = node->as.symbol_node.value,
-      .closing = node->as.symbol_node.closing
+      .opening   = node->as.symbol_node.opening,
+      .content   = node->as.symbol_node.value,
+      .closing   = node->as.symbol_node.closing,
+      .unescaped = node->as.symbol_node.unescaped
     }
   };
-
-  yp_unescape(
-    node->as.string_node.content.start,
-    node->as.string_node.content.end - node->as.string_node.content.start,
-    &node->as.string_node.unescaped,
-    YP_UNESCAPE_ALL,
-    &parser->error_list
-  );
 }
 
 // Allocate and initialize a new SuperNode node.
@@ -1555,23 +1548,6 @@ char_is_non_newline_whitespace(const char c) {
 static inline bool
 char_is_whitespace(const char c) {
   return char_is_non_newline_whitespace(c) || c == '\n';
-}
-
-// This is a lookup table for whether or not an ASCII character is printable.
-static const bool ascii_printable_chars[] = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0
-};
-
-static inline bool
-char_is_ascii_printable(const char c) {
-  return ascii_printable_chars[(unsigned char) c];
 }
 
 #define BIT(c, idx) (((c) / 32 - 1 == idx) ? (1U << ((c) % 32)) : 0)
@@ -2539,112 +2515,14 @@ lex_question_mark(yp_parser_t *parser) {
 
   lex_state_set(parser, YP_LEX_STATE_END);
 
-  switch (*parser->current.end) {
-    case '\t':
-    case '\v':
-    case '\f':
-    case '\r':
-      parser->current.end++;
-      return YP_TOKEN_CHARACTER_LITERAL;
-    case '\\':
-      parser->current.end++;
-      if (parser->current.end >= parser->end) {
-        return YP_TOKEN_CHARACTER_LITERAL;
-      }
-
-      switch (*parser->current.end) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-          // \nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
-          parser->current.end++;
-          if (parser->current.end < parser->end && char_is_octal_number(*parser->current.end)) parser->current.end++;
-          if (parser->current.end < parser->end && char_is_octal_number(*parser->current.end)) parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'x':
-          // \xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
-          parser->current.end++;
-          if (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-          if (parser->current.end < parser->end && char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'u':
-          // \unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
-          // \u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
-          parser->current.end++;
-
-          if (match(parser, '{')) {
-            parser->current.end += yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end);
-            const char *previous = parser->current.end;
-
-            while (parser->current.end < parser->end && !match(parser, '}')) {
-              parser->current.end += yp_strspn_hexidecimal_digit(parser->current.end, parser->end - parser->current.end);
-              parser->current.end += yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end);
-              if (parser->current.end == previous) break;
-            }
-          } else {
-            for (size_t index = 0; index < 4; index++) {
-              if (char_is_hexadecimal_number(*parser->current.end)) parser->current.end++;
-              else break;
-            }
-          }
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'c':
-          // \cx            control character, where x is an ASCII printable character
-          // \c\M-x         same as above
-          // \c?            delete, ASCII 7Fh (DEL)
-          parser->current.end++;
-
-          if (parser->current.end < parser->end) {
-            if (char_is_ascii_printable(*parser->current.end)) {
-              parser->current.end++;
-            } else if (match(parser, '\\') && match(parser, 'M') && match(parser, '-') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
-              parser->current.end++;
-            }
-          }
-
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'C':
-          // \C-x           control character, where x is an ASCII printable character
-          // \C-?           delete, ASCII 7Fh (DEL)
-          parser->current.end++;
-          if (match(parser, '-') && char_is_ascii_printable(*parser->current.end)) {
-            parser->current.end++;
-          }
-          return YP_TOKEN_CHARACTER_LITERAL;
-        case 'M':
-          // \M-x           meta character, where x is an ASCII printable character
-          // \M-\C-x        meta control character, where x is an ASCII printable character
-          // \M-\cx         same as above
-          parser->current.end++;
-          if (match(parser, '-')) {
-            if (match(parser, '\\')) {
-              if (match(parser, 'C') && match(parser, '-') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
-                parser->current.end++;
-              } else if (match(parser, 'c') && ((parser->current.end < parser->end) && char_is_ascii_printable(*parser->current.end))) {
-                parser->current.end++;
-              }
-            } else if (char_is_ascii_printable(*parser->current.end)) {
-              parser->current.end++;
-            }
-          }
-          return YP_TOKEN_CHARACTER_LITERAL;
-        default:
-          // In this case we have an escaped character that we don't have a
-          // special case for, so we can just skip over it.
-          parser->current.end++;
-          return YP_TOKEN_CHARACTER_LITERAL;
-      }
-    default:
-      parser->current.end++;
-      return YP_TOKEN_CHARACTER_LITERAL;
+  if (parser->current.start[1] == '\\') {
+    int difference = yp_unescape_calculate_difference(parser->current.start + 1, parser->end - parser->current.start + 1, YP_UNESCAPE_ALL, &parser->error_list);
+    parser->current.end += difference;
   }
+  else {
+    parser->current.end++;
+  }
+  return YP_TOKEN_CHARACTER_LITERAL;
 }
 
 // Lex a variable that starts with an @ sign (either an instance or class
@@ -3944,7 +3822,10 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+	    {
+	      int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
+	      breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
+	    }
             break;
           case ' ':
           case '\t':
@@ -4038,12 +3919,14 @@ parser_lex(yp_parser_t *parser) {
             // If we hit a null byte, skip directly past it.
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
-          case '\\':
+          case '\\': {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
+            breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
+          }
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
             if (type != YP_TOKEN_NOT_PROVIDED) {
@@ -4186,12 +4069,15 @@ parser_lex(yp_parser_t *parser) {
             // Skip directly past the null character.
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
-          case '\\':
+          case '\\': {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+	    yp_unescape_type_t unescape_type = parser->lex_modes.current->as.string.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
+            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, unescape_type, &parser->error_list);
+            breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
+          }
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
             if (type != YP_TOKEN_NOT_PROVIDED) {
@@ -4320,16 +4206,18 @@ parser_lex(yp_parser_t *parser) {
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
           }
-          case '\\':
+          case '\\': {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
+            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
             if (breakpoint[1] == '\n') {
               breakpoint++;
             } else {
-              breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+              breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             }
             break;
+          }
           case '#': {
             yp_token_type_t type = lex_interpolation(parser, breakpoint);
             if (type != YP_TOKEN_NOT_PROVIDED) {
@@ -4373,28 +4261,28 @@ parser_lex(yp_parser_t *parser) {
 static yp_node_t *
 yp_node_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_regular_expression_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.regular_expression_node.unescaped, unescape_type, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.regular_expression_node.unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_node_symbol_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.symbol_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.symbol_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_node_string_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-  yp_unescape(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
@@ -7429,7 +7317,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
-        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_NONE);
+        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_MINIMAL);
         yp_array_node_elements_append(array, string);
       }
 

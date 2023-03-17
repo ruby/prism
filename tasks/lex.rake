@@ -98,7 +98,7 @@ YAML.safe_load_file("targets.yml").each do |name, target|
 
     if lex_task.todos.length != target.fetch("todos", []).length
       puts("Some files listed as todo are passing. This is the new list:")
-      puts("    - #{lex_task.todos.join("\n    - ")}")
+      puts("    - #{lex_task.todos.map { _1.gsub("tmp/targets/ruby/", "") }.join("\n    - ")}")
     end
 
     puts(lex_task.summary)

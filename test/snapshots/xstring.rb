@@ -24,7 +24,7 @@ ProgramNode(
        BACKTICK("`"),
        STRING_CONTENT("f\\oo"),
        STRING_END("`"),
-       "f\\oo"
+       "foo"
      ),
      XStringNode(BACKTICK("`"), STRING_CONTENT("foo"), STRING_END("`"), "foo")]
   )

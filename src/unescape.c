@@ -1,4 +1,5 @@
 #include "unescape.h"
+#include "stdio.h"
 
 /******************************************************************************/
 /* Character checks                                                           */
@@ -184,7 +185,7 @@ unescape_char(const char value, const unsigned char flags) {
 
 // Read a specific escape sequence into the given destination.
 static const char *
-unescape(char *dest, size_t *dest_length, const char *backslash, const char *end, yp_list_t *error_list, const unsigned char flags) {
+unescape(char *dest, size_t *dest_length, const char *backslash, const char *end, yp_list_t *error_list, const unsigned char flags, bool write_to_str) {
   switch (backslash[1]) {
     // \a \b \e \f \n \r \s \t \v
     case 'a':
@@ -196,7 +197,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
     case 's':
     case 't':
     case 'v':
-      dest[(*dest_length)++] = unescape_char(unescape_chars[(unsigned char) backslash[1]], flags);
+      if (write_to_str) {
+	dest[(*dest_length)++] = unescape_char(unescape_chars[(unsigned char) backslash[1]], flags);
+      }
       return backslash + 2;
     // \nnn         octal bit pattern, where nnn is 1-3 octal digits ([0-7])
     case '0': case '1': case '2': case '3': case '4':
@@ -204,7 +207,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
       unsigned char value;
       const char *cursor = backslash + unescape_octal(backslash, &value);
 
-      dest[(*dest_length)++] = unescape_char(value, flags);
+      if (write_to_str) {
+	dest[(*dest_length)++] = unescape_char(value, flags);
+      }
       return cursor;
     }
     // \xnn         hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
@@ -212,7 +217,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
       unsigned char value;
       const char *cursor = backslash + unescape_hexadecimal(backslash, &value);
 
-      dest[(*dest_length)++] = unescape_char(value, flags);
+      if (write_to_str) {
+	dest[(*dest_length)++] = unescape_char(value, flags);
+      }
       return cursor;
     }
     // \u{nnnn ...} Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
@@ -233,7 +240,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
           uint32_t value;
           unescape_unicode(unicode_start, unicode_cursor - unicode_start, &value);
-          *dest_length += unescape_unicode_write(dest + *dest_length, value, unicode_start, unicode_cursor, error_list);
+	  if (write_to_str) {
+            *dest_length += unescape_unicode_write(dest + *dest_length, value, unicode_start, unicode_cursor, error_list);
+	  }
 
           unicode_cursor += yp_strspn_whitespace(unicode_cursor, end - unicode_cursor);
         }
@@ -245,7 +254,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
         uint32_t value;
         unescape_unicode(backslash + 2, 4, &value);
 
-        *dest_length += unescape_unicode_write(dest + *dest_length, value, backslash + 2, backslash + 6, error_list);
+	if (write_to_str) {
+          *dest_length += unescape_unicode_write(dest + *dest_length, value, backslash + 2, backslash + 6, error_list);
+	}
         return backslash + 6;
       }
 
@@ -268,9 +279,11 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
       switch (backslash[2]) {
         case '\\':
-          return unescape(dest, dest_length, backslash + 2, end, error_list, flags | YP_UNESCAPE_FLAG_CONTROL);
+          return unescape(dest, dest_length, backslash + 2, end, error_list, flags | YP_UNESCAPE_FLAG_CONTROL, write_to_str);
         case '?':
-          dest[(*dest_length)++] = unescape_char(0x7f, flags);
+	  if (write_to_str) {
+	    dest[(*dest_length)++] = unescape_char(0x7f, flags);
+	  }
           return backslash + 3;
         default: {
           if (!char_is_ascii_printable(backslash[2])) {
@@ -278,7 +291,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
             return backslash + 2;
           }
 
-          dest[(*dest_length)++] = unescape_char(backslash[2], flags | YP_UNESCAPE_FLAG_CONTROL);
+	  if (write_to_str) {
+	    dest[(*dest_length)++] = unescape_char(backslash[2], flags | YP_UNESCAPE_FLAG_CONTROL);
+	  }
           return backslash + 3;
         }
       }
@@ -302,9 +317,11 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
       switch (backslash[3]) {
         case '\\':
-          return unescape(dest, dest_length, backslash + 3, end, error_list, flags | YP_UNESCAPE_FLAG_CONTROL);
+          return unescape(dest, dest_length, backslash + 3, end, error_list, flags | YP_UNESCAPE_FLAG_CONTROL, write_to_str);
         case '?':
-          dest[(*dest_length)++] = unescape_char(0x7f, flags);
+	  if (write_to_str) {
+	    dest[(*dest_length)++] = unescape_char(0x7f, flags);
+	  }
           return backslash + 4;
         default:
           if (!char_is_ascii_printable(backslash[3])) {
@@ -312,7 +329,9 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
             return backslash + 2;
           }
 
-          dest[(*dest_length)++] = unescape_char(backslash[3], flags | YP_UNESCAPE_FLAG_CONTROL);
+	  if (write_to_str) {
+	    dest[(*dest_length)++] = unescape_char(backslash[3], flags | YP_UNESCAPE_FLAG_CONTROL);
+	  }
           return backslash + 4;
       }
     // \M-\C-x      meta control character, where x is an ASCII printable character
@@ -335,11 +354,13 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
       }
 
       if (backslash[3] == '\\') {
-        return unescape(dest, dest_length, backslash + 3, end, error_list, flags | YP_UNESCAPE_FLAG_META);
+        return unescape(dest, dest_length, backslash + 3, end, error_list, flags | YP_UNESCAPE_FLAG_META, write_to_str);
       }
 
       if (char_is_ascii_printable(backslash[3])) {
-        dest[(*dest_length)++] = unescape_char(backslash[3], flags | YP_UNESCAPE_FLAG_META);
+	if (write_to_str) {
+	  dest[(*dest_length)++] = unescape_char(backslash[3], flags | YP_UNESCAPE_FLAG_META);
+	}
         return backslash + 4;
       }
 
@@ -348,8 +369,12 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
     }
     // In this case we're escaping something that doesn't need escaping.
     default:
-      dest[(*dest_length)++] = '\\';
-      return backslash + 1;
+      {
+	if (write_to_str) {
+	  dest[(*dest_length)++] = backslash[1];
+	}
+	return backslash + 2;
+      }
   }
 }
 
@@ -382,7 +407,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
 __attribute__((__visibility__("default"))) extern void
-yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
+yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
   if (unescape_type == YP_UNESCAPE_NONE) {
     // If we're not unescaping then we can reference the source directly.
     yp_string_shared_init(string, value, value + length);
@@ -442,7 +467,7 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
         // This is the only type of unescaping left. In this case we need to
         // handle all of the different unescapes.
         assert(unescape_type == YP_UNESCAPE_ALL);
-        cursor = unescape(dest, &dest_length, backslash, end, error_list, YP_UNESCAPE_FLAG_NONE);
+        cursor = unescape(dest, &dest_length, backslash, end, error_list, YP_UNESCAPE_FLAG_NONE, true);
         break;
     }
 
@@ -464,4 +489,61 @@ yp_unescape(const char *value, size_t length, yp_string_t *string, yp_unescape_t
   // reduces the length of the final string, and we don't want garbage at the
   // end.
   string->as.owned.length = dest_length + (end - cursor);
+}
+
+// This function is similar to yp_unescape_manipulate_string, except it doesn't
+// actually perform any string manipulations. Instead, it calculates how long
+// the unescaped character is, and returns that value
+__attribute__((__visibility__("default"))) extern int
+yp_unescape_calculate_difference(const char *backslash, size_t length, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
+  assert(unescape_type != YP_UNESCAPE_NONE);
+
+  // This is the current position in the source string that we're looking at.
+  // It's going to move along behind the backslash so that we can copy each
+  // segment of the string that doesn't contain an escape.
+  const char *cursor = backslash;
+  const char *end = backslash + length;
+
+  int difference = 0;
+  // For each escape found in the source string, we will handle it and update
+  // the moving cursor->backslash window.
+
+  // This is the size of the segment of the string from the previous escape
+  // or the start of the string to the current escape.
+
+  switch (backslash[1]) {
+    case '\\':
+    case '\'':
+      cursor = backslash + 2;
+      break;
+    default:
+      if (unescape_type == YP_UNESCAPE_MINIMAL) {
+	// In this case we're escaping something that doesn't need escaping.
+	cursor = backslash + 1;
+	break;
+      }
+
+      // This is the only type of unescaping left. In this case we need to
+      // handle all of the different unescapes.
+      assert(unescape_type == YP_UNESCAPE_ALL);
+      cursor = unescape(NULL, 0, backslash, end, error_list, YP_UNESCAPE_FLAG_NONE, false);
+      break;
+  }
+
+  difference += (cursor - backslash);
+  if (end > cursor) {
+    backslash = memchr(cursor, '\\', end - cursor);
+  } else {
+    backslash = NULL;
+  }
+
+  // We need to copy the final segment of the string after the last escape.
+  if (end <= cursor) {
+    cursor = end;
+  }
+
+  // We also need to update the length at the end. This is because every escape
+  // reduces the length of the final string, and we don't want garbage at the
+  // end.
+  return difference;
 }
