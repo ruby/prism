@@ -18,7 +18,6 @@ ruby:
     - lib/ruby_vm/rjit/insn_compiler.rb
     - sample/trick2018/05-tompng/entry.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
-    - test/-ext-/bignum/test_pack.rb
     - test/csv/test_patterns.rb
     - test/openssl/test_x509name.rb
     - test/psych/visitors/test_to_ruby.rb
