@@ -117,7 +117,7 @@ unescape_unicode(const char *string, size_t length, uint32_t *value) {
 // 32-bit value to write. Writes the UTF-8 representation of the value to the
 // string and returns the number of bytes written.
 static inline size_t
-unescape_unicode_write(char *destination, uint32_t value) {
+unescape_unicode_write(char *destination, uint32_t value, const char *start, const char *end, yp_list_t *error_list) {
   if (value <= 0x7F) {
     // 0xxxxxxx
     destination[0] = value;
@@ -141,14 +141,23 @@ unescape_unicode_write(char *destination, uint32_t value) {
 
   // At this point it must be a 4 digit UTF-8 representation. If it's not, then
   // the input is invalid.
-  assert(value <= 0x10FFFF);
+  if (value <= 0x10FFFF) {
+    // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+    destination[0] = 0xF0 | (value >> 18);
+    destination[1] = 0x80 | ((value >> 12) & 0x3F);
+    destination[2] = 0x80 | ((value >> 6) & 0x3F);
+    destination[3] = 0x80 | (value & 0x3F);
+    return 4;
+  }
 
-  // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-  destination[0] = 0xF0 | (value >> 18);
-  destination[1] = 0x80 | ((value >> 12) & 0x3F);
-  destination[2] = 0x80 | ((value >> 6) & 0x3F);
-  destination[3] = 0x80 | (value & 0x3F);
-  return 4;
+  // If we get here, then the value is too big. This is an error, but we don't
+  // want to just crash, so instead we'll add an error to the error list and put
+  // in a replacement character instead.
+  yp_diagnostic_list_append(error_list, start, end, "Invalid Unicode escape sequence.");
+  destination[0] = 0xEF;
+  destination[1] = 0xBF;
+  destination[2] = 0xBD;
+  return 3;
 }
 
 typedef enum {
@@ -224,7 +233,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
           uint32_t value;
           unescape_unicode(unicode_start, unicode_cursor - unicode_start, &value);
-          *dest_length += unescape_unicode_write(dest + *dest_length, value);
+          *dest_length += unescape_unicode_write(dest + *dest_length, value, unicode_start, unicode_cursor, error_list);
 
           unicode_cursor += yp_strspn_whitespace(unicode_cursor, end - unicode_cursor);
         }
@@ -236,7 +245,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
         uint32_t value;
         unescape_unicode(backslash + 2, 4, &value);
 
-        *dest_length += unescape_unicode_write(dest + *dest_length, value);
+        *dest_length += unescape_unicode_write(dest + *dest_length, value, backslash + 2, backslash + 6, error_list);
         return backslash + 6;
       }
 
