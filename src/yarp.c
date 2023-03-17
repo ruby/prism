@@ -1869,6 +1869,26 @@ context_p(yp_parser_t *parser, yp_context_t context) {
   return false;
 }
 
+static bool
+context_def_p(yp_parser_t *parser) {
+  yp_context_node_t *context_node = parser->current_context;
+
+  while (context_node != NULL) {
+    switch (context_node->context) {
+      case YP_CONTEXT_DEF:
+        return true;
+      case YP_CONTEXT_CLASS:
+      case YP_CONTEXT_MODULE:
+      case YP_CONTEXT_SCLASS:
+        return false;
+      default:
+        context_node = context_node->prev;
+    }
+  }
+
+  return false;
+}
+
 /******************************************************************************/
 /* Lex mode manipulations                                                     */
 /******************************************************************************/
@@ -7182,7 +7202,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
 
-      if (context_p(parser, YP_CONTEXT_DEF)) {
+      if (context_def_p(parser)) {
         yp_diagnostic_list_append(&parser->error_list, module_keyword.start, module_keyword.end, "Module definition in method body");
       }
 

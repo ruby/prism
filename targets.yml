@@ -30,7 +30,6 @@ ruby:
     - test/ruby/test_file_exhaustive.rb
     - test/ruby/test_iseq.rb
     - test/ruby/test_mixed_unicode_escapes.rb
-    - test/ruby/test_module.rb
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_rubyoptions.rb
     - test/ruby/test_string.rb
