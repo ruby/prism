@@ -3385,6 +3385,7 @@ parser_lex(yp_parser_t *parser) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
 
             if (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end)) {
+              parser->current.end++;
               yp_token_type_t type = lex_numeric(parser);
               lex_state_set(parser, YP_LEX_STATE_END);
               LEX(type);
