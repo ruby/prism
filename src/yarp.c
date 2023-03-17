@@ -1596,6 +1596,15 @@ char_is_global_name_punctuation(const char c) {
   return (yp_global_name_punctuation_hash[(i - 0x20) / 32] >> (c % 32)) & 1;
 }
 
+static inline bool
+token_is_numbered_parameter(yp_token_t *token) {
+  return
+    (token->type == YP_TOKEN_IDENTIFIER) &&
+    (token->end - token->start == 2) &&
+    (token->start[0] == '_') &&
+    (char_is_decimal_number(token->start[1]));
+}
+
 /******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
@@ -4734,6 +4743,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           if (value != NULL) {
             target->as.local_variable_write_node.value = value;
             target->location.end = value->location.end;
+          }
+
+          if (token_is_numbered_parameter(&name)) {
+            yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "reserved for numbered parameter");
           }
 
           return target;

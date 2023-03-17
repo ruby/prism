@@ -445,6 +445,74 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
+  test "cannot assign to a reserved numbered parameter" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      StatementsNode(
+        [LocalVariableWriteNode(
+           IDENTIFIER("_1"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_2"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_3"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_4"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_5"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_6"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_7"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_8"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_9"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         ),
+         LocalVariableWriteNode(
+           IDENTIFIER("_10"),
+           EQUAL("="),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+         )]
+      ),
+      nil,
+      nil,
+      nil,
+      KEYWORD_END("end")
+    )
+    assert_errors expected, "
+    begin
+      _1=:a;_2=:a;_3=:a;_4=:a;_5=:a
+      _6=:a;_7=:a;_8=:a;_9=:a;_10=:a
+    end
+    ", Array.new(9, "reserved for numbered parameter")
+  end
+
   private
 
   def assert_errors(expected, source, errors)
