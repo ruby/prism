@@ -5461,7 +5461,7 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
 
             // If we hit a newline, then this is the end of the rescue expression. We
             // can continue on to parse the statements.
-            if (accept_any(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_KEYWORD_THEN)) break;
+            if (match_any_type_p(parser, 3, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_KEYWORD_THEN)) break;
 
             // If we hit a `=>` then we're going to parse the exception variable. Once
             // we've done that, we'll break out of the loop and parse the statements.
@@ -5478,6 +5478,12 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
           } while (accept(parser, YP_TOKEN_COMMA));
         }
       }
+    }
+
+    if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+      accept(parser, YP_TOKEN_KEYWORD_THEN);
+    } else {
+      expect(parser, YP_TOKEN_KEYWORD_THEN, "Expected a terminator after rescue clause.");
     }
 
     rescue->as.rescue_node.statements = parse_statements(parser, YP_CONTEXT_RESCUE);
@@ -6542,13 +6548,17 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_CASE: {
       parser_lex(parser);
       yp_token_t case_keyword = parser->previous;
-      yp_node_t *predicate;
+      yp_node_t *predicate = NULL;
 
-      if (accept(parser, YP_TOKEN_SEMICOLON) || match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_END)) {
+      if (
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON) ||
+        match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_END) ||
+        !token_begins_expression_p(parser->current.type)
+      ) {
         predicate = NULL;
       } else {
         predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
-        expect_any(parser, "Expected a delimiter after the predicate in a case statement.", 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {
