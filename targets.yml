@@ -13,10 +13,7 @@ ruby:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
   todos:
     - benchmark/app_lc_fizzbuzz.rb
-    - ext/etc/mkconstants.rb
     - ext/psych/lib/psych/scalar_scanner.rb
-    - ext/socket/mkconstants.rb
-    - lib/bundler/deployment.rb
     - lib/bundler/rubygems_gem_installer.rb
     - lib/optparse.rb
     - lib/rdoc/token_stream.rb
@@ -27,14 +24,12 @@ ruby:
     - sample/trick2015/kinaba/entry.rb
     - sample/trick2018/01-kinaba/entry.rb
     - sample/trick2018/05-tompng/entry.rb
-    - spec/bundler/realworld/edgecases_spec.rb
     - spec/ruby/language/regexp/interpolation_spec.rb
     - spec/syntax_suggest/unit/code_line_spec.rb
     - test/-ext-/bignum/test_pack.rb
     - test/csv/test_patterns.rb
     - test/openssl/test_x509name.rb
     - test/psych/test_parser.rb
-    - test/psych/test_yaml.rb
     - test/psych/visitors/test_to_ruby.rb
     - test/rdoc/test_rdoc_markup_to_html.rb
     - test/rdoc/test_rdoc_parser_ruby.rb
@@ -51,7 +46,6 @@ ruby:
     - test/ruby/test_marshal.rb
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_module.rb
-    - test/ruby/test_objectspace.rb
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_range.rb
     - test/ruby/test_rubyoptions.rb
@@ -62,7 +56,6 @@ ruby:
     - test/zlib/test_zlib.rb
     - tool/lib/webrick/ssl.rb
     - tool/merger.rb
-    - tool/rbinstall.rb
     - tool/rjit/bindgen.rb
     - tool/ruby_vm/loaders/insns_def.rb
     - tool/ruby_vm/models/operands_unifications.rb
