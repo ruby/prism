@@ -24,7 +24,6 @@ ruby:
     - lib/ruby_vm/rjit/insn_compiler.rb
     - lib/rubygems/commands/install_command.rb
     - lib/rubygems/optparse/lib/optparse.rb
-    - lib/syntax_suggest/block_expand.rb
     - sample/trick2015/kinaba/entry.rb
     - sample/trick2018/01-kinaba/entry.rb
     - sample/trick2018/05-tompng/entry.rb
@@ -76,7 +75,6 @@ rails:
   todos:
     - actionpack/test/dispatch/content_disposition_test.rb
     - actionview/lib/action_view/layouts.rb
-    - activesupport/test/core_ext/string_ext_test.rb
 
 discourse:
   repo: https://github.com/discourse/discourse
@@ -85,10 +83,7 @@ discourse:
     - app/controllers/admin/api_controller.rb
     - app/controllers/composer_controller.rb
     - app/jobs/scheduled/enqueue_suspect_users.rb
-    - app/models/post.rb
     - app/models/topic_thumbnail.rb
-    - app/services/hashtag_autocomplete_service.rb
-    - lib/slug.rb
     - lib/upload_security.rb
     - plugins/chat/app/jobs/regular/auto_manage_channel_memberships.rb
     - plugins/chat/lib/chat_channel_fetcher.rb

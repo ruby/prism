@@ -1891,6 +1891,14 @@ lex_state_p(yp_parser_t *parser, yp_lex_state_t state) {
 }
 
 static inline bool
+lex_state_ignored_p(yp_parser_t *parser) {
+  return (
+    (lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED)) ||
+    (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))
+  );
+}
+
+static inline bool
 lex_state_beg_p(yp_parser_t *parser) {
   return lex_state_p(parser, YP_LEX_STATE_BEG_ANY) || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED));
 }
@@ -2678,6 +2686,15 @@ lex_embdoc(yp_parser_t *parser) {
   return YP_TOKEN_EOF;
 }
 
+// Set the current type to an ignored newline and then call the lex callback.
+// This happens in a couple places depending on whether or not we have already
+// lexed a comment.
+static inline void
+parser_lex_ignored_newline(yp_parser_t *parser) {
+  parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
+  parser_lex_callback(parser);
+}
+
 // This is a convenience macro that will set the current token type, call the
 // lex callback, and then return from the parser_lex function.
 #define LEX(token_type) parser->current.type = token_type; parser_lex_callback(parser); return
@@ -2799,20 +2816,38 @@ parser_lex(yp_parser_t *parser) {
             next_content += yp_strspn_inline_whitespace(parser->current.end, parser->end - parser->current.end);
 
             if (next_content < parser->end) {
-              if (next_content[0] == '.') {
-                parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
-                parser_lex_callback(parser);
+              // If we hit a comment after a newline, then we're going to check
+              // if it's ignored or not. If it is, then we're going to call the
+              // callback with an ignored newline and then continue lexing.
+              // Otherwise we'll return a regular newline.
+              if (next_content[0] == '#') {
+                if (lex_state_ignored_p(parser)) {
+                  if (!lexed_comment) parser_lex_ignored_newline(parser);
+                  lexed_comment = false;
+                  goto lex_next_token;
+                }
 
+                lex_state_set(parser, YP_LEX_STATE_BEG);
+                parser->command_start = true;
+                parser->current.type = YP_TOKEN_NEWLINE;
+                if (!lexed_comment) parser_lex_callback(parser);
+                return;
+              }
+
+              // If we hit a . after a newline, then we're in a call chain and
+              // we need to return the call operator.
+              if (next_content[0] == '.') {
+                if (!lexed_comment) parser_lex_ignored_newline(parser);
                 lex_state_set(parser, YP_LEX_STATE_DOT);
                 parser->current.start = next_content;
                 parser->current.end = next_content + 1;
                 LEX(YP_TOKEN_DOT);
               }
 
+              // If we hit a &. after a newline, then we're in a call chain and
+              // we need to return the call operator.
               if (next_content + 1 < parser->end && next_content[0] == '&' && next_content[1] == '.') {
-                parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
-                parser_lex_callback(parser);
-
+                if (!lexed_comment) parser_lex_ignored_newline(parser);
                 lex_state_set(parser, YP_LEX_STATE_DOT);
                 parser->current.start = next_content;
                 parser->current.end = next_content + 2;
@@ -2826,26 +2861,20 @@ parser_lex(yp_parser_t *parser) {
             parser->heredoc_end = NULL;
           }
 
-          if ((lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED)) || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED))) {
-            // This is an ignored newline.
-            if (!lexed_comment) {
-              parser->current.type = YP_TOKEN_IGNORED_NEWLINE;
-              parser_lex_callback(parser);
-            }
-
+          // If this is an ignored newline, then we can continue lexing after
+          // calling the callback with the ignored newline token.
+          if (lex_state_ignored_p(parser)) {
+            if (!lexed_comment) parser_lex_ignored_newline(parser);
             lexed_comment = false;
             goto lex_next_token;
           }
 
-          // This is a normal newline.
+          // At this point we know this is a regular newline, and we can set the
+          // necessary state and return the token.
           lex_state_set(parser, YP_LEX_STATE_BEG);
           parser->command_start = true;
           parser->current.type = YP_TOKEN_NEWLINE;
-
-          if (!lexed_comment) {
-            parser_lex_callback(parser);
-          }
-
+          if (!lexed_comment) parser_lex_callback(parser);
           return;
         }
 
