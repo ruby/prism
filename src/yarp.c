@@ -5079,7 +5079,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
       yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected argument after block argument.");
     }
 
-    yp_node_t *argument;
+    yp_node_t *argument = NULL;
 
     switch (parser->current.type) {
       case YP_TOKEN_STAR_STAR:
@@ -5130,16 +5130,28 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
         if (accepts_forwarding) {
           parser_lex(parser);
 
-          if (!yp_parser_local_p(parser, &parser->previous)) {
-            yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
-          }
+          if (token_begins_expression_p(parser->current.type)) {
+            // If the token begins an expression then this ... was not actually
+            // argument forwarding but was instead a range.
+            yp_token_t operator = parser->previous;
+            yp_node_t *right = parse_expression(parser, YP_BINDING_POWER_RANGE, "Expected a value after the operator.");
+            argument = yp_range_node_create(parser, NULL, &operator, right);
+          } else {
+            if (!yp_parser_local_p(parser, &parser->previous)) {
+              yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
+            }
 
-          argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
-          break;
+            argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
+            break;
+          }
         }
+
+        // fallthrough
       }
       default: {
-        argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
+        if (argument == NULL) {
+          argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
+        }
 
         if (yp_symbol_node_label_p(argument) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
           yp_token_t operator;
