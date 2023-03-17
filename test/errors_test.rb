@@ -521,17 +521,12 @@ class ErrorsTest < Test::Unit::TestCase
     result = YARP.parse(source)
     result => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
 
-    assert_equal expected, node
-    assert_equal errors, result.errors.map(&:message)
+    assert_equal_nodes(expected, node, compare_location: false)
+    assert_equal(errors, result.errors.map(&:message))
   end
 
   def expression(source)
     YARP.parse(source) => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
     node
-  end
-
-  # This method is just named this way to mirror the other DSL methods.
-  def Location()
-    YARP::Location.new(0, 0)
   end
 end
