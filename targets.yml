@@ -14,12 +14,10 @@ ruby:
   todos:
     - benchmark/app_lc_fizzbuzz.rb
     - ext/psych/lib/psych/scalar_scanner.rb
-    - lib/optparse.rb
     - lib/rdoc/token_stream.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - lib/rubygems/commands/install_command.rb
-    - lib/rubygems/optparse/lib/optparse.rb
     - sample/trick2015/kinaba/entry.rb
     - sample/trick2018/01-kinaba/entry.rb
     - sample/trick2018/05-tompng/entry.rb
