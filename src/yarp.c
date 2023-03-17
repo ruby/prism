@@ -6569,7 +6569,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
         } while (accept(parser, YP_TOKEN_COMMA));
 
-        expect_any(parser, "Expected a delimiter after the predicates of a `when` clause.", 3, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE, YP_TOKEN_KEYWORD_THEN);
+        if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+          accept(parser, YP_TOKEN_KEYWORD_THEN);
+        } else {
+          expect(parser, YP_TOKEN_KEYWORD_THEN, "Expected a delimiter after the predicates of a `when' clause.");
+        }
 
         if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
           when_node->as.when_node.statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
