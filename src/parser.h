@@ -71,9 +71,6 @@ typedef struct yp_lex_mode {
     // This state is used when any given token is being lexed.
     YP_LEX_DEFAULT,
 
-    // This state is used when we're lexing an embdoc (a =begin..=end comment).
-    YP_LEX_EMBDOC,
-
     // This state is used when we're lexing as normal but inside an embedded
     // expression of a string.
     YP_LEX_EMBEXPR,
