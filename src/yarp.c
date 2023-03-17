@@ -4689,6 +4689,7 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_KEYWORD_END:
     case YP_TOKEN_KEYWORD_IN:
     case YP_TOKEN_KEYWORD_THEN:
+    case YP_TOKEN_KEYWORD_WHEN:
     case YP_TOKEN_NEWLINE:
     case YP_TOKEN_PARENTHESIS_RIGHT:
     case YP_TOKEN_SEMICOLON:
@@ -6112,10 +6113,13 @@ parse_identifier(yp_parser_t *parser) {
 static inline yp_token_t
 parse_method_definition_name(yp_parser_t *parser) {
   switch (parser->current.type) {
-    case YP_CASE_OPERATOR:
     case YP_CASE_KEYWORD:
     case YP_TOKEN_CONSTANT:
     case YP_TOKEN_IDENTIFIER:
+      parser_lex(parser);
+      return parser->previous;
+    case YP_CASE_OPERATOR:
+      lex_state_set(parser, YP_LEX_STATE_ENDFN);
       parser_lex(parser);
       return parser->previous;
     default:
@@ -6383,6 +6387,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
+      yp_token_t identifier = parser->previous;
       yp_node_t *node = parse_identifier(parser);
 
       // If an identifier is followed by something that looks like an argument,
@@ -6394,7 +6399,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);
 
-        yp_node_t *fcall = yp_call_node_fcall_create(parser, &node->as.local_variable_read_node.name, &arguments);
+        yp_node_t *fcall = yp_call_node_fcall_create(parser, &identifier, &arguments);
         yp_node_destroy(parser, node);
         return fcall;
       }
@@ -8273,6 +8278,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         return yp_node_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
       }
 
+      accept(parser, YP_TOKEN_NEWLINE);
       expect(parser, YP_TOKEN_COLON, "Expected ':' after true expression in ternary operator.");
 
       yp_token_t colon = parser->previous;
