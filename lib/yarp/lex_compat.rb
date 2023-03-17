@@ -269,7 +269,7 @@ module YARP
 
               # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind to
               # keep the delimiter in the result.
-              token.value.split(/(?<=\\\n)/).each_with_index do |value, index|
+              token.value.split(/(?<=[^\\]\\\n)/).each_with_index do |value, index|
                 column = 0 if index > 0
                 results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
                 lineno += value.count("\n")
