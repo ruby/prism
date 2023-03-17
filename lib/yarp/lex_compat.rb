@@ -222,11 +222,32 @@ module YARP
     # heredoc that should be appended onto the list of tokens when the heredoc
     # closes.
     module Heredoc
-      # Heredocs that are no dedent heredocs are just a list of tokens. We need
-      # to keep them around so that we can insert them in the correct order back
-      # into the token stream and set the state of the last token to the state
-      # that the heredoc was opened in.
-      class RegularHeredoc
+      # Heredocs that are no dash or tilde heredocs are just a list of tokens.
+      # We need to keep them around so that we can insert them in the correct
+      # order back into the token stream and set the state of the last token to
+      # the state that the heredoc was opened in.
+      class PlainHeredoc
+        attr_reader :state, :tokens
+
+        def initialize(state)
+          @state = state
+          @tokens = []
+        end
+
+        def <<(token)
+          tokens << token
+        end
+
+        def to_a
+          tokens.last.state = state
+          tokens
+        end
+      end
+
+      # Dash heredocs are a little more complicated. They are a list of tokens
+      # that need to be split on "\\\n" to mimic Ripper's behavior. We also need
+      # to keep track of the state that the heredoc was opened in.
+      class DashHeredoc
         attr_reader :state, :tokens
 
         def initialize(state)
@@ -393,10 +414,13 @@ module YARP
       # Here we will split between the two types of heredocs and return the
       # object that will store their tokens.
       def self.build(opening, state)
-        if opening.value[2] == "~"
+        case opening.value[2]
+        when "~"
           DedentingHeredoc.new(state)
+        when "-"
+          DashHeredoc.new(state)
         else
-          RegularHeredoc.new(state)
+          PlainHeredoc.new(state)
         end
       end
     end
