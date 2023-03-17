@@ -187,7 +187,7 @@ unescape_char(const char value, const unsigned char flags) {
 static const char *
 unescape(char *dest, size_t *dest_length, const char *backslash, const char *end, yp_list_t *error_list, const unsigned char flags, bool write_to_str) {
   switch (backslash[1]) {
-    // \a \b \e \f \n \r \s \t \v \# \" \/ \+
+    // \a \b \e \f \n \r \s \t \v
     case 'a':
     case 'b':
     case 'e':
@@ -370,10 +370,10 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
     // In this case we're escaping something that doesn't need escaping.
     default:
       {
-      if (write_to_str) {
-	dest[(*dest_length)++] = backslash[1];
-      }
-      return backslash + 2;
+	if (write_to_str) {
+	  dest[(*dest_length)++] = backslash[1];
+	}
+	return backslash + 2;
       }
   }
 }
@@ -408,6 +408,12 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 //
 __attribute__((__visibility__("default"))) extern void
 yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
+  if (unescape_type == YP_UNESCAPE_NONE) {
+    // If we're not unescaping then we can reference the source directly.
+    yp_string_shared_init(string, value, value + length);
+    return;
+  }
+
   const char *backslash = memchr(value, '\\', length);
 
   if (backslash == NULL) {

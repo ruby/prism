@@ -4325,7 +4325,7 @@ parser_lex(yp_parser_t *parser) {
             if (breakpoint[1] == '\n') {
               breakpoint++;
             } else {
-              breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+              breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             }
             break;
           }
