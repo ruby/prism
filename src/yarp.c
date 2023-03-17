@@ -1599,6 +1599,7 @@ char_is_global_name_punctuation(const char c) {
 static inline bool
 token_is_numbered_parameter(yp_token_t *token) {
   return
+    (token->type == YP_TOKEN_IDENTIFIER) &&
     (token->end - token->start == 2) &&
     (token->start[0] == '_') &&
     (char_is_decimal_number(token->start[1]));
