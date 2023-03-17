@@ -3937,7 +3937,10 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            breakpoint = yp_strpbrk(breakpoint + 2, breakpoints, parser->end - (breakpoint + 2));
+	    {
+	      int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
+	      breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
+	    }
             break;
           case ' ':
           case '\t':
