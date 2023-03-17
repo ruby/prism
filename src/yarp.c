@@ -1919,7 +1919,7 @@ lex_state_arg_p(yp_parser_t *parser) {
 
 static inline bool
 lex_state_spcarg_p(yp_parser_t *parser, bool space_seen) {
-  return lex_state_arg_p(parser) && space_seen && !char_is_non_newline_whitespace(*parser->current.end);
+  return lex_state_arg_p(parser) && space_seen && !char_is_whitespace(*parser->current.end);
 }
 
 static inline bool
@@ -3371,7 +3371,17 @@ parser_lex(yp_parser_t *parser) {
             LEX(YP_TOKEN_PLUS_EQUAL);
           }
 
-          if (lex_state_beg_p(parser)) {
+          bool spcarg = lex_state_spcarg_p(parser, space_seen);
+          if (spcarg) {
+            yp_diagnostic_list_append(
+              &parser->warning_list,
+              parser->current.start,
+              parser->current.end,
+              "ambiguous first argument; put parentheses or a space even after `+` operator"
+            );
+          }
+
+          if (lex_state_beg_p(parser) || spcarg) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
 
             if (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end)) {
