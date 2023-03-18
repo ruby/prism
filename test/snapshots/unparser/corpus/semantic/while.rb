@@ -65,7 +65,7 @@ ProgramNode(2...188)(
      ),
      WhileNode(46...45)(
        KEYWORD_WHILE_MODIFIER(46...51)("while"),
-       LocalVariableReadNode(52...55)(),
+       LocalVariableReadNode(52...55)(1),
        StatementsNode(36...45)(
          [LocalVariableWriteNode(36...45)(
             (36...39),
@@ -79,7 +79,8 @@ ProgramNode(2...188)(
               nil,
               "bar"
             ),
-            (40...41)
+            (40...41),
+            0
           )]
        )
      ),
@@ -141,9 +142,10 @@ ProgramNode(2...188)(
            nil,
            "b"
          ),
-         (85...86)
+         (85...86),
+         0
        ),
-       StatementsNode(91...92)([LocalVariableReadNode(91...92)()])
+       StatementsNode(91...92)([LocalVariableReadNode(91...92)(1)])
      ),
      UntilNode(100...99)(
        KEYWORD_UNTIL_MODIFIER(100...105)("until"),
@@ -181,7 +183,7 @@ ProgramNode(2...188)(
          ),
          "b"
        ),
-       StatementsNode(98...99)([LocalVariableReadNode(98...99)()])
+       StatementsNode(98...99)([LocalVariableReadNode(98...99)(1)])
      ),
      ModuleNode(132...188)(
        ScopeNode(132...138)([IDENTIFIER(143...146)("foo")]),
@@ -200,11 +202,12 @@ ProgramNode(2...188)(
               nil,
               "exp"
             ),
-            (147...148)
+            (147...148),
+            0
           ),
           WhileNode(155...178)(
             KEYWORD_WHILE(155...160)("while"),
-            LocalVariableReadNode(161...164)(),
+            LocalVariableReadNode(161...164)(1),
             StatementsNode(169...178)(
               [LocalVariableWriteNode(169...178)(
                  (169...172),
@@ -218,7 +221,8 @@ ProgramNode(2...188)(
                    nil,
                    "bar"
                  ),
-                 (173...174)
+                 (173...174),
+                 1
                )]
             )
           )]

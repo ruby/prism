@@ -13,8 +13,8 @@ ProgramNode(0...142)(
        ),
        ArrayPatternNode(10...14)(
          nil,
-         [LocalVariableWriteNode(10...11)((10...11), nil, nil),
-          LocalVariableWriteNode(13...14)((13...14), nil, nil)],
+         [LocalVariableWriteNode(10...11)((10...11), nil, nil, 0),
+          LocalVariableWriteNode(13...14)((13...14), nil, nil, 0)],
          nil,
          [],
          nil,
@@ -22,7 +22,7 @@ ProgramNode(0...142)(
        ),
        (7...9)
      ),
-     LocalVariableReadNode(16...17)(),
+     LocalVariableReadNode(16...17)(1),
      MatchPredicateNode(19...33)(
        ArrayNode(19...25)(
          [IntegerNode(20...21)(), IntegerNode(23...24)()],
@@ -31,8 +31,8 @@ ProgramNode(0...142)(
        ),
        ArrayPatternNode(29...33)(
          nil,
-         [LocalVariableWriteNode(29...30)((29...30), nil, nil),
-          LocalVariableWriteNode(32...33)((32...33), nil, nil)],
+         [LocalVariableWriteNode(29...30)((29...30), nil, nil, 0),
+          LocalVariableWriteNode(32...33)((32...33), nil, nil, 0)],
          nil,
          [],
          nil,
@@ -40,7 +40,7 @@ ProgramNode(0...142)(
        ),
        (26...28)
      ),
-     LocalVariableReadNode(35...36)(),
+     LocalVariableReadNode(35...36)(1),
      MatchRequiredNode(39...50)(
        HashNode(39...43)(
          BRACE_LEFT(38...39)("{"),
@@ -74,7 +74,7 @@ ProgramNode(0...142)(
        ),
        (45...47)
      ),
-     LocalVariableReadNode(52...53)(),
+     LocalVariableReadNode(52...53)(1),
      MatchPredicateNode(56...67)(
        HashNode(56...60)(
          BRACE_LEFT(55...56)("{"),
@@ -108,7 +108,7 @@ ProgramNode(0...142)(
        ),
        (62...64)
      ),
-     LocalVariableReadNode(69...70)(),
+     LocalVariableReadNode(69...70)(1),
      MatchRequiredNode(73...99)(
        HashNode(73...84)(
          BRACE_LEFT(72...73)("{"),
@@ -138,7 +138,7 @@ ProgramNode(0...142)(
               LABEL_END(92...93)(":"),
               "key"
             ),
-            LocalVariableWriteNode(94...99)((94...99), nil, nil),
+            LocalVariableWriteNode(94...99)((94...99), nil, nil, 0),
             nil
           )],
          nil,
@@ -147,7 +147,7 @@ ProgramNode(0...142)(
        ),
        (86...88)
      ),
-     LocalVariableReadNode(101...106)(),
+     LocalVariableReadNode(101...106)(1),
      MatchPredicateNode(109...135)(
        HashNode(109...120)(
          BRACE_LEFT(108...109)("{"),
@@ -177,7 +177,7 @@ ProgramNode(0...142)(
               LABEL_END(128...129)(":"),
               "key"
             ),
-            LocalVariableWriteNode(130...135)((130...135), nil, nil),
+            LocalVariableWriteNode(130...135)((130...135), nil, nil, 0),
             nil
           )],
          nil,
@@ -186,6 +186,6 @@ ProgramNode(0...142)(
        ),
        (122...124)
      ),
-     LocalVariableReadNode(137...142)()]
+     LocalVariableReadNode(137...142)(1)]
   )
 )

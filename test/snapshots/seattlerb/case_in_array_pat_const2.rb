@@ -15,7 +15,7 @@ ProgramNode(0...27)(
               ConstantReadNode(14...15)(),
               (12...14)
             ),
-            [LocalVariableWriteNode(16...17)((16...17), nil, nil)],
+            [LocalVariableWriteNode(16...17)((16...17), nil, nil, 0)],
             nil,
             [],
             (15...16),

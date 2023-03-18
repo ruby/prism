@@ -9,13 +9,13 @@ ProgramNode(0...23)(
   ),
   StatementsNode(0...23)(
     [MultiWriteNode(0...23)(
-       [LocalVariableWriteNode(0...1)((0...1), nil, nil),
-        LocalVariableWriteNode(3...4)((3...4), nil, nil),
-        LocalVariableWriteNode(6...7)((6...7), nil, nil),
+       [LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
+        LocalVariableWriteNode(3...4)((3...4), nil, nil, 0),
+        LocalVariableWriteNode(6...7)((6...7), nil, nil, 0),
         SplatNode(9...10)(USTAR(9...10)("*"), nil),
-        LocalVariableWriteNode(12...13)((12...13), nil, nil),
-        LocalVariableWriteNode(15...16)((15...16), nil, nil),
-        LocalVariableWriteNode(18...19)((18...19), nil, nil)],
+        LocalVariableWriteNode(12...13)((12...13), nil, nil, 0),
+        LocalVariableWriteNode(15...16)((15...16), nil, nil, 0),
+        LocalVariableWriteNode(18...19)((18...19), nil, nil, 0)],
        EQUAL(20...21)("="),
        CallNode(22...23)(
          nil,

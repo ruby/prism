@@ -11,7 +11,7 @@ ProgramNode(0...13)(
        BlockNode(6...13)(
          ScopeNode(6...7)([IDENTIFIER(9...10)("a")]),
          BlockParametersNode(0...10)(nil, [IDENTIFIER(9...10)("a")]),
-         StatementsNode(11...12)([LocalVariableReadNode(11...12)()]),
+         StatementsNode(11...12)([LocalVariableReadNode(11...12)(1)]),
          (6...7),
          (12...13)
        ),

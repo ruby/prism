@@ -30,7 +30,7 @@ ProgramNode(0...43)(
                nil
              ),
              AssocSplatNode(20...26)(
-               LocalVariableWriteNode(22...26)((22...26), nil, nil),
+               LocalVariableWriteNode(22...26)((22...26), nil, nil, 0),
                (20...22)
              )],
             nil,
@@ -49,7 +49,7 @@ ProgramNode(0...43)(
                   nil,
                   "a"
                 ),
-                LocalVariableReadNode(34...38)()],
+                LocalVariableReadNode(34...38)(1)],
                BRACKET_LEFT_ARRAY(30...31)("["),
                BRACKET_RIGHT(38...39)("]")
              )]

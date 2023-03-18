@@ -9,7 +9,8 @@ ProgramNode(0...22)(
      LocalVariableWriteNode(12...22)(
        (12...18),
        IntegerNode(21...22)(),
-       (19...20)
+       (19...20),
+       0
      )]
   )
 )

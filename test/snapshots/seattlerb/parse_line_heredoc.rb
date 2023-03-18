@@ -23,14 +23,15 @@ ProgramNode(6...81)(
          nil,
          "strip"
        ),
-       (13...14)
+       (13...14),
+       0
      ),
      CallNode(77...81)(
        nil,
        nil,
        IDENTIFIER(77...81)("puts"),
        nil,
-       ArgumentsNode(82...88)([LocalVariableReadNode(82...88)()]),
+       ArgumentsNode(82...88)([LocalVariableReadNode(82...88)(1)]),
        nil,
        nil,
        "puts"

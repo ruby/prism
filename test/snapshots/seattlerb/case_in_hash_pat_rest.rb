@@ -18,11 +18,11 @@ ProgramNode(0...35)(
                  LABEL_END(12...13)(":"),
                  "b"
                ),
-               LocalVariableWriteNode(14...15)((14...15), nil, nil),
+               LocalVariableWriteNode(14...15)((14...15), nil, nil, 0),
                nil
              ),
              AssocSplatNode(17...23)(
-               LocalVariableWriteNode(19...23)((19...23), nil, nil),
+               LocalVariableWriteNode(19...23)((19...23), nil, nil, 0),
                (17...19)
              )],
             nil,

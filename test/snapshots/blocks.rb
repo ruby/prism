@@ -129,9 +129,9 @@ ProgramNode(0...402)(
          ),
          StatementsNode(63...72)(
            [OperatorAssignmentNode(63...72)(
-              LocalVariableWriteNode(63...67)((63...67), nil, nil),
+              LocalVariableWriteNode(63...67)((63...67), nil, nil, 1),
               PLUS_EQUAL(68...70)("+="),
-              LocalVariableReadNode(71...72)()
+              LocalVariableReadNode(71...72)(1)
             )]
          ),
          (51...52),
@@ -466,7 +466,7 @@ ProgramNode(0...402)(
            ),
            []
          ),
-         StatementsNode(274...275)([LocalVariableReadNode(274...275)()]),
+         StatementsNode(274...275)([LocalVariableReadNode(274...275)(1)]),
          (257...258),
          (276...277)
        ),
@@ -501,7 +501,8 @@ ProgramNode(0...402)(
      LocalVariableWriteNode(292...300)(
        (292...296),
        IntegerNode(299...300)(),
-       (297...298)
+       (297...298),
+       0
      ),
      CallNode(301...316)(
        nil,

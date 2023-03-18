@@ -16,8 +16,8 @@ ProgramNode(0...20)(
               "bar"
             ),
             MultiWriteNode(9...19)(
-              [LocalVariableWriteNode(9...10)((9...10), nil, nil),
-               LocalVariableWriteNode(12...13)((12...13), nil, nil)],
+              [LocalVariableWriteNode(9...10)((9...10), nil, nil, 0),
+               LocalVariableWriteNode(12...13)((12...13), nil, nil, 0)],
               EQUAL(14...15)("="),
               CallNode(16...19)(
                 nil,

@@ -2,14 +2,14 @@ ProgramNode(0...8)(
   ScopeNode(0...0)([IDENTIFIER(0...3)("foo")]),
   StatementsNode(0...8)(
     [OperatorAssignmentNode(0...8)(
-       LocalVariableWriteNode(0...3)((0...3), nil, nil),
+       LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),
        PLUS_EQUAL(4...6)("+="),
        CallNode(7...8)(
          nil,
          nil,
          IDENTIFIER(7...8)("m"),
          nil,
-         ArgumentsNode(9...12)([LocalVariableReadNode(9...12)()]),
+         ArgumentsNode(9...12)([LocalVariableReadNode(9...12)(1)]),
          nil,
          nil,
          "m"

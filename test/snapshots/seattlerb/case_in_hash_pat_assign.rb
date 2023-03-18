@@ -20,7 +20,7 @@ ProgramNode(0...56)(
                ),
                AsPatternNode(16...28)(
                  ConstantReadNode(16...23)(),
-                 LocalVariableWriteNode(27...28)((27...28), nil, nil),
+                 LocalVariableWriteNode(27...28)((27...28), nil, nil, 0),
                  (24...26)
                ),
                nil

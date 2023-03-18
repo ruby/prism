@@ -10,14 +10,16 @@ ProgramNode(0...26)(
            nil,
            IDENTIFIER(12...13)("m"),
            nil,
-           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)()]),
+           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(1)]),
            nil,
            nil,
            "m"
          ),
-         (10...11)
+         (10...11),
+         0
        ),
-       (4...5)
+       (4...5),
+       0
      ),
      LocalVariableWriteNode(19...26)(
        (19...22),
@@ -26,12 +28,13 @@ ProgramNode(0...26)(
          nil,
          IDENTIFIER(25...26)("m"),
          nil,
-         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)()]),
+         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(1)]),
          nil,
          nil,
          "m"
        ),
-       (23...24)
+       (23...24),
+       1
      )]
   )
 )

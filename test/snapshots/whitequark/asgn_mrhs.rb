@@ -16,7 +16,8 @@ ProgramNode(0...0)(
            "bar"
          )
        ),
-       (4...5)
+       (4...5),
+       0
      ),
      LocalVariableWriteNode(12...0)(
        (12...15),
@@ -35,7 +36,8 @@ ProgramNode(0...0)(
          nil,
          nil
        ),
-       (16...17)
+       (16...17),
+       1
      ),
      LocalVariableWriteNode(26...0)(
        (26...29),
@@ -66,7 +68,8 @@ ProgramNode(0...0)(
          nil,
          nil
        ),
-       (30...31)
+       (30...31),
+       1
      )]
   )
 )

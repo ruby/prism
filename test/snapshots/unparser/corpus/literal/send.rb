@@ -11,12 +11,12 @@ ProgramNode(0...991)(
        ConstantReadNode(7...8)(),
        StatementsNode(11...31)(
          [OperatorOrAssignmentNode(11...31)(
-            LocalVariableWriteNode(11...14)((11...14), nil, nil),
+            LocalVariableWriteNode(11...14)((11...14), nil, nil, 0),
             ParenthesesNode(19...31)(
               StatementsNode(21...30)(
                 [MultiWriteNode(21...30)(
-                   [LocalVariableWriteNode(21...22)((21...22), nil, nil),
-                    LocalVariableWriteNode(24...25)((24...25), nil, nil)],
+                   [LocalVariableWriteNode(21...22)((21...22), nil, nil, 0),
+                    LocalVariableWriteNode(24...25)((24...25), nil, nil, 0)],
                    EQUAL(27...28)("="),
                    CallNode(29...30)(
                      nil,
@@ -48,10 +48,11 @@ ProgramNode(0...991)(
          [LocalVariableWriteNode(48...57)(
             (48...53),
             IntegerNode(56...57)(),
-            (54...55)
+            (54...55),
+            0
           ),
           CallNode(60...69)(
-            LocalVariableReadNode(60...65)(),
+            LocalVariableReadNode(60...65)(1),
             DOT(65...66)("."),
             IDENTIFIER(66...69)("bar"),
             nil,

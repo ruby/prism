@@ -14,7 +14,8 @@ ProgramNode(0...21)(
            nil,
            "meth"
          ),
-         (4...5)
+         (4...5),
+         0
        ),
        KEYWORD_RESCUE_MODIFIER(11...17)("rescue"),
        CallNode(18...21)(

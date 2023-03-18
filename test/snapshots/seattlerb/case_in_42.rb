@@ -19,7 +19,7 @@ ProgramNode(0...30)(
              )],
             SplatNode(15...17)(
               USTAR(15...16)("*"),
-              LocalVariableWriteNode(16...17)((16...17), nil, nil)
+              LocalVariableWriteNode(16...17)((16...17), nil, nil, 0)
             ),
             [],
             nil,
