@@ -456,6 +456,7 @@ ProgramNode(
        ),
        nil,
        BlockNode(
+         Scope([IDENTIFIER("a"), IDENTIFIER("b")]),
          BlockParametersNode(
            ParametersNode(
              [RequiredParameterNode(IDENTIFIER("a")),
@@ -474,7 +475,7 @@ ProgramNode(
               nil,
               IDENTIFIER("puts"),
               nil,
-              ArgumentsNode([LocalVariableReadNode(IDENTIFIER("a"))]),
+              ArgumentsNode([LocalVariableReadNode(IDENTIFIER("a"), 0)]),
               nil,
               nil,
               "puts"
@@ -748,7 +749,7 @@ ProgramNode(
        nil,
        nil,
        nil,
-       BlockNode(nil, nil, (703..704), (705..706)),
+       BlockNode(Scope([]), nil, nil, (703..704), (705..706)),
        "each"
      ),
      CallNode(
@@ -759,6 +760,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([]),
          nil,
          StatementsNode([GlobalVariableReadNode(BACK_REFERENCE("$&"))]),
          (716..717),

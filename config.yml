@@ -420,6 +420,8 @@ nodes:
           ^^^^^^^^^^
   - name: BlockNode
     child_nodes:
+      - name: scope
+        type: node
       - name: parameters
         type: node?
       - name: statements
@@ -959,6 +961,8 @@ nodes:
     child_nodes:
       - name: name
         type: token
+      - name: depth
+        type: integer
     location: name
     comment: |
       Represents reading a local variable. Note that this requires that a local
@@ -975,6 +979,8 @@ nodes:
         type: token?
       - name: value
         type: node?
+      - name: depth
+        type: integer
     location: name->value|name
     comment: |
       Represents writing to a local variable.

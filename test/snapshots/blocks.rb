@@ -11,6 +11,7 @@ ProgramNode(
        ),
        BRACKET_RIGHT("]"),
        BlockNode(
+         Scope([]),
          nil,
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
@@ -30,6 +31,7 @@ ProgramNode(
        ),
        BRACKET_RIGHT("]"),
        BlockNode(
+         Scope([]),
          nil,
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
@@ -47,6 +49,7 @@ ProgramNode(
        ArgumentsNode([IntegerNode()]),
        PARENTHESIS_RIGHT(")"),
        BlockNode(
+         Scope([IDENTIFIER("x"), IDENTIFIER("memo")]),
          BlockParametersNode(
            ParametersNode(
              [RequiredParameterNode(IDENTIFIER("x")),
@@ -61,9 +64,9 @@ ProgramNode(
          ),
          StatementsNode(
            [OperatorAssignmentNode(
-              LocalVariableWriteNode(IDENTIFIER("memo"), nil, nil),
+              LocalVariableWriteNode(IDENTIFIER("memo"), nil, nil, 0),
               PLUS_EQUAL("+="),
-              LocalVariableReadNode(IDENTIFIER("x"))
+              LocalVariableReadNode(IDENTIFIER("x"), 0)
             )]
          ),
          (51..52),
@@ -78,7 +81,7 @@ ProgramNode(
        nil,
        nil,
        nil,
-       BlockNode(nil, nil, (80..82), (83..86)),
+       BlockNode(Scope([]), nil, nil, (80..82), (83..86)),
        "foo"
      ),
      CallNode(
@@ -97,7 +100,7 @@ ProgramNode(
                  nil,
                  nil,
                  nil,
-                 BlockNode(nil, nil, (102..104), (105..108)),
+                 BlockNode(Scope([]), nil, nil, (102..104), (105..108)),
                  "baz"
                )]
             ),
@@ -118,7 +121,7 @@ ProgramNode(
          [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")]
        ),
        nil,
-       BlockNode(nil, nil, (119..121), (122..125)),
+       BlockNode(Scope([]), nil, nil, (119..121), (122..125)),
        "foo"
      ),
      CallNode(
@@ -150,7 +153,7 @@ ProgramNode(
           )]
        ),
        nil,
-       BlockNode(nil, nil, (139..141), (142..145)),
+       BlockNode(Scope([]), nil, nil, (139..141), (142..145)),
        "foo"
      ),
      CallNode(
@@ -161,6 +164,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([IDENTIFIER("a")]),
          BlockParametersNode(
            ParametersNode(
              [],
@@ -199,6 +203,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([]),
          nil,
          BeginNode(
            nil,
@@ -228,6 +233,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([]),
          nil,
          StatementsNode(
            [CallNode(
@@ -238,6 +244,7 @@ ProgramNode(
               nil,
               nil,
               BlockNode(
+                Scope([]),
                 nil,
                 StatementsNode(
                   [CallNode(
@@ -247,7 +254,7 @@ ProgramNode(
                      nil,
                      nil,
                      nil,
-                     BlockNode(nil, nil, (213..215), (220..223)),
+                     BlockNode(Scope([]), nil, nil, (213..215), (220..223)),
                      "baz"
                    )]
                 ),
@@ -272,6 +279,7 @@ ProgramNode(
        ),
        BRACKET_RIGHT("]"),
        BlockNode(
+         Scope([]),
          nil,
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
@@ -289,6 +297,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([IDENTIFIER("x"), IDENTIFIER("y"), LABEL("z")]),
          BlockParametersNode(
            ParametersNode(
              [RequiredParameterNode(IDENTIFIER("x"))],
@@ -304,7 +313,7 @@ ProgramNode(
            ),
            []
          ),
-         StatementsNode([LocalVariableReadNode(IDENTIFIER("x"))]),
+         StatementsNode([LocalVariableReadNode(IDENTIFIER("x"), 0)]),
          (257..258),
          (276..277)
        ),
@@ -318,6 +327,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([IDENTIFIER("x")]),
          BlockParametersNode(
            ParametersNode(
              [RequiredParameterNode(IDENTIFIER("x"))],
@@ -335,7 +345,7 @@ ProgramNode(
        ),
        "foo"
      ),
-     LocalVariableWriteNode(IDENTIFIER("fork"), EQUAL("="), IntegerNode()),
+     LocalVariableWriteNode(IDENTIFIER("fork"), EQUAL("="), IntegerNode(), 0),
      CallNode(
        nil,
        nil,
@@ -344,6 +354,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([IDENTIFIER("a")]),
          BlockParametersNode(
            ParametersNode(
              [RequiredParameterNode(IDENTIFIER("a"))],
@@ -369,6 +380,7 @@ ProgramNode(
        nil,
        nil,
        BlockNode(
+         Scope([IDENTIFIER("a")]),
          BlockParametersNode(
            ParametersNode(
              [RequiredParameterNode(IDENTIFIER("a"))],
@@ -393,7 +405,7 @@ ProgramNode(
        nil,
        nil,
        nil,
-       BlockNode(nil, nil, (334..336), (337..340)),
+       BlockNode(Scope([]), nil, nil, (334..336), (337..340)),
        "C"
      ),
      CallNode(
@@ -403,7 +415,7 @@ ProgramNode(
        nil,
        nil,
        nil,
-       BlockNode(nil, nil, (344..345), (345..346)),
+       BlockNode(Scope([]), nil, nil, (344..345), (345..346)),
        "C"
      ),
      CallNode(
@@ -420,6 +432,7 @@ ProgramNode(
             nil,
             nil,
             BlockNode(
+              Scope([LABEL("a"), LABEL("b")]),
               BlockParametersNode(
                 ParametersNode(
                   [],

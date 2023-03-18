@@ -248,7 +248,7 @@ ProgramNode(
        nil,
        (233..236)
      ),
-     LocalVariableWriteNode(IDENTIFIER("a"), EQUAL("="), IntegerNode()),
+     LocalVariableWriteNode(IDENTIFIER("a"), EQUAL("="), IntegerNode(), 0),
      DefNode(
        IDENTIFIER("a"),
        nil,
@@ -516,7 +516,12 @@ ProgramNode(
        nil,
        ParametersNode([], [], nil, [], nil, nil),
        StatementsNode(
-         [LocalVariableWriteNode(IDENTIFIER("b"), EQUAL("="), IntegerNode())]
+         [LocalVariableWriteNode(
+            IDENTIFIER("b"),
+            EQUAL("="),
+            IntegerNode(),
+            0
+          )]
        ),
        Scope([IDENTIFIER("b")]),
        (494..497),
@@ -740,7 +745,8 @@ ProgramNode(
          LocalVariableWriteNode(
            IDENTIFIER("c"),
            EQUAL("="),
-           CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")
+           CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+           0
          ),
          (731..732),
          (737..738)
@@ -814,7 +820,8 @@ ProgramNode(
          LocalVariableWriteNode(
            IDENTIFIER("a"),
            EQUAL("="),
-           CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")
+           CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
+           0
          ),
          (795..796),
          (801..802)

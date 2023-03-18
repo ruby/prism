@@ -6,7 +6,12 @@ ProgramNode(
        KEYWORD_MODULE("module"),
        ConstantReadNode(),
        StatementsNode(
-         [LocalVariableWriteNode(IDENTIFIER("a"), EQUAL("="), IntegerNode())]
+         [LocalVariableWriteNode(
+            IDENTIFIER("a"),
+            EQUAL("="),
+            IntegerNode(),
+            0
+          )]
        ),
        KEYWORD_END("end")
      ),
@@ -41,7 +46,12 @@ ProgramNode(
        BeginNode(
          nil,
          StatementsNode(
-           [LocalVariableWriteNode(IDENTIFIER("x"), EQUAL("="), IntegerNode())]
+           [LocalVariableWriteNode(
+              IDENTIFIER("x"),
+              EQUAL("="),
+              IntegerNode(),
+              0
+            )]
          ),
          RescueNode(
            KEYWORD_RESCUE("rescue"),

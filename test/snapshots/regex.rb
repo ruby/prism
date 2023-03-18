@@ -67,7 +67,7 @@ ProgramNode(
           nil,
           "=~"
         ),
-        LocalVariableReadNode(IDENTIFIER("foo"))],
+        LocalVariableReadNode(IDENTIFIER("foo"), 0)],
        BRACKET_LEFT_ARRAY("["),
        BRACKET_RIGHT("]")
      ),

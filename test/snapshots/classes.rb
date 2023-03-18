@@ -8,7 +8,12 @@ ProgramNode(
        nil,
        nil,
        StatementsNode(
-         [LocalVariableWriteNode(IDENTIFIER("a"), EQUAL("="), IntegerNode())]
+         [LocalVariableWriteNode(
+            IDENTIFIER("a"),
+            EQUAL("="),
+            IntegerNode(),
+            0
+          )]
        ),
        KEYWORD_END("end")
      ),
@@ -66,7 +71,12 @@ ProgramNode(
        LESS("<"),
        ConstantReadNode(),
        StatementsNode(
-         [LocalVariableWriteNode(IDENTIFIER("a"), EQUAL("="), IntegerNode())]
+         [LocalVariableWriteNode(
+            IDENTIFIER("a"),
+            EQUAL("="),
+            IntegerNode(),
+            0
+          )]
        ),
        KEYWORD_END("end")
      ),

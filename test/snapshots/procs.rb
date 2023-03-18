@@ -18,7 +18,7 @@ ProgramNode(
          [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
        ),
        PARENTHESIS_RIGHT(")"),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("b"))])
+       StatementsNode([LocalVariableReadNode(IDENTIFIER("b"), 0)])
      ),
      LambdaNode(
        Scope([]),
@@ -107,7 +107,7 @@ ProgramNode(
          []
        ),
        nil,
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
+       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"), 0)])
      ),
      LambdaNode(
        Scope(
@@ -133,7 +133,7 @@ ProgramNode(
          []
        ),
        PARENTHESIS_RIGHT(")"),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
+       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"), 0)])
      ),
      LambdaNode(
        Scope(
@@ -159,7 +159,7 @@ ProgramNode(
          []
        ),
        PARENTHESIS_RIGHT(")"),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
+       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"), 0)])
      ),
      LambdaNode(
        Scope([IDENTIFIER("a")]),
@@ -194,11 +194,11 @@ ProgramNode(
             nil,
             StatementsNode(
               [CallNode(
-                 LocalVariableReadNode(IDENTIFIER("a")),
+                 LocalVariableReadNode(IDENTIFIER("a"), 1),
                  nil,
                  STAR("*"),
                  nil,
-                 ArgumentsNode([LocalVariableReadNode(IDENTIFIER("b"))]),
+                 ArgumentsNode([LocalVariableReadNode(IDENTIFIER("b"), 0)]),
                  nil,
                  nil,
                  "*"

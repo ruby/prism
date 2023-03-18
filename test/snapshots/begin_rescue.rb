@@ -143,7 +143,7 @@ ProgramNode(
          KEYWORD_RESCUE("rescue"),
          [ConstantReadNode()],
          EQUAL_GREATER("=>"),
-         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
+         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil, 0),
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]
          ),
@@ -151,7 +151,7 @@ ProgramNode(
            KEYWORD_RESCUE("rescue"),
            [ConstantReadNode(), ConstantReadNode()],
            EQUAL_GREATER("=>"),
-           LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
+           LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil, 0),
            StatementsNode(
              [CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")]
            ),
@@ -171,7 +171,7 @@ ProgramNode(
          KEYWORD_RESCUE("rescue"),
          [ConstantReadNode()],
          EQUAL_GREATER("=>"),
-         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
+         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil, 0),
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]
          ),
@@ -297,7 +297,7 @@ ProgramNode(
          KEYWORD_RESCUE("rescue"),
          [ConstantReadNode(), ConstantReadNode()],
          EQUAL_GREATER("=>"),
-         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
+         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil, 0),
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]
          ),
@@ -316,7 +316,7 @@ ProgramNode(
          KEYWORD_RESCUE("rescue"),
          [ConstantReadNode()],
          EQUAL_GREATER("=>"),
-         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil),
+         LocalVariableWriteNode(IDENTIFIER("ex"), nil, nil, 0),
          StatementsNode(
            [CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b")]
          ),

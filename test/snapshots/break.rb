@@ -62,6 +62,7 @@ ProgramNode(
          nil,
          nil,
          BlockNode(
+           Scope([]),
            nil,
            StatementsNode(
              [BreakNode(ArgumentsNode([IntegerNode()]), (127..132))]
@@ -88,6 +89,7 @@ ProgramNode(
          nil,
          nil,
          BlockNode(
+           Scope([IDENTIFIER("a")]),
            BlockParametersNode(
              ParametersNode(
                [RequiredParameterNode(IDENTIFIER("a"))],
