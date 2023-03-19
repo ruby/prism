@@ -4347,11 +4347,13 @@ typedef enum {
 typedef struct {
   yp_binding_power_t left;
   yp_binding_power_t right;
+  bool binary;
 } yp_binding_powers_t;
 
-#define BINDING_POWER_ASSIGNMENT { YP_BINDING_POWER_UNARY, YP_BINDING_POWER_ASSIGNMENT }
-#define LEFT_ASSOCIATIVE(precedence) { precedence, precedence + 1 }
-#define RIGHT_ASSOCIATIVE(precedence) { precedence, precedence }
+#define BINDING_POWER_ASSIGNMENT { YP_BINDING_POWER_UNARY, YP_BINDING_POWER_ASSIGNMENT, true }
+#define LEFT_ASSOCIATIVE(precedence) { precedence, precedence + 1, true }
+#define RIGHT_ASSOCIATIVE(precedence) { precedence, precedence, true }
+#define RIGHT_ASSOCIATIVE_UNARY(precedence) { precedence, precedence, false }
 
 yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
   // if unless until while
@@ -4432,15 +4434,15 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_USTAR] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_FACTOR),
 
   // -@
-  [YP_TOKEN_UMINUS] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_UMINUS),
+  [YP_TOKEN_UMINUS] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UMINUS),
 
   // **
   [YP_TOKEN_STAR_STAR] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_EXPONENT),
 
   // ! ~ +@
-  [YP_TOKEN_BANG] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_UNARY),
-  [YP_TOKEN_TILDE] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_UNARY),
-  [YP_TOKEN_UPLUS] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_UNARY),
+  [YP_TOKEN_BANG] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UNARY),
+  [YP_TOKEN_TILDE] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UNARY),
+  [YP_TOKEN_UPLUS] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UNARY),
 
   // [
   [YP_TOKEN_BRACKET_LEFT] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_INDEX),
@@ -4454,6 +4456,7 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
 #undef BINDING_POWER_ASSIGNMENT
 #undef LEFT_ASSOCIATIVE
 #undef RIGHT_ASSOCIATIVE
+#undef RIGHT_ASSOCIATIVE_UNARY
 
 // If the current token is of the specified type, lex forward by one token and
 // return true. Otherwise, return false. For example:
@@ -8307,8 +8310,7 @@ parse_expression(yp_parser_t *parser, yp_binding_power_t binding_power, const ch
   while (
     current_binding_powers = yp_binding_powers[parser->current.type],
     binding_power <= current_binding_powers.left &&
-    current_binding_powers.right != YP_BINDING_POWER_UNARY &&
-    current_binding_powers.right != YP_BINDING_POWER_UMINUS
+    current_binding_powers.binary
    ) {
     node = parse_expression_infix(parser, node, binding_power, current_binding_powers.right);
   }
