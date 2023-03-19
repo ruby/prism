@@ -5532,7 +5532,7 @@ parse_block(yp_parser_t *parser) {
   if (accept(parser, YP_TOKEN_PIPE)) {
     parameters = parse_block_parameters(parser);
     parser->command_start = true;
-    while (accept(parser, YP_TOKEN_NEWLINE));
+    accept(parser, YP_TOKEN_NEWLINE);
     expect(parser, YP_TOKEN_PIPE, "Expected block parameters to end with '|'.");
   }
 
