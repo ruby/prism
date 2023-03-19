@@ -797,6 +797,40 @@ ProgramNode(
        PARENTHESIS_RIGHT(")"),
        nil,
        "C"
+     ),
+     CallNode(
+       nil,
+       nil,
+       IDENTIFIER("foo"),
+       PARENTHESIS_LEFT("("),
+       ArgumentsNode(
+         [HashNode(
+            nil,
+            [AssocNode(
+               SymbolNode(
+                 STRING_BEGIN("\""),
+                 STRING_CONTENT("a"),
+                 LABEL_END("\":"),
+                 "a"
+               ),
+               CallNode(
+                 IntegerNode(),
+                 nil,
+                 UMINUS("-"),
+                 nil,
+                 nil,
+                 nil,
+                 nil,
+                 "-@"
+               ),
+               nil
+             )],
+            nil
+          )]
+       ),
+       PARENTHESIS_RIGHT(")"),
+       nil,
+       "foo"
      )]
   )
 )
