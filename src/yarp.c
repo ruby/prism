@@ -8304,7 +8304,8 @@ parse_expression(yp_parser_t *parser, yp_binding_power_t binding_power, const ch
   // Otherwise we'll look and see if the next token can be parsed as an infix
   // operator. If it can, then we'll parse it using parse_expression_infix.
   yp_binding_powers_t current_binding_powers;
-  while (current_binding_powers = yp_binding_powers[parser->current.type], binding_power <= current_binding_powers.left) {
+  while (current_binding_powers = yp_binding_powers[parser->current.type],
+         binding_power <= current_binding_powers.left && parser->current.type != YP_TOKEN_BANG) {
     node = parse_expression_infix(parser, node, binding_power, current_binding_powers.right);
   }
 
