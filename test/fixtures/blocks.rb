@@ -44,3 +44,9 @@ C do
 end
 
 C {}
+
+foo lambda { |
+  a: 1,
+  b: 2
+  |
+}

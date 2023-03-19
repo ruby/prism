@@ -513,6 +513,42 @@ class ErrorsTest < Test::Unit::TestCase
     ", Array.new(9, "reserved for numbered parameter")
   end
 
+  test "trailing comma is not allowed in block parameters" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("foo"),
+      nil,
+      ArgumentsNode(
+        [CallNode(
+           nil,
+           nil,
+           IDENTIFIER("lambda"),
+           nil,
+           nil,
+           nil,
+           BlockNode(
+             BlockParametersNode(ParametersNode([], [], nil, [KeywordParameterNode(LABEL("a:"), IntegerNode()), KeywordParameterNode(LABEL("b:"), IntegerNode())], nil, nil), []),
+             nil,
+             Location(),
+             Location()
+           ),
+           "lambda"
+         )]
+      ),
+      nil,
+      nil,
+      "foo"
+    )
+    assert_errors expected, "
+      foo lambda { |
+        a: 1,
+        b: 2, |
+      }
+    ",
+    ["Unexpected token '|'"]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

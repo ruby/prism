@@ -405,6 +405,43 @@ ProgramNode(
        nil,
        BlockNode(nil, nil, (344..345), (345..346)),
        "C"
+     ),
+     CallNode(
+       nil,
+       nil,
+       IDENTIFIER("foo"),
+       nil,
+       ArgumentsNode(
+         [CallNode(
+            nil,
+            nil,
+            IDENTIFIER("lambda"),
+            nil,
+            nil,
+            nil,
+            BlockNode(
+              BlockParametersNode(
+                ParametersNode(
+                  [],
+                  [],
+                  nil,
+                  [KeywordParameterNode(LABEL("a:"), IntegerNode()),
+                   KeywordParameterNode(LABEL("b:"), IntegerNode())],
+                  nil,
+                  nil
+                ),
+                []
+              ),
+              nil,
+              (359..360),
+              (382..383)
+            ),
+            "lambda"
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
      )]
   )
 )
