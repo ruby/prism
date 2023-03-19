@@ -5369,9 +5369,6 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         parser_lex(parser);
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Formal argument cannot be a class variable");
         break;
-      case YP_TOKEN_PIPE:
-        yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected token '|'");
-        return params;
       default:
         return params;
     }
