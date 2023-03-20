@@ -5134,6 +5134,10 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
     switch (parser->current.type) {
       case YP_TOKEN_STAR_STAR:
       case YP_TOKEN_LABEL: {
+        if (parsed_bare_hash) {
+          yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
+        }
+
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         argument = yp_node_hash_node_create(parser, &opening, &closing);
@@ -5204,6 +5208,10 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
         }
 
         if (yp_symbol_node_label_p(argument) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+          if (parsed_bare_hash) {
+            yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected bare hash argument.");
+          }
+
           yp_token_t operator;
           if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
             operator = parser->previous;
@@ -6150,6 +6158,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
+      bool parsed_bare_hash = false;
+
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
         // Handle the case where we don't have a comma and we have a newline followed by a right bracket.
         if (accept(parser, YP_TOKEN_NEWLINE) && match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
@@ -6170,7 +6180,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (accept(parser, YP_TOKEN_USTAR)) {
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_splat_node_create(parser, &parser->previous, expression);
-        } else if (match_type_p(parser, YP_TOKEN_LABEL)) {
+        } else if (match_any_type_p(parser, 2, YP_TOKEN_LABEL, YP_TOKEN_STAR_STAR)) {
+          if (parsed_bare_hash) {
+            yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
+          }
+
           yp_token_t opening = not_provided(parser);
           yp_token_t closing = not_provided(parser);
           element = yp_node_hash_node_create(parser, &opening, &closing);
@@ -6178,10 +6192,16 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (!match_any_type_p(parser, 8, YP_TOKEN_EOF, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
             parse_assocs(parser, element);
           }
+
+          parsed_bare_hash = true;
         } else {
           element = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an element for the array.");
 
           if (yp_symbol_node_label_p(element) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+            if (parsed_bare_hash) {
+              yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected bare hash.");
+            }
+
             yp_token_t opening = not_provided(parser);
             yp_token_t closing = not_provided(parser);
             yp_node_t *hash = yp_node_hash_node_create(parser, &opening, &closing);
@@ -6201,6 +6221,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             if (accept(parser, YP_TOKEN_COMMA)) {
               parse_assocs(parser, element);
             }
+
+            parsed_bare_hash = true;
           }
         }
 
