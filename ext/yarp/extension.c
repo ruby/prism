@@ -210,12 +210,10 @@ static yp_encoding_t yp_encoding_utf_8 = { .name = "utf-8",
                                            .alpha_char = yp_encoding_utf_8_alpha_char,
                                            .isupper_char = yp_encoding_utf_8_isupper_char };
 
-static yp_encoding_t yp_encoding_windows_1252 = {
-  .name = "windows-1252",
-  .alnum_char = yp_encoding_windows_1252_alnum_char,
-  .alpha_char = yp_encoding_windows_1252_alpha_char,
-  .isupper_char = yp_encoding_windows_1252_isupper_char
-};
+static yp_encoding_t yp_encoding_windows_1252 = { .name = "windows-1252",
+                                                  .alnum_char = yp_encoding_windows_1252_alnum_char,
+                                                  .alpha_char = yp_encoding_windows_1252_alpha_char,
+                                                  .isupper_char = yp_encoding_windows_1252_isupper_char };
 
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
