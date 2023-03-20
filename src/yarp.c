@@ -1735,6 +1735,7 @@ parser_lex_magic_comments(yp_parser_t *parser) {
 #define ENCODING(value, prebuilt) \
     if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
       parser->encoding = prebuilt; \
+      if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
       return; \
     }
 
@@ -8360,12 +8361,11 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .enclosure_nesting = 0,
     .lambda_enclosure_nesting = -1,
     .brace_nesting = 0,
-    .lex_modes =
-      {
-        .index = 0,
-        .stack = {{.mode = YP_LEX_DEFAULT}},
-        .current = &parser->lex_modes.stack[0],
-      },
+    .lex_modes = {
+      .index = 0,
+      .stack = {{ .mode = YP_LEX_DEFAULT }},
+      .current = &parser->lex_modes.stack[0],
+    },
     .start = source,
     .end = source + size,
     .current = { .start = source, .end = source },
@@ -8393,6 +8393,13 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
     parser->current.end += 3;
   }
+}
+
+// Register a callback that will be called whenever YARP changes the encoding it
+// is using to parse based on the magic comment.
+__attribute__((__visibility__("default"))) extern void
+yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_changed_callback_t callback) {
+  parser->encoding_changed_callback = callback;
 }
 
 // Register a callback that will be called when YARP encounters a magic comment
