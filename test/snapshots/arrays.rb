@@ -1,204 +1,489 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [ArrayNode(
-       [SplatNode(
-          IDENTIFIER("a"),
-          CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a")
+ProgramNode(0...259)(
+  Scope(?...?)([]),
+  StatementsNode(0...259)(
+    [ArrayNode(0...4)(
+       [SplatNode(2...3)(
+          IDENTIFIER(2...3)("a"),
+          CallNode(2...3)(
+            nil,
+            nil,
+            IDENTIFIER(2...3)("a"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "a"
+          )
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(0...1)("["),
+       BRACKET_RIGHT(3...4)("]")
      ),
-     CallNode(
-       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-       nil,
-       BRACKET_LEFT_RIGHT_EQUAL("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
-          CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
-          ArrayNode([IntegerNode(), IntegerNode(), IntegerNode()], nil, nil)]
+     CallNode(6...0)(
+       CallNode(6...9)(
+         nil,
+         nil,
+         IDENTIFIER(6...9)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
        ),
-       BRACKET_RIGHT("]"),
+       nil,
+       BRACKET_LEFT_RIGHT_EQUAL(9...10)("["),
+       BRACKET_LEFT(9...10)("["),
+       ArgumentsNode(10...0)(
+         [CallNode(10...13)(
+            nil,
+            nil,
+            IDENTIFIER(10...13)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          ),
+          CallNode(15...18)(
+            nil,
+            nil,
+            IDENTIFIER(15...18)("baz"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "baz"
+          ),
+          ArrayNode(0...0)(
+            [IntegerNode(22...23)(),
+             IntegerNode(25...26)(),
+             IntegerNode(28...29)()],
+            nil,
+            nil
+          )]
+       ),
+       BRACKET_RIGHT(18...19)("]"),
        nil,
        "[]="
      ),
-     ArrayNode(
-       [HashNode(
+     ArrayNode(31...44)(
+       [HashNode(32...43)(
           nil,
-          [AssocNode(
-             SymbolNode(nil, LABEL("a"), LABEL_END(":"), "a"),
-             ArrayNode(
-               [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
-                SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c")],
-               BRACKET_LEFT_ARRAY("["),
-               BRACKET_RIGHT("]")
+          [AssocNode(32...43)(
+             SymbolNode(32...34)(
+               nil,
+               LABEL(32...33)("a"),
+               LABEL_END(33...34)(":"),
+               "a"
+             ),
+             ArrayNode(35...43)(
+               [SymbolNode(36...38)(
+                  SYMBOL_BEGIN(36...37)(":"),
+                  IDENTIFIER(37...38)("b"),
+                  nil,
+                  "b"
+                ),
+                SymbolNode(40...42)(
+                  SYMBOL_BEGIN(40...41)(":"),
+                  IDENTIFIER(41...42)("c"),
+                  nil,
+                  "c"
+                )],
+               BRACKET_LEFT_ARRAY(35...36)("["),
+               BRACKET_RIGHT(42...43)("]")
              ),
              nil
            )],
           nil
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(31...32)("["),
+       BRACKET_RIGHT(43...44)("]")
      ),
-     ArrayNode(
-       [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c"),
-        IntegerNode(),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil, "d")],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
-     ),
-     ArrayNode(
-       [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c"),
-        IntegerNode(),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("d"), nil, "d")],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
-     ),
-     ArrayNode(
-       [HashNode(
+     ArrayNode(48...71)(
+       [SymbolNode(49...51)(
+          SYMBOL_BEGIN(49...50)(":"),
+          IDENTIFIER(50...51)("a"),
           nil,
-          [AssocNode(
-             CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-             CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
-             EQUAL_GREATER("=>")
+          "a"
+        ),
+        SymbolNode(53...55)(
+          SYMBOL_BEGIN(53...54)(":"),
+          IDENTIFIER(54...55)("b"),
+          nil,
+          "b"
+        ),
+        SymbolNode(57...59)(
+          SYMBOL_BEGIN(57...58)(":"),
+          IDENTIFIER(58...59)("c"),
+          nil,
+          "c"
+        ),
+        IntegerNode(60...61)(),
+        SymbolNode(66...68)(
+          SYMBOL_BEGIN(66...67)(":"),
+          IDENTIFIER(67...68)("d"),
+          nil,
+          "d"
+        )],
+       BRACKET_LEFT_ARRAY(48...49)("["),
+       BRACKET_RIGHT(70...71)("]")
+     ),
+     ArrayNode(74...98)(
+       [SymbolNode(75...77)(
+          SYMBOL_BEGIN(75...76)(":"),
+          IDENTIFIER(76...77)("a"),
+          nil,
+          "a"
+        ),
+        SymbolNode(79...81)(
+          SYMBOL_BEGIN(79...80)(":"),
+          IDENTIFIER(80...81)("b"),
+          nil,
+          "b"
+        ),
+        SymbolNode(83...85)(
+          SYMBOL_BEGIN(83...84)(":"),
+          IDENTIFIER(84...85)("c"),
+          nil,
+          "c"
+        ),
+        IntegerNode(86...87)(),
+        SymbolNode(92...94)(
+          SYMBOL_BEGIN(92...93)(":"),
+          IDENTIFIER(93...94)("d"),
+          nil,
+          "d"
+        )],
+       BRACKET_LEFT_ARRAY(74...75)("["),
+       BRACKET_RIGHT(97...98)("]")
+     ),
+     ArrayNode(100...112)(
+       [HashNode(101...111)(
+          nil,
+          [AssocNode(101...111)(
+             CallNode(101...104)(
+               nil,
+               nil,
+               IDENTIFIER(101...104)("foo"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "foo"
+             ),
+             CallNode(108...111)(
+               nil,
+               nil,
+               IDENTIFIER(108...111)("bar"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "bar"
+             ),
+             EQUAL_GREATER(105...107)("=>")
            )],
           nil
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(100...101)("["),
+       BRACKET_RIGHT(111...112)("]")
      ),
-     CallNode(
-       CallNode(
-         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-         nil,
-         BRACKET_LEFT_RIGHT("["),
-         BRACKET_LEFT("["),
-         ArgumentsNode(
-           [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")]
+     CallNode(114...133)(
+       CallNode(114...122)(
+         CallNode(114...117)(
+           nil,
+           nil,
+           IDENTIFIER(114...117)("foo"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "foo"
          ),
-         BRACKET_RIGHT("]"),
+         nil,
+         BRACKET_LEFT_RIGHT(117...118)("["),
+         BRACKET_LEFT(117...118)("["),
+         ArgumentsNode(118...121)(
+           [CallNode(118...121)(
+              nil,
+              nil,
+              IDENTIFIER(118...121)("bar"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "bar"
+            )]
+         ),
+         BRACKET_RIGHT(121...122)("]"),
          nil,
          "[]"
        ),
        nil,
-       BRACKET_LEFT_RIGHT_EQUAL("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
-          CallNode(nil, nil, IDENTIFIER("qux"), nil, nil, nil, nil, "qux")]
+       BRACKET_LEFT_RIGHT_EQUAL(122...123)("["),
+       BRACKET_LEFT(122...123)("["),
+       ArgumentsNode(123...133)(
+         [CallNode(123...126)(
+            nil,
+            nil,
+            IDENTIFIER(123...126)("baz"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "baz"
+          ),
+          CallNode(130...133)(
+            nil,
+            nil,
+            IDENTIFIER(130...133)("qux"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "qux"
+          )]
        ),
-       BRACKET_RIGHT("]"),
+       BRACKET_RIGHT(126...127)("]"),
        nil,
        "[]="
      ),
-     CallNode(
-       CallNode(
-         CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-         nil,
-         BRACKET_LEFT_RIGHT("["),
-         BRACKET_LEFT("["),
-         ArgumentsNode(
-           [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")]
+     CallNode(135...148)(
+       CallNode(135...143)(
+         CallNode(135...138)(
+           nil,
+           nil,
+           IDENTIFIER(135...138)("foo"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "foo"
          ),
-         BRACKET_RIGHT("]"),
+         nil,
+         BRACKET_LEFT_RIGHT(138...139)("["),
+         BRACKET_LEFT(138...139)("["),
+         ArgumentsNode(139...142)(
+           [CallNode(139...142)(
+              nil,
+              nil,
+              IDENTIFIER(139...142)("bar"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "bar"
+            )]
+         ),
+         BRACKET_RIGHT(142...143)("]"),
          nil,
          "[]"
        ),
        nil,
-       BRACKET_LEFT_RIGHT("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
+       BRACKET_LEFT_RIGHT(143...144)("["),
+       BRACKET_LEFT(143...144)("["),
+       ArgumentsNode(144...147)(
+         [CallNode(144...147)(
+            nil,
+            nil,
+            IDENTIFIER(144...147)("baz"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "baz"
+          )]
        ),
-       BRACKET_RIGHT("]"),
+       BRACKET_RIGHT(147...148)("]"),
        nil,
        "[]"
      ),
-     ArrayNode([], BRACKET_LEFT_ARRAY("["), BRACKET_RIGHT("]")),
-     CallNode(
-       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-       nil,
-       BRACKET_LEFT_RIGHT("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
-          CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
+     ArrayNode(150...153)(
+       [],
+       BRACKET_LEFT_ARRAY(150...151)("["),
+       BRACKET_RIGHT(152...153)("]")
+     ),
+     CallNode(155...168)(
+       CallNode(155...158)(
+         nil,
+         nil,
+         IDENTIFIER(155...158)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
        ),
-       BRACKET_RIGHT("]"),
+       nil,
+       BRACKET_LEFT_RIGHT(158...159)("["),
+       BRACKET_LEFT(158...159)("["),
+       ArgumentsNode(159...167)(
+         [CallNode(159...162)(
+            nil,
+            nil,
+            IDENTIFIER(159...162)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          ),
+          CallNode(164...167)(
+            nil,
+            nil,
+            IDENTIFIER(164...167)("baz"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "baz"
+          )]
+       ),
+       BRACKET_RIGHT(167...168)("]"),
        nil,
        "[]"
      ),
-     CallNode(
-       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-       nil,
-       BRACKET_LEFT_RIGHT_EQUAL("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
-          CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
-          CallNode(nil, nil, IDENTIFIER("qux"), nil, nil, nil, nil, "qux")]
+     CallNode(170...189)(
+       CallNode(170...173)(
+         nil,
+         nil,
+         IDENTIFIER(170...173)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
        ),
-       BRACKET_RIGHT("]"),
+       nil,
+       BRACKET_LEFT_RIGHT_EQUAL(173...174)("["),
+       BRACKET_LEFT(173...174)("["),
+       ArgumentsNode(174...189)(
+         [CallNode(174...177)(
+            nil,
+            nil,
+            IDENTIFIER(174...177)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          ),
+          CallNode(179...182)(
+            nil,
+            nil,
+            IDENTIFIER(179...182)("baz"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "baz"
+          ),
+          CallNode(186...189)(
+            nil,
+            nil,
+            IDENTIFIER(186...189)("qux"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "qux"
+          )]
+       ),
+       BRACKET_RIGHT(182...183)("]"),
        nil,
        "[]="
      ),
-     MultiWriteNode(
-       [CallNode(
-          CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+     MultiWriteNode(191...0)(
+       [CallNode(191...197)(
+          CallNode(191...194)(
+            nil,
+            nil,
+            IDENTIFIER(191...194)("foo"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "foo"
+          ),
           nil,
-          BRACKET_LEFT_RIGHT_EQUAL("["),
-          BRACKET_LEFT("["),
-          ArgumentsNode([IntegerNode()]),
-          BRACKET_RIGHT("]"),
+          BRACKET_LEFT_RIGHT_EQUAL(194...195)("["),
+          BRACKET_LEFT(194...195)("["),
+          ArgumentsNode(195...196)([IntegerNode(195...196)()]),
+          BRACKET_RIGHT(196...197)("]"),
           nil,
           "[]="
         ),
-        CallNode(
-          CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+        CallNode(199...205)(
+          CallNode(199...202)(
+            nil,
+            nil,
+            IDENTIFIER(199...202)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          ),
           nil,
-          BRACKET_LEFT_RIGHT_EQUAL("["),
-          BRACKET_LEFT("["),
-          ArgumentsNode([IntegerNode()]),
-          BRACKET_RIGHT("]"),
+          BRACKET_LEFT_RIGHT_EQUAL(202...203)("["),
+          BRACKET_LEFT(202...203)("["),
+          ArgumentsNode(203...204)([IntegerNode(203...204)()]),
+          BRACKET_RIGHT(204...205)("]"),
           nil,
           "[]="
         )],
-       EQUAL("="),
-       ArrayNode([IntegerNode(), IntegerNode()], nil, nil),
+       EQUAL(206...207)("="),
+       ArrayNode(0...0)(
+         [IntegerNode(208...209)(), IntegerNode(211...212)()],
+         nil,
+         nil
+       ),
        nil,
        nil
      ),
-     CallNode(
-       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+     CallNode(214...233)(
+       CallNode(214...217)(
+         nil,
+         nil,
+         IDENTIFIER(214...217)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
        nil,
-       BRACKET_LEFT_RIGHT("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(
-            CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+       BRACKET_LEFT_RIGHT(217...218)("["),
+       BRACKET_LEFT(217...218)("["),
+       ArgumentsNode(218...232)(
+         [CallNode(218...232)(
+            CallNode(218...221)(
+              nil,
+              nil,
+              IDENTIFIER(218...221)("bar"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "bar"
+            ),
             nil,
-            BRACKET_LEFT_RIGHT_EQUAL("["),
-            BRACKET_LEFT("["),
-            ArgumentsNode(
-              [CallNode(
+            BRACKET_LEFT_RIGHT_EQUAL(221...222)("["),
+            BRACKET_LEFT(221...222)("["),
+            ArgumentsNode(222...232)(
+              [CallNode(222...225)(
                  nil,
                  nil,
-                 IDENTIFIER("baz"),
+                 IDENTIFIER(222...225)("baz"),
                  nil,
                  nil,
                  nil,
                  nil,
                  "baz"
                ),
-               CallNode(
+               CallNode(229...232)(
                  nil,
                  nil,
-                 IDENTIFIER("qux"),
+                 IDENTIFIER(229...232)("qux"),
                  nil,
                  nil,
                  nil,
@@ -206,37 +491,82 @@ ProgramNode(
                  "qux"
                )]
             ),
-            BRACKET_RIGHT("]"),
+            BRACKET_RIGHT(225...226)("]"),
             nil,
             "[]="
           )]
        ),
-       BRACKET_RIGHT("]"),
+       BRACKET_RIGHT(232...233)("]"),
        nil,
        "[]"
      ),
-     CallNode(
-       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-       nil,
-       BRACKET_LEFT_RIGHT("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")]
+     CallNode(235...243)(
+       CallNode(235...238)(
+         nil,
+         nil,
+         IDENTIFIER(235...238)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
        ),
-       BRACKET_RIGHT("]"),
+       nil,
+       BRACKET_LEFT_RIGHT(238...239)("["),
+       BRACKET_LEFT(238...239)("["),
+       ArgumentsNode(239...242)(
+         [CallNode(239...242)(
+            nil,
+            nil,
+            IDENTIFIER(239...242)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          )]
+       ),
+       BRACKET_RIGHT(242...243)("]"),
        nil,
        "[]"
      ),
-     CallNode(
-       CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
-       nil,
-       BRACKET_LEFT_RIGHT_EQUAL("["),
-       BRACKET_LEFT("["),
-       ArgumentsNode(
-         [CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
-          CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
+     CallNode(245...259)(
+       CallNode(245...248)(
+         nil,
+         nil,
+         IDENTIFIER(245...248)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
        ),
-       BRACKET_RIGHT("]"),
+       nil,
+       BRACKET_LEFT_RIGHT_EQUAL(248...249)("["),
+       BRACKET_LEFT(248...249)("["),
+       ArgumentsNode(249...259)(
+         [CallNode(249...252)(
+            nil,
+            nil,
+            IDENTIFIER(249...252)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          ),
+          CallNode(256...259)(
+            nil,
+            nil,
+            IDENTIFIER(256...259)("baz"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "baz"
+          )]
+       ),
+       BRACKET_RIGHT(252...253)("]"),
        nil,
        "[]="
      )]

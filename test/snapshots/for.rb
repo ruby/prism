@@ -1,74 +1,114 @@
-ProgramNode(
-  Scope([IDENTIFIER("i"), IDENTIFIER("j"), IDENTIFIER("k")]),
-  StatementsNode(
-    [ForNode(
-       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
-       RangeNode(IntegerNode(), IntegerNode(), (10..12)),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
-       (0..3),
-       (6..8),
+ProgramNode(0...143)(
+  Scope(?...?)(
+    [IDENTIFIER(4...5)("i"),
+     IDENTIFIER(52...53)("j"),
+     IDENTIFIER(78...79)("k")]
+  ),
+  StatementsNode(0...143)(
+    [ForNode(0...20)(
+       LocalVariableWriteNode(4...5)(IDENTIFIER(4...5)("i"), nil, nil),
+       RangeNode(9...14)(
+         IntegerNode(9...10)(),
+         IntegerNode(12...14)(),
+         (10...12)
+       ),
+       StatementsNode(15...16)(
+         [LocalVariableReadNode(15...16)(IDENTIFIER(15...16)("i"))]
+       ),
+       (0...3),
+       (6...8),
        nil,
-       (17..20)
+       (17...20)
      ),
-     ForNode(
-       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
-       RangeNode(IntegerNode(), IntegerNode(), (32..34)),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
-       (22..25),
-       (28..30),
+     ForNode(22...44)(
+       LocalVariableWriteNode(26...27)(IDENTIFIER(26...27)("i"), nil, nil),
+       RangeNode(31...36)(
+         IntegerNode(31...32)(),
+         IntegerNode(34...36)(),
+         (32...34)
+       ),
+       StatementsNode(38...39)(
+         [LocalVariableReadNode(38...39)(IDENTIFIER(38...39)("i"))]
+       ),
+       (22...25),
+       (28...30),
        nil,
-       (41..44)
+       (41...44)
      ),
-     ForNode(
-       MultiWriteNode(
-         [LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
-          LocalVariableWriteNode(IDENTIFIER("j"), nil, nil)],
+     ForNode(46...68)(
+       MultiWriteNode(50...53)(
+         [LocalVariableWriteNode(50...51)(IDENTIFIER(50...51)("i"), nil, nil),
+          LocalVariableWriteNode(52...53)(IDENTIFIER(52...53)("j"), nil, nil)],
          nil,
          nil,
          nil,
          nil
        ),
-       RangeNode(IntegerNode(), IntegerNode(), (58..60)),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
-       (46..49),
-       (54..56),
+       RangeNode(57...62)(
+         IntegerNode(57...58)(),
+         IntegerNode(60...62)(),
+         (58...60)
+       ),
+       StatementsNode(63...64)(
+         [LocalVariableReadNode(63...64)(IDENTIFIER(63...64)("i"))]
+       ),
+       (46...49),
+       (54...56),
        nil,
-       (65..68)
+       (65...68)
      ),
-     ForNode(
-       MultiWriteNode(
-         [LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
-          LocalVariableWriteNode(IDENTIFIER("j"), nil, nil),
-          LocalVariableWriteNode(IDENTIFIER("k"), nil, nil)],
+     ForNode(70...94)(
+       MultiWriteNode(74...79)(
+         [LocalVariableWriteNode(74...75)(IDENTIFIER(74...75)("i"), nil, nil),
+          LocalVariableWriteNode(76...77)(IDENTIFIER(76...77)("j"), nil, nil),
+          LocalVariableWriteNode(78...79)(IDENTIFIER(78...79)("k"), nil, nil)],
          nil,
          nil,
          nil,
          nil
        ),
-       RangeNode(IntegerNode(), IntegerNode(), (84..86)),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
-       (70..73),
-       (80..82),
+       RangeNode(83...88)(
+         IntegerNode(83...84)(),
+         IntegerNode(86...88)(),
+         (84...86)
+       ),
+       StatementsNode(89...90)(
+         [LocalVariableReadNode(89...90)(IDENTIFIER(89...90)("i"))]
+       ),
+       (70...73),
+       (80...82),
        nil,
-       (91..94)
+       (91...94)
      ),
-     ForNode(
-       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
-       RangeNode(IntegerNode(), IntegerNode(), (106..108)),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
-       (96..99),
-       (102..104),
-       (111..113),
-       (116..119)
+     ForNode(96...119)(
+       LocalVariableWriteNode(100...101)(IDENTIFIER(100...101)("i"), nil, nil),
+       RangeNode(105...110)(
+         IntegerNode(105...106)(),
+         IntegerNode(108...110)(),
+         (106...108)
+       ),
+       StatementsNode(114...115)(
+         [LocalVariableReadNode(114...115)(IDENTIFIER(114...115)("i"))]
+       ),
+       (96...99),
+       (102...104),
+       (111...113),
+       (116...119)
      ),
-     ForNode(
-       LocalVariableWriteNode(IDENTIFIER("i"), nil, nil),
-       RangeNode(IntegerNode(), IntegerNode(), (131..133)),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("i"))]),
-       (121..124),
-       (127..129),
+     ForNode(121...143)(
+       LocalVariableWriteNode(125...126)(IDENTIFIER(125...126)("i"), nil, nil),
+       RangeNode(130...135)(
+         IntegerNode(130...131)(),
+         IntegerNode(133...135)(),
+         (131...133)
+       ),
+       StatementsNode(137...138)(
+         [LocalVariableReadNode(137...138)(IDENTIFIER(137...138)("i"))]
+       ),
+       (121...124),
+       (127...129),
        nil,
-       (140..143)
+       (140...143)
      )]
   )
 )

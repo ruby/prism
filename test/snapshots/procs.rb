@@ -1,188 +1,264 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [LambdaNode(
-       Scope(
-         [IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
+ProgramNode(4...241)(
+  Scope(?...?)([]),
+  StatementsNode(4...241)(
+    [LambdaNode(4...19)(
+       Scope(?...?)(
+         [IDENTIFIER(4...5)("a"),
+          IDENTIFIER(7...8)("b"),
+          IDENTIFIER(10...11)("c"),
+          IDENTIFIER(13...14)("d")]
        ),
-       PARENTHESIS_LEFT("("),
-       BlockParametersNode(
-         ParametersNode(
-           [RequiredParameterNode(IDENTIFIER("a"))],
+       PARENTHESIS_LEFT(3...4)("("),
+       BlockParametersNode(4...14)(
+         ParametersNode(4...5)(
+           [RequiredParameterNode(4...5)(IDENTIFIER(4...5)("a"))],
            [],
            nil,
            [],
            nil,
            nil
          ),
-         [IDENTIFIER("b"), IDENTIFIER("c"), IDENTIFIER("d")]
+         [IDENTIFIER(7...8)("b"),
+          IDENTIFIER(10...11)("c"),
+          IDENTIFIER(13...14)("d")]
        ),
-       PARENTHESIS_RIGHT(")"),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("b"))])
-     ),
-     LambdaNode(
-       Scope([]),
-       nil,
-       BlockParametersNode(ParametersNode([], [], nil, [], nil, nil), []),
-       nil,
-       BeginNode(
-         nil,
-         StatementsNode([]),
-         nil,
-         nil,
-         EnsureNode(
-           KEYWORD_ENSURE("ensure"),
-           StatementsNode([]),
-           KEYWORD_END("end")
-         ),
-         KEYWORD_END("end")
+       PARENTHESIS_RIGHT(14...15)(")"),
+       StatementsNode(18...19)(
+         [LocalVariableReadNode(18...19)(IDENTIFIER(18...19)("b"))]
        )
      ),
-     LambdaNode(
-       Scope([]),
+     LambdaNode(?...39)(
+       Scope(?...?)([]),
        nil,
-       BlockParametersNode(ParametersNode([], [], nil, [], nil, nil), []),
+       BlockParametersNode(?...?)(
+         ParametersNode(?...?)([], [], nil, [], nil, nil),
+         []
+       ),
        nil,
-       BeginNode(
+       BeginNode(0...39)(
          nil,
-         StatementsNode([]),
-         RescueNode(
-           KEYWORD_RESCUE("rescue"),
+         StatementsNode(0...0)([]),
+         nil,
+         nil,
+         EnsureNode(29...39)(
+           KEYWORD_ENSURE(29...35)("ensure"),
+           StatementsNode(0...0)([]),
+           KEYWORD_END(36...39)("end")
+         ),
+         KEYWORD_END(36...39)("end")
+       )
+     ),
+     LambdaNode(?...69)(
+       Scope(?...?)([]),
+       nil,
+       BlockParametersNode(?...?)(
+         ParametersNode(?...?)([], [], nil, [], nil, nil),
+         []
+       ),
+       nil,
+       BeginNode(0...69)(
+         nil,
+         StatementsNode(0...0)([]),
+         RescueNode(47...0)(
+           KEYWORD_RESCUE(47...53)("rescue"),
            [],
            nil,
            nil,
-           StatementsNode([]),
+           StatementsNode(0...0)([]),
            nil
          ),
-         ElseNode(
-           KEYWORD_ELSE("else"),
-           StatementsNode([]),
-           KEYWORD_ELSE("else")
+         ElseNode(54...58)(
+           KEYWORD_ELSE(54...58)("else"),
+           StatementsNode(0...0)([]),
+           KEYWORD_ELSE(54...58)("else")
          ),
-         EnsureNode(
-           KEYWORD_ENSURE("ensure"),
-           StatementsNode([]),
-           KEYWORD_END("end")
+         EnsureNode(59...69)(
+           KEYWORD_ENSURE(59...65)("ensure"),
+           StatementsNode(0...0)([]),
+           KEYWORD_END(66...69)("end")
          ),
-         KEYWORD_END("end")
+         KEYWORD_END(66...69)("end")
        )
      ),
-     LambdaNode(
-       Scope([]),
+     LambdaNode(?...79)(
+       Scope(?...?)([]),
        nil,
-       BlockParametersNode(ParametersNode([], [], nil, [], nil, nil), []),
-       nil,
-       StatementsNode(
-         [CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")]
-       )
-     ),
-     LambdaNode(
-       Scope([]),
-       nil,
-       BlockParametersNode(ParametersNode([], [], nil, [], nil, nil), []),
-       nil,
-       StatementsNode(
-         [CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")]
-       )
-     ),
-     LambdaNode(
-       Scope(
-         [IDENTIFIER("a"),
-          IDENTIFIER("b"),
-          LABEL("c"),
-          LABEL("d"),
-          IDENTIFIER("e")]
-       ),
-       nil,
-       BlockParametersNode(
-         ParametersNode(
-           [RequiredParameterNode(IDENTIFIER("a"))],
-           [OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), IntegerNode())],
-           nil,
-           [KeywordParameterNode(LABEL("c:"), nil),
-            KeywordParameterNode(LABEL("d:"), nil)],
-           nil,
-           BlockParameterNode(IDENTIFIER("e"), (121..122))
-         ),
+       BlockParametersNode(?...?)(
+         ParametersNode(?...?)([], [], nil, [], nil, nil),
          []
        ),
        nil,
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
-     ),
-     LambdaNode(
-       Scope(
-         [IDENTIFIER("a"),
-          IDENTIFIER("b"),
-          IDENTIFIER("c"),
-          LABEL("d"),
-          LABEL("e"),
-          IDENTIFIER("f"),
-          IDENTIFIER("g")]
-       ),
-       PARENTHESIS_LEFT("("),
-       BlockParametersNode(
-         ParametersNode(
-           [RequiredParameterNode(IDENTIFIER("a"))],
-           [OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), IntegerNode())],
-           RestParameterNode(USTAR("*"), IDENTIFIER("c")),
-           [KeywordParameterNode(LABEL("d:"), nil),
-            KeywordParameterNode(LABEL("e:"), nil)],
-           KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
-           BlockParameterNode(IDENTIFIER("g"), (162..163))
-         ),
-         []
-       ),
-       PARENTHESIS_RIGHT(")"),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
-     ),
-     LambdaNode(
-       Scope(
-         [IDENTIFIER("a"),
-          IDENTIFIER("b"),
-          IDENTIFIER("c"),
-          LABEL("d"),
-          LABEL("e"),
-          IDENTIFIER("f"),
-          IDENTIFIER("g")]
-       ),
-       PARENTHESIS_LEFT("("),
-       BlockParametersNode(
-         ParametersNode(
-           [RequiredParameterNode(IDENTIFIER("a"))],
-           [OptionalParameterNode(IDENTIFIER("b"), EQUAL("="), IntegerNode())],
-           RestParameterNode(USTAR("*"), IDENTIFIER("c")),
-           [KeywordParameterNode(LABEL("d:"), nil),
-            KeywordParameterNode(LABEL("e:"), nil)],
-           KeywordRestParameterNode(STAR_STAR("**"), IDENTIFIER("f")),
-           BlockParameterNode(IDENTIFIER("g"), (204..205))
-         ),
-         []
-       ),
-       PARENTHESIS_RIGHT(")"),
-       StatementsNode([LocalVariableReadNode(IDENTIFIER("a"))])
-     ),
-     LambdaNode(
-       Scope([IDENTIFIER("a")]),
-       PARENTHESIS_LEFT("("),
-       BlockParametersNode(
-         ParametersNode(
-           [RequiredParameterNode(IDENTIFIER("a"))],
-           [],
-           nil,
-           [],
-           nil,
-           nil
-         ),
-         []
-       ),
-       PARENTHESIS_RIGHT(")"),
-       StatementsNode(
-         [LambdaNode(
-            Scope([IDENTIFIER("b")]),
+       StatementsNode(76...79)(
+         [CallNode(76...79)(
             nil,
-            BlockParametersNode(
-              ParametersNode(
-                [RequiredParameterNode(IDENTIFIER("b"))],
+            nil,
+            IDENTIFIER(76...79)("foo"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "foo"
+          )]
+       )
+     ),
+     LambdaNode(?...93)(
+       Scope(?...?)([]),
+       nil,
+       BlockParametersNode(?...?)(
+         ParametersNode(?...?)([], [], nil, [], nil, nil),
+         []
+       ),
+       nil,
+       StatementsNode(90...93)(
+         [CallNode(90...93)(
+            nil,
+            nil,
+            IDENTIFIER(90...93)("foo"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "foo"
+          )]
+       )
+     ),
+     LambdaNode(113...127)(
+       Scope(?...?)(
+         [IDENTIFIER(103...104)("a"),
+          IDENTIFIER(106...107)("b"),
+          LABEL(113...114)("c"),
+          LABEL(117...118)("d"),
+          IDENTIFIER(122...123)("e")]
+       ),
+       nil,
+       BlockParametersNode(113...119)(
+         ParametersNode(113...119)(
+           [RequiredParameterNode(103...104)(IDENTIFIER(103...104)("a"))],
+           [OptionalParameterNode(106...111)(
+              IDENTIFIER(106...107)("b"),
+              EQUAL(108...109)("="),
+              IntegerNode(110...111)()
+            )],
+           nil,
+           [KeywordParameterNode(113...115)(LABEL(113...115)("c:"), nil),
+            KeywordParameterNode(117...119)(LABEL(117...119)("d:"), nil)],
+           nil,
+           BlockParameterNode(121...123)(
+             IDENTIFIER(122...123)("e"),
+             (121...122)
+           )
+         ),
+         []
+       ),
+       nil,
+       StatementsNode(126...127)(
+         [LocalVariableReadNode(126...127)(IDENTIFIER(126...127)("a"))]
+       )
+     ),
+     LambdaNode(149...169)(
+       Scope(?...?)(
+         [IDENTIFIER(135...136)("a"),
+          IDENTIFIER(138...139)("b"),
+          IDENTIFIER(146...147)("c"),
+          LABEL(149...150)("d"),
+          LABEL(153...154)("e"),
+          IDENTIFIER(159...160)("f"),
+          IDENTIFIER(163...164)("g")]
+       ),
+       PARENTHESIS_LEFT(134...135)("("),
+       BlockParametersNode(149...155)(
+         ParametersNode(149...155)(
+           [RequiredParameterNode(135...136)(IDENTIFIER(135...136)("a"))],
+           [OptionalParameterNode(138...143)(
+              IDENTIFIER(138...139)("b"),
+              EQUAL(140...141)("="),
+              IntegerNode(142...143)()
+            )],
+           RestParameterNode(145...147)(
+             USTAR(145...146)("*"),
+             IDENTIFIER(146...147)("c")
+           ),
+           [KeywordParameterNode(149...151)(LABEL(149...151)("d:"), nil),
+            KeywordParameterNode(153...155)(LABEL(153...155)("e:"), nil)],
+           KeywordRestParameterNode(157...160)(
+             STAR_STAR(157...159)("**"),
+             IDENTIFIER(159...160)("f")
+           ),
+           BlockParameterNode(162...164)(
+             IDENTIFIER(163...164)("g"),
+             (162...163)
+           )
+         ),
+         []
+       ),
+       PARENTHESIS_RIGHT(164...165)(")"),
+       StatementsNode(168...169)(
+         [LocalVariableReadNode(168...169)(IDENTIFIER(168...169)("a"))]
+       )
+     ),
+     LambdaNode(191...214)(
+       Scope(?...?)(
+         [IDENTIFIER(177...178)("a"),
+          IDENTIFIER(180...181)("b"),
+          IDENTIFIER(188...189)("c"),
+          LABEL(191...192)("d"),
+          LABEL(195...196)("e"),
+          IDENTIFIER(201...202)("f"),
+          IDENTIFIER(205...206)("g")]
+       ),
+       PARENTHESIS_LEFT(176...177)("("),
+       BlockParametersNode(191...197)(
+         ParametersNode(191...197)(
+           [RequiredParameterNode(177...178)(IDENTIFIER(177...178)("a"))],
+           [OptionalParameterNode(180...185)(
+              IDENTIFIER(180...181)("b"),
+              EQUAL(182...183)("="),
+              IntegerNode(184...185)()
+            )],
+           RestParameterNode(187...189)(
+             USTAR(187...188)("*"),
+             IDENTIFIER(188...189)("c")
+           ),
+           [KeywordParameterNode(191...193)(LABEL(191...193)("d:"), nil),
+            KeywordParameterNode(195...197)(LABEL(195...197)("e:"), nil)],
+           KeywordRestParameterNode(199...202)(
+             STAR_STAR(199...201)("**"),
+             IDENTIFIER(201...202)("f")
+           ),
+           BlockParameterNode(204...206)(
+             IDENTIFIER(205...206)("g"),
+             (204...205)
+           )
+         ),
+         []
+       ),
+       PARENTHESIS_RIGHT(206...207)(")"),
+       StatementsNode(213...214)(
+         [LocalVariableReadNode(213...214)(IDENTIFIER(213...214)("a"))]
+       )
+     ),
+     LambdaNode(224...241)(
+       Scope(?...?)([IDENTIFIER(224...225)("a")]),
+       PARENTHESIS_LEFT(223...224)("("),
+       BlockParametersNode(224...225)(
+         ParametersNode(224...225)(
+           [RequiredParameterNode(224...225)(IDENTIFIER(224...225)("a"))],
+           [],
+           nil,
+           [],
+           nil,
+           nil
+         ),
+         []
+       ),
+       PARENTHESIS_RIGHT(225...226)(")"),
+       StatementsNode(232...241)(
+         [LambdaNode(232...241)(
+            Scope(?...?)([IDENTIFIER(232...233)("b")]),
+            nil,
+            BlockParametersNode(232...233)(
+              ParametersNode(232...233)(
+                [RequiredParameterNode(232...233)(IDENTIFIER(232...233)("b"))],
                 [],
                 nil,
                 [],
@@ -192,13 +268,17 @@ ProgramNode(
               []
             ),
             nil,
-            StatementsNode(
-              [CallNode(
-                 LocalVariableReadNode(IDENTIFIER("a")),
+            StatementsNode(236...241)(
+              [CallNode(236...241)(
+                 LocalVariableReadNode(236...237)(IDENTIFIER(236...237)("a")),
                  nil,
-                 STAR("*"),
+                 STAR(238...239)("*"),
                  nil,
-                 ArgumentsNode([LocalVariableReadNode(IDENTIFIER("b"))]),
+                 ArgumentsNode(240...241)(
+                   [LocalVariableReadNode(240...241)(
+                      IDENTIFIER(240...241)("b")
+                    )]
+                 ),
                  nil,
                  nil,
                  "*"

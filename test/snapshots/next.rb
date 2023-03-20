@@ -1,59 +1,88 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [NextNode(nil, (0..4)),
-     NextNode(
-       ArgumentsNode(
-         [ParenthesesNode(StatementsNode([IntegerNode()]), (11..12), (13..14)),
-          ParenthesesNode(StatementsNode([IntegerNode()]), (16..17), (18..19)),
-          ParenthesesNode(StatementsNode([IntegerNode()]), (21..22), (23..24))]
-       ),
-       (6..10)
-     ),
-     NextNode(ArgumentsNode([IntegerNode()]), (26..30)),
-     NextNode(
-       ArgumentsNode([IntegerNode(), IntegerNode(), IntegerNode()]),
-       (34..38)
-     ),
-     NextNode(
-       ArgumentsNode([IntegerNode(), IntegerNode(), IntegerNode()]),
-       (48..52)
-     ),
-     NextNode(
-       ArgumentsNode(
-         [ArrayNode(
-            [IntegerNode(), IntegerNode(), IntegerNode()],
-            BRACKET_LEFT_ARRAY("["),
-            BRACKET_RIGHT("]")
+ProgramNode(0...118)(
+  Scope(?...?)([]),
+  StatementsNode(0...118)(
+    [NextNode(0...4)(nil, (0...4)),
+     NextNode(6...24)(
+       ArgumentsNode(11...24)(
+         [ParenthesesNode(11...14)(
+            StatementsNode(12...13)([IntegerNode(12...13)()]),
+            (11...12),
+            (13...14)
+          ),
+          ParenthesesNode(16...19)(
+            StatementsNode(17...18)([IntegerNode(17...18)()]),
+            (16...17),
+            (18...19)
+          ),
+          ParenthesesNode(21...24)(
+            StatementsNode(22...23)([IntegerNode(22...23)()]),
+            (21...22),
+            (23...24)
           )]
        ),
-       (62..66)
+       (6...10)
      ),
-     NextNode(
-       ArgumentsNode(
-         [ParenthesesNode(
-            StatementsNode([IntegerNode(), IntegerNode()]),
-            (82..83),
-            (92..93)
+     NextNode(26...32)(
+       ArgumentsNode(31...32)([IntegerNode(31...32)()]),
+       (26...30)
+     ),
+     NextNode(34...46)(
+       ArgumentsNode(39...46)(
+         [IntegerNode(39...40)(),
+          IntegerNode(42...43)(),
+          IntegerNode(45...46)()]
+       ),
+       (34...38)
+     ),
+     NextNode(48...60)(
+       ArgumentsNode(53...60)(
+         [IntegerNode(53...54)(),
+          IntegerNode(56...57)(),
+          IntegerNode(59...60)()]
+       ),
+       (48...52)
+     ),
+     NextNode(62...76)(
+       ArgumentsNode(67...76)(
+         [ArrayNode(67...76)(
+            [IntegerNode(68...69)(),
+             IntegerNode(71...72)(),
+             IntegerNode(74...75)()],
+            BRACKET_LEFT_ARRAY(67...68)("["),
+            BRACKET_RIGHT(75...76)("]")
           )]
        ),
-       (78..82)
+       (62...66)
      ),
-     NextNode(nil, (95..99)),
-     IntegerNode(),
-     NextNode(
-       ArgumentsNode([ParenthesesNode(nil, (107..108), (108..109))]),
-       (103..107)
-     ),
-     NextNode(
-       ArgumentsNode(
-         [ParenthesesNode(
-            StatementsNode([IntegerNode()]),
-            (115..116),
-            (117..118)
+     NextNode(78...93)(
+       ArgumentsNode(82...93)(
+         [ParenthesesNode(82...93)(
+            StatementsNode(86...91)(
+              [IntegerNode(86...87)(), IntegerNode(90...91)()]
+            ),
+            (82...83),
+            (92...93)
           )]
        ),
-       (111..115)
+       (78...82)
+     ),
+     NextNode(95...99)(nil, (95...99)),
+     IntegerNode(100...101)(),
+     NextNode(103...109)(
+       ArgumentsNode(107...109)(
+         [ParenthesesNode(107...109)(nil, (107...108), (108...109))]
+       ),
+       (103...107)
+     ),
+     NextNode(111...118)(
+       ArgumentsNode(115...118)(
+         [ParenthesesNode(115...118)(
+            StatementsNode(116...117)([IntegerNode(116...117)()]),
+            (115...116),
+            (117...118)
+          )]
+       ),
+       (111...115)
      )]
   )
 )

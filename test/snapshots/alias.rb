@@ -1,89 +1,114 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [AliasNode(
-       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("foo"), nil, "foo"),
-       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bar"), nil, "bar"),
-       (0..5)
+ProgramNode(0...175)(
+  Scope(?...?)([]),
+  StatementsNode(0...175)(
+    [AliasNode(0...15)(
+       SymbolNode(6...10)(
+         SYMBOL_BEGIN(6...7)(":"),
+         IDENTIFIER(7...10)("foo"),
+         nil,
+         "foo"
+       ),
+       SymbolNode(11...15)(
+         SYMBOL_BEGIN(11...12)(":"),
+         IDENTIFIER(12...15)("bar"),
+         nil,
+         "bar"
+       ),
+       (0...5)
      ),
-     AliasNode(
-       SymbolNode(
-         SYMBOL_BEGIN("%s["),
-         STRING_CONTENT("abc"),
-         STRING_END("]"),
+     AliasNode(17...38)(
+       SymbolNode(23...30)(
+         SYMBOL_BEGIN(23...26)("%s["),
+         STRING_CONTENT(26...29)("abc"),
+         STRING_END(29...30)("]"),
          "abc"
        ),
-       SymbolNode(
-         SYMBOL_BEGIN("%s["),
-         STRING_CONTENT("def"),
-         STRING_END("]"),
+       SymbolNode(31...38)(
+         SYMBOL_BEGIN(31...34)("%s["),
+         STRING_CONTENT(34...37)("def"),
+         STRING_END(37...38)("]"),
          "def"
        ),
-       (17..22)
+       (17...22)
      ),
-     AliasNode(
-       SymbolNode(
-         SYMBOL_BEGIN(":'"),
-         STRING_CONTENT("abc"),
-         STRING_END("'"),
+     AliasNode(40...59)(
+       SymbolNode(46...52)(
+         SYMBOL_BEGIN(46...48)(":'"),
+         STRING_CONTENT(48...51)("abc"),
+         STRING_END(51...52)("'"),
          "abc"
        ),
-       SymbolNode(
-         SYMBOL_BEGIN(":'"),
-         STRING_CONTENT("def"),
-         STRING_END("'"),
+       SymbolNode(53...59)(
+         SYMBOL_BEGIN(53...55)(":'"),
+         STRING_CONTENT(55...58)("def"),
+         STRING_END(58...59)("'"),
          "def"
        ),
-       (40..45)
+       (40...45)
      ),
-     AliasNode(
-       InterpolatedSymbolNode(
-         SYMBOL_BEGIN(":\""),
-         [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
-          StringInterpolatedNode(
-            EMBEXPR_BEGIN("\#{"),
-            StatementsNode([IntegerNode()]),
-            EMBEXPR_END("}")
+     AliasNode(61...84)(
+       InterpolatedSymbolNode(69...76)(
+         SYMBOL_BEGIN(67...69)(":\""),
+         [StringNode(69...72)(nil, STRING_CONTENT(69...72)("abc"), nil, "abc"),
+          StringInterpolatedNode(72...76)(
+            EMBEXPR_BEGIN(72...74)("\#{"),
+            StatementsNode(74...75)([IntegerNode(74...75)()]),
+            EMBEXPR_END(75...76)("}")
           )],
-         STRING_END("\"")
+         STRING_END(76...77)("\"")
        ),
-       SymbolNode(
-         SYMBOL_BEGIN(":'"),
-         STRING_CONTENT("def"),
-         STRING_END("'"),
+       SymbolNode(78...84)(
+         SYMBOL_BEGIN(78...80)(":'"),
+         STRING_CONTENT(80...83)("def"),
+         STRING_END(83...84)("'"),
          "def"
        ),
-       (61..66)
+       (61...66)
      ),
-     AliasNode(
-       GlobalVariableReadNode(GLOBAL_VARIABLE("$a")),
-       GlobalVariableReadNode(BACK_REFERENCE("$'")),
-       (86..91)
+     AliasNode(86...97)(
+       GlobalVariableReadNode(92...94)(GLOBAL_VARIABLE(92...94)("$a")),
+       GlobalVariableReadNode(95...97)(BACK_REFERENCE(95...97)("$'")),
+       (86...91)
      ),
-     AliasNode(
-       SymbolNode(nil, IDENTIFIER("foo"), nil, "foo"),
-       SymbolNode(nil, IDENTIFIER("bar"), nil, "bar"),
-       (99..104)
+     AliasNode(99...112)(
+       SymbolNode(105...108)(nil, IDENTIFIER(105...108)("foo"), nil, "foo"),
+       SymbolNode(109...112)(nil, IDENTIFIER(109...112)("bar"), nil, "bar"),
+       (99...104)
      ),
-     AliasNode(
-       GlobalVariableReadNode(GLOBAL_VARIABLE("$foo")),
-       GlobalVariableReadNode(GLOBAL_VARIABLE("$bar")),
-       (114..119)
+     AliasNode(114...129)(
+       GlobalVariableReadNode(120...124)(GLOBAL_VARIABLE(120...124)("$foo")),
+       GlobalVariableReadNode(125...129)(GLOBAL_VARIABLE(125...129)("$bar")),
+       (114...119)
      ),
-     AliasNode(
-       SymbolNode(nil, IDENTIFIER("foo"), nil, "foo"),
-       SymbolNode(nil, KEYWORD_IF("if"), nil, "if"),
-       (131..136)
+     AliasNode(131...143)(
+       SymbolNode(137...140)(nil, IDENTIFIER(137...140)("foo"), nil, "foo"),
+       SymbolNode(141...143)(nil, KEYWORD_IF(141...143)("if"), nil, "if"),
+       (131...136)
      ),
-     AliasNode(
-       SymbolNode(nil, IDENTIFIER("foo"), nil, "foo"),
-       SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil, "<=>"),
-       (145..150)
+     AliasNode(145...158)(
+       SymbolNode(151...154)(nil, IDENTIFIER(151...154)("foo"), nil, "foo"),
+       SymbolNode(155...158)(
+         nil,
+         LESS_EQUAL_GREATER(155...158)("<=>"),
+         nil,
+         "<=>"
+       ),
+       (145...150)
      ),
-     AliasNode(
-       SymbolNode(SYMBOL_BEGIN(":"), EQUAL_EQUAL("=="), nil, "=="),
-       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("eql?"), nil, "eql?"),
-       (160..165)
+     AliasNode(160...175)(
+       SymbolNode(166...169)(
+         SYMBOL_BEGIN(166...167)(":"),
+         EQUAL_EQUAL(167...169)("=="),
+         nil,
+         "=="
+       ),
+       SymbolNode(170...175)(
+         SYMBOL_BEGIN(170...171)(":"),
+         IDENTIFIER(171...175)("eql?"),
+         nil,
+         "eql?"
+       ),
+       (160...165)
      )]
   )
 )

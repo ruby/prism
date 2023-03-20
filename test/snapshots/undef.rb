@@ -1,48 +1,84 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [UndefNode([SymbolNode(nil, IDENTIFIER("a"), nil, "a")], (0..5)),
-     UndefNode(
-       [SymbolNode(nil, IDENTIFIER("a"), nil, "a"),
-        SymbolNode(nil, IDENTIFIER("b"), nil, "b")],
-       (9..14)
+ProgramNode(0...99)(
+  Scope(?...?)([]),
+  StatementsNode(0...99)(
+    [UndefNode(0...7)(
+       [SymbolNode(6...7)(nil, IDENTIFIER(6...7)("a"), nil, "a")],
+       (0...5)
      ),
-     UndefNode([SymbolNode(nil, KEYWORD_IF("if"), nil, "if")], (21..26)),
-     UndefNode(
-       [SymbolNode(nil, LESS_EQUAL_GREATER("<=>"), nil, "<=>")],
-       (31..36)
+     UndefNode(9...19)(
+       [SymbolNode(15...16)(nil, IDENTIFIER(15...16)("a"), nil, "a"),
+        SymbolNode(18...19)(nil, IDENTIFIER(18...19)("b"), nil, "b")],
+       (9...14)
      ),
-     UndefNode(
-       [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")],
-       (42..47)
+     UndefNode(21...29)(
+       [SymbolNode(27...29)(nil, KEYWORD_IF(27...29)("if"), nil, "if")],
+       (21...26)
      ),
-     UndefNode(
-       [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b"),
-        SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("c"), nil, "c")],
-       (52..57)
+     UndefNode(31...40)(
+       [SymbolNode(37...40)(
+          nil,
+          LESS_EQUAL_GREATER(37...40)("<=>"),
+          nil,
+          "<=>"
+        )],
+       (31...36)
      ),
-     UndefNode(
-       [SymbolNode(
-          SYMBOL_BEGIN(":'"),
-          STRING_CONTENT("abc"),
-          STRING_END("'"),
+     UndefNode(42...50)(
+       [SymbolNode(48...50)(
+          SYMBOL_BEGIN(48...49)(":"),
+          IDENTIFIER(49...50)("a"),
+          nil,
+          "a"
+        )],
+       (42...47)
+     ),
+     UndefNode(52...68)(
+       [SymbolNode(58...60)(
+          SYMBOL_BEGIN(58...59)(":"),
+          IDENTIFIER(59...60)("a"),
+          nil,
+          "a"
+        ),
+        SymbolNode(62...64)(
+          SYMBOL_BEGIN(62...63)(":"),
+          IDENTIFIER(63...64)("b"),
+          nil,
+          "b"
+        ),
+        SymbolNode(66...68)(
+          SYMBOL_BEGIN(66...67)(":"),
+          IDENTIFIER(67...68)("c"),
+          nil,
+          "c"
+        )],
+       (52...57)
+     ),
+     UndefNode(70...82)(
+       [SymbolNode(76...82)(
+          SYMBOL_BEGIN(76...78)(":'"),
+          STRING_CONTENT(78...81)("abc"),
+          STRING_END(81...82)("'"),
           "abc"
         )],
-       (70..75)
+       (70...75)
      ),
-     UndefNode(
-       [InterpolatedSymbolNode(
-          SYMBOL_BEGIN(":\""),
-          [StringNode(nil, STRING_CONTENT("abc"), nil, "abc"),
-           StringInterpolatedNode(
-             EMBEXPR_BEGIN("\#{"),
-             StatementsNode([IntegerNode()]),
-             EMBEXPR_END("}")
+     UndefNode(84...99)(
+       [InterpolatedSymbolNode(92...99)(
+          SYMBOL_BEGIN(90...92)(":\""),
+          [StringNode(92...95)(
+             nil,
+             STRING_CONTENT(92...95)("abc"),
+             nil,
+             "abc"
+           ),
+           StringInterpolatedNode(95...99)(
+             EMBEXPR_BEGIN(95...97)("\#{"),
+             StatementsNode(97...98)([IntegerNode(97...98)()]),
+             EMBEXPR_END(98...99)("}")
            )],
-          STRING_END("\"")
+          STRING_END(99...100)("\"")
         )],
-       (84..89)
+       (84...89)
      )]
   )
 )

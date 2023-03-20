@@ -1,251 +1,277 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [CallNode(IntegerNode(), nil, BANG("!"), nil, nil, nil, nil, "!"),
-     CallNode(IntegerNode(), nil, TILDE("~"), nil, nil, nil, nil, "~"),
-     CallNode(
-       IntegerNode(),
+ProgramNode(0...247)(
+  Scope(?...?)([]),
+  StatementsNode(0...247)(
+    [CallNode(0...2)(
+       IntegerNode(1...2)(),
        nil,
-       BANG_EQUAL("!="),
+       BANG(0...1)("!"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       nil,
+       nil,
+       nil,
+       "!"
+     ),
+     CallNode(4...6)(
+       IntegerNode(5...6)(),
+       nil,
+       TILDE(4...5)("~"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "~"
+     ),
+     CallNode(8...14)(
+       IntegerNode(8...9)(),
+       nil,
+       BANG_EQUAL(10...12)("!="),
+       nil,
+       ArgumentsNode(13...14)([IntegerNode(13...14)()]),
        nil,
        nil,
        "!="
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(16...22)(
+       IntegerNode(16...17)(),
        nil,
-       BANG_TILDE("!~"),
+       BANG_TILDE(18...20)("!~"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(21...22)([IntegerNode(21...22)()]),
        nil,
        nil,
        "!~"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(24...29)(
+       IntegerNode(24...25)(),
        nil,
-       PERCENT("%"),
+       PERCENT(26...27)("%"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(28...29)([IntegerNode(28...29)()]),
        nil,
        nil,
        "%"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(31...36)(
+       IntegerNode(31...32)(),
        nil,
-       AMPERSAND("&"),
+       AMPERSAND(33...34)("&"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(35...36)([IntegerNode(35...36)()]),
        nil,
        nil,
        "&"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(38...43)(
+       IntegerNode(38...39)(),
        nil,
-       STAR("*"),
+       STAR(40...41)("*"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(42...43)([IntegerNode(42...43)()]),
        nil,
        nil,
        "*"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(45...49)(
+       IntegerNode(45...46)(),
        nil,
-       STAR_STAR("**"),
+       STAR_STAR(46...48)("**"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(48...49)([IntegerNode(48...49)()]),
        nil,
        nil,
        "**"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(51...56)(
+       IntegerNode(51...52)(),
        nil,
-       PLUS("+"),
+       PLUS(53...54)("+"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(55...56)([IntegerNode(55...56)()]),
        nil,
        nil,
        "+"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(58...63)(
+       IntegerNode(58...59)(),
        nil,
-       MINUS("-"),
+       MINUS(60...61)("-"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(62...63)([IntegerNode(62...63)()]),
        nil,
        nil,
        "-"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(65...70)(
+       IntegerNode(65...66)(),
        nil,
-       SLASH("/"),
+       SLASH(67...68)("/"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(69...70)([IntegerNode(69...70)()]),
        nil,
        nil,
        "/"
      ),
-     CallNode(
-       CallNode(
-         IntegerNode(),
+     CallNode(72...77)(
+       CallNode(72...75)(
+         IntegerNode(72...73)(),
          nil,
-         SLASH("/"),
+         SLASH(73...74)("/"),
          nil,
-         ArgumentsNode([IntegerNode()]),
+         ArgumentsNode(74...75)([IntegerNode(74...75)()]),
          nil,
          nil,
          "/"
        ),
        nil,
-       SLASH("/"),
+       SLASH(75...76)("/"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(76...77)([IntegerNode(76...77)()]),
        nil,
        nil,
        "/"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(79...84)(
+       IntegerNode(79...80)(),
        nil,
-       LESS("<"),
+       LESS(81...82)("<"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(83...84)([IntegerNode(83...84)()]),
        nil,
        nil,
        "<"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(86...92)(
+       IntegerNode(86...87)(),
        nil,
-       LESS_LESS("<<"),
+       LESS_LESS(88...90)("<<"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(91...92)([IntegerNode(91...92)()]),
        nil,
        nil,
        "<<"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(94...100)(
+       IntegerNode(94...95)(),
        nil,
-       LESS_EQUAL("<="),
+       LESS_EQUAL(96...98)("<="),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(99...100)([IntegerNode(99...100)()]),
        nil,
        nil,
        "<="
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(102...109)(
+       IntegerNode(102...103)(),
        nil,
-       LESS_EQUAL_GREATER("<=>"),
+       LESS_EQUAL_GREATER(104...107)("<=>"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(108...109)([IntegerNode(108...109)()]),
        nil,
        nil,
        "<=>"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(111...117)(
+       IntegerNode(111...112)(),
        nil,
-       EQUAL_EQUAL("=="),
+       EQUAL_EQUAL(113...115)("=="),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(116...117)([IntegerNode(116...117)()]),
        nil,
        nil,
        "=="
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(119...126)(
+       IntegerNode(119...120)(),
        nil,
-       EQUAL_EQUAL_EQUAL("==="),
+       EQUAL_EQUAL_EQUAL(121...124)("==="),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(125...126)([IntegerNode(125...126)()]),
        nil,
        nil,
        "==="
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(128...134)(
+       IntegerNode(128...129)(),
        nil,
-       EQUAL_TILDE("=~"),
+       EQUAL_TILDE(130...132)("=~"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(133...134)([IntegerNode(133...134)()]),
        nil,
        nil,
        "=~"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(136...141)(
+       IntegerNode(136...137)(),
        nil,
-       GREATER(">"),
+       GREATER(138...139)(">"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(140...141)([IntegerNode(140...141)()]),
        nil,
        nil,
        ">"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(143...149)(
+       IntegerNode(143...144)(),
        nil,
-       GREATER_EQUAL(">="),
+       GREATER_EQUAL(145...147)(">="),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(148...149)([IntegerNode(148...149)()]),
        nil,
        nil,
        ">="
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(151...157)(
+       IntegerNode(151...152)(),
        nil,
-       GREATER_GREATER(">>"),
+       GREATER_GREATER(153...155)(">>"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(156...157)([IntegerNode(156...157)()]),
        nil,
        nil,
        ">>"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(159...164)(
+       IntegerNode(159...160)(),
        nil,
-       CARET("^"),
+       CARET(161...162)("^"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(163...164)([IntegerNode(163...164)()]),
        nil,
        nil,
        "^"
      ),
-     CallNode(
-       IntegerNode(),
+     CallNode(166...171)(
+       IntegerNode(166...167)(),
        nil,
-       PIPE("|"),
+       PIPE(168...169)("|"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(170...171)([IntegerNode(170...171)()]),
        nil,
        nil,
        "|"
      ),
-     AndNode(IntegerNode(), IntegerNode(), AMPERSAND_AMPERSAND("&&")),
-     AndNode(IntegerNode(), IntegerNode(), KEYWORD_AND("and")),
-     CallNode(
-       IntegerNode(),
+     AndNode(173...179)(
+       IntegerNode(173...174)(),
+       IntegerNode(178...179)(),
+       AMPERSAND_AMPERSAND(175...177)("&&")
+     ),
+     AndNode(181...188)(
+       IntegerNode(181...182)(),
+       IntegerNode(187...188)(),
+       KEYWORD_AND(183...186)("and")
+     ),
+     CallNode(190...200)(
+       IntegerNode(190...191)(),
        nil,
-       STAR("*"),
+       STAR(192...193)("*"),
        nil,
-       ArgumentsNode(
-         [CallNode(
-            IntegerNode(),
+       ArgumentsNode(194...200)(
+         [CallNode(194...200)(
+            IntegerNode(194...195)(),
             nil,
-            STAR_STAR("**"),
+            STAR_STAR(196...198)("**"),
             nil,
-            ArgumentsNode([IntegerNode()]),
+            ArgumentsNode(199...200)([IntegerNode(199...200)()]),
             nil,
             nil,
             "**"
@@ -255,39 +281,47 @@ ProgramNode(
        nil,
        "*"
      ),
-     CallNode(
-       CallNode(
-         IntegerNode(),
+     CallNode(202...211)(
+       CallNode(202...207)(
+         IntegerNode(202...203)(),
          nil,
-         STAR("*"),
+         STAR(204...205)("*"),
          nil,
-         ArgumentsNode([IntegerNode()]),
+         ArgumentsNode(206...207)([IntegerNode(206...207)()]),
          nil,
          nil,
          "*"
        ),
        nil,
-       PLUS("+"),
+       PLUS(208...209)("+"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(210...211)([IntegerNode(210...211)()]),
        nil,
        nil,
        "+"
      ),
-     OrNode(IntegerNode(), IntegerNode(), (215..217)),
-     OrNode(IntegerNode(), IntegerNode(), (223..225)),
-     CallNode(
-       IntegerNode(),
+     OrNode(213...219)(
+       IntegerNode(213...214)(),
+       IntegerNode(218...219)(),
+       (215...217)
+     ),
+     OrNode(221...227)(
+       IntegerNode(221...222)(),
+       IntegerNode(226...227)(),
+       (223...225)
+     ),
+     CallNode(229...238)(
+       IntegerNode(229...230)(),
        nil,
-       PLUS("+"),
+       PLUS(231...232)("+"),
        nil,
-       ArgumentsNode(
-         [CallNode(
-            IntegerNode(),
+       ArgumentsNode(233...238)(
+         [CallNode(233...238)(
+            IntegerNode(233...234)(),
             nil,
-            STAR("*"),
+            STAR(235...236)("*"),
             nil,
-            ArgumentsNode([IntegerNode()]),
+            ArgumentsNode(237...238)([IntegerNode(237...238)()]),
             nil,
             nil,
             "*"
@@ -297,21 +331,21 @@ ProgramNode(
        nil,
        "+"
      ),
-     ParenthesesNode(
-       StatementsNode(
-         [CallNode(
-            IntegerNode(),
+     ParenthesesNode(240...247)(
+       StatementsNode(241...246)(
+         [CallNode(241...246)(
+            IntegerNode(241...242)(),
             nil,
-            PLUS("+"),
+            PLUS(243...244)("+"),
             nil,
-            ArgumentsNode([IntegerNode()]),
+            ArgumentsNode(245...246)([IntegerNode(245...246)()]),
             nil,
             nil,
             "+"
           )]
        ),
-       (240..241),
-       (246..247)
+       (240...241),
+       (246...247)
      )]
   )
 )

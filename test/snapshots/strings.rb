@@ -1,136 +1,159 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [StringNode(
-       STRING_BEGIN("%%"),
-       STRING_CONTENT("abc"),
-       STRING_END("%"),
+ProgramNode(0...459)(
+  Scope(?...?)([]),
+  StatementsNode(0...459)(
+    [StringNode(0...6)(
+       STRING_BEGIN(0...2)("%%"),
+       STRING_CONTENT(2...5)("abc"),
+       STRING_END(5...6)("%"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%^"),
-       STRING_CONTENT("abc"),
-       STRING_END("^"),
+     StringNode(8...14)(
+       STRING_BEGIN(8...10)("%^"),
+       STRING_CONTENT(10...13)("abc"),
+       STRING_END(13...14)("^"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%&"),
-       STRING_CONTENT("abc"),
-       STRING_END("&"),
+     StringNode(16...22)(
+       STRING_BEGIN(16...18)("%&"),
+       STRING_CONTENT(18...21)("abc"),
+       STRING_END(21...22)("&"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%*"),
-       STRING_CONTENT("abc"),
-       STRING_END("*"),
+     StringNode(24...30)(
+       STRING_BEGIN(24...26)("%*"),
+       STRING_CONTENT(26...29)("abc"),
+       STRING_END(29...30)("*"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%_"),
-       STRING_CONTENT("abc"),
-       STRING_END("_"),
+     StringNode(32...38)(
+       STRING_BEGIN(32...34)("%_"),
+       STRING_CONTENT(34...37)("abc"),
+       STRING_END(37...38)("_"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%+"),
-       STRING_CONTENT("abc"),
-       STRING_END("+"),
+     StringNode(40...46)(
+       STRING_BEGIN(40...42)("%+"),
+       STRING_CONTENT(42...45)("abc"),
+       STRING_END(45...46)("+"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%-"),
-       STRING_CONTENT("abc"),
-       STRING_END("-"),
+     StringNode(48...54)(
+       STRING_BEGIN(48...50)("%-"),
+       STRING_CONTENT(50...53)("abc"),
+       STRING_END(53...54)("-"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%:"),
-       STRING_CONTENT("abc"),
-       STRING_END(":"),
+     StringNode(56...62)(
+       STRING_BEGIN(56...58)("%:"),
+       STRING_CONTENT(58...61)("abc"),
+       STRING_END(61...62)(":"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%;"),
-       STRING_CONTENT("abc"),
-       STRING_END(";"),
+     StringNode(64...70)(
+       STRING_BEGIN(64...66)("%;"),
+       STRING_CONTENT(66...69)("abc"),
+       STRING_END(69...70)(";"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%'"),
-       STRING_CONTENT("abc"),
-       STRING_END("'"),
+     StringNode(72...78)(
+       STRING_BEGIN(72...74)("%'"),
+       STRING_CONTENT(74...77)("abc"),
+       STRING_END(77...78)("'"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%~"),
-       STRING_CONTENT("abc"),
-       STRING_END("~"),
+     StringNode(80...86)(
+       STRING_BEGIN(80...82)("%~"),
+       STRING_CONTENT(82...85)("abc"),
+       STRING_END(85...86)("~"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%?"),
-       STRING_CONTENT("abc"),
-       STRING_END("?"),
+     StringNode(88...94)(
+       STRING_BEGIN(88...90)("%?"),
+       STRING_CONTENT(90...93)("abc"),
+       STRING_END(93...94)("?"),
        "abc"
      ),
-     ArrayNode([], PERCENT_LOWER_W("%w{"), STRING_END("}")),
-     StringNode(
-       STRING_BEGIN("%/"),
-       STRING_CONTENT("abc"),
-       STRING_END("/"),
+     ArrayNode(96...104)(
+       [],
+       PERCENT_LOWER_W(96...99)("%w{"),
+       STRING_END(103...104)("}")
+     ),
+     StringNode(106...112)(
+       STRING_BEGIN(106...108)("%/"),
+       STRING_CONTENT(108...111)("abc"),
+       STRING_END(111...112)("/"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%`"),
-       STRING_CONTENT("abc"),
-       STRING_END("`"),
+     StringNode(114...120)(
+       STRING_BEGIN(114...116)("%`"),
+       STRING_CONTENT(116...119)("abc"),
+       STRING_END(119...120)("`"),
        "abc"
      ),
-     InterpolatedStringNode(
-       STRING_BEGIN("\""),
-       [ClassVariableReadNode()],
-       STRING_END("\"")
+     InterpolatedStringNode(122...130)(
+       STRING_BEGIN(122...123)("\""),
+       [ClassVariableReadNode(124...129)()],
+       STRING_END(129...130)("\"")
      ),
-     StringNode(
-       STRING_BEGIN("%\\"),
-       STRING_CONTENT("abc"),
-       STRING_END("\\"),
+     StringNode(132...138)(
+       STRING_BEGIN(132...134)("%\\"),
+       STRING_CONTENT(134...137)("abc"),
+       STRING_END(137...138)("\\"),
        "abc"
      ),
-     InterpolatedStringNode(
-       STRING_BEGIN("%{"),
-       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
-        StringInterpolatedNode(
-          EMBEXPR_BEGIN("\#{"),
-          StatementsNode(
-            [CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, nil, "bbb")]
-          ),
-          EMBEXPR_END("}")
+     InterpolatedStringNode(140...157)(
+       STRING_BEGIN(140...142)("%{"),
+       [StringNode(142...146)(
+          nil,
+          STRING_CONTENT(142...146)("aaa "),
+          nil,
+          "aaa "
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")],
-       STRING_END("}")
+        StringInterpolatedNode(146...152)(
+          EMBEXPR_BEGIN(146...148)("\#{"),
+          StatementsNode(148...151)(
+            [CallNode(148...151)(
+               nil,
+               nil,
+               IDENTIFIER(148...151)("bbb"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "bbb"
+             )]
+          ),
+          EMBEXPR_END(151...152)("}")
+        ),
+        StringNode(152...156)(
+          nil,
+          STRING_CONTENT(152...156)(" ccc"),
+          nil,
+          " ccc"
+        )],
+       STRING_END(156...157)("}")
      ),
-     StringNode(
-       STRING_BEGIN("%["),
-       STRING_CONTENT("foo[]"),
-       STRING_END("]"),
+     StringNode(159...167)(
+       STRING_BEGIN(159...161)("%["),
+       STRING_CONTENT(161...166)("foo[]"),
+       STRING_END(166...167)("]"),
        "foo[]"
      ),
-     CallNode(
-       StringNode(
-         STRING_BEGIN("\""),
-         STRING_CONTENT("foo"),
-         STRING_END("\""),
+     CallNode(169...183)(
+       StringNode(169...174)(
+         STRING_BEGIN(169...170)("\""),
+         STRING_CONTENT(170...173)("foo"),
+         STRING_END(173...174)("\""),
          "foo"
        ),
        nil,
-       PLUS("+"),
+       PLUS(175...176)("+"),
        nil,
-       ArgumentsNode(
-         [StringNode(
-            STRING_BEGIN("\""),
-            STRING_CONTENT("bar"),
-            STRING_END("\""),
+       ArgumentsNode(178...183)(
+         [StringNode(178...183)(
+            STRING_BEGIN(178...179)("\""),
+            STRING_CONTENT(179...182)("bar"),
+            STRING_END(182...183)("\""),
             "bar"
           )]
        ),
@@ -138,166 +161,229 @@ ProgramNode(
        nil,
        "+"
      ),
-     StringNode(
-       STRING_BEGIN("%q{"),
-       STRING_CONTENT("abc"),
-       STRING_END("}"),
+     StringNode(185...192)(
+       STRING_BEGIN(185...188)("%q{"),
+       STRING_CONTENT(188...191)("abc"),
+       STRING_END(191...192)("}"),
        "abc"
      ),
-     SymbolNode(
-       SYMBOL_BEGIN("%s["),
-       STRING_CONTENT("abc"),
-       STRING_END("]"),
+     SymbolNode(194...201)(
+       SYMBOL_BEGIN(194...197)("%s["),
+       STRING_CONTENT(197...200)("abc"),
+       STRING_END(200...201)("]"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%{"),
-       STRING_CONTENT("abc"),
-       STRING_END("}"),
+     StringNode(203...209)(
+       STRING_BEGIN(203...205)("%{"),
+       STRING_CONTENT(205...208)("abc"),
+       STRING_END(208...209)("}"),
        "abc"
      ),
-     StringNode(STRING_BEGIN("'"), STRING_CONTENT(""), STRING_END("'"), ""),
-     StringNode(
-       STRING_BEGIN("\""),
-       STRING_CONTENT("abc"),
-       STRING_END("\""),
+     StringNode(211...213)(
+       STRING_BEGIN(211...212)("'"),
+       STRING_CONTENT(212...212)(""),
+       STRING_END(212...213)("'"),
+       ""
+     ),
+     StringNode(215...220)(
+       STRING_BEGIN(215...216)("\""),
+       STRING_CONTENT(216...219)("abc"),
+       STRING_END(219...220)("\""),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("\""),
-       STRING_CONTENT("\#@---"),
-       STRING_END("\""),
+     StringNode(222...229)(
+       STRING_BEGIN(222...223)("\""),
+       STRING_CONTENT(223...228)("\#@---"),
+       STRING_END(228...229)("\""),
        "\#@---"
      ),
-     InterpolatedStringNode(
-       STRING_BEGIN("\""),
-       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
-        StringInterpolatedNode(
-          EMBEXPR_BEGIN("\#{"),
-          StatementsNode(
-            [CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, nil, "bbb")]
-          ),
-          EMBEXPR_END("}")
+     InterpolatedStringNode(231...247)(
+       STRING_BEGIN(231...232)("\""),
+       [StringNode(232...236)(
+          nil,
+          STRING_CONTENT(232...236)("aaa "),
+          nil,
+          "aaa "
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")],
-       STRING_END("\"")
+        StringInterpolatedNode(236...242)(
+          EMBEXPR_BEGIN(236...238)("\#{"),
+          StatementsNode(238...241)(
+            [CallNode(238...241)(
+               nil,
+               nil,
+               IDENTIFIER(238...241)("bbb"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "bbb"
+             )]
+          ),
+          EMBEXPR_END(241...242)("}")
+        ),
+        StringNode(242...246)(
+          nil,
+          STRING_CONTENT(242...246)(" ccc"),
+          nil,
+          " ccc"
+        )],
+       STRING_END(246...247)("\"")
      ),
-     StringNode(
-       STRING_BEGIN("'"),
-       STRING_CONTENT("abc"),
-       STRING_END("'"),
+     StringNode(249...254)(
+       STRING_BEGIN(249...250)("'"),
+       STRING_CONTENT(250...253)("abc"),
+       STRING_END(253...254)("'"),
        "abc"
      ),
-     ArrayNode(
-       [StringNode(nil, STRING_CONTENT("a"), nil, "a"),
-        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
-        StringNode(nil, STRING_CONTENT("c"), nil, "c")],
-       PERCENT_LOWER_W("%w["),
-       STRING_END("]")
+     ArrayNode(256...265)(
+       [StringNode(259...260)(nil, STRING_CONTENT(259...260)("a"), nil, "a"),
+        StringNode(261...262)(nil, STRING_CONTENT(261...262)("b"), nil, "b"),
+        StringNode(263...264)(nil, STRING_CONTENT(263...264)("c"), nil, "c")],
+       PERCENT_LOWER_W(256...259)("%w["),
+       STRING_END(264...265)("]")
      ),
-     ArrayNode(
-       [StringNode(nil, STRING_CONTENT("a[]"), nil, "a[]"),
-        StringNode(nil, STRING_CONTENT("b[[]]"), nil, "b[[]]"),
-        StringNode(nil, STRING_CONTENT("c[]"), nil, "c[]")],
-       PERCENT_LOWER_W("%w["),
-       STRING_END("]")
-     ),
-     ArrayNode(
-       [StringNode(nil, STRING_CONTENT("a"), nil, "a"),
-        InterpolatedStringNode(
+     ArrayNode(267...284)(
+       [StringNode(270...273)(
           nil,
-          [StringNode(nil, STRING_CONTENT("b"), nil, "b"),
-           StringInterpolatedNode(
-             EMBEXPR_BEGIN("\#{"),
-             StatementsNode(
-               [CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")]
-             ),
-             EMBEXPR_END("}")
+          STRING_CONTENT(270...273)("a[]"),
+          nil,
+          "a[]"
+        ),
+        StringNode(274...279)(
+          nil,
+          STRING_CONTENT(274...279)("b[[]]"),
+          nil,
+          "b[[]]"
+        ),
+        StringNode(280...283)(
+          nil,
+          STRING_CONTENT(280...283)("c[]"),
+          nil,
+          "c[]"
+        )],
+       PERCENT_LOWER_W(267...270)("%w["),
+       STRING_END(283...284)("]")
+     ),
+     ArrayNode(286...300)(
+       [StringNode(289...290)(nil, STRING_CONTENT(289...290)("a"), nil, "a"),
+        InterpolatedStringNode(291...297)(
+          nil,
+          [StringNode(291...292)(
+             nil,
+             STRING_CONTENT(291...292)("b"),
+             nil,
+             "b"
            ),
-           StringNode(nil, STRING_CONTENT("d"), nil, "d")],
+           StringInterpolatedNode(292...296)(
+             EMBEXPR_BEGIN(292...294)("\#{"),
+             StatementsNode(294...295)(
+               [CallNode(294...295)(
+                  nil,
+                  nil,
+                  IDENTIFIER(294...295)("c"),
+                  nil,
+                  nil,
+                  nil,
+                  nil,
+                  "c"
+                )]
+             ),
+             EMBEXPR_END(295...296)("}")
+           ),
+           StringNode(296...297)(
+             nil,
+             STRING_CONTENT(296...297)("d"),
+             nil,
+             "d"
+           )],
           nil
         ),
-        StringNode(nil, STRING_CONTENT("e"), nil, "e")],
-       PERCENT_UPPER_W("%W["),
-       STRING_END("]")
+        StringNode(298...299)(nil, STRING_CONTENT(298...299)("e"), nil, "e")],
+       PERCENT_UPPER_W(286...289)("%W["),
+       STRING_END(299...300)("]")
      ),
-     ArrayNode(
-       [StringNode(nil, STRING_CONTENT("a"), nil, "a"),
-        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
-        StringNode(nil, STRING_CONTENT("c"), nil, "c")],
-       PERCENT_UPPER_W("%W["),
-       STRING_END("]")
+     ArrayNode(302...311)(
+       [StringNode(305...306)(nil, STRING_CONTENT(305...306)("a"), nil, "a"),
+        StringNode(307...308)(nil, STRING_CONTENT(307...308)("b"), nil, "b"),
+        StringNode(309...310)(nil, STRING_CONTENT(309...310)("c"), nil, "c")],
+       PERCENT_UPPER_W(302...305)("%W["),
+       STRING_END(310...311)("]")
      ),
-     ArrayNode(
-       [StringNode(nil, STRING_CONTENT("a"), nil, "a"),
-        StringNode(nil, STRING_CONTENT("b"), nil, "b"),
-        StringNode(nil, STRING_CONTENT("c"), nil, "c")],
-       PERCENT_LOWER_W("%w["),
-       STRING_END("]")
+     ArrayNode(313...330)(
+       [StringNode(319...320)(nil, STRING_CONTENT(319...320)("a"), nil, "a"),
+        StringNode(323...324)(nil, STRING_CONTENT(323...324)("b"), nil, "b"),
+        StringNode(327...328)(nil, STRING_CONTENT(327...328)("c"), nil, "c")],
+       PERCENT_LOWER_W(313...316)("%w["),
+       STRING_END(329...330)("]")
      ),
-     StringNode(
-       STRING_BEGIN("'"),
-       STRING_CONTENT("\\' foo \\' bar"),
-       STRING_END("'"),
+     StringNode(332...347)(
+       STRING_BEGIN(332...333)("'"),
+       STRING_CONTENT(333...346)("\\' foo \\' bar"),
+       STRING_END(346...347)("'"),
        "' foo ' bar"
      ),
-     StringNode(
-       STRING_BEGIN("'"),
-       STRING_CONTENT("\\\\ foo \\\\ bar"),
-       STRING_END("'"),
+     StringNode(349...364)(
+       STRING_BEGIN(349...350)("'"),
+       STRING_CONTENT(350...363)("\\\\ foo \\\\ bar"),
+       STRING_END(363...364)("'"),
        "\\ foo \\ bar"
      ),
-     InterpolatedStringNode(
-       STRING_BEGIN("\""),
-       [GlobalVariableReadNode(GLOBAL_VARIABLE("$foo"))],
-       STRING_END("\"")
+     InterpolatedStringNode(366...373)(
+       STRING_BEGIN(366...367)("\""),
+       [GlobalVariableReadNode(368...372)(GLOBAL_VARIABLE(368...372)("$foo"))],
+       STRING_END(372...373)("\"")
      ),
-     InterpolatedStringNode(
-       STRING_BEGIN("\""),
-       [InstanceVariableReadNode()],
-       STRING_END("\"")
+     InterpolatedStringNode(375...382)(
+       STRING_BEGIN(375...376)("\""),
+       [InstanceVariableReadNode(377...381)()],
+       STRING_END(381...382)("\"")
      ),
-     StringNode(
-       STRING_BEGIN("\""),
-       STRING_CONTENT("\\x7 \\x23 \\x61"),
-       STRING_END("\""),
+     StringNode(384...399)(
+       STRING_BEGIN(384...385)("\""),
+       STRING_CONTENT(385...398)("\\x7 \\x23 \\x61"),
+       STRING_END(398...399)("\""),
        "\a # a"
      ),
-     StringNode(
-       STRING_BEGIN("\""),
-       STRING_CONTENT("\\7 \\43 \\141"),
-       STRING_END("\""),
+     StringNode(401...414)(
+       STRING_BEGIN(401...402)("\""),
+       STRING_CONTENT(402...413)("\\7 \\43 \\141"),
+       STRING_END(413...414)("\""),
        "\a # a"
      ),
-     StringNode(
-       STRING_BEGIN("%["),
-       STRING_CONTENT("abc"),
-       STRING_END("]"),
+     StringNode(416...422)(
+       STRING_BEGIN(416...418)("%["),
+       STRING_CONTENT(418...421)("abc"),
+       STRING_END(421...422)("]"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%("),
-       STRING_CONTENT("abc"),
-       STRING_END(")"),
+     StringNode(424...430)(
+       STRING_BEGIN(424...426)("%("),
+       STRING_CONTENT(426...429)("abc"),
+       STRING_END(429...430)(")"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%@"),
-       STRING_CONTENT("abc"),
-       STRING_END("@"),
+     StringNode(432...438)(
+       STRING_BEGIN(432...434)("%@"),
+       STRING_CONTENT(434...437)("abc"),
+       STRING_END(437...438)("@"),
        "abc"
      ),
-     StringNode(
-       STRING_BEGIN("%$"),
-       STRING_CONTENT("abc"),
-       STRING_END("$"),
+     StringNode(440...446)(
+       STRING_BEGIN(440...442)("%$"),
+       STRING_CONTENT(442...445)("abc"),
+       STRING_END(445...446)("$"),
        "abc"
      ),
-     StringNode(STRING_BEGIN("?"), STRING_CONTENT("a"), nil, "a"),
-     StringNode(
-       STRING_BEGIN("%Q{"),
-       STRING_CONTENT("abc"),
-       STRING_END("}"),
+     StringNode(448...450)(
+       STRING_BEGIN(448...449)("?"),
+       STRING_CONTENT(449...450)("a"),
+       nil,
+       "a"
+     ),
+     StringNode(452...459)(
+       STRING_BEGIN(452...455)("%Q{"),
+       STRING_CONTENT(455...458)("abc"),
+       STRING_END(458...459)("}"),
        "abc"
      )]
   )
