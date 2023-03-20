@@ -239,6 +239,64 @@ ProgramNode(
        BRACKET_RIGHT("]"),
        nil,
        "[]="
+     ),
+     ArrayNode(
+       [HashNode(
+          nil,
+          [AssocSplatNode(
+             HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+             (262..264)
+           )],
+          nil
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     ArrayNode(
+       [HashNode(
+          nil,
+          [AssocSplatNode(
+             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
+             (270..272)
+           )],
+          nil
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     ArrayNode(
+       [IntegerNode(),
+        HashNode(
+          nil,
+          [AssocSplatNode(
+             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
+             (281..283)
+           )],
+          nil
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     ArrayNode(
+       [IntegerNode(),
+        HashNode(
+          nil,
+          [AssocSplatNode(
+             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
+             (292..294)
+           ),
+           AssocSplatNode(
+             HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
+             (298..300)
+           ),
+           AssocSplatNode(
+             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
+             (304..306)
+           )],
+          nil
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
      )]
   )
 )
