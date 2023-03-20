@@ -21,6 +21,7 @@ ruby:
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_string.rb
     - test/ruby/test_syntax.rb
+    - test/test_tempfile.rb
     - tool/merger.rb
     - tool/rjit/bindgen.rb
     - tool/sync_default_gems.rb
