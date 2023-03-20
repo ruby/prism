@@ -35,10 +35,3 @@ discourse:
   todos:
     - app/controllers/admin/api_controller.rb
     - app/controllers/composer_controller.rb
-    - app/jobs/scheduled/enqueue_suspect_users.rb
-    - app/models/topic_thumbnail.rb
-    - lib/upload_security.rb
-    - plugins/chat/app/jobs/regular/auto_manage_channel_memberships.rb
-    - plugins/chat/lib/chat_mailer.rb
-    - plugins/chat/lib/extensions/user_notifications_extension.rb
-    - spec/models/reviewable_spec.rb
