@@ -2,34 +2,40 @@
 
 module YARP
   class LexTask
-    attr_reader :todos, :passing, :failing
+    attr_reader :previous_todos, :todos, :passing_file_count
 
-    def initialize(todos)
-      @todos = todos
-      @passing = 0
-      @failing = 0
+    def initialize(previous_todos)
+      @previous_todos = previous_todos
+      @passing_file_count = 0
+      @todos = []
     end
 
     def compare(filepath)
       if lex(filepath)
-        todos.delete(filepath) if todos.include?(filepath)
-        @passing += 1
+        @passing_file_count += 1
         true
       else
-        @failing += 1 if ENV["TODOS"] || !todos.include?(filepath)
+        @todos << filepath
         false
       end
     end
 
+    def failing_file_count
+      @todos.length
+    end
+
+    # ENV["TODOS"] was toggled and there are failing files
+    # or new failures were introduced
     def failed?
-      failing > 0
+      (ENV["TODOS"] && failing_file_count > 0) ||
+        (@todos - @previous_todos).any?
     end
 
     def summary
       <<~RESULTS
-        PASSING=#{passing}
-        FAILING=#{failing + todos.length}
-        PERCENT=#{(passing.to_f / (passing + failing + todos.length) * 100).round(2)}%
+        PASSING=#{passing_file_count}
+        FAILING=#{failing_file_count}
+        PERCENT=#{(passing_file_count.to_f / (passing_file_count + failing_file_count) * 100).round(2)}%
       RESULTS
     end
 
@@ -96,9 +102,22 @@ YAML.safe_load_file("targets.yml").each do |name, target|
 
     puts("\n\n")
 
-    if lex_task.todos.length != target.fetch("todos", []).length
-      puts("Some files listed as todo are passing. This is the new list:")
-      puts("    - #{lex_task.todos.map { _1.gsub("tmp/targets/ruby/", "") }.join("\n    - ")}")
+    previous_todos = lex_task.previous_todos.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }
+    current_todos = lex_task.todos.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }
+    current_minus_previous = current_todos - previous_todos
+    previous_minus_current = previous_todos - current_todos
+
+    if current_minus_previous.any?
+      puts("Uh oh, there are some files which were previously passing but are now failing. Here are the files:")
+      puts("    - #{current_minus_previous.join("\n    - ")}")
+    elsif (previous_minus_current).any?
+      puts("Some files listed as todo are now passing:")
+      puts("    - #{previous_minus_current.join("\n    - ")}")
+
+      puts("This is the new list which can be copied into targets.yml:")
+      puts("    - #{current_todos.join("\n    - ")}")
+    else
+      puts("The todos list in targets.yml is up to date")
     end
 
     puts(lex_task.summary)
@@ -154,8 +173,8 @@ task "lex:rubygems": :compile do
   end
 
   warn_failing = ENV.fetch("VERBOSE", false)
-  passing = 0
-  failing = 0
+  passing_gem_count = 0
+  failing_gem_count = 0
 
   workers =
     ENV.fetch("WORKERS", 16).times.map do
@@ -181,10 +200,10 @@ task "lex:rubygems": :compile do
                   end
 
                   if lex_task.failed?
-                    failing += 1
+                    failing_gem_count += 1
                     print("\033[31mE\033[0m")
                   else
-                    passing += 1
+                    passing_gem_count += 1
                     warn(gem_name) if warn_failing
                     print("\033[32m.\033[0m")
                   end
@@ -200,8 +219,8 @@ task "lex:rubygems": :compile do
 
   workers.each(&:join)
   puts(<<~RESULTS)
-    PASSING=#{passing}
-    FAILING=#{failing}
-    PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
+    PASSING=#{passing_gem_count}
+    FAILING=#{failing_gem_count}
+    PERCENT=#{(passing_gem_count.to_f / (passing_gem_count + failing_gem_count) * 100).round(2)}%
   RESULTS
 end
