@@ -2865,58 +2865,60 @@ parser_lex(yp_parser_t *parser) {
         }
 
         case '\n': {
-          if (parser->heredoc_end == NULL) {
-            // Here we need to look ahead and see if there is a call operator
-            // (either . or &.) that starts the next line. If there is, then this
-            // is going to become an ignored newline and we're going to instead
-            // return the call operator.
-            const char *next_content = parser->current.end;
-            next_content += yp_strspn_inline_whitespace(parser->current.end, parser->end - parser->current.end);
-
-            if (next_content < parser->end) {
-              // If we hit a comment after a newline, then we're going to check
-              // if it's ignored or not. If it is, then we're going to call the
-              // callback with an ignored newline and then continue lexing.
-              // Otherwise we'll return a regular newline.
-              if (next_content[0] == '#') {
-                if (lex_state_ignored_p(parser)) {
-                  if (!lexed_comment) parser_lex_ignored_newline(parser);
-                  lexed_comment = false;
-                  goto lex_next_token;
-                }
-
-                lex_state_set(parser, YP_LEX_STATE_BEG);
-                parser->command_start = true;
-                parser->current.type = YP_TOKEN_NEWLINE;
-                if (!lexed_comment) parser_lex_callback(parser);
-                return;
-              }
-
-              // If we hit a . after a newline, then we're in a call chain and
-              // we need to return the call operator.
-              if (next_content[0] == '.') {
-                if (!lexed_comment) parser_lex_ignored_newline(parser);
-                lex_state_set(parser, YP_LEX_STATE_DOT);
-                parser->current.start = next_content;
-                parser->current.end = next_content + 1;
-                LEX(YP_TOKEN_DOT);
-              }
-
-              // If we hit a &. after a newline, then we're in a call chain and
-              // we need to return the call operator.
-              if (next_content + 1 < parser->end && next_content[0] == '&' && next_content[1] == '.') {
-                if (!lexed_comment) parser_lex_ignored_newline(parser);
-                lex_state_set(parser, YP_LEX_STATE_DOT);
-                parser->current.start = next_content;
-                parser->current.end = next_content + 2;
-                LEX(YP_TOKEN_AMPERSAND_DOT);
-              }
-            }
-          } else {
+          if (parser->heredoc_end != NULL) {
             // If the special resume flag is set, then we need to jump ahead.
             assert(parser->heredoc_end <= parser->end);
             parser->next_start = parser->heredoc_end;
             parser->heredoc_end = NULL;
+          }
+
+          // Here we need to look ahead and see if there is a call operator
+          // (either . or &.) that starts the next line. If there is, then this
+          // is going to become an ignored newline and we're going to instead
+          // return the call operator.
+          const char *next_content = parser->next_start == NULL ? parser->current.end : parser->next_start;
+          next_content += yp_strspn_inline_whitespace(next_content, parser->end - next_content);
+
+          if (next_content < parser->end) {
+            // If we hit a comment after a newline, then we're going to check
+            // if it's ignored or not. If it is, then we're going to call the
+            // callback with an ignored newline and then continue lexing.
+            // Otherwise we'll return a regular newline.
+            if (next_content[0] == '#') {
+              if (lex_state_ignored_p(parser)) {
+                if (!lexed_comment) parser_lex_ignored_newline(parser);
+                lexed_comment = false;
+                goto lex_next_token;
+              }
+
+              lex_state_set(parser, YP_LEX_STATE_BEG);
+              parser->command_start = true;
+              parser->current.type = YP_TOKEN_NEWLINE;
+              if (!lexed_comment) parser_lex_callback(parser);
+              return;
+            }
+
+            // If we hit a . after a newline, then we're in a call chain and
+            // we need to return the call operator.
+            if (next_content[0] == '.') {
+              if (!lexed_comment) parser_lex_ignored_newline(parser);
+              lex_state_set(parser, YP_LEX_STATE_DOT);
+              parser->current.start = next_content;
+              parser->current.end = next_content + 1;
+              parser->next_start = NULL;
+              LEX(YP_TOKEN_DOT);
+            }
+
+            // If we hit a &. after a newline, then we're in a call chain and
+            // we need to return the call operator.
+            if (next_content + 1 < parser->end && next_content[0] == '&' && next_content[1] == '.') {
+              if (!lexed_comment) parser_lex_ignored_newline(parser);
+              lex_state_set(parser, YP_LEX_STATE_DOT);
+              parser->current.start = next_content;
+              parser->current.end = next_content + 2;
+              parser->next_start = NULL;
+              LEX(YP_TOKEN_AMPERSAND_DOT);
+            }
           }
 
           // If this is an ignored newline, then we can continue lexing after
