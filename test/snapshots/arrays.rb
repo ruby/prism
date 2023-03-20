@@ -1,6 +1,6 @@
-ProgramNode(0...259)(
+ProgramNode(0...309)(
   Scope(?...?)([]),
-  StatementsNode(0...259)(
+  StatementsNode(0...309)(
     [ArrayNode(0...4)(
        [SplatNode(2...3)(
           IDENTIFIER(2...3)("a"),
@@ -570,63 +570,107 @@ ProgramNode(0...259)(
        nil,
        "[]="
      ),
-     ArrayNode(
-       [HashNode(
+     ArrayNode(261...267)(
+       [HashNode(262...265)(
           nil,
-          [AssocSplatNode(
-             HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
-             (262..264)
+          [AssocSplatNode(262...265)(
+             HashNode(264...265)(
+               BRACE_LEFT(264...265)("{"),
+               [],
+               BRACE_RIGHT(265...266)("}")
+             ),
+             (262...264)
            )],
           nil
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(261...262)("["),
+       BRACKET_RIGHT(266...267)("]")
      ),
-     ArrayNode(
-       [HashNode(
+     ArrayNode(269...275)(
+       [HashNode(270...274)(
           nil,
-          [AssocSplatNode(
-             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
-             (270..272)
+          [AssocSplatNode(270...274)(
+             CallNode(272...274)(
+               nil,
+               nil,
+               IDENTIFIER(272...274)("kw"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "kw"
+             ),
+             (270...272)
            )],
           nil
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(269...270)("["),
+       BRACKET_RIGHT(274...275)("]")
      ),
-     ArrayNode(
-       [IntegerNode(),
-        HashNode(
+     ArrayNode(277...286)(
+       [IntegerNode(278...279)(),
+        HashNode(281...285)(
           nil,
-          [AssocSplatNode(
-             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
-             (281..283)
+          [AssocSplatNode(281...285)(
+             CallNode(283...285)(
+               nil,
+               nil,
+               IDENTIFIER(283...285)("kw"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "kw"
+             ),
+             (281...283)
            )],
           nil
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(277...278)("["),
+       BRACKET_RIGHT(285...286)("]")
      ),
-     ArrayNode(
-       [IntegerNode(),
-        HashNode(
+     ArrayNode(288...309)(
+       [IntegerNode(289...290)(),
+        HashNode(292...308)(
           nil,
-          [AssocSplatNode(
-             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
-             (292..294)
+          [AssocSplatNode(292...296)(
+             CallNode(294...296)(
+               nil,
+               nil,
+               IDENTIFIER(294...296)("kw"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "kw"
+             ),
+             (292...294)
            ),
-           AssocSplatNode(
-             HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}")),
-             (298..300)
+           AssocSplatNode(298...301)(
+             HashNode(300...301)(
+               BRACE_LEFT(300...301)("{"),
+               [],
+               BRACE_RIGHT(301...302)("}")
+             ),
+             (298...300)
            ),
-           AssocSplatNode(
-             CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw"),
-             (304..306)
+           AssocSplatNode(304...308)(
+             CallNode(306...308)(
+               nil,
+               nil,
+               IDENTIFIER(306...308)("kw"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "kw"
+             ),
+             (304...306)
            )],
           nil
         )],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+       BRACKET_LEFT_ARRAY(288...289)("["),
+       BRACKET_RIGHT(308...309)("]")
      )]
   )
 )
