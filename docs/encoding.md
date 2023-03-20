@@ -20,6 +20,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `iso-8859-15`
 * `us-ascii`
 * `utf-8`
+* `windows-1251`
 * `windows-1252`
 
 For each of these encodings, YARP provides a function for checking if the subsequent bytes form an alphabetic or alphanumeric character.

@@ -1675,6 +1675,13 @@ static yp_encoding_t yp_encoding_utf_8 = {
   .isupper_char = yp_encoding_utf_8_isupper_char
 };
 
+static yp_encoding_t yp_encoding_windows_1251 = {
+  .name = "windows-1251",
+  .alnum_char = yp_encoding_windows_1251_alnum_char,
+  .alpha_char = yp_encoding_windows_1251_alpha_char,
+  .isupper_char = yp_encoding_windows_1251_isupper_char
+};
+
 static yp_encoding_t yp_encoding_windows_1252 = {
   .name = "windows-1252",
   .alnum_char = yp_encoding_windows_1252_alnum_char,
@@ -1740,6 +1747,7 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
     ENCODING("us-ascii", yp_encoding_ascii);
     ENCODING("utf-8", yp_encoding_utf_8);
+    ENCODING("windows-1251", yp_encoding_windows_1251);
     ENCODING("windows-1252", yp_encoding_windows_1252);
 
 #undef ENCODING

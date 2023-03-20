@@ -57,6 +57,10 @@ puts "\nISO-8859-15"
 puts "=========="
 table((0...256), Encoding::ISO8859_15)
 
+puts "\nWindows-1251"
+puts "=========="
+table((0...256), Encoding::Windows_1251)
+
 puts "\nWindows-1252"
 puts "=========="
 table((0...256), Encoding::Windows_1252)
