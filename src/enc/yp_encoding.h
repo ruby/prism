@@ -75,6 +75,20 @@ __attribute__((__visibility__("default"))) extern bool
 yp_encoding_utf_8_isupper_char(const char *c);
 
 /******************************************************************************/
+/* Windows-1251                                                               */
+/******************************************************************************/
+
+__attribute__((__visibility__("default"))) extern size_t
+yp_encoding_windows_1251_alpha_char(const char *c);
+
+__attribute__((__visibility__("default"))) extern size_t
+yp_encoding_windows_1251_alnum_char(const char *c);
+
+__attribute__((__visibility__("default"))) extern bool
+yp_encoding_windows_1251_isupper_char(const char *c);
+
+
+/******************************************************************************/
 /* Windows-1252                                                               */
 /******************************************************************************/
 
