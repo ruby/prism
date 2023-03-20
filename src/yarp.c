@@ -1783,7 +1783,7 @@ static yp_encoding_t yp_encoding_windows_1252 = {
 // Here we're going to check if this is a "magic" comment, and perform whatever
 // actions are necessary for it here.
 static void
-parser_lex_magic_comments(yp_parser_t *parser) {
+parser_lex_encoding_comment(yp_parser_t *parser) {
   const char *start = parser->current.start + 1;
   start += yp_strspn_inline_whitespace(start, parser->end - start);
 
@@ -2677,10 +2677,6 @@ lex_at_variable(yp_parser_t *parser) {
 // Optionally call out to the lex callback if one is provided.
 static inline void
 parser_lex_callback(yp_parser_t *parser) {
-  if (parser->consider_magic_comments && parser->current.type != YP_TOKEN_COMMENT) {
-    parser->consider_magic_comments = false;
-  }
-
   if (parser->lex_callback) {
     parser->lex_callback->callback(parser->lex_callback->data, parser, &parser->current);
   }
@@ -2860,8 +2856,8 @@ parser_lex(yp_parser_t *parser) {
           yp_comment_t *comment = parser_comment(parser, YP_COMMENT_INLINE);
           yp_list_append(&parser->comment_list, (yp_list_node_t *) comment);
 
-          if (parser->consider_magic_comments) {
-            parser_lex_magic_comments(parser);
+          if (parser->current.start == parser->encoding_comment_start) {
+            parser_lex_encoding_comment(parser);
           }
 
           lexed_comment = true;
@@ -8479,9 +8475,10 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .current_context = NULL,
     .recovering = false,
     .encoding = yp_encoding_utf_8,
+    .encoding_changed_callback = NULL,
     .encoding_decode_callback = NULL,
+    .encoding_comment_start = source,
     .lex_callback = NULL,
-    .consider_magic_comments = true
   };
 
   yp_state_stack_init(&parser->do_loop_stack);
@@ -8492,10 +8489,17 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
   yp_list_init(&parser->error_list);
   yp_list_init(&parser->comment_list);
 
-  // If the first three bytes of the source are the UTF-8 BOM, then we'll skip
-  // over them.
   if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
+    // If the first three bytes of the source are the UTF-8 BOM, then we'll skip
+    // over them.
     parser->current.end += 3;
+  } else if (size >= 2 && source[0] == '#' && source[1] == '!') {
+    // If the first two bytes of the source are a shebang, then we'll indicate
+    // that the encoding comment is at the end of the shebang.
+    const char *encoding_comment_start = memchr(source, '\n', size);
+    if (encoding_comment_start) {
+      parser->encoding_comment_start = encoding_comment_start + 1;
+    }
   }
 }
 

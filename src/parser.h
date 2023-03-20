@@ -347,14 +347,13 @@ struct yp_parser {
   // our encoding and use it to parse identifiers.
   yp_encoding_decode_callback_t encoding_decode_callback;
 
+  // This pointer indicates where a comment must start if it is to be considered
+  // an encoding comment.
+  const char *encoding_comment_start;
+
   // This is an optional callback that can be attached to the parser that will
   // be called whenever a new token is lexed by the parser.
   yp_lex_callback_t *lex_callback;
-
-  // A boolean that tracks whether or not we should potentially consider comment
-  // tokens to be magic comments. This becomes false after anything other than
-  // comment tokens have been seen.
-  bool consider_magic_comments;
 };
 
 #endif // YARP_PARSER_H
