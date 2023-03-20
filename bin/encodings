@@ -49,13 +49,65 @@ puts "ASCII"
 puts "=========="
 table((0...128), Encoding::US_ASCII)
 
+puts "\nISO-8859-1"
+puts "=========="
+table((0...256), Encoding::ISO8859_1)
+
+puts "\nISO-8859-2"
+puts "=========="
+table((0...256), Encoding::ISO8859_2)
+
+puts "\nISO-8859-3"
+puts "=========="
+table((0...256), Encoding::ISO8859_3)
+
+puts "\nISO-8859-4"
+puts "=========="
+table((0...256), Encoding::ISO8859_4)
+
+puts "\nISO-8859-5"
+puts "=========="
+table((0...256), Encoding::ISO8859_5)
+
+puts "\nISO-8859-6"
+puts "=========="
+table((0...256), Encoding::ISO8859_6)
+
+puts "\nISO-8859-7"
+puts "=========="
+table((0...256), Encoding::ISO8859_7)
+
+puts "\nISO-8859-8"
+puts "=========="
+table((0...256), Encoding::ISO8859_8)
+
 puts "\nISO-8859-9"
 puts "=========="
 table((0...256), Encoding::ISO8859_9)
 
+puts "\nISO-8859-10"
+puts "=========="
+table((0...256), Encoding::ISO8859_10)
+
+puts "\nISO-8859-11"
+puts "=========="
+table((0...256), Encoding::ISO8859_11)
+
+puts "\nISO-8859-13"
+puts "=========="
+table((0...256), Encoding::ISO8859_13)
+
+puts "\nISO-8859-14"
+puts "=========="
+table((0...256), Encoding::ISO8859_14)
+
 puts "\nISO-8859-15"
 puts "=========="
 table((0...256), Encoding::ISO8859_15)
+
+puts "\nISO-8859-16"
+puts "=========="
+table((0...256), Encoding::ISO8859_16)
 
 puts "\nWindows-1251"
 puts "=========="

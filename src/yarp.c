@@ -1654,6 +1654,62 @@ static yp_encoding_t yp_encoding_big5 = {
   .isupper_char = yp_encoding_big5_isupper_char
 };
 
+static yp_encoding_t yp_encoding_iso_8859_1 = {
+  .name = "iso-8859-1",
+  .alnum_char = yp_encoding_iso_8859_1_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_1_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_1_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_2 = {
+  .name = "iso-8859-2",
+  .alnum_char = yp_encoding_iso_8859_2_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_2_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_2_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_3 = {
+  .name = "iso-8859-3",
+  .alnum_char = yp_encoding_iso_8859_3_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_3_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_3_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_4 = {
+  .name = "iso-8859-4",
+  .alnum_char = yp_encoding_iso_8859_4_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_4_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_4_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_5 = {
+  .name = "iso-8859-5",
+  .alnum_char = yp_encoding_iso_8859_5_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_5_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_5_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_6 = {
+  .name = "iso-8859-6",
+  .alnum_char = yp_encoding_iso_8859_6_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_6_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_6_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_7 = {
+  .name = "iso-8859-7",
+  .alnum_char = yp_encoding_iso_8859_7_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_7_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_7_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_8 = {
+  .name = "iso-8859-8",
+  .alnum_char = yp_encoding_iso_8859_8_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_8_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_8_isupper_char
+};
+
 static yp_encoding_t yp_encoding_iso_8859_9 = {
   .name = "iso-8859-9",
   .alnum_char = yp_encoding_iso_8859_9_alnum_char,
@@ -1661,11 +1717,46 @@ static yp_encoding_t yp_encoding_iso_8859_9 = {
   .isupper_char = yp_encoding_iso_8859_9_isupper_char
 };
 
+static yp_encoding_t yp_encoding_iso_8859_10 = {
+  .name = "iso-8859-10",
+  .alnum_char = yp_encoding_iso_8859_10_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_10_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_10_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_11 = {
+  .name = "iso-8859-11",
+  .alnum_char = yp_encoding_iso_8859_11_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_11_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_11_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_13 = {
+  .name = "iso-8859-13",
+  .alnum_char = yp_encoding_iso_8859_13_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_13_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_13_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_14 = {
+  .name = "iso-8859-14",
+  .alnum_char = yp_encoding_iso_8859_14_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_14_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_14_isupper_char
+};
+
 static yp_encoding_t yp_encoding_iso_8859_15 = {
   .name = "iso-8859-15",
   .alnum_char = yp_encoding_iso_8859_15_alnum_char,
   .alpha_char = yp_encoding_iso_8859_15_alpha_char,
   .isupper_char = yp_encoding_iso_8859_15_isupper_char
+};
+
+static yp_encoding_t yp_encoding_iso_8859_16 = {
+  .name = "iso-8859-16",
+  .alnum_char = yp_encoding_iso_8859_16_alnum_char,
+  .alpha_char = yp_encoding_iso_8859_16_alpha_char,
+  .isupper_char = yp_encoding_iso_8859_16_isupper_char
 };
 
 static yp_encoding_t yp_encoding_utf_8 = {
@@ -1743,8 +1834,21 @@ parser_lex_magic_comments(yp_parser_t *parser) {
     ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
     ENCODING("big5", yp_encoding_big5);
     ENCODING("binary", yp_encoding_ascii_8bit);
+    ENCODING("iso-8859-1", yp_encoding_iso_8859_1);
+    ENCODING("iso-8859-2", yp_encoding_iso_8859_2);
+    ENCODING("iso-8859-3", yp_encoding_iso_8859_3);
+    ENCODING("iso-8859-4", yp_encoding_iso_8859_4);
+    ENCODING("iso-8859-5", yp_encoding_iso_8859_5);
+    ENCODING("iso-8859-6", yp_encoding_iso_8859_6);
+    ENCODING("iso-8859-7", yp_encoding_iso_8859_7);
+    ENCODING("iso-8859-8", yp_encoding_iso_8859_8);
     ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
+    ENCODING("iso-8859-10", yp_encoding_iso_8859_10);
+    ENCODING("iso-8859-11", yp_encoding_iso_8859_11);
+    ENCODING("iso-8859-13", yp_encoding_iso_8859_13);
+    ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
     ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
+    ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
     ENCODING("us-ascii", yp_encoding_ascii);
     ENCODING("utf-8", yp_encoding_utf_8);
     ENCODING("windows-1251", yp_encoding_windows_1251);
