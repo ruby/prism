@@ -3,6 +3,10 @@
 require "test_helper"
 
 class ParseTest < Test::Unit::TestCase
+  test "Ruby 3.2+" do
+    assert_operator Gem::Version.new(RUBY_VERSION), :>=, Gem::Version.new("3.2.0"), "ParseTest requires Ruby 3.2+"
+  end
+
   test "empty string" do
     YARP.parse("") => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: []]]]
   end
