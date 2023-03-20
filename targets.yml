@@ -33,7 +33,6 @@ rails:
   sha: 8e3449908c59858384ae230d1416c7dcabc8c2dc
   todos:
     - actionpack/test/dispatch/content_disposition_test.rb
-    - activerecord/test/migrations/magic/1_currencies_have_symbols.rb
 
 discourse:
   repo: https://github.com/discourse/discourse
