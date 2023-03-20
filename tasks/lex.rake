@@ -2,18 +2,17 @@
 
 module YARP
   class LexTask
-    attr_reader :previous_todos, :todos, :passing, :failing
+    attr_reader :previous_todos, :todos, :passing_file_count
 
     def initialize(previous_todos)
       @previous_todos = previous_todos
-      @passing = 0
-      @failing = 0
+      @passing_file_count = 0
       @todos = []
     end
 
     def compare(filepath)
       if lex(filepath)
-        @passing += 1
+        @passing_file_count += 1
         true
       else
         @todos << filepath
@@ -21,19 +20,22 @@ module YARP
       end
     end
 
-    def failing
-      @todos.length if ENV["TODOS"]
+    def failing_file_count
+      @todos.length
     end
 
+    # ENV["TODOS"] was toggled and there are failing files
+    # or new failures were introduced
     def failed?
-      failing > 0
+      (ENV["TODOS"] && failing_file_count > 0) ||
+        (@todos - @previous_todos).any?
     end
 
     def summary
       <<~RESULTS
-        PASSING=#{passing}
-        FAILING=#{failing}
-        PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
+        PASSING=#{passing_file_count}
+        FAILING=#{failing_file_count}
+        PERCENT=#{(passing_file_count.to_f / (passing_file_count + failing_file_count) * 100).round(2)}%
       RESULTS
     end
 
@@ -171,8 +173,8 @@ task "lex:rubygems": :compile do
   end
 
   warn_failing = ENV.fetch("VERBOSE", false)
-  passing = 0
-  failing = 0
+  passing_gem_count = 0
+  failing_gem_count = 0
 
   workers =
     ENV.fetch("WORKERS", 16).times.map do
@@ -198,10 +200,10 @@ task "lex:rubygems": :compile do
                   end
 
                   if lex_task.failed?
-                    failing += 1
+                    failing_gem_count += 1
                     print("\033[31mE\033[0m")
                   else
-                    passing += 1
+                    passing_gem_count += 1
                     warn(gem_name) if warn_failing
                     print("\033[32m.\033[0m")
                   end
@@ -217,8 +219,8 @@ task "lex:rubygems": :compile do
 
   workers.each(&:join)
   puts(<<~RESULTS)
-    PASSING=#{passing}
-    FAILING=#{failing}
-    PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
+    PASSING=#{passing_gem_count}
+    FAILING=#{failing_gem_count}
+    PERCENT=#{(passing_gem_count.to_f / (passing_gem_count + failing_gem_count) * 100).round(2)}%
   RESULTS
 end
