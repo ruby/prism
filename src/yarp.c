@@ -6180,6 +6180,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (!match_any_type_p(parser, 8, YP_TOKEN_EOF, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
             parse_assocs(parser, element);
           }
+        } else if (match_type_p(parser, YP_TOKEN_STAR_STAR)) {
+          parser_lex(parser);
+
+          yp_token_t operator = parser->previous;
+          yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after ** in hash.");
+
+          element = yp_node_splat_node_create(parser, &operator, value);
         } else {
           element = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an element for the array.");
 

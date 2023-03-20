@@ -239,6 +239,48 @@ ProgramNode(
        BRACKET_RIGHT("]"),
        nil,
        "[]="
+     ),
+     ArrayNode(
+       [SplatNode(
+          STAR_STAR("**"),
+          HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     ArrayNode(
+       [SplatNode(
+          STAR_STAR("**"),
+          CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw")
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     ArrayNode(
+       [IntegerNode(),
+        SplatNode(
+          STAR_STAR("**"),
+          CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw")
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
+     ),
+     ArrayNode(
+       [IntegerNode(),
+        SplatNode(
+          STAR_STAR("**"),
+          CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw")
+        ),
+        SplatNode(
+          STAR_STAR("**"),
+          HashNode(BRACE_LEFT("{"), [], BRACE_RIGHT("}"))
+        ),
+        SplatNode(
+          STAR_STAR("**"),
+          CallNode(nil, nil, IDENTIFIER("kw"), nil, nil, nil, nil, "kw")
+        )],
+       BRACKET_LEFT_ARRAY("["),
+       BRACKET_RIGHT("]")
      )]
   )
 )
