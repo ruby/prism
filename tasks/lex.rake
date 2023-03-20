@@ -2,23 +2,27 @@
 
 module YARP
   class LexTask
-    attr_reader :todos, :passing, :failing
+    attr_reader :previous_todos, :todos, :passing, :failing
 
-    def initialize(todos)
-      @todos = todos
+    def initialize(previous_todos)
+      @previous_todos = previous_todos
       @passing = 0
       @failing = 0
+      @todos = []
     end
 
     def compare(filepath)
       if lex(filepath)
-        todos.delete(filepath) if todos.include?(filepath)
         @passing += 1
         true
       else
-        @failing += 1 if ENV["TODOS"] || !todos.include?(filepath)
+        @todos << filepath
         false
       end
+    end
+
+    def failing
+      @todos.length if ENV["TODOS"]
     end
 
     def failed?
@@ -28,8 +32,8 @@ module YARP
     def summary
       <<~RESULTS
         PASSING=#{passing}
-        FAILING=#{failing + todos.length}
-        PERCENT=#{(passing.to_f / (passing + failing + todos.length) * 100).round(2)}%
+        FAILING=#{failing}
+        PERCENT=#{(passing.to_f / (passing + failing) * 100).round(2)}%
       RESULTS
     end
 
@@ -96,9 +100,22 @@ YAML.safe_load_file("targets.yml").each do |name, target|
 
     puts("\n\n")
 
-    if lex_task.todos.length != target.fetch("todos", []).length
-      puts("Some files listed as todo are passing. This is the new list:")
-      puts("    - #{lex_task.todos.map { _1.gsub("tmp/targets/ruby/", "") }.join("\n    - ")}")
+    previous_todos = lex_task.previous_todos.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }
+    current_todos = lex_task.todos.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }
+    current_minus_previous = current_todos - previous_todos
+    previous_minus_current = previous_todos - current_todos
+
+    if current_minus_previous.any?
+      puts("Uh oh, there are some files which were previously passing but are now failing. Here are the files:")
+      puts("    - #{current_minus_previous.join("\n    - ")}")
+    elsif (previous_minus_current).any?
+      puts("Some files listed as todo are now passing:")
+      puts("    - #{previous_minus_current.join("\n    - ")}")
+
+      puts("This is the new list which can be copied into targets.yml:")
+      puts("    - #{current_todos.join("\n    - ")}")
+    else
+      puts("The todos list in targets.yml is up to date")
     end
 
     puts(lex_task.summary)
