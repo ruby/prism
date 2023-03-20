@@ -236,6 +236,10 @@ typedef struct {
   bool (*isupper_char)(const char *c);
 } yp_encoding_t;
 
+// When the encoding that is being used to parse the source is changed by YARP,
+// we provide the ability here to call out to a user-defined function.
+typedef void (*yp_encoding_changed_callback_t)(yp_parser_t *parser);
+
 // When an encoding is encountered that isn't understood by YARP, we provide
 // the ability here to call out to a user-defined function to get an encoding
 // struct. If the function returns something that isn't NULL, we set that to
@@ -332,6 +336,10 @@ struct yp_parser {
   // The encoding functions for the current file is attached to the parser as
   // it's parsing so that it can change with a magic comment.
   yp_encoding_t encoding;
+
+  // When the encoding that is being used to parse the source is changed by
+  // YARP, we provide the ability here to call out to a user-defined function.
+  yp_encoding_changed_callback_t encoding_changed_callback;
 
   // When an encoding is encountered that isn't understood by YARP, we provide
   // the ability here to call out to a user-defined function to get an encoding

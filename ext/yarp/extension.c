@@ -109,9 +109,9 @@ dump_file(VALUE self, VALUE filepath) {
 static VALUE
 parser_comments(yp_parser_t *parser) {
   VALUE comments = rb_ary_new();
+  yp_comment_t *comment;
 
-  for (yp_comment_t *comment = (yp_comment_t *) parser->comment_list.head; comment != NULL;
-       comment = (yp_comment_t *) comment->node.next) {
+  for (comment = (yp_comment_t *) parser->comment_list.head; comment != NULL; comment = (yp_comment_t *) comment->node.next) {
     VALUE location_argv[] = { LONG2FIX(comment->start - parser->start), LONG2FIX(comment->end - parser->start) };
     VALUE type;
 
@@ -143,11 +143,16 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding) {
   VALUE errors = rb_ary_new();
   yp_diagnostic_t *error;
 
-  for (error = (yp_diagnostic_t *) parser->error_list.head; error != NULL;
-       error = (yp_diagnostic_t *) error->node.next) {
-    VALUE location_argv[] = { LONG2FIX(error->start - parser->start), LONG2FIX(error->end - parser->start) };
-    VALUE error_argv[] = { rb_enc_str_new_cstr(error->message, encoding),
-                           rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+  for (error = (yp_diagnostic_t *) parser->error_list.head; error != NULL; error = (yp_diagnostic_t *) error->node.next) {
+    VALUE location_argv[] = {
+      LONG2FIX(error->start - parser->start),
+      LONG2FIX(error->end - parser->start)
+    };
+
+    VALUE error_argv[] = {
+      rb_enc_str_new_cstr(error->message, encoding),
+      rb_class_new_instance(2, location_argv, rb_cYARPLocation)
+    };
 
     rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
   }
@@ -161,11 +166,16 @@ parser_warnings(yp_parser_t *parser, rb_encoding *encoding) {
   VALUE warnings = rb_ary_new();
   yp_diagnostic_t *warning;
 
-  for (warning = (yp_diagnostic_t *) parser->warning_list.head; warning != NULL;
-       warning = (yp_diagnostic_t *) warning->node.next) {
-    VALUE location_argv[] = { LONG2FIX(warning->start - parser->start), LONG2FIX(warning->end - parser->start) };
-    VALUE warning_argv[] = { rb_enc_str_new_cstr(warning->message, encoding),
-                             rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+  for (warning = (yp_diagnostic_t *) parser->warning_list.head; warning != NULL; warning = (yp_diagnostic_t *) warning->node.next) {
+    VALUE location_argv[] = {
+      LONG2FIX(warning->start - parser->start),
+      LONG2FIX(warning->end - parser->start)
+    };
+
+    VALUE warning_argv[] = {
+      rb_enc_str_new_cstr(warning->message, encoding),
+      rb_class_new_instance(2, location_argv, rb_cYARPLocation)
+    };
 
     rb_ary_push(warnings, rb_class_new_instance(2, warning_argv, rb_cYARPParseWarning));
   }
@@ -178,43 +188,6 @@ typedef struct {
   rb_encoding *encoding;
 } lex_data_t;
 
-static yp_encoding_t yp_encoding_ascii = { .name = "ascii",
-                                           .alnum_char = yp_encoding_ascii_alnum_char,
-                                           .alpha_char = yp_encoding_ascii_alpha_char,
-                                           .isupper_char = yp_encoding_ascii_isupper_char };
-
-static yp_encoding_t yp_encoding_ascii_8bit = {
-  .name = "ascii-8bit",
-  .alnum_char = yp_encoding_ascii_alnum_char,
-  .alpha_char = yp_encoding_ascii_alpha_char,
-  .isupper_char = yp_encoding_ascii_isupper_char,
-};
-
-static yp_encoding_t yp_encoding_big5 = { .name = "big5",
-                                          .alnum_char = yp_encoding_big5_alnum_char,
-                                          .alpha_char = yp_encoding_big5_alpha_char,
-                                          .isupper_char = yp_encoding_big5_isupper_char };
-
-static yp_encoding_t yp_encoding_iso_8859_9 = { .name = "iso-8859-9",
-                                                .alnum_char = yp_encoding_iso_8859_9_alnum_char,
-                                                .alpha_char = yp_encoding_iso_8859_9_alpha_char,
-                                                .isupper_char = yp_encoding_iso_8859_9_isupper_char };
-
-static yp_encoding_t yp_encoding_iso_8859_15 = { .name = "iso-8859-15",
-                                                 .alnum_char = yp_encoding_iso_8859_15_alnum_char,
-                                                 .alpha_char = yp_encoding_iso_8859_15_alpha_char,
-                                                 .isupper_char = yp_encoding_iso_8859_15_isupper_char };
-
-static yp_encoding_t yp_encoding_utf_8 = { .name = "utf-8",
-                                           .alnum_char = yp_encoding_utf_8_alnum_char,
-                                           .alpha_char = yp_encoding_utf_8_alpha_char,
-                                           .isupper_char = yp_encoding_utf_8_isupper_char };
-
-static yp_encoding_t yp_encoding_windows_1252 = { .name = "windows-1252",
-                                                  .alnum_char = yp_encoding_windows_1252_alnum_char,
-                                                  .alpha_char = yp_encoding_windows_1252_alpha_char,
-                                                  .isupper_char = yp_encoding_windows_1252_isupper_char };
-
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
   lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
@@ -226,31 +199,10 @@ lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
   rb_ary_push(lex_data->tokens, yields);
 }
 
-static yp_encoding_t *
-lex_encoding_callback(yp_parser_t *parser, const char *start, size_t width) {
-  char compare[width + 1];
-  sprintf(compare, "%.*s", (int) width, start);
-
-#define ENCODING(value, prebuilt)                                                                                      \
-  if (width == sizeof(value) - 1 && strncasecmp(compare, value, sizeof(value) - 1) == 0) {                             \
-    lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;                                                  \
-    lex_data->encoding = rb_enc_find(prebuilt.name);                                                                   \
-    return &prebuilt;                                                                                                  \
-  }
-
-  ENCODING("ascii", yp_encoding_ascii);
-  ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
-  ENCODING("big5", yp_encoding_big5);
-  ENCODING("binary", yp_encoding_ascii_8bit);
-  ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
-  ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
-  ENCODING("us-ascii", yp_encoding_ascii);
-  ENCODING("utf-8", yp_encoding_utf_8);
-  ENCODING("windows-1252", yp_encoding_windows_1252);
-
-#undef ENCODING
-
-  return NULL;
+static void
+lex_encoding_changed_callback(yp_parser_t *parser) {
+  lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
+  lex_data->encoding = rb_enc_find(parser->encoding.name);
 }
 
 // Return an array of tokens corresponding to the given source.
@@ -258,9 +210,12 @@ static VALUE
 lex_source(source_t *source) {
   yp_parser_t parser;
   yp_parser_init(&parser, source->source, source->size);
-  yp_parser_register_encoding_decode_callback(&parser, lex_encoding_callback);
+  yp_parser_register_encoding_changed_callback(&parser, lex_encoding_changed_callback);
 
-  lex_data_t lex_data = { .tokens = rb_ary_new(), .encoding = rb_utf8_encoding() };
+  lex_data_t lex_data = {
+    .tokens = rb_ary_new(),
+    .encoding = rb_utf8_encoding()
+  };
 
   void *data = (void *) &lex_data;
   yp_lex_callback_t lex_callback = (yp_lex_callback_t) {
@@ -271,8 +226,12 @@ lex_source(source_t *source) {
   parser.lex_callback = &lex_callback;
   yp_node_t *node = yp_parse(&parser);
 
-  VALUE result_argv[] = { lex_data.tokens, parser_comments(&parser), parser_errors(&parser, lex_data.encoding),
-                          parser_warnings(&parser, lex_data.encoding) };
+  VALUE result_argv[] = {
+    lex_data.tokens,
+    parser_comments(&parser),
+    parser_errors(&parser, lex_data.encoding),
+    parser_warnings(&parser, lex_data.encoding)
+  };
 
   VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
 
@@ -309,8 +268,12 @@ parse_source(source_t *source) {
   yp_node_t *node = yp_parse(&parser);
   rb_encoding *encoding = rb_enc_find(parser.encoding.name);
 
-  VALUE result_argv[] = { yp_node_new(&parser, node, encoding), parser_comments(&parser),
-                          parser_errors(&parser, encoding), parser_warnings(&parser, encoding) };
+  VALUE result_argv[] = {
+    yp_node_new(&parser, node, encoding),
+    parser_comments(&parser),
+    parser_errors(&parser, encoding),
+    parser_warnings(&parser, encoding)
+  };
 
   VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
 
