@@ -1,16 +1,16 @@
-ProgramNode(
-  Scope([IDENTIFIER("foo")]),
-  StatementsNode(
-    [CallNode(
+ProgramNode(0...94)(
+  Scope(?...?)([IDENTIFIER(64...67)("foo")]),
+  StatementsNode(0...94)(
+    [CallNode(0...3)(
        nil,
        nil,
-       IDENTIFIER("foo"),
+       IDENTIFIER(0...3)("foo"),
        nil,
-       ArgumentsNode(
-         [RegularExpressionNode(
-            REGEXP_BEGIN("/"),
-            STRING_CONTENT("bar"),
-            REGEXP_END("/"),
+       ArgumentsNode(4...9)(
+         [RegularExpressionNode(4...9)(
+            REGEXP_BEGIN(4...5)("/"),
+            STRING_CONTENT(5...8)("bar"),
+            REGEXP_END(8...9)("/"),
             "bar"
           )]
        ),
@@ -18,63 +18,86 @@ ProgramNode(
        nil,
        "foo"
      ),
-     RegularExpressionNode(
-       REGEXP_BEGIN("%r{"),
-       STRING_CONTENT("abc"),
-       REGEXP_END("}i"),
+     RegularExpressionNode(11...19)(
+       REGEXP_BEGIN(11...14)("%r{"),
+       STRING_CONTENT(14...17)("abc"),
+       REGEXP_END(17...19)("}i"),
        "abc"
      ),
-     RegularExpressionNode(
-       REGEXP_BEGIN("/"),
-       STRING_CONTENT("a\\b"),
-       REGEXP_END("/"),
+     RegularExpressionNode(21...26)(
+       REGEXP_BEGIN(21...22)("/"),
+       STRING_CONTENT(22...25)("a\\b"),
+       REGEXP_END(25...26)("/"),
        "a\b"
      ),
-     InterpolatedRegularExpressionNode(
-       REGEXP_BEGIN("/"),
-       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
-        GlobalVariableReadNode(GLOBAL_VARIABLE("$bbb"))],
-       REGEXP_END("/")
+     InterpolatedRegularExpressionNode(29...39)(
+       REGEXP_BEGIN(28...29)("/"),
+       [StringNode(29...33)(nil, STRING_CONTENT(29...33)("aaa "), nil, "aaa "),
+        GlobalVariableReadNode(34...38)(GLOBAL_VARIABLE(34...38)("$bbb"))],
+       REGEXP_END(38...39)("/")
      ),
-     InterpolatedRegularExpressionNode(
-       REGEXP_BEGIN("/"),
-       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
-        StringInterpolatedNode(
-          EMBEXPR_BEGIN("\#{"),
-          StatementsNode(
-            [CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, nil, "bbb")]
+     InterpolatedRegularExpressionNode(42...57)(
+       REGEXP_BEGIN(41...42)("/"),
+       [StringNode(42...46)(nil, STRING_CONTENT(42...46)("aaa "), nil, "aaa "),
+        StringInterpolatedNode(46...52)(
+          EMBEXPR_BEGIN(46...48)("\#{"),
+          StatementsNode(48...51)(
+            [CallNode(48...51)(
+               nil,
+               nil,
+               IDENTIFIER(48...51)("bbb"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "bbb"
+             )]
           ),
-          EMBEXPR_END("}")
+          EMBEXPR_END(51...52)("}")
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")],
-       REGEXP_END("/")
+        StringNode(52...56)(
+          nil,
+          STRING_CONTENT(52...56)(" ccc"),
+          nil,
+          " ccc"
+        )],
+       REGEXP_END(56...57)("/")
      ),
-     ArrayNode(
-       [CallNode(
-          RegularExpressionNode(
-            REGEXP_BEGIN("/"),
-            STRING_CONTENT("(?<foo>bar)"),
-            REGEXP_END("/"),
+     ArrayNode(59...86)(
+       [CallNode(60...80)(
+          RegularExpressionNode(60...73)(
+            REGEXP_BEGIN(60...61)("/"),
+            STRING_CONTENT(61...72)("(?<foo>bar)"),
+            REGEXP_END(72...73)("/"),
             "(?<foo>bar)"
           ),
           nil,
-          EQUAL_TILDE("=~"),
+          EQUAL_TILDE(74...76)("=~"),
           nil,
-          ArgumentsNode(
-            [CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz")]
+          ArgumentsNode(77...80)(
+            [CallNode(77...80)(
+               nil,
+               nil,
+               IDENTIFIER(77...80)("baz"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "baz"
+             )]
           ),
           nil,
           nil,
           "=~"
         ),
-        LocalVariableReadNode(IDENTIFIER("foo"))],
-       BRACKET_LEFT_ARRAY("["),
-       BRACKET_RIGHT("]")
+        LocalVariableReadNode(82...85)(IDENTIFIER(82...85)("foo"))],
+       BRACKET_LEFT_ARRAY(59...60)("["),
+       BRACKET_RIGHT(85...86)("]")
      ),
-     RegularExpressionNode(
-       REGEXP_BEGIN("/"),
-       STRING_CONTENT("abc"),
-       REGEXP_END("/i"),
+     RegularExpressionNode(88...94)(
+       REGEXP_BEGIN(88...89)("/"),
+       STRING_CONTENT(89...92)("abc"),
+       REGEXP_END(92...94)("/i"),
        "abc"
      )]
   )

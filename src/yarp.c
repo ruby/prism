@@ -4761,7 +4761,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       yp_token_t name = target->as.local_variable_read_node.name;
       yp_parser_local_add(parser, &name);
 
-      memset(target, 0, sizeof(yp_node_t));
+      yp_node_clear(target);
 
       target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
       target->location.start = name.start;
@@ -4822,7 +4822,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // Not entirely sure why we need to clear this out, but it seems that
           // something about the memory layout in the union is causing the type
           // to have a problem if we don't.
-          memset(target, 0, sizeof(yp_node_t));
+          yp_node_clear(target);
 
           target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
           target->location.start = name.start;

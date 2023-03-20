@@ -1,30 +1,45 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [CaseNode(
-       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi"),
-       [WhenNode(
-          KEYWORD_WHEN("when"),
-          [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")],
+ProgramNode(0...198)(
+  Scope(?...?)([]),
+  StatementsNode(0...198)(
+    [CaseNode(0...21)(
+       SymbolNode(5...8)(
+         SYMBOL_BEGIN(5...6)(":"),
+         IDENTIFIER(6...8)("hi"),
+         nil,
+         "hi"
+       ),
+       [WhenNode(14...17)(
+          KEYWORD_WHEN(9...13)("when"),
+          [SymbolNode(14...17)(
+             SYMBOL_BEGIN(14...15)(":"),
+             IDENTIFIER(15...17)("hi"),
+             nil,
+             "hi"
+           )],
           nil
         )],
        nil,
-       (0..4),
-       (18..21)
+       (0...4),
+       (18...21)
      ),
-     CaseNode(
-       TrueNode(),
-       [WhenNode(
-          KEYWORD_WHEN("when"),
-          [TrueNode()],
-          StatementsNode(
-            [CallNode(
+     CaseNode(23...81)(
+       TrueNode(28...32)(),
+       [WhenNode(39...43)(
+          KEYWORD_WHEN(34...38)("when"),
+          [TrueNode(39...43)()],
+          StatementsNode(45...49)(
+            [CallNode(45...49)(
                nil,
                nil,
-               IDENTIFIER("puts"),
+               IDENTIFIER(45...49)("puts"),
                nil,
-               ArgumentsNode(
-                 [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")]
+               ArgumentsNode(50...53)(
+                 [SymbolNode(50...53)(
+                    SYMBOL_BEGIN(50...51)(":"),
+                    IDENTIFIER(51...53)("hi"),
+                    nil,
+                    "hi"
+                  )]
                ),
                nil,
                nil,
@@ -32,17 +47,22 @@ ProgramNode(
              )]
           )
         ),
-        WhenNode(
-          KEYWORD_WHEN("when"),
-          [FalseNode()],
-          StatementsNode(
-            [CallNode(
+        WhenNode(60...65)(
+          KEYWORD_WHEN(55...59)("when"),
+          [FalseNode(60...65)()],
+          StatementsNode(67...71)(
+            [CallNode(67...71)(
                nil,
                nil,
-               IDENTIFIER("puts"),
+               IDENTIFIER(67...71)("puts"),
                nil,
-               ArgumentsNode(
-                 [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("bye"), nil, "bye")]
+               ArgumentsNode(72...76)(
+                 [SymbolNode(72...76)(
+                    SYMBOL_BEGIN(72...73)(":"),
+                    IDENTIFIER(73...76)("bye"),
+                    nil,
+                    "bye"
+                  )]
                ),
                nil,
                nil,
@@ -51,65 +71,107 @@ ProgramNode(
           )
         )],
        nil,
-       (23..27),
-       (78..81)
+       (23...27),
+       (78...81)
      ),
-     CaseNode(
+     CaseNode(83...103)(
        nil,
-       [WhenNode(
-          KEYWORD_WHEN("when"),
-          [SplatNode(
-             USTAR("*"),
-             CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo")
+       [WhenNode(94...98)(
+          KEYWORD_WHEN(89...93)("when"),
+          [SplatNode(94...98)(
+             USTAR(94...95)("*"),
+             CallNode(95...98)(
+               nil,
+               nil,
+               IDENTIFIER(95...98)("foo"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "foo"
+             )
            )],
           nil
         )],
        nil,
-       (83..87),
-       (100..103)
+       (83...87),
+       (100...103)
      ),
-     CaseNode(
-       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi"),
-       [WhenNode(
-          KEYWORD_WHEN("when"),
-          [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("hi"), nil, "hi")],
-          nil
-        )],
-       ElseNode(
-         KEYWORD_ELSE("else"),
-         StatementsNode(
-           [SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("b"), nil, "b")]
-         ),
-         KEYWORD_END("end")
+     CaseNode(105...134)(
+       SymbolNode(110...113)(
+         SYMBOL_BEGIN(110...111)(":"),
+         IDENTIFIER(111...113)("hi"),
+         nil,
+         "hi"
        ),
-       (105..109),
-       (131..134)
+       [WhenNode(119...122)(
+          KEYWORD_WHEN(114...118)("when"),
+          [SymbolNode(119...122)(
+             SYMBOL_BEGIN(119...120)(":"),
+             IDENTIFIER(120...122)("hi"),
+             nil,
+             "hi"
+           )],
+          nil
+        )],
+       ElseNode(123...134)(
+         KEYWORD_ELSE(123...127)("else"),
+         StatementsNode(128...130)(
+           [SymbolNode(128...130)(
+              SYMBOL_BEGIN(128...129)(":"),
+              IDENTIFIER(129...130)("b"),
+              nil,
+              "b"
+            )]
+         ),
+         KEYWORD_END(131...134)("end")
+       ),
+       (105...109),
+       (131...134)
      ),
-     CaseNode(
-       CallNode(nil, nil, IDENTIFIER("this"), nil, nil, nil, nil, "this"),
-       [WhenNode(
-          KEYWORD_WHEN("when"),
-          [ConstantReadNode(), ConstantReadNode()],
+     CaseNode(136...172)(
+       CallNode(141...145)(
+         nil,
+         nil,
+         IDENTIFIER(141...145)("this"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "this"
+       ),
+       [WhenNode(152...167)(
+          KEYWORD_WHEN(147...151)("when"),
+          [ConstantReadNode(152...158)(), ConstantReadNode(160...167)()],
           nil
         )],
        nil,
-       (136..140),
-       (169..172)
+       (136...140),
+       (169...172)
      ),
-     CaseNode(
+     CaseNode(174...198)(
        nil,
-       [WhenNode(
-          KEYWORD_WHEN("when"),
-          [CallNode(
-             CallNode(nil, nil, IDENTIFIER("foo"), nil, nil, nil, nil, "foo"),
+       [WhenNode(184...194)(
+          KEYWORD_WHEN(179...183)("when"),
+          [CallNode(184...194)(
+             CallNode(184...187)(
+               nil,
+               nil,
+               IDENTIFIER(184...187)("foo"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "foo"
+             ),
              nil,
-             EQUAL_EQUAL("=="),
+             EQUAL_EQUAL(188...190)("=="),
              nil,
-             ArgumentsNode(
-               [CallNode(
+             ArgumentsNode(191...194)(
+               [CallNode(191...194)(
                   nil,
                   nil,
-                  IDENTIFIER("bar"),
+                  IDENTIFIER(191...194)("bar"),
                   nil,
                   nil,
                   nil,
@@ -124,8 +186,8 @@ ProgramNode(
           nil
         )],
        nil,
-       (174..178),
-       (195..198)
+       (174...178),
+       (195...198)
      )]
   )
 )

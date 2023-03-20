@@ -1,28 +1,82 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [TernaryNode(
-       CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-       QUESTION_MARK("?"),
-       CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
-       COLON(":"),
-       CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c")
-     ),
-     TernaryNode(
-       CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-       QUESTION_MARK("?"),
-       DefinedNode(
+ProgramNode(0...38)(
+  Scope(?...?)([]),
+  StatementsNode(0...38)(
+    [TernaryNode(0...9)(
+       CallNode(0...1)(
          nil,
-         CallNode(nil, nil, IDENTIFIER("b"), nil, nil, nil, nil, "b"),
          nil,
-         (15..23)
+         IDENTIFIER(0...1)("a"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a"
        ),
-       COLON(":"),
-       DefinedNode(
+       QUESTION_MARK(2...3)("?"),
+       CallNode(4...5)(
          nil,
-         CallNode(nil, nil, IDENTIFIER("c"), nil, nil, nil, nil, "c"),
          nil,
-         (28..36)
+         IDENTIFIER(4...5)("b"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "b"
+       ),
+       COLON(6...7)(":"),
+       CallNode(8...9)(
+         nil,
+         nil,
+         IDENTIFIER(8...9)("c"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "c"
+       )
+     ),
+     TernaryNode(11...38)(
+       CallNode(11...12)(
+         nil,
+         nil,
+         IDENTIFIER(11...12)("a"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a"
+       ),
+       QUESTION_MARK(13...14)("?"),
+       DefinedNode(15...25)(
+         nil,
+         CallNode(24...25)(
+           nil,
+           nil,
+           IDENTIFIER(24...25)("b"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "b"
+         ),
+         nil,
+         (15...23)
+       ),
+       COLON(26...27)(":"),
+       DefinedNode(28...38)(
+         nil,
+         CallNode(37...38)(
+           nil,
+           nil,
+           IDENTIFIER(37...38)("c"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "c"
+         ),
+         nil,
+         (28...36)
        )
      )]
   )

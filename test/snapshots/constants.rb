@@ -1,75 +1,108 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [ConstantPathNode(
-       ConstantReadNode(),
-       COLON_COLON("::"),
-       ConstantReadNode()
+ProgramNode(0...92)(
+  Scope(?...?)([]),
+  StatementsNode(0...92)(
+    [ConstantPathNode(0...4)(
+       ConstantReadNode(0...1)(),
+       COLON_COLON(1...3)("::"),
+       ConstantReadNode(3...4)()
      ),
-     ConstantPathNode(
-       ConstantPathNode(
-         ConstantReadNode(),
-         COLON_COLON("::"),
-         ConstantReadNode()
+     ConstantPathNode(6...13)(
+       ConstantPathNode(6...10)(
+         ConstantReadNode(6...7)(),
+         COLON_COLON(7...9)("::"),
+         ConstantReadNode(9...10)()
        ),
-       COLON_COLON("::"),
-       ConstantReadNode()
+       COLON_COLON(10...12)("::"),
+       ConstantReadNode(12...13)()
      ),
-     ConstantPathNode(
-       CallNode(nil, nil, IDENTIFIER("a"), nil, nil, nil, nil, "a"),
-       COLON_COLON("::"),
-       ConstantReadNode()
-     ),
-     ConstantPathWriteNode(
-       ConstantPathNode(
-         ConstantReadNode(),
-         COLON_COLON("::"),
-         ConstantReadNode()
+     ConstantPathNode(15...19)(
+       CallNode(15...16)(
+         nil,
+         nil,
+         IDENTIFIER(15...16)("a"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a"
        ),
-       EQUAL("="),
-       IntegerNode()
+       COLON_COLON(16...18)("::"),
+       ConstantReadNode(18...19)()
      ),
-     ConstantPathWriteNode(ConstantReadNode(), EQUAL("="), IntegerNode()),
-     ConstantReadNode(),
-     CallNode(
+     ConstantPathWriteNode(21...29)(
+       ConstantPathNode(21...25)(
+         ConstantReadNode(21...22)(),
+         COLON_COLON(22...24)("::"),
+         ConstantReadNode(24...25)()
+       ),
+       EQUAL(26...27)("="),
+       IntegerNode(28...29)()
+     ),
+     ConstantPathWriteNode(31...36)(
+       ConstantReadNode(31...32)(),
+       EQUAL(33...34)("="),
+       IntegerNode(35...36)()
+     ),
+     ConstantReadNode(38...41)(),
+     CallNode(43...0)(
        nil,
        nil,
-       CONSTANT("Foo"),
+       CONSTANT(43...46)("Foo"),
        nil,
-       ArgumentsNode([IntegerNode()]),
+       ArgumentsNode(47...48)([IntegerNode(47...48)()]),
        nil,
        nil,
        "Foo"
      ),
-     CallNode(
-       ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
-       COLON_COLON("::"),
-       IDENTIFIER("foo"),
+     CallNode(50...58)(
+       ConstantPathNode(50...53)(
+         nil,
+         UCOLON_COLON(50...52)("::"),
+         ConstantReadNode(52...53)()
+       ),
+       COLON_COLON(53...55)("::"),
+       IDENTIFIER(55...58)("foo"),
        nil,
        nil,
        nil,
        nil,
        "foo"
      ),
-     ConstantPathWriteNode(
-       ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
-       EQUAL("="),
-       IntegerNode()
-     ),
-     ConstantPathWriteNode(
-       ConstantPathNode(
-         ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
-         COLON_COLON("::"),
-         ConstantReadNode()
+     ConstantPathWriteNode(60...67)(
+       ConstantPathNode(60...63)(
+         nil,
+         UCOLON_COLON(60...62)("::"),
+         ConstantReadNode(62...63)()
        ),
-       EQUAL("="),
-       IntegerNode()
+       EQUAL(64...65)("="),
+       IntegerNode(66...67)()
      ),
-     ConstantPathNode(
-       ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
-       COLON_COLON("::"),
-       ConstantReadNode()
+     ConstantPathWriteNode(69...79)(
+       ConstantPathNode(69...75)(
+         ConstantPathNode(69...72)(
+           nil,
+           UCOLON_COLON(69...71)("::"),
+           ConstantReadNode(71...72)()
+         ),
+         COLON_COLON(72...74)("::"),
+         ConstantReadNode(74...75)()
+       ),
+       EQUAL(76...77)("="),
+       IntegerNode(78...79)()
      ),
-     ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode())]
+     ConstantPathNode(81...87)(
+       ConstantPathNode(81...84)(
+         nil,
+         UCOLON_COLON(81...83)("::"),
+         ConstantReadNode(83...84)()
+       ),
+       COLON_COLON(84...86)("::"),
+       ConstantReadNode(86...87)()
+     ),
+     ConstantPathNode(89...92)(
+       nil,
+       UCOLON_COLON(89...91)("::"),
+       ConstantReadNode(91...92)()
+     )]
   )
 )

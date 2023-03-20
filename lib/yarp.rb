@@ -15,7 +15,7 @@ module YARP
     end
 
     def pretty_print(q)
-      q.text("(#{start_offset}..#{end_offset})")
+      q.text("(#{start_offset || '?'}...#{end_offset || '?'})")
     end
 
     def ==(other)
@@ -111,7 +111,9 @@ module YARP
 
     def pretty_print(q)
       q.group do
-        q.text("#{type}(")
+        q.text(type.to_s)
+        self.location.pretty_print(q)
+        q.text("(")
         q.nest(2) do
           q.breakable("")
           q.pp(value)
@@ -130,7 +132,9 @@ module YARP
   class Node
     def pretty_print(q)
       q.group do
-        q.text("#{self.class.name.split("::").last}(")
+        q.text(self.class.name.split("::").last)
+        self.location.pretty_print(q)
+        q.text("(")
         q.nest(2) do
           deconstructed = deconstruct_keys([])
           deconstructed.delete(:location)

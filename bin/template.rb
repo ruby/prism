@@ -151,7 +151,7 @@ class NodeType
     in OptionalNodeParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->location.start)"
     in TokenParam then "#{param.name}->start"
     in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
-    in NodeListParam | TokenListParam then "0"
+    in NodeListParam | TokenListParam then "NULL"
     in LocationParam then "#{param.name}->start"
     in OptionalLocationParam then "(#{param.name} == NULL ? #{start_location_for(params.drop(1))} : #{param.name}->start)"
     else
@@ -165,7 +165,7 @@ class NodeType
     in OptionalNodeParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->location.end)"
     in TokenParam then "#{param.name}->end"
     in OptionalTokenParam then "(#{param.name}->type == YP_TOKEN_NOT_PROVIDED ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
-    in NodeListParam | TokenListParam then "0"
+    in NodeListParam | TokenListParam then "NULL"
     in LocationParam then "#{param.name}->end"
     in OptionalLocationParam then "(#{param.name} == NULL ? #{end_location_for(params.drop(1))} : #{param.name}->end)"
     else

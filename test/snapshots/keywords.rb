@@ -1,11 +1,11 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [RedoNode(),
-     RetryNode(),
-     SelfNode(),
-     SourceEncodingNode(),
-     SourceFileNode(),
-     SourceLineNode()]
+ProgramNode(0...51)(
+  Scope(?...?)([]),
+  StatementsNode(0...51)(
+    [RedoNode(0...4)(),
+     RetryNode(6...11)(),
+     SelfNode(13...17)(),
+     SourceEncodingNode(19...31)(),
+     SourceFileNode(33...41)(),
+     SourceLineNode(43...51)()]
   )
 )

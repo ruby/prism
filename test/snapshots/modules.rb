@@ -1,68 +1,103 @@
-ProgramNode(
-  Scope([]),
-  StatementsNode(
-    [ModuleNode(
-       Scope([IDENTIFIER("a")]),
-       KEYWORD_MODULE("module"),
-       ConstantReadNode(),
-       StatementsNode(
-         [LocalVariableWriteNode(IDENTIFIER("a"), EQUAL("="), IntegerNode())]
+ProgramNode(0...101)(
+  Scope(?...?)([]),
+  StatementsNode(0...101)(
+    [ModuleNode(0...18)(
+       Scope(?...?)([IDENTIFIER(9...10)("a")]),
+       KEYWORD_MODULE(0...6)("module"),
+       ConstantReadNode(7...8)(),
+       StatementsNode(9...14)(
+         [LocalVariableWriteNode(9...14)(
+            IDENTIFIER(9...10)("a"),
+            EQUAL(11...12)("="),
+            IntegerNode(13...14)()
+          )]
        ),
-       KEYWORD_END("end")
+       KEYWORD_END(15...18)("end")
      ),
-     InterpolatedStringNode(
-       STRING_BEGIN("%Q{"),
-       [StringNode(nil, STRING_CONTENT("aaa "), nil, "aaa "),
-        StringInterpolatedNode(
-          EMBEXPR_BEGIN("\#{"),
-          StatementsNode(
-            [CallNode(nil, nil, IDENTIFIER("bbb"), nil, nil, nil, nil, "bbb")]
+     InterpolatedStringNode(20...38)(
+       STRING_BEGIN(20...23)("%Q{"),
+       [StringNode(23...27)(nil, STRING_CONTENT(23...27)("aaa "), nil, "aaa "),
+        StringInterpolatedNode(27...33)(
+          EMBEXPR_BEGIN(27...29)("\#{"),
+          StatementsNode(29...32)(
+            [CallNode(29...32)(
+               nil,
+               nil,
+               IDENTIFIER(29...32)("bbb"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "bbb"
+             )]
           ),
-          EMBEXPR_END("}")
+          EMBEXPR_END(32...33)("}")
         ),
-        StringNode(nil, STRING_CONTENT(" ccc"), nil, " ccc")],
-       STRING_END("}")
+        StringNode(33...37)(
+          nil,
+          STRING_CONTENT(33...37)(" ccc"),
+          nil,
+          " ccc"
+        )],
+       STRING_END(37...38)("}")
      ),
-     ModuleNode(
-       Scope([]),
-       KEYWORD_MODULE("module"),
-       ConstantPathNode(
-         CallNode(nil, nil, IDENTIFIER("m"), nil, nil, nil, nil, "m"),
-         COLON_COLON("::"),
-         ConstantReadNode()
-       ),
-       StatementsNode([]),
-       KEYWORD_END("end")
-     ),
-     ModuleNode(
-       Scope([IDENTIFIER("x")]),
-       KEYWORD_MODULE("module"),
-       ConstantReadNode(),
-       BeginNode(
-         nil,
-         StatementsNode(
-           [LocalVariableWriteNode(IDENTIFIER("x"), EQUAL("="), IntegerNode())]
+     ModuleNode(40...55)(
+       Scope(?...?)([]),
+       KEYWORD_MODULE(40...46)("module"),
+       ConstantPathNode(47...51)(
+         CallNode(47...48)(
+           nil,
+           nil,
+           IDENTIFIER(47...48)("m"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "m"
          ),
-         RescueNode(
-           KEYWORD_RESCUE("rescue"),
+         COLON_COLON(48...50)("::"),
+         ConstantReadNode(50...51)()
+       ),
+       StatementsNode(0...0)([]),
+       KEYWORD_END(52...55)("end")
+     ),
+     ModuleNode(57...85)(
+       Scope(?...?)([IDENTIFIER(67...68)("x")]),
+       KEYWORD_MODULE(57...63)("module"),
+       ConstantReadNode(64...65)(),
+       BeginNode(0...85)(
+         nil,
+         StatementsNode(67...72)(
+           [LocalVariableWriteNode(67...72)(
+              IDENTIFIER(67...68)("x"),
+              EQUAL(69...70)("="),
+              IntegerNode(71...72)()
+            )]
+         ),
+         RescueNode(74...0)(
+           KEYWORD_RESCUE(74...80)("rescue"),
            [],
            nil,
            nil,
-           StatementsNode([]),
+           StatementsNode(0...0)([]),
            nil
          ),
          nil,
          nil,
-         KEYWORD_END("end")
+         KEYWORD_END(82...85)("end")
        ),
-       KEYWORD_END("end")
+       KEYWORD_END(82...85)("end")
      ),
-     ModuleNode(
-       Scope([]),
-       KEYWORD_MODULE("module"),
-       ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode()),
-       StatementsNode([]),
-       KEYWORD_END("end")
+     ModuleNode(87...101)(
+       Scope(?...?)([]),
+       KEYWORD_MODULE(87...93)("module"),
+       ConstantPathNode(94...97)(
+         nil,
+         UCOLON_COLON(94...96)("::"),
+         ConstantReadNode(96...97)()
+       ),
+       StatementsNode(0...0)([]),
+       KEYWORD_END(98...101)("end")
      )]
   )
 )
