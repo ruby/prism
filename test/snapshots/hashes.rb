@@ -66,6 +66,29 @@ ProgramNode(
           nil
         )],
        BRACE_RIGHT("}")
+     ),
+     HashNode(
+       BRACE_LEFT("{"),
+       [AssocNode(
+          SymbolNode(
+            STRING_BEGIN("\""),
+            STRING_CONTENT("a"),
+            LABEL_END("\":"),
+            "a"
+          ),
+          CallNode(
+            CallNode(nil, nil, IDENTIFIER("b?"), nil, nil, nil, nil, "b?"),
+            nil,
+            BANG("!"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "!"
+          ),
+          nil
+        )],
+       BRACE_RIGHT("}")
      )]
   )
 )

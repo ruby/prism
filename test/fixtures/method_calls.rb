@@ -93,3 +93,5 @@ foo.map { $& }
 A::B::C :foo
 
 A::B::C(:foo)
+
+foo("a": -1)
