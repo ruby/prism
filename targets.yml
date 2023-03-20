@@ -11,15 +11,12 @@ ruby:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
   todos:
     - benchmark/app_lc_fizzbuzz.rb
-    - ext/psych/lib/psych/scalar_scanner.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - test/csv/test_patterns.rb
     - test/psych/visitors/test_to_ruby.rb
     - test/ruby/enc/test_euc_jp.rb
     - test/ruby/enc/test_shift_jis.rb
-    - test/ruby/enc/test_windows_1251.rb
-    - test/ruby/enc/test_windows_1252.rb
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_string.rb
@@ -31,8 +28,6 @@ ruby:
 rails:
   repo: https://github.com/rails/rails
   sha: 8e3449908c59858384ae230d1416c7dcabc8c2dc
-  todos:
-    - actionpack/test/dispatch/content_disposition_test.rb
 
 discourse:
   repo: https://github.com/discourse/discourse
@@ -47,5 +42,4 @@ discourse:
     - plugins/chat/lib/chat_channel_fetcher.rb
     - plugins/chat/lib/chat_mailer.rb
     - plugins/chat/lib/extensions/user_notifications_extension.rb
-    - script/import_scripts/yahoogroup.rb
     - spec/models/reviewable_spec.rb
