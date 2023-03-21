@@ -5337,7 +5337,12 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 
 // Parse a list of parameters on a method definition.
 static yp_node_t *
-parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t binding_power) {
+parse_parameters(
+  yp_parser_t *parser,
+  bool uses_parentheses,
+  yp_binding_power_t binding_power,
+  bool allows_trailing_comma
+) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
 
   do {
@@ -5500,6 +5505,9 @@ parse_parameters(yp_parser_t *parser, bool uses_parentheses, yp_binding_power_t 
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Formal argument cannot be a class variable");
         break;
       default:
+        if (parser->previous.type == YP_TOKEN_COMMA && !allows_trailing_comma) {
+          yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected ','.");
+        }
         return params;
     }
 
@@ -5634,8 +5642,8 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
 
 // Parse a list of parameters and local on a block definition.
 static yp_node_t *
-parse_block_parameters(yp_parser_t *parser) {
-  yp_node_t *parameters = parse_parameters(parser, false, YP_BINDING_POWER_INDEX);
+parse_block_parameters(yp_parser_t *parser, bool allows_trailling_comma) {
+  yp_node_t *parameters = parse_parameters(parser, false, YP_BINDING_POWER_INDEX, allows_trailling_comma);
   yp_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters);
 
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
@@ -5660,7 +5668,7 @@ parse_block(yp_parser_t *parser) {
   yp_node_t *parameters = NULL;
 
   if (accept(parser, YP_TOKEN_PIPE)) {
-    parameters = parse_block_parameters(parser);
+    parameters = parse_block_parameters(parser, true);
     parser->command_start = true;
     accept(parser, YP_TOKEN_NEWLINE);
     expect(parser, YP_TOKEN_PIPE, "Expected block parameters to end with '|'.");
@@ -7014,8 +7022,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         lparen = not_provided(parser);
       }
 
-      yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT, YP_BINDING_POWER_DEFINED);
-      yp_token_t params_end = parser->previous;
+      yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT, YP_BINDING_POWER_DEFINED, false);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -7040,10 +7047,6 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       } else {
         equal = not_provided(parser);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-      }
-
-      if (params_end.type == YP_TOKEN_COMMA) {
-        yp_diagnostic_list_append(&parser->error_list, params_end.start, params_end.end, "Unexpected ','.");
       }
 
       context_pop(parser);
@@ -7789,7 +7792,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       yp_parser_scope_push(parser, false);
-      yp_node_t *parameters = parse_block_parameters(parser);
+      yp_node_t *parameters = parse_block_parameters(parser, false);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");

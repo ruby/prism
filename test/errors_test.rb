@@ -539,6 +539,19 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
+  test "do not allow trailing commas in lambda parameters" do
+    expected = LambdaNode(
+      Scope([IDENTIFIER("a"), IDENTIFIER("b")]),
+      PARENTHESIS_LEFT("("),
+      BlockParametersNode(ParametersNode([RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil), []),
+      PARENTHESIS_RIGHT(")"),
+      StatementsNode([])
+    )
+    assert_errors expected, "-> (a, b, ) {}", [
+      "Unexpected ','."
+    ]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
