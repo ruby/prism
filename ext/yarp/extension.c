@@ -303,6 +303,37 @@ parse_file(VALUE self, VALUE rb_filepath) {
 }
 
 static VALUE
+parse_dup(VALUE self, VALUE string) {
+  source_t source;
+  source_string_load(&source, string);
+
+  char* dup = malloc(source.size);
+  memcpy(dup, source.source, source.size);
+  source.source = dup;
+
+  VALUE value = parse_source(&source);
+  free(dup);
+  return value;
+}
+
+static VALUE
+parse_file_dup(VALUE self, VALUE rb_filepath) {
+  source_t source;
+  if (source_file_load(&source, rb_filepath) != 0) {
+    return Qnil;
+  }
+
+  char* dup = malloc(source.size);
+  memcpy(dup, source.source, source.size);
+  source_file_unload(&source);
+  source.source = dup;
+
+  VALUE value = parse_source(&source);
+  free(dup);
+  return value;
+}
+
+static VALUE
 named_captures(VALUE self, VALUE rb_source) {
   yp_string_list_t string_list;
   yp_string_list_init(&string_list);
@@ -406,6 +437,9 @@ Init_yarp(void) {
 
   rb_define_singleton_method(rb_cYARP, "parse", parse, 1);
   rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
+
+  rb_define_singleton_method(rb_cYARP, "parse_dup", parse_dup, 1);
+  rb_define_singleton_method(rb_cYARP, "parse_file_dup", parse_file_dup, 1);
 
   rb_define_singleton_method(rb_cYARP, "named_captures", named_captures, 1);
 

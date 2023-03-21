@@ -29,7 +29,7 @@ class EncodingTest < Test::Unit::TestCase
     windows-1252
   ].each do |encoding|
     test encoding do
-      result = YARP.parse("# encoding: #{encoding}\nident")
+      result = YARP.parse_dup("# encoding: #{encoding}\nident")
       actual = result.value.statements.body.first.message.value.encoding
       assert_equal Encoding.find(encoding), actual
     end

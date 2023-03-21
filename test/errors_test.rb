@@ -559,7 +559,7 @@ class ErrorsTest < Test::Unit::TestCase
   def assert_errors(expected, source, errors)
     assert_nil Ripper.sexp_raw(source)
 
-    result = YARP.parse(source)
+    result = YARP.parse_dup(source)
     result => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
 
     assert_equal_nodes(expected, node, compare_location: false)
@@ -567,7 +567,7 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   def expression(source)
-    YARP.parse(source) => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
+    YARP.parse_dup(source) => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
     node
   end
 end

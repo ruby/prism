@@ -2082,7 +2082,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
 
   // Here we're going to attempt to parse the optional decimal portion of a
   // float. If it's not there, then it's okay and we'll just continue on.
-  if (*parser->current.end == '.') {
+  if ((parser->current.end < parser->end) && *parser->current.end == '.') {
     if ((parser->current.end + 1 < parser->end) && char_is_decimal_number(parser->current.end[1])) {
       parser->current.end += 2;
       parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
@@ -2208,10 +2208,13 @@ lex_numeric_prefix(yp_parser_t *parser) {
 
 static yp_token_type_t
 lex_numeric(yp_parser_t *parser) {
-  yp_token_type_t type = lex_numeric_prefix(parser);
+  yp_token_type_t type = YP_TOKEN_INTEGER;
 
-  if (match(parser, 'r')) type = YP_TOKEN_RATIONAL_NUMBER;
-  if (match(parser, 'i')) type = YP_TOKEN_IMAGINARY_NUMBER;
+  if (parser->current.end < parser->end) {
+    type = lex_numeric_prefix(parser);
+    if (match(parser, 'r')) type = YP_TOKEN_RATIONAL_NUMBER;
+    if (match(parser, 'i')) type = YP_TOKEN_IMAGINARY_NUMBER;
+  }
 
   return type;
 }
@@ -2340,7 +2343,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
   width = parser->current.end - parser->current.start;
 
   if (parser->current.end < parser->end) {
-    if ((parser->current.end[1] != '=') && (match(parser, '!') || match(parser, '?'))) {
+    if (((parser->current.end + 1 >= parser->end) || (parser->current.end[1] != '=')) && (match(parser, '!') || match(parser, '?'))) {
       // First we'll attempt to extend the identifier by a ! or ?. Then we'll
       // check if we're returning the defined? keyword or just an identifier.
       width++;
@@ -2654,10 +2657,10 @@ lex_at_variable(yp_parser_t *parser) {
   yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
   size_t width;
 
-  if ((width = char_is_identifier_start(parser, parser->current.end))) {
+  if ((parser->current.end < parser->end) && (width = char_is_identifier_start(parser, parser->current.end))) {
     parser->current.end += width;
 
-    while ((width = char_is_identifier(parser, parser->current.end))) {
+    while ((parser->current.end < parser->end) && (width = char_is_identifier(parser, parser->current.end))) {
       parser->current.end += width;
     }
   } else if (type == YP_TOKEN_CLASS_VARIABLE) {
