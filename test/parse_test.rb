@@ -20,7 +20,7 @@ class ParseTest < Test::Unit::TestCase
       refute_nil Ripper.sexp_raw(source)
 
       # Next, parse the source and print the value.
-      result = YARP.parse(source)
+      result = YARP.parse_file_dup(filepath)
       value = result.value
       printed = PP.pp(value, +"")
 

@@ -40,6 +40,6 @@ class CommentsTest < Test::Unit::TestCase
   private
 
   def assert_comment(source, type)
-    YARP.parse(source) => YARP::ParseResult[comments: [YARP::Comment[type: type]]]
+    YARP.parse_dup(source) => YARP::ParseResult[comments: [YARP::Comment[type: type]]]
   end
 end
