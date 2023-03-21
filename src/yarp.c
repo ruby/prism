@@ -5650,8 +5650,8 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
 
 // Parse a list of parameters and local on a block definition.
 static yp_node_t *
-parse_block_parameters(yp_parser_t *parser, bool allows_trailling_comma) {
-  yp_node_t *parameters = parse_parameters(parser, false, YP_BINDING_POWER_INDEX, allows_trailling_comma);
+parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma) {
+  yp_node_t *parameters = parse_parameters(parser, false, YP_BINDING_POWER_INDEX, allows_trailing_comma);
   yp_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters);
 
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
