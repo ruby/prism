@@ -637,6 +637,7 @@ ProgramNode(0...402)(
        nil,
        nil,
        BlockNode(389...402)(
+         Scope(?...?)([IDENTIFIER(393...396)("bar")]),
          BlockParametersNode(393...396)(
            ParametersNode(393...396)(
              [RequiredParameterNode(393...396)(IDENTIFIER(393...396)("bar"))],
