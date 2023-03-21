@@ -53,3 +53,7 @@ foo[bar] = baz
 [1, **kw]
 
 [1, **kw, **{}, **kw]
+
+[
+  foo => bar,
+]

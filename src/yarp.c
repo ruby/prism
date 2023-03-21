@@ -5677,8 +5677,9 @@ parse_block(yp_parser_t *parser) {
 
   if (accept(parser, YP_TOKEN_PIPE)) {
     parameters = parse_block_parameters(parser, true);
-    parser->command_start = true;
     accept(parser, YP_TOKEN_NEWLINE);
+
+    parser->command_start = true;
     expect(parser, YP_TOKEN_PIPE, "Expected block parameters to end with '|'.");
   }
 
@@ -5896,10 +5897,12 @@ parse_string_part(yp_parser_t *parser) {
 
       parser->brace_nesting = 0;
       lex_state_set(parser, YP_LEX_STATE_BEG);
+      yp_state_stack_push(&parser->accepts_block_stack, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
+      yp_state_stack_pop(&parser->accepts_block_stack);
 
       parser->brace_nesting = brace_nesting;
       lex_state_set(parser, state);
@@ -6234,7 +6237,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_node_list_append(parser, hash, &hash->as.hash_node.elements, assoc);
 
             element = hash;
-            if (accept(parser, YP_TOKEN_COMMA)) {
+            if (accept(parser, YP_TOKEN_COMMA) && !match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
               parse_assocs(parser, element);
             }
 
@@ -6331,6 +6334,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_parentheses_node_create(parser, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_BRACE_LEFT: {
+      yp_state_stack_push(&parser->accepts_block_stack, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
@@ -6341,8 +6345,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         accept(parser, YP_TOKEN_NEWLINE);
       }
 
+      yp_state_stack_pop(&parser->accepts_block_stack);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
       node->as.hash_node.closing = parser->previous;
+
       return node;
     }
     case YP_TOKEN_CHARACTER_LITERAL: {
@@ -7803,6 +7809,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_t *parameters = parse_block_parameters(parser, false);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        accept(parser, YP_TOKEN_NEWLINE);
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
         rparen = parser->previous;
       } else {
@@ -8355,7 +8362,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           ) {
             yp_token_t message = parser->previous;
             yp_arguments_t arguments = yp_arguments(parser);
-            parse_arguments_list(parser, &arguments, false);
+            parse_arguments_list(parser, &arguments, true);
             return yp_call_node_call_create(parser, node, &delimiter, &message, &arguments);
           }
 

@@ -1,0 +1,22 @@
+ProgramNode(6...0)(
+  Scope(?...?)([]),
+  StatementsNode(6...0)(
+    [LambdaNode(6...0)(
+       Scope(?...?)([IDENTIFIER(6...9)("foo")]),
+       PARENTHESIS_LEFT(2...3)("("),
+       BlockParametersNode(6...9)(
+         ParametersNode(6...9)(
+           [RequiredParameterNode(6...9)(IDENTIFIER(6...9)("foo"))],
+           [],
+           nil,
+           [],
+           nil,
+           nil
+         ),
+         []
+       ),
+       PARENTHESIS_RIGHT(10...11)(")"),
+       StatementsNode(0...0)([])
+     )]
+  )
+)
