@@ -472,13 +472,14 @@ yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, y
 
 // Allocate and initialize a new BlockNode node.
 static yp_node_t *
-yp_block_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *parameters, yp_node_t *statements, const yp_token_t *closing) {
+yp_block_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *opening, yp_node_t *parameters, yp_node_t *statements, const yp_token_t *closing) {
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
     .type = YP_NODE_BLOCK_NODE,
     .location = { .start = opening->start, .end = closing->end },
     .as.block_node = {
+      .scope = scope,
       .parameters = parameters,
       .statements = statements,
       .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
@@ -5689,11 +5690,10 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
-  yp_node_destroy(parser, parser->current_scope->node);
+  yp_node_t *scope = parser->current_scope->node;
   yp_parser_scope_pop(parser);
   yp_state_stack_pop(&parser->accepts_block_stack);
-
-  return yp_block_node_create(parser, &opening, parameters, statements, &parser->previous);
+  return yp_block_node_create(parser, scope, &opening, parameters, statements, &parser->previous);
 }
 
 // Parse a list of arguments and their surrounding parentheses if they are

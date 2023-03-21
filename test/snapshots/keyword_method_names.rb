@@ -45,7 +45,13 @@ ProgramNode(0...185)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(56...64)(nil, nil, (56...58), (61...64)),
+                 BlockNode(56...64)(
+                   Scope(?...?)([]),
+                   nil,
+                   nil,
+                   (56...58),
+                   (61...64)
+                 ),
                  "bar"
                )]
             ),
