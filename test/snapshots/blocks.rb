@@ -1,6 +1,6 @@
-ProgramNode(0...351)(
+ProgramNode(0...402)(
   Scope(?...?)([IDENTIFIER(292...296)("fork")]),
-  StatementsNode(0...351)(
+  StatementsNode(0...402)(
     [CallNode(0...16)(
        CallNode(0...3)(
          nil,
@@ -627,6 +627,32 @@ ProgramNode(0...351)(
        ),
        nil,
        nil,
+       "foo"
+     ),
+     CallNode(385...402)(
+       nil,
+       nil,
+       IDENTIFIER(385...388)("foo"),
+       nil,
+       nil,
+       nil,
+       BlockNode(389...402)(
+         Scope(?...?)([IDENTIFIER(393...396)("bar")]),
+         BlockParametersNode(393...396)(
+           ParametersNode(393...396)(
+             [RequiredParameterNode(393...396)(IDENTIFIER(393...396)("bar"))],
+             [],
+             RestParameterNode(396...397)(COMMA(396...397)(","), nil),
+             [],
+             nil,
+             nil
+           ),
+           []
+         ),
+         nil,
+         (389...391),
+         (399...402)
+       ),
        "foo"
      )]
   )
