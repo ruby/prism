@@ -8342,7 +8342,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           ) {
             yp_token_t message = parser->previous;
             yp_arguments_t arguments = yp_arguments(parser);
-            parse_arguments_list(parser, &arguments, false);
+            parse_arguments_list(parser, &arguments, true);
             return yp_call_node_call_create(parser, node, &delimiter, &message, &arguments);
           }
 
