@@ -513,6 +513,32 @@ class ErrorsTest < Test::Unit::TestCase
     ", Array.new(9, "reserved for numbered parameter")
   end
 
+  test "do not allow trailing commas in method parameters" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b")), RequiredParameterNode(IDENTIFIER("c"))],
+        [],
+        nil,
+        [],
+        nil,
+        nil
+      ),
+      StatementsNode([]),
+      Scope([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(a,b,c,);end", [
+      "Unexpected ','."
+    ]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

@@ -7015,6 +7015,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT, YP_BINDING_POWER_DEFINED);
+      yp_token_t params_end = parser->previous;
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
         lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -7039,6 +7040,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       } else {
         equal = not_provided(parser);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      }
+
+      if (params_end.type == YP_TOKEN_COMMA) {
+        yp_diagnostic_list_append(&parser->error_list, params_end.start, params_end.end, "Unexpected ','.");
       }
 
       context_pop(parser);
