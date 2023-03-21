@@ -2884,24 +2884,6 @@ parser_lex(yp_parser_t *parser) {
           next_content += yp_strspn_inline_whitespace(next_content, parser->end - next_content);
 
           if (next_content < parser->end) {
-            // If we hit a comment after a newline, then we're going to check
-            // if it's ignored or not. If it is, then we're going to call the
-            // callback with an ignored newline and then continue lexing.
-            // Otherwise we'll return a regular newline.
-            if (next_content[0] == '#') {
-              if (lex_state_ignored_p(parser)) {
-                if (!lexed_comment) parser_lex_ignored_newline(parser);
-                lexed_comment = false;
-                goto lex_next_token;
-              }
-
-              lex_state_set(parser, YP_LEX_STATE_BEG);
-              parser->command_start = true;
-              parser->current.type = YP_TOKEN_NEWLINE;
-              if (!lexed_comment) parser_lex_callback(parser);
-              return;
-            }
-
             // If we hit a . after a newline, then we're in a call chain and
             // we need to return the call operator.
             if (next_content[0] == '.') {
