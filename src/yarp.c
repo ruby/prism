@@ -5040,6 +5040,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 // Parse all of the elements of a hash.
 static void
 parse_assocs(yp_parser_t *parser, yp_node_t *node) {
+  yp_state_stack_push(&parser->accepts_block_stack, true);
   while (true) {
     yp_node_t *element;
 
@@ -5065,9 +5066,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
         yp_node_t *value = NULL;
 
         if (token_begins_expression_p(parser->current.type)) {
-          yp_state_stack_push(&parser->accepts_block_stack, true);
           value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after the label in hash.");
-          yp_state_stack_pop(&parser->accepts_block_stack);
         }
 
         element = yp_assoc_node_create(parser, key, &operator, value);
@@ -5093,7 +5092,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
     yp_node_list_append(parser, node, &node->as.hash_node.elements, element);
 
     // If there's no comma after the element, then we're done.
-    if (!accept(parser, YP_TOKEN_COMMA)) return;
+    if (!accept(parser, YP_TOKEN_COMMA)) goto exit;
 
     // If the next element starts with a label or a **, then we know we have
     // another element in the hash, so we'll continue parsing.
@@ -5104,8 +5103,11 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
     if (token_begins_expression_p(parser->current.type)) continue;
 
     // Otherwise by default we will exit out of this loop.
-    return;
+    goto exit;
   }
+  exit:
+    yp_state_stack_pop(&parser->accepts_block_stack);
+    return;
 }
 
 // Parse a list of arguments.
