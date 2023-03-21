@@ -5880,10 +5880,10 @@ parse_string_part(yp_parser_t *parser) {
 
       parser->brace_nesting = 0;
       lex_state_set(parser, YP_LEX_STATE_BEG);
+      yp_state_stack_push(&parser->accepts_block_stack, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
-      yp_state_stack_push(&parser->accepts_block_stack, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
       yp_state_stack_pop(&parser->accepts_block_stack);
 
