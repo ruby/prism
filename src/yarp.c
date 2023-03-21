@@ -5065,7 +5065,9 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
         yp_node_t *value = NULL;
 
         if (token_begins_expression_p(parser->current.type)) {
+          yp_state_stack_push(&parser->accepts_block_stack, true);
           value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after the label in hash.");
+          yp_state_stack_pop(&parser->accepts_block_stack);
         }
 
         element = yp_assoc_node_create(parser, key, &operator, value);

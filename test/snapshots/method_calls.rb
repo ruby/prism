@@ -1,6 +1,6 @@
-ProgramNode(0...765)(
+ProgramNode(0...770)(
   Scope(?...?)([]),
-  StatementsNode(0...765)(
+  StatementsNode(0...770)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1329,6 +1329,53 @@ ProgramNode(0...765)(
           )]
        ),
        PARENTHESIS_RIGHT(764...765)(")"),
+       nil,
+       "foo"
+     ),
+     CallNode(767...770)(
+       nil,
+       nil,
+       IDENTIFIER(767...770)("foo"),
+       nil,
+       ArgumentsNode(771...793)(
+         [HashNode(771...793)(
+            nil,
+            [AssocNode(771...793)(
+               SymbolNode(771...775)(
+                 nil,
+                 LABEL(771...774)("bar"),
+                 LABEL_END(774...775)(":"),
+                 "bar"
+               ),
+               HashNode(778...793)(
+                 BRACE_LEFT(776...777)("{"),
+                 [AssocNode(778...793)(
+                    SymbolNode(778...782)(
+                      nil,
+                      LABEL(778...781)("baz"),
+                      LABEL_END(781...782)(":"),
+                      "baz"
+                    ),
+                    CallNode(783...793)(
+                      nil,
+                      nil,
+                      IDENTIFIER(783...786)("qux"),
+                      nil,
+                      nil,
+                      nil,
+                      BlockNode(787...793)(nil, nil, (787...789), (790...793)),
+                      "qux"
+                    ),
+                    nil
+                  )],
+                 BRACE_RIGHT(794...795)("}")
+               ),
+               nil
+             )],
+            nil
+          )]
+       ),
+       nil,
        nil,
        "foo"
      )]

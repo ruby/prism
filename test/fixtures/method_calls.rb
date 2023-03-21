@@ -95,3 +95,5 @@ A::B::C :foo
 A::B::C(:foo)
 
 foo("a": -1)
+
+foo bar: { baz: qux do end }
