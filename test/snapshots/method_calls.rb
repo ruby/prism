@@ -1,6 +1,6 @@
-ProgramNode(0...822)(
+ProgramNode(0...878)(
   Scope(?...?)([]),
-  StatementsNode(0...822)(
+  StatementsNode(0...878)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1353,56 +1353,144 @@ ProgramNode(0...822)(
        nil,
        "foo"
      ),
-     CallNode(786...822)(
+     CallNode(786...789)(
        nil,
        nil,
        IDENTIFIER(786...789)("foo"),
        nil,
-       ArgumentsNode(790...815)(
-         [InterpolatedStringNode(790...815)(
-            STRING_BEGIN(790...791)("\""),
-            [StringInterpolatedNode(791...814)(
-               EMBEXPR_BEGIN(791...793)("\#{"),
-               StatementsNode(793...813)(
-                 [CallNode(793...813)(
-                    CallNode(793...796)(
+       ArgumentsNode(790...812)(
+         [HashNode(790...812)(
+            nil,
+            [AssocNode(790...812)(
+               SymbolNode(790...794)(
+                 nil,
+                 LABEL(790...793)("bar"),
+                 LABEL_END(793...794)(":"),
+                 "bar"
+               ),
+               HashNode(797...812)(
+                 BRACE_LEFT(795...796)("{"),
+                 [AssocNode(797...812)(
+                    SymbolNode(797...801)(
+                      nil,
+                      LABEL(797...800)("baz"),
+                      LABEL_END(800...801)(":"),
+                      "baz"
+                    ),
+                    CallNode(802...812)(
                       nil,
                       nil,
-                      IDENTIFIER(793...796)("bar"),
+                      IDENTIFIER(802...805)("qux"),
+                      nil,
+                      nil,
+                      nil,
+                      BlockNode(806...812)(nil, nil, (806...808), (809...812)),
+                      "qux"
+                    ),
+                    nil
+                  )],
+                 BRACE_RIGHT(813...814)("}")
+               ),
+               nil
+             )],
+            nil
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
+     ),
+     CallNode(816...819)(
+       nil,
+       nil,
+       IDENTIFIER(816...819)("foo"),
+       nil,
+       ArgumentsNode(820...838)(
+         [HashNode(820...838)(
+            nil,
+            [AssocNode(820...838)(
+               SymbolNode(820...824)(
+                 nil,
+                 LABEL(820...823)("bar"),
+                 LABEL_END(823...824)(":"),
+                 "bar"
+               ),
+               HashNode(827...838)(
+                 BRACE_LEFT(825...826)("{"),
+                 [AssocSplatNode(827...838)(
+                    CallNode(829...838)(
+                      nil,
+                      nil,
+                      IDENTIFIER(829...831)("kw"),
+                      nil,
+                      nil,
+                      nil,
+                      BlockNode(832...838)(nil, nil, (832...834), (835...838)),
+                      "kw"
+                    ),
+                    (827...829)
+                  )],
+                 BRACE_RIGHT(839...840)("}")
+               ),
+               nil
+             )],
+            nil
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
+     ),
+     CallNode(842...878)(
+       nil,
+       nil,
+       IDENTIFIER(842...845)("foo"),
+       nil,
+       ArgumentsNode(846...871)(
+         [InterpolatedStringNode(846...871)(
+            STRING_BEGIN(846...847)("\""),
+            [StringInterpolatedNode(847...870)(
+               EMBEXPR_BEGIN(847...849)("\#{"),
+               StatementsNode(849...869)(
+                 [CallNode(849...869)(
+                    CallNode(849...852)(
+                      nil,
+                      nil,
+                      IDENTIFIER(849...852)("bar"),
                       nil,
                       nil,
                       nil,
                       nil,
                       "bar"
                     ),
-                    DOT(796...797)("."),
-                    IDENTIFIER(797...800)("map"),
+                    DOT(852...853)("."),
+                    IDENTIFIER(853...856)("map"),
                     nil,
                     nil,
                     nil,
-                    BlockNode(801...813)(
+                    BlockNode(857...869)(
                       nil,
-                      StatementsNode(804...809)(
-                        [StringNode(804...809)(
-                           STRING_BEGIN(804...805)("\""),
-                           STRING_CONTENT(805...808)("baz"),
-                           STRING_END(808...809)("\""),
+                      StatementsNode(860...865)(
+                        [StringNode(860...865)(
+                           STRING_BEGIN(860...861)("\""),
+                           STRING_CONTENT(861...864)("baz"),
+                           STRING_END(864...865)("\""),
                            "baz"
                          )]
                       ),
-                      (801...803),
-                      (810...813)
+                      (857...859),
+                      (866...869)
                     ),
                     "map"
                   )]
                ),
-               EMBEXPR_END(813...814)("}")
+               EMBEXPR_END(869...870)("}")
              )],
-            STRING_END(814...815)("\"")
+            STRING_END(870...871)("\"")
           )]
        ),
        nil,
-       BlockNode(816...822)(nil, nil, (816...818), (819...822)),
+       BlockNode(872...878)(nil, nil, (872...874), (875...878)),
        "foo"
      )]
   )

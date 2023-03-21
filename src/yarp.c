@@ -6317,6 +6317,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_parentheses_node_create(parser, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_BRACE_LEFT: {
+      yp_state_stack_push(&parser->accepts_block_stack, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
@@ -6329,6 +6330,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
       node->as.hash_node.closing = parser->previous;
+      yp_state_stack_pop(&parser->accepts_block_stack);
       return node;
     }
     case YP_TOKEN_CHARACTER_LITERAL: {
