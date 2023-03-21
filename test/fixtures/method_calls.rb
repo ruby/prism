@@ -94,8 +94,12 @@ A::B::C :foo
 
 A::B::C(:foo)
 
+A::B::C(:foo) { }
+
 foo("a": -1)
 
 foo bar: { baz: qux do end }
 
 foo bar: { **kw do end }
+
+foo "#{bar.map do "baz" end}" do end

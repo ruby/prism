@@ -1,6 +1,6 @@
-ProgramNode(0...309)(
+ProgramNode(0...328)(
   Scope(?...?)([]),
-  StatementsNode(0...309)(
+  StatementsNode(0...328)(
     [ArrayNode(0...4)(
        [SplatNode(2...3)(
           IDENTIFIER(2...3)("a"),
@@ -671,6 +671,37 @@ ProgramNode(0...309)(
         )],
        BRACKET_LEFT_ARRAY(288...289)("["),
        BRACKET_RIGHT(308...309)("]")
+     ),
+     ArrayNode(311...328)(
+       [HashNode(315...325)(
+          nil,
+          [AssocNode(315...325)(
+             CallNode(315...318)(
+               nil,
+               nil,
+               IDENTIFIER(315...318)("foo"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "foo"
+             ),
+             CallNode(322...325)(
+               nil,
+               nil,
+               IDENTIFIER(322...325)("bar"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "bar"
+             ),
+             EQUAL_GREATER(319...321)("=>")
+           )],
+          nil
+        )],
+       BRACKET_LEFT_ARRAY(311...312)("["),
+       BRACKET_RIGHT(327...328)("]")
      )]
   )
 )
