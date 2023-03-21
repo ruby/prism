@@ -1,6 +1,6 @@
-ProgramNode(0...765)(
+ProgramNode(0...803)(
   Scope(?...?)([]),
-  StatementsNode(0...765)(
+  StatementsNode(0...803)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1330,6 +1330,58 @@ ProgramNode(0...765)(
        ),
        PARENTHESIS_RIGHT(764...765)(")"),
        nil,
+       "foo"
+     ),
+     CallNode(767...803)(
+       nil,
+       nil,
+       IDENTIFIER(767...770)("foo"),
+       nil,
+       ArgumentsNode(771...796)(
+         [InterpolatedStringNode(771...796)(
+            STRING_BEGIN(771...772)("\""),
+            [StringInterpolatedNode(772...795)(
+               EMBEXPR_BEGIN(772...774)("\#{"),
+               StatementsNode(774...794)(
+                 [CallNode(774...794)(
+                    CallNode(774...777)(
+                      nil,
+                      nil,
+                      IDENTIFIER(774...777)("bar"),
+                      nil,
+                      nil,
+                      nil,
+                      nil,
+                      "bar"
+                    ),
+                    DOT(777...778)("."),
+                    IDENTIFIER(778...781)("map"),
+                    nil,
+                    nil,
+                    nil,
+                    BlockNode(782...794)(
+                      nil,
+                      StatementsNode(785...790)(
+                        [StringNode(785...790)(
+                           STRING_BEGIN(785...786)("\""),
+                           STRING_CONTENT(786...789)("baz"),
+                           STRING_END(789...790)("\""),
+                           "baz"
+                         )]
+                      ),
+                      (782...784),
+                      (791...794)
+                    ),
+                    "map"
+                  )]
+               ),
+               EMBEXPR_END(794...795)("}")
+             )],
+            STRING_END(795...796)("\"")
+          )]
+       ),
+       nil,
+       BlockNode(797...803)(nil, nil, (797...799), (800...803)),
        "foo"
      )]
   )
