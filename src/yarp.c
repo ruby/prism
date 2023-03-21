@@ -5040,7 +5040,6 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 // Parse all of the elements of a hash.
 static void
 parse_assocs(yp_parser_t *parser, yp_node_t *node) {
-  yp_state_stack_push(&parser->accepts_block_stack, true);
   while (true) {
     yp_node_t *element;
 
@@ -5092,7 +5091,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
     yp_node_list_append(parser, node, &node->as.hash_node.elements, element);
 
     // If there's no comma after the element, then we're done.
-    if (!accept(parser, YP_TOKEN_COMMA)) goto exit;
+    if (!accept(parser, YP_TOKEN_COMMA)) return;
 
     // If the next element starts with a label or a **, then we know we have
     // another element in the hash, so we'll continue parsing.
@@ -5103,11 +5102,8 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
     if (token_begins_expression_p(parser->current.type)) continue;
 
     // Otherwise by default we will exit out of this loop.
-    goto exit;
-  }
-  exit:
-    yp_state_stack_pop(&parser->accepts_block_stack);
     return;
+  }
 }
 
 // Parse a list of arguments.
@@ -6321,6 +6317,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_parentheses_node_create(parser, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_BRACE_LEFT: {
+      yp_state_stack_push(&parser->accepts_block_stack, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
@@ -6333,6 +6330,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
       node->as.hash_node.closing = parser->previous;
+      yp_state_stack_pop(&parser->accepts_block_stack);
       return node;
     }
     case YP_TOKEN_CHARACTER_LITERAL: {
