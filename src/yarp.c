@@ -6328,9 +6328,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         accept(parser, YP_TOKEN_NEWLINE);
       }
 
+      yp_state_stack_pop(&parser->accepts_block_stack);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
       node->as.hash_node.closing = parser->previous;
-      yp_state_stack_pop(&parser->accepts_block_stack);
+
       return node;
     }
     case YP_TOKEN_CHARACTER_LITERAL: {
