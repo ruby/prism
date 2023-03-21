@@ -7787,6 +7787,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_t *parameters = parse_block_parameters(parser);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
+        accept(parser, YP_TOKEN_NEWLINE);
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
         rparen = parser->previous;
       } else {
