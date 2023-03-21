@@ -5505,8 +5505,16 @@ parse_parameters(
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Formal argument cannot be a class variable");
         break;
       default:
-        if (parser->previous.type == YP_TOKEN_COMMA && !allows_trailing_comma) {
-          yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected ','.");
+        if (parser->previous.type == YP_TOKEN_COMMA) {
+          if (allows_trailing_comma) {
+            // If we get here, then we have a trailing comma in a block parameter list.
+            // We need to create an anonymous rest parameter to represent it.
+            yp_token_t name = not_provided(parser);
+            yp_node_t *param = yp_node_rest_parameter_node_create(parser, &parser->previous, &name);
+            params->as.parameters_node.rest = param;
+          } else {
+            yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected ','.");
+          }
         }
         return params;
     }

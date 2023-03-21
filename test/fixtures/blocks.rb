@@ -50,3 +50,5 @@ foo lambda { |
   b: 2
   |
 }
+
+foo do |bar,| end
