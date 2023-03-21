@@ -420,6 +420,8 @@ nodes:
           ^^^^^^^^^^
   - name: BlockNode
     child_nodes:
+      - name: scope
+        type: node
       - name: parameters
         type: node?
       - name: statements

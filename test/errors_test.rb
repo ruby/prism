@@ -226,6 +226,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
+        Scope([]),
         nil,
         StatementsNode([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
         Location(),
@@ -388,6 +389,7 @@ class ErrorsTest < Test::Unit::TestCase
            nil,
            nil,
            BlockNode(
+             Scope([]),
              nil,
              StatementsNode(
                [ModuleNode(
