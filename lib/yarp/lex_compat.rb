@@ -248,10 +248,11 @@ module YARP
       # that need to be split on "\\\n" to mimic Ripper's behavior. We also need
       # to keep track of the state that the heredoc was opened in.
       class DashHeredoc
-        attr_reader :state, :tokens
+        attr_reader :state, :split, :tokens
 
-        def initialize(state)
+        def initialize(state, split)
           @state = state
+          @split = split
           @tokens = []
         end
 
@@ -276,12 +277,16 @@ module YARP
                 lineno = token[0][0]
                 column = token[0][1]
 
-                # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind
-                # to keep the delimiter in the result.
-                token.value.split(/(?<=[^\\]\\\n)/).each_with_index do |value, index|
-                  column = 0 if index > 0
-                  results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
-                  lineno += value.count("\n")
+                if split
+                  # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind
+                  # to keep the delimiter in the result.
+                  token.value.split(/(?<=[^\\]\\\n)/).each_with_index do |value, index|
+                    column = 0 if index > 0
+                    results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
+                    lineno += value.count("\n")
+                  end
+                else
+                  results << token
                 end
               else
                 results << token
@@ -480,7 +485,7 @@ module YARP
         when "~"
           DedentingHeredoc.new(state)
         when "-"
-          DashHeredoc.new(state)
+          DashHeredoc.new(state, opening.value[3] != "'")
         else
           PlainHeredoc.new(state)
         end

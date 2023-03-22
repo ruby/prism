@@ -13,7 +13,6 @@ ruby:
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - test/csv/test_patterns.rb
-    - test/psych/visitors/test_to_ruby.rb
     - test/ruby/enc/test_euc_jp.rb
     - test/ruby/enc/test_shift_jis.rb
     - test/ruby/test_mixed_unicode_escapes.rb
