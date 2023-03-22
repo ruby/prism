@@ -1,5 +1,5 @@
 ProgramNode(0...118)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...118)(
     [NextNode(0...4)(nil, (0...4)),
      NextNode(6...24)(

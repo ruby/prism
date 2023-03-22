@@ -1,5 +1,5 @@
 ProgramNode(0...155)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...155)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(

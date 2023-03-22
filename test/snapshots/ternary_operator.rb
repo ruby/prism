@@ -1,5 +1,5 @@
 ProgramNode(0...38)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...38)(
     [TernaryNode(0...9)(
        CallNode(0...1)(
