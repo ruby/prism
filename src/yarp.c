@@ -3205,9 +3205,10 @@ parser_lex(yp_parser_t *parser) {
                 }
               }
 
-              // If the lex state was ignored, or we hit a '.', we
-              // will lex the ignored newline
-              if (lex_state_ignored_p(parser) || following[0] == '.') {
+              // If the lex state was ignored, or we hit a '.' or a '&.',
+              // we will lex the ignored newline
+              if (lex_state_ignored_p(parser) || following[0] == '.' ||
+		  (following + 1 < parser->end && following[0] == '&' && following[1] == '.')) {
                 if (!lexed_comment) parser_lex_ignored_newline(parser);
                 lexed_comment = false;
                 goto lex_next_token;

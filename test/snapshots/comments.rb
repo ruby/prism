@@ -1,6 +1,6 @@
-ProgramNode(0...98)(
+ProgramNode(0...118)(
   Scope(0...0)([]),
-  StatementsNode(0...98)(
+  StatementsNode(0...118)(
     [CallNode(0...1)(
        nil,
        nil,
@@ -116,6 +116,25 @@ ProgramNode(0...98)(
        nil,
        nil,
        "l"
+     ),
+     CallNode(100...118)(
+       CallNode(100...101)(
+         nil,
+         nil,
+         IDENTIFIER(100...101)("m"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "m"
+       ),
+       AMPERSAND_DOT(115...117)("&."),
+       IDENTIFIER(117...118)("n"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "n"
      )]
   )
 )
