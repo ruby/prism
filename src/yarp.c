@@ -6678,7 +6678,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_token_t opening = parser->previous;
       yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
-
+      yp_accepts_block_stack_push(parser, true);
       bool parsed_bare_hash = false;
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
@@ -6754,6 +6754,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       accept(parser, YP_TOKEN_NEWLINE);
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a closing bracket for the array.");
       yp_array_node_close_set(array, &parser->previous);
+      yp_accepts_block_stack_pop(parser);
 
       return array;
     }
@@ -7442,7 +7443,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       yp_parser_scope_push(parser, &class_keyword, true);
+      yp_accepts_block_stack_push(parser, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_CLASS);
+      yp_accepts_block_stack_pop(parser);
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
@@ -7827,7 +7830,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       yp_parser_scope_push(parser, &module_keyword, true);
+      yp_accepts_block_stack_push(parser, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_MODULE);
+      yp_accepts_block_stack_pop(parser);
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
         statements = parse_rescues_as_begin(parser, statements);
