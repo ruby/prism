@@ -8,6 +8,7 @@ class EncodingTest < Test::Unit::TestCase
     ascii-8bit
     big5
     binary
+    euc-jp
     iso-8859-1
     iso-8859-2
     iso-8859-3

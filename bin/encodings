@@ -128,3 +128,7 @@ lists("utf8", (0...0x110000), Encoding::UTF_8)
 puts "\nShift-JIS"
 puts "=========="
 lists("shift_jis", (0...0x10000), Encoding::Shift_JIS)
+
+puts "\nEUC-JP"
+puts "=========="
+lists("euc-jp", (0...0x10000), Encoding::EUC_JP)

@@ -1973,6 +1973,14 @@ static yp_encoding_t yp_encoding_big5 = {
   .isupper_char = yp_encoding_big5_isupper_char
 };
 
+static yp_encoding_t yp_encoding_euc_jp = {
+  .name = "euc-jp",
+  .char_width = yp_encoding_euc_jp_char_width,
+  .alnum_char = yp_encoding_euc_jp_alnum_char,
+  .alpha_char = yp_encoding_euc_jp_alpha_char,
+  .isupper_char = yp_encoding_euc_jp_isupper_char
+};
+
 static yp_encoding_t yp_encoding_iso_8859_1 = {
   .name = "iso-8859-1",
   .char_width = yp_encoding_iso_8859_1_char_width,
@@ -2182,6 +2190,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("us-ascii", yp_encoding_ascii);
     ENCODING("binary", yp_encoding_ascii_8bit);
     ENCODING("shift_jis", yp_encoding_shift_jis);
+    ENCODING("euc-jp", yp_encoding_euc_jp);
 
     // Then check all the others.
     ENCODING("big5", yp_encoding_big5);

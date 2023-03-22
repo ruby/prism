@@ -45,6 +45,22 @@ bool
 yp_encoding_big5_isupper_char(const char *c);
 
 /******************************************************************************/
+/* EUC-JP                                                                     */
+/******************************************************************************/
+
+size_t
+yp_encoding_euc_jp_char_width(const char *c);
+
+size_t
+yp_encoding_euc_jp_alpha_char(const char *c);
+
+size_t
+yp_encoding_euc_jp_alnum_char(const char *c);
+
+bool
+yp_encoding_euc_jp_isupper_char(const char *c);
+
+/******************************************************************************/
 /* ISO-8859-1                                                                 */
 /******************************************************************************/
 
