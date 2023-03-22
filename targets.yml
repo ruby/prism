@@ -10,7 +10,6 @@ ruby:
   excludes:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
   todos:
-    - benchmark/app_lc_fizzbuzz.rb
     - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - test/csv/test_patterns.rb
@@ -20,8 +19,6 @@ ruby:
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_pattern_matching.rb
     - test/ruby/test_string.rb
-    - test/ruby/test_syntax.rb
-    - test/test_tempfile.rb
     - tool/merger.rb
     - tool/rjit/bindgen.rb
     - tool/sync_default_gems.rb
