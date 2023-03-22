@@ -4,7 +4,7 @@ ProgramNode(0...434)(
     [DefNode(0...9)(
        BANG(4...5)("!"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(0...3)([]),
        (0...3),
@@ -17,7 +17,7 @@ ProgramNode(0...434)(
      DefNode(11...21)(
        BANG_EQUAL(15...17)("!="),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(11...14)([]),
        (11...14),
@@ -30,7 +30,7 @@ ProgramNode(0...434)(
      DefNode(23...33)(
        BANG_TILDE(27...29)("!~"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(23...26)([]),
        (23...26),
@@ -43,7 +43,7 @@ ProgramNode(0...434)(
      DefNode(35...44)(
        PERCENT(39...40)("%"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(35...38)([]),
        (35...38),
@@ -56,7 +56,7 @@ ProgramNode(0...434)(
      DefNode(46...60)(
        PLUS(55...56)("+"),
        SelfNode(50...54)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(46...49)([]),
        (46...49),
@@ -69,7 +69,7 @@ ProgramNode(0...434)(
      DefNode(62...71)(
        AMPERSAND(66...67)("&"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(62...65)([]),
        (62...65),
@@ -82,7 +82,7 @@ ProgramNode(0...434)(
      DefNode(73...82)(
        STAR(77...78)("*"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(73...76)([]),
        (73...76),
@@ -95,7 +95,7 @@ ProgramNode(0...434)(
      DefNode(84...94)(
        STAR_STAR(88...90)("**"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(84...87)([]),
        (84...87),
@@ -137,7 +137,7 @@ ProgramNode(0...434)(
      DefNode(119...130)(
        PLUS(123...124)("+"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(119...122)([]),
        (119...122),
@@ -170,7 +170,7 @@ ProgramNode(0...434)(
      DefNode(145...159)(
        PLUS(154...155)("+"),
        SelfNode(149...153)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(145...148)([]),
        (145...148),
@@ -183,7 +183,7 @@ ProgramNode(0...434)(
      DefNode(161...170)(
        PLUS(165...166)("+"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(161...164)([]),
        (161...164),
@@ -196,7 +196,7 @@ ProgramNode(0...434)(
      DefNode(172...182)(
        UPLUS(176...178)("+@"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(172...175)([]),
        (172...175),
@@ -209,7 +209,7 @@ ProgramNode(0...434)(
      DefNode(184...193)(
        MINUS(188...189)("-"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(184...187)([]),
        (184...187),
@@ -231,7 +231,7 @@ ProgramNode(0...434)(
          nil,
          "a"
        ),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(195...198)([]),
        (195...198),
@@ -244,7 +244,7 @@ ProgramNode(0...434)(
      DefNode(208...218)(
        UMINUS(212...214)("-@"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(208...211)([]),
        (208...211),
@@ -257,7 +257,7 @@ ProgramNode(0...434)(
      DefNode(220...229)(
        SLASH(224...225)("/"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(220...223)([]),
        (220...223),
@@ -270,7 +270,7 @@ ProgramNode(0...434)(
      DefNode(231...240)(
        LESS(235...236)("<"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(231...234)([]),
        (231...234),
@@ -283,7 +283,7 @@ ProgramNode(0...434)(
      DefNode(242...252)(
        LESS_LESS(246...248)("<<"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(242...245)([]),
        (242...245),
@@ -296,7 +296,7 @@ ProgramNode(0...434)(
      DefNode(254...264)(
        LESS_EQUAL(258...260)("<="),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(254...257)([]),
        (254...257),
@@ -309,7 +309,7 @@ ProgramNode(0...434)(
      DefNode(266...277)(
        LESS_EQUAL_GREATER(270...273)("<=>"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(266...269)([]),
        (266...269),
@@ -322,7 +322,7 @@ ProgramNode(0...434)(
      DefNode(279...289)(
        EQUAL_EQUAL(283...285)("=="),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(279...282)([]),
        (279...282),
@@ -335,7 +335,7 @@ ProgramNode(0...434)(
      DefNode(291...302)(
        EQUAL_EQUAL_EQUAL(295...298)("==="),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(291...294)([]),
        (291...294),
@@ -348,7 +348,7 @@ ProgramNode(0...434)(
      DefNode(304...314)(
        EQUAL_TILDE(308...310)("=~"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(304...307)([]),
        (304...307),
@@ -361,7 +361,7 @@ ProgramNode(0...434)(
      DefNode(316...325)(
        GREATER(320...321)(">"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(316...319)([]),
        (316...319),
@@ -374,7 +374,7 @@ ProgramNode(0...434)(
      DefNode(327...337)(
        GREATER_EQUAL(331...333)(">="),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(327...330)([]),
        (327...330),
@@ -387,7 +387,7 @@ ProgramNode(0...434)(
      DefNode(339...349)(
        GREATER_GREATER(343...345)(">>"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(339...342)([]),
        (339...342),
@@ -400,7 +400,7 @@ ProgramNode(0...434)(
      DefNode(351...361)(
        BRACKET_LEFT_RIGHT(355...357)("[]"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(351...354)([]),
        (351...354),
@@ -413,7 +413,7 @@ ProgramNode(0...434)(
      DefNode(363...374)(
        BRACKET_LEFT_RIGHT_EQUAL(367...370)("[]="),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(363...366)([]),
        (363...366),
@@ -426,7 +426,7 @@ ProgramNode(0...434)(
      DefNode(376...385)(
        CARET(380...381)("^"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(376...379)([]),
        (376...379),
@@ -439,7 +439,7 @@ ProgramNode(0...434)(
      DefNode(387...396)(
        BACKTICK(391...392)("`"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(387...390)([]),
        (387...390),
@@ -452,7 +452,7 @@ ProgramNode(0...434)(
      DefNode(398...412)(
        BACKTICK(407...408)("`"),
        SelfNode(402...406)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(398...401)([]),
        (398...401),
@@ -465,7 +465,7 @@ ProgramNode(0...434)(
      DefNode(414...423)(
        PIPE(418...419)("|"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(414...417)([]),
        (414...417),
@@ -478,7 +478,7 @@ ProgramNode(0...434)(
      DefNode(425...434)(
        TILDE(429...430)("~"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(425...428)([]),
        (425...428),

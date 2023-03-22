@@ -353,7 +353,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode([], [], nil, [], nil, nil),
+      nil,
       StatementsNode(
         [ModuleNode(
            Scope([]),
@@ -379,7 +379,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode([], [], nil, [], nil, nil),
+      nil,
       StatementsNode(
         [CallNode(
            nil,

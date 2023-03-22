@@ -605,7 +605,7 @@ nodes:
       - name: receiver
         type: node?
       - name: parameters
-        type: node
+        type: node?
       - name: statements
         type: node
       - name: scope

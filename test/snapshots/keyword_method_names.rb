@@ -4,7 +4,7 @@ ProgramNode(0...185)(
     [DefNode(0...11)(
        KEYWORD_DEF(4...7)("def"),
        nil,
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(0...3)([]),
        (0...3),
@@ -17,7 +17,7 @@ ProgramNode(0...185)(
      DefNode(13...32)(
        KEYWORD_ENSURE(22...28)("ensure"),
        SelfNode(17...21)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(13...16)([]),
        (13...16),
@@ -36,7 +36,7 @@ ProgramNode(0...185)(
          [DefNode(42...68)(
             IDENTIFIER(46...49)("foo"),
             nil,
-            ParametersNode(?...?)([], [], nil, [], nil, nil),
+            nil,
             StatementsNode(52...64)(
               [CallNode(52...64)(
                  nil,
@@ -91,7 +91,7 @@ ProgramNode(0...185)(
      DefNode(91...113)(
        IDENTIFIER(108...109)("a"),
        SourceEncodingNode(95...107)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(91...94)([]),
        (91...94),
@@ -116,7 +116,7 @@ ProgramNode(0...185)(
      DefNode(131...149)(
        IDENTIFIER(144...145)("a"),
        SourceFileNode(135...143)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(131...134)([]),
        (131...134),
@@ -129,7 +129,7 @@ ProgramNode(0...185)(
      DefNode(151...169)(
        IDENTIFIER(164...165)("a"),
        SourceLineNode(155...163)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(151...154)([]),
        (151...154),
@@ -142,7 +142,7 @@ ProgramNode(0...185)(
      DefNode(171...185)(
        IDENTIFIER(180...181)("a"),
        NilNode(175...178)(),
-       ParametersNode(?...?)([], [], nil, [], nil, nil),
+       nil,
        StatementsNode(0...0)([]),
        Scope(171...174)([]),
        (171...174),

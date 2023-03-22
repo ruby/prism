@@ -5548,8 +5548,8 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 static yp_node_t *
 parse_parameters(
   yp_parser_t *parser,
-  bool uses_parentheses,
   yp_binding_power_t binding_power,
+  bool uses_parentheses,
   bool allows_trailing_comma
 ) {
   yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
@@ -5860,7 +5860,7 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
 // Parse a list of parameters and local on a block definition.
 static yp_node_t *
 parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma) {
-  yp_node_t *parameters = parse_parameters(parser, false, YP_BINDING_POWER_INDEX, allows_trailing_comma);
+  yp_node_t *parameters = parse_parameters(parser, YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
   yp_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters);
 
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
@@ -7458,23 +7458,48 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_token_t lparen;
       yp_token_t rparen;
+      yp_node_t *params;
 
-      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        lparen = parser->previous;
-      } else {
-        lparen = not_provided(parser);
-      }
+      switch (parser->current.type) {
+        case YP_TOKEN_PARENTHESIS_LEFT: {
+          parser_lex(parser);
+          lparen = parser->previous;
 
-      yp_node_t *params = parse_parameters(parser, lparen.type == YP_TOKEN_PARENTHESIS_LEFT, YP_BINDING_POWER_DEFINED, false);
+          if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+            params = NULL;
+          } else {
+            params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, true, false);
+          }
 
-      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
-        lex_state_set(parser, YP_LEX_STATE_BEG);
-        parser->command_start = true;
+          lex_state_set(parser, YP_LEX_STATE_BEG);
+          parser->command_start = true;
 
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
-        rparen = parser->previous;
-      } else {
-        rparen = not_provided(parser);
+          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+          rparen = parser->previous;
+          break;
+        }
+        case YP_TOKEN_AMPERSAND:
+        case YP_TOKEN_UDOT_DOT_DOT:
+        case YP_TOKEN_IDENTIFIER:
+        case YP_TOKEN_LABEL:
+        case YP_TOKEN_USTAR:
+        case YP_TOKEN_STAR:
+        case YP_TOKEN_STAR_STAR:
+        case YP_TOKEN_CONSTANT:
+        case YP_TOKEN_INSTANCE_VARIABLE:
+        case YP_TOKEN_GLOBAL_VARIABLE:
+        case YP_TOKEN_CLASS_VARIABLE: {
+          lparen = not_provided(parser);
+          rparen = not_provided(parser);
+          params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, false, false);
+          break;
+        }
+        default: {
+          lparen = not_provided(parser);
+          rparen = not_provided(parser);
+          params = NULL;
+          break;
+        }
       }
 
       yp_token_t equal;
