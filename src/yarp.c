@@ -1973,6 +1973,14 @@ static yp_encoding_t yp_encoding_big5 = {
   .isupper_char = yp_encoding_big5_isupper_char
 };
 
+static yp_encoding_t yp_encoding_euc_jp = {
+  .name = "euc-jp",
+  .char_width = yp_encoding_euc_jp_char_width,
+  .alnum_char = yp_encoding_euc_jp_alnum_char,
+  .alpha_char = yp_encoding_euc_jp_alpha_char,
+  .isupper_char = yp_encoding_euc_jp_isupper_char
+};
+
 static yp_encoding_t yp_encoding_iso_8859_1 = {
   .name = "iso-8859-1",
   .char_width = yp_encoding_iso_8859_1_char_width,
@@ -2093,12 +2101,28 @@ static yp_encoding_t yp_encoding_iso_8859_16 = {
   .isupper_char = yp_encoding_iso_8859_16_isupper_char
 };
 
+static yp_encoding_t yp_encoding_shift_jis = {
+  .name = "shift_jis",
+  .char_width = yp_encoding_shift_jis_char_width,
+  .alnum_char = yp_encoding_shift_jis_alnum_char,
+  .alpha_char = yp_encoding_shift_jis_alpha_char,
+  .isupper_char = yp_encoding_shift_jis_isupper_char
+};
+
 static yp_encoding_t yp_encoding_utf_8 = {
   .name = "utf-8",
   .char_width = yp_encoding_utf_8_char_width,
   .alnum_char = yp_encoding_utf_8_alnum_char,
   .alpha_char = yp_encoding_utf_8_alpha_char,
   .isupper_char = yp_encoding_utf_8_isupper_char
+};
+
+static yp_encoding_t yp_encoding_windows_31j = {
+  .name = "windows-31j",
+  .char_width = yp_encoding_windows_31j_char_width,
+  .alnum_char = yp_encoding_windows_31j_alnum_char,
+  .alpha_char = yp_encoding_windows_31j_alpha_char,
+  .isupper_char = yp_encoding_windows_31j_isupper_char
 };
 
 static yp_encoding_t yp_encoding_windows_1251 = {
@@ -2122,86 +2146,94 @@ static yp_encoding_t yp_encoding_windows_1252 = {
 static void
 parser_lex_encoding_comment(yp_parser_t *parser) {
   const char *start = parser->current.start + 1;
-  start += yp_strspn_inline_whitespace(start, parser->end - start);
+  const char *end = memchr(start, '\n', parser->end - start);
+  if (end == NULL) end = parser->end;
 
-  if (strncmp(start, "-*-", 3) == 0) {
-    start += 3;
-    start += yp_strspn_inline_whitespace(start, parser->end - start);
+  // These are the patterns we're going to match to find the encoding comment.
+  // This is definitely not complete or even really correct.
+  const char *encoding_start = NULL;
+  if ((encoding_start = yp_strnstr(start, "coding:", end - start)) != NULL) {
+    encoding_start += 7;
+  } else if ((encoding_start = yp_strnstr(start, "coding=", end - start)) != NULL) {
+    encoding_start += 7;
   }
 
-  // There is a lot TODO here to make it more accurately reflect encoding
-  // parsing, but for now this gets us closer.
-  size_t length = 0;
-  if (strncmp(start, "encoding:", 9) == 0) {
-    length = 9;
-  } else if (strncmp(start, "coding:", 7) == 0) {
-    length = 7;
-  }
+  // If we didn't find anything that matched our patterns, then return. Note
+  // that this does a _very_ poor job of actually finding the encoding, and
+  // there is a lot of work to do here to better reflect actual magic comment
+  // parsing from CRuby, but this at least gets us part of the way there.
+  if (encoding_start == NULL) return;
 
-  if (length != 0) {
-    start += length;
-    start += yp_strspn_inline_whitespace(start, parser->end - start);
+  // Skip any non-newline whitespace after the "coding:" or "coding=".
+  encoding_start += yp_strspn_inline_whitespace(encoding_start, end - encoding_start);
 
-    const char *end = yp_strpbrk(start, " \t\f\r\v\n;", parser->end - start);
-    end = end == NULL ? parser->end : end;
-    size_t width = end - start;
+  // Now determine the end of the encoding string. This is either the end of
+  // the line, the first whitespace character, or a punctuation mark.
+  const char *encoding_end = yp_strpbrk(encoding_start, " \t\f\r\v\n;,", end - encoding_start);
+  encoding_end = encoding_end == NULL ? end : encoding_end;
 
-    // First, we're going to call out to a user-defined callback if one was
-    // provided. If they return an encoding struct that we can use, then we'll
-    // use that here.
-    if (parser->encoding_decode_callback != NULL) {
-      yp_encoding_t *encoding = parser->encoding_decode_callback(parser, start, width);
+  // Finally, we can determine the width of the encoding string.
+  size_t width = encoding_end - encoding_start;
 
-      if (encoding != NULL) {
-        parser->encoding = *encoding;
-        return;
-      }
+  // First, we're going to call out to a user-defined callback if one was
+  // provided. If they return an encoding struct that we can use, then we'll
+  // use that here.
+  if (parser->encoding_decode_callback != NULL) {
+    yp_encoding_t *encoding = parser->encoding_decode_callback(parser, encoding_start, width);
+
+    if (encoding != NULL) {
+      parser->encoding = *encoding;
+      return;
     }
+  }
 
-    // Next, we're going to loop through each of the encodings that we handle
-    // explicitly. If we found one that we understand, we'll use that value.
+  // Next, we're going to loop through each of the encodings that we handle
+  // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
-    if (width == sizeof(value) - 1 && strncasecmp(start, value, sizeof(value) - 1) == 0) { \
-      parser->encoding = prebuilt; \
-      if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
-      return; \
-    }
+  if (width == sizeof(value) - 1 && strncasecmp(encoding_start, value, sizeof(value) - 1) == 0) { \
+    parser->encoding = prebuilt; \
+    if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
+    return; \
+  }
 
-    // Check most common first. (This is pretty arbitrary.)
-    ENCODING("utf-8", yp_encoding_utf_8);
-    ENCODING("ascii", yp_encoding_ascii);
-    ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
-    ENCODING("us-ascii", yp_encoding_ascii);
-    ENCODING("binary", yp_encoding_ascii_8bit);
+  // Check most common first. (This is pretty arbitrary.)
+  ENCODING("utf-8", yp_encoding_utf_8);
+  ENCODING("ascii", yp_encoding_ascii);
+  ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
+  ENCODING("us-ascii", yp_encoding_ascii);
+  ENCODING("binary", yp_encoding_ascii_8bit);
+  ENCODING("shift_jis", yp_encoding_shift_jis);
+  ENCODING("euc-jp", yp_encoding_euc_jp);
 
-    // Then check all the others.
-    ENCODING("big5", yp_encoding_big5);
-    ENCODING("iso-8859-1", yp_encoding_iso_8859_1);
-    ENCODING("iso-8859-2", yp_encoding_iso_8859_2);
-    ENCODING("iso-8859-3", yp_encoding_iso_8859_3);
-    ENCODING("iso-8859-4", yp_encoding_iso_8859_4);
-    ENCODING("iso-8859-5", yp_encoding_iso_8859_5);
-    ENCODING("iso-8859-6", yp_encoding_iso_8859_6);
-    ENCODING("iso-8859-7", yp_encoding_iso_8859_7);
-    ENCODING("iso-8859-8", yp_encoding_iso_8859_8);
-    ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
-    ENCODING("iso-8859-10", yp_encoding_iso_8859_10);
-    ENCODING("iso-8859-11", yp_encoding_iso_8859_11);
-    ENCODING("iso-8859-13", yp_encoding_iso_8859_13);
-    ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
-    ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
-    ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
-    ENCODING("windows-1251", yp_encoding_windows_1251);
-    ENCODING("windows-1252", yp_encoding_windows_1252);
+  // Then check all the others.
+  ENCODING("big5", yp_encoding_big5);
+  ENCODING("iso-8859-1", yp_encoding_iso_8859_1);
+  ENCODING("iso-8859-2", yp_encoding_iso_8859_2);
+  ENCODING("iso-8859-3", yp_encoding_iso_8859_3);
+  ENCODING("iso-8859-4", yp_encoding_iso_8859_4);
+  ENCODING("iso-8859-5", yp_encoding_iso_8859_5);
+  ENCODING("iso-8859-6", yp_encoding_iso_8859_6);
+  ENCODING("iso-8859-7", yp_encoding_iso_8859_7);
+  ENCODING("iso-8859-8", yp_encoding_iso_8859_8);
+  ENCODING("iso-8859-9", yp_encoding_iso_8859_9);
+  ENCODING("iso-8859-10", yp_encoding_iso_8859_10);
+  ENCODING("iso-8859-11", yp_encoding_iso_8859_11);
+  ENCODING("iso-8859-13", yp_encoding_iso_8859_13);
+  ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
+  ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
+  ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
+  ENCODING("windows-31j", yp_encoding_windows_31j);
+  ENCODING("windows-1251", yp_encoding_windows_1251);
+  ENCODING("windows-1252", yp_encoding_windows_1252);
+  ENCODING("cp932", yp_encoding_windows_31j);
 
 #undef ENCODING
 
-    // If nothing was returned by this point, then we've got an issue because we
-    // didn't understand the encoding that the user was trying to use. In this
-    // case we'll keep using the default encoding but add an error to the
-    // parser to indicate an unsuccessful parse.
-    yp_diagnostic_list_append(&parser->error_list, start, end, "Could not understand the encoding specified in the magic comment.");
-  }
+  // If nothing was returned by this point, then we've got an issue because we
+  // didn't understand the encoding that the user was trying to use. In this
+  // case we'll keep using the default encoding but add an error to the
+  // parser to indicate an unsuccessful parse.
+  yp_diagnostic_list_append(&parser->error_list, encoding_start, encoding_end, "Could not understand the encoding specified in the magic comment.");
 }
 
 /******************************************************************************/

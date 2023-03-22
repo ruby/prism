@@ -22,10 +22,10 @@ def table(range, encoding)
 end
 
 def lists(name, range, encoding)
-  range = range.map { begin; _1.chr(Encoding::UTF_8); _1; rescue RangeError; nil; end }.compact
+  range = range.map { begin; _1.chr(encoding); _1; rescue RangeError; nil; end }.compact
 
   { alpha: /[[:alpha:]]/, alnum: /[[:alnum:]]/, isupper: /[[:upper:]]/ }.map do |kind, regex|
-    codepoints = range.select { _1.chr(Encoding::UTF_8).match?(regex) }
+    codepoints = range.select { _1.chr(encoding).match?(regex) }
 
     previous = nil
     groups =
@@ -124,3 +124,15 @@ lists("big5", (0...0x10000), Encoding::Big5)
 puts "\nUTF-8"
 puts "=========="
 lists("utf8", (0...0x110000), Encoding::UTF_8)
+
+puts "\nShift-JIS"
+puts "=========="
+lists("shift_jis", (0...0x10000), Encoding::Shift_JIS)
+
+puts "\nEUC-JP"
+puts "=========="
+lists("euc-jp", (0...0x10000), Encoding::EUC_JP)
+
+puts "\nWindows-31J"
+puts "=========="
+lists("windows-31j", (0...0x10000), Encoding::Windows_31J)

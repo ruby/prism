@@ -45,6 +45,22 @@ bool
 yp_encoding_big5_isupper_char(const char *c);
 
 /******************************************************************************/
+/* EUC-JP                                                                     */
+/******************************************************************************/
+
+size_t
+yp_encoding_euc_jp_char_width(const char *c);
+
+size_t
+yp_encoding_euc_jp_alpha_char(const char *c);
+
+size_t
+yp_encoding_euc_jp_alnum_char(const char *c);
+
+bool
+yp_encoding_euc_jp_isupper_char(const char *c);
+
+/******************************************************************************/
 /* ISO-8859-1                                                                 */
 /******************************************************************************/
 
@@ -285,6 +301,22 @@ bool
 yp_encoding_iso_8859_16_isupper_char(const char *c);
 
 /******************************************************************************/
+/* Shift-JIS                                                                  */
+/******************************************************************************/
+
+size_t
+yp_encoding_shift_jis_char_width(const char *c);
+
+size_t
+yp_encoding_shift_jis_alpha_char(const char *c);
+
+size_t
+yp_encoding_shift_jis_alnum_char(const char *c);
+
+bool
+yp_encoding_shift_jis_isupper_char(const char *c);
+
+/******************************************************************************/
 /* UTF-8                                                                      */
 /******************************************************************************/
 
@@ -299,6 +331,22 @@ yp_encoding_utf_8_alnum_char(const char *c);
 
 bool
 yp_encoding_utf_8_isupper_char(const char *c);
+
+/******************************************************************************/
+/* Windows-31J                                                                */
+/******************************************************************************/
+
+size_t
+yp_encoding_windows_31j_char_width(const char *c);
+
+size_t
+yp_encoding_windows_31j_alpha_char(const char *c);
+
+size_t
+yp_encoding_windows_31j_alnum_char(const char *c);
+
+bool
+yp_encoding_windows_31j_isupper_char(const char *c);
 
 /******************************************************************************/
 /* Windows-1251                                                               */
