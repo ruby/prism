@@ -189,10 +189,6 @@ module YARP
       def state
         self[3]
       end
-
-      def state=(val)
-        self[3] = val
-      end
     end
 
     # Ripper doesn't include the rest of the token in the event, so we need to
@@ -212,6 +208,18 @@ module YARP
       end
     end
 
+    # Heredoc end tokens are emitted in an odd order, so we don't compare the
+    # state on them.
+    class HeredocEndToken < Token
+      def ==(other)
+        self[0...-1] == other[0...-1]
+      end
+    end
+
+    # Ident tokens for the most part are exactly the same, except sometimes we
+    # know an ident is a local when ripper doesn't (when they are introduced
+    # through named captures in regular expressions). In that case we don't
+    # compare the state.
     class IdentToken < Token
       def ==(other)
         self[0...-1] == other[0...-1]
@@ -227,10 +235,9 @@ module YARP
       # order back into the token stream and set the state of the last token to
       # the state that the heredoc was opened in.
       class PlainHeredoc
-        attr_reader :state, :tokens
+        attr_reader :tokens
 
-        def initialize(state)
-          @state = state
+        def initialize
           @tokens = []
         end
 
@@ -239,7 +246,6 @@ module YARP
         end
 
         def to_a
-          tokens.last.state = state
           tokens
         end
       end
@@ -248,10 +254,9 @@ module YARP
       # that need to be split on "\\\n" to mimic Ripper's behavior. We also need
       # to keep track of the state that the heredoc was opened in.
       class DashHeredoc
-        attr_reader :state, :split, :tokens
+        attr_reader :split, :tokens
 
-        def initialize(state, split)
-          @state = state
+        def initialize(split)
           @split = split
           @tokens = []
         end
@@ -261,7 +266,6 @@ module YARP
         end
 
         def to_a
-          tokens.last.state = state
           embexpr_balance = 0
 
           tokens.each_with_object([]) do |token, results|
@@ -311,12 +315,10 @@ module YARP
       class DedentingHeredoc
         TAB_WIDTH = 8
 
-        attr_reader :state, :tokens, :dedent_next, :dedent, :embexpr_balance
+        attr_reader :tokens, :dedent_next, :dedent, :embexpr_balance
 
-        def initialize(state)
-          @state = state
+        def initialize
           @tokens = []
-
           @dedent_next = true
           @dedent = nil
           @embexpr_balance = 0
@@ -347,11 +349,6 @@ module YARP
         end
 
         def to_a
-          # First set the final state correctly. Next, check if there is
-          # anything to dedent. If there isn't, then we can return the tokens
-          # directly since no on_ignored_sp tokens need to be inserted.
-          tokens.last.state = state
-
           # If every line in the heredoc is blank, we still need to split up the
           # string content token into multiple tokens.
           if dedent.nil?
@@ -480,14 +477,14 @@ module YARP
 
       # Here we will split between the two types of heredocs and return the
       # object that will store their tokens.
-      def self.build(opening, state)
+      def self.build(opening)
         case opening.value[2]
         when "~"
-          DedentingHeredoc.new(state)
+          DedentingHeredoc.new
         when "-"
-          DashHeredoc.new(state, opening.value[3] != "'")
+          DashHeredoc.new(opening.value[3] != "'")
         else
-          PlainHeredoc.new(state)
+          PlainHeredoc.new
         end
       end
     end
@@ -531,6 +528,10 @@ module YARP
             EndContentToken.new([[lineno, column], event, value, lex_state])
           when :on_comment
             CommentToken.new([[lineno, column], event, value, lex_state])
+          when :on_heredoc_end
+            # Heredoc end tokens can be emitted in an odd order, so we don't
+            # want to bother comparing the state on them.
+            HeredocEndToken.new([[lineno, column], event, value, lex_state])
           when :on_ident
             if lex_state == Ripper::EXPR_END | Ripper::EXPR_LABEL
               # In the event that we're comparing identifiers, we're going to
@@ -592,7 +593,7 @@ module YARP
 
           if event == :on_heredoc_beg
             state = :heredoc_opened
-            heredocs << Heredoc.build(token, lex_state)
+            heredocs << Heredoc.build(token)
           end
         when :heredoc_opened
           heredocs.last << token
@@ -610,7 +611,7 @@ module YARP
             state = :default
           when :on_heredoc_beg
             state = :heredoc_opened
-            heredocs << Heredoc.build(token, lex_state)
+            heredocs << Heredoc.build(token)
           end
         end
       end

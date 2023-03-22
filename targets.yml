@@ -17,10 +17,7 @@ ruby:
     - test/ruby/enc/test_shift_jis.rb
     - test/ruby/test_mixed_unicode_escapes.rb
     - test/ruby/test_pattern_matching.rb
-    - test/ruby/test_string.rb
-    - tool/merger.rb
     - tool/rjit/bindgen.rb
-    - tool/sync_default_gems.rb
 
 rails:
   repo: https://github.com/rails/rails
