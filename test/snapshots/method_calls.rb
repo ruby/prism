@@ -1,6 +1,6 @@
-ProgramNode(0...878)(
+ProgramNode(0...944)(
   Scope(0...0)([]),
-  StatementsNode(0...878)(
+  StatementsNode(0...944)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1526,6 +1526,109 @@ ProgramNode(0...878)(
          (872...874),
          (875...878)
        ),
+       "foo"
+     ),
+     CallNode(880...883)(
+       nil,
+       nil,
+       IDENTIFIER(880...883)("foo"),
+       nil,
+       ArgumentsNode(884...908)(
+         [ClassNode(884...908)(
+            Scope(884...889)([]),
+            KEYWORD_CLASS(884...889)("class"),
+            ConstantReadNode(890...893)(),
+            nil,
+            nil,
+            StatementsNode(894...904)(
+              [CallNode(894...904)(
+                 nil,
+                 nil,
+                 IDENTIFIER(894...897)("baz"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(898...904)(
+                   Scope(898...900)([]),
+                   nil,
+                   nil,
+                   (898...900),
+                   (901...904)
+                 ),
+                 "baz"
+               )]
+            ),
+            KEYWORD_END(905...908)("end")
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
+     ),
+     CallNode(910...913)(
+       nil,
+       nil,
+       IDENTIFIER(910...913)("foo"),
+       nil,
+       ArgumentsNode(914...939)(
+         [ModuleNode(914...939)(
+            Scope(914...920)([]),
+            KEYWORD_MODULE(914...920)("module"),
+            ConstantReadNode(921...924)(),
+            StatementsNode(925...935)(
+              [CallNode(925...935)(
+                 nil,
+                 nil,
+                 IDENTIFIER(925...928)("baz"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(929...935)(
+                   Scope(929...931)([]),
+                   nil,
+                   nil,
+                   (929...931),
+                   (932...935)
+                 ),
+                 "baz"
+               )]
+            ),
+            KEYWORD_END(936...939)("end")
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
+     ),
+     CallNode(941...944)(
+       nil,
+       nil,
+       IDENTIFIER(941...944)("foo"),
+       nil,
+       ArgumentsNode(945...957)(
+         [ArrayNode(945...957)(
+            [CallNode(946...956)(
+               nil,
+               nil,
+               IDENTIFIER(946...949)("baz"),
+               nil,
+               nil,
+               nil,
+               BlockNode(950...956)(
+                 Scope(950...952)([]),
+                 nil,
+                 nil,
+                 (950...952),
+                 (953...956)
+               ),
+               "baz"
+             )],
+            BRACKET_LEFT_ARRAY(945...946)("["),
+            BRACKET_RIGHT(956...957)("]")
+          )]
+       ),
+       nil,
+       nil,
        "foo"
      )]
   )
