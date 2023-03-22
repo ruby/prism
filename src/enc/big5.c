@@ -1497,7 +1497,15 @@ big5_codepoint(const char *c, size_t *width) {
   }
 }
 
-__attribute__((__visibility__("default"))) extern size_t
+size_t
+yp_encoding_big5_char_width(const char *c) {
+  size_t width;
+  big5_codepoint(c, &width);
+
+  return width;
+}
+
+size_t
 yp_encoding_big5_alpha_char(const char *c) {
   size_t width;
   big5_codepoint_t codepoint = big5_codepoint(c, &width);
@@ -1505,7 +1513,7 @@ yp_encoding_big5_alpha_char(const char *c) {
   return big5_codepoint_match(codepoint, big5_alpha_codepoints, BIG5_ALPHA_CODEPOINTS_LENGTH) ? width : 0;
 }
 
-__attribute__((__visibility__("default"))) extern size_t
+size_t
 yp_encoding_big5_alnum_char(const char *c) {
   size_t width;
   big5_codepoint_t codepoint = big5_codepoint(c, &width);
@@ -1513,7 +1521,7 @@ yp_encoding_big5_alnum_char(const char *c) {
   return big5_codepoint_match(codepoint, big5_alnum_codepoints, BIG5_ALNUM_CODEPOINTS_LENGTH) ? width : 0;
 }
 
-__attribute__((__visibility__("default"))) extern bool
+bool
 yp_encoding_big5_isupper_char(const char *c) {
   size_t width;
   big5_codepoint_t codepoint = big5_codepoint(c, &width);

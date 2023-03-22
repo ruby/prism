@@ -1951,6 +1951,7 @@ terminator(const char start) {
 
 static yp_encoding_t yp_encoding_ascii = {
   .name = "ascii",
+  .char_width = yp_encoding_ascii_char_width,
   .alnum_char = yp_encoding_ascii_alnum_char,
   .alpha_char = yp_encoding_ascii_alpha_char,
   .isupper_char = yp_encoding_ascii_isupper_char
@@ -1958,6 +1959,7 @@ static yp_encoding_t yp_encoding_ascii = {
 
 static yp_encoding_t yp_encoding_ascii_8bit = {
   .name = "ascii-8bit",
+  .char_width = yp_encoding_ascii_8_bit_char_width,
   .alnum_char = yp_encoding_ascii_alnum_char,
   .alpha_char = yp_encoding_ascii_alpha_char,
   .isupper_char = yp_encoding_ascii_isupper_char,
@@ -1965,6 +1967,7 @@ static yp_encoding_t yp_encoding_ascii_8bit = {
 
 static yp_encoding_t yp_encoding_big5 = {
   .name = "big5",
+  .char_width = yp_encoding_big5_char_width,
   .alnum_char = yp_encoding_big5_alnum_char,
   .alpha_char = yp_encoding_big5_alpha_char,
   .isupper_char = yp_encoding_big5_isupper_char
@@ -1972,6 +1975,7 @@ static yp_encoding_t yp_encoding_big5 = {
 
 static yp_encoding_t yp_encoding_iso_8859_1 = {
   .name = "iso-8859-1",
+  .char_width = yp_encoding_iso_8859_1_char_width,
   .alnum_char = yp_encoding_iso_8859_1_alnum_char,
   .alpha_char = yp_encoding_iso_8859_1_alpha_char,
   .isupper_char = yp_encoding_iso_8859_1_isupper_char
@@ -1979,6 +1983,7 @@ static yp_encoding_t yp_encoding_iso_8859_1 = {
 
 static yp_encoding_t yp_encoding_iso_8859_2 = {
   .name = "iso-8859-2",
+  .char_width = yp_encoding_iso_8859_2_char_width,
   .alnum_char = yp_encoding_iso_8859_2_alnum_char,
   .alpha_char = yp_encoding_iso_8859_2_alpha_char,
   .isupper_char = yp_encoding_iso_8859_2_isupper_char
@@ -1986,6 +1991,7 @@ static yp_encoding_t yp_encoding_iso_8859_2 = {
 
 static yp_encoding_t yp_encoding_iso_8859_3 = {
   .name = "iso-8859-3",
+  .char_width = yp_encoding_iso_8859_3_char_width,
   .alnum_char = yp_encoding_iso_8859_3_alnum_char,
   .alpha_char = yp_encoding_iso_8859_3_alpha_char,
   .isupper_char = yp_encoding_iso_8859_3_isupper_char
@@ -1993,6 +1999,7 @@ static yp_encoding_t yp_encoding_iso_8859_3 = {
 
 static yp_encoding_t yp_encoding_iso_8859_4 = {
   .name = "iso-8859-4",
+  .char_width = yp_encoding_iso_8859_4_char_width,
   .alnum_char = yp_encoding_iso_8859_4_alnum_char,
   .alpha_char = yp_encoding_iso_8859_4_alpha_char,
   .isupper_char = yp_encoding_iso_8859_4_isupper_char
@@ -2000,6 +2007,7 @@ static yp_encoding_t yp_encoding_iso_8859_4 = {
 
 static yp_encoding_t yp_encoding_iso_8859_5 = {
   .name = "iso-8859-5",
+  .char_width = yp_encoding_iso_8859_5_char_width,
   .alnum_char = yp_encoding_iso_8859_5_alnum_char,
   .alpha_char = yp_encoding_iso_8859_5_alpha_char,
   .isupper_char = yp_encoding_iso_8859_5_isupper_char
@@ -2007,6 +2015,7 @@ static yp_encoding_t yp_encoding_iso_8859_5 = {
 
 static yp_encoding_t yp_encoding_iso_8859_6 = {
   .name = "iso-8859-6",
+  .char_width = yp_encoding_iso_8859_6_char_width,
   .alnum_char = yp_encoding_iso_8859_6_alnum_char,
   .alpha_char = yp_encoding_iso_8859_6_alpha_char,
   .isupper_char = yp_encoding_iso_8859_6_isupper_char
@@ -2014,6 +2023,7 @@ static yp_encoding_t yp_encoding_iso_8859_6 = {
 
 static yp_encoding_t yp_encoding_iso_8859_7 = {
   .name = "iso-8859-7",
+  .char_width = yp_encoding_iso_8859_7_char_width,
   .alnum_char = yp_encoding_iso_8859_7_alnum_char,
   .alpha_char = yp_encoding_iso_8859_7_alpha_char,
   .isupper_char = yp_encoding_iso_8859_7_isupper_char
@@ -2021,6 +2031,7 @@ static yp_encoding_t yp_encoding_iso_8859_7 = {
 
 static yp_encoding_t yp_encoding_iso_8859_8 = {
   .name = "iso-8859-8",
+  .char_width = yp_encoding_iso_8859_8_char_width,
   .alnum_char = yp_encoding_iso_8859_8_alnum_char,
   .alpha_char = yp_encoding_iso_8859_8_alpha_char,
   .isupper_char = yp_encoding_iso_8859_8_isupper_char
@@ -2028,6 +2039,7 @@ static yp_encoding_t yp_encoding_iso_8859_8 = {
 
 static yp_encoding_t yp_encoding_iso_8859_9 = {
   .name = "iso-8859-9",
+  .char_width = yp_encoding_iso_8859_9_char_width,
   .alnum_char = yp_encoding_iso_8859_9_alnum_char,
   .alpha_char = yp_encoding_iso_8859_9_alpha_char,
   .isupper_char = yp_encoding_iso_8859_9_isupper_char
@@ -2035,6 +2047,7 @@ static yp_encoding_t yp_encoding_iso_8859_9 = {
 
 static yp_encoding_t yp_encoding_iso_8859_10 = {
   .name = "iso-8859-10",
+  .char_width = yp_encoding_iso_8859_10_char_width,
   .alnum_char = yp_encoding_iso_8859_10_alnum_char,
   .alpha_char = yp_encoding_iso_8859_10_alpha_char,
   .isupper_char = yp_encoding_iso_8859_10_isupper_char
@@ -2042,6 +2055,7 @@ static yp_encoding_t yp_encoding_iso_8859_10 = {
 
 static yp_encoding_t yp_encoding_iso_8859_11 = {
   .name = "iso-8859-11",
+  .char_width = yp_encoding_iso_8859_11_char_width,
   .alnum_char = yp_encoding_iso_8859_11_alnum_char,
   .alpha_char = yp_encoding_iso_8859_11_alpha_char,
   .isupper_char = yp_encoding_iso_8859_11_isupper_char
@@ -2049,6 +2063,7 @@ static yp_encoding_t yp_encoding_iso_8859_11 = {
 
 static yp_encoding_t yp_encoding_iso_8859_13 = {
   .name = "iso-8859-13",
+  .char_width = yp_encoding_iso_8859_13_char_width,
   .alnum_char = yp_encoding_iso_8859_13_alnum_char,
   .alpha_char = yp_encoding_iso_8859_13_alpha_char,
   .isupper_char = yp_encoding_iso_8859_13_isupper_char
@@ -2056,6 +2071,7 @@ static yp_encoding_t yp_encoding_iso_8859_13 = {
 
 static yp_encoding_t yp_encoding_iso_8859_14 = {
   .name = "iso-8859-14",
+  .char_width = yp_encoding_iso_8859_14_char_width,
   .alnum_char = yp_encoding_iso_8859_14_alnum_char,
   .alpha_char = yp_encoding_iso_8859_14_alpha_char,
   .isupper_char = yp_encoding_iso_8859_14_isupper_char
@@ -2063,6 +2079,7 @@ static yp_encoding_t yp_encoding_iso_8859_14 = {
 
 static yp_encoding_t yp_encoding_iso_8859_15 = {
   .name = "iso-8859-15",
+  .char_width = yp_encoding_iso_8859_15_char_width,
   .alnum_char = yp_encoding_iso_8859_15_alnum_char,
   .alpha_char = yp_encoding_iso_8859_15_alpha_char,
   .isupper_char = yp_encoding_iso_8859_15_isupper_char
@@ -2070,6 +2087,7 @@ static yp_encoding_t yp_encoding_iso_8859_15 = {
 
 static yp_encoding_t yp_encoding_iso_8859_16 = {
   .name = "iso-8859-16",
+  .char_width = yp_encoding_iso_8859_16_char_width,
   .alnum_char = yp_encoding_iso_8859_16_alnum_char,
   .alpha_char = yp_encoding_iso_8859_16_alpha_char,
   .isupper_char = yp_encoding_iso_8859_16_isupper_char
@@ -2077,6 +2095,7 @@ static yp_encoding_t yp_encoding_iso_8859_16 = {
 
 static yp_encoding_t yp_encoding_utf_8 = {
   .name = "utf-8",
+  .char_width = yp_encoding_utf_8_char_width,
   .alnum_char = yp_encoding_utf_8_alnum_char,
   .alpha_char = yp_encoding_utf_8_alpha_char,
   .isupper_char = yp_encoding_utf_8_isupper_char
@@ -2084,6 +2103,7 @@ static yp_encoding_t yp_encoding_utf_8 = {
 
 static yp_encoding_t yp_encoding_windows_1251 = {
   .name = "windows-1251",
+  .char_width = yp_encoding_windows_1251_char_width,
   .alnum_char = yp_encoding_windows_1251_alnum_char,
   .alpha_char = yp_encoding_windows_1251_alpha_char,
   .isupper_char = yp_encoding_windows_1251_isupper_char
@@ -2091,6 +2111,7 @@ static yp_encoding_t yp_encoding_windows_1251 = {
 
 static yp_encoding_t yp_encoding_windows_1252 = {
   .name = "windows-1252",
+  .char_width = yp_encoding_windows_1252_char_width,
   .alnum_char = yp_encoding_windows_1252_alnum_char,
   .alpha_char = yp_encoding_windows_1252_alpha_char,
   .isupper_char = yp_encoding_windows_1252_isupper_char
@@ -2146,10 +2167,15 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
       return; \
     }
 
+    // Check most common first. (This is pretty arbitrary.)
+    ENCODING("utf-8", yp_encoding_utf_8);
     ENCODING("ascii", yp_encoding_ascii);
     ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
-    ENCODING("big5", yp_encoding_big5);
+    ENCODING("us-ascii", yp_encoding_ascii);
     ENCODING("binary", yp_encoding_ascii_8bit);
+
+    // Then check all the others.
+    ENCODING("big5", yp_encoding_big5);
     ENCODING("iso-8859-1", yp_encoding_iso_8859_1);
     ENCODING("iso-8859-2", yp_encoding_iso_8859_2);
     ENCODING("iso-8859-3", yp_encoding_iso_8859_3);
@@ -2165,8 +2191,6 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
     ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
     ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
-    ENCODING("us-ascii", yp_encoding_ascii);
-    ENCODING("utf-8", yp_encoding_utf_8);
     ENCODING("windows-1251", yp_encoding_windows_1251);
     ENCODING("windows-1252", yp_encoding_windows_1252);
 
@@ -2958,12 +2982,11 @@ lex_question_mark(yp_parser_t *parser) {
   lex_state_set(parser, YP_LEX_STATE_END);
 
   if (parser->current.start[1] == '\\') {
-    int difference = yp_unescape_calculate_difference(parser->current.start + 1, parser->end - parser->current.start + 1, YP_UNESCAPE_ALL, &parser->error_list);
-    parser->current.end += difference;
+    parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end - parser->current.start + 1, YP_UNESCAPE_ALL, &parser->error_list);
+  } else {
+    parser->current.end += parser->encoding.char_width(parser->current.end);
   }
-  else {
-    parser->current.end++;
-  }
+
   return YP_TOKEN_CHARACTER_LITERAL;
 }
 
