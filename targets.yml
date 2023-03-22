@@ -30,6 +30,3 @@ rails:
 discourse:
   repo: https://github.com/discourse/discourse
   sha: 964f37476dbbfb978bf99608a62d0da9ddf531fa
-  todos:
-    - app/controllers/admin/api_controller.rb
-    - app/controllers/composer_controller.rb

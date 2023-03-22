@@ -3207,28 +3207,25 @@ parser_lex(yp_parser_t *parser) {
             // callback with an ignored newline and then continue lexing.
             // Otherwise we'll return a regular newline.
             if (next_content[0] == '#') {
-              // Here we look for a '.' following a \n
-              const char *following = next_content;
+              // Here we look for a "." or "&." following a "\n".
+              const char *following = memchr(next_content, '\n', parser->end - next_content);
 
-              while (following < parser->end) {
-                if (following[0] == '\n') {
-                  following++;
-                  following += yp_strspn_inline_whitespace(following, parser->end - following);
-                  // If there's another comment, we want to continue searching
-                  // Otherwise, we break out of this loop because we've found
-                  // a non-space, non-'#' character, and we can check if it's
-                  // a '.'
-                  if (following[0] != '#') break;
-                }
-                else {
-                  following++;
-                }
+              while (following && (following < parser->end)) {
+                following++;
+                following += yp_strspn_inline_whitespace(following, parser->end - following);
+
+                // If this is not followed by a comment, then we can break out
+                // of this loop.
+                if (*following != '#') break;
+
+                // If there is a comment, then we need to find the end of the
+                // comment and continue searching from there.
+                following = memchr(following, '\n', parser->end - following);
               }
 
               // If the lex state was ignored, or we hit a '.' or a '&.',
               // we will lex the ignored newline
-              if (lex_state_ignored_p(parser) || following[0] == '.' ||
-		  (following + 1 < parser->end && following[0] == '&' && following[1] == '.')) {
+              if (lex_state_ignored_p(parser) || (following && ((following[0] == '.') || (following + 1 < parser->end && following[0] == '&' && following[1] == '.')))) {
                 if (!lexed_comment) parser_lex_ignored_newline(parser);
                 lexed_comment = false;
                 goto lex_next_token;
