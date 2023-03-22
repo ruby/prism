@@ -114,7 +114,7 @@ ProgramNode(0...434)(
      DefNode(104...117)(
        PLUS(108...109)("+"),
        nil,
-       ParametersNode(?...?)(
+       ParametersNode(110...113)(
          [],
          [],
          nil,

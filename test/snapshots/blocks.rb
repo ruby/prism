@@ -449,8 +449,8 @@ ProgramNode(0...402)(
             IDENTIFIER(263...264)("y"),
             LABEL(270...271)("z")]
          ),
-         BlockParametersNode(270...272)(
-           ParametersNode(270...272)(
+         BlockParametersNode(260...272)(
+           ParametersNode(260...272)(
              [RequiredParameterNode(260...261)(IDENTIFIER(260...261)("x"))],
              [OptionalParameterNode(263...268)(
                 IDENTIFIER(263...264)("y"),
@@ -640,8 +640,8 @@ ProgramNode(0...402)(
        nil,
        BlockNode(389...402)(
          Scope(389...391)([IDENTIFIER(393...396)("bar")]),
-         BlockParametersNode(393...396)(
-           ParametersNode(393...396)(
+         BlockParametersNode(393...397)(
+           ParametersNode(393...397)(
              [RequiredParameterNode(393...396)(IDENTIFIER(393...396)("bar"))],
              [],
              RestParameterNode(396...397)(COMMA(396...397)(","), nil),

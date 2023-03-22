@@ -122,7 +122,7 @@ ProgramNode(4...241)(
           )]
        )
      ),
-     LambdaNode(113...127)(
+     LambdaNode(103...127)(
        Scope(100...102)(
          [IDENTIFIER(103...104)("a"),
           IDENTIFIER(106...107)("b"),
@@ -131,8 +131,8 @@ ProgramNode(4...241)(
           IDENTIFIER(122...123)("e")]
        ),
        nil,
-       BlockParametersNode(113...119)(
-         ParametersNode(113...119)(
+       BlockParametersNode(103...123)(
+         ParametersNode(103...123)(
            [RequiredParameterNode(103...104)(IDENTIFIER(103...104)("a"))],
            [OptionalParameterNode(106...111)(
               IDENTIFIER(106...107)("b"),
@@ -155,7 +155,7 @@ ProgramNode(4...241)(
          [LocalVariableReadNode(126...127)(IDENTIFIER(126...127)("a"))]
        )
      ),
-     LambdaNode(149...169)(
+     LambdaNode(135...169)(
        Scope(131...133)(
          [IDENTIFIER(135...136)("a"),
           IDENTIFIER(138...139)("b"),
@@ -166,8 +166,8 @@ ProgramNode(4...241)(
           IDENTIFIER(163...164)("g")]
        ),
        PARENTHESIS_LEFT(134...135)("("),
-       BlockParametersNode(149...155)(
-         ParametersNode(149...155)(
+       BlockParametersNode(135...164)(
+         ParametersNode(135...164)(
            [RequiredParameterNode(135...136)(IDENTIFIER(135...136)("a"))],
            [OptionalParameterNode(138...143)(
               IDENTIFIER(138...139)("b"),
@@ -196,7 +196,7 @@ ProgramNode(4...241)(
          [LocalVariableReadNode(168...169)(IDENTIFIER(168...169)("a"))]
        )
      ),
-     LambdaNode(191...214)(
+     LambdaNode(177...214)(
        Scope(173...175)(
          [IDENTIFIER(177...178)("a"),
           IDENTIFIER(180...181)("b"),
@@ -207,8 +207,8 @@ ProgramNode(4...241)(
           IDENTIFIER(205...206)("g")]
        ),
        PARENTHESIS_LEFT(176...177)("("),
-       BlockParametersNode(191...197)(
-         ParametersNode(191...197)(
+       BlockParametersNode(177...206)(
+         ParametersNode(177...206)(
            [RequiredParameterNode(177...178)(IDENTIFIER(177...178)("a"))],
            [OptionalParameterNode(180...185)(
               IDENTIFIER(180...181)("b"),

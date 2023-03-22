@@ -1345,6 +1345,94 @@ yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operat
   return node;
 }
 
+// Allocate and initialize a new ParametersNode node.
+static yp_node_t *
+yp_parameters_node_create(yp_parser_t *parser) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_PARAMETERS_NODE,
+    .location = { .start = NULL, .end = NULL },
+    .as.parameters_node = {
+      .rest = NULL,
+      .keyword_rest = NULL,
+      .block = NULL
+    }
+  };
+
+  yp_node_list_init(&node->as.parameters_node.requireds);
+  yp_node_list_init(&node->as.parameters_node.optionals);
+  yp_node_list_init(&node->as.parameters_node.keywords);
+
+  return node;
+}
+
+// Set the location properly for the parameters node.
+static void
+yp_parameters_node_location_set(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+
+  if (params->location.start == NULL) {
+    params->location.start = param->location.start;
+  } else {
+    params->location.start = params->location.start < param->location.start ? params->location.start : param->location.start;
+  }
+
+  if (params->location.end == NULL) {
+    params->location.end = param->location.end;
+  } else {
+    params->location.end = params->location.end > param->location.end ? params->location.end : param->location.end;
+  }
+}
+
+// Append a required parameter to a ParametersNode node.
+static void
+yp_parameters_node_requireds_append(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+  yp_parameters_node_location_set(params, param);
+  yp_node_list_append2(&params->as.parameters_node.requireds, param);
+}
+
+// Append an optional parameter to a ParametersNode node.
+static void
+yp_parameters_node_optionals_append(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+  yp_parameters_node_location_set(params, param);
+  yp_node_list_append2(&params->as.parameters_node.optionals, param);
+}
+
+// Set the rest parameter on a ParametersNode node.
+static void
+yp_parameters_node_rest_set(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+  yp_parameters_node_location_set(params, param);
+  params->as.parameters_node.rest = param;
+}
+
+// Append a keyword parameter to a ParametersNode node.
+static void
+yp_parameters_node_keywords_append(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+  yp_parameters_node_location_set(params, param);
+  yp_node_list_append2(&params->as.parameters_node.keywords, param);
+}
+
+// Set the keyword rest parameter on a ParametersNode node.
+static void
+yp_parameters_node_keyword_rest_set(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+  yp_parameters_node_location_set(params, param);
+  params->as.parameters_node.keyword_rest = param;
+}
+
+// Set the block parameter on a ParametersNode node.
+static void
+yp_parameters_node_block_set(yp_node_t *params, yp_node_t *param) {
+  assert(params->type == YP_NODE_PARAMETERS_NODE);
+  yp_parameters_node_location_set(params, param);
+  params->as.parameters_node.block = param;
+}
+
 // Allocate and initialize new ParenthesesNode node.
 static yp_node_t *
 yp_parentheses_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
@@ -5552,13 +5640,13 @@ parse_parameters(
   bool uses_parentheses,
   bool allows_trailing_comma
 ) {
-  yp_node_t *params = yp_node_parameters_node_create(parser, NULL, NULL, NULL);
+  yp_node_t *params = yp_parameters_node_create(parser);
 
   do {
     switch (parser->current.type) {
       case YP_TOKEN_PARENTHESIS_LEFT: {
         yp_node_t *param = parse_required_destructured_parameter(parser);
-        yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
+        yp_parameters_node_requireds_append(params, param);
         break;
       }
       case YP_TOKEN_AMPERSAND: {
@@ -5575,7 +5663,7 @@ parse_parameters(
         }
 
         yp_node_t *param = yp_block_parameter_node_create(parser, &name, &operator);
-        params->as.parameters_node.block = param;
+        yp_parameters_node_block_set(params, param);
         break;
       }
       case YP_TOKEN_UDOT_DOT_DOT: {
@@ -5583,7 +5671,7 @@ parse_parameters(
 
         yp_parser_local_add(parser, &parser->previous);
         yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
-        params->as.parameters_node.keyword_rest = param;
+        yp_parameters_node_keyword_rest_set(params, param);
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
@@ -5597,7 +5685,7 @@ parse_parameters(
           yp_node_t *value = parse_expression(parser, binding_power, "Expected to find a default value for the parameter.");
 
           yp_node_t *param = yp_node_optional_parameter_node_create(parser, &name, &operator, value);
-          yp_node_list_append(parser, params, &params->as.parameters_node.optionals, param);
+          yp_parameters_node_optionals_append(params, param);
 
           // If parsing the value of the parameter resulted in error recovery,
           // then we can put a missing node in its place and stop parsing the
@@ -5605,7 +5693,7 @@ parse_parameters(
           if (parser->recovering) return params;
         } else {
           yp_node_t *param = yp_node_required_parameter_node_create(parser, &name);
-          yp_node_list_append(parser, params, &params->as.parameters_node.requireds, param);
+          yp_parameters_node_requireds_append(params, param);
         }
 
         break;
@@ -5623,7 +5711,7 @@ parse_parameters(
           case YP_TOKEN_PARENTHESIS_RIGHT:
           case YP_TOKEN_PIPE: {
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
-            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+            yp_parameters_node_keywords_append(params, param);
             break;
           }
           case YP_TOKEN_SEMICOLON:
@@ -5633,7 +5721,7 @@ parse_parameters(
             }
 
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
-            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+            yp_parameters_node_keywords_append(params, param);
             break;
           }
           default: {
@@ -5643,7 +5731,7 @@ parse_parameters(
             }
 
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, value);
-            yp_node_list_append(parser, params, &params->as.parameters_node.keywords, param);
+            yp_parameters_node_keywords_append(params, param);
 
             // If parsing the value of the parameter resulted in error recovery,
             // then we can put a missing node in its place and stop parsing the
@@ -5670,7 +5758,7 @@ parse_parameters(
         }
 
         yp_node_t *param = yp_node_rest_parameter_node_create(parser, &operator, &name);
-        params->as.parameters_node.rest = param;
+        yp_parameters_node_rest_set(params, param);
         break;
       }
       case YP_TOKEN_STAR_STAR: {
@@ -5694,7 +5782,7 @@ parse_parameters(
           param = yp_node_keyword_rest_parameter_node_create(parser, &operator, &name);
         }
 
-        params->as.parameters_node.keyword_rest = param;
+        yp_parameters_node_keyword_rest_set(params, param);
         break;
       }
       case YP_TOKEN_CONSTANT:
@@ -5716,15 +5804,17 @@ parse_parameters(
       default:
         if (parser->previous.type == YP_TOKEN_COMMA) {
           if (allows_trailing_comma) {
-            // If we get here, then we have a trailing comma in a block parameter list.
-            // We need to create an anonymous rest parameter to represent it.
+            // If we get here, then we have a trailing comma in a block
+            // parameter list. We need to create an anonymous rest parameter to
+            // represent it.
             yp_token_t name = not_provided(parser);
             yp_node_t *param = yp_node_rest_parameter_node_create(parser, &parser->previous, &name);
-            params->as.parameters_node.rest = param;
+            yp_parameters_node_rest_set(params, param);
           } else {
             yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected ','.");
           }
         }
+
         return params;
     }
 

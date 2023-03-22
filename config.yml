@@ -1175,7 +1175,6 @@ nodes:
         type: node?
       - name: block
         type: node?
-    location: requireds->block|keyword_rest|keywords
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
