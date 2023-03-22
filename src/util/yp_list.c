@@ -1,4 +1,4 @@
-#include "yp_list.h"
+#include "util/yp_list.h"
 
 // Allocate a new list.
 yp_list_t *

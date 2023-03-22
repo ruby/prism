@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#include <util/yp_string.h>
+#include "util/yp_string.h"
 
 typedef struct {
   yp_string_t *strings;
