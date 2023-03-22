@@ -605,7 +605,7 @@ nodes:
       - name: receiver
         type: node?
       - name: parameters
-        type: node
+        type: node?
       - name: statements
         type: node
       - name: scope
@@ -958,15 +958,17 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+      - name: opening
+        type: token
       - name: lparen
         type: token?
       - name: parameters
-        type: node
+        type: node?
       - name: rparen
         type: token?
       - name: statements
         type: node
-    location: parameters->statements|lparen->statements
+    location: opening->statements
     comment: |
       Represents using a lambda literal (not the lambda method call).
 
@@ -1175,7 +1177,6 @@ nodes:
         type: node?
       - name: block
         type: node?
-    location: requireds->block|keyword_rest|keywords
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 

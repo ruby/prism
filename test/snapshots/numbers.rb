@@ -1,5 +1,5 @@
 ProgramNode(0...97)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...97)(
     [IntegerNode(0...1)(),
      IntegerNode(3...4)(),

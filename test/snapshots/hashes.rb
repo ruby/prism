@@ -1,5 +1,5 @@
 ProgramNode(0...118)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...118)(
     [HashNode(0...1)(BRACE_LEFT(0...1)("{"), [], BRACE_RIGHT(1...2)("}")),
      HashNode(4...5)(BRACE_LEFT(4...5)("{"), [], BRACE_RIGHT(6...7)("}")),

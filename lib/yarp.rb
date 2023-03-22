@@ -15,7 +15,7 @@ module YARP
     end
 
     def pretty_print(q)
-      q.text("(#{start_offset || '?'}...#{end_offset || '?'})")
+      q.text("(#{start_offset}...#{end_offset})")
     end
 
     def ==(other)
