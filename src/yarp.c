@@ -1776,6 +1776,26 @@ token_is_numbered_parameter(yp_token_t *token) {
 }
 
 /******************************************************************************/
+/* Stack helpers                                                              */
+/******************************************************************************/
+
+static inline void
+yp_accepts_block_stack_push(yp_parser_t *parser, bool value) {
+  // Use the negation of the value to prevent stack overflow.
+  yp_state_stack_push(&parser->accepts_block_stack, !value);
+}
+
+static inline void
+yp_accepts_block_stack_pop(yp_parser_t *parser) {
+  yp_state_stack_pop(&parser->accepts_block_stack);
+}
+
+static inline bool
+yp_accepts_block_stack_p(yp_parser_t *parser) {
+  return !yp_state_stack_p(&parser->accepts_block_stack);
+}
+
+/******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
 
@@ -5866,7 +5886,7 @@ parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
 
-  yp_state_stack_push(&parser->accepts_block_stack, true);
+  yp_accepts_block_stack_push(parser, true);
   yp_parser_scope_push(parser, false);
   yp_node_t *parameters = NULL;
 
@@ -5902,7 +5922,7 @@ parse_block(yp_parser_t *parser) {
 
   yp_node_t *scope = parser->current_scope->node;
   yp_parser_scope_pop(parser);
-  yp_state_stack_pop(&parser->accepts_block_stack);
+  yp_accepts_block_stack_pop(parser);
   return yp_block_node_create(parser, scope, &opening, parameters, statements, &parser->previous);
 }
 
@@ -5918,15 +5938,15 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     } else {
       arguments->arguments = yp_arguments_node_create(parser);
 
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_accepts_block_stack_push(parser, true);
       parse_arguments(parser, arguments->arguments, true, YP_TOKEN_PARENTHESIS_RIGHT);
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ')' to close the argument list.");
-      yp_state_stack_pop(&parser->accepts_block_stack);
+      yp_accepts_block_stack_pop(parser);
 
       arguments->closing = parser->previous;
     }
   } else if ((token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR)) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
-    yp_state_stack_push(&parser->accepts_block_stack, false);
+    yp_accepts_block_stack_push(parser, false);
 
     // If we get here, then the subsequent token cannot be used as an infix
     // operator. In this case we assume the subsequent token is part of an
@@ -5934,7 +5954,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     arguments->arguments = yp_arguments_node_create(parser);
     parse_arguments(parser, arguments->arguments, true, YP_TOKEN_EOF);
 
-    yp_state_stack_pop(&parser->accepts_block_stack);
+    yp_accepts_block_stack_pop(parser);
   }
 
   // If we're at the end of the arguments, we can now check if there is a block
@@ -5943,7 +5963,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
   if (accepts_block) {
     if (accept(parser, YP_TOKEN_BRACE_LEFT)) {
       arguments->block = parse_block(parser);
-    } else if (yp_state_stack_p(&parser->accepts_block_stack) && accept(parser, YP_TOKEN_KEYWORD_DO)) {
+    } else if (yp_accepts_block_stack_p(parser) && accept(parser, YP_TOKEN_KEYWORD_DO)) {
       arguments->block = parse_block(parser);
     }
   }
@@ -6101,12 +6121,12 @@ parse_string_part(yp_parser_t *parser) {
 
       parser->brace_nesting = 0;
       lex_state_set(parser, YP_LEX_STATE_BEG);
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_accepts_block_stack_push(parser, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_EMBEXPR);
-      yp_state_stack_pop(&parser->accepts_block_stack);
+      yp_accepts_block_stack_pop(parser);
 
       parser->brace_nesting = brace_nesting;
       lex_state_set(parser, state);
@@ -6627,14 +6647,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       // Otherwise, we're going to parse the first statement in the list of
       // statements within the parentheses.
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_accepts_block_stack_push(parser, true);
       yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
       while (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
 
       // If we hit a right parenthesis, then we're done parsing the parentheses
       // node, and we can check which kind of node we should return.
       if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-        yp_state_stack_pop(&parser->accepts_block_stack);
+        yp_accepts_block_stack_pop(parser);
 
         // If we have a single statement and are ending on a right parenthesis,
         // then we need to check if this is possibly a multiple assignment node.
@@ -6684,13 +6704,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       context_pop(parser);
-      yp_state_stack_pop(&parser->accepts_block_stack);
+      yp_accepts_block_stack_pop(parser);
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
 
       return yp_parentheses_node_create(parser, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_BRACE_LEFT: {
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_accepts_block_stack_push(parser, true);
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
@@ -6701,7 +6721,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         accept(parser, YP_TOKEN_NEWLINE);
       }
 
-      yp_state_stack_pop(&parser->accepts_block_stack);
+      yp_accepts_block_stack_pop(parser);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
       node->as.hash_node.closing = parser->previous;
 
@@ -6741,7 +6761,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (
         match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
         (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR))) ||
-        (yp_state_stack_p(&parser->accepts_block_stack) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
+        (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);
@@ -6805,7 +6825,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // then this is in fact a method call, not a local read.
       if (
         (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR))) ||
-        (yp_state_stack_p(&parser->accepts_block_stack) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
+        (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);
@@ -7490,14 +7510,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         context_pop(parser);
       } else {
-        yp_state_stack_push(&parser->accepts_block_stack, true);
+        yp_accepts_block_stack_push(parser, true);
         statements = parse_statements(parser, YP_CONTEXT_DEF);
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
           statements = parse_rescues_as_begin(parser, statements);
         }
 
-        yp_state_stack_pop(&parser->accepts_block_stack);
+        yp_accepts_block_stack_pop(parser);
       }
 
       yp_token_t end_keyword;
@@ -8208,7 +8228,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_MINUS_GREATER: {
       parser->lambda_enclosure_nesting = parser->enclosure_nesting;
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_accepts_block_stack_push(parser, true);
 
       parser_lex(parser);
       yp_token_t lparen;
@@ -8249,7 +8269,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
-      yp_state_stack_pop(&parser->accepts_block_stack);
+      yp_accepts_block_stack_pop(parser);
       return yp_node_lambda_node_create(parser, scope, &lparen, parameters, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
@@ -8817,7 +8837,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       return yp_node_rescue_modifier_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_BRACKET_LEFT: {
-      yp_state_stack_push(&parser->accepts_block_stack, true);
+      yp_accepts_block_stack_push(parser, true);
       parser_lex(parser);
 
       yp_arguments_t arguments = yp_arguments(parser);
@@ -8825,7 +8845,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       arguments.arguments = yp_arguments_node_create(parser);
 
       parse_arguments(parser, arguments.arguments, false, YP_TOKEN_BRACKET_RIGHT);
-      yp_state_stack_pop(&parser->accepts_block_stack);
+      yp_accepts_block_stack_pop(parser);
 
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected ']' to close the bracket expression.");
       arguments.closing = parser->previous;
@@ -8842,7 +8862,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       // add it to the arguments.
       if (accept(parser, YP_TOKEN_BRACE_LEFT)) {
         arguments.block = parse_block(parser);
-      } else if (yp_state_stack_p(&parser->accepts_block_stack) && accept(parser, YP_TOKEN_KEYWORD_DO)) {
+      } else if (yp_accepts_block_stack_p(parser) && accept(parser, YP_TOKEN_KEYWORD_DO)) {
         arguments.block = parse_block(parser);
       }
 
@@ -8962,7 +8982,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
 
   yp_state_stack_init(&parser->do_loop_stack);
   yp_state_stack_init(&parser->accepts_block_stack);
-  yp_state_stack_push(&parser->accepts_block_stack, true);
+  yp_accepts_block_stack_push(parser, true);
 
   yp_list_init(&parser->warning_list);
   yp_list_init(&parser->error_list);
