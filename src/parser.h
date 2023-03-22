@@ -232,6 +232,7 @@ typedef struct yp_comment {
 // invalid for the encoding and type.
 typedef struct {
   const char *name;
+  size_t (*char_width)(const char *c);
   size_t (*alpha_char)(const char *c);
   size_t (*alnum_char)(const char *c);
   bool (*isupper_char)(const char *c);

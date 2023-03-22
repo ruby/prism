@@ -2203,7 +2203,16 @@ utf_8_codepoint(const unsigned char *c, size_t *width) {
   return 0;
 }
 
-__attribute__((__visibility__("default"))) extern size_t
+size_t
+yp_encoding_utf_8_char_width(const char *c) {
+  size_t width;
+  const unsigned char *uc = (const unsigned char *) c;
+
+  utf_8_codepoint(uc, &width);
+  return width;
+}
+
+size_t
 yp_encoding_utf_8_alpha_char(const char *c) {
   size_t width;
   const unsigned char *uc = (const unsigned char *) c;
@@ -2212,7 +2221,7 @@ yp_encoding_utf_8_alpha_char(const char *c) {
   return (codepoint && unicode_codepoint_match(codepoint, unicode_alpha_codepoints, UNICODE_ALPHA_CODEPOINTS_LENGTH)) ? width : 0;
 }
 
-__attribute__((__visibility__("default"))) extern size_t
+size_t
 yp_encoding_utf_8_alnum_char(const char *c) {
   size_t width;
   const unsigned char *uc = (const unsigned char *) c;
@@ -2221,7 +2230,7 @@ yp_encoding_utf_8_alnum_char(const char *c) {
   return (codepoint && unicode_codepoint_match(codepoint, unicode_alnum_codepoints, UNICODE_ALNUM_CODEPOINTS_LENGTH)) ? width : 0;
 }
 
-__attribute__((__visibility__("default"))) extern bool
+bool
 yp_encoding_utf_8_isupper_char(const char *c) {
   size_t width;
   const unsigned char *uc = (const unsigned char *) c;
