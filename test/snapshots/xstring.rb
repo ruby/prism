@@ -1,5 +1,5 @@
 ProgramNode(0...40)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...40)(
     [XStringNode(0...7)(
        PERCENT_LOWER_X(0...3)("%x["),

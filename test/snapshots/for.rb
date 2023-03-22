@@ -1,5 +1,5 @@
 ProgramNode(0...143)(
-  Scope(?...?)(
+  Scope(0...0)(
     [IDENTIFIER(4...5)("i"),
      IDENTIFIER(52...53)("j"),
      IDENTIFIER(78...79)("k")]

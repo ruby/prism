@@ -1,5 +1,5 @@
 ProgramNode(0...578)(
-  Scope(?...?)([IDENTIFIER(207...209)("ex")]),
+  Scope(0...0)([IDENTIFIER(207...209)("ex")]),
   StatementsNode(0...578)(
     [BeginNode(0...33)(
        KEYWORD_BEGIN(0...5)("begin"),

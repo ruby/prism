@@ -1,5 +1,5 @@
 ProgramNode(0...51)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...51)(
     [RedoNode(0...4)(),
      RetryNode(6...11)(),
