@@ -18,3 +18,9 @@ case
 when foo == bar
 end
 
+case
+when a
+else
+  # empty
+end
+

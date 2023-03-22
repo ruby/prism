@@ -74,12 +74,16 @@ ProgramNode(0...155)(
          "foo"
        ),
        KEYWORD_RESCUE_MODIFIER(111...117)("rescue"),
-       TernaryNode(118...129)(
-         NilNode(118...121)(),
+       IfNode(122...129)(
          QUESTION_MARK(122...123)("?"),
+         NilNode(118...121)(),
          IntegerNode(124...125)(),
-         COLON(126...127)(":"),
-         IntegerNode(128...129)()
+         ElseNode(126...129)(
+           COLON(126...127)(":"),
+           IntegerNode(128...129)(),
+           nil
+         ),
+         nil
        )
      ),
      BeginNode(131...155)(

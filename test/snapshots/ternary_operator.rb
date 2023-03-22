@@ -1,7 +1,8 @@
-ProgramNode(0...38)(
+ProgramNode(2...38)(
   Scope(0...0)([]),
-  StatementsNode(0...38)(
-    [TernaryNode(0...9)(
+  StatementsNode(2...38)(
+    [IfNode(2...9)(
+       QUESTION_MARK(2...3)("?"),
        CallNode(0...1)(
          nil,
          nil,
@@ -12,7 +13,6 @@ ProgramNode(0...38)(
          nil,
          "a"
        ),
-       QUESTION_MARK(2...3)("?"),
        CallNode(4...5)(
          nil,
          nil,
@@ -23,19 +23,24 @@ ProgramNode(0...38)(
          nil,
          "b"
        ),
-       COLON(6...7)(":"),
-       CallNode(8...9)(
-         nil,
-         nil,
-         IDENTIFIER(8...9)("c"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "c"
-       )
+       ElseNode(6...9)(
+         COLON(6...7)(":"),
+         CallNode(8...9)(
+           nil,
+           nil,
+           IDENTIFIER(8...9)("c"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "c"
+         ),
+         nil
+       ),
+       nil
      ),
-     TernaryNode(11...38)(
+     IfNode(13...38)(
+       QUESTION_MARK(13...14)("?"),
        CallNode(11...12)(
          nil,
          nil,
@@ -46,7 +51,6 @@ ProgramNode(0...38)(
          nil,
          "a"
        ),
-       QUESTION_MARK(13...14)("?"),
        DefinedNode(15...25)(
          nil,
          CallNode(24...25)(
@@ -62,22 +66,26 @@ ProgramNode(0...38)(
          nil,
          (15...23)
        ),
-       COLON(26...27)(":"),
-       DefinedNode(28...38)(
-         nil,
-         CallNode(37...38)(
+       ElseNode(26...38)(
+         COLON(26...27)(":"),
+         DefinedNode(28...38)(
            nil,
+           CallNode(37...38)(
+             nil,
+             nil,
+             IDENTIFIER(37...38)("c"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "c"
+           ),
            nil,
-           IDENTIFIER(37...38)("c"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "c"
+           (28...36)
          ),
-         nil,
-         (28...36)
-       )
+         nil
+       ),
+       nil
      )]
   )
 )

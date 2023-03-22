@@ -1,6 +1,6 @@
-ProgramNode(0...198)(
+ProgramNode(0...230)(
   Scope(0...0)([]),
-  StatementsNode(0...198)(
+  StatementsNode(0...230)(
     [CaseNode(0...21)(
        SymbolNode(5...8)(
          SYMBOL_BEGIN(5...6)(":"),
@@ -188,6 +188,30 @@ ProgramNode(0...198)(
        nil,
        (174...178),
        (195...198)
+     ),
+     CaseNode(200...230)(
+       nil,
+       [WhenNode(210...211)(
+          KEYWORD_WHEN(205...209)("when"),
+          [CallNode(210...211)(
+             nil,
+             nil,
+             IDENTIFIER(210...211)("a"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "a"
+           )],
+          nil
+        )],
+       ElseNode(212...230)(
+         KEYWORD_ELSE(212...216)("else"),
+         nil,
+         KEYWORD_END(227...230)("end")
+       ),
+       (200...204),
+       (227...230)
      )]
   )
 )

@@ -714,7 +714,11 @@ nodes:
       - name: statements
         type: node?
       - name: end_keyword
+<<<<<<< HEAD
         type: token
+=======
+        type: token?
+>>>>>>> 6daf55f (Remove TernaryNode in place of IfNode)
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
@@ -1622,23 +1626,6 @@ nodes:
 
           %i[foo]
              ^^^
-  - name: TernaryNode
-    child_nodes:
-      - name: predicate
-        type: node
-      - name: question_mark
-        type: token
-      - name: true_expression
-        type: node
-      - name: colon
-        type: token
-      - name: false_expression
-        type: node
-    comment: |
-      Represents the use of the ternary operators.
-
-          foo ? bar : baz
-          ^^^^^^^^^^^^^^^
   - name: TrueNode
     comment: |
       Represents the use of the literal `true` keyword.
