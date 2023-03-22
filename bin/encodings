@@ -132,3 +132,7 @@ lists("shift_jis", (0...0x10000), Encoding::Shift_JIS)
 puts "\nEUC-JP"
 puts "=========="
 lists("euc-jp", (0...0x10000), Encoding::EUC_JP)
+
+puts "\nWindows-31J"
+puts "=========="
+lists("windows-31j", (0...0x10000), Encoding::Windows_31J)

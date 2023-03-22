@@ -27,6 +27,7 @@ class EncodingTest < Test::Unit::TestCase
     shift_jis
     us-ascii
     utf-8
+    windows-31j
     windows-1251
     windows-1252
   ].each do |encoding|

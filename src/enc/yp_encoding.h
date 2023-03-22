@@ -333,6 +333,22 @@ bool
 yp_encoding_utf_8_isupper_char(const char *c);
 
 /******************************************************************************/
+/* Windows-31J                                                                */
+/******************************************************************************/
+
+size_t
+yp_encoding_windows_31j_char_width(const char *c);
+
+size_t
+yp_encoding_windows_31j_alpha_char(const char *c);
+
+size_t
+yp_encoding_windows_31j_alnum_char(const char *c);
+
+bool
+yp_encoding_windows_31j_isupper_char(const char *c);
+
+/******************************************************************************/
 /* Windows-1251                                                               */
 /******************************************************************************/
 

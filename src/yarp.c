@@ -2117,6 +2117,14 @@ static yp_encoding_t yp_encoding_utf_8 = {
   .isupper_char = yp_encoding_utf_8_isupper_char
 };
 
+static yp_encoding_t yp_encoding_windows_31j = {
+  .name = "windows-31j",
+  .char_width = yp_encoding_windows_31j_char_width,
+  .alnum_char = yp_encoding_windows_31j_alnum_char,
+  .alpha_char = yp_encoding_windows_31j_alpha_char,
+  .isupper_char = yp_encoding_windows_31j_isupper_char
+};
+
 static yp_encoding_t yp_encoding_windows_1251 = {
   .name = "windows-1251",
   .char_width = yp_encoding_windows_1251_char_width,
@@ -2209,8 +2217,10 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
     ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
     ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
+    ENCODING("windows-31j", yp_encoding_windows_31j);
     ENCODING("windows-1251", yp_encoding_windows_1251);
     ENCODING("windows-1252", yp_encoding_windows_1252);
+    ENCODING("cp932", yp_encoding_windows_31j);
 
 #undef ENCODING
 
