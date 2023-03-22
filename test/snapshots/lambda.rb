@@ -17,6 +17,51 @@ ProgramNode(6...0)(
        ),
        PARENTHESIS_RIGHT(10...11)(")"),
        StatementsNode(0...0)([])
+     ),
+     LambdaNode(19...0)(
+       Scope(?...?)([LABEL(19...20)("x")]),
+       PARENTHESIS_LEFT(18...19)("("),
+       BlockParametersNode(19...21)(
+         ParametersNode(19...21)(
+           [],
+           [],
+           nil,
+           [KeywordParameterNode(19...21)(
+              LABEL(19...21)("x:"),
+              InterpolatedStringNode(22...29)(
+                STRING_BEGIN(22...23)("\""),
+                [StringNode(23...24)(
+                   nil,
+                   STRING_CONTENT(23...24)("b"),
+                   nil,
+                   "b"
+                 ),
+                 StringInterpolatedNode(24...28)(
+                   EMBEXPR_BEGIN(24...26)("\#{"),
+                   StatementsNode(26...27)(
+                     [CallNode(26...27)(
+                        nil,
+                        nil,
+                        IDENTIFIER(26...27)("a"),
+                        nil,
+                        nil,
+                        nil,
+                        nil,
+                        "a"
+                      )]
+                   ),
+                   EMBEXPR_END(27...28)("}")
+                 )],
+                STRING_END(28...29)("\"")
+              )
+            )],
+           nil,
+           nil
+         ),
+         []
+       ),
+       PARENTHESIS_RIGHT(29...30)(")"),
+       StatementsNode(0...0)([])
      )]
   )
 )

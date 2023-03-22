@@ -2772,6 +2772,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // already consumed content, then we need to return that content as string
       // content first.
       if (pound > parser->current.start) {
+        parser->enclosure_nesting--;
         parser->current.end = pound;
         return YP_TOKEN_STRING_CONTENT;
       }
