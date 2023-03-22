@@ -19,8 +19,9 @@ ProgramNode(0...0)(
        PARENTHESIS_RIGHT(10...11)(")"),
        StatementsNode(0...0)([])
      ),
-     LambdaNode(19...0)(
-       Scope(?...?)([LABEL(19...20)("x")]),
+     LambdaNode(16...0)(
+       Scope(16...18)([LABEL(19...20)("x")]),
+       MINUS_GREATER(16...18)("->"),
        PARENTHESIS_LEFT(18...19)("("),
        BlockParametersNode(19...21)(
          ParametersNode(19...21)(
