@@ -2093,6 +2093,14 @@ static yp_encoding_t yp_encoding_iso_8859_16 = {
   .isupper_char = yp_encoding_iso_8859_16_isupper_char
 };
 
+static yp_encoding_t yp_encoding_shift_jis = {
+  .name = "shift_jis",
+  .char_width = yp_encoding_shift_jis_char_width,
+  .alnum_char = yp_encoding_shift_jis_alnum_char,
+  .alpha_char = yp_encoding_shift_jis_alpha_char,
+  .isupper_char = yp_encoding_shift_jis_isupper_char
+};
+
 static yp_encoding_t yp_encoding_utf_8 = {
   .name = "utf-8",
   .char_width = yp_encoding_utf_8_char_width,
@@ -2173,6 +2181,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
     ENCODING("us-ascii", yp_encoding_ascii);
     ENCODING("binary", yp_encoding_ascii_8bit);
+    ENCODING("shift_jis", yp_encoding_shift_jis);
 
     // Then check all the others.
     ENCODING("big5", yp_encoding_big5);

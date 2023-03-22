@@ -285,6 +285,22 @@ bool
 yp_encoding_iso_8859_16_isupper_char(const char *c);
 
 /******************************************************************************/
+/* Shift-JIS                                                                  */
+/******************************************************************************/
+
+size_t
+yp_encoding_shift_jis_char_width(const char *c);
+
+size_t
+yp_encoding_shift_jis_alpha_char(const char *c);
+
+size_t
+yp_encoding_shift_jis_alnum_char(const char *c);
+
+bool
+yp_encoding_shift_jis_isupper_char(const char *c);
+
+/******************************************************************************/
 /* UTF-8                                                                      */
 /******************************************************************************/
 

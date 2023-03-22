@@ -23,6 +23,7 @@ class EncodingTest < Test::Unit::TestCase
     iso-8859-14
     iso-8859-15
     iso-8859-16
+    shift_jis
     us-ascii
     utf-8
     windows-1251
