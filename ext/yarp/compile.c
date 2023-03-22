@@ -2,7 +2,8 @@
 
 typedef enum {
   YP_ISEQ_TYPE_TOP,
-  YP_ISEQ_TYPE_BLOCK
+  YP_ISEQ_TYPE_BLOCK,
+  YP_ISEQ_TYPE_METHOD
 } yp_iseq_type_t;
 
 typedef enum {
@@ -174,6 +175,15 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
     case YP_ISEQ_TYPE_BLOCK:
       type = ID2SYM(rb_intern("block"));
       break;
+
+    case YP_ISEQ_TYPE_METHOD:
+      type = ID2SYM(rb_intern("method"));
+      break;
+  }
+
+  VALUE rb_locals = rb_ary_new();
+  for (size_t i = 0; i < compiler->locals->size; i++) {
+    rb_ary_push(rb_locals, ID2SYM(parse_token_symbol(&compiler->locals->tokens[i])));
   }
 
   VALUE iseq = rb_ary_new_capa(13);
@@ -187,9 +197,9 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
   rb_ary_push(iseq, rb_str_new_cstr("<compiled>"));
   rb_ary_push(iseq, INT2FIX(1));
   rb_ary_push(iseq, type);
-  rb_ary_push(iseq, rb_ary_new());
-  rb_ary_push(iseq, rb_hash_new());
-  rb_ary_push(iseq, rb_ary_new());
+  rb_ary_push(iseq, rb_locals); // locals
+  rb_ary_push(iseq, rb_hash_new()); // {:lead_num=>1, :ambiguous_param0=>true} what is this?
+  rb_ary_push(iseq, rb_ary_new()); // what is this?
   rb_ary_push(iseq, compiler->insns);
 
   return iseq;
@@ -290,6 +300,11 @@ push_branchunless(yp_iseq_compiler_t *compiler, VALUE label) {
 static inline VALUE
 push_concatstrings(yp_iseq_compiler_t *compiler, int count) {
   return push_insn(compiler, -count + 1, 2, ID2SYM(rb_intern("concatstrings")), INT2FIX(count));
+}
+
+static inline VALUE
+push_definemethod(yp_iseq_compiler_t *compiler, VALUE name, VALUE method_iseq) {
+  return push_insn(compiler, -1 + 2, 3, ID2SYM(rb_intern("definemethod")), name, method_iseq);
 }
 
 static inline VALUE
@@ -699,6 +714,38 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
       push_putobject(compiler, parse_string(&node->as.x_string_node.unescaped));
       push_send(compiler, -1, yp_calldata_new(rb_intern("`"), YP_CALLDATA_FCALL | YP_CALLDATA_ARGS_SIMPLE, 1), Qnil);
       return;
+
+    case YP_NODE_DEF_NODE: {
+      const char * start = node->as.def_node.name.start;
+      const char * end = node->as.def_node.name.end;
+      
+      size_t length = end - start;
+      char *name = malloc(length + 1);
+      memcpy(name, start, length);
+
+      name[length] = '\0';
+      
+      VALUE rb_name = ID2SYM(parse_token_symbol(&node->as.def_node.name));
+      
+      yp_iseq_compiler_t method_compiler;
+      yp_iseq_compiler_init(
+        &method_compiler,
+        compiler,
+        &node->as.def_node.scope->as.scope.locals,
+        name,
+        YP_ISEQ_TYPE_METHOD
+      );
+
+      yp_compile_node(&method_compiler, node->as.def_node.statements);
+
+      push_leave(&method_compiler);
+
+      VALUE method_iseq = yp_iseq_new(&method_compiler);
+      push_definemethod(compiler, rb_name, method_iseq);
+      push_putobject(compiler, rb_name);
+
+      return;
+    }
     default:
       rb_raise(rb_eNotImpError, "node type %d not implemented", node->type);
       return;
