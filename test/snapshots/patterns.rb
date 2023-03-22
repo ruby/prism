@@ -447,13 +447,11 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       LambdaNode(?...351)(
+       LambdaNode(343...351)(
          Scope(343...345)([]),
+         MINUS_GREATER(343...345)("->"),
          nil,
-         BlockParametersNode(?...?)(
-           ParametersNode(?...?)([], [], nil, [], nil, nil),
-           []
-         ),
+         nil,
          nil,
          StatementsNode(348...351)(
            [LocalVariableReadNode(348...351)(IDENTIFIER(348...351)("bar"))]
@@ -1074,26 +1072,22 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       RangeNode(?...938)(
-         LambdaNode(?...924)(
+       RangeNode(916...938)(
+         LambdaNode(916...924)(
            Scope(916...918)([]),
+           MINUS_GREATER(916...918)("->"),
            nil,
-           BlockParametersNode(?...?)(
-             ParametersNode(?...?)([], [], nil, [], nil, nil),
-             []
-           ),
+           nil,
            nil,
            StatementsNode(921...924)(
              [LocalVariableReadNode(921...924)(IDENTIFIER(921...924)("bar"))]
            )
          ),
-         LambdaNode(?...938)(
+         LambdaNode(930...938)(
            Scope(930...932)([]),
+           MINUS_GREATER(930...932)("->"),
            nil,
-           BlockParametersNode(?...?)(
-             ParametersNode(?...?)([], [], nil, [], nil, nil),
-             []
-           ),
+           nil,
            nil,
            StatementsNode(935...938)(
              [LocalVariableReadNode(935...938)(IDENTIFIER(935...938)("bar"))]
@@ -1621,13 +1615,11 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       LambdaNode(?...1346)(
+       LambdaNode(1338...1346)(
          Scope(1338...1340)([]),
+         MINUS_GREATER(1338...1340)("->"),
          nil,
-         BlockParametersNode(?...?)(
-           ParametersNode(?...?)([], [], nil, [], nil, nil),
-           []
-         ),
+         nil,
          nil,
          StatementsNode(1343...1346)(
            [LocalVariableReadNode(1343...1346)(IDENTIFIER(1343...1346)("bar"))]
@@ -2261,13 +2253,11 @@ ProgramNode(0...3020)(
          "foo"
        ),
        [InNode(2071...2089)(
-          LambdaNode(?...2082)(
+          LambdaNode(2074...2082)(
             Scope(2074...2076)([]),
+            MINUS_GREATER(2074...2076)("->"),
             nil,
-            BlockParametersNode(?...?)(
-              ParametersNode(?...?)([], [], nil, [], nil, nil),
-              []
-            ),
+            nil,
             nil,
             StatementsNode(2079...2082)(
               [LocalVariableReadNode(2079...2082)(
@@ -3312,7 +3302,7 @@ ProgramNode(0...3020)(
          "foo"
        ),
        [InNode(2991...3016)(
-          IfNode(?...3011)(
+          IfNode(2994...3011)(
             KEYWORD_IF_MODIFIER(3005...3007)("if"),
             CallNode(3008...3011)(
               nil,
@@ -3324,14 +3314,12 @@ ProgramNode(0...3020)(
               nil,
               "baz"
             ),
-            StatementsNode(?...3002)(
-              [LambdaNode(?...3002)(
+            StatementsNode(2994...3002)(
+              [LambdaNode(2994...3002)(
                  Scope(2994...2996)([]),
+                 MINUS_GREATER(2994...2996)("->"),
                  nil,
-                 BlockParametersNode(?...?)(
-                   ParametersNode(?...?)([], [], nil, [], nil, nil),
-                   []
-                 ),
+                 nil,
                  nil,
                  StatementsNode(2999...3002)(
                    [LocalVariableReadNode(2999...3002)(

@@ -544,6 +544,7 @@ class ErrorsTest < Test::Unit::TestCase
   test "do not allow trailing commas in lambda parameters" do
     expected = LambdaNode(
       Scope([IDENTIFIER("a"), IDENTIFIER("b")]),
+      MINUS_GREATER("->"),
       PARENTHESIS_LEFT("("),
       BlockParametersNode(ParametersNode([RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil), []),
       PARENTHESIS_RIGHT(")"),

@@ -1,8 +1,9 @@
-ProgramNode(6...0)(
+ProgramNode(0...0)(
   Scope(0...0)([]),
-  StatementsNode(6...0)(
-    [LambdaNode(6...0)(
+  StatementsNode(0...0)(
+    [LambdaNode(0...0)(
        Scope(0...2)([IDENTIFIER(6...9)("foo")]),
+       MINUS_GREATER(0...2)("->"),
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(6...9)(
          ParametersNode(6...9)(

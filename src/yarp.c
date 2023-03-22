@@ -6168,6 +6168,12 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_KEYWORD_SELF: case YP_TOKEN_KEYWORD_TRUE: case YP_TOKEN_KEYWORD_FALSE: case YP_TOKEN_KEYWORD___FILE__: \
   case YP_TOKEN_KEYWORD___LINE__: case YP_TOKEN_KEYWORD___ENCODING__: case YP_TOKEN_MINUS_GREATER
 
+// This macro allows you to define a case statement for all of the token types
+// that could begin a parameter.
+#define YP_CASE_PARAMETER YP_TOKEN_AMPERSAND: case YP_TOKEN_UDOT_DOT_DOT: case YP_TOKEN_IDENTIFIER: \
+  case YP_TOKEN_LABEL: case YP_TOKEN_USTAR: case YP_TOKEN_STAR: case YP_TOKEN_STAR_STAR: case YP_TOKEN_CONSTANT: \
+  case YP_TOKEN_INSTANCE_VARIABLE: case YP_TOKEN_GLOBAL_VARIABLE: case YP_TOKEN_CLASS_VARIABLE
+
 // This macro allows you to define a case statement for all of the nodes that
 // can be transformed into write targets.
 #define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
@@ -7568,17 +7574,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           rparen = parser->previous;
           break;
         }
-        case YP_TOKEN_AMPERSAND:
-        case YP_TOKEN_UDOT_DOT_DOT:
-        case YP_TOKEN_IDENTIFIER:
-        case YP_TOKEN_LABEL:
-        case YP_TOKEN_USTAR:
-        case YP_TOKEN_STAR:
-        case YP_TOKEN_STAR_STAR:
-        case YP_TOKEN_CONSTANT:
-        case YP_TOKEN_INSTANCE_VARIABLE:
-        case YP_TOKEN_GLOBAL_VARIABLE:
-        case YP_TOKEN_CLASS_VARIABLE: {
+        case YP_CASE_PARAMETER: {
           lparen = not_provided(parser);
           rparen = not_provided(parser);
           params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, false, false);
@@ -8338,27 +8334,43 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_MINUS_GREATER: {
       parser->lambda_enclosure_nesting = parser->enclosure_nesting;
       yp_state_stack_push(&parser->accepts_block_stack, true);
-
       parser_lex(parser);
+
       yp_token_t opening = parser->previous;
+      yp_parser_scope_push(parser, &opening, false);
+
       yp_token_t lparen;
       yp_token_t rparen;
+      yp_node_t *params;
 
-      if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-        lparen = parser->previous;
-      } else {
-        lparen = not_provided(parser);
-      }
+      switch (parser->current.type) {
+        case YP_TOKEN_PARENTHESIS_LEFT: {
+          parser_lex(parser);
+          lparen = parser->previous;
 
-      yp_parser_scope_push(parser, &opening, false);
-      yp_node_t *parameters = parse_block_parameters(parser, false);
+          if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+            params = NULL;
+          } else {
+            params = parse_block_parameters(parser, false);
+          }
 
-      if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
-        accept(parser, YP_TOKEN_NEWLINE);
-        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
-        rparen = parser->previous;
-      } else {
-        rparen = not_provided(parser);
+          accept(parser, YP_TOKEN_NEWLINE);
+          expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
+          rparen = parser->previous;
+          break;
+        }
+        case YP_CASE_PARAMETER: {
+          lparen = not_provided(parser);
+          rparen = not_provided(parser);
+          params = parse_block_parameters(parser, false);
+          break;
+        }
+        default: {
+          lparen = not_provided(parser);
+          rparen = not_provided(parser);
+          params = NULL;
+          break;
+        }
       }
 
       yp_node_t *body;
@@ -8380,7 +8392,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
       yp_state_stack_pop(&parser->accepts_block_stack);
-      return yp_node_lambda_node_create(parser, scope, &lparen, parameters, &rparen, body);
+      return yp_node_lambda_node_create(parser, scope, &opening, &lparen, params, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
