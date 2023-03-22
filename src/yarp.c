@@ -2766,16 +2766,15 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       parser->current.end = pound + 1;
       return YP_TOKEN_NOT_PROVIDED;
     case '{':
-      parser->enclosure_nesting++;
-
       // In this case it's the start of an embedded expression. If we have
       // already consumed content, then we need to return that content as string
       // content first.
       if (pound > parser->current.start) {
-        parser->enclosure_nesting--;
         parser->current.end = pound;
         return YP_TOKEN_STRING_CONTENT;
       }
+
+      parser->enclosure_nesting++;
 
       // Otherwise we'll skip past the #{ and begin lexing the embedded
       // expression.
