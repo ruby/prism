@@ -3202,21 +3202,37 @@ parser_lex(yp_parser_t *parser) {
 
           if (next_content < parser->end) {
             // If we hit a comment after a newline, then we're going to check
-            // if it's ignored or not. If it is, then we're going to call the
+            // if it's ignored or if it's followed by a method call ('.').
+            // If it is, then we're going to call the
             // callback with an ignored newline and then continue lexing.
             // Otherwise we'll return a regular newline.
             if (next_content[0] == '#') {
-              if (lex_state_ignored_p(parser)) {
+              // Here we look for a '.' following a \n
+              const char *following = next_content;
+
+              while (following < parser->end) {
+                if (following[0] == '\n') {
+                  following++;
+                  following += yp_strspn_inline_whitespace(following, parser->end - following);
+                  // If there's another comment, we want to continue searching
+                  // Otherwise, we break out of this loop because we've found
+                  // a non-space, non-'#' character, and we can check if it's
+                  // a '.'
+                  if (following[0] != '#') break;
+                }
+                else {
+                  following++;
+                }
+              }
+
+              // If the lex state was ignored, or we hit a '.' or a '&.',
+              // we will lex the ignored newline
+              if (lex_state_ignored_p(parser) || following[0] == '.' ||
+		  (following + 1 < parser->end && following[0] == '&' && following[1] == '.')) {
                 if (!lexed_comment) parser_lex_ignored_newline(parser);
                 lexed_comment = false;
                 goto lex_next_token;
               }
-
-              lex_state_set(parser, YP_LEX_STATE_BEG);
-              parser->command_start = true;
-              parser->current.type = YP_TOKEN_NEWLINE;
-              if (!lexed_comment) parser_lex_callback(parser);
-              return;
             }
 
             // If we hit a . after a newline, then we're in a call chain and
