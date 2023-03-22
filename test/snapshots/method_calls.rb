@@ -565,7 +565,7 @@ ProgramNode(0...878)(
        nil,
        "b"
      ),
-     IfNode(239...231)(
+     IfNode(228...261)(
        KEYWORD_IF_MODIFIER(239...241)("if"),
        AndNode(242...261)(
          OrNode(242...253)(

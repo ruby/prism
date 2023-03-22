@@ -816,6 +816,21 @@ nodes:
 
           1.0i
           ^^^^
+  - name: InNode
+    child_nodes:
+      - name: pattern
+        type: node
+      - name: statements
+        type: node?
+      - name: in_loc
+        type: location
+      - name: then_loc
+        type: location?
+    comment: |
+      Represents the use of the `in` keyword in a case statement.
+
+          case a; in b then c end
+                  ^^^^^^^^^^^
   - name: InstanceVariableReadNode
     comment: |
       Represents referencing an instance variable.
@@ -983,6 +998,32 @@ nodes:
 
           foo = 1
           ^^^^^^^
+  - name: MatchPredicateNode
+    child_nodes:
+      - name: value
+        type: node
+      - name: pattern
+        type: node
+      - name: operator_loc
+        type: location
+    comment: |
+      Represents the use of the modifier `in` operator.
+
+          foo in bar
+          ^^^^^^^^^^
+  - name: MatchRequiredNode
+    child_nodes:
+      - name: value
+        type: node
+      - name: pattern
+        type: node
+      - name: operator_loc
+        type: location
+    comment: |
+      Represents the use of the `=>` operator.
+
+          foo => bar
+          ^^^^^^^^^^
   - name: MissingNode
     comment: |
       Represents a node that is missing from the source and results in a syntax
@@ -1154,6 +1195,18 @@ nodes:
 
           (10 + 34)
           ^^^^^^^^^
+  - name: PinnedVariableNode
+    child_nodes:
+      - name: variable
+        type: node
+      - name: operator_loc
+        type: location
+    comment: |
+      Represents the use of the `^` operator for pinning a variable in a pattern
+      matching expression.
+
+          case foo in ^bar
+                      ^^^^
   - name: PostExecutionNode
     child_nodes:
       - name: statements

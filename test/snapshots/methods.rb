@@ -650,8 +650,8 @@ ProgramNode(0...899)(
        IDENTIFIER(558...560)("hi"),
        nil,
        ParametersNode(?...?)([], [], nil, [], nil, nil),
-       StatementsNode(572...584)(
-         [IfNode(572...571)(
+       StatementsNode(561...584)(
+         [IfNode(561...579)(
             KEYWORD_IF_MODIFIER(572...574)("if"),
             TrueNode(575...579)(),
             StatementsNode(561...571)(

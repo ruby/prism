@@ -179,6 +179,7 @@ typedef enum {
   YP_CONTEXT_BLOCK_BRACES,   // expressions in block arguments using braces
   YP_CONTEXT_BLOCK_KEYWORDS, // expressions in block arguments using do..end
   YP_CONTEXT_CASE_WHEN,      // a case when statements
+  YP_CONTEXT_CASE_IN,        // a case in statements
   YP_CONTEXT_CLASS,          // a class declaration
   YP_CONTEXT_DEF,            // a method definition
   YP_CONTEXT_DEF_PARAMS,     // a method definition's parameters
