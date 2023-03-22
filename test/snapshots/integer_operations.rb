@@ -1,5 +1,5 @@
 ProgramNode(0...247)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(0...247)(
     [CallNode(0...2)(
        IntegerNode(1...2)(),

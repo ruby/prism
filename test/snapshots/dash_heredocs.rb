@@ -1,5 +1,5 @@
 ProgramNode(7...219)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(7...219)(
     [HeredocNode(7...11)(
        HEREDOC_START(0...6)("<<-EOF"),

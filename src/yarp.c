@@ -1472,6 +1472,20 @@ yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
   return yp_node_create_from_token(parser, YP_NODE_RETRY_NODE, token);
 }
 
+// Allocate and initialize a new Scope node.
+static yp_node_t *
+yp_scope_create(yp_parser_t *parser, const yp_token_t *token) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_SCOPE,
+    .location = YP_LOCATION_TOKEN_VALUE(token)
+  };
+
+  yp_token_list_init(&node->as.scope.locals);
+  return node;
+}
+
 // Allocate and initialize a new SelfNode node.
 static yp_node_t *
 yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -1647,8 +1661,8 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
 
 // Allocate and initialize a new scope. Push it onto the scope stack.
 static void
-yp_parser_scope_push(yp_parser_t *parser, bool top) {
-  yp_node_t *node = yp_node_scope_create(parser);
+yp_parser_scope_push(yp_parser_t *parser, const yp_token_t *token, bool top) {
+  yp_node_t *node = yp_scope_create(parser, token);
   yp_scope_t *scope = (yp_scope_t *) malloc(sizeof(yp_scope_t));
   *scope = (yp_scope_t) { .node = node, .top = top, .previous = parser->current_scope };
   parser->current_scope = scope;
@@ -5867,7 +5881,7 @@ parse_block(yp_parser_t *parser) {
   accept(parser, YP_TOKEN_NEWLINE);
 
   yp_state_stack_push(&parser->accepts_block_stack, true);
-  yp_parser_scope_push(parser, false);
+  yp_parser_scope_push(parser, &opening, false);
   yp_node_t *parameters = NULL;
 
   if (accept(parser, YP_TOKEN_PIPE)) {
@@ -7263,7 +7277,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t operator = parser->previous;
         yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_NOT, "Expected to find an expression after `<<`.");
 
-        yp_parser_scope_push(parser, true);
+        yp_parser_scope_push(parser, &class_keyword, true);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
         yp_node_t *statements = parse_statements(parser, YP_CONTEXT_SCLASS);
@@ -7295,7 +7309,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         superclass = NULL;
       }
 
-      yp_parser_scope_push(parser, true);
+      yp_parser_scope_push(parser, &class_keyword, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_CLASS);
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
@@ -7320,13 +7334,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       switch (parser->current.type) {
         case YP_CASE_OPERATOR:
-          yp_parser_scope_push(parser, true);
+          yp_parser_scope_push(parser, &def_keyword, true);
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
           parser_lex(parser);
           name = parser->previous;
           break;
         case YP_TOKEN_IDENTIFIER: {
-          yp_parser_scope_push(parser, true);
+          yp_parser_scope_push(parser, &def_keyword, true);
           parser_lex(parser);
 
           if (match_any_type_p(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
@@ -7358,7 +7372,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         case YP_TOKEN_KEYWORD___FILE__:
         case YP_TOKEN_KEYWORD___LINE__:
         case YP_TOKEN_KEYWORD___ENCODING__: {
-          yp_parser_scope_push(parser, true);
+          yp_parser_scope_push(parser, &def_keyword, true);
           parser_lex(parser);
           yp_token_t identifier = parser->previous;
 
@@ -7428,12 +7442,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
           receiver = yp_parentheses_node_create(parser, &lparen, expression, &rparen);
 
-          yp_parser_scope_push(parser, true);
+          yp_parser_scope_push(parser, &def_keyword, true);
           name = parse_method_definition_name(parser);
           break;
         }
         default:
-          yp_parser_scope_push(parser, true);
+          yp_parser_scope_push(parser, &def_keyword, true);
           name = parse_method_definition_name(parser);
 
           if (name.type == YP_TOKEN_MISSING) {
@@ -7650,7 +7664,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
       if (name->type == YP_NODE_MISSING_NODE) {
-        yp_node_t *scope = yp_node_scope_create(parser);
+        yp_node_t *scope = yp_scope_create(parser, &module_keyword);
         yp_node_t *statements = yp_statements_node_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
@@ -7665,7 +7679,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         name = yp_node_constant_path_node_create(parser, name, &double_colon, constant);
       }
 
-      yp_parser_scope_push(parser, true);
+      yp_parser_scope_push(parser, &module_keyword, true);
       yp_node_t *statements = parse_statements(parser, YP_CONTEXT_MODULE);
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
@@ -8211,6 +8225,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_state_stack_push(&parser->accepts_block_stack, true);
 
       parser_lex(parser);
+      yp_token_t opening = parser->previous;
       yp_token_t lparen;
       yp_token_t rparen;
 
@@ -8220,7 +8235,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         lparen = not_provided(parser);
       }
 
-      yp_parser_scope_push(parser, false);
+      yp_parser_scope_push(parser, &opening, false);
       yp_node_t *parameters = parse_block_parameters(parser, false);
 
       if (lparen.type == YP_TOKEN_PARENTHESIS_LEFT) {
@@ -8917,7 +8932,7 @@ parse_expression(yp_parser_t *parser, yp_binding_power_t binding_power, const ch
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-  yp_parser_scope_push(parser, true);
+  yp_parser_scope_push(parser, &(yp_token_t) { .type = YP_TOKEN_EOF, .start = parser->start, .end = parser->start }, true);
   parser_lex(parser);
 
   yp_node_t *statements = parse_statements(parser, YP_CONTEXT_MAIN);

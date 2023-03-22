@@ -1,5 +1,5 @@
 ProgramNode(0...3020)(
-  Scope(?...?)([IDENTIFIER(7...10)("bar")]),
+  Scope(0...0)([IDENTIFIER(7...10)("bar")]),
   StatementsNode(0...3020)(
     [MatchRequiredNode(0...10)(
        CallNode(0...3)(
@@ -448,7 +448,7 @@ ProgramNode(0...3020)(
          "foo"
        ),
        LambdaNode(?...351)(
-         Scope(?...?)([]),
+         Scope(343...345)([]),
          nil,
          BlockParametersNode(?...?)(
            ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -1076,7 +1076,7 @@ ProgramNode(0...3020)(
        ),
        RangeNode(?...938)(
          LambdaNode(?...924)(
-           Scope(?...?)([]),
+           Scope(916...918)([]),
            nil,
            BlockParametersNode(?...?)(
              ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -1088,7 +1088,7 @@ ProgramNode(0...3020)(
            )
          ),
          LambdaNode(?...938)(
-           Scope(?...?)([]),
+           Scope(930...932)([]),
            nil,
            BlockParametersNode(?...?)(
              ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -1622,7 +1622,7 @@ ProgramNode(0...3020)(
          "foo"
        ),
        LambdaNode(?...1346)(
-         Scope(?...?)([]),
+         Scope(1338...1340)([]),
          nil,
          BlockParametersNode(?...?)(
            ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -2262,7 +2262,7 @@ ProgramNode(0...3020)(
        ),
        [InNode(2071...2089)(
           LambdaNode(?...2082)(
-            Scope(?...?)([]),
+            Scope(2074...2076)([]),
             nil,
             BlockParametersNode(?...?)(
               ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -3326,7 +3326,7 @@ ProgramNode(0...3020)(
             ),
             StatementsNode(?...3002)(
               [LambdaNode(?...3002)(
-                 Scope(?...?)([]),
+                 Scope(2994...2996)([]),
                  nil,
                  BlockParametersNode(?...?)(
                    ParametersNode(?...?)([], [], nil, [], nil, nil),

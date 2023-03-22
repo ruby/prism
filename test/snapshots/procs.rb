@@ -1,8 +1,8 @@
 ProgramNode(4...241)(
-  Scope(?...?)([]),
+  Scope(0...0)([]),
   StatementsNode(4...241)(
     [LambdaNode(4...19)(
-       Scope(?...?)(
+       Scope(0...2)(
          [IDENTIFIER(4...5)("a"),
           IDENTIFIER(7...8)("b"),
           IDENTIFIER(10...11)("c"),
@@ -28,7 +28,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(?...39)(
-       Scope(?...?)([]),
+       Scope(23...25)([]),
        nil,
        BlockParametersNode(?...?)(
          ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -49,7 +49,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(?...69)(
-       Scope(?...?)([]),
+       Scope(41...43)([]),
        nil,
        BlockParametersNode(?...?)(
          ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -81,7 +81,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(?...79)(
-       Scope(?...?)([]),
+       Scope(71...73)([]),
        nil,
        BlockParametersNode(?...?)(
          ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -102,7 +102,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(?...93)(
-       Scope(?...?)([]),
+       Scope(83...85)([]),
        nil,
        BlockParametersNode(?...?)(
          ParametersNode(?...?)([], [], nil, [], nil, nil),
@@ -123,7 +123,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(113...127)(
-       Scope(?...?)(
+       Scope(100...102)(
          [IDENTIFIER(103...104)("a"),
           IDENTIFIER(106...107)("b"),
           LABEL(113...114)("c"),
@@ -156,7 +156,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(149...169)(
-       Scope(?...?)(
+       Scope(131...133)(
          [IDENTIFIER(135...136)("a"),
           IDENTIFIER(138...139)("b"),
           IDENTIFIER(146...147)("c"),
@@ -197,7 +197,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(191...214)(
-       Scope(?...?)(
+       Scope(173...175)(
          [IDENTIFIER(177...178)("a"),
           IDENTIFIER(180...181)("b"),
           IDENTIFIER(188...189)("c"),
@@ -238,7 +238,7 @@ ProgramNode(4...241)(
        )
      ),
      LambdaNode(224...241)(
-       Scope(?...?)([IDENTIFIER(224...225)("a")]),
+       Scope(220...222)([IDENTIFIER(224...225)("a")]),
        PARENTHESIS_LEFT(223...224)("("),
        BlockParametersNode(224...225)(
          ParametersNode(224...225)(
@@ -254,7 +254,7 @@ ProgramNode(4...241)(
        PARENTHESIS_RIGHT(225...226)(")"),
        StatementsNode(232...241)(
          [LambdaNode(232...241)(
-            Scope(?...?)([IDENTIFIER(232...233)("b")]),
+            Scope(229...231)([IDENTIFIER(232...233)("b")]),
             nil,
             BlockParametersNode(232...233)(
               ParametersNode(232...233)(
