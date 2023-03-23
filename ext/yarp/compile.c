@@ -16,12 +16,25 @@ typedef struct yp_iseq_compiler {
   // need to be able to jump back to the parent ISEQ.
   struct yp_iseq_compiler *parent;
 
+  // node currently being emitted
+  // useful for line number tracing
+  // information emitted with instructions
+  yp_node_t *node;
+
   // This is the list of local variables that are defined on this scope.
   yp_token_list_t *locals;
 
   // This is the instruction sequence that we are compiling. It's actually just
   // a Ruby array that maps to the output of RubyVM::InstructionSequence#to_a.
   VALUE insns;
+
+  // list of byte offsets of newline characters in the string
+  // used to find the line that a node starts on.
+  char **newline_locations;
+
+  // line last emitted as an event.
+  // used to not repeat the line number
+  int cur_line;
 
   // This is a list of IDs coming from the instructions that are being compiled.
   // In theory they should be deterministic, but we don't have that
@@ -50,9 +63,10 @@ typedef struct yp_iseq_compiler {
 } yp_iseq_compiler_t;
 
 static void
-yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_iseq_compiler_t *parent, yp_token_list_t *locals, const char *name, yp_iseq_type_t type) {
+yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_node_t *node, yp_iseq_compiler_t *parent, yp_token_list_t *locals, const char *name, yp_iseq_type_t type) {
   *compiler = (yp_iseq_compiler_t) {
     .parent = parent,
+    .node = node,
     .locals = locals,
     .insns = rb_ary_new(),
     .node_ids = rb_ary_new(),
@@ -96,6 +110,27 @@ local_index(yp_iseq_compiler_t *compiler, int depth, const char *start, const ch
   }
 
   return -1;
+}
+
+static inline int
+node_line_number(yp_iseq_compiler_t *compiler, yp_node_t *node) {
+  const char *start = node->location.start;
+
+  // call nodes which are infix should use the message field for its line number
+  if (node->type == YP_NODE_CALL_NODE) {
+    start = node->as.call_node.message.start;
+  }
+
+
+  int index = 0;
+
+  while (compiler->newline_locations[index] != NULL) {
+    if (start < compiler->newline_locations[index]) {
+      return index + 1;
+    }
+    index++;
+  }
+  return index;
 }
 
 /******************************************************************************/
@@ -152,7 +187,7 @@ parse_string_symbol(yp_string_t *string) {
 /******************************************************************************/
 
 static VALUE
-yp_iseq_new(yp_iseq_compiler_t *compiler) {
+yp_iseq_new(yp_iseq_compiler_t *compiler, yp_node_t *params) {
   VALUE code_locations = rb_ary_new_capa(4);
   rb_ary_push(code_locations, INT2FIX(1));
   rb_ary_push(code_locations, INT2FIX(0));
@@ -161,7 +196,7 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
 
   VALUE data = rb_hash_new();
   rb_hash_aset(data, ID2SYM(rb_intern("arg_size")), INT2FIX(0));
-  rb_hash_aset(data, ID2SYM(rb_intern("local_size")), INT2FIX(0));
+  rb_hash_aset(data, ID2SYM(rb_intern(" local_size")), INT2FIX(0));
   rb_hash_aset(data, ID2SYM(rb_intern("stack_max")), INT2FIX(compiler->stack_max));
   rb_hash_aset(data, ID2SYM(rb_intern("node_id")), INT2FIX(-1));
   rb_hash_aset(data, ID2SYM(rb_intern("code_locations")), code_locations);
@@ -186,6 +221,12 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
     rb_ary_push(rb_locals, ID2SYM(parse_token_symbol(&compiler->locals->tokens[i])));
   }
 
+  VALUE rb_options = rb_hash_new();
+  if (params) {
+    size_t required_count = params->as.parameters_node.requireds.size;
+    rb_hash_aset(rb_options, rb_str_new2("lead_num"), INT2NUM((int)required_count));
+  }
+
   VALUE iseq = rb_ary_new_capa(13);
   rb_ary_push(iseq, rb_str_new_cstr("YARVInstructionSequence/SimpleDataFormat"));
   rb_ary_push(iseq, INT2FIX(3));
@@ -198,7 +239,7 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
   rb_ary_push(iseq, INT2FIX(1));
   rb_ary_push(iseq, type);
   rb_ary_push(iseq, rb_locals); // locals
-  rb_ary_push(iseq, rb_hash_new()); // {:lead_num=>1, :ambiguous_param0=>true} what is this?
+  rb_ary_push(iseq, rb_options); // {:lead_num=>1, :ambiguous_param0=>true} what is this?
   rb_ary_push(iseq, rb_ary_new()); // what is this?
   rb_ary_push(iseq, compiler->insns);
 
@@ -241,6 +282,13 @@ yp_inline_storage_new(yp_iseq_compiler_t *compiler) {
 
 static VALUE
 push_insn(yp_iseq_compiler_t *compiler, int stack_change, size_t size, ...) {
+  if (node_line_number(compiler, compiler->node) != compiler->cur_line) {
+    int ln = node_line_number(compiler, compiler->node);
+    compiler->cur_line = ln;
+    rb_ary_push(compiler->insns, INT2NUM(ln));
+  }
+
+
   va_list opnds;
   va_start(opnds, size);
 
@@ -426,7 +474,10 @@ push_setinstancevariable(yp_iseq_compiler_t *compiler, VALUE name, VALUE inline_
 /******************************************************************************/
 
 static void
-yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
+yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node);
+
+static void
+yp_compile_sub_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
   switch (node->type) {
     case YP_NODE_ALIAS_NODE:
       push_putspecialobject(compiler, YP_SPECIALOBJECT_VMCORE);
@@ -469,7 +520,11 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
       return;
     case YP_NODE_BLOCK_NODE:
       push_ruby_event(compiler, YP_RUBY_EVENT_B_CALL);
-      yp_compile_node(compiler, node->as.block_node.statements);
+      if (node->as.block_node.statements) {
+        yp_compile_node(compiler, node->as.block_node.statements);
+      } else {
+        push_putnil(compiler);
+      }
       push_ruby_event(compiler, YP_RUBY_EVENT_B_RETURN);
       push_leave(compiler);
       return;
@@ -498,6 +553,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
         yp_iseq_compiler_t block_compiler;
         yp_iseq_compiler_init(
           &block_compiler,
+          node,
           compiler,
           &node->as.call_node.block->as.block_node.scope->as.scope.locals,
           "block in <compiled>",
@@ -505,7 +561,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
         );
 
         yp_compile_node(&block_compiler, node->as.call_node.block);
-        block_iseq = yp_iseq_new(&block_compiler);
+        block_iseq = yp_iseq_new(&block_compiler, node->as.call_node.block->as.block_node.parameters);
       }
 
       if (block_iseq == Qnil && flags == 0) {
@@ -519,6 +575,8 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
           flags |= YP_CALLDATA_VCALL;
         }
       }
+
+
 
       push_send(compiler, -sizet2int(orig_argc), yp_calldata_new(mid, flags, orig_argc), block_iseq);
       return;
@@ -718,29 +776,37 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
     case YP_NODE_DEF_NODE: {
       const char * start = node->as.def_node.name.start;
       const char * end = node->as.def_node.name.end;
-      
+
       size_t length = end - start;
       char *name = malloc(length + 1);
       memcpy(name, start, length);
 
       name[length] = '\0';
-      
+
       VALUE rb_name = ID2SYM(parse_token_symbol(&node->as.def_node.name));
-      
+
       yp_iseq_compiler_t method_compiler;
       yp_iseq_compiler_init(
         &method_compiler,
+        node,
         compiler,
         &node->as.def_node.scope->as.scope.locals,
         name,
         YP_ISEQ_TYPE_METHOD
       );
 
-      yp_compile_node(&method_compiler, node->as.def_node.statements);
+      // TODO: optional arguments
+
+      if (node->as.def_node.statements->as.statements_node.body.size > 0) {
+        yp_compile_node(&method_compiler, node->as.def_node.statements);
+      } else {
+        push_putnil(&method_compiler);
+      }
+
 
       push_leave(&method_compiler);
 
-      VALUE method_iseq = yp_iseq_new(&method_compiler);
+      VALUE method_iseq = yp_iseq_new(&method_compiler, node->as.def_node.parameters);
       push_definemethod(compiler, rb_name, method_iseq);
       push_putobject(compiler, rb_name);
 
@@ -748,22 +814,40 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
     }
     default:
       rb_raise(rb_eNotImpError, "node type %d not implemented", node->type);
+
       return;
   }
 }
 
+static void
+yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *node) {
+  yp_node_t *prev_node = compiler->node;
+  compiler->node = node;
+  yp_compile_sub_node(compiler, node);
+  compiler->node = prev_node;
+}
+
 // This function compiles the given node into a list of instructions.
 VALUE
-yp_compile(yp_node_t *node) {
+yp_compile(yp_node_t *node, char **newline_locations) {
   yp_iseq_compiler_t compiler;
+
   yp_iseq_compiler_init(
     &compiler,
+    node,
     NULL,
     &node->as.program_node.scope->as.scope.locals,
     "<compiled>",
     YP_ISEQ_TYPE_TOP
   );
 
+  compiler.newline_locations = newline_locations;
+  int ln = node_line_number(&compiler, node);
+  compiler.cur_line = ln;
+
+  rb_ary_push(compiler.insns, INT2NUM(ln));
+  rb_ary_push(compiler.insns, ID2SYM(rb_intern("RUBY_EVENT_LINE")));
+
   yp_compile_node(&compiler, node);
-  return yp_iseq_new(&compiler);
+  return yp_iseq_new(&compiler, NULL);
 }

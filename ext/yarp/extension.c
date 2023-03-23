@@ -387,7 +387,19 @@ compile(VALUE self, VALUE string) {
   yp_parser_init(&parser, RSTRING_PTR(string), length);
 
   yp_node_t *node = yp_parse(&parser);
-  VALUE result = yp_compile(node);
+
+  // TODO: this hack
+  char ** newline_locations = calloc(sizeof(char*), 100);
+  int index = 0;
+  
+  char *source = StringValueCStr(string);
+  for (int i = 0; i < strlen(source); i++) {
+    if (source[i] == '\n') {
+      newline_locations[index++] = &source[i];
+    }
+  }
+
+  VALUE result = yp_compile(node, newline_locations);
 
   yp_node_destroy(&parser, node);
   yp_parser_free(&parser);
