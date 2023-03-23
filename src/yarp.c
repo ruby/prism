@@ -7384,7 +7384,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t begin_keyword = parser->previous;
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
+      yp_accepts_block_stack_push(parser, true);
       yp_node_t *begin_statements = parse_statements(parser, YP_CONTEXT_BEGIN);
+      yp_accepts_block_stack_pop(parser);
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
       yp_node_t *begin_node = yp_begin_node_create(parser, &begin_keyword, begin_statements);

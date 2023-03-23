@@ -1,6 +1,6 @@
-ProgramNode(0...944)(
+ProgramNode(0...960)(
   Scope(0...0)([]),
-  StatementsNode(0...944)(
+  StatementsNode(0...960)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1630,6 +1630,42 @@ ProgramNode(0...944)(
        nil,
        nil,
        "foo"
+     ),
+     CallNode(959...960)(
+       nil,
+       nil,
+       IDENTIFIER(959...960)("p"),
+       nil,
+       ArgumentsNode(961...987)(
+         [BeginNode(961...987)(
+            KEYWORD_BEGIN(961...966)("begin"),
+            StatementsNode(967...983)(
+              [CallNode(967...983)(
+                 IntegerNode(967...968)(),
+                 DOT(968...969)("."),
+                 IDENTIFIER(969...974)("times"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(975...983)(
+                   Scope(975...977)([]),
+                   nil,
+                   StatementsNode(978...979)([IntegerNode(978...979)()]),
+                   (975...977),
+                   (980...983)
+                 ),
+                 "times"
+               )]
+            ),
+            nil,
+            nil,
+            nil,
+            KEYWORD_END(984...987)("end")
+          )]
+       ),
+       nil,
+       nil,
+       "p"
      )]
   )
 )
