@@ -27,7 +27,7 @@ table = ""
   table << "  #{row.join(" ")} // #{row_index.to_s(16).upcase}x\n"
 end
 -%>
-#include "util/yp_strspn.h"
+#include "yarp/util/yp_strspn.h"
 
 <%- bits.each_key.with_index do |name, bit_index| -%>
 <%= "#define YP_STRSPN_BIT_#{name} (1 << #{bit_index})" %>

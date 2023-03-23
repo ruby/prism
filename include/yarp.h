@@ -9,17 +9,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util/yp_buffer.h"
-#include "util/yp_strnstr.h"
-#include "util/yp_strpbrk.h"
-#include "util/yp_strspn.h"
-#include "ast.h"
-#include "diagnostic.h"
-#include "pack.h"
-#include "parser.h"
-#include "regexp.h"
-#include "node.h"
-#include "unescape.h"
+#include "yarp/ast.h"
+#include "yarp/diagnostic.h"
+#include "yarp/node.h"
+#include "yarp/pack.h"
+#include "yarp/parser.h"
+#include "yarp/regexp.h"
+#include "yarp/unescape.h"
+#include "yarp/util/yp_buffer.h"
+#include "yarp/util/yp_strnstr.h"
+#include "yarp/util/yp_strpbrk.h"
+#include "yarp/util/yp_strspn.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 4

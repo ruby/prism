@@ -20,7 +20,7 @@ class OptionalNodeParam < Struct.new(:name, :fallback)
   def java_type = "Node"
 end
 
-SingleNodeParam = -> node { NodeParam === node or OptionalNodeParam === node }
+SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
 
 # This represents a parameter to a node that is a list of nodes. We pass them as
 # references and store them as references.
