@@ -16,14 +16,14 @@ test-native/run-one
 *.dSYM
 
 /ext/yarp/node.c
+/include/yarp/ast.h
+/include/yarp/node.h
 /java/org/yarp/AbstractNodeVisitor.java
 /java/org/yarp/Loader.java
 /java/org/yarp/Nodes.java
 /lib/yarp/node.rb
 /lib/yarp/serialize.rb
-/src/ast.h
 /src/node.c
-/src/node.h
 /src/prettyprint.c
 /src/serialize.c
 /src/token_type.c

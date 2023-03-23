@@ -34,14 +34,14 @@ task default: :test
 
 TEMPLATES = [
   "ext/yarp/node.c",
-  "lib/yarp/node.rb",
-  "lib/yarp/serialize.rb",
+  "include/yarp/ast.h",
+  "include/yarp/node.h",
   "java/org/yarp/Loader.java",
   "java/org/yarp/Nodes.java",
   "java/org/yarp/AbstractNodeVisitor.java",
-  "src/ast.h",
+  "lib/yarp/node.rb",
+  "lib/yarp/serialize.rb",
   "src/node.c",
-  "src/node.h",
   "src/prettyprint.c",
   "src/serialize.c",
   "src/token_type.c",
