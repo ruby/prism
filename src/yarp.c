@@ -7711,6 +7711,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         context_pop(parser);
       } else {
         yp_accepts_block_stack_push(parser, true);
+        yp_state_stack_push(&parser->do_loop_stack, false);
         statements = parse_statements(parser, YP_CONTEXT_DEF);
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
@@ -7718,6 +7719,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         yp_accepts_block_stack_pop(parser);
+        yp_state_stack_pop(&parser->do_loop_stack);
       }
 
       yp_token_t end_keyword;
