@@ -1269,8 +1269,8 @@ ProgramNode(0...960)(
      CallNode(724...736)(
        ConstantPathNode(724...728)(
          ConstantReadNode(724...725)(),
-         COLON_COLON(725...727)("::"),
-         ConstantReadNode(727...728)()
+         ConstantReadNode(727...728)(),
+         (725...727)
        ),
        COLON_COLON(728...730)("::"),
        CONSTANT(730...731)("C"),
@@ -1290,8 +1290,8 @@ ProgramNode(0...960)(
      CallNode(738...751)(
        ConstantPathNode(738...742)(
          ConstantReadNode(738...739)(),
-         COLON_COLON(739...741)("::"),
-         ConstantReadNode(741...742)()
+         ConstantReadNode(741...742)(),
+         (739...741)
        ),
        COLON_COLON(742...744)("::"),
        CONSTANT(744...745)("C"),
@@ -1311,8 +1311,8 @@ ProgramNode(0...960)(
      CallNode(753...770)(
        ConstantPathNode(753...757)(
          ConstantReadNode(753...754)(),
-         COLON_COLON(754...756)("::"),
-         ConstantReadNode(756...757)()
+         ConstantReadNode(756...757)(),
+         (754...756)
        ),
        COLON_COLON(757...759)("::"),
        CONSTANT(759...760)("C"),

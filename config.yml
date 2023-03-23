@@ -565,11 +565,10 @@ nodes:
     child_nodes:
       - name: parent
         type: node?
-      - name: delimiter
-        type: token
       - name: child
         type: node
-    location: parent|delimiter->child
+      - name: delimiter_loc
+        type: location
     comment: |
       Represents accessing a constant through a path of `::` operators.
 

@@ -55,8 +55,8 @@ ProgramNode(0...101)(
            nil,
            "m"
          ),
-         COLON_COLON(48...50)("::"),
-         ConstantReadNode(50...51)()
+         ConstantReadNode(50...51)(),
+         (48...50)
        ),
        StatementsNode(0...0)([]),
        KEYWORD_END(52...55)("end")
@@ -91,11 +91,7 @@ ProgramNode(0...101)(
      ModuleNode(87...101)(
        Scope(87...93)([]),
        KEYWORD_MODULE(87...93)("module"),
-       ConstantPathNode(94...97)(
-         nil,
-         UCOLON_COLON(94...96)("::"),
-         ConstantReadNode(96...97)()
-       ),
+       ConstantPathNode(94...97)(nil, ConstantReadNode(96...97)(), (94...96)),
        StatementsNode(0...0)([]),
        KEYWORD_END(98...101)("end")
      )]

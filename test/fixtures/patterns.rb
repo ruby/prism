@@ -56,6 +56,9 @@ foo => ^@bar
 foo => ^@@bar
 foo => ^$bar
 
+foo => Foo
+foo => Foo::Bar::Baz
+
 foo in bar
 foo in 1
 foo in 1.0
