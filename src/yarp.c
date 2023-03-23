@@ -1902,11 +1902,34 @@ yp_accepts_block_stack_p(yp_parser_t *parser) {
 /* Lexer check helpers                                                        */
 /******************************************************************************/
 
+// Get the next character in the source starting from parser->current.end and
+// adding the given offset. If that position is beyond the end of the source
+// then return '\0'.
+static inline char
+peek_at(yp_parser_t *parser, size_t offset) {
+  if (parser->current.end + offset < parser->end) {
+    return parser->current.end[offset];
+  } else {
+    return '\0';
+  }
+}
+
+// Get the next character in the source starting from parser->current.end. If
+// that position is beyond the end of the source then return '\0'.
+static inline char
+peek(yp_parser_t *parser) {
+  if (parser->current.end < parser->end) {
+    return *parser->current.end;
+  } else {
+    return '\0';
+  }
+}
+
 // If the character to be read matches the given value, then returns true and
 // advanced the current pointer.
 static inline bool
 match(yp_parser_t *parser, char value) {
-  if (parser->current.end < parser->end && *parser->current.end == value) {
+  if (peek(parser) == value) {
     parser->current.end++;
     return true;
   }
@@ -2456,8 +2479,8 @@ lex_optional_float_suffix(yp_parser_t *parser) {
 
   // Here we're going to attempt to parse the optional decimal portion of a
   // float. If it's not there, then it's okay and we'll just continue on.
-  if ((parser->current.end < parser->end) && *parser->current.end == '.') {
-    if ((parser->current.end + 1 < parser->end) && char_is_decimal_number(parser->current.end[1])) {
+  if (peek(parser) == '.') {
+    if (char_is_decimal_number(peek_at(parser, 1))) {
       parser->current.end += 2;
       parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
       type = YP_TOKEN_FLOAT;
@@ -2629,7 +2652,7 @@ lex_global_variable(yp_parser_t *parser) {
       if ((width = char_is_identifier(parser, parser->current.end)) > 0) {
         do {
           parser->current.end += width;
-        } while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)));
+        } while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)) > 0);
 
         // $0 isn't allowed to be followed by anything.
         yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid global variable.");
@@ -2660,7 +2683,7 @@ lex_global_variable(yp_parser_t *parser) {
       if ((width = char_is_identifier(parser, parser->current.end)) > 0) {
         do {
           parser->current.end += width;
-        } while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)));
+        } while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)) > 0);
       } else {
         // If we get here, then we have a $ followed by something that isn't
         // recognized as a global variable.
@@ -2708,7 +2731,7 @@ static yp_token_type_t
 lex_identifier(yp_parser_t *parser, bool previous_command_start) {
   // Lex as far as we can into the current identifier.
   size_t width;
-  while ((parser->current.end < parser->end) && (width = char_is_identifier(parser, parser->current.end))) {
+  while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)) > 0) {
     parser->current.end += width;
   }
 
@@ -2724,7 +2747,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
 
       if (
         ((lex_state_p(parser, YP_LEX_STATE_LABEL | YP_LEX_STATE_ENDFN) && !previous_command_start) || lex_state_arg_p(parser)) &&
-        parser->current.end[0] == ':' && parser->current.end[1] != ':'
+        (peek(parser) == ':') && (peek_at(parser, 1) != ':')
       ) {
         // If we're in a position where we can accept a : at the end of an
         // identifier, then we'll optionally accept it.
@@ -2740,7 +2763,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
       }
 
       return YP_TOKEN_IDENTIFIER;
-    } else if (lex_state_p(parser, YP_LEX_STATE_FNAME) && parser->current.end[1] != '~' && parser->current.end[1] != '>' && (parser->current.end[1] != '=' || parser->current.end[2] == '>') && match(parser, '=')) {
+    } else if (lex_state_p(parser, YP_LEX_STATE_FNAME) && peek_at(parser, 1) != '~' && peek_at(parser, 1) != '>' && (peek_at(parser, 1) != '=' || peek_at(parser, 2) == '>') && match(parser, '=')) {
       // If we're in a position where we can accept a = at the end of an
       // identifier, then we'll optionally accept it.
       return YP_TOKEN_IDENTIFIER;
@@ -3030,10 +3053,10 @@ lex_at_variable(yp_parser_t *parser) {
   yp_token_type_t type = match(parser, '@') ? YP_TOKEN_CLASS_VARIABLE : YP_TOKEN_INSTANCE_VARIABLE;
   size_t width;
 
-  if ((parser->current.end < parser->end) && (width = char_is_identifier_start(parser, parser->current.end))) {
+  if (parser->current.end < parser->end && (width = char_is_identifier_start(parser, parser->current.end)) > 0) {
     parser->current.end += width;
 
-    while ((parser->current.end < parser->end) && (width = char_is_identifier(parser, parser->current.end))) {
+    while (parser->current.end < parser->end && (width = char_is_identifier(parser, parser->current.end)) > 0) {
       parser->current.end += width;
     }
   } else if (type == YP_TOKEN_CLASS_VARIABLE) {
@@ -3829,7 +3852,7 @@ parser_lex(yp_parser_t *parser) {
           if (lex_state_beg_p(parser) || spcarg) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
 
-            if (parser->current.end < parser->end && char_is_decimal_number(*parser->current.end)) {
+            if (char_is_decimal_number(peek(parser))) {
               parser->current.end++;
               yp_token_type_t type = lex_numeric(parser);
               lex_state_set(parser, YP_LEX_STATE_END);
@@ -4563,8 +4586,8 @@ parser_lex(yp_parser_t *parser) {
 
           if (
             parser->lex_modes.current->as.string.label_allowed &&
-            parser->current.end < parser->end && parser->current.end[0] == ':' &&
-            (parser->current.end + 1 >= parser->end || parser->current.end[1] != ':')
+            (peek(parser) == ':') &&
+            (peek_at(parser, 1) != ':')
           ) {
             parser->current.end++;
             lex_state_set(parser, YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED);
