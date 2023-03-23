@@ -4,9 +4,10 @@
 /******************************************************************************/
 
 #include <stdio.h>
-#include "util/yp_buffer.h"
-#include "ast.h"
-#include "parser.h"
+
+#include "yarp/ast.h"
+#include "yarp/parser.h"
+#include "yarp/util/yp_buffer.h"
 
 static void
 prettyprint_token(yp_buffer_t *buffer, yp_token_t *token) {
@@ -64,7 +65,7 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
       <%- when LocationParam -%>
       prettyprint_location(buffer, parser, &node->as.<%= node.human %>.<%= param.name %>);
       <%- when OptionalLocationParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %>.start == parser->start) {
+      if (node->as.<%= node.human %>.<%= param.name %>.start == NULL) {
         yp_buffer_append_str(buffer, "nil", 3);
       } else {
         prettyprint_location(buffer, parser, &node->as.<%= node.human %>.<%= param.name %>);

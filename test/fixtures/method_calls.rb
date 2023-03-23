@@ -109,3 +109,5 @@ foo class Bar baz do end end
 foo module Bar baz do end end
 
 foo [baz do end]
+
+p begin 1.times do 1 end end

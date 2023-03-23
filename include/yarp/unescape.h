@@ -6,10 +6,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "diagnostic.h"
-#include "util/yp_list.h"
-#include "util/yp_string.h"
-#include "util/yp_strspn.h"
+#include "yarp/diagnostic.h"
+#include "yarp/util/yp_list.h"
+#include "yarp/util/yp_string.h"
+#include "yarp/util/yp_strspn.h"
 
 // The type of unescape we are performing.
 typedef enum {

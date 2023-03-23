@@ -1,4 +1,4 @@
-#include "util/yp_strnstr.h"
+#include "yarp/util/yp_strnstr.h"
 
 // Find the first occurrence of the needle string in haystack string, searching
 // at maximum length bytes. Haystack is not assumed to be null terminated, but
