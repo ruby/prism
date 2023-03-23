@@ -72,10 +72,7 @@ module YARP
       end
 
       def load_optional_location
-        if io.read(1).unpack1("C") != 0
-          io.pos -= 1
-          load_location
-        end
+        load_location if io.read(1).unpack1("C") != 0
       end
 
       def load_node

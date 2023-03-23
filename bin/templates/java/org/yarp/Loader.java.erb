@@ -89,10 +89,9 @@ public class Loader {
     }
 
     private Nodes.Location loadOptionalLocation() {
-        if (buffer.get(buffer.position()) != 0) {
+        if (buffer.get() != 0) {
             return loadLocation();
         } else {
-            buffer.position(buffer.position() + 1); // continue after the 0 byte
             return null;
         }
     }

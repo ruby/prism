@@ -11,9 +11,7 @@ extern VALUE rb_cYARPLocation;
 
 static VALUE
 location_new(yp_parser_t *parser, const char *start, const char *end) {
-  VALUE real_start = start ? LONG2FIX(start - parser->start) : Qnil;
-  VALUE real_end = end ? LONG2FIX(end - parser->start) : Qnil;
-  VALUE argv[] = { real_start, real_end };
+  VALUE argv[] = { LONG2FIX(start - parser->start), LONG2FIX(end - parser->start) };
   return rb_class_new_instance(2, argv, rb_cYARPLocation);
 }
 
@@ -66,7 +64,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
       <%- when LocationParam -%>
       argv[<%= index %>] = location_new(parser, node->as.<%= node.human %>.<%= param.name %>.start, node->as.<%= node.human %>.<%= param.name %>.end);
       <%- when OptionalLocationParam -%>
-      argv[<%= index %>] = node->as.<%= node.human %>.<%= param.name %>.start == parser->start ? Qnil : location_new(parser, node->as.<%= node.human %>.<%= param.name %>.start, node->as.<%= node.human %>.<%= param.name %>.end);
+      argv[<%= index %>] = node->as.<%= node.human %>.<%= param.name %>.start == NULL ? Qnil : location_new(parser, node->as.<%= node.human %>.<%= param.name %>.start, node->as.<%= node.human %>.<%= param.name %>.end);
       <%- when IntegerParam -%>
       argv[<%= index %>] = INT2FIX(node->as.<%= node.human %>.<%= param.name %>);
       <%- else -%>
