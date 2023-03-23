@@ -32,13 +32,4 @@ yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list
 // Clear the node but preserves the location.
 void
 yp_node_clear(yp_node_t *node);
-
-<%- nodes.each do |node| -%>
-// Allocate a new <%= node.name %> node.
-yp_node_t *
-<%- params = ["yp_parser_t *parser", *node.params.map(&:param), ("yp_location_t *location" if node.location_provided?)].compact.join(", ") -%>
-yp_node_<%= node.human %>_create(<%= params %>);
-
-<%- end -%>
-
 #endif // YARP_NODE_H
