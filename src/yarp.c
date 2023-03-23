@@ -5730,6 +5730,7 @@ parse_parameters(
   bool allows_trailing_comma
 ) {
   yp_node_t *params = yp_parameters_node_create(parser);
+  yp_state_stack_push(&parser->do_loop_stack, false);
 
   do {
     switch (parser->current.type) {
@@ -5779,7 +5780,7 @@ parse_parameters(
           // If parsing the value of the parameter resulted in error recovery,
           // then we can put a missing node in its place and stop parsing the
           // parameters entirely now.
-          if (parser->recovering) return params;
+          if (parser->recovering) goto exit;
         } else {
           yp_node_t *param = yp_node_required_parameter_node_create(parser, &name);
           yp_parameters_node_requireds_append(params, param);
@@ -5806,7 +5807,7 @@ parse_parameters(
           case YP_TOKEN_SEMICOLON:
           case YP_TOKEN_NEWLINE: {
             if (uses_parentheses) {
-              return params;
+              goto exit;
             }
 
             yp_node_t *param = yp_node_keyword_parameter_node_create(parser, &name, NULL);
@@ -5825,7 +5826,7 @@ parse_parameters(
             // If parsing the value of the parameter resulted in error recovery,
             // then we can put a missing node in its place and stop parsing the
             // parameters entirely now.
-            if (parser->recovering) return params;
+            if (parser->recovering) goto exit;
           }
         }
 
@@ -5904,7 +5905,7 @@ parse_parameters(
           }
         }
 
-        return params;
+        goto exit;
     }
 
     if (uses_parentheses) {
@@ -5912,6 +5913,8 @@ parse_parameters(
     }
   } while (accept(parser, YP_TOKEN_COMMA));
 
+exit:
+  yp_state_stack_pop(&parser->do_loop_stack);
   return params;
 }
 

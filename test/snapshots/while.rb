@@ -1,6 +1,6 @@
-ProgramNode(0...91)(
+ProgramNode(0...156)(
   Scope(0...0)([]),
-  StatementsNode(0...91)(
+  StatementsNode(0...156)(
     [WhileNode(0...13)(
        KEYWORD_WHILE(0...5)("while"),
        TrueNode(6...10)(),
@@ -65,6 +65,49 @@ ProgramNode(0...91)(
             "foo"
           )]
        )
+     ),
+     WhileNode(111...156)(
+       KEYWORD_WHILE(111...116)("while"),
+       DefNode(117...149)(
+         IDENTIFIER(126...129)("foo"),
+         SelfNode(121...125)(),
+         ParametersNode(130...144)(
+           [],
+           [OptionalParameterNode(130...144)(
+              IDENTIFIER(130...131)("a"),
+              EQUAL(132...133)("="),
+              CallNode(134...144)(
+                nil,
+                nil,
+                IDENTIFIER(134...137)("tap"),
+                nil,
+                nil,
+                nil,
+                BlockNode(138...144)(
+                  Scope(138...140)([]),
+                  nil,
+                  nil,
+                  (138...140),
+                  (141...144)
+                ),
+                "tap"
+              )
+            )],
+           nil,
+           [],
+           nil,
+           nil
+         ),
+         StatementsNode(0...0)([]),
+         Scope(117...120)([IDENTIFIER(130...131)("a")]),
+         (117...120),
+         (125...126),
+         nil,
+         nil,
+         nil,
+         (146...149)
+       ),
+       StatementsNode(151...156)([BreakNode(151...156)(nil, (151...156))])
      )]
   )
 )
