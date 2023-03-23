@@ -378,30 +378,10 @@ yp_array_node_close_set(yp_node_t *node, const yp_token_t *closing) {
   node->as.array_node.closing = *closing;
 }
 
-// Allocate and initialize a new array pattern node from a single rest node.
-static yp_node_t *
-yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
-  yp_node_t *node = yp_node_alloc(parser);
-
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = rest->location,
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = rest
-    }
-  };
-
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
-
-  return node;
-}
-
 // Allocate and initialize a new array pattern node. The node list given in the
 // nodes parameter is guaranteed to have at least two nodes.
 static yp_node_t *
-yp_array_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
+yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *nodes) {
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -434,6 +414,78 @@ yp_array_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
       yp_node_list_append2(&node->as.array_pattern_node.requireds, child);
     }
   }
+
+  return node;
+}
+
+// Allocate and initialize a new array pattern node from a single rest node.
+static yp_node_t *
+yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_ARRAY_PATTERN_NODE,
+    .location = rest->location,
+    .as.array_pattern_node = {
+      .constant = NULL,
+      .rest = rest
+    }
+  };
+
+  yp_node_list_init(&node->as.array_pattern_node.requireds);
+  yp_node_list_init(&node->as.array_pattern_node.posts);
+
+  return node;
+}
+
+// Allocate and initialize a new array pattern node from a constant and opening
+// and closing tokens.
+static yp_node_t *
+yp_array_pattern_node_constant_create(yp_parser_t *parser, yp_node_t *constant, const yp_token_t *opening, const yp_token_t *closing) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_ARRAY_PATTERN_NODE,
+    .location = {
+      .start = constant->location.start,
+      .end = closing->end
+    },
+    .as.array_pattern_node = {
+      .constant = constant,
+      .rest = NULL,
+      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+    }
+  };
+
+  yp_node_list_init(&node->as.array_pattern_node.requireds);
+  yp_node_list_init(&node->as.array_pattern_node.posts);
+
+  return node;
+}
+
+// Allocate and initialize a new array pattern node from an opening and closing
+// token.
+static yp_node_t *
+yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_ARRAY_PATTERN_NODE,
+    .location = {
+      .start = opening->start,
+      .end = closing->end
+    },
+    .as.array_pattern_node = {
+      .constant = NULL,
+      .rest = NULL,
+      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+    }
+  };
+
+  yp_node_list_init(&node->as.array_pattern_node.requireds);
+  yp_node_list_init(&node->as.array_pattern_node.posts);
 
   return node;
 }
@@ -6727,53 +6779,8 @@ parse_method_definition_name(yp_parser_t *parser) {
   }
 }
 
-/*
-p_expr                   -> array pattern
-p_expr ','               -> array pattern
-p_expr ',' p_args        -> array pattern
-p_args_tail              -> array pattern
-p_find                   -> find pattern
-p_kwargs                 -> hash pattern
-
-p_expr -> p_expr '=>' tIDENTIFIER
-p_expr -> p_expr '|' p_expr_basic
-
-p_expr_basic -> p_value
-p_expr_basic -> tIDENTIFIER
-p_expr_basic -> '[' ']'
-p_expr_basic -> '[' p_args ']'
-p_expr_basic -> '[' p_find ']'
-p_expr_basic -> '{' '}'
-p_expr_basic -> '{' p_kwargs '}'
-p_expr_basic -> '(' p_expr ')'
-
-p_expr_basic -> p_const '(' ')'
-p_expr_basic -> p_const '(' p_args ')'
-p_expr_basic -> p_const '(' p_find ')'
-p_expr_basic -> p_const '(' p_kwargs ')'
-p_expr_basic -> p_const '[' ']'
-p_expr_basic -> p_const '[' p_args ']'
-p_expr_basic -> p_const '[' p_find ']'
-p_expr_basic -> p_const '[' p_kwargs ']'
-
-p_args -> comma separated p_expr, optional splat, optional comma separated p_expr
-p_find -> splat, comma separated p_expr, splat
-p_kwargs -> comma separated p_kwarg, optional keyword splat
-p_kwarg -> label then p_expr
-
-p_const -> constant path
-
-p_value -> p_primitive
-p_value -> p_primitive '..' p_primitive
-p_value -> p_primitive '...' p_primitive
-p_value -> p_primitive '..'
-p_value -> p_primitive '...'
-p_value -> '..' p_primitive
-p_value -> '...' p_primitive
-p_value -> pinned variable
-p_value -> pinned expression
-p_value -> p_const
-*/
+static yp_node_t *
+parse_pattern(yp_parser_t *parser, const char *message);
 
 // Accept any number of constants joined by :: delimiters.
 static yp_node_t *
@@ -6788,6 +6795,75 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
     node = yp_constant_path_node_create(parser, node, &delimiter, child);
   }
 
+  // If there is a [ or ( that follows, then this is part of a larger pattern
+  // expression. We'll parse the inner pattern here, then modify the returned
+  // inner pattern with our constant path attached.
+  if (match_any_type_p(parser, 2, YP_TOKEN_BRACKET_LEFT, YP_TOKEN_PARENTHESIS_LEFT)) {
+    yp_token_t opening;
+    yp_token_t closing;
+    yp_node_t *inner = NULL;
+
+    if (accept(parser, YP_TOKEN_BRACKET_LEFT)) {
+      opening = parser->previous;
+
+      if (!accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
+        inner = parse_pattern(parser, "Expected a pattern expression after the [ operator.");
+        expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a ] to close the pattern expression.");
+      }
+
+      closing = parser->previous;
+    } else {
+      parser_lex(parser);
+      opening = parser->previous;
+
+      if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+        inner = parse_pattern(parser, "Expected a pattern expression after the ( operator.");
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ) to close the pattern expression.");
+      }
+
+      closing = parser->previous;
+    }
+
+    if (inner) {
+      // Now that we have the inner pattern, check to see if it's an array, find,
+      // or hash pattern. If it is, then we'll attach our constant path to it. If
+      // it's not, then we'll create an array pattern.
+      switch (inner->type) {
+        case YP_NODE_ARRAY_PATTERN_NODE: {
+          inner->location.start = node->location.start;
+          inner->location.end = closing.end;
+
+          inner->as.array_pattern_node.constant = node;
+          inner->as.array_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          inner->as.array_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+          node = inner;
+          break;
+        }
+        case YP_NODE_FIND_PATTERN_NODE: {
+          inner->location.start = node->location.start;
+          inner->location.end = closing.end;
+
+          inner->as.find_pattern_node.constant = node;
+          inner->as.find_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          inner->as.find_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+          node = inner;
+          break;
+        }
+        default: {
+          node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
+          yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
+          break;
+        }
+      }
+    } else {
+      // If there was no inner pattern, then we have something like Foo() or
+      // Foo[]. In that case we'll create an array pattern with no requireds.
+      node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
+    }
+  }
+
   return node;
 }
 
@@ -6799,6 +6875,58 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       parser_lex(parser);
       yp_parser_local_add(parser, &parser->previous);
       return yp_local_variable_write_node_create(parser, &parser->previous);
+    }
+    case YP_TOKEN_BRACKET_LEFT_ARRAY: {
+      yp_token_t opening = parser->current;
+      parser_lex(parser);
+
+      if (accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
+        // If we have an empty array pattern, then we'll just return a new
+        // array pattern node.
+        return yp_array_pattern_node_empty_create(parser, &opening, &parser->previous);
+      }
+
+      // Otherwise, we'll parse the inner pattern, then deal with it depending
+      // on the type it returns.
+      yp_node_t *inner = parse_pattern(parser, "Expected a pattern expression after the [ operator.");
+
+      expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a ] to close the pattern expression.");
+      yp_token_t closing = parser->previous;
+
+      switch (inner->type) {
+        case YP_NODE_ARRAY_PATTERN_NODE: {
+          if (inner->as.array_pattern_node.opening_loc.start == NULL) {
+            inner->location.start = opening.start;
+            inner->location.end = closing.end;
+
+            inner->as.array_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+            inner->as.array_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+            return inner;
+          }
+
+          break;
+        }
+        case YP_NODE_FIND_PATTERN_NODE: {
+          if (inner->as.find_pattern_node.opening_loc.start == NULL) {
+            inner->location.start = opening.start;
+            inner->location.end = closing.end;
+
+            inner->as.find_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+            inner->as.find_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+            return inner;
+          }
+
+          break;
+        }
+        default:
+          break;
+      }
+
+      yp_node_t *node = yp_array_pattern_node_empty_create(parser, &opening, &closing);
+      yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
+      return node;
     }
     case YP_TOKEN_UDOT_DOT:
     case YP_TOKEN_UDOT_DOT_DOT: {
@@ -6942,6 +7070,12 @@ parse_pattern_rest(yp_parser_t *parser) {
 }
 
 // Parse a pattern expression primitive.
+//
+// Still yet to be supported:
+// * Capturing variables:          p_expr '=>' tIDENTIFIER
+// * Alternation:                  p_expr '|' p_expr_basic
+// * Hash patterns
+// * Array patterns w/o constants
 static yp_node_t *
 parse_pattern(yp_parser_t *parser, const char *message) {
   yp_node_t *node;
@@ -6994,7 +7128,7 @@ parse_pattern(yp_parser_t *parser, const char *message) {
     if (nodes.nodes[0]->type == YP_NODE_SPLAT_NODE && nodes.nodes[nodes.size - 1]->type == YP_NODE_SPLAT_NODE) {
       node = yp_find_pattern_node_create(parser, &nodes);
     } else {
-      node = yp_array_pattern_node_create(parser, &nodes);
+      node = yp_array_pattern_node_node_list_create(parser, &nodes);
     }
 
     free(nodes.nodes);
