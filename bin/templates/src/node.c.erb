@@ -127,9 +127,13 @@ yp_node_t *
   in StringParam | NodeListParam | TokenListParam then nil
   end
 }.compact.join(", ") -%>
-yp_node_<%= node.human %>_create(<%= ["yp_parser_t *parser", *node.params.map(&:param), ("yp_location_t *location" if node.location_provided?)].compact.join(", ") %>) {
+yp_node_<%= node.human %>_create(<%= ["yp_parser_t *parser", *node.params.map(&:param), ("yp_location_t *location" if node.location_caller_provided?)].compact.join(", ") %>) {
   yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) { .type = <%= node.type %>, .location = <%= node.location %><%= assigns.empty? ? "" : ", .as.#{node.human} = { #{assigns} }" %> };
+  *node = (yp_node_t) {
+    .type = <%= node.type %>,
+    .location = <%= node.location %><%= assigns.empty? ? "" : ",
+    .as.#{node.human} = { #{assigns} }" %>
+  };
   <%- node.params.each do |param| -%>
   <%- case param -%>
   <%- when NodeListParam -%>

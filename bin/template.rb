@@ -85,7 +85,7 @@ end
 # child nodes it contains, and how to obtain the location of the node in the
 # source.
 class NodeType
-  attr_reader :name, :type, :human, :params, :location, :location_provided, :comment
+  attr_reader :name, :type, :human, :params, :location, :location_caller_provided, :comment
 
   def initialize(config)
     @name = config.fetch("name")
@@ -125,9 +125,9 @@ class NodeType
       end
 
     @location =
-      config.fetch("location", "provided").then do |location|
-        if location == "provided"
-          @location_provided = true
+      config.fetch("location", "caller_provided").then do |location|
+        if location == "caller_provided"
+          @location_caller_provided = true
           "*location"
         else
           bounds = location.include?("->") ? location.split("->") : [location, location]
@@ -139,8 +139,8 @@ class NodeType
     @comment = config.fetch("comment")
   end
 
-  def location_provided?
-    @location_provided
+  def location_caller_provided?
+    @location_caller_provided
   end
 
   private

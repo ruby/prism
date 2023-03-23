@@ -36,7 +36,7 @@ yp_node_clear(yp_node_t *node);
 <%- nodes.each do |node| -%>
 // Allocate a new <%= node.name %> node.
 yp_node_t *
-<%- params = ["yp_parser_t *parser", *node.params.map(&:param), ("yp_location_t *location" if node.location_provided?)].compact.join(", ") -%>
+<%- params = ["yp_parser_t *parser", *node.params.map(&:param), ("yp_location_t *location" if node.location_caller_provided?)].compact.join(", ") -%>
 yp_node_<%= node.human %>_create(<%= params %>);
 
 <%- end -%>
