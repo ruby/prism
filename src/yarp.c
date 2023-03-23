@@ -6685,6 +6685,9 @@ p_value -> pinned expression
 p_value -> p_const
 */
 
+static yp_node_t *
+parse_pattern(yp_parser_t *parser, bool root_pattern, const char *message);
+
 // Accept any number of constants joined by :: delimiters.
 static yp_node_t *
 parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
