@@ -117,9 +117,10 @@ yp_node_list_free(yp_parser_t *parser, yp_node_list_t *list) {
 }
 
 <%- nodes.each do |node| -%>
+<% unless node.location_provided? %>
 // Allocate a new <%= node.name %> node.
 yp_node_t *
-<%- assigns = node.params.map { |param| 
+<%- assigns = node.params.map { |param|
   case param
   in NodeParam | OptionalNodeParam | IntegerParam then ".#{param.name} = #{param.name}"
   in TokenParam | OptionalTokenParam then ".#{param.name} = *#{param.name}"
@@ -141,6 +142,7 @@ yp_node_<%= node.human %>_create(<%= ["yp_parser_t *parser", *node.params.map(&:
   return node;
 }
 
+<%- end -%>
 <%- end -%>
 // Deallocate the space for a yp_node_t. Similarly to yp_node_alloc, we're not
 // using the parser argument, but it's there to allow for the future possibility
