@@ -56,6 +56,10 @@ foo => ^@bar
 foo => ^@@bar
 foo => ^$bar
 
+foo => ^(1)
+foo => ^(nil)
+foo => ^("bar" + "baz")
+
 foo => Foo
 foo => Foo::Bar::Baz
 foo => ::Foo
