@@ -3289,7 +3289,11 @@ parser_lex(yp_parser_t *parser) {
 
             // If we hit a . after a newline, then we're in a call chain and
             // we need to return the call operator.
-            if (next_content[0] == '.') {
+            if (
+              (next_content[0] == '.') &&
+              (next_content + 1 < parser->end) &&
+              (next_content[1] != '.')
+             ) {
               if (!lexed_comment) parser_lex_ignored_newline(parser);
               lex_state_set(parser, YP_LEX_STATE_DOT);
               parser->current.start = next_content;
