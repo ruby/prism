@@ -8,8 +8,8 @@ class ErrorsTest < Test::Unit::TestCase
   test "constant path with invalid token after" do
     expected = ConstantPathNode(
       ConstantReadNode(),
-      COLON_COLON("::"),
-      MissingNode()
+      MissingNode(),
+      Location()
     )
 
     assert_errors expected, "A::$b", ["Expected identifier or constant after '::'"]
@@ -177,12 +177,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "top level constant with downcased identifier" do
-    expected = ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode())
+    expected = ConstantPathNode(nil, ConstantReadNode(), Location())
     assert_errors expected, "::foo", ["Expected a constant after ::."]
   end
 
   test "top level constant starting with downcased identifier" do
-    expected = ConstantPathNode(nil, UCOLON_COLON("::"), ConstantReadNode())
+    expected = ConstantPathNode(nil, ConstantReadNode(), Location())
     assert_errors expected, "::foo::A", ["Expected a constant after ::."]
   end
 

@@ -1,6 +1,6 @@
-ProgramNode(0...3020)(
+ProgramNode(0...3053)(
   Scope(0...0)([IDENTIFIER(7...10)("bar")]),
-  StatementsNode(0...3020)(
+  StatementsNode(0...3053)(
     [MatchRequiredNode(0...10)(
        CallNode(0...3)(
          nil,
@@ -1165,7 +1165,7 @@ ProgramNode(0...3020)(
        ),
        (985...987)
      ),
-     MatchPredicateNode(995...1005)(
+     MatchRequiredNode(995...1005)(
        CallNode(995...998)(
          nil,
          nil,
@@ -1176,14 +1176,10 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       LocalVariableWriteNode(1002...1005)(
-         IDENTIFIER(1002...1005)("bar"),
-         nil,
-         nil
-       ),
+       ConstantReadNode(1002...1005)(),
        (999...1001)
      ),
-     MatchPredicateNode(1006...1014)(
+     MatchRequiredNode(1006...1026)(
        CallNode(1006...1009)(
          nil,
          nil,
@@ -1194,1128 +1190,1126 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       IntegerNode(1013...1014)(),
+       ConstantPathNode(1013...1026)(
+         ConstantPathNode(1013...1021)(
+           ConstantReadNode(1013...1016)(),
+           ConstantReadNode(1018...1021)(),
+           (1016...1018)
+         ),
+         ConstantReadNode(1023...1026)(),
+         (1021...1023)
+       ),
        (1010...1012)
      ),
-     MatchPredicateNode(1015...1025)(
-       CallNode(1015...1018)(
+     MatchPredicateNode(1028...1038)(
+       CallNode(1028...1031)(
          nil,
          nil,
-         IDENTIFIER(1015...1018)("foo"),
+         IDENTIFIER(1028...1031)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       FloatNode(1022...1025)(),
-       (1019...1021)
+       LocalVariableWriteNode(1035...1038)(
+         IDENTIFIER(1035...1038)("bar"),
+         nil,
+         nil
+       ),
+       (1032...1034)
      ),
-     MatchPredicateNode(1026...1035)(
-       CallNode(1026...1029)(
+     MatchPredicateNode(1039...1047)(
+       CallNode(1039...1042)(
          nil,
          nil,
-         IDENTIFIER(1026...1029)("foo"),
+         IDENTIFIER(1039...1042)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       ImaginaryNode(1033...1035)(),
-       (1030...1032)
+       IntegerNode(1046...1047)(),
+       (1043...1045)
      ),
-     MatchPredicateNode(1036...1045)(
-       CallNode(1036...1039)(
+     MatchPredicateNode(1048...1058)(
+       CallNode(1048...1051)(
          nil,
          nil,
-         IDENTIFIER(1036...1039)("foo"),
+         IDENTIFIER(1048...1051)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       RationalNode(1043...1045)(),
-       (1040...1042)
+       FloatNode(1055...1058)(),
+       (1052...1054)
      ),
-     MatchPredicateNode(1046...1057)(
-       CallNode(1046...1049)(
+     MatchPredicateNode(1059...1068)(
+       CallNode(1059...1062)(
          nil,
          nil,
-         IDENTIFIER(1046...1049)("foo"),
+         IDENTIFIER(1059...1062)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       SymbolNode(1053...1057)(
-         SYMBOL_BEGIN(1053...1054)(":"),
-         IDENTIFIER(1054...1057)("foo"),
-         nil,
-         "foo"
-       ),
-       (1050...1052)
+       ImaginaryNode(1066...1068)(),
+       (1063...1065)
      ),
-     MatchPredicateNode(1058...1072)(
-       CallNode(1058...1061)(
+     MatchPredicateNode(1069...1078)(
+       CallNode(1069...1072)(
          nil,
          nil,
-         IDENTIFIER(1058...1061)("foo"),
+         IDENTIFIER(1069...1072)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       SymbolNode(1065...1072)(
-         SYMBOL_BEGIN(1065...1068)("%s["),
-         STRING_CONTENT(1068...1071)("foo"),
-         STRING_END(1071...1072)("]"),
-         "foo"
-       ),
-       (1062...1064)
+       RationalNode(1076...1078)(),
+       (1073...1075)
      ),
-     MatchPredicateNode(1073...1085)(
-       CallNode(1073...1076)(
+     MatchPredicateNode(1079...1090)(
+       CallNode(1079...1082)(
          nil,
          nil,
-         IDENTIFIER(1073...1076)("foo"),
+         IDENTIFIER(1079...1082)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       InterpolatedSymbolNode(1082...1085)(
-         SYMBOL_BEGIN(1080...1082)(":\""),
-         [StringNode(1082...1085)(
-            nil,
-            STRING_CONTENT(1082...1085)("foo"),
-            nil,
-            "foo"
-          )],
-         STRING_END(1085...1086)("\"")
-       ),
-       (1077...1079)
-     ),
-     MatchPredicateNode(1087...1099)(
-       CallNode(1087...1090)(
-         nil,
-         nil,
+       SymbolNode(1086...1090)(
+         SYMBOL_BEGIN(1086...1087)(":"),
          IDENTIFIER(1087...1090)("foo"),
          nil,
-         nil,
-         nil,
-         nil,
          "foo"
        ),
-       RegularExpressionNode(1094...1099)(
-         REGEXP_BEGIN(1094...1095)("/"),
-         STRING_CONTENT(1095...1098)("foo"),
-         REGEXP_END(1098...1099)("/"),
-         "foo"
-       ),
-       (1091...1093)
+       (1083...1085)
      ),
-     MatchPredicateNode(1100...1112)(
-       CallNode(1100...1103)(
+     MatchPredicateNode(1091...1105)(
+       CallNode(1091...1094)(
          nil,
          nil,
-         IDENTIFIER(1100...1103)("foo"),
+         IDENTIFIER(1091...1094)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       XStringNode(1107...1112)(
-         BACKTICK(1107...1108)("`"),
-         STRING_CONTENT(1108...1111)("foo"),
-         STRING_END(1111...1112)("`"),
+       SymbolNode(1098...1105)(
+         SYMBOL_BEGIN(1098...1101)("%s["),
+         STRING_CONTENT(1101...1104)("foo"),
+         STRING_END(1104...1105)("]"),
          "foo"
        ),
-       (1104...1106)
+       (1095...1097)
      ),
-     MatchPredicateNode(1113...1127)(
-       CallNode(1113...1116)(
+     MatchPredicateNode(1106...1118)(
+       CallNode(1106...1109)(
          nil,
          nil,
-         IDENTIFIER(1113...1116)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
-       XStringNode(1120...1127)(
-         PERCENT_LOWER_X(1120...1123)("%x["),
-         STRING_CONTENT(1123...1126)("foo"),
-         STRING_END(1126...1127)("]"),
-         "foo"
-       ),
-       (1117...1119)
-     ),
-     MatchPredicateNode(1128...1142)(
-       CallNode(1128...1131)(
-         nil,
-         nil,
-         IDENTIFIER(1128...1131)("foo"),
+         IDENTIFIER(1106...1109)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       ArrayNode(1135...1142)(
-         [SymbolNode(1138...1141)(
+       InterpolatedSymbolNode(1115...1118)(
+         SYMBOL_BEGIN(1113...1115)(":\""),
+         [StringNode(1115...1118)(
             nil,
-            STRING_CONTENT(1138...1141)("foo"),
+            STRING_CONTENT(1115...1118)("foo"),
             nil,
             "foo"
           )],
-         PERCENT_LOWER_I(1135...1138)("%i["),
-         STRING_END(1141...1142)("]")
+         STRING_END(1118...1119)("\"")
        ),
-       (1132...1134)
+       (1110...1112)
      ),
-     MatchPredicateNode(1143...1157)(
-       CallNode(1143...1146)(
+     MatchPredicateNode(1120...1132)(
+       CallNode(1120...1123)(
          nil,
          nil,
-         IDENTIFIER(1143...1146)("foo"),
+         IDENTIFIER(1120...1123)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       ArrayNode(1150...1157)(
-         [SymbolNode(1153...1156)(
+       RegularExpressionNode(1127...1132)(
+         REGEXP_BEGIN(1127...1128)("/"),
+         STRING_CONTENT(1128...1131)("foo"),
+         REGEXP_END(1131...1132)("/"),
+         "foo"
+       ),
+       (1124...1126)
+     ),
+     MatchPredicateNode(1133...1145)(
+       CallNode(1133...1136)(
+         nil,
+         nil,
+         IDENTIFIER(1133...1136)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       XStringNode(1140...1145)(
+         BACKTICK(1140...1141)("`"),
+         STRING_CONTENT(1141...1144)("foo"),
+         STRING_END(1144...1145)("`"),
+         "foo"
+       ),
+       (1137...1139)
+     ),
+     MatchPredicateNode(1146...1160)(
+       CallNode(1146...1149)(
+         nil,
+         nil,
+         IDENTIFIER(1146...1149)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       XStringNode(1153...1160)(
+         PERCENT_LOWER_X(1153...1156)("%x["),
+         STRING_CONTENT(1156...1159)("foo"),
+         STRING_END(1159...1160)("]"),
+         "foo"
+       ),
+       (1150...1152)
+     ),
+     MatchPredicateNode(1161...1175)(
+       CallNode(1161...1164)(
+         nil,
+         nil,
+         IDENTIFIER(1161...1164)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       ArrayNode(1168...1175)(
+         [SymbolNode(1171...1174)(
             nil,
-            STRING_CONTENT(1153...1156)("foo"),
+            STRING_CONTENT(1171...1174)("foo"),
             nil,
             "foo"
           )],
-         PERCENT_UPPER_I(1150...1153)("%I["),
-         STRING_END(1156...1157)("]")
+         PERCENT_LOWER_I(1168...1171)("%i["),
+         STRING_END(1174...1175)("]")
        ),
-       (1147...1149)
+       (1165...1167)
      ),
-     MatchPredicateNode(1158...1172)(
-       CallNode(1158...1161)(
+     MatchPredicateNode(1176...1190)(
+       CallNode(1176...1179)(
          nil,
          nil,
-         IDENTIFIER(1158...1161)("foo"),
+         IDENTIFIER(1176...1179)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       ArrayNode(1165...1172)(
-         [StringNode(1168...1171)(
+       ArrayNode(1183...1190)(
+         [SymbolNode(1186...1189)(
             nil,
-            STRING_CONTENT(1168...1171)("foo"),
-            nil,
-            "foo"
-          )],
-         PERCENT_LOWER_W(1165...1168)("%w["),
-         STRING_END(1171...1172)("]")
-       ),
-       (1162...1164)
-     ),
-     MatchPredicateNode(1173...1187)(
-       CallNode(1173...1176)(
-         nil,
-         nil,
-         IDENTIFIER(1173...1176)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
-       ArrayNode(1180...1187)(
-         [StringNode(1183...1186)(
-            nil,
-            STRING_CONTENT(1183...1186)("foo"),
+            STRING_CONTENT(1186...1189)("foo"),
             nil,
             "foo"
           )],
-         PERCENT_UPPER_W(1180...1183)("%W["),
-         STRING_END(1186...1187)("]")
+         PERCENT_UPPER_I(1183...1186)("%I["),
+         STRING_END(1189...1190)("]")
        ),
-       (1177...1179)
+       (1180...1182)
      ),
-     MatchPredicateNode(1188...1202)(
-       CallNode(1188...1191)(
+     MatchPredicateNode(1191...1205)(
+       CallNode(1191...1194)(
          nil,
          nil,
-         IDENTIFIER(1188...1191)("foo"),
+         IDENTIFIER(1191...1194)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       StringNode(1195...1202)(
-         STRING_BEGIN(1195...1198)("%q["),
-         STRING_CONTENT(1198...1201)("foo"),
-         STRING_END(1201...1202)("]"),
-         "foo"
+       ArrayNode(1198...1205)(
+         [StringNode(1201...1204)(
+            nil,
+            STRING_CONTENT(1201...1204)("foo"),
+            nil,
+            "foo"
+          )],
+         PERCENT_LOWER_W(1198...1201)("%w["),
+         STRING_END(1204...1205)("]")
        ),
-       (1192...1194)
+       (1195...1197)
      ),
-     MatchPredicateNode(1203...1217)(
-       CallNode(1203...1206)(
+     MatchPredicateNode(1206...1220)(
+       CallNode(1206...1209)(
          nil,
          nil,
-         IDENTIFIER(1203...1206)("foo"),
+         IDENTIFIER(1206...1209)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       StringNode(1210...1217)(
-         STRING_BEGIN(1210...1213)("%Q["),
-         STRING_CONTENT(1213...1216)("foo"),
-         STRING_END(1216...1217)("]"),
-         "foo"
+       ArrayNode(1213...1220)(
+         [StringNode(1216...1219)(
+            nil,
+            STRING_CONTENT(1216...1219)("foo"),
+            nil,
+            "foo"
+          )],
+         PERCENT_UPPER_W(1213...1216)("%W["),
+         STRING_END(1219...1220)("]")
        ),
-       (1207...1209)
+       (1210...1212)
      ),
-     MatchPredicateNode(1218...1230)(
-       CallNode(1218...1221)(
+     MatchPredicateNode(1221...1235)(
+       CallNode(1221...1224)(
          nil,
          nil,
-         IDENTIFIER(1218...1221)("foo"),
+         IDENTIFIER(1221...1224)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       StringNode(1225...1230)(
-         STRING_BEGIN(1225...1226)("\""),
-         STRING_CONTENT(1226...1229)("foo"),
-         STRING_END(1229...1230)("\""),
+       StringNode(1228...1235)(
+         STRING_BEGIN(1228...1231)("%q["),
+         STRING_CONTENT(1231...1234)("foo"),
+         STRING_END(1234...1235)("]"),
          "foo"
        ),
-       (1222...1224)
+       (1225...1227)
      ),
-     MatchPredicateNode(1231...1241)(
-       CallNode(1231...1234)(
+     MatchPredicateNode(1236...1250)(
+       CallNode(1236...1239)(
          nil,
          nil,
-         IDENTIFIER(1231...1234)("foo"),
+         IDENTIFIER(1236...1239)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       NilNode(1238...1241)(),
-       (1235...1237)
+       StringNode(1243...1250)(
+         STRING_BEGIN(1243...1246)("%Q["),
+         STRING_CONTENT(1246...1249)("foo"),
+         STRING_END(1249...1250)("]"),
+         "foo"
+       ),
+       (1240...1242)
      ),
-     MatchPredicateNode(1242...1253)(
-       CallNode(1242...1245)(
+     MatchPredicateNode(1251...1263)(
+       CallNode(1251...1254)(
          nil,
          nil,
-         IDENTIFIER(1242...1245)("foo"),
+         IDENTIFIER(1251...1254)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       SelfNode(1249...1253)(),
-       (1246...1248)
+       StringNode(1258...1263)(
+         STRING_BEGIN(1258...1259)("\""),
+         STRING_CONTENT(1259...1262)("foo"),
+         STRING_END(1262...1263)("\""),
+         "foo"
+       ),
+       (1255...1257)
      ),
-     MatchPredicateNode(1254...1265)(
-       CallNode(1254...1257)(
+     MatchPredicateNode(1264...1274)(
+       CallNode(1264...1267)(
          nil,
          nil,
-         IDENTIFIER(1254...1257)("foo"),
+         IDENTIFIER(1264...1267)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       TrueNode(1261...1265)(),
-       (1258...1260)
+       NilNode(1271...1274)(),
+       (1268...1270)
      ),
-     MatchPredicateNode(1266...1278)(
-       CallNode(1266...1269)(
+     MatchPredicateNode(1275...1286)(
+       CallNode(1275...1278)(
          nil,
          nil,
-         IDENTIFIER(1266...1269)("foo"),
+         IDENTIFIER(1275...1278)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       FalseNode(1273...1278)(),
-       (1270...1272)
+       SelfNode(1282...1286)(),
+       (1279...1281)
      ),
-     MatchPredicateNode(1279...1294)(
-       CallNode(1279...1282)(
+     MatchPredicateNode(1287...1298)(
+       CallNode(1287...1290)(
          nil,
          nil,
-         IDENTIFIER(1279...1282)("foo"),
+         IDENTIFIER(1287...1290)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       SourceFileNode(1286...1294)(),
-       (1283...1285)
+       TrueNode(1294...1298)(),
+       (1291...1293)
      ),
-     MatchPredicateNode(1295...1310)(
-       CallNode(1295...1298)(
+     MatchPredicateNode(1299...1311)(
+       CallNode(1299...1302)(
          nil,
          nil,
-         IDENTIFIER(1295...1298)("foo"),
+         IDENTIFIER(1299...1302)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       SourceLineNode(1302...1310)(),
-       (1299...1301)
+       FalseNode(1306...1311)(),
+       (1303...1305)
      ),
-     MatchPredicateNode(1311...1330)(
-       CallNode(1311...1314)(
+     MatchPredicateNode(1312...1327)(
+       CallNode(1312...1315)(
          nil,
          nil,
-         IDENTIFIER(1311...1314)("foo"),
+         IDENTIFIER(1312...1315)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       SourceEncodingNode(1318...1330)(),
-       (1315...1317)
+       SourceFileNode(1319...1327)(),
+       (1316...1318)
      ),
-     MatchPredicateNode(1331...1346)(
-       CallNode(1331...1334)(
+     MatchPredicateNode(1328...1343)(
+       CallNode(1328...1331)(
          nil,
          nil,
-         IDENTIFIER(1331...1334)("foo"),
+         IDENTIFIER(1328...1331)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       LambdaNode(1338...1346)(
-         Scope(1338...1340)([]),
-         MINUS_GREATER(1338...1340)("->"),
+       SourceLineNode(1335...1343)(),
+       (1332...1334)
+     ),
+     MatchPredicateNode(1344...1363)(
+       CallNode(1344...1347)(
+         nil,
+         nil,
+         IDENTIFIER(1344...1347)("foo"),
          nil,
          nil,
          nil,
-         StatementsNode(1343...1346)(
-           [LocalVariableReadNode(1343...1346)(IDENTIFIER(1343...1346)("bar"))]
+         nil,
+         "foo"
+       ),
+       SourceEncodingNode(1351...1363)(),
+       (1348...1350)
+     ),
+     MatchPredicateNode(1364...1379)(
+       CallNode(1364...1367)(
+         nil,
+         nil,
+         IDENTIFIER(1364...1367)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       LambdaNode(1371...1379)(
+         Scope(1371...1373)([]),
+         MINUS_GREATER(1371...1373)("->"),
+         nil,
+         nil,
+         nil,
+         StatementsNode(1376...1379)(
+           [LocalVariableReadNode(1376...1379)(IDENTIFIER(1376...1379)("bar"))]
          )
        ),
-       (1335...1337)
+       (1368...1370)
      ),
-     CaseNode(1350...1375)(
-       CallNode(1355...1358)(
+     CaseNode(1383...1408)(
+       CallNode(1388...1391)(
          nil,
          nil,
-         IDENTIFIER(1355...1358)("foo"),
+         IDENTIFIER(1388...1391)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1360...1371)(
-          LocalVariableWriteNode(1363...1366)(
-            IDENTIFIER(1363...1366)("bar"),
+       [InNode(1393...1404)(
+          LocalVariableWriteNode(1396...1399)(
+            IDENTIFIER(1396...1399)("bar"),
             nil,
             nil
           ),
           nil,
-          (1360...1362),
-          (1367...1371)
+          (1393...1395),
+          (1400...1404)
         )],
        nil,
-       (1350...1354),
-       (1372...1375)
+       (1383...1387),
+       (1405...1408)
      ),
-     CaseNode(1376...1399)(
-       CallNode(1381...1384)(
+     CaseNode(1409...1432)(
+       CallNode(1414...1417)(
          nil,
          nil,
-         IDENTIFIER(1381...1384)("foo"),
+         IDENTIFIER(1414...1417)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1386...1395)(
-          IntegerNode(1389...1390)(),
+       [InNode(1419...1428)(
+          IntegerNode(1422...1423)(),
           nil,
-          (1386...1388),
-          (1391...1395)
+          (1419...1421),
+          (1424...1428)
         )],
        nil,
-       (1376...1380),
-       (1396...1399)
+       (1409...1413),
+       (1429...1432)
      ),
-     CaseNode(1400...1425)(
-       CallNode(1405...1408)(
+     CaseNode(1433...1458)(
+       CallNode(1438...1441)(
          nil,
          nil,
-         IDENTIFIER(1405...1408)("foo"),
+         IDENTIFIER(1438...1441)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1410...1421)(
-          FloatNode(1413...1416)(),
+       [InNode(1443...1454)(
+          FloatNode(1446...1449)(),
           nil,
-          (1410...1412),
-          (1417...1421)
+          (1443...1445),
+          (1450...1454)
         )],
        nil,
-       (1400...1404),
-       (1422...1425)
+       (1433...1437),
+       (1455...1458)
      ),
-     CaseNode(1426...1450)(
-       CallNode(1431...1434)(
+     CaseNode(1459...1483)(
+       CallNode(1464...1467)(
          nil,
          nil,
-         IDENTIFIER(1431...1434)("foo"),
+         IDENTIFIER(1464...1467)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1436...1446)(
-          ImaginaryNode(1439...1441)(),
+       [InNode(1469...1479)(
+          ImaginaryNode(1472...1474)(),
           nil,
-          (1436...1438),
-          (1442...1446)
+          (1469...1471),
+          (1475...1479)
         )],
        nil,
-       (1426...1430),
-       (1447...1450)
+       (1459...1463),
+       (1480...1483)
      ),
-     CaseNode(1451...1475)(
-       CallNode(1456...1459)(
+     CaseNode(1484...1508)(
+       CallNode(1489...1492)(
          nil,
          nil,
-         IDENTIFIER(1456...1459)("foo"),
+         IDENTIFIER(1489...1492)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1461...1471)(
-          RationalNode(1464...1466)(),
+       [InNode(1494...1504)(
+          RationalNode(1497...1499)(),
           nil,
-          (1461...1463),
-          (1467...1471)
+          (1494...1496),
+          (1500...1504)
         )],
        nil,
-       (1451...1455),
-       (1472...1475)
+       (1484...1488),
+       (1505...1508)
      ),
-     CaseNode(1476...1502)(
-       CallNode(1481...1484)(
+     CaseNode(1509...1535)(
+       CallNode(1514...1517)(
          nil,
          nil,
-         IDENTIFIER(1481...1484)("foo"),
+         IDENTIFIER(1514...1517)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1486...1498)(
-          SymbolNode(1489...1493)(
-            SYMBOL_BEGIN(1489...1490)(":"),
-            IDENTIFIER(1490...1493)("foo"),
+       [InNode(1519...1531)(
+          SymbolNode(1522...1526)(
+            SYMBOL_BEGIN(1522...1523)(":"),
+            IDENTIFIER(1523...1526)("foo"),
             nil,
             "foo"
           ),
           nil,
-          (1486...1488),
-          (1494...1498)
+          (1519...1521),
+          (1527...1531)
         )],
        nil,
-       (1476...1480),
-       (1499...1502)
+       (1509...1513),
+       (1532...1535)
      ),
-     CaseNode(1503...1532)(
-       CallNode(1508...1511)(
+     CaseNode(1536...1565)(
+       CallNode(1541...1544)(
          nil,
          nil,
-         IDENTIFIER(1508...1511)("foo"),
+         IDENTIFIER(1541...1544)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1513...1528)(
-          SymbolNode(1516...1523)(
-            SYMBOL_BEGIN(1516...1519)("%s["),
-            STRING_CONTENT(1519...1522)("foo"),
-            STRING_END(1522...1523)("]"),
+       [InNode(1546...1561)(
+          SymbolNode(1549...1556)(
+            SYMBOL_BEGIN(1549...1552)("%s["),
+            STRING_CONTENT(1552...1555)("foo"),
+            STRING_END(1555...1556)("]"),
             "foo"
           ),
           nil,
-          (1513...1515),
-          (1524...1528)
+          (1546...1548),
+          (1557...1561)
         )],
        nil,
-       (1503...1507),
-       (1529...1532)
+       (1536...1540),
+       (1562...1565)
      ),
-     CaseNode(1533...1561)(
-       CallNode(1538...1541)(
+     CaseNode(1566...1594)(
+       CallNode(1571...1574)(
          nil,
          nil,
-         IDENTIFIER(1538...1541)("foo"),
+         IDENTIFIER(1571...1574)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1543...1557)(
-          InterpolatedSymbolNode(1548...1551)(
-            SYMBOL_BEGIN(1546...1548)(":\""),
-            [StringNode(1548...1551)(
+       [InNode(1576...1590)(
+          InterpolatedSymbolNode(1581...1584)(
+            SYMBOL_BEGIN(1579...1581)(":\""),
+            [StringNode(1581...1584)(
                nil,
-               STRING_CONTENT(1548...1551)("foo"),
+               STRING_CONTENT(1581...1584)("foo"),
                nil,
                "foo"
              )],
-            STRING_END(1551...1552)("\"")
+            STRING_END(1584...1585)("\"")
           ),
           nil,
-          (1543...1545),
-          (1553...1557)
+          (1576...1578),
+          (1586...1590)
         )],
        nil,
-       (1533...1537),
-       (1558...1561)
+       (1566...1570),
+       (1591...1594)
      ),
-     CaseNode(1562...1589)(
-       CallNode(1567...1570)(
+     CaseNode(1595...1622)(
+       CallNode(1600...1603)(
          nil,
          nil,
-         IDENTIFIER(1567...1570)("foo"),
+         IDENTIFIER(1600...1603)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1572...1585)(
-          RegularExpressionNode(1575...1580)(
-            REGEXP_BEGIN(1575...1576)("/"),
-            STRING_CONTENT(1576...1579)("foo"),
-            REGEXP_END(1579...1580)("/"),
+       [InNode(1605...1618)(
+          RegularExpressionNode(1608...1613)(
+            REGEXP_BEGIN(1608...1609)("/"),
+            STRING_CONTENT(1609...1612)("foo"),
+            REGEXP_END(1612...1613)("/"),
             "foo"
           ),
           nil,
-          (1572...1574),
-          (1581...1585)
+          (1605...1607),
+          (1614...1618)
         )],
        nil,
-       (1562...1566),
-       (1586...1589)
+       (1595...1599),
+       (1619...1622)
      ),
-     CaseNode(1590...1617)(
-       CallNode(1595...1598)(
+     CaseNode(1623...1650)(
+       CallNode(1628...1631)(
          nil,
          nil,
-         IDENTIFIER(1595...1598)("foo"),
+         IDENTIFIER(1628...1631)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1600...1613)(
-          XStringNode(1603...1608)(
-            BACKTICK(1603...1604)("`"),
-            STRING_CONTENT(1604...1607)("foo"),
-            STRING_END(1607...1608)("`"),
+       [InNode(1633...1646)(
+          XStringNode(1636...1641)(
+            BACKTICK(1636...1637)("`"),
+            STRING_CONTENT(1637...1640)("foo"),
+            STRING_END(1640...1641)("`"),
             "foo"
           ),
           nil,
-          (1600...1602),
-          (1609...1613)
+          (1633...1635),
+          (1642...1646)
         )],
        nil,
-       (1590...1594),
-       (1614...1617)
+       (1623...1627),
+       (1647...1650)
      ),
-     CaseNode(1618...1647)(
-       CallNode(1623...1626)(
+     CaseNode(1651...1680)(
+       CallNode(1656...1659)(
          nil,
          nil,
-         IDENTIFIER(1623...1626)("foo"),
+         IDENTIFIER(1656...1659)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1628...1643)(
-          XStringNode(1631...1638)(
-            PERCENT_LOWER_X(1631...1634)("%x["),
-            STRING_CONTENT(1634...1637)("foo"),
-            STRING_END(1637...1638)("]"),
+       [InNode(1661...1676)(
+          XStringNode(1664...1671)(
+            PERCENT_LOWER_X(1664...1667)("%x["),
+            STRING_CONTENT(1667...1670)("foo"),
+            STRING_END(1670...1671)("]"),
             "foo"
           ),
           nil,
-          (1628...1630),
-          (1639...1643)
+          (1661...1663),
+          (1672...1676)
         )],
        nil,
-       (1618...1622),
-       (1644...1647)
+       (1651...1655),
+       (1677...1680)
      ),
-     CaseNode(1648...1677)(
-       CallNode(1653...1656)(
+     CaseNode(1681...1710)(
+       CallNode(1686...1689)(
          nil,
          nil,
-         IDENTIFIER(1653...1656)("foo"),
+         IDENTIFIER(1686...1689)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1658...1673)(
-          ArrayNode(1661...1668)(
-            [SymbolNode(1664...1667)(
+       [InNode(1691...1706)(
+          ArrayNode(1694...1701)(
+            [SymbolNode(1697...1700)(
                nil,
-               STRING_CONTENT(1664...1667)("foo"),
+               STRING_CONTENT(1697...1700)("foo"),
                nil,
                "foo"
              )],
-            PERCENT_LOWER_I(1661...1664)("%i["),
-            STRING_END(1667...1668)("]")
+            PERCENT_LOWER_I(1694...1697)("%i["),
+            STRING_END(1700...1701)("]")
           ),
           nil,
-          (1658...1660),
-          (1669...1673)
+          (1691...1693),
+          (1702...1706)
         )],
        nil,
-       (1648...1652),
-       (1674...1677)
+       (1681...1685),
+       (1707...1710)
      ),
-     CaseNode(1678...1707)(
-       CallNode(1683...1686)(
+     CaseNode(1711...1740)(
+       CallNode(1716...1719)(
          nil,
          nil,
-         IDENTIFIER(1683...1686)("foo"),
+         IDENTIFIER(1716...1719)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1688...1703)(
-          ArrayNode(1691...1698)(
-            [SymbolNode(1694...1697)(
+       [InNode(1721...1736)(
+          ArrayNode(1724...1731)(
+            [SymbolNode(1727...1730)(
                nil,
-               STRING_CONTENT(1694...1697)("foo"),
-               nil,
-               "foo"
-             )],
-            PERCENT_UPPER_I(1691...1694)("%I["),
-            STRING_END(1697...1698)("]")
-          ),
-          nil,
-          (1688...1690),
-          (1699...1703)
-        )],
-       nil,
-       (1678...1682),
-       (1704...1707)
-     ),
-     CaseNode(1708...1737)(
-       CallNode(1713...1716)(
-         nil,
-         nil,
-         IDENTIFIER(1713...1716)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
-       [InNode(1718...1733)(
-          ArrayNode(1721...1728)(
-            [StringNode(1724...1727)(
-               nil,
-               STRING_CONTENT(1724...1727)("foo"),
+               STRING_CONTENT(1727...1730)("foo"),
                nil,
                "foo"
              )],
-            PERCENT_LOWER_W(1721...1724)("%w["),
-            STRING_END(1727...1728)("]")
+            PERCENT_UPPER_I(1724...1727)("%I["),
+            STRING_END(1730...1731)("]")
           ),
           nil,
-          (1718...1720),
-          (1729...1733)
+          (1721...1723),
+          (1732...1736)
         )],
        nil,
-       (1708...1712),
-       (1734...1737)
+       (1711...1715),
+       (1737...1740)
      ),
-     CaseNode(1738...1767)(
-       CallNode(1743...1746)(
+     CaseNode(1741...1770)(
+       CallNode(1746...1749)(
          nil,
          nil,
-         IDENTIFIER(1743...1746)("foo"),
+         IDENTIFIER(1746...1749)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1748...1763)(
-          ArrayNode(1751...1758)(
-            [StringNode(1754...1757)(
+       [InNode(1751...1766)(
+          ArrayNode(1754...1761)(
+            [StringNode(1757...1760)(
                nil,
-               STRING_CONTENT(1754...1757)("foo"),
+               STRING_CONTENT(1757...1760)("foo"),
                nil,
                "foo"
              )],
-            PERCENT_UPPER_W(1751...1754)("%W["),
-            STRING_END(1757...1758)("]")
+            PERCENT_LOWER_W(1754...1757)("%w["),
+            STRING_END(1760...1761)("]")
           ),
           nil,
-          (1748...1750),
-          (1759...1763)
+          (1751...1753),
+          (1762...1766)
         )],
        nil,
-       (1738...1742),
-       (1764...1767)
+       (1741...1745),
+       (1767...1770)
      ),
-     CaseNode(1768...1797)(
-       CallNode(1773...1776)(
+     CaseNode(1771...1800)(
+       CallNode(1776...1779)(
          nil,
          nil,
-         IDENTIFIER(1773...1776)("foo"),
+         IDENTIFIER(1776...1779)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1778...1793)(
-          StringNode(1781...1788)(
-            STRING_BEGIN(1781...1784)("%q["),
-            STRING_CONTENT(1784...1787)("foo"),
-            STRING_END(1787...1788)("]"),
+       [InNode(1781...1796)(
+          ArrayNode(1784...1791)(
+            [StringNode(1787...1790)(
+               nil,
+               STRING_CONTENT(1787...1790)("foo"),
+               nil,
+               "foo"
+             )],
+            PERCENT_UPPER_W(1784...1787)("%W["),
+            STRING_END(1790...1791)("]")
+          ),
+          nil,
+          (1781...1783),
+          (1792...1796)
+        )],
+       nil,
+       (1771...1775),
+       (1797...1800)
+     ),
+     CaseNode(1801...1830)(
+       CallNode(1806...1809)(
+         nil,
+         nil,
+         IDENTIFIER(1806...1809)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       [InNode(1811...1826)(
+          StringNode(1814...1821)(
+            STRING_BEGIN(1814...1817)("%q["),
+            STRING_CONTENT(1817...1820)("foo"),
+            STRING_END(1820...1821)("]"),
             "foo"
           ),
           nil,
-          (1778...1780),
-          (1789...1793)
+          (1811...1813),
+          (1822...1826)
         )],
        nil,
-       (1768...1772),
-       (1794...1797)
+       (1801...1805),
+       (1827...1830)
      ),
-     CaseNode(1798...1827)(
-       CallNode(1803...1806)(
+     CaseNode(1831...1860)(
+       CallNode(1836...1839)(
          nil,
          nil,
-         IDENTIFIER(1803...1806)("foo"),
+         IDENTIFIER(1836...1839)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1808...1823)(
-          StringNode(1811...1818)(
-            STRING_BEGIN(1811...1814)("%Q["),
-            STRING_CONTENT(1814...1817)("foo"),
-            STRING_END(1817...1818)("]"),
+       [InNode(1841...1856)(
+          StringNode(1844...1851)(
+            STRING_BEGIN(1844...1847)("%Q["),
+            STRING_CONTENT(1847...1850)("foo"),
+            STRING_END(1850...1851)("]"),
             "foo"
           ),
           nil,
-          (1808...1810),
-          (1819...1823)
+          (1841...1843),
+          (1852...1856)
         )],
        nil,
-       (1798...1802),
-       (1824...1827)
+       (1831...1835),
+       (1857...1860)
      ),
-     CaseNode(1828...1855)(
-       CallNode(1833...1836)(
+     CaseNode(1861...1888)(
+       CallNode(1866...1869)(
          nil,
          nil,
-         IDENTIFIER(1833...1836)("foo"),
+         IDENTIFIER(1866...1869)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1838...1851)(
-          StringNode(1841...1846)(
-            STRING_BEGIN(1841...1842)("\""),
-            STRING_CONTENT(1842...1845)("foo"),
-            STRING_END(1845...1846)("\""),
+       [InNode(1871...1884)(
+          StringNode(1874...1879)(
+            STRING_BEGIN(1874...1875)("\""),
+            STRING_CONTENT(1875...1878)("foo"),
+            STRING_END(1878...1879)("\""),
             "foo"
           ),
           nil,
-          (1838...1840),
-          (1847...1851)
+          (1871...1873),
+          (1880...1884)
         )],
        nil,
-       (1828...1832),
-       (1852...1855)
+       (1861...1865),
+       (1885...1888)
      ),
-     CaseNode(1856...1881)(
-       CallNode(1861...1864)(
+     CaseNode(1889...1914)(
+       CallNode(1894...1897)(
          nil,
          nil,
-         IDENTIFIER(1861...1864)("foo"),
+         IDENTIFIER(1894...1897)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1866...1877)(
-          NilNode(1869...1872)(),
+       [InNode(1899...1910)(
+          NilNode(1902...1905)(),
           nil,
-          (1866...1868),
-          (1873...1877)
+          (1899...1901),
+          (1906...1910)
         )],
        nil,
-       (1856...1860),
-       (1878...1881)
+       (1889...1893),
+       (1911...1914)
      ),
-     CaseNode(1882...1908)(
-       CallNode(1887...1890)(
+     CaseNode(1915...1941)(
+       CallNode(1920...1923)(
          nil,
          nil,
-         IDENTIFIER(1887...1890)("foo"),
+         IDENTIFIER(1920...1923)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1892...1904)(
-          SelfNode(1895...1899)(),
+       [InNode(1925...1937)(
+          SelfNode(1928...1932)(),
           nil,
-          (1892...1894),
-          (1900...1904)
+          (1925...1927),
+          (1933...1937)
         )],
        nil,
-       (1882...1886),
-       (1905...1908)
+       (1915...1919),
+       (1938...1941)
      ),
-     CaseNode(1909...1935)(
-       CallNode(1914...1917)(
+     CaseNode(1942...1968)(
+       CallNode(1947...1950)(
          nil,
          nil,
-         IDENTIFIER(1914...1917)("foo"),
+         IDENTIFIER(1947...1950)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1919...1931)(
-          TrueNode(1922...1926)(),
+       [InNode(1952...1964)(
+          TrueNode(1955...1959)(),
           nil,
-          (1919...1921),
-          (1927...1931)
+          (1952...1954),
+          (1960...1964)
         )],
        nil,
-       (1909...1913),
-       (1932...1935)
+       (1942...1946),
+       (1965...1968)
      ),
-     CaseNode(1936...1963)(
-       CallNode(1941...1944)(
+     CaseNode(1969...1996)(
+       CallNode(1974...1977)(
          nil,
          nil,
-         IDENTIFIER(1941...1944)("foo"),
+         IDENTIFIER(1974...1977)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1946...1959)(
-          FalseNode(1949...1954)(),
+       [InNode(1979...1992)(
+          FalseNode(1982...1987)(),
           nil,
-          (1946...1948),
-          (1955...1959)
+          (1979...1981),
+          (1988...1992)
         )],
        nil,
-       (1936...1940),
-       (1960...1963)
+       (1969...1973),
+       (1993...1996)
      ),
-     CaseNode(1964...1994)(
-       CallNode(1969...1972)(
+     CaseNode(1997...2027)(
+       CallNode(2002...2005)(
          nil,
          nil,
-         IDENTIFIER(1969...1972)("foo"),
+         IDENTIFIER(2002...2005)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(1974...1990)(
-          SourceFileNode(1977...1985)(),
+       [InNode(2007...2023)(
+          SourceFileNode(2010...2018)(),
           nil,
-          (1974...1976),
-          (1986...1990)
+          (2007...2009),
+          (2019...2023)
         )],
        nil,
-       (1964...1968),
-       (1991...1994)
+       (1997...2001),
+       (2024...2027)
      ),
-     CaseNode(1995...2025)(
-       CallNode(2000...2003)(
+     CaseNode(2028...2058)(
+       CallNode(2033...2036)(
          nil,
          nil,
-         IDENTIFIER(2000...2003)("foo"),
+         IDENTIFIER(2033...2036)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2005...2021)(
-          SourceLineNode(2008...2016)(),
+       [InNode(2038...2054)(
+          SourceLineNode(2041...2049)(),
           nil,
-          (2005...2007),
-          (2017...2021)
+          (2038...2040),
+          (2050...2054)
         )],
        nil,
-       (1995...1999),
-       (2022...2025)
+       (2028...2032),
+       (2055...2058)
      ),
-     CaseNode(2026...2060)(
-       CallNode(2031...2034)(
+     CaseNode(2059...2093)(
+       CallNode(2064...2067)(
          nil,
          nil,
-         IDENTIFIER(2031...2034)("foo"),
+         IDENTIFIER(2064...2067)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2036...2056)(
-          SourceEncodingNode(2039...2051)(),
+       [InNode(2069...2089)(
+          SourceEncodingNode(2072...2084)(),
           nil,
-          (2036...2038),
-          (2052...2056)
+          (2069...2071),
+          (2085...2089)
         )],
        nil,
-       (2026...2030),
-       (2057...2060)
+       (2059...2063),
+       (2090...2093)
      ),
-     CaseNode(2061...2093)(
-       CallNode(2066...2069)(
+     CaseNode(2094...2126)(
+       CallNode(2099...2102)(
          nil,
          nil,
-         IDENTIFIER(2066...2069)("foo"),
+         IDENTIFIER(2099...2102)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2071...2089)(
-          LambdaNode(2074...2082)(
-            Scope(2074...2076)([]),
-            MINUS_GREATER(2074...2076)("->"),
+       [InNode(2104...2122)(
+          LambdaNode(2107...2115)(
+            Scope(2107...2109)([]),
+            MINUS_GREATER(2107...2109)("->"),
             nil,
             nil,
             nil,
-            StatementsNode(2079...2082)(
-              [LocalVariableReadNode(2079...2082)(
-                 IDENTIFIER(2079...2082)("bar")
+            StatementsNode(2112...2115)(
+              [LocalVariableReadNode(2112...2115)(
+                 IDENTIFIER(2112...2115)("bar")
                )]
             )
           ),
           nil,
-          (2071...2073),
-          (2085...2089)
+          (2104...2106),
+          (2118...2122)
         )],
        nil,
-       (2061...2065),
-       (2090...2093)
+       (2094...2098),
+       (2123...2126)
      ),
-     CaseNode(2095...2127)(
-       CallNode(2100...2103)(
-         nil,
-         nil,
-         IDENTIFIER(2100...2103)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
-       [InNode(2105...2123)(
-          IfNode(2108...2118)(
-            KEYWORD_IF_MODIFIER(2112...2114)("if"),
-            CallNode(2115...2118)(
-              nil,
-              nil,
-              IDENTIFIER(2115...2118)("baz"),
-              nil,
-              nil,
-              nil,
-              nil,
-              "baz"
-            ),
-            StatementsNode(2108...2111)(
-              [LocalVariableWriteNode(2108...2111)(
-                 IDENTIFIER(2108...2111)("bar"),
-                 nil,
-                 nil
-               )]
-            ),
-            nil,
-            nil
-          ),
-          nil,
-          (2105...2107),
-          (2119...2123)
-        )],
-       nil,
-       (2095...2099),
-       (2124...2127)
-     ),
-     CaseNode(2128...2158)(
+     CaseNode(2128...2160)(
        CallNode(2133...2136)(
          nil,
          nil,
@@ -2326,44 +2320,50 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       [InNode(2138...2154)(
-          IfNode(2141...2149)(
-            KEYWORD_IF_MODIFIER(2143...2145)("if"),
-            CallNode(2146...2149)(
+       [InNode(2138...2156)(
+          IfNode(2141...2151)(
+            KEYWORD_IF_MODIFIER(2145...2147)("if"),
+            CallNode(2148...2151)(
               nil,
               nil,
-              IDENTIFIER(2146...2149)("baz"),
+              IDENTIFIER(2148...2151)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2141...2142)([IntegerNode(2141...2142)()]),
+            StatementsNode(2141...2144)(
+              [LocalVariableWriteNode(2141...2144)(
+                 IDENTIFIER(2141...2144)("bar"),
+                 nil,
+                 nil
+               )]
+            ),
             nil,
             nil
           ),
           nil,
           (2138...2140),
-          (2150...2154)
+          (2152...2156)
         )],
        nil,
        (2128...2132),
-       (2155...2158)
+       (2157...2160)
      ),
-     CaseNode(2159...2191)(
-       CallNode(2164...2167)(
+     CaseNode(2161...2191)(
+       CallNode(2166...2169)(
          nil,
          nil,
-         IDENTIFIER(2164...2167)("foo"),
+         IDENTIFIER(2166...2169)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2169...2187)(
-          IfNode(2172...2182)(
+       [InNode(2171...2187)(
+          IfNode(2174...2182)(
             KEYWORD_IF_MODIFIER(2176...2178)("if"),
             CallNode(2179...2182)(
               nil,
@@ -2375,19 +2375,19 @@ ProgramNode(0...3020)(
               nil,
               "baz"
             ),
-            StatementsNode(2172...2175)([FloatNode(2172...2175)()]),
+            StatementsNode(2174...2175)([IntegerNode(2174...2175)()]),
             nil,
             nil
           ),
           nil,
-          (2169...2171),
+          (2171...2173),
           (2183...2187)
         )],
        nil,
-       (2159...2163),
+       (2161...2165),
        (2188...2191)
      ),
-     CaseNode(2192...2223)(
+     CaseNode(2192...2224)(
        CallNode(2197...2200)(
          nil,
          nil,
@@ -2398,95 +2398,131 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       [InNode(2202...2219)(
-          IfNode(2205...2214)(
-            KEYWORD_IF_MODIFIER(2208...2210)("if"),
-            CallNode(2211...2214)(
+       [InNode(2202...2220)(
+          IfNode(2205...2215)(
+            KEYWORD_IF_MODIFIER(2209...2211)("if"),
+            CallNode(2212...2215)(
               nil,
               nil,
-              IDENTIFIER(2211...2214)("baz"),
+              IDENTIFIER(2212...2215)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2205...2207)([ImaginaryNode(2205...2207)()]),
+            StatementsNode(2205...2208)([FloatNode(2205...2208)()]),
             nil,
             nil
           ),
           nil,
           (2202...2204),
-          (2215...2219)
+          (2216...2220)
         )],
        nil,
        (2192...2196),
-       (2220...2223)
+       (2221...2224)
      ),
-     CaseNode(2224...2255)(
-       CallNode(2229...2232)(
+     CaseNode(2225...2256)(
+       CallNode(2230...2233)(
          nil,
          nil,
-         IDENTIFIER(2229...2232)("foo"),
+         IDENTIFIER(2230...2233)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2234...2251)(
-          IfNode(2237...2246)(
-            KEYWORD_IF_MODIFIER(2240...2242)("if"),
-            CallNode(2243...2246)(
+       [InNode(2235...2252)(
+          IfNode(2238...2247)(
+            KEYWORD_IF_MODIFIER(2241...2243)("if"),
+            CallNode(2244...2247)(
               nil,
               nil,
-              IDENTIFIER(2243...2246)("baz"),
+              IDENTIFIER(2244...2247)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2237...2239)([RationalNode(2237...2239)()]),
+            StatementsNode(2238...2240)([ImaginaryNode(2238...2240)()]),
             nil,
             nil
           ),
           nil,
-          (2234...2236),
-          (2247...2251)
+          (2235...2237),
+          (2248...2252)
         )],
        nil,
-       (2224...2228),
-       (2252...2255)
+       (2225...2229),
+       (2253...2256)
      ),
-     CaseNode(2256...2289)(
-       CallNode(2261...2264)(
+     CaseNode(2257...2288)(
+       CallNode(2262...2265)(
          nil,
          nil,
-         IDENTIFIER(2261...2264)("foo"),
+         IDENTIFIER(2262...2265)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2266...2285)(
-          IfNode(2269...2280)(
-            KEYWORD_IF_MODIFIER(2274...2276)("if"),
-            CallNode(2277...2280)(
+       [InNode(2267...2284)(
+          IfNode(2270...2279)(
+            KEYWORD_IF_MODIFIER(2273...2275)("if"),
+            CallNode(2276...2279)(
               nil,
               nil,
-              IDENTIFIER(2277...2280)("baz"),
+              IDENTIFIER(2276...2279)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2269...2273)(
-              [SymbolNode(2269...2273)(
-                 SYMBOL_BEGIN(2269...2270)(":"),
-                 IDENTIFIER(2270...2273)("foo"),
+            StatementsNode(2270...2272)([RationalNode(2270...2272)()]),
+            nil,
+            nil
+          ),
+          nil,
+          (2267...2269),
+          (2280...2284)
+        )],
+       nil,
+       (2257...2261),
+       (2285...2288)
+     ),
+     CaseNode(2289...2322)(
+       CallNode(2294...2297)(
+         nil,
+         nil,
+         IDENTIFIER(2294...2297)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       [InNode(2299...2318)(
+          IfNode(2302...2313)(
+            KEYWORD_IF_MODIFIER(2307...2309)("if"),
+            CallNode(2310...2313)(
+              nil,
+              nil,
+              IDENTIFIER(2310...2313)("baz"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "baz"
+            ),
+            StatementsNode(2302...2306)(
+              [SymbolNode(2302...2306)(
+                 SYMBOL_BEGIN(2302...2303)(":"),
+                 IDENTIFIER(2303...2306)("foo"),
                  nil,
                  "foo"
                )]
@@ -2495,42 +2531,42 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2266...2268),
-          (2281...2285)
+          (2299...2301),
+          (2314...2318)
         )],
        nil,
-       (2256...2260),
-       (2286...2289)
+       (2289...2293),
+       (2319...2322)
      ),
-     CaseNode(2290...2326)(
-       CallNode(2295...2298)(
+     CaseNode(2323...2359)(
+       CallNode(2328...2331)(
          nil,
          nil,
-         IDENTIFIER(2295...2298)("foo"),
+         IDENTIFIER(2328...2331)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2300...2322)(
-          IfNode(2303...2317)(
-            KEYWORD_IF_MODIFIER(2311...2313)("if"),
-            CallNode(2314...2317)(
+       [InNode(2333...2355)(
+          IfNode(2336...2350)(
+            KEYWORD_IF_MODIFIER(2344...2346)("if"),
+            CallNode(2347...2350)(
               nil,
               nil,
-              IDENTIFIER(2314...2317)("baz"),
+              IDENTIFIER(2347...2350)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2303...2310)(
-              [SymbolNode(2303...2310)(
-                 SYMBOL_BEGIN(2303...2306)("%s["),
-                 STRING_CONTENT(2306...2309)("foo"),
-                 STRING_END(2309...2310)("]"),
+            StatementsNode(2336...2343)(
+              [SymbolNode(2336...2343)(
+                 SYMBOL_BEGIN(2336...2339)("%s["),
+                 STRING_CONTENT(2339...2342)("foo"),
+                 STRING_END(2342...2343)("]"),
                  "foo"
                )]
             ),
@@ -2538,89 +2574,89 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2300...2302),
-          (2318...2322)
+          (2333...2335),
+          (2351...2355)
         )],
        nil,
-       (2290...2294),
-       (2323...2326)
+       (2323...2327),
+       (2356...2359)
      ),
-     CaseNode(2327...2362)(
-       CallNode(2332...2335)(
+     CaseNode(2360...2395)(
+       CallNode(2365...2368)(
          nil,
          nil,
-         IDENTIFIER(2332...2335)("foo"),
+         IDENTIFIER(2365...2368)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2337...2358)(
-          IfNode(2342...2353)(
-            KEYWORD_IF_MODIFIER(2347...2349)("if"),
-            CallNode(2350...2353)(
+       [InNode(2370...2391)(
+          IfNode(2375...2386)(
+            KEYWORD_IF_MODIFIER(2380...2382)("if"),
+            CallNode(2383...2386)(
               nil,
               nil,
-              IDENTIFIER(2350...2353)("baz"),
+              IDENTIFIER(2383...2386)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2342...2345)(
-              [InterpolatedSymbolNode(2342...2345)(
-                 SYMBOL_BEGIN(2340...2342)(":\""),
-                 [StringNode(2342...2345)(
+            StatementsNode(2375...2378)(
+              [InterpolatedSymbolNode(2375...2378)(
+                 SYMBOL_BEGIN(2373...2375)(":\""),
+                 [StringNode(2375...2378)(
                     nil,
-                    STRING_CONTENT(2342...2345)("foo"),
+                    STRING_CONTENT(2375...2378)("foo"),
                     nil,
                     "foo"
                   )],
-                 STRING_END(2345...2346)("\"")
+                 STRING_END(2378...2379)("\"")
                )]
             ),
             nil,
             nil
           ),
           nil,
-          (2337...2339),
-          (2354...2358)
+          (2370...2372),
+          (2387...2391)
         )],
        nil,
-       (2327...2331),
-       (2359...2362)
+       (2360...2364),
+       (2392...2395)
      ),
-     CaseNode(2363...2397)(
-       CallNode(2368...2371)(
+     CaseNode(2396...2430)(
+       CallNode(2401...2404)(
          nil,
          nil,
-         IDENTIFIER(2368...2371)("foo"),
+         IDENTIFIER(2401...2404)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2373...2393)(
-          IfNode(2376...2388)(
-            KEYWORD_IF_MODIFIER(2382...2384)("if"),
-            CallNode(2385...2388)(
+       [InNode(2406...2426)(
+          IfNode(2409...2421)(
+            KEYWORD_IF_MODIFIER(2415...2417)("if"),
+            CallNode(2418...2421)(
               nil,
               nil,
-              IDENTIFIER(2385...2388)("baz"),
+              IDENTIFIER(2418...2421)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2376...2381)(
-              [RegularExpressionNode(2376...2381)(
-                 REGEXP_BEGIN(2376...2377)("/"),
-                 STRING_CONTENT(2377...2380)("foo"),
-                 REGEXP_END(2380...2381)("/"),
+            StatementsNode(2409...2414)(
+              [RegularExpressionNode(2409...2414)(
+                 REGEXP_BEGIN(2409...2410)("/"),
+                 STRING_CONTENT(2410...2413)("foo"),
+                 REGEXP_END(2413...2414)("/"),
                  "foo"
                )]
             ),
@@ -2628,42 +2664,42 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2373...2375),
-          (2389...2393)
+          (2406...2408),
+          (2422...2426)
         )],
        nil,
-       (2363...2367),
-       (2394...2397)
+       (2396...2400),
+       (2427...2430)
      ),
-     CaseNode(2398...2432)(
-       CallNode(2403...2406)(
+     CaseNode(2431...2465)(
+       CallNode(2436...2439)(
          nil,
          nil,
-         IDENTIFIER(2403...2406)("foo"),
+         IDENTIFIER(2436...2439)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2408...2428)(
-          IfNode(2411...2423)(
-            KEYWORD_IF_MODIFIER(2417...2419)("if"),
-            CallNode(2420...2423)(
+       [InNode(2441...2461)(
+          IfNode(2444...2456)(
+            KEYWORD_IF_MODIFIER(2450...2452)("if"),
+            CallNode(2453...2456)(
               nil,
               nil,
-              IDENTIFIER(2420...2423)("baz"),
+              IDENTIFIER(2453...2456)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2411...2416)(
-              [XStringNode(2411...2416)(
-                 BACKTICK(2411...2412)("`"),
-                 STRING_CONTENT(2412...2415)("foo"),
-                 STRING_END(2415...2416)("`"),
+            StatementsNode(2444...2449)(
+              [XStringNode(2444...2449)(
+                 BACKTICK(2444...2445)("`"),
+                 STRING_CONTENT(2445...2448)("foo"),
+                 STRING_END(2448...2449)("`"),
                  "foo"
                )]
             ),
@@ -2671,42 +2707,42 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2408...2410),
-          (2424...2428)
+          (2441...2443),
+          (2457...2461)
         )],
        nil,
-       (2398...2402),
-       (2429...2432)
+       (2431...2435),
+       (2462...2465)
      ),
-     CaseNode(2433...2469)(
-       CallNode(2438...2441)(
+     CaseNode(2466...2502)(
+       CallNode(2471...2474)(
          nil,
          nil,
-         IDENTIFIER(2438...2441)("foo"),
+         IDENTIFIER(2471...2474)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2443...2465)(
-          IfNode(2446...2460)(
-            KEYWORD_IF_MODIFIER(2454...2456)("if"),
-            CallNode(2457...2460)(
+       [InNode(2476...2498)(
+          IfNode(2479...2493)(
+            KEYWORD_IF_MODIFIER(2487...2489)("if"),
+            CallNode(2490...2493)(
               nil,
               nil,
-              IDENTIFIER(2457...2460)("baz"),
+              IDENTIFIER(2490...2493)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2446...2453)(
-              [XStringNode(2446...2453)(
-                 PERCENT_LOWER_X(2446...2449)("%x["),
-                 STRING_CONTENT(2449...2452)("foo"),
-                 STRING_END(2452...2453)("]"),
+            StatementsNode(2479...2486)(
+              [XStringNode(2479...2486)(
+                 PERCENT_LOWER_X(2479...2482)("%x["),
+                 STRING_CONTENT(2482...2485)("foo"),
+                 STRING_END(2485...2486)("]"),
                  "foo"
                )]
             ),
@@ -2714,230 +2750,230 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2443...2445),
-          (2461...2465)
+          (2476...2478),
+          (2494...2498)
         )],
        nil,
-       (2433...2437),
-       (2466...2469)
+       (2466...2470),
+       (2499...2502)
      ),
-     CaseNode(2470...2506)(
-       CallNode(2475...2478)(
+     CaseNode(2503...2539)(
+       CallNode(2508...2511)(
          nil,
          nil,
-         IDENTIFIER(2475...2478)("foo"),
+         IDENTIFIER(2508...2511)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2480...2502)(
-          IfNode(2483...2497)(
-            KEYWORD_IF_MODIFIER(2491...2493)("if"),
-            CallNode(2494...2497)(
+       [InNode(2513...2535)(
+          IfNode(2516...2530)(
+            KEYWORD_IF_MODIFIER(2524...2526)("if"),
+            CallNode(2527...2530)(
               nil,
               nil,
-              IDENTIFIER(2494...2497)("baz"),
+              IDENTIFIER(2527...2530)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2483...2490)(
-              [ArrayNode(2483...2490)(
-                 [SymbolNode(2486...2489)(
+            StatementsNode(2516...2523)(
+              [ArrayNode(2516...2523)(
+                 [SymbolNode(2519...2522)(
                     nil,
-                    STRING_CONTENT(2486...2489)("foo"),
+                    STRING_CONTENT(2519...2522)("foo"),
                     nil,
                     "foo"
                   )],
-                 PERCENT_LOWER_I(2483...2486)("%i["),
-                 STRING_END(2489...2490)("]")
+                 PERCENT_LOWER_I(2516...2519)("%i["),
+                 STRING_END(2522...2523)("]")
                )]
             ),
             nil,
             nil
           ),
           nil,
-          (2480...2482),
-          (2498...2502)
+          (2513...2515),
+          (2531...2535)
         )],
        nil,
-       (2470...2474),
-       (2503...2506)
+       (2503...2507),
+       (2536...2539)
      ),
-     CaseNode(2507...2543)(
-       CallNode(2512...2515)(
+     CaseNode(2540...2576)(
+       CallNode(2545...2548)(
          nil,
          nil,
-         IDENTIFIER(2512...2515)("foo"),
+         IDENTIFIER(2545...2548)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2517...2539)(
-          IfNode(2520...2534)(
-            KEYWORD_IF_MODIFIER(2528...2530)("if"),
-            CallNode(2531...2534)(
+       [InNode(2550...2572)(
+          IfNode(2553...2567)(
+            KEYWORD_IF_MODIFIER(2561...2563)("if"),
+            CallNode(2564...2567)(
               nil,
               nil,
-              IDENTIFIER(2531...2534)("baz"),
+              IDENTIFIER(2564...2567)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2520...2527)(
-              [ArrayNode(2520...2527)(
-                 [SymbolNode(2523...2526)(
+            StatementsNode(2553...2560)(
+              [ArrayNode(2553...2560)(
+                 [SymbolNode(2556...2559)(
                     nil,
-                    STRING_CONTENT(2523...2526)("foo"),
+                    STRING_CONTENT(2556...2559)("foo"),
                     nil,
                     "foo"
                   )],
-                 PERCENT_UPPER_I(2520...2523)("%I["),
-                 STRING_END(2526...2527)("]")
+                 PERCENT_UPPER_I(2553...2556)("%I["),
+                 STRING_END(2559...2560)("]")
                )]
             ),
             nil,
             nil
           ),
           nil,
-          (2517...2519),
-          (2535...2539)
+          (2550...2552),
+          (2568...2572)
         )],
        nil,
-       (2507...2511),
-       (2540...2543)
+       (2540...2544),
+       (2573...2576)
      ),
-     CaseNode(2544...2580)(
-       CallNode(2549...2552)(
+     CaseNode(2577...2613)(
+       CallNode(2582...2585)(
          nil,
          nil,
-         IDENTIFIER(2549...2552)("foo"),
+         IDENTIFIER(2582...2585)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2554...2576)(
-          IfNode(2557...2571)(
-            KEYWORD_IF_MODIFIER(2565...2567)("if"),
-            CallNode(2568...2571)(
+       [InNode(2587...2609)(
+          IfNode(2590...2604)(
+            KEYWORD_IF_MODIFIER(2598...2600)("if"),
+            CallNode(2601...2604)(
               nil,
               nil,
-              IDENTIFIER(2568...2571)("baz"),
+              IDENTIFIER(2601...2604)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2557...2564)(
-              [ArrayNode(2557...2564)(
-                 [StringNode(2560...2563)(
+            StatementsNode(2590...2597)(
+              [ArrayNode(2590...2597)(
+                 [StringNode(2593...2596)(
                     nil,
-                    STRING_CONTENT(2560...2563)("foo"),
+                    STRING_CONTENT(2593...2596)("foo"),
                     nil,
                     "foo"
                   )],
-                 PERCENT_LOWER_W(2557...2560)("%w["),
-                 STRING_END(2563...2564)("]")
+                 PERCENT_LOWER_W(2590...2593)("%w["),
+                 STRING_END(2596...2597)("]")
                )]
             ),
             nil,
             nil
           ),
           nil,
-          (2554...2556),
-          (2572...2576)
+          (2587...2589),
+          (2605...2609)
         )],
        nil,
-       (2544...2548),
-       (2577...2580)
+       (2577...2581),
+       (2610...2613)
      ),
-     CaseNode(2581...2617)(
-       CallNode(2586...2589)(
+     CaseNode(2614...2650)(
+       CallNode(2619...2622)(
          nil,
          nil,
-         IDENTIFIER(2586...2589)("foo"),
+         IDENTIFIER(2619...2622)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2591...2613)(
-          IfNode(2594...2608)(
-            KEYWORD_IF_MODIFIER(2602...2604)("if"),
-            CallNode(2605...2608)(
+       [InNode(2624...2646)(
+          IfNode(2627...2641)(
+            KEYWORD_IF_MODIFIER(2635...2637)("if"),
+            CallNode(2638...2641)(
               nil,
               nil,
-              IDENTIFIER(2605...2608)("baz"),
+              IDENTIFIER(2638...2641)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2594...2601)(
-              [ArrayNode(2594...2601)(
-                 [StringNode(2597...2600)(
+            StatementsNode(2627...2634)(
+              [ArrayNode(2627...2634)(
+                 [StringNode(2630...2633)(
                     nil,
-                    STRING_CONTENT(2597...2600)("foo"),
+                    STRING_CONTENT(2630...2633)("foo"),
                     nil,
                     "foo"
                   )],
-                 PERCENT_UPPER_W(2594...2597)("%W["),
-                 STRING_END(2600...2601)("]")
+                 PERCENT_UPPER_W(2627...2630)("%W["),
+                 STRING_END(2633...2634)("]")
                )]
             ),
             nil,
             nil
           ),
           nil,
-          (2591...2593),
-          (2609...2613)
+          (2624...2626),
+          (2642...2646)
         )],
        nil,
-       (2581...2585),
-       (2614...2617)
+       (2614...2618),
+       (2647...2650)
      ),
-     CaseNode(2618...2654)(
-       CallNode(2623...2626)(
+     CaseNode(2651...2687)(
+       CallNode(2656...2659)(
          nil,
          nil,
-         IDENTIFIER(2623...2626)("foo"),
+         IDENTIFIER(2656...2659)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2628...2650)(
-          IfNode(2631...2645)(
-            KEYWORD_IF_MODIFIER(2639...2641)("if"),
-            CallNode(2642...2645)(
+       [InNode(2661...2683)(
+          IfNode(2664...2678)(
+            KEYWORD_IF_MODIFIER(2672...2674)("if"),
+            CallNode(2675...2678)(
               nil,
               nil,
-              IDENTIFIER(2642...2645)("baz"),
+              IDENTIFIER(2675...2678)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2631...2638)(
-              [StringNode(2631...2638)(
-                 STRING_BEGIN(2631...2634)("%q["),
-                 STRING_CONTENT(2634...2637)("foo"),
-                 STRING_END(2637...2638)("]"),
+            StatementsNode(2664...2671)(
+              [StringNode(2664...2671)(
+                 STRING_BEGIN(2664...2667)("%q["),
+                 STRING_CONTENT(2667...2670)("foo"),
+                 STRING_END(2670...2671)("]"),
                  "foo"
                )]
             ),
@@ -2945,42 +2981,42 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2628...2630),
-          (2646...2650)
+          (2661...2663),
+          (2679...2683)
         )],
        nil,
-       (2618...2622),
-       (2651...2654)
+       (2651...2655),
+       (2684...2687)
      ),
-     CaseNode(2655...2691)(
-       CallNode(2660...2663)(
+     CaseNode(2688...2724)(
+       CallNode(2693...2696)(
          nil,
          nil,
-         IDENTIFIER(2660...2663)("foo"),
+         IDENTIFIER(2693...2696)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2665...2687)(
-          IfNode(2668...2682)(
-            KEYWORD_IF_MODIFIER(2676...2678)("if"),
-            CallNode(2679...2682)(
+       [InNode(2698...2720)(
+          IfNode(2701...2715)(
+            KEYWORD_IF_MODIFIER(2709...2711)("if"),
+            CallNode(2712...2715)(
               nil,
               nil,
-              IDENTIFIER(2679...2682)("baz"),
+              IDENTIFIER(2712...2715)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2668...2675)(
-              [StringNode(2668...2675)(
-                 STRING_BEGIN(2668...2671)("%Q["),
-                 STRING_CONTENT(2671...2674)("foo"),
-                 STRING_END(2674...2675)("]"),
+            StatementsNode(2701...2708)(
+              [StringNode(2701...2708)(
+                 STRING_BEGIN(2701...2704)("%Q["),
+                 STRING_CONTENT(2704...2707)("foo"),
+                 STRING_END(2707...2708)("]"),
                  "foo"
                )]
             ),
@@ -2988,69 +3024,26 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2665...2667),
-          (2683...2687)
+          (2698...2700),
+          (2716...2720)
         )],
        nil,
-       (2655...2659),
-       (2688...2691)
+       (2688...2692),
+       (2721...2724)
      ),
-     CaseNode(2692...2726)(
-       CallNode(2697...2700)(
+     CaseNode(2725...2759)(
+       CallNode(2730...2733)(
          nil,
          nil,
-         IDENTIFIER(2697...2700)("foo"),
+         IDENTIFIER(2730...2733)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2702...2722)(
-          IfNode(2705...2717)(
-            KEYWORD_IF_MODIFIER(2711...2713)("if"),
-            CallNode(2714...2717)(
-              nil,
-              nil,
-              IDENTIFIER(2714...2717)("baz"),
-              nil,
-              nil,
-              nil,
-              nil,
-              "baz"
-            ),
-            StatementsNode(2705...2710)(
-              [StringNode(2705...2710)(
-                 STRING_BEGIN(2705...2706)("\""),
-                 STRING_CONTENT(2706...2709)("foo"),
-                 STRING_END(2709...2710)("\""),
-                 "foo"
-               )]
-            ),
-            nil,
-            nil
-          ),
-          nil,
-          (2702...2704),
-          (2718...2722)
-        )],
-       nil,
-       (2692...2696),
-       (2723...2726)
-     ),
-     CaseNode(2727...2759)(
-       CallNode(2732...2735)(
-         nil,
-         nil,
-         IDENTIFIER(2732...2735)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
-       [InNode(2737...2755)(
-          IfNode(2740...2750)(
+       [InNode(2735...2755)(
+          IfNode(2738...2750)(
             KEYWORD_IF_MODIFIER(2744...2746)("if"),
             CallNode(2747...2750)(
               nil,
@@ -3062,19 +3055,26 @@ ProgramNode(0...3020)(
               nil,
               "baz"
             ),
-            StatementsNode(2740...2743)([NilNode(2740...2743)()]),
+            StatementsNode(2738...2743)(
+              [StringNode(2738...2743)(
+                 STRING_BEGIN(2738...2739)("\""),
+                 STRING_CONTENT(2739...2742)("foo"),
+                 STRING_END(2742...2743)("\""),
+                 "foo"
+               )]
+            ),
             nil,
             nil
           ),
           nil,
-          (2737...2739),
+          (2735...2737),
           (2751...2755)
         )],
        nil,
-       (2727...2731),
+       (2725...2729),
        (2756...2759)
      ),
-     CaseNode(2760...2793)(
+     CaseNode(2760...2792)(
        CallNode(2765...2768)(
          nil,
          nil,
@@ -3085,245 +3085,281 @@ ProgramNode(0...3020)(
          nil,
          "foo"
        ),
-       [InNode(2770...2789)(
-          IfNode(2773...2784)(
-            KEYWORD_IF_MODIFIER(2778...2780)("if"),
-            CallNode(2781...2784)(
+       [InNode(2770...2788)(
+          IfNode(2773...2783)(
+            KEYWORD_IF_MODIFIER(2777...2779)("if"),
+            CallNode(2780...2783)(
               nil,
               nil,
-              IDENTIFIER(2781...2784)("baz"),
+              IDENTIFIER(2780...2783)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2773...2777)([SelfNode(2773...2777)()]),
+            StatementsNode(2773...2776)([NilNode(2773...2776)()]),
             nil,
             nil
           ),
           nil,
           (2770...2772),
-          (2785...2789)
+          (2784...2788)
         )],
        nil,
        (2760...2764),
-       (2790...2793)
+       (2789...2792)
      ),
-     CaseNode(2794...2827)(
-       CallNode(2799...2802)(
+     CaseNode(2793...2826)(
+       CallNode(2798...2801)(
          nil,
          nil,
-         IDENTIFIER(2799...2802)("foo"),
+         IDENTIFIER(2798...2801)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2804...2823)(
-          IfNode(2807...2818)(
-            KEYWORD_IF_MODIFIER(2812...2814)("if"),
-            CallNode(2815...2818)(
+       [InNode(2803...2822)(
+          IfNode(2806...2817)(
+            KEYWORD_IF_MODIFIER(2811...2813)("if"),
+            CallNode(2814...2817)(
               nil,
               nil,
-              IDENTIFIER(2815...2818)("baz"),
+              IDENTIFIER(2814...2817)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2807...2811)([TrueNode(2807...2811)()]),
+            StatementsNode(2806...2810)([SelfNode(2806...2810)()]),
             nil,
             nil
           ),
           nil,
-          (2804...2806),
-          (2819...2823)
+          (2803...2805),
+          (2818...2822)
         )],
        nil,
-       (2794...2798),
-       (2824...2827)
+       (2793...2797),
+       (2823...2826)
      ),
-     CaseNode(2828...2862)(
-       CallNode(2833...2836)(
+     CaseNode(2827...2860)(
+       CallNode(2832...2835)(
          nil,
          nil,
-         IDENTIFIER(2833...2836)("foo"),
+         IDENTIFIER(2832...2835)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2838...2858)(
-          IfNode(2841...2853)(
-            KEYWORD_IF_MODIFIER(2847...2849)("if"),
-            CallNode(2850...2853)(
+       [InNode(2837...2856)(
+          IfNode(2840...2851)(
+            KEYWORD_IF_MODIFIER(2845...2847)("if"),
+            CallNode(2848...2851)(
               nil,
               nil,
-              IDENTIFIER(2850...2853)("baz"),
+              IDENTIFIER(2848...2851)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2841...2846)([FalseNode(2841...2846)()]),
+            StatementsNode(2840...2844)([TrueNode(2840...2844)()]),
             nil,
             nil
           ),
           nil,
-          (2838...2840),
-          (2854...2858)
+          (2837...2839),
+          (2852...2856)
         )],
        nil,
-       (2828...2832),
-       (2859...2862)
+       (2827...2831),
+       (2857...2860)
      ),
-     CaseNode(2863...2900)(
-       CallNode(2868...2871)(
+     CaseNode(2861...2895)(
+       CallNode(2866...2869)(
          nil,
          nil,
-         IDENTIFIER(2868...2871)("foo"),
+         IDENTIFIER(2866...2869)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2873...2896)(
-          IfNode(2876...2891)(
-            KEYWORD_IF_MODIFIER(2885...2887)("if"),
-            CallNode(2888...2891)(
+       [InNode(2871...2891)(
+          IfNode(2874...2886)(
+            KEYWORD_IF_MODIFIER(2880...2882)("if"),
+            CallNode(2883...2886)(
               nil,
               nil,
-              IDENTIFIER(2888...2891)("baz"),
+              IDENTIFIER(2883...2886)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2876...2884)([SourceFileNode(2876...2884)()]),
+            StatementsNode(2874...2879)([FalseNode(2874...2879)()]),
             nil,
             nil
           ),
           nil,
-          (2873...2875),
-          (2892...2896)
+          (2871...2873),
+          (2887...2891)
         )],
        nil,
-       (2863...2867),
-       (2897...2900)
+       (2861...2865),
+       (2892...2895)
      ),
-     CaseNode(2901...2938)(
-       CallNode(2906...2909)(
+     CaseNode(2896...2933)(
+       CallNode(2901...2904)(
          nil,
          nil,
-         IDENTIFIER(2906...2909)("foo"),
+         IDENTIFIER(2901...2904)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2911...2934)(
-          IfNode(2914...2929)(
-            KEYWORD_IF_MODIFIER(2923...2925)("if"),
-            CallNode(2926...2929)(
+       [InNode(2906...2929)(
+          IfNode(2909...2924)(
+            KEYWORD_IF_MODIFIER(2918...2920)("if"),
+            CallNode(2921...2924)(
               nil,
               nil,
-              IDENTIFIER(2926...2929)("baz"),
+              IDENTIFIER(2921...2924)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2914...2922)([SourceLineNode(2914...2922)()]),
+            StatementsNode(2909...2917)([SourceFileNode(2909...2917)()]),
             nil,
             nil
           ),
           nil,
-          (2911...2913),
-          (2930...2934)
+          (2906...2908),
+          (2925...2929)
         )],
        nil,
-       (2901...2905),
-       (2935...2938)
+       (2896...2900),
+       (2930...2933)
      ),
-     CaseNode(2939...2980)(
-       CallNode(2944...2947)(
+     CaseNode(2934...2971)(
+       CallNode(2939...2942)(
          nil,
          nil,
-         IDENTIFIER(2944...2947)("foo"),
+         IDENTIFIER(2939...2942)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2949...2976)(
-          IfNode(2952...2971)(
-            KEYWORD_IF_MODIFIER(2965...2967)("if"),
-            CallNode(2968...2971)(
+       [InNode(2944...2967)(
+          IfNode(2947...2962)(
+            KEYWORD_IF_MODIFIER(2956...2958)("if"),
+            CallNode(2959...2962)(
               nil,
               nil,
-              IDENTIFIER(2968...2971)("baz"),
+              IDENTIFIER(2959...2962)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2952...2964)([SourceEncodingNode(2952...2964)()]),
+            StatementsNode(2947...2955)([SourceLineNode(2947...2955)()]),
             nil,
             nil
           ),
           nil,
-          (2949...2951),
-          (2972...2976)
+          (2944...2946),
+          (2963...2967)
         )],
        nil,
-       (2939...2943),
-       (2977...2980)
+       (2934...2938),
+       (2968...2971)
      ),
-     CaseNode(2981...3020)(
-       CallNode(2986...2989)(
+     CaseNode(2972...3013)(
+       CallNode(2977...2980)(
          nil,
          nil,
-         IDENTIFIER(2986...2989)("foo"),
+         IDENTIFIER(2977...2980)("foo"),
          nil,
          nil,
          nil,
          nil,
          "foo"
        ),
-       [InNode(2991...3016)(
-          IfNode(2994...3011)(
-            KEYWORD_IF_MODIFIER(3005...3007)("if"),
-            CallNode(3008...3011)(
+       [InNode(2982...3009)(
+          IfNode(2985...3004)(
+            KEYWORD_IF_MODIFIER(2998...3000)("if"),
+            CallNode(3001...3004)(
               nil,
               nil,
-              IDENTIFIER(3008...3011)("baz"),
+              IDENTIFIER(3001...3004)("baz"),
               nil,
               nil,
               nil,
               nil,
               "baz"
             ),
-            StatementsNode(2994...3002)(
-              [LambdaNode(2994...3002)(
-                 Scope(2994...2996)([]),
-                 MINUS_GREATER(2994...2996)("->"),
+            StatementsNode(2985...2997)([SourceEncodingNode(2985...2997)()]),
+            nil,
+            nil
+          ),
+          nil,
+          (2982...2984),
+          (3005...3009)
+        )],
+       nil,
+       (2972...2976),
+       (3010...3013)
+     ),
+     CaseNode(3014...3053)(
+       CallNode(3019...3022)(
+         nil,
+         nil,
+         IDENTIFIER(3019...3022)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       [InNode(3024...3049)(
+          IfNode(3027...3044)(
+            KEYWORD_IF_MODIFIER(3038...3040)("if"),
+            CallNode(3041...3044)(
+              nil,
+              nil,
+              IDENTIFIER(3041...3044)("baz"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "baz"
+            ),
+            StatementsNode(3027...3035)(
+              [LambdaNode(3027...3035)(
+                 Scope(3027...3029)([]),
+                 MINUS_GREATER(3027...3029)("->"),
                  nil,
                  nil,
                  nil,
-                 StatementsNode(2999...3002)(
-                   [LocalVariableReadNode(2999...3002)(
-                      IDENTIFIER(2999...3002)("bar")
+                 StatementsNode(3032...3035)(
+                   [LocalVariableReadNode(3032...3035)(
+                      IDENTIFIER(3032...3035)("bar")
                     )]
                  )
                )]
@@ -3332,12 +3368,12 @@ ProgramNode(0...3020)(
             nil
           ),
           nil,
-          (2991...2993),
-          (3012...3016)
+          (3024...3026),
+          (3045...3049)
         )],
        nil,
-       (2981...2985),
-       (3017...3020)
+       (3014...3018),
+       (3050...3053)
      )]
   )
 )
