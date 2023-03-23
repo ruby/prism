@@ -603,7 +603,6 @@ nodes:
         type: node
       - name: end_keyword
         type: token
-    location: class_keyword->end_keyword
     comment: |
       Represents a class declaration involving the `class` keyword.
 
@@ -649,7 +648,6 @@ nodes:
         type: token?
       - name: value
         type: node?
-    location: target->value|target
     comment: |
       Represents writing to a constant.
 
@@ -704,7 +702,6 @@ nodes:
         type: token?
       - name: keyword_loc
         type: location
-    location: keyword_loc->rparen|value
     comment: |
       Represents the use of the `defined?` keyword.
 
@@ -718,7 +715,6 @@ nodes:
         type: node?
       - name: end_keyword
         type: token
-    location: else_keyword->end_keyword
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
@@ -732,7 +728,6 @@ nodes:
         type: node
       - name: end_keyword
         type: token
-    location: ensure_keyword->end_keyword
     comment: |
       Represents an `ensure` clause in a `begin` statement.
 
@@ -828,7 +823,6 @@ nodes:
     child_nodes:
       - name: name
         type: token
-    location: name
     comment: |
       Represents referencing a global variable.
 
@@ -842,7 +836,6 @@ nodes:
         type: token?
       - name: value
         type: node?
-    location: name->value|name
     comment: |
       Represents writing to a global variable.
 
@@ -856,7 +849,6 @@ nodes:
         type: node[]
       - name: closing
         type: token?
-    location: opening|elements->closing|elements
     comment: |
       Represents a hash literal.
 
@@ -892,7 +884,6 @@ nodes:
         type: token
       - name: dedent
         type: integer
-    location: opening->closing
     comment: |
       Represents the use of a heredoc.
 
@@ -912,7 +903,6 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
-    location: if_keyword->end_keyword|consequent|statements
     comment: |
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
@@ -975,7 +965,6 @@ nodes:
         type: node[]
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents a regular expression literal that contains interpolation.
 
@@ -989,7 +978,6 @@ nodes:
         type: node[]
       - name: closing
         type: token?
-    location: opening|parts->closing|parts
     comment: |
       Represents a string literal that contains interpolation.
 
@@ -1003,7 +991,6 @@ nodes:
         type: node[]
       - name: closing
         type: token?
-    location: opening|parts->closing|parts
     comment: |
       Represents a symbol literal that contains interpolation.
 
@@ -1017,7 +1004,6 @@ nodes:
         type: node[]
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents an xstring literal that contains interpolation.
 
@@ -1029,7 +1015,6 @@ nodes:
         type: token
       - name: value
         type: node?
-    location: name
     comment: |
       Represents a keyword parameter to a method, block, or lambda definition.
 
@@ -1046,7 +1031,6 @@ nodes:
         type: token
       - name: name
         type: token?
-    location: operator->name|operator
     comment: |
       Represents a keyword rest parameter to a method, block, or lambda definition.
 
@@ -1067,7 +1051,6 @@ nodes:
         type: token?
       - name: statements
         type: node
-    location: opening->statements
     comment: |
       Represents using a lambda literal (not the lambda method call).
 
@@ -1077,7 +1060,6 @@ nodes:
     child_nodes:
       - name: name
         type: token
-    location: name
     comment: |
       Represents reading a local variable. Note that this requires that a local
       variable of the same name has already been written to in the same scope,
@@ -1093,7 +1075,6 @@ nodes:
         type: token?
       - name: value
         type: node?
-    location: name->value|name
     comment: |
       Represents writing to a local variable.
 
@@ -1141,7 +1122,6 @@ nodes:
         type: node
       - name: end_keyword
         type: token
-    location: module_keyword->end_keyword
     comment: |
       Represents a module declaration involving the `module` keyword.
 
@@ -1159,7 +1139,6 @@ nodes:
         type: location?
       - name: rparen_loc
         type: location?
-    location: targets
     comment: |
       Represents a multi-target expression.
 
@@ -1215,7 +1194,6 @@ nodes:
         type: token
       - name: value
         type: node
-    location: target->value
     comment: |
       Represents assigning to a value using an operator that isn't `=`.
 
@@ -1242,7 +1220,6 @@ nodes:
         type: token
       - name: value
         type: node
-    location: name->value
     comment: |
       Represents an optional parameter to a method, block, or lambda definition.
 
@@ -1359,7 +1336,6 @@ nodes:
         type: node
       - name: statements
         type: node
-    location: statements
     comment: The top level node of any parse tree.
   - name: RangeNode
     child_nodes:
@@ -1399,7 +1375,6 @@ nodes:
         type: token
       - name: unescaped
         type: string
-    location: opening->closing
     comment: |
       Represents a regular expression literal with no interpolation.
 
@@ -1413,7 +1388,6 @@ nodes:
         type: token
       - name: closing
         type: token
-    location: parameters
     comment: |
       Represents a destructured required parameter node.
 
@@ -1424,7 +1398,6 @@ nodes:
     child_nodes:
       - name: name
         type: token
-    location: name
     comment: |
       Represents a required parameter to a method, block, or lambda definition.
 
@@ -1439,7 +1412,6 @@ nodes:
         type: token
       - name: rescue_expression
         type: node
-    location: expression->rescue_expression
     comment: |
       Represents an expression modified with a rescue.
 
@@ -1459,7 +1431,6 @@ nodes:
         type: node
       - name: consequent
         type: node?
-    location: rescue_keyword->statements|consequent
     comment: |
       Represents a rescue statement.
 
@@ -1474,7 +1445,6 @@ nodes:
         type: token
       - name: name
         type: token?
-    location: operator->name|operator
     comment: |
       Represents a rest parameter to a method, block, or lambda definition.
 
@@ -1493,7 +1463,6 @@ nodes:
         type: token
       - name: arguments
         type: node?
-    location: keyword->arguments|keyword
     comment: |
       Represents the use of the `return` keyword.
 
@@ -1503,7 +1472,6 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-    location: locals
     comment: |
       Represents the local variables within a given lexical scope. These are
       attached to nodes where a new scope is created.
@@ -1527,7 +1495,6 @@ nodes:
         type: node
       - name: end_keyword
         type: token
-    location: class_keyword->end_keyword
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 
@@ -1557,7 +1524,6 @@ nodes:
         type: token
       - name: expression
         type: node?
-    location: operator->expression|operator
     comment: |
       Represents the use of the splat operator.
 
@@ -1578,7 +1544,6 @@ nodes:
         type: node
       - name: right
         type: node
-    location: left->right
     comment: |
       Represents the use of compile-time string concatenation.
 
@@ -1592,7 +1557,6 @@ nodes:
         type: node
       - name: closing
         type: token
-    location: opening->closing
     comment: |
       Represents an interpolated set of statements within a string.
 
@@ -1608,7 +1572,6 @@ nodes:
         type: token?
       - name: unescaped
         type: string
-    location: opening|content->closing|content
     comment: |
       Represents a string literal, a string contained within a `%w` list, or
       plain string content within an interpolated string.
@@ -1633,7 +1596,6 @@ nodes:
         type: token?
       - name: block
         type: node?
-    location: keyword->block|rparen|arguments|lparen|keyword
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.
 
@@ -1652,7 +1614,6 @@ nodes:
         type: token?
       - name: unescaped
         type: string
-    location: opening|value->closing|value
     comment: |
       Represents a symbol literal or a symbol contained within a `%i` list.
 
@@ -1673,7 +1634,6 @@ nodes:
         type: token
       - name: false_expression
         type: node
-    location: predicate->false_expression
     comment: |
       Represents the use of the ternary operators.
 
@@ -1708,7 +1668,6 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
-    location: keyword->statements
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
@@ -1725,7 +1684,6 @@ nodes:
         type: node
       - name: statements
         type: node
-    location: keyword->statements
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
@@ -1742,7 +1700,6 @@ nodes:
         type: node[]
       - name: statements
         type: node?
-    location: when_keyword->statements|conditions
     comment: |
       case true
       when true
@@ -1756,7 +1713,6 @@ nodes:
         type: node
       - name: statements
         type: node
-    location: keyword->statements
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 
@@ -1790,7 +1746,6 @@ nodes:
         type: node?
       - name: rparen
         type: token?
-    location: keyword->rparen|arguments|lparen|keyword
     comment: |
       Represents the use of the `yield` keyword.
 
