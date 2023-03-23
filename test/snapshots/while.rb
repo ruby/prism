@@ -1,6 +1,6 @@
-ProgramNode(0...156)(
+ProgramNode(0...309)(
   Scope(0...0)([]),
-  StatementsNode(0...156)(
+  StatementsNode(0...309)(
     [WhileNode(0...13)(
        KEYWORD_WHILE(0...5)("while"),
        TrueNode(6...10)(),
@@ -108,6 +108,102 @@ ProgramNode(0...156)(
          (146...149)
        ),
        StatementsNode(151...156)([BreakNode(151...156)(nil, (151...156))])
+     ),
+     WhileNode(163...205)(
+       KEYWORD_WHILE(163...168)("while"),
+       ClassNode(169...198)(
+         Scope(169...174)([IDENTIFIER(179...180)("a")]),
+         KEYWORD_CLASS(169...174)("class"),
+         ConstantReadNode(175...178)(),
+         nil,
+         nil,
+         StatementsNode(179...193)(
+           [LocalVariableWriteNode(179...193)(
+              IDENTIFIER(179...180)("a"),
+              EQUAL(181...182)("="),
+              CallNode(183...193)(
+                nil,
+                nil,
+                IDENTIFIER(183...186)("tap"),
+                nil,
+                nil,
+                nil,
+                BlockNode(187...193)(
+                  Scope(187...189)([]),
+                  nil,
+                  nil,
+                  (187...189),
+                  (190...193)
+                ),
+                "tap"
+              )
+            )]
+         ),
+         KEYWORD_END(195...198)("end")
+       ),
+       StatementsNode(200...205)([BreakNode(200...205)(nil, (200...205))])
+     ),
+     WhileNode(212...255)(
+       KEYWORD_WHILE(212...217)("while"),
+       SingletonClassNode(218...248)(
+         Scope(218...223)([]),
+         KEYWORD_CLASS(218...223)("class"),
+         LESS_LESS(224...226)("<<"),
+         SelfNode(227...231)(),
+         StatementsNode(233...243)(
+           [CallNode(233...243)(
+              nil,
+              nil,
+              IDENTIFIER(233...236)("tap"),
+              nil,
+              nil,
+              nil,
+              BlockNode(237...243)(
+                Scope(237...239)([]),
+                nil,
+                nil,
+                (237...239),
+                (240...243)
+              ),
+              "tap"
+            )]
+         ),
+         KEYWORD_END(245...248)("end")
+       ),
+       StatementsNode(250...255)([BreakNode(250...255)(nil, (250...255))])
+     ),
+     WhileNode(262...309)(
+       KEYWORD_WHILE(262...267)("while"),
+       SingletonClassNode(268...302)(
+         Scope(268...273)([IDENTIFIER(283...284)("a")]),
+         KEYWORD_CLASS(268...273)("class"),
+         LESS_LESS(274...276)("<<"),
+         SelfNode(277...281)(),
+         StatementsNode(283...297)(
+           [LocalVariableWriteNode(283...297)(
+              IDENTIFIER(283...284)("a"),
+              EQUAL(285...286)("="),
+              CallNode(287...297)(
+                nil,
+                nil,
+                IDENTIFIER(287...290)("tap"),
+                nil,
+                nil,
+                nil,
+                BlockNode(291...297)(
+                  Scope(291...293)([]),
+                  nil,
+                  nil,
+                  (291...293),
+                  (294...297)
+                ),
+                "tap"
+              )
+            )]
+         ),
+         KEYWORD_END(299...302)("end")
+       ),
+       StatementsNode(304...309)([BreakNode(304...309)(nil, (304...309))])
      )]
   )
 )

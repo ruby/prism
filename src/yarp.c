@@ -7461,6 +7461,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);
       yp_token_t class_keyword = parser->previous;
+      yp_state_stack_push(&parser->do_loop_stack, false);
 
       if (accept(parser, YP_TOKEN_LESS_LESS)) {
         yp_token_t operator = parser->previous;
@@ -7511,6 +7512,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
+      yp_state_stack_pop(&parser->do_loop_stack);
       return yp_node_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_DEF: {
