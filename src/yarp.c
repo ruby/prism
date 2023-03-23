@@ -378,6 +378,66 @@ yp_array_node_close_set(yp_node_t *node, const yp_token_t *closing) {
   node->as.array_node.closing = *closing;
 }
 
+// Allocate and initialize a new array pattern node from a single rest node.
+static yp_node_t *
+yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_ARRAY_PATTERN_NODE,
+    .location = rest->location,
+    .as.array_pattern_node = {
+      .constant = NULL,
+      .rest = rest
+    }
+  };
+
+  yp_node_list_init(&node->as.array_pattern_node.requireds);
+  yp_node_list_init(&node->as.array_pattern_node.posts);
+
+  return node;
+}
+
+// Allocate and initialize a new array pattern node. The node list given in the
+// nodes parameter is guaranteed to have at least two nodes.
+static yp_node_t *
+yp_array_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_ARRAY_PATTERN_NODE,
+    .location = {
+      .start = nodes->nodes[0]->location.start,
+      .end = nodes->nodes[nodes->size - 1]->location.end
+    },
+    .as.array_pattern_node = {
+      .constant = NULL,
+      .rest = NULL
+    }
+  };
+
+  // For now we're going to just copy over each pointer manually. This could be
+  // much more efficient, as we could instead resize the node list.
+  yp_node_list_init(&node->as.array_pattern_node.requireds);
+  yp_node_list_init(&node->as.array_pattern_node.posts);
+
+  bool found_rest = false;
+  for (size_t index = 0; index < nodes->size; index++) {
+    yp_node_t *child = nodes->nodes[index];
+
+    if (child->type == YP_NODE_SPLAT_NODE) {
+      node->as.array_pattern_node.rest = child;
+      found_rest = true;
+    } else if (found_rest) {
+      yp_node_list_append2(&node->as.array_pattern_node.posts, child);
+    } else {
+      yp_node_list_append2(&node->as.array_pattern_node.requireds, child);
+    }
+  }
+
+  return node;
+}
+
 // Allocate and initialize a new assoc node.
 static yp_node_t *
 yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *operator, yp_node_t *value) {
@@ -964,6 +1024,36 @@ static yp_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_FALSE);
   return yp_node_create_from_token(parser, YP_NODE_FALSE_NODE, token);
+}
+
+// Allocate and initialize a new find pattern node. The node list given in the
+// nodes parameter is guaranteed to have at least two nodes.
+static yp_node_t *
+yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_FIND_PATTERN_NODE,
+    .location = {
+      .start = nodes->nodes[0]->location.start,
+      .end = nodes->nodes[nodes->size - 1]->location.end
+    },
+    .as.find_pattern_node = {
+      .constant = NULL,
+      .left = nodes->nodes[0],
+      .right = nodes->nodes[nodes->size - 1]
+    }
+  };
+
+  // For now we're going to just copy over each pointer manually. This could be
+  // much more efficient, as we could instead resize the node list to only point
+  // to 1...-1.
+  yp_node_list_init(&node->as.find_pattern_node.requireds);
+  for (size_t index = 1; index < nodes->size - 1; index++) {
+    yp_node_list_append2(&node->as.find_pattern_node.requireds, nodes->nodes[index]);
+  }
+
+  return node;
 }
 
 // Allocate and initialize a new FloatNode node.
@@ -6685,9 +6775,6 @@ p_value -> pinned expression
 p_value -> p_const
 */
 
-static yp_node_t *
-parse_pattern(yp_parser_t *parser, bool root_pattern, const char *message);
-
 // Accept any number of constants joined by :: delimiters.
 static yp_node_t *
 parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
@@ -6704,9 +6791,9 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
   return node;
 }
 
-// Parse a pattern expression.
+// Parse a pattern expression primitive.
 static yp_node_t *
-parse_pattern(yp_parser_t *parser, bool root_pattern, const char *message) {
+parse_pattern_primitive(yp_parser_t *parser, const char *message) {
   switch (parser->current.type) {
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
@@ -6832,6 +6919,92 @@ parse_pattern(yp_parser_t *parser, bool root_pattern, const char *message) {
         .end = parser->current.end
       });
   }
+}
+
+// Parse a rest pattern.
+static yp_node_t *
+parse_pattern_rest(yp_parser_t *parser) {
+  assert(parser->previous.type == YP_TOKEN_USTAR);
+  yp_token_t operator = parser->previous;
+  yp_node_t *name = NULL;
+
+  // Rest patterns don't necessarily have a name associated with them. So we
+  // will check for that here. If they do, then we'll add it to the local table
+  // since this pattern will cause it to become a local variable.
+  if (accept(parser, YP_TOKEN_IDENTIFIER)) {
+    yp_token_t identifier = parser->previous;
+    yp_parser_local_add(parser, &identifier);
+    name = yp_local_variable_write_node_create(parser, &identifier);
+  }
+
+  // Finally we can return the created node.
+  return yp_node_splat_node_create(parser, &operator, name);
+}
+
+// Parse a pattern expression primitive.
+static yp_node_t *
+parse_pattern(yp_parser_t *parser, const char *message) {
+  yp_node_t *node;
+
+  bool leading_rest = false;
+  bool trailing_rest = false;
+
+  // First, parse the first pattern in the list. If it's a splat node, then we
+  // know we're going to be parsing an array or find pattern. Otherwise it could
+  // just be a regular pattern.
+  if (accept(parser, YP_TOKEN_USTAR)) {
+    node = parse_pattern_rest(parser);
+    leading_rest = true;
+  } else {
+    node = parse_pattern_primitive(parser, message);
+  }
+
+  if (match_type_p(parser, YP_TOKEN_COMMA)) {
+    // If we have a comma, then we are now parsing either an array pattern or a
+    // find pattern. We need to parse all of the patterns, put them into a big
+    // list, and then determine which type of node we have.
+    yp_node_list_t nodes;
+    yp_node_list_init(&nodes);
+    yp_node_list_append2(&nodes, node);
+
+    // Gather up all of the patterns into the list.
+    while (accept(parser, YP_TOKEN_COMMA)) {
+      if (accept(parser, YP_TOKEN_USTAR)) {
+        node = parse_pattern_rest(parser);
+
+        // If we have already parsed a splat pattern, then this is an error. We
+        // will continue to parse the rest of the patterns, but we will indicate
+        // it as an error.
+        if (trailing_rest) {
+          yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected rest pattern.");
+        }
+
+        trailing_rest = true;
+      } else {
+        node = parse_pattern_primitive(parser, "Expected a pattern after the comma.");
+      }
+
+      yp_node_list_append2(&nodes, node);
+    }
+
+    // If the first pattern and the last pattern are rest patterns, then we will
+    // call this a find pattern, regardless of how many rest patterns are in
+    // between because we know we already added the appropriate errors.
+    // Otherwise we will create an array pattern.
+    if (nodes.nodes[0]->type == YP_NODE_SPLAT_NODE && nodes.nodes[nodes.size - 1]->type == YP_NODE_SPLAT_NODE) {
+      node = yp_find_pattern_node_create(parser, &nodes);
+    } else {
+      node = yp_array_pattern_node_create(parser, &nodes);
+    }
+
+    free(nodes.nodes);
+  } else if (leading_rest) {
+    // Otherwise, if we parsed a single splat pattern, then we know we have an
+    // array pattern, so we can go ahead and create that node.
+    node = yp_array_pattern_node_rest_create(parser, node);
+  }
+
+  return node;
 }
 
 // Parse an expression that begins with the previous node that we just lexed.
@@ -7425,7 +7598,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           parser_lex(parser);
 
           yp_token_t in_keyword = parser->previous;
-          yp_node_t *pattern = parse_pattern(parser, true, "Expected a pattern after `in' keyword.");
+          yp_node_t *pattern = parse_pattern(parser, "Expected a pattern after `in' keyword.");
 
           // Since we're in the top-level of the case-in node we need to check
           // for guard clauses in the form of `if` or `unless` statements.
@@ -9216,7 +9389,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       parser_lex(parser);
 
-      yp_node_t *pattern = parse_pattern(parser, true, "Expected a pattern after `in'.");
+      yp_node_t *pattern = parse_pattern(parser, "Expected a pattern after `in'.");
       return yp_match_predicate_node_create(parser, node, pattern, &operator);
     }
     case YP_TOKEN_EQUAL_GREATER: {
@@ -9227,7 +9400,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       parser_lex(parser);
 
-      yp_node_t *pattern = parse_pattern(parser, true, "Expected a pattern after `=>'.");
+      yp_node_t *pattern = parse_pattern(parser, "Expected a pattern after `=>'.");
       return yp_match_required_node_create(parser, node, pattern, &operator);
     }
     default:
