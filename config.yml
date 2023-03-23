@@ -1,3 +1,9 @@
+# [TODO: Write full specifications for this file (#649)]
+#
+# "location: default" is for the case when location
+# will be filled out by the consumer, and sets the location
+# to the parser's start and end location in the interim
+
 tokens:
   - name: EOF
     value: 0
@@ -343,6 +349,7 @@ nodes:
     child_nodes:
       - name: arguments
         type: node[]
+    location: default
     comment: |
       Represents a set of arguments to a method or a keyword.
 
@@ -1452,6 +1459,7 @@ nodes:
     child_nodes:
       - name: body
         type: node[]
+    location: default
     comment: |
       Represents a set of statements contained within some scope.
 

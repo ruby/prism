@@ -129,6 +129,8 @@ class NodeType
         if location == "caller_provided"
           @location_caller_provided = true
           "*location"
+        elsif location == "default"
+          "{ .start = (parser)->start, .end = (parser)->start}"
         else
           bounds = location.include?("->") ? location.split("->") : [location, location]
           from, to = bounds.map { |names| names.split("|").map { |name| params.find { |param| param.name == name } } }

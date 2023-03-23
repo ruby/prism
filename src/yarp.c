@@ -232,20 +232,6 @@ yp_node_create_from_token(yp_parser_t *parser, yp_node_type_t type, const yp_tok
   return node;
 }
 
-// Allocate and initialize a new StatementsNode node.
-static yp_node_t *
-yp_statements_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
-
-  *node = (yp_node_t) {
-    .type = YP_NODE_STATEMENTS_NODE,
-    .location = YP_LOCATION_NULL_VALUE(parser)
-  };
-
-  yp_node_list_init(&node->as.statements_node.body);
-  return node;
-}
-
 // Append a new node to the given StatementsNode node's body.
 static void
 yp_statements_node_body_append(yp_node_t *node, yp_node_t *statement) {
@@ -297,20 +283,6 @@ yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *opera
     }
   };
 
-  return node;
-}
-
-// Allocate an initialize a new arguments node.
-static yp_node_t *
-yp_arguments_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
-
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARGUMENTS_NODE,
-    .location = YP_LOCATION_NULL_VALUE(parser)
-  };
-
-  yp_node_list_init(&node->as.arguments_node.arguments);
   return node;
 }
 
@@ -661,7 +633,7 @@ yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t 
   node->as.call_node.receiver = receiver;
   node->as.call_node.message = *operator;
 
-  yp_node_t *arguments = yp_arguments_node_create(parser);
+  yp_node_t *arguments = yp_node_arguments_node_create(parser);
   yp_arguments_node_arguments_append(arguments, argument);
   node->as.call_node.arguments = arguments;
 
@@ -1022,7 +994,7 @@ static yp_node_t *
 yp_if_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *if_keyword, yp_node_t *predicate) {
   yp_node_t *node = yp_node_alloc(parser);
 
-  yp_node_t *statements = yp_statements_node_create(parser);
+  yp_node_t *statements = yp_node_statements_node_create(parser);
   yp_statements_node_body_append(statements, statement);
 
   *node = (yp_node_t) {
@@ -1696,7 +1668,7 @@ static yp_node_t *
 yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *unless_keyword, yp_node_t *predicate) {
   yp_node_t *node = yp_node_alloc(parser);
 
-  yp_node_t *statements = yp_statements_node_create(parser);
+  yp_node_t *statements = yp_node_statements_node_create(parser);
   yp_statements_node_body_append(statements, statement);
 
   *node = (yp_node_t) {
@@ -5243,7 +5215,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         // a method call with an argument. In this case we will create the
         // arguments node, parse the argument, and add it to the list.
         if (value) {
-          target->as.call_node.arguments = yp_arguments_node_create(parser);
+          target->as.call_node.arguments = yp_node_arguments_node_create(parser);
           yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
         }
 
@@ -5400,7 +5372,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
 static yp_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
   context_push(parser, context);
-  yp_node_t *statements = yp_statements_node_create(parser);
+  yp_node_t *statements = yp_node_statements_node_create(parser);
 
   while (!context_terminator(context, &parser->current)) {
     // Ignore semicolon without statements before them
@@ -5929,7 +5901,7 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     yp_token_t rescue_keyword = parser->previous;
 
     yp_token_t equal_greater = not_provided(parser);
-    yp_node_t *statements = yp_statements_node_create(parser);
+    yp_node_t *statements = yp_node_statements_node_create(parser);
     yp_node_t *rescue = yp_node_rescue_node_create(parser, &rescue_keyword, &equal_greater, NULL, statements, NULL);
     yp_node_destroy(parser, statements);
 
@@ -6113,7 +6085,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
       arguments->closing = parser->previous;
     } else {
-      arguments->arguments = yp_arguments_node_create(parser);
+      arguments->arguments = yp_node_arguments_node_create(parser);
 
       yp_accepts_block_stack_push(parser, true);
       parse_arguments(parser, arguments->arguments, true, YP_TOKEN_PARENTHESIS_RIGHT);
@@ -6128,7 +6100,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     // If we get here, then the subsequent token cannot be used as an infix
     // operator. In this case we assume the subsequent token is part of an
     // argument to this method call.
-    arguments->arguments = yp_arguments_node_create(parser);
+    arguments->arguments = yp_node_arguments_node_create(parser);
     parse_arguments(parser, arguments->arguments, true, YP_TOKEN_EOF);
 
     yp_accepts_block_stack_pop(parser);
@@ -6855,7 +6827,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // If we have a single statement and are ending on a right parenthesis
         // and we didn't return a multiple assignment node, then we can return a
         // regular parentheses node now.
-        yp_node_t *statements = yp_statements_node_create(parser);
+        yp_node_t *statements = yp_node_statements_node_create(parser);
         yp_statements_node_body_append(statements, statement);
 
         return yp_parentheses_node_create(parser, &opening, statements, &parser->previous);
@@ -6865,7 +6837,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // are going to parse all of them as a list of statements. We'll do that
       // here.
       context_push(parser, YP_CONTEXT_PARENS);
-      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
       yp_statements_node_body_append(statements, statement);
 
       while (!match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
@@ -7423,7 +7395,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
         if (binding_power == YP_BINDING_POWER_UNSET || binding_power >= YP_BINDING_POWER_RANGE) {
-          arguments = yp_arguments_node_create(parser);
+          arguments = yp_node_arguments_node_create(parser);
           parse_arguments(parser, arguments, false, YP_TOKEN_EOF);
         }
       }
@@ -7706,7 +7678,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       if (endless_definition) {
         context_push(parser, YP_CONTEXT_DEF);
-        statements = yp_statements_node_create(parser);
+        statements = yp_node_statements_node_create(parser);
 
         yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse body of endless method definition.");
         yp_statements_node_body_append(statements, statement);
@@ -7874,7 +7846,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // name of the module, then we'll handle that here.
       if (name->type == YP_NODE_MISSING_NODE) {
         yp_node_t *scope = yp_scope_create(parser, &module_keyword);
-        yp_node_t *statements = yp_statements_node_create(parser);
+        yp_node_t *statements = yp_node_statements_node_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_node_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);
       }
@@ -8952,7 +8924,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_UNTIL_MODIFIER: {
       parser_lex(parser);
-      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
       yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
@@ -8960,7 +8932,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
     }
     case YP_TOKEN_KEYWORD_WHILE_MODIFIER: {
       parser_lex(parser);
-      yp_node_t *statements = yp_statements_node_create(parser);
+      yp_node_t *statements = yp_node_statements_node_create(parser);
       yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
@@ -9064,7 +9036,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       yp_arguments_t arguments = yp_arguments(parser);
       arguments.opening = parser->previous;
-      arguments.arguments = yp_arguments_node_create(parser);
+      arguments.arguments = yp_node_arguments_node_create(parser);
 
       parse_arguments(parser, arguments.arguments, false, YP_TOKEN_BRACKET_RIGHT);
       yp_accepts_block_stack_pop(parser);
