@@ -6663,6 +6663,22 @@ p_value -> pinned expression
 p_value -> p_const
 */
 
+// Accept any number of constants joined by :: delimiters.
+static yp_node_t *
+parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
+  // Now, if there are any :: operators that follow, parse them as constant
+  // path nodes.
+  while (accept(parser, YP_TOKEN_COLON_COLON)) {
+    yp_token_t delimiter = parser->previous;
+    expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
+
+    yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
+    node = yp_constant_path_node_create(parser, node, &delimiter, child);
+  }
+
+  return node;
+}
+
 // Parse a pattern expression.
 static yp_node_t *
 parse_pattern(yp_parser_t *parser, bool root_pattern, const char *message) {
@@ -6757,25 +6773,22 @@ parse_pattern(yp_parser_t *parser, bool root_pattern, const char *message) {
         }
       }
     }
+    case YP_TOKEN_UCOLON_COLON: {
+      yp_token_t delimiter = parser->current;
+      parser_lex(parser);
+
+      expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
+      yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
+      yp_node_t *node = yp_constant_path_node_create(parser, NULL, &delimiter, child);
+
+      return parse_pattern_constant_path(parser, node);
+    }
     case YP_TOKEN_CONSTANT: {
       yp_token_t constant = parser->current;
       parser_lex(parser);
 
-      // First, create a constant read that will be the root of the node.
       yp_node_t *node = yp_constant_read_node_create(parser, &constant);
-
-      // Now, if there are any :: operators that follow, parse them as constant
-      // path nodes.
-      while (accept(parser, YP_TOKEN_COLON_COLON)) {
-        yp_token_t delimiter = parser->previous;
-        expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
-
-        yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
-        node = yp_constant_path_node_create(parser, node, &delimiter, child);
-      }
-
-      // Finally, return the constant path.
-      return node;
+      return parse_pattern_constant_path(parser, node);
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
