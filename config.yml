@@ -362,6 +362,37 @@ nodes:
 
           [1, 2, 3]
           ^^^^^^^^^
+  - name: ArrayPatternNode
+    child_nodes:
+      - name: constant
+        type: node?
+      - name: requireds
+        type: node[]
+      - name: rest
+        type: node?
+      - name: posts
+        type: node[]
+      - name: opening_loc
+        type: location?
+      - name: closing_loc
+        type: location?
+    comment: |
+      Represents an array pattern in pattern matching.
+
+          foo in 1, 2
+          ^^^^^^^^^^^
+
+          foo in [1, 2]
+          ^^^^^^^^^^^^^
+
+          foo in *1
+          ^^^^^^^^^
+
+          foo in Bar[]
+          ^^^^^^^^^^^^
+
+          foo in Bar[1, 2, 3]
+          ^^^^^^^^^^^^^^^^^^^
   - name: AssocNode
     child_nodes:
       - name: key
@@ -681,6 +712,31 @@ nodes:
 
           false
           ^^^^^
+  - name: FindPatternNode
+    child_nodes:
+      - name: constant
+        type: node?
+      - name: left
+        type: node
+      - name: requireds
+        type: node[]
+      - name: right
+        type: node
+      - name: opening_loc
+        type: location?
+      - name: closing_loc
+        type: location?
+    comment: |
+      Represents a find pattern in pattern matching.
+
+          foo in *bar, baz, *qux
+          ^^^^^^^^^^^^^^^^^^^^^^
+
+          foo in [*bar, baz, *qux]
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+
+          foo in Foo(*bar, baz, *qux)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
   - name: FloatNode
     comment: |
       Represents a floating point number literal.
@@ -1195,6 +1251,22 @@ nodes:
 
           (10 + 34)
           ^^^^^^^^^
+  - name: PinnedExpressionNode
+    child_nodes:
+      - name: expression
+        type: node
+      - name: operator_loc
+        type: location
+      - name: lparen_loc
+        type: location
+      - name: rparen_loc
+        type: location
+    comment: |
+      Represents the use of the `^` operator for pinning an expression in a
+      pattern matching expression.
+
+          foo in ^(bar)
+                 ^^^^^^
   - name: PinnedVariableNode
     child_nodes:
       - name: variable
@@ -1205,8 +1277,8 @@ nodes:
       Represents the use of the `^` operator for pinning a variable in a pattern
       matching expression.
 
-          case foo in ^bar
-                      ^^^^
+          foo in ^bar
+                 ^^^^
   - name: PostExecutionNode
     child_nodes:
       - name: statements

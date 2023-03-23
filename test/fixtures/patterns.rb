@@ -56,8 +56,45 @@ foo => ^@bar
 foo => ^@@bar
 foo => ^$bar
 
+foo => ^(1)
+foo => ^(nil)
+foo => ^("bar" + "baz")
+
 foo => Foo
 foo => Foo::Bar::Baz
+foo => ::Foo
+foo => ::Foo::Bar::Baz
+
+foo => Foo()
+foo => Foo(1)
+foo => Foo(1, 2, 3)
+foo => Foo(bar)
+foo => Foo(*bar, baz)
+foo => Foo(bar, *baz)
+foo => Foo(*bar, baz, *qux)
+
+foo => Foo[]
+foo => Foo[1]
+foo => Foo[1, 2, 3]
+foo => Foo[bar]
+foo => Foo[*bar, baz]
+foo => Foo[bar, *baz]
+foo => Foo[*bar, baz, *qux]
+
+foo => *bar
+foo => *bar, baz, qux
+foo => bar, *baz, qux
+foo => bar, baz, *qux
+foo => *bar, baz, *qux
+
+foo => []
+foo => [[[[[]]]]]
+
+foo => [*bar]
+foo => [*bar, baz, qux]
+foo => [bar, *baz, qux]
+foo => [bar, baz, *qux]
+foo => [*bar, baz, *qux]
 
 foo in bar
 foo in 1
