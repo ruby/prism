@@ -224,7 +224,10 @@ module YARP
     # compare the state.
     class IdentToken < Token
       def ==(other)
-        self[0...-1] == other[0...-1]
+        (self[0...-1] == other[0...-1]) && (
+          (other[3] == Ripper::EXPR_LABEL | Ripper::EXPR_END) ||
+          (other[3] & Ripper::EXPR_ARG_ANY != 0)
+        )
       end
     end
 
@@ -534,7 +537,7 @@ module YARP
             # Heredoc end tokens can be emitted in an odd order, so we don't
             # want to bother comparing the state on them.
             HeredocEndToken.new([[lineno, column], event, value, lex_state])
-          when :on_ident
+          when :on_embexpr_end, :on_ident
             if lex_state == Ripper::EXPR_END | Ripper::EXPR_LABEL
               # In the event that we're comparing identifiers, we're going to
               # allow a little divergence. Ripper doesn't account for local
