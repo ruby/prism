@@ -133,3 +133,7 @@ Const = 1; def Const.a
 end
 
 def a(...); "foo#{b(...)}"; end
+
+def foo
+  {}.merge **bar, **baz, **qux
+end

@@ -1,6 +1,6 @@
-ProgramNode(0...899)(
+ProgramNode(0...943)(
   Scope(0...0)([IDENTIFIER(238...239)("a"), IDENTIFIER(732...733)("c")]),
-  StatementsNode(0...899)(
+  StatementsNode(0...943)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -238,7 +238,7 @@ ProgramNode(0...899)(
          nil,
          [],
          KeywordRestParameterNode(198...201)(
-           STAR_STAR(198...200)("**"),
+           USTAR_STAR(198...200)("**"),
            IDENTIFIER(200...201)("b")
          ),
          nil
@@ -260,7 +260,7 @@ ProgramNode(0...899)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(214...216)(STAR_STAR(214...216)("**"), nil),
+         KeywordRestParameterNode(214...216)(USTAR_STAR(214...216)("**"), nil),
          nil
        ),
        StatementsNode(0...0)([]),
@@ -1039,6 +1039,78 @@ ProgramNode(0...899)(
        (877...878),
        nil,
        (896...899)
+     ),
+     DefNode(901...943)(
+       IDENTIFIER(905...908)("foo"),
+       nil,
+       nil,
+       StatementsNode(911...939)(
+         [CallNode(911...939)(
+            HashNode(911...912)(
+              BRACE_LEFT(911...912)("{"),
+              [],
+              BRACE_RIGHT(912...913)("}")
+            ),
+            DOT(913...914)("."),
+            IDENTIFIER(914...919)("merge"),
+            nil,
+            ArgumentsNode(920...939)(
+              [HashNode(920...939)(
+                 nil,
+                 [AssocSplatNode(920...925)(
+                    CallNode(922...925)(
+                      nil,
+                      nil,
+                      IDENTIFIER(922...925)("bar"),
+                      nil,
+                      nil,
+                      nil,
+                      nil,
+                      "bar"
+                    ),
+                    (920...922)
+                  ),
+                  AssocSplatNode(927...932)(
+                    CallNode(929...932)(
+                      nil,
+                      nil,
+                      IDENTIFIER(929...932)("baz"),
+                      nil,
+                      nil,
+                      nil,
+                      nil,
+                      "baz"
+                    ),
+                    (927...929)
+                  ),
+                  AssocSplatNode(934...939)(
+                    CallNode(936...939)(
+                      nil,
+                      nil,
+                      IDENTIFIER(936...939)("qux"),
+                      nil,
+                      nil,
+                      nil,
+                      nil,
+                      "qux"
+                    ),
+                    (934...936)
+                  )],
+                 nil
+               )]
+            ),
+            nil,
+            nil,
+            "merge"
+          )]
+       ),
+       Scope(901...904)([]),
+       (901...904),
+       nil,
+       nil,
+       nil,
+       nil,
+       (940...943)
      )]
   )
 )
