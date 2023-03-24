@@ -6955,6 +6955,17 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
           node = inner;
           break;
         }
+        case YP_NODE_HASH_PATTERN_NODE: {
+          inner->location.start = node->location.start;
+          inner->location.end = closing.end;
+
+          inner->as.hash_pattern_node.constant = node;
+          inner->as.hash_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          inner->as.hash_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+          node = inner;
+          break;
+        }
         default: {
           node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
           yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
