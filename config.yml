@@ -406,6 +406,19 @@ nodes:
 
           foo in Bar[1, 2, 3]
           ^^^^^^^^^^^^^^^^^^^
+  - name: AsPatternNode
+    child_nodes:
+      - name: value
+        type: node
+      - name: target
+        type: node
+      - name: operator_loc
+        type: location
+    comment: |
+      Represents assigning to a local variable in pattern matching.
+
+          foo => [bar => baz]
+                 ^^^^^^^^^^^^
   - name: AssocNode
     child_nodes:
       - name: key

@@ -511,6 +511,27 @@ yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *openin
   return node;
 }
 
+// Allocate and initialize a new AsPatternNode node.
+static yp_node_t *
+yp_as_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_AS_PATTERN_NODE,
+    .location = {
+      .start = value->location.start,
+      .end = target->location.end
+    },
+    .as.as_pattern_node = {
+      .value = value,
+      .target = target,
+      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new assoc node.
 static yp_node_t *
 yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *operator, yp_node_t *value) {
@@ -7202,6 +7223,53 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
   }
 }
 
+// Parse any number of primitives joined by alternation and ended optionally by
+// assignment.
+static yp_node_t *
+parse_pattern_primitives(yp_parser_t *parser, const char *message) {
+  yp_node_t *node = NULL;
+
+  do {
+    yp_token_t operator = parser->previous;
+
+    switch (parser->current.type) {
+      case YP_TOKEN_IDENTIFIER:
+      case YP_TOKEN_BRACKET_LEFT_ARRAY:
+      case YP_TOKEN_BRACE_LEFT:
+      case YP_TOKEN_CARET:
+      case YP_TOKEN_CONSTANT:
+      case YP_TOKEN_UCOLON_COLON:
+      case YP_CASE_PRIMITIVE: {
+        if (node == NULL) {
+          node = parse_pattern_primitive(parser, message);
+        } else {
+          yp_node_t *right = parse_pattern_primitive(parser, "Expected to be able to parse a pattern after `|'.");
+          node = yp_alternation_pattern_node_create(parser, node, right, &operator);
+        }
+
+        break;
+      }
+      default: {
+        yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
+        yp_node_t *right = yp_node_missing_node_create(parser, &(yp_location_t) {
+          .start = parser->current.start,
+          .end = parser->current.end
+        });
+
+        if (node == NULL) {
+          node = right;
+        } else {
+          node = yp_alternation_pattern_node_create(parser, node, right, &operator);
+        }
+
+        break;
+      }
+    }
+  } while (accept(parser, YP_TOKEN_PIPE));
+
+  return node;
+}
+
 // Parse a rest pattern.
 static yp_node_t *
 parse_pattern_rest(yp_parser_t *parser) {
@@ -7222,13 +7290,7 @@ parse_pattern_rest(yp_parser_t *parser) {
   return yp_node_splat_node_create(parser, &operator, name);
 }
 
-// Parse a pattern expression primitive.
-//
-// Still yet to be supported:
-// * Capturing variables:          p_expr '=>' tIDENTIFIER
-// * Alternation:                  p_expr '|' p_expr_basic
-// * Hash patterns
-// * Array patterns w/o constants
+// Parse a pattern matching expression.
 static yp_node_t *
 parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
   yp_node_t *node = NULL;
@@ -7245,38 +7307,21 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
 
     return parse_pattern_hash(parser, yp_assoc_node_create(parser, key, &operator, NULL));
   } else {
-    do {
-      yp_token_t operator = parser->previous;
+    node = parse_pattern_primitives(parser, message);
+  }
 
-      // First, parse the first pattern in the list. If it's a splat node, then we
-      // know we're going to be parsing an array or find pattern. Otherwise it
-      // could just be a regular pattern.
-      switch (parser->current.type) {
-        case YP_TOKEN_IDENTIFIER:
-        case YP_TOKEN_BRACKET_LEFT_ARRAY:
-        case YP_TOKEN_BRACE_LEFT:
-        case YP_TOKEN_CARET:
-        case YP_TOKEN_CONSTANT:
-        case YP_TOKEN_UCOLON_COLON:
-        case YP_CASE_PRIMITIVE: {
-          if (node == NULL) {
-            node = parse_pattern_primitive(parser, message);
-          } else {
-            yp_node_t *right = parse_pattern_primitive(parser, "Expected to be able to parse a pattern after `|'.");
-            node = yp_alternation_pattern_node_create(parser, node, right, &operator);
-          }
+  // If we have an =>, then we are assigning this pattern to a variable. In this
+  // case we should create an assignment node.
+  while (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+    yp_token_t operator = parser->previous;
 
-          break;
-        }
-        default:
-          yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
+    expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier after the `=>' operator.");
+    yp_token_t identifier = parser->previous;
 
-          return yp_node_missing_node_create(parser, &(yp_location_t) {
-            .start = parser->current.start,
-            .end = parser->current.end
-          });
-      }
-    } while (accept(parser, YP_TOKEN_PIPE));
+    yp_parser_local_add(parser, &identifier);
+    yp_node_t *target = yp_local_variable_write_node_create(parser, &identifier);
+
+    node = yp_as_pattern_node_create(parser, node, target, &operator);
   }
 
   if (top_pattern && match_type_p(parser, YP_TOKEN_COMMA)) {
@@ -7301,7 +7346,21 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
 
         trailing_rest = true;
       } else {
-        node = parse_pattern_primitive(parser, "Expected a pattern after the comma.");
+        node = parse_pattern_primitives(parser, "Expected a pattern after the comma.");
+
+        // If we have an =>, then we are assigning this pattern to a variable.
+        // In this case we should create an assignment node.
+        while (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
+          yp_token_t operator = parser->previous;
+
+          expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier after the `=>' operator.");
+          yp_token_t identifier = parser->previous;
+
+          yp_parser_local_add(parser, &identifier);
+          yp_node_t *target = yp_local_variable_write_node_create(parser, &identifier);
+
+          node = yp_as_pattern_node_create(parser, node, target, &operator);
+        }
       }
 
       yp_node_list_append2(&nodes, node);
