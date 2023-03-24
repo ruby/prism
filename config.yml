@@ -826,6 +826,26 @@ nodes:
 
           { a => b }
           ^^^^^^^^^^
+  - name: HashPatternNode
+    child_nodes:
+      - name: constant
+        type: node?
+      - name: assocs
+        type: node[]
+      - name: kwrest
+        type: node?
+      - name: opening_loc
+        type: location?
+      - name: closing_loc
+        type: location?
+    comment: |
+      Represents a hash pattern in pattern matching.
+
+          foo => { a: 1, b: 2 }
+                 ^^^^^^^^^^^^^^
+
+          foo => { a: 1, b: 2, **c }
+                 ^^^^^^^^^^^^^^^^^^^
   - name: HeredocNode
     child_nodes:
       - name: opening
