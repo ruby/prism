@@ -435,7 +435,7 @@ nodes:
   - name: AssocSplatNode
     child_nodes:
       - name: value
-        type: node
+        type: node?
       - name: operator_loc
         type: location
     comment: |

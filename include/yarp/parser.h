@@ -357,6 +357,10 @@ struct yp_parser {
   // This is an optional callback that can be attached to the parser that will
   // be called whenever a new token is lexed by the parser.
   yp_lex_callback_t *lex_callback;
+
+  // This flag indicates that we are currently parsing a pattern matching
+  // expression and impacts that calculation of newlines.
+  bool pattern_matching_newlines;
 };
 
 #endif // YARP_PARSER_H
