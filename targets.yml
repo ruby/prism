@@ -13,7 +13,6 @@ ruby:
     - lib/ruby_vm/rjit/insn_compiler.rb
     - test/csv/test_patterns.rb
     - test/ruby/test_pattern_matching.rb
-    - tool/rjit/bindgen.rb
 
 rails:
   repo: https://github.com/rails/rails

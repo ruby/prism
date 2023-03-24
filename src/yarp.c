@@ -6985,7 +6985,7 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
 // Parse a hash pattern.
 static yp_node_t *
 parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
-  if (!match_any_type_p(parser, 3, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT)) {
+  if (!match_any_type_p(parser, 4, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT)) {
     // Here we have a value for the first assoc in the list, so we will parse it
     // now and update the first assoc.
     yp_node_t *value = parse_pattern(parser, false, "Expected a pattern expression after the key.");
@@ -7010,7 +7010,7 @@ parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
     yp_node_t *key = yp_symbol_node_label_create(parser, &parser->previous);
     yp_node_t *value = NULL;
 
-    if (!match_any_type_p(parser, 3, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT)) {
+    if (!match_any_type_p(parser, 4, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT)) {
       value = parse_pattern(parser, false, "Expected a pattern expression after the key.");
     }
 
