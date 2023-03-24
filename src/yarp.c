@@ -280,6 +280,27 @@ yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
   return node;
 }
 
+// Allocate a new AlternationPatternNode node.
+static yp_node_t *
+yp_alternation_pattern_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right, const yp_token_t *operator) {
+  yp_node_t *node = yp_node_alloc(parser);
+
+  *node = (yp_node_t) {
+    .type = YP_NODE_ALTERNATION_PATTERN_NODE,
+    .location = {
+      .start = left->location.start,
+      .end = right->location.end
+    },
+    .as.alternation_pattern_node = {
+      .left = left,
+      .right = right,
+      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
+    }
+  };
+
+  return node;
+}
+
 // Allocate and initialize a new and node.
 static yp_node_t *
 yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
@@ -7210,46 +7231,52 @@ parse_pattern_rest(yp_parser_t *parser) {
 // * Array patterns w/o constants
 static yp_node_t *
 parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
-  yp_node_t *node;
+  yp_node_t *node = NULL;
 
   bool leading_rest = false;
   bool trailing_rest = false;
 
-  // First, parse the first pattern in the list. If it's a splat node, then we
-  // know we're going to be parsing an array or find pattern. Otherwise it could
-  // just be a regular pattern.
-  switch (parser->current.type) {
-    case YP_TOKEN_IDENTIFIER:
-    case YP_TOKEN_BRACKET_LEFT_ARRAY:
-    case YP_TOKEN_BRACE_LEFT:
-    case YP_TOKEN_CARET:
-    case YP_TOKEN_CONSTANT:
-    case YP_TOKEN_UCOLON_COLON:
-    case YP_CASE_PRIMITIVE:
-      node = parse_pattern_primitive(parser, message);
-      break;
-    case YP_TOKEN_LABEL: {
-      parser_lex(parser);
+  if (top_pattern && accept(parser, YP_TOKEN_USTAR)) {
+    node = parse_pattern_rest(parser);
+    leading_rest = true;
+  } else if (accept(parser, YP_TOKEN_LABEL)) {
+    yp_node_t *key = yp_symbol_node_label_create(parser, &parser->previous);
+    yp_token_t operator = not_provided(parser);
 
-      yp_node_t *key = yp_symbol_node_label_create(parser, &parser->previous);
-      yp_token_t operator = not_provided(parser);
+    return parse_pattern_hash(parser, yp_assoc_node_create(parser, key, &operator, NULL));
+  } else {
+    do {
+      yp_token_t operator = parser->previous;
 
-      return parse_pattern_hash(parser, yp_assoc_node_create(parser, key, &operator, NULL));
-    }
-    case YP_TOKEN_USTAR:
-      if (top_pattern) {
-        parser_lex(parser);
-        node = parse_pattern_rest(parser);
-        leading_rest = true;
-        break;
+      // First, parse the first pattern in the list. If it's a splat node, then we
+      // know we're going to be parsing an array or find pattern. Otherwise it
+      // could just be a regular pattern.
+      switch (parser->current.type) {
+        case YP_TOKEN_IDENTIFIER:
+        case YP_TOKEN_BRACKET_LEFT_ARRAY:
+        case YP_TOKEN_BRACE_LEFT:
+        case YP_TOKEN_CARET:
+        case YP_TOKEN_CONSTANT:
+        case YP_TOKEN_UCOLON_COLON:
+        case YP_CASE_PRIMITIVE: {
+          if (node == NULL) {
+            node = parse_pattern_primitive(parser, message);
+          } else {
+            yp_node_t *right = parse_pattern_primitive(parser, "Expected to be able to parse a pattern after `|'.");
+            node = yp_alternation_pattern_node_create(parser, node, right, &operator);
+          }
+
+          break;
+        }
+        default:
+          yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
+
+          return yp_node_missing_node_create(parser, &(yp_location_t) {
+            .start = parser->current.start,
+            .end = parser->current.end
+          });
       }
-    default:
-      yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
-
-      return yp_node_missing_node_create(parser, &(yp_location_t) {
-        .start = parser->current.start,
-        .end = parser->current.end
-      });
+    } while (accept(parser, YP_TOKEN_PIPE));
   }
 
   if (top_pattern && match_type_p(parser, YP_TOKEN_COMMA)) {

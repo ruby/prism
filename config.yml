@@ -326,6 +326,19 @@ nodes:
 
           alias foo bar
           ^^^^^^^^^^^^^
+  - name: AlternationPatternNode
+    child_nodes:
+      - name: left
+        type: node
+      - name: right
+        type: node
+      - name: operator_loc
+        type: location
+    comment: |
+      Represents an alternation pattern in pattern matching.
+
+          foo => bar | baz
+                 ^^^^^^^^^
   - name: AndNode
     child_nodes:
       - name: left
