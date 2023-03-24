@@ -3659,10 +3659,7 @@ parser_lex(yp_parser_t *parser) {
 
             yp_token_type_t type = YP_TOKEN_STAR_STAR;
 
-            if (lex_state_spcarg_p(parser, space_seen)) {
-              // yp_diagnostic_list_append(&parser->warning_list, parser->current.start, parser->current.end, "`*' interpreted as argument prefix");
-              type = YP_TOKEN_USTAR_STAR;
-            } else if (lex_state_beg_p(parser)) {
+            if (lex_state_spcarg_p(parser, space_seen) || lex_state_beg_p(parser)) {
               type = YP_TOKEN_USTAR_STAR;
             }
 
