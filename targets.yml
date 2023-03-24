@@ -10,7 +10,6 @@ ruby:
   excludes:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
   todos:
-    - lib/ruby_vm/rjit/assembler.rb
     - lib/ruby_vm/rjit/insn_compiler.rb
     - test/csv/test_patterns.rb
     - test/ruby/test_pattern_matching.rb

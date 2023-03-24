@@ -1894,7 +1894,7 @@ yp_symbol_node_label_p(yp_node_t *node) {
 // Allocate and initialize a new SymbolNode node from a label.
 static yp_node_t *
 yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_LABEL);
+  assert(token->type == YP_TOKEN_LABEL || token->type == YP_TOKEN_MISSING);
 
   yp_token_t opening = not_provided(parser);
   yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
@@ -7247,6 +7247,13 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
           node = yp_alternation_pattern_node_create(parser, node, right, &operator);
         }
 
+        break;
+      }
+      case YP_TOKEN_PARENTHESIS_LEFT: {
+        parser_lex(parser);
+        node = parse_pattern(parser, false, "Expected a pattern after the opening parenthesis.");
+
+        expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis after the pattern.");
         break;
       }
       default: {
