@@ -72,6 +72,7 @@ typedef struct yp_node {
   // it might not end up mattering in the final compiled code.
   union {
   <%- nodes.each do |node| -%>
+  <%- next if node.params.empty? -%>
     // <%= node.name %>
     struct {
     <%- node.params.each do |param| -%>

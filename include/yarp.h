@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "yarp/missing.h"
 #include "yarp/ast.h"
 #include "yarp/diagnostic.h"
 #include "yarp/node.h"
@@ -17,7 +18,6 @@
 #include "yarp/regexp.h"
 #include "yarp/unescape.h"
 #include "yarp/util/yp_buffer.h"
-#include "yarp/util/yp_strnstr.h"
 #include "yarp/util/yp_strpbrk.h"
 #include "yarp/util/yp_strspn.h"
 
