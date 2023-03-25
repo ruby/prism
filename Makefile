@@ -5,7 +5,7 @@ SOEXT := so
 endif
 
 build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h
-	$(CC) -Wall -Werror -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
+	$(CC) -std=c99 -Wall -Werror -Wpedantic -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
 
 build:
 	mkdir -p build

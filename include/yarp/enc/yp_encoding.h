@@ -5,9 +5,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define YP_ENCODING_ALPHABETIC_BIT 0b001
-#define YP_ENCODING_ALPHANUMERIC_BIT 0b010
-#define YP_ENCODING_UPPERCASE_BIT 0b100
+#define YP_ENCODING_ALPHABETIC_BIT 1 << 0
+#define YP_ENCODING_ALPHANUMERIC_BIT 1 << 1
+#define YP_ENCODING_UPPERCASE_BIT 1 << 2
 
 /******************************************************************************/
 /* ASCII                                                                      */

@@ -21,7 +21,7 @@ table = ""
         value |= (1 << bit_index) if characters.include?(character)
       end
 
-      "0b%08b," % value
+      "0x%02x," % value
     end
 
   table << "  #{row.join(" ")} // #{row_index.to_s(16).upcase}x\n"
@@ -34,7 +34,7 @@ end
 <%- end -%>
 
 const unsigned char yp_strspn_table[256] = {
-  //       <%= "#{(0...16).map { |value| value.to_s(16).upcase }.join("           ")}" %>
+  // <%= "#{(0...16).map { |value| value.to_s(16).upcase }.join("     ")}" %>
 <%= table %>};
 <%- bits.each do |name, characters| -%>
 

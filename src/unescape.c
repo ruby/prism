@@ -34,7 +34,7 @@ static const char unescape_chars[] = {
   ['\\'] = '\\',
   ['a'] = '\a',
   ['b'] = '\b',
-  ['e'] = '\e',
+  ['e'] = '\033',
   ['f'] = '\f',
   ['n'] = '\n',
   ['r'] = '\r',
@@ -117,25 +117,27 @@ unescape_unicode(const char *string, size_t length, uint32_t *value) {
 // 32-bit value to write. Writes the UTF-8 representation of the value to the
 // string and returns the number of bytes written.
 static inline size_t
-unescape_unicode_write(char *destination, uint32_t value, const char *start, const char *end, yp_list_t *error_list) {
+unescape_unicode_write(char *dest, uint32_t value, const char *start, const char *end, yp_list_t *error_list) {
+  unsigned char *bytes = (unsigned char *) dest;
+
   if (value <= 0x7F) {
     // 0xxxxxxx
-    destination[0] = value;
+    bytes[0] = value;
     return 1;
   }
 
   if (value <= 0x7FF) {
     // 110xxxxx 10xxxxxx
-    destination[0] = 0xC0 | (value >> 6);
-    destination[1] = 0x80 | (value & 0x3F);
+    bytes[0] = 0xC0 | (value >> 6);
+    bytes[1] = 0x80 | (value & 0x3F);
     return 2;
   }
 
   if (value <= 0xFFFF) {
     // 1110xxxx 10xxxxxx 10xxxxxx
-    destination[0] = 0xE0 | (value >> 12);
-    destination[1] = 0x80 | ((value >> 6) & 0x3F);
-    destination[2] = 0x80 | (value & 0x3F);
+    bytes[0] = 0xE0 | (value >> 12);
+    bytes[1] = 0x80 | ((value >> 6) & 0x3F);
+    bytes[2] = 0x80 | (value & 0x3F);
     return 3;
   }
 
@@ -143,10 +145,10 @@ unescape_unicode_write(char *destination, uint32_t value, const char *start, con
   // the input is invalid.
   if (value <= 0x10FFFF) {
     // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-    destination[0] = 0xF0 | (value >> 18);
-    destination[1] = 0x80 | ((value >> 12) & 0x3F);
-    destination[2] = 0x80 | ((value >> 6) & 0x3F);
-    destination[3] = 0x80 | (value & 0x3F);
+    bytes[0] = 0xF0 | (value >> 18);
+    bytes[1] = 0x80 | ((value >> 12) & 0x3F);
+    bytes[2] = 0x80 | ((value >> 6) & 0x3F);
+    bytes[3] = 0x80 | (value & 0x3F);
     return 4;
   }
 
@@ -154,9 +156,9 @@ unescape_unicode_write(char *destination, uint32_t value, const char *start, con
   // want to just crash, so instead we'll add an error to the error list and put
   // in a replacement character instead.
   yp_diagnostic_list_append(error_list, start, end, "Invalid Unicode escape sequence.");
-  destination[0] = 0xEF;
-  destination[1] = 0xBF;
-  destination[2] = 0xBD;
+  bytes[0] = 0xEF;
+  bytes[1] = 0xBF;
+  bytes[2] = 0xBD;
   return 3;
 }
 
