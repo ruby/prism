@@ -227,7 +227,12 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
         while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
           const char *unicode_start = unicode_cursor;
-          unicode_cursor += yp_strspn_hexidecimal_digit(unicode_cursor, end - unicode_cursor);
+
+          // \u{nnnn} character literal allows only 1-6 hexadecimal digits
+          int hexadecimal_length = yp_strspn_hexidecimal_digit(unicode_cursor, end - unicode_cursor);
+          if (hexadecimal_length > 6)
+            yp_diagnostic_list_append(error_list, unicode_cursor, unicode_cursor + hexadecimal_length, "invalid Unicode escape.");
+          unicode_cursor += hexadecimal_length;
 
           uint32_t value;
           unescape_unicode(unicode_start, (size_t) (unicode_cursor - unicode_start), &value);
