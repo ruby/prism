@@ -2469,9 +2469,9 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
   // These are the patterns we're going to match to find the encoding comment.
   // This is definitely not complete or even really correct.
   const char *encoding_start = NULL;
-  if ((encoding_start = yp_strnstr(start, "coding:", end - start)) != NULL) {
+  if ((encoding_start = strnstr(start, "coding:", end - start)) != NULL) {
     encoding_start += 7;
-  } else if ((encoding_start = yp_strnstr(start, "coding=", end - start)) != NULL) {
+  } else if ((encoding_start = strnstr(start, "coding=", end - start)) != NULL) {
     encoding_start += 7;
   }
 
