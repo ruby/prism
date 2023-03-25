@@ -1353,7 +1353,7 @@ ProgramNode(0...960)(
                CallNode(781...783)(
                  IntegerNode(782...783)(),
                  nil,
-                 UMINUS(781...782)("-"),
+                 UMINUS_NUM(781...782)("-"),
                  nil,
                  nil,
                  nil,

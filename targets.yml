@@ -9,12 +9,6 @@ ruby:
   sha: 309ff928f5470697d6def63c5dd45255d2a09e1d
   excludes:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
-  todos:
-    - lib/ruby_vm/rjit/assembler.rb
-    - lib/ruby_vm/rjit/insn_compiler.rb
-    - test/csv/test_patterns.rb
-    - test/ruby/test_pattern_matching.rb
-    - tool/rjit/bindgen.rb
 
 rails:
   repo: https://github.com/rails/rails
