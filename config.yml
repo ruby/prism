@@ -519,7 +519,7 @@ nodes:
       - name: name
         type: string
     comment: |
-      Represents a method call, in all of the various forms that that can take.
+      Represents a method call, in all of the various forms that can take.
 
           foo
           ^^^
@@ -1292,8 +1292,8 @@ nodes:
     comment: |
       Represents the use of the `END` keyword.
 
-          BEGIN { foo }
-          ^^^^^^^^^^^^^
+          END { foo }
+          ^^^^^^^^^^^
   - name: PreExecutionNode
     child_nodes:
       - name: statements
@@ -1305,10 +1305,10 @@ nodes:
       - name: closing_loc
         type: location
     comment: |
-      Represents the use of the `END` keyword.
+      Represents the use of the `BEGIN` keyword.
 
-          END { foo }
-          ^^^^^^^^^^^
+          BEGIN { foo }
+          ^^^^^^^^^^^^^
   - name: ProgramNode
     child_nodes:
       - name: scope
