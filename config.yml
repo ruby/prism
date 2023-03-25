@@ -304,6 +304,8 @@ tokens:
     comment: "unary ..."
   - name: UMINUS
     comment: "-@"
+  - name: UMINUS_NUM
+    comment: "-@ for a number"
   - name: UPLUS
     comment: "+@"
   - name: USTAR

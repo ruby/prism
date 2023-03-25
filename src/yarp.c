@@ -4184,7 +4184,7 @@ parser_lex(yp_parser_t *parser) {
         }
 
         // - -= -@
-        case '-':
+        case '-': {
           if (lex_state_operator_p(parser)) {
             lex_state_set(parser, YP_LEX_STATE_ARG);
 
@@ -4217,11 +4217,12 @@ parser_lex(yp_parser_t *parser) {
 
           if (lex_state_beg_p(parser) || spcarg) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
-            LEX(YP_TOKEN_UMINUS);
+            LEX(char_is_decimal_number(peek(parser)) ? YP_TOKEN_UMINUS_NUM : YP_TOKEN_UMINUS);
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
           LEX(YP_TOKEN_MINUS);
+        }
 
         // . .. ...
         case '.': {
@@ -5294,6 +5295,7 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // -@
   [YP_TOKEN_UMINUS] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UMINUS),
+  [YP_TOKEN_UMINUS_NUM] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UMINUS),
 
   // **
   [YP_TOKEN_STAR_STAR] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_EXPONENT),
@@ -5443,6 +5445,7 @@ token_begins_expression_p(yp_token_type_t type) {
       return false;
     case YP_TOKEN_UCOLON_COLON:
     case YP_TOKEN_UMINUS:
+    case YP_TOKEN_UMINUS_NUM:
     case YP_TOKEN_UPLUS:
     case YP_TOKEN_BANG:
     case YP_TOKEN_TILDE:
@@ -6583,8 +6586,8 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_EQUAL_TILDE: case YP_TOKEN_GREATER_EQUAL: case YP_TOKEN_GREATER_GREATER: case YP_TOKEN_GREATER: \
   case YP_TOKEN_LESS_EQUAL_GREATER: case YP_TOKEN_LESS_EQUAL: case YP_TOKEN_LESS_LESS: case YP_TOKEN_LESS: \
   case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: \
-  case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UPLUS: \
-  case YP_TOKEN_USTAR
+  case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UMINUS_NUM: \
+  case YP_TOKEN_UPLUS: case YP_TOKEN_USTAR
 
 // This macro allows you to define a case statement for all of the token types
 // that represent the beginning of nodes that are "primitives" in a pattern
@@ -6595,7 +6598,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_PERCENT_UPPER_I: case YP_TOKEN_PERCENT_UPPER_W: case YP_TOKEN_STRING_BEGIN: case YP_TOKEN_KEYWORD_NIL: \
   case YP_TOKEN_KEYWORD_SELF: case YP_TOKEN_KEYWORD_TRUE: case YP_TOKEN_KEYWORD_FALSE: case YP_TOKEN_KEYWORD___FILE__: \
   case YP_TOKEN_KEYWORD___LINE__: case YP_TOKEN_KEYWORD___ENCODING__: case YP_TOKEN_MINUS_GREATER: \
-  case YP_TOKEN_HEREDOC_START
+  case YP_TOKEN_HEREDOC_START: case YP_TOKEN_UMINUS_NUM
 
 // This macro allows you to define a case statement for all of the token types
 // that could begin a parameter.
@@ -9210,7 +9213,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_UMINUS: {
+    case YP_TOKEN_UMINUS:
+    case YP_TOKEN_UMINUS_NUM: {
       parser_lex(parser);
 
       yp_token_t operator = parser->previous;
