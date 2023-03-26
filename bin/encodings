@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 def table(range, encoding)
-  puts "//  #{(0...16).map { |value| value.to_s(16).upcase }.join("      ")}"
+  puts "//#{(0...16).map { |value| value.to_s(16).upcase }.join("  ")}"
 
   range.each_slice(16).with_index do |slice, row_index|
     row =
@@ -14,7 +14,7 @@ def table(range, encoding)
         value |= (1 << 1) if character.match?(/[[:alnum:]]/)
         value |= (1 << 2) if character.match?(/[[:upper:]]/)
 
-        "0b%03b," % value
+        "%d," % value
       end
 
     puts "#{row.join(" ")} // #{row_index.to_s(16).upcase}x"
@@ -45,94 +45,29 @@ def lists(name, range, encoding)
   end
 end
 
-puts "ASCII"
-puts "=========="
-table((0...128), Encoding::US_ASCII)
-
-puts "\nISO-8859-1"
-puts "=========="
-table((0...256), Encoding::ISO8859_1)
-
-puts "\nISO-8859-2"
-puts "=========="
-table((0...256), Encoding::ISO8859_2)
-
-puts "\nISO-8859-3"
-puts "=========="
-table((0...256), Encoding::ISO8859_3)
-
-puts "\nISO-8859-4"
-puts "=========="
-table((0...256), Encoding::ISO8859_4)
-
-puts "\nISO-8859-5"
-puts "=========="
-table((0...256), Encoding::ISO8859_5)
-
-puts "\nISO-8859-6"
-puts "=========="
-table((0...256), Encoding::ISO8859_6)
-
-puts "\nISO-8859-7"
-puts "=========="
-table((0...256), Encoding::ISO8859_7)
-
-puts "\nISO-8859-8"
-puts "=========="
-table((0...256), Encoding::ISO8859_8)
-
-puts "\nISO-8859-9"
-puts "=========="
-table((0...256), Encoding::ISO8859_9)
-
-puts "\nISO-8859-10"
-puts "=========="
-table((0...256), Encoding::ISO8859_10)
-
-puts "\nISO-8859-11"
-puts "=========="
-table((0...256), Encoding::ISO8859_11)
-
-puts "\nISO-8859-13"
-puts "=========="
-table((0...256), Encoding::ISO8859_13)
-
-puts "\nISO-8859-14"
-puts "=========="
-table((0...256), Encoding::ISO8859_14)
-
-puts "\nISO-8859-15"
-puts "=========="
-table((0...256), Encoding::ISO8859_15)
-
-puts "\nISO-8859-16"
-puts "=========="
-table((0...256), Encoding::ISO8859_16)
-
-puts "\nWindows-1251"
-puts "=========="
-table((0...256), Encoding::Windows_1251)
-
-puts "\nWindows-1252"
-puts "=========="
-table((0...256), Encoding::Windows_1252)
-
-puts "\nBig5"
-puts "=========="
-lists("big5", (0...0x10000), Encoding::Big5)
-
-puts "\nUTF-8"
-puts "=========="
-lists("utf8", (0...0x110000), Encoding::UTF_8)
-
-puts "\nShift-JIS"
-puts "=========="
-lists("shift_jis", (0...0x10000), Encoding::Shift_JIS)
-
-puts "\nEUC-JP"
-puts "=========="
-lists("euc-jp", (0...0x10000), Encoding::EUC_JP)
-
-puts "\nWindows-31J"
-puts "=========="
-lists("windows-31j", (0...0x10000), Encoding::Windows_31J)
+case ARGV[0]
+when "ascii"        then table(0...256, Encoding::ASCII_8BIT)
+when "big5"         then lists("big5", 0...65536, Encoding::Big5)
+when "euc-jp"       then lists("euc-jp", 0...0x10000, Encoding::EUC_JP)
+when "iso-8859-1"   then table(0...256, Encoding::ISO8859_1)
+when "iso-8859-10"  then table(0...256, Encoding::ISO8859_10)
+when "iso-8859-11"  then table(0...256, Encoding::ISO8859_11)
+when "iso-8859-13"  then table(0...256, Encoding::ISO8859_13)
+when "iso-8859-14"  then table(0...256, Encoding::ISO8859_14)
+when "iso-8859-15"  then table(0...256, Encoding::ISO8859_15)
+when "iso-8859-16"  then table(0...256, Encoding::ISO8859_16)
+when "iso-8859-2"   then table(0...256, Encoding::ISO8859_2)
+when "iso-8859-3"   then table(0...256, Encoding::ISO8859_3)
+when "iso-8859-4"   then table(0...256, Encoding::ISO8859_4)
+when "iso-8859-5"   then table(0...256, Encoding::ISO8859_5)
+when "iso-8859-6"   then table(0...256, Encoding::ISO8859_6)
+when "iso-8859-7"   then table(0...256, Encoding::ISO8859_7)
+when "iso-8859-8"   then table(0...256, Encoding::ISO8859_8)
+when "iso-8859-9"   then table(0...256, Encoding::ISO8859_9)
+when "shift_jis"    then lists("shift_jis", 0...0x10000, Encoding::Shift_JIS)
+when "utf8"         then lists("utf8", 0...0x110000, Encoding::UTF_8)
+when "windows-1251" then table(0...256, Encoding::Windows_1251)
+when "windows-1252" then table(0...256, Encoding::Windows_1252)
+when "windows-31j"  then lists("windows-31j", 0...0x10000, Encoding::Windows_31)
+else raise "Unknown encoding `#{ARGV[0]}'"
+end
