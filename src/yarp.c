@@ -7042,7 +7042,7 @@ parse_pattern_rest(yp_parser_t *parser) {
 // Parse a keyword rest node.
 static yp_node_t *
 parse_pattern_keyword_rest(yp_parser_t *parser) {
-  assert(parser->current.type == YP_TOKEN_STAR_STAR);
+  assert(parser->current.type == YP_TOKEN_USTAR_STAR);
   parser_lex(parser);
 
   yp_token_t operator = parser->previous;
@@ -7085,7 +7085,7 @@ parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
 
     yp_node_t *assoc;
 
-    if (match_type_p(parser, YP_TOKEN_STAR_STAR)) {
+    if (match_type_p(parser, YP_TOKEN_USTAR_STAR)) {
       assoc = parse_pattern_keyword_rest(parser);
     } else {
       expect(parser, YP_TOKEN_LABEL, "Expected a label after the `,'.");
@@ -7190,7 +7190,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
             parser_lex(parser);
             key = yp_symbol_node_label_create(parser, &parser->previous);
             break;
-          case YP_TOKEN_STAR_STAR:
+          case YP_TOKEN_USTAR_STAR:
             key = parse_pattern_keyword_rest(parser);
             break;
           case YP_TOKEN_STRING_BEGIN:
@@ -7435,7 +7435,7 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
 
       return parse_pattern_hash(parser, yp_assoc_node_create(parser, key, &operator, NULL));
     }
-    case YP_TOKEN_STAR_STAR: {
+    case YP_TOKEN_USTAR_STAR: {
       node = parse_pattern_keyword_rest(parser);
       return parse_pattern_hash(parser, node);
     }
