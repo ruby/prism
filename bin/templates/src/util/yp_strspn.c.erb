@@ -21,7 +21,7 @@ table = ""
         value |= (1 << bit_index) if characters.include?(character)
       end
 
-      "0b%08b," % value
+      "0x%02x," % value
     end
 
   table << "  #{row.join(" ")} // #{row_index.to_s(16).upcase}x\n"
@@ -34,11 +34,11 @@ end
 <%- end -%>
 
 const unsigned char yp_strspn_table[256] = {
-  //       <%= "#{(0...16).map { |value| value.to_s(16).upcase }.join("           ")}" %>
+  // <%= "#{(0...16).map { |value| value.to_s(16).upcase }.join("     ")}" %>
 <%= table %>};
 <%- bits.each do |name, characters| -%>
 
-// Returns the number of characters at the start of the string string that are a
+// Returns the number of characters at the start of the string that are a
 // <%= name.to_s.downcase.split("_").join(" ") %>. Disallows searching past the given maximum number of characters.
 size_t
 yp_strspn_<%= name.downcase %>(const char *string, int maximum) {
@@ -50,7 +50,7 @@ yp_strspn_<%= name.downcase %>(const char *string, int maximum) {
 }
 <%- end -%>
 
-// Returns the number of characters at the start of the string string that are a
+// Returns the number of characters at the start of the string that are a
 // binary number. Disallows searching past the given maximum number of characters.
 size_t
 yp_strspn_binary_number(const char *string, int maximum) {

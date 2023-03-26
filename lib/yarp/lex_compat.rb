@@ -164,6 +164,7 @@ module YARP
       UDOT_DOT: :on_op,
       UDOT_DOT_DOT: :on_op,
       UMINUS: :on_op,
+      UMINUS_NUM: :on_op,
       UPLUS: :on_op,
       USTAR: :on_op,
       USTAR_STAR: :on_op,

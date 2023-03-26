@@ -25,7 +25,7 @@ ProgramNode(0...97)(
      CallNode(95...97)(
        IntegerNode(96...97)(),
        nil,
-       UMINUS(95...96)("-"),
+       UMINUS_NUM(95...96)("-"),
        nil,
        nil,
        nil,

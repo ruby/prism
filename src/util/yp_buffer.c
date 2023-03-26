@@ -22,9 +22,10 @@ yp_buffer_append(yp_buffer_t *buffer, const void *source, size_t length) {
   size_t next_length = buffer->length + length;
 
   if (next_length > buffer->capacity) {
-    while (next_length > buffer->capacity) {
-      buffer->capacity = buffer->capacity * 2;
-    }
+    do {
+      buffer->capacity *= 2;
+    } while (next_length > buffer->capacity);
+
     buffer->value = realloc(buffer->value, buffer->capacity);
   }
 
