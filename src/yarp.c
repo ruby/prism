@@ -565,7 +565,7 @@ yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *oper
 // Allocate and initialize a new assoc splat node.
 static yp_node_t *
 yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token_t *operator) {
-  assert(operator->type == YP_TOKEN_STAR_STAR);
+  assert(operator->type == YP_TOKEN_USTAR_STAR);
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
@@ -1519,7 +1519,7 @@ yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new NoKeywordsParameterNode node.
 static yp_node_t *
 yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *keyword) {
-  assert(operator->type == YP_TOKEN_STAR_STAR);
+  assert(operator->type == YP_TOKEN_USTAR_STAR);
   assert(keyword->type == YP_TOKEN_KEYWORD_NIL);
   yp_node_t *node = yp_node_alloc(parser);
 
@@ -3789,12 +3789,19 @@ parser_lex(yp_parser_t *parser) {
               LEX(YP_TOKEN_STAR_STAR_EQUAL);
             }
 
+            yp_token_type_t type = YP_TOKEN_STAR_STAR;
+
+            if (lex_state_spcarg_p(parser, space_seen) || lex_state_beg_p(parser)) {
+              type = YP_TOKEN_USTAR_STAR;
+            }
+
             if (lex_state_operator_p(parser)) {
               lex_state_set(parser, YP_LEX_STATE_ARG);
             } else {
               lex_state_set(parser, YP_LEX_STATE_BEG);
             }
-            LEX(YP_TOKEN_STAR_STAR);
+
+            LEX(type);
           }
 
           if (match(parser, '=')) {
@@ -5299,6 +5306,7 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // **
   [YP_TOKEN_STAR_STAR] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_EXPONENT),
+  [YP_TOKEN_USTAR_STAR] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UNARY),
 
   // ! ~ +@
   [YP_TOKEN_BANG] = RIGHT_ASSOCIATIVE_UNARY(YP_BINDING_POWER_UNARY),
@@ -5776,7 +5784,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
     yp_node_t *element;
 
     switch (parser->current.type) {
-      case YP_TOKEN_STAR_STAR: {
+      case YP_TOKEN_USTAR_STAR: {
         parser_lex(parser);
 
         yp_token_t operator = parser->previous;
@@ -5823,7 +5831,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
 
     // If the next element starts with a label or a **, then we know we have
     // another element in the hash, so we'll continue parsing.
-    if (match_any_type_p(parser, 2, YP_TOKEN_STAR_STAR, YP_TOKEN_LABEL)) continue;
+    if (match_any_type_p(parser, 2, YP_TOKEN_USTAR_STAR, YP_TOKEN_LABEL)) continue;
 
     // Otherwise we need to check if the subsequent token begins an expression.
     // If it does, then we'll continue parsing.
@@ -5860,7 +5868,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
     yp_node_t *argument = NULL;
 
     switch (parser->current.type) {
-      case YP_TOKEN_STAR_STAR:
+      case YP_TOKEN_USTAR_STAR:
       case YP_TOKEN_LABEL: {
         if (parsed_bare_hash) {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
@@ -5961,7 +5969,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
           // Then parse more if we have a comma
           if (accept(parser, YP_TOKEN_COMMA) && (
             token_begins_expression_p(parser->current.type) ||
-            match_any_type_p(parser, 2, YP_TOKEN_STAR_STAR, YP_TOKEN_LABEL)
+            match_any_type_p(parser, 2, YP_TOKEN_USTAR_STAR, YP_TOKEN_LABEL)
           )) {
             parse_assocs(parser, argument);
           }
@@ -6192,7 +6200,8 @@ parse_parameters(
         yp_parameters_node_rest_set(params, param);
         break;
       }
-      case YP_TOKEN_STAR_STAR: {
+      case YP_TOKEN_STAR_STAR:
+      case YP_TOKEN_USTAR_STAR: {
         parser_lex(parser);
 
         yp_token_t operator = parser->previous;
@@ -6460,7 +6469,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
 
       arguments->closing = parser->previous;
     }
-  } else if ((token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR)) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
+  } else if ((token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR)) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
     yp_accepts_block_stack_push(parser, false);
 
     // If we get here, then the subsequent token cannot be used as an infix
@@ -6587,7 +6596,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_LESS_EQUAL_GREATER: case YP_TOKEN_LESS_EQUAL: case YP_TOKEN_LESS_LESS: case YP_TOKEN_LESS: \
   case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: \
   case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UMINUS_NUM: \
-  case YP_TOKEN_UPLUS: case YP_TOKEN_USTAR
+  case YP_TOKEN_UPLUS: case YP_TOKEN_USTAR: case YP_TOKEN_USTAR_STAR
 
 // This macro allows you to define a case statement for all of the token types
 // that represent the beginning of nodes that are "primitives" in a pattern
@@ -6603,7 +6612,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // This macro allows you to define a case statement for all of the token types
 // that could begin a parameter.
 #define YP_CASE_PARAMETER YP_TOKEN_AMPERSAND: case YP_TOKEN_UDOT_DOT_DOT: case YP_TOKEN_IDENTIFIER: \
-  case YP_TOKEN_LABEL: case YP_TOKEN_USTAR: case YP_TOKEN_STAR: case YP_TOKEN_STAR_STAR: case YP_TOKEN_CONSTANT: \
+  case YP_TOKEN_LABEL: case YP_TOKEN_USTAR: case YP_TOKEN_STAR: case YP_TOKEN_STAR_STAR: case YP_TOKEN_USTAR_STAR: case YP_TOKEN_CONSTANT: \
   case YP_TOKEN_INSTANCE_VARIABLE: case YP_TOKEN_GLOBAL_VARIABLE: case YP_TOKEN_CLASS_VARIABLE
 
 // This macro allows you to define a case statement for all of the nodes that
@@ -7033,7 +7042,7 @@ parse_pattern_rest(yp_parser_t *parser) {
 // Parse a keyword rest node.
 static yp_node_t *
 parse_pattern_keyword_rest(yp_parser_t *parser) {
-  assert(parser->current.type == YP_TOKEN_STAR_STAR);
+  assert(parser->current.type == YP_TOKEN_USTAR_STAR);
   parser_lex(parser);
 
   yp_token_t operator = parser->previous;
@@ -7076,7 +7085,7 @@ parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
 
     yp_node_t *assoc;
 
-    if (match_type_p(parser, YP_TOKEN_STAR_STAR)) {
+    if (match_type_p(parser, YP_TOKEN_USTAR_STAR)) {
       assoc = parse_pattern_keyword_rest(parser);
     } else {
       expect(parser, YP_TOKEN_LABEL, "Expected a label after the `,'.");
@@ -7181,7 +7190,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
             parser_lex(parser);
             key = yp_symbol_node_label_create(parser, &parser->previous);
             break;
-          case YP_TOKEN_STAR_STAR:
+          case YP_TOKEN_USTAR_STAR:
             key = parse_pattern_keyword_rest(parser);
             break;
           case YP_TOKEN_STRING_BEGIN:
@@ -7426,7 +7435,7 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
 
       return parse_pattern_hash(parser, yp_assoc_node_create(parser, key, &operator, NULL));
     }
-    case YP_TOKEN_STAR_STAR: {
+    case YP_TOKEN_USTAR_STAR: {
       node = parse_pattern_keyword_rest(parser);
       return parse_pattern_hash(parser, node);
     }
@@ -7537,7 +7546,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (accept(parser, YP_TOKEN_USTAR)) {
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
           element = yp_node_splat_node_create(parser, &parser->previous, expression);
-        } else if (match_any_type_p(parser, 2, YP_TOKEN_LABEL, YP_TOKEN_STAR_STAR)) {
+        } else if (match_any_type_p(parser, 2, YP_TOKEN_LABEL, YP_TOKEN_USTAR_STAR)) {
           if (parsed_bare_hash) {
             yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
           }
@@ -7723,7 +7732,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // fact a method call, not a constant read.
       if (
         match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR))) ||
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR))) ||
         (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
@@ -7787,7 +7796,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // If an identifier is followed by something that looks like an argument,
       // then this is in fact a method call, not a local read.
       if (
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR))) ||
+        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (
+          token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR)
+        )) ||
         (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
@@ -8202,7 +8213,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t keyword = parser->previous;
       yp_node_t *arguments = NULL;
 
-      if (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR)) {
+      if (
+        token_begins_expression_p(parser->current.type) ||
+        match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR)
+      ) {
         yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
         if (binding_power == YP_BINDING_POWER_UNSET || binding_power >= YP_BINDING_POWER_RANGE) {
@@ -9802,7 +9816,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // like Foo::Bar().
           if (
             (parser->current.type == YP_TOKEN_PARENTHESIS_LEFT) ||
-            (token_begins_expression_p(parser->current.type) || match_type_p(parser, YP_TOKEN_USTAR))
+            (token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR))
           ) {
             yp_token_t message = parser->previous;
             yp_arguments_t arguments = yp_arguments(parser);

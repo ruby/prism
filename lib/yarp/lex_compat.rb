@@ -167,6 +167,7 @@ module YARP
       UMINUS_NUM: :on_op,
       UPLUS: :on_op,
       USTAR: :on_op,
+      USTAR_STAR: :on_op,
       WORDS_SEP: :on_words_sep,
       __END__: :on___end__
     }.freeze
