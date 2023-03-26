@@ -524,6 +524,9 @@ nodes:
           foo
           ^^^
 
+          foo()
+          ^^^^^
+
           +foo
           ^^^^
 
@@ -532,6 +535,9 @@ nodes:
 
           foo.bar
           ^^^^^^^
+
+          foo&.bar
+          ^^^^^^^^
   - name: CaseNode
     child_nodes:
       - name: predicate
