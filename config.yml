@@ -1053,18 +1053,6 @@ nodes:
           def a(**b)
                 ^^^
           end
-  - name: KeywordStarNode
-    child_nodes:
-      - name: operator
-        type: token
-      - name: expression
-        type: node
-    location: operator->expression
-    comment: |
-      Represents keyword splat method arguments.
-
-          bar(**kwargs)
-          ^^^^^^^^^^^
   - name: LambdaNode
     child_nodes:
       - name: scope
