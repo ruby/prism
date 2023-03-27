@@ -6053,30 +6053,29 @@ match_any_type_p(yp_parser_t *parser, size_t count, ...) {
 typedef enum {
   YP_BINDING_POWER_UNSET = 0,            // used to indicate this token cannot be used as an infix operator
   YP_BINDING_POWER_STATEMENT = 2,
-  YP_BINDING_POWER_MODIFIER = 4,         // if unless until while in
+  YP_BINDING_POWER_MODIFIER = 4,         // if unless until while in rescue
   YP_BINDING_POWER_COMPOSITION = 6,      // and or
   YP_BINDING_POWER_NOT = 8,              // not
   YP_BINDING_POWER_MATCH = 10,           // =>
   YP_BINDING_POWER_DEFINED = 12,         // defined?
   YP_BINDING_POWER_ASSIGNMENT = 14,      // = += -= *= /= %= &= |= ^= &&= ||= <<= >>= **=
-  YP_BINDING_POWER_MODIFIER_RESCUE = 16, // rescue
-  YP_BINDING_POWER_TERNARY = 18,         // ?:
-  YP_BINDING_POWER_RANGE = 20,           // .. ...
-  YP_BINDING_POWER_LOGICAL_OR = 22,      // ||
-  YP_BINDING_POWER_LOGICAL_AND = 24,     // &&
-  YP_BINDING_POWER_EQUALITY = 26,        // <=> == === != =~ !~
-  YP_BINDING_POWER_COMPARISON = 28,      // > >= < <=
-  YP_BINDING_POWER_BITWISE_OR = 30,      // | ^
-  YP_BINDING_POWER_BITWISE_AND = 32,     // &
-  YP_BINDING_POWER_SHIFT = 34,           // << >>
-  YP_BINDING_POWER_TERM = 36,            // + -
-  YP_BINDING_POWER_FACTOR = 38,          // * / %
-  YP_BINDING_POWER_UMINUS = 40,          // -@
-  YP_BINDING_POWER_EXPONENT = 42,        // **
-  YP_BINDING_POWER_UNARY = 44,           // ! ~ +@
-  YP_BINDING_POWER_INDEX = 46,           // [] []=
-  YP_BINDING_POWER_CALL = 48,            // :: .
-  YP_BINDING_POWER_MAX = 50
+  YP_BINDING_POWER_TERNARY = 16,         // ?:
+  YP_BINDING_POWER_RANGE = 18,           // .. ...
+  YP_BINDING_POWER_LOGICAL_OR = 20,      // ||
+  YP_BINDING_POWER_LOGICAL_AND = 22,     // &&
+  YP_BINDING_POWER_EQUALITY = 24,        // <=> == === != =~ !~
+  YP_BINDING_POWER_COMPARISON = 26,      // > >= < <=
+  YP_BINDING_POWER_BITWISE_OR = 28,      // | ^
+  YP_BINDING_POWER_BITWISE_AND = 30,     // &
+  YP_BINDING_POWER_SHIFT = 32,           // << >>
+  YP_BINDING_POWER_TERM = 34,            // + -
+  YP_BINDING_POWER_FACTOR = 36,          // * / %
+  YP_BINDING_POWER_UMINUS = 38,          // -@
+  YP_BINDING_POWER_EXPONENT = 40,        // **
+  YP_BINDING_POWER_UNARY = 42,           // ! ~ +@
+  YP_BINDING_POWER_INDEX = 44,           // [] []=
+  YP_BINDING_POWER_CALL = 46,            // :: .
+  YP_BINDING_POWER_MAX = 48
 } yp_binding_power_t;
 
 // This struct represents a set of binding powers used for a given token. They
@@ -6093,14 +6092,15 @@ typedef struct {
 #define RIGHT_ASSOCIATIVE_UNARY(precedence) { precedence, precedence, false }
 
 yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
-  // if unless until while in
+  // if unless until while in rescue
   [YP_TOKEN_KEYWORD_IF_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
   [YP_TOKEN_KEYWORD_UNLESS_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
   [YP_TOKEN_KEYWORD_UNTIL_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
   [YP_TOKEN_KEYWORD_WHILE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_IN] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
+  [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
 
   // and or
-  [YP_TOKEN_KEYWORD_IN] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_COMPOSITION),
   [YP_TOKEN_KEYWORD_AND] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_COMPOSITION),
   [YP_TOKEN_KEYWORD_OR] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_COMPOSITION),
 
@@ -6122,9 +6122,6 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_SLASH_EQUAL] = BINDING_POWER_ASSIGNMENT,
   [YP_TOKEN_STAR_EQUAL] = BINDING_POWER_ASSIGNMENT,
   [YP_TOKEN_STAR_STAR_EQUAL] = BINDING_POWER_ASSIGNMENT,
-
-  // rescue
-  [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER_RESCUE),
 
   // ?:
   [YP_TOKEN_QUESTION_MARK] = RIGHT_ASSOCIATIVE(YP_BINDING_POWER_TERNARY),

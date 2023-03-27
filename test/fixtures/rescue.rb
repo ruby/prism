@@ -14,3 +14,7 @@ foo rescue nil || 1
 foo rescue nil ? 1 : 2
 
 begin; a; rescue *b; end
+
+foo do |x|
+  bar(y) rescue ArgumentError fail "baz"
+end

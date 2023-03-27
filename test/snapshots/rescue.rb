@@ -1,6 +1,6 @@
-ProgramNode(0...155)(
+ProgramNode(0...212)(
   Scope(0...0)([]),
-  StatementsNode(0...155)(
+  StatementsNode(0...212)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -123,6 +123,85 @@ ProgramNode(0...155)(
        nil,
        nil,
        KEYWORD_END(152...155)("end")
+     ),
+     CallNode(157...212)(
+       nil,
+       nil,
+       IDENTIFIER(157...160)("foo"),
+       nil,
+       nil,
+       nil,
+       BlockNode(161...212)(
+         Scope(161...163)([IDENTIFIER(165...166)("x")]),
+         BlockParametersNode(165...166)(
+           ParametersNode(165...166)(
+             [RequiredParameterNode(165...166)(IDENTIFIER(165...166)("x"))],
+             [],
+             nil,
+             [],
+             nil,
+             nil
+           ),
+           []
+         ),
+         StatementsNode(170...0)(
+           [RescueModifierNode(170...0)(
+              CallNode(170...176)(
+                nil,
+                nil,
+                IDENTIFIER(170...173)("bar"),
+                PARENTHESIS_LEFT(173...174)("("),
+                ArgumentsNode(174...175)(
+                  [CallNode(174...175)(
+                     nil,
+                     nil,
+                     IDENTIFIER(174...175)("y"),
+                     nil,
+                     nil,
+                     nil,
+                     nil,
+                     "y"
+                   )]
+                ),
+                PARENTHESIS_RIGHT(175...176)(")"),
+                nil,
+                "bar"
+              ),
+              KEYWORD_RESCUE_MODIFIER(177...183)("rescue"),
+              CallNode(184...0)(
+                nil,
+                nil,
+                CONSTANT(184...197)("ArgumentError"),
+                nil,
+                ArgumentsNode(198...202)(
+                  [CallNode(198...202)(
+                     nil,
+                     nil,
+                     IDENTIFIER(198...202)("fail"),
+                     nil,
+                     ArgumentsNode(203...208)(
+                       [StringNode(203...208)(
+                          STRING_BEGIN(203...204)("\""),
+                          STRING_CONTENT(204...207)("baz"),
+                          STRING_END(207...208)("\""),
+                          "baz"
+                        )]
+                     ),
+                     nil,
+                     nil,
+                     "fail"
+                   )]
+                ),
+                nil,
+                nil,
+                "ArgumentError"
+              )
+            )]
+         ),
+         (161...163),
+         (209...212)
+       ),
+       "foo"
      )]
   )
 )
