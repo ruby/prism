@@ -714,11 +714,7 @@ nodes:
       - name: statements
         type: node?
       - name: end_keyword
-<<<<<<< HEAD
-        type: token
-=======
         type: token?
->>>>>>> 6daf55f (Remove TernaryNode in place of IfNode)
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 

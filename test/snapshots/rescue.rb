@@ -77,10 +77,10 @@ ProgramNode(0...155)(
        IfNode(122...129)(
          QUESTION_MARK(122...123)("?"),
          NilNode(118...121)(),
-         IntegerNode(124...125)(),
+         StatementsNode(124...125)([IntegerNode(124...125)()]),
          ElseNode(126...129)(
            COLON(126...127)(":"),
-           IntegerNode(128...129)(),
+           StatementsNode(128...129)([IntegerNode(128...129)()]),
            nil
          ),
          nil
