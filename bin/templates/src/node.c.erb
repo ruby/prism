@@ -120,17 +120,17 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
       <%- case param -%>
       <%- when TokenParam, OptionalTokenParam, LocationParam, OptionalLocationParam, IntegerParam -%>
       <%- when NodeParam -%>
-      yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_destroy(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when OptionalNodeParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %> != NULL) {
-        yp_node_destroy(parser, node->as.<%= node.human %>.<%= param.name %>);
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
+        yp_node_destroy(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       }
       <%- when StringParam -%>
-      yp_string_free(&node->as.<%= node.human %>.<%= param.name %>);
+      yp_string_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when NodeListParam -%>
-      yp_node_list_free(parser, &node->as.<%= node.human %>.<%= param.name %>);
+      yp_node_list_free(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when TokenListParam -%>
-      yp_token_list_free(&node->as.<%= node.human %>.<%= param.name %>);
+      yp_token_list_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- else -%>
       <%- raise -%>
       <%- end -%>
@@ -156,17 +156,17 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
       <%- case param -%>
       <%- when TokenParam, OptionalTokenParam -%>
       <%- when NodeParam -%>
-      yp_node_memsize_node(node->as.<%= node.human %>.<%= param.name %>, memsize);
+      yp_node_memsize_node(((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
       <%- when OptionalNodeParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %> != NULL) {
-        yp_node_memsize_node(node->as.<%= node.human %>.<%= param.name %>, memsize);
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
+        yp_node_memsize_node(((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
       }
       <%- when StringParam -%>
-      memsize->memsize += yp_string_memsize(&node->as.<%= node.human %>.<%= param.name %>);
+      memsize->memsize += yp_string_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when NodeListParam -%>
-      yp_node_list_memsize(&node->as.<%= node.human %>.<%= param.name %>, memsize);
+      yp_node_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
       <%- when TokenListParam -%>
-      memsize->memsize += yp_token_list_memsize(&node->as.<%= node.human %>.<%= param.name %>);
+      memsize->memsize += yp_token_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when LocationParam, OptionalLocationParam -%>
       memsize->memsize += sizeof(yp_location_t);
       <%- when IntegerParam -%>
