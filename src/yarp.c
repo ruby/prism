@@ -7717,10 +7717,6 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
     case YP_TOKEN_BACK_REFERENCE:
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE: {
-      if (first) {
-        lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
-      }
-
       parser_lex(parser);
       return yp_global_variable_read_node_create(parser, &parser->previous);
     }
@@ -8891,7 +8887,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
             yp_token_t *name = &right->as.global_variable_read_node.name;
 
-            if ((name->type == YP_TOKEN_GLOBAL_VARIABLE) && char_is_decimal_number(name->start[1]) && (name->start[1] != '0')) {
+            if ((name->type == YP_TOKEN_NTH_REFERENCE) && char_is_decimal_number(name->start[1]) && (name->start[1] != '0')) {
               yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Can't make alias for number variables.");
             }
           } else {
