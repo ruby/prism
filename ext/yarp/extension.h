@@ -3,6 +3,7 @@
 
 #include <ruby.h>
 #include <ruby/encoding.h>
+#include <ruby/internal/special_consts.h>
 #include <yarp.h>
 
 #include <fcntl.h>

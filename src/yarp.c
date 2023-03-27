@@ -2626,12 +2626,20 @@ yp_source_encoding_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate and initialize a new SourceFileNode node.
-static yp_source_file_node_t *
-yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_KEYWORD___FILE__);
+static yp_source_file_node_t*
+yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *file_keyword) {
   yp_source_file_node_t *node = yp_alloc(parser, sizeof(yp_source_file_node_t));
+  assert(file_keyword->type == YP_TOKEN_KEYWORD___FILE__);
 
-  *node = (yp_source_file_node_t) {{ .type = YP_NODE_SOURCE_FILE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  *node = (yp_source_file_node_t) {
+    {
+      .type = YP_NODE_SOURCE_FILE_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(file_keyword),
+    },
+    .file_keyword = *file_keyword,
+    .filepath = parser->filepath_string,
+  };
+
   return node;
 }
 
@@ -7255,7 +7263,7 @@ static void
 update_parameter_state(yp_parser_t *parser, yp_token_t *token, yp_parameters_order_t *current) {
   yp_parameters_order_t state = parameters_ordering[token->type];
   if (state == YP_PARAMETERS_NO_CHANGE) return;
-  
+
   // If we see another ordered argument after a optional argument
   // we only continue parsing ordered arguments until we stop seeing ordered arguments
   if (*current == YP_PARAMETERS_ORDER_OPTIONAL && state == YP_PARAMETERS_ORDER_NAMED) {
@@ -7293,7 +7301,7 @@ parse_parameters(
       case YP_TOKEN_PARENTHESIS_LEFT: {
         update_parameter_state(parser, &parser->current, &order);
         yp_node_t *param = (yp_node_t *) parse_required_destructured_parameter(parser);
-        
+
         if (order > YP_PARAMETERS_ORDER_AFTER_OPTIONAL) {
           yp_parameters_node_requireds_append(params, param);
         } else {
@@ -7331,7 +7339,7 @@ parse_parameters(
         } else {
           update_parameter_state(parser, &parser->current, &order);
           parser_lex(parser);
-        }          
+        }
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
@@ -11343,7 +11351,12 @@ parse_program(yp_parser_t *parser) {
 
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
-yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
+yp_parser_init(yp_parser_t *parser, const char *source, size_t size, char *filepath) {
+  // Set filepath to the file that was passed
+  if (!filepath) filepath = "";
+  yp_string_t filepath_string;
+  yp_string_constant_init(&filepath_string, filepath, strlen(filepath));
+
   *parser = (yp_parser_t) {
     .lex_state = YP_LEX_STATE_BEG,
     .command_start = true,
@@ -11369,7 +11382,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size) {
     .encoding_decode_callback = NULL,
     .encoding_comment_start = source,
     .lex_callback = NULL,
-    .pattern_matching_newlines = false
+    .pattern_matching_newlines = false,
+    .filepath_string = filepath_string,
   };
 
   yp_state_stack_init(&parser->do_loop_stack);
@@ -11427,6 +11441,7 @@ yp_comment_list_free(yp_list_t *list) {
 // Free any memory associated with the given parser.
 __attribute__((__visibility__("default"))) extern void
 yp_parser_free(yp_parser_t *parser) {
+  yp_string_free(&parser->filepath_string);
   yp_diagnostic_list_free(&parser->error_list);
   yp_diagnostic_list_free(&parser->warning_list);
   yp_comment_list_free(&parser->comment_list);
@@ -11454,7 +11469,7 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 __attribute__((__visibility__("default"))) extern void
 yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source, size);
+  yp_parser_init(&parser, source, size, NULL);
 
   yp_node_t *node = yp_parse(&parser);
   yp_serialize(&parser, node, buffer);

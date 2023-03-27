@@ -13,7 +13,7 @@ puts pattern % ["-" * 70, "-" * 70]
 
 source = File.read(filepath)
 ripper = YARP.lex_ripper(source)
-yarp = YARP.lex_compat(source).value
+yarp = YARP.lex_compat(source, filepath).value
 
 [yarp.length, ripper.length].max.times do |index|
   left = ripper[index]

@@ -409,7 +409,10 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       SourceFileNode(291...299)(),
+       SourceFileNode(291...299)(
+         KEYWORD___FILE__(291...299)("__FILE__"),
+         "/fixtures/patterns.rb"
+       ),
        (288...290)
      ),
      MatchRequiredNode(300...315)(
@@ -1021,8 +1024,14 @@ ProgramNode(0...3655)(
          "foo"
        ),
        RangeNode(824...844)(
-         SourceFileNode(824...832)(),
-         SourceFileNode(836...844)(),
+         SourceFileNode(824...832)(
+           KEYWORD___FILE__(824...832)("__FILE__"),
+           "/fixtures/patterns.rb"
+         ),
+         SourceFileNode(836...844)(
+           KEYWORD___FILE__(836...844)("__FILE__"),
+           "/fixtures/patterns.rb"
+         ),
          (833...835)
        ),
        (821...823)
@@ -2367,7 +2376,10 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       SourceFileNode(1921...1929)(),
+       SourceFileNode(1921...1929)(
+         KEYWORD___FILE__(1921...1929)("__FILE__"),
+         "/fixtures/patterns.rb"
+       ),
        (1918...1920)
      ),
      MatchPredicateNode(1930...1945)(
@@ -2978,7 +2990,10 @@ ProgramNode(0...3655)(
          "foo"
        ),
        [InNode(2609...2625)(
-          SourceFileNode(2612...2620)(),
+          SourceFileNode(2612...2620)(
+            KEYWORD___FILE__(2612...2620)("__FILE__"),
+            "/fixtures/patterns.rb"
+          ),
           nil,
           (2609...2611),
           (2621...2625)
@@ -3781,7 +3796,12 @@ ProgramNode(0...3655)(
           IfNode(3511...3526)(
             KEYWORD_IF_MODIFIER(3520...3522)("if"),
             LocalVariableReadNode(3523...3526)(0),
-            StatementsNode(3511...3519)([SourceFileNode(3511...3519)()]),
+            StatementsNode(3511...3519)(
+              [SourceFileNode(3511...3519)(
+                 KEYWORD___FILE__(3511...3519)("__FILE__"),
+                 "/fixtures/patterns.rb"
+               )]
+            ),
             nil,
             nil
           ),

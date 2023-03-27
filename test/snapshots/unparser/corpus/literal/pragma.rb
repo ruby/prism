@@ -2,7 +2,10 @@ ProgramNode(0...38)(
   ScopeNode(0...0)([]),
   StatementsNode(0...38)(
     [SourceEncodingNode(0...12)(),
-     SourceFileNode(13...21)(),
+     SourceFileNode(13...21)(
+       KEYWORD___FILE__(13...21)("__FILE__"),
+       "/fixtures/unparser/corpus/literal/pragma.rb"
+     ),
      SourceLineNode(22...30)(),
      CallNode(31...38)(
        nil,

@@ -361,6 +361,10 @@ struct yp_parser {
   // This flag indicates that we are currently parsing a pattern matching
   // expression and impacts that calculation of newlines.
   bool pattern_matching_newlines;
+
+  // This is the path of the file being parsed
+  // We use the filepath when constructing SourceFileNodes
+  yp_string_t filepath_string;
 };
 
 #endif // YARP_PARSER_H
