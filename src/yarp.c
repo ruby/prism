@@ -228,6 +228,14 @@ yp_node_alloc(yp_parser_t *parser) {
 /* Node creation functions                                                    */
 /******************************************************************************/
 
+// Allocate and initialize a new StatementsNode node.
+static yp_node_t *
+yp_statements_node_create(yp_parser_t *parser);
+
+// Append a new node to the given StatementsNode node's body.
+static void
+yp_statements_node_body_append(yp_node_t *node, yp_node_t *statement);
+
 // Allocate and initialize a new node of the given type from the given token.
 // This function is used for simple nodes that effectively wrap a token.
 static inline yp_node_t *
@@ -1158,7 +1166,7 @@ yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t 
   return node;
 }
 
-// Allocate a new ElseNode node.
+// Allocate and initialize a new ElseNode node.
 static yp_node_t *
 yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_node_t *statements, const yp_token_t *end_keyword) {
   yp_node_t *node = yp_node_alloc(parser);
@@ -1167,7 +1175,7 @@ yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_node
     .type = YP_NODE_ELSE_NODE,
     .location = {
       .start = else_keyword->start,
-      .end = end_keyword->end
+      .end = end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end
     },
     .as.else_node = {
       .else_keyword = *else_keyword,
@@ -1472,6 +1480,21 @@ yp_if_node_create(yp_parser_t *parser, const yp_token_t *if_keyword, yp_node_t *
   };
 
   return node;
+}
+
+// Allocate and initialize an if node from a ternary expression.
+static yp_node_t *
+yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_token_t *question_mark, yp_node_t *true_expression, const yp_token_t *colon, yp_node_t *false_expression) {
+  yp_node_t *if_statements = yp_statements_node_create(parser);
+  yp_statements_node_body_append(if_statements, true_expression);
+
+  yp_node_t *else_statements = yp_statements_node_create(parser);
+  yp_statements_node_body_append(else_statements, false_expression);
+
+  yp_token_t end_keyword = not_provided(parser);
+  yp_node_t *else_node = yp_else_node_create(parser, colon, else_statements, &end_keyword);
+
+  return yp_if_node_create(parser, question_mark, predicate, if_statements, else_node, &end_keyword);
 }
 
 // Allocate and initialize a new ImaginaryNode node.
@@ -2685,29 +2708,6 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
       .unescaped = node->as.symbol_node.unescaped
     }
   };
-}
-
-// Allocate a new TernaryNode node.
-static yp_node_t *
-yp_ternary_node_create(yp_parser_t *parser, yp_node_t *predicate, const yp_token_t *question_mark, yp_node_t *true_expression, const yp_token_t *colon, yp_node_t *false_expression) {
-  yp_node_t *node = yp_node_alloc(parser);
-
-  *node = (yp_node_t) {
-    .type = YP_NODE_TERNARY_NODE,
-    .location = {
-      .start = predicate->location.start,
-      .end = false_expression->location.end
-    },
-    .as.ternary_node = {
-      .predicate = predicate,
-      .question_mark = *question_mark,
-      .true_expression = true_expression,
-      .colon = *colon,
-      .false_expression = false_expression
-    }
-  };
-
-  return node;
 }
 
 // Allocate and initialize a new TrueNode node.
@@ -10663,7 +10663,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           .end = colon.end,
         });
 
-        return yp_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
+        return yp_if_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
       }
 
       accept(parser, YP_TOKEN_NEWLINE);
@@ -10672,7 +10672,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_token_t colon = parser->previous;
       yp_node_t *false_expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after ':'");
 
-      return yp_ternary_node_create(parser, node, &token, true_expression, &colon, false_expression);
+      return yp_if_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
     }
     case YP_TOKEN_COLON_COLON: {
       parser_lex(parser);
