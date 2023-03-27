@@ -375,7 +375,7 @@ ProgramNode(0...737)(
          ScopeNode(213...214)(
            [IDENTIFIER(218...219)("a"), IDENTIFIER(221...222)("b")]
          ),
-         BlockParametersNode(218...222)(
+         BlockParametersNode(0...222)(
            nil,
            [IDENTIFIER(218...219)("a"), IDENTIFIER(221...222)("b")]
          ),
