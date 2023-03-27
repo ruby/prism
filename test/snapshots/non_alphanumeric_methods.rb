@@ -117,6 +117,7 @@ ProgramNode(0...434)(
        ParametersNode(110...113)(
          [],
          [],
+         [],
          nil,
          [],
          KeywordRestParameterNode(110...113)(
@@ -152,6 +153,7 @@ ProgramNode(0...434)(
        nil,
        ParametersNode(138...139)(
          [RequiredParameterNode(138...139)()],
+         [],
          [],
          nil,
          [],

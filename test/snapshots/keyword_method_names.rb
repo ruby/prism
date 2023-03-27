@@ -74,6 +74,7 @@ ProgramNode(0...185)(
        ParametersNode(76...84)(
          [RequiredParameterNode(76...77)()],
          [],
+         [],
          nil,
          [],
          NoKeywordsParameterNode(79...84)((79...81), (81...84)),

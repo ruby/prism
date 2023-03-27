@@ -7,6 +7,7 @@ ProgramNode(0...14)(
        ParametersNode(6...8)(
          [],
          [],
+         [],
          nil,
          [],
          KeywordRestParameterNode(6...8)(USTAR_STAR(6...8)("**"), nil),

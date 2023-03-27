@@ -21,6 +21,7 @@ ProgramNode(0...616)(
                 ParametersNode(18...21)(
                   [RequiredParameterNode(18...21)()],
                   [],
+                  [],
                   nil,
                   [],
                   nil,
@@ -230,6 +231,7 @@ ProgramNode(0...616)(
                 ParametersNode(249...252)(
                   [RequiredParameterNode(249...252)()],
                   [],
+                  [],
                   nil,
                   [],
                   nil,
@@ -294,6 +296,7 @@ ProgramNode(0...616)(
               BlockParametersNode(320...323)(
                 ParametersNode(320...323)(
                   [RequiredParameterNode(320...323)()],
+                  [],
                   [],
                   nil,
                   [],

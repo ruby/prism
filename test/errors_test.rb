@@ -428,7 +428,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode([], [], nil, [], nil, nil),
+      ParametersNode([], [], [], nil, [], nil, nil),
       nil,
       ScopeNode([]),
       Location(),
@@ -532,6 +532,7 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()],
         [],
+        [],
         nil,
         [],
         nil,
@@ -546,6 +547,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(a,b,c,);end", [
       "Unexpected ','."
     ]
@@ -556,7 +558,16 @@ class ErrorsTest < Test::Unit::TestCase
       ScopeNode([IDENTIFIER("a"), IDENTIFIER("b")]),
       MINUS_GREATER("->"),
       PARENTHESIS_LEFT("("),
-      BlockParametersNode(ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], nil, [], nil, nil), []),
+      BlockParametersNode(
+        ParametersNode([RequiredParameterNode(), RequiredParameterNode()],
+                       [],
+                       [],
+                       nil,
+                       [],
+                       nil,
+                       nil
+                      ),
+        []),
       PARENTHESIS_RIGHT(")"),
       nil
     )
@@ -608,15 +619,16 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a"))],
         [],
+        [],
+        [RequiredParameterNode()],
         nil,
         [],
         nil,
         BlockParameterNode(IDENTIFIER("block"), Location())
       ),
-      StatementsNode([]),
-      Scope([IDENTIFIER("block"), IDENTIFIER("a")]),
+      nil,
+      ScopeNode([IDENTIFIER("block"), IDENTIFIER("a")]),
       Location(),
       nil,
       Location(),
@@ -631,16 +643,9 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a"))],
-        [],
-        nil,
-        [],
-        nil,
-        BlockParameterNode(nil, Location())
-      ),
-      StatementsNode([]),
-      Scope([IDENTIFIER("a")]),
+      ParametersNode([], [], [RequiredParameterNode()], nil, [], nil, BlockParameterNode(nil, Location())),
+      nil,
+      ScopeNode([AMPERSAND("&"), IDENTIFIER("a")]),
       Location(),
       nil,
       Location(),
@@ -648,6 +653,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(&, a)\nend", ["Unexpected parameter order"]
   end
 
@@ -656,15 +662,16 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a"))],
         [],
+        [],
+        [RequiredParameterNode()],
         nil,
         [],
         ForwardingParameterNode(),
         nil
       ),
-      StatementsNode([]),
-      Scope([UDOT_DOT_DOT("..."), IDENTIFIER("a")]),
+      nil,
+      ScopeNode([UDOT_DOT_DOT("..."), IDENTIFIER("a")]),
       Location(),
       nil,
       Location(),
@@ -680,15 +687,16 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a"))],
         [],
+        [],
+        [RequiredParameterNode()],
         nil,
         [KeywordParameterNode(LABEL("b:"), nil)],
         nil,
         nil
       ),
-      StatementsNode([]),
-      Scope([LABEL("b"), IDENTIFIER("a")]),
+      nil,
+      ScopeNode([LABEL("b"), IDENTIFIER("a")]),
       Location(),
       nil,
       Location(),
@@ -706,6 +714,7 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
+        [],
         nil,
         [KeywordParameterNode(LABEL("b:"), nil)],
         KeywordRestParameterNode(
@@ -714,8 +723,8 @@ class ErrorsTest < Test::Unit::TestCase
         ),
         nil
       ),
-      StatementsNode([]),
-      Scope([IDENTIFIER("rest"), LABEL("b")]),
+      nil,
+      ScopeNode([IDENTIFIER("rest"), LABEL("b")]),
       Location(),
       nil,
       Location(),
@@ -730,16 +739,9 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode(
-        [],
-        [],
-        nil,
-        [],
-        ForwardingParameterNode(),
-        nil
-      ),
-      StatementsNode([]),
-      Scope([UDOT_DOT_DOT("...")]),
+      ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil),
+      nil,
+      ScopeNode([UDOT_DOT_DOT("...")]),
       Location(),
       nil,
       Location(),
@@ -755,8 +757,9 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a"))],
         [],
+        [],
+        [RequiredParameterNode()],
         nil,
         [KeywordParameterNode(LABEL("b:"), nil)],
         KeywordRestParameterNode(
@@ -765,8 +768,40 @@ class ErrorsTest < Test::Unit::TestCase
         ),
         nil
       ),
-      StatementsNode([]),
-      Scope(
+      nil,
+      ScopeNode(
+        [IDENTIFIER("args"),
+         IDENTIFIER("a"),
+         LABEL("b")]
+      ),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
+  end
+
+  test "switching to optional arguments twice" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [],
+        [],
+        [RequiredParameterNode()],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        KeywordRestParameterNode(
+          USTAR_STAR("**"),
+          IDENTIFIER("args")
+        ),
+        nil
+      ),
+      nil,
+      ScopeNode(
         [IDENTIFIER("args"),
          IDENTIFIER("a"),
          LABEL("b")]
@@ -781,13 +816,14 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
-  test "test switching to optional arguments twice" do
+  test "switching to named arguments twice" do
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a"))],
         [],
+        [],
+        [RequiredParameterNode()],
         nil,
         [KeywordParameterNode(LABEL("b:"), nil)],
         KeywordRestParameterNode(
@@ -796,8 +832,8 @@ class ErrorsTest < Test::Unit::TestCase
         ),
         nil
       ),
-      StatementsNode([]),
-      Scope(
+      nil,
+      ScopeNode(
         [IDENTIFIER("args"),
          IDENTIFIER("a"),
          LABEL("b")]
@@ -807,12 +843,52 @@ class ErrorsTest < Test::Unit::TestCase
       Location(),
       Location(),
       nil,
-      Location()
+      Location(),
     )
-    err = "Unexpected parameter order"
-    assert_errors expected, "def foo(**args, a, b:)\nend", [err, err]
+    assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
+  test "returning to optional parameters multiple times" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode()],
+        [OptionalParameterNode(
+           IDENTIFIER("b"),
+           EQUAL("="),
+           IntegerNode()
+         ),
+         OptionalParameterNode(
+           IDENTIFIER("d"),
+           EQUAL("="),
+           IntegerNode()
+         )],
+        [RequiredParameterNode(),
+         RequiredParameterNode()],
+        nil,
+        [],
+        nil,
+        nil
+      ),
+      nil,
+      ScopeNode(
+        [IDENTIFIER("a"),
+         IDENTIFIER("b"),
+         IDENTIFIER("c"),
+         IDENTIFIER("d"),
+         IDENTIFIER("e")]
+      ),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location(),
+    )
+    assert_errors expected, "def foo(a, b = 1, c, d = 2, e)\nend", ["Unexpected parameter order"]
+  end
+  
   private
 
   def assert_errors(expected, source, errors)
@@ -821,7 +897,7 @@ class ErrorsTest < Test::Unit::TestCase
     result = YARP.parse_dup(source)
     result => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
 
-    assert_equal_nodes(expected, node, message: PP.pp(node, +""), compare_location: false)
+    assert_equal_nodes(expected, node, compare_location: false)
     assert_equal(errors, result.errors.map(&:message))
   end
   

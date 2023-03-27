@@ -449,6 +449,7 @@ ProgramNode(0...747)(
                  ParametersNode(449...450)(
                    [RequiredParameterNode(449...450)()],
                    [],
+                   [],
                    nil,
                    [],
                    nil,

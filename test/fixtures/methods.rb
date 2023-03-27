@@ -1,6 +1,10 @@
 def foo((bar, baz))
 end
 
+def foo((bar, baz), optional = 1, (bin, bag))
+end
+
+
 def a; ensure; end
 
 def (b).a

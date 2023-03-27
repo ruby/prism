@@ -37,6 +37,7 @@ ProgramNode(0...23)(
                      )
                    )
                  )],
+                [],
                 nil,
                 [],
                 nil,
@@ -64,6 +65,7 @@ ProgramNode(0...23)(
             PARENTHESIS_LEFT(26...27)("("),
             BlockParametersNode(27...35)(
               ParametersNode(27...35)(
+                [],
                 [],
                 [],
                 nil,

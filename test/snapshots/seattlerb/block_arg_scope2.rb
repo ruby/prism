@@ -18,6 +18,7 @@ ProgramNode(0...14)(
            ParametersNode(4...5)(
              [RequiredParameterNode(4...5)()],
              [],
+             [],
              nil,
              [],
              nil,

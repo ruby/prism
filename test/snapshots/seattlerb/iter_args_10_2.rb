@@ -23,6 +23,7 @@ ProgramNode(0...25)(
                 EQUAL(10...11)("="),
                 IntegerNode(12...14)()
               )],
+             [],
              RestParameterNode(16...18)(
                USTAR(16...17)("*"),
                IDENTIFIER(17...18)("c")

@@ -14,6 +14,7 @@ ProgramNode(0...23)(
            ParametersNode(5...13)(
              [],
              [],
+             [],
              nil,
              [],
              KeywordRestParameterNode(5...13)(

@@ -7,6 +7,7 @@ ProgramNode(0...77)(
        ParametersNode(8...11)(
          [],
          [],
+         [],
          nil,
          [],
          ForwardingParameterNode(8...11)(),
@@ -38,6 +39,7 @@ ProgramNode(0...77)(
        ParametersNode(37...40)(
          [],
          [],
+         [],
          nil,
          [],
          ForwardingParameterNode(37...40)(),
@@ -56,6 +58,7 @@ ProgramNode(0...77)(
        IDENTIFIER(52...55)("foo"),
        nil,
        ParametersNode(56...59)(
+         [],
          [],
          [],
          nil,

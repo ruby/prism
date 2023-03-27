@@ -7,6 +7,7 @@ ProgramNode(0...43)(
        ParametersNode(8...19)(
          [RequiredParameterNode(8...16)()],
          [],
+         [],
          RestParameterNode(18...19)(USTAR(18...19)("*"), nil),
          [],
          nil,

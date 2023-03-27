@@ -2156,6 +2156,7 @@ yp_parameters_node_create(yp_parser_t *parser) {
 
   yp_node_list_init(&node->requireds);
   yp_node_list_init(&node->optionals);
+  yp_node_list_init(&node->posts);
   yp_node_list_init(&node->keywords);
 
   return node;
@@ -2189,6 +2190,13 @@ static void
 yp_parameters_node_optionals_append(yp_parameters_node_t *params, yp_optional_parameter_node_t *param) {
   yp_parameters_node_location_set(params, (yp_node_t *) param);
   yp_node_list_append2(&params->optionals, (yp_node_t *) param);
+}
+
+// Append a post optional arguments parameter to a ParametersNode node.
+static void
+yp_parameters_node_posts_append(yp_parameters_node_t *params, yp_node_t *param) {
+  yp_parameters_node_location_set(params, param);
+  yp_node_list_append2(&params->posts, param);
 }
 
 // Set the rest parameter on a ParametersNode node.
@@ -7218,32 +7226,48 @@ typedef enum {
   YP_PARAMETERS_ORDER_KEYWORDS_REST,
   YP_PARAMETERS_ORDER_KEYWORDS,
   YP_PARAMETERS_ORDER_REST,
+  YP_PARAMETERS_ORDER_AFTER_OPTIONAL,
+  YP_PARAMETERS_ORDER_OPTIONAL,
   YP_PARAMETERS_ORDER_NAMED,
   YP_PARAMETERS_ORDER_NONE,
-  
-} parameters_order_t;
+
+} yp_parameters_order_t;
 
 // This matches parameters tokens with parameters state.
-parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
+yp_parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
   [0] = YP_PARAMETERS_NO_CHANGE,
   [YP_TOKEN_AMPERSAND] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
   [YP_TOKEN_UDOT_DOT_DOT] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
   [YP_TOKEN_IDENTIFIER] = YP_PARAMETERS_ORDER_NAMED,
+  [YP_TOKEN_PARENTHESIS_LEFT] = YP_PARAMETERS_ORDER_NAMED,
+  [YP_TOKEN_EQUAL] = YP_PARAMETERS_ORDER_OPTIONAL,
   [YP_TOKEN_LABEL] = YP_PARAMETERS_ORDER_KEYWORDS,
-  [YP_TOKEN_USTAR] = YP_PARAMETERS_ORDER_REST,
-  [YP_TOKEN_USTAR_STAR] = YP_PARAMETERS_ORDER_KEYWORDS_REST
+  [YP_TOKEN_USTAR] = YP_PARAMETERS_ORDER_AFTER_OPTIONAL,
+  [YP_TOKEN_STAR] = YP_PARAMETERS_ORDER_AFTER_OPTIONAL,
+  [YP_TOKEN_USTAR_STAR] = YP_PARAMETERS_ORDER_KEYWORDS_REST,
+  [YP_TOKEN_STAR_STAR] = YP_PARAMETERS_ORDER_KEYWORDS_REST
 };
 
 // Check if current parameter follows valid parameters ordering. If not it adds an
 // error to the list without stopping the parsing, otherwise sets the parameters state
 // to the one corresponding to the current parameter.
 static void
-update_parameter_state(yp_parser_t *parser, parameters_order_t *current) {
-  parameters_order_t state = parameters_ordering[parser->current.type];
+update_parameter_state(yp_parser_t *parser, yp_token_t *token, yp_parameters_order_t *current) {
+  yp_parameters_order_t state = parameters_ordering[token->type];
   if (state == YP_PARAMETERS_NO_CHANGE) return;
+  
+  // If we see another ordered argument after a optional argument
+  // we only continue parsing ordered arguments until we stop seeing ordered arguments
+  if (*current == YP_PARAMETERS_ORDER_OPTIONAL && state == YP_PARAMETERS_ORDER_NAMED) {
+    *current = YP_PARAMETERS_ORDER_AFTER_OPTIONAL;
+    return;
+  } else if (*current == YP_PARAMETERS_ORDER_AFTER_OPTIONAL && state == YP_PARAMETERS_ORDER_NAMED) {
+    return;
+  }
 
   if (*current == YP_PARAMETERS_ORDER_NOTHING_AFTER || state > *current) {
-    yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected parameter order");
+    // We know what transition we failed on, so we can provide a better error here.
+    yp_diagnostic_list_append(&parser->error_list, token->start, token->end, "Unexpected parameter order");
   } else if (state < *current) {
     *current = state;
   }
@@ -7262,17 +7286,23 @@ parse_parameters(
 
   yp_state_stack_push(&parser->do_loop_stack, false);
 
-  parameters_order_t order = YP_PARAMETERS_ORDER_NONE;
-  
+  yp_parameters_order_t order = YP_PARAMETERS_ORDER_NONE;
+
   do {
-    update_parameter_state(parser, &order);
     switch (parser->current.type) {
       case YP_TOKEN_PARENTHESIS_LEFT: {
+        update_parameter_state(parser, &parser->current, &order);
         yp_node_t *param = (yp_node_t *) parse_required_destructured_parameter(parser);
-        yp_parameters_node_requireds_append(params, param);
+        
+        if (order > YP_PARAMETERS_ORDER_AFTER_OPTIONAL) {
+          yp_parameters_node_requireds_append(params, param);
+        } else {
+          yp_parameters_node_posts_append(params, param);
+        }
         break;
       }
       case YP_TOKEN_AMPERSAND: {
+        update_parameter_state(parser, &parser->current, &order);
         parser_lex(parser);
 
         yp_token_t operator = parser->previous;
@@ -7291,15 +7321,27 @@ parse_parameters(
         break;
       }
       case YP_TOKEN_UDOT_DOT_DOT: {
-        parser_lex(parser);
+        if (order > YP_PARAMETERS_ORDER_NOTHING_AFTER) {
+          update_parameter_state(parser, &parser->current, &order);
+          parser_lex(parser);
 
-        yp_parser_local_add(parser, &parser->previous);
-        yp_forwarding_parameter_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
-        yp_parameters_node_keyword_rest_set(params, (yp_node_t *)param);
+          yp_parser_local_add(parser, &parser->previous);
+          yp_forwarding_parameter_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
+          yp_parameters_node_keyword_rest_set(params, (yp_node_t *)param);
+        } else {
+          update_parameter_state(parser, &parser->current, &order);
+          parser_lex(parser);
+        }          
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
         parser_lex(parser);
+
+        if (parser->current.type == YP_TOKEN_EQUAL) {
+          update_parameter_state(parser, &parser->current, &order);
+        } else {
+          update_parameter_state(parser, &parser->previous, &order);
+        }
 
         yp_token_t name = parser->previous;
         yp_parser_local_add(parser, &name);
@@ -7318,14 +7360,18 @@ parse_parameters(
             looping = false;
             break;
           }
+        } else if (order > YP_PARAMETERS_ORDER_AFTER_OPTIONAL) {
+          yp_required_parameter_node_t *param = yp_required_parameter_node_create(parser, &name);
+          yp_parameters_node_requireds_append(params, (yp_node_t *) param);
         } else {
-          yp_node_t *param = (yp_node_t *) yp_required_parameter_node_create(parser, &name);
-          yp_parameters_node_requireds_append(params, param);
+          yp_required_parameter_node_t *param = yp_required_parameter_node_create(parser, &name);
+          yp_parameters_node_posts_append(params, (yp_node_t *) param);
         }
 
         break;
       }
       case YP_TOKEN_LABEL: {
+        update_parameter_state(parser, &parser->current, &order);
         parser_lex(parser);
 
         yp_token_t name = parser->previous;
@@ -7375,6 +7421,7 @@ parse_parameters(
       }
       case YP_TOKEN_USTAR:
       case YP_TOKEN_STAR: {
+        update_parameter_state(parser, &parser->current, &order);
         parser_lex(parser);
 
         yp_token_t operator = parser->previous;
@@ -7394,6 +7441,7 @@ parse_parameters(
       }
       case YP_TOKEN_STAR_STAR:
       case YP_TOKEN_USTAR_STAR: {
+        update_parameter_state(parser, &parser->current, &order);
         parser_lex(parser);
 
         yp_token_t operator = parser->previous;

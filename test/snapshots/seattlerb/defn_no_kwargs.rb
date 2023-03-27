@@ -7,6 +7,7 @@ ProgramNode(0...17)(
        ParametersNode(6...11)(
          [],
          [],
+         [],
          nil,
          [],
          NoKeywordsParameterNode(6...11)((6...8), (8...11)),

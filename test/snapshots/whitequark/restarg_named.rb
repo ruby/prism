@@ -7,6 +7,7 @@ ProgramNode(0...16)(
        ParametersNode(6...10)(
          [],
          [],
+         [],
          RestParameterNode(6...10)(
            USTAR(6...7)("*"),
            IDENTIFIER(7...10)("foo")

@@ -7,6 +7,7 @@ ProgramNode(0...23)(
        ParametersNode(6...9)(
          [],
          [],
+         [],
          nil,
          [],
          ForwardingParameterNode(6...9)(),

@@ -9,6 +9,7 @@ ProgramNode(0...15)(
          ParametersNode(3...7)(
            [],
            [],
+           [],
            nil,
            [KeywordParameterNode(3...7)(
               LABEL(3...5)("a:"),
@@ -28,6 +29,7 @@ ProgramNode(0...15)(
        nil,
        BlockParametersNode(16...18)(
          ParametersNode(16...18)(
+           [],
            [],
            [],
            nil,

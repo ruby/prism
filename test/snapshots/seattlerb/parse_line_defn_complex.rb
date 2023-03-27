@@ -7,6 +7,7 @@ ProgramNode(0...40)(
        ParametersNode(6...7)(
          [RequiredParameterNode(6...7)()],
          [],
+         [],
          nil,
          [],
          nil,
