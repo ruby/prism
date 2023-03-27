@@ -1,5 +1,5 @@
 ProgramNode(0...212)(
-  Scope(0...0)([]),
+  ScopeNode(0...0)([]),
   StatementsNode(0...212)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
@@ -132,7 +132,7 @@ ProgramNode(0...212)(
        nil,
        nil,
        BlockNode(161...212)(
-         Scope(161...163)([IDENTIFIER(165...166)("x")]),
+         ScopeNode(161...163)([IDENTIFIER(165...166)("x")]),
          BlockParametersNode(165...166)(
            ParametersNode(165...166)(
              [RequiredParameterNode(165...166)(IDENTIFIER(165...166)("x"))],

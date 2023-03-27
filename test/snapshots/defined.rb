@@ -1,5 +1,5 @@
 ProgramNode(0...78)(
-  Scope(0...0)([IDENTIFIER(36...37)("x")]),
+  ScopeNode(0...0)([IDENTIFIER(36...37)("x")]),
   StatementsNode(0...78)(
     [AndNode(0...25)(
        DefinedNode(0...10)(nil, IntegerNode(9...10)(), nil, (0...8)),

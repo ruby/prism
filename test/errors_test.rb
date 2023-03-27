@@ -17,12 +17,12 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "module name recoverable" do
     expected = ModuleNode(
-      Scope([]),
+      ScopeNode([]),
       KEYWORD_MODULE("module"),
       ConstantReadNode(),
       StatementsNode(
         [ModuleNode(
-           Scope([]),
+           ScopeNode([]),
            KEYWORD_MODULE("module"),
            MissingNode(),
            StatementsNode([]),
@@ -226,7 +226,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        Scope([]),
+        ScopeNode([]),
         nil,
         StatementsNode([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
         Location(),
@@ -356,14 +356,14 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       StatementsNode(
         [ModuleNode(
-           Scope([]),
+           ScopeNode([]),
            KEYWORD_MODULE("module"),
            ConstantReadNode(),
            StatementsNode([]),
            KEYWORD_END("end")
          )]
       ),
-      Scope([]),
+      ScopeNode([]),
       Location(),
       nil,
       nil,
@@ -389,11 +389,11 @@ class ErrorsTest < Test::Unit::TestCase
            nil,
            nil,
            BlockNode(
-             Scope([]),
+             ScopeNode([]),
              nil,
              StatementsNode(
                [ModuleNode(
-                  Scope([]),
+                  ScopeNode([]),
                   KEYWORD_MODULE("module"),
                   ConstantReadNode(),
                   StatementsNode([]),
@@ -406,7 +406,7 @@ class ErrorsTest < Test::Unit::TestCase
            "bar"
          )]
       ),
-      Scope([]),
+      ScopeNode([]),
       Location(),
       nil,
       nil,
@@ -430,7 +430,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], nil, [], nil, nil),
       StatementsNode([]),
-      Scope([]),
+      ScopeNode([]),
       Location(),
       nil,
       Location(),
@@ -528,7 +528,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       StatementsNode([]),
-      Scope([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")]),
+      ScopeNode([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")]),
       Location(),
       nil,
       Location(),
@@ -543,7 +543,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "do not allow trailing commas in lambda parameters" do
     expected = LambdaNode(
-      Scope([IDENTIFIER("a"), IDENTIFIER("b")]),
+      ScopeNode([IDENTIFIER("a"), IDENTIFIER("b")]),
       MINUS_GREATER("->"),
       PARENTHESIS_LEFT("("),
       BlockParametersNode(ParametersNode([RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil), []),

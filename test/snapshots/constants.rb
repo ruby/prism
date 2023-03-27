@@ -1,5 +1,5 @@
 ProgramNode(0...92)(
-  Scope(0...0)([]),
+  ScopeNode(0...0)([]),
   StatementsNode(0...92)(
     [ConstantPathNode(0...4)(
        ConstantReadNode(0...1)(),

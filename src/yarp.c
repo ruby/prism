@@ -152,7 +152,7 @@ __attribute__((unused)) static void
 debug_scope(yp_parser_t *parser) {
   fprintf(stderr, "SCOPE:\n");
 
-  yp_token_list_t token_list = parser->current_scope->node->as.scope.locals;
+  yp_token_list_t token_list = parser->current_scope->node->as.scope_node.locals;
   for (size_t index = 0; index < token_list.size; index++) {
     debug_token(&token_list.tokens[index]);
   }
@@ -2414,18 +2414,17 @@ yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t 
   return node;
 }
 
-// JEM: What to do here??
 // Allocate and initialize a new Scope node.
 static yp_node_t *
-yp_scope_create(yp_parser_t *parser, const yp_token_t *token) {
+yp_scope_node_create(yp_parser_t *parser, const yp_token_t *token) {
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
-    .type = YP_NODE_SCOPE,
+    .type = YP_NODE_SCOPE_NODE,
     .location = YP_LOCATION_TOKEN_VALUE(token)
   };
 
-  yp_token_list_init(&node->as.scope.locals);
+  yp_token_list_init(&node->as.scope_node.locals);
   return node;
 }
 
@@ -2919,7 +2918,7 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
 // Allocate and initialize a new scope. Push it onto the scope stack.
 static void
 yp_parser_scope_push(yp_parser_t *parser, const yp_token_t *token, bool top) {
-  yp_node_t *node = yp_scope_create(parser, token);
+  yp_node_t *node = yp_scope_node_create(parser, token);
   yp_scope_t *scope = (yp_scope_t *) malloc(sizeof(yp_scope_t));
   *scope = (yp_scope_t) { .node = node, .top = top, .previous = parser->current_scope };
   parser->current_scope = scope;
@@ -2931,7 +2930,7 @@ yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
   yp_scope_t *scope = parser->current_scope;
 
   while (scope != NULL) {
-    if (yp_token_list_includes(&scope->node->as.scope.locals, token)) return true;
+    if (yp_token_list_includes(&scope->node->as.scope_node.locals, token)) return true;
     if (scope->top) break;
     scope = scope->previous;
   }
@@ -2942,8 +2941,8 @@ yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
 // Add a local variable to the current scope.
 static void
 yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
-  if (!yp_token_list_includes(&parser->current_scope->node->as.scope.locals, token)) {
-    yp_token_list_append(&parser->current_scope->node->as.scope.locals, token);
+  if (!yp_token_list_includes(&parser->current_scope->node->as.scope_node.locals, token)) {
+    yp_token_list_append(&parser->current_scope->node->as.scope_node.locals, token);
   }
 }
 
@@ -9545,7 +9544,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
       if (name->type == YP_NODE_MISSING_NODE) {
-        yp_node_t *scope = yp_scope_create(parser, &module_keyword);
+        yp_node_t *scope = yp_scope_node_create(parser, &module_keyword);
         yp_node_t *statements = yp_statements_node_create(parser);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
         return yp_module_node_create(parser, scope, &module_keyword, name, statements, &end_keyword);

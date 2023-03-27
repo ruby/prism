@@ -1,5 +1,5 @@
 ProgramNode(0...24)(
-  Scope(0...0)([IDENTIFIER(0...1)("a")]),
+  ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...24)(
     [OperatorAndAssignmentNode(0...7)(
        LocalVariableWriteNode(0...1)(IDENTIFIER(0...1)("a"), nil, nil),
