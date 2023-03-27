@@ -36,12 +36,12 @@ ProgramNode(0...241)(
        nil,
        BeginNode(0...39)(
          nil,
-         StatementsNode(0...0)([]),
+         nil,
          nil,
          nil,
          EnsureNode(29...39)(
            KEYWORD_ENSURE(29...35)("ensure"),
-           StatementsNode(0...0)([]),
+           nil,
            KEYWORD_END(36...39)("end")
          ),
          KEYWORD_END(36...39)("end")
@@ -55,23 +55,23 @@ ProgramNode(0...241)(
        nil,
        BeginNode(0...69)(
          nil,
-         StatementsNode(0...0)([]),
-         RescueNode(47...0)(
+         nil,
+         RescueNode(47...53)(
            KEYWORD_RESCUE(47...53)("rescue"),
            [],
            nil,
            nil,
-           StatementsNode(0...0)([]),
+           nil,
            nil
          ),
-         ElseNode(54...58)(
+         ElseNode(54...65)(
            KEYWORD_ELSE(54...58)("else"),
-           StatementsNode(0...0)([]),
-           KEYWORD_ELSE(54...58)("else")
+           nil,
+           KEYWORD_ENSURE(59...65)("ensure")
          ),
          EnsureNode(59...69)(
            KEYWORD_ENSURE(59...65)("ensure"),
-           StatementsNode(0...0)([]),
+           nil,
            KEYWORD_END(66...69)("end")
          ),
          KEYWORD_END(66...69)("end")

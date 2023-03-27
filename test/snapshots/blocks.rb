@@ -327,13 +327,13 @@ ProgramNode(0...402)(
          nil,
          BeginNode(0...187)(
            nil,
-           StatementsNode(0...0)([]),
-           RescueNode(177...0)(
+           nil,
+           RescueNode(177...183)(
              KEYWORD_RESCUE(177...183)("rescue"),
              [],
              nil,
              nil,
-             StatementsNode(0...0)([]),
+             nil,
              nil
            ),
            nil,

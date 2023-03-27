@@ -452,7 +452,7 @@ nodes:
       - name: begin_keyword
         type: token?
       - name: statements
-        type: node
+        type: node?
       - name: rescue_clause
         type: node?
       - name: else_clause
@@ -471,7 +471,7 @@ nodes:
   - name: BlockArgumentNode
     child_nodes:
       - name: expression
-        type: node
+        type: node?
       - name: operator_loc
         type: location
     comment: |
@@ -511,7 +511,7 @@ nodes:
   - name: BlockParametersNode
     child_nodes:
       - name: parameters
-        type: node
+        type: node?
       - name: locals
         type: token[]
     comment: |
@@ -600,7 +600,7 @@ nodes:
       - name: superclass
         type: node?
       - name: statements
-        type: node
+        type: node?
       - name: end_keyword
         type: token
     comment: |
@@ -671,7 +671,7 @@ nodes:
       - name: parameters
         type: node?
       - name: statements
-        type: node
+        type: node?
       - name: scope
         type: node
       - name: def_keyword_loc
@@ -725,7 +725,7 @@ nodes:
       - name: ensure_keyword
         type: token
       - name: statements
-        type: node
+        type: node?
       - name: end_keyword
         type: token
     comment: |
@@ -781,7 +781,7 @@ nodes:
       - name: collection
         type: node
       - name: statements
-        type: node
+        type: node?
       - name: for_keyword_loc
         type: location
       - name: in_keyword_loc
@@ -898,7 +898,7 @@ nodes:
       - name: predicate
         type: node
       - name: statements
-        type: node
+        type: node?
       - name: consequent
         type: node?
       - name: end_keyword
@@ -1050,7 +1050,7 @@ nodes:
       - name: rparen
         type: token?
       - name: statements
-        type: node
+        type: node?
     comment: |
       Represents using a lambda literal (not the lambda method call).
 
@@ -1119,7 +1119,7 @@ nodes:
       - name: constant_path
         type: node
       - name: statements
-        type: node
+        type: node?
       - name: end_keyword
         type: token
     comment: |
@@ -1428,7 +1428,7 @@ nodes:
       - name: exception
         type: node?
       - name: statements
-        type: node
+        type: node?
       - name: consequent
         type: node?
     comment: |
@@ -1492,7 +1492,7 @@ nodes:
       - name: expression
         type: node
       - name: statements
-        type: node
+        type: node?
       - name: end_keyword
         type: token
     comment: |
@@ -1554,7 +1554,7 @@ nodes:
       - name: opening
         type: token
       - name: statements
-        type: node
+        type: node?
       - name: closing
         type: token
     comment: |
@@ -1646,7 +1646,7 @@ nodes:
       - name: predicate
         type: node
       - name: statements
-        type: node
+        type: node?
       - name: consequent
         type: node?
       - name: end_keyword
@@ -1666,7 +1666,7 @@ nodes:
       - name: predicate
         type: node
       - name: statements
-        type: node
+        type: node?
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
@@ -1695,7 +1695,7 @@ nodes:
       - name: predicate
         type: node
       - name: statements
-        type: node
+        type: node?
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 
