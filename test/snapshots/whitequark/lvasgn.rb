@@ -1,0 +1,11 @@
+ProgramNode(0...13)(
+  ScopeNode(0...0)([IDENTIFIER(0...3)("var")]),
+  StatementsNode(0...13)(
+    [LocalVariableWriteNode(0...8)(
+       IDENTIFIER(0...3)("var"),
+       EQUAL(4...5)("="),
+       IntegerNode(6...8)()
+     ),
+     LocalVariableReadNode(10...13)(IDENTIFIER(10...13)("var"))]
+  )
+)

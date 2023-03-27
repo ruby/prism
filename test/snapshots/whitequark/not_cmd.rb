@@ -1,0 +1,35 @@
+ProgramNode(0...5)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...5)(
+    [CallNode(0...5)(
+       CallNode(4...5)(
+         nil,
+         nil,
+         IDENTIFIER(4...5)("m"),
+         nil,
+         ArgumentsNode(6...9)(
+           [CallNode(6...9)(
+              nil,
+              nil,
+              IDENTIFIER(6...9)("foo"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "foo"
+            )]
+         ),
+         nil,
+         nil,
+         "m"
+       ),
+       nil,
+       KEYWORD_NOT(0...3)("not"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "!"
+     )]
+  )
+)

@@ -13,6 +13,7 @@ namespace :unparser do
 
   desc "Import the unparser tests"
   task import: ["tmp/unparser", "test/fixtures/unparser"] do
+    cp "tmp/unparser/LICENSE", "test/fixtures/unparser/LICENSE"
     cp_r "tmp/unparser/test/corpus/", "test/fixtures/unparser"
 
     # There's an issue with one of the test files in unparser. We'll correct it
@@ -24,5 +25,6 @@ namespace :unparser do
   desc "Clean up tmp files related to unparser"
   task :clean do
     rm_rf "tmp/unparser"
+    rm_rf "test/fixtures/unparser"
   end
 end
