@@ -25,7 +25,7 @@ class ErrorsTest < Test::Unit::TestCase
            ScopeNode([]),
            KEYWORD_MODULE("module"),
            MissingNode(),
-           StatementsNode([]),
+           nil,
            MISSING("")
          )]
       ),
@@ -55,7 +55,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ForNode(
       MissingNode(),
       MissingNode(),
-      StatementsNode([]),
+      nil,
       Location(),
       Location(),
       nil,
@@ -359,7 +359,7 @@ class ErrorsTest < Test::Unit::TestCase
            ScopeNode([]),
            KEYWORD_MODULE("module"),
            ConstantReadNode(),
-           StatementsNode([]),
+           nil,
            KEYWORD_END("end")
          )]
       ),
@@ -396,7 +396,7 @@ class ErrorsTest < Test::Unit::TestCase
                   ScopeNode([]),
                   KEYWORD_MODULE("module"),
                   ConstantReadNode(),
-                  StatementsNode([]),
+                  nil,
                   KEYWORD_END("end")
                 )]
              ),
@@ -429,7 +429,7 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode([], [], nil, [], nil, nil),
-      StatementsNode([]),
+      nil,
       ScopeNode([]),
       Location(),
       nil,
@@ -527,7 +527,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil,
         nil
       ),
-      StatementsNode([]),
+      nil,
       ScopeNode([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")]),
       Location(),
       nil,
@@ -548,7 +548,7 @@ class ErrorsTest < Test::Unit::TestCase
       PARENTHESIS_LEFT("("),
       BlockParametersNode(ParametersNode([RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil), []),
       PARENTHESIS_RIGHT(")"),
-      StatementsNode([])
+      nil
     )
     assert_errors expected, "-> (a, b, ) {}", [
       "Unexpected ','."

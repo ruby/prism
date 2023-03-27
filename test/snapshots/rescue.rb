@@ -117,7 +117,7 @@ ProgramNode(0...212)(
           )],
          nil,
          nil,
-         StatementsNode(0...0)([]),
+         nil,
          nil
        ),
        nil,

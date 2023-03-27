@@ -1,7 +1,7 @@
-ProgramNode(0...0)(
+ProgramNode(0...30)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...0)(
-    [LambdaNode(0...0)(
+  StatementsNode(0...30)(
+    [LambdaNode(0...11)(
        ScopeNode(0...2)([IDENTIFIER(6...9)("foo")]),
        MINUS_GREATER(0...2)("->"),
        PARENTHESIS_LEFT(2...3)("("),
@@ -17,9 +17,9 @@ ProgramNode(0...0)(
          []
        ),
        PARENTHESIS_RIGHT(10...11)(")"),
-       StatementsNode(0...0)([])
+       nil
      ),
-     LambdaNode(16...0)(
+     LambdaNode(16...30)(
        ScopeNode(16...18)([LABEL(19...20)("x")]),
        MINUS_GREATER(16...18)("->"),
        PARENTHESIS_LEFT(18...19)("("),
@@ -63,7 +63,7 @@ ProgramNode(0...0)(
          []
        ),
        PARENTHESIS_RIGHT(29...30)(")"),
-       StatementsNode(0...0)([])
+       nil
      )]
   )
 )

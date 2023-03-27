@@ -58,7 +58,7 @@ ProgramNode(0...101)(
          ConstantReadNode(50...51)(),
          (48...50)
        ),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(52...55)("end")
      ),
      ModuleNode(57...85)(
@@ -74,12 +74,12 @@ ProgramNode(0...101)(
               IntegerNode(71...72)()
             )]
          ),
-         RescueNode(74...0)(
+         RescueNode(74...80)(
            KEYWORD_RESCUE(74...80)("rescue"),
            [],
            nil,
            nil,
-           StatementsNode(0...0)([]),
+           nil,
            nil
          ),
          nil,
@@ -92,7 +92,7 @@ ProgramNode(0...101)(
        ScopeNode(87...93)([]),
        KEYWORD_MODULE(87...93)("module"),
        ConstantPathNode(94...97)(nil, ConstantReadNode(96...97)(), (94...96)),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(98...101)("end")
      )]
   )

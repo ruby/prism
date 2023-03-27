@@ -24,12 +24,12 @@ ProgramNode(0...350)(
        nil,
        BeginNode(0...39)(
          nil,
-         StatementsNode(0...0)([]),
+         nil,
          nil,
          nil,
          EnsureNode(28...39)(
            KEYWORD_ENSURE(28...34)("ensure"),
-           StatementsNode(0...0)([]),
+           nil,
            KEYWORD_END(36...39)("end")
          ),
          KEYWORD_END(36...39)("end")
@@ -44,23 +44,23 @@ ProgramNode(0...350)(
        nil,
        BeginNode(0...75)(
          nil,
-         StatementsNode(0...0)([]),
-         RescueNode(50...0)(
+         nil,
+         RescueNode(50...56)(
            KEYWORD_RESCUE(50...56)("rescue"),
            [],
            nil,
            nil,
-           StatementsNode(0...0)([]),
+           nil,
            nil
          ),
-         ElseNode(58...63)(
+         ElseNode(58...70)(
            KEYWORD_ELSE(58...62)("else"),
-           StatementsNode(0...0)([]),
-           SEMICOLON(62...63)(";")
+           nil,
+           KEYWORD_ENSURE(64...70)("ensure")
          ),
          EnsureNode(64...75)(
            KEYWORD_ENSURE(64...70)("ensure"),
-           StatementsNode(0...0)([]),
+           nil,
            KEYWORD_END(72...75)("end")
          ),
          KEYWORD_END(72...75)("end")
@@ -105,7 +105,7 @@ ProgramNode(0...350)(
          nil,
          "!"
        ),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(117...120)("end")
      ),
      ClassNode(122...162)(
@@ -122,12 +122,12 @@ ProgramNode(0...350)(
             SelfNode(140...144)(),
             BeginNode(0...157)(
               nil,
-              StatementsNode(0...0)([]),
+              nil,
               nil,
               nil,
               EnsureNode(146...157)(
                 KEYWORD_ENSURE(146...152)("ensure"),
-                StatementsNode(0...0)([]),
+                nil,
                 KEYWORD_END(154...157)("end")
               ),
               KEYWORD_END(154...157)("end")
@@ -151,23 +151,23 @@ ProgramNode(0...350)(
             SelfNode(182...186)(),
             BeginNode(0...213)(
               nil,
-              StatementsNode(0...0)([]),
-              RescueNode(188...0)(
+              nil,
+              RescueNode(188...194)(
                 KEYWORD_RESCUE(188...194)("rescue"),
                 [],
                 nil,
                 nil,
-                StatementsNode(0...0)([]),
+                nil,
                 nil
               ),
-              ElseNode(196...201)(
+              ElseNode(196...208)(
                 KEYWORD_ELSE(196...200)("else"),
-                StatementsNode(0...0)([]),
-                SEMICOLON(200...201)(";")
+                nil,
+                KEYWORD_ENSURE(202...208)("ensure")
               ),
               EnsureNode(202...213)(
                 KEYWORD_ENSURE(202...208)("ensure"),
-                StatementsNode(0...0)([]),
+                nil,
                 KEYWORD_END(210...213)("end")
               ),
               KEYWORD_END(210...213)("end")
@@ -200,7 +200,7 @@ ProgramNode(0...350)(
          nil,
          "bar"
        ),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(237...240)("end")
      ),
      SingletonClassNode(242...262)(
@@ -226,7 +226,7 @@ ProgramNode(0...350)(
          nil,
          "bar"
        ),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(259...262)("end")
      ),
      SingletonClassNode(264...281)(
@@ -234,7 +234,7 @@ ProgramNode(0...350)(
        KEYWORD_CLASS(264...269)("class"),
        LESS_LESS(270...272)("<<"),
        SelfNode(273...277)(),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(278...281)("end")
      ),
      SingletonClassNode(283...300)(
@@ -242,7 +242,7 @@ ProgramNode(0...350)(
        KEYWORD_CLASS(283...288)("class"),
        LESS_LESS(289...291)("<<"),
        SelfNode(292...296)(),
-       StatementsNode(0...0)([]),
+       nil,
        KEYWORD_END(297...300)("end")
      ),
      SingletonClassNode(302...325)(

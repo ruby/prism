@@ -12,6 +12,12 @@ class ParseTest < Test::Unit::TestCase
   end
 
   Dir[File.expand_path("fixtures/**/*.rb", __dir__)].each do |filepath|
+    relative = filepath.delete_prefix("#{File.expand_path("fixtures", __dir__)}/")
+    snapshot = File.expand_path(File.join("snapshots", relative), __dir__)
+
+    directory = File.dirname(snapshot)
+    FileUtils.mkdir_p(directory) unless File.directory?(directory)
+
     test(filepath) do
       # First, read the source from the filepath and make sure that it can be
       # correctly parsed by Ripper. If it can't, then we have a fixture that is
@@ -26,9 +32,6 @@ class ParseTest < Test::Unit::TestCase
 
       # Next, assert that there were no errors during parsing.
       assert_empty result.errors, value
-
-      # Next, assert that the printed value matches the snapshot.
-      snapshot = File.expand_path(File.join("snapshots", File.basename(filepath)), __dir__)
 
       if File.exist?(snapshot)
         # If the snapshot file exists, then assert that the printed value
