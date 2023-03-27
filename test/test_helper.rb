@@ -11,8 +11,8 @@ module YARP
   module Assertions
     private
 
-    def assert_equal_nodes(expected, actual, compare_location: true)
-      assert_equal expected.class, actual.class
+    def assert_equal_nodes(expected, actual, message: nil, compare_location: true)
+      assert_equal expected.class, actual.class, message || PP.pp(actual, +"")
   
       case expected
       when Array

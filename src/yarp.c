@@ -7210,6 +7210,45 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
   return node;
 }
 
+// This represents the different order states we can be in when parsing
+// method parameters.
+typedef enum {
+  YP_PARAMETERS_NO_CHANGE = 0, // Extra state for tokens that should not change the state
+  YP_PARAMETERS_ORDER_NOTHING_AFTER = 1,
+  YP_PARAMETERS_ORDER_KEYWORDS_REST,
+  YP_PARAMETERS_ORDER_KEYWORDS,
+  YP_PARAMETERS_ORDER_REST,
+  YP_PARAMETERS_ORDER_NAMED,
+  YP_PARAMETERS_ORDER_NONE,
+  
+} parameters_order_t;
+
+// This matches parameters tokens with parameters state.
+parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
+  [0] = YP_PARAMETERS_NO_CHANGE,
+  [YP_TOKEN_AMPERSAND] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
+  [YP_TOKEN_UDOT_DOT_DOT] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
+  [YP_TOKEN_IDENTIFIER] = YP_PARAMETERS_ORDER_NAMED,
+  [YP_TOKEN_LABEL] = YP_PARAMETERS_ORDER_KEYWORDS,
+  [YP_TOKEN_USTAR] = YP_PARAMETERS_ORDER_REST,
+  [YP_TOKEN_USTAR_STAR] = YP_PARAMETERS_ORDER_KEYWORDS_REST
+};
+
+// Check if current parameter follows valid parameters ordering. If not it adds an
+// error to the list without stopping the parsing, otherwise sets the parameters state
+// to the one corresponding to the current parameter.
+static void
+update_parameter_state(yp_parser_t *parser, parameters_order_t *current) {
+  parameters_order_t state = parameters_ordering[parser->current.type];
+  if (state == YP_PARAMETERS_NO_CHANGE) return;
+
+  if (*current == YP_PARAMETERS_ORDER_NOTHING_AFTER || state > *current) {
+    yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected parameter order");
+  } else if (state < *current) {
+    *current = state;
+  }
+}
+
 // Parse a list of parameters on a method definition.
 static yp_parameters_node_t *
 parse_parameters(
@@ -7223,7 +7262,10 @@ parse_parameters(
 
   yp_state_stack_push(&parser->do_loop_stack, false);
 
+  parameters_order_t order = YP_PARAMETERS_ORDER_NONE;
+  
   do {
+    update_parameter_state(parser, &order);
     switch (parser->current.type) {
       case YP_TOKEN_PARENTHESIS_LEFT: {
         yp_node_t *param = (yp_node_t *) parse_required_destructured_parameter(parser);

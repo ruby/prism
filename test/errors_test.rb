@@ -603,6 +603,215 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
+  test "method parameters after block" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [],
+        nil,
+        BlockParameterNode(IDENTIFIER("block"), Location())
+      ),
+      StatementsNode([]),
+      Scope([IDENTIFIER("block"), IDENTIFIER("a")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(&block, a)\nend", ["Unexpected parameter order"]
+  end
+
+  test "method with arguments after anonamous block" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [],
+        nil,
+        BlockParameterNode(nil, Location())
+      ),
+      StatementsNode([]),
+      Scope([IDENTIFIER("a")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(&, a)\nend", ["Unexpected parameter order"]
+  end
+
+  test "method parameters after arguments forwarding" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [],
+        ForwardingParameterNode(),
+        nil
+      ),
+      StatementsNode([]),
+      Scope([UDOT_DOT_DOT("..."), IDENTIFIER("a")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(..., a)\nend", ["Unexpected parameter order"]
+  end
+
+  test "keywords parameters before required parameters" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        nil,
+        nil
+      ),
+      StatementsNode([]),
+      Scope([LABEL("b"), IDENTIFIER("a")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(b:, a)\nend", ["Unexpected parameter order"]
+  end
+
+  test "rest keywords parameters before required parameters" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [],
+        [],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        KeywordRestParameterNode(
+          USTAR_STAR("**"),
+          IDENTIFIER("rest")
+        ),
+        nil
+      ),
+      StatementsNode([]),
+      Scope([IDENTIFIER("rest"), LABEL("b")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(**rest, b:)\nend", ["Unexpected parameter order"]
+  end
+
+  test "double arguments forwarding" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [],
+        [],
+        nil,
+        [],
+        ForwardingParameterNode(),
+        nil
+      ),
+      StatementsNode([]),
+      Scope([UDOT_DOT_DOT("...")]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(..., ...)\nend", ["Unexpected parameter order"]
+  end
+
+  test "multiple error in parameters order" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        KeywordRestParameterNode(
+          USTAR_STAR("**"),
+          IDENTIFIER("args")
+        ),
+        nil
+      ),
+      StatementsNode([]),
+      Scope(
+        [IDENTIFIER("args"),
+         IDENTIFIER("a"),
+         LABEL("b")]
+      ),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location(),
+    )
+    assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
+  end
+
+  test "test switching to optional arguments twice" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode(
+        [RequiredParameterNode(IDENTIFIER("a"))],
+        [],
+        nil,
+        [KeywordParameterNode(LABEL("b:"), nil)],
+        KeywordRestParameterNode(
+          USTAR_STAR("**"),
+          IDENTIFIER("args")
+        ),
+        nil
+      ),
+      StatementsNode([]),
+      Scope(
+        [IDENTIFIER("args"),
+         IDENTIFIER("a"),
+         LABEL("b")]
+      ),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    err = "Unexpected parameter order"
+    assert_errors expected, "def foo(**args, a, b:)\nend", [err, err]
+  end
 
   private
 
@@ -612,10 +821,10 @@ class ErrorsTest < Test::Unit::TestCase
     result = YARP.parse_dup(source)
     result => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
 
-    assert_equal_nodes(expected, node, compare_location: false)
+    assert_equal_nodes(expected, node, message: PP.pp(node, +""), compare_location: false)
     assert_equal(errors, result.errors.map(&:message))
   end
-
+  
   def expression(source)
     YARP.parse_dup(source) => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
     node

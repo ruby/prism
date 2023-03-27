@@ -1,6 +1,3 @@
-ProgramNode(0...241)(
-  ScopeNode(0...0)([]),
-  StatementsNode(0...241)(
     [LambdaNode(0...19)(
        ScopeNode(0...2)(
          [IDENTIFIER(4...5)("a"),
@@ -274,6 +271,36 @@ ProgramNode(0...241)(
             )
           )]
        )
+     ),
+     LambdaNode(247...0)(
+       Scope(247...249)(
+         [IDENTIFIER(252...253)("a"),
+          IDENTIFIER(255...256)("b"),
+          IDENTIFIER(260...261)("c")]
+       ),
+       MINUS_GREATER(247...249)("->"),
+       PARENTHESIS_LEFT(250...251)("("),
+       BlockParametersNode(252...261)(
+         ParametersNode(252...261)(
+           [RequiredDestructuredParameterNode(252...257)(
+              [RequiredParameterNode(252...253)(IDENTIFIER(252...253)("a")),
+               RequiredParameterNode(255...256)(IDENTIFIER(255...256)("b"))],
+              PARENTHESIS_LEFT(251...252)("("),
+              PARENTHESIS_RIGHT(256...257)(")")
+            )],
+           [],
+           RestParameterNode(259...261)(
+             USTAR(259...260)("*"),
+             IDENTIFIER(260...261)("c")
+           ),
+           [],
+           nil,
+           nil
+         ),
+         []
+       ),
+       PARENTHESIS_RIGHT(261...262)(")"),
+       StatementsNode(0...0)([])
      )]
   )
 )
