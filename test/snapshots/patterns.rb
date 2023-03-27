@@ -1,5 +1,5 @@
 ProgramNode(0...3655)(
-  Scope(0...0)(
+  ScopeNode(0...0)(
     [IDENTIFIER(7...10)("bar"),
      IDENTIFIER(1195...1198)("baz"),
      IDENTIFIER(1245...1248)("qux")]
@@ -452,7 +452,7 @@ ProgramNode(0...3655)(
          "foo"
        ),
        LambdaNode(343...351)(
-         Scope(343...345)([]),
+         ScopeNode(343...345)([]),
          MINUS_GREATER(343...345)("->"),
          nil,
          nil,
@@ -1078,7 +1078,7 @@ ProgramNode(0...3655)(
        ),
        RangeNode(916...938)(
          LambdaNode(916...924)(
-           Scope(916...918)([]),
+           ScopeNode(916...918)([]),
            MINUS_GREATER(916...918)("->"),
            nil,
            nil,
@@ -1088,7 +1088,7 @@ ProgramNode(0...3655)(
            )
          ),
          LambdaNode(930...938)(
-           Scope(930...932)([]),
+           ScopeNode(930...932)([]),
            MINUS_GREATER(930...932)("->"),
            nil,
            nil,
@@ -2588,7 +2588,7 @@ ProgramNode(0...3655)(
          "foo"
        ),
        LambdaNode(1973...1981)(
-         Scope(1973...1975)([]),
+         ScopeNode(1973...1975)([]),
          MINUS_GREATER(1973...1975)("->"),
          nil,
          nil,
@@ -3226,7 +3226,7 @@ ProgramNode(0...3655)(
        ),
        [InNode(2706...2724)(
           LambdaNode(2709...2717)(
-            Scope(2709...2711)([]),
+            ScopeNode(2709...2711)([]),
             MINUS_GREATER(2709...2711)("->"),
             nil,
             nil,
@@ -4054,7 +4054,7 @@ ProgramNode(0...3655)(
             LocalVariableReadNode(3643...3646)(IDENTIFIER(3643...3646)("baz")),
             StatementsNode(3629...3637)(
               [LambdaNode(3629...3637)(
-                 Scope(3629...3631)([]),
+                 ScopeNode(3629...3631)([]),
                  MINUS_GREATER(3629...3631)("->"),
                  nil,
                  nil,

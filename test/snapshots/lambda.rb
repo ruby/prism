@@ -1,8 +1,8 @@
 ProgramNode(0...0)(
-  Scope(0...0)([]),
+  ScopeNode(0...0)([]),
   StatementsNode(0...0)(
     [LambdaNode(0...0)(
-       Scope(0...2)([IDENTIFIER(6...9)("foo")]),
+       ScopeNode(0...2)([IDENTIFIER(6...9)("foo")]),
        MINUS_GREATER(0...2)("->"),
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(6...9)(
@@ -20,7 +20,7 @@ ProgramNode(0...0)(
        StatementsNode(0...0)([])
      ),
      LambdaNode(16...0)(
-       Scope(16...18)([LABEL(19...20)("x")]),
+       ScopeNode(16...18)([LABEL(19...20)("x")]),
        MINUS_GREATER(16...18)("->"),
        PARENTHESIS_LEFT(18...19)("("),
        BlockParametersNode(19...29)(

@@ -1468,7 +1468,7 @@ nodes:
 
           return 1
           ^^^^^^^^
-  - name: Scope
+  - name: ScopeNode
     child_nodes:
       - name: locals
         type: token[]

@@ -1,8 +1,8 @@
 ProgramNode(0...350)(
-  Scope(0...0)([]),
+  ScopeNode(0...0)([]),
   StatementsNode(0...350)(
     [ClassNode(0...17)(
-       Scope(0...5)([IDENTIFIER(8...9)("a")]),
+       ScopeNode(0...5)([IDENTIFIER(8...9)("a")]),
        KEYWORD_CLASS(0...5)("class"),
        ConstantReadNode(6...7)(),
        nil,
@@ -17,7 +17,7 @@ ProgramNode(0...350)(
        KEYWORD_END(14...17)("end")
      ),
      ClassNode(19...39)(
-       Scope(19...24)([]),
+       ScopeNode(19...24)([]),
        KEYWORD_CLASS(19...24)("class"),
        ConstantReadNode(25...26)(),
        nil,
@@ -37,7 +37,7 @@ ProgramNode(0...350)(
        KEYWORD_END(36...39)("end")
      ),
      ClassNode(41...75)(
-       Scope(41...46)([]),
+       ScopeNode(41...46)([]),
        KEYWORD_CLASS(41...46)("class"),
        ConstantReadNode(47...48)(),
        nil,
@@ -68,7 +68,7 @@ ProgramNode(0...350)(
        KEYWORD_END(72...75)("end")
      ),
      ClassNode(77...98)(
-       Scope(77...82)([IDENTIFIER(89...90)("a")]),
+       ScopeNode(77...82)([IDENTIFIER(89...90)("a")]),
        KEYWORD_CLASS(77...82)("class"),
        ConstantReadNode(83...84)(),
        LESS(85...86)("<"),
@@ -83,7 +83,7 @@ ProgramNode(0...350)(
        KEYWORD_END(95...98)("end")
      ),
      SingletonClassNode(100...120)(
-       Scope(100...105)([]),
+       ScopeNode(100...105)([]),
        KEYWORD_CLASS(100...105)("class"),
        LESS_LESS(106...108)("<<"),
        CallNode(109...116)(
@@ -109,14 +109,14 @@ ProgramNode(0...350)(
        KEYWORD_END(117...120)("end")
      ),
      ClassNode(122...162)(
-       Scope(122...127)([]),
+       ScopeNode(122...127)([]),
        KEYWORD_CLASS(122...127)("class"),
        ConstantReadNode(128...129)(),
        nil,
        nil,
        StatementsNode(131...157)(
          [SingletonClassNode(131...157)(
-            Scope(131...136)([]),
+            ScopeNode(131...136)([]),
             KEYWORD_CLASS(131...136)("class"),
             LESS_LESS(137...139)("<<"),
             SelfNode(140...144)(),
@@ -138,14 +138,14 @@ ProgramNode(0...350)(
        KEYWORD_END(159...162)("end")
      ),
      ClassNode(164...218)(
-       Scope(164...169)([]),
+       ScopeNode(164...169)([]),
        KEYWORD_CLASS(164...169)("class"),
        ConstantReadNode(170...171)(),
        nil,
        nil,
        StatementsNode(173...213)(
          [SingletonClassNode(173...213)(
-            Scope(173...178)([]),
+            ScopeNode(173...178)([]),
             KEYWORD_CLASS(173...178)("class"),
             LESS_LESS(179...181)("<<"),
             SelfNode(182...186)(),
@@ -178,7 +178,7 @@ ProgramNode(0...350)(
        KEYWORD_END(215...218)("end")
      ),
      SingletonClassNode(220...240)(
-       Scope(220...225)([]),
+       ScopeNode(220...225)([]),
        KEYWORD_CLASS(220...225)("class"),
        LESS_LESS(226...228)("<<"),
        CallNode(229...236)(
@@ -204,7 +204,7 @@ ProgramNode(0...350)(
        KEYWORD_END(237...240)("end")
      ),
      SingletonClassNode(242...262)(
-       Scope(242...247)([]),
+       ScopeNode(242...247)([]),
        KEYWORD_CLASS(242...247)("class"),
        LESS_LESS(248...250)("<<"),
        CallNode(251...258)(
@@ -230,7 +230,7 @@ ProgramNode(0...350)(
        KEYWORD_END(259...262)("end")
      ),
      SingletonClassNode(264...281)(
-       Scope(264...269)([]),
+       ScopeNode(264...269)([]),
        KEYWORD_CLASS(264...269)("class"),
        LESS_LESS(270...272)("<<"),
        SelfNode(273...277)(),
@@ -238,7 +238,7 @@ ProgramNode(0...350)(
        KEYWORD_END(278...281)("end")
      ),
      SingletonClassNode(283...300)(
-       Scope(283...288)([]),
+       ScopeNode(283...288)([]),
        KEYWORD_CLASS(283...288)("class"),
        LESS_LESS(289...291)("<<"),
        SelfNode(292...296)(),
@@ -246,7 +246,7 @@ ProgramNode(0...350)(
        KEYWORD_END(297...300)("end")
      ),
      SingletonClassNode(302...325)(
-       Scope(302...307)([]),
+       ScopeNode(302...307)([]),
        KEYWORD_CLASS(302...307)("class"),
        LESS_LESS(308...310)("<<"),
        SelfNode(311...315)(),
@@ -265,7 +265,7 @@ ProgramNode(0...350)(
        KEYWORD_END(322...325)("end")
      ),
      SingletonClassNode(327...350)(
-       Scope(327...332)([]),
+       ScopeNode(327...332)([]),
        KEYWORD_CLASS(327...332)("class"),
        LESS_LESS(333...335)("<<"),
        SelfNode(336...340)(),

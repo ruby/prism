@@ -1,5 +1,5 @@
 ProgramNode(0...40)(
-  Scope(0...0)([]),
+  ScopeNode(0...0)([]),
   StatementsNode(0...40)(
     [ForwardingSuperNode(0...5)(nil),
      SuperNode(7...14)(
