@@ -23,12 +23,12 @@ ProgramNode(0...0)(
        Scope(16...18)([LABEL(19...20)("x")]),
        MINUS_GREATER(16...18)("->"),
        PARENTHESIS_LEFT(18...19)("("),
-       BlockParametersNode(19...21)(
-         ParametersNode(19...21)(
+       BlockParametersNode(19...29)(
+         ParametersNode(19...29)(
            [],
            [],
            nil,
-           [KeywordParameterNode(19...21)(
+           [KeywordParameterNode(19...29)(
               LABEL(19...21)("x:"),
               InterpolatedStringNode(22...29)(
                 STRING_BEGIN(22...23)("\""),
