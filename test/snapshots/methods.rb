@@ -349,12 +349,12 @@ ProgramNode(0...943)(
      DefNode(290...308)(
        IDENTIFIER(294...295)("a"),
        nil,
-       ParametersNode(296...302)(
+       ParametersNode(296...304)(
          [],
          [],
          nil,
          [KeywordParameterNode(296...298)(LABEL(296...298)("b:"), nil),
-          KeywordParameterNode(300...302)(
+          KeywordParameterNode(300...304)(
             LABEL(300...302)("c:"),
             IntegerNode(303...304)()
           )],
@@ -373,12 +373,12 @@ ProgramNode(0...943)(
      DefNode(310...329)(
        IDENTIFIER(314...315)("a"),
        nil,
-       ParametersNode(316...322)(
+       ParametersNode(316...324)(
          [],
          [],
          nil,
          [KeywordParameterNode(316...318)(LABEL(316...318)("b:"), nil),
-          KeywordParameterNode(320...322)(
+          KeywordParameterNode(320...324)(
             LABEL(320...322)("c:"),
             IntegerNode(323...324)()
           )],
@@ -401,7 +401,7 @@ ProgramNode(0...943)(
          [],
          [],
          nil,
-         [KeywordParameterNode(337...339)(
+         [KeywordParameterNode(337...343)(
             LABEL(337...339)("b:"),
             IntegerNode(342...343)()
           ),

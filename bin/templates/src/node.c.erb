@@ -5,14 +5,6 @@
 
 #include "yarp/node.h"
 
-// Allocate the space for a new yp_node_t. Currently we're not using the
-// parser argument, but it's there to allow for the future possibility of
-// pre-allocating larger memory pools and then pulling from those here.
-static inline yp_node_t *
-yp_node_alloc(yp_parser_t *parser) {
-  return (yp_node_t *) malloc(sizeof(yp_node_t));
-}
-
 // Clear the node but preserves the location.
 void yp_node_clear(yp_node_t *node) {
   yp_location_t location = node->location;
@@ -116,32 +108,6 @@ yp_node_list_free(yp_parser_t *parser, yp_node_list_t *list) {
   }
 }
 
-<%- nodes.each do |node| -%>
-// Allocate a new <%= node.name %> node.
-yp_node_t *
-<%- assigns = node.params.map { |param| 
-  case param
-  in NodeParam | OptionalNodeParam | IntegerParam then ".#{param.name} = #{param.name}"
-  in TokenParam | OptionalTokenParam then ".#{param.name} = *#{param.name}"
-  in LocationParam | OptionalLocationParam then ".#{param.name} = *#{param.name}"
-  in StringParam | NodeListParam | TokenListParam then nil
-  end
-}.compact.join(", ") -%>
-yp_node_<%= node.human %>_create(<%= ["yp_parser_t *parser", *node.params.map(&:param), ("yp_location_t *location" if node.location_provided?)].compact.join(", ") %>) {
-  yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) { .type = <%= node.type %>, .location = <%= node.location %><%= assigns.empty? ? "" : ", .as.#{node.human} = { #{assigns} }" %> };
-  <%- node.params.each do |param| -%>
-  <%- case param -%>
-  <%- when NodeListParam -%>
-  yp_node_list_init(&node->as.<%= node.human %>.<%= param.name %>);
-  <%- when TokenListParam -%>
-  yp_token_list_init(&node->as.<%= node.human %>.<%= param.name %>);
-  <%- end -%>
-  <%- end -%>
-  return node;
-}
-
-<%- end -%>
 // Deallocate the space for a yp_node_t. Similarly to yp_node_alloc, we're not
 // using the parser argument, but it's there to allow for the future possibility
 // of pre-allocating larger memory pools.

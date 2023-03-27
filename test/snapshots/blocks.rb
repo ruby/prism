@@ -602,16 +602,16 @@ ProgramNode(0...402)(
             nil,
             BlockNode(359...383)(
               Scope(359...360)([LABEL(365...366)("a"), LABEL(373...374)("b")]),
-              BlockParametersNode(365...375)(
-                ParametersNode(365...375)(
+              BlockParametersNode(365...377)(
+                ParametersNode(365...377)(
                   [],
                   [],
                   nil,
-                  [KeywordParameterNode(365...367)(
+                  [KeywordParameterNode(365...369)(
                      LABEL(365...367)("a:"),
                      IntegerNode(368...369)()
                    ),
-                   KeywordParameterNode(373...375)(
+                   KeywordParameterNode(373...377)(
                      LABEL(373...375)("b:"),
                      IntegerNode(376...377)()
                    )],
