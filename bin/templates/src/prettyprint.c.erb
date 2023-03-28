@@ -12,7 +12,7 @@
 static void
 prettyprint_token(yp_buffer_t *buffer, yp_token_t *token) {
   yp_buffer_append_str(buffer, "\"", 1);
-  yp_buffer_append_str(buffer, token->start, token->end - token->start); 
+  yp_buffer_append_str(buffer, token->start, token->end - token->start);
   yp_buffer_append_str(buffer, "\"", 1);
 }
 
@@ -26,7 +26,7 @@ prettyprint_location(yp_buffer_t *buffer, yp_parser_t *parser, yp_location_t *lo
 static void
 prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
   switch (node->type) {
-    <%- nodes.each do |node| -%>
+    <%- nodes.filter { !_1.is_migrated }.each do |node| -%>
     case <%= node.type %>: {
       yp_buffer_append_str(buffer, "<%= node.name %>(", <%= node.name.length + 1 %>);
       <%- node.params.each_with_index do |param, index| -%>
@@ -74,6 +74,65 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
       char <%= param.name %>_buffer[12];
       snprintf(<%= param.name %>_buffer, 12, "+%d", node->as.<%= node.human %>.<%= param.name %>);
       if (node->as.<%= node.human %>.<%= param.name %> < 0) {
+        <%= param.name %>_buffer[0] = '-';
+      }
+      yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
+      <%- else -%>
+      <%- raise -%>
+      <%- end -%>
+      <%- end -%>
+      yp_buffer_append_str(buffer, ")", 1);
+      break;
+    }
+    <%- end -%>
+    <%- nodes.filter { _1.is_migrated }.each do |node| -%>
+    case <%= node.type %>: {
+      yp_buffer_append_str(buffer, "<%= node.name %>(", <%= node.name.length + 1 %>);
+      <%- node.params.each_with_index do |param, index| -%>
+      <%= "yp_buffer_append_str(buffer, \", \", 2);" if index != 0 -%>
+      <%- case param -%>
+      <%- when NodeParam -%>
+      prettyprint_node(buffer, parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when OptionalNodeParam -%>
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> == NULL) {
+        yp_buffer_append_str(buffer, "nil", 3);
+      } else {
+        prettyprint_node(buffer, parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      }
+      <%- when StringParam -%>
+      yp_buffer_append_str(buffer, "\"", 1);
+      yp_buffer_append_str(buffer, yp_string_source(&((yp_<%= node.human %>_t *)node)-><%= param.name %>), yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>));
+      yp_buffer_append_str(buffer, "\"", 1);
+      <%- when NodeListParam -%>
+      for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
+        if (index != 0) yp_buffer_append_str(buffer, ", ", 2);
+        prettyprint_node(buffer, parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index]);
+      }
+      <%- when TokenParam -%>
+      prettyprint_token(buffer, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when OptionalTokenParam -%>
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %>.type == YP_TOKEN_NOT_PROVIDED) {
+        yp_buffer_append_str(buffer, "nil", 3);
+      } else {
+        prettyprint_token(buffer, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      }
+      <%- when TokenListParam -%>
+      for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
+        if (index != 0) yp_buffer_append_str(buffer, ", ", 2);
+        prettyprint_token(buffer, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.tokens[index]);
+      }
+      <%- when LocationParam -%>
+      prettyprint_location(buffer, parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when OptionalLocationParam -%>
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %>.start == NULL) {
+        yp_buffer_append_str(buffer, "nil", 3);
+      } else {
+        prettyprint_location(buffer, parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      }
+      <%- when IntegerParam -%>
+      char <%= param.name %>_buffer[12];
+      snprintf(<%= param.name %>_buffer, 12, "+%d", ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> < 0) {
         <%= param.name %>_buffer[0] = '-';
       }
       yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
