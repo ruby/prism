@@ -465,6 +465,7 @@ nodes:
         kind: ElseNode
       - name: ensure_clause
         type: node?
+        kind: EnsureNode
       - name: end_keyword
         type: token?
     comment: |
@@ -753,6 +754,7 @@ nodes:
           ^^^^^^
             bar
           end
+    is_migrated: true
   - name: FalseNode
     comment: |
       Represents the use of the literal `false` keyword.
