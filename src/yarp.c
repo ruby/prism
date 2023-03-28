@@ -2055,21 +2055,21 @@ yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, c
 }
 
 // Allocate and initialize a new OrNode node.
-static yp_node_t *
+static yp_or_node_t *
 yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_or_node_t *node = YP_NODE_ALLOC(yp_or_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OR_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_or_node_t) {
+    {
+      .type = YP_NODE_OR_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      }
     },
-    .as.or_node = {
-      .left = left,
-      .right = right,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .left = left,
+    .right = right,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -10852,7 +10852,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       parser_lex(parser);
 
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
-      return yp_or_node_create(parser, node, &token, right);
+      return (yp_node_t *) yp_or_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_EQUAL_TILDE: {
       // Note that we _must_ parse the value before adding the local variables

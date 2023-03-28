@@ -1275,6 +1275,7 @@ nodes:
                 ^^^^^
           end
   - name: OrNode
+    is_migrated: true
     child_nodes:
       - name: left
         type: node
