@@ -2463,10 +2463,13 @@ yp_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, c
 }
 
 // Allocate and initialize a new RetryNode node.
-static yp_node_t *
+static yp_retry_node_t *
 yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_RETRY);
-  return yp_node_create_from_token(parser, YP_NODE_RETRY_NODE, token);
+  yp_retry_node_t *node = YP_NODE_ALLOC(yp_retry_node_t);
+
+  *node = (yp_retry_node_t) {{ .type = YP_NODE_RETRY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate a new ReturnNode node.
@@ -9901,7 +9904,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_redo_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_RETRY:
       parser_lex(parser);
-      return yp_retry_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_retry_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_SELF:
       parser_lex(parser);
       return (yp_node_t *) yp_self_node_create(parser, &parser->previous);

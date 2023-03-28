@@ -1496,6 +1496,7 @@ nodes:
                 ^^
           end
   - name: RetryNode
+    is_migrated: true
     comment: |
       Represents the use of the `retry` keyword.
 
