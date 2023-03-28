@@ -462,6 +462,7 @@ nodes:
         type: node?
       - name: else_clause
         type: node?
+        kind: ElseNode
       - name: ensure_clause
         type: node?
       - name: end_keyword
@@ -730,6 +731,7 @@ nodes:
 
           if a then b else c end
                       ^^^^^^^^^^
+    is_migrated: true
   - name: EnsureNode
     child_nodes:
       - name: ensure_keyword

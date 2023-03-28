@@ -608,10 +608,8 @@ yp_begin_node_rescue_clause_set(yp_begin_node_t *node, yp_node_t *rescue_clause)
 
 // Set the else clause and end location of a begin node.
 static void
-yp_begin_node_else_clause_set(yp_begin_node_t *node, yp_node_t *else_clause) {
-  assert(else_clause->type == YP_NODE_ELSE_NODE);
-
-  node->base.location.end = else_clause->location.end;
+yp_begin_node_else_clause_set(yp_begin_node_t *node, yp_else_node_t *else_clause) {
+  node->base.location.end = else_clause->base.location.end;
   node->else_clause = else_clause;
 }
 
@@ -1171,21 +1169,21 @@ yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t 
 }
 
 // Allocate and initialize a new ElseNode node.
-static yp_node_t *
+static yp_else_node_t *
 yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_else_node_t *node = YP_NODE_ALLOC(yp_else_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ELSE_NODE,
-    .location = {
-      .start = else_keyword->start,
-      .end = end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end
+  *node = (yp_else_node_t) {
+    {
+      .type = YP_NODE_ELSE_NODE,
+      .location = {
+        .start = else_keyword->start,
+        .end = end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end
+      },
     },
-    .as.else_node = {
-      .else_keyword = *else_keyword,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .else_keyword = *else_keyword,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
   return node;
@@ -1498,9 +1496,9 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_to
   yp_statements_node_body_append(else_statements, false_expression);
 
   yp_token_t end_keyword = not_provided(parser);
-  yp_node_t *else_node = yp_else_node_create(parser, colon, else_statements, &end_keyword);
+  yp_else_node_t *else_node = yp_else_node_create(parser, colon, else_statements, &end_keyword);
 
-  return yp_if_node_create(parser, question_mark, predicate, if_statements, else_node, &end_keyword);
+  return yp_if_node_create(parser, question_mark, predicate, if_statements, YP_NODE_DOWNCAST(else_node), &end_keyword);
 }
 
 // Allocate and initialize a new ImaginaryNode node.
@@ -7427,7 +7425,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
     }
 
-    yp_node_t *else_clause = yp_else_node_create(parser, &else_keyword, else_statements, &parser->current);
+    yp_else_node_t *else_clause = yp_else_node_create(parser, &else_keyword, else_statements, &parser->current);
     yp_begin_node_else_clause_set(parent_node, else_clause);
   }
 
@@ -7640,8 +7638,8 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
 
-      yp_node_t *else_node = yp_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
-      current->as.if_node.consequent = else_node;
+      yp_else_node_t *else_node = yp_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
+      current->as.if_node.consequent = YP_NODE_DOWNCAST(else_node);
       parent->as.if_node.end_keyword = parser->previous;
       break;
     }
@@ -9256,7 +9254,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
         yp_token_t else_keyword = parser->previous;
-        yp_node_t *else_node;
+        yp_else_node_t *else_node;
 
         if (!match_type_p(parser, YP_TOKEN_KEYWORD_END)) {
           else_node = yp_else_node_create(parser, &else_keyword, parse_statements(parser, YP_CONTEXT_ELSE), &parser->current);
@@ -9264,7 +9262,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           else_node = yp_else_node_create(parser, &else_keyword, NULL, &parser->current);
         }
 
-        yp_case_node_consequent_set(case_node, else_node);
+        yp_case_node_consequent_set(case_node, YP_NODE_DOWNCAST(else_node));
       }
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected case statement to end with an end keyword.");
