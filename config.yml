@@ -1204,6 +1204,7 @@ nodes:
           next 1
           ^^^^^^
   - name: NilNode
+    is_migrated: true
     comment: |
       Represents the use of the `nil` keyword.
 
