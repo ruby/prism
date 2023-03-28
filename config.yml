@@ -1639,6 +1639,7 @@ nodes:
           %i[foo]
              ^^^
   - name: TrueNode
+    is_migrated: true
     comment: |
       Represents the use of the literal `true` keyword.
 
@@ -1650,6 +1651,7 @@ nodes:
         type: node[]
       - name: keyword_loc
         type: location
+    is_migrated: true
     comment: |
       Represents the use of the `undef` keyword.
 
@@ -1665,8 +1667,10 @@ nodes:
         type: node?
       - name: consequent
         type: node?
+        kind: ElseNode
       - name: end_keyword
         type: token?
+    is_migrated: true
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
@@ -1683,6 +1687,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+    is_migrated: true
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
@@ -1699,6 +1704,7 @@ nodes:
         type: node[]
       - name: statements
         type: node?
+    is_migrated: true
     comment: |
       case true
       when true
@@ -1712,6 +1718,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+    is_migrated: true
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 
@@ -1730,6 +1737,7 @@ nodes:
         type: token
       - name: unescaped
         type: string
+    is_migrated: true
     comment: |
       Represents an xstring literal with no interpolation.
 
@@ -1746,6 +1754,7 @@ nodes:
         kind: ArgumentsNode
       - name: rparen
         type: token?
+    is_migrated: true
     comment: |
       Represents the use of the `yield` keyword.
 

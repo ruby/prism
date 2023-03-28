@@ -2768,183 +2768,198 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
 }
 
 // Allocate and initialize a new TrueNode node.
-static yp_node_t *
+static yp_true_node_t *
 yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_TRUE);
-  return yp_node_create_from_token(parser, YP_NODE_TRUE_NODE, token);
+  yp_true_node_t *node = YP_NODE_ALLOC(yp_true_node_t);
+
+  *node = (yp_true_node_t) {{ .type = YP_NODE_TRUE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new UndefNode node.
-static yp_node_t *
+static yp_undef_node_t *
 yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_UNDEF);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_undef_node_t *node = YP_NODE_ALLOC(yp_undef_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNDEF_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(token),
-    .as.undef_node.keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
+  *node = (yp_undef_node_t) {
+    {
+      .type = YP_NODE_UNDEF_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(token),
+    },
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
   };
 
-  yp_node_list_init(&node->as.undef_node.names);
+  yp_node_list_init(&node->names);
   return node;
 }
 
 // Append a name to an undef node.
 static void
-yp_undef_node_append(yp_node_t *node, yp_node_t *name) {
-  node->location.end = name->location.end;
-  yp_node_list_append2(&node->as.undef_node.names, name);
+yp_undef_node_append(yp_undef_node_t *node, yp_node_t *name) {
+  node->base.location.end = name->location.end;
+  yp_node_list_append2(&node->names, name);
 }
 
 // Allocate a new UnlessNode node.
-static yp_node_t *
-yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements, yp_node_t *consequent, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+static yp_unless_node_t *
+yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
+  yp_unless_node_t *node = YP_NODE_ALLOC(yp_unless_node_t);
 
   const char *end;
-  if (end_keyword->type != YP_TOKEN_NOT_PROVIDED) {
-    end = end_keyword->end;
-  } else if (consequent != NULL) {
-    end = consequent->location.end;
-  } else if (statements != NULL) {
+  if (statements != NULL) {
     end = statements->location.end;
   } else {
     end = predicate->location.end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNLESS_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end
+  *node = (yp_unless_node_t) {
+    {
+      .type = YP_NODE_UNLESS_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = end
+      },
     },
-    .as.unless_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements,
-      .consequent = consequent,
-      .end_keyword = *end_keyword
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements,
+    .consequent = NULL,
+    .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
   };
 
   return node;
 }
 
 // Allocate and initialize new UnlessNode node in the modifier form.
-static yp_node_t *
+static yp_unless_node_t *
 yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *unless_keyword, yp_node_t *predicate) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_unless_node_t *node = YP_NODE_ALLOC(yp_unless_node_t);
 
   yp_node_t *statements = yp_statements_node_create(parser);
   yp_statements_node_body_append(statements, statement);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNLESS_NODE,
-    .location = {
-      .start = statement->location.start,
-      .end = predicate->location.end
+  *node = (yp_unless_node_t) {
+    {
+      .type = YP_NODE_UNLESS_NODE,
+      .location = {
+        .start = statement->location.start,
+        .end = predicate->location.end
+      },
     },
-    .as.unless_node = {
-      .keyword = *unless_keyword,
-      .predicate = predicate,
-      .statements = statements,
-      .consequent = NULL,
-      .end_keyword = not_provided(parser)
-    }
+    .keyword = *unless_keyword,
+    .predicate = predicate,
+    .statements = statements,
+    .consequent = NULL,
+    .end_keyword = not_provided(parser)
   };
 
   return node;
 }
 
 // Allocate a new UntilNode node.
-static yp_node_t *
+static yp_until_node_t *
 yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_until_node_t *node = YP_NODE_ALLOC(yp_until_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNTIL_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = statements == NULL ? predicate->location.end : statements->location.end
+  *node = (yp_until_node_t) {
+    {
+      .type = YP_NODE_UNTIL_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements == NULL ? predicate->location.end : statements->location.end
+      },
     },
-    .as.until_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements
   };
 
   return node;
 }
 
-// Allocate a new WhenNode node.
-static yp_node_t *
-yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+// Allocate and initialize a new WhenNode node.
+static yp_when_node_t *
+yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword) {
+  yp_when_node_t *node = YP_NODE_ALLOC(yp_when_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_WHEN_NODE,
-    .location = {
-      .start = when_keyword->start,
-      .end = (statements == NULL ? NULL : statements->location.end)
+  *node = (yp_when_node_t) {
+    {
+      .type = YP_NODE_WHEN_NODE,
+      .location = {
+        .start = when_keyword->start,
+        .end = NULL
+      }
     },
-    .as.when_node = {
-      .when_keyword = *when_keyword,
-      .statements = statements
-    }
+    .when_keyword = *when_keyword,
+    .statements = NULL
   };
 
-  yp_node_list_init(&node->as.when_node.conditions);
+  yp_node_list_init(&node->conditions);
   return node;
+}
+
+// Append a new condition to a when node.
+static void
+yp_when_node_conditions_append(yp_when_node_t *node, yp_node_t *condition) {
+  node->base.location.end = condition->location.end;
+  yp_node_list_append2(&node->conditions, condition);
+}
+
+// Set the statements list of a when node.
+static void
+yp_when_node_statements_set(yp_when_node_t *node, yp_node_t *statements) {
+  if (statements->location.end > node->base.location.end) node->base.location.end = statements->location.end;
+  node->statements = statements;
 }
 
 // Allocate a new WhileNode node.
-static yp_node_t *
+static yp_while_node_t *
 yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_while_node_t *node = YP_NODE_ALLOC(yp_while_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_WHILE_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = statements == NULL ? predicate->location.end : statements->location.end
+  *node = (yp_while_node_t) {
+    {
+      .type = YP_NODE_WHILE_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements == NULL ? predicate->location.end : statements->location.end
+      },
     },
-    .as.while_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements
   };
 
   return node;
 }
 
 // Allocate and initialize a new XStringNode node.
-static yp_node_t *
+static yp_x_string_node_t *
 yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_x_string_node_t *node = YP_NODE_ALLOC(yp_x_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_X_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_x_string_node_t) {
+    {
+      .type = YP_NODE_X_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.x_string_node = {
-      .opening = *opening,
-      .content = *content,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .content = *content,
+    .closing = *closing
   };
 
   return node;
 }
 
 // Allocate a new YieldNode node.
-static yp_node_t *
+static yp_yield_node_t *
 yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *lparen, yp_arguments_node_t *arguments, const yp_token_t *rparen) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_yield_node_t *node = YP_NODE_ALLOC(yp_yield_node_t);
 
   const char *end;
   if (rparen->type != YP_TOKEN_NOT_PROVIDED) {
@@ -2957,18 +2972,18 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
     end = keyword->end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_YIELD_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end
+  *node = (yp_yield_node_t) {
+    {
+      .type = YP_NODE_YIELD_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = end
+      },
     },
-    .as.yield_node = {
-      .keyword = *keyword,
-      .lparen = *lparen,
-      .arguments = arguments,
-      .rparen = *rparen
-    }
+    .keyword = *keyword,
+    .lparen = *lparen,
+    .arguments = arguments,
+    .rparen = *rparen
   };
 
   return node;
@@ -6150,10 +6165,10 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
   return node;
 }
 
-static yp_node_t *
+static yp_x_string_node_t *
 yp_node_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_x_string_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
@@ -7601,11 +7616,10 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
       parent = yp_if_node_create(parser, &keyword, predicate, statements, NULL, &end_keyword);
       break;
     case YP_CONTEXT_UNLESS:
-      parent = yp_unless_node_create(parser, &keyword, predicate, statements, NULL, &end_keyword);
+      parent = (yp_node_t *) yp_unless_node_create(parser, &keyword, predicate, statements);
       break;
     default:
-      // Should not be able to reach here.
-      parent = NULL;
+      assert(false && "unreachable");
       break;
   }
 
@@ -7613,45 +7627,61 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 
   // Parse any number of elsif clauses. This will form a linked list of if
   // nodes pointing to each other from the top.
-  while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
-    yp_token_t elsif_keyword = parser->previous;
-    yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
+  if (context == YP_CONTEXT_IF) {
+    while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
+      yp_token_t elsif_keyword = parser->previous;
+      yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
 
-    // Predicates are closed by a term, a "then", or a term and then a "then".
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-    accept(parser, YP_TOKEN_KEYWORD_THEN);
+      // Predicates are closed by a term, a "then", or a term and then a "then".
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      accept(parser, YP_TOKEN_KEYWORD_THEN);
 
-    yp_node_t *statements = parse_statements(parser, YP_CONTEXT_ELSIF);
-    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+      yp_node_t *statements = parse_statements(parser, YP_CONTEXT_ELSIF);
+      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
-    yp_node_t *elsif = yp_if_node_create(parser, &elsif_keyword, predicate, statements, NULL, &end_keyword);
-    current->as.if_node.consequent = elsif;
-    current = elsif;
+      yp_node_t *elsif = yp_if_node_create(parser, &elsif_keyword, predicate, statements, NULL, &end_keyword);
+      current->as.if_node.consequent = elsif;
+      current = elsif;
+    }
   }
 
-  switch (parser->current.type) {
-    case YP_TOKEN_KEYWORD_ELSE: {
-      parser_lex(parser);
-      yp_token_t else_keyword = parser->previous;
-      yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_ELSE);
+  if (match_type_p(parser, YP_TOKEN_KEYWORD_ELSE)) {
+    parser_lex(parser);
+    yp_token_t else_keyword = parser->previous;
+    yp_node_t *else_statements = parse_statements(parser, YP_CONTEXT_ELSE);
 
-      accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
+    accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+    expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
 
-      yp_else_node_t *else_node = yp_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
-      current->as.if_node.consequent = YP_NODE_DOWNCAST(else_node);
-      parent->as.if_node.end_keyword = parser->previous;
-      break;
+    yp_else_node_t *else_node = yp_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
+
+    switch (context) {
+      case YP_CONTEXT_IF:
+        current->as.if_node.consequent = (yp_node_t *) else_node;
+        parent->as.if_node.end_keyword = parser->previous;
+        break;
+      case YP_CONTEXT_UNLESS:
+        ((yp_unless_node_t *) parent)->consequent = else_node;
+        ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
+        break;
+      default:
+        assert(false && "unreachable");
+        break;
     }
-    case YP_TOKEN_KEYWORD_END: {
-      parser_lex(parser);
-      parent->as.if_node.end_keyword = parser->previous;
-      break;
+  } else {
+    expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
+
+    switch (context) {
+      case YP_CONTEXT_IF:
+        parent->as.if_node.end_keyword = parser->previous;
+        break;
+      case YP_CONTEXT_UNLESS:
+        ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
+        break;
+      default:
+        assert(false && "unreachable");
+        break;
     }
-    default:
-      expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
-      parent->as.if_node.end_keyword = parser->previous;
-      break;
   }
 
   return parent;
@@ -9162,7 +9192,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // the end of the list.
         while (accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
           yp_token_t when_keyword = parser->previous;
-          yp_node_t *when_node = yp_when_node_create(parser, &when_keyword, NULL);
+          yp_when_node_t *when_node = yp_when_node_create(parser, &when_keyword);
 
           do {
             if (accept(parser, YP_TOKEN_USTAR)) {
@@ -9170,12 +9200,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after `*' operator.");
 
               yp_node_t *star_node = yp_splat_node_create(parser, &operator, expression);
-              yp_node_list_append(parser, when_node, &when_node->as.when_node.conditions, star_node);
+              yp_when_node_conditions_append(when_node, star_node);
 
               if (expression->type == YP_NODE_MISSING_NODE) break;
             } else {
               yp_node_t *condition = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after when keyword.");
-              yp_node_list_append(parser, when_node, &when_node->as.when_node.conditions, condition);
+              yp_when_node_conditions_append(when_node, condition);
 
               if (condition->type == YP_NODE_MISSING_NODE) break;
             }
@@ -9188,10 +9218,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
 
           if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
-            when_node->as.when_node.statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
+            yp_when_node_statements_set(when_node, parse_statements(parser, YP_CONTEXT_CASE_WHEN));
           }
 
-          yp_case_node_condition_append(case_node, when_node);
+          yp_case_node_condition_append(case_node, (yp_node_t *) when_node);
         }
       } else {
         // At this point we expect that we're parsing a case-in node. We will
@@ -9217,7 +9247,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           } else if (accept(parser, YP_TOKEN_KEYWORD_UNLESS_MODIFIER)) {
             yp_token_t keyword = parser->previous;
             yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after guard keyword.");
-            pattern = yp_unless_node_modifier_create(parser, pattern, &keyword, predicate);
+            pattern = (yp_node_t *) yp_unless_node_modifier_create(parser, pattern, &keyword, predicate);
           }
 
           // Now we need to check for the terminator of the in node's pattern.
@@ -9356,7 +9386,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_arguments_t arguments = yp_arguments(parser);
       parse_arguments_list(parser, &arguments, false);
 
-      return yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
+      return YP_NODE_DOWNCAST(yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing));
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);
@@ -9506,7 +9536,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_self_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_TRUE:
-                receiver = yp_true_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_true_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_FALSE:
                 receiver = yp_false_node_create(parser, &identifier);
@@ -9742,23 +9772,23 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {
       parser_lex(parser);
-      yp_node_t *undef = yp_undef_node_create(parser, &parser->previous);
-
+      yp_undef_node_t *undef = yp_undef_node_create(parser, &parser->previous);
       yp_node_t *name = parse_undef_argument(parser);
-      if (name->type == YP_NODE_MISSING_NODE) return undef;
 
-      yp_undef_node_append(undef, name);
-
-      while (match_type_p(parser, YP_TOKEN_COMMA)) {
-        lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
-        parser_lex(parser);
-        name = parse_undef_argument(parser);
-        if (name->type == YP_NODE_MISSING_NODE) return undef;
-
+      if (name->type != YP_NODE_MISSING_NODE) {
         yp_undef_node_append(undef, name);
+
+        while (match_type_p(parser, YP_TOKEN_COMMA)) {
+          lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
+          parser_lex(parser);
+          name = parse_undef_argument(parser);
+          if (name->type == YP_NODE_MISSING_NODE) break;
+
+          yp_undef_node_append(undef, name);
+        }
       }
 
-      return undef;
+      return (yp_node_t *) undef;
     }
     case YP_TOKEN_KEYWORD_NOT: {
       parser_lex(parser);
@@ -9851,7 +9881,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_self_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_TRUE:
       parser_lex(parser);
-      return yp_true_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_state_stack_push(&parser->do_loop_stack, true);
       parser_lex(parser);
@@ -9869,7 +9899,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
       }
 
-      return yp_until_node_create(parser, &keyword, predicate, statements);
+      return (yp_node_t *) yp_until_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_state_stack_push(&parser->do_loop_stack, true);
@@ -9888,7 +9918,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
       }
 
-      return yp_while_node_create(parser, &keyword, predicate, statements);
+      return (yp_node_t *) yp_while_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_PERCENT_LOWER_I: {
       parser_lex(parser);
@@ -10274,7 +10304,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         };
 
         parser_lex(parser);
-        return yp_xstring_node_create(parser, &opening, &content, &parser->previous);
+        return (yp_node_t *) yp_xstring_node_create(parser, &opening, &content, &parser->previous);
       }
 
       yp_node_t *node;
@@ -10288,7 +10318,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         parser_lex(parser);
 
         if (accept(parser, YP_TOKEN_STRING_END)) {
-          return yp_node_xstring_node_create_and_unescape(parser, &opening, &content, &parser->previous);
+          return (yp_node_t *) yp_node_xstring_node_create_and_unescape(parser, &opening, &content, &parser->previous);
         }
 
         // If we get here, then we have interpolation so we'll need to create
@@ -10921,7 +10951,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       parser_lex(parser);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after `unless'.");
-      return yp_unless_node_modifier_create(parser, node, &keyword, predicate);
+      return (yp_node_t *) yp_unless_node_modifier_create(parser, node, &keyword, predicate);
     }
     case YP_TOKEN_KEYWORD_UNTIL_MODIFIER: {
       parser_lex(parser);
@@ -10929,7 +10959,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
-      return yp_until_node_create(parser, &token, predicate, statements);
+      return (yp_node_t *) yp_until_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE_MODIFIER: {
       parser_lex(parser);
@@ -10937,7 +10967,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
-      return yp_while_node_create(parser, &token, predicate, statements);
+      return (yp_node_t *) yp_while_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_QUESTION_MARK: {
       parser_lex(parser);

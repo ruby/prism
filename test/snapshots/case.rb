@@ -8,7 +8,7 @@ ProgramNode(0...230)(
          nil,
          "hi"
        ),
-       [WhenNode(14...17)(
+       [WhenNode(9...17)(
           KEYWORD_WHEN(9...13)("when"),
           [SymbolNode(14...17)(
              SYMBOL_BEGIN(14...15)(":"),
@@ -24,7 +24,7 @@ ProgramNode(0...230)(
      ),
      CaseNode(23...81)(
        TrueNode(28...32)(),
-       [WhenNode(39...43)(
+       [WhenNode(34...49)(
           KEYWORD_WHEN(34...38)("when"),
           [TrueNode(39...43)()],
           StatementsNode(45...49)(
@@ -47,7 +47,7 @@ ProgramNode(0...230)(
              )]
           )
         ),
-        WhenNode(60...65)(
+        WhenNode(55...71)(
           KEYWORD_WHEN(55...59)("when"),
           [FalseNode(60...65)()],
           StatementsNode(67...71)(
@@ -76,7 +76,7 @@ ProgramNode(0...230)(
      ),
      CaseNode(83...103)(
        nil,
-       [WhenNode(94...98)(
+       [WhenNode(89...98)(
           KEYWORD_WHEN(89...93)("when"),
           [SplatNode(94...98)(
              USTAR(94...95)("*"),
@@ -104,7 +104,7 @@ ProgramNode(0...230)(
          nil,
          "hi"
        ),
-       [WhenNode(119...122)(
+       [WhenNode(114...122)(
           KEYWORD_WHEN(114...118)("when"),
           [SymbolNode(119...122)(
              SYMBOL_BEGIN(119...120)(":"),
@@ -140,7 +140,7 @@ ProgramNode(0...230)(
          nil,
          "this"
        ),
-       [WhenNode(152...167)(
+       [WhenNode(147...167)(
           KEYWORD_WHEN(147...151)("when"),
           [ConstantReadNode(152...158)(), ConstantReadNode(160...167)()],
           nil
@@ -151,7 +151,7 @@ ProgramNode(0...230)(
      ),
      CaseNode(174...198)(
        nil,
-       [WhenNode(184...194)(
+       [WhenNode(179...194)(
           KEYWORD_WHEN(179...183)("when"),
           [CallNode(184...194)(
              CallNode(184...187)(
@@ -191,7 +191,7 @@ ProgramNode(0...230)(
      ),
      CaseNode(200...230)(
        nil,
-       [WhenNode(210...211)(
+       [WhenNode(205...211)(
           KEYWORD_WHEN(205...209)("when"),
           [CallNode(210...211)(
              nil,
