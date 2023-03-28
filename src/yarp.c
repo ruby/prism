@@ -189,7 +189,7 @@ not_provided(yp_parser_t *parser) {
 // of the call node creation functions.
 typedef struct {
   yp_token_t opening;
-  yp_node_t *arguments;
+  yp_arguments_node_t *arguments;
   yp_token_t closing;
   yp_node_t *block;
 } yp_arguments_t;
@@ -815,7 +815,7 @@ yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t 
 
   yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
   yp_arguments_node_arguments_append(arguments, argument);
-  node->as.call_node.arguments = YP_NODE_DOWNCAST(arguments);
+  node->as.call_node.arguments = arguments;
 
   yp_string_shared_init(&node->as.call_node.name, operator->start, operator->end);
   return node;
@@ -832,7 +832,7 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     node->location.end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
-    node->location.end = arguments->arguments->location.end;
+    node->location.end = arguments->arguments->base.location.end;
   } else {
     node->location.end = message->end;
   }
@@ -2693,7 +2693,7 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
-    end = arguments->arguments->location.end;
+    end = arguments->arguments->base.location.end;
   } else {
     assert(false && "unreachable");
   }
@@ -2707,7 +2707,7 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
     .as.super_node = {
       .keyword = *keyword,
       .lparen = arguments->opening,
-      .arguments = arguments->arguments,
+      .arguments = YP_NODE_DOWNCAST(arguments->arguments),
       .rparen = arguments->closing,
       .block = arguments->block
     }
@@ -6554,7 +6554,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         // arguments node, parse the argument, and add it to the list.
         if (value) {
           yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
-          target->as.call_node.arguments = YP_NODE_DOWNCAST(arguments);
+          target->as.call_node.arguments = arguments;
           yp_arguments_node_arguments_append(arguments, value);
         }
 
@@ -6584,7 +6584,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
 
         if (value != NULL) {
           if (target->as.call_node.arguments == NULL) {
-            target->as.call_node.arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
+            target->as.call_node.arguments = yp_arguments_node_create(parser);
           }
 
           yp_arguments_node_arguments_append(YP_NODE_UPCAST(target->as.call_node.arguments, yp_arguments_node_t), value);
@@ -6840,7 +6840,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
 
 // Parse a list of arguments.
 static void
-parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwarding, yp_token_type_t terminator) {
+parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accepts_forwarding, yp_token_type_t terminator) {
   yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
   // First we need to check if the next token is one that could be the start of
@@ -7488,7 +7488,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
       arguments->closing = parser->previous;
     } else {
-      arguments->arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
+      arguments->arguments = yp_arguments_node_create(parser);
 
       yp_accepts_block_stack_push(parser, true);
       parse_arguments(parser, arguments->arguments, true, YP_TOKEN_PARENTHESIS_RIGHT);
@@ -7503,7 +7503,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     // If we get here, then the subsequent token cannot be used as an infix
     // operator. In this case we assume the subsequent token is part of an
     // argument to this method call.
-    arguments->arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
+    arguments->arguments = yp_arguments_node_create(parser);
     parse_arguments(parser, arguments->arguments, true, YP_TOKEN_EOF);
 
     yp_accepts_block_stack_pop(parser);
@@ -9258,7 +9258,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_token_t keyword = parser->previous;
-      yp_node_t *arguments = NULL;
+      yp_arguments_node_t *arguments = NULL;
 
       if (
         token_begins_expression_p(parser->current.type) ||
@@ -9267,18 +9267,18 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
         if (binding_power == YP_BINDING_POWER_UNSET || binding_power >= YP_BINDING_POWER_RANGE) {
-          arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
+          arguments = yp_arguments_node_create(parser);
           parse_arguments(parser, arguments, false, YP_TOKEN_EOF);
         }
       }
 
       switch (keyword.type) {
         case YP_TOKEN_KEYWORD_BREAK:
-          return yp_break_node_create(parser, &keyword, arguments);
+          return yp_break_node_create(parser, &keyword, YP_NODE_DOWNCAST(arguments));
         case YP_TOKEN_KEYWORD_NEXT:
-          return yp_next_node_create(parser, &keyword, arguments);
+          return yp_next_node_create(parser, &keyword, YP_NODE_DOWNCAST(arguments));
         case YP_TOKEN_KEYWORD_RETURN:
-          return yp_return_node_create(parser, &keyword, arguments);
+          return yp_return_node_create(parser, &keyword, YP_NODE_DOWNCAST(arguments));
         default:
           assert(false && "unreachable");
       }
@@ -9303,7 +9303,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_arguments_t arguments = yp_arguments(parser);
       parse_arguments_list(parser, &arguments, false);
 
-      return yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
+      return yp_yield_node_create(parser, &keyword, &arguments.opening, YP_NODE_DOWNCAST(arguments.arguments), &arguments.closing);
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);
@@ -10971,7 +10971,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       if (!accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
         yp_accepts_block_stack_push(parser, true);
-        arguments.arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
+        arguments.arguments = yp_arguments_node_create(parser);
 
         parse_arguments(parser, arguments.arguments, false, YP_TOKEN_BRACKET_RIGHT);
         yp_accepts_block_stack_pop(parser);

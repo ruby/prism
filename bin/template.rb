@@ -6,18 +6,20 @@ require "yaml"
 
 # This represents a parameter to a node that is itself a node. We pass them as
 # references and store them as references.
-class NodeParam < Struct.new(:name)
+class NodeParam < Struct.new(:name, :kind)
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node"
   def java_type = "Node"
+  def c_type = kind.nil? ? "yp_node" : "yp_#{kind.gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
 end
 
 # This represents a parameter to a node that is itself a node and can be
 # optionally null. We pass them as references and store them as references.
-class OptionalNodeParam < Struct.new(:name, :fallback)
+class OptionalNodeParam < Struct.new(:name, :kind, :fallback)
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node?"
   def java_type = "Node"
+  def c_type = kind.nil? ? "yp_node" : "yp_#{kind.gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
 end
 
 SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
@@ -102,7 +104,7 @@ class NodeType
         when "node"
           NodeParam.new(name)
         when "node?"
-          OptionalNodeParam.new(name)
+          OptionalNodeParam.new(name, param["kind"])
         when "node[]"
           NodeListParam.new(name)
         when "string"

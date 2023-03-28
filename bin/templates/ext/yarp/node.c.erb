@@ -42,9 +42,9 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
       // <%= param.name %>
       <%- case param -%>
       <%- when NodeParam -%>
-      argv[<%= index %>] = yp_node_new(parser, node->as.<%= node.human %>.<%= param.name %>, encoding);
+      argv[<%= index %>] = yp_node_new(parser, (yp_node_t *)node->as.<%= node.human %>.<%= param.name %>, encoding);
       <%- when OptionalNodeParam -%>
-      argv[<%= index %>] = node->as.<%= node.human %>.<%= param.name %> == NULL ? Qnil : yp_node_new(parser, node->as.<%= node.human %>.<%= param.name %>, encoding);
+      argv[<%= index %>] = node->as.<%= node.human %>.<%= param.name %> == NULL ? Qnil : yp_node_new(parser, (yp_node_t *)node->as.<%= node.human %>.<%= param.name %>, encoding);
       <%- when NodeListParam -%>
       argv[<%= index %>] = rb_ary_new();
       for (size_t index = 0; index < node->as.<%= node.human %>.<%= param.name %>.size; index++) {
@@ -86,9 +86,9 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
       // <%= param.name %>
       <%- case param -%>
       <%- when NodeParam -%>
-      argv[<%= index %>] = yp_node_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+      argv[<%= index %>] = yp_node_new(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
       <%- when OptionalNodeParam -%>
-      argv[<%= index %>] = ((yp_<%= node.human %>_t *)node)-><%= param.name %> == NULL ? Qnil : yp_node_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+      argv[<%= index %>] = ((yp_<%= node.human %>_t *)node)-><%= param.name %> == NULL ? Qnil : yp_node_new(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
       <%- when NodeListParam -%>
       argv[<%= index %>] = rb_ary_new();
       for (size_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {

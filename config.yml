@@ -544,6 +544,7 @@ nodes:
         type: token?
       - name: arguments
         type: node?
+        kind: ArgumentsNode
       - name: closing
         type: token?
       - name: block
