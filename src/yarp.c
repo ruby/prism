@@ -1883,38 +1883,36 @@ yp_module_node_create(yp_parser_t *parser, yp_scope_node_t *scope, const yp_toke
 }
 
 // Allocate a new MultiWriteNode node.
-static yp_node_t *
+static yp_multi_write_node_t *
 yp_multi_write_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *value, const yp_location_t *lparen_loc, const yp_location_t *rparen_loc) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_multi_write_node_t *node = YP_NODE_ALLOC(yp_multi_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MULTI_WRITE_NODE,
-    .location = { .start = NULL, .end = NULL },
-    .as.multi_write_node = {
-      .operator = *operator,
-      .value = value,
-      .lparen_loc = *lparen_loc,
-      .rparen_loc = *rparen_loc
-    }
+  *node = (yp_multi_write_node_t) {
+    {
+      .type = YP_NODE_MULTI_WRITE_NODE,
+      .location = { .start = NULL, .end = NULL },
+    },
+    .operator = *operator,
+    .value = value,
+    .lparen_loc = *lparen_loc,
+    .rparen_loc = *rparen_loc
   };
 
-  yp_node_list_init(&node->as.multi_write_node.targets);
+  yp_node_list_init(&node->targets);
   return node;
 }
 
 // Append a target to a MultiWriteNode node.
 static void
-yp_multi_write_node_targets_append(yp_node_t *node, yp_node_t *target) {
-  assert(node->type == YP_NODE_MULTI_WRITE_NODE);
+yp_multi_write_node_targets_append(yp_multi_write_node_t *node, yp_node_t *target) {
+  yp_node_list_append2(&node->targets, target);
 
-  yp_node_list_append2(&node->as.multi_write_node.targets, target);
-
-  if (node->location.start == NULL || (node->location.start > target->location.start)) {
-    node->location.start = target->location.start;
+  if (node->base.location.start == NULL || (node->base.location.start > target->location.start)) {
+    node->base.location.start = target->location.start;
   }
 
-  if (node->location.end == NULL || (node->location.end < target->location.end)) {
-    node->location.end = target->location.end;
+  if (node->base.location.end == NULL || (node->base.location.end < target->location.end)) {
+    node->base.location.end = target->location.end;
   }
 }
 
@@ -6579,15 +6577,17 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
       yp_instance_variable_write_node_create(parser, target, operator, value);
       return target;
-    case YP_NODE_MULTI_WRITE_NODE:
-      target->as.multi_write_node.operator = *operator;
+    case YP_NODE_MULTI_WRITE_NODE: {
+      yp_multi_write_node_t *multi_write = (yp_multi_write_node_t *) target;
+      multi_write->operator = *operator;
 
       if (value != NULL) {
-        target->as.multi_write_node.value = value;
-        target->location.end = value->location.end;
+        multi_write->value = value;
+        multi_write->base.location.end = value->location.end;
       }
 
-      return target;
+      return (yp_node_t *) multi_write;
+    }
     case YP_NODE_SPLAT_NODE: {
       yp_splat_node_t *splat = (yp_splat_node_t *) target;
 
@@ -6596,10 +6596,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       }
 
       yp_location_t location = { .start = NULL, .end = NULL };
-      yp_node_t *multi_write = yp_multi_write_node_create(parser, operator, value, &location, &location);
+      yp_multi_write_node_t *multi_write = yp_multi_write_node_create(parser, operator, value, &location, &location);
       yp_multi_write_node_targets_append(multi_write, (yp_node_t *) splat);
 
-      return multi_write;
+      return (yp_node_t *) multi_write;
     }
     case YP_NODE_CALL_NODE: {
       // If we have no arguments to the call node and we need this to be a
@@ -6738,13 +6738,12 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
   }
 
   yp_location_t lparen_loc = { .start = NULL, .end = NULL };
-  yp_node_t *result = yp_multi_write_node_create(parser, &operator, NULL, &lparen_loc, &lparen_loc);
+  yp_multi_write_node_t *result = yp_multi_write_node_create(parser, &operator, NULL, &lparen_loc, &lparen_loc);
 
   if (first_target != NULL) {
     yp_multi_write_node_targets_append(result, first_target);
   }
 
-  yp_node_t *target;
   bool has_splat = false;
 
   if (first_target == NULL || accept(parser, YP_TOKEN_COMMA)) {
@@ -6782,18 +6781,20 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected an ')' after multi-assignment.");
         yp_token_t rparen = parser->previous;
 
-        if (child_target->type == YP_NODE_MULTI_WRITE_NODE && first_target == NULL && result->as.multi_write_node.targets.size == 0) {
-          yp_node_destroy(parser, result);
-          result = child_target;
-          result->location.start = lparen.start;
-          result->location.end = rparen.end;
-          result->as.multi_write_node.lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
-          result->as.multi_write_node.rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
+        if (child_target->type == YP_NODE_MULTI_WRITE_NODE && first_target == NULL && result->targets.size == 0) {
+          yp_node_destroy(parser, (yp_node_t *) result);
+          result = (yp_multi_write_node_t *) child_target;
+          result->base.location.start = lparen.start;
+          result->base.location.end = rparen.end;
+          result->lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
+          result->rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
         } else {
+          yp_multi_write_node_t *target;
+
           if (child_target->type == YP_NODE_MULTI_WRITE_NODE) {
-            target = child_target;
-            target->as.multi_write_node.lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
-            target->as.multi_write_node.rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
+            target = (yp_multi_write_node_t *) child_target;
+            target->lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
+            target->rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
           } else {
             yp_token_t operator = not_provided(parser);
 
@@ -6808,15 +6809,15 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
             yp_multi_write_node_targets_append(target, child_target);
           }
 
-          target->location.end = rparen.end;
-          yp_multi_write_node_targets_append(result, target);
+          target->base.location.end = rparen.end;
+          yp_multi_write_node_targets_append(result, (yp_node_t *) target);
         }
       } else {
         if (!token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_USTAR)) {
-          if (first_target == NULL && result->as.multi_write_node.targets.size == 0) {
+          if (first_target == NULL && result->targets.size == 0) {
             // If we get here, then we weren't able to parse anything at all, so
             // we need to return a missing node.
-            yp_node_destroy(parser, result);
+            yp_node_destroy(parser, (yp_node_t *) result);
             yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected index after for.");
             return yp_missing_node_create(parser, &(yp_location_t) { .start = operator.start, .end = operator.end });
           }
@@ -6826,10 +6827,10 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
           // anonymous splat.
           yp_node_t *splat = (yp_node_t *) yp_splat_node_create(parser, &parser->previous, NULL);
           yp_multi_write_node_targets_append(result, splat);
-          return result;
+          return (yp_node_t *) result;
         }
 
-        target = parse_expression(parser, binding_power, "Expected another expression after ','.");
+        yp_node_t *target = parse_expression(parser, binding_power, "Expected another expression after ','.");
         target = parse_target(parser, target, &operator, NULL);
 
         yp_multi_write_node_targets_append(result, target);
@@ -6837,7 +6838,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
     } while (accept(parser, YP_TOKEN_COMMA));
   }
 
-  return result;
+  return (yp_node_t *) result;
 }
 
 // Parse a list of statements separated by newlines or semicolons.
@@ -8780,26 +8781,26 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         // If we have a single statement and are ending on a right parenthesis,
         // then we need to check if this is possibly a multiple assignment node.
-        if (
-          binding_power == YP_BINDING_POWER_STATEMENT &&
-          statement->type == YP_NODE_MULTI_WRITE_NODE &&
-          statement->as.multi_write_node.value == NULL
-        ) {
-          yp_location_t lparen_loc = { .start = opening.start, .end = opening.end };
-          yp_location_t rparen_loc = { .start = parser->previous.start, .end = parser->previous.end };
-          yp_node_t *multi_write;
+        if (binding_power == YP_BINDING_POWER_STATEMENT && statement->type == YP_NODE_MULTI_WRITE_NODE) {
+          yp_multi_write_node_t *multi_statement = (yp_multi_write_node_t *) statement;
 
-          if (statement->as.multi_write_node.lparen_loc.start == NULL) {
-            multi_write = statement;
-            multi_write->as.multi_write_node.lparen_loc = lparen_loc;
-            multi_write->as.multi_write_node.rparen_loc = rparen_loc;
-          } else {
-            yp_token_t operator = not_provided(parser);
-            multi_write = yp_multi_write_node_create(parser, &operator, NULL, &lparen_loc, &rparen_loc);
-            yp_multi_write_node_targets_append(multi_write, statement);
+          if (multi_statement->value == NULL) {
+            yp_location_t lparen_loc = { .start = opening.start, .end = opening.end };
+            yp_location_t rparen_loc = { .start = parser->previous.start, .end = parser->previous.end };
+            yp_multi_write_node_t *multi_write;
+
+            if (multi_statement->lparen_loc.start == NULL) {
+              multi_write = (yp_multi_write_node_t *) statement;
+              multi_write->lparen_loc = lparen_loc;
+              multi_write->rparen_loc = rparen_loc;
+            } else {
+              yp_token_t operator = not_provided(parser);
+              multi_write = yp_multi_write_node_create(parser, &operator, NULL, &lparen_loc, &rparen_loc);
+              yp_multi_write_node_targets_append(multi_write, statement);
+            }
+
+            return parse_targets(parser, (yp_node_t *) multi_write, YP_BINDING_POWER_INDEX);
           }
-
-          return parse_targets(parser, multi_write, YP_BINDING_POWER_INDEX);
         }
 
         // If we have a single statement and are ending on a right parenthesis

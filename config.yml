@@ -1175,6 +1175,7 @@ nodes:
           module Foo end
           ^^^^^^^^^^^^^^
   - name: MultiWriteNode
+    is_migrated: true
     child_nodes:
       - name: targets
         type: node[]
