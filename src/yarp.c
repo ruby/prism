@@ -2128,9 +2128,9 @@ yp_parameters_node_optionals_append(yp_node_t *params, yp_node_t *param) {
 
 // Set the rest parameter on a ParametersNode node.
 static void
-yp_parameters_node_rest_set(yp_node_t *params, yp_node_t *param) {
+yp_parameters_node_rest_set(yp_node_t *params, yp_rest_parameter_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
-  yp_parameters_node_location_set(params, param);
+  yp_parameters_node_location_set(params, (yp_node_t *) param);
   params->as.parameters_node.rest = param;
 }
 
@@ -2443,20 +2443,20 @@ yp_rescue_node_statements_set(yp_node_t *node, yp_statements_node_t *statements)
 }
 
 // Allocate a new RestParameterNode node.
-static yp_node_t *
+static yp_rest_parameter_node_t *
 yp_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_rest_parameter_node_t *node = YP_NODE_ALLOC(yp_rest_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REST_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+  *node = (yp_rest_parameter_node_t) {
+    {
+      .type = YP_NODE_REST_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+      }
     },
-    .as.rest_parameter_node = {
-      .operator = *operator,
-      .name = *name
-    }
+    .operator = *operator,
+    .name = *name
   };
 
   return node;
@@ -7307,7 +7307,7 @@ parse_parameters(
           yp_parser_local_add(parser, &operator);
         }
 
-        yp_node_t *param = yp_rest_parameter_node_create(parser, &operator, &name);
+        yp_rest_parameter_node_t *param = yp_rest_parameter_node_create(parser, &operator, &name);
         yp_parameters_node_rest_set(params, param);
         break;
       }
@@ -7360,7 +7360,7 @@ parse_parameters(
             // parameter list. We need to create an anonymous rest parameter to
             // represent it.
             yp_token_t name = not_provided(parser);
-            yp_node_t *param = yp_rest_parameter_node_create(parser, &parser->previous, &name);
+            yp_rest_parameter_node_t *param = yp_rest_parameter_node_create(parser, &parser->previous, &name);
             yp_parameters_node_rest_set(params, param);
           } else {
             yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected ','.");

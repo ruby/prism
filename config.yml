@@ -1286,6 +1286,7 @@ nodes:
         type: node[]
       - name: rest
         type: node?
+        kind: RestParameterNode
       - name: keywords
         type: node[]
       - name: keyword_rest
@@ -1489,6 +1490,7 @@ nodes:
         type: token
       - name: name
         type: token?
+    is_migrated: true
     comment: |
       Represents a rest parameter to a method, block, or lambda definition.
 
