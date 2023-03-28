@@ -493,6 +493,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: parameters
         type: node?
         kind: BlockParametersNode
@@ -611,6 +612,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: class_keyword
         type: token
       - name: constant_path
@@ -696,6 +698,7 @@ nodes:
         type: node?
       - name: scope
         type: node
+        kind: ScopeNode
       - name: def_keyword_loc
         type: location
       - name: operator_loc
@@ -1073,6 +1076,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: opening
         type: token
       - name: lparen
@@ -1147,6 +1151,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: module_keyword
         type: token
       - name: constant_path
@@ -1370,6 +1375,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: statements
         type: node
         kind: StatementsNode
@@ -1511,6 +1517,7 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
+    is_migrated: true
     comment: |
       Represents the local variables within a given lexical scope. These are
       attached to nodes where a new scope is created.
@@ -1525,6 +1532,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: class_keyword
         type: token
       - name: operator
