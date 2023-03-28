@@ -6464,9 +6464,11 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
   switch (target->type) {
     case YP_NODE_MISSING_NODE:
       return target;
-    case YP_NODE_CLASS_VARIABLE_READ_NODE:
-      yp_class_variable_read_node_to_class_variable_write_node(parser, target, operator, value);
-      return target;
+    case YP_NODE_CLASS_VARIABLE_READ_NODE: {
+      yp_node_t *write_node = yp_class_variable_read_node_to_class_variable_write_node(parser, target, operator, value);
+      yp_node_destroy(parser, target);
+      return write_node;
+    }
     case YP_NODE_CONSTANT_PATH_NODE:
     case YP_NODE_CONSTANT_READ_NODE:
       return yp_constant_path_write_node_create(parser, target, operator, value);
@@ -6489,30 +6491,15 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         write_node->value = value;
         write_node->base.location.end = value->location.end;
       }
-      // TODO: hb destory read node
+      yp_node_destroy(parser, target);
+
       return YP_NODE_DOWNCAST(write_node);
-
-      // yp_token_t name = target->as.local_variable_read_node.name;
-      // yp_parser_local_add(parser, &name);
-
-      // yp_node_clear(target);
-
-      // target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
-      // target->location.start = name.start;
-
-      // target->as.local_variable_write_node.name = name;
-      // target->as.local_variable_write_node.operator = *operator;
-
-      // if (value != NULL) {
-      //   target->as.local_variable_write_node.value = value;
-      //   target->location.end = value->location.end;
-      // }
-
-      // return target;
     }
-    case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
-      yp_instance_variable_write_node_create(parser, target, operator, value);
-      return target;
+    case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
+      yp_node_t *write_node = yp_instance_variable_write_node_create(parser, target, operator, value);
+      yp_node_destroy(parser, target);
+      return write_node;
+    }
     case YP_NODE_MULTI_WRITE_NODE: {
       yp_multi_write_node_t *write_node = YP_NODE_UPCAST(target, yp_multi_write_node_t);
       write_node->operator = *operator;
@@ -6555,30 +6542,16 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // When it was parsed in the prefix position, foo was seen as a
           // method call with no receiver and no arguments. Now we have an
           // =, so we know it's a local variable write.
+          yp_node_destroy(parser, target);
           yp_token_t name = call_node->message;
           yp_parser_local_add(parser, &name);
-
-          // Not entirely sure why we need to clear this out, but it seems that
-          // something about the memory layout in the union is causing the type
-          // to have a problem if we don't.
-          // yp_node_clear(target);
-
-          // TODO: hb destroy the call node
 
           yp_node_t *write_node = yp_local_variable_write_node_create(parser, &name);
           YP_NODE_UPCAST(write_node, yp_local_variable_write_node_t)->operator = *operator;
 
-          // target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
-          // target->location.start = name.start;
-
-          // target->as.local_variable_write_node.name = name;
-          // target->as.local_variable_write_node.operator = *operator;
-
           if (value != NULL) {
             YP_NODE_UPCAST(write_node, yp_local_variable_write_node_t)->value = value;
             write_node->location.end = value->location.end;
-            // target->as.local_variable_write_node.value = value;
-            // target->location.end = value->location.end;
           }
 
           if (token_is_numbered_parameter(&name)) {
