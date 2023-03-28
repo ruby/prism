@@ -615,10 +615,8 @@ yp_begin_node_else_clause_set(yp_begin_node_t *node, yp_else_node_t *else_clause
 
 // Set the ensure clause and end location of a begin node.
 static void
-yp_begin_node_ensure_clause_set(yp_begin_node_t *node, yp_node_t *ensure_clause) {
-  assert(ensure_clause->type == YP_NODE_ENSURE_NODE);
-
-  node->base.location.end = ensure_clause->location.end;
+yp_begin_node_ensure_clause_set(yp_begin_node_t *node, yp_ensure_node_t *ensure_clause) {
+  node->base.location.end = ensure_clause->base.location.end;
   node->ensure_clause = ensure_clause;
 }
 
@@ -1190,21 +1188,21 @@ yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_node
 }
 
 // Allocate a new EnsureNode node.
-static yp_node_t *
+static yp_ensure_node_t *
 yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_ensure_node_t *node = YP_NODE_ALLOC(yp_ensure_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ENSURE_NODE,
-    .location = {
-      .start = ensure_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_ensure_node_t) {
+    {
+      .type = YP_NODE_ENSURE_NODE,
+      .location = {
+        .start = ensure_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.ensure_node = {
-      .ensure_keyword = *ensure_keyword,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .ensure_keyword = *ensure_keyword,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
   return node;
@@ -7454,7 +7452,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
     }
 
-    yp_node_t *ensure_clause = yp_ensure_node_create(parser, &ensure_keyword, ensure_statements, &parser->current);
+    yp_ensure_node_t *ensure_clause = yp_ensure_node_create(parser, &ensure_keyword, ensure_statements, &parser->current);
     yp_begin_node_ensure_clause_set(parent_node, ensure_clause);
   }
 
