@@ -1650,6 +1650,7 @@ nodes:
         type: node[]
       - name: keyword_loc
         type: location
+    is_migrated: true
     comment: |
       Represents the use of the `undef` keyword.
 

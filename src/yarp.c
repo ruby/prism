@@ -2775,26 +2775,28 @@ yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate and initialize a new UndefNode node.
-static yp_node_t *
+static yp_undef_node_t *
 yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_UNDEF);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_undef_node_t *node = YP_NODE_ALLOC(yp_undef_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNDEF_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(token),
-    .as.undef_node.keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
+  *node = (yp_undef_node_t) {
+    {
+      .type = YP_NODE_UNDEF_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(token),
+    },
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
   };
 
-  yp_node_list_init(&node->as.undef_node.names);
+  yp_node_list_init(&node->names);
   return node;
 }
 
 // Append a name to an undef node.
 static void
-yp_undef_node_append(yp_node_t *node, yp_node_t *name) {
-  node->location.end = name->location.end;
-  yp_node_list_append2(&node->as.undef_node.names, name);
+yp_undef_node_append(yp_undef_node_t *node, yp_node_t *name) {
+  node->base.location.end = name->location.end;
+  yp_node_list_append2(&node->names, name);
 }
 
 // Allocate a new UnlessNode node.
@@ -9767,23 +9769,23 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {
       parser_lex(parser);
-      yp_node_t *undef = yp_undef_node_create(parser, &parser->previous);
-
+      yp_undef_node_t *undef = yp_undef_node_create(parser, &parser->previous);
       yp_node_t *name = parse_undef_argument(parser);
-      if (name->type == YP_NODE_MISSING_NODE) return undef;
 
-      yp_undef_node_append(undef, name);
-
-      while (match_type_p(parser, YP_TOKEN_COMMA)) {
-        lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
-        parser_lex(parser);
-        name = parse_undef_argument(parser);
-        if (name->type == YP_NODE_MISSING_NODE) return undef;
-
+      if (name->type != YP_NODE_MISSING_NODE) {
         yp_undef_node_append(undef, name);
+
+        while (match_type_p(parser, YP_TOKEN_COMMA)) {
+          lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
+          parser_lex(parser);
+          name = parse_undef_argument(parser);
+          if (name->type == YP_NODE_MISSING_NODE) break;
+
+          yp_undef_node_append(undef, name);
+        }
       }
 
-      return undef;
+      return (yp_node_t *) undef;
     }
     case YP_TOKEN_KEYWORD_NOT: {
       parser_lex(parser);
