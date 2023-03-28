@@ -655,6 +655,7 @@ nodes:
 
           Foo::Bar
           ^^^^^^^^
+    is_migrated: true
   - name: ConstantPathWriteNode
     child_nodes:
       - name: target
