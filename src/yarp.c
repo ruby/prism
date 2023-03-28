@@ -352,46 +352,44 @@ yp_arguments_node_arguments_append(yp_arguments_node_t *node, yp_node_t *argumen
 }
 
 // Allocate and initialize a new ArrayNode node.
-static yp_node_t *
+static yp_array_node_t *
 yp_array_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_node_t *node = YP_NODE_ALLOC(yp_array_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_array_node_t) {
+    {
+      .type = YP_NODE_ARRAY_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.array_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.array_node.elements);
+  yp_node_list_init(&node->elements);
   return node;
 }
 
 // Return the size of the given array node.
-static size_t
-yp_array_node_size(yp_node_t *node) {
-  assert(node->type == YP_NODE_ARRAY_NODE);
-  return node->as.array_node.elements.size;
+static inline size_t
+yp_array_node_size(yp_array_node_t *node) {
+  return node->elements.size;
 }
 
 // Append an argument to an array node.
-static void
-yp_array_node_elements_append(yp_node_t *node, yp_node_t *element) {
-  assert(node->type == YP_NODE_ARRAY_NODE);
-  yp_node_list_append2(&node->as.array_node.elements, element);
+static inline void
+yp_array_node_elements_append(yp_array_node_t *node, yp_node_t *element) {
+  yp_node_list_append2(&node->elements, element);
 }
 
 // Set the closing token and end location of an array node.
 static void
-yp_array_node_close_set(yp_node_t *node, const yp_token_t *closing) {
+yp_array_node_close_set(yp_array_node_t *node, const yp_token_t *closing) {
   assert(closing->type == YP_TOKEN_BRACKET_RIGHT || closing->type == YP_TOKEN_STRING_END || closing->type == YP_TOKEN_MISSING);
-  node->location.end = closing->end;
-  node->as.array_node.closing = *closing;
+  node->base.location.end = closing->end;
+  node->closing = *closing;
 }
 
 // Allocate and initialize a new array pattern node. The node list given in the
@@ -8554,7 +8552,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_token_t opening = parser->previous;
-      yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
+      yp_array_node_t *array = yp_array_node_create(parser, &opening, &opening);
       yp_accepts_block_stack_push(parser, true);
       bool parsed_bare_hash = false;
 
@@ -8633,7 +8631,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_array_node_close_set(array, &parser->previous);
       yp_accepts_block_stack_pop(parser);
 
-      return array;
+      return YP_NODE_DOWNCAST(array);
     }
     case YP_TOKEN_PARENTHESIS_LEFT:
     case YP_TOKEN_PARENTHESIS_LEFT_PARENTHESES: {
@@ -9838,7 +9836,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_PERCENT_LOWER_I: {
       parser_lex(parser);
       yp_token_t opening = parser->previous;
-      yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
+      yp_array_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         if (yp_array_node_size(array) == 0) {
@@ -9860,12 +9858,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return array;
+      return YP_NODE_DOWNCAST(array);
     }
     case YP_TOKEN_PERCENT_UPPER_I: {
       parser_lex(parser);
       yp_token_t opening = parser->previous;
-      yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
+      yp_array_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
       // This is the current node that we are parsing that will be added to the
       // list of elements.
@@ -9983,12 +9981,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%I` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return array;
+      return YP_NODE_DOWNCAST(array);
     }
     case YP_TOKEN_PERCENT_LOWER_W: {
       parser_lex(parser);
       yp_token_t opening = parser->previous;
-      yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
+      yp_array_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
       // skip all leading whitespaces
       accept(parser, YP_TOKEN_WORDS_SEP);
@@ -10011,12 +10009,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return array;
+      return YP_NODE_DOWNCAST(array);
     }
     case YP_TOKEN_PERCENT_UPPER_W: {
       parser_lex(parser);
       yp_token_t opening = parser->previous;
-      yp_node_t *array = yp_array_node_create(parser, &opening, &opening);
+      yp_array_node_t *array = yp_array_node_create(parser, &opening, &opening);
 
       // This is the current node that we are parsing that will be added to the
       // list of elements.
@@ -10127,7 +10125,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return array;
+      return YP_NODE_DOWNCAST(array);
     }
     case YP_TOKEN_RATIONAL_NUMBER:
       parser_lex(parser);
@@ -10522,10 +10520,10 @@ parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_
   if (previous_binding_power == YP_BINDING_POWER_STATEMENT && accept(parser, YP_TOKEN_COMMA)) {
     yp_token_t opening = not_provided(parser);
     yp_token_t closing = not_provided(parser);
-    yp_node_t *array = yp_array_node_create(parser, &opening, &closing);
+    yp_array_node_t *array = yp_array_node_create(parser, &opening, &closing);
 
     yp_array_node_elements_append(array, value);
-    value = array;
+    value = YP_NODE_DOWNCAST(array);
 
     do {
       yp_node_t *element = parse_starred_expression(parser, binding_power, "Expected an element for the array.");
