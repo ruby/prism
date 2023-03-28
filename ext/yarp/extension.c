@@ -93,8 +93,7 @@ dump(VALUE self, VALUE string, VALUE filepath) {
   source_string_load(&source, string);
   char *str = NULL;
 
-  // We use RTEST to check if filepath is nil
-  if (RTEST(filepath)) {
+  if (filepath != Qnil) {
     str = StringValueCStr(filepath);
   }
 
