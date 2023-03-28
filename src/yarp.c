@@ -180,6 +180,7 @@ not_provided(yp_parser_t *parser) {
 #define YP_LOCATION_NULL_VALUE(parser) ((yp_location_t) { .start = parser->start, .end = parser->start })
 #define YP_LOCATION_TOKEN_VALUE(token) ((yp_location_t) { .start = (token)->start, .end = (token)->end })
 #define YP_LOCATION_NODE_VALUE(node) ((yp_location_t) { .start = (node)->location.start, .end = (node)->location.end })
+#define YP_LOCATION_NODE_BASE_VALUE(node) ((yp_location_t) { .start = (node)->base.location.start, .end = (node)->base.location.end })
 #define YP_OPTIONAL_LOCATION_TOKEN_VALUE(token) ((token)->type == YP_TOKEN_NOT_PROVIDED ? (yp_location_t) { .start = NULL, .end = NULL } : YP_LOCATION_TOKEN_VALUE(token))
 #define YP_TOKEN_NOT_PROVIDED_VALUE(parser) ((yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = (parser)->start, .end = (parser)->start })
 
@@ -690,13 +691,13 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, cons
 
 // Allocate and initialize a new BlockParametersNode node.
 static yp_block_parameters_node_t *
-yp_block_parameters_node_create(yp_parser_t *parser, yp_node_t *parameters) {
+yp_block_parameters_node_create(yp_parser_t *parser, yp_parameters_node_t *parameters) {
   yp_block_parameters_node_t *node = YP_NODE_ALLOC(yp_block_parameters_node_t);
 
   *node = (yp_block_parameters_node_t) {
     {
       .type = YP_NODE_BLOCK_PARAMETERS_NODE,
-      .location = parameters == NULL ? YP_LOCATION_NULL_VALUE(parser) : YP_LOCATION_NODE_VALUE(parameters),
+      .location = parameters == NULL ? YP_LOCATION_NULL_VALUE(parser) : YP_LOCATION_NODE_BASE_VALUE(parameters),
     },
     .parameters = parameters
   };
@@ -1096,7 +1097,7 @@ yp_def_node_create(
   yp_parser_t *parser,
   const yp_token_t *name,
   yp_node_t *receiver,
-  yp_node_t *parameters,
+  yp_parameters_node_t *parameters,
   yp_node_t *statements,
   yp_scope_node_t *scope,
   const yp_token_t *def_keyword,
@@ -2075,91 +2076,83 @@ yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operat
 }
 
 // Allocate and initialize a new ParametersNode node.
-static yp_node_t *
+static yp_parameters_node_t *
 yp_parameters_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_parameters_node_t *node = YP_NODE_ALLOC(yp_parameters_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PARAMETERS_NODE,
-    .location = { .start = NULL, .end = NULL },
-    .as.parameters_node = {
-      .rest = NULL,
-      .keyword_rest = NULL,
-      .block = NULL
-    }
+  *node = (yp_parameters_node_t) {
+    {
+      .type = YP_NODE_PARAMETERS_NODE,
+      .location = { .start = NULL, .end = NULL },
+    },
+    .rest = NULL,
+    .keyword_rest = NULL,
+    .block = NULL
   };
 
-  yp_node_list_init(&node->as.parameters_node.requireds);
-  yp_node_list_init(&node->as.parameters_node.optionals);
-  yp_node_list_init(&node->as.parameters_node.keywords);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->optionals);
+  yp_node_list_init(&node->keywords);
 
   return node;
 }
 
 // Set the location properly for the parameters node.
 static void
-yp_parameters_node_location_set(yp_node_t *params, yp_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
-
-  if (params->location.start == NULL) {
-    params->location.start = param->location.start;
+yp_parameters_node_location_set(yp_parameters_node_t *params, yp_node_t *param) {
+  if (params->base.location.start == NULL) {
+    params->base.location.start = param->location.start;
   } else {
-    params->location.start = params->location.start < param->location.start ? params->location.start : param->location.start;
+    params->base.location.start = params->base.location.start < param->location.start ? params->base.location.start : param->location.start;
   }
 
-  if (params->location.end == NULL) {
-    params->location.end = param->location.end;
+  if (params->base.location.end == NULL) {
+    params->base.location.end = param->location.end;
   } else {
-    params->location.end = params->location.end > param->location.end ? params->location.end : param->location.end;
+    params->base.location.end = params->base.location.end > param->location.end ? params->base.location.end : param->location.end;
   }
 }
 
 // Append a required parameter to a ParametersNode node.
 static void
-yp_parameters_node_requireds_append(yp_node_t *params, yp_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
+yp_parameters_node_requireds_append(yp_parameters_node_t *params, yp_node_t *param) {
   yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->as.parameters_node.requireds, param);
+  yp_node_list_append2(&params->requireds, param);
 }
 
 // Append an optional parameter to a ParametersNode node.
 static void
-yp_parameters_node_optionals_append(yp_node_t *params, yp_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
+yp_parameters_node_optionals_append(yp_parameters_node_t *params, yp_node_t *param) {
   yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->as.parameters_node.optionals, param);
+  yp_node_list_append2(&params->optionals, param);
 }
 
 // Set the rest parameter on a ParametersNode node.
 static void
-yp_parameters_node_rest_set(yp_node_t *params, yp_rest_parameter_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
+yp_parameters_node_rest_set(yp_parameters_node_t *params, yp_rest_parameter_node_t *param) {
   yp_parameters_node_location_set(params, (yp_node_t *) param);
-  params->as.parameters_node.rest = param;
+  params->rest = param;
 }
 
 // Append a keyword parameter to a ParametersNode node.
 static void
-yp_parameters_node_keywords_append(yp_node_t *params, yp_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
+yp_parameters_node_keywords_append(yp_parameters_node_t *params, yp_node_t *param) {
   yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->as.parameters_node.keywords, param);
+  yp_node_list_append2(&params->keywords, param);
 }
 
 // Set the keyword rest parameter on a ParametersNode node.
 static void
-yp_parameters_node_keyword_rest_set(yp_node_t *params, yp_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
+yp_parameters_node_keyword_rest_set(yp_parameters_node_t *params, yp_node_t *param) {
   yp_parameters_node_location_set(params, param);
-  params->as.parameters_node.keyword_rest = param;
+  params->keyword_rest = param;
 }
 
 // Set the block parameter on a ParametersNode node.
 static void
-yp_parameters_node_block_set(yp_node_t *params, yp_node_t *param) {
-  assert(params->type == YP_NODE_PARAMETERS_NODE);
-  yp_parameters_node_location_set(params, param);
-  params->as.parameters_node.block = param;
+yp_parameters_node_block_set(yp_parameters_node_t *params, yp_block_parameter_node_t *param) {
+  yp_parameters_node_location_set(params, (yp_node_t *) param);
+  params->block = param;
 }
 
 // Allocate a new ProgramNode node.
@@ -3029,6 +3022,7 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
 #undef YP_LOCATION_NULL_VALUE
 #undef YP_LOCATION_TOKEN_VALUE
 #undef YP_LOCATION_NODE_VALUE
+#undef YP_LOCATION_NODE_BASE_VALUE
 #undef YP_TOKEN_NOT_PROVIDED_VALUE
 
 /******************************************************************************/
@@ -7179,14 +7173,14 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 }
 
 // Parse a list of parameters on a method definition.
-static yp_node_t *
+static yp_parameters_node_t *
 parse_parameters(
   yp_parser_t *parser,
   yp_binding_power_t binding_power,
   bool uses_parentheses,
   bool allows_trailing_comma
 ) {
-  yp_node_t *params = yp_parameters_node_create(parser);
+  yp_parameters_node_t *params = yp_parameters_node_create(parser);
   bool looping = true;
 
   yp_state_stack_push(&parser->do_loop_stack, false);
@@ -7213,7 +7207,7 @@ parse_parameters(
         }
 
         yp_block_parameter_node_t *param = yp_block_parameter_node_create(parser, &name, &operator);
-        yp_parameters_node_block_set(params, (yp_node_t *)param);
+        yp_parameters_node_block_set(params, param);
         break;
       }
       case YP_TOKEN_UDOT_DOT_DOT: {
@@ -7514,7 +7508,7 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_statements_node_t *statements) {
 // Parse a list of parameters and local on a block definition.
 static yp_block_parameters_node_t *
 parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma) {
-  yp_node_t *parameters = NULL;
+  yp_parameters_node_t *parameters = NULL;
   if (!match_type_p(parser, YP_TOKEN_SEMICOLON)) {
     parameters = parse_parameters(parser, YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
   }
@@ -9625,7 +9619,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_token_t lparen;
       yp_token_t rparen;
-      yp_node_t *params;
+      yp_parameters_node_t *params;
 
       switch (parser->current.type) {
         case YP_TOKEN_PARENTHESIS_LEFT: {

@@ -527,6 +527,7 @@ nodes:
     child_nodes:
       - name: parameters
         type: node?
+        kind: ParametersNode
       - name: locals
         type: token[]
     comment: |
@@ -695,6 +696,7 @@ nodes:
         type: node?
       - name: parameters
         type: node?
+        kind: ParametersNode
       - name: statements
         type: node?
       - name: scope
@@ -1286,6 +1288,7 @@ nodes:
           left or right
           ^^^^^^^^^^^^^
   - name: ParametersNode
+    is_migrated: true
     child_nodes:
       - name: requireds
         type: node[]
@@ -1300,6 +1303,7 @@ nodes:
         type: node?
       - name: block
         type: node?
+        kind: BlockParameterNode
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
