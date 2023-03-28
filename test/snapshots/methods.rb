@@ -4,10 +4,10 @@ ProgramNode(0...943)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
-       ParametersNode(9...18)(
-         [RequiredDestructuredParameterNode(9...18)(
-            [RequiredParameterNode(9...12)(IDENTIFIER(9...12)("bar")),
-             RequiredParameterNode(14...17)(IDENTIFIER(14...17)("baz"))],
+       ParametersNode(8...18)(
+         [RequiredDestructuredParameterNode(8...18)(
+            [RequiredParameterNode(9...12)(),
+             RequiredParameterNode(14...17)()],
             PARENTHESIS_LEFT(8...9)("("),
             PARENTHESIS_RIGHT(17...18)(")")
           )],
@@ -313,9 +313,9 @@ ProgramNode(0...943)(
        IDENTIFIER(260...261)("a"),
        nil,
        ParametersNode(262...269)(
-         [RequiredParameterNode(262...263)(IDENTIFIER(262...263)("b")),
-          RequiredParameterNode(265...266)(IDENTIFIER(265...266)("c")),
-          RequiredParameterNode(268...269)(IDENTIFIER(268...269)("d"))],
+         [RequiredParameterNode(262...263)(),
+          RequiredParameterNode(265...266)(),
+          RequiredParameterNode(268...269)()],
          [],
          nil,
          [],
@@ -474,7 +474,7 @@ ProgramNode(0...943)(
        IDENTIFIER(403...404)("a"),
        nil,
        ParametersNode(405...413)(
-         [RequiredParameterNode(405...406)(IDENTIFIER(405...406)("b"))],
+         [RequiredParameterNode(405...406)()],
          [OptionalParameterNode(408...413)(
             IDENTIFIER(408...409)("c"),
             EQUAL(410...411)("="),
@@ -500,7 +500,7 @@ ProgramNode(0...943)(
        IDENTIFIER(423...424)("a"),
        nil,
        ParametersNode(425...426)(
-         [RequiredParameterNode(425...426)(IDENTIFIER(425...426)("b"))],
+         [RequiredParameterNode(425...426)()],
          [],
          nil,
          [],
@@ -721,7 +721,7 @@ ProgramNode(0...943)(
        IDENTIFIER(619...622)("foo"),
        nil,
        ParametersNode(623...626)(
-         [RequiredParameterNode(623...626)(IDENTIFIER(623...626)("bar"))],
+         [RequiredParameterNode(623...626)()],
          [],
          nil,
          [],

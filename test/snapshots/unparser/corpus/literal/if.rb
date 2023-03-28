@@ -178,9 +178,7 @@ ProgramNode(0...242)(
            ScopeNode(205...206)([IDENTIFIER(208...212)("pair")]),
            BlockParametersNode(208...212)(
              ParametersNode(208...212)(
-               [RequiredParameterNode(208...212)(
-                  IDENTIFIER(208...212)("pair")
-                )],
+               [RequiredParameterNode(208...212)()],
                [],
                nil,
                [],

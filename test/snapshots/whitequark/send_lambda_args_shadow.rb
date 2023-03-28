@@ -11,7 +11,7 @@ ProgramNode(0...15)(
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(3...14)(
          ParametersNode(3...4)(
-           [RequiredParameterNode(3...4)(IDENTIFIER(3...4)("a"))],
+           [RequiredParameterNode(3...4)()],
            [],
            nil,
            [],

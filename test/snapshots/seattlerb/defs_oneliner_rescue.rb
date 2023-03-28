@@ -5,7 +5,7 @@ ProgramNode(0...145)(
        IDENTIFIER(9...13)("exec"),
        SelfNode(4...8)(),
        ParametersNode(14...17)(
-         [RequiredParameterNode(14...17)(IDENTIFIER(14...17)("cmd"))],
+         [RequiredParameterNode(14...17)()],
          [],
          nil,
          [],
@@ -52,7 +52,7 @@ ProgramNode(0...145)(
        IDENTIFIER(61...65)("exec"),
        SelfNode(56...60)(),
        ParametersNode(66...69)(
-         [RequiredParameterNode(66...69)(IDENTIFIER(66...69)("cmd"))],
+         [RequiredParameterNode(66...69)()],
          [],
          nil,
          [],
@@ -89,7 +89,7 @@ ProgramNode(0...145)(
        IDENTIFIER(111...115)("exec"),
        SelfNode(106...110)(),
        ParametersNode(116...119)(
-         [RequiredParameterNode(116...119)(IDENTIFIER(116...119)("cmd"))],
+         [RequiredParameterNode(116...119)()],
          [],
          nil,
          [],

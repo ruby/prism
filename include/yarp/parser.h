@@ -271,7 +271,7 @@ typedef struct {
 typedef struct yp_scope {
   // A pointer to the node that holds the tokens that correspond to the locals
   // in the given scope.
-  yp_node_t *node;
+  yp_scope_node_t *node;
 
   // A boolean indicating whether or not this scope can see into its parent. If
   // top is true, then the scope cannot see into its parent.

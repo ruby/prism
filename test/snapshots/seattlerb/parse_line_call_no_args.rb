@@ -12,8 +12,7 @@ ProgramNode(0...23)(
          ScopeNode(2...4)([IDENTIFIER(6...7)("x"), IDENTIFIER(9...10)("y")]),
          BlockParametersNode(6...10)(
            ParametersNode(6...10)(
-             [RequiredParameterNode(6...7)(IDENTIFIER(6...7)("x")),
-              RequiredParameterNode(9...10)(IDENTIFIER(9...10)("y"))],
+             [RequiredParameterNode(6...7)(), RequiredParameterNode(9...10)()],
              [],
              nil,
              [],

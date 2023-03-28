@@ -17,14 +17,14 @@ ProgramNode(0...21)(
          ),
          BlockParametersNode(5...18)(
            ParametersNode(5...18)(
-             [RequiredParameterNode(5...6)(IDENTIFIER(5...6)("a")),
-              RequiredDestructuredParameterNode(9...18)(
-                [RequiredParameterNode(9...10)(IDENTIFIER(9...10)("b")),
+             [RequiredParameterNode(5...6)(),
+              RequiredDestructuredParameterNode(8...18)(
+                [RequiredParameterNode(9...10)(),
                  SplatNode(12...14)(
                    USTAR(12...13)("*"),
-                   RequiredParameterNode(13...14)(IDENTIFIER(13...14)("c"))
+                   RequiredParameterNode(13...14)()
                  ),
-                 RequiredParameterNode(16...17)(IDENTIFIER(16...17)("d"))],
+                 RequiredParameterNode(16...17)()],
                 PARENTHESIS_LEFT(8...9)("("),
                 PARENTHESIS_RIGHT(17...18)(")")
               )],

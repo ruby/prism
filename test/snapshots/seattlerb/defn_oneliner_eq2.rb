@@ -12,7 +12,7 @@ ProgramNode(0...28)(
             EQUAL_EQUAL(14...16)("=="),
             nil,
             ParametersNode(17...18)(
-              [RequiredParameterNode(17...18)(IDENTIFIER(17...18)("o"))],
+              [RequiredParameterNode(17...18)()],
               [],
               nil,
               [],

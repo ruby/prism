@@ -75,7 +75,7 @@ ProgramNode(0...148)(
          ScopeNode(70...72)([IDENTIFIER(74...75)("a")]),
          BlockParametersNode(74...75)(
            ParametersNode(74...75)(
-             [RequiredParameterNode(74...75)(IDENTIFIER(74...75)("a"))],
+             [RequiredParameterNode(74...75)()],
              [],
              nil,
              [],
@@ -113,7 +113,7 @@ ProgramNode(0...148)(
          ScopeNode(94...96)([IDENTIFIER(98...99)("a")]),
          BlockParametersNode(98...99)(
            ParametersNode(98...99)(
-             [RequiredParameterNode(98...99)(IDENTIFIER(98...99)("a"))],
+             [RequiredParameterNode(98...99)()],
              [],
              nil,
              [],

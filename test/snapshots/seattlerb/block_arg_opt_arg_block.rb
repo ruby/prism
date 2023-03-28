@@ -17,8 +17,8 @@ ProgramNode(0...21)(
          ),
          BlockParametersNode(5...18)(
            ParametersNode(5...18)(
-             [RequiredParameterNode(5...6)(IDENTIFIER(5...6)("b")),
-              RequiredParameterNode(13...14)(IDENTIFIER(13...14)("d"))],
+             [RequiredParameterNode(5...6)(),
+              RequiredParameterNode(13...14)()],
              [OptionalParameterNode(8...11)(
                 IDENTIFIER(8...9)("c"),
                 EQUAL(9...10)("="),

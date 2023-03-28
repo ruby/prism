@@ -836,8 +836,8 @@ ProgramNode(0...960)(
          ),
          BlockParametersNode(405...409)(
            ParametersNode(405...409)(
-             [RequiredParameterNode(405...406)(IDENTIFIER(405...406)("a")),
-              RequiredParameterNode(408...409)(IDENTIFIER(408...409)("b"))],
+             [RequiredParameterNode(405...406)(),
+              RequiredParameterNode(408...409)()],
              [],
              nil,
              [],

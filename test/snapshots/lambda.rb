@@ -7,7 +7,7 @@ ProgramNode(0...30)(
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(6...9)(
          ParametersNode(6...9)(
-           [RequiredParameterNode(6...9)(IDENTIFIER(6...9)("foo"))],
+           [RequiredParameterNode(6...9)()],
            [],
            nil,
            [],

@@ -15,7 +15,7 @@ ProgramNode(0...44)(
             "meth"
           )]
        ),
-       RescueNode(20...39)(
+       RescueNode(13...39)(
          KEYWORD_RESCUE(13...19)("rescue"),
          [ConstantReadNode(20...29)(),
           CallNode(31...34)(

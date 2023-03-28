@@ -35,7 +35,7 @@ ProgramNode(0...49)(
        IDENTIFIER(19...22)("foo"),
        nil,
        ParametersNode(23...28)(
-         [RequiredParameterNode(23...28)(IDENTIFIER(23...28)("raise"))],
+         [RequiredParameterNode(23...28)()],
          [],
          nil,
          [],

@@ -67,7 +67,7 @@ ProgramNode(0...278)(
        IDENTIFIER(54...57)("foo"),
        nil,
        ParametersNode(58...59)(
-         [RequiredParameterNode(58...59)(IDENTIFIER(58...59)("x"))],
+         [RequiredParameterNode(58...59)()],
          [],
          nil,
          [],
@@ -189,7 +189,7 @@ ProgramNode(0...278)(
          "obj"
        ),
        ParametersNode(141...142)(
-         [RequiredParameterNode(141...142)(IDENTIFIER(141...142)("x"))],
+         [RequiredParameterNode(141...142)()],
          [],
          nil,
          [],
@@ -222,7 +222,7 @@ ProgramNode(0...278)(
        IDENTIFIER(158...165)("rescued"),
        nil,
        ParametersNode(166...167)(
-         [RequiredParameterNode(166...167)(IDENTIFIER(166...167)("x"))],
+         [RequiredParameterNode(166...167)()],
          [],
          nil,
          [],
@@ -282,7 +282,7 @@ ProgramNode(0...278)(
        IDENTIFIER(225...232)("rescued"),
        SelfNode(220...224)(),
        ParametersNode(233...234)(
-         [RequiredParameterNode(233...234)(IDENTIFIER(233...234)("x"))],
+         [RequiredParameterNode(233...234)()],
          [],
          nil,
          [],

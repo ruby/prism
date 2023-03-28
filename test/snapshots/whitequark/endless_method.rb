@@ -18,7 +18,7 @@ ProgramNode(0...78)(
        IDENTIFIER(20...23)("inc"),
        nil,
        ParametersNode(24...25)(
-         [RequiredParameterNode(24...25)(IDENTIFIER(24...25)("x"))],
+         [RequiredParameterNode(24...25)()],
          [],
          nil,
          [],
@@ -80,7 +80,7 @@ ProgramNode(0...78)(
          "obj"
        ),
        ParametersNode(68...69)(
-         [RequiredParameterNode(68...69)(IDENTIFIER(68...69)("x"))],
+         [RequiredParameterNode(68...69)()],
          [],
          nil,
          [],

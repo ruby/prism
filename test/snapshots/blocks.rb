@@ -117,8 +117,8 @@ ProgramNode(0...402)(
          ),
          BlockParametersNode(54...61)(
            ParametersNode(54...61)(
-             [RequiredParameterNode(54...55)(IDENTIFIER(54...55)("x")),
-              RequiredParameterNode(57...61)(IDENTIFIER(57...61)("memo"))],
+             [RequiredParameterNode(54...55)(),
+              RequiredParameterNode(57...61)()],
              [],
              nil,
              [],
@@ -457,7 +457,7 @@ ProgramNode(0...402)(
          ),
          BlockParametersNode(260...272)(
            ParametersNode(260...272)(
-             [RequiredParameterNode(260...261)(IDENTIFIER(260...261)("x"))],
+             [RequiredParameterNode(260...261)()],
              [OptionalParameterNode(263...268)(
                 IDENTIFIER(263...264)("y"),
                 EQUAL(265...266)("="),
@@ -489,7 +489,7 @@ ProgramNode(0...402)(
          ScopeNode(283...284)([IDENTIFIER(286...287)("x")]),
          BlockParametersNode(286...287)(
            ParametersNode(286...287)(
-             [RequiredParameterNode(286...287)(IDENTIFIER(286...287)("x"))],
+             [RequiredParameterNode(286...287)()],
              [],
              nil,
              [],
@@ -520,7 +520,7 @@ ProgramNode(0...402)(
          ScopeNode(306...308)([IDENTIFIER(310...311)("a")]),
          BlockParametersNode(310...311)(
            ParametersNode(310...311)(
-             [RequiredParameterNode(310...311)(IDENTIFIER(310...311)("a"))],
+             [RequiredParameterNode(310...311)()],
              [],
              nil,
              [],
@@ -546,7 +546,7 @@ ProgramNode(0...402)(
          ScopeNode(323...324)([IDENTIFIER(326...327)("a")]),
          BlockParametersNode(326...327)(
            ParametersNode(326...327)(
-             [RequiredParameterNode(326...327)(IDENTIFIER(326...327)("a"))],
+             [RequiredParameterNode(326...327)()],
              [],
              nil,
              [],
@@ -650,7 +650,7 @@ ProgramNode(0...402)(
          ScopeNode(389...391)([IDENTIFIER(393...396)("bar")]),
          BlockParametersNode(393...397)(
            ParametersNode(393...397)(
-             [RequiredParameterNode(393...396)(IDENTIFIER(393...396)("bar"))],
+             [RequiredParameterNode(393...396)()],
              [],
              RestParameterNode(396...397)(COMMA(396...397)(","), nil),
              [],

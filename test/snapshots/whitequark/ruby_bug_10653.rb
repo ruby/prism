@@ -106,7 +106,7 @@ ProgramNode(6...93)(
               ScopeNode(75...77)([IDENTIFIER(79...80)("n")]),
               BlockParametersNode(79...80)(
                 ParametersNode(79...80)(
-                  [RequiredParameterNode(79...80)(IDENTIFIER(79...80)("n"))],
+                  [RequiredParameterNode(79...80)()],
                   [],
                   nil,
                   [],

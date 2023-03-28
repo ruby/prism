@@ -475,9 +475,7 @@ ProgramNode(0...747)(
                PARENTHESIS_LEFT(448...449)("("),
                BlockParametersNode(449...450)(
                  ParametersNode(449...450)(
-                   [RequiredParameterNode(449...450)(
-                      IDENTIFIER(449...450)("b")
-                    )],
+                   [RequiredParameterNode(449...450)()],
                    [],
                    nil,
                    [],

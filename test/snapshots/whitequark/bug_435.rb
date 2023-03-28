@@ -12,7 +12,7 @@ ProgramNode(0...14)(
                nil,
                BlockParametersNode(6...9)(
                  ParametersNode(6...9)(
-                   [RequiredParameterNode(6...9)(IDENTIFIER(6...9)("foo"))],
+                   [RequiredParameterNode(6...9)()],
                    [],
                    nil,
                    [],

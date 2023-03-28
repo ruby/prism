@@ -110,9 +110,7 @@ ProgramNode(0...266)(
              ScopeNode(104...105)([IDENTIFIER(107...110)("bar")]),
              BlockParametersNode(107...110)(
                ParametersNode(107...110)(
-                 [RequiredParameterNode(107...110)(
-                    IDENTIFIER(107...110)("bar")
-                  )],
+                 [RequiredParameterNode(107...110)()],
                  [],
                  nil,
                  [],

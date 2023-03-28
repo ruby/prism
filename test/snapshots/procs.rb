@@ -12,7 +12,7 @@ ProgramNode(0...241)(
        PARENTHESIS_LEFT(3...4)("("),
        BlockParametersNode(4...14)(
          ParametersNode(4...5)(
-           [RequiredParameterNode(4...5)(IDENTIFIER(4...5)("a"))],
+           [RequiredParameterNode(4...5)()],
            [],
            nil,
            [],
@@ -127,7 +127,7 @@ ProgramNode(0...241)(
        nil,
        BlockParametersNode(103...123)(
          ParametersNode(103...123)(
-           [RequiredParameterNode(103...104)(IDENTIFIER(103...104)("a"))],
+           [RequiredParameterNode(103...104)()],
            [OptionalParameterNode(106...111)(
               IDENTIFIER(106...107)("b"),
               EQUAL(108...109)("="),
@@ -163,7 +163,7 @@ ProgramNode(0...241)(
        PARENTHESIS_LEFT(134...135)("("),
        BlockParametersNode(135...164)(
          ParametersNode(135...164)(
-           [RequiredParameterNode(135...136)(IDENTIFIER(135...136)("a"))],
+           [RequiredParameterNode(135...136)()],
            [OptionalParameterNode(138...143)(
               IDENTIFIER(138...139)("b"),
               EQUAL(140...141)("="),
@@ -205,7 +205,7 @@ ProgramNode(0...241)(
        PARENTHESIS_LEFT(176...177)("("),
        BlockParametersNode(177...206)(
          ParametersNode(177...206)(
-           [RequiredParameterNode(177...178)(IDENTIFIER(177...178)("a"))],
+           [RequiredParameterNode(177...178)()],
            [OptionalParameterNode(180...185)(
               IDENTIFIER(180...181)("b"),
               EQUAL(182...183)("="),
@@ -239,7 +239,7 @@ ProgramNode(0...241)(
        PARENTHESIS_LEFT(223...224)("("),
        BlockParametersNode(224...225)(
          ParametersNode(224...225)(
-           [RequiredParameterNode(224...225)(IDENTIFIER(224...225)("a"))],
+           [RequiredParameterNode(224...225)()],
            [],
            nil,
            [],
@@ -256,7 +256,7 @@ ProgramNode(0...241)(
             nil,
             BlockParametersNode(232...233)(
               ParametersNode(232...233)(
-                [RequiredParameterNode(232...233)(IDENTIFIER(232...233)("b"))],
+                [RequiredParameterNode(232...233)()],
                 [],
                 nil,
                 [],

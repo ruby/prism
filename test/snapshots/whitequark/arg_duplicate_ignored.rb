@@ -5,8 +5,7 @@ ProgramNode(0...40)(
        IDENTIFIER(4...7)("foo"),
        nil,
        ParametersNode(8...12)(
-         [RequiredParameterNode(8...9)(IDENTIFIER(8...9)("_")),
-          RequiredParameterNode(11...12)(IDENTIFIER(11...12)("_"))],
+         [RequiredParameterNode(8...9)(), RequiredParameterNode(11...12)()],
          [],
          nil,
          [],
@@ -26,8 +25,7 @@ ProgramNode(0...40)(
        IDENTIFIER(24...27)("foo"),
        nil,
        ParametersNode(28...34)(
-         [RequiredParameterNode(28...30)(IDENTIFIER(28...30)("_a")),
-          RequiredParameterNode(32...34)(IDENTIFIER(32...34)("_a"))],
+         [RequiredParameterNode(28...30)(), RequiredParameterNode(32...34)()],
          [],
          nil,
          [],
