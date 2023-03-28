@@ -31,7 +31,7 @@ ProgramNode(0...33)(
          ScopeNode(8...10)([IDENTIFIER(12...13)("c")]),
          BlockParametersNode(12...13)(
            ParametersNode(12...13)(
-             [RequiredParameterNode(12...13)(IDENTIFIER(12...13)("c"))],
+             [RequiredParameterNode(12...13)()],
              [],
              nil,
              [],

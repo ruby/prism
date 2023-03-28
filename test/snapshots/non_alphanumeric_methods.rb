@@ -151,7 +151,7 @@ ProgramNode(0...434)(
        PLUS(136...137)("+"),
        nil,
        ParametersNode(138...139)(
-         [RequiredParameterNode(138...139)(IDENTIFIER(138...139)("b"))],
+         [RequiredParameterNode(138...139)()],
          [],
          nil,
          [],

@@ -12,7 +12,7 @@ ProgramNode(0...33)(
             EQUAL_EQUAL(19...21)("=="),
             SelfNode(14...18)(),
             ParametersNode(22...23)(
-              [RequiredParameterNode(22...23)(IDENTIFIER(22...23)("o"))],
+              [RequiredParameterNode(22...23)()],
               [],
               nil,
               [],

@@ -13,8 +13,7 @@ ProgramNode(0...21)(
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(3...20)(
          ParametersNode(3...20)(
-           [RequiredParameterNode(3...4)(IDENTIFIER(3...4)("b")),
-            RequiredParameterNode(15...16)(IDENTIFIER(15...16)("e"))],
+           [RequiredParameterNode(3...4)(), RequiredParameterNode(15...16)()],
            [OptionalParameterNode(6...9)(
               IDENTIFIER(6...7)("c"),
               EQUAL(7...8)("="),

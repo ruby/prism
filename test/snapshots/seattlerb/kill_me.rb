@@ -16,12 +16,12 @@ ProgramNode(0...18)(
          ),
          BlockParametersNode(5...15)(
            ParametersNode(5...15)(
-             [RequiredParameterNode(5...6)(IDENTIFIER(5...6)("a")),
+             [RequiredParameterNode(5...6)(),
               RequiredDestructuredParameterNode(9...15)(
-                [RequiredParameterNode(9...10)(IDENTIFIER(9...10)("b")),
+                [RequiredParameterNode(9...10)(),
                  SplatNode(12...14)(
                    USTAR(12...13)("*"),
-                   RequiredParameterNode(13...14)(IDENTIFIER(13...14)("c"))
+                   RequiredParameterNode(13...14)()
                  )],
                 PARENTHESIS_LEFT(8...9)("("),
                 PARENTHESIS_RIGHT(14...15)(")")

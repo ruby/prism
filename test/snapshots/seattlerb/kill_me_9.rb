@@ -12,11 +12,11 @@ ProgramNode(0...15)(
          ScopeNode(2...3)([IDENTIFIER(5...6)("a"), IDENTIFIER(10...11)("b")]),
          BlockParametersNode(5...12)(
            ParametersNode(5...12)(
-             [RequiredParameterNode(5...6)(IDENTIFIER(5...6)("a")),
+             [RequiredParameterNode(5...6)(),
               RequiredDestructuredParameterNode(9...12)(
                 [SplatNode(9...11)(
                    USTAR(9...10)("*"),
-                   RequiredParameterNode(10...11)(IDENTIFIER(10...11)("b"))
+                   RequiredParameterNode(10...11)()
                  )],
                 PARENTHESIS_LEFT(8...9)("("),
                 PARENTHESIS_RIGHT(11...12)(")")

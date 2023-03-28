@@ -135,7 +135,7 @@ ProgramNode(0...212)(
          ScopeNode(161...163)([IDENTIFIER(165...166)("x")]),
          BlockParametersNode(165...166)(
            ParametersNode(165...166)(
-             [RequiredParameterNode(165...166)(IDENTIFIER(165...166)("x"))],
+             [RequiredParameterNode(165...166)()],
              [],
              nil,
              [],

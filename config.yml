@@ -1440,9 +1440,7 @@ nodes:
                   ^^^^^^^^^^
           end
   - name: RequiredParameterNode
-    child_nodes:
-      - name: name
-        type: token
+    is_migrated: true
     comment: |
       Represents a required parameter to a method, block, or lambda definition.
 

@@ -19,7 +19,7 @@ ProgramNode(0...616)(
               ),
               BlockParametersNode(18...21)(
                 ParametersNode(18...21)(
-                  [RequiredParameterNode(18...21)(IDENTIFIER(18...21)("bar"))],
+                  [RequiredParameterNode(18...21)()],
                   [],
                   nil,
                   [],
@@ -225,9 +225,7 @@ ProgramNode(0...616)(
               ),
               BlockParametersNode(249...252)(
                 ParametersNode(249...252)(
-                  [RequiredParameterNode(249...252)(
-                     IDENTIFIER(249...252)("baz")
-                   )],
+                  [RequiredParameterNode(249...252)()],
                   [],
                   nil,
                   [],
@@ -291,9 +289,7 @@ ProgramNode(0...616)(
               ScopeNode(317...318)([IDENTIFIER(320...323)("foo")]),
               BlockParametersNode(320...323)(
                 ParametersNode(320...323)(
-                  [RequiredParameterNode(320...323)(
-                     IDENTIFIER(320...323)("foo")
-                   )],
+                  [RequiredParameterNode(320...323)()],
                   [],
                   nil,
                   [],

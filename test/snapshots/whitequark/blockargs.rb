@@ -119,7 +119,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(64...73)(
            ParametersNode(64...73)(
-             [RequiredParameterNode(68...69)(IDENTIFIER(68...69)("p"))],
+             [RequiredParameterNode(68...69)()],
              [],
              RestParameterNode(64...66)(
                USTAR(64...65)("*"),
@@ -268,7 +268,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(142...147)(
            ParametersNode(142...147)(
-             [RequiredParameterNode(142...143)(IDENTIFIER(142...143)("a"))],
+             [RequiredParameterNode(142...143)()],
              [],
              nil,
              [],
@@ -301,7 +301,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(156...164)(
            ParametersNode(156...164)(
-             [RequiredParameterNode(156...157)(IDENTIFIER(156...157)("a"))],
+             [RequiredParameterNode(156...157)()],
              [],
              RestParameterNode(159...160)(USTAR(159...160)("*"), nil),
              [],
@@ -335,8 +335,8 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(173...185)(
            ParametersNode(173...185)(
-             [RequiredParameterNode(173...174)(IDENTIFIER(173...174)("a")),
-              RequiredParameterNode(180...181)(IDENTIFIER(180...181)("p"))],
+             [RequiredParameterNode(173...174)(),
+              RequiredParameterNode(180...181)()],
              [],
              RestParameterNode(176...178)(
                USTAR(176...177)("*"),
@@ -372,7 +372,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(194...203)(
            ParametersNode(194...203)(
-             [RequiredParameterNode(194...195)(IDENTIFIER(194...195)("a"))],
+             [RequiredParameterNode(194...195)()],
              [],
              RestParameterNode(197...199)(
                USTAR(197...198)("*"),
@@ -406,7 +406,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(212...217)(
            ParametersNode(212...217)(
-             [RequiredParameterNode(212...213)(IDENTIFIER(212...213)("a"))],
+             [RequiredParameterNode(212...213)()],
              [],
              RestParameterNode(215...217)(
                USTAR(215...216)("*"),
@@ -437,7 +437,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(226...230)(
            ParametersNode(226...230)(
-             [RequiredParameterNode(226...227)(IDENTIFIER(226...227)("a"))],
+             [RequiredParameterNode(226...227)()],
              [],
              RestParameterNode(229...230)(USTAR(229...230)("*"), nil),
              [],
@@ -465,8 +465,8 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(239...244)(
            ParametersNode(239...244)(
-             [RequiredParameterNode(239...240)(IDENTIFIER(239...240)("a")),
-              RequiredParameterNode(242...243)(IDENTIFIER(242...243)("b"))],
+             [RequiredParameterNode(239...240)(),
+              RequiredParameterNode(242...243)()],
              [],
              RestParameterNode(243...244)(COMMA(243...244)(","), nil),
              [],
@@ -494,8 +494,8 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(253...257)(
            ParametersNode(253...257)(
-             [RequiredParameterNode(253...254)(IDENTIFIER(253...254)("a")),
-              RequiredParameterNode(256...257)(IDENTIFIER(256...257)("c"))],
+             [RequiredParameterNode(253...254)(),
+              RequiredParameterNode(256...257)()],
              [],
              nil,
              [],
@@ -525,7 +525,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(266...276)(
            ParametersNode(266...276)(
-             [RequiredParameterNode(266...267)(IDENTIFIER(266...267)("a"))],
+             [RequiredParameterNode(266...267)()],
              [OptionalParameterNode(269...272)(
                 IDENTIFIER(269...270)("o"),
                 EQUAL(270...271)("="),
@@ -564,8 +564,8 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(285...302)(
            ParametersNode(285...302)(
-             [RequiredParameterNode(285...286)(IDENTIFIER(285...286)("a")),
-              RequiredParameterNode(297...298)(IDENTIFIER(297...298)("p"))],
+             [RequiredParameterNode(285...286)(),
+              RequiredParameterNode(297...298)()],
              [OptionalParameterNode(288...291)(
                 IDENTIFIER(288...289)("o"),
                 EQUAL(289...290)("="),
@@ -607,7 +607,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(311...331)(
            ParametersNode(311...331)(
-             [RequiredParameterNode(311...312)(IDENTIFIER(311...312)("a"))],
+             [RequiredParameterNode(311...312)()],
              [OptionalParameterNode(314...317)(
                 IDENTIFIER(314...315)("o"),
                 EQUAL(315...316)("="),
@@ -653,8 +653,8 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(340...353)(
            ParametersNode(340...353)(
-             [RequiredParameterNode(340...341)(IDENTIFIER(340...341)("a")),
-              RequiredParameterNode(348...349)(IDENTIFIER(348...349)("p"))],
+             [RequiredParameterNode(340...341)(),
+              RequiredParameterNode(348...349)()],
              [OptionalParameterNode(343...346)(
                 IDENTIFIER(343...344)("o"),
                 EQUAL(344...345)("="),
@@ -687,7 +687,7 @@ ProgramNode(0...550)(
          ScopeNode(359...360)([IDENTIFIER(362...363)("a")]),
          BlockParametersNode(362...364)(
            ParametersNode(362...364)(
-             [RequiredParameterNode(362...363)(IDENTIFIER(362...363)("a"))],
+             [RequiredParameterNode(362...363)()],
              [],
              RestParameterNode(363...364)(COMMA(363...364)(","), nil),
              [],
@@ -713,7 +713,7 @@ ProgramNode(0...550)(
          ScopeNode(370...371)([IDENTIFIER(373...374)("a")]),
          BlockParametersNode(373...374)(
            ParametersNode(373...374)(
-             [RequiredParameterNode(373...374)(IDENTIFIER(373...374)("a"))],
+             [RequiredParameterNode(373...374)()],
              [],
              nil,
              [],
@@ -739,7 +739,7 @@ ProgramNode(0...550)(
          ScopeNode(380...381)([IDENTIFIER(383...384)("a")]),
          BlockParametersNode(383...384)(
            ParametersNode(383...384)(
-             [RequiredParameterNode(383...384)(IDENTIFIER(383...384)("a"))],
+             [RequiredParameterNode(383...384)()],
              [],
              nil,
              [],
@@ -765,7 +765,7 @@ ProgramNode(0...550)(
          ScopeNode(390...391)([IDENTIFIER(393...394)("a")]),
          BlockParametersNode(393...394)(
            ParametersNode(393...394)(
-             [RequiredParameterNode(393...394)(IDENTIFIER(393...394)("a"))],
+             [RequiredParameterNode(393...394)()],
              [],
              nil,
              [],
@@ -975,7 +975,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(505...519)(
            ParametersNode(505...519)(
-             [RequiredParameterNode(514...515)(IDENTIFIER(514...515)("p"))],
+             [RequiredParameterNode(514...515)()],
              [OptionalParameterNode(505...508)(
                 IDENTIFIER(505...506)("o"),
                 EQUAL(506...507)("="),
@@ -1015,7 +1015,7 @@ ProgramNode(0...550)(
          ),
          BlockParametersNode(528...538)(
            ParametersNode(528...538)(
-             [RequiredParameterNode(533...534)(IDENTIFIER(533...534)("p"))],
+             [RequiredParameterNode(533...534)()],
              [OptionalParameterNode(528...531)(
                 IDENTIFIER(528...529)("o"),
                 EQUAL(529...530)("="),

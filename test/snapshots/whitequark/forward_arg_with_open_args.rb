@@ -130,7 +130,7 @@ ProgramNode(0...292)(
        IDENTIFIER(109...112)("foo"),
        nil,
        ParametersNode(113...119)(
-         [RequiredParameterNode(113...114)(IDENTIFIER(113...114)("a"))],
+         [RequiredParameterNode(113...114)()],
          [],
          nil,
          [],
@@ -163,7 +163,7 @@ ProgramNode(0...292)(
        IDENTIFIER(140...143)("foo"),
        nil,
        ParametersNode(144...150)(
-         [RequiredParameterNode(144...145)(IDENTIFIER(144...145)("a"))],
+         [RequiredParameterNode(144...145)()],
          [],
          nil,
          [],
@@ -196,7 +196,7 @@ ProgramNode(0...292)(
        IDENTIFIER(171...174)("foo"),
        nil,
        ParametersNode(175...188)(
-         [RequiredParameterNode(175...176)(IDENTIFIER(175...176)("a"))],
+         [RequiredParameterNode(175...176)()],
          [OptionalParameterNode(178...183)(
             IDENTIFIER(178...179)("b"),
             EQUAL(180...181)("="),
@@ -298,7 +298,7 @@ ProgramNode(0...292)(
        IDENTIFIER(268...271)("foo"),
        nil,
        ParametersNode(272...278)(
-         [RequiredParameterNode(272...273)(IDENTIFIER(272...273)("a"))],
+         [RequiredParameterNode(272...273)()],
          [],
          nil,
          [],

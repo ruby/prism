@@ -520,7 +520,7 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b")), RequiredParameterNode(IDENTIFIER("c"))],
+        [RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()],
         [],
         nil,
         [],
@@ -546,7 +546,7 @@ class ErrorsTest < Test::Unit::TestCase
       ScopeNode([IDENTIFIER("a"), IDENTIFIER("b")]),
       MINUS_GREATER("->"),
       PARENTHESIS_LEFT("("),
-      BlockParametersNode(ParametersNode([RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil), []),
+      BlockParametersNode(ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], nil, [], nil, nil), []),
       PARENTHESIS_RIGHT(")"),
       nil
     )

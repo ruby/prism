@@ -15,8 +15,8 @@ ProgramNode(0...32)(
          BlockParametersNode(6...15)(
            ParametersNode(6...15)(
              [RequiredDestructuredParameterNode(6...15)(
-                [RequiredParameterNode(6...9)(IDENTIFIER(6...9)("foo")),
-                 RequiredParameterNode(11...14)(IDENTIFIER(11...14)("bar"))],
+                [RequiredParameterNode(6...9)(),
+                 RequiredParameterNode(11...14)()],
                 PARENTHESIS_LEFT(5...6)("("),
                 PARENTHESIS_RIGHT(14...15)(")")
               )],
@@ -45,7 +45,7 @@ ProgramNode(0...32)(
          ScopeNode(23...24)([IDENTIFIER(26...29)("foo")]),
          BlockParametersNode(26...29)(
            ParametersNode(26...29)(
-             [RequiredParameterNode(26...29)(IDENTIFIER(26...29)("foo"))],
+             [RequiredParameterNode(26...29)()],
              [],
              nil,
              [],

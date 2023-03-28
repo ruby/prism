@@ -2361,21 +2361,12 @@ yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_tok
 }
 
 // Allocate a new RequiredParameterNode node.
-static yp_node_t *
-yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+static yp_required_parameter_node_t *
+yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_MISSING || token->type == YP_TOKEN_IDENTIFIER);
+  yp_required_parameter_node_t *node = YP_NODE_ALLOC(yp_required_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REQUIRED_PARAMETER_NODE,
-    .location = {
-      .start = name->start,
-      .end = name->end
-    },
-    .as.required_parameter_node = {
-      .name = *name
-    }
-  };
-
+  *node = (yp_required_parameter_node_t) {{ .type = YP_NODE_REQUIRED_PARAMETER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
   return node;
 }
 
@@ -7143,7 +7134,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 
       if (accept(parser, YP_TOKEN_IDENTIFIER)) {
         yp_token_t name = parser->previous;
-        value = yp_required_parameter_node_create(parser, &name);
+        value = (yp_node_t *) yp_required_parameter_node_create(parser, &name);
         yp_parser_local_add(parser, &name);
       }
 
@@ -7153,7 +7144,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier for a required parameter.");
       yp_token_t name = parser->previous;
 
-      param = yp_required_parameter_node_create(parser, &name);
+      param = (yp_node_t *) yp_required_parameter_node_create(parser, &name);
       yp_parser_local_add(parser, &name);
     }
 
@@ -7234,7 +7225,7 @@ parse_parameters(
             break;
           }
         } else {
-          yp_node_t *param = yp_required_parameter_node_create(parser, &name);
+          yp_node_t *param = (yp_node_t *) yp_required_parameter_node_create(parser, &name);
           yp_parameters_node_requireds_append(params, param);
         }
 

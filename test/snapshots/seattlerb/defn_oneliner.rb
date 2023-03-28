@@ -5,7 +5,7 @@ ProgramNode(0...27)(
        IDENTIFIER(4...8)("exec"),
        nil,
        ParametersNode(9...12)(
-         [RequiredParameterNode(9...12)(IDENTIFIER(9...12)("cmd"))],
+         [RequiredParameterNode(9...12)()],
          [],
          nil,
          [],
