@@ -2034,21 +2034,21 @@ yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, co
 }
 
 // Allocate a new OptionalParameterNode node.
-static yp_node_t *
+static yp_optional_parameter_node_t *
 yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *equal_operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_optional_parameter_node_t *node = YP_NODE_ALLOC(yp_optional_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPTIONAL_PARAMETER_NODE,
-    .location = {
-      .start = name->start,
-      .end = value->location.end
+  *node = (yp_optional_parameter_node_t) {
+    {
+      .type = YP_NODE_OPTIONAL_PARAMETER_NODE,
+      .location = {
+        .start = name->start,
+        .end = value->location.end
+      }
     },
-    .as.optional_parameter_node = {
-      .name = *name,
-      .equal_operator = *equal_operator,
-      .value = value
-    }
+    .name = *name,
+    .equal_operator = *equal_operator,
+    .value = value
   };
 
   return node;
@@ -2122,9 +2122,9 @@ yp_parameters_node_requireds_append(yp_parameters_node_t *params, yp_node_t *par
 
 // Append an optional parameter to a ParametersNode node.
 static void
-yp_parameters_node_optionals_append(yp_parameters_node_t *params, yp_node_t *param) {
-  yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->optionals, param);
+yp_parameters_node_optionals_append(yp_parameters_node_t *params, yp_optional_parameter_node_t *param) {
+  yp_parameters_node_location_set(params, (yp_node_t *) param);
+  yp_node_list_append2(&params->optionals, (yp_node_t *) param);
 }
 
 // Set the rest parameter on a ParametersNode node.
@@ -7228,7 +7228,7 @@ parse_parameters(
           yp_token_t operator = parser->previous;
           yp_node_t *value = parse_expression(parser, binding_power, "Expected to find a default value for the parameter.");
 
-          yp_node_t *param = yp_optional_parameter_node_create(parser, &name, &operator, value);
+          yp_optional_parameter_node_t *param = yp_optional_parameter_node_create(parser, &name, &operator, value);
           yp_parameters_node_optionals_append(params, param);
 
           // If parsing the value of the parameter resulted in error recovery,

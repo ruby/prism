@@ -1261,6 +1261,7 @@ nodes:
           target ||= value
           ^^^^^^^^^^^^^^^^
   - name: OptionalParameterNode
+    is_migrated: true
     child_nodes:
       - name: name
         type: token
