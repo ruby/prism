@@ -255,7 +255,7 @@ yp_node_create_from_token(yp_parser_t *parser, yp_node_type_t type, const yp_tok
 }
 
 // Allocate and initialize a new alias node.
-static yp_node_t *
+static yp_alias_node_t *
 yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *new_name, yp_node_t *old_name) {
   assert(keyword->type == YP_TOKEN_KEYWORD_ALIAS);
   yp_alias_node_t *node = YP_NODE_ALLOC(yp_alias_node_t);
@@ -273,7 +273,7 @@ yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
     .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
   };
 
-  return YP_NODE_DOWNCAST(node);
+  return node;
 }
 
 // Allocate a new AlternationPatternNode node.
@@ -2988,9 +2988,6 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
 #undef YP_LOCATION_TOKEN_VALUE
 #undef YP_LOCATION_NODE_VALUE
 #undef YP_TOKEN_NOT_PROVIDED_VALUE
-#undef YP_NODE_ALLOC
-#undef YP_NODE_DOWNCAST
-#undef YP_NODE_UPCAST
 
 /******************************************************************************/
 /* Scope-related functions                                                    */
@@ -9079,7 +9076,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           break;
       }
 
-      return yp_alias_node_create(parser, &keyword, left, right);
+      return YP_NODE_DOWNCAST(yp_alias_node_create(parser, &keyword, left, right));
     }
     case YP_TOKEN_KEYWORD_CASE: {
       parser_lex(parser);
@@ -11216,6 +11213,9 @@ yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
   yp_parser_free(&parser);
 }
 
+#undef YP_NODE_ALLOC
+#undef YP_NODE_DOWNCAST
+#undef YP_NODE_UPCAST
 #undef YP_CASE_KEYWORD
 #undef YP_CASE_OPERATOR
 #undef YP_CASE_WRITABLE
