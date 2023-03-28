@@ -1587,6 +1587,7 @@ nodes:
         type: token?
       - name: unescaped
         type: string
+    is_migrated: true
     comment: |
       Represents a string literal, a string contained within a `%w` list, or
       plain string content within an interpolated string.

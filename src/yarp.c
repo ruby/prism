@@ -2653,21 +2653,21 @@ yp_string_interpolated_node_create(yp_parser_t *parser, const yp_token_t *openin
 }
 
 // Allocate a new StringNode node.
-static yp_node_t *
+static yp_string_node_t *
 yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_string_node_t *node = YP_NODE_ALLOC(yp_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_NODE,
-    .location = {
-      .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? content->start : opening->start),
-      .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? content->end : closing->end)
+  *node = (yp_string_node_t) {
+    {
+      .type = YP_NODE_STRING_NODE,
+      .location = {
+        .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? content->start : opening->start),
+        .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? content->end : closing->end)
+      }
     },
-    .as.string_node = {
-      .opening = *opening,
-      .content = *content,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .content = *content,
+    .closing = *closing
   };
 
   return node;
@@ -2753,19 +2753,19 @@ yp_symbol_node_label_p(yp_node_t *node) {
 }
 
 // Convert the given SymbolNode node to a StringNode node.
-static yp_node_t *
+static yp_string_node_t *
 yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
-  yp_node_t *new_node = yp_node_alloc(parser);
+  yp_string_node_t *new_node = YP_NODE_ALLOC(yp_string_node_t);
 
-  *new_node = (yp_node_t) {
-    .type = YP_NODE_STRING_NODE,
-    .location = node->base.location,
-    .as.string_node = {
-      .opening = node->opening,
-      .content = node->value,
-      .closing = node->closing,
-      .unescaped = node->unescaped
-    }
+  *new_node = (yp_string_node_t) {
+    {
+      .type = YP_NODE_STRING_NODE,
+      .location = node->base.location
+    },
+    .opening = node->opening,
+    .content = node->value,
+    .closing = node->closing,
+    .unescaped = node->unescaped
   };
 
   yp_node_destroy(parser, (yp_node_t *) node);
@@ -6163,10 +6163,10 @@ yp_node_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
   return node;
 }
 
-static yp_node_t *
+static yp_string_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
-  yp_node_t *node = yp_string_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
+  yp_string_node_t *node = yp_string_node_create(parser, opening, content, closing);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
@@ -7757,7 +7757,7 @@ parse_string_part(yp_parser_t *parser) {
       yp_token_t opening = not_provided(parser);
       yp_token_t closing = not_provided(parser);
 
-      return yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+      return (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
     }
     // Here the lexer has returned the beginning of an embedded expression. In
     // that case we'll parse the inner statements and return that as the part.
@@ -8844,7 +8844,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_token_t closing = not_provided(parser);
 
-      return yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_ALL);
+      return (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &content, &closing, YP_UNESCAPE_ALL);
     }
     case YP_TOKEN_CLASS_VARIABLE: {
       parser_lex(parser);
@@ -8955,8 +8955,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node = yp_interpolated_xstring_node_create(parser, &parser->previous, &parser->previous);
-      }
-      else {
+      } else {
         node = yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
       }
 
@@ -8991,42 +8990,39 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         for (int i = 0; i < node_list->size; i++) {
           yp_node_t *node = node_list->nodes[i];
 
-          if (node->type == YP_NODE_STRING_NODE && *node->as.string_node.content.start != '\n' &&
-              // If the previous node wasn't a string node, we don't want to trim whitespace
-              (i == 0 || node_list->nodes[i-1]->type == YP_NODE_STRING_NODE)
-             ) {
-            int cur_whitespace;
-            const char *cur_char = node->as.string_node.content.start;
+          if (node->type == YP_NODE_STRING_NODE) {
+            yp_token_t *content = &((yp_string_node_t *) node)->content;
 
-            while (cur_char && cur_char < node->as.string_node.content.end) {
-              // Any empty newlines aren't included in the minimum whitespace calculation
-              while(cur_char < node->as.string_node.content.end && *cur_char == '\n') {
-                cur_char++;
-              }
+            // If the previous node wasn't a string node, we don't want to trim whitespace
+            if (*content->start != '\n' && (i == 0 || node_list->nodes[i-1]->type == YP_NODE_STRING_NODE)) {
+              int cur_whitespace;
+              const char *cur_char = content->start;
 
-              if (cur_char == node->as.string_node.content.end) {
-                break;
-              }
+              while (cur_char && cur_char < content->end) {
+                // Any empty newlines aren't included in the minimum whitespace calculation
+                while (cur_char < content->end && *cur_char == '\n') cur_char++;
+                if (cur_char == content->end) break;
 
-              cur_whitespace = 0;
+                cur_whitespace = 0;
 
-              while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
-                if (cur_char[0] == '\t') {
-                  cur_whitespace += YP_TAB_WHITESPACE_SIZE;
+                while (char_is_non_newline_whitespace(*cur_char) && cur_char < content->end) {
+                  if (cur_char[0] == '\t') {
+                    cur_whitespace += YP_TAB_WHITESPACE_SIZE;
+                  }
+                  else {
+                    cur_whitespace++;
+                  }
+                  cur_char++;
                 }
-                else {
-                  cur_whitespace++;
+
+                if (cur_whitespace < min_whitespace || min_whitespace == -1) {
+                  min_whitespace = cur_whitespace;
                 }
-                cur_char++;
-              }
 
-              if (cur_whitespace < min_whitespace || min_whitespace == -1) {
-                min_whitespace = cur_whitespace;
-              }
-
-              cur_char = memchr(cur_char + 1, '\n', parser->end - (cur_char + 1));
-              if (cur_char) {
-                cur_char++;
+                cur_char = memchr(cur_char + 1, '\n', parser->end - (cur_char + 1));
+                if (cur_char) {
+                  cur_char++;
+                }
               }
             }
           }
@@ -9040,7 +9036,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_node_t *node = node_list->nodes[i];
 
             if (node->type == YP_NODE_STRING_NODE) {
-              yp_string_t *node_str = &node->as.string_node.unescaped;
+              yp_string_t *node_str = &((yp_string_node_t *) node)->unescaped;
 
               // We convert all strings to be "owned" to make it simpler to manipulate memory
               if (node_str->type != YP_STRING_OWNED) {
@@ -10016,7 +10012,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_token_t closing = not_provided(parser);
               yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
-              current = yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
+              current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
               yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, current);
               current = interpolated;
             } else {
@@ -10045,7 +10041,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_token_t closing = not_provided(parser);
               yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
-              current = yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
+              current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
               yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, current);
               current = interpolated;
             } else if (current->type == YP_NODE_INTERPOLATED_SYMBOL_NODE) {
@@ -10095,7 +10091,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
-        yp_node_t *string = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_MINIMAL);
+        yp_node_t *string = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_MINIMAL);
         yp_array_node_elements_append(array, string);
       }
 
@@ -10264,7 +10260,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
-        yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+        yp_node_t *part = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
 
         yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part);
       } else {
@@ -10332,7 +10328,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
-        yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+        yp_node_t *part = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
         yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
       } else {
         // If the first part of the body of the string is not a string content,
@@ -10499,7 +10495,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           .end = parser->previous.start
         };
 
-        node = yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_NONE);
+        node = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_NONE);
       } else if (accept(parser, YP_TOKEN_LABEL_END)) {
         // If we get here, then we have an end of a label immediately after a
         // start. In that case we'll create an empty symbol node.
@@ -10533,11 +10529,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           yp_node_list_init(&parts);
 
           yp_token_t delimiters = not_provided(parser);
-          yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &delimiters, &content, &delimiters, YP_UNESCAPE_MINIMAL);
+          yp_node_t *part = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &delimiters, &content, &delimiters, YP_UNESCAPE_MINIMAL);
           yp_node_list_append2(&parts, part);
 
           while (accept(parser, YP_TOKEN_STRING_CONTENT)) {
-            part = yp_node_string_node_create_and_unescape(parser, &delimiters, &parser->previous, &delimiters, YP_UNESCAPE_MINIMAL);
+            part = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &delimiters, &parser->previous, &delimiters, YP_UNESCAPE_MINIMAL);
             yp_node_list_append2(&parts, part);
           }
 
@@ -10550,7 +10546,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-        node = yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_MINIMAL);
+        node = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_MINIMAL);
       } else if (match_type_p(parser, YP_TOKEN_STRING_CONTENT)) {
         // In this case we've hit string content so we know the string at
         // least has something in it. We'll need to check if the following
@@ -10560,7 +10556,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         parser_lex(parser);
 
         if (accept(parser, YP_TOKEN_STRING_END)) {
-          node = yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_ALL);
+          node = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_ALL);
         } else if (accept(parser, YP_TOKEN_LABEL_END)) {
           return (yp_node_t *) yp_node_symbol_node_create_and_unescape(parser, &opening, &content, &parser->previous);
         } else {
@@ -10571,7 +10567,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
           yp_token_t string_opening = not_provided(parser);
           yp_token_t string_closing = not_provided(parser);
-          yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &string_opening, &parser->previous, &string_closing, YP_UNESCAPE_ALL);
+          yp_node_t *part = (yp_node_t *) yp_node_string_node_create_and_unescape(parser, &string_opening, &parser->previous, &string_closing, YP_UNESCAPE_ALL);
           yp_node_list_append2(&parts, part);
 
           while (!match_any_type_p(parser, 3, YP_TOKEN_STRING_END, YP_TOKEN_LABEL_END, YP_TOKEN_EOF)) {
