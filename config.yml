@@ -487,6 +487,7 @@ nodes:
 
           bar(&args)
           ^^^^^^^^^^
+    is_migrated: true
   - name: BlockNode
     child_nodes:
       - name: scope
@@ -504,6 +505,7 @@ nodes:
 
       [1, 2, 3].each { |i| puts x }
                      ^^^^^^^^^^^^^^
+    is_migrated: true
   - name: BlockParameterNode
     child_nodes:
       - name: name
@@ -557,6 +559,7 @@ nodes:
         type: token?
       - name: block
         type: node?
+        kind: BlockNode
       - name: name
         type: string
     comment: |
@@ -832,6 +835,7 @@ nodes:
     child_nodes:
       - name: block
         type: node?
+        kind: BlockNode
     comment: |
       Represents the use of the `super` keyword without parentheses or arguments.
 
@@ -1620,6 +1624,7 @@ nodes:
         type: token?
       - name: block
         type: node?
+        kind: BlockNode
     is_migrated: true
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.

@@ -191,7 +191,7 @@ typedef struct {
   yp_token_t opening;
   yp_arguments_node_t *arguments;
   yp_token_t closing;
-  yp_node_t *block;
+  yp_block_node_t *block;
 } yp_arguments_t;
 
 // Initialize a stack-allocated yp_arguments_t struct to its default values and
@@ -630,40 +630,40 @@ yp_begin_node_end_keyword_set(yp_begin_node_t *node, const yp_token_t *end_keywo
 }
 
 // Allocate and initialize a new BlockArgumentNode node.
-static yp_node_t *
+static yp_block_argument_node_t *
 yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_block_argument_node_t *node = YP_NODE_ALLOC(yp_block_argument_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BLOCK_ARGUMENT_NODE,
-    .location = {
-      .start = operator->start,
-      .end = expression == NULL ? operator->end : expression->location.end
+  *node = (yp_block_argument_node_t) {
+    {
+      .type = YP_NODE_BLOCK_ARGUMENT_NODE,
+      .location = {
+        .start = operator->start,
+        .end = expression == NULL ? operator->end : expression->location.end
+      },
     },
-    .as.block_argument_node = {
-      .expression = expression,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .expression = expression,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
 }
 
 // Allocate and initialize a new BlockNode node.
-static yp_node_t *
+static yp_block_node_t *
 yp_block_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *opening, yp_node_t *parameters, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_block_node_t *node = YP_NODE_ALLOC(yp_block_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BLOCK_NODE,
-    .location = { .start = opening->start, .end = closing->end },
-    .as.block_node = {
-      .scope = scope,
-      .parameters = parameters,
-      .statements = statements,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+  *node = (yp_block_node_t) {
+    {
+      .type = YP_NODE_BLOCK_NODE,
+      .location = { .start = opening->start, .end = closing->end },
+    },
+    .scope = scope,
+    .parameters = parameters,
+    .statements = statements,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;
@@ -771,7 +771,7 @@ yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_arguments_
 
   node->location.start = receiver->location.start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->location.end = arguments->block->base.location.end;
   } else {
     node->location.end = arguments->closing.end;
   }
@@ -818,7 +818,7 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
 
   node->location.start = receiver->location.start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->location.end = arguments->block->base.location.end;
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     node->location.end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
@@ -847,7 +847,7 @@ yp_call_node_fcall_create(yp_parser_t *parser, yp_token_t *message, yp_arguments
 
   node->location.start = message->start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->location.end = arguments->block->base.location.end;
   } else {
     node->location.end = arguments->closing.end;
   }
@@ -891,7 +891,7 @@ yp_call_node_shorthand_create(yp_parser_t *parser, yp_node_t *receiver, yp_token
 
   node->location.start = receiver->location.start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->location.end = arguments->block->base.location.end;
   } else {
     node->location.end = arguments->closing.end;
   }
@@ -1305,7 +1305,7 @@ yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token, yp
     .type = YP_NODE_FORWARDING_SUPER_NODE,
     .location = {
       .start = token->start,
-      .end = arguments->block != NULL ? arguments->block->location.end : token->end
+      .end = arguments->block != NULL ? arguments->block->base.location.end : token->end
     },
     .as.forwarding_super_node.block = arguments->block
   };
@@ -2674,7 +2674,7 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
 
   const char *end;
   if (arguments->block != NULL) {
-    end = arguments->block->location.end;
+    end = arguments->block->base.location.end;
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
@@ -6958,7 +6958,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "unexpected & when parent method is not forwarding.");
         }
 
-        argument = yp_block_argument_node_create(parser, &operator, expression);
+        argument = (yp_node_t *)yp_block_argument_node_create(parser, &operator, expression);
         parsed_block_argument = true;
         break;
       }
@@ -7493,7 +7493,7 @@ parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma) {
 }
 
 // Parse a block.
-static yp_node_t *
+static yp_block_node_t *
 parse_block(yp_parser_t *parser) {
   yp_token_t opening = parser->previous;
   accept(parser, YP_TOKEN_NEWLINE);
@@ -8004,7 +8004,7 @@ parse_identifier(yp_parser_t *parser) {
     node->as.call_node.block = arguments.block;
 
     if (arguments.block != NULL) {
-      node->location.end = arguments.block->location.end;
+      node->location.end = arguments.block->base.location.end;
     } else if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
       node->location.end = node->as.call_node.message.end;
     } else {
