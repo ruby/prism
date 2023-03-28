@@ -527,6 +527,7 @@ nodes:
     child_nodes:
       - name: parameters
         type: node?
+        kind: ParametersNode
       - name: locals
         type: token[]
     comment: |
@@ -695,6 +696,7 @@ nodes:
         type: node?
       - name: parameters
         type: node?
+        kind: ParametersNode
       - name: statements
         type: node?
       - name: scope
@@ -1220,6 +1222,7 @@ nodes:
                 ^^^^^
           end
   - name: OperatorAndAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1233,6 +1236,7 @@ nodes:
           target &&= value
           ^^^^^^^^^^^^^^^^
   - name: OperatorAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1246,6 +1250,7 @@ nodes:
           foo += bar
           ^^^^^^^^^^
   - name: OperatorOrAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1259,6 +1264,7 @@ nodes:
           target ||= value
           ^^^^^^^^^^^^^^^^
   - name: OptionalParameterNode
+    is_migrated: true
     child_nodes:
       - name: name
         type: token
@@ -1273,6 +1279,7 @@ nodes:
                 ^^^^^
           end
   - name: OrNode
+    is_migrated: true
     child_nodes:
       - name: left
         type: node
@@ -1286,6 +1293,7 @@ nodes:
           left or right
           ^^^^^^^^^^^^^
   - name: ParametersNode
+    is_migrated: true
     child_nodes:
       - name: requireds
         type: node[]
@@ -1300,6 +1308,7 @@ nodes:
         type: node?
       - name: block
         type: node?
+        kind: BlockParameterNode
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
@@ -1307,6 +1316,7 @@ nodes:
                 ^^^^^^^
           end
   - name: ParenthesesNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node?
@@ -1320,6 +1330,7 @@ nodes:
           (10 + 34)
           ^^^^^^^^^
   - name: PinnedExpressionNode
+    is_migrated: true
     child_nodes:
       - name: expression
         type: node
@@ -1336,6 +1347,7 @@ nodes:
           foo in ^(bar)
                  ^^^^^^
   - name: PinnedVariableNode
+    is_migrated: true
     child_nodes:
       - name: variable
         type: node
@@ -1348,6 +1360,7 @@ nodes:
           foo in ^bar
                  ^^^^
   - name: PostExecutionNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node
@@ -1364,6 +1377,7 @@ nodes:
           END { foo }
           ^^^^^^^^^^^
   - name: PreExecutionNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node
@@ -1380,6 +1394,7 @@ nodes:
           BEGIN { foo }
           ^^^^^^^^^^^^^
   - name: ProgramNode
+    is_migrated: true
     child_nodes:
       - name: scope
         type: node
@@ -1389,6 +1404,7 @@ nodes:
         kind: StatementsNode
     comment: The top level node of any parse tree.
   - name: RangeNode
+    is_migrated: true
     child_nodes:
       - name: left
         type: node?
@@ -1405,18 +1421,21 @@ nodes:
           c if a =~ /left/ ... b =~ /right/
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   - name: RationalNode
+    is_migrated: true
     comment: |
       Represents a rational number literal.
 
           1.0r
           ^^^^
   - name: RedoNode
+    is_migrated: true
     comment: |
       Represents the use of the `redo` keyword.
 
           redo
           ^^^^
   - name: RegularExpressionNode
+    is_migrated: true
     child_nodes:
       - name: opening
         type: token
