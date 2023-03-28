@@ -85,7 +85,7 @@ end
 # child nodes it contains, and how to obtain the location of the node in the
 # source.
 class NodeType
-  attr_reader :name, :type, :human, :params, :location, :location_provided, :comment
+  attr_reader :name, :type, :human, :params, :location, :location_provided, :comment, :is_migrated
 
   def initialize(config)
     @name = config.fetch("name")
@@ -137,6 +137,7 @@ class NodeType
       end
 
     @comment = config.fetch("comment")
+    @is_migrated = config["is_migrated"] || false
   end
 
   def location_provided?

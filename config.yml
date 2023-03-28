@@ -330,6 +330,7 @@ nodes:
 
           alias foo bar
           ^^^^^^^^^^^^^
+    is_migrated: true
   - name: AlternationPatternNode
     child_nodes:
       - name: left

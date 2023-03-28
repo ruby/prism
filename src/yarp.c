@@ -224,6 +224,15 @@ yp_node_alloc(yp_parser_t *parser) {
   return (yp_node_t *) malloc(sizeof(yp_node_t));
 }
 
+// Allocate the space for a specific node type.
+#define YP_NODE_ALLOC(type) ((type *)malloc(sizeof(type)))
+
+// Downcast a specific node type to a yp_node_t.
+#define YP_NODE_DOWNCAST(node) ((yp_node_t *)node)
+
+// Upcast a yp_node_t to a specific node type.
+#define YP_NODE_UPCAST(node, type) ((type *)node)
+
 /******************************************************************************/
 /* Node creation functions                                                    */
 /******************************************************************************/
@@ -249,22 +258,22 @@ yp_node_create_from_token(yp_parser_t *parser, yp_node_type_t type, const yp_tok
 static yp_node_t *
 yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *new_name, yp_node_t *old_name) {
   assert(keyword->type == YP_TOKEN_KEYWORD_ALIAS);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_alias_node_t *node = YP_NODE_ALLOC(yp_alias_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ALIAS_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = old_name->location.end
+  *node = (yp_alias_node_t) {
+    {
+      .type = YP_NODE_ALIAS_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = old_name->location.end
+      },
     },
-    .as.alias_node = {
-      .new_name = new_name,
-      .old_name = old_name,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
-    }
+    .new_name = new_name,
+    .old_name = old_name,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new AlternationPatternNode node.

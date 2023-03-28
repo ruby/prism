@@ -114,7 +114,7 @@ yp_node_list_free(yp_parser_t *parser, yp_node_list_t *list) {
 __attribute__((__visibility__("default"))) void
 yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
   switch (node->type) {
-    <%- nodes.each do |node| -%>
+    <%- nodes.filter { !_1.is_migrated }.each do |node| -%>
     case <%= node.type %>:
       <%- node.params.each do |param| -%>
       <%- case param -%>
@@ -137,6 +137,29 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
       <%- end -%>
       break;
     <%- end -%>
+    <%- nodes.filter { _1.is_migrated }.each do |node| -%>
+    case <%= node.type %>:
+      <%- node.params.each do |param| -%>
+      <%- case param -%>
+      <%- when TokenParam, OptionalTokenParam, LocationParam, OptionalLocationParam, IntegerParam -%>
+      <%- when NodeParam -%>
+      yp_node_destroy(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when OptionalNodeParam -%>
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
+        yp_node_destroy(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      }
+      <%- when StringParam -%>
+      yp_string_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when NodeListParam -%>
+      yp_node_list_free(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when TokenListParam -%>
+      yp_token_list_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- else -%>
+      <%- raise -%>
+      <%- end -%>
+      <%- end -%>
+      break;
+    <%- end -%>
     default:
       assert(false && "unreachable");
       break;
@@ -149,7 +172,7 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
   memsize->node_count++;
 
   switch (node->type) {
-    <%- nodes.each do |node| -%>
+    <%- nodes.filter { !_1.is_migrated }.each do |node| -%>
     case <%= node.type %>: {
       memsize->memsize += sizeof(yp_node_t);
       <%- node.params.each do |param| -%>
@@ -167,6 +190,35 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
       yp_node_list_memsize(&node->as.<%= node.human %>.<%= param.name %>, memsize);
       <%- when TokenListParam -%>
       memsize->memsize += yp_token_list_memsize(&node->as.<%= node.human %>.<%= param.name %>);
+      <%- when LocationParam, OptionalLocationParam -%>
+      memsize->memsize += sizeof(yp_location_t);
+      <%- when IntegerParam -%>
+      memsize->memsize += sizeof(int);
+      <%- else -%>
+      <%- raise -%>
+      <%- end -%>
+      <%- end -%>
+      break;
+    }
+    <%- end -%>
+    <%- nodes.filter { _1.is_migrated }.each do |node| -%>
+    case <%= node.type %>: {
+      memsize->memsize += sizeof(yp_node_t);
+      <%- node.params.each do |param| -%>
+      <%- case param -%>
+      <%- when TokenParam, OptionalTokenParam -%>
+      <%- when NodeParam -%>
+      yp_node_memsize_node(((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+      <%- when OptionalNodeParam -%>
+      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
+        yp_node_memsize_node(((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+      }
+      <%- when StringParam -%>
+      memsize->memsize += yp_string_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when NodeListParam -%>
+      yp_node_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+      <%- when TokenListParam -%>
+      memsize->memsize += yp_token_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when LocationParam, OptionalLocationParam -%>
       memsize->memsize += sizeof(yp_location_t);
       <%- when IntegerParam -%>
