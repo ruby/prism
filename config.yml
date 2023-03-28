@@ -1630,6 +1630,7 @@ nodes:
         type: token?
       - name: unescaped
         type: string
+    is_migrated: true
     comment: |
       Represents a symbol literal or a symbol contained within a `%i` list.
 
