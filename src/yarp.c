@@ -189,7 +189,7 @@ not_provided(yp_parser_t *parser) {
 // of the call node creation functions.
 typedef struct {
   yp_token_t opening;
-  yp_node_t *arguments;
+  yp_arguments_node_t *arguments;
   yp_token_t closing;
   yp_node_t *block;
 } yp_arguments_t;
@@ -319,37 +319,36 @@ yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *opera
 }
 
 // Allocate an initialize a new arguments node.
-static yp_node_t *
+static yp_arguments_node_t *
 yp_arguments_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_arguments_node_t *node = YP_NODE_ALLOC(yp_arguments_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARGUMENTS_NODE,
-    .location = YP_LOCATION_NULL_VALUE(parser)
+  *node = (yp_arguments_node_t) {
+    {
+      .type = YP_NODE_ARGUMENTS_NODE,
+      .location = YP_LOCATION_NULL_VALUE(parser)
+    }
   };
 
-  yp_node_list_init(&node->as.arguments_node.arguments);
+  yp_node_list_init(&node->arguments);
   return node;
 }
 
 // Return the size of the given arguments node.
 static size_t
-yp_arguments_node_size(yp_node_t *node) {
-  assert(node->type == YP_NODE_ARGUMENTS_NODE);
-  return node->as.arguments_node.arguments.size;
+yp_arguments_node_size(yp_arguments_node_t *node) {
+  return node->arguments.size;
 }
 
 // Append an argument to an arguments node.
 static void
-yp_arguments_node_arguments_append(yp_node_t *node, yp_node_t *argument) {
-  assert(node->type == YP_NODE_ARGUMENTS_NODE);
-
+yp_arguments_node_arguments_append(yp_arguments_node_t *node, yp_node_t *argument) {
   if (yp_arguments_node_size(node) == 0) {
-    node->location.start = argument->location.start;
+    node->base.location.start = argument->location.start;
   }
 
-  node->location.end = argument->location.end;
-  yp_node_list_append2(&node->as.arguments_node.arguments, argument);
+  node->base.location.end = argument->location.end;
+  yp_node_list_append2(&node->arguments, argument);
 }
 
 // Allocate and initialize a new ArrayNode node.
@@ -731,7 +730,7 @@ yp_block_parameters_node_append_local(yp_node_t *node, const yp_token_t *local) 
 
 // Allocate and initialize a new BreakNode node.
 static yp_node_t *
-yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
+yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_BREAK);
   yp_node_t *node = yp_node_alloc(parser);
 
@@ -739,7 +738,7 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
     .type = YP_NODE_BREAK_NODE,
     .location = {
       .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+      .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
     },
     .as.break_node = {
       .arguments = arguments,
@@ -814,7 +813,7 @@ yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t 
   node->as.call_node.receiver = receiver;
   node->as.call_node.message = *operator;
 
-  yp_node_t *arguments = yp_arguments_node_create(parser);
+  yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
   yp_arguments_node_arguments_append(arguments, argument);
   node->as.call_node.arguments = arguments;
 
@@ -833,7 +832,7 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     node->location.end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
-    node->location.end = arguments->arguments->location.end;
+    node->location.end = arguments->arguments->base.location.end;
   } else {
     node->location.end = message->end;
   }
@@ -1894,7 +1893,7 @@ yp_multi_write_node_targets_append(yp_node_t *node, yp_node_t *target) {
 
 // Allocate and initialize a new NextNode node.
 static yp_node_t *
-yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
+yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_NEXT);
   yp_node_t *node = yp_node_alloc(parser);
 
@@ -1902,7 +1901,7 @@ yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *a
     .type = YP_NODE_NEXT_NODE,
     .location = {
       .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+      .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
     },
     .as.next_node = {
       .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
@@ -2450,14 +2449,14 @@ yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
 
 // Allocate a new ReturnNode node.
 static yp_node_t *
-yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
+yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
   yp_node_t *node = yp_node_alloc(parser);
 
   *node = (yp_node_t) {
     .type = YP_NODE_RETURN_NODE,
     .location = {
       .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+      .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
     },
     .as.return_node = {
       .keyword = *keyword,
@@ -2694,7 +2693,7 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
     end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
-    end = arguments->arguments->location.end;
+    end = arguments->arguments->base.location.end;
   } else {
     assert(false && "unreachable");
   }
@@ -2952,14 +2951,14 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
 
 // Allocate a new YieldNode node.
 static yp_node_t *
-yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *lparen, yp_node_t *arguments, const yp_token_t *rparen) {
+yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *lparen, yp_arguments_node_t *arguments, const yp_token_t *rparen) {
   yp_node_t *node = yp_node_alloc(parser);
 
   const char *end;
   if (rparen->type != YP_TOKEN_NOT_PROVIDED) {
     end = rparen->end;
   } else if (arguments != NULL) {
-    end = arguments->location.end;
+    end = arguments->base.location.end;
   } else if (lparen->type != YP_TOKEN_NOT_PROVIDED) {
     end = lparen->end;
   } else {
@@ -6554,8 +6553,9 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         // a method call with an argument. In this case we will create the
         // arguments node, parse the argument, and add it to the list.
         if (value) {
-          target->as.call_node.arguments = yp_arguments_node_create(parser);
-          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
+          yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
+          target->as.call_node.arguments = arguments;
+          yp_arguments_node_arguments_append(arguments, value);
         }
 
         // The method name needs to change. If we previously had foo, we now
@@ -6840,7 +6840,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
 
 // Parse a list of arguments.
 static void
-parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwarding, yp_token_type_t terminator) {
+parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accepts_forwarding, yp_token_type_t terminator) {
   yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
   // First we need to check if the next token is one that could be the start of
@@ -9258,7 +9258,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_token_t keyword = parser->previous;
-      yp_node_t *arguments = NULL;
+      yp_arguments_node_t *arguments = NULL;
 
       if (
         token_begins_expression_p(parser->current.type) ||
