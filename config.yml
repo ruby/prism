@@ -1192,6 +1192,7 @@ nodes:
           a, b, c = 1, 2, 3
           ^^^^^^^^^^^^^^^^^
   - name: NextNode
+    is_migrated: true
     child_nodes:
       - name: arguments
         type: node?

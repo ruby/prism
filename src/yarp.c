@@ -1919,21 +1919,21 @@ yp_multi_write_node_targets_append(yp_node_t *node, yp_node_t *target) {
 }
 
 // Allocate and initialize a new NextNode node.
-static yp_node_t *
+static yp_next_node_t *
 yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_NEXT);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_next_node_t *node = YP_NODE_ALLOC(yp_next_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_NEXT_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
+  *node = (yp_next_node_t) {
+    {
+      .type = YP_NODE_NEXT_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
+      }
     },
-    .as.next_node = {
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-      .arguments = arguments
-    }
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .arguments = arguments
   };
 
   return node;
@@ -9386,9 +9386,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       switch (keyword.type) {
         case YP_TOKEN_KEYWORD_BREAK:
-          return YP_NODE_DOWNCAST(yp_break_node_create(parser, &keyword, arguments));
+          return (yp_node_t *) yp_break_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_NEXT:
-          return yp_next_node_create(parser, &keyword, arguments);
+          return (yp_node_t *) yp_next_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_RETURN:
           return (yp_node_t *) yp_return_node_create(parser, &keyword, arguments);
         default:
