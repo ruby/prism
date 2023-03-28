@@ -6587,7 +6587,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
             target->as.call_node.arguments = yp_arguments_node_create(parser);
           }
 
-          yp_arguments_node_arguments_append(YP_NODE_UPCAST(target->as.call_node.arguments, yp_arguments_node_t), value);
+          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
           target->location.end = value->location.end;
         }
 
@@ -6983,7 +6983,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
       }
     }
 
-    yp_arguments_node_arguments_append(YP_NODE_UPCAST(arguments, yp_arguments_node_t), argument);
+    yp_arguments_node_arguments_append(arguments, argument);
 
     // If parsing the argument failed, we need to stop parsing arguments.
     if (argument->type == YP_NODE_MISSING_NODE || parser->recovering) break;
