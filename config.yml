@@ -1320,6 +1320,7 @@ nodes:
           (10 + 34)
           ^^^^^^^^^
   - name: PinnedExpressionNode
+    is_migrated: true
     child_nodes:
       - name: expression
         type: node
@@ -1336,6 +1337,7 @@ nodes:
           foo in ^(bar)
                  ^^^^^^
   - name: PinnedVariableNode
+    is_migrated: true
     child_nodes:
       - name: variable
         type: node

@@ -2204,42 +2204,42 @@ yp_parentheses_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_no
 }
 
 // Allocate and initialize a new PinnedExpressionNode node.
-static yp_node_t *
+static yp_pinned_expression_node_t *
 yp_pinned_expression_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *operator, const yp_token_t *lparen, const yp_token_t *rparen) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_pinned_expression_node_t *node = YP_NODE_ALLOC(yp_pinned_expression_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PINNED_EXPRESSION_NODE,
-    .location = {
-      .start = operator->start,
-      .end = rparen->end
+  *node = (yp_pinned_expression_node_t) {
+    {
+      .type = YP_NODE_PINNED_EXPRESSION_NODE,
+      .location = {
+        .start = operator->start,
+        .end = rparen->end
+      }
     },
-    .as.pinned_expression_node = {
-      .expression = expression,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-      .lparen_loc = YP_LOCATION_TOKEN_VALUE(lparen),
-      .rparen_loc = YP_LOCATION_TOKEN_VALUE(rparen)
-    }
+    .expression = expression,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+    .lparen_loc = YP_LOCATION_TOKEN_VALUE(lparen),
+    .rparen_loc = YP_LOCATION_TOKEN_VALUE(rparen)
   };
 
   return node;
 }
 
 // Allocate and initialize a new PinnedVariableNode node.
-static yp_node_t *
+static yp_pinned_variable_node_t *
 yp_pinned_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *variable) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_pinned_variable_node_t *node = YP_NODE_ALLOC(yp_pinned_variable_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PINNED_VARIABLE_NODE,
-    .location = {
-      .start = operator->start,
-      .end = variable->location.end
+  *node = (yp_pinned_variable_node_t) {
+    {
+      .type = YP_NODE_PINNED_VARIABLE_NODE,
+      .location = {
+        .start = operator->start,
+        .end = variable->location.end
+      }
     },
-    .as.pinned_variable_node = {
-      .variable = variable,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .variable = variable,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -8429,19 +8429,19 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           parser_lex(parser);
           yp_node_t *variable = yp_local_variable_read_node_create(parser, &parser->previous);
 
-          return yp_pinned_variable_node_create(parser, &operator, variable);
+          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
         case YP_TOKEN_INSTANCE_VARIABLE: {
           parser_lex(parser);
           yp_node_t *variable = yp_instance_variable_read_node_create(parser, &parser->previous);
 
-          return yp_pinned_variable_node_create(parser, &operator, variable);
+          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
         case YP_TOKEN_CLASS_VARIABLE: {
           parser_lex(parser);
           yp_node_t *variable = yp_class_variable_read_node_create(parser, &parser->previous);
 
-          return yp_pinned_variable_node_create(parser, &operator, variable);
+          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
         case YP_TOKEN_GLOBAL_VARIABLE:
         case YP_TOKEN_NTH_REFERENCE:
@@ -8449,7 +8449,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           parser_lex(parser);
           yp_node_t *variable = yp_global_variable_read_node_create(parser, &parser->previous);
 
-          return yp_pinned_variable_node_create(parser, &operator, variable);
+          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
         case YP_TOKEN_PARENTHESIS_LEFT: {
           bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
@@ -8463,7 +8463,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
 
           accept(parser, YP_TOKEN_NEWLINE);
           expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis after the expression.");
-          return yp_pinned_expression_node_create(parser, expression, &operator, &lparen, &parser->previous);
+          return (yp_node_t *) yp_pinned_expression_node_create(parser, expression, &operator, &lparen, &parser->previous);
         }
         default: {
           // If we get here, then we have a pin operator followed by something
@@ -8471,7 +8471,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected a variable after the pin operator.");
           yp_node_t *variable = yp_missing_node_create(parser, &(yp_location_t) { .start = operator.start, .end = operator.end });
 
-          return yp_pinned_variable_node_create(parser, &operator, variable);
+          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
       }
     }
