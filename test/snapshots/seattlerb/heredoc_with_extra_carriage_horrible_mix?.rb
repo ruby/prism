@@ -1,0 +1,16 @@
+ProgramNode(9...15)(
+  ScopeNode(0...0)([]),
+  StatementsNode(9...15)(
+    [HeredocNode(9...15)(
+       HEREDOC_START(0...7)("<<'eot'"),
+       [StringNode(9...15)(
+          nil,
+          STRING_CONTENT(9...15)("body\r\n"),
+          nil,
+          "body\r\n"
+        )],
+       HEREDOC_END(15...19)("eot\n"),
+       0
+     )]
+  )
+)

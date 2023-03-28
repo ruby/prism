@@ -1,0 +1,29 @@
+ProgramNode(0...30)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...30)(
+    [DefNode(0...30)(
+       IDENTIFIER(4...15)("some_method"),
+       nil,
+       nil,
+       StatementsNode(18...30)(
+         [CallNode(18...30)(
+            nil,
+            nil,
+            IDENTIFIER(18...30)("other_method"),
+            nil,
+            ArgumentsNode(31...33)([IntegerNode(31...33)()]),
+            nil,
+            nil,
+            "other_method"
+          )]
+       ),
+       ScopeNode(0...3)([]),
+       (0...3),
+       nil,
+       nil,
+       nil,
+       (16...17),
+       nil
+     )]
+  )
+)

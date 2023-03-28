@@ -641,15 +641,14 @@ module YARP
         when :heredoc_closed
           tokens << token
 
-          case event
-          when :on_nl, :on_ignored_nl, :on_comment
+          if %i[on_nl on_ignored_nl on_comment].include?(event) || (event == :on_tstring_content && value.end_with?("\n"))
             heredocs.each do |heredoc|
               tokens.concat(heredoc.to_a)
             end
 
             heredocs.clear
             state = :default
-          when :on_heredoc_beg
+          elsif event == :on_heredoc_beg
             state = :heredoc_opened
             heredocs << Heredoc.build(token)
           end

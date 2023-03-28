@@ -1,0 +1,15 @@
+ProgramNode(2...16)(
+  ScopeNode(0...0)([]),
+  StatementsNode(2...16)(
+    [InterpolatedSymbolNode(2...16)(
+       SYMBOL_BEGIN(0...2)(":\""),
+       [StringNode(2...16)(
+          nil,
+          STRING_CONTENT(2...16)("Variet\\303\\240"),
+          nil,
+          "Varietà"
+        )],
+       STRING_END(16...17)("\"")
+     )]
+  )
+)

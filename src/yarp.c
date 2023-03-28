@@ -3856,8 +3856,18 @@ lex_numeric(yp_parser_t *parser) {
 
   if (parser->current.end < parser->end) {
     type = lex_numeric_prefix(parser);
+
+    yp_token_type_t current = type;
+    const char *end = parser->current.end;
+
     if (match(parser, 'r')) type = YP_TOKEN_RATIONAL_NUMBER;
     if (match(parser, 'i')) type = YP_TOKEN_IMAGINARY_NUMBER;
+
+    const unsigned char uc = (const unsigned char) peek(parser);
+    if (uc != '\0' && (uc >= 0x80 || ((uc >= 'a' && uc <= 'z') || (uc >= 'A' && uc <= 'Z')) || uc == '_')) {
+      type = current;
+      parser->current.end = end;
+    }
   }
 
   return type;
@@ -4285,7 +4295,7 @@ lex_question_mark(yp_parser_t *parser) {
   lex_state_set(parser, YP_LEX_STATE_END);
 
   if (parser->current.start[1] == '\\') {
-    parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end - parser->current.start + 1, YP_UNESCAPE_ALL, &parser->error_list);
+    parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
   } else {
     parser->current.end += parser->encoding.char_width(parser->current.end);
   }
@@ -4400,6 +4410,20 @@ parser_lex_ignored_newline(yp_parser_t *parser) {
   parser_lex_callback(parser);
 }
 
+// This function will be called when a newline is encountered. In some newlines,
+// we need to check if there is a heredoc or heredocs that we have already lexed
+// the body of that we need to now skip past. That will be indicated by the
+// heredoc_end field on the parser.
+//
+// If it is set, then we need to skip past the heredoc body and then clear the
+// heredoc_end field.
+static inline void
+parser_flush_heredoc_end(yp_parser_t *parser) {
+  assert(parser->heredoc_end <= parser->end);
+  parser->next_start = parser->heredoc_end;
+  parser->heredoc_end = NULL;
+}
+
 // This is a convenience macro that will set the current token type, call the
 // lex callback, and then return from the parser_lex function.
 #define LEX(token_type) parser->current.type = token_type; parser_lex_callback(parser); return
@@ -4451,12 +4475,19 @@ parser_lex(yp_parser_t *parser) {
           case '\t':
           case '\f':
           case '\v':
-          case '\r':
             parser->current.end++;
             space_seen = true;
             break;
+          case '\r':
+            if (peek_at(parser, 1) == '\n') {
+              chomping = false;
+            } else {
+              parser->current.end++;
+              space_seen = true;
+            }
+            break;
           case '\\':
-            if (parser->current.end[1] == '\n') {
+            if (peek_at(parser, 1) == '\n') {
               parser->current.end += 2;
               space_seen = true;
             } else if (char_is_non_newline_whitespace(*parser->current.end)) {
@@ -4511,12 +4542,22 @@ parser_lex(yp_parser_t *parser) {
           // fallthrough
         }
 
+        case '\r': {
+          // The only way you can have carriage returns in this particular loop
+          // is if you have a carriage return followed by a newline. In that
+          // case we'll just skip over the carriage return and continue lexing,
+          // in order to make it so that the newline token encapsulates both the
+          // carriage return and the newline. Note that we need to check that
+          // we haven't already lexed a comment here because that falls through
+          // into here as well.
+          if (!lexed_comment) parser->current.end++;
+
+          // fallthrough
+        }
+
         case '\n': {
           if (parser->heredoc_end != NULL) {
-            // If the special resume flag is set, then we need to jump ahead.
-            assert(parser->heredoc_end <= parser->end);
-            parser->next_start = parser->heredoc_end;
-            parser->heredoc_end = NULL;
+            parser_flush_heredoc_end(parser);
           }
 
           // If this is an ignored newline, then we can continue lexing after
@@ -5633,7 +5674,7 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
+            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
           }
@@ -5733,7 +5774,7 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
+            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
           }
@@ -5793,7 +5834,13 @@ parser_lex(yp_parser_t *parser) {
     }
     case YP_LEX_STRING: {
       // First, we'll set to start of this token to be the current end.
-      parser->current.start = parser->current.end;
+      if (parser->next_start == NULL) {
+        parser->current.start = parser->current.end;
+      } else {
+        parser->current.start = parser->next_start;
+        parser->current.end = parser->next_start;
+        parser->next_start = NULL;
+      }
 
       // We'll check if we're at the end of the file. If we are, then we need to
       // return the EOF token.
@@ -5803,8 +5850,8 @@ parser_lex(yp_parser_t *parser) {
 
       // These are the places where we need to split up the content of the
       // string. We'll use strpbrk to find the first of these characters.
-      char breakpoints[] = "\\\0\0\0";
-      size_t index = 1;
+      char breakpoints[] = "\n\\\0\0\0";
+      size_t index = 2;
 
       // Now add in the terminator.
       breakpoints[index++] = parser->lex_modes.current->as.string.terminator;
@@ -5874,6 +5921,20 @@ parser_lex(yp_parser_t *parser) {
           LEX(YP_TOKEN_STRING_END);
         }
 
+        // When we hit a newline, we need to flush any potential heredocs. Note
+        // that this has to happen after we check for the terminator in case the
+        // terminator is a newline character.
+        if (*breakpoint == '\n') {
+          if (parser->heredoc_end == NULL) {
+            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+            continue;
+          } else {
+            parser->current.end = breakpoint + 1;
+            parser_flush_heredoc_end(parser);
+            LEX(YP_TOKEN_STRING_CONTENT);
+          }
+        }
+
         switch (*breakpoint) {
           case '\0':
             // Skip directly past the null character.
@@ -5884,7 +5945,7 @@ parser_lex(yp_parser_t *parser) {
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
             yp_unescape_type_t unescape_type = parser->lex_modes.current->as.string.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
-            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, unescape_type, &parser->error_list);
+            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, &parser->error_list);
             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
           }
@@ -6020,10 +6081,10 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            int difference = yp_unescape_calculate_difference(breakpoint, parser->end - breakpoint, YP_UNESCAPE_ALL, &parser->error_list);
             if (breakpoint[1] == '\n') {
               breakpoint++;
             } else {
+              size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
               breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             }
             break;
@@ -9839,6 +9900,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
         }
 
+        if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
 
         yp_token_t opening = not_provided(parser);
@@ -10412,10 +10474,38 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         return yp_symbol_node_create(parser, &opening, &content, &parser->previous);
       } else if (!lex_mode->as.string.interpolation) {
-        // If we don't accept interpolation then we only expect there to be a
-        // single string content token immediately after the opening delimiter.
+        // If we don't accept interpolation then we expect the string to start
+        // with a single string content node.
         expect(parser, YP_TOKEN_STRING_CONTENT, "Expected string content after opening delimiter.");
         yp_token_t content = parser->previous;
+
+        // It is unfortunately possible to have multiple string content nodes in
+        // a row in the case that there's heredoc content in the middle of the
+        // string, like this cursed example:
+        //
+        // <<-END+'b
+        //  a
+        // END
+        //  c'+'d'
+        //
+        // In that case we need to switch to an interpolated string to be able
+        // to contain all of the parts.
+        if (match_type_p(parser, YP_TOKEN_STRING_CONTENT)) {
+          yp_node_list_t parts;
+          yp_node_list_init(&parts);
+
+          yp_token_t delimiters = not_provided(parser);
+          yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &delimiters, &content, &delimiters, YP_UNESCAPE_MINIMAL);
+          yp_node_list_append2(&parts, part);
+
+          while (accept(parser, YP_TOKEN_STRING_CONTENT)) {
+            part = yp_node_string_node_create_and_unescape(parser, &delimiters, &parser->previous, &delimiters, YP_UNESCAPE_MINIMAL);
+            yp_node_list_append2(&parts, part);
+          }
+
+          expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
+          return yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
+        }
 
         if (accept(parser, YP_TOKEN_LABEL_END)) {
           return yp_node_symbol_node_create_and_unescape(parser, &opening, &content, &parser->previous);

@@ -1,0 +1,28 @@
+ProgramNode(0...8)(
+  ScopeNode(0...0)([IDENTIFIER(0...1)("c")]),
+  StatementsNode(0...8)(
+    [LocalVariableWriteNode(0...8)(
+       IDENTIFIER(0...1)("c"),
+       EQUAL(2...3)("="),
+       CallNode(4...8)(
+         CallNode(4...5)(
+           nil,
+           nil,
+           IDENTIFIER(4...5)("a"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "a"
+         ),
+         AMPERSAND_DOT(5...7)("&."),
+         IDENTIFIER(7...8)("b"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "b"
+       )
+     )]
+  )
+)

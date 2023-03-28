@@ -1,0 +1,38 @@
+ProgramNode(0...23)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...23)(
+    [ArrayNode(0...23)(
+       [HeredocNode(6...19)(
+          HEREDOC_START(1...4)("<<A"),
+          [StringInterpolatedNode(6...12)(
+             EMBEXPR_BEGIN(6...8)("\#{"),
+             StatementsNode(13...15)(
+               [HeredocNode(13...15)(
+                  HEREDOC_START(8...11)("<<B"),
+                  [StringNode(13...15)(
+                     nil,
+                     STRING_CONTENT(13...15)("b\n"),
+                     nil,
+                     "b\n"
+                   )],
+                  HEREDOC_END(15...17)("B\n"),
+                  0
+                )]
+             ),
+             EMBEXPR_END(11...12)("}")
+           ),
+           StringNode(12...19)(
+             nil,
+             STRING_CONTENT(12...19)("\n" + "b\n" + "B\n" + "a\n"),
+             nil,
+             "\n" + "b\n" + "B\n" + "a\n"
+           )],
+          HEREDOC_END(19...21)("A\n"),
+          0
+        ),
+        IntegerNode(21...22)()],
+       BRACKET_LEFT_ARRAY(0...1)("["),
+       BRACKET_RIGHT(22...23)("]")
+     )]
+  )
+)
