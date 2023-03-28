@@ -2311,17 +2311,23 @@ yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *ope
 }
 
 // Allocate and initialize a new RationalNode node.
-static yp_node_t *
+static yp_rational_node_t *
 yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_RATIONAL_NUMBER);
-  return yp_node_create_from_token(parser, YP_NODE_RATIONAL_NODE, token);
+  yp_rational_node_t *node = YP_NODE_ALLOC(yp_rational_node_t);
+
+  *node = (yp_rational_node_t) {{ .type = YP_NODE_RATIONAL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new RedoNode node.
-static yp_node_t *
+static yp_redo_node_t *
 yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_REDO);
-  return yp_node_create_from_token(parser, YP_NODE_REDO_NODE, token);
+  yp_redo_node_t *node = YP_NODE_ALLOC(yp_redo_node_t);
+
+  *node = (yp_redo_node_t) {{ .type = YP_NODE_REDO_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate a new RegularExpressionNode node.
@@ -9902,7 +9908,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_nil_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_REDO:
       parser_lex(parser);
-      return yp_redo_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_redo_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_RETRY:
       parser_lex(parser);
       return (yp_node_t *) yp_retry_node_create(parser, &parser->previous);
@@ -10247,7 +10253,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_RATIONAL_NUMBER:
       parser_lex(parser);
-      return yp_rational_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_rational_node_create(parser, &parser->previous);
     case YP_TOKEN_REGEXP_BEGIN: {
       yp_token_t opening = parser->current;
       parser_lex(parser);
