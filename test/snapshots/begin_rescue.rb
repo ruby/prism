@@ -283,7 +283,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(194...213)(
+       RescueNode(187...213)(
          KEYWORD_RESCUE(187...193)("rescue"),
          [ConstantReadNode(194...203)()],
          EQUAL_GREATER(204...206)("=>"),
@@ -304,7 +304,7 @@ ProgramNode(0...578)(
               "b"
             )]
          ),
-         RescueNode(221...265)(
+         RescueNode(214...265)(
            KEYWORD_RESCUE(214...220)("rescue"),
            [ConstantReadNode(221...237)(), ConstantReadNode(239...255)()],
            EQUAL_GREATER(256...258)("=>"),
@@ -346,7 +346,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(288...307)(
+       RescueNode(281...307)(
          KEYWORD_RESCUE(281...287)("rescue"),
          [ConstantReadNode(288...297)()],
          EQUAL_GREATER(298...300)("=>"),
@@ -519,7 +519,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(413...424)(
+       RescueNode(406...424)(
          KEYWORD_RESCUE(406...412)("rescue"),
          [ConstantReadNode(413...422)()],
          nil,
@@ -556,7 +556,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(445...473)(
+       RescueNode(438...473)(
          KEYWORD_RESCUE(438...444)("rescue"),
          [ConstantReadNode(445...454)(), ConstantReadNode(456...471)()],
          nil,
@@ -593,7 +593,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(496...532)(
+       RescueNode(489...532)(
          KEYWORD_RESCUE(489...495)("rescue"),
          [ConstantReadNode(496...505)(), ConstantReadNode(507...522)()],
          EQUAL_GREATER(523...525)("=>"),
@@ -634,7 +634,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(555...574)(
+       RescueNode(548...574)(
          KEYWORD_RESCUE(548...554)("rescue"),
          [ConstantReadNode(555...564)()],
          EQUAL_GREATER(565...567)("=>"),

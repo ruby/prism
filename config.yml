@@ -461,6 +461,7 @@ nodes:
         kind: StatementsNode
       - name: rescue_clause
         type: node?
+        kind: RescueNode
       - name: else_clause
         type: node?
         kind: ElseNode
@@ -1476,6 +1477,8 @@ nodes:
         kind: StatementsNode
       - name: consequent
         type: node?
+        kind: RescueNode
+    is_migrated: true
     comment: |
       Represents a rescue statement.
 

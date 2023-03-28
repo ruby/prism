@@ -690,7 +690,7 @@ ProgramNode(0...737)(
          BeginNode(0...390)(
            nil,
            nil,
-           RescueNode(372...386)(
+           RescueNode(365...386)(
              KEYWORD_RESCUE(365...371)("rescue"),
              [ConstantReadNode(372...381)()],
              EQUAL_GREATER(382...384)("=>"),
@@ -735,7 +735,7 @@ ProgramNode(0...737)(
                 "foo"
               )]
            ),
-           RescueNode(409...431)(
+           RescueNode(402...431)(
              KEYWORD_RESCUE(402...408)("rescue"),
              [ConstantReadNode(409...418)()],
              EQUAL_GREATER(419...421)("=>"),
@@ -782,7 +782,7 @@ ProgramNode(0...737)(
                 "bar"
               )]
            ),
-           RescueNode(454...475)(
+           RescueNode(447...475)(
              KEYWORD_RESCUE(447...453)("rescue"),
              [ConstantReadNode(454...463)(),
               SplatNode(465...469)(
@@ -847,7 +847,7 @@ ProgramNode(0...737)(
                 "bar"
               )]
            ),
-           RescueNode(498...532)(
+           RescueNode(491...532)(
              KEYWORD_RESCUE(491...497)("rescue"),
              [ConstantReadNode(498...507)(),
               SplatNode(509...513)(
@@ -916,7 +916,7 @@ ProgramNode(0...737)(
                 "bar"
               )]
            ),
-           RescueNode(555...565)(
+           RescueNode(548...565)(
              KEYWORD_RESCUE(548...554)("rescue"),
              [SplatNode(555...559)(
                 USTAR(555...556)("*"),
@@ -980,7 +980,7 @@ ProgramNode(0...737)(
                 "bar"
               )]
            ),
-           RescueNode(588...597)(
+           RescueNode(581...587)(
              KEYWORD_RESCUE(581...587)("rescue"),
              [ConstantReadNode(588...597)()],
              nil,
@@ -1077,7 +1077,7 @@ ProgramNode(0...737)(
                 "bar"
               )]
            ),
-           RescueNode(653...676)(
+           RescueNode(646...676)(
              KEYWORD_RESCUE(646...652)("rescue"),
              [SplatNode(653...657)(
                 USTAR(653...654)("*"),

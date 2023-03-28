@@ -138,7 +138,7 @@ ProgramNode(0...530)(
      BeginNode(107...125)(
        KEYWORD_BEGIN(107...112)("begin"),
        nil,
-       RescueNode(120...121)(
+       RescueNode(113...119)(
          KEYWORD_RESCUE(113...119)("rescue"),
          [ConstantReadNode(120...121)()],
          nil,
@@ -153,7 +153,7 @@ ProgramNode(0...530)(
      BeginNode(127...152)(
        KEYWORD_BEGIN(127...132)("begin"),
        nil,
-       RescueNode(140...148)(
+       RescueNode(133...148)(
          KEYWORD_RESCUE(133...139)("rescue"),
          [ConstantReadNode(140...141)()],
          EQUAL_GREATER(142...144)("=>"),
@@ -183,7 +183,7 @@ ProgramNode(0...530)(
             "a"
           )]
        ),
-       RescueNode(171...176)(
+       RescueNode(164...176)(
          KEYWORD_RESCUE(164...170)("rescue"),
          [ConstantReadNode(171...172)()],
          nil,
@@ -200,7 +200,7 @@ ProgramNode(0...530)(
               "b"
             )]
          ),
-         RescueNode(184...189)(
+         RescueNode(177...189)(
            KEYWORD_RESCUE(177...183)("rescue"),
            [ConstantReadNode(184...185)()],
            nil,
@@ -334,7 +334,7 @@ ProgramNode(0...530)(
             )
           )]
        ),
-       RescueNode(324...333)(
+       RescueNode(317...323)(
          KEYWORD_RESCUE(317...323)("rescue"),
          [ConstantReadNode(324...333)()],
          nil,
@@ -374,7 +374,7 @@ ProgramNode(0...530)(
        StatementsNode(384...387)(
          [LocalVariableReadNode(384...387)(IDENTIFIER(384...387)("foo"))]
        ),
-       RescueNode(395...424)(
+       RescueNode(388...424)(
          KEYWORD_RESCUE(388...394)("rescue"),
          [ConstantReadNode(395...404)(), ConstantReadNode(406...411)()],
          EQUAL_GREATER(412...414)("=>"),
@@ -397,7 +397,7 @@ ProgramNode(0...530)(
        StatementsNode(438...441)(
          [LocalVariableReadNode(438...441)(IDENTIFIER(438...441)("bar"))]
        ),
-       RescueNode(449...483)(
+       RescueNode(442...483)(
          KEYWORD_RESCUE(442...448)("rescue"),
          [ConstantReadNode(449...458)(),
           SplatNode(460...464)(

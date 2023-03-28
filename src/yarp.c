@@ -599,10 +599,8 @@ yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_st
 
 // Set the rescue clause and end location of a begin node.
 static void
-yp_begin_node_rescue_clause_set(yp_begin_node_t *node, yp_node_t *rescue_clause) {
-  assert(rescue_clause->type == YP_NODE_RESCUE_NODE);
-
-  node->base.location.end = rescue_clause->location.end;
+yp_begin_node_rescue_clause_set(yp_begin_node_t *node, yp_rescue_node_t *rescue_clause) {
+  node->base.location.end = rescue_clause->base.location.end;
   node->rescue_clause = rescue_clause;
 }
 
@@ -2403,43 +2401,41 @@ yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const
 }
 
 // Allocate and initiliaze a new RescueNode node.
-static yp_node_t *
+static yp_rescue_node_t *
 yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *rescue_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_rescue_node_t *node = YP_NODE_ALLOC(yp_rescue_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RESCUE_NODE,
-    .location = {
-      .start = rescue_keyword->start,
-      .end = rescue_keyword->end
+  *node = (yp_rescue_node_t) {
+    {
+      .type = YP_NODE_RESCUE_NODE,
+      .location = {
+        .start = rescue_keyword->start,
+        .end = rescue_keyword->end
+      }
     },
-    .as.rescue_node = {
-      .rescue_keyword = *rescue_keyword,
-      .equal_greater = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-      .exception = NULL,
-      .statements = NULL,
-      .consequent = NULL
-    }
+    .rescue_keyword = *rescue_keyword,
+    .equal_greater = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .exception = NULL,
+    .statements = NULL,
+    .consequent = NULL
   };
 
-  yp_node_list_init(&node->as.rescue_node.exceptions);
+  yp_node_list_init(&node->exceptions);
   return node;
 }
 
 // Set the exception of a rescue node, and update the location of the node.
 static void
-yp_rescue_node_exception_set(yp_node_t *node, yp_node_t *exception) {
-  assert(node->type == YP_NODE_RESCUE_NODE);
-  node->as.rescue_node.exception = exception;
-  node->location.end = exception->location.end;
+yp_rescue_node_exception_set(yp_rescue_node_t *node, yp_node_t *exception) {
+  node->exception = exception;
+  node->base.location.end = exception->location.end;
 }
 
 // Set the statements of a rescue node, and update the location of the node.
 static void
-yp_rescue_node_statements_set(yp_node_t *node, yp_statements_node_t *statements) {
-  assert(node->type == YP_NODE_RESCUE_NODE);
-  node->as.rescue_node.statements = statements;
-  node->location.end = statements->base.location.end;
+yp_rescue_node_statements_set(yp_rescue_node_t *node, yp_statements_node_t *statements) {
+  node->statements = statements;
+  node->base.location.end = statements->base.location.end;
 }
 
 // Allocate a new RestParameterNode node.
@@ -7384,10 +7380,10 @@ parse_parameters(
 // nodes pointing to each other from the top.
 static inline void
 parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
-  yp_node_t *current = NULL;
+  yp_rescue_node_t *current = NULL;
 
   while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
-    yp_node_t *rescue = yp_rescue_node_create(parser, &parser->previous);
+    yp_rescue_node_t *rescue = yp_rescue_node_create(parser, &parser->previous);
 
     switch (parser->current.type) {
       case YP_TOKEN_EQUAL_GREATER: {
@@ -7395,13 +7391,13 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
         // we're going to have an empty list of exceptions to rescue (which
         // implies StandardError).
         parser_lex(parser);
-        rescue->as.rescue_node.equal_greater = parser->previous;
+        rescue->equal_greater = parser->previous;
 
         yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
         yp_token_t operator = not_provided(parser);
         node = parse_target(parser, node, &operator, NULL);
 
-        rescue->as.rescue_node.exception = node;
+        rescue->exception = node;
         break;
       }
       case YP_TOKEN_NEWLINE:
@@ -7417,7 +7413,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
 
           do {
             yp_node_t *expression = parse_starred_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to find a rescued expression.");
-            yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exceptions, expression);
+            yp_node_list_append2(&rescue->exceptions, expression);
 
             // If we hit a newline, then this is the end of the rescue expression. We
             // can continue on to parse the statements.
@@ -7426,7 +7422,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
             // If we hit a `=>` then we're going to parse the exception variable. Once
             // we've done that, we'll break out of the loop and parse the statements.
             if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-              rescue->as.rescue_node.equal_greater = parser->previous;
+              rescue->equal_greater = parser->previous;
 
               yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
               yp_token_t operator = not_provided(parser);
@@ -7454,7 +7450,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
     if (current == NULL) {
       yp_begin_node_rescue_clause_set(parent_node, rescue);
     } else {
-      current->as.rescue_node.consequent = rescue;
+      current->consequent = rescue;
     }
 
     current = rescue;

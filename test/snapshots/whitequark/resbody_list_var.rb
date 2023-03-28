@@ -15,7 +15,7 @@ ProgramNode(0...39)(
             "meth"
           )]
        ),
-       RescueNode(20...34)(
+       RescueNode(13...34)(
          KEYWORD_RESCUE(13...19)("rescue"),
          [CallNode(20...23)(
             nil,

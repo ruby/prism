@@ -27,7 +27,7 @@ ProgramNode(0...76)(
                    nil
                  )]
               ),
-              RescueNode(42...66)(
+              RescueNode(35...66)(
                 KEYWORD_RESCUE(35...41)("rescue"),
                 [ConstantReadNode(42...51)()],
                 EQUAL_GREATER(52...54)("=>"),
