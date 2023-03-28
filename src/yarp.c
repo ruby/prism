@@ -1147,22 +1147,22 @@ yp_def_node_create(
 }
 
 // Allocate a new DefinedNode node.
-static yp_node_t *
+static yp_defined_node_t *
 yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t *value, const yp_token_t *rparen, const yp_location_t *keyword_loc) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_defined_node_t *node = YP_NODE_ALLOC(yp_defined_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_DEFINED_NODE,
-    .location = {
-      .start = keyword_loc->start,
-      .end = (rparen->type == YP_TOKEN_NOT_PROVIDED ? value->location.end : rparen->end)
+  *node = (yp_defined_node_t) {
+    {
+      .type = YP_NODE_DEFINED_NODE,
+      .location = {
+        .start = keyword_loc->start,
+        .end = (rparen->type == YP_TOKEN_NOT_PROVIDED ? value->location.end : rparen->end)
+      },
     },
-    .as.defined_node = {
-      .lparen = *lparen,
-      .value = value,
-      .rparen = *rparen,
-      .keyword_loc = *keyword_loc
-     }
+    .lparen = *lparen,
+    .value = value,
+    .rparen = *rparen,
+    .keyword_loc = *keyword_loc
   };
 
   return node;
@@ -9713,13 +9713,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected expression after `defined?`.");
       }
 
-      return yp_defined_node_create(
+      return YP_NODE_DOWNCAST(yp_defined_node_create(
         parser,
         &lparen,
         expression,
         &rparen,
         &(yp_location_t) { .start = keyword.start, .end = keyword.end }
-      );
+      ));
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       parser_lex(parser);

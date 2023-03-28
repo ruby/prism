@@ -719,6 +719,7 @@ nodes:
 
           defined?(a)
           ^^^^^^^^^^^
+    is_migrated: true
   - name: ElseNode
     child_nodes:
       - name: else_keyword
