@@ -1011,22 +1011,22 @@ yp_case_node_end_keyword_loc_set(yp_node_t *node, const yp_token_t *end_keyword)
 }
 
 // Allocate a new ClassNode node.
-static yp_node_t *
+static yp_class_node_t *
 yp_class_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *class_keyword, yp_node_t *constant_path, const yp_token_t *inheritance_operator, yp_node_t *superclass, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_class_node_t *node = YP_NODE_ALLOC(yp_class_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CLASS_NODE,
-    .location = { .start = class_keyword->start, .end = end_keyword->end },
-    .as.class_node = {
-      .scope = scope,
-      .class_keyword = *class_keyword,
-      .constant_path = constant_path,
-      .inheritance_operator = *inheritance_operator,
-      .superclass = superclass,
-      .statements = statements,
-      .end_keyword = *end_keyword
-     }
+  *node = (yp_class_node_t) {
+    {
+      .type = YP_NODE_CLASS_NODE,
+      .location = { .start = class_keyword->start, .end = end_keyword->end },
+    },
+    .scope = scope,
+    .class_keyword = *class_keyword,
+    .constant_path = constant_path,
+    .inheritance_operator = *inheritance_operator,
+    .superclass = superclass,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
   return node;
@@ -9429,7 +9429,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
       yp_state_stack_pop(&parser->do_loop_stack);
-      return yp_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
+      return YP_NODE_DOWNCAST(
+        yp_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous)
+      );
     }
     case YP_TOKEN_KEYWORD_DEF: {
       yp_token_t def_keyword = parser->current;

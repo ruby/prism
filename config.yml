@@ -615,6 +615,7 @@ nodes:
 
           class Foo end
           ^^^^^^^^^^^^^
+    is_migrated: true
   - name: ClassVariableReadNode
     comment: |
       Represents referencing a class variable.
