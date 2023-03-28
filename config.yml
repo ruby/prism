@@ -1540,18 +1540,21 @@ nodes:
           class << self end
           ^^^^^^^^^^^^^^^^^
   - name: SourceEncodingNode
+    is_migrated: true
     comment: |
       Represents the use of the `__ENCODING__` keyword.
 
           __ENCODING__
           ^^^^^^^^^^^^
   - name: SourceFileNode
+    is_migrated: true
     comment: |
       Represents the use of the `__FILE__` keyword.
 
           __FILE__
           ^^^^^^^^
   - name: SourceLineNode
+    is_migrated: true
     comment: |
       Represents the use of the `__LINE__` keyword.
 

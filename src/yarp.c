@@ -2531,24 +2531,33 @@ yp_singleton_class_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_t
 }
 
 // Allocate and initialize a new SourceEncodingNode node.
-static yp_node_t *
+static yp_source_encoding_node_t *
 yp_source_encoding_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD___ENCODING__);
-  return yp_node_create_from_token(parser, YP_NODE_SOURCE_ENCODING_NODE, token);
+  yp_source_encoding_node_t *node = YP_NODE_ALLOC(yp_source_encoding_node_t);
+
+  *node = (yp_source_encoding_node_t) {{ .type = YP_NODE_SOURCE_ENCODING_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new SourceFileNode node.
-static yp_node_t *
+static yp_source_file_node_t *
 yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD___FILE__);
-  return yp_node_create_from_token(parser, YP_NODE_SOURCE_FILE_NODE, token);
+  yp_source_file_node_t *node = YP_NODE_ALLOC(yp_source_file_node_t);
+
+  *node = (yp_source_file_node_t) {{ .type = YP_NODE_SOURCE_FILE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new SourceLineNode node.
-static yp_node_t *
+static yp_source_line_node_t *
 yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD___LINE__);
-  return yp_node_create_from_token(parser, YP_NODE_SOURCE_LINE_NODE, token);
+  yp_source_line_node_t *node = YP_NODE_ALLOC(yp_source_line_node_t);
+
+  *node = (yp_source_line_node_t) {{ .type = YP_NODE_SOURCE_LINE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate a new SplatNode node.
@@ -9127,13 +9136,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_integer_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___ENCODING__:
       parser_lex(parser);
-      return yp_source_encoding_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_source_encoding_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___FILE__:
       parser_lex(parser);
-      return yp_source_file_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_source_file_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___LINE__:
       parser_lex(parser);
-      return yp_source_line_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_source_line_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_ALIAS: {
       parser_lex(parser);
       yp_token_t keyword = parser->previous;
@@ -9550,13 +9559,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_false_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD___FILE__:
-                receiver = yp_source_file_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_source_file_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD___LINE__:
-                receiver = yp_source_line_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_source_line_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD___ENCODING__:
-                receiver = yp_source_encoding_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_source_encoding_node_create(parser, &identifier);
                 break;
               default:
                 break;
