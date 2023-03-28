@@ -2900,21 +2900,21 @@ yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword, yp_node
 }
 
 // Allocate a new WhileNode node.
-static yp_node_t *
+static yp_while_node_t *
 yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_while_node_t *node = YP_NODE_ALLOC(yp_while_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_WHILE_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = statements == NULL ? predicate->location.end : statements->location.end
+  *node = (yp_while_node_t) {
+    {
+      .type = YP_NODE_WHILE_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements == NULL ? predicate->location.end : statements->location.end
+      },
     },
-    .as.while_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements
   };
 
   return node;
@@ -9888,7 +9888,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
       }
 
-      return yp_while_node_create(parser, &keyword, predicate, statements);
+      return (yp_node_t *) yp_while_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_PERCENT_LOWER_I: {
       parser_lex(parser);
@@ -10937,7 +10937,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
-      return yp_while_node_create(parser, &token, predicate, statements);
+      return (yp_node_t *) yp_while_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_QUESTION_MARK: {
       parser_lex(parser);
