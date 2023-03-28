@@ -494,6 +494,7 @@ nodes:
         type: node
       - name: parameters
         type: node?
+        kind: BlockParametersNode
       - name: statements
         type: node?
       - name: opening_loc
@@ -518,6 +519,7 @@ nodes:
           def a(&b)
                 ^^
           end
+    is_migrated: true
   - name: BlockParametersNode
     child_nodes:
       - name: parameters
@@ -529,6 +531,7 @@ nodes:
 
           -> (a, b = 1; local) { }
               ^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: BreakNode
     child_nodes:
       - name: arguments
@@ -1069,6 +1072,7 @@ nodes:
         type: token?
       - name: parameters
         type: node?
+        kind: BlockParametersNode
       - name: rparen
         type: token?
       - name: statements
