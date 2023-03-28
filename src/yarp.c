@@ -1203,10 +1203,12 @@ yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_
 }
 
 // Allocate and initialize a new FalseNode node.
-static yp_node_t *
+static yp_false_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_FALSE);
-  return yp_node_create_from_token(parser, YP_NODE_FALSE_NODE, token);
+  yp_false_node_t *node = YP_NODE_ALLOC(yp_false_node_t);
+  *node = (yp_false_node_t) {{ .type = YP_NODE_FALSE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new find pattern node. The node list given in the
@@ -1240,14 +1242,16 @@ yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
 }
 
 // Allocate and initialize a new FloatNode node.
-static yp_node_t *
+static yp_float_node_t *
 yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_FLOAT);
-  return yp_node_create_from_token(parser, YP_NODE_FLOAT_NODE, token);
+  yp_float_node_t *node = YP_NODE_ALLOC(yp_float_node_t);
+  *node = (yp_float_node_t) {{ .type = YP_NODE_FLOAT_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new ForNode node.
-static yp_node_t *
+static yp_for_node_t *
 yp_for_node_create(
   yp_parser_t *parser,
   yp_node_t *index,
@@ -1258,55 +1262,61 @@ yp_for_node_create(
   const yp_token_t *do_keyword,
   const yp_token_t *end_keyword
 ) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_for_node_t *node = YP_NODE_ALLOC(yp_for_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_FOR_NODE,
-    .location = {
-      .start = for_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_for_node_t) {
+    {
+      .type = YP_NODE_FOR_NODE,
+      .location = {
+        .start = for_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.for_node = {
-      .index = index,
-      .collection = collection,
-      .statements = statements,
-      .for_keyword_loc = YP_LOCATION_TOKEN_VALUE(for_keyword),
-      .in_keyword_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
-      .do_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(do_keyword),
-      .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
-    }
+    .index = index,
+    .collection = collection,
+    .statements = statements,
+    .for_keyword_loc = YP_LOCATION_TOKEN_VALUE(for_keyword),
+    .in_keyword_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
+    .do_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(do_keyword),
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;
 }
 
 // Allocate and initialize a new ForwardingArgumentsNode node.
-static yp_node_t *
+static yp_forwarding_arguments_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
-  return yp_node_create_from_token(parser, YP_NODE_FORWARDING_ARGUMENTS_NODE, token);
+  yp_forwarding_arguments_node_t *node = YP_NODE_ALLOC(yp_forwarding_arguments_node_t);
+  *node = (yp_forwarding_arguments_node_t) {{ .type = YP_NODE_FORWARDING_ARGUMENTS_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new ForwardingParameterNode node.
-static yp_node_t *
+static yp_forwarding_parameter_node_t *
 yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
-  return yp_node_create_from_token(parser, YP_NODE_FORWARDING_PARAMETER_NODE, token);
+  yp_forwarding_parameter_node_t *node = YP_NODE_ALLOC(yp_forwarding_parameter_node_t);
+  *node = (yp_forwarding_parameter_node_t) {{ .type = YP_NODE_FORWARDING_PARAMETER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new ForwardingSuper node.
-static yp_node_t *
+static yp_forwarding_super_node_t *
 yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token, yp_arguments_t *arguments) {
   assert(token->type == YP_TOKEN_KEYWORD_SUPER);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_forwarding_super_node_t *node = YP_NODE_ALLOC(yp_forwarding_super_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_FORWARDING_SUPER_NODE,
-    .location = {
-      .start = token->start,
-      .end = arguments->block != NULL ? arguments->block->base.location.end : token->end
+  *node = (yp_forwarding_super_node_t) {
+    {
+      .type = YP_NODE_FORWARDING_SUPER_NODE,
+      .location = {
+        .start = token->start,
+        .end = arguments->block != NULL ? arguments->block->base.location.end : token->end
+      },
     },
-    .as.forwarding_super_node.block = arguments->block
+    .block = arguments->block
   };
 
   return node;
@@ -7008,7 +7018,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
               yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
             }
 
-            argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
+            argument = (yp_node_t *)yp_forwarding_arguments_node_create(parser, &parser->previous);
             break;
           }
         }
@@ -7190,8 +7200,8 @@ parse_parameters(
         parser_lex(parser);
 
         yp_parser_local_add(parser, &parser->previous);
-        yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
-        yp_parameters_node_keyword_rest_set(params, param);
+        yp_forwarding_parameter_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
+        yp_parameters_node_keyword_rest_set(params, (yp_node_t *)param);
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
@@ -8910,7 +8920,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_FLOAT:
       parser_lex(parser);
-      return yp_float_node_create(parser, &parser->previous);
+      return (yp_node_t *)yp_float_node_create(parser, &parser->previous);
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_BACK_REFERENCE: {
@@ -9378,7 +9388,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parse_arguments_list(parser, &arguments, true);
 
       if (arguments.opening.type == YP_TOKEN_NOT_PROVIDED && arguments.arguments == NULL) {
-        return yp_forwarding_super_node_create(parser, &keyword, &arguments);
+        return (yp_node_t *) yp_forwarding_super_node_create(parser, &keyword, &arguments);
       }
 
       return (yp_node_t *) yp_super_node_create(parser, &keyword, &arguments);
@@ -9545,7 +9555,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = (yp_node_t *) yp_true_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_FALSE:
-                receiver = yp_false_node_create(parser, &identifier);
+                receiver = (yp_node_t *)yp_false_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD___FILE__:
                 receiver = yp_source_file_node_create(parser, &identifier);
@@ -9743,7 +9753,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       parser_lex(parser);
-      return yp_false_node_create(parser, &parser->previous);
+      return (yp_node_t *)yp_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_FOR: {
       parser_lex(parser);
       yp_token_t for_keyword = parser->previous;
@@ -9772,7 +9782,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close for loop.");
       }
 
-      return yp_for_node_create(parser, index, collection, statements, &for_keyword, &in_keyword, &do_keyword, &parser->previous);
+      return (yp_node_t *) yp_for_node_create(parser, index, collection, statements, &for_keyword, &in_keyword, &do_keyword, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_IF:
       parser_lex(parser);
