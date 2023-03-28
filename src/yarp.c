@@ -955,7 +955,7 @@ yp_call_node_vcall_p(yp_node_t *node) {
 
 // Allocate and initialize a new CaseNode node.
 static yp_case_node_t *
-yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_node_t *consequent, const yp_token_t *end_keyword) {
+yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_else_node_t *consequent, const yp_token_t *end_keyword) {
   yp_case_node_t *node = YP_NODE_ALLOC(yp_case_node_t);
 
   *node = (yp_case_node_t) {
@@ -987,9 +987,9 @@ yp_case_node_condition_append(yp_case_node_t *node, yp_node_t *condition) {
 
 // Set the consequent of a CaseNode node.
 static void
-yp_case_node_consequent_set(yp_case_node_t *node, yp_node_t *consequent) {
+yp_case_node_consequent_set(yp_case_node_t *node, yp_else_node_t *consequent) {
   node->consequent = consequent;
-  node->base.location.end = consequent->location.end;
+  node->base.location.end = consequent->base.location.end;
 }
 
 // Set the end location for a CaseNode node.
@@ -9287,7 +9287,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           else_node = yp_else_node_create(parser, &else_keyword, NULL, &parser->current);
         }
 
-        yp_case_node_consequent_set(case_node, YP_NODE_DOWNCAST(else_node));
+        yp_case_node_consequent_set(case_node, else_node);
       }
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected case statement to end with an end keyword.");

@@ -586,6 +586,7 @@ nodes:
         type: node[]
       - name: consequent
         type: node?
+        kind: ElseNode
       - name: case_keyword_loc
         type: location
       - name: end_keyword_loc
