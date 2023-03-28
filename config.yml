@@ -1127,6 +1127,7 @@ nodes:
           foo = 1
           ^^^^^^^
   - name: MatchPredicateNode
+    is_migrated: true
     child_nodes:
       - name: value
         type: node
@@ -1140,6 +1141,7 @@ nodes:
           foo in bar
           ^^^^^^^^^^
   - name: MatchRequiredNode
+    is_migrated: true
     child_nodes:
       - name: value
         type: node

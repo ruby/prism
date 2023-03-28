@@ -1809,42 +1809,42 @@ yp_local_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name)
 }
 
 // Allocate and initialize a new MatchPredicateNode node.
-static yp_node_t *
+static yp_match_predicate_node_t *
 yp_match_predicate_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *pattern, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_match_predicate_node_t *node = YP_NODE_ALLOC(yp_match_predicate_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MATCH_PREDICATE_NODE,
-    .location = {
-      .start = value->location.start,
-      .end = pattern->location.end
+  *node = (yp_match_predicate_node_t) {
+    {
+      .type = YP_NODE_MATCH_PREDICATE_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = pattern->location.end
+      }
     },
-    .as.match_predicate_node = {
-      .value = value,
-      .pattern = pattern,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .pattern = pattern,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
 }
 
 // Allocate and initialize a new MatchRequiredNode node.
-static yp_node_t *
+static yp_match_required_node_t *
 yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *pattern, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_match_required_node_t *node = YP_NODE_ALLOC(yp_match_required_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MATCH_REQUIRED_NODE,
-    .location = {
-      .start = value->location.start,
-      .end = pattern->location.end
+  *node = (yp_match_required_node_t) {
+    {
+      .type = YP_NODE_MATCH_REQUIRED_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = pattern->location.end
+      }
     },
-    .as.match_required_node = {
-      .value = value,
-      .pattern = pattern,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .pattern = pattern,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -11123,7 +11123,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_node_t *pattern = parse_pattern(parser, true, "Expected a pattern after `in'.");
       parser->pattern_matching_newlines = previous_pattern_matching_newlines;
 
-      return yp_match_predicate_node_create(parser, node, pattern, &operator);
+      return (yp_node_t *) yp_match_predicate_node_create(parser, node, pattern, &operator);
     }
     case YP_TOKEN_EQUAL_GREATER: {
       bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
@@ -11138,7 +11138,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_node_t *pattern = parse_pattern(parser, true, "Expected a pattern after `=>'.");
       parser->pattern_matching_newlines = previous_pattern_matching_newlines;
 
-      return yp_match_required_node_create(parser, node, pattern, &operator);
+      return (yp_node_t *) yp_match_required_node_create(parser, node, pattern, &operator);
     }
     default:
       assert(false && "unreachable");
