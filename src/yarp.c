@@ -2183,21 +2183,21 @@ yp_program_node_create(yp_parser_t *parser, yp_scope_node_t *scope, yp_statement
 }
 
 // Allocate and initialize new ParenthesesNode node.
-static yp_node_t *
+static yp_parentheses_node_t *
 yp_parentheses_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_parentheses_node_t *node = YP_NODE_ALLOC(yp_parentheses_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PARENTHESES_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_parentheses_node_t) {
+    {
+      .type = YP_NODE_PARENTHESES_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      }
     },
-    .as.parentheses_node = {
-      .statements = statements,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .statements = statements,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;
@@ -8767,7 +8767,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // we have an empty parentheses node, and we can immediately return.
       if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_EOF)) {
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
-        return yp_parentheses_node_create(parser, &opening, NULL, &parser->previous);
+        return (yp_node_t *) yp_parentheses_node_create(parser, &opening, NULL, &parser->previous);
       }
 
       // Otherwise, we're going to parse the first statement in the list of
@@ -8811,7 +8811,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_statements_node_t *statements = yp_statements_node_create(parser);
         yp_statements_node_body_append(statements, statement);
 
-        return yp_parentheses_node_create(parser, &opening, (yp_node_t *) statements, &parser->previous);
+        return (yp_node_t *) yp_parentheses_node_create(parser, &opening, (yp_node_t *) statements, &parser->previous);
       }
 
       // If we have more than one statement in the set of parentheses, then we
@@ -8844,7 +8844,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_accepts_block_stack_pop(parser);
       expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis.");
 
-      return yp_parentheses_node_create(parser, &opening, (yp_node_t *) statements, &parser->previous);
+      return (yp_node_t *) yp_parentheses_node_create(parser, &opening, (yp_node_t *) statements, &parser->previous);
     }
     case YP_TOKEN_BRACE_LEFT: {
       yp_accepts_block_stack_push(parser, true);
@@ -9605,9 +9605,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
           lex_state_set(parser, YP_LEX_STATE_FNAME);
           expect_any(parser, "Expected '.' or '::' after receiver", 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON);
-          operator = parser->previous;
 
-          receiver = yp_parentheses_node_create(parser, &lparen, expression, &rparen);
+          operator = parser->previous;
+          receiver = (yp_node_t *) yp_parentheses_node_create(parser, &lparen, expression, &rparen);
 
           yp_parser_scope_push(parser, &def_keyword, true);
           name = parse_method_definition_name(parser);

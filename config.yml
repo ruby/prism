@@ -1307,6 +1307,7 @@ nodes:
                 ^^^^^^^
           end
   - name: ParenthesesNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node?
