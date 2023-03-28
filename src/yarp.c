@@ -2163,20 +2163,20 @@ yp_parameters_node_block_set(yp_node_t *params, yp_node_t *param) {
 }
 
 // Allocate a new ProgramNode node.
-static yp_node_t *
+static yp_program_node_t *
 yp_program_node_create(yp_parser_t *parser, yp_scope_node_t *scope, yp_statements_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_program_node_t *node = YP_NODE_ALLOC(yp_program_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PROGRAM_NODE,
-    .location = {
-      .start = statements == NULL ? parser->start : statements->base.location.start,
-      .end = statements == NULL ? parser->end : statements->base.location.end
+  *node = (yp_program_node_t) {
+    {
+      .type = YP_NODE_PROGRAM_NODE,
+      .location = {
+        .start = statements == NULL ? parser->start : statements->base.location.start,
+        .end = statements == NULL ? parser->end : statements->base.location.end
+      }
     },
-    .as.program_node = {
-      .scope = scope,
-      .statements = statements
-    }
+    .scope = scope,
+    .statements = statements
   };
 
   return node;
@@ -11237,7 +11237,7 @@ parse_program(yp_parser_t *parser) {
     yp_statements_node_location_set(statements, parser->start, parser->start);
   }
 
-  return yp_program_node_create(parser, scope, statements);
+  return (yp_node_t *) yp_program_node_create(parser, scope, statements);
 }
 
 /******************************************************************************/

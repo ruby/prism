@@ -1380,6 +1380,7 @@ nodes:
           BEGIN { foo }
           ^^^^^^^^^^^^^
   - name: ProgramNode
+    is_migrated: true
     child_nodes:
       - name: scope
         type: node
