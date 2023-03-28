@@ -383,6 +383,7 @@ nodes:
 
           [1, 2, 3]
           ^^^^^^^^^
+    is_migrated: true
   - name: ArrayPatternNode
     child_nodes:
       - name: constant
