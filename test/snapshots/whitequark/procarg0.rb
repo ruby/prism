@@ -12,9 +12,9 @@ ProgramNode(0...32)(
          ScopeNode(2...3)(
            [IDENTIFIER(6...9)("foo"), IDENTIFIER(11...14)("bar")]
          ),
-         BlockParametersNode(6...15)(
-           ParametersNode(6...15)(
-             [RequiredDestructuredParameterNode(6...15)(
+         BlockParametersNode(5...15)(
+           ParametersNode(5...15)(
+             [RequiredDestructuredParameterNode(5...15)(
                 [RequiredParameterNode(6...9)(),
                  RequiredParameterNode(11...14)()],
                 PARENTHESIS_LEFT(5...6)("("),

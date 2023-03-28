@@ -2340,24 +2340,33 @@ yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening
 }
 
 // Allocate a new RequiredDestructuredParameterNode node.
-static yp_node_t *
-yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+static yp_required_destructured_parameter_node_t *
+yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_token_t *opening) {
+  yp_required_destructured_parameter_node_t *node = YP_NODE_ALLOC(yp_required_destructured_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REQUIRED_DESTRUCTURED_PARAMETER_NODE,
-    .location = {
-      .start = NULL,
-      .end = NULL
+  *node = (yp_required_destructured_parameter_node_t) {
+    {
+      .type = YP_NODE_REQUIRED_DESTRUCTURED_PARAMETER_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(opening)
     },
-    .as.required_destructured_parameter_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening
   };
 
-  yp_node_list_init(&node->as.required_destructured_parameter_node.parameters);
+  yp_node_list_init(&node->parameters);
   return node;
+}
+
+// Append a new parameter to the given RequiredDestructuredParameterNode node.
+static void
+yp_required_destructured_parameter_node_append_parameter(yp_required_destructured_parameter_node_t *node, yp_node_t *parameter) {
+  yp_node_list_append2(&node->parameters, parameter);
+}
+
+// Set the closing token of the given RequiredDestructuredParameterNode node.
+static void
+yp_required_destructured_parameter_node_closing_set(yp_required_destructured_parameter_node_t *node, const yp_token_t *closing) {
+  node->closing = *closing;
+  node->base.location.end = closing->end;
 }
 
 // Allocate a new RequiredParameterNode node.
@@ -7101,29 +7110,29 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
 //     end
 //
 // It can recurse infinitely down, and splats are allowed to group arguments.
-static yp_node_t *
+static yp_required_destructured_parameter_node_t *
 parse_required_destructured_parameter(yp_parser_t *parser) {
   expect(parser, YP_TOKEN_PARENTHESIS_LEFT, "Expected '(' to start a required parameter.");
 
   yp_token_t opening = parser->previous;
-  yp_node_t *node = yp_required_destructured_parameter_node_create(parser, &opening, &opening);
+  yp_required_destructured_parameter_node_t *node = yp_required_destructured_parameter_node_create(parser, &opening);
   bool parsed_splat;
 
   do {
     yp_node_t *param;
 
-    if (node->as.required_destructured_parameter_node.parameters.size > 0 && match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+    if (node->parameters.size > 0 && match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
       if (parsed_splat) {
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected splat after splat.");
       }
 
       param = (yp_node_t *) yp_splat_node_create(parser, &parser->previous, NULL);
-      yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
+      yp_required_destructured_parameter_node_append_parameter(node, param);
       break;
     }
 
     if (match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
-      param = parse_required_destructured_parameter(parser);
+      param = (yp_node_t *) parse_required_destructured_parameter(parser);
     } else if (accept(parser, YP_TOKEN_USTAR)) {
       if (parsed_splat) {
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected splat after splat.");
@@ -7148,12 +7157,11 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
       yp_parser_local_add(parser, &name);
     }
 
-    yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
+    yp_required_destructured_parameter_node_append_parameter(node, param);
   } while (accept(parser, YP_TOKEN_COMMA));
 
   expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' to end a required parameter.");
-  node->as.required_destructured_parameter_node.closing = parser->previous;
-  node->location.end = parser->previous.end;
+  yp_required_destructured_parameter_node_closing_set(node, &parser->previous);
 
   return node;
 }
@@ -7174,7 +7182,7 @@ parse_parameters(
   do {
     switch (parser->current.type) {
       case YP_TOKEN_PARENTHESIS_LEFT: {
-        yp_node_t *param = parse_required_destructured_parameter(parser);
+        yp_node_t *param = (yp_node_t *) parse_required_destructured_parameter(parser);
         yp_parameters_node_requireds_append(params, param);
         break;
       }

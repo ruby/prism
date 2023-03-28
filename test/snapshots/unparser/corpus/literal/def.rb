@@ -944,9 +944,9 @@ ProgramNode(0...913)(
      DefNode(805...821)(
        IDENTIFIER(809...810)("f"),
        nil,
-       ParametersNode(813...816)(
-         [RequiredDestructuredParameterNode(813...816)(
-            [RequiredDestructuredParameterNode(813...815)(
+       ParametersNode(811...816)(
+         [RequiredDestructuredParameterNode(811...816)(
+            [RequiredDestructuredParameterNode(812...815)(
                [RequiredParameterNode(813...814)()],
                PARENTHESIS_LEFT(812...813)("("),
                PARENTHESIS_RIGHT(814...815)(")")

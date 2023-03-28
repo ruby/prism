@@ -17,7 +17,7 @@ ProgramNode(0...17)(
          BlockParametersNode(5...14)(
            ParametersNode(5...14)(
              [RequiredParameterNode(5...6)(),
-              RequiredDestructuredParameterNode(9...14)(
+              RequiredDestructuredParameterNode(8...14)(
                 [RequiredParameterNode(9...10)(),
                  RequiredParameterNode(12...13)()],
                 PARENTHESIS_LEFT(8...9)("("),

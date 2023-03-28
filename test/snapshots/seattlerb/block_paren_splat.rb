@@ -10,9 +10,9 @@ ProgramNode(0...15)(
        nil,
        BlockNode(2...15)(
          ScopeNode(2...3)([IDENTIFIER(6...7)("b"), IDENTIFIER(10...11)("c")]),
-         BlockParametersNode(6...12)(
-           ParametersNode(6...12)(
-             [RequiredDestructuredParameterNode(6...12)(
+         BlockParametersNode(5...12)(
+           ParametersNode(5...12)(
+             [RequiredDestructuredParameterNode(5...12)(
                 [RequiredParameterNode(6...7)(),
                  SplatNode(9...11)(
                    USTAR(9...10)("*"),

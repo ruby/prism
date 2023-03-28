@@ -15,10 +15,10 @@ ProgramNode(0...22)(
             IDENTIFIER(14...15)("c"),
             IDENTIFIER(18...19)("d")]
          ),
-         BlockParametersNode(7...19)(
-           ParametersNode(7...19)(
-             [RequiredDestructuredParameterNode(7...16)(
-                [RequiredDestructuredParameterNode(7...12)(
+         BlockParametersNode(5...19)(
+           ParametersNode(5...19)(
+             [RequiredDestructuredParameterNode(5...16)(
+                [RequiredDestructuredParameterNode(6...12)(
                    [RequiredParameterNode(7...8)(),
                     RequiredParameterNode(10...11)()],
                    PARENTHESIS_LEFT(6...7)("("),

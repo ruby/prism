@@ -1426,6 +1426,7 @@ nodes:
           /foo/i
           ^^^^^^
   - name: RequiredDestructuredParameterNode
+    is_migrated: true
     child_nodes:
       - name: parameters
         type: node[]

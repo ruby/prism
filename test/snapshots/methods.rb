@@ -4,8 +4,8 @@ ProgramNode(0...943)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
-       ParametersNode(9...18)(
-         [RequiredDestructuredParameterNode(9...18)(
+       ParametersNode(8...18)(
+         [RequiredDestructuredParameterNode(8...18)(
             [RequiredParameterNode(9...12)(),
              RequiredParameterNode(14...17)()],
             PARENTHESIS_LEFT(8...9)("("),
