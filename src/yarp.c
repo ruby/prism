@@ -1107,7 +1107,7 @@ yp_constant_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
 }
 
 // Allocate and initialize a new DefNode node.
-static yp_node_t *
+static yp_def_node_t *
 yp_def_node_create(
   yp_parser_t *parser,
   const yp_token_t *name,
@@ -1122,7 +1122,7 @@ yp_def_node_create(
   const yp_token_t *equal,
   const yp_token_t *end_keyword
 ) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_def_node_t *node = YP_NODE_ALLOC(yp_def_node_t);
   const char *end;
 
   if (end_keyword->type == YP_TOKEN_NOT_PROVIDED) {
@@ -1131,22 +1131,22 @@ yp_def_node_create(
     end = end_keyword->end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_DEF_NODE,
-    .location = { .start = def_keyword->start, .end = end },
-    .as.def_node = {
-      .name = *name,
-      .receiver = receiver,
-      .parameters = parameters,
-      .statements = statements,
-      .scope = scope,
-      .def_keyword_loc = YP_LOCATION_TOKEN_VALUE(def_keyword),
-      .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
-      .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(lparen),
-      .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(rparen),
-      .equal_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(equal),
-      .end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword)
-    }
+  *node = (yp_def_node_t) {
+    {
+      .type = YP_NODE_DEF_NODE,
+      .location = { .start = def_keyword->start, .end = end },
+    },
+    .name = *name,
+    .receiver = receiver,
+    .parameters = parameters,
+    .statements = statements,
+    .scope = scope,
+    .def_keyword_loc = YP_LOCATION_TOKEN_VALUE(def_keyword),
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+    .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(lparen),
+    .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(rparen),
+    .equal_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(equal),
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;
@@ -9587,7 +9587,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
 
-      return yp_def_node_create(
+      return YP_NODE_DOWNCAST(yp_def_node_create(
         parser,
         &name,
         receiver,
@@ -9600,7 +9600,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         &rparen,
         &equal,
         &end_keyword
-      );
+      ));
     }
     case YP_TOKEN_KEYWORD_DEFINED: {
       parser_lex(parser);
