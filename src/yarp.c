@@ -1043,21 +1043,21 @@ yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp
 }
 
 // Allocate and initialize a new ConstantPathNode node.
-static yp_node_t *
+static yp_constant_path_node_t *
 yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_token_t *delimiter, yp_node_t *child) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_constant_path_node_t *node = YP_NODE_ALLOC(yp_constant_path_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CONSTANT_PATH_NODE,
-    .location = {
-      .start = parent == NULL ? delimiter->start : parent->location.start,
-      .end = child->location.end
+  *node = (yp_constant_path_node_t) {
+    {
+      .type = YP_NODE_CONSTANT_PATH_NODE,
+      .location = {
+        .start = parent == NULL ? delimiter->start : parent->location.start,
+        .end = child->location.end
+      },
     },
-    .as.constant_path_node = {
-      .parent = parent,
-      .child = child,
-      .delimiter_loc = YP_LOCATION_TOKEN_VALUE(delimiter)
-    }
+    .parent = parent,
+    .child = child,
+    .delimiter_loc = YP_LOCATION_TOKEN_VALUE(delimiter)
   };
 
   return node;
@@ -8055,7 +8055,7 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
     expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
 
     yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
-    node = yp_constant_path_node_create(parser, node, &delimiter, child);
+    node = (yp_node_t *)yp_constant_path_node_create(parser, node, &delimiter, child);
   }
 
   // If there is a [ or ( that follows, then this is part of a larger pattern
@@ -8451,9 +8451,9 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
 
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
       yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
-      yp_node_t *node = yp_constant_path_node_create(parser, NULL, &delimiter, child);
+      yp_constant_path_node_t *node = yp_constant_path_node_create(parser, NULL, &delimiter, child);
 
-      return parse_pattern_constant_path(parser, node);
+      return parse_pattern_constant_path(parser, (yp_node_t *)node);
     }
     case YP_TOKEN_CONSTANT: {
       yp_token_t constant = parser->current;
@@ -8892,7 +8892,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
 
       yp_node_t *constant = yp_constant_read_node_create(parser, &parser->previous);
-      yp_node_t *node = yp_constant_path_node_create(parser, NULL, &delimiter, constant);
+      yp_node_t *node = (yp_node_t *)yp_constant_path_node_create(parser, NULL, &delimiter, constant);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -9846,7 +9846,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
         yp_node_t *constant = yp_constant_read_node_create(parser, &parser->previous);
 
-        name = yp_constant_path_node_create(parser, name, &double_colon, constant);
+        name = (yp_node_t *)yp_constant_path_node_create(parser, name, &double_colon, constant);
       }
 
       yp_parser_scope_push(parser, &module_keyword, true);
@@ -11033,7 +11033,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           } else {
             // Otherwise, this is a constant path. That would look like Foo::Bar.
             yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
-            path = yp_constant_path_node_create(parser, node, &delimiter, child);
+            path = (yp_node_t *)yp_constant_path_node_create(parser, node, &delimiter, child);
           }
 
           // If this is followed by a comma then it is a multiple assignment.
@@ -11075,7 +11075,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
             .end = delimiter.end,
           });
 
-          return yp_constant_path_node_create(parser, node, &delimiter, child);
+          return (yp_node_t *)yp_constant_path_node_create(parser, node, &delimiter, child);
         }
       }
     }
