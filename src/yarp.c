@@ -2632,21 +2632,21 @@ yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *ri
 }
 
 // Allocate a new StringInterpolatedNode node.
-static yp_node_t *
+static yp_string_interpolated_node_t *
 yp_string_interpolated_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_string_interpolated_node_t *node = YP_NODE_ALLOC(yp_string_interpolated_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_INTERPOLATED_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_string_interpolated_node_t) {
+    {
+      .type = YP_NODE_STRING_INTERPOLATED_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      }
     },
-    .as.string_interpolated_node = {
-      .opening = *opening,
-      .statements = statements,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .statements = statements,
+    .closing = *closing
   };
 
   return node;
@@ -7788,7 +7788,7 @@ parse_string_part(yp_parser_t *parser) {
       expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
       yp_token_t closing = parser->previous;
 
-      return yp_string_interpolated_node_create(parser, &opening, statements, &closing);
+      return (yp_node_t *) yp_string_interpolated_node_create(parser, &opening, statements, &closing);
     }
     // Here the lexer has returned the beginning of an embedded variable. In
     // that case we'll parse the variable and create an appropriate node for it

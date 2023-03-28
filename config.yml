@@ -1572,6 +1572,7 @@ nodes:
         type: node?
       - name: closing
         type: token
+    is_migrated: true
     comment: |
       Represents an interpolated set of statements within a string.
 
