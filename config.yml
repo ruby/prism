@@ -473,6 +473,7 @@ nodes:
             foo
           end
           ^^^^^
+    is_migrated: true
   - name: BlockArgumentNode
     child_nodes:
       - name: expression
