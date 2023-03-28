@@ -2612,20 +2612,20 @@ yp_if_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_t
 }
 
 // Allocate a new StringConcatNode node.
-static yp_node_t *
+static yp_string_concat_node_t *
 yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_string_concat_node_t *node = YP_NODE_ALLOC(yp_string_concat_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_CONCAT_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_string_concat_node_t) {
+    {
+      .type = YP_NODE_STRING_CONCAT_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      }
     },
-    .as.string_concat_node = {
-      .left = left,
-      .right = right
-    }
+    .left = left,
+    .right = right
   };
 
   return node;
@@ -10606,7 +10606,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // concatenatation. In this case we'll parse the next string and create a
       // node in the tree that concatenates the two strings.
       if (parser->current.type == YP_TOKEN_STRING_BEGIN) {
-        return yp_string_concat_node_create(
+        return (yp_node_t *) yp_string_concat_node_create(
           parser,
           node,
           parse_expression(parser, YP_BINDING_POWER_CALL, "Expected string on the right side of concatenation.")

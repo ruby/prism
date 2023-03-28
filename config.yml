@@ -1559,6 +1559,7 @@ nodes:
         type: node
       - name: right
         type: node
+    is_migrated: true
     comment: |
       Represents the use of compile-time string concatenation.
 
