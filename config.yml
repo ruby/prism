@@ -1534,6 +1534,7 @@ nodes:
         type: node?
       - name: end_keyword
         type: token
+    is_migrated: true
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 

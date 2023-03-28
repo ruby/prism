@@ -2507,24 +2507,24 @@ yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate a new SingletonClassNode node.
-static yp_node_t *
+static yp_singleton_class_node_t *
 yp_singleton_class_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *class_keyword, const yp_token_t *operator, yp_node_t *expression, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_singleton_class_node_t *node = YP_NODE_ALLOC(yp_singleton_class_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SINGLETON_CLASS_NODE,
-    .location = {
-      .start = class_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_singleton_class_node_t) {
+    {
+      .type = YP_NODE_SINGLETON_CLASS_NODE,
+      .location = {
+        .start = class_keyword->start,
+        .end = end_keyword->end
+      }
     },
-    .as.singleton_class_node = {
-      .scope = scope,
-      .class_keyword = *class_keyword,
-      .operator = *operator,
-      .expression = expression,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .scope = scope,
+    .class_keyword = *class_keyword,
+    .operator = *operator,
+    .expression = expression,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
   return node;
@@ -9430,7 +9430,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_node_t *scope = parser->current_scope->node;
         yp_parser_scope_pop(parser);
         yp_state_stack_pop(&parser->do_loop_stack);
-        return yp_singleton_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
+        return (yp_node_t *) yp_singleton_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
       yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_CALL, "Expected to find a class name after `class`.");
