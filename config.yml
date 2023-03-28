@@ -770,6 +770,7 @@ nodes:
 
           false
           ^^^^^
+    is_migrated: true
   - name: FindPatternNode
     child_nodes:
       - name: constant
@@ -801,6 +802,7 @@ nodes:
 
           1.0
           ^^^
+    is_migrated: true
   - name: ForNode
     child_nodes:
       - name: index
@@ -823,6 +825,7 @@ nodes:
 
           for i in a end
           ^^^^^^^^^^^^^^
+    is_migrated: true
   - name: ForwardingArgumentsNode
     comment: |
       Represents forwarding all arguments to this method to another method.
@@ -831,6 +834,7 @@ nodes:
             bar(...)
             ^^^^^^^^
           end
+    is_migrated: true
   - name: ForwardingParameterNode
     comment: |
       Represents the use of the forwarding parameter in a method, block, or lambda declaration.
@@ -838,6 +842,7 @@ nodes:
           def foo(...)
                   ^^^
           end
+    is_migrated: true
   - name: ForwardingSuperNode
     child_nodes:
       - name: block
@@ -848,6 +853,7 @@ nodes:
 
           super
           ^^^^^
+    is_migrated: true
   - name: GlobalVariableReadNode
     child_nodes:
       - name: name
