@@ -1422,6 +1422,11 @@ yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_tok
   return node;
 }
 
+static inline void
+yp_hash_node_elements_append(yp_parser_t *parser, yp_hash_node_t *hash, yp_node_t *element) {
+  yp_node_list_append(parser, (yp_node_t *)hash, &hash->elements, element);
+}
+
 // Allocate a new HeredocNode node.
 static yp_node_t *
 yp_heredoc_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing, int dedent) {
@@ -8706,7 +8711,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
             yp_node_t *assoc = yp_assoc_node_create(parser, element, &operator, value);
-            yp_node_list_append(parser, (yp_node_t *)hash, &hash->elements, assoc);
+            yp_hash_node_elements_append(parser, hash, assoc);
 
             element = (yp_node_t *)hash;
             if (accept(parser, YP_TOKEN_COMMA) && !match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
