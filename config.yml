@@ -1348,6 +1348,7 @@ nodes:
           foo in ^bar
                  ^^^^
   - name: PostExecutionNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node
@@ -1364,6 +1365,7 @@ nodes:
           END { foo }
           ^^^^^^^^^^^
   - name: PreExecutionNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node

@@ -2246,44 +2246,44 @@ yp_pinned_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, 
 }
 
 // Allocate and initialize a new PostExecutionNode node.
-static yp_node_t *
+static yp_post_execution_node_t *
 yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_post_execution_node_t *node = YP_NODE_ALLOC(yp_post_execution_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_POST_EXECUTION_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = closing->end
+  *node = (yp_post_execution_node_t) {
+    {
+      .type = YP_NODE_POST_EXECUTION_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = closing->end
+      }
     },
-    .as.post_execution_node = {
-      .statements = statements,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .statements = statements,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;
 }
 
 // Allocate and initialize a new PreExecutionNode node.
-static yp_node_t *
+static yp_pre_execution_node_t *
 yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_pre_execution_node_t *node = YP_NODE_ALLOC(yp_pre_execution_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PRE_EXECUTION_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = closing->end
+  *node = (yp_pre_execution_node_t) {
+    {
+      .type = YP_NODE_PRE_EXECUTION_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = closing->end
+      }
     },
-    .as.pre_execution_node = {
-      .statements = statements,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .statements = statements,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;
@@ -9365,9 +9365,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_PREEXE);
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'BEGIN' statements.");
-      yp_token_t closing = parser->previous;
-
-      return yp_pre_execution_node_create(parser, &keyword, &opening, statements, &closing);
+      return (yp_node_t *) yp_pre_execution_node_create(parser, &keyword, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_BREAK:
     case YP_TOKEN_KEYWORD_NEXT:
@@ -9765,9 +9763,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_POSTEXE);
 
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected '}' after 'END' statements.");
-      yp_token_t closing = parser->previous;
-
-      return yp_post_execution_node_create(parser, &keyword, &opening, statements, &closing);
+      return (yp_node_t *) yp_post_execution_node_create(parser, &keyword, &opening, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_FALSE:
       parser_lex(parser);
