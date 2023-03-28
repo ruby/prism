@@ -152,7 +152,7 @@ __attribute__((unused)) static void
 debug_scope(yp_parser_t *parser) {
   fprintf(stderr, "SCOPE:\n");
 
-  yp_token_list_t token_list = parser->current_scope->node->as.scope_node.locals;
+  yp_token_list_t token_list = ((yp_scope_node_t *)parser->current_scope->node)->locals;
   for (size_t index = 0; index < token_list.size; index++) {
     debug_token(&token_list.tokens[index]);
   }
@@ -182,6 +182,8 @@ not_provided(yp_parser_t *parser) {
 #define YP_LOCATION_NODE_VALUE(node) ((yp_location_t) { .start = (node)->location.start, .end = (node)->location.end })
 #define YP_OPTIONAL_LOCATION_TOKEN_VALUE(token) ((token)->type == YP_TOKEN_NOT_PROVIDED ? (yp_location_t) { .start = NULL, .end = NULL } : YP_LOCATION_TOKEN_VALUE(token))
 #define YP_TOKEN_NOT_PROVIDED_VALUE(parser) ((yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = (parser)->start, .end = (parser)->start })
+#define YP_NODE_DOWNCAST(node) ((yp_node_t *)node)
+#define YP_NODE_UPCAST(node, type) ((type *)node)
 
 // This is a special out parameter to the parse_arguments_list function that
 // includes opening and closing parentheses in addition to the arguments since
@@ -228,6 +230,8 @@ yp_node_alloc(yp_parser_t *parser) {
 /* Node creation functions                                                    */
 /******************************************************************************/
 
+#define YP_NODE_ALLOC(type) (type *)malloc(sizeof(type))
+
 // Allocate and initialize a new StatementsNode node.
 static yp_node_t *
 yp_statements_node_create(yp_parser_t *parser);
@@ -244,90 +248,91 @@ yp_node_create_from_token(yp_parser_t *parser, yp_node_type_t type, const yp_tok
   *node = (yp_node_t) { .type = type, .location = YP_LOCATION_TOKEN_VALUE(token) };
   return node;
 }
-
 // Allocate and initialize a new alias node.
 static yp_node_t *
 yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *new_name, yp_node_t *old_name) {
   assert(keyword->type == YP_TOKEN_KEYWORD_ALIAS);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_alias_node_t *node = YP_NODE_ALLOC(yp_alias_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ALIAS_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = old_name->location.end
+  *node = (yp_alias_node_t) {
+    {
+      .type = YP_NODE_ALIAS_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = old_name->location.end
+      },
     },
-    .as.alias_node = {
-      .new_name = new_name,
-      .old_name = old_name,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
-    }
+    .new_name = new_name,
+    .old_name = old_name,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new AlternationPatternNode node.
 static yp_node_t *
 yp_alternation_pattern_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_alternation_pattern_node_t *node = YP_NODE_ALLOC(yp_alternation_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ALTERNATION_PATTERN_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_alternation_pattern_node_t) {
+    {
+      .type = YP_NODE_ALTERNATION_PATTERN_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      },
     },
-    .as.alternation_pattern_node = {
-      .left = left,
-      .right = right,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .left = left,
+    .right = right,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new and node.
 static yp_node_t *
 yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_and_node_t *node = YP_NODE_ALLOC(yp_and_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_AND_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_and_node_t) {
+    {
+      .type = YP_NODE_AND_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      },
     },
-    .as.and_node = {
-      .left = left,
-      .operator = *operator,
-      .right = right
-    }
+    .left = left,
+    .operator = *operator,
+    .right = right
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate an initialize a new arguments node.
 static yp_node_t *
 yp_arguments_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_arguments_node_t *node = YP_NODE_ALLOC(yp_arguments_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARGUMENTS_NODE,
-    .location = YP_LOCATION_NULL_VALUE()
+  *node = (yp_arguments_node_t) {
+    {
+      .type = YP_NODE_ARGUMENTS_NODE,
+      .location = YP_LOCATION_NULL_VALUE()
+    }
   };
 
-  yp_node_list_init(&node->as.arguments_node.arguments);
-  return node;
+  yp_node_list_init(&node->arguments);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Return the size of the given arguments node.
 static size_t
 yp_arguments_node_size(yp_node_t *node) {
   assert(node->type == YP_NODE_ARGUMENTS_NODE);
-  return node->as.arguments_node.arguments.size;
+  return YP_NODE_UPCAST(node, yp_arguments_node_t)->arguments.size;
 }
 
 // Append an argument to an arguments node.
@@ -340,42 +345,42 @@ yp_arguments_node_arguments_append(yp_node_t *node, yp_node_t *argument) {
   }
 
   node->location.end = argument->location.end;
-  yp_node_list_append2(&node->as.arguments_node.arguments, argument);
+  yp_node_list_append2(&YP_NODE_UPCAST(node, yp_arguments_node_t)->arguments, argument);
 }
 
 // Allocate and initialize a new ArrayNode node.
 static yp_node_t *
 yp_array_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_node_t *node = YP_NODE_ALLOC(yp_array_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_array_node_t) {
+    {
+      .type = YP_NODE_ARRAY_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.array_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.array_node.elements);
-  return node;
+  yp_node_list_init(&node->elements);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Return the size of the given array node.
 static size_t
 yp_array_node_size(yp_node_t *node) {
   assert(node->type == YP_NODE_ARRAY_NODE);
-  return node->as.array_node.elements.size;
+  return YP_NODE_UPCAST(node, yp_array_node_t)->elements.size;
 }
 
 // Append an argument to an array node.
 static void
 yp_array_node_elements_append(yp_node_t *node, yp_node_t *element) {
   assert(node->type == YP_NODE_ARRAY_NODE);
-  yp_node_list_append2(&node->as.array_node.elements, element);
+  yp_node_list_append2(&YP_NODE_UPCAST(node, yp_array_node_t)->elements, element);
 }
 
 // Set the closing token and end location of an array node.
@@ -383,146 +388,146 @@ static void
 yp_array_node_close_set(yp_node_t *node, const yp_token_t *closing) {
   assert(closing->type == YP_TOKEN_BRACKET_RIGHT || closing->type == YP_TOKEN_STRING_END || closing->type == YP_TOKEN_MISSING);
   node->location.end = closing->end;
-  node->as.array_node.closing = *closing;
+  YP_NODE_UPCAST(node, yp_array_node_t)->closing = *closing;
 }
 
 // Allocate and initialize a new array pattern node. The node list given in the
 // nodes parameter is guaranteed to have at least two nodes.
 static yp_node_t *
 yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *nodes) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = {
-      .start = nodes->nodes[0]->location.start,
-      .end = nodes->nodes[nodes->size - 1]->location.end
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = {
+        .start = nodes->nodes[0]->location.start,
+        .end = nodes->nodes[nodes->size - 1]->location.end
+      },
     },
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = NULL
-    }
+    .constant = NULL,
+    .rest = NULL
   };
 
   // For now we're going to just copy over each pointer manually. This could be
   // much more efficient, as we could instead resize the node list.
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
   bool found_rest = false;
   for (size_t index = 0; index < nodes->size; index++) {
     yp_node_t *child = nodes->nodes[index];
 
     if (child->type == YP_NODE_SPLAT_NODE) {
-      node->as.array_pattern_node.rest = child;
+      node->rest = child;
       found_rest = true;
     } else if (found_rest) {
-      yp_node_list_append2(&node->as.array_pattern_node.posts, child);
+      yp_node_list_append2(&node->posts, child);
     } else {
-      yp_node_list_append2(&node->as.array_pattern_node.requireds, child);
+      yp_node_list_append2(&node->requireds, child);
     }
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new array pattern node from a single rest node.
 static yp_node_t *
 yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = rest->location,
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = rest
-    }
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = rest->location,
+    },
+    .constant = NULL,
+    .rest = rest
   };
 
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new array pattern node from a constant and opening
 // and closing tokens.
 static yp_node_t *
 yp_array_pattern_node_constant_create(yp_parser_t *parser, yp_node_t *constant, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = {
-      .start = constant->location.start,
-      .end = closing->end
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = {
+        .start = constant->location.start,
+        .end = closing->end
+      },
     },
-    .as.array_pattern_node = {
-      .constant = constant,
-      .rest = NULL,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .constant = constant,
+    .rest = NULL,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new array pattern node from an opening and closing
 // token.
 static yp_node_t *
 yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = NULL,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .constant = NULL,
+    .rest = NULL,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new AsPatternNode node.
 static yp_node_t *
 yp_as_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_as_pattern_node_t *node = YP_NODE_ALLOC(yp_as_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_AS_PATTERN_NODE,
-    .location = {
-      .start = value->location.start,
-      .end = target->location.end
+  *node = (yp_as_pattern_node_t) {
+    {
+      .type = YP_NODE_AS_PATTERN_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = target->location.end
+      },
     },
-    .as.as_pattern_node = {
-      .value = value,
-      .target = target,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .target = target,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new assoc node.
 static yp_node_t *
 yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_assoc_node_t *node = YP_NODE_ALLOC(yp_assoc_node_t);
   const char *end;
 
   if (value != NULL) {
@@ -533,62 +538,62 @@ yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *oper
     end = key->location.end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ASSOC_NODE,
-    .location = {
-      .start = key->location.start,
-      .end = end
+  *node = (yp_assoc_node_t) {
+    {
+      .type = YP_NODE_ASSOC_NODE,
+      .location = {
+        .start = key->location.start,
+        .end = end
+      },
     },
-    .as.assoc_node = {
-      .key = key,
-      .operator = *operator,
-      .value = value
-    }
+    .key = key,
+    .operator = *operator,
+    .value = value
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new assoc splat node.
 static yp_node_t *
 yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token_t *operator) {
   assert(operator->type == YP_TOKEN_USTAR_STAR);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_assoc_splat_node_t *node = YP_NODE_ALLOC(yp_assoc_splat_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ASSOC_SPLAT_NODE,
-    .location = {
-      .start = operator->start,
-      .end = value == NULL ? operator->end : value->location.end
+  *node = (yp_assoc_splat_node_t) {
+    {
+      .type = YP_NODE_ASSOC_SPLAT_NODE,
+      .location = {
+        .start = operator->start,
+        .end = value == NULL ? operator->end : value->location.end
+      },
     },
-    .as.assoc_splat_node = {
-      .value = value,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize new a begin node.
 static yp_node_t *
 yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_begin_node_t *node = YP_NODE_ALLOC(yp_begin_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BEGIN_NODE,
-    .location = {
-      .start = begin_keyword->start,
-      .end = statements == NULL ? begin_keyword->end : statements->location.end
+  *node = (yp_begin_node_t) {
+    {
+      .type = YP_NODE_BEGIN_NODE,
+      .location = {
+        .start = begin_keyword->start,
+        .end = statements->location.end
+      },
     },
-    .as.begin_node = {
-      .begin_keyword = *begin_keyword,
-      .statements = statements,
-      .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
-    }
+    .begin_keyword = *begin_keyword,
+    .statements = statements,
+    .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Set the rescue clause and end location of a begin node.
@@ -596,9 +601,9 @@ static void
 yp_begin_node_rescue_clause_set(yp_node_t *node, yp_node_t *rescue_clause) {
   assert(node->type == YP_NODE_BEGIN_NODE);
   assert(rescue_clause->type == YP_NODE_RESCUE_NODE);
-
-  node->location.end = rescue_clause->location.end;
-  node->as.begin_node.rescue_clause = rescue_clause;
+  yp_begin_node_t *begin_node = YP_NODE_UPCAST(node, yp_begin_node_t);
+  begin_node->base.location.end = rescue_clause->location.end;
+  begin_node->rescue_clause = rescue_clause;
 }
 
 // Set the else clause and end location of a begin node.
@@ -606,9 +611,9 @@ static void
 yp_begin_node_else_clause_set(yp_node_t *node, yp_node_t *else_clause) {
   assert(node->type == YP_NODE_BEGIN_NODE);
   assert(else_clause->type == YP_NODE_ELSE_NODE);
-
-  node->location.end = else_clause->location.end;
-  node->as.begin_node.else_clause = else_clause;
+  yp_begin_node_t *begin_node = YP_NODE_UPCAST(node, yp_begin_node_t);
+  begin_node->base.location.end = else_clause->location.end;
+  begin_node->else_clause = else_clause;
 }
 
 // Set the ensure clause and end location of a begin node.
@@ -616,9 +621,9 @@ static void
 yp_begin_node_ensure_clause_set(yp_node_t *node, yp_node_t *ensure_clause) {
   assert(node->type == YP_NODE_BEGIN_NODE);
   assert(ensure_clause->type == YP_NODE_ENSURE_NODE);
-
-  node->location.end = ensure_clause->location.end;
-  node->as.begin_node.ensure_clause = ensure_clause;
+  yp_begin_node_t *begin_node = YP_NODE_UPCAST(node, yp_begin_node_t);
+  begin_node->base.location.end = ensure_clause->location.end;
+  begin_node->ensure_clause = ensure_clause;
 }
 
 // Set the end keyword and end location of a begin node.
@@ -626,119 +631,117 @@ static void
 yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
   assert(node->type == YP_NODE_BEGIN_NODE);
   assert(end_keyword->type == YP_TOKEN_KEYWORD_END || end_keyword->type == YP_TOKEN_MISSING);
-
-  node->location.end = end_keyword->end;
-  node->as.begin_node.end_keyword = *end_keyword;
+  yp_begin_node_t *begin_node = YP_NODE_UPCAST(node, yp_begin_node_t);
+  begin_node->base.location.end = end_keyword->end;
+  begin_node->end_keyword = *end_keyword;
 }
 
 // Allocate and initialize a new BlockArgumentNode node.
 static yp_node_t *
 yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_block_argument_node_t *node = YP_NODE_ALLOC(yp_block_argument_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BLOCK_ARGUMENT_NODE,
-    .location = {
-      .start = operator->start,
-      .end = expression == NULL ? operator->end : expression->location.end
+  *node = (yp_block_argument_node_t) {
+    {
+      .type = YP_NODE_BLOCK_ARGUMENT_NODE,
+      .location = {
+        .start = operator->start,
+        .end = expression->location.end
+      },
     },
-    .as.block_argument_node = {
-      .expression = expression,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .expression = expression,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new BlockNode node.
 static yp_node_t *
 yp_block_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *opening, yp_node_t *parameters, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_block_node_t *node = YP_NODE_ALLOC(yp_block_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BLOCK_NODE,
-    .location = { .start = opening->start, .end = closing->end },
-    .as.block_node = {
-      .scope = scope,
-      .parameters = parameters,
-      .statements = statements,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+  *node = (yp_block_node_t) {
+    {
+      .type = YP_NODE_BLOCK_NODE,
+      .location = { .start = opening->start, .end = closing->end },
+    },
+    .scope = scope,
+    .parameters = parameters,
+    .statements = statements,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new BlockParameterNode node.
 static yp_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {
   assert(operator->type == YP_TOKEN_NOT_PROVIDED || operator->type == YP_TOKEN_AMPERSAND);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_block_parameter_node_t *node = YP_NODE_ALLOC(yp_block_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BLOCK_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+  *node = (yp_block_parameter_node_t) {
+    {
+      .type = YP_NODE_BLOCK_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+      },
     },
-    .as.block_parameter_node = {
-      .name = *name,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .name = *name,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new BlockParametersNode node.
 static yp_node_t *
 yp_block_parameters_node_create(yp_parser_t *parser, yp_node_t *parameters) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_block_parameters_node_t *node = YP_NODE_ALLOC(yp_block_parameters_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BLOCK_PARAMETERS_NODE,
-    .location = parameters == NULL ? YP_LOCATION_NULL_VALUE() : YP_LOCATION_NODE_VALUE(parameters),
-    .as.block_parameters_node = {
-      .parameters = parameters
-    }
+  *node = (yp_block_parameters_node_t) {
+    {
+      .type = YP_NODE_BLOCK_PARAMETERS_NODE,
+      .location = YP_LOCATION_NODE_VALUE(parameters),
+    },
+    .parameters = parameters
   };
 
-  yp_token_list_init(&node->as.block_parameters_node.locals);
-  return node;
+  yp_token_list_init(&node->locals);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Append a new block-local variable to a BlockParametersNode node.
 static void
 yp_block_parameters_node_append_local(yp_node_t *node, const yp_token_t *local) {
-  assert(node->type == YP_NODE_BLOCK_PARAMETERS_NODE);
   assert(local->type == YP_TOKEN_IDENTIFIER);
-
-  yp_token_list_append(&node->as.block_parameters_node.locals, local);
-  if (node->location.start == NULL) node->location.start = local->start;
-  node->location.end = local->end;
+  yp_block_parameters_node_t *params_node = YP_NODE_UPCAST(node, yp_block_parameters_node_t);
+  yp_token_list_append(&params_node->locals, local);
+  params_node->base.location.end = local->end;
 }
 
 // Allocate and initialize a new BreakNode node.
 static yp_node_t *
 yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_BREAK);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_break_node_t *node = YP_NODE_ALLOC(yp_break_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BREAK_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+  *node = (yp_break_node_t) {
+    {
+      .type = YP_NODE_BREAK_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = (arguments == NULL ? keyword->end : arguments->location.end)
+      },
     },
-    .as.break_node = {
-      .arguments = arguments,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
-    }
+    .arguments = arguments,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node. This sets everything to NULL or
@@ -746,234 +749,235 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 // in the various specializations of this function.
 static yp_node_t *
 yp_call_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_call_node_t *node = YP_NODE_ALLOC(yp_call_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CALL_NODE,
-    .location = YP_LOCATION_NULL_VALUE(),
-    .as.call_node = {
-      .receiver = NULL,
-      .call_operator = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-      .message = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-      .opening = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-      .arguments = NULL,
-      .closing = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-      .block = NULL
-    }
+  *node = (yp_call_node_t) {
+    {
+      .type = YP_NODE_CALL_NODE,
+      .location = YP_LOCATION_NULL_VALUE(),
+    },
+    .receiver = NULL,
+    .call_operator = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .message = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .opening = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .arguments = NULL,
+    .closing = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .block = NULL
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from an aref or an aset
 // expression.
 static yp_node_t *
 yp_call_node_aref_create(yp_parser_t *parser, yp_node_t *receiver, yp_arguments_t *arguments) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = receiver->location.start;
+  node->base.location.start = receiver->location.start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->base.location.end = arguments->block->location.end;
   } else {
-    node->location.end = arguments->closing.end;
+    node->base.location.end = arguments->closing.end;
   }
 
-  node->as.call_node.receiver = receiver;
-  node->as.call_node.message = (yp_token_t) {
+  node->receiver = receiver;
+  node->message = (yp_token_t) {
     .type = YP_TOKEN_BRACKET_LEFT_RIGHT,
     .start = arguments->opening.start,
     .end = arguments->opening.end
   };
 
-  node->as.call_node.opening = arguments->opening;
-  node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.closing = arguments->closing;
-  node->as.call_node.block = arguments->block;
+  node->opening = arguments->opening;
+  node->arguments = arguments->arguments;
+  node->closing = arguments->closing;
+  node->block = arguments->block;
 
-  yp_string_constant_init(&node->as.call_node.name, "[]", 2);
-  return node;
+  yp_string_constant_init(&node->name, "[]", 2);
+  return YP_NODE_DOWNCAST(node);
 }
+
+#define YP_NODE_CAST(value) ((yp_node_t *)value)
 
 // Allocate and initialize a new CallNode node from a binary expression.
 static yp_node_t *
 yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *operator, yp_node_t *argument) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = receiver->location.start;
-  node->location.end = argument->location.end;
+  node->base.location.start = receiver->location.start;
+  node->base.location.end = argument->location.end;
 
-  node->as.call_node.receiver = receiver;
-  node->as.call_node.message = *operator;
+  node->receiver = receiver;
+  node->message = *operator;
 
   yp_node_t *arguments = yp_arguments_node_create(parser);
   yp_arguments_node_arguments_append(arguments, argument);
-  node->as.call_node.arguments = arguments;
+  node->arguments = YP_NODE_CAST(arguments);
 
-  yp_string_shared_init(&node->as.call_node.name, operator->start, operator->end);
-  return node;
+  yp_string_shared_init(&node->name, operator->start, operator->end);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from a call expression.
 static yp_node_t *
 yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *operator, yp_token_t *message, yp_arguments_t *arguments) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = receiver->location.start;
+  node->base.location.start = receiver->location.start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->base.location.end = arguments->block->location.end;
   } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
-    node->location.end = arguments->closing.end;
+    node->base.location.end = arguments->closing.end;
   } else if (arguments->arguments != NULL) {
-    node->location.end = arguments->arguments->location.end;
+    node->base.location.end = arguments->arguments->location.end;
   } else {
-    node->location.end = message->end;
+    node->base.location.end = message->end;
   }
 
-  node->as.call_node.receiver = receiver;
-  node->as.call_node.call_operator = *operator;
-  node->as.call_node.message = *message;
-  node->as.call_node.opening = arguments->opening;
-  node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.closing = arguments->closing;
-  node->as.call_node.block = arguments->block;
+  node->receiver = receiver;
+  node->call_operator = *operator;
+  node->message = *message;
+  node->opening = arguments->opening;
+  node->arguments = arguments->arguments;
+  node->closing = arguments->closing;
+  node->block = arguments->block;
 
-  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
-  return node;
+  yp_string_shared_init(&node->name, message->start, message->end);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from a call to a method name
 // without a receiver that could not have been a local variable read.
 static yp_node_t *
 yp_call_node_fcall_create(yp_parser_t *parser, yp_token_t *message, yp_arguments_t *arguments) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = message->start;
+  node->base.location.start = message->start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->base.location.end = arguments->block->location.end;
   } else {
-    node->location.end = arguments->closing.end;
+    node->base.location.end = arguments->closing.end;
   }
 
-  node->as.call_node.message = *message;
-  node->as.call_node.opening = arguments->opening;
-  node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.closing = arguments->closing;
-  node->as.call_node.block = arguments->block;
+  node->message = *message;
+  node->opening = arguments->opening;
+  node->arguments = arguments->arguments;
+  node->closing = arguments->closing;
+  node->block = arguments->block;
 
-  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
-  return node;
+  yp_string_shared_init(&node->name, message->start, message->end);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from a not expression.
 static yp_node_t *
 yp_call_node_not_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *message, yp_arguments_t *arguments) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = message->start;
+  node->base.location.start = message->start;
   if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
-    node->location.end = arguments->closing.end;
+    node->base.location.end = arguments->closing.end;
   } else {
-    node->location.end = receiver->location.end;
+    node->base.location.end = receiver->location.end;
   }
 
-  node->as.call_node.receiver = receiver;
-  node->as.call_node.message = *message;
-  node->as.call_node.opening = arguments->opening;
-  node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.closing = arguments->closing;
+  node->receiver = receiver;
+  node->message = *message;
+  node->opening = arguments->opening;
+  node->arguments = arguments->arguments;
+  node->closing = arguments->closing;
 
-  yp_string_constant_init(&node->as.call_node.name, "!", 1);
-  return node;
+  yp_string_constant_init(&node->name, "!", 1);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from a call shorthand expression.
 static yp_node_t *
 yp_call_node_shorthand_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *operator, yp_arguments_t *arguments) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = receiver->location.start;
+  node->base.location.start = receiver->location.start;
   if (arguments->block != NULL) {
-    node->location.end = arguments->block->location.end;
+    node->base.location.end = arguments->block->location.end;
   } else {
-    node->location.end = arguments->closing.end;
+    node->base.location.end = arguments->closing.end;
   }
 
-  node->as.call_node.receiver = receiver;
-  node->as.call_node.call_operator = *operator;
-  node->as.call_node.opening = arguments->opening;
-  node->as.call_node.arguments = arguments->arguments;
-  node->as.call_node.closing = arguments->closing;
-  node->as.call_node.block = arguments->block;
+  node->receiver = receiver;
+  node->call_operator = *operator;
+  node->opening = arguments->opening;
+  node->arguments = arguments->arguments;
+  node->closing = arguments->closing;
+  node->block = arguments->block;
 
-  yp_string_constant_init(&node->as.call_node.name, "call", 4);
-  return node;
+  yp_string_constant_init(&node->name, "call", 4);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from a unary operator expression.
 static yp_node_t *
 yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *receiver, const char *name) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = operator->start;
-  node->location.end = receiver->location.end;
+  node->base.location.start = operator->start;
+  node->base.location.end = receiver->location.end;
 
-  node->as.call_node.receiver = receiver;
-  node->as.call_node.message = *operator;
+  node->receiver = receiver;
+  node->message = *operator;
 
-  yp_string_constant_init(&node->as.call_node.name, name, strnlen(name, 2));
-  return node;
+  yp_string_constant_init(&node->name, name, strnlen(name, 2));
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new CallNode node from a call to a method name
 // without a receiver that could also have been a local variable read.
 static yp_node_t *
 yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message) {
-  yp_node_t *node = yp_call_node_create(parser);
+  yp_call_node_t *node = YP_NODE_UPCAST(yp_call_node_create(parser), yp_call_node_t);
 
-  node->location.start = message->start;
-  node->location.end = message->end;
+  node->base.location.start = message->start;
+  node->base.location.end = message->end;
 
-  node->as.call_node.message = *message;
+  node->message = *message;
 
-  yp_string_shared_init(&node->as.call_node.name, message->start, message->end);
-  return node;
+  yp_string_shared_init(&node->name, message->start, message->end);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Returns whether or not this call node is a "vcall" (a call to a method name
 // without a receiver that could also have been a local variable read).
 static bool
 yp_call_node_vcall_p(yp_node_t *node) {
-  assert(node->type == YP_NODE_CALL_NODE);
-
+  yp_call_node_t *call_node = YP_NODE_UPCAST(node, yp_call_node_t);
   return (
-    (node->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
-    (node->as.call_node.arguments == NULL) &&
-    (node->as.call_node.block == NULL) &&
-    (node->as.call_node.receiver == NULL)
+    (call_node->opening.type == YP_TOKEN_NOT_PROVIDED) &&
+    (call_node->arguments == NULL) &&
+    (call_node->block == NULL) &&
+    (call_node->receiver == NULL)
   );
 }
 
 // Allocate and initialize a new CaseNode node.
 static yp_node_t *
 yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_node_t *consequent, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_case_node_t *node = YP_NODE_ALLOC(yp_case_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CASE_NODE,
-    .location = {
-      .start = case_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_case_node_t) {
+    {
+      .type = YP_NODE_CASE_NODE,
+      .location = {
+        .start = case_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.case_node = {
-      .predicate = predicate,
-      .consequent = consequent,
-      .case_keyword_loc = YP_LOCATION_TOKEN_VALUE(case_keyword),
-      .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
-    }
+    .predicate = predicate,
+    .consequent = consequent,
+    .case_keyword_loc = YP_LOCATION_TOKEN_VALUE(case_keyword),
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
-  yp_node_list_init(&node->as.case_node.conditions);
-  return node;
+  yp_node_list_init(&node->conditions);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Append a new condition to a CaseNode node.
@@ -982,7 +986,7 @@ yp_case_node_condition_append(yp_node_t *node, yp_node_t *condition) {
   assert(node->type == YP_NODE_CASE_NODE);
   assert(condition->type == YP_NODE_WHEN_NODE || condition->type == YP_NODE_IN_NODE);
 
-  yp_node_list_append2(&node->as.case_node.conditions, condition);
+  yp_node_list_append2(&YP_NODE_UPCAST(node, yp_case_node_t)->conditions, condition);
   node->location.end = condition->location.end;
 }
 
@@ -991,7 +995,7 @@ static void
 yp_case_node_consequent_set(yp_node_t *node, yp_node_t *consequent) {
   assert(node->type == YP_NODE_CASE_NODE);
 
-  node->as.case_node.consequent = consequent;
+  YP_NODE_UPCAST(node, yp_case_node_t)->consequent = consequent;
   node->location.end = consequent->location.end;
 }
 
@@ -1001,29 +1005,29 @@ yp_case_node_end_keyword_loc_set(yp_node_t *node, const yp_token_t *end_keyword)
   assert(node->type == YP_NODE_CASE_NODE);
 
   node->location.end = end_keyword->end;
-  node->as.case_node.end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
+  YP_NODE_UPCAST(node, yp_case_node_t)->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
 }
 
 // Allocate a new ClassNode node.
 static yp_node_t *
 yp_class_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *class_keyword, yp_node_t *constant_path, const yp_token_t *inheritance_operator, yp_node_t *superclass, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_class_node_t *node = YP_NODE_ALLOC(yp_class_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CLASS_NODE,
-    .location = { .start = class_keyword->start, .end = end_keyword->end },
-    .as.class_node = {
-      .scope = scope,
-      .class_keyword = *class_keyword,
-      .constant_path = constant_path,
-      .inheritance_operator = *inheritance_operator,
-      .superclass = superclass,
-      .statements = statements,
-      .end_keyword = *end_keyword
-     }
+  *node = (yp_class_node_t) {
+    {
+      .type = YP_NODE_CLASS_NODE,
+      .location = { .start = class_keyword->start, .end = end_keyword->end },
+    },
+    .scope = scope,
+    .class_keyword = *class_keyword,
+    .constant_path = constant_path,
+    .inheritance_operator = *inheritance_operator,
+    .superclass = superclass,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new ClassVariableReadNode node.
@@ -1036,60 +1040,66 @@ yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token)
 // Initialize a new ClassVariableWriteNode node from a ClassVariableRead node.
 static yp_node_t *
 yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp_node_t *node, yp_token_t *operator, yp_node_t *value) {
-  assert(node->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
-  node->type = YP_NODE_CLASS_VARIABLE_WRITE_NODE;
+  yp_class_variable_write_node_t *write_node = YP_NODE_ALLOC(yp_class_variable_write_node_t);
 
-  node->as.class_variable_write_node.name_loc = YP_LOCATION_NODE_VALUE(node);
-  node->as.class_variable_write_node.operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
+  *write_node = (yp_class_variable_write_node_t) {
+    {
+      .type = YP_NODE_CLASS_VARIABLE_WRITE_NODE,
+      .location = node->location,
+    },
+  };
+
+  write_node->name_loc = YP_LOCATION_NODE_VALUE(node);
+  write_node->operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
 
   if (value != NULL) {
-    node->location.end = value->location.end;
-    node->as.class_variable_write_node.value = value;
+    write_node->base.location.end = value->location.end;
+    write_node->value = value;
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(write_node);
 }
 
 // Allocate and initialize a new ConstantPathNode node.
 static yp_node_t *
 yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_token_t *delimiter, yp_node_t *child) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_constant_path_node_t *node = YP_NODE_ALLOC(yp_constant_path_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CONSTANT_PATH_NODE,
-    .location = {
-      .start = parent == NULL ? delimiter->start : parent->location.start,
-      .end = child->location.end
+  *node = (yp_constant_path_node_t) {
+    {
+      .type = YP_NODE_CONSTANT_PATH_NODE,
+      .location = {
+        .start = parent == NULL ? delimiter->start : parent->location.start,
+        .end = child->location.end
+      },
     },
-    .as.constant_path_node = {
-      .parent = parent,
-      .child = child,
-      .delimiter_loc = YP_LOCATION_TOKEN_VALUE(delimiter)
-    }
+    .parent = parent,
+    .child = child,
+    .delimiter_loc = YP_LOCATION_TOKEN_VALUE(delimiter)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new ConstantPathWriteNode node.
 static yp_node_t *
 yp_constant_path_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_constant_path_write_node_t *node = YP_NODE_ALLOC(yp_constant_path_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CONSTANT_PATH_WRITE_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = (value == NULL ? target->location.end : value->location.end)
+  *node = (yp_constant_path_write_node_t) {
+    {
+      .type = YP_NODE_CONSTANT_PATH_WRITE_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = (value == NULL ? target->location.end : value->location.end)
+      },
     },
-    .as.constant_path_write_node = {
-      .target = target,
-      .operator = *operator,
-      .value = value
-     }
+    .target = target,
+    .operator = *operator,
+    .value = value
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 
@@ -1116,7 +1126,7 @@ yp_def_node_create(
   const yp_token_t *equal,
   const yp_token_t *end_keyword
 ) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_def_node_t *node = YP_NODE_ALLOC(yp_def_node_t);
   const char *end;
 
   if (end_keyword->type == YP_TOKEN_NOT_PROVIDED) {
@@ -1125,89 +1135,89 @@ yp_def_node_create(
     end = end_keyword->end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_DEF_NODE,
-    .location = { .start = def_keyword->start, .end = end },
-    .as.def_node = {
-      .name = *name,
-      .receiver = receiver,
-      .parameters = parameters,
-      .statements = statements,
-      .scope = scope,
-      .def_keyword_loc = YP_LOCATION_TOKEN_VALUE(def_keyword),
-      .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
-      .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(lparen),
-      .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(rparen),
-      .equal_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(equal),
-      .end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword)
-    }
+  *node = (yp_def_node_t) {
+    {
+      .type = YP_NODE_DEF_NODE,
+      .location = { .start = def_keyword->start, .end = end },
+    },
+    .name = *name,
+    .receiver = receiver,
+    .parameters = parameters,
+    .statements = statements,
+    .scope = scope,
+    .def_keyword_loc = YP_LOCATION_TOKEN_VALUE(def_keyword),
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+    .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(lparen),
+    .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(rparen),
+    .equal_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(equal),
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new DefinedNode node.
 static yp_node_t *
 yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t *value, const yp_token_t *rparen, const yp_location_t *keyword_loc) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_defined_node_t *node = YP_NODE_ALLOC(yp_defined_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_DEFINED_NODE,
-    .location = {
-      .start = keyword_loc->start,
-      .end = (rparen->type == YP_TOKEN_NOT_PROVIDED ? value->location.end : rparen->end)
+  *node = (yp_defined_node_t) {
+    {
+      .type = YP_NODE_DEFINED_NODE,
+      .location = {
+        .start = keyword_loc->start,
+        .end = (rparen->type == YP_TOKEN_NOT_PROVIDED ? value->location.end : rparen->end)
+      },
     },
-    .as.defined_node = {
-      .lparen = *lparen,
-      .value = value,
-      .rparen = *rparen,
-      .keyword_loc = *keyword_loc
-     }
+    .lparen = *lparen,
+    .value = value,
+    .rparen = *rparen,
+    .keyword_loc = *keyword_loc
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new ElseNode node.
 static yp_node_t *
 yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_else_node_t *node = YP_NODE_ALLOC(yp_else_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ELSE_NODE,
-    .location = {
-      .start = else_keyword->start,
-      .end = end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end
+  *node = (yp_else_node_t) {
+    {
+      .type = YP_NODE_ELSE_NODE,
+      .location = {
+        .start = else_keyword->start,
+        .end = end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->location.end : end_keyword->end
+      },
     },
-    .as.else_node = {
-      .else_keyword = *else_keyword,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .else_keyword = *else_keyword,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new EnsureNode node.
 static yp_node_t *
 yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_ensure_node_t *node = YP_NODE_ALLOC(yp_ensure_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ENSURE_NODE,
-    .location = {
-      .start = ensure_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_ensure_node_t) {
+    {
+      .type = YP_NODE_ENSURE_NODE,
+      .location = {
+        .start = ensure_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.ensure_node = {
-      .ensure_keyword = *ensure_keyword,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .ensure_keyword = *ensure_keyword,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new FalseNode node.
@@ -1221,30 +1231,30 @@ yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // nodes parameter is guaranteed to have at least two nodes.
 static yp_node_t *
 yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_find_pattern_node_t *node = YP_NODE_ALLOC(yp_find_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_FIND_PATTERN_NODE,
-    .location = {
-      .start = nodes->nodes[0]->location.start,
-      .end = nodes->nodes[nodes->size - 1]->location.end
+  *node = (yp_find_pattern_node_t) {
+    {
+      .type = YP_NODE_FIND_PATTERN_NODE,
+      .location = {
+        .start = nodes->nodes[0]->location.start,
+        .end = nodes->nodes[nodes->size - 1]->location.end
+      },
     },
-    .as.find_pattern_node = {
-      .constant = NULL,
-      .left = nodes->nodes[0],
-      .right = nodes->nodes[nodes->size - 1]
-    }
+    .constant = NULL,
+    .left = nodes->nodes[0],
+    .right = nodes->nodes[nodes->size - 1]
   };
 
   // For now we're going to just copy over each pointer manually. This could be
   // much more efficient, as we could instead resize the node list to only point
   // to 1...-1.
-  yp_node_list_init(&node->as.find_pattern_node.requireds);
+  yp_node_list_init(&node->requireds);
   for (size_t index = 1; index < nodes->size - 1; index++) {
-    yp_node_list_append2(&node->as.find_pattern_node.requireds, nodes->nodes[index]);
+    yp_node_list_append2(&node->requireds, nodes->nodes[index]);
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new FloatNode node.
@@ -1266,26 +1276,26 @@ yp_for_node_create(
   const yp_token_t *do_keyword,
   const yp_token_t *end_keyword
 ) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_for_node_t *node = YP_NODE_ALLOC(yp_for_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_FOR_NODE,
-    .location = {
-      .start = for_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_for_node_t) {
+    {
+      .type = YP_NODE_FOR_NODE,
+      .location = {
+        .start = for_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.for_node = {
-      .index = index,
-      .collection = collection,
-      .statements = statements,
-      .for_keyword_loc = YP_LOCATION_TOKEN_VALUE(for_keyword),
-      .in_keyword_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
-      .do_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(do_keyword),
-      .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
-    }
+    .index = index,
+    .collection = collection,
+    .statements = statements,
+    .for_keyword_loc = YP_LOCATION_TOKEN_VALUE(for_keyword),
+    .in_keyword_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
+    .do_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(do_keyword),
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new ForwardingArgumentsNode node.
@@ -1306,184 +1316,184 @@ yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token
 static yp_node_t *
 yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token, yp_arguments_t *arguments) {
   assert(token->type == YP_TOKEN_KEYWORD_SUPER);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_forwarding_super_node_t *node = YP_NODE_ALLOC(yp_forwarding_super_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_FORWARDING_SUPER_NODE,
-    .location = {
-      .start = token->start,
-      .end = arguments->block != NULL ? arguments->block->location.end : token->end
+  *node = (yp_forwarding_super_node_t) {
+    {
+      .type = YP_NODE_FORWARDING_SUPER_NODE,
+      .location = {
+        .start = token->start,
+        .end = arguments->block != NULL ? arguments->block->location.end : token->end
+      },
     },
-    .as.forwarding_super_node.block = arguments->block
+    .block = arguments->block
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new hash pattern node from an opening and closing
 // token.
 static yp_node_t *
 yp_hash_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_hash_pattern_node_t *node = YP_NODE_ALLOC(yp_hash_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_HASH_PATTERN_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_hash_pattern_node_t) {
+    {
+      .type = YP_NODE_HASH_PATTERN_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.hash_pattern_node = {
-      .constant = NULL,
-      .kwrest = NULL,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .constant = NULL,
+    .kwrest = NULL,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  yp_node_list_init(&node->as.hash_pattern_node.assocs);
+  yp_node_list_init(&node->assocs);
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new hash pattern node.
 static yp_node_t *
 yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assocs) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_hash_pattern_node_t *node = YP_NODE_ALLOC(yp_hash_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_HASH_PATTERN_NODE,
-    .location = {
-      .start = assocs->nodes[0]->location.start,
-      .end = assocs->nodes[assocs->size - 1]->location.end
+  *node = (yp_hash_pattern_node_t) {
+    {
+      .type = YP_NODE_HASH_PATTERN_NODE,
+      .location = {
+        .start = assocs->nodes[0]->location.start,
+        .end = assocs->nodes[assocs->size - 1]->location.end
+      },
     },
-    .as.hash_pattern_node = {
-      .constant = NULL,
-      .kwrest = NULL
-    }
+    .constant = NULL,
+    .kwrest = NULL
   };
 
-  yp_node_list_init(&node->as.hash_pattern_node.assocs);
+  yp_node_list_init(&node->assocs);
 
   for (size_t index = 0; index < assocs->size; index++) {
     yp_node_t *assoc = assocs->nodes[index];
-    yp_node_list_append2(&node->as.hash_pattern_node.assocs, assoc);
+    yp_node_list_append2(&node->assocs, assoc);
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new GlobalVariableReadNode node.
 static yp_node_t *
 yp_global_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_global_variable_read_node_t *node = YP_NODE_ALLOC(yp_global_variable_read_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_GLOBAL_VARIABLE_READ_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(name),
-    .as.global_variable_read_node = {
-      .name = *name
-    }
+  *node = (yp_global_variable_read_node_t) {
+    {
+      .type = YP_NODE_GLOBAL_VARIABLE_READ_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(name),
+    },
+    .name = *name
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new GlobalVariableWriteNode node.
 static yp_node_t *
 yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_global_variable_write_node_t *node = YP_NODE_ALLOC(yp_global_variable_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_GLOBAL_VARIABLE_WRITE_NODE,
-    .location = {
-      .start = name->start,
-      .end = (value == NULL ? name->end : value->location.end)
+  *node = (yp_global_variable_write_node_t) {
+    {
+      .type = YP_NODE_GLOBAL_VARIABLE_WRITE_NODE,
+      .location = {
+        .start = name->start,
+        .end = (value == NULL ? name->end : value->location.end)
+      },
     },
-    .as.global_variable_write_node = {
-      .name = *name,
-      .operator = *operator,
-      .value = value
-    }
+    .name = *name,
+    .operator = *operator,
+    .value = value
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new HashNode node.
 static yp_node_t *
 yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_hash_node_t *node = YP_NODE_ALLOC(yp_hash_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_HASH_NODE,
-    .location = {
-      .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? NULL : opening->start),
-      .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? NULL : closing->end)
+  *node = (yp_hash_node_t) {
+    {
+      .type = YP_NODE_HASH_NODE,
+      .location = {
+        .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? NULL : opening->start),
+        .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? NULL : closing->end)
+      },
     },
-    .as.hash_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.hash_node.elements);
-  return node;
+  yp_node_list_init(&node->elements);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new HeredocNode node.
 static yp_node_t *
 yp_heredoc_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing, int dedent) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_heredoc_node_t *node = YP_NODE_ALLOC(yp_heredoc_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_HEREDOC_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_heredoc_node_t) {
+    {
+      .type = YP_NODE_HEREDOC_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.heredoc_node = {
-      .opening = *opening,
-      .closing = *closing,
-      .dedent = dedent
-    }
+    .opening = *opening,
+    .closing = *closing,
+    .dedent = dedent
   };
 
-  yp_node_list_init(&node->as.heredoc_node.parts);
-  return node;
+  yp_node_list_init(&node->parts);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new IfNode node.
 static yp_node_t *
 yp_if_node_create(yp_parser_t *parser, const yp_token_t *if_keyword, yp_node_t *predicate, yp_node_t *statements, yp_node_t *consequent, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_if_node_t *node = YP_NODE_ALLOC(yp_if_node_t);
 
   const char *end;
   if (end_keyword->type != YP_TOKEN_NOT_PROVIDED) {
     end = end_keyword->end;
   } else if (consequent != NULL) {
     end = consequent->location.end;
-  } else if (statements != NULL) {
-    end = statements->location.end;
   } else {
-    end = predicate->location.end;
+    end = statements->location.end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_IF_NODE,
-    .location = {
-      .start = if_keyword->start,
-      .end = end
+  *node = (yp_if_node_t) {
+    {
+      .type = YP_NODE_IF_NODE,
+      .location = {
+        .start = if_keyword->start,
+        .end = end
+      },
     },
-    .as.if_node = {
-      .if_keyword = *if_keyword,
-      .predicate = predicate,
-      .statements = statements,
-      .consequent = consequent,
-      .end_keyword = *end_keyword
-    }
+    .if_keyword = *if_keyword,
+    .predicate = predicate,
+    .statements = statements,
+    .consequent = consequent,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize an if node from a ternary expression.
@@ -1511,7 +1521,7 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new InNode node.
 static yp_node_t *
 yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_node_t *statements, const yp_token_t *in_keyword, const yp_token_t *then_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_in_node_t *node = YP_NODE_ALLOC(yp_in_node_t);
 
   const char *end;
   if (then_keyword->type != YP_TOKEN_NOT_PROVIDED) {
@@ -1522,21 +1532,21 @@ yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_node_t *statements
     end = pattern->location.end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_IN_NODE,
-    .location = {
-      .start = in_keyword->start,
-      .end = end
+  *node = (yp_in_node_t) {
+    {
+      .type = YP_NODE_IN_NODE,
+      .location = {
+        .start = in_keyword->start,
+        .end = end
+      },
     },
-    .as.in_node = {
-      .pattern = pattern,
-      .statements = statements,
-      .in_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
-      .then_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(then_keyword)
-    }
+    .pattern = pattern,
+    .statements = statements,
+    .in_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
+    .then_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(then_keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new InstanceVariableReadNode node.
@@ -1550,17 +1560,22 @@ yp_instance_variable_read_node_create(yp_parser_t *parser, const yp_token_t *tok
 static yp_node_t *
 yp_instance_variable_write_node_create(yp_parser_t *parser, yp_node_t *node, yp_token_t *operator, yp_node_t *value) {
   assert(node->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
-  node->type = YP_NODE_INSTANCE_VARIABLE_WRITE_NODE;
-
-  node->as.instance_variable_write_node.name_loc = YP_LOCATION_NODE_VALUE(node);
-  node->as.instance_variable_write_node.operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
+  yp_instance_variable_write_node_t *write_node = YP_NODE_ALLOC(yp_instance_variable_write_node_t);
+  *write_node = (yp_instance_variable_write_node_t) {
+    {
+      .location = node->location,
+      .type = YP_NODE_INSTANCE_VARIABLE_WRITE_NODE
+    },
+    .name_loc = YP_LOCATION_NODE_VALUE(node),
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+  };
 
   if (value != NULL) {
-    node->as.instance_variable_write_node.value = value;
-    node->location.end = value->location.end;
+    write_node->value = value;
+    write_node->base.location.end = value->location.end;
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(write_node);
 }
 
 // Allocate and initialize a new IntegerNode node.
@@ -1573,313 +1588,304 @@ yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new InterpolatedRegularExpressionNode node.
 static yp_node_t *
 yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_regular_expression_node_t *node = YP_NODE_ALLOC(yp_interpolated_regular_expression_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_REGULAR_EXPRESSION_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_interpolated_regular_expression_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_REGULAR_EXPRESSION_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.interpolated_regular_expression_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.interpolated_regular_expression_node.parts);
-  return node;
+  yp_node_list_init(&node->parts);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new InterpolatedStringNode node.
 static yp_node_t *
 yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_node_list_t *parts, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_string_node_t *node = YP_NODE_ALLOC(yp_interpolated_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end,
+  *node = (yp_interpolated_string_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end,
+      },
     },
-    .as.interpolated_string_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
   if (parts == NULL) {
-    yp_node_list_init(&node->as.interpolated_string_node.parts);
-  }
-  else {
-    node->as.interpolated_string_node.parts = *parts;
+    yp_node_list_init(&node->parts);
+  } else {
+    node->parts = *parts;
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new InterpolatedSymbolNode node.
 static yp_node_t *
 yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_node_list_t *parts, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_symbol_node_t *node = YP_NODE_ALLOC(yp_interpolated_symbol_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_SYMBOL_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end,
+  *node = (yp_interpolated_symbol_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_SYMBOL_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end,
+      },
     },
-    .as.interpolated_symbol_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
   if (parts == NULL) {
-    yp_node_list_init(&node->as.interpolated_symbol_node.parts);
+    yp_node_list_init(&node->parts);
   }
   else {
-    node->as.interpolated_symbol_node.parts = *parts;
+    node->parts = *parts;
   }
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new InterpolatedXStringNode node.
 static yp_node_t *
 yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_x_string_node_t *node = YP_NODE_ALLOC(yp_interpolated_x_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_X_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_interpolated_x_string_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_X_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.interpolated_x_string_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.interpolated_x_string_node.parts);
-  return node;
+  yp_node_list_init(&node->parts);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new KeywordParameterNode node.
 static yp_node_t *
 yp_keyword_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_keyword_parameter_node_t *node = YP_NODE_ALLOC(yp_keyword_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_KEYWORD_PARAMETER_NODE,
-    .location = {
-      .start = name->start,
-      .end = value == NULL ? name->end : value->location.end
+  *node = (yp_keyword_parameter_node_t) {
+    {
+      .type = YP_NODE_KEYWORD_PARAMETER_NODE,
+      .location = {
+        .start = name->start,
+        .end = value == NULL ? name->end : value->location.end
+      },
     },
-    .as.keyword_parameter_node = {
-      .name = *name,
-      .value = value
-    }
+    .name = *name,
+    .value = value
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new KeywordRestParameterNode node.
 static yp_node_t *
 yp_keyword_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_keyword_rest_parameter_node_t *node = YP_NODE_ALLOC(yp_keyword_rest_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_KEYWORD_REST_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+  *node = (yp_keyword_rest_parameter_node_t) {
+    {
+      .type = YP_NODE_KEYWORD_REST_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+      },
     },
-    .as.keyword_rest_parameter_node = {
-      .operator = *operator,
-      .name = *name
-    }
+    .operator = *operator,
+    .name = *name
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new LambdaNode node.
 static yp_node_t *
 yp_lambda_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *opening, const yp_token_t *lparen, yp_node_t *parameters, const yp_token_t *rparen, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_lambda_node_t *node = YP_NODE_ALLOC(yp_lambda_node_t);
 
-  const char *end;
-  if (statements != NULL) {
-    end = statements->location.end;
-  } else if (rparen->type != YP_TOKEN_NOT_PROVIDED) {
-    end = rparen->end;
-  } else {
-    end = opening->end;
-  }
-
-  *node = (yp_node_t) {
-    .type = YP_NODE_LAMBDA_NODE,
-    .location = {
-      .start = opening->start,
-      .end = end
+  *node = (yp_lambda_node_t) {
+    {
+      .type = YP_NODE_LAMBDA_NODE,
+      .location = {
+        .start = opening->start,
+        .end = statements->location.end
+      },
     },
-    .as.lambda_node = {
-      .scope = scope,
-      .opening = *opening,
-      .lparen = *lparen,
-      .parameters = parameters,
-      .rparen = *rparen,
-      .statements = statements
-    }
+    .scope = scope,
+    .opening = *opening,
+    .lparen = *lparen,
+    .parameters = parameters,
+    .rparen = *rparen,
+    .statements = statements
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new LocalVariableReadNode node.
 static yp_node_t *
 yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_local_variable_read_node_t *node = YP_NODE_ALLOC(yp_local_variable_read_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_LOCAL_VARIABLE_READ_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(name),
-    .as.local_variable_read_node = {
-      .name = *name
-    }
+  *node = (yp_local_variable_read_node_t) {
+    {
+      .type = YP_NODE_LOCAL_VARIABLE_READ_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(name),
+    },
+    .name = *name
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new LocalVariableWriteNode node.
 static yp_node_t *
 yp_local_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_local_variable_write_node_t *node = YP_NODE_ALLOC(yp_local_variable_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(name),
-    .as.local_variable_write_node = {
-      .name = *name,
-      .operator = not_provided(parser),
-      .value = NULL
-    }
+  *node = (yp_local_variable_write_node_t) {
+    {
+      .type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(name),
+    },
+    .name = *name,
+    .operator = not_provided(parser),
+    .value = NULL
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new MatchPredicateNode node.
 static yp_node_t *
 yp_match_predicate_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *pattern, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_match_predicate_node_t *node = YP_NODE_ALLOC(yp_match_predicate_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MATCH_PREDICATE_NODE,
-    .location = {
-      .start = value->location.start,
-      .end = pattern->location.end
+  *node = (yp_match_predicate_node_t) {
+    {
+      .type = YP_NODE_MATCH_PREDICATE_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = pattern->location.end
+      },
     },
-    .as.match_predicate_node = {
-      .value = value,
-      .pattern = pattern,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .pattern = pattern,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new MatchRequiredNode node.
 static yp_node_t *
 yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *pattern, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_match_required_node_t *node = YP_NODE_ALLOC(yp_match_required_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MATCH_REQUIRED_NODE,
-    .location = {
-      .start = value->location.start,
-      .end = pattern->location.end
+  *node = (yp_match_required_node_t) {
+    {
+      .type = YP_NODE_MATCH_REQUIRED_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = pattern->location.end
+      },
     },
-    .as.match_required_node = {
-      .value = value,
-      .pattern = pattern,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .pattern = pattern,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new MissingNode node.
 static yp_node_t *
 yp_missing_node_create(yp_parser_t *parser, yp_location_t *location) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_node_t *node = YP_NODE_ALLOC(yp_node_t);
   *node = (yp_node_t) { .type = YP_NODE_MISSING_NODE, .location = *location };
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 
 // Allocate a new ModuleNode node.
 static yp_node_t *
 yp_module_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *module_keyword, yp_node_t *constant_path, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_module_node_t *node = YP_NODE_ALLOC(yp_module_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MODULE_NODE,
-    .location = {
-      .start = module_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_module_node_t) {
+    {
+      .type = YP_NODE_MODULE_NODE,
+      .location = {
+        .start = module_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.module_node = {
-      .scope = scope,
-      .module_keyword = *module_keyword,
-      .constant_path = constant_path,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .scope = scope,
+    .module_keyword = *module_keyword,
+    .constant_path = constant_path,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new MultiWriteNode node.
 static yp_node_t *
 yp_multi_write_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *value, const yp_location_t *lparen_loc, const yp_location_t *rparen_loc) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_multi_write_node_t *node = YP_NODE_ALLOC(yp_multi_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MULTI_WRITE_NODE,
-    .location = { .start = NULL, .end = NULL },
-    .as.multi_write_node = {
-      .operator = *operator,
-      .value = value,
-      .lparen_loc = *lparen_loc,
-      .rparen_loc = *rparen_loc
-    }
+  *node = (yp_multi_write_node_t) {
+    {
+      .type = YP_NODE_MULTI_WRITE_NODE,
+      .location = { .start = NULL, .end = NULL },
+    },
+    .operator = *operator,
+    .value = value,
+    .lparen_loc = *lparen_loc,
+    .rparen_loc = *rparen_loc
   };
 
-  yp_node_list_init(&node->as.multi_write_node.targets);
-  return node;
+  yp_node_list_init(&node->targets);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Append a target to a MultiWriteNode node.
 static void
 yp_multi_write_node_targets_append(yp_node_t *node, yp_node_t *target) {
   assert(node->type == YP_NODE_MULTI_WRITE_NODE);
+  yp_multi_write_node_t *write_node = YP_NODE_UPCAST(node, yp_multi_write_node_t);
 
-  yp_node_list_append2(&node->as.multi_write_node.targets, target);
+  yp_node_list_append2(&write_node->targets, target);
 
-  if (node->location.start == NULL || (node->location.start > target->location.start)) {
-    node->location.start = target->location.start;
+  if (write_node->base.location.start == NULL || (write_node->base.location.start > target->location.start)) {
+    write_node->base.location.start = target->location.start;
   }
 
-  if (node->location.end == NULL || (node->location.end < target->location.end)) {
-    node->location.end = target->location.end;
+  if (write_node->base.location.end == NULL || (write_node->base.location.end < target->location.end)) {
+    write_node->base.location.end = target->location.end;
   }
 }
 
@@ -1887,21 +1893,21 @@ yp_multi_write_node_targets_append(yp_node_t *node, yp_node_t *target) {
 static yp_node_t *
 yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_NEXT);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_next_node_t *node = YP_NODE_ALLOC(yp_next_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_NEXT_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+  *node = (yp_next_node_t) {
+    {
+      .type = YP_NODE_NEXT_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = (arguments == NULL ? keyword->end : arguments->location.end)
+      },
     },
-    .as.next_node = {
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-      .arguments = arguments
-    }
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .arguments = arguments
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new NilNode node.
@@ -1916,150 +1922,150 @@ static yp_node_t *
 yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *keyword) {
   assert(operator->type == YP_TOKEN_USTAR_STAR);
   assert(keyword->type == YP_TOKEN_KEYWORD_NIL);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_no_keywords_parameter_node_t *node = YP_NODE_ALLOC(yp_no_keywords_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_NO_KEYWORDS_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = keyword->end
+  *node = (yp_no_keywords_parameter_node_t) {
+    {
+      .type = YP_NODE_NO_KEYWORDS_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = keyword->end
+      },
     },
-    .as.no_keywords_parameter_node = {
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
-    }
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new OperatorAndAssignmentNode node.
 static yp_node_t *
 yp_operator_and_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
   assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_operator_and_assignment_node_t *node = YP_NODE_ALLOC(yp_operator_and_assignment_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPERATOR_AND_ASSIGNMENT_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = value->location.end
+  *node = (yp_operator_and_assignment_node_t) {
+    {
+      .type = YP_NODE_OPERATOR_AND_ASSIGNMENT_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = value->location.end
+      },
     },
-    .as.operator_and_assignment_node = {
-      .target = target,
-      .value = value,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .target = target,
+    .value = value,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new OperatorAssignmentNode node.
 static yp_node_t *
 yp_operator_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_operator_assignment_node_t *node = YP_NODE_ALLOC(yp_operator_assignment_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPERATOR_ASSIGNMENT_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = value->location.end
+  *node = (yp_operator_assignment_node_t) {
+    {
+      .type = YP_NODE_OPERATOR_ASSIGNMENT_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = value->location.end
+      },
     },
-    .as.operator_assignment_node = {
-      .target = target,
-      .operator = *operator,
-      .value = value
-    }
+    .target = target,
+    .operator = *operator,
+    .value = value
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new OperatorOrAssignmentNode node.
 static yp_node_t *
 yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
   assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_operator_or_assignment_node_t *node = YP_NODE_ALLOC(yp_operator_or_assignment_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPERATOR_OR_ASSIGNMENT_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = value->location.end
+  *node = (yp_operator_or_assignment_node_t) {
+    {
+      .type = YP_NODE_OPERATOR_OR_ASSIGNMENT_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = value->location.end
+      },
     },
-    .as.operator_or_assignment_node = {
-      .target = target,
-      .value = value,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .target = target,
+    .value = value,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new OptionalParameterNode node.
 static yp_node_t *
 yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *equal_operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_optional_parameter_node_t *node = YP_NODE_ALLOC(yp_optional_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPTIONAL_PARAMETER_NODE,
-    .location = {
-      .start = name->start,
-      .end = value->location.end
+  *node = (yp_optional_parameter_node_t) {
+    {
+      .type = YP_NODE_OPTIONAL_PARAMETER_NODE,
+      .location = {
+        .start = name->start,
+        .end = value->location.end
+      },
     },
-    .as.optional_parameter_node = {
-      .name = *name,
-      .equal_operator = *equal_operator,
-      .value = value
-    }
+    .name = *name,
+    .equal_operator = *equal_operator,
+    .value = value
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new OrNode node.
 static yp_node_t *
 yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_or_node_t *node = YP_NODE_ALLOC(yp_or_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OR_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_or_node_t) {
+    {
+      .type = YP_NODE_OR_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      },
     },
-    .as.or_node = {
-      .left = left,
-      .right = right,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .left = left,
+    .right = right,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new ParametersNode node.
 static yp_node_t *
 yp_parameters_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_parameters_node_t *node = YP_NODE_ALLOC(yp_parameters_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PARAMETERS_NODE,
-    .location = { .start = NULL, .end = NULL },
-    .as.parameters_node = {
-      .rest = NULL,
-      .keyword_rest = NULL,
-      .block = NULL
-    }
+  *node = (yp_parameters_node_t) {
+    {
+      .type = YP_NODE_PARAMETERS_NODE,
+      .location = { .start = NULL, .end = NULL },
+    },
+    .rest = NULL,
+    .keyword_rest = NULL,
+    .block = NULL
   };
 
-  yp_node_list_init(&node->as.parameters_node.requireds);
-  yp_node_list_init(&node->as.parameters_node.optionals);
-  yp_node_list_init(&node->as.parameters_node.keywords);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->optionals);
+  yp_node_list_init(&node->keywords);
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Set the location properly for the parameters node.
@@ -2085,7 +2091,7 @@ static void
 yp_parameters_node_requireds_append(yp_node_t *params, yp_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
   yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->as.parameters_node.requireds, param);
+  yp_node_list_append2(&YP_NODE_UPCAST(params, yp_parameters_node_t)->requireds, param);
 }
 
 // Append an optional parameter to a ParametersNode node.
@@ -2093,7 +2099,7 @@ static void
 yp_parameters_node_optionals_append(yp_node_t *params, yp_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
   yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->as.parameters_node.optionals, param);
+  yp_node_list_append2(&YP_NODE_UPCAST(params, yp_parameters_node_t)->optionals, param);
 }
 
 // Set the rest parameter on a ParametersNode node.
@@ -2101,7 +2107,7 @@ static void
 yp_parameters_node_rest_set(yp_node_t *params, yp_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
   yp_parameters_node_location_set(params, param);
-  params->as.parameters_node.rest = param;
+  YP_NODE_UPCAST(params, yp_parameters_node_t)->rest = param;
 }
 
 // Append a keyword parameter to a ParametersNode node.
@@ -2109,7 +2115,7 @@ static void
 yp_parameters_node_keywords_append(yp_node_t *params, yp_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
   yp_parameters_node_location_set(params, param);
-  yp_node_list_append2(&params->as.parameters_node.keywords, param);
+  yp_node_list_append2(&YP_NODE_UPCAST(params, yp_parameters_node_t)->keywords, param);
 }
 
 // Set the keyword rest parameter on a ParametersNode node.
@@ -2117,7 +2123,7 @@ static void
 yp_parameters_node_keyword_rest_set(yp_node_t *params, yp_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
   yp_parameters_node_location_set(params, param);
-  params->as.parameters_node.keyword_rest = param;
+  YP_NODE_UPCAST(params, yp_parameters_node_t)->keyword_rest = param;
 }
 
 // Set the block parameter on a ParametersNode node.
@@ -2125,155 +2131,155 @@ static void
 yp_parameters_node_block_set(yp_node_t *params, yp_node_t *param) {
   assert(params->type == YP_NODE_PARAMETERS_NODE);
   yp_parameters_node_location_set(params, param);
-  params->as.parameters_node.block = param;
+  YP_NODE_UPCAST(params, yp_parameters_node_t)->block = param;
 }
 
 // Allocate a new ProgramNode node.
 static yp_node_t *
 yp_program_node_create(yp_parser_t *parser, yp_node_t *scope, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_program_node_t *node = YP_NODE_ALLOC(yp_program_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PROGRAM_NODE,
-    .location = {
-      .start = statements == NULL ? parser->start : statements->location.start,
-      .end = statements == NULL ? parser->end : statements->location.end
+  *node = (yp_program_node_t) {
+    {
+      .type = YP_NODE_PROGRAM_NODE,
+      .location = {
+        .start = statements->location.start,
+        .end = statements->location.end
+      },
     },
-    .as.program_node = {
-      .scope = scope,
-      .statements = statements
-    }
+    .scope = scope,
+    .statements = statements
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize new ParenthesesNode node.
 static yp_node_t *
 yp_parentheses_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_parentheses_node_t *node = YP_NODE_ALLOC(yp_parentheses_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PARENTHESES_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_parentheses_node_t) {
+    {
+      .type = YP_NODE_PARENTHESES_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.parentheses_node = {
-      .statements = statements,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .statements = statements,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new PinnedExpressionNode node.
 static yp_node_t *
 yp_pinned_expression_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *operator, const yp_token_t *lparen, const yp_token_t *rparen) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_pinned_expression_node_t *node = YP_NODE_ALLOC(yp_pinned_expression_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PINNED_EXPRESSION_NODE,
-    .location = {
-      .start = operator->start,
-      .end = rparen->end
+  *node = (yp_pinned_expression_node_t) {
+    {
+      .type = YP_NODE_PINNED_EXPRESSION_NODE,
+      .location = {
+        .start = operator->start,
+        .end = rparen->end
+      },
     },
-    .as.pinned_expression_node = {
-      .expression = expression,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-      .lparen_loc = YP_LOCATION_TOKEN_VALUE(lparen),
-      .rparen_loc = YP_LOCATION_TOKEN_VALUE(rparen)
-    }
+    .expression = expression,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+    .lparen_loc = YP_LOCATION_TOKEN_VALUE(lparen),
+    .rparen_loc = YP_LOCATION_TOKEN_VALUE(rparen)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new PinnedVariableNode node.
 static yp_node_t *
 yp_pinned_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *variable) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_pinned_variable_node_t *node = YP_NODE_ALLOC(yp_pinned_variable_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PINNED_VARIABLE_NODE,
-    .location = {
-      .start = operator->start,
-      .end = variable->location.end
+  *node = (yp_pinned_variable_node_t) {
+    {
+      .type = YP_NODE_PINNED_VARIABLE_NODE,
+      .location = {
+        .start = operator->start,
+        .end = variable->location.end
+      },
     },
-    .as.pinned_variable_node = {
-      .variable = variable,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .variable = variable,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new PostExecutionNode node.
 static yp_node_t *
 yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_post_execution_node_t *node = YP_NODE_ALLOC(yp_post_execution_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_POST_EXECUTION_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = closing->end
+  *node = (yp_post_execution_node_t) {
+    {
+      .type = YP_NODE_POST_EXECUTION_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = closing->end
+      },
     },
-    .as.post_execution_node = {
-      .statements = statements,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .statements = statements,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new PreExecutionNode node.
 static yp_node_t *
 yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_pre_execution_node_t *node = YP_NODE_ALLOC(yp_pre_execution_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_PRE_EXECUTION_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = closing->end
+  *node = (yp_pre_execution_node_t) {
+    {
+      .type = YP_NODE_PRE_EXECUTION_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = closing->end
+      },
     },
-    .as.pre_execution_node = {
-      .statements = statements,
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .statements = statements,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize new RangeNode node.
 static yp_node_t *
 yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_range_node_t *node = YP_NODE_ALLOC(yp_range_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RANGE_NODE,
-    .location = {
-      .start = (left == NULL ? operator->start : left->location.start),
-      .end = (right == NULL ? operator->end : right->location.end)
+  *node = (yp_range_node_t) {
+    {
+      .type = YP_NODE_RANGE_NODE,
+      .location = {
+        .start = (left == NULL ? operator->start : left->location.start),
+        .end = (right == NULL ? operator->end : right->location.end)
+      },
     },
-    .as.range_node = {
-      .left = left,
-      .right = right,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-    }
+    .left = left,
+    .right = right,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new RationalNode node.
@@ -2293,143 +2299,145 @@ yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new RegularExpressionNode node.
 static yp_node_t *
 yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_regular_expression_node_t *node = YP_NODE_ALLOC(yp_regular_expression_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REGULAR_EXPRESSION_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_regular_expression_node_t) {
+    {
+      .type = YP_NODE_REGULAR_EXPRESSION_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.regular_expression_node = {
-      .opening = *opening,
-      .content = *content,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .content = *content,
+    .closing = *closing
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new RequiredDestructuredParameterNode node.
 static yp_node_t *
 yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_required_destructured_parameter_node_t *node = YP_NODE_ALLOC(yp_required_destructured_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REQUIRED_DESTRUCTURED_PARAMETER_NODE,
-    .location = {
-      .start = NULL,
-      .end = NULL
+  *node = (yp_required_destructured_parameter_node_t) {
+    {
+      .type = YP_NODE_REQUIRED_DESTRUCTURED_PARAMETER_NODE,
+      .location = {
+        .start = NULL,
+        .end = NULL
+      },
     },
-    .as.required_destructured_parameter_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.required_destructured_parameter_node.parameters);
-  return node;
+  yp_node_list_init(&node->parameters);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new RequiredParameterNode node.
 static yp_node_t *
 yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_required_parameter_node_t *node = YP_NODE_ALLOC(yp_required_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REQUIRED_PARAMETER_NODE,
-    .location = {
-      .start = name->start,
-      .end = name->end
+  *node = (yp_required_parameter_node_t) {
+    {
+      .type = YP_NODE_REQUIRED_PARAMETER_NODE,
+      .location = {
+        .start = name->start,
+        .end = name->end
+      },
     },
-    .as.required_parameter_node = {
-      .name = *name
-    }
+    .name = *name
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new RescueModifierNode node.
 static yp_node_t *
 yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *rescue_keyword, yp_node_t *rescue_expression) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_rescue_modifier_node_t *node = YP_NODE_ALLOC(yp_rescue_modifier_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RESCUE_MODIFIER_NODE,
-    .location = {
-      .start = expression->location.start,
-      .end = rescue_expression->location.end
+  *node = (yp_rescue_modifier_node_t) {
+    {
+      .type = YP_NODE_RESCUE_MODIFIER_NODE,
+      .location = {
+        .start = expression->location.start,
+        .end = rescue_expression->location.end
+      },
     },
-    .as.rescue_modifier_node = {
-      .expression = expression,
-      .rescue_keyword = *rescue_keyword,
-      .rescue_expression = rescue_expression
-    }
+    .expression = expression,
+    .rescue_keyword = *rescue_keyword,
+    .rescue_expression = rescue_expression
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
-// Allocate and initiliaze a new RescueNode node.
+// Allocate a new RescueNode node.
 static yp_node_t *
 yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *rescue_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_rescue_node_t *node = YP_NODE_ALLOC(yp_rescue_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RESCUE_NODE,
-    .location = {
-      .start = rescue_keyword->start,
-      .end = rescue_keyword->end
+  *node = (yp_rescue_node_t) {
+    {
+      .type = YP_NODE_RESCUE_NODE,
+      .location = {
+        .start = rescue_keyword->start,
+        .end = rescue_keyword->end
+      },
     },
-    .as.rescue_node = {
-      .rescue_keyword = *rescue_keyword,
-      .equal_greater = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-      .exception = NULL,
-      .statements = NULL,
-      .consequent = NULL
-    }
+    .rescue_keyword = *rescue_keyword,
+    .equal_greater = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .exception = NULL,
+    .statements = NULL,
+    .consequent = NULL
   };
 
-  yp_node_list_init(&node->as.rescue_node.exceptions);
-  return node;
+  yp_node_list_init(&node->exceptions);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Set the exception of a rescue node, and update the location of the node.
 static void
 yp_rescue_node_exception_set(yp_node_t *node, yp_node_t *exception) {
   assert(node->type == YP_NODE_RESCUE_NODE);
-  node->as.rescue_node.exception = exception;
-  node->location.end = exception->location.end;
+  yp_rescue_node_t *rescue_node = YP_NODE_UPCAST(node, yp_rescue_node_t);
+  rescue_node->exception = exception;
+  rescue_node->base.location.end = exception->location.end;
 }
 
 // Set the statements of a rescue node, and update the location of the node.
 static void
 yp_rescue_node_statements_set(yp_node_t *node, yp_node_t *statements) {
   assert(node->type == YP_NODE_RESCUE_NODE);
-  node->as.rescue_node.statements = statements;
-  node->location.end = statements->location.end;
+  yp_rescue_node_t *rescue_node = YP_NODE_UPCAST(node, yp_rescue_node_t);
+  rescue_node->statements = statements;
+  rescue_node->base.location.end = statements->location.end;
 }
 
 // Allocate a new RestParameterNode node.
 static yp_node_t *
 yp_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_rest_parameter_node_t *node = YP_NODE_ALLOC(yp_rest_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_REST_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+  *node = (yp_rest_parameter_node_t) {
+    {
+      .type = YP_NODE_REST_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+      },
     },
-    .as.rest_parameter_node = {
-      .operator = *operator,
-      .name = *name
-    }
+    .operator = *operator,
+    .name = *name
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new RetryNode node.
@@ -2442,35 +2450,37 @@ yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new ReturnNode node.
 static yp_node_t *
 yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *arguments) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_return_node_t *node = YP_NODE_ALLOC(yp_return_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RETURN_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->location.end)
+  *node = (yp_return_node_t) {
+    {
+      .type = YP_NODE_RETURN_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = (arguments == NULL ? keyword->end : arguments->location.end)
+      },
     },
-    .as.return_node = {
-      .keyword = *keyword,
-      .arguments = arguments
-    }
+    .keyword = *keyword,
+    .arguments = arguments
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new Scope node.
 static yp_node_t *
 yp_scope_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_scope_node_t *node = YP_NODE_ALLOC(yp_scope_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SCOPE_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(token)
+  *node = (yp_scope_node_t) {
+    {
+      .type = YP_NODE_SCOPE_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(token)
+    },
   };
 
-  yp_token_list_init(&node->as.scope_node.locals);
-  return node;
+  yp_token_list_init(&node->locals);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new SelfNode node.
@@ -2483,25 +2493,25 @@ yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new SingletonClassNode node.
 static yp_node_t *
 yp_singleton_class_node_create(yp_parser_t *parser, yp_node_t *scope, const yp_token_t *class_keyword, const yp_token_t *operator, yp_node_t *expression, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_singleton_class_node_t *node = YP_NODE_ALLOC(yp_singleton_class_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SINGLETON_CLASS_NODE,
-    .location = {
-      .start = class_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_singleton_class_node_t) {
+    {
+      .type = YP_NODE_SINGLETON_CLASS_NODE,
+      .location = {
+        .start = class_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.singleton_class_node = {
-      .scope = scope,
-      .class_keyword = *class_keyword,
-      .operator = *operator,
-      .expression = expression,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .scope = scope,
+    .class_keyword = *class_keyword,
+    .operator = *operator,
+    .expression = expression,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new SourceEncodingNode node.
@@ -2528,41 +2538,43 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new SplatNode node.
 static yp_node_t *
 yp_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_splat_node_t *node = YP_NODE_ALLOC(yp_splat_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SPLAT_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (expression == NULL ? operator->end : expression->location.end)
+  *node = (yp_splat_node_t) {
+    {
+      .type = YP_NODE_SPLAT_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (expression == NULL ? operator->end : expression->location.end)
+      },
     },
-    .as.splat_node = {
-      .operator = *operator,
-      .expression = expression
-    }
+    .operator = *operator,
+    .expression = expression
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new StatementsNode node.
 static yp_node_t *
 yp_statements_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_statements_node_t *node = YP_NODE_ALLOC(yp_statements_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STATEMENTS_NODE,
-    .location = YP_LOCATION_NULL_VALUE()
+  *node = (yp_statements_node_t) {
+    {
+      .type = YP_NODE_STATEMENTS_NODE,
+      .location = YP_LOCATION_NULL_VALUE()
+    },
   };
 
-  yp_node_list_init(&node->as.statements_node.body);
-  return node;
+  yp_node_list_init(&node->body);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Get the length of the given StatementsNode node's body.
 static size_t
 yp_statements_node_body_length(yp_node_t *node) {
-  return node->as.statements_node.body.size;
+  return YP_NODE_UPCAST(node, yp_statements_node_t)->body.size;
 }
 
 // Set the location of the given StatementsNode.
@@ -2579,7 +2591,7 @@ yp_statements_node_body_append(yp_node_t *node, yp_node_t *statement) {
     node->location.start = statement->location.start;
   }
 
-  yp_node_list_append2(&node->as.statements_node.body, statement);
+  yp_node_list_append2(&YP_NODE_UPCAST(node, yp_statements_node_t)->body, statement);
   node->location.end = statement->location.end;
 }
 
@@ -2588,96 +2600,96 @@ yp_statements_node_body_append(yp_node_t *node, yp_node_t *statement) {
 // Allocate and initialize new IfNode node in the modifier form.
 static yp_node_t *
 yp_if_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *if_keyword, yp_node_t *predicate) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_if_node_t *node = YP_NODE_ALLOC(yp_if_node_t);
 
   yp_node_t *statements = yp_statements_node_create(parser);
   yp_statements_node_body_append(statements, statement);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_IF_NODE,
-    .location = {
-      .start = statement->location.start,
-      .end = predicate->location.end
+  *node = (yp_if_node_t) {
+    {
+      .type = YP_NODE_IF_NODE,
+      .location = {
+        .start = statement->location.start,
+        .end = predicate->location.end
+      },
     },
-    .as.if_node = {
-      .if_keyword = *if_keyword,
-      .predicate = predicate,
-      .statements = statements,
-      .consequent = NULL,
-      .end_keyword = not_provided(parser)
-    }
+    .if_keyword = *if_keyword,
+    .predicate = predicate,
+    .statements = (yp_node_t *)statements,
+    .consequent = NULL,
+    .end_keyword = not_provided(parser)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new StringConcatNode node.
 static yp_node_t *
 yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_string_concat_node_t *node = YP_NODE_ALLOC(yp_string_concat_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_CONCAT_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_string_concat_node_t) {
+    {
+      .type = YP_NODE_STRING_CONCAT_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      },
     },
-    .as.string_concat_node = {
-      .left = left,
-      .right = right
-    }
+    .left = left,
+    .right = right
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new StringInterpolatedNode node.
 static yp_node_t *
 yp_string_interpolated_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_string_interpolated_node_t *node = YP_NODE_ALLOC(yp_string_interpolated_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_INTERPOLATED_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_string_interpolated_node_t) {
+    {
+      .type = YP_NODE_STRING_INTERPOLATED_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.string_interpolated_node = {
-      .opening = *opening,
-      .statements = statements,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .statements = statements,
+    .closing = *closing
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new StringNode node.
 static yp_node_t *
 yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_string_node_t *node = YP_NODE_ALLOC(yp_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_NODE,
-    .location = {
-      .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? content->start : opening->start),
-      .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? content->end : closing->end)
+  *node = (yp_string_node_t) {
+    {
+      .type = YP_NODE_STRING_NODE,
+      .location = {
+        .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? content->start : opening->start),
+        .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? content->end : closing->end)
+      },
     },
-    .as.string_node = {
-      .opening = *opening,
-      .content = *content,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .content = *content,
+    .closing = *closing
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new SuperNode node.
 static yp_node_t *
 yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_SUPER);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_super_node_t *node = YP_NODE_ALLOC(yp_super_node_t);
 
   const char *end;
   if (arguments->block != NULL) {
@@ -2690,43 +2702,43 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
     assert(false && "unreachable");
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SUPER_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end,
+  *node = (yp_super_node_t) {
+    {
+      .type = YP_NODE_SUPER_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = end,
+      },
     },
-    .as.super_node = {
-      .keyword = *keyword,
-      .lparen = arguments->opening,
-      .arguments = arguments->arguments,
-      .rparen = arguments->closing,
-      .block = arguments->block
-    }
+    .keyword = *keyword,
+    .lparen = arguments->opening,
+    .arguments = arguments->arguments,
+    .rparen = arguments->closing,
+    .block = arguments->block
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new SymbolNode node.
 static yp_node_t *
 yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *value, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_symbol_node_t *node = YP_NODE_ALLOC(yp_symbol_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SYMBOL_NODE,
-    .location = {
-      .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? value->start : opening->start),
-      .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? value->end : closing->end)
+  *node = (yp_symbol_node_t) {
+    {
+      .type = YP_NODE_SYMBOL_NODE,
+      .location = {
+        .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? value->start : opening->start),
+        .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? value->end : closing->end)
+      },
     },
-    .as.symbol_node = {
-      .opening = *opening,
-      .value = *value,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .value = *value,
+    .closing = *closing
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new SymbolNode node from a label.
@@ -2739,7 +2751,7 @@ yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
   yp_token_t closing = { .type = YP_TOKEN_LABEL_END, .start = label.end, .end = label.end + 1 };
 
   yp_node_t *node = yp_symbol_node_create(parser, &opening, &label, &closing);
-  yp_unescape_manipulate_string(label.start, label.end - label.start, &node->as.symbol_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(label.start, label.end - label.start, &YP_NODE_UPCAST(node, yp_symbol_node_t)->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
@@ -2747,24 +2759,27 @@ yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
 static bool
 yp_symbol_node_label_p(yp_node_t *node) {
   return (
-    (node->type == YP_NODE_SYMBOL_NODE && node->as.symbol_node.closing.type == YP_TOKEN_LABEL_END) ||
-    (node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE && node->as.interpolated_symbol_node.closing.type == YP_TOKEN_LABEL_END)
+    (node->type == YP_NODE_SYMBOL_NODE && ((yp_symbol_node_t *)node)->closing.type == YP_TOKEN_LABEL_END) ||
+    (node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE && ((yp_interpolated_symbol_node_t *)node)->closing.type == YP_TOKEN_LABEL_END)
   );
 }
 
-// Convert the given SymbolNode node to a StringNode node.
-static void
-yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
-  *node = (yp_node_t) {
-    .type = YP_NODE_STRING_NODE,
-    .location = node->location,
-    .as.string_node = {
-      .opening = node->as.symbol_node.opening,
-      .content = node->as.symbol_node.value,
-      .closing = node->as.symbol_node.closing,
-      .unescaped = node->as.symbol_node.unescaped
-    }
+// Create a StringNode from the given SymbolNode node.
+static yp_node_t *
+yp_symbol_node_to_string_node(yp_node_t *node) {
+  yp_symbol_node_t *symbol_node = YP_NODE_UPCAST(node, yp_symbol_node_t);
+  yp_string_node_t *result = YP_NODE_ALLOC(yp_string_node_t);
+  *result = (yp_string_node_t) {
+    {
+      .location = symbol_node->base.location,
+      .type = YP_NODE_STRING_NODE,
+    },
+    .opening = symbol_node->opening,
+    .content = symbol_node->value,
+    .closing = symbol_node->closing,
+    .unescaped = symbol_node->unescaped
   };
+  return YP_NODE_DOWNCAST(result);
 }
 
 // Allocate and initialize a new TrueNode node.
@@ -2778,173 +2793,164 @@ yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
 static yp_node_t *
 yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_UNDEF);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_undef_node_t *node = YP_NODE_ALLOC(yp_undef_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNDEF_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(token),
-    .as.undef_node.keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
+  *node = (yp_undef_node_t) {
+    {
+      .type = YP_NODE_UNDEF_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(token),
+    },
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
   };
 
-  yp_node_list_init(&node->as.undef_node.names);
-  return node;
+  yp_node_list_init(&node->names);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Append a name to an undef node.
 static void
-yp_undef_node_append(yp_node_t *node, yp_node_t *name) {
-  node->location.end = name->location.end;
-  yp_node_list_append2(&node->as.undef_node.names, name);
+yp_undef_node_append(yp_undef_node_t *node, yp_node_t *name) {
+  node->base.location.end = name->location.end;
+  yp_node_list_append2(&node->names, name);
 }
 
 // Allocate a new UnlessNode node.
 static yp_node_t *
 yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements, yp_node_t *consequent, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_unless_node_t *node = YP_NODE_ALLOC(yp_unless_node_t);
 
-  const char *end;
-  if (end_keyword->type != YP_TOKEN_NOT_PROVIDED) {
-    end = end_keyword->end;
-  } else if (consequent != NULL) {
-    end = consequent->location.end;
-  } else if (statements != NULL) {
-    end = statements->location.end;
-  } else {
-    end = predicate->location.end;
-  }
-
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNLESS_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end
+  *node = (yp_unless_node_t) {
+    {
+      .type = YP_NODE_UNLESS_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements->location.end
+      },
     },
-    .as.unless_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements,
-      .consequent = consequent,
-      .end_keyword = *end_keyword
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements,
+    .consequent = consequent,
+    .end_keyword = *end_keyword
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize new UnlessNode node in the modifier form.
 static yp_node_t *
 yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *unless_keyword, yp_node_t *predicate) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_unless_node_t *node = YP_NODE_ALLOC(yp_unless_node_t);
 
   yp_node_t *statements = yp_statements_node_create(parser);
   yp_statements_node_body_append(statements, statement);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNLESS_NODE,
-    .location = {
-      .start = statement->location.start,
-      .end = predicate->location.end
+  *node = (yp_unless_node_t) {
+    {
+      .type = YP_NODE_UNLESS_NODE,
+      .location = {
+        .start = statement->location.start,
+        .end = predicate->location.end
+      },
     },
-    .as.unless_node = {
-      .keyword = *unless_keyword,
-      .predicate = predicate,
-      .statements = statements,
-      .consequent = NULL,
-      .end_keyword = not_provided(parser)
-    }
+    .keyword = *unless_keyword,
+    .predicate = predicate,
+    .statements = (yp_node_t *)statements,
+    .consequent = NULL,
+    .end_keyword = not_provided(parser)
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new UntilNode node.
 static yp_node_t *
 yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_until_node_t *node = YP_NODE_ALLOC(yp_until_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNTIL_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = statements == NULL ? predicate->location.end : statements->location.end
+  *node = (yp_until_node_t) {
+    {
+      .type = YP_NODE_UNTIL_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements->location.end
+      },
     },
-    .as.until_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new WhenNode node.
 static yp_node_t *
 yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_when_node_t *node = YP_NODE_ALLOC(yp_when_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_WHEN_NODE,
-    .location = {
-      .start = when_keyword->start,
-      .end = (statements == NULL ? NULL : statements->location.end)
+  *node = (yp_when_node_t) {
+    {
+      .type = YP_NODE_WHEN_NODE,
+      .location = {
+        .start = when_keyword->start,
+        .end = (statements == NULL ? NULL : statements->location.end)
+      },
     },
-    .as.when_node = {
-      .when_keyword = *when_keyword,
-      .statements = statements
-    }
+    .when_keyword = *when_keyword,
+    .statements = statements
   };
 
-  yp_node_list_init(&node->as.when_node.conditions);
-  return node;
+  yp_node_list_init(&node->conditions);
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new WhileNode node.
 static yp_node_t *
 yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_while_node_t *node = YP_NODE_ALLOC(yp_while_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_WHILE_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = statements == NULL ? predicate->location.end : statements->location.end
+  *node = (yp_while_node_t) {
+    {
+      .type = YP_NODE_WHILE_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements->location.end
+      },
     },
-    .as.while_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate and initialize a new XStringNode node.
 static yp_node_t *
 yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_x_string_node_t *node = YP_NODE_ALLOC(yp_x_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_X_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_x_string_node_t) {
+    {
+      .type = YP_NODE_X_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.x_string_node = {
-      .opening = *opening,
-      .content = *content,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .content = *content,
+    .closing = *closing
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Allocate a new YieldNode node.
 static yp_node_t *
 yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *lparen, yp_node_t *arguments, const yp_token_t *rparen) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_yield_node_t *node = YP_NODE_ALLOC(yp_yield_node_t);
 
   const char *end;
   if (rparen->type != YP_TOKEN_NOT_PROVIDED) {
@@ -2957,23 +2963,22 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
     end = keyword->end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_YIELD_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end
+  *node = (yp_yield_node_t) {
+    {
+      .type = YP_NODE_YIELD_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = end
+      },
     },
-    .as.yield_node = {
-      .keyword = *keyword,
-      .lparen = *lparen,
-      .arguments = arguments,
-      .rparen = *rparen
-    }
+    .keyword = *keyword,
+    .lparen = *lparen,
+    .arguments = arguments,
+    .rparen = *rparen
   };
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
-
 
 #undef YP_LOCATION_NULL_VALUE
 #undef YP_LOCATION_TOKEN_VALUE
@@ -2999,7 +3004,7 @@ yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
   yp_scope_t *scope = parser->current_scope;
 
   while (scope != NULL) {
-    if (yp_token_list_includes(&scope->node->as.scope_node.locals, token)) return true;
+    if (yp_token_list_includes(&YP_NODE_UPCAST(scope->node, yp_scope_node_t)->locals, token)) return true;
     if (scope->top) break;
     scope = scope->previous;
   }
@@ -3010,8 +3015,8 @@ yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
 // Add a local variable to the current scope.
 static void
 yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
-  if (!yp_token_list_includes(&parser->current_scope->node->as.scope_node.locals, token)) {
-    yp_token_list_append(&parser->current_scope->node->as.scope_node.locals, token);
+  if (!yp_token_list_includes(&YP_NODE_UPCAST(parser->current_scope->node, yp_scope_node_t)->locals, token)) {
+    yp_token_list_append(&YP_NODE_UPCAST(parser->current_scope->node, yp_scope_node_t)->locals, token);
   }
 }
 
@@ -6064,28 +6069,28 @@ parser_lex(yp_parser_t *parser) {
 static yp_node_t *
 yp_node_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_regular_expression_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.regular_expression_node.unescaped, unescape_type, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &YP_NODE_UPCAST(node, yp_regular_expression_node_t)->unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_symbol_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.symbol_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &YP_NODE_UPCAST(node, yp_symbol_node_t)->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
   yp_node_t *node = yp_string_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.string_node.unescaped, unescape_type, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &YP_NODE_UPCAST(node, yp_string_node_t)->unescaped, unescape_type, &parser->error_list);
   return node;
 }
 
 static yp_node_t *
 yp_node_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
   yp_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &YP_NODE_UPCAST(node, yp_x_string_node_t)->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
@@ -6434,44 +6439,63 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_CONSTANT_READ_NODE:
       return yp_constant_path_write_node_create(parser, target, operator, value);
     case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
-      yp_node_t *result = yp_global_variable_write_node_create(parser, &target->as.global_variable_read_node.name, operator, value);
+      yp_node_t *result = yp_global_variable_write_node_create(parser, &YP_NODE_UPCAST(target, yp_global_variable_read_node_t)->name, operator, value);
       yp_node_destroy(parser, target);
       return result;
     }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
-      yp_token_t name = target->as.local_variable_read_node.name;
+      yp_local_variable_read_node_t *read_node = YP_NODE_UPCAST(target, yp_local_variable_read_node_t);
+      yp_token_t name = read_node->name;
       yp_parser_local_add(parser, &name);
-
-      yp_node_clear(target);
-
-      target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
-      target->location.start = name.start;
-
-      target->as.local_variable_write_node.name = name;
-      target->as.local_variable_write_node.operator = *operator;
-
+      yp_local_variable_write_node_t *write_node = YP_NODE_UPCAST(
+        yp_local_variable_write_node_create(parser, &read_node->name),
+        yp_local_variable_write_node_t
+      );
+      write_node->base.location.start = name.start;
+      write_node->operator = *operator;
       if (value != NULL) {
-        target->as.local_variable_write_node.value = value;
-        target->location.end = value->location.end;
+        write_node->value = value;
+        write_node->base.location.end = value->location.end;
       }
+      // TODO: hb destory read node
+      return YP_NODE_DOWNCAST(write_node);
 
-      return target;
+      // yp_token_t name = target->as.local_variable_read_node.name;
+      // yp_parser_local_add(parser, &name);
+
+      // yp_node_clear(target);
+
+      // target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+      // target->location.start = name.start;
+
+      // target->as.local_variable_write_node.name = name;
+      // target->as.local_variable_write_node.operator = *operator;
+
+      // if (value != NULL) {
+      //   target->as.local_variable_write_node.value = value;
+      //   target->location.end = value->location.end;
+      // }
+
+      // return target;
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
       yp_instance_variable_write_node_create(parser, target, operator, value);
       return target;
-    case YP_NODE_MULTI_WRITE_NODE:
-      target->as.multi_write_node.operator = *operator;
+    case YP_NODE_MULTI_WRITE_NODE: {
+      yp_multi_write_node_t *write_node = YP_NODE_UPCAST(target, yp_multi_write_node_t);
+      write_node->operator = *operator;
 
       if (value != NULL) {
-        target->as.multi_write_node.value = value;
-        target->location.end = value->location.end;
+        write_node->value = value;
+        write_node->base.location.end = value->location.end;
       }
 
-      return target;
+      return YP_NODE_DOWNCAST(write_node);
+    }
     case YP_NODE_SPLAT_NODE: {
-      if (target->as.splat_node.expression != NULL) {
-        target->as.splat_node.expression = parse_target(parser, target->as.splat_node.expression, operator, value);
+      yp_splat_node_t *splat_node = YP_NODE_UPCAST(target, yp_splat_node_t);
+      if (splat_node->expression != NULL) {
+        splat_node->expression = parse_target(parser, splat_node->expression, operator, value);
       }
 
       yp_location_t location = { .start = NULL, .end = NULL };
@@ -6483,12 +6507,13 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_CALL_NODE: {
       // If we have no arguments to the call node and we need this to be a
       // target then this is either a method call or a local variable write.
+      yp_call_node_t *call_node = YP_NODE_UPCAST(target, yp_call_node_t);
       if (
-        (target->as.call_node.opening.type == YP_TOKEN_NOT_PROVIDED) &&
-        (target->as.call_node.arguments == NULL) &&
-        (target->as.call_node.block == NULL)
+        (call_node->opening.type == YP_TOKEN_NOT_PROVIDED) &&
+        (call_node->arguments == NULL) &&
+        (call_node->block == NULL)
       ) {
-        if (target->as.call_node.receiver == NULL) {
+        if (call_node->receiver == NULL) {
           // When we get here, we have a local variable write, because it
           // was previously marked as a method call but now we have an =.
           // This looks like:
@@ -6498,30 +6523,37 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // When it was parsed in the prefix position, foo was seen as a
           // method call with no receiver and no arguments. Now we have an
           // =, so we know it's a local variable write.
-          yp_token_t name = target->as.call_node.message;
+          yp_token_t name = call_node->message;
           yp_parser_local_add(parser, &name);
 
           // Not entirely sure why we need to clear this out, but it seems that
           // something about the memory layout in the union is causing the type
           // to have a problem if we don't.
-          yp_node_clear(target);
+          // yp_node_clear(target);
 
-          target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
-          target->location.start = name.start;
+          // TODO: hb destroy the call node
 
-          target->as.local_variable_write_node.name = name;
-          target->as.local_variable_write_node.operator = *operator;
+          yp_node_t *write_node = yp_local_variable_write_node_create(parser, &name);
+          YP_NODE_UPCAST(write_node, yp_local_variable_write_node_t)->operator = *operator;
+
+          // target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
+          // target->location.start = name.start;
+
+          // target->as.local_variable_write_node.name = name;
+          // target->as.local_variable_write_node.operator = *operator;
 
           if (value != NULL) {
-            target->as.local_variable_write_node.value = value;
-            target->location.end = value->location.end;
+            YP_NODE_UPCAST(write_node, yp_local_variable_write_node_t)->value = value;
+            write_node->location.end = value->location.end;
+            // target->as.local_variable_write_node.value = value;
+            // target->location.end = value->location.end;
           }
 
           if (token_is_numbered_parameter(&name)) {
             yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "reserved for numbered parameter");
           }
 
-          return target;
+          return write_node;
         }
 
         // When we get here, we have a method call, because it was
@@ -6535,20 +6567,20 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         // a method call with an argument. In this case we will create the
         // arguments node, parse the argument, and add it to the list.
         if (value) {
-          target->as.call_node.arguments = yp_arguments_node_create(parser);
-          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
+          call_node->arguments = yp_arguments_node_create(parser);
+          yp_arguments_node_arguments_append(call_node->arguments, value);
         }
 
         // The method name needs to change. If we previously had foo, we now
         // need foo=. In this case we'll allocate a new owned string, copy
         // the previous method name in, and append an =.
-        size_t length = yp_string_length(&target->as.call_node.name);
+        size_t length = yp_string_length(&call_node->name);
         char *name = malloc(length + 2);
-        sprintf(name, "%.*s=", (int) length, yp_string_source(&target->as.call_node.name));
+        sprintf(name, "%.*s=", (int) length, yp_string_source(&call_node->name));
 
         // Now switch the name to the new string.
-        yp_string_free(&target->as.call_node.name);
-        yp_string_owned_init(&target->as.call_node.name, name, length + 1);
+        yp_string_free(&call_node->name);
+        yp_string_owned_init(&call_node->name, name, length + 1);
 
         return target;
       }
@@ -6557,25 +6589,25 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       // an aref expression, and we can transform it into an aset
       // expression.
       if (
-        (target->as.call_node.call_operator.type == YP_TOKEN_NOT_PROVIDED) &&
-        (target->as.call_node.message.type == YP_TOKEN_BRACKET_LEFT_RIGHT) &&
-        (target->as.call_node.block == NULL)
+        (call_node->call_operator.type == YP_TOKEN_NOT_PROVIDED) &&
+        (call_node->message.type == YP_TOKEN_BRACKET_LEFT_RIGHT) &&
+        (call_node->block == NULL)
       ) {
-        target->as.call_node.message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
+        call_node->message.type = YP_TOKEN_BRACKET_LEFT_RIGHT_EQUAL;
 
         if (value != NULL) {
-          if (target->as.call_node.arguments == NULL) {
-            target->as.call_node.arguments = yp_arguments_node_create(parser);
+          if (call_node->arguments == NULL) {
+            call_node->arguments = yp_arguments_node_create(parser);
           }
 
-          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
-          target->location.end = value->location.end;
+          yp_arguments_node_arguments_append(call_node->arguments, value);
+          call_node->base.location.end = value->location.end;
         }
 
         // Free the previous name and replace it with "[]=".
-        yp_string_free(&target->as.call_node.name);
-        yp_string_constant_init(&target->as.call_node.name, "[]=", 3);
-        return target;
+        yp_string_free(&call_node->name);
+        yp_string_constant_init(&call_node->name, "[]=", 3);
+        return YP_NODE_DOWNCAST(call_node);
       }
 
       // If there are arguments on the call node, then it can't be a method
@@ -6660,18 +6692,22 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected an ')' after multi-assignment.");
         yp_token_t rparen = parser->previous;
 
-        if (child_target->type == YP_NODE_MULTI_WRITE_NODE && first_target == NULL && result->as.multi_write_node.targets.size == 0) {
+        if (child_target->type == YP_NODE_MULTI_WRITE_NODE &&
+            first_target == NULL &&
+            YP_NODE_UPCAST(result, yp_multi_write_node_t)->targets.size == 0
+        ) {
           yp_node_destroy(parser, result);
           result = child_target;
           result->location.start = lparen.start;
           result->location.end = rparen.end;
-          result->as.multi_write_node.lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
-          result->as.multi_write_node.rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
+
+          YP_NODE_UPCAST(result, yp_multi_write_node_t)->lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
+          YP_NODE_UPCAST(result, yp_multi_write_node_t)->rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
         } else {
           if (child_target->type == YP_NODE_MULTI_WRITE_NODE) {
             target = child_target;
-            target->as.multi_write_node.lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
-            target->as.multi_write_node.rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
+            YP_NODE_UPCAST(target, yp_multi_write_node_t)->lparen_loc = (yp_location_t) { .start = lparen.start, .end = lparen.end };
+            YP_NODE_UPCAST(target, yp_multi_write_node_t)->rparen_loc = (yp_location_t) { .start = rparen.start, .end = rparen.end };
           } else {
             yp_token_t operator = not_provided(parser);
 
@@ -6691,7 +6727,10 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
         }
       } else {
         if (!token_begins_expression_p(parser->current.type) && !match_type_p(parser, YP_TOKEN_USTAR)) {
-          if (first_target == NULL && result->as.multi_write_node.targets.size == 0) {
+          if (
+            first_target == NULL &&
+            YP_NODE_UPCAST(result, yp_multi_write_node_t)->targets.size == 0
+          ) {
             // If we get here, then we weren't able to parse anything at all, so
             // we need to return a missing node.
             yp_node_destroy(parser, result);
@@ -6801,7 +6840,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
       }
     }
 
-    yp_node_list_append(parser, node, &node->as.hash_node.elements, element);
+    yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_hash_node_t)->elements, element);
 
     // If there's no comma after the element, then we're done.
     if (!accept(parser, YP_TOKEN_COMMA)) return;
@@ -6940,14 +6979,14 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
 
           yp_token_t opening = not_provided(parser);
           yp_token_t closing = not_provided(parser);
-          yp_node_t *bare_hash = yp_hash_node_create(parser, &opening, &closing);
+          yp_hash_node_t *bare_hash = YP_NODE_UPCAST(yp_hash_node_create(parser, &opening, &closing), yp_hash_node_t);
 
           // Finish parsing the one we are part way through
           yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
 
           argument = yp_assoc_node_create(parser, argument, &operator, value);
-          yp_node_list_append(parser, bare_hash, &bare_hash->as.hash_node.elements, argument);
-          argument = bare_hash;
+          yp_node_list_append(parser, YP_NODE_DOWNCAST(bare_hash), &bare_hash->elements, argument);
+          argument = YP_NODE_DOWNCAST(bare_hash);
 
           // Then parse more if we have a comma
           if (accept(parser, YP_TOKEN_COMMA) && (
@@ -7002,19 +7041,22 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
   expect(parser, YP_TOKEN_PARENTHESIS_LEFT, "Expected '(' to start a required parameter.");
 
   yp_token_t opening = parser->previous;
-  yp_node_t *node = yp_required_destructured_parameter_node_create(parser, &opening, &opening);
+  yp_required_destructured_parameter_node_t *node = YP_NODE_UPCAST(
+    yp_required_destructured_parameter_node_create(parser, &opening, &opening),
+    yp_required_destructured_parameter_node_t
+  );
   bool parsed_splat;
 
   do {
     yp_node_t *param;
 
-    if (node->as.required_destructured_parameter_node.parameters.size > 0 && match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+    if (node->parameters.size > 0 && match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
       if (parsed_splat) {
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected splat after splat.");
       }
 
       param = yp_splat_node_create(parser, &parser->previous, NULL);
-      yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
+      yp_node_list_append(parser, YP_NODE_DOWNCAST(node), &node->parameters, param);
       break;
     }
 
@@ -7044,14 +7086,14 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
       yp_parser_local_add(parser, &name);
     }
 
-    yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
+    yp_node_list_append(parser, YP_NODE_DOWNCAST(node), &node->parameters, param);
   } while (accept(parser, YP_TOKEN_COMMA));
 
   expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' to end a required parameter.");
-  node->as.required_destructured_parameter_node.closing = parser->previous;
-  node->location.end = parser->previous.end;
+  node->closing = parser->previous;
+  node->base.location.end = parser->previous.end;
 
-  return node;
+  return YP_NODE_DOWNCAST(node);
 }
 
 // Parse a list of parameters on a method definition.
@@ -7258,7 +7300,10 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
   yp_node_t *current = NULL;
 
   while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
-    yp_node_t *rescue = yp_rescue_node_create(parser, &parser->previous);
+    yp_rescue_node_t *rescue = YP_NODE_UPCAST(
+      yp_rescue_node_create(parser, &parser->previous),
+      yp_rescue_node_t
+    );
 
     switch (parser->current.type) {
       case YP_TOKEN_EQUAL_GREATER: {
@@ -7266,13 +7311,13 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
         // we're going to have an empty list of exceptions to rescue (which
         // implies StandardError).
         parser_lex(parser);
-        rescue->as.rescue_node.equal_greater = parser->previous;
+        rescue->equal_greater = parser->previous;
 
         yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
         yp_token_t operator = not_provided(parser);
         node = parse_target(parser, node, &operator, NULL);
 
-        rescue->as.rescue_node.exception = node;
+        rescue->exception = node;
         break;
       }
       case YP_TOKEN_NEWLINE:
@@ -7288,7 +7333,7 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
 
           do {
             yp_node_t *expression = parse_starred_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to find a rescued expression.");
-            yp_node_list_append(parser, rescue, &rescue->as.rescue_node.exceptions, expression);
+            yp_node_list_append(parser, YP_NODE_DOWNCAST(rescue), &rescue->exceptions, expression);
 
             // If we hit a newline, then this is the end of the rescue expression. We
             // can continue on to parse the statements.
@@ -7297,13 +7342,13 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
             // If we hit a `=>` then we're going to parse the exception variable. Once
             // we've done that, we'll break out of the loop and parse the statements.
             if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-              rescue->as.rescue_node.equal_greater = parser->previous;
+              rescue->equal_greater = parser->previous;
 
               yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
               yp_token_t operator = not_provided(parser);
               node = parse_target(parser, node, &operator, NULL);
 
-              yp_rescue_node_exception_set(rescue, node);
+              yp_rescue_node_exception_set(YP_NODE_DOWNCAST(rescue), node);
               break;
             }
           } while (accept(parser, YP_TOKEN_COMMA));
@@ -7318,17 +7363,17 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
     }
 
     if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_KEYWORD_END)) {
-      yp_rescue_node_statements_set(rescue, parse_statements(parser, YP_CONTEXT_RESCUE));
+      yp_rescue_node_statements_set(YP_NODE_DOWNCAST(rescue), parse_statements(parser, YP_CONTEXT_RESCUE));
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
     }
 
     if (current == NULL) {
-      yp_begin_node_rescue_clause_set(parent_node, rescue);
+      yp_begin_node_rescue_clause_set(parent_node, YP_NODE_DOWNCAST(rescue));
     } else {
-      current->as.rescue_node.consequent = rescue;
+      YP_NODE_UPCAST(current, yp_rescue_node_t)->consequent = YP_NODE_DOWNCAST(rescue);
     }
 
-    current = rescue;
+    current = YP_NODE_DOWNCAST(rescue);
   }
 
   if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
@@ -7537,7 +7582,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
 
     yp_node_t *elsif = yp_if_node_create(parser, &elsif_keyword, predicate, statements, NULL, &end_keyword);
-    current->as.if_node.consequent = elsif;
+    YP_NODE_UPCAST(current, yp_if_node_t)->consequent = elsif;
     current = elsif;
   }
 
@@ -7551,18 +7596,18 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `else` clause.");
 
       yp_node_t *else_node = yp_else_node_create(parser, &else_keyword, else_statements, &parser->previous);
-      current->as.if_node.consequent = else_node;
-      parent->as.if_node.end_keyword = parser->previous;
+      YP_NODE_UPCAST(current, yp_if_node_t)->consequent = else_node;
+      YP_NODE_UPCAST(parent, yp_if_node_t)->end_keyword = parser->previous;
       break;
     }
     case YP_TOKEN_KEYWORD_END: {
       parser_lex(parser);
-      parent->as.if_node.end_keyword = parser->previous;
+      YP_NODE_UPCAST(parent, yp_if_node_t)->end_keyword = parser->previous;
       break;
     }
     default:
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `if` statement.");
-      parent->as.if_node.end_keyword = parser->previous;
+      YP_NODE_UPCAST(parent, yp_if_node_t)->end_keyword = parser->previous;
       break;
   }
 
@@ -7754,12 +7799,15 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
   assert(lex_mode->mode == YP_LEX_STRING);
 
   if (lex_mode->as.string.interpolation) {
-    yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &opening);
+    yp_interpolated_symbol_node_t *interpolated = YP_NODE_UPCAST(
+      yp_interpolated_symbol_node_create(parser, &opening, NULL, &opening),
+      yp_interpolated_symbol_node_t
+    );
 
     while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
       yp_node_t *part = parse_string_part(parser);
       if (part != NULL) {
-        yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, part);
+        yp_node_list_append(parser, YP_NODE_DOWNCAST(interpolated), &interpolated->parts, part);
       }
     }
 
@@ -7768,8 +7816,8 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
     }
     expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
 
-    interpolated->as.interpolated_symbol_node.closing = parser->previous;
-    return interpolated;
+    interpolated->closing = parser->previous;
+    return YP_NODE_DOWNCAST(interpolated);
   }
 
   yp_token_t content;
@@ -7882,15 +7930,15 @@ parse_identifier(yp_parser_t *parser) {
     yp_arguments_t arguments = yp_arguments(parser);
     parse_arguments_list(parser, &arguments, true);
 
-    node->as.call_node.opening = arguments.opening;
-    node->as.call_node.arguments = arguments.arguments;
-    node->as.call_node.closing = arguments.closing;
-    node->as.call_node.block = arguments.block;
+    YP_NODE_UPCAST(node, yp_call_node_t)->opening = arguments.opening;
+    YP_NODE_UPCAST(node, yp_call_node_t)->arguments = arguments.arguments;
+    YP_NODE_UPCAST(node, yp_call_node_t)->closing = arguments.closing;
+    YP_NODE_UPCAST(node, yp_call_node_t)->block = arguments.block;
 
     if (arguments.block != NULL) {
       node->location.end = arguments.block->location.end;
     } else if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
-      node->location.end = node->as.call_node.message.end;
+      node->location.end = YP_NODE_UPCAST(node, yp_call_node_t)->message.end;
     } else {
       node->location.end = arguments.closing.end;
     }
@@ -7967,41 +8015,44 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
       // it's not, then we'll create an array pattern.
       switch (inner->type) {
         case YP_NODE_ARRAY_PATTERN_NODE: {
-          inner->location.start = node->location.start;
-          inner->location.end = closing.end;
+          yp_array_pattern_node_t *array_pattern_node = YP_NODE_UPCAST(inner, yp_array_pattern_node_t);
+          array_pattern_node->base.location.start = node->location.start;
+          array_pattern_node->base.location.end = closing.end;
 
-          inner->as.array_pattern_node.constant = node;
-          inner->as.array_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-          inner->as.array_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+          array_pattern_node->constant = node;
+          array_pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          array_pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-          node = inner;
+          node = YP_NODE_DOWNCAST(array_pattern_node);
           break;
         }
         case YP_NODE_FIND_PATTERN_NODE: {
-          inner->location.start = node->location.start;
-          inner->location.end = closing.end;
+          yp_find_pattern_node_t *find_pattern_node = YP_NODE_UPCAST(inner, yp_find_pattern_node_t);
+          find_pattern_node->base.location.start = node->location.start;
+          find_pattern_node->base.location.end = closing.end;
 
-          inner->as.find_pattern_node.constant = node;
-          inner->as.find_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-          inner->as.find_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+          find_pattern_node->constant = node;
+          find_pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          find_pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-          node = inner;
+          node = YP_NODE_DOWNCAST(find_pattern_node);
           break;
         }
         case YP_NODE_HASH_PATTERN_NODE: {
-          inner->location.start = node->location.start;
-          inner->location.end = closing.end;
+          yp_hash_pattern_node_t *hash_pattern_node = YP_NODE_UPCAST(inner, yp_hash_pattern_node_t);
+          hash_pattern_node->base.location.start = node->location.start;
+          hash_pattern_node->base.location.end = closing.end;
 
-          inner->as.hash_pattern_node.constant = node;
-          inner->as.hash_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-          inner->as.hash_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+          hash_pattern_node->constant = node;
+          hash_pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          hash_pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-          node = inner;
+          node = YP_NODE_DOWNCAST(hash_pattern_node);
           break;
         }
         default: {
           node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
-          yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
+          yp_node_list_append2(&YP_NODE_UPCAST(node, yp_array_pattern_node_t)->requireds, inner);
           break;
         }
       }
@@ -8065,7 +8116,7 @@ parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
     yp_node_t *value = parse_pattern(parser, false, "Expected a pattern expression after the key.");
 
     first_assoc->location.end = value->location.end;
-    first_assoc->as.assoc_node.value = value;
+    YP_NODE_UPCAST(first_assoc, yp_assoc_node_t)->value = value;
   }
 
   yp_node_list_t assocs;
@@ -8133,27 +8184,29 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
 
       switch (inner->type) {
         case YP_NODE_ARRAY_PATTERN_NODE: {
-          if (inner->as.array_pattern_node.opening_loc.start == NULL) {
-            inner->location.start = opening.start;
-            inner->location.end = closing.end;
+          yp_array_pattern_node_t *array_pattern_node = YP_NODE_UPCAST(inner, yp_array_pattern_node_t);
+          if (array_pattern_node->opening_loc.start == NULL) {
+            array_pattern_node->base.location.start = opening.start;
+            array_pattern_node->base.location.end = closing.end;
 
-            inner->as.array_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-            inner->as.array_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+            array_pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+            array_pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-            return inner;
+            return YP_NODE_DOWNCAST(array_pattern_node);
           }
 
           break;
         }
         case YP_NODE_FIND_PATTERN_NODE: {
-          if (inner->as.find_pattern_node.opening_loc.start == NULL) {
-            inner->location.start = opening.start;
-            inner->location.end = closing.end;
+          yp_find_pattern_node_t *find_pattern_node = YP_NODE_UPCAST(inner, yp_find_pattern_node_t);
+          if (find_pattern_node->opening_loc.start == NULL) {
+            find_pattern_node->base.location.start = opening.start;
+            find_pattern_node->base.location.end = closing.end;
 
-            inner->as.find_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-            inner->as.find_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+            find_pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+            find_pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-            return inner;
+            return YP_NODE_DOWNCAST(find_pattern_node);
           }
 
           break;
@@ -8163,7 +8216,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       }
 
       yp_node_t *node = yp_array_pattern_node_empty_create(parser, &opening, &closing);
-      yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
+      yp_node_list_append2(&YP_NODE_UPCAST(node, yp_array_pattern_node_t)->requireds, inner);
       return node;
     }
     case YP_TOKEN_BRACE_LEFT: {
@@ -8213,8 +8266,8 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
         node->location.start = opening.start;
         node->location.end = closing.end;
 
-        node->as.hash_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-        node->as.hash_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+        YP_NODE_UPCAST(node, yp_hash_pattern_node_t)->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+        YP_NODE_UPCAST(node, yp_hash_pattern_node_t)->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
       }
 
       parser->pattern_matching_newlines = previous_pattern_matching_newlines;
@@ -8577,7 +8630,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
             yp_node_t *assoc = yp_assoc_node_create(parser, element, &operator, value);
-            yp_node_list_append(parser, hash, &hash->as.hash_node.elements, assoc);
+            yp_node_list_append(parser, hash, &YP_NODE_UPCAST(hash, yp_hash_node_t)->elements, assoc);
 
             element = hash;
             if (accept(parser, YP_TOKEN_COMMA) && !match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
@@ -8631,8 +8684,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           statement->type == YP_NODE_MULTI_WRITE_NODE &&
           match_any_type_p(parser, 2, YP_TOKEN_COMMA, YP_TOKEN_EQUAL)
         ) {
-          statement->as.multi_write_node.lparen_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-          statement->as.multi_write_node.rparen_loc = (yp_location_t) { .start = parser->previous.start, .end = parser->previous.end };
+          YP_NODE_UPCAST(statement, yp_multi_write_node_t)->lparen_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          YP_NODE_UPCAST(statement, yp_multi_write_node_t)->rparen_loc = (yp_location_t) { .start = parser->previous.start, .end = parser->previous.end };
           return parse_targets(parser, statement, YP_BINDING_POWER_INDEX);
         }
 
@@ -8691,7 +8744,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_accepts_block_stack_pop(parser);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
-      node->as.hash_node.closing = parser->previous;
+      YP_NODE_UPCAST(node, yp_hash_node_t)->closing = parser->previous;
 
       return node;
     }
@@ -8827,20 +8880,20 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_list_t *node_list;
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node_list = &node->as.interpolated_x_string_node.parts;
+        node_list = &YP_NODE_UPCAST(node, yp_interpolated_x_string_node_t)->parts;
       }
       else {
-        node_list = &node->as.heredoc_node.parts;
+        node_list = &YP_NODE_UPCAST(node, yp_heredoc_node_t)->parts;
       }
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
         yp_node_t *part = parse_string_part(parser);
         if (part != NULL) {
           if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-            yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+            yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_interpolated_x_string_node_t)->parts, part);
           }
           else {
-            yp_node_list_append(parser, node, &node->as.heredoc_node.parts, part);
+            yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_heredoc_node_t)->parts, part);
           }
         }
       }
@@ -8855,26 +8908,26 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         for (int i = 0; i < node_list->size; i++) {
           yp_node_t *node = node_list->nodes[i];
 
-          if (node->type == YP_NODE_STRING_NODE && *node->as.string_node.content.start != '\n' &&
+          if (node->type == YP_NODE_STRING_NODE && *YP_NODE_UPCAST(node, yp_string_node_t)->content.start != '\n' &&
               // If the previous node wasn't a string node, we don't want to trim whitespace
               (i == 0 || node_list->nodes[i-1]->type == YP_NODE_STRING_NODE)
              ) {
             int cur_whitespace;
-            const char *cur_char = node->as.string_node.content.start;
+            const char *cur_char = YP_NODE_UPCAST(node, yp_string_node_t)->content.start;
 
-            while (cur_char && cur_char < node->as.string_node.content.end) {
+            while (cur_char && cur_char < YP_NODE_UPCAST(node, yp_string_node_t)->content.end) {
               // Any empty newlines aren't included in the minimum whitespace calculation
-              while(cur_char < node->as.string_node.content.end && *cur_char == '\n') {
+              while(cur_char < YP_NODE_UPCAST(node, yp_string_node_t)->content.end && *cur_char == '\n') {
                 cur_char++;
               }
 
-              if (cur_char == node->as.string_node.content.end) {
+              if (cur_char == YP_NODE_UPCAST(node, yp_string_node_t)->content.end) {
                 break;
               }
 
               cur_whitespace = 0;
 
-              while(char_is_non_newline_whitespace(*cur_char) && cur_char < node->as.string_node.content.end) {
+              while(char_is_non_newline_whitespace(*cur_char) && cur_char < YP_NODE_UPCAST(node, yp_string_node_t)->content.end) {
                 if (cur_char[0] == '\t') {
                   cur_whitespace += YP_TAB_WHITESPACE_SIZE;
                 }
@@ -8897,14 +8950,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (min_whitespace > 0) {
-          node->as.heredoc_node.dedent = min_whitespace;
+          YP_NODE_UPCAST(node, yp_heredoc_node_t)->dedent = min_whitespace;
 
           // Iterate over all nodes, and trim whitespace accordingly
           for (int i = 0; i < node_list->size; i++) {
             yp_node_t *node = node_list->nodes[i];
 
             if (node->type == YP_NODE_STRING_NODE) {
-              yp_string_t *node_str = &node->as.string_node.unescaped;
+              yp_string_t *node_str = &YP_NODE_UPCAST(node, yp_string_node_t)->unescaped;
 
               // We convert all strings to be "owned" to make it simpler to manipulate memory
               if (node_str->type != YP_STRING_OWNED) {
@@ -8963,12 +9016,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node->as.interpolated_x_string_node.closing = parser->previous;
+        YP_NODE_UPCAST(node, yp_interpolated_x_string_node_t)->closing = parser->previous;
       }
       else {
-        node->as.heredoc_node.closing = parser->previous;
+        YP_NODE_UPCAST(node, yp_heredoc_node_t)->closing = parser->previous;
       }
-
 
       return node;
     }
@@ -9014,7 +9066,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
         case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
           if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
-            yp_token_t *name = &right->as.global_variable_read_node.name;
+            yp_token_t *name = &YP_NODE_UPCAST(right, yp_global_variable_read_node_t)->name;
 
             if (name->type == YP_TOKEN_NTH_REFERENCE) {
               yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Can't make alias for number variables.");
@@ -9061,7 +9113,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // the end of the list.
         while (accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
           yp_token_t when_keyword = parser->previous;
-          yp_node_t *when_node = yp_when_node_create(parser, &when_keyword, NULL);
+          yp_when_node_t *when_node = YP_NODE_UPCAST(
+            yp_when_node_create(parser, &when_keyword, NULL),
+            yp_when_node_t
+          );
 
           do {
             if (accept(parser, YP_TOKEN_USTAR)) {
@@ -9069,12 +9124,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after `*' operator.");
 
               yp_node_t *star_node = yp_splat_node_create(parser, &operator, expression);
-              yp_node_list_append(parser, when_node, &when_node->as.when_node.conditions, star_node);
+              yp_node_list_append(parser, YP_NODE_DOWNCAST(when_node), &when_node->conditions, star_node);
 
               if (expression->type == YP_NODE_MISSING_NODE) break;
             } else {
               yp_node_t *condition = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after when keyword.");
-              yp_node_list_append(parser, when_node, &when_node->as.when_node.conditions, condition);
+              yp_node_list_append(parser, YP_NODE_DOWNCAST(when_node), &when_node->conditions, condition);
 
               if (condition->type == YP_NODE_MISSING_NODE) break;
             }
@@ -9087,10 +9142,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
 
           if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
-            when_node->as.when_node.statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
+            when_node->statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
           }
 
-          yp_case_node_condition_append(case_node, when_node);
+          yp_case_node_condition_append(case_node, YP_NODE_DOWNCAST(when_node));
         }
       } else {
         // At this point we expect that we're parsing a case-in node. We will
@@ -9633,10 +9688,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return parse_conditional(parser, YP_CONTEXT_IF);
     case YP_TOKEN_KEYWORD_UNDEF: {
       parser_lex(parser);
-      yp_node_t *undef = yp_undef_node_create(parser, &parser->previous);
+      yp_undef_node_t *undef = YP_NODE_UPCAST(
+        yp_undef_node_create(parser, &parser->previous),
+        yp_undef_node_t
+      );
 
       yp_node_t *name = parse_undef_argument(parser);
-      if (name->type == YP_NODE_MISSING_NODE) return undef;
+      if (name->type == YP_NODE_MISSING_NODE) {
+        return YP_NODE_DOWNCAST(undef);
+      }
 
       yp_undef_node_append(undef, name);
 
@@ -9644,12 +9704,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
         parser_lex(parser);
         name = parse_undef_argument(parser);
-        if (name->type == YP_NODE_MISSING_NODE) return undef;
+        if (name->type == YP_NODE_MISSING_NODE) {
+          return YP_NODE_DOWNCAST(undef);
+        }
 
         yp_undef_node_append(undef, name);
       }
 
-      return undef;
+      return YP_NODE_DOWNCAST(undef);
     }
     case YP_TOKEN_KEYWORD_NOT: {
       parser_lex(parser);
@@ -9848,7 +9910,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // interpolated string, then we need to append the string content
               // to the list of child nodes.
               yp_node_t *part = parse_string_part(parser);
-              yp_node_list_append(parser, current, &current->as.interpolated_symbol_node.parts, part);
+              yp_node_list_append(parser, current, &YP_NODE_UPCAST(current, yp_interpolated_symbol_node_t)->parts, part);
             } else {
               assert(false && "unreachable");
             }
@@ -9871,8 +9933,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_token_t closing = not_provided(parser);
               yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
-              yp_symbol_node_to_string_node(parser, current);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, current);
+              yp_symbol_node_to_string_node(current);
+              yp_node_list_append(parser, interpolated, &YP_NODE_UPCAST(interpolated, yp_interpolated_symbol_node_t)->parts, current);
               current = interpolated;
             } else {
               // If we hit an embedded variable and the current node is an
@@ -9880,7 +9942,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_symbol_node.parts, part);
+            yp_node_list_append(parser, current, &YP_NODE_UPCAST(current, yp_interpolated_symbol_node_t)->parts, part);
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -9900,8 +9962,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_token_t closing = not_provided(parser);
               yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
-              yp_symbol_node_to_string_node(parser, current);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, current);
+              yp_symbol_node_to_string_node(current);
+              yp_node_list_append(parser, interpolated, &YP_NODE_UPCAST(interpolated, yp_interpolated_symbol_node_t)->parts, current);
               current = interpolated;
             } else if (current->type == YP_NODE_INTERPOLATED_SYMBOL_NODE) {
               // If we hit an embedded expression and the current node is an
@@ -9911,7 +9973,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_symbol_node.parts, part);
+            yp_node_list_append(parser, current, &YP_NODE_UPCAST(current, yp_interpolated_string_node_t)->parts, part);
             break;
           }
           default:
@@ -9995,7 +10057,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // interpolated string, then we need to append the string content
               // to the list of child nodes.
               yp_node_t *part = parse_string_part(parser);
-              yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+              yp_node_list_append(parser, current, &YP_NODE_UPCAST(current, yp_interpolated_string_node_t)->parts, part);
             } else {
               assert(false && "unreachable");
             }
@@ -10016,17 +10078,20 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // string and add the string node to the list of parts.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              yp_node_t *interpolated = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
+              yp_interpolated_string_node_t *interpolated = YP_NODE_UPCAST(
+                yp_interpolated_string_node_create(parser, &opening, NULL, &closing),
+                yp_interpolated_string_node_t
+              );
 
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, current);
-              current = interpolated;
+              yp_node_list_append(parser, YP_NODE_DOWNCAST(interpolated), &interpolated->parts, current);
+              current = YP_NODE_DOWNCAST(interpolated);
             } else {
               // If we hit an embedded variable and the current node is an
               // interpolated string, then we'll just add the embedded variable.
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+            yp_node_list_append(parser, current, &YP_NODE_UPCAST(current, yp_interpolated_string_node_t)->parts, part);
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -10045,7 +10110,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
               yp_node_t *interpolated = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, current);
+              yp_node_list_append(parser, interpolated, &YP_NODE_UPCAST(interpolated, yp_interpolated_string_node_t)->parts, current);
               current = interpolated;
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit an embedded expression and the current node is an
@@ -10055,7 +10120,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+            yp_node_list_append(parser, current, &YP_NODE_UPCAST(current, yp_interpolated_string_node_t)->parts, part);
             break;
           }
           default:
@@ -10121,7 +10186,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t closing = not_provided(parser);
         yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
 
-        yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part);
+        yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_interpolated_regular_expression_node_t)->parts, part);
       } else {
         // If the first part of the body of the regular expression is not a
         // string content, then we have interpolation and we need to create an
@@ -10134,12 +10199,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       while (!match_any_type_p(parser, 2, YP_TOKEN_REGEXP_END, YP_TOKEN_EOF)) {
         yp_node_t *part = parse_string_part(parser);
         if (part != NULL) {
-          yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part);
+          yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_interpolated_regular_expression_node_t)->parts, part);
         }
       }
 
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
-      node->as.interpolated_regular_expression_node.closing = parser->previous;
+      YP_NODE_UPCAST(node, yp_interpolated_regular_expression_node_t)->closing = parser->previous;
       node->location.end = parser->previous.end;
 
       return node;
@@ -10188,7 +10253,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         yp_node_t *part = yp_node_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-        yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+        yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_interpolated_x_string_node_t)->parts, part);
       } else {
         // If the first part of the body of the string is not a string content,
         // then we have interpolation and we need to create an interpolated
@@ -10198,11 +10263,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         yp_node_t *part = parse_string_part(parser);
-        if (part != NULL) yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+        if (part != NULL) yp_node_list_append(parser, node, &YP_NODE_UPCAST(node, yp_interpolated_x_string_node_t)->parts, part);
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an xstring.");
-      node->as.interpolated_x_string_node.closing = parser->previous;
+      YP_NODE_UPCAST(node, yp_interpolated_x_string_node_t)->closing = parser->previous;
       node->location.end = parser->previous.end;
 
       return node;
@@ -10494,7 +10559,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // This _must_ happen before the value is parsed because it could be
           // referenced in the value.
           if (yp_call_node_vcall_p(node)) {
-            yp_parser_local_add(parser, &node->as.call_node.message);
+            yp_parser_local_add(parser, &YP_NODE_UPCAST(node, yp_call_node_t)->message);
           }
 
           // fallthrough
@@ -10505,7 +10570,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_SPLAT_NODE: {
-          switch (node->as.splat_node.expression->type) {
+          switch (YP_NODE_UPCAST(node, yp_splat_node_t)->expression->type) {
             case YP_CASE_WRITABLE: {
               parser_lex(parser);
               yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
@@ -10534,7 +10599,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // This _must_ happen before the value is parsed because it could be
           // referenced in the value.
           if (yp_call_node_vcall_p(node)) {
-            yp_parser_local_add(parser, &node->as.call_node.message);
+            yp_parser_local_add(parser, &YP_NODE_UPCAST(node, yp_call_node_t)->message);
           }
 
           // fallthrough
@@ -10571,7 +10636,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // This _must_ happen before the value is parsed because it could be
           // referenced in the value.
           if (yp_call_node_vcall_p(node)) {
-            yp_parser_local_add(parser, &node->as.call_node.message);
+            yp_parser_local_add(parser, &YP_NODE_UPCAST(node, yp_call_node_t)->message);
           }
 
           // fallthrough
@@ -10618,7 +10683,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           // This _must_ happen before the value is parsed because it could be
           // referenced in the value.
           if (yp_call_node_vcall_p(node)) {
-            yp_parser_local_add(parser, &node->as.call_node.message);
+            yp_parser_local_add(parser, &YP_NODE_UPCAST(node, yp_call_node_t)->message);
           }
 
           // fallthrough
@@ -10671,7 +10736,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         yp_string_list_t named_captures;
         yp_string_list_init(&named_captures);
 
-        yp_token_t *content = &node->as.regular_expression_node.content;
+        yp_token_t *content = &YP_NODE_UPCAST(node, yp_regular_expression_node_t)->content;
         assert(yp_regexp_named_capture_group_names(content->start, content->end - content->start, &named_captures));
 
         for (size_t index = 0; index < named_captures.length; index++) {
