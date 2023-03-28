@@ -2380,21 +2380,21 @@ yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *name) {
 }
 
 // Allocate a new RescueModifierNode node.
-static yp_node_t *
+static yp_rescue_modifier_node_t *
 yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *rescue_keyword, yp_node_t *rescue_expression) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_rescue_modifier_node_t *node = YP_NODE_ALLOC(yp_rescue_modifier_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RESCUE_MODIFIER_NODE,
-    .location = {
-      .start = expression->location.start,
-      .end = rescue_expression->location.end
+  *node = (yp_rescue_modifier_node_t) {
+    {
+      .type = YP_NODE_RESCUE_MODIFIER_NODE,
+      .location = {
+        .start = expression->location.start,
+        .end = rescue_expression->location.end
+      }
     },
-    .as.rescue_modifier_node = {
-      .expression = expression,
-      .rescue_keyword = *rescue_keyword,
-      .rescue_expression = rescue_expression
-    }
+    .expression = expression,
+    .rescue_keyword = *rescue_keyword,
+    .rescue_expression = rescue_expression
   };
 
   return node;
@@ -11103,7 +11103,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       accept(parser, YP_TOKEN_NEWLINE);
       yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
 
-      return yp_rescue_modifier_node_create(parser, node, &token, value);
+      return (yp_node_t *) yp_rescue_modifier_node_create(parser, node, &token, value);
     }
     case YP_TOKEN_BRACKET_LEFT: {
       parser_lex(parser);

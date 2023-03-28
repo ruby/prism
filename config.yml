@@ -1457,6 +1457,7 @@ nodes:
         type: token
       - name: rescue_expression
         type: node
+    is_migrated: true
     comment: |
       Represents an expression modified with a rescue.
 
