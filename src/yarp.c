@@ -1203,10 +1203,12 @@ yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_
 }
 
 // Allocate and initialize a new FalseNode node.
-static yp_node_t *
+static yp_false_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_FALSE);
-  return yp_node_create_from_token(parser, YP_NODE_FALSE_NODE, token);
+  yp_false_node_t *node = YP_NODE_ALLOC(yp_false_node_t);
+  *node = (yp_false_node_t) {{ .type = YP_NODE_FALSE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new find pattern node. The node list given in the
@@ -1240,10 +1242,12 @@ yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
 }
 
 // Allocate and initialize a new FloatNode node.
-static yp_node_t *
+static yp_float_node_t *
 yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_FLOAT);
-  return yp_node_create_from_token(parser, YP_NODE_FLOAT_NODE, token);
+  yp_float_node_t *node = YP_NODE_ALLOC(yp_float_node_t);
+  *node = (yp_float_node_t) {{ .type = YP_NODE_FLOAT_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new ForNode node.
@@ -1281,17 +1285,21 @@ yp_for_node_create(
 }
 
 // Allocate and initialize a new ForwardingArgumentsNode node.
-static yp_node_t *
+static yp_forwarding_arguments_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
-  return yp_node_create_from_token(parser, YP_NODE_FORWARDING_ARGUMENTS_NODE, token);
+  yp_forwarding_arguments_node_t *node = YP_NODE_ALLOC(yp_forwarding_arguments_node_t);
+  *node = (yp_forwarding_arguments_node_t) {{ .type = YP_NODE_FORWARDING_ARGUMENTS_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new ForwardingParameterNode node.
-static yp_node_t *
+static yp_forwarding_parameter_node_t *
 yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
-  return yp_node_create_from_token(parser, YP_NODE_FORWARDING_PARAMETER_NODE, token);
+  yp_forwarding_parameter_node_t *node = YP_NODE_ALLOC(yp_forwarding_parameter_node_t);
+  *node = (yp_forwarding_parameter_node_t) {{ .type = YP_NODE_FORWARDING_PARAMETER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new ForwardingSuper node.
@@ -7010,7 +7018,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
               yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
             }
 
-            argument = yp_forwarding_arguments_node_create(parser, &parser->previous);
+            argument = (yp_node_t *)yp_forwarding_arguments_node_create(parser, &parser->previous);
             break;
           }
         }
@@ -7192,8 +7200,8 @@ parse_parameters(
         parser_lex(parser);
 
         yp_parser_local_add(parser, &parser->previous);
-        yp_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
-        yp_parameters_node_keyword_rest_set(params, param);
+        yp_forwarding_parameter_node_t *param = yp_forwarding_parameter_node_create(parser, &parser->previous);
+        yp_parameters_node_keyword_rest_set(params, (yp_node_t *)param);
         break;
       }
       case YP_TOKEN_IDENTIFIER: {
@@ -8912,7 +8920,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_FLOAT:
       parser_lex(parser);
-      return yp_float_node_create(parser, &parser->previous);
+      return (yp_node_t *)yp_float_node_create(parser, &parser->previous);
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_BACK_REFERENCE: {
@@ -9547,7 +9555,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = (yp_node_t *) yp_true_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_FALSE:
-                receiver = yp_false_node_create(parser, &identifier);
+                receiver = (yp_node_t *)yp_false_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD___FILE__:
                 receiver = yp_source_file_node_create(parser, &identifier);
@@ -9745,7 +9753,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_KEYWORD_FALSE:
       parser_lex(parser);
-      return yp_false_node_create(parser, &parser->previous);
+      return (yp_node_t *)yp_false_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_FOR: {
       parser_lex(parser);
       yp_token_t for_keyword = parser->previous;
