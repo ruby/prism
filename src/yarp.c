@@ -2942,9 +2942,9 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
 }
 
 // Allocate a new YieldNode node.
-static yp_node_t *
+static yp_yield_node_t *
 yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *lparen, yp_arguments_node_t *arguments, const yp_token_t *rparen) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_yield_node_t *node = YP_NODE_ALLOC(yp_yield_node_t);
 
   const char *end;
   if (rparen->type != YP_TOKEN_NOT_PROVIDED) {
@@ -2957,18 +2957,18 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
     end = keyword->end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_YIELD_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end
+  *node = (yp_yield_node_t) {
+    {
+      .type = YP_NODE_YIELD_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = end
+      },
     },
-    .as.yield_node = {
-      .keyword = *keyword,
-      .lparen = *lparen,
-      .arguments = arguments,
-      .rparen = *rparen
-    }
+    .keyword = *keyword,
+    .lparen = *lparen,
+    .arguments = arguments,
+    .rparen = *rparen
   };
 
   return node;
@@ -9356,7 +9356,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_arguments_t arguments = yp_arguments(parser);
       parse_arguments_list(parser, &arguments, false);
 
-      return yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
+      return YP_NODE_DOWNCAST(yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing));
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);

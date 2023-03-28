@@ -1746,6 +1746,7 @@ nodes:
         kind: ArgumentsNode
       - name: rparen
         type: token?
+    is_migrated: true
     comment: |
       Represents the use of the `yield` keyword.
 
