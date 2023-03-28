@@ -2290,21 +2290,21 @@ yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, con
 }
 
 // Allocate and initialize new RangeNode node.
-static yp_node_t *
+static yp_range_node_t *
 yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_range_node_t *node = YP_NODE_ALLOC(yp_range_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RANGE_NODE,
-    .location = {
-      .start = (left == NULL ? operator->start : left->location.start),
-      .end = (right == NULL ? operator->end : right->location.end)
+  *node = (yp_range_node_t) {
+    {
+      .type = YP_NODE_RANGE_NODE,
+      .location = {
+        .start = (left == NULL ? operator->start : left->location.start),
+        .end = (right == NULL ? operator->end : right->location.end)
+      }
     },
-    .as.range_node = {
-      .left = left,
-      .right = right,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-    }
+    .left = left,
+    .right = right,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
   };
 
   return node;
@@ -7033,7 +7033,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             // argument forwarding but was instead a range.
             yp_token_t operator = parser->previous;
             yp_node_t *right = parse_expression(parser, YP_BINDING_POWER_RANGE, "Expected a value after the operator.");
-            argument = yp_range_node_create(parser, NULL, &operator, right);
+            argument = (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
           } else {
             if (!yp_parser_local_p(parser, &parser->previous)) {
               yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
@@ -8386,13 +8386,13 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       switch (parser->current.type) {
         case YP_CASE_PRIMITIVE: {
           yp_node_t *right = parse_expression(parser, YP_BINDING_POWER_MAX, "Expected an expression after the range operator.");
-          return yp_range_node_create(parser, NULL, &operator, right);
+          return (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
         }
         default: {
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected an expression after the range operator.");
 
           yp_node_t *right = yp_missing_node_create(parser, &(yp_location_t) { .start = operator.start, .end = operator.end });
-          return yp_range_node_create(parser, NULL, &operator, right);
+          return (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
         }
       }
     }
@@ -8409,10 +8409,10 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
         switch (parser->current.type) {
           case YP_CASE_PRIMITIVE: {
             yp_node_t *right = parse_expression(parser, YP_BINDING_POWER_MAX, "Expected an expression after the range operator.");
-            return yp_range_node_create(parser, node, &operator, right);
+            return (yp_node_t *) yp_range_node_create(parser, node, &operator, right);
           }
           default:
-            return yp_range_node_create(parser, node, &operator, NULL);
+            return (yp_node_t *) yp_range_node_create(parser, node, &operator, NULL);
         }
       }
 
@@ -8936,7 +8936,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
-      return yp_range_node_create(parser, NULL, &operator, right);
+      return (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
     }
     case YP_TOKEN_FLOAT:
       parser_lex(parser);
@@ -10976,7 +10976,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         right = parse_expression(parser, binding_power, "Expected a value after the operator.");
       }
 
-      return yp_range_node_create(parser, node, &token, right);
+      return (yp_node_t *) yp_range_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_KEYWORD_IF_MODIFIER: {
       yp_token_t keyword = parser->current;
