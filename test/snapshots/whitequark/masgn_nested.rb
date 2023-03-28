@@ -7,7 +7,7 @@ ProgramNode(2...30)(
   StatementsNode(2...30)(
     [MultiWriteNode(2...13)(
        [MultiWriteNode(2...4)(
-          [LocalVariableWriteNode(2...3)(IDENTIFIER(2...3)("b"), nil, nil),
+          [LocalVariableWriteNode(2...3)((2...3), nil, nil),
            SplatNode(3...4)(COMMA(3...4)(","), nil)],
           nil,
           nil,
@@ -29,14 +29,10 @@ ProgramNode(2...30)(
        (6...7)
      ),
      MultiWriteNode(15...30)(
-       [LocalVariableWriteNode(15...16)(IDENTIFIER(15...16)("a"), nil, nil),
+       [LocalVariableWriteNode(15...16)((15...16), nil, nil),
         MultiWriteNode(19...24)(
-          [LocalVariableWriteNode(19...20)(IDENTIFIER(19...20)("b"), nil, nil),
-           LocalVariableWriteNode(22...23)(
-             IDENTIFIER(22...23)("c"),
-             nil,
-             nil
-           )],
+          [LocalVariableWriteNode(19...20)((19...20), nil, nil),
+           LocalVariableWriteNode(22...23)((22...23), nil, nil)],
           nil,
           nil,
           (18...19),

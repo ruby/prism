@@ -144,8 +144,7 @@ ProgramNode(0...275)(
        AMPERSAND_AMPERSAND(55...57)("&&")
      ),
      LocalVariableWriteNode(60...74)(
-       IDENTIFIER(60...61)("a"),
-       EQUAL(62...63)("="),
+       (60...61),
        OrNode(64...74)(
          CallNode(64...65)(
            nil,
@@ -159,11 +158,11 @@ ProgramNode(0...275)(
          ),
          BreakNode(69...74)(nil, (69...74)),
          (66...68)
-       )
+       ),
+       (62...63)
      ),
      LocalVariableWriteNode(75...88)(
-       IDENTIFIER(75...76)("a"),
-       EQUAL(77...78)("="),
+       (75...76),
        OrNode(79...88)(
          CallNode(79...80)(
            nil,
@@ -177,11 +176,11 @@ ProgramNode(0...275)(
          ),
          NextNode(84...88)(nil, (84...88)),
          (81...83)
-       )
+       ),
+       (77...78)
      ),
      LocalVariableWriteNode(89...104)(
-       IDENTIFIER(89...90)("a"),
-       EQUAL(91...92)("="),
+       (89...90),
        OrNode(93...104)(
          CallNode(93...94)(
            nil,
@@ -195,10 +194,11 @@ ProgramNode(0...275)(
          ),
          ReturnNode(98...104)(KEYWORD_RETURN(98...104)("return"), nil),
          (95...97)
-       )
+       ),
+       (91...92)
      ),
      AndNode(105...121)(
-       LocalVariableReadNode(105...106)(IDENTIFIER(105...106)("a")),
+       LocalVariableReadNode(105...106)(),
        ReturnNode(111...121)(
          KEYWORD_RETURN(111...117)("return"),
          ArgumentsNode(118...121)(
@@ -217,12 +217,12 @@ ProgramNode(0...275)(
        KEYWORD_AND(107...110)("and")
      ),
      OrNode(122...133)(
-       LocalVariableReadNode(122...123)(IDENTIFIER(122...123)("a")),
+       LocalVariableReadNode(122...123)(),
        ReturnNode(127...133)(KEYWORD_RETURN(127...133)("return"), nil),
        (124...126)
      ),
      OrNode(134...149)(
-       LocalVariableReadNode(134...135)(IDENTIFIER(134...135)("a")),
+       LocalVariableReadNode(134...135)(),
        ReturnNode(139...149)(
          KEYWORD_RETURN(139...145)("return"),
          ArgumentsNode(146...149)(
@@ -241,7 +241,7 @@ ProgramNode(0...275)(
        (136...138)
      ),
      OrNode(150...163)(
-       LocalVariableReadNode(150...151)(IDENTIFIER(150...151)("a")),
+       LocalVariableReadNode(150...151)(),
        ParenthesesNode(155...163)(
          StatementsNode(156...162)(
            [OrNode(156...162)(
@@ -274,7 +274,7 @@ ProgramNode(0...275)(
        (152...154)
      ),
      OrNode(164...180)(
-       LocalVariableReadNode(164...165)(IDENTIFIER(164...165)("a")),
+       LocalVariableReadNode(164...165)(),
        ParenthesesNode(169...180)(
          StatementsNode(170...179)(
            [BreakNode(170...179)(
@@ -299,7 +299,7 @@ ProgramNode(0...275)(
        (166...168)
      ),
      OrNode(181...198)(
-       LocalVariableReadNode(181...182)(IDENTIFIER(181...182)("a")),
+       LocalVariableReadNode(181...182)(),
        ParenthesesNode(186...198)(
          StatementsNode(187...197)(
            [ReturnNode(187...197)(
@@ -381,13 +381,12 @@ ProgramNode(0...275)(
      ),
      OrNode(241...252)(
        ReturnNode(241...247)(KEYWORD_RETURN(241...247)("return"), nil),
-       LocalVariableReadNode(251...252)(IDENTIFIER(251...252)("a")),
+       LocalVariableReadNode(251...252)(),
        (248...250)
      ),
      OrNode(253...263)(
        LocalVariableWriteNode(253...258)(
-         IDENTIFIER(253...254)("a"),
-         EQUAL(255...256)("="),
+         (253...254),
          CallNode(257...258)(
            nil,
            nil,
@@ -397,7 +396,8 @@ ProgramNode(0...275)(
            nil,
            nil,
            "b"
-         )
+         ),
+         (255...256)
        ),
        CallNode(262...263)(
          nil,
@@ -413,8 +413,7 @@ ProgramNode(0...275)(
      ),
      AndNode(264...275)(
        LocalVariableWriteNode(264...269)(
-         IDENTIFIER(264...265)("a"),
-         EQUAL(266...267)("="),
+         (264...265),
          CallNode(268...269)(
            nil,
            nil,
@@ -424,7 +423,8 @@ ProgramNode(0...275)(
            nil,
            nil,
            "b"
-         )
+         ),
+         (266...267)
        ),
        CallNode(274...275)(
          nil,

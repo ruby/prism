@@ -19,7 +19,7 @@ ProgramNode(0...29)(
             IDENTIFIER(15...16)("b"),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...23)(
-              [LocalVariableReadNode(17...18)(IDENTIFIER(17...18)("x")),
+              [LocalVariableReadNode(17...18)(),
                ForwardingArgumentsNode(20...23)()]
             ),
             PARENTHESIS_RIGHT(23...24)(")"),

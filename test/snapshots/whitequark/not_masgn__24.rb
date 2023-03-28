@@ -5,12 +5,8 @@ ProgramNode(0...13)(
        ParenthesesNode(1...13)(
          StatementsNode(2...12)(
            [MultiWriteNode(2...12)(
-              [LocalVariableWriteNode(2...3)(IDENTIFIER(2...3)("a"), nil, nil),
-               LocalVariableWriteNode(5...6)(
-                 IDENTIFIER(5...6)("b"),
-                 nil,
-                 nil
-               )],
+              [LocalVariableWriteNode(2...3)((2...3), nil, nil),
+               LocalVariableWriteNode(5...6)((5...6), nil, nil)],
               EQUAL(7...8)("="),
               CallNode(9...12)(
                 nil,

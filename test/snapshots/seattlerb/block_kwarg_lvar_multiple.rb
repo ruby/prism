@@ -38,9 +38,7 @@ ProgramNode(0...33)(
            ),
            []
          ),
-         StatementsNode(29...31)(
-           [LocalVariableReadNode(29...31)(IDENTIFIER(29...31)("kw"))]
-         ),
+         StatementsNode(29...31)([LocalVariableReadNode(29...31)()]),
          (3...4),
          (32...33)
        ),

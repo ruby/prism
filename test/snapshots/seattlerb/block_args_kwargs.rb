@@ -24,9 +24,7 @@ ProgramNode(0...23)(
            ),
            []
          ),
-         StatementsNode(15...21)(
-           [LocalVariableReadNode(15...21)(IDENTIFIER(15...21)("kwargs"))]
-         ),
+         StatementsNode(15...21)([LocalVariableReadNode(15...21)()]),
          (2...3),
          (22...23)
        ),

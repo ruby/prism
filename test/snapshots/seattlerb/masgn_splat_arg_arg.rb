@@ -7,15 +7,15 @@ ProgramNode(0...12)(
        [MultiWriteNode(0...2)(
           [SplatNode(0...2)(
              USTAR(0...1)("*"),
-             LocalVariableWriteNode(1...2)(IDENTIFIER(1...2)("a"), nil, nil)
+             LocalVariableWriteNode(1...2)((1...2), nil, nil)
            )],
           nil,
           nil,
           nil,
           nil
         ),
-        LocalVariableWriteNode(4...5)(IDENTIFIER(4...5)("b"), nil, nil),
-        LocalVariableWriteNode(7...8)(IDENTIFIER(7...8)("c"), nil, nil)],
+        LocalVariableWriteNode(4...5)((4...5), nil, nil),
+        LocalVariableWriteNode(7...8)((7...8), nil, nil)],
        EQUAL(9...10)("="),
        CallNode(11...12)(
          nil,

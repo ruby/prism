@@ -2,8 +2,7 @@ ProgramNode(0...37)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...37)(
     [LocalVariableWriteNode(0...37)(
-       IDENTIFIER(0...1)("a"),
-       EQUAL(2...3)("="),
+       (0...1),
        HeredocNode(13...37)(
          HEREDOC_START(4...12)("<<~\"EOF\""),
          [StringNode(13...37)(
@@ -14,7 +13,8 @@ ProgramNode(0...37)(
           )],
          HEREDOC_END(37...43)("  EOF\n"),
          2
-       )
+       ),
+       (2...3)
      )]
   )
 )

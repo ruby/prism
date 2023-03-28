@@ -11,9 +11,9 @@ ProgramNode(0...14)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(3...4)(IDENTIFIER(3...4)("x"), nil, nil),
-        LocalVariableWriteNode(6...7)(IDENTIFIER(6...7)("y"), nil, nil),
-        LocalVariableWriteNode(9...10)(IDENTIFIER(9...10)("z"), nil, nil)],
+        LocalVariableWriteNode(3...4)((3...4), nil, nil),
+        LocalVariableWriteNode(6...7)((6...7), nil, nil),
+        LocalVariableWriteNode(9...10)((9...10), nil, nil)],
        EQUAL(11...12)("="),
        CallNode(13...14)(
          nil,

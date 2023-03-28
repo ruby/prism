@@ -9,9 +9,9 @@ ProgramNode(0...350)(
        nil,
        StatementsNode(8...13)(
          [LocalVariableWriteNode(8...13)(
-            IDENTIFIER(8...9)("a"),
-            EQUAL(10...11)("="),
-            IntegerNode(12...13)()
+            (8...9),
+            IntegerNode(12...13)(),
+            (10...11)
           )]
        ),
        KEYWORD_END(14...17)("end")
@@ -75,9 +75,9 @@ ProgramNode(0...350)(
        ConstantReadNode(87...88)(),
        StatementsNode(89...94)(
          [LocalVariableWriteNode(89...94)(
-            IDENTIFIER(89...90)("a"),
-            EQUAL(91...92)("="),
-            IntegerNode(93...94)()
+            (89...90),
+            IntegerNode(93...94)(),
+            (91...92)
           )]
        ),
        KEYWORD_END(95...98)("end")

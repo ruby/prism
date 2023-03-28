@@ -10,16 +10,16 @@ ProgramNode(0...15)(
        [MultiWriteNode(0...2)(
           [SplatNode(0...2)(
              USTAR(0...1)("*"),
-             LocalVariableWriteNode(1...2)(IDENTIFIER(1...2)("s"), nil, nil)
+             LocalVariableWriteNode(1...2)((1...2), nil, nil)
            )],
           nil,
           nil,
           nil,
           nil
         ),
-        LocalVariableWriteNode(4...5)(IDENTIFIER(4...5)("x"), nil, nil),
-        LocalVariableWriteNode(7...8)(IDENTIFIER(7...8)("y"), nil, nil),
-        LocalVariableWriteNode(10...11)(IDENTIFIER(10...11)("z"), nil, nil)],
+        LocalVariableWriteNode(4...5)((4...5), nil, nil),
+        LocalVariableWriteNode(7...8)((7...8), nil, nil),
+        LocalVariableWriteNode(10...11)((10...11), nil, nil)],
        EQUAL(12...13)("="),
        CallNode(14...15)(
          nil,

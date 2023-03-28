@@ -10,8 +10,7 @@ ProgramNode(0...192)(
          SelfNode(15...19)(),
          StatementsNode(21...35)(
            [LocalVariableWriteNode(21...35)(
-              IDENTIFIER(21...22)("a"),
-              EQUAL(23...24)("="),
+              (21...22),
               CallNode(25...35)(
                 nil,
                 nil,
@@ -27,7 +26,8 @@ ProgramNode(0...192)(
                   (32...35)
                 ),
                 "tap"
-              )
+              ),
+              (23...24)
             )]
          ),
          KEYWORD_END(37...40)("end")
@@ -73,8 +73,7 @@ ProgramNode(0...192)(
          nil,
          StatementsNode(120...134)(
            [LocalVariableWriteNode(120...134)(
-              IDENTIFIER(120...121)("a"),
-              EQUAL(122...123)("="),
+              (120...121),
               CallNode(124...134)(
                 nil,
                 nil,
@@ -90,7 +89,8 @@ ProgramNode(0...192)(
                   (131...134)
                 ),
                 "tap"
-              )
+              ),
+              (122...123)
             )]
          ),
          KEYWORD_END(136...139)("end")

@@ -52,9 +52,9 @@ ProgramNode(0...293)(
        "a"
      ),
      LocalVariableWriteNode(85...92)(
-       IDENTIFIER(85...88)("abc"),
-       EQUAL(89...90)("="),
-       IntegerNode(91...92)()
+       (85...88),
+       IntegerNode(91...92)(),
+       (89...90)
      ),
      MultiWriteNode(94...108)(
        [GlobalVariableWriteNode(94...98)(
@@ -99,34 +99,30 @@ ProgramNode(0...293)(
        (144...145)
      ),
      LocalVariableWriteNode(152...159)(
-       IDENTIFIER(152...155)("foo"),
-       EQUAL(156...157)("="),
-       IntegerNode(158...159)()
+       (152...155),
+       IntegerNode(158...159)(),
+       (156...157)
      ),
      LocalVariableWriteNode(161...0)(
-       IDENTIFIER(161...164)("foo"),
-       EQUAL(165...166)("="),
+       (161...164),
        ArrayNode(0...0)(
          [IntegerNode(167...168)(), IntegerNode(170...171)()],
          nil,
          nil
-       )
+       ),
+       (165...166)
      ),
      LocalVariableWriteNode(173...0)(
-       IDENTIFIER(173...176)("foo"),
-       EQUAL(177...178)("="),
+       (173...176),
        ArrayNode(0...0)(
          [IntegerNode(179...180)(), IntegerNode(182...183)()],
          nil,
          nil
-       )
+       ),
+       (177...178)
      ),
      MultiWriteNode(185...0)(
-       [LocalVariableWriteNode(185...188)(
-          IDENTIFIER(185...188)("foo"),
-          nil,
-          nil
-        ),
+       [LocalVariableWriteNode(185...188)((185...188), nil, nil),
         SplatNode(190...191)(USTAR(190...191)("*"), nil)],
        EQUAL(192...193)("="),
        ArrayNode(0...0)(
@@ -138,11 +134,7 @@ ProgramNode(0...293)(
        nil
      ),
      MultiWriteNode(200...0)(
-       [LocalVariableWriteNode(200...203)(
-          IDENTIFIER(200...203)("foo"),
-          nil,
-          nil
-        ),
+       [LocalVariableWriteNode(200...203)((200...203), nil, nil),
         SplatNode(203...204)(COMMA(203...204)(","), nil)],
        EQUAL(205...206)("="),
        ArrayNode(0...0)(
@@ -154,18 +146,10 @@ ProgramNode(0...293)(
        nil
      ),
      MultiWriteNode(213...0)(
-       [LocalVariableWriteNode(213...216)(
-          IDENTIFIER(213...216)("foo"),
-          nil,
-          nil
-        ),
+       [LocalVariableWriteNode(213...216)((213...216), nil, nil),
         SplatNode(218...222)(
           USTAR(218...219)("*"),
-          LocalVariableWriteNode(219...222)(
-            IDENTIFIER(219...222)("bar"),
-            nil,
-            nil
-          )
+          LocalVariableWriteNode(219...222)((219...222), nil, nil)
         )],
        EQUAL(223...224)("="),
        ArrayNode(0...0)(
@@ -177,22 +161,10 @@ ProgramNode(0...293)(
        nil
      ),
      MultiWriteNode(231...0)(
-       [LocalVariableWriteNode(231...234)(
-          IDENTIFIER(231...234)("foo"),
-          nil,
-          nil
-        ),
+       [LocalVariableWriteNode(231...234)((231...234), nil, nil),
         MultiWriteNode(237...246)(
-          [LocalVariableWriteNode(237...240)(
-             IDENTIFIER(237...240)("bar"),
-             nil,
-             nil
-           ),
-           LocalVariableWriteNode(242...245)(
-             IDENTIFIER(242...245)("baz"),
-             nil,
-             nil
-           )],
+          [LocalVariableWriteNode(237...240)((237...240), nil, nil),
+           LocalVariableWriteNode(242...245)((242...245), nil, nil)],
           nil,
           nil,
           (236...237),
@@ -213,12 +185,12 @@ ProgramNode(0...293)(
        nil
      ),
      LocalVariableWriteNode(260...270)(
-       IDENTIFIER(260...263)("foo"),
-       EQUAL(264...265)("="),
+       (260...263),
        SplatNode(266...270)(
          USTAR(266...267)("*"),
-         LocalVariableReadNode(267...270)(IDENTIFIER(267...270)("bar"))
-       )
+         LocalVariableReadNode(267...270)()
+       ),
+       (264...265)
      ),
      ConstantPathWriteNode(272...0)(
        ConstantReadNode(272...275)(),

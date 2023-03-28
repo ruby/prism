@@ -2,8 +2,7 @@ ProgramNode(0...23)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("s")]),
   StatementsNode(0...23)(
     [LocalVariableWriteNode(0...23)(
-       IDENTIFIER(0...1)("s"),
-       EQUAL(2...3)("="),
+       (0...1),
        HeredocNode(11...23)(
          HEREDOC_START(4...10)("<<-EOS"),
          [StringNode(11...23)(
@@ -14,7 +13,8 @@ ProgramNode(0...23)(
           )],
          HEREDOC_END(23...27)("EOS\n"),
          0
-       )
+       ),
+       (2...3)
      )]
   )
 )

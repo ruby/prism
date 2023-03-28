@@ -15,12 +15,8 @@ ProgramNode(0...40)(
        ParenthesesNode(7...19)(
          StatementsNode(8...18)(
            [MultiWriteNode(8...18)(
-              [LocalVariableWriteNode(8...9)(IDENTIFIER(8...9)("a"), nil, nil),
-               LocalVariableWriteNode(11...12)(
-                 IDENTIFIER(11...12)("b"),
-                 nil,
-                 nil
-               )],
+              [LocalVariableWriteNode(8...9)((8...9), nil, nil),
+               LocalVariableWriteNode(11...12)((11...12), nil, nil)],
               EQUAL(13...14)("="),
               CallNode(15...18)(
                 nil,
@@ -55,16 +51,8 @@ ProgramNode(0...40)(
        ParenthesesNode(28...40)(
          StatementsNode(29...39)(
            [MultiWriteNode(29...39)(
-              [LocalVariableWriteNode(29...30)(
-                 IDENTIFIER(29...30)("a"),
-                 nil,
-                 nil
-               ),
-               LocalVariableWriteNode(32...33)(
-                 IDENTIFIER(32...33)("b"),
-                 nil,
-                 nil
-               )],
+              [LocalVariableWriteNode(29...30)((29...30), nil, nil),
+               LocalVariableWriteNode(32...33)((32...33), nil, nil)],
               EQUAL(34...35)("="),
               CallNode(36...39)(
                 nil,
