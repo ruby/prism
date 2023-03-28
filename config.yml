@@ -525,6 +525,7 @@ nodes:
     child_nodes:
       - name: arguments
         type: node?
+        kind: ArgumentsNode
       - name: keyword_loc
         type: location
     comment: |
@@ -1151,6 +1152,7 @@ nodes:
     child_nodes:
       - name: arguments
         type: node?
+        kind: ArgumentsNode
       - name: keyword_loc
         type: location
     comment: |
@@ -1466,6 +1468,7 @@ nodes:
         type: token
       - name: arguments
         type: node?
+        kind: ArgumentsNode
     comment: |
       Represents the use of the `return` keyword.
 
@@ -1595,6 +1598,7 @@ nodes:
         type: token?
       - name: arguments
         type: node?
+        kind: ArgumentsNode
       - name: rparen
         type: token?
       - name: block
@@ -1730,6 +1734,7 @@ nodes:
         type: token?
       - name: arguments
         type: node?
+        kind: ArgumentsNode
       - name: rparen
         type: token?
     comment: |
