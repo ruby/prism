@@ -231,6 +231,20 @@ module YARP
       end
     end
 
+    # Ignored newlines can occasionally have a LABEL state attached to them, so
+    # we compare the state differently here.
+    class IgnoredNewlineToken < Token
+      def ==(other)
+        return false unless self[0...-1] == other[0...-1]
+        
+        if self[4] == Ripper::EXPR_ARG | Ripper::EXPR_LABELED
+          other[4] & Ripper::EXPR_ARG | Ripper::EXPR_LABELED > 0
+        else
+          self[4] == other[4]
+        end
+      end
+    end
+
     # A heredoc in this case is a list of tokens that belong to the body of the
     # heredoc that should be appended onto the list of tokens when the heredoc
     # closes.
@@ -344,7 +358,17 @@ module YARP
                 next if line.empty? || !(dedent_next || index > 0)
 
                 leading = line[/\A\s*/]
-                @dedent = [dedent, leading.length + (leading.count("\t") * (TAB_WIDTH - 1))].compact.min
+                next_dedent = 0
+
+                leading.each_char do |char|
+                  if char == "\t"
+                    next_dedent = next_dedent - (next_dedent % TAB_WIDTH) + TAB_WIDTH
+                  else
+                    next_dedent += 1
+                  end
+                end
+
+                @dedent = [dedent, next_dedent].compact.min
               end
             end
           end
@@ -448,7 +472,13 @@ module YARP
                     # delete, stopping when you hit a character that would put
                     # you over the dedent amount.
                     line.each_char do |char|
-                      break if (deleting += char == "\t" ? TAB_WIDTH : 1) > dedent
+                      if char == "\t"
+                        deleting = deleting - (deleting % TAB_WIDTH) + TAB_WIDTH
+                      else
+                        deleting += 1
+                      end
+
+                      break if deleting > dedent
                       deleted_chars << char
                     end
 
@@ -547,6 +577,11 @@ module YARP
             else
               Token.new([[lineno, column], event, value, lex_state])
             end
+          when :on_ignored_nl
+            # Ignored newlines can occasionally have a LABEL state attached to
+            # them which doesn't actually impact anything. We don't mirror that
+            # state so we ignored it.
+            IgnoredNewlineToken.new([[lineno, column], event, value, lex_state])
           when :on_regexp_end
             # On regex end, Ripper scans and then sets end state, so the ripper
             # lexed output is begin, when it should be end. YARP sets lex state
