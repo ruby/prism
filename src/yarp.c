@@ -228,12 +228,6 @@ yp_node_alloc(yp_parser_t *parser) {
 // Allocate the space for a specific node type.
 #define YP_NODE_ALLOC(type) ((type *)malloc(sizeof(type)))
 
-// Downcast a specific node type to a yp_node_t.
-#define YP_NODE_DOWNCAST(node) ((yp_node_t *)node)
-
-// Upcast a yp_node_t to a specific node type.
-#define YP_NODE_UPCAST(node, type) ((type *)node)
-
 /******************************************************************************/
 /* Node creation functions                                                    */
 /******************************************************************************/
@@ -1525,7 +1519,7 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_to
   yp_token_t end_keyword = not_provided(parser);
   yp_else_node_t *else_node = yp_else_node_create(parser, colon, else_statements, &end_keyword);
 
-  return yp_if_node_create(parser, question_mark, predicate, if_statements, YP_NODE_DOWNCAST(else_node), &end_keyword);
+  return yp_if_node_create(parser, question_mark, predicate, if_statements, (yp_node_t *)else_node, &end_keyword);
 }
 
 // Allocate and initialize a new ImaginaryNode node.
@@ -8499,7 +8493,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
           node = parse_pattern_primitive(parser, message);
         } else {
           yp_node_t *right = parse_pattern_primitive(parser, "Expected to be able to parse a pattern after `|'.");
-          node = YP_NODE_DOWNCAST(yp_alternation_pattern_node_create(parser, node, right, &operator));
+          node = (yp_node_t *) yp_alternation_pattern_node_create(parser, node, right, &operator);
         }
 
         break;
@@ -8518,7 +8512,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
         if (node == NULL) {
           node = right;
         } else {
-          node = YP_NODE_DOWNCAST(yp_alternation_pattern_node_create(parser, node, right, &operator));
+          node = (yp_node_t *) yp_alternation_pattern_node_create(parser, node, right, &operator);
         }
 
         break;
@@ -8724,7 +8718,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_array_node_close_set(array, &parser->previous);
       yp_accepts_block_stack_pop(parser);
 
-      return YP_NODE_DOWNCAST(array);
+      return (yp_node_t *) array;
     }
     case YP_TOKEN_PARENTHESIS_LEFT:
     case YP_TOKEN_PARENTHESIS_LEFT_PARENTHESES: {
@@ -9163,7 +9157,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           break;
       }
 
-      return YP_NODE_DOWNCAST(yp_alias_node_create(parser, &keyword, left, right));
+      return (yp_node_t *) yp_alias_node_create(parser, &keyword, left, right);
     }
     case YP_TOKEN_KEYWORD_CASE: {
       parser_lex(parser);
@@ -9182,7 +9176,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {
-        return YP_NODE_DOWNCAST(yp_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous));
+        return (yp_node_t *) yp_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous);
       }
 
       // At this point we can create a case node, though we don't yet know if it
@@ -9301,7 +9295,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected case statement to end with an end keyword.");
       yp_case_node_end_keyword_loc_set(case_node, &parser->previous);
-      return YP_NODE_DOWNCAST(case_node);
+      return (yp_node_t *) case_node;
     }
     case YP_TOKEN_KEYWORD_BEGIN: {
       parser_lex(parser);
@@ -9324,7 +9318,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       begin_node->base.location.end = parser->previous.end;
       yp_begin_node_end_keyword_set(begin_node, &parser->previous);
 
-      return YP_NODE_DOWNCAST(begin_node);
+      return (yp_node_t *) begin_node;
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       parser_lex(parser);
@@ -9388,7 +9382,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_arguments_t arguments = yp_arguments(parser);
       parse_arguments_list(parser, &arguments, false);
 
-      return YP_NODE_DOWNCAST(yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing));
+      return (yp_node_t *) yp_yield_node_create(parser, &keyword, &arguments.opening, arguments.arguments, &arguments.closing);
     }
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);
@@ -9716,13 +9710,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected expression after `defined?`.");
       }
 
-      return YP_NODE_DOWNCAST(yp_defined_node_create(
+      return (yp_node_t *) yp_defined_node_create(
         parser,
         &lparen,
         expression,
         &rparen,
         &(yp_location_t) { .start = keyword.start, .end = keyword.end }
-      ));
+      );
     }
     case YP_TOKEN_KEYWORD_END_UPCASE: {
       parser_lex(parser);
@@ -9948,7 +9942,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%i` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return YP_NODE_DOWNCAST(array);
+      return (yp_node_t *) array;
     }
     case YP_TOKEN_PERCENT_UPPER_I: {
       parser_lex(parser);
@@ -10071,7 +10065,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%I` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return YP_NODE_DOWNCAST(array);
+      return (yp_node_t *) array;
     }
     case YP_TOKEN_PERCENT_LOWER_W: {
       parser_lex(parser);
@@ -10099,7 +10093,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%w` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return YP_NODE_DOWNCAST(array);
+      return (yp_node_t *) array;
     }
     case YP_TOKEN_PERCENT_UPPER_W: {
       parser_lex(parser);
@@ -10215,7 +10209,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a `%W` list.");
       yp_array_node_close_set(array, &parser->previous);
 
-      return YP_NODE_DOWNCAST(array);
+      return (yp_node_t *) array;
     }
     case YP_TOKEN_RATIONAL_NUMBER:
       parser_lex(parser);
@@ -10636,7 +10630,7 @@ parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_
     yp_array_node_t *array = yp_array_node_create(parser, &opening, &closing);
 
     yp_array_node_elements_append(array, value);
-    value = YP_NODE_DOWNCAST(array);
+    value = (yp_node_t *) array;
 
     do {
       yp_node_t *element = parse_starred_expression(parser, binding_power, "Expected an element for the array.");
@@ -10815,7 +10809,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       parser_lex(parser);
 
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
-      return YP_NODE_DOWNCAST(yp_and_node_create(parser, node, &token, right));
+      return (yp_node_t *) yp_and_node_create(parser, node, &token, right);
     }
     case YP_TOKEN_KEYWORD_OR:
     case YP_TOKEN_PIPE_PIPE: {
@@ -11319,8 +11313,6 @@ yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
 }
 
 #undef YP_NODE_ALLOC
-#undef YP_NODE_DOWNCAST
-#undef YP_NODE_UPCAST
 #undef YP_CASE_KEYWORD
 #undef YP_CASE_OPERATOR
 #undef YP_CASE_WRITABLE
