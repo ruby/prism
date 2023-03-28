@@ -1667,6 +1667,7 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
+    is_migrated: true
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
