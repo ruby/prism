@@ -1417,6 +1417,7 @@ nodes:
           redo
           ^^^^
   - name: RegularExpressionNode
+    is_migrated: true
     child_nodes:
       - name: opening
         type: token
