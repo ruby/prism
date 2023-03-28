@@ -2921,21 +2921,21 @@ yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 }
 
 // Allocate and initialize a new XStringNode node.
-static yp_node_t *
+static yp_x_string_node_t *
 yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_x_string_node_t *node = YP_NODE_ALLOC(yp_x_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_X_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_x_string_node_t) {
+    {
+      .type = YP_NODE_X_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.x_string_node = {
-      .opening = *opening,
-      .content = *content,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .content = *content,
+    .closing = *closing
   };
 
   return node;
@@ -6150,10 +6150,10 @@ yp_node_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *o
   return node;
 }
 
-static yp_node_t *
+static yp_x_string_node_t *
 yp_node_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-  yp_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->as.x_string_node.unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+  yp_x_string_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
+  yp_unescape_manipulate_string(content->start, content->end - content->start, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
   return node;
 }
 
@@ -10274,7 +10274,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         };
 
         parser_lex(parser);
-        return yp_xstring_node_create(parser, &opening, &content, &parser->previous);
+        return (yp_node_t *) yp_xstring_node_create(parser, &opening, &content, &parser->previous);
       }
 
       yp_node_t *node;
@@ -10288,7 +10288,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         parser_lex(parser);
 
         if (accept(parser, YP_TOKEN_STRING_END)) {
-          return yp_node_xstring_node_create_and_unescape(parser, &opening, &content, &parser->previous);
+          return (yp_node_t *) yp_node_xstring_node_create_and_unescape(parser, &opening, &content, &parser->previous);
         }
 
         // If we get here, then we have interpolation so we'll need to create
