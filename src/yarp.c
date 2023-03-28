@@ -1860,23 +1860,23 @@ yp_missing_node_create(yp_parser_t *parser, yp_location_t *location) {
 
 
 // Allocate a new ModuleNode node.
-static yp_node_t *
+static yp_module_node_t *
 yp_module_node_create(yp_parser_t *parser, yp_scope_node_t *scope, const yp_token_t *module_keyword, yp_node_t *constant_path, yp_node_t *statements, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_module_node_t *node = YP_NODE_ALLOC(yp_module_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_MODULE_NODE,
-    .location = {
-      .start = module_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_module_node_t) {
+    {
+      .type = YP_NODE_MODULE_NODE,
+      .location = {
+        .start = module_keyword->start,
+        .end = end_keyword->end
+      }
     },
-    .as.module_node = {
-      .scope = scope,
-      .module_keyword = *module_keyword,
-      .constant_path = constant_path,
-      .statements = statements,
-      .end_keyword = *end_keyword
-    }
+    .scope = scope,
+    .module_keyword = *module_keyword,
+    .constant_path = constant_path,
+    .statements = statements,
+    .end_keyword = *end_keyword
   };
 
   return node;
@@ -9859,7 +9859,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (name->type == YP_NODE_MISSING_NODE) {
         yp_scope_node_t *scope = yp_scope_node_create(parser, &module_keyword);
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
-        return yp_module_node_create(parser, scope, &module_keyword, name, NULL, &end_keyword);
+        return (yp_node_t *) yp_module_node_create(parser, scope, &module_keyword, name, NULL, &end_keyword);
       }
 
       while (accept(parser, YP_TOKEN_COLON_COLON)) {
@@ -9895,7 +9895,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_diagnostic_list_append(&parser->error_list, module_keyword.start, module_keyword.end, "Module definition in method body");
       }
 
-      return yp_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
+      return (yp_node_t *) yp_module_node_create(parser, scope, &module_keyword, name, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_NIL:
       parser_lex(parser);

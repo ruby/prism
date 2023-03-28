@@ -1157,6 +1157,7 @@ nodes:
       Represents a node that is missing from the source and results in a syntax
       error.
   - name: ModuleNode
+    is_migrated: true
     child_nodes:
       - name: scope
         type: node
