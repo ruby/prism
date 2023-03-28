@@ -2988,6 +2988,9 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
 #undef YP_LOCATION_TOKEN_VALUE
 #undef YP_LOCATION_NODE_VALUE
 #undef YP_TOKEN_NOT_PROVIDED_VALUE
+#undef YP_NODE_ALLOC
+#undef YP_NODE_DOWNCAST
+#undef YP_NODE_UPCAST
 
 /******************************************************************************/
 /* Scope-related functions                                                    */
