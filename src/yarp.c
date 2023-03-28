@@ -2552,20 +2552,20 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate a new SplatNode node.
-static yp_node_t *
+static yp_splat_node_t *
 yp_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_splat_node_t *node = YP_NODE_ALLOC(yp_splat_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SPLAT_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (expression == NULL ? operator->end : expression->location.end)
+  *node = (yp_splat_node_t) {
+    {
+      .type = YP_NODE_SPLAT_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (expression == NULL ? operator->end : expression->location.end)
+      }
     },
-    .as.splat_node = {
-      .operator = *operator,
-      .expression = expression
-    }
+    .operator = *operator,
+    .expression = expression
   };
 
   return node;
@@ -6508,7 +6508,7 @@ parse_starred_expression(yp_parser_t *parser, yp_binding_power_t binding_power, 
   if (accept(parser, YP_TOKEN_USTAR)) {
     yp_token_t operator = parser->previous;
     yp_node_t *expression = parse_expression(parser, binding_power, "Expected expression after `*'.");
-    return yp_splat_node_create(parser, &operator, expression);
+    return (yp_node_t *) yp_splat_node_create(parser, &operator, expression);
   }
 
   return parse_expression(parser, binding_power, message);
@@ -6563,13 +6563,15 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
 
       return target;
     case YP_NODE_SPLAT_NODE: {
-      if (target->as.splat_node.expression != NULL) {
-        target->as.splat_node.expression = parse_target(parser, target->as.splat_node.expression, operator, value);
+      yp_splat_node_t *splat = (yp_splat_node_t *) target;
+
+      if (splat->expression != NULL) {
+        splat->expression = parse_target(parser, splat->expression, operator, value);
       }
 
       yp_location_t location = { .start = NULL, .end = NULL };
       yp_node_t *multi_write = yp_multi_write_node_create(parser, operator, value, &location, &location);
-      yp_multi_write_node_targets_append(multi_write, target);
+      yp_multi_write_node_targets_append(multi_write, (yp_node_t *) splat);
 
       return multi_write;
     }
@@ -6739,7 +6741,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
           name = parse_target(parser, name, &operator, NULL);
         }
 
-        yp_node_t *splat = yp_splat_node_create(parser, &star_operator, name);
+        yp_node_t *splat = (yp_node_t *) yp_splat_node_create(parser, &star_operator, name);
         yp_multi_write_node_targets_append(result, splat);
         has_splat = true;
       } else if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
@@ -6796,7 +6798,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
           // If we get here, then we have a trailing , in a multi write node.
           // We need to indicate this somehow in the tree, so we'll add an
           // anonymous splat.
-          yp_node_t *splat = yp_splat_node_create(parser, &parser->previous, NULL);
+          yp_node_t *splat = (yp_node_t *) yp_splat_node_create(parser, &parser->previous, NULL);
           yp_multi_write_node_targets_append(result, splat);
           return result;
         }
@@ -6980,7 +6982,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "unexpected * when parent method is not forwarding.");
           }
 
-          argument = yp_splat_node_create(parser, &operator, NULL);
+          argument = (yp_node_t *) yp_splat_node_create(parser, &operator, NULL);
         } else {
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
 
@@ -6988,7 +6990,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             yp_diagnostic_list_append(&parser->error_list, operator.start, expression->location.end, "Unexpected splat argument after double splat.");
           }
 
-          argument = yp_splat_node_create(parser, &operator, expression);
+          argument = (yp_node_t *) yp_splat_node_create(parser, &operator, expression);
         }
 
         break;
@@ -7107,7 +7109,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected splat after splat.");
       }
 
-      param = yp_splat_node_create(parser, &parser->previous, NULL);
+      param = (yp_node_t *) yp_splat_node_create(parser, &parser->previous, NULL);
       yp_node_list_append(parser, node, &node->as.required_destructured_parameter_node.parameters, param);
       break;
     }
@@ -7128,7 +7130,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
         yp_parser_local_add(parser, &name);
       }
 
-      param = yp_splat_node_create(parser, &star, value);
+      param = (yp_node_t *) yp_splat_node_create(parser, &star, value);
       parsed_splat = true;
     } else {
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier for a required parameter.");
@@ -8142,7 +8144,7 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
 }
 
 // Parse a rest pattern.
-static yp_node_t *
+static yp_splat_node_t *
 parse_pattern_rest(yp_parser_t *parser) {
   assert(parser->previous.type == YP_TOKEN_USTAR);
   yp_token_t operator = parser->previous;
@@ -8565,7 +8567,7 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
     case YP_TOKEN_USTAR: {
       if (top_pattern) {
         parser_lex(parser);
-        node = parse_pattern_rest(parser);
+        node = (yp_node_t *) parse_pattern_rest(parser);
         leading_rest = true;
         break;
       }
@@ -8598,7 +8600,7 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
       }
 
       if (accept(parser, YP_TOKEN_USTAR)) {
-        node = parse_pattern_rest(parser);
+        node = (yp_node_t *) parse_pattern_rest(parser);
 
         // If we have already parsed a splat pattern, then this is an error. We
         // will continue to parse the rest of the patterns, but we will indicate
@@ -8668,7 +8670,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         if (accept(parser, YP_TOKEN_USTAR)) {
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
-          element = yp_splat_node_create(parser, &parser->previous, expression);
+          element = (yp_node_t *) yp_splat_node_create(parser, &parser->previous, expression);
         } else if (match_any_type_p(parser, 2, YP_TOKEN_LABEL, YP_TOKEN_USTAR_STAR)) {
           if (parsed_bare_hash) {
             yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
@@ -9203,8 +9205,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_token_t operator = parser->previous;
               yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after `*' operator.");
 
-              yp_node_t *star_node = yp_splat_node_create(parser, &operator, expression);
-              yp_when_node_conditions_append(when_node, star_node);
+              yp_splat_node_t *splat_node = yp_splat_node_create(parser, &operator, expression);
+              yp_when_node_conditions_append(when_node, (yp_node_t *) splat_node);
 
               if (expression->type == YP_NODE_MISSING_NODE) break;
             } else {
@@ -10375,7 +10377,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an expression after '*'.");
       }
 
-      yp_node_t *splat = yp_splat_node_create(parser, &operator, name);
+      yp_node_t *splat = (yp_node_t *) yp_splat_node_create(parser, &operator, name);
       return parse_targets(parser, splat, YP_BINDING_POWER_INDEX);
     }
     case YP_TOKEN_BANG: {
@@ -10684,11 +10686,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           return parse_target(parser, node, &token, value);
         }
         case YP_NODE_SPLAT_NODE: {
-          switch (node->as.splat_node.expression->type) {
+          yp_splat_node_t *splat_node = (yp_splat_node_t *) node;
+
+          switch (splat_node->expression->type) {
             case YP_CASE_WRITABLE: {
               parser_lex(parser);
               yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
-              return parse_target(parser, node, &token, value);
+              return parse_target(parser, (yp_node_t *) splat_node, &token, value);
             }
             default: {}
           }
