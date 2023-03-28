@@ -577,21 +577,21 @@ yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token
 }
 
 // Allocate and initialize new a begin node.
-static yp_node_t *
+static yp_begin_node_t *
 yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_begin_node_t *node = YP_NODE_ALLOC(yp_begin_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_BEGIN_NODE,
-    .location = {
-      .start = begin_keyword->start,
-      .end = statements == NULL ? begin_keyword->end : statements->location.end
+  *node = (yp_begin_node_t) {
+    {
+      .type = YP_NODE_BEGIN_NODE,
+      .location = {
+        .start = begin_keyword->start,
+        .end = statements == NULL ? begin_keyword->end : statements->location.end
+      },
     },
-    .as.begin_node = {
-      .begin_keyword = *begin_keyword,
-      .statements = statements,
-      .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
-    }
+    .begin_keyword = *begin_keyword,
+    .statements = statements,
+    .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
   };
 
   return node;
@@ -599,42 +599,38 @@ yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_no
 
 // Set the rescue clause and end location of a begin node.
 static void
-yp_begin_node_rescue_clause_set(yp_node_t *node, yp_node_t *rescue_clause) {
-  assert(node->type == YP_NODE_BEGIN_NODE);
+yp_begin_node_rescue_clause_set(yp_begin_node_t *node, yp_node_t *rescue_clause) {
   assert(rescue_clause->type == YP_NODE_RESCUE_NODE);
 
-  node->location.end = rescue_clause->location.end;
-  node->as.begin_node.rescue_clause = rescue_clause;
+  node->base.location.end = rescue_clause->location.end;
+  node->rescue_clause = rescue_clause;
 }
 
 // Set the else clause and end location of a begin node.
 static void
-yp_begin_node_else_clause_set(yp_node_t *node, yp_node_t *else_clause) {
-  assert(node->type == YP_NODE_BEGIN_NODE);
+yp_begin_node_else_clause_set(yp_begin_node_t *node, yp_node_t *else_clause) {
   assert(else_clause->type == YP_NODE_ELSE_NODE);
 
-  node->location.end = else_clause->location.end;
-  node->as.begin_node.else_clause = else_clause;
+  node->base.location.end = else_clause->location.end;
+  node->else_clause = else_clause;
 }
 
 // Set the ensure clause and end location of a begin node.
 static void
-yp_begin_node_ensure_clause_set(yp_node_t *node, yp_node_t *ensure_clause) {
-  assert(node->type == YP_NODE_BEGIN_NODE);
+yp_begin_node_ensure_clause_set(yp_begin_node_t *node, yp_node_t *ensure_clause) {
   assert(ensure_clause->type == YP_NODE_ENSURE_NODE);
 
-  node->location.end = ensure_clause->location.end;
-  node->as.begin_node.ensure_clause = ensure_clause;
+  node->base.location.end = ensure_clause->location.end;
+  node->ensure_clause = ensure_clause;
 }
 
 // Set the end keyword and end location of a begin node.
 static void
-yp_begin_node_end_keyword_set(yp_node_t *node, const yp_token_t *end_keyword) {
-  assert(node->type == YP_NODE_BEGIN_NODE);
+yp_begin_node_end_keyword_set(yp_begin_node_t *node, const yp_token_t *end_keyword) {
   assert(end_keyword->type == YP_TOKEN_KEYWORD_END || end_keyword->type == YP_TOKEN_MISSING);
 
-  node->location.end = end_keyword->end;
-  node->as.begin_node.end_keyword = *end_keyword;
+  node->base.location.end = end_keyword->end;
+  node->end_keyword = *end_keyword;
 }
 
 // Allocate and initialize a new BlockArgumentNode node.
@@ -7344,7 +7340,7 @@ parse_parameters(
 // Parse any number of rescue clauses. This will form a linked list of if
 // nodes pointing to each other from the top.
 static inline void
-parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
+parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
   yp_node_t *current = NULL;
 
   while (accept(parser, YP_TOKEN_KEYWORD_RESCUE)) {
@@ -7457,10 +7453,10 @@ parse_rescues(yp_parser_t *parser, yp_node_t *parent_node) {
   }
 }
 
-static inline yp_node_t *
+static inline yp_begin_node_t *
 parse_rescues_as_begin(yp_parser_t *parser, yp_node_t *statements) {
   yp_token_t no_begin_token = not_provided(parser);
-  yp_node_t *begin_node = yp_begin_node_create(parser, &no_begin_token, statements);
+  yp_begin_node_t *begin_node = yp_begin_node_create(parser, &no_begin_token, statements);
   parse_rescues(parser, begin_node);
   return begin_node;
 }
@@ -7524,7 +7520,7 @@ parse_block(yp_parser_t *parser) {
       }
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-        statements = parse_rescues_as_begin(parser, statements);
+        statements = YP_NODE_DOWNCAST(parse_rescues_as_begin(parser, statements));
       }
     }
 
@@ -9289,14 +9285,14 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       }
 
-      yp_node_t *begin_node = yp_begin_node_create(parser, &begin_keyword, begin_statements);
+      yp_begin_node_t *begin_node = yp_begin_node_create(parser, &begin_keyword, begin_statements);
       parse_rescues(parser, begin_node);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `begin` statement.");
-      begin_node->location.end = parser->previous.end;
+      begin_node->base.location.end = parser->previous.end;
       yp_begin_node_end_keyword_set(begin_node, &parser->previous);
 
-      return begin_node;
+      return YP_NODE_DOWNCAST(begin_node);
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
       parser_lex(parser);
@@ -9382,7 +9378,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-          statements = parse_rescues_as_begin(parser, statements);
+          statements = YP_NODE_DOWNCAST(parse_rescues_as_begin(parser, statements));
         }
 
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
@@ -9421,7 +9417,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-        statements = parse_rescues_as_begin(parser, statements);
+        statements = YP_NODE_DOWNCAST(parse_rescues_as_begin(parser, statements));
       }
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
@@ -9638,7 +9634,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-          statements = parse_rescues_as_begin(parser, statements);
+          statements = YP_NODE_DOWNCAST(parse_rescues_as_begin(parser, statements));
         }
 
         yp_accepts_block_stack_pop(parser);
@@ -9829,7 +9825,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-        statements = parse_rescues_as_begin(parser, statements);
+        statements = YP_NODE_DOWNCAST(parse_rescues_as_begin(parser, statements));
       }
 
       yp_node_t *scope = parser->current_scope->node;
@@ -10434,7 +10430,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
-          body = parse_rescues_as_begin(parser, body);
+          body = YP_NODE_DOWNCAST(parse_rescues_as_begin(parser, body));
         }
 
         expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");

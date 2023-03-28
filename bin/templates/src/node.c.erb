@@ -208,10 +208,10 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
       <%- case param -%>
       <%- when TokenParam, OptionalTokenParam -%>
       <%- when NodeParam -%>
-      yp_node_memsize_node(((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+      yp_node_memsize_node((yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
       <%- when OptionalNodeParam -%>
       if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
-        yp_node_memsize_node(((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+        yp_node_memsize_node((yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
       }
       <%- when StringParam -%>
       memsize->memsize += yp_string_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);

@@ -92,12 +92,12 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
       <%= "yp_buffer_append_str(buffer, \", \", 2);" if index != 0 -%>
       <%- case param -%>
       <%- when NodeParam -%>
-      prettyprint_node(buffer, parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      prettyprint_node(buffer, parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when OptionalNodeParam -%>
       if (((yp_<%= node.human %>_t *)node)-><%= param.name %> == NULL) {
         yp_buffer_append_str(buffer, "nil", 3);
       } else {
-        prettyprint_node(buffer, parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+        prettyprint_node(buffer, parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       }
       <%- when StringParam -%>
       yp_buffer_append_str(buffer, "\"", 1);
