@@ -538,6 +538,7 @@ nodes:
 
           break foo
           ^^^^^^^^^
+    is_migrated: true
   - name: CallNode
     child_nodes:
       - name: receiver
