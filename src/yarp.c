@@ -277,21 +277,21 @@ yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 }
 
 // Allocate a new AlternationPatternNode node.
-static yp_node_t *
+static yp_alternation_pattern_node_t *
 yp_alternation_pattern_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_alternation_pattern_node_t *node = YP_NODE_ALLOC(yp_alternation_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ALTERNATION_PATTERN_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_alternation_pattern_node_t) {
+    {
+      .type = YP_NODE_ALTERNATION_PATTERN_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      },
     },
-    .as.alternation_pattern_node = {
-      .left = left,
-      .right = right,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .left = left,
+    .right = right,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -8404,7 +8404,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
           node = parse_pattern_primitive(parser, message);
         } else {
           yp_node_t *right = parse_pattern_primitive(parser, "Expected to be able to parse a pattern after `|'.");
-          node = yp_alternation_pattern_node_create(parser, node, right, &operator);
+          node = YP_NODE_DOWNCAST(yp_alternation_pattern_node_create(parser, node, right, &operator));
         }
 
         break;
@@ -8426,7 +8426,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
         if (node == NULL) {
           node = right;
         } else {
-          node = yp_alternation_pattern_node_create(parser, node, right, &operator);
+          node = YP_NODE_DOWNCAST(yp_alternation_pattern_node_create(parser, node, right, &operator));
         }
 
         break;

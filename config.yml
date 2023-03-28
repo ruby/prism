@@ -344,6 +344,7 @@ nodes:
 
           foo => bar | baz
                  ^^^^^^^^^
+    is_migrated: true
   - name: AndNode
     child_nodes:
       - name: left
