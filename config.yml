@@ -488,12 +488,14 @@ nodes:
 
           bar(&args)
           ^^^^^^^^^^
+    is_migrated: true
   - name: BlockNode
     child_nodes:
       - name: scope
         type: node
       - name: parameters
         type: node?
+        kind: BlockParametersNode
       - name: statements
         type: node?
       - name: opening_loc
@@ -505,6 +507,7 @@ nodes:
 
       [1, 2, 3].each { |i| puts x }
                      ^^^^^^^^^^^^^^
+    is_migrated: true
   - name: BlockParameterNode
     child_nodes:
       - name: name
@@ -517,6 +520,7 @@ nodes:
           def a(&b)
                 ^^
           end
+    is_migrated: true
   - name: BlockParametersNode
     child_nodes:
       - name: parameters
@@ -528,6 +532,7 @@ nodes:
 
           -> (a, b = 1; local) { }
               ^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: BreakNode
     child_nodes:
       - name: arguments
@@ -558,6 +563,7 @@ nodes:
         type: token?
       - name: block
         type: node?
+        kind: BlockNode
       - name: name
         type: string
     comment: |
@@ -836,6 +842,7 @@ nodes:
     child_nodes:
       - name: block
         type: node?
+        kind: BlockNode
     comment: |
       Represents the use of the `super` keyword without parentheses or arguments.
 
@@ -1071,6 +1078,7 @@ nodes:
         type: token?
       - name: parameters
         type: node?
+        kind: BlockParametersNode
       - name: rparen
         type: token?
       - name: statements
@@ -1632,6 +1640,7 @@ nodes:
         type: token?
       - name: block
         type: node?
+        kind: BlockNode
     is_migrated: true
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.
