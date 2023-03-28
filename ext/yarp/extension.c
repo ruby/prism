@@ -68,7 +68,7 @@ source_file_unload(source_t *source) {
 
 // Dump the AST corresponding to the given source to a string.
 static VALUE
-dump_source(source_t *source, char *filepath) {
+dump_source(source_t *source, const char *filepath) {
   yp_parser_t parser;
   yp_parser_init(&parser, source->source, source->size, filepath);
 

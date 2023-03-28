@@ -3,7 +3,6 @@ ProgramNode(0...38)(
   StatementsNode(0...38)(
     [SourceEncodingNode(0...12)(),
      SourceFileNode(13...21)(
-       KEYWORD___FILE__(13...21)("__FILE__"),
        "/fixtures/unparser/corpus/literal/pragma.rb"
      ),
      SourceLineNode(22...30)(),

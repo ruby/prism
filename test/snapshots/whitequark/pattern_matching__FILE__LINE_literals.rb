@@ -4,7 +4,6 @@ ProgramNode(8...111)(
     [CaseNode(8...111)(
        ArrayNode(13...51)(
          [SourceFileNode(14...22)(
-            KEYWORD___FILE__(14...22)("__FILE__"),
             "/fixtures/whitequark/pattern_matching__FILE__LINE_literals.rb"
           ),
           CallNode(24...36)(
@@ -25,7 +24,6 @@ ProgramNode(8...111)(
           ArrayPatternNode(65...99)(
             nil,
             [SourceFileNode(66...74)(
-               KEYWORD___FILE__(66...74)("__FILE__"),
                "/fixtures/whitequark/pattern_matching__FILE__LINE_literals.rb"
              ),
              SourceLineNode(76...84)(),

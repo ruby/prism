@@ -117,7 +117,6 @@ ProgramNode(0...185)(
      DefNode(131...149)(
        IDENTIFIER(144...145)("a"),
        SourceFileNode(135...143)(
-         KEYWORD___FILE__(135...143)("__FILE__"),
          "/fixtures/keyword_method_names.rb"
        ),
        nil,

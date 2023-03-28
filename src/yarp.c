@@ -2636,7 +2636,6 @@ yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *file_keyword) 
       .type = YP_NODE_SOURCE_FILE_NODE,
       .location = YP_LOCATION_TOKEN_VALUE(file_keyword),
     },
-    .file_keyword = *file_keyword,
     .filepath = parser->filepath_string,
   };
 
@@ -11351,7 +11350,7 @@ parse_program(yp_parser_t *parser) {
 
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
-yp_parser_init(yp_parser_t *parser, const char *source, size_t size, char *filepath) {
+yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath) {
   // Set filepath to the file that was passed
   if (!filepath) filepath = "";
   yp_string_t filepath_string;

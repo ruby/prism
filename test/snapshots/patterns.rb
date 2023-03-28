@@ -410,7 +410,6 @@ ProgramNode(0...3655)(
          "foo"
        ),
        SourceFileNode(291...299)(
-         KEYWORD___FILE__(291...299)("__FILE__"),
          "/fixtures/patterns.rb"
        ),
        (288...290)
@@ -1025,11 +1024,9 @@ ProgramNode(0...3655)(
        ),
        RangeNode(824...844)(
          SourceFileNode(824...832)(
-           KEYWORD___FILE__(824...832)("__FILE__"),
            "/fixtures/patterns.rb"
          ),
          SourceFileNode(836...844)(
-           KEYWORD___FILE__(836...844)("__FILE__"),
            "/fixtures/patterns.rb"
          ),
          (833...835)
@@ -2377,7 +2374,6 @@ ProgramNode(0...3655)(
          "foo"
        ),
        SourceFileNode(1921...1929)(
-         KEYWORD___FILE__(1921...1929)("__FILE__"),
          "/fixtures/patterns.rb"
        ),
        (1918...1920)
@@ -2991,7 +2987,6 @@ ProgramNode(0...3655)(
        ),
        [InNode(2609...2625)(
           SourceFileNode(2612...2620)(
-            KEYWORD___FILE__(2612...2620)("__FILE__"),
             "/fixtures/patterns.rb"
           ),
           nil,
@@ -3798,7 +3793,6 @@ ProgramNode(0...3655)(
             LocalVariableReadNode(3523...3526)(0),
             StatementsNode(3511...3519)(
               [SourceFileNode(3511...3519)(
-                 KEYWORD___FILE__(3511...3519)("__FILE__"),
                  "/fixtures/patterns.rb"
                )]
             ),

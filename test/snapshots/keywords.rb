@@ -6,7 +6,6 @@ ProgramNode(0...51)(
      SelfNode(13...17)(),
      SourceEncodingNode(19...31)(),
      SourceFileNode(33...41)(
-       KEYWORD___FILE__(33...41)("__FILE__"),
        "/fixtures/keywords.rb"
      ),
      SourceLineNode(43...51)()]

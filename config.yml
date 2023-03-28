@@ -1544,8 +1544,6 @@ nodes:
   - name: SourceFileNode
     is_migrated: true
     child_nodes:
-      - name: file_keyword
-        type: token
       - name: filepath
         type: string
     comment: |
