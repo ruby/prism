@@ -3,7 +3,7 @@ ProgramNode(0...28)(
   StatementsNode(0...28)(
     [CaseNode(0...28)(
        nil,
-       [WhenNode(11...23)(
+       [WhenNode(6...23)(
           KEYWORD_WHEN(6...10)("when"),
           [RegularExpressionNode(11...23)(
              REGEXP_BEGIN(11...14)("%r%"),

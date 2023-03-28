@@ -12,7 +12,7 @@ ProgramNode(0...43)(
          nil,
          "foo"
        ),
-       [WhenNode(15...22)(
+       [WhenNode(10...27)(
           KEYWORD_WHEN(10...14)("when"),
           [IntegerNode(15...16)(),
            SplatNode(18...22)(
@@ -41,7 +41,7 @@ ProgramNode(0...43)(
              )]
           )
         ),
-        WhenNode(34...38)(
+        WhenNode(29...38)(
           KEYWORD_WHEN(29...33)("when"),
           [SplatNode(34...38)(
              USTAR(34...35)("*"),

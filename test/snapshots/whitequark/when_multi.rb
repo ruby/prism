@@ -12,7 +12,7 @@ ProgramNode(0...37)(
          nil,
          "foo"
        ),
-       [WhenNode(15...27)(
+       [WhenNode(10...32)(
           KEYWORD_WHEN(10...14)("when"),
           [StringNode(15...20)(
              STRING_BEGIN(15...16)("'"),

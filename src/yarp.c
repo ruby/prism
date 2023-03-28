@@ -2878,25 +2878,39 @@ yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
   return node;
 }
 
-// Allocate a new WhenNode node.
-static yp_node_t *
-yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+// Allocate and initialize a new WhenNode node.
+static yp_when_node_t *
+yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword) {
+  yp_when_node_t *node = YP_NODE_ALLOC(yp_when_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_WHEN_NODE,
-    .location = {
-      .start = when_keyword->start,
-      .end = (statements == NULL ? NULL : statements->location.end)
+  *node = (yp_when_node_t) {
+    {
+      .type = YP_NODE_WHEN_NODE,
+      .location = {
+        .start = when_keyword->start,
+        .end = NULL
+      }
     },
-    .as.when_node = {
-      .when_keyword = *when_keyword,
-      .statements = statements
-    }
+    .when_keyword = *when_keyword,
+    .statements = NULL
   };
 
-  yp_node_list_init(&node->as.when_node.conditions);
+  yp_node_list_init(&node->conditions);
   return node;
+}
+
+// Append a new condition to a when node.
+static void
+yp_when_node_conditions_append(yp_when_node_t *node, yp_node_t *condition) {
+  node->base.location.end = condition->location.end;
+  yp_node_list_append2(&node->conditions, condition);
+}
+
+// Set the statements list of a when node.
+static void
+yp_when_node_statements_set(yp_when_node_t *node, yp_node_t *statements) {
+  if (statements->location.end > node->base.location.end) node->base.location.end = statements->location.end;
+  node->statements = statements;
 }
 
 // Allocate a new WhileNode node.
@@ -9162,7 +9176,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // the end of the list.
         while (accept(parser, YP_TOKEN_KEYWORD_WHEN)) {
           yp_token_t when_keyword = parser->previous;
-          yp_node_t *when_node = yp_when_node_create(parser, &when_keyword, NULL);
+          yp_when_node_t *when_node = yp_when_node_create(parser, &when_keyword);
 
           do {
             if (accept(parser, YP_TOKEN_USTAR)) {
@@ -9170,12 +9184,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after `*' operator.");
 
               yp_node_t *star_node = yp_splat_node_create(parser, &operator, expression);
-              yp_node_list_append(parser, when_node, &when_node->as.when_node.conditions, star_node);
+              yp_when_node_conditions_append(when_node, star_node);
 
               if (expression->type == YP_NODE_MISSING_NODE) break;
             } else {
               yp_node_t *condition = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value after when keyword.");
-              yp_node_list_append(parser, when_node, &when_node->as.when_node.conditions, condition);
+              yp_when_node_conditions_append(when_node, condition);
 
               if (condition->type == YP_NODE_MISSING_NODE) break;
             }
@@ -9188,10 +9202,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
 
           if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
-            when_node->as.when_node.statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
+            yp_when_node_statements_set(when_node, parse_statements(parser, YP_CONTEXT_CASE_WHEN));
           }
 
-          yp_case_node_condition_append(case_node, when_node);
+          yp_case_node_condition_append(case_node, (yp_node_t *) when_node);
         }
       } else {
         // At this point we expect that we're parsing a case-in node. We will

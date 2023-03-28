@@ -1699,6 +1699,7 @@ nodes:
         type: node[]
       - name: statements
         type: node?
+    is_migrated: true
     comment: |
       case true
       when true

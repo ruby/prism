@@ -3,7 +3,7 @@ ProgramNode(0...26)(
   StatementsNode(0...26)(
     [CaseNode(0...26)(
        nil,
-       [WhenNode(11...14)(
+       [WhenNode(6...21)(
           KEYWORD_WHEN(6...10)("when"),
           [CallNode(11...14)(
              nil,
