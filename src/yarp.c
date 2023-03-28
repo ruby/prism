@@ -2858,21 +2858,21 @@ yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const 
 }
 
 // Allocate a new UntilNode node.
-static yp_node_t *
+static yp_until_node_t *
 yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_node_t *statements) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_until_node_t *node = YP_NODE_ALLOC(yp_until_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_UNTIL_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = statements == NULL ? predicate->location.end : statements->location.end
+  *node = (yp_until_node_t) {
+    {
+      .type = YP_NODE_UNTIL_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = statements == NULL ? predicate->location.end : statements->location.end
+      },
     },
-    .as.until_node = {
-      .keyword = *keyword,
-      .predicate = predicate,
-      .statements = statements
-    }
+    .keyword = *keyword,
+    .predicate = predicate,
+    .statements = statements
   };
 
   return node;
@@ -9883,7 +9883,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
       }
 
-      return yp_until_node_create(parser, &keyword, predicate, statements);
+      return (yp_node_t *) yp_until_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_state_stack_push(&parser->do_loop_stack, true);
@@ -10943,7 +10943,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       yp_statements_node_body_append(statements, node);
 
       yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
-      return yp_until_node_create(parser, &token, predicate, statements);
+      return (yp_node_t *) yp_until_node_create(parser, &token, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE_MODIFIER: {
       parser_lex(parser);
