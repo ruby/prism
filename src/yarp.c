@@ -2674,10 +2674,10 @@ yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
 }
 
 // Allocate and initialize a new SuperNode node.
-static yp_node_t *
+static yp_super_node_t *
 yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_t *arguments) {
   assert(keyword->type == YP_TOKEN_KEYWORD_SUPER);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_super_node_t *node = YP_NODE_ALLOC(yp_super_node_t);
 
   const char *end;
   if (arguments->block != NULL) {
@@ -2690,19 +2690,19 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
     assert(false && "unreachable");
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_SUPER_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = end,
+  *node = (yp_super_node_t) {
+    {
+      .type = YP_NODE_SUPER_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = end,
+      }
     },
-    .as.super_node = {
-      .keyword = *keyword,
-      .lparen = arguments->opening,
-      .arguments = arguments->arguments,
-      .rparen = arguments->closing,
-      .block = arguments->block
-    }
+    .keyword = *keyword,
+    .lparen = arguments->opening,
+    .arguments = arguments->arguments,
+    .rparen = arguments->closing,
+    .block = arguments->block
   };
 
   return node;
@@ -9382,7 +9382,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return yp_forwarding_super_node_create(parser, &keyword, &arguments);
       }
 
-      return yp_super_node_create(parser, &keyword, &arguments);
+      return (yp_node_t *) yp_super_node_create(parser, &keyword, &arguments);
     }
     case YP_TOKEN_KEYWORD_YIELD: {
       parser_lex(parser);

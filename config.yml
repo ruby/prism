@@ -1612,6 +1612,7 @@ nodes:
         type: token?
       - name: block
         type: node?
+    is_migrated: true
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.
 
