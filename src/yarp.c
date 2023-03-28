@@ -1851,13 +1851,12 @@ yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *
 }
 
 // Allocate a new MissingNode node.
-static yp_node_t *
-yp_missing_node_create(yp_parser_t *parser, yp_location_t *location) {
-  yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) { .type = YP_NODE_MISSING_NODE, .location = *location };
+static yp_missing_node_t *
+yp_missing_node_create(yp_parser_t *parser, const char *start, const char *end) {
+  yp_missing_node_t *node = YP_NODE_ALLOC(yp_missing_node_t);
+  *node = (yp_missing_node_t) {{ .type = YP_NODE_MISSING_NODE, .location = { .start = start, .end = end } }};
   return node;
 }
-
 
 // Allocate a new ModuleNode node.
 static yp_module_node_t *
@@ -6819,7 +6818,7 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
             // we need to return a missing node.
             yp_node_destroy(parser, (yp_node_t *) result);
             yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected index after for.");
-            return yp_missing_node_create(parser, &(yp_location_t) { .start = operator.start, .end = operator.end });
+            return (yp_node_t *) yp_missing_node_create(parser, operator.start, operator.end);
           }
 
           // If we get here, then we have a trailing , in a multi write node.
@@ -7853,11 +7852,7 @@ parse_string_part(yp_parser_t *parser) {
         // attempt to lex this token and instead just return a missing node.
         default:
           expect(parser, YP_TOKEN_IDENTIFIER, "Expected a valid embedded variable.");
-
-          return yp_missing_node_create(parser, &(yp_location_t) {
-            .start = parser->current.start,
-            .end = parser->current.end
-          });
+          return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
       }
     }
     default:
@@ -7963,11 +7958,7 @@ parse_undef_argument(yp_parser_t *parser) {
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Expected a bare word or symbol argument.");
-
-      return yp_missing_node_create(parser, &(yp_location_t) {
-        .start = parser->current.start,
-        .end = parser->current.end,
-      });
+      return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
   }
 }
 
@@ -8005,11 +7996,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Expected a bare word, symbol or global variable argument.");
-
-      return yp_missing_node_create(parser, &(yp_location_t) {
-        .start = parser->current.start,
-        .end = parser->current.end
-      });
+      return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
   }
 }
 
@@ -8353,7 +8340,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           default:
             parser_lex(parser);
             yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Expected a key in the hash pattern.");
-            key = yp_missing_node_create(parser, &(yp_location_t) { .start = parser->previous.start, .end = parser->previous.end });
+            key = (yp_node_t *) yp_missing_node_create(parser, parser->previous.start, parser->previous.end);
             break;
         }
 
@@ -8388,8 +8375,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
         }
         default: {
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected an expression after the range operator.");
-
-          yp_node_t *right = yp_missing_node_create(parser, &(yp_location_t) { .start = operator.start, .end = operator.end });
+          yp_node_t *right = (yp_node_t *) yp_missing_node_create(parser, operator.start, operator.end);
           return (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
         }
       }
@@ -8467,8 +8453,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           // If we get here, then we have a pin operator followed by something
           // not understood. We'll create a missing node and return that.
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected a variable after the pin operator.");
-          yp_node_t *variable = yp_missing_node_create(parser, &(yp_location_t) { .start = operator.start, .end = operator.end });
-
+          yp_node_t *variable = (yp_node_t *) yp_missing_node_create(parser, operator.start, operator.end);
           return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
       }
@@ -8492,11 +8477,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
-
-      return yp_missing_node_create(parser, &(yp_location_t) {
-        .start = parser->current.start,
-        .end = parser->current.end
-      });
+      return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
   }
 }
 
@@ -8537,10 +8518,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
       }
       default: {
         yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, message);
-        yp_node_t *right = yp_missing_node_create(parser, &(yp_location_t) {
-          .start = parser->current.start,
-          .end = parser->current.end
-        });
+        yp_node_t *right = (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
 
         if (node == NULL) {
           node = right;
@@ -10384,10 +10362,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // context of a multiple assignment. We enforce that here. We'll still lex
       // past it though and create a missing node place.
       if (binding_power != YP_BINDING_POWER_STATEMENT) {
-        return yp_missing_node_create(parser, &(yp_location_t) {
-          .start = parser->previous.start,
-          .end = parser->previous.end,
-        });
+        return (yp_node_t *) yp_missing_node_create(parser, parser->previous.start, parser->previous.end);
       }
 
       yp_token_t operator = parser->previous;
@@ -10653,10 +10628,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         parser->recovering = true;
       }
 
-      return yp_missing_node_create(parser, &(yp_location_t) {
-        .start = parser->previous.start,
-        .end = parser->previous.end,
-      });
+      return (yp_node_t *) yp_missing_node_create(parser, parser->previous.start, parser->previous.end);
   }
 }
 
@@ -11014,10 +10986,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         // accidentally move past a ':' token that occurs after the syntax
         // error.
         yp_token_t colon = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
-        yp_node_t *false_expression = yp_missing_node_create(parser, &(yp_location_t) {
-          .start = colon.start,
-          .end = colon.end,
-        });
+        yp_node_t *false_expression = (yp_node_t *) yp_missing_node_create(parser, colon.start, colon.end);
 
         return yp_if_node_ternary_create(parser, node, &token, true_expression, &colon, false_expression);
       }
@@ -11093,12 +11062,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         }
         default: {
           yp_diagnostic_list_append(&parser->error_list, delimiter.start, delimiter.end, "Expected identifier or constant after '::'");
-
-          yp_node_t *child = yp_missing_node_create(parser, &(yp_location_t) {
-            .start = delimiter.start,
-            .end = delimiter.end,
-          });
-
+          yp_node_t *child = (yp_node_t *) yp_missing_node_create(parser, delimiter.start, delimiter.end);
           return (yp_node_t *)yp_constant_path_node_create(parser, node, &delimiter, child);
         }
       }

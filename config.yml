@@ -1153,6 +1153,7 @@ nodes:
           foo => bar
           ^^^^^^^^^^
   - name: MissingNode
+    is_migrated: true
     comment: |
       Represents a node that is missing from the source and results in a syntax
       error.
