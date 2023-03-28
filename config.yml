@@ -1639,6 +1639,7 @@ nodes:
           %i[foo]
              ^^^
   - name: TrueNode
+    is_migrated: true
     comment: |
       Represents the use of the literal `true` keyword.
 

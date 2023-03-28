@@ -2768,10 +2768,13 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_node_t *node) {
 }
 
 // Allocate and initialize a new TrueNode node.
-static yp_node_t *
+static yp_true_node_t *
 yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_TRUE);
-  return yp_node_create_from_token(parser, YP_NODE_TRUE_NODE, token);
+  yp_true_node_t *node = YP_NODE_ALLOC(yp_true_node_t);
+
+  *node = (yp_true_node_t) {{ .type = YP_NODE_TRUE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new UndefNode node.
@@ -9533,7 +9536,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_self_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_TRUE:
-                receiver = yp_true_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_true_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_FALSE:
                 receiver = yp_false_node_create(parser, &identifier);
@@ -9878,7 +9881,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_self_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_TRUE:
       parser_lex(parser);
-      return yp_true_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNTIL: {
       yp_state_stack_push(&parser->do_loop_stack, true);
       parser_lex(parser);
