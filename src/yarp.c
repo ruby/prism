@@ -1969,65 +1969,65 @@ yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *oper
 }
 
 // Allocate and initialize a new OperatorAndAssignmentNode node.
-static yp_node_t *
+static yp_operator_and_assignment_node_t *
 yp_operator_and_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
   assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_operator_and_assignment_node_t *node = YP_NODE_ALLOC(yp_operator_and_assignment_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPERATOR_AND_ASSIGNMENT_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = value->location.end
+  *node = (yp_operator_and_assignment_node_t) {
+    {
+      .type = YP_NODE_OPERATOR_AND_ASSIGNMENT_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = value->location.end
+      }
     },
-    .as.operator_and_assignment_node = {
-      .target = target,
-      .value = value,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .target = target,
+    .value = value,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
 }
 
 // Allocate a new OperatorAssignmentNode node.
-static yp_node_t *
+static yp_operator_assignment_node_t *
 yp_operator_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_operator_assignment_node_t *node = YP_NODE_ALLOC(yp_operator_assignment_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPERATOR_ASSIGNMENT_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = value->location.end
+  *node = (yp_operator_assignment_node_t) {
+    {
+      .type = YP_NODE_OPERATOR_ASSIGNMENT_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = value->location.end
+      }
     },
-    .as.operator_assignment_node = {
-      .target = target,
-      .operator = *operator,
-      .value = value
-    }
+    .target = target,
+    .operator = *operator,
+    .value = value
   };
 
   return node;
 }
 
 // Allocate and initialize a new OperatorOrAssignmentNode node.
-static yp_node_t *
+static yp_operator_or_assignment_node_t *
 yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
   assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_operator_or_assignment_node_t *node = YP_NODE_ALLOC(yp_operator_or_assignment_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_OPERATOR_OR_ASSIGNMENT_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = value->location.end
+  *node = (yp_operator_or_assignment_node_t) {
+    {
+      .type = YP_NODE_OPERATOR_OR_ASSIGNMENT_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = value->location.end
+      }
     },
-    .as.operator_or_assignment_node = {
-      .target = target,
-      .value = value,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .target = target,
+    .value = value,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -10750,7 +10750,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           }
 
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
-          return yp_operator_and_assignment_node_create(parser, node, &token, value);
+          return (yp_node_t *) yp_operator_and_assignment_node_create(parser, node, &token, value);
         }
         default:
           parser_lex(parser);
@@ -10787,7 +10787,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           }
 
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
-          return yp_operator_or_assignment_node_create(parser, node, &token, value);
+          return (yp_node_t *) yp_operator_or_assignment_node_create(parser, node, &token, value);
         }
         default:
           parser_lex(parser);
@@ -10828,7 +10828,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
           parser_lex(parser);
           yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
-          return yp_operator_assignment_node_create(parser, node, &token, value);
+          return (yp_node_t *) yp_operator_assignment_node_create(parser, node, &token, value);
         }
         default:
           parser_lex(parser);

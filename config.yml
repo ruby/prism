@@ -1222,6 +1222,7 @@ nodes:
                 ^^^^^
           end
   - name: OperatorAndAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1235,6 +1236,7 @@ nodes:
           target &&= value
           ^^^^^^^^^^^^^^^^
   - name: OperatorAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1248,6 +1250,7 @@ nodes:
           foo += bar
           ^^^^^^^^^^
   - name: OperatorOrAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
