@@ -2470,20 +2470,20 @@ yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate a new ReturnNode node.
-static yp_node_t *
+static yp_return_node_t *
 yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_return_node_t *node = YP_NODE_ALLOC(yp_return_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_RETURN_NODE,
-    .location = {
-      .start = keyword->start,
-      .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
+  *node = (yp_return_node_t) {
+    {
+      .type = YP_NODE_RETURN_NODE,
+      .location = {
+        .start = keyword->start,
+        .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
+      }
     },
-    .as.return_node = {
-      .keyword = *keyword,
-      .arguments = arguments
-    }
+    .keyword = *keyword,
+    .arguments = arguments
   };
 
   return node;
@@ -9385,7 +9385,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         case YP_TOKEN_KEYWORD_NEXT:
           return yp_next_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_RETURN:
-          return yp_return_node_create(parser, &keyword, arguments);
+          return (yp_node_t *) yp_return_node_create(parser, &keyword, arguments);
         default:
           assert(false && "unreachable");
       }

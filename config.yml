@@ -1508,6 +1508,7 @@ nodes:
       - name: arguments
         type: node?
         kind: ArgumentsNode
+    is_migrated: true
     comment: |
       Represents the use of the `return` keyword.
 
