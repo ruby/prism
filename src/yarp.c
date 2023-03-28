@@ -6542,7 +6542,6 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // When it was parsed in the prefix position, foo was seen as a
           // method call with no receiver and no arguments. Now we have an
           // =, so we know it's a local variable write.
-          yp_node_destroy(parser, target);
           yp_token_t name = call_node->message;
           yp_parser_local_add(parser, &name);
 
