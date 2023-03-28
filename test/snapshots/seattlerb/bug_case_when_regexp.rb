@@ -8,7 +8,7 @@ ProgramNode(0...26)(
          nil,
          "x"
        ),
-       [WhenNode(14...17)(
+       [WhenNode(9...17)(
           KEYWORD_WHEN(9...13)("when"),
           [RegularExpressionNode(14...17)(
              REGEXP_BEGIN(14...15)("/"),

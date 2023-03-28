@@ -114,7 +114,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       uint32_t <%= param.name %>_size = ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size;
       yp_buffer_append_u32(buffer, <%= param.name %>_size);
       for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
-        yp_serialize_node(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], buffer);
+        yp_serialize_node(parser, (yp_node_t *) ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], buffer);
       }
       <%- when TokenParam -%>
       serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
