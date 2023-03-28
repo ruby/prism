@@ -298,21 +298,21 @@ yp_alternation_pattern_node_create(yp_parser_t *parser, yp_node_t *left, yp_node
 }
 
 // Allocate and initialize a new and node.
-static yp_node_t *
+static yp_and_node_t *
 yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_and_node_t *node = YP_NODE_ALLOC(yp_and_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_AND_NODE,
-    .location = {
-      .start = left->location.start,
-      .end = right->location.end
+  *node = (yp_and_node_t) {
+    {
+      .type = YP_NODE_AND_NODE,
+      .location = {
+        .start = left->location.start,
+        .end = right->location.end
+      },
     },
-    .as.and_node = {
-      .left = left,
-      .operator = *operator,
-      .right = right
-    }
+    .left = left,
+    .operator = *operator,
+    .right = right
   };
 
   return node;
@@ -10702,7 +10702,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
       parser_lex(parser);
 
       yp_node_t *right = parse_expression(parser, binding_power, "Expected a value after the operator.");
-      return yp_and_node_create(parser, node, &token, right);
+      return YP_NODE_DOWNCAST(yp_and_node_create(parser, node, &token, right));
     }
     case YP_TOKEN_KEYWORD_OR:
     case YP_TOKEN_PIPE_PIPE: {

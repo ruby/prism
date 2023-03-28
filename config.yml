@@ -357,6 +357,7 @@ nodes:
 
           left and right
           ^^^^^^^^^^^^^^
+    is_migrated: true
   - name: ArgumentsNode
     child_nodes:
       - name: arguments
