@@ -595,6 +595,7 @@ nodes:
       ^^^^^^^^^
       when false
       end
+    is_migrated: true
   - name: ClassNode
     child_nodes:
       - name: scope

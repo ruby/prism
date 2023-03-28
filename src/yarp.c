@@ -956,54 +956,49 @@ yp_call_node_vcall_p(yp_node_t *node) {
 }
 
 // Allocate and initialize a new CaseNode node.
-static yp_node_t *
+static yp_case_node_t *
 yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_node_t *consequent, const yp_token_t *end_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_case_node_t *node = YP_NODE_ALLOC(yp_case_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CASE_NODE,
-    .location = {
-      .start = case_keyword->start,
-      .end = end_keyword->end
+  *node = (yp_case_node_t) {
+    {
+      .type = YP_NODE_CASE_NODE,
+      .location = {
+        .start = case_keyword->start,
+        .end = end_keyword->end
+      },
     },
-    .as.case_node = {
-      .predicate = predicate,
-      .consequent = consequent,
-      .case_keyword_loc = YP_LOCATION_TOKEN_VALUE(case_keyword),
-      .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
-    }
+    .predicate = predicate,
+    .consequent = consequent,
+    .case_keyword_loc = YP_LOCATION_TOKEN_VALUE(case_keyword),
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
-  yp_node_list_init(&node->as.case_node.conditions);
+  yp_node_list_init(&node->conditions);
   return node;
 }
 
 // Append a new condition to a CaseNode node.
 static void
-yp_case_node_condition_append(yp_node_t *node, yp_node_t *condition) {
-  assert(node->type == YP_NODE_CASE_NODE);
+yp_case_node_condition_append(yp_case_node_t *node, yp_node_t *condition) {
   assert(condition->type == YP_NODE_WHEN_NODE || condition->type == YP_NODE_IN_NODE);
 
-  yp_node_list_append2(&node->as.case_node.conditions, condition);
-  node->location.end = condition->location.end;
+  yp_node_list_append2(&node->conditions, condition);
+  node->base.location.end = condition->location.end;
 }
 
 // Set the consequent of a CaseNode node.
 static void
-yp_case_node_consequent_set(yp_node_t *node, yp_node_t *consequent) {
-  assert(node->type == YP_NODE_CASE_NODE);
-
-  node->as.case_node.consequent = consequent;
-  node->location.end = consequent->location.end;
+yp_case_node_consequent_set(yp_case_node_t *node, yp_node_t *consequent) {
+  node->consequent = consequent;
+  node->base.location.end = consequent->location.end;
 }
 
 // Set the end location for a CaseNode node.
 static void
-yp_case_node_end_keyword_loc_set(yp_node_t *node, const yp_token_t *end_keyword) {
-  assert(node->type == YP_NODE_CASE_NODE);
-
-  node->location.end = end_keyword->end;
-  node->as.case_node.end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
+yp_case_node_end_keyword_loc_set(yp_case_node_t *node, const yp_token_t *end_keyword) {
+  node->base.location.end = end_keyword->end;
+  node->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
 }
 
 // Allocate a new ClassNode node.
@@ -9150,13 +9145,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {
-        return yp_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous);
+        return YP_NODE_DOWNCAST(yp_case_node_create(parser, &case_keyword, predicate, NULL, &parser->previous));
       }
 
       // At this point we can create a case node, though we don't yet know if it
       // is a case-in or case-when node.
       yp_token_t end_keyword = not_provided(parser);
-      yp_node_t *case_node = yp_case_node_create(parser, &case_keyword, predicate, NULL, &end_keyword);
+      yp_case_node_t *case_node = yp_case_node_create(parser, &case_keyword, predicate, NULL, &end_keyword);
 
       if (match_type_p(parser, YP_TOKEN_KEYWORD_WHEN)) {
         // At this point we've seen a when keyword, so we know this is a
@@ -9269,7 +9264,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected case statement to end with an end keyword.");
       yp_case_node_end_keyword_loc_set(case_node, &parser->previous);
-      return case_node;
+      return YP_NODE_DOWNCAST(case_node);
     }
     case YP_TOKEN_KEYWORD_BEGIN: {
       parser_lex(parser);
