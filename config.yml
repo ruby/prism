@@ -1564,6 +1564,7 @@ nodes:
         type: node
       - name: right
         type: node
+    is_migrated: true
     comment: |
       Represents the use of compile-time string concatenation.
 
@@ -1577,6 +1578,7 @@ nodes:
         type: node?
       - name: closing
         type: token
+    is_migrated: true
     comment: |
       Represents an interpolated set of statements within a string.
 
@@ -1592,6 +1594,7 @@ nodes:
         type: token?
       - name: unescaped
         type: string
+    is_migrated: true
     comment: |
       Represents a string literal, a string contained within a `%w` list, or
       plain string content within an interpolated string.
@@ -1617,6 +1620,7 @@ nodes:
         type: token?
       - name: block
         type: node?
+    is_migrated: true
     comment: |
       Represents the use of the `super` keyword with parentheses or arguments.
 
@@ -1635,6 +1639,7 @@ nodes:
         type: token?
       - name: unescaped
         type: string
+    is_migrated: true
     comment: |
       Represents a symbol literal or a symbol contained within a `%i` list.
 
