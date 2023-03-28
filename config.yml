@@ -1515,6 +1515,7 @@ nodes:
       Represents the local variables within a given lexical scope. These are
       attached to nodes where a new scope is created.
   - name: SelfNode
+    is_migrated: true
     comment: |
       Represents the `self` keyword.
 

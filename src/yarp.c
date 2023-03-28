@@ -2500,10 +2500,13 @@ yp_scope_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate and initialize a new SelfNode node.
-static yp_node_t *
+static yp_self_node_t *
 yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_KEYWORD_SELF);
-  return yp_node_create_from_token(parser, YP_NODE_SELF_NODE, token);
+  yp_self_node_t *node = YP_NODE_ALLOC(yp_self_node_t);
+
+  *node = (yp_self_node_t) {{ .type = YP_NODE_SELF_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate a new SingletonClassNode node.
@@ -9550,7 +9553,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_nil_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_SELF:
-                receiver = yp_self_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_self_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_TRUE:
                 receiver = (yp_node_t *) yp_true_node_create(parser, &identifier);
@@ -9897,7 +9900,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return yp_retry_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_SELF:
       parser_lex(parser);
-      return yp_self_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_self_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_TRUE:
       parser_lex(parser);
       return (yp_node_t *) yp_true_node_create(parser, &parser->previous);
