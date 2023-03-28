@@ -852,9 +852,7 @@ ProgramNode(0...960)(
               nil,
               IDENTIFIER(411...415)("puts"),
               nil,
-              ArgumentsNode(416...417)(
-                [LocalVariableReadNode(416...417)(IDENTIFIER(416...417)("a"))]
-              ),
+              ArgumentsNode(416...417)([LocalVariableReadNode(416...417)()]),
               nil,
               nil,
               "puts"

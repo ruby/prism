@@ -3,7 +3,7 @@ ProgramNode(0...7)(
   StatementsNode(0...7)(
     [MatchRequiredNode(0...7)(
        IntegerNode(0...2)(),
-       LocalVariableWriteNode(6...7)(IDENTIFIER(6...7)("n"), nil, nil),
+       LocalVariableWriteNode(6...7)((6...7), nil, nil),
        (3...5)
      )]
   )

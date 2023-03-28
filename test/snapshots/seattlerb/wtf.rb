@@ -29,8 +29,8 @@ ProgramNode(0...16)(
             nil,
             ArgumentsNode(17...23)(
               [ArrayNode(17...23)(
-                 [LocalVariableReadNode(18...19)(IDENTIFIER(18...19)("a")),
-                  LocalVariableReadNode(21...22)(IDENTIFIER(21...22)("b"))],
+                 [LocalVariableReadNode(18...19)(),
+                  LocalVariableReadNode(21...22)()],
                  BRACKET_LEFT_ARRAY(17...18)("["),
                  BRACKET_RIGHT(22...23)("]")
                )]

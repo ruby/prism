@@ -1103,9 +1103,7 @@ nodes:
           ->(value) { value * 2 }
           ^^^^^^^^^^^^^^^^^^^^^^^
   - name: LocalVariableReadNode
-    child_nodes:
-      - name: name
-        type: token
+    is_migrated: true
     comment: |
       Represents reading a local variable. Note that this requires that a local
       variable of the same name has already been written to in the same scope,
@@ -1114,13 +1112,14 @@ nodes:
           foo
           ^^^
   - name: LocalVariableWriteNode
+    is_migrated: true
     child_nodes:
-      - name: name
-        type: token
-      - name: operator
-        type: token?
+      - name: name_loc
+        type: location
       - name: value
         type: node?
+      - name: operator_loc
+        type: location?
     comment: |
       Represents writing to a local variable.
 

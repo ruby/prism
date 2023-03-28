@@ -2,8 +2,7 @@ ProgramNode(0...41)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("c"), IDENTIFIER(35...36)("d")]),
   StatementsNode(0...41)(
     [LocalVariableWriteNode(0...30)(
-       IDENTIFIER(0...1)("c"),
-       EQUAL(2...3)("="),
+       (0...1),
        HeredocNode(12...30)(
          HEREDOC_START(4...11)("<<'CCC'"),
          [StringNode(12...30)(
@@ -14,12 +13,13 @@ ProgramNode(0...41)(
           )],
          HEREDOC_END(30...34)("CCC\n"),
          0
-       )
+       ),
+       (2...3)
      ),
      LocalVariableWriteNode(35...41)(
-       IDENTIFIER(35...36)("d"),
-       EQUAL(37...38)("="),
-       IntegerNode(39...41)()
+       (35...36),
+       IntegerNode(39...41)(),
+       (37...38)
      )]
   )
 )

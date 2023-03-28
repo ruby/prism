@@ -34,9 +34,7 @@ ProgramNode(0...76)(
            ),
            []
          ),
-         StatementsNode(29...30)(
-           [LocalVariableReadNode(29...30)(IDENTIFIER(29...30)("a"))]
-         ),
+         StatementsNode(29...30)([LocalVariableReadNode(29...30)()]),
          (18...19),
          (31...32)
        ),

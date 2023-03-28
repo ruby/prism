@@ -5,7 +5,7 @@ ProgramNode(0...24)(
        IntegerNode(0...1)(),
        ArrayPatternNode(5...8)(
          nil,
-         [LocalVariableWriteNode(6...7)(IDENTIFIER(6...7)("a"), nil, nil)],
+         [LocalVariableWriteNode(6...7)((6...7), nil, nil)],
          nil,
          [],
          (5...6),
@@ -13,12 +13,12 @@ ProgramNode(0...24)(
        ),
        (2...4)
      ),
-     LocalVariableReadNode(10...11)(IDENTIFIER(10...11)("a")),
+     LocalVariableReadNode(10...11)(),
      MatchPredicateNode(13...21)(
        IntegerNode(13...14)(),
        ArrayPatternNode(18...21)(
          nil,
-         [LocalVariableWriteNode(19...20)(IDENTIFIER(19...20)("a"), nil, nil)],
+         [LocalVariableWriteNode(19...20)((19...20), nil, nil)],
          nil,
          [],
          (18...19),
@@ -26,6 +26,6 @@ ProgramNode(0...24)(
        ),
        (15...17)
      ),
-     LocalVariableReadNode(23...24)(IDENTIFIER(23...24)("a"))]
+     LocalVariableReadNode(23...24)()]
   )
 )

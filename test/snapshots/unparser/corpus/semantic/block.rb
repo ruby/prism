@@ -122,9 +122,7 @@ ProgramNode(0...148)(
            ),
            []
          ),
-         StatementsNode(111...112)(
-           [LocalVariableReadNode(111...112)(IDENTIFIER(111...112)("a"))]
-         ),
+         StatementsNode(111...112)([LocalVariableReadNode(111...112)()]),
          (94...96),
          (113...116)
        ),

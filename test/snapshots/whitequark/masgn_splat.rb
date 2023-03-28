@@ -30,8 +30,8 @@ ProgramNode(0...0)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(12...13)(IDENTIFIER(12...13)("c"), nil, nil),
-        LocalVariableWriteNode(15...16)(IDENTIFIER(15...16)("d"), nil, nil)],
+        LocalVariableWriteNode(12...13)((12...13), nil, nil),
+        LocalVariableWriteNode(15...16)((15...16), nil, nil)],
        EQUAL(17...18)("="),
        CallNode(19...22)(
          nil,
@@ -49,7 +49,7 @@ ProgramNode(0...0)(
      MultiWriteNode(24...32)(
        [SplatNode(24...26)(
           USTAR(24...25)("*"),
-          LocalVariableWriteNode(25...26)(IDENTIFIER(25...26)("b"), nil, nil)
+          LocalVariableWriteNode(25...26)((25...26), nil, nil)
         )],
        EQUAL(27...28)("="),
        CallNode(29...32)(
@@ -69,18 +69,14 @@ ProgramNode(0...0)(
        [MultiWriteNode(34...36)(
           [SplatNode(34...36)(
              USTAR(34...35)("*"),
-             LocalVariableWriteNode(35...36)(
-               IDENTIFIER(35...36)("b"),
-               nil,
-               nil
-             )
+             LocalVariableWriteNode(35...36)((35...36), nil, nil)
            )],
           nil,
           nil,
           nil,
           nil
         ),
-        LocalVariableWriteNode(38...39)(IDENTIFIER(38...39)("c"), nil, nil)],
+        LocalVariableWriteNode(38...39)((38...39), nil, nil)],
        EQUAL(40...41)("="),
        CallNode(42...45)(
          nil,
@@ -116,7 +112,7 @@ ProgramNode(0...0)(
        nil
      ),
      MultiWriteNode(67...77)(
-       [LocalVariableWriteNode(67...68)(IDENTIFIER(67...68)("a"), nil, nil),
+       [LocalVariableWriteNode(67...68)((67...68), nil, nil),
         SplatNode(70...71)(USTAR(70...71)("*"), nil)],
        EQUAL(72...73)("="),
        CallNode(74...77)(
@@ -133,9 +129,9 @@ ProgramNode(0...0)(
        nil
      ),
      MultiWriteNode(79...92)(
-       [LocalVariableWriteNode(79...80)(IDENTIFIER(79...80)("a"), nil, nil),
+       [LocalVariableWriteNode(79...80)((79...80), nil, nil),
         SplatNode(82...83)(USTAR(82...83)("*"), nil),
-        LocalVariableWriteNode(85...86)(IDENTIFIER(85...86)("c"), nil, nil)],
+        LocalVariableWriteNode(85...86)((85...86), nil, nil)],
        EQUAL(87...88)("="),
        CallNode(89...92)(
          nil,
@@ -151,10 +147,10 @@ ProgramNode(0...0)(
        nil
      ),
      MultiWriteNode(94...105)(
-       [LocalVariableWriteNode(94...95)(IDENTIFIER(94...95)("a"), nil, nil),
+       [LocalVariableWriteNode(94...95)((94...95), nil, nil),
         SplatNode(97...99)(
           USTAR(97...98)("*"),
-          LocalVariableWriteNode(98...99)(IDENTIFIER(98...99)("b"), nil, nil)
+          LocalVariableWriteNode(98...99)((98...99), nil, nil)
         )],
        EQUAL(100...101)("="),
        CallNode(102...105)(
@@ -171,24 +167,12 @@ ProgramNode(0...0)(
        nil
      ),
      MultiWriteNode(107...121)(
-       [LocalVariableWriteNode(107...108)(
-          IDENTIFIER(107...108)("a"),
-          nil,
-          nil
-        ),
+       [LocalVariableWriteNode(107...108)((107...108), nil, nil),
         SplatNode(110...112)(
           USTAR(110...111)("*"),
-          LocalVariableWriteNode(111...112)(
-            IDENTIFIER(111...112)("b"),
-            nil,
-            nil
-          )
+          LocalVariableWriteNode(111...112)((111...112), nil, nil)
         ),
-        LocalVariableWriteNode(114...115)(
-          IDENTIFIER(114...115)("c"),
-          nil,
-          nil
-        )],
+        LocalVariableWriteNode(114...115)((114...115), nil, nil)],
        EQUAL(116...117)("="),
        CallNode(118...121)(
          nil,
@@ -204,16 +188,8 @@ ProgramNode(0...0)(
        nil
      ),
      MultiWriteNode(123...0)(
-       [LocalVariableWriteNode(123...124)(
-          IDENTIFIER(123...124)("a"),
-          nil,
-          nil
-        ),
-        LocalVariableWriteNode(126...127)(
-          IDENTIFIER(126...127)("b"),
-          nil,
-          nil
-        )],
+       [LocalVariableWriteNode(123...124)((123...124), nil, nil),
+        LocalVariableWriteNode(126...127)((126...127), nil, nil)],
        EQUAL(128...129)("="),
        ArrayNode(0...0)(
          [SplatNode(130...134)(

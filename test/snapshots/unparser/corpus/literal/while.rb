@@ -43,11 +43,9 @@ ProgramNode(0...616)(
                    ),
                    StatementsNode(43...52)(
                      [LocalVariableWriteNode(43...52)(
-                        IDENTIFIER(43...46)("foo"),
-                        EQUAL(47...48)("="),
-                        LocalVariableReadNode(49...52)(
-                          IDENTIFIER(49...52)("bar")
-                        )
+                        (43...46),
+                        LocalVariableReadNode(49...52)(),
+                        (47...48)
                       )]
                    )
                  )]
@@ -68,7 +66,7 @@ ProgramNode(0...616)(
          [WhileNode(90...89)(
             KEYWORD_WHILE_MODIFIER(90...95)("while"),
             CallNode(96...106)(
-              LocalVariableReadNode(96...99)(IDENTIFIER(96...99)("foo")),
+              LocalVariableReadNode(96...99)(),
               nil,
               BANG_EQUAL(100...102)("!="),
               nil,
@@ -90,8 +88,7 @@ ProgramNode(0...616)(
             ),
             StatementsNode(80...89)(
               [LocalVariableWriteNode(80...89)(
-                 IDENTIFIER(80...83)("foo"),
-                 EQUAL(84...85)("="),
+                 (80...83),
                  CallNode(86...89)(
                    nil,
                    nil,
@@ -101,7 +98,8 @@ ProgramNode(0...616)(
                    nil,
                    nil,
                    "bar"
-                 )
+                 ),
+                 (84...85)
                )]
             )
           )]
@@ -121,11 +119,10 @@ ProgramNode(0...616)(
        StatementsNode(133...132)(
          [WhileNode(133...132)(
             KEYWORD_WHILE_MODIFIER(133...138)("while"),
-            LocalVariableReadNode(139...142)(IDENTIFIER(139...142)("foo")),
+            LocalVariableReadNode(139...142)(),
             StatementsNode(123...132)(
               [LocalVariableWriteNode(123...132)(
-                 IDENTIFIER(123...126)("foo"),
-                 EQUAL(127...128)("="),
+                 (123...126),
                  CallNode(129...132)(
                    nil,
                    nil,
@@ -135,7 +132,8 @@ ProgramNode(0...616)(
                    nil,
                    nil,
                    "bar"
-                 )
+                 ),
+                 (127...128)
                )]
             )
           )]
@@ -149,11 +147,10 @@ ProgramNode(0...616)(
        StatementsNode(169...168)(
          [UntilNode(169...168)(
             KEYWORD_UNTIL_MODIFIER(169...174)("until"),
-            LocalVariableReadNode(175...178)(IDENTIFIER(175...178)("foo")),
+            LocalVariableReadNode(175...178)(),
             StatementsNode(159...168)(
               [LocalVariableWriteNode(159...168)(
-                 IDENTIFIER(159...162)("foo"),
-                 EQUAL(163...164)("="),
+                 (159...162),
                  CallNode(165...168)(
                    nil,
                    nil,
@@ -163,7 +160,8 @@ ProgramNode(0...616)(
                    nil,
                    nil,
                    "bar"
-                 )
+                 ),
+                 (163...164)
                )]
             )
           )]
@@ -189,8 +187,7 @@ ProgramNode(0...616)(
             ),
             StatementsNode(209...218)(
               [LocalVariableWriteNode(209...218)(
-                 IDENTIFIER(209...212)("foo"),
-                 EQUAL(213...214)("="),
+                 (209...212),
                  CallNode(215...218)(
                    nil,
                    nil,
@@ -200,7 +197,8 @@ ProgramNode(0...616)(
                    nil,
                    nil,
                    "bar"
-                 )
+                 ),
+                 (213...214)
                )]
             )
           )]
@@ -249,8 +247,7 @@ ProgramNode(0...616)(
                    ),
                    StatementsNode(274...283)(
                      [LocalVariableWriteNode(274...283)(
-                        IDENTIFIER(274...277)("foo"),
-                        EQUAL(278...279)("="),
+                        (274...277),
                         CallNode(280...283)(
                           nil,
                           nil,
@@ -260,7 +257,8 @@ ProgramNode(0...616)(
                           nil,
                           nil,
                           "bar"
-                        )
+                        ),
+                        (278...279)
                       )]
                    )
                  )]
@@ -301,13 +299,10 @@ ProgramNode(0...616)(
               StatementsNode(329...354)(
                 [WhileNode(329...354)(
                    KEYWORD_WHILE(329...334)("while"),
-                   LocalVariableReadNode(335...338)(
-                     IDENTIFIER(335...338)("foo")
-                   ),
+                   LocalVariableReadNode(335...338)(),
                    StatementsNode(345...354)(
                      [LocalVariableWriteNode(345...354)(
-                        IDENTIFIER(345...348)("foo"),
-                        EQUAL(349...350)("="),
+                        (345...348),
                         CallNode(351...354)(
                           nil,
                           nil,
@@ -317,7 +312,8 @@ ProgramNode(0...616)(
                           nil,
                           nil,
                           "bar"
-                        )
+                        ),
+                        (349...350)
                       )]
                    )
                  )]
@@ -331,8 +327,7 @@ ProgramNode(0...616)(
        KEYWORD_END(367...370)("end")
      ),
      LocalVariableWriteNode(371...402)(
-       IDENTIFIER(371...372)("x"),
-       EQUAL(373...374)("="),
+       (371...372),
        ParenthesesNode(375...402)(
          StatementsNode(392...391)(
            [WhileNode(392...391)(
@@ -372,7 +367,8 @@ ProgramNode(0...616)(
          ),
          (375...376),
          (401...402)
-       )
+       ),
+       (373...374)
      ),
      WhileNode(419...418)(
        KEYWORD_WHILE_MODIFIER(419...424)("while"),

@@ -23,13 +23,11 @@ ProgramNode(0...23)(
          ),
          StatementsNode(14...19)(
            [CallNode(14...19)(
-              LocalVariableReadNode(14...15)(IDENTIFIER(14...15)("x")),
+              LocalVariableReadNode(14...15)(),
               nil,
               PLUS(16...17)("+"),
               nil,
-              ArgumentsNode(18...19)(
-                [LocalVariableReadNode(18...19)(IDENTIFIER(18...19)("y"))]
-              ),
+              ArgumentsNode(18...19)([LocalVariableReadNode(18...19)()]),
               nil,
               nil,
               "+"

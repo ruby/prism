@@ -23,6 +23,6 @@ ProgramNode(0...31)(
        nil,
        "=~"
      ),
-     LocalVariableReadNode(26...31)(IDENTIFIER(26...31)("match"))]
+     LocalVariableReadNode(26...31)()]
   )
 )

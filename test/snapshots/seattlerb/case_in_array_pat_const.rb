@@ -11,11 +11,7 @@ ProgramNode(0...24)(
        [InNode(8...20)(
           ArrayPatternNode(11...15)(
             ConstantReadNode(11...12)(),
-            [LocalVariableWriteNode(13...14)(
-               IDENTIFIER(13...14)("c"),
-               nil,
-               nil
-             )],
+            [LocalVariableWriteNode(13...14)((13...14), nil, nil)],
             nil,
             [],
             (12...13),

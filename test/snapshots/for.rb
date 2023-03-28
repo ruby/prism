@@ -7,7 +7,7 @@ ProgramNode(0...143)(
   StatementsNode(0...143)(
     [ForNode(0...20)(
        MultiWriteNode(4...5)(
-         [LocalVariableWriteNode(4...5)(IDENTIFIER(4...5)("i"), nil, nil)],
+         [LocalVariableWriteNode(4...5)((4...5), nil, nil)],
          nil,
          nil,
          nil,
@@ -18,9 +18,7 @@ ProgramNode(0...143)(
          IntegerNode(12...14)(),
          (10...12)
        ),
-       StatementsNode(15...16)(
-         [LocalVariableReadNode(15...16)(IDENTIFIER(15...16)("i"))]
-       ),
+       StatementsNode(15...16)([LocalVariableReadNode(15...16)()]),
        (0...3),
        (6...8),
        nil,
@@ -28,7 +26,7 @@ ProgramNode(0...143)(
      ),
      ForNode(22...44)(
        MultiWriteNode(26...27)(
-         [LocalVariableWriteNode(26...27)(IDENTIFIER(26...27)("i"), nil, nil)],
+         [LocalVariableWriteNode(26...27)((26...27), nil, nil)],
          nil,
          nil,
          nil,
@@ -39,9 +37,7 @@ ProgramNode(0...143)(
          IntegerNode(34...36)(),
          (32...34)
        ),
-       StatementsNode(38...39)(
-         [LocalVariableReadNode(38...39)(IDENTIFIER(38...39)("i"))]
-       ),
+       StatementsNode(38...39)([LocalVariableReadNode(38...39)()]),
        (22...25),
        (28...30),
        nil,
@@ -49,8 +45,8 @@ ProgramNode(0...143)(
      ),
      ForNode(46...68)(
        MultiWriteNode(50...53)(
-         [LocalVariableWriteNode(50...51)(IDENTIFIER(50...51)("i"), nil, nil),
-          LocalVariableWriteNode(52...53)(IDENTIFIER(52...53)("j"), nil, nil)],
+         [LocalVariableWriteNode(50...51)((50...51), nil, nil),
+          LocalVariableWriteNode(52...53)((52...53), nil, nil)],
          nil,
          nil,
          nil,
@@ -61,9 +57,7 @@ ProgramNode(0...143)(
          IntegerNode(60...62)(),
          (58...60)
        ),
-       StatementsNode(63...64)(
-         [LocalVariableReadNode(63...64)(IDENTIFIER(63...64)("i"))]
-       ),
+       StatementsNode(63...64)([LocalVariableReadNode(63...64)()]),
        (46...49),
        (54...56),
        nil,
@@ -71,9 +65,9 @@ ProgramNode(0...143)(
      ),
      ForNode(70...94)(
        MultiWriteNode(74...79)(
-         [LocalVariableWriteNode(74...75)(IDENTIFIER(74...75)("i"), nil, nil),
-          LocalVariableWriteNode(76...77)(IDENTIFIER(76...77)("j"), nil, nil),
-          LocalVariableWriteNode(78...79)(IDENTIFIER(78...79)("k"), nil, nil)],
+         [LocalVariableWriteNode(74...75)((74...75), nil, nil),
+          LocalVariableWriteNode(76...77)((76...77), nil, nil),
+          LocalVariableWriteNode(78...79)((78...79), nil, nil)],
          nil,
          nil,
          nil,
@@ -84,9 +78,7 @@ ProgramNode(0...143)(
          IntegerNode(86...88)(),
          (84...86)
        ),
-       StatementsNode(89...90)(
-         [LocalVariableReadNode(89...90)(IDENTIFIER(89...90)("i"))]
-       ),
+       StatementsNode(89...90)([LocalVariableReadNode(89...90)()]),
        (70...73),
        (80...82),
        nil,
@@ -94,11 +86,7 @@ ProgramNode(0...143)(
      ),
      ForNode(96...119)(
        MultiWriteNode(100...101)(
-         [LocalVariableWriteNode(100...101)(
-            IDENTIFIER(100...101)("i"),
-            nil,
-            nil
-          )],
+         [LocalVariableWriteNode(100...101)((100...101), nil, nil)],
          nil,
          nil,
          nil,
@@ -109,9 +97,7 @@ ProgramNode(0...143)(
          IntegerNode(108...110)(),
          (106...108)
        ),
-       StatementsNode(114...115)(
-         [LocalVariableReadNode(114...115)(IDENTIFIER(114...115)("i"))]
-       ),
+       StatementsNode(114...115)([LocalVariableReadNode(114...115)()]),
        (96...99),
        (102...104),
        (111...113),
@@ -119,11 +105,7 @@ ProgramNode(0...143)(
      ),
      ForNode(121...143)(
        MultiWriteNode(125...126)(
-         [LocalVariableWriteNode(125...126)(
-            IDENTIFIER(125...126)("i"),
-            nil,
-            nil
-          )],
+         [LocalVariableWriteNode(125...126)((125...126), nil, nil)],
          nil,
          nil,
          nil,
@@ -134,9 +116,7 @@ ProgramNode(0...143)(
          IntegerNode(133...135)(),
          (131...133)
        ),
-       StatementsNode(137...138)(
-         [LocalVariableReadNode(137...138)(IDENTIFIER(137...138)("i"))]
-       ),
+       StatementsNode(137...138)([LocalVariableReadNode(137...138)()]),
        (121...124),
        (127...129),
        nil,

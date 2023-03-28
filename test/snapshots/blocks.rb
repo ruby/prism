@@ -129,13 +129,9 @@ ProgramNode(0...402)(
          ),
          StatementsNode(63...72)(
            [OperatorAssignmentNode(63...72)(
-              LocalVariableWriteNode(63...67)(
-                IDENTIFIER(63...67)("memo"),
-                nil,
-                nil
-              ),
+              LocalVariableWriteNode(63...67)((63...67), nil, nil),
               PLUS_EQUAL(68...70)("+="),
-              LocalVariableReadNode(71...72)(IDENTIFIER(71...72)("x"))
+              LocalVariableReadNode(71...72)()
             )]
          ),
          (51...52),
@@ -470,9 +466,7 @@ ProgramNode(0...402)(
            ),
            []
          ),
-         StatementsNode(274...275)(
-           [LocalVariableReadNode(274...275)(IDENTIFIER(274...275)("x"))]
-         ),
+         StatementsNode(274...275)([LocalVariableReadNode(274...275)()]),
          (257...258),
          (276...277)
        ),
@@ -505,9 +499,9 @@ ProgramNode(0...402)(
        "foo"
      ),
      LocalVariableWriteNode(292...300)(
-       IDENTIFIER(292...296)("fork"),
-       EQUAL(297...298)("="),
-       IntegerNode(299...300)()
+       (292...296),
+       IntegerNode(299...300)(),
+       (297...298)
      ),
      CallNode(301...316)(
        nil,

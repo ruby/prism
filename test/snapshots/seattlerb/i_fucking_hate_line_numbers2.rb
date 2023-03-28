@@ -23,26 +23,24 @@ ProgramNode(0...48)(
             "p"
           ),
           LocalVariableWriteNode(24...29)(
-            IDENTIFIER(24...25)("b"),
-            EQUAL(26...27)("="),
-            IntegerNode(28...29)()
+            (24...25),
+            IntegerNode(28...29)(),
+            (26...27)
           ),
           CallNode(32...33)(
             nil,
             nil,
             IDENTIFIER(32...33)("p"),
             nil,
-            ArgumentsNode(34...35)(
-              [LocalVariableReadNode(34...35)(IDENTIFIER(34...35)("b"))]
-            ),
+            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)()]),
             nil,
             nil,
             "p"
           ),
           LocalVariableWriteNode(38...42)(
-            IDENTIFIER(38...39)("c"),
-            EQUAL(40...41)("="),
-            IntegerNode(41...42)()
+            (38...39),
+            IntegerNode(41...42)(),
+            (40...41)
           )]
        ),
        nil,

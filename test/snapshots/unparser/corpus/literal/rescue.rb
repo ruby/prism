@@ -53,8 +53,7 @@ ProgramNode(0...64)(
        )
      ),
      LocalVariableWriteNode(37...64)(
-       IDENTIFIER(37...38)("x"),
-       EQUAL(39...40)("="),
+       (37...38),
        ParenthesesNode(41...64)(
          StatementsNode(42...63)(
            [RescueModifierNode(42...63)(
@@ -88,7 +87,8 @@ ProgramNode(0...64)(
          ),
          (41...42),
          (63...64)
-       )
+       ),
+       (39...40)
      )]
   )
 )

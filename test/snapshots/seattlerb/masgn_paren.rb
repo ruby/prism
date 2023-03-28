@@ -2,8 +2,8 @@ ProgramNode(1...12)(
   ScopeNode(0...0)([IDENTIFIER(1...2)("a"), IDENTIFIER(4...5)("b")]),
   StatementsNode(1...12)(
     [MultiWriteNode(1...12)(
-       [LocalVariableWriteNode(1...2)(IDENTIFIER(1...2)("a"), nil, nil),
-        LocalVariableWriteNode(4...5)(IDENTIFIER(4...5)("b"), nil, nil)],
+       [LocalVariableWriteNode(1...2)((1...2), nil, nil),
+        LocalVariableWriteNode(4...5)((4...5), nil, nil)],
        EQUAL(7...8)("="),
        CallNode(9...12)(
          CallNode(9...10)(

@@ -292,9 +292,9 @@ ProgramNode(0...943)(
        (233...236)
      ),
      LocalVariableWriteNode(238...243)(
-       IDENTIFIER(238...239)("a"),
-       EQUAL(240...241)("="),
-       IntegerNode(242...243)()
+       (238...239),
+       IntegerNode(242...243)(),
+       (240...241)
      ),
      DefNode(245...254)(
        IDENTIFIER(249...250)("a"),
@@ -600,9 +600,9 @@ ProgramNode(0...943)(
        nil,
        StatementsNode(500...505)(
          [LocalVariableWriteNode(500...505)(
-            IDENTIFIER(500...501)("b"),
-            EQUAL(502...503)("="),
-            IntegerNode(504...505)()
+            (500...501),
+            IntegerNode(504...505)(),
+            (502...503)
           )]
        ),
        ScopeNode(494...497)([IDENTIFIER(500...501)("b")]),
@@ -853,8 +853,7 @@ ProgramNode(0...943)(
        IDENTIFIER(739...740)("a"),
        ParenthesesNode(731...738)(
          LocalVariableWriteNode(732...737)(
-           IDENTIFIER(732...733)("c"),
-           EQUAL(734...735)("="),
+           (732...733),
            CallNode(736...737)(
              nil,
              nil,
@@ -864,7 +863,8 @@ ProgramNode(0...943)(
              nil,
              nil,
              "b"
-           )
+           ),
+           (734...735)
          ),
          (731...732),
          (737...738)
@@ -936,8 +936,7 @@ ProgramNode(0...943)(
        CONSTANT(803...804)("C"),
        ParenthesesNode(795...802)(
          LocalVariableWriteNode(796...801)(
-           IDENTIFIER(796...797)("a"),
-           EQUAL(798...799)("="),
+           (796...797),
            CallNode(800...801)(
              nil,
              nil,
@@ -947,7 +946,8 @@ ProgramNode(0...943)(
              nil,
              nil,
              "b"
-           )
+           ),
+           (798...799)
          ),
          (795...796),
          (801...802)

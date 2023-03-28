@@ -25,9 +25,7 @@ ProgramNode(0...45)(
               [HashNode(31...40)(
                  nil,
                  [AssocSplatNode(31...40)(
-                    LocalVariableReadNode(33...40)(
-                      IDENTIFIER(33...40)("testing")
-                    ),
+                    LocalVariableReadNode(33...40)(),
                     (31...33)
                   )],
                  nil

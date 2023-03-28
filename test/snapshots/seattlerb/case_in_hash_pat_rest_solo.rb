@@ -12,11 +12,7 @@ ProgramNode(0...29)(
           HashPatternNode(11...17)(
             nil,
             [AssocSplatNode(11...17)(
-               LocalVariableWriteNode(13...17)(
-                 IDENTIFIER(13...17)("rest"),
-                 nil,
-                 nil
-               ),
+               LocalVariableWriteNode(13...17)((13...17), nil, nil),
                (11...13)
              )],
             nil,

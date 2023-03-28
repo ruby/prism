@@ -80,9 +80,7 @@ ProgramNode(0...278)(
             nil,
             IDENTIFIER(63...67)("puts"),
             nil,
-            ArgumentsNode(68...69)(
-              [LocalVariableReadNode(68...69)(IDENTIFIER(68...69)("x"))]
-            ),
+            ArgumentsNode(68...69)([LocalVariableReadNode(68...69)()]),
             nil,
             nil,
             "puts"
@@ -202,9 +200,7 @@ ProgramNode(0...278)(
             nil,
             IDENTIFIER(146...150)("puts"),
             nil,
-            ArgumentsNode(151...152)(
-              [LocalVariableReadNode(151...152)(IDENTIFIER(151...152)("x"))]
-            ),
+            ArgumentsNode(151...152)([LocalVariableReadNode(151...152)()]),
             nil,
             nil,
             "puts"
@@ -260,9 +256,7 @@ ProgramNode(0...278)(
                StringInterpolatedNode(209...213)(
                  EMBEXPR_BEGIN(209...211)("\#{"),
                  StatementsNode(211...212)(
-                   [LocalVariableReadNode(211...212)(
-                      IDENTIFIER(211...212)("x")
-                    )]
+                   [LocalVariableReadNode(211...212)()]
                  ),
                  EMBEXPR_END(212...213)("}")
                )],
@@ -320,9 +314,7 @@ ProgramNode(0...278)(
                StringInterpolatedNode(273...277)(
                  EMBEXPR_BEGIN(273...275)("\#{"),
                  StatementsNode(275...276)(
-                   [LocalVariableReadNode(275...276)(
-                      IDENTIFIER(275...276)("x")
-                    )]
+                   [LocalVariableReadNode(275...276)()]
                  ),
                  EMBEXPR_END(276...277)("}")
                )],

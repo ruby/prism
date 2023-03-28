@@ -56,7 +56,7 @@ ProgramNode(0...73)(
          KEYWORD_RESCUE(51...57)("rescue"),
          [],
          EQUAL_GREATER(58...60)("=>"),
-         LocalVariableWriteNode(61...63)(IDENTIFIER(61...63)("ex"), nil, nil),
+         LocalVariableWriteNode(61...63)((61...63), nil, nil),
          StatementsNode(65...68)(
            [CallNode(65...68)(
               nil,

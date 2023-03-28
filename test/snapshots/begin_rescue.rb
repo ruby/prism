@@ -287,11 +287,7 @@ ProgramNode(0...578)(
          KEYWORD_RESCUE(187...193)("rescue"),
          [ConstantReadNode(194...203)()],
          EQUAL_GREATER(204...206)("=>"),
-         LocalVariableWriteNode(207...209)(
-           IDENTIFIER(207...209)("ex"),
-           nil,
-           nil
-         ),
+         LocalVariableWriteNode(207...209)((207...209), nil, nil),
          StatementsNode(212...213)(
            [CallNode(212...213)(
               nil,
@@ -308,11 +304,7 @@ ProgramNode(0...578)(
            KEYWORD_RESCUE(214...220)("rescue"),
            [ConstantReadNode(221...237)(), ConstantReadNode(239...255)()],
            EQUAL_GREATER(256...258)("=>"),
-           LocalVariableWriteNode(259...261)(
-             IDENTIFIER(259...261)("ex"),
-             nil,
-             nil
-           ),
+           LocalVariableWriteNode(259...261)((259...261), nil, nil),
            StatementsNode(264...265)(
              [CallNode(264...265)(
                 nil,
@@ -350,11 +342,7 @@ ProgramNode(0...578)(
          KEYWORD_RESCUE(281...287)("rescue"),
          [ConstantReadNode(288...297)()],
          EQUAL_GREATER(298...300)("=>"),
-         LocalVariableWriteNode(301...303)(
-           IDENTIFIER(301...303)("ex"),
-           nil,
-           nil
-         ),
+         LocalVariableWriteNode(301...303)((301...303), nil, nil),
          StatementsNode(306...307)(
            [CallNode(306...307)(
               nil,
@@ -597,11 +585,7 @@ ProgramNode(0...578)(
          KEYWORD_RESCUE(489...495)("rescue"),
          [ConstantReadNode(496...505)(), ConstantReadNode(507...522)()],
          EQUAL_GREATER(523...525)("=>"),
-         LocalVariableWriteNode(526...528)(
-           IDENTIFIER(526...528)("ex"),
-           nil,
-           nil
-         ),
+         LocalVariableWriteNode(526...528)((526...528), nil, nil),
          StatementsNode(531...532)(
            [CallNode(531...532)(
               nil,
@@ -638,11 +622,7 @@ ProgramNode(0...578)(
          KEYWORD_RESCUE(548...554)("rescue"),
          [ConstantReadNode(555...564)()],
          EQUAL_GREATER(565...567)("=>"),
-         LocalVariableWriteNode(568...570)(
-           IDENTIFIER(568...570)("ex"),
-           nil,
-           nil
-         ),
+         LocalVariableWriteNode(568...570)((568...570), nil, nil),
          StatementsNode(573...574)(
            [CallNode(573...574)(
               nil,

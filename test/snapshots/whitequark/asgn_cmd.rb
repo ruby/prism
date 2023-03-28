@@ -2,40 +2,36 @@ ProgramNode(0...26)(
   ScopeNode(0...0)([IDENTIFIER(0...3)("foo"), IDENTIFIER(6...9)("bar")]),
   StatementsNode(0...26)(
     [LocalVariableWriteNode(0...13)(
-       IDENTIFIER(0...3)("foo"),
-       EQUAL(4...5)("="),
+       (0...3),
        LocalVariableWriteNode(6...13)(
-         IDENTIFIER(6...9)("bar"),
-         EQUAL(10...11)("="),
+         (6...9),
          CallNode(12...13)(
            nil,
            nil,
            IDENTIFIER(12...13)("m"),
            nil,
-           ArgumentsNode(14...17)(
-             [LocalVariableReadNode(14...17)(IDENTIFIER(14...17)("foo"))]
-           ),
+           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)()]),
            nil,
            nil,
            "m"
-         )
-       )
+         ),
+         (10...11)
+       ),
+       (4...5)
      ),
      LocalVariableWriteNode(19...26)(
-       IDENTIFIER(19...22)("foo"),
-       EQUAL(23...24)("="),
+       (19...22),
        CallNode(25...26)(
          nil,
          nil,
          IDENTIFIER(25...26)("m"),
          nil,
-         ArgumentsNode(27...30)(
-           [LocalVariableReadNode(27...30)(IDENTIFIER(27...30)("foo"))]
-         ),
+         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)()]),
          nil,
          nil,
          "m"
-       )
+       ),
+       (23...24)
      )]
   )
 )

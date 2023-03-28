@@ -25,8 +25,7 @@ ProgramNode(0...31)(
        (16...19)
      ),
      LocalVariableWriteNode(21...31)(
-       IDENTIFIER(21...22)("o"),
-       EQUAL(23...24)("="),
+       (21...22),
        HashNode(27...31)(
          BRACE_LEFT(25...26)("{"),
          [AssocNode(27...31)(
@@ -40,7 +39,8 @@ ProgramNode(0...31)(
             nil
           )],
          BRACE_RIGHT(32...33)("}")
-       )
+       ),
+       (23...24)
      )]
   )
 )

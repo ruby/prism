@@ -90,7 +90,7 @@ ProgramNode(0...94)(
           nil,
           "=~"
         ),
-        LocalVariableReadNode(82...85)(IDENTIFIER(82...85)("foo"))],
+        LocalVariableReadNode(82...85)()],
        BRACKET_LEFT_ARRAY(59...60)("["),
        BRACKET_RIGHT(85...86)("]")
      ),

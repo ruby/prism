@@ -1775,15 +1775,14 @@ yp_lambda_node_create(
 }
 
 // Allocate a new LocalVariableReadNode node.
-static yp_node_t *
+static yp_local_variable_read_node_t *
 yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_local_variable_read_node_t *node = YP_NODE_ALLOC(yp_local_variable_read_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_LOCAL_VARIABLE_READ_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(name),
-    .as.local_variable_read_node = {
-      .name = *name
+  *node = (yp_local_variable_read_node_t) {
+    {
+      .type = YP_NODE_LOCAL_VARIABLE_READ_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(name)
     }
   };
 
@@ -1791,18 +1790,39 @@ yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) 
 }
 
 // Allocate and initialize a new LocalVariableWriteNode node.
-static yp_node_t *
-yp_local_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+static yp_local_variable_write_node_t *
+yp_local_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, yp_node_t *value, const yp_token_t *operator) {
+  yp_local_variable_write_node_t *node = YP_NODE_ALLOC(yp_local_variable_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(name),
-    .as.local_variable_write_node = {
-      .name = *name,
-      .operator = not_provided(parser),
-      .value = NULL
-    }
+  *node = (yp_local_variable_write_node_t) {
+    {
+      .type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE,
+      .location = {
+        .start = name_loc->start,
+        .end = value == NULL ? name_loc->end : value->location.end
+      }
+    },
+    .name_loc = *name_loc,
+    .value = value,
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator)
+  };
+
+  return node;
+}
+
+// Allocate and initialize a new LocalVariableWriteNode node without an operator or target.
+static yp_local_variable_write_node_t *
+yp_local_variable_target_node_create(yp_parser_t *parser, const yp_token_t *name) {
+  yp_local_variable_write_node_t *node = YP_NODE_ALLOC(yp_local_variable_write_node_t);
+
+  *node = (yp_local_variable_write_node_t) {
+    {
+      .type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(name)
+    },
+    .name_loc = YP_LOCATION_TOKEN_VALUE(name),
+    .value = NULL,
+    .operator_loc = { .start = NULL, .end = NULL }
   };
 
   return node;
@@ -6555,23 +6575,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       return result;
     }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
-      yp_token_t name = target->as.local_variable_read_node.name;
-      yp_parser_local_add(parser, &name);
+      yp_location_t name_loc = target->location;
+      yp_node_destroy(parser, target);
 
-      yp_node_clear(target);
-
-      target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
-      target->location.start = name.start;
-
-      target->as.local_variable_write_node.name = name;
-      target->as.local_variable_write_node.operator = *operator;
-
-      if (value != NULL) {
-        target->as.local_variable_write_node.value = value;
-        target->location.end = value->location.end;
-      }
-
-      return target;
+      return (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator);
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
       yp_instance_variable_write_node_create(parser, target, operator, value);
@@ -6620,22 +6627,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // =, so we know it's a local variable write.
           yp_token_t name = target->as.call_node.message;
           yp_parser_local_add(parser, &name);
+          yp_node_destroy(parser, target);
 
-          // Not entirely sure why we need to clear this out, but it seems that
-          // something about the memory layout in the union is causing the type
-          // to have a problem if we don't.
-          yp_node_clear(target);
-
-          target->type = YP_NODE_LOCAL_VARIABLE_WRITE_NODE;
-          target->location.start = name.start;
-
-          target->as.local_variable_write_node.name = name;
-          target->as.local_variable_write_node.operator = *operator;
-
-          if (value != NULL) {
-            target->as.local_variable_write_node.value = value;
-            target->location.end = value->location.end;
-          }
+          yp_location_t name_loc = { .start = name.start, .end = name.end };
+          target = (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator);
 
           if (token_is_numbered_parameter(&name)) {
             yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "reserved for numbered parameter");
@@ -8009,7 +8004,7 @@ parse_vcall(yp_parser_t *parser) {
     (parser->previous.end[-1] != '?') &&
     yp_parser_local_p(parser, &parser->previous)
   ) {
-    return yp_local_variable_read_node_create(parser, &parser->previous);
+    return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous);
   }
 
   return yp_call_node_vcall_create(parser, &parser->previous);
@@ -8169,7 +8164,7 @@ parse_pattern_rest(yp_parser_t *parser) {
   if (accept(parser, YP_TOKEN_IDENTIFIER)) {
     yp_token_t identifier = parser->previous;
     yp_parser_local_add(parser, &identifier);
-    name = yp_local_variable_write_node_create(parser, &identifier);
+    name = (yp_node_t *) yp_local_variable_target_node_create(parser, &identifier);
   }
 
   // Finally we can return the created node.
@@ -8191,7 +8186,7 @@ parse_pattern_keyword_rest(yp_parser_t *parser) {
 
   if (accept(parser, YP_TOKEN_IDENTIFIER)) {
     yp_parser_local_add(parser, &parser->previous);
-    value = yp_local_variable_write_node_create(parser, &parser->previous);
+    value = (yp_node_t *) yp_local_variable_target_node_create(parser, &parser->previous);
   }
 
   return yp_assoc_splat_node_create(parser, value, &operator);
@@ -8253,7 +8248,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
       yp_parser_local_add(parser, &parser->previous);
-      return yp_local_variable_write_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_local_variable_target_node_create(parser, &parser->previous);
     }
     case YP_TOKEN_BRACKET_LEFT_ARRAY: {
       yp_token_t opening = parser->current;
@@ -8411,7 +8406,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       switch (parser->current.type) {
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
-          yp_node_t *variable = yp_local_variable_read_node_create(parser, &parser->previous);
+          yp_node_t *variable = (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous);
 
           return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
@@ -8538,10 +8533,9 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
 
     expect(parser, YP_TOKEN_IDENTIFIER, "Expected an identifier after the `=>' operator.");
     yp_token_t identifier = parser->previous;
-
     yp_parser_local_add(parser, &identifier);
-    yp_node_t *target = yp_local_variable_write_node_create(parser, &identifier);
 
+    yp_node_t *target = (yp_node_t *) yp_local_variable_target_node_create(parser, &identifier);
     node = yp_as_pattern_node_create(parser, node, target, &operator);
   }
 
