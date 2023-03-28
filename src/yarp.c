@@ -1724,19 +1724,15 @@ yp_keyword_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *ope
 
 // Allocate a new LambdaNode node.
 static yp_node_t *
-<<<<<<< HEAD
 yp_lambda_node_create(
   yp_parser_t *parser,
-  yp_node_t *scope,
+  yp_scope_node_t *scope,
   const yp_token_t *opening,
   const yp_token_t *lparen,
   yp_block_parameters_node_t *parameters,
   const yp_token_t *rparen,
   yp_node_t *statements
 ) {
-=======
-yp_lambda_node_create(yp_parser_t *parser, yp_scope_node_t *scope, const yp_token_t *opening, const yp_token_t *lparen, yp_node_t *parameters, const yp_token_t *rparen, yp_node_t *statements) {
->>>>>>> 5d3fc84 (Migrate scope node)
   yp_node_t *node = yp_node_alloc(parser);
 
   const char *end;
