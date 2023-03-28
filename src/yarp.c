@@ -1947,22 +1947,22 @@ yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate and initialize a new NoKeywordsParameterNode node.
-static yp_node_t *
+static yp_no_keywords_parameter_node_t *
 yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *keyword) {
   assert(operator->type == YP_TOKEN_USTAR_STAR);
   assert(keyword->type == YP_TOKEN_KEYWORD_NIL);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_no_keywords_parameter_node_t *node = YP_NODE_ALLOC(yp_no_keywords_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_NO_KEYWORDS_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = keyword->end
+  *node = (yp_no_keywords_parameter_node_t) {
+    {
+      .type = YP_NODE_NO_KEYWORDS_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = keyword->end
+      }
     },
-    .as.no_keywords_parameter_node = {
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-      .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
-    }
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
   };
 
   return node;
@@ -7320,7 +7320,7 @@ parse_parameters(
         yp_node_t *param;
 
         if (accept(parser, YP_TOKEN_KEYWORD_NIL)) {
-          param = yp_no_keywords_parameter_node_create(parser, &operator, &parser->previous);
+          param = (yp_node_t *) yp_no_keywords_parameter_node_create(parser, &operator, &parser->previous);
         } else {
           yp_token_t name;
 
@@ -8195,7 +8195,7 @@ parse_pattern_keyword_rest(yp_parser_t *parser) {
   yp_node_t *value = NULL;
 
   if (accept(parser, YP_TOKEN_KEYWORD_NIL)) {
-    return yp_no_keywords_parameter_node_create(parser, &operator, &parser->previous);
+    return (yp_node_t *) yp_no_keywords_parameter_node_create(parser, &operator, &parser->previous);
   }
 
   if (accept(parser, YP_TOKEN_IDENTIFIER)) {

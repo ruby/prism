@@ -1210,6 +1210,7 @@ nodes:
           nil
           ^^^
   - name: NoKeywordsParameterNode
+    is_migrated: true
     child_nodes:
       - name: operator_loc
         type: location
