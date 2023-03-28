@@ -1,0 +1,36 @@
+ProgramNode(0...1)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...1)(
+    [CallNode(0...1)(
+       nil,
+       nil,
+       IDENTIFIER(0...1)("x"),
+       nil,
+       ArgumentsNode(3...8)(
+         [InterpolatedXStringNode(3...8)(
+            BACKTICK(2...3)("`"),
+            [StringInterpolatedNode(3...7)(
+               EMBEXPR_BEGIN(3...5)("\#{"),
+               StatementsNode(5...6)(
+                 [CallNode(5...6)(
+                    nil,
+                    nil,
+                    IDENTIFIER(5...6)("y"),
+                    nil,
+                    nil,
+                    nil,
+                    nil,
+                    "y"
+                  )]
+               ),
+               EMBEXPR_END(6...7)("}")
+             )],
+            STRING_END(7...8)("`")
+          )]
+       ),
+       nil,
+       nil,
+       "x"
+     )]
+  )
+)

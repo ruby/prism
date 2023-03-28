@@ -1,0 +1,17 @@
+ProgramNode(0...20)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...20)(
+    [BeginNode(0...20)(
+       KEYWORD_BEGIN(0...5)("begin"),
+       StatementsNode(6...7)([IntegerNode(6...7)()]),
+       nil,
+       ElseNode(9...20)(
+         KEYWORD_ELSE(9...13)("else"),
+         StatementsNode(15...16)([IntegerNode(15...16)()]),
+         KEYWORD_END(17...20)("end")
+       ),
+       nil,
+       KEYWORD_END(17...20)("end")
+     )]
+  )
+)

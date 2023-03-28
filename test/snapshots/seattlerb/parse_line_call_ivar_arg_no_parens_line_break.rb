@@ -1,0 +1,15 @@
+ProgramNode(0...1)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...1)(
+    [CallNode(0...1)(
+       nil,
+       nil,
+       IDENTIFIER(0...1)("a"),
+       nil,
+       ArgumentsNode(2...4)([InstanceVariableReadNode(2...4)()]),
+       nil,
+       nil,
+       "a"
+     )]
+  )
+)

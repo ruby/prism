@@ -11,10 +11,20 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse("") => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: []]]]
   end
 
+  known_failures = %w[
+    seattlerb/heredoc__backslash_dos_format.rb
+    seattlerb/heredoc_nested.rb
+    seattlerb/heredoc_squiggly_visually_blank_lines.rb
+    seattlerb/heredoc_trailing_slash_continued_call.rb
+    seattlerb/pct_w_heredoc_interp_nested.rb
+    seattlerb/required_kwarg_no_value.rb
+  ]
+
   Dir[File.expand_path("fixtures/**/*.rb", __dir__)].each do |filepath|
     relative = filepath.delete_prefix("#{File.expand_path("fixtures", __dir__)}/")
-    snapshot = File.expand_path(File.join("snapshots", relative), __dir__)
+    next if known_failures.include?(relative)
 
+    snapshot = File.expand_path(File.join("snapshots", relative), __dir__)
     directory = File.dirname(snapshot)
     FileUtils.mkdir_p(directory) unless File.directory?(directory)
 

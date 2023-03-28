@@ -495,56 +495,20 @@ yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *str
 // This function is similar to yp_unescape_manipulate_string, except it doesn't
 // actually perform any string manipulations. Instead, it calculates how long
 // the unescaped character is, and returns that value
-__attribute__((__visibility__("default"))) extern int
-yp_unescape_calculate_difference(const char *backslash, size_t length, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
+__attribute__((__visibility__("default"))) extern size_t
+yp_unescape_calculate_difference(const char *backslash, const char *end, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
   assert(unescape_type != YP_UNESCAPE_NONE);
-
-  // This is the current position in the source string that we're looking at.
-  // It's going to move along behind the backslash so that we can copy each
-  // segment of the string that doesn't contain an escape.
-  const char *cursor = backslash;
-  const char *end = backslash + length;
-
-  int difference = 0;
-  // For each escape found in the source string, we will handle it and update
-  // the moving cursor->backslash window.
-
-  // This is the size of the segment of the string from the previous escape
-  // or the start of the string to the current escape.
 
   switch (backslash[1]) {
     case '\\':
     case '\'':
-      cursor = backslash + 2;
-      break;
+      return 2;
     default:
-      if (unescape_type == YP_UNESCAPE_MINIMAL) {
-        // In this case we're escaping something that doesn't need escaping.
-        cursor = backslash + 1;
-        break;
-      }
+      if (unescape_type == YP_UNESCAPE_MINIMAL) return 2;
 
       // This is the only type of unescaping left. In this case we need to
       // handle all of the different unescapes.
       assert(unescape_type == YP_UNESCAPE_ALL);
-      cursor = unescape(NULL, 0, backslash, end, error_list, YP_UNESCAPE_FLAG_NONE, false);
-      break;
+      return unescape(NULL, 0, backslash, end, error_list, YP_UNESCAPE_FLAG_NONE, false) - backslash;
   }
-
-  difference += (cursor - backslash);
-  if (end > cursor) {
-    backslash = memchr(cursor, '\\', end - cursor);
-  } else {
-    backslash = NULL;
-  }
-
-  // We need to copy the final segment of the string after the last escape.
-  if (end <= cursor) {
-    cursor = end;
-  }
-
-  // We also need to update the length at the end. This is because every escape
-  // reduces the length of the final string, and we don't want garbage at the
-  // end.
-  return difference;
 }

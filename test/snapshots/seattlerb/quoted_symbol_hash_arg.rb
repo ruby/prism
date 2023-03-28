@@ -1,0 +1,34 @@
+ProgramNode(0...4)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...4)(
+    [CallNode(0...4)(
+       nil,
+       nil,
+       IDENTIFIER(0...4)("puts"),
+       nil,
+       ArgumentsNode(5...11)(
+         [HashNode(5...11)(
+            nil,
+            [AssocNode(5...11)(
+               SymbolNode(5...9)(
+                 STRING_BEGIN(5...6)("'"),
+                 STRING_CONTENT(6...7)("a"),
+                 LABEL_END(7...9)("':"),
+                 "a"
+               ),
+               HashNode(10...11)(
+                 BRACE_LEFT(10...11)("{"),
+                 [],
+                 BRACE_RIGHT(11...12)("}")
+               ),
+               nil
+             )],
+            nil
+          )]
+       ),
+       nil,
+       nil,
+       "puts"
+     )]
+  )
+)

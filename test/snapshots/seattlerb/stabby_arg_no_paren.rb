@@ -1,0 +1,23 @@
+ProgramNode(0...2)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...2)(
+    [LambdaNode(0...2)(
+       ScopeNode(0...2)([IDENTIFIER(2...3)("a")]),
+       MINUS_GREATER(0...2)("->"),
+       nil,
+       BlockParametersNode(2...3)(
+         ParametersNode(2...3)(
+           [RequiredParameterNode(2...3)(IDENTIFIER(2...3)("a"))],
+           [],
+           nil,
+           [],
+           nil,
+           nil
+         ),
+         []
+       ),
+       nil,
+       nil
+     )]
+  )
+)
