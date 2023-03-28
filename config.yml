@@ -366,6 +366,7 @@ nodes:
 
           return foo, bar, baz
                  ^^^^^^^^^^^^^
+    is_migrated: true
   - name: ArrayNode
     child_nodes:
       - name: elements

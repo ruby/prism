@@ -319,37 +319,36 @@ yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *opera
 }
 
 // Allocate an initialize a new arguments node.
-static yp_node_t *
+static yp_arguments_node_t *
 yp_arguments_node_create(yp_parser_t *parser) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_arguments_node_t *node = YP_NODE_ALLOC(yp_arguments_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARGUMENTS_NODE,
-    .location = YP_LOCATION_NULL_VALUE(parser)
+  *node = (yp_arguments_node_t) {
+    {
+      .type = YP_NODE_ARGUMENTS_NODE,
+      .location = YP_LOCATION_NULL_VALUE(parser)
+    }
   };
 
-  yp_node_list_init(&node->as.arguments_node.arguments);
+  yp_node_list_init(&node->arguments);
   return node;
 }
 
 // Return the size of the given arguments node.
 static size_t
-yp_arguments_node_size(yp_node_t *node) {
-  assert(node->type == YP_NODE_ARGUMENTS_NODE);
-  return node->as.arguments_node.arguments.size;
+yp_arguments_node_size(yp_arguments_node_t *node) {
+  return node->arguments.size;
 }
 
 // Append an argument to an arguments node.
 static void
-yp_arguments_node_arguments_append(yp_node_t *node, yp_node_t *argument) {
-  assert(node->type == YP_NODE_ARGUMENTS_NODE);
-
+yp_arguments_node_arguments_append(yp_arguments_node_t *node, yp_node_t *argument) {
   if (yp_arguments_node_size(node) == 0) {
-    node->location.start = argument->location.start;
+    node->base.location.start = argument->location.start;
   }
 
-  node->location.end = argument->location.end;
-  yp_node_list_append2(&node->as.arguments_node.arguments, argument);
+  node->base.location.end = argument->location.end;
+  yp_node_list_append2(&node->arguments, argument);
 }
 
 // Allocate and initialize a new ArrayNode node.
@@ -814,9 +813,9 @@ yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t 
   node->as.call_node.receiver = receiver;
   node->as.call_node.message = *operator;
 
-  yp_node_t *arguments = yp_arguments_node_create(parser);
+  yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
   yp_arguments_node_arguments_append(arguments, argument);
-  node->as.call_node.arguments = arguments;
+  node->as.call_node.arguments = YP_NODE_DOWNCAST(arguments);
 
   yp_string_shared_init(&node->as.call_node.name, operator->start, operator->end);
   return node;
@@ -6554,8 +6553,9 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         // a method call with an argument. In this case we will create the
         // arguments node, parse the argument, and add it to the list.
         if (value) {
-          target->as.call_node.arguments = yp_arguments_node_create(parser);
-          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
+          yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
+          target->as.call_node.arguments = YP_NODE_DOWNCAST(arguments);
+          yp_arguments_node_arguments_append(arguments, value);
         }
 
         // The method name needs to change. If we previously had foo, we now
@@ -6584,10 +6584,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
 
         if (value != NULL) {
           if (target->as.call_node.arguments == NULL) {
-            target->as.call_node.arguments = yp_arguments_node_create(parser);
+            target->as.call_node.arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
           }
 
-          yp_arguments_node_arguments_append(target->as.call_node.arguments, value);
+          yp_arguments_node_arguments_append(YP_NODE_UPCAST(target->as.call_node.arguments, yp_arguments_node_t), value);
           target->location.end = value->location.end;
         }
 
@@ -6983,7 +6983,7 @@ parse_arguments(yp_parser_t *parser, yp_node_t *arguments, bool accepts_forwardi
       }
     }
 
-    yp_arguments_node_arguments_append(arguments, argument);
+    yp_arguments_node_arguments_append(YP_NODE_UPCAST(arguments, yp_arguments_node_t), argument);
 
     // If parsing the argument failed, we need to stop parsing arguments.
     if (argument->type == YP_NODE_MISSING_NODE || parser->recovering) break;
@@ -7488,7 +7488,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
       arguments->closing = parser->previous;
     } else {
-      arguments->arguments = yp_arguments_node_create(parser);
+      arguments->arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
 
       yp_accepts_block_stack_push(parser, true);
       parse_arguments(parser, arguments->arguments, true, YP_TOKEN_PARENTHESIS_RIGHT);
@@ -7503,7 +7503,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     // If we get here, then the subsequent token cannot be used as an infix
     // operator. In this case we assume the subsequent token is part of an
     // argument to this method call.
-    arguments->arguments = yp_arguments_node_create(parser);
+    arguments->arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
     parse_arguments(parser, arguments->arguments, true, YP_TOKEN_EOF);
 
     yp_accepts_block_stack_pop(parser);
@@ -9267,7 +9267,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_binding_power_t binding_power = yp_binding_powers[parser->current.type].left;
 
         if (binding_power == YP_BINDING_POWER_UNSET || binding_power >= YP_BINDING_POWER_RANGE) {
-          arguments = yp_arguments_node_create(parser);
+          arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
           parse_arguments(parser, arguments, false, YP_TOKEN_EOF);
         }
       }
@@ -10971,7 +10971,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
       if (!accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
         yp_accepts_block_stack_push(parser, true);
-        arguments.arguments = yp_arguments_node_create(parser);
+        arguments.arguments = YP_NODE_DOWNCAST(yp_arguments_node_create(parser));
 
         parse_arguments(parser, arguments.arguments, false, YP_TOKEN_BRACKET_RIGHT);
         yp_accepts_block_stack_pop(parser);
