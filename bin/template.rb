@@ -6,20 +6,18 @@ require "yaml"
 
 # This represents a parameter to a node that is itself a node. We pass them as
 # references and store them as references.
-class NodeParam < Struct.new(:name, :kind)
+class NodeParam < Struct.new(:name, :c_type)
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node"
   def java_type = "Node"
-  def c_type = kind.nil? ? "yp_node" : "yp_#{kind.gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
 end
 
 # This represents a parameter to a node that is itself a node and can be
 # optionally null. We pass them as references and store them as references.
-class OptionalNodeParam < Struct.new(:name, :kind, :fallback)
+class OptionalNodeParam < Struct.new(:name, :c_type, :fallback)
   def param = "yp_node_t *#{name}"
   def rbs_class = "Node?"
   def java_type = "Node"
-  def c_type = kind.nil? ? "yp_node" : "yp_#{kind.gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
 end
 
 SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
@@ -100,11 +98,10 @@ class NodeType
       config.fetch("child_nodes", []).map do |param|
         name = param.fetch("name")
 
-        case param.fetch("type")
-        when "node"
-          NodeParam.new(name)
-        when "node?"
-          OptionalNodeParam.new(name, param["kind"])
+        case (type = param.fetch("type"))
+        when "node", "node?"
+          c_type = param["kind"].nil? ? "yp_node" : "yp_#{param["kind"].gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
+          (type == "node" ? NodeParam : OptionalNodeParam).new(name, c_type)
         when "node[]"
           NodeListParam.new(name)
         when "string"

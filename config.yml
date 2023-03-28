@@ -458,6 +458,7 @@ nodes:
         type: token?
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: rescue_clause
         type: node?
       - name: else_clause
@@ -729,6 +730,7 @@ nodes:
         type: token
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: end_keyword
         type: token?
     comment: |
@@ -743,6 +745,7 @@ nodes:
         type: token
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: end_keyword
         type: token
     comment: |
@@ -800,6 +803,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: for_keyword_loc
         type: location
       - name: in_keyword_loc
@@ -917,6 +921,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: consequent
         type: node?
       - name: end_keyword
@@ -941,6 +946,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: in_loc
         type: location
       - name: then_loc
@@ -1323,6 +1329,7 @@ nodes:
     child_nodes:
       - name: statements
         type: node
+        kind: StatementsNode
       - name: keyword_loc
         type: location
       - name: opening_loc
@@ -1338,6 +1345,7 @@ nodes:
     child_nodes:
       - name: statements
         type: node
+        kind: StatementsNode
       - name: keyword_loc
         type: location
       - name: opening_loc
@@ -1355,6 +1363,7 @@ nodes:
         type: node
       - name: statements
         type: node
+        kind: StatementsNode
     comment: The top level node of any parse tree.
   - name: RangeNode
     child_nodes:
@@ -1448,6 +1457,7 @@ nodes:
         type: node?
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: consequent
         type: node?
     comment: |
@@ -1553,6 +1563,7 @@ nodes:
     child_nodes:
       - name: body
         type: node[]
+    is_migrated: true
     comment: |
       Represents a set of statements contained within some scope.
 
@@ -1576,6 +1587,7 @@ nodes:
         type: token
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: closing
         type: token
     is_migrated: true
@@ -1675,6 +1687,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+        kind: StatementsNode
       - name: consequent
         type: node?
         kind: ElseNode
@@ -1697,6 +1710,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+        kind: StatementsNode
     is_migrated: true
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
@@ -1714,6 +1728,7 @@ nodes:
         type: node[]
       - name: statements
         type: node?
+        kind: StatementsNode
     is_migrated: true
     comment: |
       case true
@@ -1728,6 +1743,7 @@ nodes:
         type: node
       - name: statements
         type: node?
+        kind: StatementsNode
     is_migrated: true
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
