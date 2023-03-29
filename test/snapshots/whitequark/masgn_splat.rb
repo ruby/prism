@@ -92,7 +92,7 @@ ProgramNode(0...0)(
        nil
      ),
      MultiWriteNode(47...65)(
-       [InstanceVariableWriteNode(47...51)((47...51), nil, nil),
+       [InstanceVariableWriteNode(47...51)((47...51), nil, (0...0)),
         ClassVariableWriteNode(53...58)((53...58), nil, nil)],
        EQUAL(59...60)("="),
        SplatNode(61...65)(

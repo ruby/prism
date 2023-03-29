@@ -82,8 +82,8 @@ ProgramNode(0...293)(
        )
      ),
      MultiWriteNode(123...137)(
-       [InstanceVariableWriteNode(123...127)((123...127), nil, nil),
-        InstanceVariableWriteNode(129...133)((129...133), nil, nil)],
+       [InstanceVariableWriteNode(123...127)((123...127), nil, (0...0)),
+        InstanceVariableWriteNode(129...133)((129...133), nil, (0...0))],
        EQUAL(134...135)("="),
        IntegerNode(136...137)(),
        nil,

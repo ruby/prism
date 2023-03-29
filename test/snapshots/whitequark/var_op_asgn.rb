@@ -7,7 +7,7 @@ ProgramNode(0...53)(
        IntegerNode(9...11)()
      ),
      OperatorAssignmentNode(13...20)(
-       InstanceVariableWriteNode(13...15)((13...15), nil, nil),
+       InstanceVariableWriteNode(13...15)((13...15), nil, (0...0)),
        PIPE_EQUAL(16...18)("|="),
        IntegerNode(19...20)()
      ),
