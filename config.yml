@@ -962,6 +962,7 @@ nodes:
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: ImaginaryNode
     comment: |
       Represents an imaginary number literal.
