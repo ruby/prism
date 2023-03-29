@@ -5,16 +5,6 @@
 /******************************************************************************/
 
 static inline bool
-char_is_octal_number(const char c) {
-  return c >= '0' && c <= '7';
-}
-
-static inline bool
-char_is_hexadecimal_number(const char c) {
-  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-}
-
-static inline bool
 char_is_hexadecimal_numbers(const char *c, size_t length) {
   for (size_t index = 0; index < length; index++) {
     if (!char_is_hexadecimal_number(c[index])) {

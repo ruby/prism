@@ -18,6 +18,7 @@
 #include "yarp/regexp.h"
 #include "yarp/unescape.h"
 #include "yarp/util/yp_buffer.h"
+#include "yarp/util/yp_char.h"
 #include "yarp/util/yp_strpbrk.h"
 #include "yarp/util/yp_strspn.h"
 
@@ -32,7 +33,7 @@ void
 yp_print_node(yp_parser_t *parser, yp_node_t *node);
 
 // Returns the YARP version and notably the serialization format
-__attribute__((__visibility__("default"))) extern char*
+__attribute__((__visibility__("default"))) extern const char *
 yp_version(void);
 
 // Initialize a parser with the given start and end pointers.

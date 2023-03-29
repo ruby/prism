@@ -411,7 +411,7 @@ memsize(VALUE self, VALUE string) {
   return result;
 }
 
-void
+RUBY_FUNC_EXPORTED void
 Init_yarp(void) {
   if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
     rb_raise(rb_eRuntimeError, "The YARP library version (%s) does not match the expected version (%s)", yp_version(),
