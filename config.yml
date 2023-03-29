@@ -428,6 +428,7 @@ nodes:
 
           foo => [bar => baz]
                  ^^^^^^^^^^^^
+    is_migrated: true
   - name: AssocNode
     child_nodes:
       - name: key
@@ -441,6 +442,7 @@ nodes:
 
           { a => b }
             ^^^^^^
+    is_migrated: true
   - name: AssocSplatNode
     child_nodes:
       - name: value
@@ -452,6 +454,7 @@ nodes:
 
           { **foo }
             ^^^^^
+    is_migrated: true
   - name: BeginNode
     child_nodes:
       - name: begin_keyword
@@ -977,6 +980,7 @@ nodes:
 
           case a; in b then c end
                   ^^^^^^^^^^^
+    is_migrated: true
   - name: InstanceVariableReadNode
     comment: |
       Represents referencing an instance variable.
