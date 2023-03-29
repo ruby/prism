@@ -389,38 +389,38 @@ yp_array_node_close_set(yp_array_node_t *node, const yp_token_t *closing) {
 
 // Allocate and initialize a new array pattern node. The node list given in the
 // nodes parameter is guaranteed to have at least two nodes.
-static yp_node_t *
+static yp_array_pattern_node_t *
 yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *nodes) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = {
-      .start = nodes->nodes[0]->location.start,
-      .end = nodes->nodes[nodes->size - 1]->location.end
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = {
+        .start = nodes->nodes[0]->location.start,
+        .end = nodes->nodes[nodes->size - 1]->location.end
+      },
     },
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = NULL
-    }
+    .constant = NULL,
+    .rest = NULL
   };
 
   // For now we're going to just copy over each pointer manually. This could be
   // much more efficient, as we could instead resize the node list.
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
   bool found_rest = false;
   for (size_t index = 0; index < nodes->size; index++) {
     yp_node_t *child = nodes->nodes[index];
 
     if (child->type == YP_NODE_SPLAT_NODE) {
-      node->as.array_pattern_node.rest = child;
+      node->rest = child;
       found_rest = true;
     } else if (found_rest) {
-      yp_node_list_append2(&node->as.array_pattern_node.posts, child);
+      yp_node_list_append2(&node->posts, child);
     } else {
-      yp_node_list_append2(&node->as.array_pattern_node.requireds, child);
+      yp_node_list_append2(&node->requireds, child);
     }
   }
 
@@ -428,75 +428,80 @@ yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *node
 }
 
 // Allocate and initialize a new array pattern node from a single rest node.
-static yp_node_t *
+static yp_array_pattern_node_t *
 yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = rest->location,
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = rest
-    }
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = rest->location,
+    },
+    .constant = NULL,
+    .rest = rest
   };
 
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
   return node;
 }
 
 // Allocate and initialize a new array pattern node from a constant and opening
 // and closing tokens.
-static yp_node_t *
+static yp_array_pattern_node_t *
 yp_array_pattern_node_constant_create(yp_parser_t *parser, yp_node_t *constant, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = {
-      .start = constant->location.start,
-      .end = closing->end
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = {
+        .start = constant->location.start,
+        .end = closing->end
+      },
     },
-    .as.array_pattern_node = {
-      .constant = constant,
-      .rest = NULL,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .constant = constant,
+    .rest = NULL,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
   return node;
 }
 
 // Allocate and initialize a new array pattern node from an opening and closing
 // token.
-static yp_node_t *
+static yp_array_pattern_node_t *
 yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_array_pattern_node_t *node = YP_NODE_ALLOC(yp_array_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ARRAY_PATTERN_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_array_pattern_node_t) {
+    {
+      .type = YP_NODE_ARRAY_PATTERN_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.array_pattern_node = {
-      .constant = NULL,
-      .rest = NULL,
-      .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-      .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
-    }
+    .constant = NULL,
+    .rest = NULL,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
-  yp_node_list_init(&node->as.array_pattern_node.requireds);
-  yp_node_list_init(&node->as.array_pattern_node.posts);
+  yp_node_list_init(&node->requireds);
+  yp_node_list_init(&node->posts);
 
   return node;
+}
+
+static inline void
+yp_array_pattern_node_requireds_append(yp_array_pattern_node_t *node, yp_node_t *inner) {
+  yp_node_list_append2(&node->requireds, inner);
 }
 
 // Allocate and initialize a new AsPatternNode node.
@@ -8097,14 +8102,15 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
       // it's not, then we'll create an array pattern.
       switch (inner->type) {
         case YP_NODE_ARRAY_PATTERN_NODE: {
-          inner->location.start = node->location.start;
-          inner->location.end = closing.end;
+          yp_array_pattern_node_t *pattern_node = (yp_array_pattern_node_t *)inner;
+          pattern_node->base.location.start = node->location.start;
+          pattern_node->base.location.end = closing.end;
 
-          inner->as.array_pattern_node.constant = node;
-          inner->as.array_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-          inner->as.array_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+          pattern_node->constant = node;
+          pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-          node = inner;
+          node = (yp_node_t *)pattern_node;
           break;
         }
         case YP_NODE_FIND_PATTERN_NODE: {
@@ -8130,15 +8136,16 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
           break;
         }
         default: {
-          node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
-          yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
+          yp_array_pattern_node_t *pattern_node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
+          yp_array_pattern_node_requireds_append(pattern_node, inner);
+          node = (yp_node_t *)pattern_node;
           break;
         }
       }
     } else {
       // If there was no inner pattern, then we have something like Foo() or
       // Foo[]. In that case we'll create an array pattern with no requireds.
-      node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
+      node = (yp_node_t *)yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
     }
   }
 
@@ -8253,7 +8260,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       if (accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
         // If we have an empty array pattern, then we'll just return a new
         // array pattern node.
-        return yp_array_pattern_node_empty_create(parser, &opening, &parser->previous);
+        return (yp_node_t *)yp_array_pattern_node_empty_create(parser, &opening, &parser->previous);
       }
 
       // Otherwise, we'll parse the inner pattern, then deal with it depending
@@ -8265,14 +8272,15 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
 
       switch (inner->type) {
         case YP_NODE_ARRAY_PATTERN_NODE: {
-          if (inner->as.array_pattern_node.opening_loc.start == NULL) {
-            inner->location.start = opening.start;
-            inner->location.end = closing.end;
+          yp_array_pattern_node_t *pattern_node = (yp_array_pattern_node_t *) inner;
+          if (pattern_node->opening_loc.start == NULL) {
+            pattern_node->base.location.start = opening.start;
+            pattern_node->base.location.end = closing.end;
 
-            inner->as.array_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-            inner->as.array_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+            pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+            pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-            return inner;
+            return (yp_node_t *) pattern_node;
           }
 
           break;
@@ -8294,9 +8302,9 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           break;
       }
 
-      yp_node_t *node = yp_array_pattern_node_empty_create(parser, &opening, &closing);
-      yp_node_list_append2(&node->as.array_pattern_node.requireds, inner);
-      return node;
+      yp_array_pattern_node_t *node = yp_array_pattern_node_empty_create(parser, &opening, &closing);
+      yp_array_pattern_node_requireds_append(node, inner);
+      return (yp_node_t *) node;
     }
     case YP_TOKEN_BRACE_LEFT: {
       bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
@@ -8618,14 +8626,14 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
     if (nodes.nodes[0]->type == YP_NODE_SPLAT_NODE && nodes.nodes[nodes.size - 1]->type == YP_NODE_SPLAT_NODE) {
       node = yp_find_pattern_node_create(parser, &nodes);
     } else {
-      node = yp_array_pattern_node_node_list_create(parser, &nodes);
+      node = (yp_node_t *) yp_array_pattern_node_node_list_create(parser, &nodes);
     }
 
     free(nodes.nodes);
   } else if (leading_rest) {
     // Otherwise, if we parsed a single splat pattern, then we know we have an
     // array pattern, so we can go ahead and create that node.
-    node = yp_array_pattern_node_rest_create(parser, node);
+    node = (yp_node_t *) yp_array_pattern_node_rest_create(parser, node);
   }
 
   return node;

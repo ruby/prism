@@ -415,6 +415,7 @@ nodes:
 
           foo in Bar[1, 2, 3]
           ^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: AsPatternNode
     child_nodes:
       - name: value
