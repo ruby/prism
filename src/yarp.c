@@ -9101,6 +9101,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node->as.interpolated_x_string_node.closing = parser->previous;
       } else {
+        assert(node->type == YP_NODE_HEREDOC_NODE);
         if (node->type == YP_NODE_HEREDOC_NODE) {
           ((yp_heredoc_node_t *) node)->closing = parser->previous;
         }
