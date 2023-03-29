@@ -1592,99 +1592,117 @@ yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate a new InterpolatedRegularExpressionNode node.
-static yp_node_t *
+static yp_interpolated_regular_expression_node_t *
 yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_regular_expression_node_t *node = YP_NODE_ALLOC(yp_interpolated_regular_expression_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_REGULAR_EXPRESSION_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_interpolated_regular_expression_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_REGULAR_EXPRESSION_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.interpolated_regular_expression_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.interpolated_regular_expression_node.parts);
+  yp_node_list_init(&node->parts);
   return node;
+}
+
+static inline void
+yp_interpolated_regular_expression_node_append(yp_parser_t *parser, yp_interpolated_regular_expression_node_t *node, yp_node_t *part) {
+  yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
 }
 
 // Allocate and initialize a new InterpolatedStringNode node.
-static yp_node_t *
+static yp_interpolated_string_node_t *
 yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_node_list_t *parts, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_string_node_t *node = YP_NODE_ALLOC(yp_interpolated_string_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end,
+  *node = (yp_interpolated_string_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end,
+      },
     },
-    .as.interpolated_string_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
   if (parts == NULL) {
-    yp_node_list_init(&node->as.interpolated_string_node.parts);
-  }
-  else {
-    node->as.interpolated_string_node.parts = *parts;
+    yp_node_list_init(&node->parts);
+  } else {
+    node->parts = *parts;
   }
 
   return node;
+}
+
+static inline void
+yp_interpolated_string_node_append(yp_parser_t *parser, yp_interpolated_string_node_t *node, yp_node_t *part) {
+  yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
 }
 
 // Allocate and initialize a new InterpolatedSymbolNode node.
-static yp_node_t *
+static yp_interpolated_symbol_node_t *
 yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_node_list_t *parts, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_interpolated_symbol_node_t *node = YP_NODE_ALLOC(yp_interpolated_symbol_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_SYMBOL_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end,
+  *node = (yp_interpolated_symbol_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_SYMBOL_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end,
+      },
     },
-    .as.interpolated_symbol_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
   if (parts == NULL) {
-    yp_node_list_init(&node->as.interpolated_symbol_node.parts);
-  }
-  else {
-    node->as.interpolated_symbol_node.parts = *parts;
+    yp_node_list_init(&node->parts);
+  } else {
+    node->parts = *parts;
   }
 
   return node;
 }
 
-// Allocate a new InterpolatedXStringNode node.
-static yp_node_t *
-yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-  yp_node_t *node = yp_node_alloc(parser);
+static inline void
+yp_interpolated_symbol_node_append(yp_parser_t *parser, yp_interpolated_symbol_node_t *node, yp_node_t *part) {
+  yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
+}
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_INTERPOLATED_X_STRING_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+// Allocate a new InterpolatedXStringNode node.
+static yp_interpolated_x_string_node_t *
+yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
+  yp_interpolated_x_string_node_t *node = YP_NODE_ALLOC(yp_interpolated_x_string_node_t);
+
+  *node = (yp_interpolated_x_string_node_t) {
+    {
+      .type = YP_NODE_INTERPOLATED_X_STRING_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.interpolated_x_string_node = {
-      .opening = *opening,
-      .closing = *closing
-    }
+    .opening = *opening,
+    .closing = *closing
   };
 
-  yp_node_list_init(&node->as.interpolated_x_string_node.parts);
+  yp_node_list_init(&node->parts);
   return node;
+}
+
+static inline void
+yp_interpolated_xstring_node_append(yp_parser_t *parser, yp_interpolated_x_string_node_t *node, yp_node_t *part) {
+  yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
 }
 
 // Allocate a new KeywordParameterNode node.
@@ -2783,7 +2801,7 @@ static bool
 yp_symbol_node_label_p(yp_node_t *node) {
   return (
     (node->type == YP_NODE_SYMBOL_NODE && ((yp_symbol_node_t *) node)->closing.type == YP_TOKEN_LABEL_END) ||
-    (node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE && node->as.interpolated_symbol_node.closing.type == YP_TOKEN_LABEL_END)
+    (node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE && ((yp_interpolated_symbol_node_t *)node)->closing.type == YP_TOKEN_LABEL_END)
   );
 }
 
@@ -7892,12 +7910,12 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
   assert(lex_mode->mode == YP_LEX_STRING);
 
   if (lex_mode->as.string.interpolation) {
-    yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &opening);
+    yp_interpolated_symbol_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &opening);
 
     while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
       yp_node_t *part = parse_string_part(parser);
       if (part != NULL) {
-        yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, part);
+        yp_node_list_append(parser, (yp_node_t *) interpolated, &interpolated->parts, part);
       }
     }
 
@@ -7906,8 +7924,8 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
     }
     expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
 
-    interpolated->as.interpolated_symbol_node.closing = parser->previous;
-    return interpolated;
+    interpolated->closing = parser->previous;
+    return (yp_node_t *) interpolated;
   }
 
   yp_token_t content;
@@ -8951,7 +8969,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_heredoc_indent_t indent = parser->lex_modes.current->as.heredoc.indent;
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node = yp_interpolated_xstring_node_create(parser, &parser->previous, &parser->previous);
+        node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &parser->previous, &parser->previous);
       } else {
         node = yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
       }
@@ -8959,7 +8977,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_node_list_t *node_list;
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node_list = &node->as.interpolated_x_string_node.parts;
+        node_list = &((yp_interpolated_x_string_node_t *)node)->parts;
       }
       else {
         node_list = &node->as.heredoc_node.parts;
@@ -8969,7 +8987,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_node_t *part = parse_string_part(parser);
         if (part != NULL) {
           if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-            yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+            yp_interpolated_xstring_node_append(parser, (yp_interpolated_x_string_node_t *) node, part);
           }
           else {
             yp_node_list_append(parser, node, &node->as.heredoc_node.parts, part);
@@ -9092,7 +9110,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node->as.interpolated_x_string_node.closing = parser->previous;
+        if (node->type == YP_NODE_INTERPOLATED_X_STRING_NODE) {
+          ((yp_interpolated_x_string_node_t *)node)->closing = parser->previous;
+        }
       }
       else {
         node->as.heredoc_node.closing = parser->previous;
@@ -9984,7 +10004,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // interpolated string, then we need to append the string content
               // to the list of child nodes.
               yp_node_t *part = parse_string_part(parser);
-              yp_node_list_append(parser, current, &current->as.interpolated_symbol_node.parts, part);
+              yp_interpolated_symbol_node_append(parser, (yp_interpolated_symbol_node_t *) current, part);
             } else {
               assert(false && "unreachable");
             }
@@ -9998,25 +10018,25 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // node to a new interpolated string.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              current = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
+              current = (yp_node_t *) yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
             } else if (current->type == YP_NODE_SYMBOL_NODE) {
               // If we hit an embedded variable and the current node is a string
               // node, then we'll convert the current into an interpolated
               // string and add the string node to the list of parts.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
+              yp_interpolated_symbol_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
               current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, current);
-              current = interpolated;
+              yp_interpolated_symbol_node_append(parser, interpolated, current);
+              current = (yp_node_t *) interpolated;
             } else {
               // If we hit an embedded variable and the current node is an
               // interpolated string, then we'll just add the embedded variable.
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_symbol_node.parts, part);
+            yp_interpolated_symbol_node_append(parser, (yp_interpolated_symbol_node_t *) current, part);
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -10026,7 +10046,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // node to a new interpolated string.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              current = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
+              current = (yp_node_t *) yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
             } else if (current->type == YP_NODE_SYMBOL_NODE) {
               // If we hit an embedded expression and the current node is a
               // string node, then we'll convert the current into an
@@ -10034,11 +10054,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // parts.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              yp_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
+              yp_interpolated_symbol_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
               current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_symbol_node.parts, current);
-              current = interpolated;
+              yp_interpolated_symbol_node_append(parser, interpolated, current);
+              current = (yp_node_t *) interpolated;
             } else if (current->type == YP_NODE_INTERPOLATED_SYMBOL_NODE) {
               // If we hit an embedded expression and the current node is an
               // interpolated string, then we'll just continue on.
@@ -10047,7 +10067,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_symbol_node.parts, part);
+            yp_interpolated_symbol_node_append(parser, (yp_interpolated_symbol_node_t *) current, part);
             break;
           }
           default:
@@ -10131,7 +10151,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // interpolated string, then we need to append the string content
               // to the list of child nodes.
               yp_node_t *part = parse_string_part(parser);
-              yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+              yp_interpolated_string_node_append(parser, (yp_interpolated_string_node_t *) current, part);
             } else {
               assert(false && "unreachable");
             }
@@ -10145,24 +10165,23 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // node to a new interpolated string.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              current = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
+              current = (yp_node_t *) yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
             } else if (current->type == YP_NODE_STRING_NODE) {
               // If we hit an embedded variable and the current node is a string
               // node, then we'll convert the current into an interpolated
               // string and add the string node to the list of parts.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              yp_node_t *interpolated = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
-
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, current);
-              current = interpolated;
+              yp_interpolated_string_node_t *interpolated = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
+              yp_interpolated_string_node_append(parser, interpolated, current);
+              current = (yp_node_t *) interpolated;
             } else {
               // If we hit an embedded variable and the current node is an
               // interpolated string, then we'll just add the embedded variable.
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+            yp_interpolated_string_node_append(parser, (yp_interpolated_string_node_t *) current, part);
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -10172,7 +10191,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // node to a new interpolated string.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              current = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
+              current = (yp_node_t *) yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
             } else if (current->type == YP_NODE_STRING_NODE) {
               // If we hit an embedded expression and the current node is a
               // string node, then we'll convert the current into an
@@ -10180,9 +10199,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // parts.
               yp_token_t opening = not_provided(parser);
               yp_token_t closing = not_provided(parser);
-              yp_node_t *interpolated = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
-              yp_node_list_append(parser, interpolated, &interpolated->as.interpolated_string_node.parts, current);
-              current = interpolated;
+              yp_interpolated_string_node_t *interpolated = yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
+              yp_interpolated_string_node_append(parser, interpolated, current);
+              current = (yp_node_t *) interpolated;
             } else if (current->type == YP_NODE_INTERPOLATED_STRING_NODE) {
               // If we hit an embedded expression and the current node is an
               // interpolated string, then we'll just continue on.
@@ -10191,7 +10210,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_node_list_append(parser, current, &current->as.interpolated_string_node.parts, part);
+            yp_interpolated_string_node_append(parser, (yp_interpolated_string_node_t *) current, part);
             break;
           }
           default:
@@ -10232,7 +10251,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return (yp_node_t *) yp_regular_expression_node_create_and_unescape(parser, &opening, &content, &parser->previous, YP_UNESCAPE_ALL);
       }
 
-      yp_node_t *node;
+      yp_interpolated_regular_expression_node_t *node;
 
       if (match_type_p(parser, YP_TOKEN_STRING_CONTENT)) {
         // In this case we've hit string content so we know the regular
@@ -10256,8 +10275,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         yp_node_t *part = (yp_node_t *) yp_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-
-        yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part);
+        yp_interpolated_regular_expression_node_append(parser, node, part);
       } else {
         // If the first part of the body of the regular expression is not a
         // string content, then we have interpolation and we need to create an
@@ -10270,15 +10288,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       while (!match_any_type_p(parser, 2, YP_TOKEN_REGEXP_END, YP_TOKEN_EOF)) {
         yp_node_t *part = parse_string_part(parser);
         if (part != NULL) {
-          yp_node_list_append(parser, node, &node->as.interpolated_regular_expression_node.parts, part);
+          yp_interpolated_regular_expression_node_append(parser, node, part);
         }
       }
 
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
-      node->as.interpolated_regular_expression_node.closing = parser->previous;
-      node->location.end = parser->previous.end;
+      node->closing = parser->previous;
+      node->base.location.end = parser->previous.end;
 
-      return node;
+      return (yp_node_t *) node;
     }
     case YP_TOKEN_BACKTICK:
     case YP_TOKEN_PERCENT_LOWER_X: {
@@ -10303,7 +10321,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return (yp_node_t *) yp_xstring_node_create(parser, &opening, &content, &parser->previous);
       }
 
-      yp_node_t *node;
+      yp_interpolated_x_string_node_t *node;
 
       if (match_type_p(parser, YP_TOKEN_STRING_CONTENT)) {
         // In this case we've hit string content so we know the string at least
@@ -10324,7 +10342,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         yp_node_t *part = (yp_node_t *) yp_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-        yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+        yp_interpolated_xstring_node_append(parser, node, part);
       } else {
         // If the first part of the body of the string is not a string content,
         // then we have interpolation and we need to create an interpolated
@@ -10334,14 +10352,16 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
         yp_node_t *part = parse_string_part(parser);
-        if (part != NULL) yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
+        if (part != NULL) {
+          yp_interpolated_xstring_node_append(parser, node, part);
+        }
       }
 
       expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an xstring.");
-      node->as.interpolated_x_string_node.closing = parser->previous;
-      node->location.end = parser->previous.end;
+      node->closing = parser->previous;
+      node->base.location.end = parser->previous.end;
 
-      return node;
+      return (yp_node_t *) node;
     }
     case YP_TOKEN_USTAR: {
       parser_lex(parser);
@@ -10531,7 +10551,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
 
           expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for a string literal.");
-          return yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
+          return (yp_node_t *) yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
         }
 
         if (accept(parser, YP_TOKEN_LABEL_END)) {
@@ -10569,11 +10589,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           }
 
           if (accept(parser, YP_TOKEN_LABEL_END)) {
-            return yp_interpolated_symbol_node_create(parser, &opening, &parts, &parser->previous);
+            return (yp_node_t *) yp_interpolated_symbol_node_create(parser, &opening, &parts, &parser->previous);
           }
 
           expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated string.");
-          node = yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
+          node = (yp_node_t *) yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
         }
       } else {
         // If we get here, then the first part of the string is not plain string
@@ -10588,11 +10608,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (accept(parser, YP_TOKEN_LABEL_END)) {
-          return yp_interpolated_symbol_node_create(parser, &opening, &parts, &parser->previous);
+          return (yp_node_t *) yp_interpolated_symbol_node_create(parser, &opening, &parts, &parser->previous);
         }
 
         expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated string.");
-        node = yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
+        node = (yp_node_t *) yp_interpolated_string_node_create(parser, &opening, &parts, &parser->previous);
       }
 
       // If there's a string immediately following this string, then it's a
