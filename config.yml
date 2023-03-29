@@ -908,6 +908,7 @@ nodes:
 
           { a => b }
           ^^^^^^^^^^
+    is_migrated: true
   - name: HashPatternNode
     child_nodes:
       - name: constant
