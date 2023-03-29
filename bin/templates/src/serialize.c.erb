@@ -40,61 +40,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_buffer_append_u32(buffer, node->location.end - parser->start);
 
   switch (node->type) {
-    <%- nodes.filter { !_1.is_migrated }.each do |node| -%>
-    case <%= node.type %>: {
-      <%- node.params.each do |param| -%>
-      <%- case param -%>
-      <%- when NodeParam -%>
-      yp_serialize_node(parser, (yp_node_t *)node->as.<%= node.human %>.<%= param.name %>, buffer);
-      <%- when OptionalNodeParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %> == NULL) {
-        yp_buffer_append_u8(buffer, 0);
-      } else {
-        yp_serialize_node(parser, (yp_node_t *)node->as.<%= node.human %>.<%= param.name %>, buffer);
-      }
-      <%- when StringParam -%>
-      uint32_t <%= param.name %>_length = yp_string_length(&node->as.<%= node.human %>.<%= param.name %>);
-      yp_buffer_append_u32(buffer, <%= param.name %>_length);
-      yp_buffer_append_str(buffer, yp_string_source(&node->as.<%= node.human %>.<%= param.name %>), <%= param.name %>_length);
-      <%- when NodeListParam -%>
-      uint32_t <%= param.name %>_size = node->as.<%= node.human %>.<%= param.name %>.size;
-      yp_buffer_append_u32(buffer, <%= param.name %>_size);
-      for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
-        yp_serialize_node(parser, node->as.<%= node.human %>.<%= param.name %>.nodes[index], buffer);
-      }
-      <%- when TokenParam -%>
-      serialize_token(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
-      <%- when OptionalTokenParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %>.type == YP_TOKEN_NOT_PROVIDED) {
-        yp_buffer_append_u8(buffer, 0);
-      } else {
-        serialize_token(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
-      }
-      <%- when TokenListParam -%>
-      uint32_t <%= param.name %>_size = node->as.<%= node.human %>.<%= param.name %>.size;
-      yp_buffer_append_u32(buffer, <%= param.name %>_size);
-      for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
-        serialize_token(parser, &node->as.<%= node.human %>.<%= param.name %>.tokens[index], buffer);
-      }
-      <%- when LocationParam -%>
-      serialize_location(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
-      <%- when OptionalLocationParam -%>
-      if (node->as.<%= node.human %>.<%= param.name %>.start == NULL) {
-        yp_buffer_append_u8(buffer, 0);
-      } else {
-        yp_buffer_append_u8(buffer, 1);
-        serialize_location(parser, &node->as.<%= node.human %>.<%= param.name %>, buffer);
-      }
-      <%- when IntegerParam -%>
-      yp_buffer_append_int(buffer, node->as.<%= node.human %>.<%= param.name %>);
-      <%- else -%>
-      <%- raise -%>
-      <%- end -%>
-      <%- end -%>
-      break;
-    }
-    <%- end -%>
-    <%- nodes.filter { _1.is_migrated }.each do |node| -%>
+    <%- nodes.each do |node| -%>
     case <%= node.type %>: {
       <%- node.params.each do |param| -%>
       <%- case param -%>
