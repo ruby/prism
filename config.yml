@@ -923,6 +923,7 @@ nodes:
 
           foo => { a: 1, b: 2, **c }
                  ^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: HeredocNode
     child_nodes:
       - name: opening
