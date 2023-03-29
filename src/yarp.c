@@ -4391,7 +4391,7 @@ lex_question_mark(yp_parser_t *parser) {
   lex_state_set(parser, YP_LEX_STATE_END);
 
   if (parser->current.start[1] == '\\') {
-    parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
+    parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, true, &parser->error_list);
   } else {
     parser->current.end += parser->encoding.char_width(parser->current.end);
   }
@@ -5771,7 +5771,7 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
+            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, false, &parser->error_list);
             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
           }
@@ -5871,7 +5871,7 @@ parser_lex(yp_parser_t *parser) {
             // If we hit escapes, then we need to treat the next token
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
-            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
+            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, false, &parser->error_list);
             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
           }
@@ -6042,7 +6042,7 @@ parser_lex(yp_parser_t *parser) {
             // literally. In this case we'll skip past the next character and
             // find the next breakpoint.
             yp_unescape_type_t unescape_type = parser->lex_modes.current->as.string.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
-            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, &parser->error_list);
+            size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, false, &parser->error_list);
             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             break;
           }
@@ -6181,7 +6181,7 @@ parser_lex(yp_parser_t *parser) {
             if (breakpoint[1] == '\n') {
               breakpoint++;
             } else {
-              size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, &parser->error_list);
+              size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, false, &parser->error_list);
               breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             }
             break;

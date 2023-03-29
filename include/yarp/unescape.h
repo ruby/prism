@@ -33,6 +33,6 @@ __attribute__((__visibility__("default"))) extern void
 yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list);
 
 __attribute__((__visibility__("default"))) extern size_t
-yp_unescape_calculate_difference(const char *value, const char *end, yp_unescape_type_t unescape_type, yp_list_t *error_list);
+yp_unescape_calculate_difference(const char *value, const char *end, yp_unescape_type_t unescape_type, bool expect_single_codepoint, yp_list_t *error_list);
 
 #endif
