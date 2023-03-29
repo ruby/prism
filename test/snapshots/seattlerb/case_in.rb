@@ -286,7 +286,7 @@ ProgramNode(0...747)(
              )],
             SplatNode(296...298)(
               USTAR(296...297)("*"),
-              LocalVariableWriteNode(297...298)((297...298), nil, nil)
+              LocalVariableWriteNode(297...298)((297...298), nil, nil, 0)
             ),
             [SymbolNode(300...302)(
                SYMBOL_BEGIN(300...301)(":"),
@@ -383,12 +383,12 @@ ProgramNode(0...747)(
             ConstantReadNode(369...375)(),
             SplatNode(376...380)(
               USTAR(376...377)("*"),
-              LocalVariableWriteNode(377...380)((377...380), nil, nil)
+              LocalVariableWriteNode(377...380)((377...380), nil, nil, 0)
             ),
-            [LocalVariableWriteNode(382...383)((382...383), nil, nil)],
+            [LocalVariableWriteNode(382...383)((382...383), nil, nil, 0)],
             SplatNode(385...389)(
               USTAR(385...386)("*"),
-              LocalVariableWriteNode(386...389)((386...389), nil, nil)
+              LocalVariableWriteNode(386...389)((386...389), nil, nil, 0)
             ),
             (375...376),
             (389...390)
@@ -413,12 +413,12 @@ ProgramNode(0...747)(
             ConstantReadNode(407...413)(),
             SplatNode(414...418)(
               USTAR(414...415)("*"),
-              LocalVariableWriteNode(415...418)((415...418), nil, nil)
+              LocalVariableWriteNode(415...418)((415...418), nil, nil, 0)
             ),
-            [LocalVariableWriteNode(420...421)((420...421), nil, nil)],
+            [LocalVariableWriteNode(420...421)((420...421), nil, nil, 0)],
             SplatNode(423...427)(
               USTAR(423...424)("*"),
-              LocalVariableWriteNode(424...427)((424...427), nil, nil)
+              LocalVariableWriteNode(424...427)((424...427), nil, nil, 0)
             ),
             (413...414),
             (427...428)
@@ -459,7 +459,7 @@ ProgramNode(0...747)(
                PARENTHESIS_RIGHT(450...451)(")"),
                StatementsNode(454...458)([TrueNode(454...458)()])
              ),
-             LocalVariableWriteNode(462...463)((462...463), nil, nil)],
+             LocalVariableWriteNode(462...463)((462...463), nil, nil, 0)],
             nil,
             [],
             (445...446),
@@ -489,8 +489,8 @@ ProgramNode(0...747)(
                nil,
                "a"
              ),
-             LocalVariableWriteNode(486...487)((486...487), nil, nil),
-             LocalVariableWriteNode(489...490)((489...490), nil, nil),
+             LocalVariableWriteNode(486...487)((486...487), nil, nil, 0),
+             LocalVariableWriteNode(489...490)((489...490), nil, nil, 0),
              ArrayPatternNode(492...505)(
                nil,
                [SymbolNode(493...495)(
@@ -501,7 +501,7 @@ ProgramNode(0...747)(
                 )],
                SplatNode(497...499)(
                  USTAR(497...498)("*"),
-                 LocalVariableWriteNode(498...499)((498...499), nil, nil)
+                 LocalVariableWriteNode(498...499)((498...499), nil, nil, 0)
                ),
                [NilNode(501...504)()],
                (492...493),
@@ -562,7 +562,7 @@ ProgramNode(0...747)(
                   nil,
                   "b"
                 ),
-                LocalVariableWriteNode(555...556)((555...556), nil, nil)],
+                LocalVariableWriteNode(555...556)((555...556), nil, nil, 0)],
                nil,
                [],
                (550...551),
@@ -577,7 +577,7 @@ ProgramNode(0...747)(
                   "d"
                 ),
                 PinnedVariableNode(564...566)(
-                  LocalVariableReadNode(565...566)(),
+                  LocalVariableReadNode(565...566)(0),
                   (564...565)
                 )],
                nil,

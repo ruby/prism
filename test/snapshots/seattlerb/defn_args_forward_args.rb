@@ -27,7 +27,7 @@ ProgramNode(0...41)(
                  nil,
                  "get"
                ),
-               LocalVariableReadNode(29...30)(),
+               LocalVariableReadNode(29...30)(1),
                ForwardingArgumentsNode(32...35)()]
             ),
             PARENTHESIS_RIGHT(35...36)(")"),

@@ -1079,6 +1079,9 @@ nodes:
           ->(value) { value * 2 }
           ^^^^^^^^^^^^^^^^^^^^^^^
   - name: LocalVariableReadNode
+    child_nodes:
+      - name: depth
+        type: integer
     comment: |
       Represents reading a local variable. Note that this requires that a local
       variable of the same name has already been written to in the same scope,
@@ -1094,6 +1097,8 @@ nodes:
         type: node?
       - name: operator_loc
         type: location?
+      - name: depth
+        type: integer
     comment: |
       Represents writing to a local variable.
 

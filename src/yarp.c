@@ -1818,14 +1818,15 @@ yp_lambda_node_create(
 
 // Allocate a new LocalVariableReadNode node.
 static yp_local_variable_read_node_t *
-yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
+yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, int depth) {
   yp_local_variable_read_node_t *node = yp_alloc(parser, sizeof(yp_local_variable_read_node_t));
 
   *node = (yp_local_variable_read_node_t) {
     {
       .type = YP_NODE_LOCAL_VARIABLE_READ_NODE,
       .location = YP_LOCATION_TOKEN_VALUE(name)
-    }
+    },
+    .depth = depth
   };
 
   return node;
@@ -1833,7 +1834,7 @@ yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) 
 
 // Allocate and initialize a new LocalVariableWriteNode node.
 static yp_local_variable_write_node_t *
-yp_local_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, yp_node_t *value, const yp_token_t *operator) {
+yp_local_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, yp_node_t *value, const yp_token_t *operator, int depth) {
   yp_local_variable_write_node_t *node = yp_alloc(parser, sizeof(yp_local_variable_write_node_t));
 
   *node = (yp_local_variable_write_node_t) {
@@ -1846,7 +1847,8 @@ yp_local_variable_write_node_create(yp_parser_t *parser, const yp_location_t *na
     },
     .name_loc = *name_loc,
     .value = value,
-    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator)
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+    .depth = depth
   };
 
   return node;
@@ -3101,17 +3103,20 @@ yp_parser_scope_push(yp_parser_t *parser, const yp_token_t *token, bool top) {
 }
 
 // Check if the current scope has a given local variables.
-static bool
+static int
 yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
   yp_scope_t *scope = parser->current_scope;
+  int depth = 0;
 
   while (scope != NULL) {
     if (yp_token_list_includes(&scope->node->locals, token)) return true;
     if (scope->top) break;
+
     scope = scope->previous;
+    depth++;
   }
 
-  return false;
+  return -1;
 }
 
 // Add a local variable to the current scope.
@@ -5709,7 +5714,7 @@ parser_lex(yp_parser_t *parser) {
           if (
             !(last_state & (YP_LEX_STATE_DOT | YP_LEX_STATE_FNAME)) &&
             (type == YP_TOKEN_IDENTIFIER) &&
-            yp_parser_local_p(parser, &parser->current)
+            (yp_parser_local_p(parser, &parser->current) != -1)
           ) {
             lex_state_set(parser, YP_LEX_STATE_END | YP_LEX_STATE_LABEL);
           }
@@ -6605,9 +6610,10 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
       yp_location_t name_loc = target->location;
+      int depth = ((yp_local_variable_read_node_t *) target)->depth;
       yp_node_destroy(parser, target);
 
-      return (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator);
+      return (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator, depth);
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
       yp_node_t *write_node = (yp_node_t *) yp_instance_variable_write_node_create(parser, (yp_instance_variable_read_node_t *) target, operator, value);
@@ -6662,7 +6668,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           yp_node_destroy(parser, target);
 
           yp_location_t name_loc = { .start = name.start, .end = name.end };
-          target = (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator);
+          target = (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator, 0);
 
           if (token_is_numbered_parameter(&name)) {
             yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "reserved for numbered parameter");
@@ -7033,7 +7039,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
         yp_token_t operator = parser->previous;
 
         if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_COMMA)) {
-          if (!yp_parser_local_p(parser, &parser->previous)) {
+          if (yp_parser_local_p(parser, &parser->previous) == -1) {
             yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "unexpected * when parent method is not forwarding.");
           }
 
@@ -7061,7 +7067,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             yp_node_t *right = parse_expression(parser, YP_BINDING_POWER_RANGE, "Expected a value after the operator.");
             argument = (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
           } else {
-            if (!yp_parser_local_p(parser, &parser->previous)) {
+            if (yp_parser_local_p(parser, &parser->previous) == -1) {
               yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
             }
 
@@ -8032,13 +8038,15 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
 // Parse an identifier into either a local variable read or a call.
 static yp_node_t *
 parse_vcall(yp_parser_t *parser) {
+  int depth;
+
   if (
     (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
     (parser->previous.end[-1] != '!') &&
     (parser->previous.end[-1] != '?') &&
-    yp_parser_local_p(parser, &parser->previous)
+    (depth = yp_parser_local_p(parser, &parser->previous)) != -1
   ) {
-    return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous);
+    return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, depth);
   }
 
   return (yp_node_t *) yp_call_node_vcall_create(parser, &parser->previous);
@@ -8449,7 +8457,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       switch (parser->current.type) {
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
-          yp_node_t *variable = (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous);
+          yp_node_t *variable = (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, 0);
 
           return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }

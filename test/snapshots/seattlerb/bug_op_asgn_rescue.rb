@@ -3,7 +3,7 @@ ProgramNode(0...18)(
   StatementsNode(0...18)(
     [RescueModifierNode(0...18)(
        OperatorOrAssignmentNode(0...7)(
-         LocalVariableWriteNode(0...1)((0...1), nil, nil),
+         LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
          CallNode(6...7)(
            nil,
            nil,

@@ -14,12 +14,14 @@ ProgramNode(0...41)(
          HEREDOC_END(30...34)("CCC\n"),
          0
        ),
-       (2...3)
+       (2...3),
+       0
      ),
      LocalVariableWriteNode(35...41)(
        (35...36),
        IntegerNode(39...41)(),
-       (37...38)
+       (37...38),
+       0
      )]
   )
 )

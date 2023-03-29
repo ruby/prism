@@ -4,7 +4,7 @@ ProgramNode(0...0)(
     [MultiWriteNode(0...0)(
        [SplatNode(0...2)(
           USTAR(0...1)("*"),
-          LocalVariableWriteNode(1...2)((1...2), nil, nil)
+          LocalVariableWriteNode(1...2)((1...2), nil, nil, 0)
         )],
        EQUAL(3...4)("="),
        ArrayNode(0...0)(

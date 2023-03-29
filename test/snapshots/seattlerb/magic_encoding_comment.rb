@@ -21,7 +21,8 @@ ProgramNode(18...90)(
                    nil,
                    "però"
                  ),
-                 (73...74)
+                 (73...74),
+                 0
                )]
             ),
             ScopeNode(54...57)([IDENTIFIER(67...72)("così")]),

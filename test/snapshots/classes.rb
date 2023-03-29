@@ -11,7 +11,8 @@ ProgramNode(0...350)(
          [LocalVariableWriteNode(8...13)(
             (8...9),
             IntegerNode(12...13)(),
-            (10...11)
+            (10...11),
+            0
           )]
        ),
        KEYWORD_END(14...17)("end")
@@ -77,7 +78,8 @@ ProgramNode(0...350)(
          [LocalVariableWriteNode(89...94)(
             (89...90),
             IntegerNode(93...94)(),
-            (91...92)
+            (91...92),
+            0
           )]
        ),
        KEYWORD_END(95...98)("end")

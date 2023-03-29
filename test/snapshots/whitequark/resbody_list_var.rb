@@ -28,7 +28,7 @@ ProgramNode(0...39)(
             "foo"
           )],
          EQUAL_GREATER(24...26)("=>"),
-         LocalVariableWriteNode(27...29)((27...29), nil, nil),
+         LocalVariableWriteNode(27...29)((27...29), nil, nil, 0),
          StatementsNode(31...34)(
            [CallNode(31...34)(
               nil,

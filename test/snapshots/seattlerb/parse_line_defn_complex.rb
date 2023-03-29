@@ -18,19 +18,19 @@ ProgramNode(0...40)(
             nil,
             IDENTIFIER(11...12)("p"),
             PARENTHESIS_LEFT(12...13)("("),
-            ArgumentsNode(13...14)([LocalVariableReadNode(13...14)()]),
+            ArgumentsNode(13...14)([LocalVariableReadNode(13...14)(1)]),
             PARENTHESIS_RIGHT(14...15)(")"),
             nil,
             "p"
           ),
           OperatorAssignmentNode(18...24)(
-            LocalVariableWriteNode(18...19)((18...19), nil, nil),
+            LocalVariableWriteNode(18...19)((18...19), nil, nil, 1),
             STAR_EQUAL(20...22)("*="),
             IntegerNode(23...24)()
           ),
           ReturnNode(27...35)(
             KEYWORD_RETURN(27...33)("return"),
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)()])
+            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(1)])
           )]
        ),
        ScopeNode(0...3)([IDENTIFIER(6...7)("y")]),

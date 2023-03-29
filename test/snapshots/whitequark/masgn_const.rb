@@ -7,9 +7,9 @@ ProgramNode(0...34)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(5...8)((5...8), nil, nil)],
+        LocalVariableWriteNode(5...8)((5...8), nil, nil, 0)],
        EQUAL(9...10)("="),
-       LocalVariableReadNode(11...14)(),
+       LocalVariableReadNode(11...14)(1),
        nil,
        nil
      ),
@@ -23,9 +23,9 @@ ProgramNode(0...34)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(25...28)((25...28), nil, nil)],
+        LocalVariableWriteNode(25...28)((25...28), nil, nil, 1)],
        EQUAL(29...30)("="),
-       LocalVariableReadNode(31...34)(),
+       LocalVariableReadNode(31...34)(1),
        nil,
        nil
      )]

@@ -22,7 +22,7 @@ ProgramNode(0...408)(
             [IntegerNode(14...15)(), IntegerNode(17...18)()],
             SplatNode(20...22)(
               USTAR(20...21)("*"),
-              LocalVariableWriteNode(21...22)((21...22), nil, nil)
+              LocalVariableWriteNode(21...22)((21...22), nil, nil, 0)
             ),
             [IntegerNode(24...25)()],
             (13...14),
@@ -82,7 +82,7 @@ ProgramNode(0...408)(
             nil,
             [AssocNode(85...88)(
                AssocSplatNode(85...88)(
-                 LocalVariableWriteNode(87...88)((87...88), nil, nil),
+                 LocalVariableWriteNode(87...88)((87...88), nil, nil, 0),
                  (85...87)
                ),
                nil,
@@ -119,8 +119,8 @@ ProgramNode(0...408)(
         InNode(128...145)(
           ArrayPatternNode(131...140)(
             nil,
-            [LocalVariableWriteNode(132...133)((132...133), nil, nil),
-             LocalVariableWriteNode(135...136)((135...136), nil, nil)],
+            [LocalVariableWriteNode(132...133)((132...133), nil, nil, 0),
+             LocalVariableWriteNode(135...136)((135...136), nil, nil, 0)],
             SplatNode(138...139)(USTAR(138...139)("*"), nil),
             [],
             (131...132),
@@ -217,7 +217,7 @@ ProgramNode(0...408)(
         InNode(268...282)(
           AsPatternNode(271...277)(
             IntegerNode(271...272)(),
-            LocalVariableWriteNode(276...277)((276...277), nil, nil),
+            LocalVariableWriteNode(276...277)((276...277), nil, nil, 0),
             (273...275)
           ),
           StatementsNode(285...289)([TrueNode(285...289)()]),
@@ -226,7 +226,7 @@ ProgramNode(0...408)(
         ),
         InNode(290...300)(
           PinnedVariableNode(293...295)(
-            LocalVariableReadNode(294...295)(),
+            LocalVariableReadNode(294...295)(0),
             (293...294)
           ),
           StatementsNode(303...307)([TrueNode(303...307)()]),
@@ -265,7 +265,7 @@ ProgramNode(0...408)(
             [IntegerNode(360...361)(), IntegerNode(363...364)()],
             SplatNode(366...368)(
               USTAR(366...367)("*"),
-              LocalVariableWriteNode(367...368)((367...368), nil, nil)
+              LocalVariableWriteNode(367...368)((367...368), nil, nil, 0)
             ),
             [IntegerNode(370...371)()],
             (359...360),
@@ -308,7 +308,7 @@ ProgramNode(0...408)(
        IntegerNode(400...401)(),
        ArrayPatternNode(405...408)(
          nil,
-         [LocalVariableWriteNode(406...407)((406...407), nil, nil)],
+         [LocalVariableWriteNode(406...407)((406...407), nil, nil, 0)],
          nil,
          [],
          (405...406),

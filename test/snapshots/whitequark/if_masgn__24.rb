@@ -6,8 +6,8 @@ ProgramNode(0...15)(
        ParenthesesNode(3...15)(
          StatementsNode(4...14)(
            [MultiWriteNode(4...14)(
-              [LocalVariableWriteNode(4...5)((4...5), nil, nil),
-               LocalVariableWriteNode(7...8)((7...8), nil, nil)],
+              [LocalVariableWriteNode(4...5)((4...5), nil, nil, 0),
+               LocalVariableWriteNode(7...8)((7...8), nil, nil, 0)],
               EQUAL(9...10)("="),
               CallNode(11...14)(
                 nil,

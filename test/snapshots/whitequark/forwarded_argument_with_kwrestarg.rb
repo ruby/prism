@@ -19,7 +19,7 @@ ProgramNode(0...45)(
             IDENTIFIER(23...26)("bar"),
             PARENTHESIS_LEFT(26...27)("("),
             ArgumentsNode(27...39)(
-              [LocalVariableReadNode(27...35)(),
+              [LocalVariableReadNode(27...35)(1),
                HashNode(37...39)(
                  nil,
                  [AssocSplatNode(37...39)(nil, (37...39))],

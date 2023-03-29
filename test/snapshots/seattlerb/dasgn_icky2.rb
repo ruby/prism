@@ -15,7 +15,8 @@ ProgramNode(0...76)(
            [LocalVariableWriteNode(7...14)(
               (7...8),
               NilNode(11...14)(),
-              (9...10)
+              (9...10),
+              0
             ),
             BeginNode(17...72)(
               KEYWORD_BEGIN(17...22)("begin"),
@@ -31,7 +32,7 @@ ProgramNode(0...76)(
                 KEYWORD_RESCUE(35...41)("rescue"),
                 [ConstantReadNode(42...51)()],
                 EQUAL_GREATER(52...54)("=>"),
-                LocalVariableWriteNode(55...56)((55...56), nil, nil),
+                LocalVariableWriteNode(55...56)((55...56), nil, nil, 1),
                 StatementsNode(61...66)([BreakNode(61...66)(nil, (61...66))]),
                 nil
               ),

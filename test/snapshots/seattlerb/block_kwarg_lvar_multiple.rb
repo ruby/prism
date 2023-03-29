@@ -38,7 +38,7 @@ ProgramNode(0...33)(
            ),
            []
          ),
-         StatementsNode(29...31)([LocalVariableReadNode(29...31)()]),
+         StatementsNode(29...31)([LocalVariableReadNode(29...31)(1)]),
          (3...4),
          (32...33)
        ),

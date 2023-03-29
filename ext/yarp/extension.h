@@ -18,6 +18,9 @@ yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding);
 VALUE
 yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding);
 
+VALUE
+yp_compile(yp_node_t *node);
+
 void
 Init_yarp_pack(void);
 

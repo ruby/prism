@@ -159,7 +159,8 @@ ProgramNode(0...275)(
          BreakNode(69...74)(nil, (69...74)),
          (66...68)
        ),
-       (62...63)
+       (62...63),
+       0
      ),
      LocalVariableWriteNode(75...88)(
        (75...76),
@@ -177,7 +178,8 @@ ProgramNode(0...275)(
          NextNode(84...88)(nil, (84...88)),
          (81...83)
        ),
-       (77...78)
+       (77...78),
+       1
      ),
      LocalVariableWriteNode(89...104)(
        (89...90),
@@ -195,10 +197,11 @@ ProgramNode(0...275)(
          ReturnNode(98...104)(KEYWORD_RETURN(98...104)("return"), nil),
          (95...97)
        ),
-       (91...92)
+       (91...92),
+       1
      ),
      AndNode(105...121)(
-       LocalVariableReadNode(105...106)(),
+       LocalVariableReadNode(105...106)(1),
        ReturnNode(111...121)(
          KEYWORD_RETURN(111...117)("return"),
          ArgumentsNode(118...121)(
@@ -217,12 +220,12 @@ ProgramNode(0...275)(
        KEYWORD_AND(107...110)("and")
      ),
      OrNode(122...133)(
-       LocalVariableReadNode(122...123)(),
+       LocalVariableReadNode(122...123)(1),
        ReturnNode(127...133)(KEYWORD_RETURN(127...133)("return"), nil),
        (124...126)
      ),
      OrNode(134...149)(
-       LocalVariableReadNode(134...135)(),
+       LocalVariableReadNode(134...135)(1),
        ReturnNode(139...149)(
          KEYWORD_RETURN(139...145)("return"),
          ArgumentsNode(146...149)(
@@ -241,7 +244,7 @@ ProgramNode(0...275)(
        (136...138)
      ),
      OrNode(150...163)(
-       LocalVariableReadNode(150...151)(),
+       LocalVariableReadNode(150...151)(1),
        ParenthesesNode(155...163)(
          StatementsNode(156...162)(
            [OrNode(156...162)(
@@ -274,7 +277,7 @@ ProgramNode(0...275)(
        (152...154)
      ),
      OrNode(164...180)(
-       LocalVariableReadNode(164...165)(),
+       LocalVariableReadNode(164...165)(1),
        ParenthesesNode(169...180)(
          StatementsNode(170...179)(
            [BreakNode(170...179)(
@@ -299,7 +302,7 @@ ProgramNode(0...275)(
        (166...168)
      ),
      OrNode(181...198)(
-       LocalVariableReadNode(181...182)(),
+       LocalVariableReadNode(181...182)(1),
        ParenthesesNode(186...198)(
          StatementsNode(187...197)(
            [ReturnNode(187...197)(
@@ -381,7 +384,7 @@ ProgramNode(0...275)(
      ),
      OrNode(241...252)(
        ReturnNode(241...247)(KEYWORD_RETURN(241...247)("return"), nil),
-       LocalVariableReadNode(251...252)(),
+       LocalVariableReadNode(251...252)(1),
        (248...250)
      ),
      OrNode(253...263)(
@@ -397,7 +400,8 @@ ProgramNode(0...275)(
            nil,
            "b"
          ),
-         (255...256)
+         (255...256),
+         1
        ),
        CallNode(262...263)(
          nil,
@@ -424,7 +428,8 @@ ProgramNode(0...275)(
            nil,
            "b"
          ),
-         (266...267)
+         (266...267),
+         1
        ),
        CallNode(274...275)(
          nil,

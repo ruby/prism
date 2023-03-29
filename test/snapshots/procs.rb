@@ -24,7 +24,7 @@ ProgramNode(0...241)(
           IDENTIFIER(13...14)("d")]
        ),
        PARENTHESIS_RIGHT(14...15)(")"),
-       StatementsNode(18...19)([LocalVariableReadNode(18...19)()])
+       StatementsNode(18...19)([LocalVariableReadNode(18...19)(1)])
      ),
      LambdaNode(23...39)(
        ScopeNode(23...25)([]),
@@ -143,7 +143,7 @@ ProgramNode(0...241)(
          []
        ),
        nil,
-       StatementsNode(126...127)([LocalVariableReadNode(126...127)()])
+       StatementsNode(126...127)([LocalVariableReadNode(126...127)(1)])
      ),
      LambdaNode(131...169)(
        ScopeNode(131...133)(
@@ -183,7 +183,7 @@ ProgramNode(0...241)(
          []
        ),
        PARENTHESIS_RIGHT(164...165)(")"),
-       StatementsNode(168...169)([LocalVariableReadNode(168...169)()])
+       StatementsNode(168...169)([LocalVariableReadNode(168...169)(1)])
      ),
      LambdaNode(173...214)(
        ScopeNode(173...175)(
@@ -223,7 +223,7 @@ ProgramNode(0...241)(
          []
        ),
        PARENTHESIS_RIGHT(206...207)(")"),
-       StatementsNode(213...214)([LocalVariableReadNode(213...214)()])
+       StatementsNode(213...214)([LocalVariableReadNode(213...214)(1)])
      ),
      LambdaNode(220...241)(
        ScopeNode(220...222)([IDENTIFIER(224...225)("a")]),
@@ -260,12 +260,12 @@ ProgramNode(0...241)(
             nil,
             StatementsNode(236...241)(
               [CallNode(236...241)(
-                 LocalVariableReadNode(236...237)(),
+                 LocalVariableReadNode(236...237)(1),
                  nil,
                  STAR(238...239)("*"),
                  nil,
                  ArgumentsNode(240...241)(
-                   [LocalVariableReadNode(240...241)()]
+                   [LocalVariableReadNode(240...241)(1)]
                  ),
                  nil,
                  nil,

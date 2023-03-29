@@ -3,8 +3,8 @@ ProgramNode(2...9)(
   StatementsNode(2...9)(
     [MultiWriteNode(2...9)(
        [MultiWriteNode(2...5)(
-          [LocalVariableWriteNode(2...3)((2...3), nil, nil),
-           LocalVariableWriteNode(4...5)((4...5), nil, nil)],
+          [LocalVariableWriteNode(2...3)((2...3), nil, nil, 0),
+           LocalVariableWriteNode(4...5)((4...5), nil, nil, 0)],
           nil,
           nil,
           (1...2),

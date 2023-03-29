@@ -25,14 +25,15 @@ ProgramNode(0...48)(
           LocalVariableWriteNode(24...29)(
             (24...25),
             IntegerNode(28...29)(),
-            (26...27)
+            (26...27),
+            0
           ),
           CallNode(32...33)(
             nil,
             nil,
             IDENTIFIER(32...33)("p"),
             nil,
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)()]),
+            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(1)]),
             nil,
             nil,
             "p"
@@ -40,7 +41,8 @@ ProgramNode(0...48)(
           LocalVariableWriteNode(38...42)(
             (38...39),
             IntegerNode(41...42)(),
-            (40...41)
+            (40...41),
+            0
           )]
        ),
        nil,

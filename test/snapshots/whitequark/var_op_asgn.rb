@@ -12,7 +12,7 @@ ProgramNode(0...53)(
        IntegerNode(19...20)()
      ),
      OperatorAssignmentNode(22...28)(
-       LocalVariableWriteNode(22...23)((22...23), nil, nil),
+       LocalVariableWriteNode(22...23)((22...23), nil, nil, 0),
        PLUS_EQUAL(24...26)("+="),
        IntegerNode(27...28)()
      ),

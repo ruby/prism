@@ -454,52 +454,62 @@ class ErrorsTest < Test::Unit::TestCase
         [LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          ),
          LocalVariableWriteNode(
            Location(),
            SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location()
+           Location(),
+           0
          )]
       ),
       nil,

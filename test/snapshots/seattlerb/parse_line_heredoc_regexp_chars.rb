@@ -14,14 +14,15 @@ ProgramNode(6...67)(
          HEREDOC_END(48...57)("      ^D\n"),
          0
        ),
-       (13...14)
+       (13...14),
+       0
      ),
      CallNode(63...67)(
        nil,
        nil,
        IDENTIFIER(63...67)("puts"),
        nil,
-       ArgumentsNode(68...74)([LocalVariableReadNode(68...74)()]),
+       ArgumentsNode(68...74)([LocalVariableReadNode(68...74)(1)]),
        nil,
        nil,
        "puts"

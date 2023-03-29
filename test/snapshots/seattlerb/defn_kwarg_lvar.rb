@@ -20,7 +20,7 @@ ProgramNode(0...26)(
          nil,
          nil
        ),
-       StatementsNode(19...21)([LocalVariableReadNode(19...21)()]),
+       StatementsNode(19...21)([LocalVariableReadNode(19...21)(1)]),
        ScopeNode(0...3)([LABEL(8...10)("kw")]),
        (0...3),
        nil,
