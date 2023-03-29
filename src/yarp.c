@@ -1426,25 +1426,30 @@ yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_tok
 }
 
 // Allocate a new HeredocNode node.
-static yp_node_t *
+static yp_heredoc_node_t *
 yp_heredoc_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing, int dedent) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_heredoc_node_t *node = YP_NODE_ALLOC(yp_heredoc_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_HEREDOC_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_heredoc_node_t) {
+    {
+      .type = YP_NODE_HEREDOC_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      },
     },
-    .as.heredoc_node = {
-      .opening = *opening,
-      .closing = *closing,
-      .dedent = dedent
-    }
+    .opening = *opening,
+    .closing = *closing,
+    .dedent = dedent
   };
 
-  yp_node_list_init(&node->as.heredoc_node.parts);
+  yp_node_list_init(&node->parts);
   return node;
+}
+
+static inline void
+yp_heredoc_node_append_part(yp_parser_t *parser, yp_heredoc_node_t *node, yp_node_t *part) {
+  yp_node_list_append(parser, (yp_node_t *)node, &node->parts, part);
 }
 
 // Allocate a new IfNode node.
@@ -8953,7 +8958,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node = yp_interpolated_xstring_node_create(parser, &parser->previous, &parser->previous);
       } else {
-        node = yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+        node = (yp_node_t *) yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
       }
 
       yp_node_list_t *node_list;
@@ -8962,7 +8967,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         node_list = &node->as.interpolated_x_string_node.parts;
       }
       else {
-        node_list = &node->as.heredoc_node.parts;
+        node_list = &((yp_heredoc_node_t *)node)->parts;
       }
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
@@ -8972,7 +8977,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_node_list_append(parser, node, &node->as.interpolated_x_string_node.parts, part);
           }
           else {
-            yp_node_list_append(parser, node, &node->as.heredoc_node.parts, part);
+            yp_heredoc_node_append_part(parser, (yp_heredoc_node_t *) node, part);
           }
         }
       }
@@ -9026,7 +9031,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (min_whitespace > 0) {
-          node->as.heredoc_node.dedent = min_whitespace;
+          ((yp_heredoc_node_t *) node)->dedent = min_whitespace;
 
           // Iterate over all nodes, and trim whitespace accordingly
           for (int i = 0; i < node_list->size; i++) {
@@ -9093,11 +9098,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node->as.interpolated_x_string_node.closing = parser->previous;
+      } else {
+        ((yp_heredoc_node_t *)node)->closing = parser->previous;
       }
-      else {
-        node->as.heredoc_node.closing = parser->previous;
-      }
-
 
       return node;
     }

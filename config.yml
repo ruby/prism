@@ -933,6 +933,7 @@ nodes:
             Content.
           HERE
           ^^^^^^^^^^
+    is_migrated: true
   - name: IfNode
     child_nodes:
       - name: if_keyword
