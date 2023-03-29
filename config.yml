@@ -995,6 +995,7 @@ nodes:
 
           @foo
           ^^^^
+    is_migrated: true
   - name: InstanceVariableWriteNode
     child_nodes:
       - name: name_loc
@@ -1008,6 +1009,7 @@ nodes:
 
           @foo = 1
           ^^^^^^^^
+    is_migrated: true
   - name: IntegerNode
     comment: |
       Represents an integer number literal.
