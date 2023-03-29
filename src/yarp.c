@@ -6620,16 +6620,15 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
           // =, so we know it's a local variable write.
           yp_token_t name = call->message;
           yp_parser_local_add(parser, &name);
-          yp_node_destroy(parser, target);
-
           yp_location_t name_loc = { .start = name.start, .end = name.end };
-          target = (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator);
+          yp_local_variable_write_node_t *write_node = yp_local_variable_write_node_create(parser, &name_loc, value, operator);
 
           if (token_is_numbered_parameter(&name)) {
             yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "reserved for numbered parameter");
           }
 
-          return target;
+          yp_node_destroy(parser, target);
+          return (yp_node_t *) write_node;
         }
 
         // When we get here, we have a method call, because it was
