@@ -7113,7 +7113,7 @@ parse_required_destructured_parameter(yp_parser_t *parser) {
 
   yp_token_t opening = parser->previous;
   yp_required_destructured_parameter_node_t *node = yp_required_destructured_parameter_node_create(parser, &opening);
-  bool parsed_splat;
+  bool parsed_splat = false;
 
   do {
     yp_node_t *param;
