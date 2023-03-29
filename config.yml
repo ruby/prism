@@ -441,6 +441,7 @@ nodes:
 
           { a => b }
             ^^^^^^
+    is_migrated: true
   - name: AssocSplatNode
     child_nodes:
       - name: value
