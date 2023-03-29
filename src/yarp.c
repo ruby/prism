@@ -9031,7 +9031,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (min_whitespace > 0) {
-          ((yp_heredoc_node_t *) node)->dedent = min_whitespace;
+          if (node->type == YP_NODE_HEREDOC_NODE) {
+            ((yp_heredoc_node_t *) node)->dedent = min_whitespace;
+          }
 
           // Iterate over all nodes, and trim whitespace accordingly
           for (int i = 0; i < node_list->size; i++) {
@@ -9099,7 +9101,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node->as.interpolated_x_string_node.closing = parser->previous;
       } else {
-        ((yp_heredoc_node_t *)node)->closing = parser->previous;
+        if (node->type == YP_NODE_HEREDOC_NODE) {
+          ((yp_heredoc_node_t *) node)->closing = parser->previous;
+        }
       }
 
       return node;
