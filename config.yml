@@ -589,6 +589,7 @@ nodes:
 
           foo&.bar
           ^^^^^^^^
+    is_migrated: true
   - name: CaseNode
     child_nodes:
       - name: predicate
