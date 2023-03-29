@@ -500,21 +500,21 @@ yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *openin
 }
 
 // Allocate and initialize a new AsPatternNode node.
-static yp_node_t *
+static yp_as_pattern_node_t *
 yp_as_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_as_pattern_node_t *node = YP_NODE_ALLOC(yp_as_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_AS_PATTERN_NODE,
-    .location = {
-      .start = value->location.start,
-      .end = target->location.end
+  *node = (yp_as_pattern_node_t) {
+    {
+      .type = YP_NODE_AS_PATTERN_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = target->location.end
+      },
     },
-    .as.as_pattern_node = {
-      .value = value,
-      .target = target,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .target = target,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -8532,7 +8532,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
     yp_parser_local_add(parser, &identifier);
 
     yp_node_t *target = (yp_node_t *) yp_local_variable_target_node_create(parser, &identifier);
-    node = yp_as_pattern_node_create(parser, node, target, &operator);
+    node = (yp_node_t *) yp_as_pattern_node_create(parser, node, target, &operator);
   }
 
   return node;

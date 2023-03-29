@@ -428,6 +428,7 @@ nodes:
 
           foo => [bar => baz]
                  ^^^^^^^^^^^^
+    is_migrated: true
   - name: AssocNode
     child_nodes:
       - name: key
