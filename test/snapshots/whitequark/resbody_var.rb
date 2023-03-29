@@ -19,7 +19,7 @@ ProgramNode(0...73)(
          KEYWORD_RESCUE(13...19)("rescue"),
          [],
          EQUAL_GREATER(20...22)("=>"),
-         InstanceVariableWriteNode(23...26)((23...26), nil, (0...0)),
+         InstanceVariableWriteNode(23...26)((23...26), nil, nil),
          StatementsNode(28...31)(
            [CallNode(28...31)(
               nil,

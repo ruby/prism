@@ -1588,7 +1588,7 @@ yp_instance_variable_write_node_create(yp_parser_t *parser, yp_node_t *read_node
       }
     },
     .name_loc = YP_LOCATION_NODE_VALUE(read_node),
-    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
     .value = value
   };
 

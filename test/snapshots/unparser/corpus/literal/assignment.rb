@@ -88,8 +88,8 @@ ProgramNode(0...711)(
        (74...75)
      ),
      MultiWriteNode(86...102)(
-       [InstanceVariableWriteNode(86...88)((86...88), nil, (0...0)),
-        InstanceVariableWriteNode(90...92)((90...92), nil, (0...0))],
+       [InstanceVariableWriteNode(86...88)((86...88), nil, nil),
+        InstanceVariableWriteNode(90...92)((90...92), nil, nil)],
        EQUAL(94...95)("="),
        ArrayNode(96...102)(
          [IntegerNode(97...98)(), IntegerNode(100...101)()],
@@ -611,7 +611,7 @@ ProgramNode(0...711)(
        (543...546)
      ),
      OperatorOrAssignmentNode(551...561)(
-       InstanceVariableWriteNode(551...553)((551...553), nil, (0...0)),
+       InstanceVariableWriteNode(551...553)((551...553), nil, nil),
        StringNode(558...561)(
          STRING_BEGIN(558...560)("%("),
          STRING_CONTENT(560...560)(""),
@@ -759,7 +759,7 @@ ProgramNode(0...711)(
        (665...668)
      ),
      OperatorOrAssignmentNode(687...711)(
-       InstanceVariableWriteNode(687...689)((687...689), nil, (0...0)),
+       InstanceVariableWriteNode(687...689)((687...689), nil, nil),
        HeredocNode(705...711)(
          HEREDOC_START(694...704)("<<-HEREDOC"),
          [StringNode(705...707)(
