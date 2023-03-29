@@ -1069,6 +1069,7 @@ nodes:
           def a(b: 1)
                 ^^^^
           end
+    is_migrated: true
   - name: KeywordRestParameterNode
     child_nodes:
       - name: operator
@@ -1081,6 +1082,7 @@ nodes:
           def a(**b)
                 ^^^
           end
+    is_migrated: true
   - name: LambdaNode
     child_nodes:
       - name: scope
@@ -1102,6 +1104,7 @@ nodes:
 
           ->(value) { value * 2 }
           ^^^^^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: LocalVariableReadNode
     is_migrated: true
     comment: |

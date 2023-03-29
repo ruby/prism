@@ -1688,47 +1688,47 @@ yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *openi
 }
 
 // Allocate a new KeywordParameterNode node.
-static yp_node_t *
+static yp_keyword_parameter_node_t *
 yp_keyword_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_keyword_parameter_node_t *node = YP_NODE_ALLOC(yp_keyword_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_KEYWORD_PARAMETER_NODE,
-    .location = {
-      .start = name->start,
-      .end = value == NULL ? name->end : value->location.end
+  *node = (yp_keyword_parameter_node_t) {
+    {
+      .type = YP_NODE_KEYWORD_PARAMETER_NODE,
+      .location = {
+        .start = name->start,
+        .end = value == NULL ? name->end : value->location.end
+      },
     },
-    .as.keyword_parameter_node = {
-      .name = *name,
-      .value = value
-    }
+    .name = *name,
+    .value = value
   };
 
   return node;
 }
 
 // Allocate a new KeywordRestParameterNode node.
-static yp_node_t *
+static yp_keyword_rest_parameter_node_t *
 yp_keyword_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_keyword_rest_parameter_node_t *node = YP_NODE_ALLOC(yp_keyword_rest_parameter_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_KEYWORD_REST_PARAMETER_NODE,
-    .location = {
-      .start = operator->start,
-      .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+  *node = (yp_keyword_rest_parameter_node_t) {
+    {
+      .type = YP_NODE_KEYWORD_REST_PARAMETER_NODE,
+      .location = {
+        .start = operator->start,
+        .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
+      },
     },
-    .as.keyword_rest_parameter_node = {
-      .operator = *operator,
-      .name = *name
-    }
+    .operator = *operator,
+    .name = *name
   };
 
   return node;
 }
 
 // Allocate a new LambdaNode node.
-static yp_node_t *
+static yp_lambda_node_t *
 yp_lambda_node_create(
   yp_parser_t *parser,
   yp_scope_node_t *scope,
@@ -1738,7 +1738,7 @@ yp_lambda_node_create(
   const yp_token_t *rparen,
   yp_node_t *statements
 ) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_lambda_node_t *node = YP_NODE_ALLOC(yp_lambda_node_t);
 
   const char *end;
   if (statements != NULL) {
@@ -1749,20 +1749,20 @@ yp_lambda_node_create(
     end = opening->end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_LAMBDA_NODE,
-    .location = {
-      .start = opening->start,
-      .end = end
+  *node = (yp_lambda_node_t) {
+    {
+      .type = YP_NODE_LAMBDA_NODE,
+      .location = {
+        .start = opening->start,
+        .end = end
+      },
     },
-    .as.lambda_node = {
-      .scope = scope,
-      .opening = *opening,
-      .lparen = *lparen,
-      .parameters = parameters,
-      .rparen = *rparen,
-      .statements = statements
-    }
+    .scope = scope,
+    .opening = *opening,
+    .lparen = *lparen,
+    .parameters = parameters,
+    .rparen = *rparen,
+    .statements = statements
   };
 
   return node;
@@ -7249,7 +7249,7 @@ parse_parameters(
           case YP_TOKEN_COMMA:
           case YP_TOKEN_PARENTHESIS_RIGHT:
           case YP_TOKEN_PIPE: {
-            yp_node_t *param = yp_keyword_parameter_node_create(parser, &name, NULL);
+            yp_node_t *param = (yp_node_t *) yp_keyword_parameter_node_create(parser, &name, NULL);
             yp_parameters_node_keywords_append(params, param);
             break;
           }
@@ -7260,7 +7260,7 @@ parse_parameters(
               break;
             }
 
-            yp_node_t *param = yp_keyword_parameter_node_create(parser, &name, NULL);
+            yp_node_t *param = (yp_node_t *) yp_keyword_parameter_node_create(parser, &name, NULL);
             yp_parameters_node_keywords_append(params, param);
             break;
           }
@@ -7270,7 +7270,7 @@ parse_parameters(
               value = parse_expression(parser, binding_power, "Expected to find a default value for the keyword parameter.");
             }
 
-            yp_node_t *param = yp_keyword_parameter_node_create(parser, &name, value);
+            yp_node_t *param = (yp_node_t *) yp_keyword_parameter_node_create(parser, &name, value);
             yp_parameters_node_keywords_append(params, param);
 
             // If parsing the value of the parameter resulted in error recovery,
@@ -7324,7 +7324,7 @@ parse_parameters(
             yp_parser_local_add(parser, &operator);
           }
 
-          param = yp_keyword_rest_parameter_node_create(parser, &operator, &name);
+          param = (yp_node_t *) yp_keyword_rest_parameter_node_create(parser, &operator, &name);
         }
 
         yp_parameters_node_keyword_rest_set(params, param);
@@ -10461,7 +10461,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_scope_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
       yp_accepts_block_stack_pop(parser);
-      return yp_lambda_node_create(parser, scope, &opening, &lparen, params, &rparen, body);
+      return (yp_node_t *) yp_lambda_node_create(parser, scope, &opening, &lparen, params, &rparen, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
