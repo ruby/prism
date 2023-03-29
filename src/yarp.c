@@ -240,15 +240,6 @@ yp_statements_node_create(yp_parser_t *parser);
 static void
 yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement);
 
-// Allocate and initialize a new node of the given type from the given token.
-// This function is used for simple nodes that effectively wrap a token.
-static inline yp_node_t *
-yp_node_create_from_token(yp_parser_t *parser, yp_node_type_t type, const yp_token_t *token) {
-  yp_node_t *node = yp_node_alloc(parser);
-  *node = (yp_node_t) { .type = type, .location = YP_LOCATION_TOKEN_VALUE(token) };
-  return node;
-}
-
 // Allocate and initialize a new alias node.
 static yp_alias_node_t *
 yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *new_name, yp_node_t *old_name) {
@@ -1545,10 +1536,13 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_to
 }
 
 // Allocate and initialize a new ImaginaryNode node.
-static yp_node_t *
+static yp_imaginary_node_t *
 yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_IMAGINARY_NUMBER);
-  return yp_node_create_from_token(parser, YP_NODE_IMAGINARY_NODE, token);
+  yp_imaginary_node_t *node = YP_NODE_ALLOC(yp_imaginary_node_t);
+
+  *node = (yp_imaginary_node_t) {{ .type = YP_NODE_IMAGINARY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate and initialize a new InNode node.
@@ -9172,7 +9166,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       parser_lex(parser);
-      return yp_imaginary_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_imaginary_node_create(parser, &parser->previous);
     case YP_TOKEN_INSTANCE_VARIABLE: {
       parser_lex(parser);
       yp_node_t *node = (yp_node_t *) yp_instance_variable_read_node_create(parser, &parser->previous);

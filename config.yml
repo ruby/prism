@@ -970,6 +970,7 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^
     is_migrated: true
   - name: ImaginaryNode
+    is_migrated: true
     comment: |
       Represents an imaginary number literal.
 
