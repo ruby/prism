@@ -6,7 +6,8 @@
 
 #define YP_TAB_WHITESPACE_SIZE 8
 
-char* yp_version(void) {
+const char *
+yp_version(void) {
   return YP_VERSION_MACRO;
 }
 
@@ -1585,19 +1586,17 @@ yp_instance_variable_read_node_create(yp_parser_t *parser, const yp_token_t *tok
 
 // Initialize a new InstanceVariableWriteNode node from an InstanceVariableRead node.
 static yp_instance_variable_write_node_t *
-yp_instance_variable_write_node_create(yp_parser_t *parser, yp_node_t *read_node, yp_token_t *operator, yp_node_t *value) {
-  assert(read_node->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
-
+yp_instance_variable_write_node_create(yp_parser_t *parser, yp_instance_variable_read_node_t *read_node, yp_token_t *operator, yp_node_t *value) {
   yp_instance_variable_write_node_t *node = yp_alloc(parser, sizeof(yp_instance_variable_write_node_t));
   *node = (yp_instance_variable_write_node_t) {
     {
       .type = YP_NODE_INSTANCE_VARIABLE_WRITE_NODE,
       .location = {
-        .start = read_node->location.start,
-        .end = value == NULL ? read_node->location.end : value->location.end
+        .start = read_node->base.location.start,
+        .end = value == NULL ? read_node->base.location.end : value->location.end
       }
     },
-    .name_loc = YP_LOCATION_NODE_VALUE(read_node),
+    .name_loc = YP_LOCATION_NODE_BASE_VALUE(read_node),
     .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
     .value = value
   };
@@ -3127,26 +3126,6 @@ yp_parser_scope_pop(yp_parser_t *parser) {
 /* Basic character checks                                                     */
 /******************************************************************************/
 
-static inline bool
-char_is_binary_number(const char c) {
-  return c == '0' || c == '1';
-}
-
-static inline bool
-char_is_octal_number(const char c) {
-  return c >= '0' && c <= '7';
-}
-
-static inline bool
-char_is_decimal_number(const char c) {
-  return c >= '0' && c <= '9';
-}
-
-static inline bool
-char_is_hexadecimal_number(const char c) {
-  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-}
-
 static inline size_t
 char_is_identifier_start(yp_parser_t *parser, const char *c) {
   if (*c == '_') {
@@ -3171,16 +3150,6 @@ char_is_identifier(yp_parser_t *parser, const char *c) {
   } else {
     return 0;
   }
-}
-
-static inline bool
-char_is_non_newline_whitespace(const char c) {
-  return c == ' ' || c == '\t' || c == '\f' || c == '\r' || c == '\v';
-}
-
-static inline bool
-char_is_whitespace(const char c) {
-  return char_is_non_newline_whitespace(c) || c == '\n';
 }
 
 #define BIT(c, idx) (((c) / 32 - 1 == idx) ? (1U << ((c) % 32)) : 0)
@@ -6092,7 +6061,7 @@ parser_lex(yp_parser_t *parser) {
       // Now let's grab the information about the identifier off of the current
       // lex mode.
       const char *ident_start = parser->lex_modes.current->as.heredoc.ident_start;
-      uint32_t ident_length = parser->lex_modes.current->as.heredoc.ident_length;
+      size_t ident_length = parser->lex_modes.current->as.heredoc.ident_length;
 
       // If we are immediately following a newline and we have hit the
       // terminator, then we need to return the ending of the heredoc.
@@ -6619,7 +6588,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       return (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator);
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
-      yp_node_t *write_node = (yp_node_t *) yp_instance_variable_write_node_create(parser, target, operator, value);
+      yp_node_t *write_node = (yp_node_t *) yp_instance_variable_write_node_create(parser, (yp_instance_variable_read_node_t *) target, operator, value);
       yp_node_destroy(parser, target);
       return write_node;
     }

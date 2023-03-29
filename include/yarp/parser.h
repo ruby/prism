@@ -148,7 +148,7 @@ typedef struct yp_lex_mode {
       // These pointers point to the beginning and end of the heredoc
       // identifier.
       const char *ident_start;
-      uint32_t ident_length;
+      size_t ident_length;
 
       yp_heredoc_quote_t quote;
       yp_heredoc_indent_t indent;

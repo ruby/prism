@@ -6,6 +6,7 @@
 #include "yarp/ast.h"
 #include "yarp/parser.h"
 #include "yarp/util/yp_buffer.h"
+#include "yarp/util/yp_conversion.h"
 
 static void
 serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
@@ -13,8 +14,8 @@ serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
   assert(token->end);
 
   yp_buffer_append_u8(buffer, token->type);
-  yp_buffer_append_u32(buffer, token->start - parser->start);
-  yp_buffer_append_u32(buffer, token->end - parser->start);
+  yp_buffer_append_u32(buffer, yp_long_to_u32(token->start - parser->start));
+  yp_buffer_append_u32(buffer, yp_long_to_u32(token->end - parser->start));
 }
 
 static void
@@ -22,8 +23,8 @@ serialize_location(yp_parser_t *parser, yp_location_t *location, yp_buffer_t *bu
   assert(location->start);
   assert(location->end);
 
-  yp_buffer_append_u32(buffer, location->start - parser->start);
-  yp_buffer_append_u32(buffer, location->end - parser->start);
+  yp_buffer_append_u32(buffer, yp_long_to_u32(location->start - parser->start));
+  yp_buffer_append_u32(buffer, yp_long_to_u32(location->end - parser->start));
 }
 
 void
@@ -36,8 +37,8 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   assert(node->location.start);
   assert(node->location.end);
 
-  yp_buffer_append_u32(buffer, node->location.start - parser->start);
-  yp_buffer_append_u32(buffer, node->location.end - parser->start);
+  yp_buffer_append_u32(buffer, yp_long_to_u32(node->location.start - parser->start));
+  yp_buffer_append_u32(buffer, yp_long_to_u32(node->location.end - parser->start));
 
   switch (node->type) {
     <%- nodes.each do |node| -%>
@@ -53,11 +54,11 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
         yp_serialize_node(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
       }
       <%- when StringParam -%>
-      uint32_t <%= param.name %>_length = yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      uint32_t <%= param.name %>_length = yp_ulong_to_u32(yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>));
       yp_buffer_append_u32(buffer, <%= param.name %>_length);
       yp_buffer_append_str(buffer, yp_string_source(&((yp_<%= node.human %>_t *)node)-><%= param.name %>), <%= param.name %>_length);
       <%- when NodeListParam -%>
-      uint32_t <%= param.name %>_size = ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size;
+      uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
       yp_buffer_append_u32(buffer, <%= param.name %>_size);
       for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
         yp_serialize_node(parser, (yp_node_t *) ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], buffer);
@@ -71,7 +72,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
         serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
       }
       <%- when TokenListParam -%>
-      uint32_t <%= param.name %>_size = ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size;
+      uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
       yp_buffer_append_u32(buffer, <%= param.name %>_size);
       for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
         serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.tokens[index], buffer);
@@ -96,6 +97,6 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     <%- end -%>
   }
 
-  uint32_t length = buffer->length - offset - sizeof(uint32_t);
+  uint32_t length = yp_ulong_to_u32(buffer->length - offset - sizeof(uint32_t));
   memcpy(buffer->value + offset, &length, sizeof(uint32_t));
 }
