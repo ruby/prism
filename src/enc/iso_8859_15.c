@@ -23,24 +23,19 @@ static unsigned char yp_encoding_iso_8859_15_table[256] = {
 };
 
 size_t
-yp_encoding_iso_8859_15_char_width(const char *c) {
-  return 1;
-}
-
-size_t
 yp_encoding_iso_8859_15_alpha_char(const char *c) {
-  const unsigned char v = *c;
+  const unsigned char v = (const unsigned char) *c;
   return (yp_encoding_iso_8859_15_table[v] & YP_ENCODING_ALPHABETIC_BIT) ? 1 : 0;
 }
 
 size_t
 yp_encoding_iso_8859_15_alnum_char(const char *c) {
-  const unsigned char v = *c;
+  const unsigned char v = (const unsigned char) *c;
   return (yp_encoding_iso_8859_15_table[v] & YP_ENCODING_ALPHANUMERIC_BIT) ? 1 : 0;
 }
 
 bool
 yp_encoding_iso_8859_15_isupper_char(const char *c) {
-  const unsigned char v = *c;
+  const unsigned char v = (const unsigned char) *c;
   return (yp_encoding_iso_8859_15_table[v] & YP_ENCODING_UPPERCASE_BIT) ? true : false;
 }

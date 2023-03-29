@@ -9,15 +9,18 @@
 #define YP_ENCODING_ALPHANUMERIC_BIT 1 << 1
 #define YP_ENCODING_UPPERCASE_BIT 1 << 2
 
+// The function is shared between all of the encodings that use single bytes to
+// represent characters. They don't have need of a dynamic function to determine
+// their width.
+size_t
+yp_encoding_single_char_width(__attribute__((unused)) const char *c);
+
 /******************************************************************************/
 /* ASCII                                                                      */
 /******************************************************************************/
 
 size_t
 yp_encoding_ascii_char_width(const char *c);
-
-size_t
-yp_encoding_ascii_8_bit_char_width(const char *c);
 
 size_t
 yp_encoding_ascii_alpha_char(const char *c);

@@ -12,7 +12,7 @@
 static void
 prettyprint_token(yp_buffer_t *buffer, yp_token_t *token) {
   yp_buffer_append_str(buffer, "\"", 1);
-  yp_buffer_append_str(buffer, token->start, token->end - token->start);
+  yp_buffer_append_str(buffer, token->start, (size_t) (token->end - token->start));
   yp_buffer_append_str(buffer, "\"", 1);
 }
 

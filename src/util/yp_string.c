@@ -56,7 +56,7 @@ yp_string_memsize(const yp_string_t *string) {
 __attribute__ ((__visibility__("default"))) extern size_t
 yp_string_length(const yp_string_t *string) {
   if (string->type == YP_STRING_SHARED) {
-    return string->as.shared.end - string->as.shared.start;
+    return (size_t) (string->as.shared.end - string->as.shared.start);
   } else {
     return string->as.owned.length;
   }

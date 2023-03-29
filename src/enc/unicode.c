@@ -2183,22 +2183,22 @@ utf_8_codepoint(const unsigned char *c, size_t *width) {
   if ((c[0] >> 7) == 0) {
     // 0xxxxxxx
     *width = 1;
-    return c[0];
+    return (unicode_codepoint_t) c[0];
   }
   if (((c[0] >> 5) == 0x6) && ((c[1] >> 6) == 0x2)) {
     // 110xxxxx 10xxxxxx
     *width = 2;
-    return ((c[0] & 0x1F) << 6) | (c[1] & 0x3F);
+    return (unicode_codepoint_t) (((c[0] & 0x1F) << 6) | (c[1] & 0x3F));
   }
   if (((c[0] >> 4) == 0xE) && ((c[1] >> 6) == 0x2) && ((c[2] >> 6) == 0x2)) {
     // 1110xxxx 10xxxxxx 10xxxxxx
     *width = 3;
-    return ((c[0] & 0x0F) << 12) | ((c[1] & 0x3F) << 6) | (c[2] & 0x3F);
+    return (unicode_codepoint_t) (((c[0] & 0x0F) << 12) | ((c[1] & 0x3F) << 6) | (c[2] & 0x3F));
   }
   if (((c[0] >> 3) == 0x1E) && ((c[1] >> 6) == 0x2) && ((c[2] >> 6) == 0x2) && ((c[3] >> 6) == 0x2)) {
     // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
     *width = 4;
-    return ((c[0] & 0x07) << 18) | ((c[1] & 0x3F) << 12) | ((c[2] & 0x3F) << 6) | (c[3] & 0x3F);
+    return (unicode_codepoint_t) (((c[0] & 0x07) << 18) | ((c[1] & 0x3F) << 12) | ((c[2] & 0x3F) << 6) | (c[3] & 0x3F));
   }
   return 0;
 }
