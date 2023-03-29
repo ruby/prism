@@ -217,14 +217,6 @@ yp_node_list_append2(yp_node_list_t *list, yp_node_t *node) {
   list->nodes[list->size++] = node;
 }
 
-// Allocate the space for a new yp_node_t. Currently we're not using the
-// parser argument, but it's there to allow for the future possibility of
-// pre-allocating larger memory pools and then pulling from those here.
-static inline yp_node_t *
-yp_node_alloc(yp_parser_t *parser) {
-  return (yp_node_t *) malloc(sizeof(yp_node_t));
-}
-
 // Allocate the space for a specific node type.
 #define YP_NODE_ALLOC(type) ((type *)malloc(sizeof(type)))
 
@@ -1433,24 +1425,24 @@ yp_hash_node_elements_append(yp_parser_t *parser, yp_hash_node_t *hash, yp_node_
 }
 
 // Allocate a new HeredocNode node.
-static yp_node_t *
+static yp_heredoc_node_t *
 yp_heredoc_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing, int dedent) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_heredoc_node_t *node = YP_NODE_ALLOC(yp_heredoc_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_HEREDOC_NODE,
-    .location = {
-      .start = opening->start,
-      .end = closing->end
+  *node = (yp_heredoc_node_t) {
+    {
+      .type = YP_NODE_HEREDOC_NODE,
+      .location = {
+        .start = opening->start,
+        .end = closing->end
+      }
     },
-    .as.heredoc_node = {
-      .opening = *opening,
-      .closing = *closing,
-      .dedent = dedent
-    }
+    .opening = *opening,
+    .closing = *closing,
+    .dedent = dedent
   };
 
-  yp_node_list_init(&node->as.heredoc_node.parts);
+  yp_node_list_init(&node->parts);
   return node;
 }
 
@@ -9015,16 +9007,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &parser->previous, &parser->previous);
       } else {
-        node = yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+        node = (yp_node_t *) yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
       }
 
       yp_node_list_t *node_list;
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node_list = &((yp_interpolated_x_string_node_t *)node)->parts;
-      }
-      else {
-        node_list = &node->as.heredoc_node.parts;
+        node_list = &((yp_interpolated_x_string_node_t *) node)->parts;
+      } else {
+        node_list = &((yp_heredoc_node_t *) node)->parts;
       }
 
       while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
@@ -9034,7 +9025,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_interpolated_xstring_node_append(parser, (yp_interpolated_x_string_node_t *) node, part);
           }
           else {
-            yp_node_list_append(parser, node, &node->as.heredoc_node.parts, part);
+            yp_node_list_append(parser, node, &((yp_heredoc_node_t *) node)->parts, part);
           }
         }
       }
@@ -9088,7 +9079,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         if (min_whitespace > 0) {
-          node->as.heredoc_node.dedent = min_whitespace;
+          if (node->type == YP_NODE_HEREDOC_NODE) {
+            ((yp_heredoc_node_t *) node)->dedent = min_whitespace;
+          }
 
           // Iterate over all nodes, and trim whitespace accordingly
           for (int i = 0; i < node_list->size; i++) {
@@ -9155,12 +9148,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         assert(node->type == YP_NODE_INTERPOLATED_X_STRING_NODE);
-        ((yp_interpolated_x_string_node_t *)node)->closing = parser->previous;
+        ((yp_interpolated_x_string_node_t *) node)->closing = parser->previous;
+      } else {
+        assert(node->type == YP_NODE_HEREDOC_NODE);
+        ((yp_heredoc_node_t *) node)->closing = parser->previous;
       }
-      else {
-        node->as.heredoc_node.closing = parser->previous;
-      }
-
 
       return node;
     }
