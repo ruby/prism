@@ -452,6 +452,7 @@ nodes:
 
           { **foo }
             ^^^^^
+    is_migrated: true
   - name: BeginNode
     child_nodes:
       - name: begin_keyword

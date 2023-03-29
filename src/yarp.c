@@ -551,21 +551,21 @@ yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *oper
 }
 
 // Allocate and initialize a new assoc splat node.
-static yp_node_t *
+static yp_assoc_splat_node_t *
 yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token_t *operator) {
   assert(operator->type == YP_TOKEN_USTAR_STAR);
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_assoc_splat_node_t *node = YP_NODE_ALLOC(yp_assoc_splat_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_ASSOC_SPLAT_NODE,
-    .location = {
-      .start = operator->start,
-      .end = value == NULL ? operator->end : value->location.end
+  *node = (yp_assoc_splat_node_t) {
+    {
+      .type = YP_NODE_ASSOC_SPLAT_NODE,
+      .location = {
+        .start = operator->start,
+        .end = value == NULL ? operator->end : value->location.end
+      },
     },
-    .as.assoc_splat_node = {
-      .value = value,
-      .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    }
+    .value = value,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
   return node;
@@ -6878,7 +6878,7 @@ parse_assocs(yp_parser_t *parser, yp_node_t *node) {
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected an expression after ** in hash.");
         }
 
-        element = yp_assoc_splat_node_create(parser, value, &operator);
+        element = (yp_node_t *) yp_assoc_splat_node_create(parser, value, &operator);
         break;
       }
       case YP_TOKEN_LABEL: {
@@ -8183,7 +8183,7 @@ parse_pattern_keyword_rest(yp_parser_t *parser) {
     value = (yp_node_t *) yp_local_variable_target_node_create(parser, &parser->previous);
   }
 
-  return yp_assoc_splat_node_create(parser, value, &operator);
+  return (yp_node_t *) yp_assoc_splat_node_create(parser, value, &operator);
 }
 
 // Parse a hash pattern.
