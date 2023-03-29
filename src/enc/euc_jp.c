@@ -45,7 +45,7 @@ euc_jp_codepoint(const char *c, size_t *width) {
     ((uc[0] >= 0xA1 && uc[0] <= 0xFE) && (uc[1] >= 0xA1 && uc[1] <= 0xFE))
   ) {
     *width = 2;
-    return uc[0] << 8 | uc[1];
+    return (euc_jp_codepoint_t) (uc[0] << 8 | uc[1]);
   }
 
   *width = 0;

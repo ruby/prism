@@ -42,7 +42,7 @@ big5_codepoint(const char *c, size_t *width) {
   // These are the double byte characters.
   if ((uc[0] >= 0xA1 && uc[0] <= 0xFE) && (uc[1] >= 0x40 && uc[1] <= 0xFE)) {
     *width = 2;
-    return uc[0] << 8 | uc[1];
+    return (big5_codepoint_t) (uc[0] << 8 | uc[1]);
   }
 
   *width = 0;

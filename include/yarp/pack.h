@@ -120,7 +120,7 @@ typedef enum yp_pack_result {
 //   Consult Ruby documentation for the meaning of directives.
 __attribute__((__visibility__("default"))) extern yp_pack_result
 yp_pack_parse(
-  yp_pack_version version,
+  __attribute__((unused)) yp_pack_version version,
   yp_pack_variant variant,
   const char **format,
   const char *format_end,

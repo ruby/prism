@@ -37,15 +37,13 @@ yp_token_list_append(yp_token_list_t *token_list, const yp_token_t *token) {
 // Checks if the current token list includes the given token.
 bool
 yp_token_list_includes(yp_token_list_t *token_list, const yp_token_t *token) {
-  size_t length = token->end - token->start;
+  size_t length = (size_t) (token->end - token->start);
 
   for (size_t index = 0; index < token_list->size; index++) {
     yp_token_t current_token = token_list->tokens[index];
+    size_t token_length = (size_t) (current_token.end - current_token.start);
 
-    if (
-      ((current_token.end - current_token.start) == length) &&
-      (memcmp(current_token.start, token->start, length) == 0)
-    ) {
+    if ((token_length == length) && (memcmp(current_token.start, token->start, length) == 0)) {
       return true;
     }
   }
@@ -81,7 +79,7 @@ yp_node_list_memsize(yp_node_list_t *node_list, yp_memsize_t *memsize) {
 
 // Append a new node onto the end of the node list.
 void
-yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list, yp_node_t *node) {
+yp_node_list_append(__attribute__((unused)) yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list, yp_node_t *node) {
   if (list->size == list->capacity) {
     list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
     list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t *));
