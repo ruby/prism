@@ -686,12 +686,14 @@ nodes:
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
+    is_migrated: true
   - name: ConstantReadNode
     comment: |
       Represents referencing a constant.
 
           Foo
           ^^^
+    is_migrated: true
   - name: DefNode
     child_nodes:
       - name: name

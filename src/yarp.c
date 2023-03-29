@@ -1062,32 +1062,34 @@ yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_to
 }
 
 // Allocate a new ConstantPathWriteNode node.
-static yp_node_t *
+static yp_constant_path_write_node_t *
 yp_constant_path_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_constant_path_write_node_t *node = YP_NODE_ALLOC(yp_constant_path_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_CONSTANT_PATH_WRITE_NODE,
-    .location = {
-      .start = target->location.start,
-      .end = (value == NULL ? target->location.end : value->location.end)
+  *node = (yp_constant_path_write_node_t) {
+    {
+      .type = YP_NODE_CONSTANT_PATH_WRITE_NODE,
+      .location = {
+        .start = target->location.start,
+        .end = (value == NULL ? target->location.end : value->location.end)
+      },
     },
-    .as.constant_path_write_node = {
-      .target = target,
-      .operator = *operator,
-      .value = value
-     }
+    .target = target,
+    .operator = *operator,
+    .value = value
   };
 
   return node;
 }
 
-
 // Allocate and initialize a new ConstantReadNode node.
-static yp_node_t *
+static yp_constant_read_node_t *
 yp_constant_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
   assert(name->type == YP_TOKEN_CONSTANT || name->type == YP_TOKEN_MISSING);
-  return yp_node_create_from_token(parser, YP_NODE_CONSTANT_READ_NODE, name);
+
+  yp_constant_read_node_t *node = YP_NODE_ALLOC(yp_constant_read_node_t);
+  *node = (yp_constant_read_node_t) {{ .type = YP_NODE_CONSTANT_READ_NODE, .location = YP_LOCATION_TOKEN_VALUE(name) }};
+  return node;
 }
 
 // Allocate and initialize a new DefNode node.
@@ -6575,7 +6577,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       return target;
     case YP_NODE_CONSTANT_PATH_NODE:
     case YP_NODE_CONSTANT_READ_NODE:
-      return yp_constant_path_write_node_create(parser, target, operator, value);
+      return (yp_node_t *) yp_constant_path_write_node_create(parser, target, operator, value);
     case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
       yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &((yp_global_variable_read_node_t *) target)->name, operator, value);
       yp_node_destroy(parser, target);
@@ -8071,7 +8073,7 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
     yp_token_t delimiter = parser->previous;
     expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
 
-    yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
+    yp_node_t *child = (yp_node_t *) yp_constant_read_node_create(parser, &parser->previous);
     node = (yp_node_t *)yp_constant_path_node_create(parser, node, &delimiter, child);
   }
 
@@ -8472,7 +8474,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       parser_lex(parser);
 
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after the :: operator.");
-      yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
+      yp_node_t *child = (yp_node_t *) yp_constant_read_node_create(parser, &parser->previous);
       yp_constant_path_node_t *node = yp_constant_path_node_create(parser, NULL, &delimiter, child);
 
       return parse_pattern_constant_path(parser, (yp_node_t *)node);
@@ -8481,7 +8483,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       yp_token_t constant = parser->current;
       parser_lex(parser);
 
-      yp_node_t *node = yp_constant_read_node_create(parser, &constant);
+      yp_node_t *node = (yp_node_t *) yp_constant_read_node_create(parser, &constant);
       return parse_pattern_constant_path(parser, node);
     }
     default:
@@ -8889,7 +8891,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return yp_call_node_fcall_create(parser, &constant, &arguments);
       }
 
-      yp_node_t *node = yp_constant_read_node_create(parser, &parser->previous);
+      yp_node_t *node = (yp_node_t *) yp_constant_read_node_create(parser, &parser->previous);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
         // If we get here, then we have a comma immediately following a
@@ -8905,7 +8907,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t delimiter = parser->previous;
       expect(parser, YP_TOKEN_CONSTANT, "Expected a constant after ::.");
 
-      yp_node_t *constant = yp_constant_read_node_create(parser, &parser->previous);
+      yp_node_t *constant = (yp_node_t *) yp_constant_read_node_create(parser, &parser->previous);
       yp_node_t *node = (yp_node_t *)yp_constant_path_node_create(parser, NULL, &delimiter, constant);
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
@@ -9534,7 +9536,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             switch (identifier.type) {
               case YP_TOKEN_CONSTANT:
-                receiver = yp_constant_read_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_constant_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_INSTANCE_VARIABLE:
                 receiver = yp_instance_variable_read_node_create(parser, &identifier);
@@ -9852,7 +9854,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t double_colon = parser->previous;
 
         expect(parser, YP_TOKEN_CONSTANT, "Expected to find a module name after `::`.");
-        yp_node_t *constant = yp_constant_read_node_create(parser, &parser->previous);
+        yp_node_t *constant = (yp_node_t *) yp_constant_read_node_create(parser, &parser->previous);
 
         name = (yp_node_t *)yp_constant_path_node_create(parser, name, &double_colon, constant);
       }
@@ -11033,7 +11035,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
             path = yp_call_node_call_create(parser, node, &delimiter, &message, &arguments);
           } else {
             // Otherwise, this is a constant path. That would look like Foo::Bar.
-            yp_node_t *child = yp_constant_read_node_create(parser, &parser->previous);
+            yp_node_t *child = (yp_node_t *) yp_constant_read_node_create(parser, &parser->previous);
             path = (yp_node_t *)yp_constant_path_node_create(parser, node, &delimiter, child);
           }
 
