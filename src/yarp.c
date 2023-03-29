@@ -1015,25 +1015,31 @@ yp_class_node_create(yp_parser_t *parser, yp_scope_node_t *scope, const yp_token
 }
 
 // Allocate and initialize a new ClassVariableReadNode node.
-static yp_node_t *
+static yp_class_variable_read_node_t *
 yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_CLASS_VARIABLE);
-  return yp_node_create_from_token(parser, YP_NODE_CLASS_VARIABLE_READ_NODE, token);
+  yp_class_variable_read_node_t *node = YP_NODE_ALLOC(yp_class_variable_read_node_t);
+  *node = (yp_class_variable_read_node_t) {{ .type = YP_NODE_CLASS_VARIABLE_READ_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Initialize a new ClassVariableWriteNode node from a ClassVariableRead node.
-static yp_node_t *
-yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp_node_t *node, yp_token_t *operator, yp_node_t *value) {
-  assert(node->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
-  node->type = YP_NODE_CLASS_VARIABLE_WRITE_NODE;
+static yp_class_variable_write_node_t *
+yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp_class_variable_read_node_t *read_node, yp_token_t *operator, yp_node_t *value) {
+  yp_class_variable_write_node_t *node = YP_NODE_ALLOC(yp_class_variable_write_node_t);
 
-  node->as.class_variable_write_node.name_loc = YP_LOCATION_NODE_VALUE(node);
-  node->as.class_variable_write_node.operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
-
-  if (value != NULL) {
-    node->location.end = value->location.end;
-    node->as.class_variable_write_node.value = value;
-  }
+  *node = (yp_class_variable_write_node_t) {
+    {
+      .type = YP_NODE_CLASS_VARIABLE_WRITE_NODE,
+      .location = {
+        .start = read_node->base.location.start,
+        .end = value != NULL ? value->location.end : read_node->base.location.end
+      },
+    },
+    .name_loc = YP_LOCATION_NODE_VALUE((yp_node_t *)read_node),
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+    .value = value
+  };
 
   return node;
 }
@@ -6568,9 +6574,11 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
   switch (target->type) {
     case YP_NODE_MISSING_NODE:
       return target;
-    case YP_NODE_CLASS_VARIABLE_READ_NODE:
-      yp_class_variable_read_node_to_class_variable_write_node(parser, target, operator, value);
-      return target;
+    case YP_NODE_CLASS_VARIABLE_READ_NODE: {
+      yp_class_variable_write_node_t *write_node = yp_class_variable_read_node_to_class_variable_write_node(parser, (yp_class_variable_read_node_t *) target, operator, value);
+      yp_node_destroy(parser, target);
+      return (yp_node_t *) write_node;
+    }
     case YP_NODE_CONSTANT_PATH_NODE:
     case YP_NODE_CONSTANT_READ_NODE:
       return yp_constant_path_write_node_create(parser, target, operator, value);
@@ -7848,7 +7856,7 @@ parse_string_part(yp_parser_t *parser) {
         // class variable read node.
         case YP_TOKEN_CLASS_VARIABLE:
           parser_lex(parser);
-          return yp_class_variable_read_node_create(parser, &parser->previous);
+          return (yp_node_t *) yp_class_variable_read_node_create(parser, &parser->previous);
         // We can hit here if we got an invalid token. In that case we'll not
         // attempt to lex this token and instead just return a missing node.
         default:
@@ -8433,7 +8441,7 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
         }
         case YP_TOKEN_CLASS_VARIABLE: {
           parser_lex(parser);
-          yp_node_t *variable = yp_class_variable_read_node_create(parser, &parser->previous);
+          yp_node_t *variable = (yp_node_t *) yp_class_variable_read_node_create(parser, &parser->previous);
 
           return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
         }
@@ -8865,7 +8873,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_CLASS_VARIABLE: {
       parser_lex(parser);
-      yp_node_t *node = yp_class_variable_read_node_create(parser, &parser->previous);
+      yp_node_t *node = (yp_node_t *) yp_class_variable_read_node_create(parser, &parser->previous);
 
       if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -9540,7 +9548,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_instance_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_CLASS_VARIABLE:
-                receiver = yp_class_variable_read_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_class_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_GLOBAL_VARIABLE:
                 receiver = (yp_node_t *) yp_global_variable_read_node_create(parser, &identifier);

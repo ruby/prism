@@ -644,6 +644,7 @@ nodes:
 
           @@foo
           ^^^^^
+    is_migrated: true
   - name: ClassVariableWriteNode
     child_nodes:
       - name: name_loc
@@ -657,6 +658,7 @@ nodes:
 
           @@foo = 1
           ^^^^^^^^^
+    is_migrated: true
   - name: ConstantPathNode
     child_nodes:
       - name: parent
