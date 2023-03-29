@@ -2,16 +2,16 @@ bin/templates/**/*.c.erb linguist-language=C
 bin/templates/**/*.h.erb linguist-language=C
 bin/templates/**/*.java.erb linguist-language=Java
 bin/templates/**/*.rb.erb linguist-language=Ruby
-ext/yarp/node.c
-include/yarp/ast.h
-include/yarp/node.h
-java/org/yarp/AbstractNodeVisitor.java
-java/org/yarp/Loader.java
-java/org/yarp/Nodes.java
-lib/yarp/node.rb
-lib/yarp/serialize.rb
-src/node.c
-src/prettyprint.c
-src/serialize.c
-src/token_type.c
-src/util/yp_strspn.c
+ext/yarp/node.c linguist-language=C
+include/yarp/ast.h linguist-language=C
+include/yarp/node.h linguist-language=C
+java/org/yarp/AbstractNodeVisitor.java  linguist-language=Java
+java/org/yarp/Loader.java linguist-language=Java
+java/org/yarp/Nodes.java linguist-language=Java
+lib/yarp/node.rb linguist-language=Java
+lib/yarp/serialize.rb linguist-language=Java
+src/node.c linguist-language=C
+src/prettyprint.c linguist-language=C
+src/serialize.c linguist-language=C
+src/token_type.c linguist-language=C
+src/util/yp_strspn.c linguist-language=C
