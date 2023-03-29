@@ -1001,6 +1001,7 @@ nodes:
 
           1
           ^
+    is_migrated: true
   - name: InterpolatedRegularExpressionNode
     child_nodes:
       - name: opening

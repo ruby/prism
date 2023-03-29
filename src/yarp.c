@@ -1585,10 +1585,12 @@ yp_instance_variable_write_node_create(yp_parser_t *parser, yp_node_t *node, yp_
 }
 
 // Allocate and initialize a new IntegerNode node.
-static yp_node_t *
+static yp_integer_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_INTEGER);
-  return yp_node_create_from_token(parser, YP_NODE_INTEGER_NODE, token);
+  yp_integer_node_t *node = YP_NODE_ALLOC(yp_integer_node_t);
+  *node = (yp_integer_node_t) {{ .type = YP_NODE_INTEGER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
 }
 
 // Allocate a new InterpolatedRegularExpressionNode node.
@@ -9116,7 +9118,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     }
     case YP_TOKEN_INTEGER:
       parser_lex(parser);
-      return yp_integer_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_integer_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD___ENCODING__:
       parser_lex(parser);
       return (yp_node_t *) yp_source_encoding_node_create(parser, &parser->previous);
