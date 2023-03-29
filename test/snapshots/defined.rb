@@ -9,7 +9,7 @@ ProgramNode(0...78)(
      DefinedNode(27...43)(
        PARENTHESIS_LEFT(35...36)("("),
        OperatorAssignmentNode(36...42)(
-         LocalVariableWriteNode(36...37)(IDENTIFIER(36...37)("x"), nil, nil),
+         LocalVariableWriteNode(36...37)((36...37), nil, nil),
          PERCENT_EQUAL(38...40)("%="),
          IntegerNode(41...42)()
        ),

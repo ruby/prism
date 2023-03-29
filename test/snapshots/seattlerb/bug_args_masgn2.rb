@@ -15,20 +15,20 @@ ProgramNode(0...22)(
             IDENTIFIER(14...15)("c"),
             IDENTIFIER(18...19)("d")]
          ),
-         BlockParametersNode(7...19)(
-           ParametersNode(7...19)(
-             [RequiredDestructuredParameterNode(7...16)(
-                [RequiredDestructuredParameterNode(7...12)(
-                   [RequiredParameterNode(7...8)(IDENTIFIER(7...8)("a")),
-                    RequiredParameterNode(10...11)(IDENTIFIER(10...11)("b"))],
+         BlockParametersNode(5...19)(
+           ParametersNode(5...19)(
+             [RequiredDestructuredParameterNode(5...16)(
+                [RequiredDestructuredParameterNode(6...12)(
+                   [RequiredParameterNode(7...8)(),
+                    RequiredParameterNode(10...11)()],
                    PARENTHESIS_LEFT(6...7)("("),
                    PARENTHESIS_RIGHT(11...12)(")")
                  ),
-                 RequiredParameterNode(14...15)(IDENTIFIER(14...15)("c"))],
+                 RequiredParameterNode(14...15)()],
                 PARENTHESIS_LEFT(5...6)("("),
                 PARENTHESIS_RIGHT(15...16)(")")
               ),
-              RequiredParameterNode(18...19)(IDENTIFIER(18...19)("d"))],
+              RequiredParameterNode(18...19)()],
              [],
              nil,
              [],

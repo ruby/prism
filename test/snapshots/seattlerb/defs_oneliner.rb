@@ -5,7 +5,7 @@ ProgramNode(0...32)(
        IDENTIFIER(9...13)("exec"),
        SelfNode(4...8)(),
        ParametersNode(14...17)(
-         [RequiredParameterNode(14...17)(IDENTIFIER(14...17)("cmd"))],
+         [RequiredParameterNode(14...17)()],
          [],
          nil,
          [],
@@ -18,9 +18,7 @@ ProgramNode(0...32)(
             nil,
             IDENTIFIER(21...27)("system"),
             PARENTHESIS_LEFT(27...28)("("),
-            ArgumentsNode(28...31)(
-              [LocalVariableReadNode(28...31)(IDENTIFIER(28...31)("cmd"))]
-            ),
+            ArgumentsNode(28...31)([LocalVariableReadNode(28...31)()]),
             PARENTHESIS_RIGHT(31...32)(")"),
             nil,
             "system"

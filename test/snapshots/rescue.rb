@@ -100,7 +100,7 @@ ProgramNode(0...212)(
             "a"
           )]
        ),
-       RescueNode(148...150)(
+       RescueNode(141...147)(
          KEYWORD_RESCUE(141...147)("rescue"),
          [SplatNode(148...150)(
             USTAR(148...149)("*"),
@@ -135,7 +135,7 @@ ProgramNode(0...212)(
          ScopeNode(161...163)([IDENTIFIER(165...166)("x")]),
          BlockParametersNode(165...166)(
            ParametersNode(165...166)(
-             [RequiredParameterNode(165...166)(IDENTIFIER(165...166)("x"))],
+             [RequiredParameterNode(165...166)()],
              [],
              nil,
              [],

@@ -5,8 +5,7 @@ ProgramNode(0...40)(
        IDENTIFIER(4...7)("foo"),
        nil,
        ParametersNode(8...17)(
-         [RequiredParameterNode(8...9)(IDENTIFIER(8...9)("a")),
-          RequiredParameterNode(11...12)(IDENTIFIER(11...12)("b"))],
+         [RequiredParameterNode(8...9)(), RequiredParameterNode(11...12)()],
          [],
          nil,
          [],
@@ -20,7 +19,7 @@ ProgramNode(0...40)(
             IDENTIFIER(20...23)("bar"),
             PARENTHESIS_LEFT(23...24)("("),
             ArgumentsNode(24...34)(
-              [LocalVariableReadNode(24...25)(IDENTIFIER(24...25)("a")),
+              [LocalVariableReadNode(24...25)(),
                IntegerNode(27...29)(),
                ForwardingArgumentsNode(31...34)()]
             ),

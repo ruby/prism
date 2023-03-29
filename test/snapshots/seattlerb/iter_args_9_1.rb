@@ -12,7 +12,7 @@ ProgramNode(0...17)(
          ScopeNode(2...3)([IDENTIFIER(5...6)("a"), IDENTIFIER(13...14)("b")]),
          BlockParametersNode(5...14)(
            ParametersNode(5...14)(
-             [RequiredParameterNode(13...14)(IDENTIFIER(13...14)("b"))],
+             [RequiredParameterNode(13...14)()],
              [OptionalParameterNode(5...11)(
                 IDENTIFIER(5...6)("a"),
                 EQUAL(7...8)("="),

@@ -15,7 +15,7 @@ ProgramNode(0...39)(
             "meth"
           )]
        ),
-       RescueNode(20...34)(
+       RescueNode(13...34)(
          KEYWORD_RESCUE(13...19)("rescue"),
          [CallNode(20...23)(
             nil,
@@ -28,7 +28,7 @@ ProgramNode(0...39)(
             "foo"
           )],
          EQUAL_GREATER(24...26)("=>"),
-         LocalVariableWriteNode(27...29)(IDENTIFIER(27...29)("ex"), nil, nil),
+         LocalVariableWriteNode(27...29)((27...29), nil, nil),
          StatementsNode(31...34)(
            [CallNode(31...34)(
               nil,

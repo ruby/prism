@@ -3,8 +3,7 @@ ProgramNode(0...16)(
   StatementsNode(0...16)(
     [RescueModifierNode(0...16)(
        LocalVariableWriteNode(0...5)(
-         IDENTIFIER(0...1)("a"),
-         EQUAL(2...3)("="),
+         (0...1),
          CallNode(4...5)(
            nil,
            nil,
@@ -14,7 +13,8 @@ ProgramNode(0...16)(
            nil,
            nil,
            "b"
-         )
+         ),
+         (2...3)
        ),
        KEYWORD_RESCUE_MODIFIER(8...14)("rescue"),
        IntegerNode(15...16)()

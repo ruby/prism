@@ -16,7 +16,7 @@ ProgramNode(0...35)(
          ),
          BlockParametersNode(5...22)(
            ParametersNode(5...22)(
-             [RequiredParameterNode(5...6)(IDENTIFIER(5...6)("a"))],
+             [RequiredParameterNode(5...6)()],
              [OptionalParameterNode(8...14)(
                 IDENTIFIER(8...9)("b"),
                 EQUAL(10...11)("="),
@@ -36,9 +36,9 @@ ProgramNode(0...35)(
          ),
          StatementsNode(24...33)(
            [ArrayNode(24...33)(
-              [LocalVariableReadNode(25...26)(IDENTIFIER(25...26)("a")),
-               LocalVariableReadNode(28...29)(IDENTIFIER(28...29)("b")),
-               LocalVariableReadNode(31...32)(IDENTIFIER(31...32)("c"))],
+              [LocalVariableReadNode(25...26)(),
+               LocalVariableReadNode(28...29)(),
+               LocalVariableReadNode(31...32)()],
               BRACKET_LEFT_ARRAY(24...25)("["),
               BRACKET_RIGHT(32...33)("]")
             )]

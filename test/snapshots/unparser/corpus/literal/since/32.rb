@@ -5,7 +5,7 @@ ProgramNode(0...90)(
        IDENTIFIER(4...7)("foo"),
        nil,
        ParametersNode(8...20)(
-         [RequiredParameterNode(8...16)(IDENTIFIER(8...16)("argument"))],
+         [RequiredParameterNode(8...16)()],
          [],
          nil,
          [],
@@ -19,7 +19,7 @@ ProgramNode(0...90)(
             IDENTIFIER(24...27)("bar"),
             PARENTHESIS_LEFT(27...28)("("),
             ArgumentsNode(28...40)(
-              [LocalVariableReadNode(28...36)(IDENTIFIER(28...36)("argument")),
+              [LocalVariableReadNode(28...36)(),
                HashNode(38...40)(
                  nil,
                  [AssocSplatNode(38...40)(nil, (38...40))],
@@ -45,7 +45,7 @@ ProgramNode(0...90)(
        IDENTIFIER(51...54)("foo"),
        nil,
        ParametersNode(55...66)(
-         [RequiredParameterNode(55...63)(IDENTIFIER(55...63)("argument"))],
+         [RequiredParameterNode(55...63)()],
          [],
          RestParameterNode(65...66)(USTAR(65...66)("*"), nil),
          [],
@@ -59,7 +59,7 @@ ProgramNode(0...90)(
             IDENTIFIER(70...73)("bar"),
             PARENTHESIS_LEFT(73...74)("("),
             ArgumentsNode(74...85)(
-              [LocalVariableReadNode(74...82)(IDENTIFIER(74...82)("argument")),
+              [LocalVariableReadNode(74...82)(),
                SplatNode(84...85)(USTAR(84...85)("*"), nil)]
             ),
             PARENTHESIS_RIGHT(85...86)(")"),

@@ -5,7 +5,7 @@ ProgramNode(0...130)(
        IDENTIFIER(4...8)("exec"),
        nil,
        ParametersNode(9...12)(
-         [RequiredParameterNode(9...12)(IDENTIFIER(9...12)("cmd"))],
+         [RequiredParameterNode(9...12)()],
          [],
          nil,
          [],
@@ -20,9 +20,7 @@ ProgramNode(0...130)(
               nil,
               IDENTIFIER(16...22)("system"),
               PARENTHESIS_LEFT(22...23)("("),
-              ArgumentsNode(23...26)(
-                [LocalVariableReadNode(23...26)(IDENTIFIER(23...26)("cmd"))]
-              ),
+              ArgumentsNode(23...26)([LocalVariableReadNode(23...26)()]),
               PARENTHESIS_RIGHT(26...27)(")"),
               nil,
               "system"
@@ -52,7 +50,7 @@ ProgramNode(0...130)(
        IDENTIFIER(51...55)("exec"),
        nil,
        ParametersNode(56...59)(
-         [RequiredParameterNode(56...59)(IDENTIFIER(56...59)("cmd"))],
+         [RequiredParameterNode(56...59)()],
          [],
          nil,
          [],
@@ -66,9 +64,7 @@ ProgramNode(0...130)(
               nil,
               IDENTIFIER(63...69)("system"),
               PARENTHESIS_LEFT(69...70)("("),
-              ArgumentsNode(70...73)(
-                [LocalVariableReadNode(70...73)(IDENTIFIER(70...73)("cmd"))]
-              ),
+              ArgumentsNode(70...73)([LocalVariableReadNode(70...73)()]),
               PARENTHESIS_RIGHT(73...74)(")"),
               nil,
               "system"
@@ -89,7 +85,7 @@ ProgramNode(0...130)(
        IDENTIFIER(96...100)("exec"),
        nil,
        ParametersNode(101...104)(
-         [RequiredParameterNode(101...104)(IDENTIFIER(101...104)("cmd"))],
+         [RequiredParameterNode(101...104)()],
          [],
          nil,
          [],
@@ -103,11 +99,7 @@ ProgramNode(0...130)(
               nil,
               IDENTIFIER(108...114)("system"),
               PARENTHESIS_LEFT(114...115)("("),
-              ArgumentsNode(115...118)(
-                [LocalVariableReadNode(115...118)(
-                   IDENTIFIER(115...118)("cmd")
-                 )]
-              ),
+              ArgumentsNode(115...118)([LocalVariableReadNode(115...118)()]),
               PARENTHESIS_RIGHT(118...119)(")"),
               nil,
               "system"

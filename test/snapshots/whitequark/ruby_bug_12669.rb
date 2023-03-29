@@ -2,10 +2,10 @@ ProgramNode(0...71)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a"), IDENTIFIER(5...6)("b")]),
   StatementsNode(0...71)(
     [OperatorAssignmentNode(0...15)(
-       LocalVariableWriteNode(0...1)(IDENTIFIER(0...1)("a"), nil, nil),
+       LocalVariableWriteNode(0...1)((0...1), nil, nil),
        PLUS_EQUAL(2...4)("+="),
        OperatorAssignmentNode(5...15)(
-         LocalVariableWriteNode(5...6)(IDENTIFIER(5...6)("b"), nil, nil),
+         LocalVariableWriteNode(5...6)((5...6), nil, nil),
          PLUS_EQUAL(7...9)("+="),
          CallNode(10...15)(
            nil,
@@ -27,11 +27,10 @@ ProgramNode(0...71)(
        )
      ),
      OperatorAssignmentNode(20...34)(
-       LocalVariableWriteNode(20...21)(IDENTIFIER(20...21)("a"), nil, nil),
+       LocalVariableWriteNode(20...21)((20...21), nil, nil),
        PLUS_EQUAL(22...24)("+="),
        LocalVariableWriteNode(25...34)(
-         IDENTIFIER(25...26)("b"),
-         EQUAL(27...28)("="),
+         (25...26),
          CallNode(29...34)(
            nil,
            nil,
@@ -48,14 +47,14 @@ ProgramNode(0...71)(
            nil,
            nil,
            "raise"
-         )
+         ),
+         (27...28)
        )
      ),
      LocalVariableWriteNode(39...53)(
-       IDENTIFIER(39...40)("a"),
-       EQUAL(41...42)("="),
+       (39...40),
        OperatorAssignmentNode(43...53)(
-         LocalVariableWriteNode(43...44)(IDENTIFIER(43...44)("b"), nil, nil),
+         LocalVariableWriteNode(43...44)((43...44), nil, nil),
          PLUS_EQUAL(45...47)("+="),
          CallNode(48...53)(
            nil,
@@ -74,14 +73,13 @@ ProgramNode(0...71)(
            nil,
            "raise"
          )
-       )
+       ),
+       (41...42)
      ),
      LocalVariableWriteNode(58...71)(
-       IDENTIFIER(58...59)("a"),
-       EQUAL(60...61)("="),
+       (58...59),
        LocalVariableWriteNode(62...71)(
-         IDENTIFIER(62...63)("b"),
-         EQUAL(64...65)("="),
+         (62...63),
          CallNode(66...71)(
            nil,
            nil,
@@ -98,8 +96,10 @@ ProgramNode(0...71)(
            nil,
            nil,
            "raise"
-         )
-       )
+         ),
+         (64...65)
+       ),
+       (60...61)
      )]
   )
 )

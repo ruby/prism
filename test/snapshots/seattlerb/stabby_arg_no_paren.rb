@@ -7,7 +7,7 @@ ProgramNode(0...2)(
        nil,
        BlockParametersNode(2...3)(
          ParametersNode(2...3)(
-           [RequiredParameterNode(2...3)(IDENTIFIER(2...3)("a"))],
+           [RequiredParameterNode(2...3)()],
            [],
            nil,
            [],

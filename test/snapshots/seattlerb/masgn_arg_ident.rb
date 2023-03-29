@@ -2,7 +2,7 @@ ProgramNode(0...10)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...10)(
     [MultiWriteNode(0...10)(
-       [LocalVariableWriteNode(0...1)(IDENTIFIER(0...1)("a"), nil, nil),
+       [LocalVariableWriteNode(0...1)((0...1), nil, nil),
         CallNode(3...6)(
           CallNode(3...4)(
             nil,

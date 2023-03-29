@@ -11,7 +11,7 @@ ProgramNode(0...30)(
             IDENTIFIER(6...7)("b"),
             nil,
             ParametersNode(8...9)(
-              [RequiredParameterNode(8...9)(IDENTIFIER(8...9)("c"))],
+              [RequiredParameterNode(8...9)()],
               [],
               nil,
               [],

@@ -415,6 +415,7 @@ nodes:
 
           foo in Bar[1, 2, 3]
           ^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: AsPatternNode
     child_nodes:
       - name: value
@@ -428,6 +429,7 @@ nodes:
 
           foo => [bar => baz]
                  ^^^^^^^^^^^^
+    is_migrated: true
   - name: AssocNode
     child_nodes:
       - name: key
@@ -441,6 +443,7 @@ nodes:
 
           { a => b }
             ^^^^^^
+    is_migrated: true
   - name: AssocSplatNode
     child_nodes:
       - name: value
@@ -452,6 +455,7 @@ nodes:
 
           { **foo }
             ^^^^^
+    is_migrated: true
   - name: BeginNode
     child_nodes:
       - name: begin_keyword
@@ -461,6 +465,7 @@ nodes:
         kind: StatementsNode
       - name: rescue_clause
         type: node?
+        kind: RescueNode
       - name: else_clause
         type: node?
         kind: ElseNode
@@ -493,6 +498,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: parameters
         type: node?
         kind: BlockParametersNode
@@ -525,6 +531,7 @@ nodes:
     child_nodes:
       - name: parameters
         type: node?
+        kind: ParametersNode
       - name: locals
         type: token[]
     comment: |
@@ -611,6 +618,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: class_keyword
         type: token
       - name: constant_path
@@ -661,6 +669,7 @@ nodes:
 
           Foo::Bar
           ^^^^^^^^
+    is_migrated: true
   - name: ConstantPathWriteNode
     child_nodes:
       - name: target
@@ -691,10 +700,12 @@ nodes:
         type: node?
       - name: parameters
         type: node?
+        kind: ParametersNode
       - name: statements
         type: node?
       - name: scope
         type: node
+        kind: ScopeNode
       - name: def_keyword_loc
         type: location
       - name: operator_loc
@@ -770,6 +781,7 @@ nodes:
 
           false
           ^^^^^
+    is_migrated: true
   - name: FindPatternNode
     child_nodes:
       - name: constant
@@ -795,12 +807,14 @@ nodes:
 
           foo in Foo(*bar, baz, *qux)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: FloatNode
     comment: |
       Represents a floating point number literal.
 
           1.0
           ^^^
+    is_migrated: true
   - name: ForNode
     child_nodes:
       - name: index
@@ -823,6 +837,7 @@ nodes:
 
           for i in a end
           ^^^^^^^^^^^^^^
+    is_migrated: true
   - name: ForwardingArgumentsNode
     comment: |
       Represents forwarding all arguments to this method to another method.
@@ -831,6 +846,7 @@ nodes:
             bar(...)
             ^^^^^^^^
           end
+    is_migrated: true
   - name: ForwardingParameterNode
     comment: |
       Represents the use of the forwarding parameter in a method, block, or lambda declaration.
@@ -838,6 +854,7 @@ nodes:
           def foo(...)
                   ^^^
           end
+    is_migrated: true
   - name: ForwardingSuperNode
     child_nodes:
       - name: block
@@ -848,6 +865,7 @@ nodes:
 
           super
           ^^^^^
+    is_migrated: true
   - name: GlobalVariableReadNode
     child_nodes:
       - name: name
@@ -857,6 +875,7 @@ nodes:
 
           $foo
           ^^^^
+    is_migrated: true
   - name: GlobalVariableWriteNode
     child_nodes:
       - name: name
@@ -870,6 +889,7 @@ nodes:
 
           $foo = 1
           ^^^^^^^^
+    is_migrated: true
   - name: HashNode
     child_nodes:
       - name: opening
@@ -904,6 +924,7 @@ nodes:
 
           foo => { a: 1, b: 2, **c }
                  ^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: HeredocNode
     child_nodes:
       - name: opening
@@ -942,6 +963,7 @@ nodes:
 
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: ImaginaryNode
     comment: |
       Represents an imaginary number literal.
@@ -964,6 +986,7 @@ nodes:
 
           case a; in b then c end
                   ^^^^^^^^^^^
+    is_migrated: true
   - name: InstanceVariableReadNode
     comment: |
       Represents referencing an instance variable.
@@ -989,6 +1012,7 @@ nodes:
 
           1
           ^
+    is_migrated: true
   - name: InterpolatedRegularExpressionNode
     child_nodes:
       - name: opening
@@ -1057,6 +1081,7 @@ nodes:
           def a(b: 1)
                 ^^^^
           end
+    is_migrated: true
   - name: KeywordRestParameterNode
     child_nodes:
       - name: operator
@@ -1069,10 +1094,12 @@ nodes:
           def a(**b)
                 ^^^
           end
+    is_migrated: true
   - name: LambdaNode
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: opening
         type: token
       - name: lparen
@@ -1089,10 +1116,9 @@ nodes:
 
           ->(value) { value * 2 }
           ^^^^^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: LocalVariableReadNode
-    child_nodes:
-      - name: name
-        type: token
+    is_migrated: true
     comment: |
       Represents reading a local variable. Note that this requires that a local
       variable of the same name has already been written to in the same scope,
@@ -1101,19 +1127,21 @@ nodes:
           foo
           ^^^
   - name: LocalVariableWriteNode
+    is_migrated: true
     child_nodes:
-      - name: name
-        type: token
-      - name: operator
-        type: token?
+      - name: name_loc
+        type: location
       - name: value
         type: node?
+      - name: operator_loc
+        type: location?
     comment: |
       Represents writing to a local variable.
 
           foo = 1
           ^^^^^^^
   - name: MatchPredicateNode
+    is_migrated: true
     child_nodes:
       - name: value
         type: node
@@ -1127,6 +1155,7 @@ nodes:
           foo in bar
           ^^^^^^^^^^
   - name: MatchRequiredNode
+    is_migrated: true
     child_nodes:
       - name: value
         type: node
@@ -1140,13 +1169,16 @@ nodes:
           foo => bar
           ^^^^^^^^^^
   - name: MissingNode
+    is_migrated: true
     comment: |
       Represents a node that is missing from the source and results in a syntax
       error.
   - name: ModuleNode
+    is_migrated: true
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: module_keyword
         type: token
       - name: constant_path
@@ -1161,6 +1193,7 @@ nodes:
           module Foo end
           ^^^^^^^^^^^^^^
   - name: MultiWriteNode
+    is_migrated: true
     child_nodes:
       - name: targets
         type: node[]
@@ -1178,6 +1211,7 @@ nodes:
           a, b, c = 1, 2, 3
           ^^^^^^^^^^^^^^^^^
   - name: NextNode
+    is_migrated: true
     child_nodes:
       - name: arguments
         type: node?
@@ -1190,12 +1224,14 @@ nodes:
           next 1
           ^^^^^^
   - name: NilNode
+    is_migrated: true
     comment: |
       Represents the use of the `nil` keyword.
 
           nil
           ^^^
   - name: NoKeywordsParameterNode
+    is_migrated: true
     child_nodes:
       - name: operator_loc
         type: location
@@ -1208,6 +1244,7 @@ nodes:
                 ^^^^^
           end
   - name: OperatorAndAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1221,6 +1258,7 @@ nodes:
           target &&= value
           ^^^^^^^^^^^^^^^^
   - name: OperatorAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1234,6 +1272,7 @@ nodes:
           foo += bar
           ^^^^^^^^^^
   - name: OperatorOrAssignmentNode
+    is_migrated: true
     child_nodes:
       - name: target
         type: node
@@ -1247,6 +1286,7 @@ nodes:
           target ||= value
           ^^^^^^^^^^^^^^^^
   - name: OptionalParameterNode
+    is_migrated: true
     child_nodes:
       - name: name
         type: token
@@ -1261,6 +1301,7 @@ nodes:
                 ^^^^^
           end
   - name: OrNode
+    is_migrated: true
     child_nodes:
       - name: left
         type: node
@@ -1274,6 +1315,7 @@ nodes:
           left or right
           ^^^^^^^^^^^^^
   - name: ParametersNode
+    is_migrated: true
     child_nodes:
       - name: requireds
         type: node[]
@@ -1281,12 +1323,14 @@ nodes:
         type: node[]
       - name: rest
         type: node?
+        kind: RestParameterNode
       - name: keywords
         type: node[]
       - name: keyword_rest
         type: node?
       - name: block
         type: node?
+        kind: BlockParameterNode
     comment: |
       Represents the list of parameters on a method, block, or lambda definition.
 
@@ -1294,6 +1338,7 @@ nodes:
                 ^^^^^^^
           end
   - name: ParenthesesNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node?
@@ -1307,6 +1352,7 @@ nodes:
           (10 + 34)
           ^^^^^^^^^
   - name: PinnedExpressionNode
+    is_migrated: true
     child_nodes:
       - name: expression
         type: node
@@ -1323,6 +1369,7 @@ nodes:
           foo in ^(bar)
                  ^^^^^^
   - name: PinnedVariableNode
+    is_migrated: true
     child_nodes:
       - name: variable
         type: node
@@ -1335,6 +1382,7 @@ nodes:
           foo in ^bar
                  ^^^^
   - name: PostExecutionNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node
@@ -1351,6 +1399,7 @@ nodes:
           END { foo }
           ^^^^^^^^^^^
   - name: PreExecutionNode
+    is_migrated: true
     child_nodes:
       - name: statements
         type: node
@@ -1367,14 +1416,17 @@ nodes:
           BEGIN { foo }
           ^^^^^^^^^^^^^
   - name: ProgramNode
+    is_migrated: true
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: statements
         type: node
         kind: StatementsNode
     comment: The top level node of any parse tree.
   - name: RangeNode
+    is_migrated: true
     child_nodes:
       - name: left
         type: node?
@@ -1391,18 +1443,21 @@ nodes:
           c if a =~ /left/ ... b =~ /right/
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   - name: RationalNode
+    is_migrated: true
     comment: |
       Represents a rational number literal.
 
           1.0r
           ^^^^
   - name: RedoNode
+    is_migrated: true
     comment: |
       Represents the use of the `redo` keyword.
 
           redo
           ^^^^
   - name: RegularExpressionNode
+    is_migrated: true
     child_nodes:
       - name: opening
         type: token
@@ -1418,6 +1473,7 @@ nodes:
           /foo/i
           ^^^^^^
   - name: RequiredDestructuredParameterNode
+    is_migrated: true
     child_nodes:
       - name: parameters
         type: node[]
@@ -1432,9 +1488,7 @@ nodes:
                   ^^^^^^^^^^
           end
   - name: RequiredParameterNode
-    child_nodes:
-      - name: name
-        type: token
+    is_migrated: true
     comment: |
       Represents a required parameter to a method, block, or lambda definition.
 
@@ -1449,6 +1503,7 @@ nodes:
         type: token
       - name: rescue_expression
         type: node
+    is_migrated: true
     comment: |
       Represents an expression modified with a rescue.
 
@@ -1469,6 +1524,8 @@ nodes:
         kind: StatementsNode
       - name: consequent
         type: node?
+        kind: RescueNode
+    is_migrated: true
     comment: |
       Represents a rescue statement.
 
@@ -1483,6 +1540,7 @@ nodes:
         type: token
       - name: name
         type: token?
+    is_migrated: true
     comment: |
       Represents a rest parameter to a method, block, or lambda definition.
 
@@ -1490,6 +1548,7 @@ nodes:
                 ^^
           end
   - name: RetryNode
+    is_migrated: true
     comment: |
       Represents the use of the `retry` keyword.
 
@@ -1502,6 +1561,7 @@ nodes:
       - name: arguments
         type: node?
         kind: ArgumentsNode
+    is_migrated: true
     comment: |
       Represents the use of the `return` keyword.
 
@@ -1511,10 +1571,12 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
+    is_migrated: true
     comment: |
       Represents the local variables within a given lexical scope. These are
       attached to nodes where a new scope is created.
   - name: SelfNode
+    is_migrated: true
     comment: |
       Represents the `self` keyword.
 
@@ -1524,6 +1586,7 @@ nodes:
     child_nodes:
       - name: scope
         type: node
+        kind: ScopeNode
       - name: class_keyword
         type: token
       - name: operator
@@ -1534,24 +1597,28 @@ nodes:
         type: node?
       - name: end_keyword
         type: token
+    is_migrated: true
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 
           class << self end
           ^^^^^^^^^^^^^^^^^
   - name: SourceEncodingNode
+    is_migrated: true
     comment: |
       Represents the use of the `__ENCODING__` keyword.
 
           __ENCODING__
           ^^^^^^^^^^^^
   - name: SourceFileNode
+    is_migrated: true
     comment: |
       Represents the use of the `__FILE__` keyword.
 
           __FILE__
           ^^^^^^^^
   - name: SourceLineNode
+    is_migrated: true
     comment: |
       Represents the use of the `__LINE__` keyword.
 
@@ -1563,6 +1630,7 @@ nodes:
         type: token
       - name: expression
         type: node?
+    is_migrated: true
     comment: |
       Represents the use of the splat operator.
 

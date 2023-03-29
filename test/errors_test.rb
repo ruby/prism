@@ -452,54 +452,54 @@ class ErrorsTest < Test::Unit::TestCase
       KEYWORD_BEGIN("begin"),
       StatementsNode(
         [LocalVariableWriteNode(
-           IDENTIFIER("_1"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_2"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_3"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_4"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_5"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_6"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_7"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_8"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_9"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          ),
          LocalVariableWriteNode(
-           IDENTIFIER("_10"),
-           EQUAL("="),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a")
+           Location(),
+           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+           Location()
          )]
       ),
       nil,
@@ -520,7 +520,7 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       ParametersNode(
-        [RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b")), RequiredParameterNode(IDENTIFIER("c"))],
+        [RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()],
         [],
         nil,
         [],
@@ -546,7 +546,7 @@ class ErrorsTest < Test::Unit::TestCase
       ScopeNode([IDENTIFIER("a"), IDENTIFIER("b")]),
       MINUS_GREATER("->"),
       PARENTHESIS_LEFT("("),
-      BlockParametersNode(ParametersNode([RequiredParameterNode(IDENTIFIER("a")), RequiredParameterNode(IDENTIFIER("b"))], [], nil, [], nil, nil), []),
+      BlockParametersNode(ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], nil, [], nil, nil), []),
       PARENTHESIS_RIGHT(")"),
       nil
     )

@@ -23,8 +23,8 @@ ProgramNode(0...26)(
          ScopeNode(5...7)([IDENTIFIER(9...10)("x"), IDENTIFIER(12...13)("y")]),
          BlockParametersNode(9...13)(
            ParametersNode(9...13)(
-             [RequiredParameterNode(9...10)(IDENTIFIER(9...10)("x")),
-              RequiredParameterNode(12...13)(IDENTIFIER(12...13)("y"))],
+             [RequiredParameterNode(9...10)(),
+              RequiredParameterNode(12...13)()],
              [],
              nil,
              [],
@@ -35,13 +35,11 @@ ProgramNode(0...26)(
          ),
          StatementsNode(17...22)(
            [CallNode(17...22)(
-              LocalVariableReadNode(17...18)(IDENTIFIER(17...18)("x")),
+              LocalVariableReadNode(17...18)(),
               nil,
               PLUS(19...20)("+"),
               nil,
-              ArgumentsNode(21...22)(
-                [LocalVariableReadNode(21...22)(IDENTIFIER(21...22)("y"))]
-              ),
+              ArgumentsNode(21...22)([LocalVariableReadNode(21...22)()]),
               nil,
               nil,
               "+"

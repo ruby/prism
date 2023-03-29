@@ -2,8 +2,7 @@ ProgramNode(0...0)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...0)(
     [LocalVariableWriteNode(0...0)(
-       IDENTIFIER(0...1)("a"),
-       EQUAL(2...3)("="),
+       (0...1),
        ArrayNode(0...0)(
          [CallNode(4...5)(
             nil,
@@ -40,7 +39,8 @@ ProgramNode(0...0)(
           )],
          nil,
          nil
-       )
+       ),
+       (2...3)
      )]
   )
 )

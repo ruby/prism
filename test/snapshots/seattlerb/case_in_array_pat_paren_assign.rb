@@ -13,11 +13,7 @@ ProgramNode(0...29)(
             ConstantReadNode(11...12)(),
             [AsPatternNode(13...19)(
                ConstantReadNode(13...14)(),
-               LocalVariableWriteNode(18...19)(
-                 IDENTIFIER(18...19)("d"),
-                 nil,
-                 nil
-               ),
+               LocalVariableWriteNode(18...19)((18...19), nil, nil),
                (15...17)
              )],
             nil,

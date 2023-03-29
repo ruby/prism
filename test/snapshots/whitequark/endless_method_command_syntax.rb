@@ -67,7 +67,7 @@ ProgramNode(0...278)(
        IDENTIFIER(54...57)("foo"),
        nil,
        ParametersNode(58...59)(
-         [RequiredParameterNode(58...59)(IDENTIFIER(58...59)("x"))],
+         [RequiredParameterNode(58...59)()],
          [],
          nil,
          [],
@@ -80,9 +80,7 @@ ProgramNode(0...278)(
             nil,
             IDENTIFIER(63...67)("puts"),
             nil,
-            ArgumentsNode(68...69)(
-              [LocalVariableReadNode(68...69)(IDENTIFIER(68...69)("x"))]
-            ),
+            ArgumentsNode(68...69)([LocalVariableReadNode(68...69)()]),
             nil,
             nil,
             "puts"
@@ -189,7 +187,7 @@ ProgramNode(0...278)(
          "obj"
        ),
        ParametersNode(141...142)(
-         [RequiredParameterNode(141...142)(IDENTIFIER(141...142)("x"))],
+         [RequiredParameterNode(141...142)()],
          [],
          nil,
          [],
@@ -202,9 +200,7 @@ ProgramNode(0...278)(
             nil,
             IDENTIFIER(146...150)("puts"),
             nil,
-            ArgumentsNode(151...152)(
-              [LocalVariableReadNode(151...152)(IDENTIFIER(151...152)("x"))]
-            ),
+            ArgumentsNode(151...152)([LocalVariableReadNode(151...152)()]),
             nil,
             nil,
             "puts"
@@ -222,7 +218,7 @@ ProgramNode(0...278)(
        IDENTIFIER(158...165)("rescued"),
        nil,
        ParametersNode(166...167)(
-         [RequiredParameterNode(166...167)(IDENTIFIER(166...167)("x"))],
+         [RequiredParameterNode(166...167)()],
          [],
          nil,
          [],
@@ -260,9 +256,7 @@ ProgramNode(0...278)(
                StringInterpolatedNode(209...213)(
                  EMBEXPR_BEGIN(209...211)("\#{"),
                  StatementsNode(211...212)(
-                   [LocalVariableReadNode(211...212)(
-                      IDENTIFIER(211...212)("x")
-                    )]
+                   [LocalVariableReadNode(211...212)()]
                  ),
                  EMBEXPR_END(212...213)("}")
                )],
@@ -282,7 +276,7 @@ ProgramNode(0...278)(
        IDENTIFIER(225...232)("rescued"),
        SelfNode(220...224)(),
        ParametersNode(233...234)(
-         [RequiredParameterNode(233...234)(IDENTIFIER(233...234)("x"))],
+         [RequiredParameterNode(233...234)()],
          [],
          nil,
          [],
@@ -320,9 +314,7 @@ ProgramNode(0...278)(
                StringInterpolatedNode(273...277)(
                  EMBEXPR_BEGIN(273...275)("\#{"),
                  StatementsNode(275...276)(
-                   [LocalVariableReadNode(275...276)(
-                      IDENTIFIER(275...276)("x")
-                    )]
+                   [LocalVariableReadNode(275...276)()]
                  ),
                  EMBEXPR_END(276...277)("}")
                )],

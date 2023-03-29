@@ -16,7 +16,7 @@ ProgramNode(0...17)(
          ),
          BlockParametersNode(5...14)(
            ParametersNode(5...14)(
-             [RequiredParameterNode(9...10)(IDENTIFIER(9...10)("b"))],
+             [RequiredParameterNode(9...10)()],
              [],
              RestParameterNode(5...7)(
                USTAR(5...6)("*"),

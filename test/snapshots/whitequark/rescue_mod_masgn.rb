@@ -3,8 +3,8 @@ ProgramNode(0...29)(
   StatementsNode(0...29)(
     [RescueModifierNode(0...29)(
        MultiWriteNode(0...15)(
-         [LocalVariableWriteNode(0...3)(IDENTIFIER(0...3)("foo"), nil, nil),
-          LocalVariableWriteNode(5...8)(IDENTIFIER(5...8)("bar"), nil, nil)],
+         [LocalVariableWriteNode(0...3)((0...3), nil, nil),
+          LocalVariableWriteNode(5...8)((5...8), nil, nil)],
          EQUAL(9...10)("="),
          CallNode(11...15)(
            nil,

@@ -7,9 +7,9 @@ ProgramNode(0...22)(
        IntegerNode(10...11)()
      ),
      LocalVariableWriteNode(12...22)(
-       IDENTIFIER(12...18)("测试"),
-       EQUAL(19...20)("="),
-       IntegerNode(21...22)()
+       (12...18),
+       IntegerNode(21...22)(),
+       (19...20)
      )]
   )
 )

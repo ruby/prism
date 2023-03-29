@@ -1,11 +1,7 @@
 ProgramNode(0...49)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...49)(
-    [LocalVariableWriteNode(0...5)(
-       IDENTIFIER(0...1)("a"),
-       EQUAL(2...3)("="),
-       IntegerNode(4...5)()
-     ),
+    [LocalVariableWriteNode(0...5)((0...1), IntegerNode(4...5)(), (2...3)),
      CallNode(7...0)(
        nil,
        nil,
@@ -35,7 +31,7 @@ ProgramNode(0...49)(
        IDENTIFIER(19...22)("foo"),
        nil,
        ParametersNode(23...28)(
-         [RequiredParameterNode(23...28)(IDENTIFIER(23...28)("raise"))],
+         [RequiredParameterNode(23...28)()],
          [],
          nil,
          [],

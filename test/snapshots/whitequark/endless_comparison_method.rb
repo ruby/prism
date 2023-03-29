@@ -5,7 +5,7 @@ ProgramNode(0...179)(
        BANG_EQUAL(4...6)("!="),
        nil,
        ParametersNode(7...12)(
-         [RequiredParameterNode(7...12)(IDENTIFIER(7...12)("other"))],
+         [RequiredParameterNode(7...12)()],
          [],
          nil,
          [],
@@ -36,7 +36,7 @@ ProgramNode(0...179)(
        BANG_EQUAL(34...36)("!="),
        nil,
        ParametersNode(37...42)(
-         [RequiredParameterNode(37...42)(IDENTIFIER(37...42)("other"))],
+         [RequiredParameterNode(37...42)()],
          [],
          nil,
          [],
@@ -67,7 +67,7 @@ ProgramNode(0...179)(
        LESS_EQUAL(64...66)("<="),
        nil,
        ParametersNode(67...72)(
-         [RequiredParameterNode(67...72)(IDENTIFIER(67...72)("other"))],
+         [RequiredParameterNode(67...72)()],
          [],
          nil,
          [],
@@ -98,7 +98,7 @@ ProgramNode(0...179)(
        EQUAL_EQUAL(94...96)("=="),
        nil,
        ParametersNode(97...102)(
-         [RequiredParameterNode(97...102)(IDENTIFIER(97...102)("other"))],
+         [RequiredParameterNode(97...102)()],
          [],
          nil,
          [],
@@ -129,7 +129,7 @@ ProgramNode(0...179)(
        EQUAL_EQUAL_EQUAL(124...127)("==="),
        nil,
        ParametersNode(128...133)(
-         [RequiredParameterNode(128...133)(IDENTIFIER(128...133)("other"))],
+         [RequiredParameterNode(128...133)()],
          [],
          nil,
          [],
@@ -160,7 +160,7 @@ ProgramNode(0...179)(
        GREATER_EQUAL(155...157)(">="),
        nil,
        ParametersNode(158...163)(
-         [RequiredParameterNode(158...163)(IDENTIFIER(158...163)("other"))],
+         [RequiredParameterNode(158...163)()],
          [],
          nil,
          [],

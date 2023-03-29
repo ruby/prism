@@ -7,7 +7,7 @@ ProgramNode(0...16)(
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(3...11)(
          ParametersNode(3...11)(
-           [RequiredParameterNode(3...4)(IDENTIFIER(3...4)("a"))],
+           [RequiredParameterNode(3...4)()],
            [OptionalParameterNode(6...11)(
               IDENTIFIER(6...7)("b"),
               EQUAL(7...8)("="),
@@ -29,8 +29,8 @@ ProgramNode(0...16)(
             nil,
             ArgumentsNode(17...23)(
               [ArrayNode(17...23)(
-                 [LocalVariableReadNode(18...19)(IDENTIFIER(18...19)("a")),
-                  LocalVariableReadNode(21...22)(IDENTIFIER(21...22)("b"))],
+                 [LocalVariableReadNode(18...19)(),
+                  LocalVariableReadNode(21...22)()],
                  BRACKET_LEFT_ARRAY(17...18)("["),
                  BRACKET_RIGHT(22...23)("]")
                )]

@@ -7,7 +7,7 @@ ProgramNode(0...19)(
        PARENTHESIS_LEFT(2...3)("("),
        BlockParametersNode(3...8)(
          ParametersNode(3...8)(
-           [RequiredParameterNode(3...8)(IDENTIFIER(3...8)("scope"))],
+           [RequiredParameterNode(3...8)()],
            [],
            nil,
            [],
