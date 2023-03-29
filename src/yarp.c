@@ -1373,37 +1373,37 @@ yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assoc
 }
 
 // Allocate a new GlobalVariableReadNode node.
-static yp_node_t *
+static yp_global_variable_read_node_t *
 yp_global_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_global_variable_read_node_t *node = YP_NODE_ALLOC(yp_global_variable_read_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_GLOBAL_VARIABLE_READ_NODE,
-    .location = YP_LOCATION_TOKEN_VALUE(name),
-    .as.global_variable_read_node = {
-      .name = *name
-    }
+  *node = (yp_global_variable_read_node_t) {
+    {
+      .type = YP_NODE_GLOBAL_VARIABLE_READ_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(name),
+    },
+    .name = *name
   };
 
   return node;
 }
 
 // Allocate a new GlobalVariableWriteNode node.
-static yp_node_t *
+static yp_global_variable_write_node_t *
 yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator, yp_node_t *value) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_global_variable_write_node_t *node = YP_NODE_ALLOC(yp_global_variable_write_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_GLOBAL_VARIABLE_WRITE_NODE,
-    .location = {
-      .start = name->start,
-      .end = (value == NULL ? name->end : value->location.end)
+  *node = (yp_global_variable_write_node_t) {
+    {
+      .type = YP_NODE_GLOBAL_VARIABLE_WRITE_NODE,
+      .location = {
+        .start = name->start,
+        .end = (value == NULL ? name->end : value->location.end)
+      },
     },
-    .as.global_variable_write_node = {
-      .name = *name,
-      .operator = *operator,
-      .value = value
-    }
+    .name = *name,
+    .operator = *operator,
+    .value = value
   };
 
   return node;
@@ -6569,9 +6569,9 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_CONSTANT_READ_NODE:
       return yp_constant_path_write_node_create(parser, target, operator, value);
     case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
-      yp_node_t *result = yp_global_variable_write_node_create(parser, &target->as.global_variable_read_node.name, operator, value);
+      yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &((yp_global_variable_read_node_t *) target)->name, operator, value);
       yp_node_destroy(parser, target);
-      return result;
+      return (yp_node_t *) result;
     }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
       yp_location_t name_loc = target->location;
@@ -7831,7 +7831,7 @@ parse_string_part(yp_parser_t *parser) {
         case YP_TOKEN_GLOBAL_VARIABLE:
         case YP_TOKEN_NTH_REFERENCE:
           parser_lex(parser);
-          return yp_global_variable_read_node_create(parser, &parser->previous);
+          return (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
         // In this case an instance variable is being interpolated. We'll
         // create an instance variable read node.
         case YP_TOKEN_INSTANCE_VARIABLE:
@@ -7986,7 +7986,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
     case YP_TOKEN_NTH_REFERENCE:
     case YP_TOKEN_GLOBAL_VARIABLE: {
       parser_lex(parser);
-      return yp_global_variable_read_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
     }
     default:
       yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Expected a bare word, symbol or global variable argument.");
@@ -8432,9 +8432,8 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
         case YP_TOKEN_NTH_REFERENCE:
         case YP_TOKEN_BACK_REFERENCE: {
           parser_lex(parser);
-          yp_node_t *variable = yp_global_variable_read_node_create(parser, &parser->previous);
-
-          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
+          yp_global_variable_read_node_t *variable = yp_global_variable_read_node_create(parser, &parser->previous);
+          return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, (yp_node_t *) variable);
         }
         case YP_TOKEN_PARENTHESIS_LEFT: {
           bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
@@ -8921,7 +8920,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_GLOBAL_VARIABLE:
     case YP_TOKEN_BACK_REFERENCE: {
       parser_lex(parser);
-      yp_node_t *node = yp_global_variable_read_node_create(parser, &parser->previous);
+      yp_node_t *node = (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
 
       if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
         node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -9155,7 +9154,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
         case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
           if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
-            yp_token_t *name = &right->as.global_variable_read_node.name;
+            yp_token_t *name = &((yp_global_variable_read_node_t *) right)->name;
 
             if (name->type == YP_TOKEN_NTH_REFERENCE) {
               yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Can't make alias for number variables.");
@@ -9535,7 +9534,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 receiver = yp_class_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_GLOBAL_VARIABLE:
-                receiver = yp_global_variable_read_node_create(parser, &identifier);
+                receiver = (yp_node_t *) yp_global_variable_read_node_create(parser, &identifier);
                 break;
               case YP_TOKEN_KEYWORD_NIL:
                 receiver = (yp_node_t *) yp_nil_node_create(parser, &identifier);

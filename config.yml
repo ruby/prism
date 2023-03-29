@@ -875,6 +875,7 @@ nodes:
 
           $foo
           ^^^^
+    is_migrated: true
   - name: GlobalVariableWriteNode
     child_nodes:
       - name: name
@@ -888,6 +889,7 @@ nodes:
 
           $foo = 1
           ^^^^^^^^
+    is_migrated: true
   - name: HashNode
     child_nodes:
       - name: opening
