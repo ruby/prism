@@ -1530,9 +1530,9 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
 }
 
 // Allocate and initialize a new InNode node.
-static yp_node_t *
+static yp_in_node_t *
 yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_statements_node_t *statements, const yp_token_t *in_keyword, const yp_token_t *then_keyword) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_in_node_t *node = YP_NODE_ALLOC(yp_in_node_t);
 
   const char *end;
   if (then_keyword->type != YP_TOKEN_NOT_PROVIDED) {
@@ -1543,18 +1543,18 @@ yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_statements_node_t 
     end = pattern->location.end;
   }
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_IN_NODE,
-    .location = {
-      .start = in_keyword->start,
-      .end = end
+  *node = (yp_in_node_t) {
+    {
+      .type = YP_NODE_IN_NODE,
+      .location = {
+        .start = in_keyword->start,
+        .end = end
+      },
     },
-    .as.in_node = {
-      .pattern = pattern,
-      .statements = statements,
-      .in_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
-      .then_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(then_keyword)
-    }
+    .pattern = pattern,
+    .statements = statements,
+    .in_loc = YP_LOCATION_TOKEN_VALUE(in_keyword),
+    .then_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(then_keyword)
   };
 
   return node;
@@ -9274,7 +9274,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
           // Now that we have the full pattern and statements, we can create the
           // node and attach it to the case node.
-          yp_node_t *condition = yp_in_node_create(parser, pattern, statements, &in_keyword, &then_keyword);
+          yp_node_t *condition = (yp_node_t *) yp_in_node_create(parser, pattern, statements, &in_keyword, &then_keyword);
           yp_case_node_condition_append(case_node, condition);
         }
       }

@@ -976,6 +976,7 @@ nodes:
 
           case a; in b then c end
                   ^^^^^^^^^^^
+    is_migrated: true
   - name: InstanceVariableReadNode
     comment: |
       Represents referencing an instance variable.
