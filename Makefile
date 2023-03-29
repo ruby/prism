@@ -32,12 +32,6 @@ include/yarp/ast.h: bin/templates/include/yarp/ast.h.erb
 
 clean:
 	rm -f \
-		build/librubyparser.$(SOEXT) \
-		ext/yarp/node.c \
-		include/{ast.h,node.h} \
-		java/org/yarp/{AbstractNodeVisitor.java,Loader.java,Nodes.java} \
-		lib/yarp/{node,serialize}.rb \
-		src/{node.c,prettyprint.c,serialize.c,token_type.c} \
-		src/util/yp_strspn.c
+		build/librubyparser.$(SOEXT)
 
 .PHONY: clean
