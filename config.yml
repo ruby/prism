@@ -807,6 +807,7 @@ nodes:
 
           foo in Foo(*bar, baz, *qux)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: FloatNode
     comment: |
       Represents a floating point number literal.
