@@ -1206,29 +1206,29 @@ yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
 
 // Allocate and initialize a new find pattern node. The node list given in the
 // nodes parameter is guaranteed to have at least two nodes.
-static yp_node_t *
+static yp_find_pattern_node_t *
 yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
-  yp_node_t *node = yp_node_alloc(parser);
+  yp_find_pattern_node_t *node = YP_NODE_ALLOC(yp_find_pattern_node_t);
 
-  *node = (yp_node_t) {
-    .type = YP_NODE_FIND_PATTERN_NODE,
-    .location = {
-      .start = nodes->nodes[0]->location.start,
-      .end = nodes->nodes[nodes->size - 1]->location.end
+  *node = (yp_find_pattern_node_t) {
+    {
+      .type = YP_NODE_FIND_PATTERN_NODE,
+      .location = {
+        .start = nodes->nodes[0]->location.start,
+        .end = nodes->nodes[nodes->size - 1]->location.end
+      },
     },
-    .as.find_pattern_node = {
-      .constant = NULL,
-      .left = nodes->nodes[0],
-      .right = nodes->nodes[nodes->size - 1]
-    }
+    .constant = NULL,
+    .left = nodes->nodes[0],
+    .right = nodes->nodes[nodes->size - 1]
   };
 
   // For now we're going to just copy over each pointer manually. This could be
   // much more efficient, as we could instead resize the node list to only point
   // to 1...-1.
-  yp_node_list_init(&node->as.find_pattern_node.requireds);
+  yp_node_list_init(&node->requireds);
   for (size_t index = 1; index < nodes->size - 1; index++) {
-    yp_node_list_append2(&node->as.find_pattern_node.requireds, nodes->nodes[index]);
+    yp_node_list_append2(&node->requireds, nodes->nodes[index]);
   }
 
   return node;
@@ -8108,14 +8108,15 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
           break;
         }
         case YP_NODE_FIND_PATTERN_NODE: {
-          inner->location.start = node->location.start;
-          inner->location.end = closing.end;
+          yp_find_pattern_node_t *pattern_node = (yp_find_pattern_node_t *) inner;
+          pattern_node->base.location.start = node->location.start;
+          pattern_node->base.location.end = closing.end;
 
-          inner->as.find_pattern_node.constant = node;
-          inner->as.find_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-          inner->as.find_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+          pattern_node->constant = node;
+          pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+          pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-          node = inner;
+          node = (yp_node_t *) pattern_node;
           break;
         }
         case YP_NODE_HASH_PATTERN_NODE: {
@@ -8276,14 +8277,15 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
           break;
         }
         case YP_NODE_FIND_PATTERN_NODE: {
-          if (inner->as.find_pattern_node.opening_loc.start == NULL) {
-            inner->location.start = opening.start;
-            inner->location.end = closing.end;
+          yp_find_pattern_node_t *pattern_node = (yp_find_pattern_node_t *) inner;
+          if (pattern_node->opening_loc.start == NULL) {
+            pattern_node->base.location.start = opening.start;
+            pattern_node->base.location.end = closing.end;
 
-            inner->as.find_pattern_node.opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-            inner->as.find_pattern_node.closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+            pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+            pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
 
-            return inner;
+            return (yp_node_t *) pattern_node;
           }
 
           break;
@@ -8614,7 +8616,7 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
     // between because we know we already added the appropriate errors.
     // Otherwise we will create an array pattern.
     if (nodes.nodes[0]->type == YP_NODE_SPLAT_NODE && nodes.nodes[nodes.size - 1]->type == YP_NODE_SPLAT_NODE) {
-      node = yp_find_pattern_node_create(parser, &nodes);
+      node = (yp_node_t *) yp_find_pattern_node_create(parser, &nodes);
     } else {
       node = yp_array_pattern_node_node_list_create(parser, &nodes);
     }
