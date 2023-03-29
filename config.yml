@@ -1030,6 +1030,7 @@ nodes:
 
           /foo #{bar} baz/
           ^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: InterpolatedStringNode
     child_nodes:
       - name: opening
@@ -1043,6 +1044,7 @@ nodes:
 
           "foo #{bar} baz"
           ^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: InterpolatedSymbolNode
     child_nodes:
       - name: opening
@@ -1056,6 +1058,7 @@ nodes:
 
           :"foo #{bar} baz"
           ^^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: InterpolatedXStringNode
     child_nodes:
       - name: opening
@@ -1069,6 +1072,7 @@ nodes:
 
           `foo #{bar} baz`
           ^^^^^^^^^^^^^^^^
+    is_migrated: true
   - name: KeywordParameterNode
     child_nodes:
       - name: name
