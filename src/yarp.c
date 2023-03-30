@@ -6159,6 +6159,12 @@ parser_lex(yp_parser_t *parser) {
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             break;
           case '\n': {
+            if (parser->heredoc_end != NULL && (parser->heredoc_end > breakpoint)) {
+              parser_flush_heredoc_end(parser);
+              parser->current.end = breakpoint + 1;
+              LEX(YP_TOKEN_STRING_CONTENT);
+            }
+
             const char *start = breakpoint + 1;
             if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {
               start += yp_strspn_inline_whitespace(start, parser->end - start);
@@ -8263,22 +8269,11 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
     char new_str[node_str->as.owned.length];
     int new_str_index = 0;
 
-    bool first_iteration = (i == 0);
+    bool dedent_next = (i == 0) || (nodes->nodes[i - 1]->type == YP_NODE_STRING_NODE);
 
     while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
-      if (!first_iteration) {
-        new_str[new_str_index] = cur_char[0];
-        new_str_index++;
-        cur_char++;
-
-        if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
-          break;
-        }
-      }
-
       // Skip over the whitespace
-      if (first_iteration || cur_char[-1] == '\n') {
-        first_iteration = false;
+      if (dedent_next) {
         int trimmed_whitespace = 0;
 
         while (trimmed_whitespace < common_whitespace && cur_char[0] != '\n' && cur_char < (node_str->as.owned.source + node_str->as.owned.length)) {
@@ -8292,7 +8287,18 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
           cur_char++;
           new_size--;
         }
+
+        dedent_next = false;
       }
+
+      new_str[new_str_index] = cur_char[0];
+      new_str_index++;
+
+      if (cur_char[0] == '\n') {
+        dedent_next = true;
+      }
+
+      cur_char++;
     }
 
     // Copy over the new string

@@ -348,9 +348,9 @@ module YARP
         # remove that amount of whitespace from the beginning of each line.
         def <<(token)
           case token.event
-          when :on_embexpr_beg
+          when :on_embexpr_beg, :on_heredoc_beg
             @embexpr_balance += 1
-          when :on_embexpr_end
+          when :on_embexpr_end, :on_heredoc_end
             @embexpr_balance -= 1
           when :on_tstring_content
             if embexpr_balance == 0
@@ -387,10 +387,10 @@ module YARP
 
             tokens.each do |token|
               case token.event
-              when :on_embexpr_beg
+              when :on_embexpr_beg, :on_heredoc_beg
                 embexpr_balance += 1
                 results << token
-              when :on_embexpr_end
+              when :on_embexpr_end, :on_heredoc_end
                 embexpr_balance -= 1
                 results << token
               when :on_tstring_content
@@ -507,7 +507,9 @@ module YARP
               results << token
             end
 
-            dedent_next = token.event == :on_tstring_content && embexpr_balance == 0
+            dedent_next =
+              ((token.event == :on_tstring_content) || (token.event == :on_heredoc_end)) &&
+              embexpr_balance == 0
           end
 
           results
@@ -540,7 +542,7 @@ module YARP
       tokens = []
 
       state = :default
-      heredocs = []
+      heredoc_stack = [[]]
 
       result = YARP.lex(source, @filepath)
       result_value = result.value
@@ -638,24 +640,48 @@ module YARP
 
           if event == :on_heredoc_beg
             state = :heredoc_opened
-            heredocs << Heredoc.build(token)
+            heredoc_stack.last << Heredoc.build(token)
           end
         when :heredoc_opened
-          heredocs.last << token
-          state = :heredoc_closed if event == :on_heredoc_end
+          heredoc_stack.last.last << token
+
+          case event
+          when :on_heredoc_beg
+            heredoc_stack << [Heredoc.build(token)]
+          when :on_heredoc_end
+            state = :heredoc_closed
+          end
         when :heredoc_closed
-          tokens << token
-
           if %i[on_nl on_ignored_nl on_comment].include?(event) || (event == :on_tstring_content && value.end_with?("\n"))
-            heredocs.each do |heredoc|
-              tokens.concat(heredoc.to_a)
-            end
+            if heredoc_stack.size > 1
+              flushing = heredoc_stack.pop
+              heredoc_stack.last.last << token
 
-            heredocs.clear
-            state = :default
+              flushing.each do |heredoc|
+                heredoc.to_a.each do |flushed_token|
+                  heredoc_stack.last.last << flushed_token
+                end
+              end
+
+              state = :heredoc_opened
+            else
+              tokens << token
+
+              heredoc_stack.last.each do |heredoc|
+                tokens.concat(heredoc.to_a)
+              end
+
+              heredoc_stack.last.clear
+              state = :default
+            end
           elsif event == :on_heredoc_beg
+            tokens << token
             state = :heredoc_opened
-            heredocs << Heredoc.build(token)
+            heredoc_stack.last << Heredoc.build(token)
+          elsif heredoc_stack.size > 1
+            heredoc_stack[-2].last << token
+          else
+            tokens << token
           end
         end
       end
