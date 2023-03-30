@@ -900,23 +900,6 @@ nodes:
 
           foo => { a: 1, b: 2, **c }
                  ^^^^^^^^^^^^^^^^^^^
-  - name: HeredocNode
-    child_nodes:
-      - name: opening
-        type: token
-      - name: parts
-        type: node[]
-      - name: closing
-        type: token
-      - name: dedent
-        type: integer
-    comment: |
-      Represents the use of a heredoc.
-
-          <<~HERE
-            Content.
-          HERE
-          ^^^^^^^^^^
   - name: IfNode
     child_nodes:
       - name: if_keyword

@@ -3,7 +3,7 @@ ProgramNode(0...17)(
   StatementsNode(0...17)(
     [LocalVariableWriteNode(0...17)(
        (0...1),
-       HeredocNode(10...17)(
+       InterpolatedStringNode(10...17)(
          HEREDOC_START(4...9)("<<eos"),
          [StringNode(10...17)(
             nil,
@@ -11,8 +11,7 @@ ProgramNode(0...17)(
             nil,
             "a\xE9b\n"
           )],
-         HEREDOC_END(17...21)("eos\n"),
-         0
+         HEREDOC_END(17...21)("eos\n")
        ),
        (2...3),
        0

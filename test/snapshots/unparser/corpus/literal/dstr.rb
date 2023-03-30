@@ -23,7 +23,7 @@ ProgramNode(0...299)(
        KEYWORD_IF(21...23)("if"),
        TrueNode(24...28)(),
        StatementsNode(42...64)(
-         [HeredocNode(42...51)(
+         [InterpolatedStringNode(42...51)(
             HEREDOC_START(31...41)("<<-HEREDOC"),
             [StringNode(42...44)(
                nil,
@@ -42,8 +42,7 @@ ProgramNode(0...299)(
                nil,
                "a\n" + "b\n"
              )],
-            HEREDOC_END(51...61)("  HEREDOC\n"),
-            0
+            HEREDOC_END(51...61)("  HEREDOC\n")
           ),
           CallNode(63...64)(
             nil,
@@ -59,7 +58,7 @@ ProgramNode(0...299)(
        nil,
        KEYWORD_END(65...68)("end")
      ),
-     HeredocNode(80...101)(
+     InterpolatedStringNode(80...101)(
        HEREDOC_START(69...79)("<<-HEREDOC"),
        [StringNode(80...89)(
           nil,
@@ -90,11 +89,10 @@ ProgramNode(0...299)(
           nil,
           "\n"
         )],
-       HEREDOC_END(101...109)("HEREDOC\n"),
-       0
+       HEREDOC_END(101...109)("HEREDOC\n")
      ),
      RescueModifierNode(131...130)(
-       HeredocNode(131...137)(
+       InterpolatedStringNode(131...137)(
          HEREDOC_START(109...119)("<<-HEREDOC"),
          [StringInterpolatedNode(131...134)(
             EMBEXPR_BEGIN(131...133)("\#{"),
@@ -107,8 +105,7 @@ ProgramNode(0...299)(
             nil,
             "\n" + "a\n"
           )],
-         HEREDOC_END(137...145)("HEREDOC\n"),
-         0
+         HEREDOC_END(137...145)("HEREDOC\n")
        ),
        KEYWORD_RESCUE_MODIFIER(120...126)("rescue"),
        NilNode(127...130)()
@@ -144,7 +141,7 @@ ProgramNode(0...299)(
          [ReturnNode(184...212)(
             KEYWORD_RETURN(184...190)("return"),
             ArgumentsNode(202...212)(
-              [HeredocNode(202...212)(
+              [InterpolatedStringNode(202...212)(
                  HEREDOC_START(191...201)("<<-HEREDOC"),
                  [StringNode(202...206)(
                     nil,
@@ -163,8 +160,7 @@ ProgramNode(0...299)(
                     nil,
                     "\n"
                   )],
-                 HEREDOC_END(212...222)("  HEREDOC\n"),
-                 0
+                 HEREDOC_END(212...222)("  HEREDOC\n")
                )]
             )
           )]
@@ -178,7 +174,7 @@ ProgramNode(0...299)(
        IDENTIFIER(226...229)("foo"),
        PARENTHESIS_LEFT(229...230)("("),
        ArgumentsNode(242...251)(
-         [HeredocNode(242...251)(
+         [InterpolatedStringNode(242...251)(
             HEREDOC_START(230...240)("<<-HEREDOC"),
             [StringNode(242...244)(
                nil,
@@ -208,8 +204,7 @@ ProgramNode(0...299)(
                nil,
                "\n"
              )],
-            HEREDOC_END(251...259)("HEREDOC\n"),
-            0
+            HEREDOC_END(251...259)("HEREDOC\n")
           )]
        ),
        PARENTHESIS_RIGHT(240...241)(")"),
@@ -222,7 +217,7 @@ ProgramNode(0...299)(
        IDENTIFIER(259...262)("foo"),
        PARENTHESIS_LEFT(262...263)("("),
        ArgumentsNode(281...290)(
-         [HeredocNode(281...290)(
+         [InterpolatedStringNode(281...290)(
             HEREDOC_START(263...273)("<<-HEREDOC"),
             [StringNode(281...283)(
                nil,
@@ -252,8 +247,7 @@ ProgramNode(0...299)(
                nil,
                "\n"
              )],
-            HEREDOC_END(290...298)("HEREDOC\n"),
-            0
+            HEREDOC_END(290...298)("HEREDOC\n")
           )]
        ),
        PARENTHESIS_RIGHT(273...274)(")"),

@@ -7,7 +7,7 @@ ProgramNode(0...1)(
        IDENTIFIER(0...1)("p"),
        nil,
        ArgumentsNode(9...19)(
-         [HeredocNode(9...19)(
+         [InterpolatedStringNode(9...19)(
             HEREDOC_START(2...8)("<<~\"E\""),
             [StringNode(9...19)(
                nil,
@@ -15,8 +15,7 @@ ProgramNode(0...1)(
                nil,
                "x\n" + " y\n"
              )],
-            HEREDOC_END(19...21)("E\n"),
-            2
+            HEREDOC_END(19...21)("E\n")
           )]
        ),
        nil,

@@ -12,7 +12,7 @@ ProgramNode(0...47)(
        BRACKET_RIGHT(16...17)("]")
      ),
      ArrayNode(19...47)(
-       [HeredocNode(29...41)(
+       [InterpolatedStringNode(29...41)(
           HEREDOC_START(20...27)("<<-FILE"),
           [StringNode(29...41)(
              nil,
@@ -20,8 +20,7 @@ ProgramNode(0...47)(
              nil,
              "  some text\n"
            )],
-          HEREDOC_END(41...46)("FILE\n"),
-          0
+          HEREDOC_END(41...46)("FILE\n")
         )],
        BRACKET_LEFT_ARRAY(19...20)("["),
        BRACKET_RIGHT(46...47)("]")

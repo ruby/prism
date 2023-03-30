@@ -9,7 +9,7 @@ ProgramNode(0...1)(
        ArgumentsNode(12...30)(
          [CallNode(12...30)(
             CallNode(12...26)(
-              HeredocNode(12...16)(
+              InterpolatedStringNode(12...16)(
                 HEREDOC_START(2...8)("<<-END"),
                 [StringNode(12...16)(
                    nil,
@@ -17,8 +17,7 @@ ProgramNode(0...1)(
                    nil,
                    "  a\n"
                  )],
-                HEREDOC_END(16...22)("  END\n"),
-                0
+                HEREDOC_END(16...22)("  END\n")
               ),
               nil,
               PLUS(8...9)("+"),

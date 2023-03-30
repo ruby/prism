@@ -3,7 +3,7 @@ ProgramNode(0...41)(
   StatementsNode(0...41)(
     [LocalVariableWriteNode(0...30)(
        (0...1),
-       HeredocNode(12...30)(
+       InterpolatedStringNode(12...30)(
          HEREDOC_START(4...11)("<<'CCC'"),
          [StringNode(12...30)(
             nil,
@@ -11,8 +11,7 @@ ProgramNode(0...41)(
             nil,
             "line2\n" + "line3\n" + "line4\n"
           )],
-         HEREDOC_END(30...34)("CCC\n"),
-         0
+         HEREDOC_END(30...34)("CCC\n")
        ),
        (2...3),
        0

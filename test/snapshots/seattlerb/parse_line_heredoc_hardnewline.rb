@@ -1,7 +1,7 @@
 ProgramNode(9...48)(
   ScopeNode(0...0)([]),
   StatementsNode(9...48)(
-    [HeredocNode(9...28)(
+    [InterpolatedStringNode(9...28)(
        HEREDOC_START(0...8)("<<-EOFOO"),
        [StringNode(9...28)(
           nil,
@@ -9,8 +9,7 @@ ProgramNode(9...48)(
           nil,
           "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
         )],
-       HEREDOC_END(28...34)("EOFOO\n"),
-       0
+       HEREDOC_END(28...34)("EOFOO\n")
      ),
      ClassNode(35...48)(
        ScopeNode(35...40)([]),

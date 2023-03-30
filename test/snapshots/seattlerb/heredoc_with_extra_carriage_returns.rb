@@ -1,7 +1,7 @@
 ProgramNode(6...19)(
   ScopeNode(0...0)([]),
   StatementsNode(6...19)(
-    [HeredocNode(6...19)(
+    [InterpolatedStringNode(6...19)(
        HEREDOC_START(0...5)("<<EOS"),
        [StringNode(6...19)(
           nil,
@@ -9,8 +9,7 @@ ProgramNode(6...19)(
           nil,
           "foo\rbar\r\n" + "baz\n"
         )],
-       HEREDOC_END(19...23)("EOS\n"),
-       0
+       HEREDOC_END(19...23)("EOS\n")
      )]
   )
 )
