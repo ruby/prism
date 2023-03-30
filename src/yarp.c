@@ -2816,6 +2816,7 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
     end = arguments->arguments->base.location.end;
   } else {
     assert(false && "unreachable");
+    end = NULL;
   }
 
   *node = (yp_super_node_t) {
@@ -7818,6 +7819,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
       parent = (yp_node_t *) yp_unless_node_create(parser, &keyword, predicate, statements);
       break;
     default:
+      parent = NULL;
       assert(false && "unreachable");
       break;
   }
@@ -11026,7 +11028,11 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         yp_string_list_init(&named_captures);
 
         yp_token_t *content = &((yp_regular_expression_node_t *) node)->content;
-        assert(yp_regexp_named_capture_group_names(content->start, (size_t) (content->end - content->start), &named_captures));
+
+        __attribute__((unused)) bool captured_group_names =
+        yp_regexp_named_capture_group_names(content->start, (size_t) (content->end - content->start), &named_captures);
+	// We assert that the the regex was successfully parsed
+        assert(captured_group_names);
 
         for (size_t index = 0; index < named_captures.length; index++) {
           yp_string_t *name = &named_captures.strings[index];
