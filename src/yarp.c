@@ -8181,32 +8181,6 @@ parse_vcall(yp_parser_t *parser) {
   return (yp_node_t *) yp_call_node_vcall_create(parser, &parser->previous);
 }
 
-static yp_node_t *
-parse_identifier(yp_parser_t *parser) {
-  yp_node_t *node = parse_vcall(parser);
-
-  if (node->type == YP_NODE_CALL_NODE) {
-    yp_call_node_t *call = (yp_call_node_t *) node;
-    yp_arguments_t arguments = yp_arguments(parser);
-    parse_arguments_list(parser, &arguments, true);
-
-    call->opening = arguments.opening;
-    call->arguments = arguments.arguments;
-    call->closing = arguments.closing;
-    call->block = arguments.block;
-
-    if (arguments.block != NULL) {
-      call->base.location.end = arguments.block->base.location.end;
-    } else if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
-      call->base.location.end = call->message.end;
-    } else {
-      call->base.location.end = arguments.closing.end;
-    }
-  }
-
-  return node;
-}
-
 static inline yp_token_t
 parse_method_definition_name(yp_parser_t *parser) {
   switch (parser->current.type) {
@@ -9107,22 +9081,43 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
       yp_token_t identifier = parser->previous;
-      yp_node_t *node = parse_identifier(parser);
+      yp_node_t *node = parse_vcall(parser);
 
-      // If an identifier is followed by something that looks like an argument,
-      // then this is in fact a method call, not a local read.
-      if (
-        (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (
-          token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR)
-        )) ||
-        (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
-      ) {
+      if (node->type == YP_NODE_CALL_NODE) {
+        // If parse_vcall returned with a call node, then we know the identifier
+        // is not in the local table. In that case we need to check if there are
+        // arguments following the identifier.
+        yp_call_node_t *call = (yp_call_node_t *) node;
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);
 
-        yp_call_node_t *fcall = yp_call_node_fcall_create(parser, &identifier, &arguments);
-        yp_node_destroy(parser, node);
-        return (yp_node_t *) fcall;
+        call->opening = arguments.opening;
+        call->arguments = arguments.arguments;
+        call->closing = arguments.closing;
+        call->block = arguments.block;
+
+        if (arguments.block != NULL) {
+          call->base.location.end = arguments.block->base.location.end;
+        } else if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
+          call->base.location.end = call->message.end;
+        } else {
+          call->base.location.end = arguments.closing.end;
+        }
+      } else {
+        // Otherwise, we know the identifier is in the local table. This can
+        // still be a method call if it is followed by arguments or a block, so
+        // we need to check for that here.
+        if (
+          (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR))) ||
+          (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
+        ) {
+          yp_arguments_t arguments = yp_arguments(parser);
+          parse_arguments_list(parser, &arguments, true);
+
+          yp_call_node_t *fcall = yp_call_node_fcall_create(parser, &identifier, &arguments);
+          yp_node_destroy(parser, node);
+          return (yp_node_t *) fcall;
+        }
       }
 
       if ((binding_power == YP_BINDING_POWER_STATEMENT) && match_type_p(parser, YP_TOKEN_COMMA)) {
@@ -9285,7 +9280,18 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         ((yp_heredoc_node_t *) node)->closing = parser->previous;
       }
 
-      return node;
+      // If there's a string immediately following this heredoc, then it's a
+      // concatenatation. In this case we'll parse the next string and create a
+      // node in the tree that concatenates the two strings.
+      if (parser->current.type == YP_TOKEN_STRING_BEGIN) {
+        return (yp_node_t *) yp_string_concat_node_create(
+          parser,
+          node,
+          parse_expression(parser, YP_BINDING_POWER_CALL, "Expected string on the right side of concatenation.")
+        );
+      } else {
+        return node;
+      }
     }
     case YP_TOKEN_IMAGINARY_NUMBER:
       parser_lex(parser);
