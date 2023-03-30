@@ -79,3 +79,8 @@ EOF
     
   b
 EOF
+
+<<~EOF
+
+  #{1}a
+    EOF

@@ -8191,7 +8191,7 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
     // If the previous node wasn't a string node, we don't want to trim
     // whitespace. This could happen after an interpolated expression or
     // variable.
-    if (*content->start != '\n' && (index == 0 || nodes->nodes[index - 1]->type == YP_NODE_STRING_NODE)) {
+    if (index == 0 || nodes->nodes[index - 1]->type == YP_NODE_STRING_NODE) {
       int cur_whitespace;
       const char *cur_char = content->start;
 

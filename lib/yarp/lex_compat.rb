@@ -354,10 +354,11 @@ module YARP
             @embexpr_balance -= 1
           when :on_tstring_content
             if embexpr_balance == 0
-              token.value.split("\n").each_with_index do |line, index|
-                next if line.empty? || !(dedent_next || index > 0)
+              token.value.split(/(?<=\n)/).each_with_index do |line, index|
+                next if line.strip.empty? && line.end_with?("\n")
+                next if !(dedent_next || index > 0)
 
-                leading = line[/\A\s*/]
+                leading = line[/\A(\s*)\n?/, 1]
                 next_dedent = 0
 
                 leading.each_char do |char|
@@ -464,7 +465,7 @@ module YARP
                   # first line of the string and this line isn't entirely blank,
                   # then we need to insert an on_ignored_sp token and remove the
                   # dedent from the beginning of the line.
-                  if (line != "\n" && dedent > 0) && (dedent_next || index > 0)
+                  if (dedent > 0) && (dedent_next || index > 0)
                     deleting = 0
                     deleted_chars = []
 
@@ -472,7 +473,10 @@ module YARP
                     # delete, stopping when you hit a character that would put
                     # you over the dedent amount.
                     line.each_char do |char|
-                      if char == "\t"
+                      case char
+                      when "\n"
+                        break
+                      when "\t"
                         deleting = deleting - (deleting % TAB_WIDTH) + TAB_WIDTH
                       else
                         deleting += 1

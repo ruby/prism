@@ -16,7 +16,7 @@ ProgramNode(0...20)(
                    nil,
                    STRING_CONTENT(21...26)("\n" + "    "),
                    nil,
-                   "\n" + "    "
+                   "\n"
                  ),
                  StringInterpolatedNode(26...32)(
                    EMBEXPR_BEGIN(26...28)("\#{"),
