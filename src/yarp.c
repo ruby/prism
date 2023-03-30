@@ -8247,14 +8247,7 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
     if (node->type != YP_NODE_STRING_NODE) continue;
     yp_string_t *node_str = &((yp_string_node_t *) node)->unescaped;
 
-    // We convert all strings to be "owned" to make it simpler to manipulate memory
-    if (node_str->type != YP_STRING_OWNED) {
-      size_t length = yp_string_length(node_str);
-      const char *original = yp_string_source(node_str);
-      yp_string_owned_init(node_str, malloc(length), length);
-      memcpy(node_str->as.owned.source, original, length);
-    }
-
+    yp_string_ensure_owned(node_str);
     const char *cur_char = node_str->as.owned.source;
     size_t new_size = node_str->as.owned.length;
 
