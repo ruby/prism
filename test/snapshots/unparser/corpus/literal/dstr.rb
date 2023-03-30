@@ -259,7 +259,7 @@ ProgramNode(0...299)(
        PARENTHESIS_RIGHT(273...274)(")"),
        BlockNode(275...299)(
          ScopeNode(275...276)([IDENTIFIER(278...279)("x")]),
-         BlockParametersNode(278...279)(
+         BlockParametersNode(277...280)(
            ParametersNode(278...279)(
              [RequiredParameterNode(278...279)()],
              [],
@@ -269,7 +269,9 @@ ProgramNode(0...299)(
              nil,
              nil
            ),
-           []
+           [],
+           (277...278),
+           (279...280)
          ),
          nil,
          (275...276),

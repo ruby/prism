@@ -73,8 +73,13 @@ module YARP
     end
 
     test "BlockParametersNode" do
-      assert_location(BlockParametersNode, "foo { |bar| baz }", 7...10) { |node| node.block.parameters }
-      assert_location(BlockParametersNode, "foo { |bar; baz| baz }", 7...15) { |node| node.block.parameters }
+      assert_location(BlockParametersNode, "foo { || }", 6...8) { |node| node.block.parameters }
+      assert_location(BlockParametersNode, "foo { |bar| baz }", 6...11) { |node| node.block.parameters }
+      assert_location(BlockParametersNode, "foo { |bar; baz| baz }", 6...16) { |node| node.block.parameters }
+
+      assert_location(BlockParametersNode, "-> () {}", 3...5, &:parameters)
+      assert_location(BlockParametersNode, "-> (bar) { baz }", 3...8, &:parameters)
+      assert_location(BlockParametersNode, "-> (bar; baz) { baz }", 3...13, &:parameters)
     end
 
     test "BreakNode" do

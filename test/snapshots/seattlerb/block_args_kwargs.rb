@@ -10,7 +10,7 @@ ProgramNode(0...23)(
        nil,
        BlockNode(2...23)(
          ScopeNode(2...3)([IDENTIFIER(7...13)("kwargs")]),
-         BlockParametersNode(5...13)(
+         BlockParametersNode(4...14)(
            ParametersNode(5...13)(
              [],
              [],
@@ -23,7 +23,9 @@ ProgramNode(0...23)(
              ),
              nil
            ),
-           []
+           [],
+           (4...5),
+           (13...14)
          ),
          StatementsNode(15...21)([LocalVariableReadNode(15...21)(0)]),
          (2...3),

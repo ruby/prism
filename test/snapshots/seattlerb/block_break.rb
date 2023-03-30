@@ -23,7 +23,7 @@ ProgramNode(0...26)(
             nil,
             BlockNode(14...26)(
               ScopeNode(14...16)([IDENTIFIER(18...21)("bar")]),
-              BlockParametersNode(18...21)(
+              BlockParametersNode(17...22)(
                 ParametersNode(18...21)(
                   [RequiredParameterNode(18...21)()],
                   [],
@@ -33,7 +33,9 @@ ProgramNode(0...26)(
                   nil,
                   nil
                 ),
-                []
+                [],
+                (17...18),
+                (21...22)
               ),
               nil,
               (14...16),

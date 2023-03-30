@@ -455,8 +455,6 @@ ProgramNode(0...3655)(
          ScopeNode(343...345)([]),
          MINUS_GREATER(343...345)("->"),
          nil,
-         nil,
-         nil,
          StatementsNode(348...351)([LocalVariableReadNode(348...351)(1)])
        ),
        (340...342)
@@ -1079,15 +1077,11 @@ ProgramNode(0...3655)(
            ScopeNode(916...918)([]),
            MINUS_GREATER(916...918)("->"),
            nil,
-           nil,
-           nil,
            StatementsNode(921...924)([LocalVariableReadNode(921...924)(1)])
          ),
          LambdaNode(930...938)(
            ScopeNode(930...932)([]),
            MINUS_GREATER(930...932)("->"),
-           nil,
-           nil,
            nil,
            StatementsNode(935...938)([LocalVariableReadNode(935...938)(1)])
          ),
@@ -2413,8 +2407,6 @@ ProgramNode(0...3655)(
          ScopeNode(1973...1975)([]),
          MINUS_GREATER(1973...1975)("->"),
          nil,
-         nil,
-         nil,
          StatementsNode(1978...1981)([LocalVariableReadNode(1978...1981)(1)])
        ),
        (1970...1972)
@@ -3044,8 +3036,6 @@ ProgramNode(0...3655)(
           LambdaNode(2709...2717)(
             ScopeNode(2709...2711)([]),
             MINUS_GREATER(2709...2711)("->"),
-            nil,
-            nil,
             nil,
             StatementsNode(2714...2717)(
               [LocalVariableReadNode(2714...2717)(1)]
@@ -3866,8 +3856,6 @@ ProgramNode(0...3655)(
               [LambdaNode(3629...3637)(
                  ScopeNode(3629...3631)([]),
                  MINUS_GREATER(3629...3631)("->"),
-                 nil,
-                 nil,
                  nil,
                  StatementsNode(3634...3637)(
                    [LocalVariableReadNode(3634...3637)(1)]

@@ -761,8 +761,6 @@ ProgramNode(0...2908)(
             ScopeNode(896...898)([]),
             MINUS_GREATER(896...898)("->"),
             nil,
-            nil,
-            nil,
             StatementsNode(900...902)([IntegerNode(900...902)()])
           ),
           StatementsNode(910...914)([TrueNode(910...914)()]),

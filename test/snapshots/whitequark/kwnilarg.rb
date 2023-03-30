@@ -4,8 +4,7 @@ ProgramNode(0...46)(
     [LambdaNode(0...9)(
        ScopeNode(0...2)([]),
        MINUS_GREATER(0...2)("->"),
-       PARENTHESIS_LEFT(2...3)("("),
-       BlockParametersNode(3...8)(
+       BlockParametersNode(2...9)(
          ParametersNode(3...8)(
            [],
            [],
@@ -15,9 +14,10 @@ ProgramNode(0...46)(
            NoKeywordsParameterNode(3...8)((3...5), (5...8)),
            nil
          ),
-         []
+         [],
+         (2...3),
+         (8...9)
        ),
-       PARENTHESIS_RIGHT(8...9)(")"),
        nil
      ),
      DefNode(14...31)(
@@ -50,7 +50,7 @@ ProgramNode(0...46)(
        nil,
        BlockNode(35...46)(
          ScopeNode(35...36)([]),
-         BlockParametersNode(38...43)(
+         BlockParametersNode(37...44)(
            ParametersNode(38...43)(
              [],
              [],
@@ -60,7 +60,9 @@ ProgramNode(0...46)(
              NoKeywordsParameterNode(38...43)((38...40), (40...43)),
              nil
            ),
-           []
+           [],
+           (37...38),
+           (43...44)
          ),
          nil,
          (35...36),

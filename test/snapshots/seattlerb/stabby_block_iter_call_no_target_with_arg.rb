@@ -10,9 +10,7 @@ ProgramNode(0...1)(
          [LambdaNode(2...22)(
             ScopeNode(2...4)([]),
             MINUS_GREATER(2...4)("->"),
-            PARENTHESIS_LEFT(5...6)("("),
-            nil,
-            PARENTHESIS_RIGHT(6...7)(")"),
+            BlockParametersNode(5...7)(nil, [], (5...6), (6...7)),
             StatementsNode(11...22)(
               [CallNode(11...22)(
                  nil,

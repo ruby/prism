@@ -11,8 +11,6 @@ ProgramNode(0...38)(
             ScopeNode(2...4)([]),
             MINUS_GREATER(2...4)("->"),
             nil,
-            nil,
-            nil,
             nil
           )]
        ),
@@ -30,8 +28,6 @@ ProgramNode(0...38)(
             ScopeNode(15...17)([]),
             MINUS_GREATER(15...17)("->"),
             nil,
-            nil,
-            nil,
             nil
           )]
        ),
@@ -48,9 +44,7 @@ ProgramNode(0...38)(
          [LambdaNode(24...28)(
             ScopeNode(24...26)([]),
             MINUS_GREATER(24...26)("->"),
-            PARENTHESIS_LEFT(26...27)("("),
-            nil,
-            PARENTHESIS_RIGHT(27...28)(")"),
+            BlockParametersNode(26...28)(nil, [], (26...27), (27...28)),
             nil
           )]
        ),
@@ -67,9 +61,7 @@ ProgramNode(0...38)(
          [LambdaNode(39...43)(
             ScopeNode(39...41)([]),
             MINUS_GREATER(39...41)("->"),
-            PARENTHESIS_LEFT(41...42)("("),
-            nil,
-            PARENTHESIS_RIGHT(42...43)(")"),
+            BlockParametersNode(41...43)(nil, [], (41...42), (42...43)),
             nil
           )]
        ),

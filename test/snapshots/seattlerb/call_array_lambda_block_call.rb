@@ -11,9 +11,7 @@ ProgramNode(0...18)(
             [LambdaNode(3...7)(
                ScopeNode(3...5)([]),
                MINUS_GREATER(3...5)("->"),
-               PARENTHESIS_LEFT(5...6)("("),
-               nil,
-               PARENTHESIS_RIGHT(6...7)(")"),
+               BlockParametersNode(5...7)(nil, [], (5...6), (6...7)),
                nil
              )],
             BRACKET_LEFT_ARRAY(2...3)("["),

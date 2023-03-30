@@ -1,10 +1,9 @@
-ProgramNode(0...15)(
+ProgramNode(0...18)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...15)(
-    [LambdaNode(0...2)(
+  StatementsNode(0...18)(
+    [LambdaNode(0...7)(
        ScopeNode(0...2)([LABEL(3...4)("a")]),
        MINUS_GREATER(0...2)("->"),
-       nil,
        BlockParametersNode(3...7)(
          ParametersNode(3...7)(
            [],
@@ -18,15 +17,15 @@ ProgramNode(0...15)(
            nil,
            nil
          ),
-         []
+         [],
+         nil,
+         nil
        ),
-       nil,
        nil
      ),
-     LambdaNode(13...15)(
+     LambdaNode(13...18)(
        ScopeNode(13...15)([LABEL(16...17)("a")]),
        MINUS_GREATER(13...15)("->"),
-       nil,
        BlockParametersNode(16...18)(
          ParametersNode(16...18)(
            [],
@@ -37,9 +36,10 @@ ProgramNode(0...15)(
            nil,
            nil
          ),
-         []
+         [],
+         nil,
+         nil
        ),
-       nil,
        nil
      )]
   )

@@ -11,8 +11,6 @@ ProgramNode(0...19)(
             ScopeNode(2...4)([]),
             MINUS_GREATER(2...4)("->"),
             nil,
-            nil,
-            nil,
             StatementsNode(7...8)([IntegerNode(7...8)()])
           )]
        ),

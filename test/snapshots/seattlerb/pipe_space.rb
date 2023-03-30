@@ -17,7 +17,13 @@ ProgramNode(0...14)(
        nil,
        nil,
        nil,
-       BlockNode(4...14)(ScopeNode(4...6)([]), nil, nil, (4...6), (11...14)),
+       BlockNode(4...14)(
+         ScopeNode(4...6)([]),
+         BlockParametersNode(7...10)(nil, [], (7...8), (9...10)),
+         nil,
+         (4...6),
+         (11...14)
+       ),
        "b"
      )]
   )

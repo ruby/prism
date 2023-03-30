@@ -5,11 +5,10 @@ ProgramNode(0...14)(
        STRING_BEGIN(0...1)("\""),
        [StringInterpolatedNode(1...13)(
           EMBEXPR_BEGIN(1...3)("\#{"),
-          StatementsNode(3...5)(
-            [LambdaNode(3...5)(
+          StatementsNode(3...9)(
+            [LambdaNode(3...9)(
                ScopeNode(3...5)([IDENTIFIER(6...9)("foo")]),
                MINUS_GREATER(3...5)("->"),
-               nil,
                BlockParametersNode(6...9)(
                  ParametersNode(6...9)(
                    [RequiredParameterNode(6...9)()],
@@ -20,9 +19,10 @@ ProgramNode(0...14)(
                    nil,
                    nil
                  ),
-                 []
+                 [],
+                 nil,
+                 nil
                ),
-               nil,
                nil
              )]
           ),

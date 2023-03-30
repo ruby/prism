@@ -122,7 +122,7 @@ ProgramNode(0...168)(
          nil,
          BlockNode(149...162)(
            ScopeNode(149...150)([IDENTIFIER(152...153)("a")]),
-           BlockParametersNode(152...153)(
+           BlockParametersNode(151...154)(
              ParametersNode(152...153)(
                [RequiredParameterNode(152...153)()],
                [],
@@ -132,7 +132,9 @@ ProgramNode(0...168)(
                nil,
                nil
              ),
-             []
+             [],
+             (151...152),
+             (153...154)
            ),
            StatementsNode(155...160)([BreakNode(155...160)(nil, (155...160))]),
            (149...150),

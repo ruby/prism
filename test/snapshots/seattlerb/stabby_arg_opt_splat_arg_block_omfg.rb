@@ -10,8 +10,7 @@ ProgramNode(0...21)(
           IDENTIFIER(19...20)("f")]
        ),
        MINUS_GREATER(0...2)("->"),
-       PARENTHESIS_LEFT(2...3)("("),
-       BlockParametersNode(3...20)(
+       BlockParametersNode(2...21)(
          ParametersNode(3...20)(
            [RequiredParameterNode(3...4)()],
            [OptionalParameterNode(6...9)(
@@ -28,9 +27,10 @@ ProgramNode(0...21)(
            nil,
            BlockParameterNode(18...20)(IDENTIFIER(19...20)("f"), (18...19))
          ),
-         []
+         [],
+         (2...3),
+         (20...21)
        ),
-       PARENTHESIS_RIGHT(20...21)(")"),
        nil
      )]
   )

@@ -10,8 +10,7 @@ ProgramNode(0...23)(
          [LambdaNode(2...19)(
             ScopeNode(2...4)([IDENTIFIER(5...6)("a")]),
             MINUS_GREATER(2...4)("->"),
-            PARENTHESIS_LEFT(4...5)("("),
-            BlockParametersNode(5...14)(
+            BlockParametersNode(4...16)(
               ParametersNode(5...14)(
                 [],
                 [OptionalParameterNode(5...14)(
@@ -20,8 +19,6 @@ ProgramNode(0...23)(
                    LambdaNode(9...14)(
                      ScopeNode(9...11)([]),
                      MINUS_GREATER(9...11)("->"),
-                     nil,
-                     nil,
                      nil,
                      StatementsNode(12...14)(
                        [CallNode(12...14)(
@@ -43,9 +40,10 @@ ProgramNode(0...23)(
                 nil,
                 nil
               ),
-              []
+              [],
+              (4...5),
+              (15...16)
             ),
-            PARENTHESIS_RIGHT(15...16)(")"),
             StatementsNode(18...19)([LocalVariableReadNode(18...19)(0)])
           )]
        ),
@@ -62,8 +60,7 @@ ProgramNode(0...23)(
          [LambdaNode(24...40)(
             ScopeNode(24...26)([LABEL(27...28)("a")]),
             MINUS_GREATER(24...26)("->"),
-            PARENTHESIS_LEFT(26...27)("("),
-            BlockParametersNode(27...35)(
+            BlockParametersNode(26...37)(
               ParametersNode(27...35)(
                 [],
                 [],
@@ -74,8 +71,6 @@ ProgramNode(0...23)(
                    LambdaNode(30...35)(
                      ScopeNode(30...32)([]),
                      MINUS_GREATER(30...32)("->"),
-                     nil,
-                     nil,
                      nil,
                      StatementsNode(33...35)(
                        [CallNode(33...35)(
@@ -94,9 +89,10 @@ ProgramNode(0...23)(
                 nil,
                 nil
               ),
-              []
+              [],
+              (26...27),
+              (36...37)
             ),
-            PARENTHESIS_RIGHT(36...37)(")"),
             StatementsNode(39...40)([LocalVariableReadNode(39...40)(0)])
           )]
        ),

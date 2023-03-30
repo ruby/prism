@@ -179,7 +179,7 @@ ProgramNode(0...242)(
          nil,
          BlockNode(205...222)(
            ScopeNode(205...206)([IDENTIFIER(208...212)("pair")]),
-           BlockParametersNode(208...212)(
+           BlockParametersNode(207...213)(
              ParametersNode(208...212)(
                [RequiredParameterNode(208...212)()],
                [],
@@ -189,7 +189,9 @@ ProgramNode(0...242)(
                nil,
                nil
              ),
-             []
+             [],
+             (207...208),
+             (212...213)
            ),
            StatementsNode(216...220)([LocalVariableReadNode(216...220)(0)]),
            (205...206),

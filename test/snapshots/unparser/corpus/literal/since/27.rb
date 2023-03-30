@@ -5,8 +5,6 @@ ProgramNode(0...22)(
        ScopeNode(0...2)([]),
        MINUS_GREATER(0...2)("->"),
        nil,
-       nil,
-       nil,
        StatementsNode(7...14)(
          [CallNode(7...14)(
             CallNode(7...9)(

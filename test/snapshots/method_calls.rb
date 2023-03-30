@@ -834,7 +834,7 @@ ProgramNode(0...960)(
          ScopeNode(401...403)(
            [IDENTIFIER(405...406)("a"), IDENTIFIER(408...409)("b")]
          ),
-         BlockParametersNode(405...409)(
+         BlockParametersNode(404...410)(
            ParametersNode(405...409)(
              [RequiredParameterNode(405...406)(),
               RequiredParameterNode(408...409)()],
@@ -845,7 +845,9 @@ ProgramNode(0...960)(
              nil,
              nil
            ),
-           []
+           [],
+           (404...405),
+           (409...410)
          ),
          StatementsNode(411...415)(
            [CallNode(411...415)(

@@ -22,7 +22,7 @@ ProgramNode(0...76)(
          ScopeNode(18...19)(
            [IDENTIFIER(21...22)("a"), IDENTIFIER(24...25)("b")]
          ),
-         BlockParametersNode(21...25)(
+         BlockParametersNode(20...26)(
            ParametersNode(21...25)(
              [RequiredParameterNode(21...22)(),
               RequiredParameterNode(24...25)()],
@@ -33,7 +33,9 @@ ProgramNode(0...76)(
              nil,
              nil
            ),
-           []
+           [],
+           (20...21),
+           (25...26)
          ),
          StatementsNode(29...30)([LocalVariableReadNode(29...30)(0)]),
          (18...19),
@@ -44,16 +46,13 @@ ProgramNode(0...76)(
      LambdaNode(33...37)(
        ScopeNode(33...35)([]),
        MINUS_GREATER(33...35)("->"),
-       PARENTHESIS_LEFT(35...36)("("),
-       nil,
-       PARENTHESIS_RIGHT(36...37)(")"),
+       BlockParametersNode(35...37)(nil, [], (35...36), (36...37)),
        nil
      ),
      LambdaNode(42...47)(
        ScopeNode(42...44)([IDENTIFIER(45...46)("a")]),
        MINUS_GREATER(42...44)("->"),
-       PARENTHESIS_LEFT(44...45)("("),
-       BlockParametersNode(45...46)(
+       BlockParametersNode(44...47)(
          ParametersNode(45...46)(
            [RequiredParameterNode(45...46)()],
            [],
@@ -63,9 +62,10 @@ ProgramNode(0...76)(
            nil,
            nil
          ),
-         []
+         [],
+         (44...45),
+         (46...47)
        ),
-       PARENTHESIS_RIGHT(46...47)(")"),
        nil
      ),
      LambdaNode(52...60)(
@@ -73,8 +73,7 @@ ProgramNode(0...76)(
          [IDENTIFIER(55...56)("a"), IDENTIFIER(58...59)("b")]
        ),
        MINUS_GREATER(52...54)("->"),
-       PARENTHESIS_LEFT(54...55)("("),
-       BlockParametersNode(55...59)(
+       BlockParametersNode(54...60)(
          ParametersNode(55...59)(
            [RequiredParameterNode(55...56)(),
             RequiredParameterNode(58...59)()],
@@ -85,9 +84,10 @@ ProgramNode(0...76)(
            nil,
            nil
          ),
-         []
+         [],
+         (54...55),
+         (59...60)
        ),
-       PARENTHESIS_RIGHT(59...60)(")"),
        nil
      ),
      LambdaNode(65...76)(
@@ -97,8 +97,7 @@ ProgramNode(0...76)(
           IDENTIFIER(74...75)("c")]
        ),
        MINUS_GREATER(65...67)("->"),
-       PARENTHESIS_LEFT(67...68)("("),
-       BlockParametersNode(68...75)(
+       BlockParametersNode(67...76)(
          ParametersNode(68...72)(
            [RequiredParameterNode(68...69)(),
             RequiredParameterNode(71...72)()],
@@ -109,9 +108,10 @@ ProgramNode(0...76)(
            nil,
            nil
          ),
-         [IDENTIFIER(74...75)("c")]
+         [IDENTIFIER(74...75)("c")],
+         (67...68),
+         (75...76)
        ),
-       PARENTHESIS_RIGHT(75...76)(")"),
        nil
      )]
   )

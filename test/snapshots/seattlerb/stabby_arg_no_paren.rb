@@ -1,10 +1,9 @@
-ProgramNode(0...2)(
+ProgramNode(0...3)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...2)(
-    [LambdaNode(0...2)(
+  StatementsNode(0...3)(
+    [LambdaNode(0...3)(
        ScopeNode(0...2)([IDENTIFIER(2...3)("a")]),
        MINUS_GREATER(0...2)("->"),
-       nil,
        BlockParametersNode(2...3)(
          ParametersNode(2...3)(
            [RequiredParameterNode(2...3)()],
@@ -15,9 +14,10 @@ ProgramNode(0...2)(
            nil,
            nil
          ),
-         []
+         [],
+         nil,
+         nil
        ),
-       nil,
        nil
      )]
   )

@@ -73,7 +73,7 @@ ProgramNode(0...148)(
        nil,
        BlockNode(70...80)(
          ScopeNode(70...72)([IDENTIFIER(74...75)("a")]),
-         BlockParametersNode(74...75)(
+         BlockParametersNode(73...76)(
            ParametersNode(74...75)(
              [RequiredParameterNode(74...75)()],
              [],
@@ -83,7 +83,9 @@ ProgramNode(0...148)(
              nil,
              nil
            ),
-           []
+           [],
+           (73...74),
+           (75...76)
          ),
          nil,
          (70...72),
@@ -112,7 +114,7 @@ ProgramNode(0...148)(
        PARENTHESIS_RIGHT(92...93)(")"),
        BlockNode(94...116)(
          ScopeNode(94...96)([IDENTIFIER(98...99)("a")]),
-         BlockParametersNode(98...99)(
+         BlockParametersNode(97...100)(
            ParametersNode(98...99)(
              [RequiredParameterNode(98...99)()],
              [],
@@ -122,7 +124,9 @@ ProgramNode(0...148)(
              nil,
              nil
            ),
-           []
+           [],
+           (97...98),
+           (99...100)
          ),
          StatementsNode(111...112)([LocalVariableReadNode(111...112)(0)]),
          (94...96),

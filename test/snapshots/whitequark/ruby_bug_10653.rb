@@ -104,7 +104,7 @@ ProgramNode(6...93)(
             nil,
             BlockNode(75...89)(
               ScopeNode(75...77)([IDENTIFIER(79...80)("n")]),
-              BlockParametersNode(79...80)(
+              BlockParametersNode(78...81)(
                 ParametersNode(79...80)(
                   [RequiredParameterNode(79...80)()],
                   [],
@@ -114,7 +114,9 @@ ProgramNode(6...93)(
                   nil,
                   nil
                 ),
-                []
+                [],
+                (78...79),
+                (80...81)
               ),
               StatementsNode(82...83)(
                 [CallNode(82...83)(

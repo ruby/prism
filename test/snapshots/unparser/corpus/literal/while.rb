@@ -17,7 +17,7 @@ ProgramNode(0...616)(
               ScopeNode(15...16)(
                 [IDENTIFIER(18...21)("bar"), IDENTIFIER(43...46)("foo")]
               ),
-              BlockParametersNode(18...21)(
+              BlockParametersNode(17...22)(
                 ParametersNode(18...21)(
                   [RequiredParameterNode(18...21)()],
                   [],
@@ -27,7 +27,9 @@ ProgramNode(0...616)(
                   nil,
                   nil
                 ),
-                []
+                [],
+                (17...18),
+                (21...22)
               ),
               StatementsNode(27...52)(
                 [WhileNode(27...52)(
@@ -227,7 +229,7 @@ ProgramNode(0...616)(
               ScopeNode(246...247)(
                 [IDENTIFIER(249...252)("baz"), IDENTIFIER(274...277)("foo")]
               ),
-              BlockParametersNode(249...252)(
+              BlockParametersNode(248...253)(
                 ParametersNode(249...252)(
                   [RequiredParameterNode(249...252)()],
                   [],
@@ -237,7 +239,9 @@ ProgramNode(0...616)(
                   nil,
                   nil
                 ),
-                []
+                [],
+                (248...249),
+                (252...253)
               ),
               StatementsNode(258...283)(
                 [WhileNode(258...283)(
@@ -293,7 +297,7 @@ ProgramNode(0...616)(
             nil,
             BlockNode(317...366)(
               ScopeNode(317...318)([IDENTIFIER(320...323)("foo")]),
-              BlockParametersNode(320...323)(
+              BlockParametersNode(319...324)(
                 ParametersNode(320...323)(
                   [RequiredParameterNode(320...323)()],
                   [],
@@ -303,7 +307,9 @@ ProgramNode(0...616)(
                   nil,
                   nil
                 ),
-                []
+                [],
+                (319...320),
+                (323...324)
               ),
               StatementsNode(329...354)(
                 [WhileNode(329...354)(
