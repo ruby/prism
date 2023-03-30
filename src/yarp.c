@@ -8255,8 +8255,8 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
   if ((common_whitespace = parse_heredoc_common_whitespace(parser, nodes)) <= 0) return;
 
   // Iterate over all nodes, and trim whitespace accordingly.
-  for (size_t i = 0; i < nodes->size; i++) {
-    yp_node_t *node = nodes->nodes[i];
+  for (size_t index = 0; index < nodes->size; index++) {
+    yp_node_t *node = nodes->nodes[index];
     if (node->type != YP_NODE_STRING_NODE) continue;
 
     // Get a reference to the string struct that is being held by the string
@@ -8265,17 +8265,19 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
     yp_string_ensure_owned(string);
 
     // Now get the bounds of the existing string. We'll use this as a
-    // destination to copy bytes into. We'll also use it for bounds checking
+    // destination to move bytes into. We'll also use it for bounds checking
     // since we don't require that these strings be null terminated.
+    size_t dest_length = string->as.owned.length;
     char *source_start = string->as.owned.source;
-    const char *source_end = source_start + string->as.owned.length;
 
-    // Construct a new string, with which we'll replace the existing string
-    const char *source_cursor = string->as.owned.source;
-    int new_str_index = 0;
-    size_t next_length = string->as.owned.length;
+    const char *source_cursor = source_start;
+    const char *source_end = source_cursor + dest_length;
 
-    bool dedent_next = (i == 0) || (nodes->nodes[i - 1]->type == YP_NODE_STRING_NODE);
+    // We're going to move bytes backward in the string when we get leading
+    // whitespace, so we'll maintain a pointer to the current position in the
+    // string that we're writing to.
+    char *dest_cursor = source_start;
+    bool dedent_next = (index == 0) || (nodes->nodes[index - 1]->type == YP_NODE_STRING_NODE);
 
     while (source_cursor < source_end) {
       // If we need to dedent the next element within the heredoc or the next
@@ -8296,7 +8298,7 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
           }
 
           source_cursor++;
-          next_length--;
+          dest_length--;
         }
 
         dedent_next = false;
@@ -8309,20 +8311,20 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
       if (breakpoint == NULL) {
         // If there isn't another newline, then we can just move the rest of the
         // string and break from the loop.
-        memmove(source_start + new_str_index, source_cursor, (size_t) (source_end - source_cursor));
+        memmove(dest_cursor, source_cursor, (size_t) (source_end - source_cursor));
         break;
       }
 
       // Otherwise, we need to move everything including the newline, and
       // then set the dedent_next flag to true.
       if (breakpoint < source_end) breakpoint++;
-      memmove(source_start + new_str_index, source_cursor, (size_t) (breakpoint - source_cursor));
-      new_str_index += (int) (breakpoint - source_cursor);
-      dedent_next = true;
+      memmove(dest_cursor, source_cursor, (size_t) (breakpoint - source_cursor));
+      dest_cursor += (breakpoint - source_cursor);
       source_cursor = breakpoint;
+      dedent_next = true;
     }
 
-    string->as.owned.length = next_length;
+    string->as.owned.length = dest_length;
   }
 }
 
