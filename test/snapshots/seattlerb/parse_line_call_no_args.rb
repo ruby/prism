@@ -10,7 +10,7 @@ ProgramNode(0...23)(
        nil,
        BlockNode(2...23)(
          ScopeNode(2...4)([IDENTIFIER(6...7)("x"), IDENTIFIER(9...10)("y")]),
-         BlockParametersNode(6...10)(
+         BlockParametersNode(5...11)(
            ParametersNode(6...10)(
              [RequiredParameterNode(6...7)(), RequiredParameterNode(9...10)()],
              [],
@@ -20,7 +20,9 @@ ProgramNode(0...23)(
              nil,
              nil
            ),
-           []
+           [],
+           (5...6),
+           (10...11)
          ),
          StatementsNode(14...19)(
            [CallNode(14...19)(

@@ -19,7 +19,12 @@ ProgramNode(0...18)(
        nil,
        BlockNode(4...18)(
          ScopeNode(4...6)([IDENTIFIER(11...12)("c")]),
-         BlockParametersNode(0...12)(nil, [IDENTIFIER(11...12)("c")]),
+         BlockParametersNode(7...14)(
+           nil,
+           [IDENTIFIER(11...12)("c")],
+           (7...8),
+           (13...14)
+         ),
          nil,
          (4...6),
          (15...18)

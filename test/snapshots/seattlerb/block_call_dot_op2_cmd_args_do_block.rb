@@ -67,7 +67,7 @@ ProgramNode(0...33)(
        nil,
        BlockNode(21...33)(
          ScopeNode(21...23)([IDENTIFIER(25...26)("g")]),
-         BlockParametersNode(25...26)(
+         BlockParametersNode(24...27)(
            ParametersNode(25...26)(
              [RequiredParameterNode(25...26)()],
              [],
@@ -77,7 +77,9 @@ ProgramNode(0...33)(
              nil,
              nil
            ),
-           []
+           [],
+           (24...25),
+           (26...27)
          ),
          StatementsNode(28...29)(
            [CallNode(28...29)(

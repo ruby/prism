@@ -1,12 +1,11 @@
-ProgramNode(0...6)(
+ProgramNode(0...12)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("m")]),
-  StatementsNode(0...6)(
-    [LocalVariableWriteNode(0...6)(
+  StatementsNode(0...12)(
+    [LocalVariableWriteNode(0...12)(
        (0...1),
-       LambdaNode(4...6)(
+       LambdaNode(4...12)(
          ScopeNode(4...6)([IDENTIFIER(8...12)("args")]),
          MINUS_GREATER(4...6)("->"),
-         nil,
          BlockParametersNode(7...12)(
            ParametersNode(7...12)(
              [],
@@ -20,9 +19,10 @@ ProgramNode(0...6)(
              nil,
              nil
            ),
-           []
+           [],
+           nil,
+           nil
          ),
-         nil,
          nil
        ),
        (2...3),

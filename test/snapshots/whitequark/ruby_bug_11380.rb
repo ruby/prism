@@ -11,8 +11,6 @@ ProgramNode(0...28)(
             ScopeNode(2...4)([]),
             MINUS_GREATER(2...4)("->"),
             nil,
-            nil,
-            nil,
             StatementsNode(7...13)(
               [SymbolNode(7...13)(
                  SYMBOL_BEGIN(7...8)(":"),

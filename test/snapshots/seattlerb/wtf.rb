@@ -4,8 +4,7 @@ ProgramNode(0...16)(
     [LambdaNode(0...16)(
        ScopeNode(0...2)([IDENTIFIER(3...4)("a"), IDENTIFIER(6...7)("b")]),
        MINUS_GREATER(0...2)("->"),
-       PARENTHESIS_LEFT(2...3)("("),
-       BlockParametersNode(3...11)(
+       BlockParametersNode(2...12)(
          ParametersNode(3...11)(
            [RequiredParameterNode(3...4)()],
            [OptionalParameterNode(6...11)(
@@ -19,9 +18,10 @@ ProgramNode(0...16)(
            nil,
            nil
          ),
-         []
+         [],
+         (2...3),
+         (11...12)
        ),
-       PARENTHESIS_RIGHT(11...12)(")"),
        StatementsNode(15...16)(
          [CallNode(15...16)(
             nil,

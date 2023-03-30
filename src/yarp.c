@@ -663,19 +663,51 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, cons
 
 // Allocate and initialize a new BlockParametersNode node.
 static yp_block_parameters_node_t *
-yp_block_parameters_node_create(yp_parser_t *parser, yp_parameters_node_t *parameters) {
+yp_block_parameters_node_create(yp_parser_t *parser, yp_parameters_node_t *parameters, const yp_token_t *opening) {
   yp_block_parameters_node_t *node = yp_alloc(parser, sizeof(yp_block_parameters_node_t));
+
+  const char *start;
+  if (opening->type != YP_TOKEN_NOT_PROVIDED) {
+    start = opening->start;
+  } else if (parameters != NULL) {
+    start = parameters->base.location.start;
+  } else {
+    start = NULL;
+  }
+
+  const char *end;
+  if (parameters != NULL) {
+    end = parameters->base.location.end;
+  } else if (opening->type != YP_TOKEN_NOT_PROVIDED) {
+    end = opening->end;
+  } else {
+    end = NULL;
+  }
 
   *node = (yp_block_parameters_node_t) {
     {
       .type = YP_NODE_BLOCK_PARAMETERS_NODE,
-      .location = parameters == NULL ? YP_LOCATION_NULL_VALUE(parser) : YP_LOCATION_NODE_BASE_VALUE(parameters),
+      .location = {
+        .start = start,
+        .end = end
+      }
     },
-    .parameters = parameters
+    .parameters = parameters,
+    .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = { .start = NULL, .end = NULL }
   };
 
   yp_token_list_init(&node->locals);
   return node;
+}
+
+// Set the closing location of a BlockParametersNode node.
+static void
+yp_block_parameters_node_closing_set(yp_block_parameters_node_t *node, const yp_token_t *closing) {
+  assert(closing->type == YP_TOKEN_PIPE || closing->type == YP_TOKEN_PARENTHESIS_RIGHT || closing->type == YP_TOKEN_MISSING);
+
+  node->base.location.end = closing->end;
+  node->closing_loc = YP_LOCATION_TOKEN_VALUE(closing);
 }
 
 // Append a new block-local variable to a BlockParametersNode node.
@@ -1781,9 +1813,7 @@ yp_lambda_node_create(
   yp_parser_t *parser,
   yp_scope_node_t *scope,
   const yp_token_t *opening,
-  const yp_token_t *lparen,
   yp_block_parameters_node_t *parameters,
-  const yp_token_t *rparen,
   yp_node_t *statements
 ) {
   yp_lambda_node_t *node = yp_alloc(parser, sizeof(yp_lambda_node_t));
@@ -1791,8 +1821,8 @@ yp_lambda_node_create(
   const char *end;
   if (statements != NULL) {
     end = statements->location.end;
-  } else if (rparen->type != YP_TOKEN_NOT_PROVIDED) {
-    end = rparen->end;
+  } else if (parameters != NULL) {
+    end = parameters->base.location.end;
   } else {
     end = opening->end;
   }
@@ -1807,9 +1837,7 @@ yp_lambda_node_create(
     },
     .scope = scope,
     .opening = *opening,
-    .lparen = *lparen,
     .parameters = parameters,
-    .rparen = *rparen,
     .statements = statements
   };
 
@@ -7635,13 +7663,13 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_statements_node_t *statements) {
 
 // Parse a list of parameters and local on a block definition.
 static yp_block_parameters_node_t *
-parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma) {
+parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma, const yp_token_t *opening) {
   yp_parameters_node_t *parameters = NULL;
   if (!match_type_p(parser, YP_TOKEN_SEMICOLON)) {
     parameters = parse_parameters(parser, YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
   }
 
-  yp_block_parameters_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters);
+  yp_block_parameters_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters, opening);
   if (accept(parser, YP_TOKEN_SEMICOLON)) {
     do {
       expect(parser, YP_TOKEN_IDENTIFIER, "Expected a local variable name.");
@@ -7664,16 +7692,20 @@ parse_block(yp_parser_t *parser) {
   yp_block_parameters_node_t *parameters = NULL;
 
   if (accept(parser, YP_TOKEN_PIPE)) {
+    yp_token_t block_parameters_opening = parser->previous;
+
     if (match_type_p(parser, YP_TOKEN_PIPE)) {
+      parameters = yp_block_parameters_node_create(parser, NULL, &block_parameters_opening);
       parser->command_start = true;
       parser_lex(parser);
     } else {
-      parameters = parse_block_parameters(parser, true);
+      parameters = parse_block_parameters(parser, true, &block_parameters_opening);
       accept(parser, YP_TOKEN_NEWLINE);
-
       parser->command_start = true;
       expect(parser, YP_TOKEN_PIPE, "Expected block parameters to end with '|'.");
     }
+
+    yp_block_parameters_node_closing_set(parameters, &parser->previous);
   }
 
   accept(parser, YP_TOKEN_NEWLINE);
@@ -10547,36 +10579,31 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_token_t opening = parser->previous;
       yp_parser_scope_push(parser, &opening, false);
-
-      yp_token_t lparen;
-      yp_token_t rparen;
       yp_block_parameters_node_t *params;
 
       switch (parser->current.type) {
         case YP_TOKEN_PARENTHESIS_LEFT: {
+          yp_token_t block_parameters_opening = parser->current;
           parser_lex(parser);
-          lparen = parser->previous;
 
           if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-            params = NULL;
+            params = yp_block_parameters_node_create(parser, NULL, &block_parameters_opening);
           } else {
-            params = parse_block_parameters(parser, false);
+            params = parse_block_parameters(parser, false, &block_parameters_opening);
           }
 
           accept(parser, YP_TOKEN_NEWLINE);
           expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after left parenthesis.");
-          rparen = parser->previous;
+          yp_block_parameters_node_closing_set(params, &parser->previous);
+
           break;
         }
         case YP_CASE_PARAMETER: {
-          lparen = not_provided(parser);
-          rparen = not_provided(parser);
-          params = parse_block_parameters(parser, false);
+          yp_token_t opening = not_provided(parser);
+          params = parse_block_parameters(parser, false, &opening);
           break;
         }
         default: {
-          lparen = not_provided(parser);
-          rparen = not_provided(parser);
           params = NULL;
           break;
         }
@@ -10608,7 +10635,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_scope_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
       yp_accepts_block_stack_pop(parser);
-      return (yp_node_t *) yp_lambda_node_create(parser, scope, &opening, &lparen, params, &rparen, body);
+      return (yp_node_t *) yp_lambda_node_create(parser, scope, &opening, params, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);

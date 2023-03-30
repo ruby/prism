@@ -557,18 +557,12 @@ class ErrorsTest < Test::Unit::TestCase
     expected = LambdaNode(
       ScopeNode([IDENTIFIER("a"), IDENTIFIER("b")]),
       MINUS_GREATER("->"),
-      PARENTHESIS_LEFT("("),
       BlockParametersNode(
-        ParametersNode([RequiredParameterNode(), RequiredParameterNode()],
-                       [],
-                       [],
-                       nil,
-                       [],
-                       nil,
-                       nil
-                      ),
-        []),
-      PARENTHESIS_RIGHT(")"),
+        ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
+        [],
+        Location(),
+        Location()
+      ),
       nil
     )
     assert_errors expected, "-> (a, b, ) {}", [

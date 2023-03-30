@@ -66,8 +66,6 @@ ProgramNode(0...31)(
                  ScopeNode(35...37)([]),
                  MINUS_GREATER(35...37)("->"),
                  nil,
-                 nil,
-                 nil,
                  StatementsNode(41...52)(
                    [CallNode(41...52)(
                       nil,

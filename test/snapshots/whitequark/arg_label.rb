@@ -72,7 +72,7 @@ ProgramNode(0...49)(
        nil,
        BlockNode(39...49)(
          ScopeNode(39...40)([]),
-         nil,
+         BlockParametersNode(41...43)(nil, [], (41...42), (42...43)),
          StatementsNode(44...45)(
            [CallNode(44...45)(
               nil,

@@ -4,8 +4,7 @@ ProgramNode(0...7)(
     [LambdaNode(0...7)(
        ScopeNode(0...2)([LABEL(4...5)("k")]),
        MINUS_GREATER(0...2)("->"),
-       PARENTHESIS_LEFT(3...4)("("),
-       BlockParametersNode(4...6)(
+       BlockParametersNode(3...7)(
          ParametersNode(4...6)(
            [],
            [],
@@ -15,9 +14,10 @@ ProgramNode(0...7)(
            nil,
            nil
          ),
-         []
+         [],
+         (3...4),
+         (6...7)
        ),
-       PARENTHESIS_RIGHT(6...7)(")"),
        nil
      )]
   )

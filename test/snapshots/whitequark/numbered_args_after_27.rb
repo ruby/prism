@@ -5,8 +5,6 @@ ProgramNode(0...65)(
        ScopeNode(0...2)([]),
        MINUS_GREATER(0...2)("->"),
        nil,
-       nil,
-       nil,
        StatementsNode(6...13)(
          [CallNode(6...13)(
             CallNode(6...8)(
@@ -43,8 +41,6 @@ ProgramNode(0...65)(
      LambdaNode(19...31)(
        ScopeNode(19...21)([]),
        MINUS_GREATER(19...21)("->"),
-       nil,
-       nil,
        nil,
        StatementsNode(24...31)(
          [CallNode(24...31)(

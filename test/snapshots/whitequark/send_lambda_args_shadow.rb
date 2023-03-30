@@ -8,8 +8,7 @@ ProgramNode(0...15)(
           IDENTIFIER(11...14)("bar")]
        ),
        MINUS_GREATER(0...2)("->"),
-       PARENTHESIS_LEFT(2...3)("("),
-       BlockParametersNode(3...14)(
+       BlockParametersNode(2...15)(
          ParametersNode(3...4)(
            [RequiredParameterNode(3...4)()],
            [],
@@ -19,9 +18,10 @@ ProgramNode(0...15)(
            nil,
            nil
          ),
-         [IDENTIFIER(6...9)("foo"), IDENTIFIER(11...14)("bar")]
+         [IDENTIFIER(6...9)("foo"), IDENTIFIER(11...14)("bar")],
+         (2...3),
+         (14...15)
        ),
-       PARENTHESIS_RIGHT(14...15)(")"),
        nil
      )]
   )

@@ -444,8 +444,7 @@ ProgramNode(0...747)(
             [LambdaNode(446...458)(
                ScopeNode(446...448)([IDENTIFIER(449...450)("b")]),
                MINUS_GREATER(446...448)("->"),
-               PARENTHESIS_LEFT(448...449)("("),
-               BlockParametersNode(449...450)(
+               BlockParametersNode(448...451)(
                  ParametersNode(449...450)(
                    [RequiredParameterNode(449...450)()],
                    [],
@@ -455,9 +454,10 @@ ProgramNode(0...747)(
                    nil,
                    nil
                  ),
-                 []
+                 [],
+                 (448...449),
+                 (450...451)
                ),
-               PARENTHESIS_RIGHT(450...451)(")"),
                StatementsNode(454...458)([TrueNode(454...458)()])
              ),
              LocalVariableWriteNode(462...463)((462...463), nil, nil, 0)],

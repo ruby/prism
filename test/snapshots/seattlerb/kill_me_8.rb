@@ -14,7 +14,7 @@ ProgramNode(0...20)(
             IDENTIFIER(9...10)("b"),
             IDENTIFIER(15...16)("c")]
          ),
-         BlockParametersNode(5...17)(
+         BlockParametersNode(4...18)(
            ParametersNode(5...17)(
              [RequiredParameterNode(5...6)(),
               RequiredDestructuredParameterNode(8...17)(
@@ -31,7 +31,9 @@ ProgramNode(0...20)(
              nil,
              nil
            ),
-           []
+           [],
+           (4...5),
+           (17...18)
          ),
          nil,
          (2...3),

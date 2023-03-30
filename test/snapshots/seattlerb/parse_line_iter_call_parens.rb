@@ -21,7 +21,7 @@ ProgramNode(0...26)(
        PARENTHESIS_RIGHT(3...4)(")"),
        BlockNode(5...26)(
          ScopeNode(5...7)([IDENTIFIER(9...10)("x"), IDENTIFIER(12...13)("y")]),
-         BlockParametersNode(9...13)(
+         BlockParametersNode(8...14)(
            ParametersNode(9...13)(
              [RequiredParameterNode(9...10)(),
               RequiredParameterNode(12...13)()],
@@ -32,7 +32,9 @@ ProgramNode(0...26)(
              nil,
              nil
            ),
-           []
+           [],
+           (8...9),
+           (13...14)
          ),
          StatementsNode(17...22)(
            [CallNode(17...22)(
