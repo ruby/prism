@@ -8211,6 +8211,14 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
           cur_char++;
         }
 
+        // If we hit a newline, then we have encountered a line that contains
+        // only whitespace, and it shouldn't be considered in the calculation of
+        // common leading whitespace.
+        if (*cur_char == '\n') {
+          cur_char++;
+          continue;
+        }
+
         if (cur_whitespace < common_whitespace || common_whitespace == -1) {
           common_whitespace = cur_whitespace;
         }

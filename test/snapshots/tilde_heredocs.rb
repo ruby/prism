@@ -1,6 +1,6 @@
-ProgramNode(7...271)(
+ProgramNode(7...349)(
   ScopeNode(0...0)([]),
-  StatementsNode(7...271)(
+  StatementsNode(7...349)(
     [InterpolatedStringNode(7...11)(
        HEREDOC_START(0...6)("<<~EOF"),
        [StringNode(7...11)(nil, STRING_CONTENT(7...11)("  a\n"), nil, "a\n")],
@@ -149,6 +149,38 @@ ProgramNode(7...271)(
           "a\n" + "b\n"
         )],
        HEREDOC_END(271...275)("EOF\n")
+     ),
+     InterpolatedStringNode(283...293)(
+       HEREDOC_START(276...282)("<<~EOF"),
+       [StringNode(283...293)(
+          nil,
+          STRING_CONTENT(283...293)("  a\n" + " \n" + "  b\n"),
+          nil,
+          "a\n" + "\n" + "b\n"
+        )],
+       HEREDOC_END(293...297)("EOF\n")
+     ),
+     InterpolatedStringNode(305...318)(
+       HEREDOC_START(298...304)("<<~EOF"),
+       [StringNode(305...318)(
+          nil,
+          STRING_CONTENT(305...318)("  a\n" + "    \n" + "  b\n"),
+          nil,
+          "a\n" + "  \n" + "b\n"
+        )],
+       HEREDOC_END(318...322)("EOF\n")
+     ),
+     InterpolatedStringNode(330...349)(
+       HEREDOC_START(323...329)("<<~EOF"),
+       [StringNode(330...349)(
+          nil,
+          STRING_CONTENT(330...349)(
+            "  a\n" + "    \n" + "\n" + "    \n" + "  b\n"
+          ),
+          nil,
+          "a\n" + "  \n" + "\n" + "  \n" + "b\n"
+        )],
+       HEREDOC_END(349...353)("EOF\n")
      )]
   )
 )
