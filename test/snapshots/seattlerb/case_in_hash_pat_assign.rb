@@ -18,7 +18,7 @@ ProgramNode(0...56)(
                  LABEL_END(14...15)(":"),
                  "b"
                ),
-               AsPatternNode(16...28)(
+               CapturePatternNode(16...28)(
                  ConstantReadNode(16...23)(),
                  LocalVariableWriteNode(27...28)((27...28), nil, nil, 0),
                  (24...26)

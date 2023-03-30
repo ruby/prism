@@ -215,7 +215,7 @@ ProgramNode(0...408)(
           (256...260)
         ),
         InNode(268...282)(
-          AsPatternNode(271...277)(
+          CapturePatternNode(271...277)(
             IntegerNode(271...272)(),
             LocalVariableWriteNode(276...277)((276...277), nil, nil, 0),
             (273...275)

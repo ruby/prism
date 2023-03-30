@@ -498,27 +498,6 @@ yp_array_pattern_node_requireds_append(yp_array_pattern_node_t *node, yp_node_t 
   yp_node_list_append2(&node->requireds, inner);
 }
 
-// Allocate and initialize a new AsPatternNode node.
-static yp_as_pattern_node_t *
-yp_as_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
-  yp_as_pattern_node_t *node = yp_alloc(parser, sizeof(yp_as_pattern_node_t));
-
-  *node = (yp_as_pattern_node_t) {
-    {
-      .type = YP_NODE_AS_PATTERN_NODE,
-      .location = {
-        .start = value->location.start,
-        .end = target->location.end
-      },
-    },
-    .value = value,
-    .target = target,
-    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-  };
-
-  return node;
-}
-
 // Allocate and initialize a new assoc node.
 static yp_assoc_node_t *
 yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *operator, yp_node_t *value) {
@@ -938,6 +917,27 @@ yp_call_node_vcall_p(yp_call_node_t *node) {
     (node->block == NULL) &&
     (node->receiver == NULL)
   );
+}
+
+// Allocate and initialize a new CapturePatternNode node.
+static yp_capture_pattern_node_t *
+yp_capture_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
+  yp_capture_pattern_node_t *node = yp_alloc(parser, sizeof(yp_capture_pattern_node_t));
+
+  *node = (yp_capture_pattern_node_t) {
+    {
+      .type = YP_NODE_CAPTURE_PATTERN_NODE,
+      .location = {
+        .start = value->location.start,
+        .end = target->location.end
+      },
+    },
+    .value = value,
+    .target = target,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
+  };
+
+  return node;
 }
 
 // Allocate and initialize a new CaseNode node.
@@ -8586,7 +8586,7 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
     yp_parser_local_add(parser, &identifier);
 
     yp_node_t *target = (yp_node_t *) yp_local_variable_target_node_create(parser, &identifier);
-    node = (yp_node_t *) yp_as_pattern_node_create(parser, node, target, &operator);
+    node = (yp_node_t *) yp_capture_pattern_node_create(parser, node, target, &operator);
   }
 
   return node;

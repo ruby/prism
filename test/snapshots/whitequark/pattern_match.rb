@@ -827,7 +827,7 @@ ProgramNode(0...2908)(
          "foo"
        ),
        [InNode(998...1012)(
-          AsPatternNode(1001...1007)(
+          CapturePatternNode(1001...1007)(
             IntegerNode(1001...1002)(),
             LocalVariableWriteNode(1006...1007)((1006...1007), nil, nil, 0),
             (1003...1005)
@@ -1392,7 +1392,7 @@ ProgramNode(0...2908)(
               USTAR(1706...1707)("*"),
               LocalVariableWriteNode(1707...1708)((1707...1708), nil, nil, 0)
             ),
-            [AsPatternNode(1710...1716)(
+            [CapturePatternNode(1710...1716)(
                IntegerNode(1710...1711)(),
                LocalVariableWriteNode(1715...1716)((1715...1716), nil, nil, 0),
                (1712...1714)

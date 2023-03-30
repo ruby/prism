@@ -8,6 +8,10 @@ module YARP
       assert_location(AliasNode, "alias foo bar")
     end
 
+    test "AlternationPatternNode" do
+      assert_location(AlternationPatternNode, "foo => bar | baz", 7...16, &:pattern)
+    end
+
     test "AndNode" do
       assert_location(AndNode, "foo and bar")
       assert_location(AndNode, "foo && bar")
@@ -25,13 +29,24 @@ module YARP
       assert_location(ArrayNode, "%W[foo bar baz]")
     end
 
+    test "ArrayPatternNode" do
+      assert_location(ArrayPatternNode, "foo => bar, baz", 7...15, &:pattern)
+      assert_location(ArrayPatternNode, "foo => [bar, baz]", 7...17, &:pattern)
+      assert_location(ArrayPatternNode, "foo => *bar", 7...11, &:pattern)
+      assert_location(ArrayPatternNode, "foo => []", 7...9, &:pattern)
+      assert_location(ArrayPatternNode, "foo => Foo[]", 7...12, &:pattern)
+      assert_location(ArrayPatternNode, "foo => Foo[bar]", 7...15, &:pattern)
+    end
+
     test "AssocNode" do
       assert_location(AssocNode, "{ foo: :bar }", 2...11) { |node| node.elements.first }
       assert_location(AssocNode, "{ :foo => :bar }", 2...14) { |node| node.elements.first }
+      assert_location(AssocNode, "foo(bar: :baz)", 4...13) { |node| node.arguments.arguments.first.elements.first }
     end
 
     test "AssocSplatNode" do
       assert_location(AssocSplatNode, "{ **foo }", 2...7) { |node| node.elements.first }
+      assert_location(AssocSplatNode, "foo(**bar)", 4...9) { |node| node.arguments.arguments.first.elements.first }
     end
 
     test "BeginNode" do
@@ -39,6 +54,9 @@ module YARP
       assert_location(BeginNode, "begin foo rescue bar end")
       assert_location(BeginNode, "begin foo rescue bar\nelse baz end")
       assert_location(BeginNode, "begin foo rescue bar\nelse baz\nensure qux end")
+
+      assert_location(BeginNode, "class Foo\nrescue then end", &:statements)
+      assert_location(BeginNode, "module Foo\nrescue then end", &:statements)
     end
 
     test "BlockArgumentNode" do
