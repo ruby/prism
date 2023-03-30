@@ -236,7 +236,7 @@ module YARP
     class IgnoredNewlineToken < Token
       def ==(other)
         return false unless self[0...-1] == other[0...-1]
-        
+
         if self[4] == Ripper::EXPR_ARG | Ripper::EXPR_LABELED
           other[4] & Ripper::EXPR_ARG | Ripper::EXPR_LABELED > 0
         else
@@ -524,10 +524,11 @@ module YARP
       end
     end
 
-    attr_reader :source, :offsets
+    attr_reader :source, :offsets, :filepath
 
-    def initialize(source)
+    def initialize(source, filepath = "")
       @source = source
+      @filepath = filepath
       @offsets = find_offsets(source)
     end
 
@@ -537,7 +538,7 @@ module YARP
       state = :default
       heredocs = []
 
-      result = YARP.lex(source)
+      result = YARP.lex(source, @filepath)
       result_value = result.value
       previous_state = nil
 
@@ -698,7 +699,7 @@ module YARP
   # Returns an array of tokens that closely resembles that of the Ripper lexer.
   # The only difference is that since we don't keep track of lexer state in the
   # same way, it's going to always return the NONE state.
-  def self.lex_compat(source)
-    LexCompat.new(source).result
+  def self.lex_compat(source, filepath = "")
+    LexCompat.new(source, filepath).result
   end
 end

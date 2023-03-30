@@ -68,9 +68,9 @@ source_file_unload(source_t *source) {
 
 // Dump the AST corresponding to the given source to a string.
 static VALUE
-dump_source(source_t *source) {
+dump_source(source_t *source, const char *filepath) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source->source, source->size);
+  yp_parser_init(&parser, source->source, source->size, filepath);
 
   yp_node_t *node = yp_parse(&parser);
   yp_buffer_t buffer;
@@ -88,10 +88,16 @@ dump_source(source_t *source) {
 
 // Dump the AST corresponding to the given string to a string.
 static VALUE
-dump(VALUE self, VALUE string) {
+dump(VALUE self, VALUE string, VALUE filepath) {
   source_t source;
   source_string_load(&source, string);
-  return dump_source(&source);
+  char *str = NULL;
+
+  if (filepath != Qnil) {
+    str = StringValueCStr(filepath);
+  }
+
+  return dump_source(&source, str);
 }
 
 // Dump the AST corresponding to the given file to a string.
@@ -100,7 +106,7 @@ dump_file(VALUE self, VALUE filepath) {
   source_t source;
   if (source_file_load(&source, filepath) != 0) return Qnil;
 
-  VALUE value = dump_source(&source);
+  VALUE value = dump_source(&source, StringValueCStr(filepath));
   source_file_unload(&source);
   return value;
 }
@@ -207,9 +213,9 @@ lex_encoding_changed_callback(yp_parser_t *parser) {
 
 // Return an array of tokens corresponding to the given source.
 static VALUE
-lex_source(source_t *source) {
+lex_source(source_t *source, char *filepath) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source->source, source->size);
+  yp_parser_init(&parser, source->source, source->size, filepath);
   yp_parser_register_encoding_changed_callback(&parser, lex_encoding_changed_callback);
 
   lex_data_t lex_data = {
@@ -243,10 +249,14 @@ lex_source(source_t *source) {
 
 // Return an array of tokens corresponding to the given string.
 static VALUE
-lex(VALUE self, VALUE string) {
+lex(VALUE self, VALUE string, VALUE filepath) {
   source_t source;
   source_string_load(&source, string);
-  return lex_source(&source);
+  char *filepath_char = NULL;
+  if (filepath) {
+    filepath_char = StringValueCStr(filepath);
+  }
+  return lex_source(&source, filepath_char);
 }
 
 // Return an array of tokens corresponding to the given file.
@@ -255,15 +265,15 @@ lex_file(VALUE self, VALUE filepath) {
   source_t source;
   if (source_file_load(&source, filepath) != 0) return Qnil;
 
-  VALUE value = lex_source(&source);
+  VALUE value = lex_source(&source, StringValueCStr(filepath));
   source_file_unload(&source);
   return value;
 }
 
 static VALUE
-parse_source(source_t *source) {
+parse_source(source_t *source, char *filepath) {
   yp_parser_t parser;
-  yp_parser_init(&parser, source->source, source->size);
+  yp_parser_init(&parser, source->source, source->size, filepath);
 
   yp_node_t *node = yp_parse(&parser);
   rb_encoding *encoding = rb_enc_find(parser.encoding.name);
@@ -287,7 +297,7 @@ static VALUE
 parse(VALUE self, VALUE string) {
   source_t source;
   source_string_load(&source, string);
-  return parse_source(&source);
+  return parse_source(&source, NULL);
 }
 
 static VALUE
@@ -297,7 +307,7 @@ parse_file(VALUE self, VALUE rb_filepath) {
     return Qnil;
   }
 
-  VALUE value = parse_source(&source);
+  VALUE value = parse_source(&source, StringValueCStr(rb_filepath));
   source_file_unload(&source);
   return value;
 }
@@ -311,7 +321,7 @@ parse_dup(VALUE self, VALUE string) {
   memcpy(dup, source.source, source.size);
   source.source = dup;
 
-  VALUE value = parse_source(&source);
+  VALUE value = parse_source(&source, NULL);
   free(dup);
   return value;
 }
@@ -328,7 +338,7 @@ parse_file_dup(VALUE self, VALUE rb_filepath) {
   source_file_unload(&source);
   source.source = dup;
 
-  VALUE value = parse_source(&source);
+  VALUE value = parse_source(&source, StringValueCStr(rb_filepath));
   free(dup);
   return value;
 }
@@ -395,7 +405,7 @@ static VALUE
 memsize(VALUE self, VALUE string) {
   yp_parser_t parser;
   size_t length = RSTRING_LEN(string);
-  yp_parser_init(&parser, RSTRING_PTR(string), length);
+  yp_parser_init(&parser, RSTRING_PTR(string), length, NULL);
 
   yp_node_t *node = yp_parse(&parser);
   yp_memsize_t memsize;
@@ -415,7 +425,7 @@ static VALUE
 compile(VALUE self, VALUE string) {
   yp_parser_t parser;
   size_t length = RSTRING_LEN(string);
-  yp_parser_init(&parser, RSTRING_PTR(string), length);
+  yp_parser_init(&parser, RSTRING_PTR(string), length, NULL);
 
   yp_node_t *node = yp_parse(&parser);
   VALUE result = yp_compile(node);
@@ -444,10 +454,10 @@ Init_yarp(void) {
 
   rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
 
-  rb_define_singleton_method(rb_cYARP, "dump", dump, 1);
+  rb_define_singleton_method(rb_cYARP, "dump", dump, 2);
   rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
 
-  rb_define_singleton_method(rb_cYARP, "lex", lex, 1);
+  rb_define_singleton_method(rb_cYARP, "lex", lex, 2);
   rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
 
   rb_define_singleton_method(rb_cYARP, "parse", parse, 1);

@@ -38,7 +38,7 @@ yp_version(void);
 
 // Initialize a parser with the given start and end pointers.
 __attribute__((__visibility__("default"))) extern void
-yp_parser_init(yp_parser_t *parser, const char *source, size_t size);
+yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath);
 
 // Register a callback that will be called whenever YARP changes the encoding it
 // is using to parse based on the magic comment.

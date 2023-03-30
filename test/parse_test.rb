@@ -38,7 +38,10 @@ class ParseTest < Test::Unit::TestCase
       # Next, parse the source and print the value.
       result = YARP.parse_file_dup(filepath)
       value = result.value
-      printed = PP.pp(value, +"")
+      # This gsub removes most of the filepath in SourceFileNodes
+      # which allows comparing snapshots generated from
+      # different machines
+      printed = PP.pp(value, +"").gsub(__dir__, "")
 
       # Next, assert that there were no errors during parsing.
       assert_empty result.errors, value
@@ -57,7 +60,7 @@ class ParseTest < Test::Unit::TestCase
       # changing the shape of the tree.
       assert_equal_nodes(
         value,
-        YARP.load(source, YARP.dump(source)),
+        YARP.load(source, YARP.dump(source, filepath)),
         # We should be comparing the location here, but can't because of bugs.
         # We should fix this.
         compare_location: false
