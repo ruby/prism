@@ -8254,56 +8254,75 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
   int common_whitespace;
   if ((common_whitespace = parse_heredoc_common_whitespace(parser, nodes)) <= 0) return;
 
-  // Iterate over all nodes, and trim whitespace accordingly
+  // Iterate over all nodes, and trim whitespace accordingly.
   for (size_t i = 0; i < nodes->size; i++) {
     yp_node_t *node = nodes->nodes[i];
-
     if (node->type != YP_NODE_STRING_NODE) continue;
-    yp_string_t *node_str = &((yp_string_node_t *) node)->unescaped;
 
-    yp_string_ensure_owned(node_str);
-    const char *cur_char = node_str->as.owned.source;
-    size_t new_size = node_str->as.owned.length;
+    // Get a reference to the string struct that is being held by the string
+    // node. This is the value we're going to actual manipulate.
+    yp_string_t *string = &((yp_string_node_t *) node)->unescaped;
+    yp_string_ensure_owned(string);
+
+    // Now get the bounds of the existing string. We'll use this as a
+    // destination to copy bytes into. We'll also use it for bounds checking
+    // since we don't require that these strings be null terminated.
+    char *source_start = string->as.owned.source;
+    const char *source_end = source_start + string->as.owned.length;
 
     // Construct a new string, with which we'll replace the existing string
-    char new_str[node_str->as.owned.length];
+    const char *source_cursor = string->as.owned.source;
     int new_str_index = 0;
+    size_t next_length = string->as.owned.length;
 
     bool dedent_next = (i == 0) || (nodes->nodes[i - 1]->type == YP_NODE_STRING_NODE);
 
-    while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
-      // Skip over the whitespace
+    while (source_cursor < source_end) {
+      // If we need to dedent the next element within the heredoc or the next
+      // line within the string node, then we'll do it here.
       if (dedent_next) {
         int trimmed_whitespace = 0;
 
-        while (trimmed_whitespace < common_whitespace && cur_char[0] != '\n' && cur_char < (node_str->as.owned.source + node_str->as.owned.length)) {
-          if (*cur_char == '\t') {
+        // While we haven't reached the amount of common whitespace that we need
+        // to trim and we haven't reached the end of the string, we'll keep
+        // trimming whitespace. Trimming in this context means skipping over
+        // these bytes such that they aren't copied into the new string.
+        while ((source_cursor < source_end) && char_is_non_newline_whitespace(*source_cursor) && trimmed_whitespace < common_whitespace) {
+          if (*source_cursor == '\t') {
             trimmed_whitespace = (trimmed_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
             if (trimmed_whitespace > common_whitespace) break;
           } else {
             trimmed_whitespace++;
           }
 
-          cur_char++;
-          new_size--;
+          source_cursor++;
+          next_length--;
         }
 
         dedent_next = false;
       }
 
-      new_str[new_str_index] = cur_char[0];
-      new_str_index++;
+      // At this point we have dedented all that we need to, so we need to find
+      // the next newline.
+      const char *breakpoint = memchr(source_cursor, '\n', (size_t) (source_end - source_cursor));
 
-      if (cur_char[0] == '\n') {
-        dedent_next = true;
+      if (breakpoint == NULL) {
+        // If there isn't another newline, then we can just move the rest of the
+        // string and break from the loop.
+        memmove(source_start + new_str_index, source_cursor, (size_t) (source_end - source_cursor));
+        break;
       }
 
-      cur_char++;
+      // Otherwise, we need to move everything including the newline, and
+      // then set the dedent_next flag to true.
+      if (breakpoint < source_end) breakpoint++;
+      memmove(source_start + new_str_index, source_cursor, (size_t) (breakpoint - source_cursor));
+      new_str_index += (int) (breakpoint - source_cursor);
+      dedent_next = true;
+      source_cursor = breakpoint;
     }
 
-    // Copy over the new string
-    memcpy(node_str->as.owned.source, new_str, new_size);
-    node_str->as.owned.length = new_size;
+    string->as.owned.length = next_length;
   }
 }
 
