@@ -45,7 +45,7 @@ ProgramNode(0...23)(
               []
             ),
             PARENTHESIS_RIGHT(15...16)(")"),
-            StatementsNode(18...19)([LocalVariableReadNode(18...19)(1)])
+            StatementsNode(18...19)([LocalVariableReadNode(18...19)(0)])
           )]
        ),
        nil,
@@ -95,7 +95,7 @@ ProgramNode(0...23)(
               []
             ),
             PARENTHESIS_RIGHT(36...37)(")"),
-            StatementsNode(39...40)([LocalVariableReadNode(39...40)(1)])
+            StatementsNode(39...40)([LocalVariableReadNode(39...40)(0)])
           )]
        ),
        nil,

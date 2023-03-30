@@ -31,7 +31,7 @@ ProgramNode(2...30)(
      MultiWriteNode(15...30)(
        [LocalVariableWriteNode(15...16)((15...16), nil, nil, 0),
         MultiWriteNode(19...24)(
-          [LocalVariableWriteNode(19...20)((19...20), nil, nil, 1),
+          [LocalVariableWriteNode(19...20)((19...20), nil, nil, 0),
            LocalVariableWriteNode(22...23)((22...23), nil, nil, 0)],
           nil,
           nil,

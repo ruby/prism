@@ -27,8 +27,8 @@ ProgramNode(0...28)(
             IDENTIFIER(17...18)("p"),
             nil,
             ArgumentsNode(19...23)(
-              [LocalVariableReadNode(19...20)(1),
-               LocalVariableReadNode(22...23)(1)]
+              [LocalVariableReadNode(19...20)(0),
+               LocalVariableReadNode(22...23)(0)]
             ),
             nil,
             nil,

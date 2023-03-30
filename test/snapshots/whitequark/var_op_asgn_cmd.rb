@@ -9,7 +9,7 @@ ProgramNode(0...8)(
          nil,
          IDENTIFIER(7...8)("m"),
          nil,
-         ArgumentsNode(9...12)([LocalVariableReadNode(9...12)(1)]),
+         ArgumentsNode(9...12)([LocalVariableReadNode(9...12)(0)]),
          nil,
          nil,
          "m"

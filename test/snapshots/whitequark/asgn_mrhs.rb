@@ -37,7 +37,7 @@ ProgramNode(0...0)(
          nil
        ),
        (16...17),
-       1
+       0
      ),
      LocalVariableWriteNode(26...0)(
        (26...29),
@@ -69,7 +69,7 @@ ProgramNode(0...0)(
          nil
        ),
        (30...31),
-       1
+       0
      )]
   )
 )

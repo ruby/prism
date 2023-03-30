@@ -402,7 +402,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(286...289)([LocalVariableReadNode(286...289)(1)]),
+       StatementsNode(286...289)([LocalVariableReadNode(286...289)(0)]),
        ScopeNode(271...274)([IDENTIFIER(279...282)("bar")]),
        (271...274),
        nil,
@@ -423,7 +423,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(315...318)([LocalVariableReadNode(315...318)(1)]),
+       StatementsNode(315...318)([LocalVariableReadNode(315...318)(0)]),
        ScopeNode(295...298)(
          [IDENTIFIER(303...306)("bar"), IDENTIFIER(308...311)("baz")]
        ),
@@ -449,7 +449,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(344...347)([LocalVariableReadNode(344...347)(1)]),
+       StatementsNode(344...347)([LocalVariableReadNode(344...347)(0)]),
        ScopeNode(324...327)([IDENTIFIER(332...335)("bar")]),
        (324...327),
        nil,
@@ -513,7 +513,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(406...409)([LocalVariableReadNode(406...409)(1)]),
+       StatementsNode(406...409)([LocalVariableReadNode(406...409)(0)]),
        ScopeNode(384...387)([IDENTIFIER(392...395)("bar")]),
        (384...387),
        nil,
@@ -537,7 +537,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(442...445)([LocalVariableReadNode(442...445)(1)]),
+       StatementsNode(442...445)([LocalVariableReadNode(442...445)(0)]),
        ScopeNode(415...418)(
          [IDENTIFIER(423...426)("bar"), IDENTIFIER(428...431)("baz")]
        ),
@@ -680,7 +680,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(558...561)([LocalVariableReadNode(558...561)(1)]),
+       StatementsNode(558...561)([LocalVariableReadNode(558...561)(0)]),
        ScopeNode(542...545)([IDENTIFIER(551...554)("bar")]),
        (542...545),
        nil,
@@ -703,7 +703,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(588...591)([LocalVariableReadNode(588...591)(1)]),
+       StatementsNode(588...591)([LocalVariableReadNode(588...591)(0)]),
        ScopeNode(567...570)(
          [IDENTIFIER(575...578)("bar"), IDENTIFIER(581...584)("baz")]
        ),
@@ -817,7 +817,7 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(712...715)([LocalVariableReadNode(712...715)(1)]),
+       StatementsNode(712...715)([LocalVariableReadNode(712...715)(0)]),
        ScopeNode(679...682)(
          [IDENTIFIER(687...690)("bar"),
           IDENTIFIER(692...695)("baz"),
@@ -878,7 +878,7 @@ ProgramNode(0...913)(
            (761...762)
          )
        ),
-       StatementsNode(771...774)([LocalVariableReadNode(771...774)(1)]),
+       StatementsNode(771...774)([LocalVariableReadNode(771...774)(0)]),
        ScopeNode(748...751)(
          [IDENTIFIER(756...759)("bar"), IDENTIFIER(762...767)("block")]
        ),

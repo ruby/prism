@@ -52,7 +52,7 @@ ProgramNode(0...991)(
             0
           ),
           CallNode(60...69)(
-            LocalVariableReadNode(60...65)(1),
+            LocalVariableReadNode(60...65)(0),
             DOT(65...66)("."),
             IDENTIFIER(66...69)("bar"),
             nil,

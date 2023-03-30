@@ -74,23 +74,24 @@ sizet2int(size_t value) {
   return (int) value;
 }
 
-static inline int
+static int
 local_index(yp_iseq_compiler_t *compiler, int depth, const char *start, const char *end) {
   int compiler_index;
   yp_iseq_compiler_t *local_compiler = compiler;
 
   for (compiler_index = 0; compiler_index < depth; compiler_index++) {
     local_compiler = local_compiler->parent;
+    assert(local_compiler != NULL);
   }
 
-  size_t local_index;
+  size_t index;
   long local_size = end - start;
 
-  for (local_index = 0; local_index < local_compiler->locals->size; local_index++) {
-    yp_token_t *local = &local_compiler->locals->tokens[local_index];
+  for (index = 0; index < local_compiler->locals->size; index++) {
+    yp_token_t *local = &local_compiler->locals->tokens[index];
 
     if ((local->end - local->start == local_size) && strncmp(local->start, start, local_size) == 0) {
-      return sizet2int(local_compiler->locals->size - local_index + 2);
+      return sizet2int(local_compiler->locals->size - index + 2);
     }
   }
 
@@ -152,18 +153,18 @@ parse_string_symbol(yp_string_t *string) {
 
 static VALUE
 yp_iseq_new(yp_iseq_compiler_t *compiler) {
-  VALUE code_locations = rb_ary_new_capa(4);
-  rb_ary_push(code_locations, INT2FIX(1));
-  rb_ary_push(code_locations, INT2FIX(0));
-  rb_ary_push(code_locations, INT2FIX(1));
-  rb_ary_push(code_locations, INT2FIX(0));
+  VALUE code_location = rb_ary_new_capa(4);
+  rb_ary_push(code_location, INT2FIX(1));
+  rb_ary_push(code_location, INT2FIX(0));
+  rb_ary_push(code_location, INT2FIX(1));
+  rb_ary_push(code_location, INT2FIX(0));
 
   VALUE data = rb_hash_new();
   rb_hash_aset(data, ID2SYM(rb_intern("arg_size")), INT2FIX(0));
   rb_hash_aset(data, ID2SYM(rb_intern("local_size")), INT2FIX(0));
   rb_hash_aset(data, ID2SYM(rb_intern("stack_max")), INT2FIX(compiler->stack_max));
   rb_hash_aset(data, ID2SYM(rb_intern("node_id")), INT2FIX(-1));
-  rb_hash_aset(data, ID2SYM(rb_intern("code_locations")), code_locations);
+  rb_hash_aset(data, ID2SYM(rb_intern("code_location")), code_location);
   rb_hash_aset(data, ID2SYM(rb_intern("node_ids")), compiler->node_ids);
 
   VALUE type;
@@ -534,6 +535,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       }
 
       yp_compile_node(compiler, node->value);
+      push_dup(compiler);
       push_setclassvariable(compiler, ID2SYM(parse_location_symbol(&node->name_loc)), yp_inline_storage_new(compiler));
       return;
     }
@@ -671,9 +673,26 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
 
       return;
     }
+    case YP_NODE_PARENTHESES_NODE: {
+      yp_parentheses_node_t *node = (yp_parentheses_node_t *) base_node;
+
+      if (node->statements == NULL) {
+        push_putnil(compiler);
+      } else {
+        yp_compile_node(compiler, node->statements);
+      }
+
+      return;
+    }
     case YP_NODE_PROGRAM_NODE: {
       yp_program_node_t *node = (yp_program_node_t *) base_node;
-      yp_compile_node(compiler, (yp_node_t *) node->statements);
+
+      if (node->statements->body.size == 0) {
+        push_putnil(compiler);
+      } else {
+        yp_compile_node(compiler, (yp_node_t *) node->statements);
+      }
+
       push_leave(compiler);
       return;
     }

@@ -18,7 +18,7 @@ ProgramNode(0...32)(
             nil,
             IDENTIFIER(21...27)("system"),
             PARENTHESIS_LEFT(27...28)("("),
-            ArgumentsNode(28...31)([LocalVariableReadNode(28...31)(1)]),
+            ArgumentsNode(28...31)([LocalVariableReadNode(28...31)(0)]),
             PARENTHESIS_RIGHT(31...32)(")"),
             nil,
             "system"

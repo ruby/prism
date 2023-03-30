@@ -736,7 +736,7 @@ ProgramNode(0...737)(
              [ConstantReadNode(409...418)()],
              EQUAL_GREATER(419...421)("=>"),
              LocalVariableWriteNode(422...425)((422...425), nil, nil, 0),
-             StatementsNode(428...431)([LocalVariableReadNode(428...431)(1)]),
+             StatementsNode(428...431)([LocalVariableReadNode(428...431)(0)]),
              nil
            ),
            nil,

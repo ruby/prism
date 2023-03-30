@@ -16,7 +16,7 @@ ProgramNode(0...24)(
        (2...5)
      ),
      OperatorAssignmentNode(9...15)(
-       LocalVariableWriteNode(9...10)((9...10), nil, nil, 1),
+       LocalVariableWriteNode(9...10)((9...10), nil, nil, 0),
        PLUS_EQUAL(11...13)("+="),
        CallNode(14...15)(
          nil,
@@ -30,7 +30,7 @@ ProgramNode(0...24)(
        )
      ),
      OperatorOrAssignmentNode(17...24)(
-       LocalVariableWriteNode(17...18)((17...18), nil, nil, 1),
+       LocalVariableWriteNode(17...18)((17...18), nil, nil, 0),
        CallNode(23...24)(
          nil,
          nil,

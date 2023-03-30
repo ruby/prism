@@ -3104,12 +3104,12 @@ yp_parser_scope_push(yp_parser_t *parser, const yp_token_t *token, bool top) {
 
 // Check if the current scope has a given local variables.
 static int
-yp_parser_local_p(yp_parser_t *parser, yp_token_t *token) {
+yp_parser_local_depth(yp_parser_t *parser, yp_token_t *token) {
   yp_scope_t *scope = parser->current_scope;
   int depth = 0;
 
   while (scope != NULL) {
-    if (yp_token_list_includes(&scope->node->locals, token)) return true;
+    if (yp_token_list_includes(&scope->node->locals, token)) return depth;
     if (scope->top) break;
 
     scope = scope->previous;
@@ -5714,7 +5714,7 @@ parser_lex(yp_parser_t *parser) {
           if (
             !(last_state & (YP_LEX_STATE_DOT | YP_LEX_STATE_FNAME)) &&
             (type == YP_TOKEN_IDENTIFIER) &&
-            (yp_parser_local_p(parser, &parser->current) != -1)
+            (yp_parser_local_depth(parser, &parser->current) != -1)
           ) {
             lex_state_set(parser, YP_LEX_STATE_END | YP_LEX_STATE_LABEL);
           }
@@ -6919,7 +6919,7 @@ parse_assocs(yp_parser_t *parser, yp_hash_node_t *node) {
 
         if (token_begins_expression_p(parser->current.type)) {
           value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after ** in hash.");
-        } else if (!yp_parser_local_p(parser, &operator)) {
+        } else if (yp_parser_local_depth(parser, &operator) == -1) {
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Expected an expression after ** in hash.");
         }
 
@@ -7026,7 +7026,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
 
         if (token_begins_expression_p(parser->current.type)) {
           expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
-        } else if (!yp_parser_local_p(parser, &operator)) {
+        } else if (yp_parser_local_depth(parser, &operator) == -1) {
           yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "unexpected & when parent method is not forwarding.");
         }
 
@@ -7039,7 +7039,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
         yp_token_t operator = parser->previous;
 
         if (match_any_type_p(parser, 2, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_COMMA)) {
-          if (yp_parser_local_p(parser, &parser->previous) == -1) {
+          if (yp_parser_local_depth(parser, &parser->previous) == -1) {
             yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "unexpected * when parent method is not forwarding.");
           }
 
@@ -7067,7 +7067,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             yp_node_t *right = parse_expression(parser, YP_BINDING_POWER_RANGE, "Expected a value after the operator.");
             argument = (yp_node_t *) yp_range_node_create(parser, NULL, &operator, right);
           } else {
-            if (yp_parser_local_p(parser, &parser->previous) == -1) {
+            if (yp_parser_local_depth(parser, &parser->previous) == -1) {
               yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
             }
 
@@ -8044,7 +8044,7 @@ parse_vcall(yp_parser_t *parser) {
     (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
     (parser->previous.end[-1] != '!') &&
     (parser->previous.end[-1] != '?') &&
-    (depth = yp_parser_local_p(parser, &parser->previous)) != -1
+    (depth = yp_parser_local_depth(parser, &parser->previous)) != -1
   ) {
     return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, depth);
   }

@@ -19,7 +19,7 @@ ProgramNode(0...40)(
             IDENTIFIER(20...23)("bar"),
             PARENTHESIS_LEFT(23...24)("("),
             ArgumentsNode(24...34)(
-              [LocalVariableReadNode(24...25)(1),
+              [LocalVariableReadNode(24...25)(0),
                IntegerNode(27...29)(),
                ForwardingArgumentsNode(31...34)()]
             ),
