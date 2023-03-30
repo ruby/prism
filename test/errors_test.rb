@@ -6,13 +6,10 @@ class ErrorsTest < Test::Unit::TestCase
   include YARP::DSL
 
   test "constant path with invalid token after" do
-    expected = ConstantPathNode(
-      ConstantReadNode(),
-      MissingNode(),
-      Location()
-    )
-
-    assert_errors expected, "A::$b", ["Expected identifier or constant after '::'"]
+    assert_error_messages "A::$b", [
+      "Expected identifier or constant after '::'",
+      "Expected a newline or semicolon after statement."
+    ]
   end
 
   test "module name recoverable" do
@@ -135,13 +132,25 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "(1, 2, 3)" do
-    assert_errors expression("(1, 2, 3)"), "(1, 2, 3)", ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
+    assert_errors expression("(1, 2, 3)"), "(1, 2, 3)", [
+      "Expected to be able to parse an expression.",
+      "Expected a closing parenthesis.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression."
+    ]
   end
 
   test "return(1, 2, 3)" do
-    errors = ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
-
-    assert_errors expression("return(1, 2, 3)"), "return(1, 2, 3)", errors
+    assert_error_messages "return(1, 2, 3)", [
+      "Expected to be able to parse an expression.",
+      "Expected a closing parenthesis.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression."
+    ]
   end
 
   test "return 1,;" do
@@ -149,9 +158,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "next(1, 2, 3)" do
-    errors = ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
-
-    assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", errors
+    assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", [
+      "Expected to be able to parse an expression.",
+      "Expected a closing parenthesis.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression."
+    ]
   end
 
   test "next 1,;" do
@@ -159,7 +171,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "break(1, 2, 3)" do
-    errors = ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
+    errors = [
+      "Expected to be able to parse an expression.",
+      "Expected a closing parenthesis.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression."
+    ]
 
     assert_errors expression("break(1, 2, 3)"), "break(1, 2, 3)", errors
   end
@@ -177,13 +194,17 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "top level constant with downcased identifier" do
-    expected = ConstantPathNode(nil, ConstantReadNode(), Location())
-    assert_errors expected, "::foo", ["Expected a constant after ::."]
+    assert_error_messages "::foo", [
+      "Expected a constant after ::.",
+      "Expected a newline or semicolon after statement."
+    ]
   end
 
   test "top level constant starting with downcased identifier" do
-    expected = ConstantPathNode(nil, ConstantReadNode(), Location())
-    assert_errors expected, "::foo::A", ["Expected a constant after ::."]
+    assert_error_messages "::foo::A", [
+      "Expected a constant after ::.",
+      "Expected a newline or semicolon after statement."
+    ]
   end
 
   test "aliasing global variable with non global variable" do
@@ -209,7 +230,7 @@ class ErrorsTest < Test::Unit::TestCase
       "Expected closing ')' for receiver.",
       "Expected '.' or '::' after receiver",
       "Expected to be able to parse an expression.",
-      "Expected `end` to close `def` statement.",
+      "Expected to be able to parse an expression."
     ]
   end
 
@@ -218,24 +239,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "block beginning with '{' and ending with 'end'" do
-    expected = CallNode(
-      CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x"),
-      DOT("."),
-      IDENTIFIER("each"),
-      nil,
-      nil,
-      nil,
-      BlockNode(
-        ScopeNode([]),
-        nil,
-        StatementsNode([CallNode(nil, nil, IDENTIFIER("x"), nil, nil, nil, nil, "x")]),
-        Location(),
-        Location()
-      ),
-      "each"
-    )
-
-    assert_errors expected, "x.each { x end", ["Expected block beginning with '{' to end with '}'."]
+    assert_error_messages "x.each { x end", [
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression.",
+      "Expected to be able to parse an expression.",
+      "Expected block beginning with '{' to end with '}'."
+    ]
   end
 
   test "double splat followed by splat argument" do
@@ -294,31 +303,12 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   test "arguments binding power for and" do
-    expected = AndNode(
-      CallNode(
-        nil,
-        nil,
-        IDENTIFIER("foo"),
-        PARENTHESIS_LEFT("("),
-        ArgumentsNode(
-          [SplatNode(
-             USTAR("*"),
-             CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar")
-           )]
-        ),
-        MISSING(""),
-        nil,
-        "foo"
-      ),
-      CallNode(nil, nil, IDENTIFIER("baz"), nil, nil, nil, nil, "baz"),
-      KEYWORD_AND("and")
-    )
-
-    assert_errors expected, "foo(*bar and baz)", [
-      "Expected a ')' to close the argument list."
+    assert_error_messages "foo(*bar and baz)", [
+      "Expected a ')' to close the argument list.",
+      "Expected a newline or semicolon after statement.",
+      "Expected to be able to parse an expression."
     ]
   end
-
 
   test "splat argument after keyword argument" do
     expected = CallNode(
@@ -894,7 +884,13 @@ class ErrorsTest < Test::Unit::TestCase
     assert_equal_nodes(expected, node, compare_location: false)
     assert_equal(errors, result.errors.map(&:message))
   end
-  
+
+  def assert_error_messages(source, errors)
+    assert_nil Ripper.sexp_raw(source)
+    result = YARP.parse_dup(source)
+    assert_equal(errors, result.errors.map(&:message))
+  end
+
   def expression(source)
     YARP.parse_dup(source) => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: [*, node]]]]
     node

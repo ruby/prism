@@ -6906,15 +6906,23 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
 // Parse a list of statements separated by newlines or semicolons.
 static yp_statements_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
-  context_push(parser, context);
   yp_statements_node_t *statements = yp_statements_node_create(parser);
 
-  while (!context_terminator(context, &parser->current)) {
-    // Ignore semicolon without statements before them
-    if (accept(parser, YP_TOKEN_SEMICOLON) || accept(parser, YP_TOKEN_NEWLINE)) {
-      continue;
-    }
+  // First, skip past any optional terminators that might be at the beginning of
+  // the statements.
+  while (accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE));
 
+  // Now, if we have a terminator, then we can just return the empty statements
+  // node. We should come back in here and make it so that the callers of this
+  // function can expect a NULL, in which case we wouldn't have to allocate the
+  // statements at all.
+  if (context_terminator(context, &parser->current)) return statements;
+
+  // At this point we know we have at least one statement, and that it
+  // immediately follows the current token.
+  context_push(parser, context);
+
+  while (true) {
     yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_STATEMENT, "Expected to be able to parse an expression.");
     yp_statements_node_body_append(statements, node);
 
@@ -6927,7 +6935,41 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
       break;
     }
 
-    if (!accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) break;
+    // If we have a terminator, then we will parse all consequtive terminators
+    // and then continue parsing the statements list.
+    if (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+      // If we have a terminator, then we will continue parsing the statements
+      // list.
+      while (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
+      if (context_terminator(context, &parser->current)) break;
+
+      // Now we can continue parsing the list of statements.
+      continue;
+    }
+
+    // At this point we have a list of statements that are not terminated by a
+    // newline or semicolon. At this point we need to check if we're at the end
+    // of the statements list. If we are, then we should break out of the loop.
+    if (context_terminator(context, &parser->current)) break;
+
+    // At this point, we have a syntax error, because the statement was not
+    // terminated by a newline or semicolon, and we're not at the end of the
+    // statements list. Ideally we should scan forward to determine if we should
+    // insert a missing terminator or break out of parsing the statements list
+    // at this point.
+    //
+    // We don't have that yet, so instead we'll do a more naive approach. If we
+    // were unable to parse an expression, then we will skip past this token and
+    // continue parsing the statements list. Otherwise we'll add an error and
+    // continue parsing the statements list.
+    if (node->type == YP_NODE_MISSING_NODE) {
+      parser_lex(parser);
+
+      while (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
+      if (context_terminator(context, &parser->current)) break;
+    } else {
+      expect(parser, YP_TOKEN_NEWLINE, "Expected a newline or semicolon after statement.");
+    }
   }
 
   context_pop(parser);
