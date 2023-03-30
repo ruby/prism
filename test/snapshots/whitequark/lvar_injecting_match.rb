@@ -23,6 +23,6 @@ ProgramNode(0...31)(
        nil,
        "=~"
      ),
-     LocalVariableReadNode(26...31)(1)]
+     LocalVariableReadNode(26...31)(0)]
   )
 )

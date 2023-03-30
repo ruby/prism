@@ -49,7 +49,7 @@ ProgramNode(0...43)(
                   nil,
                   "a"
                 ),
-                LocalVariableReadNode(34...38)(1)],
+                LocalVariableReadNode(34...38)(0)],
                BRACKET_LEFT_ARRAY(30...31)("["),
                BRACKET_RIGHT(38...39)("]")
              )]

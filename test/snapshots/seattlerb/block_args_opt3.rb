@@ -37,10 +37,10 @@ ProgramNode(0...42)(
          ),
          StatementsNode(28...40)(
            [ArrayNode(28...40)(
-              [LocalVariableReadNode(29...30)(1),
-               LocalVariableReadNode(32...33)(1),
-               LocalVariableReadNode(35...36)(1),
-               LocalVariableReadNode(38...39)(1)],
+              [LocalVariableReadNode(29...30)(0),
+               LocalVariableReadNode(32...33)(0),
+               LocalVariableReadNode(35...36)(0),
+               LocalVariableReadNode(38...39)(0)],
               BRACKET_LEFT_ARRAY(28...29)("["),
               BRACKET_RIGHT(39...40)("]")
             )]

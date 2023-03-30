@@ -25,7 +25,7 @@ ProgramNode(0...48)(
             nil,
             IDENTIFIER(16...17)("p"),
             nil,
-            ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(1)]),
+            ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(0)]),
             nil,
             nil,
             "p"
@@ -38,7 +38,7 @@ ProgramNode(0...48)(
      ),
      ForNode(26...48)(
        MultiWriteNode(30...31)(
-         [LocalVariableWriteNode(30...31)((30...31), nil, nil, 1)],
+         [LocalVariableWriteNode(30...31)((30...31), nil, nil, 0)],
          nil,
          nil,
          nil,
@@ -60,7 +60,7 @@ ProgramNode(0...48)(
             nil,
             IDENTIFIER(40...41)("p"),
             nil,
-            ArgumentsNode(42...43)([LocalVariableReadNode(42...43)(1)]),
+            ArgumentsNode(42...43)([LocalVariableReadNode(42...43)(0)]),
             nil,
             nil,
             "p"

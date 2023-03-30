@@ -27,7 +27,7 @@ ProgramNode(0...71)(
        )
      ),
      OperatorAssignmentNode(20...34)(
-       LocalVariableWriteNode(20...21)((20...21), nil, nil, 1),
+       LocalVariableWriteNode(20...21)((20...21), nil, nil, 0),
        PLUS_EQUAL(22...24)("+="),
        LocalVariableWriteNode(25...34)(
          (25...26),
@@ -49,13 +49,13 @@ ProgramNode(0...71)(
            "raise"
          ),
          (27...28),
-         1
+         0
        )
      ),
      LocalVariableWriteNode(39...53)(
        (39...40),
        OperatorAssignmentNode(43...53)(
-         LocalVariableWriteNode(43...44)((43...44), nil, nil, 1),
+         LocalVariableWriteNode(43...44)((43...44), nil, nil, 0),
          PLUS_EQUAL(45...47)("+="),
          CallNode(48...53)(
            nil,
@@ -76,7 +76,7 @@ ProgramNode(0...71)(
          )
        ),
        (41...42),
-       1
+       0
      ),
      LocalVariableWriteNode(58...71)(
        (58...59),
@@ -100,10 +100,10 @@ ProgramNode(0...71)(
            "raise"
          ),
          (64...65),
-         1
+         0
        ),
        (60...61),
-       1
+       0
      )]
   )
 )

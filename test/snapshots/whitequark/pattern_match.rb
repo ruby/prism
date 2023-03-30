@@ -2136,7 +2136,7 @@ ProgramNode(0...2908)(
        ),
        [InNode(2567...2576)(
           LocalVariableWriteNode(2570...2571)((2570...2571), nil, nil, 0),
-          StatementsNode(2577...2578)([LocalVariableReadNode(2577...2578)(1)]),
+          StatementsNode(2577...2578)([LocalVariableReadNode(2577...2578)(0)]),
           (2567...2569),
           (2572...2576)
         )],

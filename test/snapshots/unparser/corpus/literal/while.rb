@@ -44,7 +44,7 @@ ProgramNode(0...616)(
                    StatementsNode(43...52)(
                      [LocalVariableWriteNode(43...52)(
                         (43...46),
-                        LocalVariableReadNode(49...52)(1),
+                        LocalVariableReadNode(49...52)(0),
                         (47...48),
                         0
                       )]
@@ -67,7 +67,7 @@ ProgramNode(0...616)(
          [WhileNode(90...89)(
             KEYWORD_WHILE_MODIFIER(90...95)("while"),
             CallNode(96...106)(
-              LocalVariableReadNode(96...99)(1),
+              LocalVariableReadNode(96...99)(0),
               nil,
               BANG_EQUAL(100...102)("!="),
               nil,
@@ -121,7 +121,7 @@ ProgramNode(0...616)(
        StatementsNode(133...132)(
          [WhileNode(133...132)(
             KEYWORD_WHILE_MODIFIER(133...138)("while"),
-            LocalVariableReadNode(139...142)(1),
+            LocalVariableReadNode(139...142)(0),
             StatementsNode(123...132)(
               [LocalVariableWriteNode(123...132)(
                  (123...126),
@@ -150,7 +150,7 @@ ProgramNode(0...616)(
        StatementsNode(169...168)(
          [UntilNode(169...168)(
             KEYWORD_UNTIL_MODIFIER(169...174)("until"),
-            LocalVariableReadNode(175...178)(1),
+            LocalVariableReadNode(175...178)(0),
             StatementsNode(159...168)(
               [LocalVariableWriteNode(159...168)(
                  (159...162),
@@ -305,7 +305,7 @@ ProgramNode(0...616)(
               StatementsNode(329...354)(
                 [WhileNode(329...354)(
                    KEYWORD_WHILE(329...334)("while"),
-                   LocalVariableReadNode(335...338)(1),
+                   LocalVariableReadNode(335...338)(0),
                    StatementsNode(345...354)(
                      [LocalVariableWriteNode(345...354)(
                         (345...348),
@@ -320,7 +320,7 @@ ProgramNode(0...616)(
                           "bar"
                         ),
                         (349...350),
-                        1
+                        0
                       )]
                    )
                  )]

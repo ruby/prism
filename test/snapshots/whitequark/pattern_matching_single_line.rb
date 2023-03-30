@@ -13,7 +13,7 @@ ProgramNode(0...24)(
        ),
        (2...4)
      ),
-     LocalVariableReadNode(10...11)(1),
+     LocalVariableReadNode(10...11)(0),
      MatchPredicateNode(13...21)(
        IntegerNode(13...14)(),
        ArrayPatternNode(18...21)(
@@ -26,6 +26,6 @@ ProgramNode(0...24)(
        ),
        (15...17)
      ),
-     LocalVariableReadNode(23...24)(1)]
+     LocalVariableReadNode(23...24)(0)]
   )
 )

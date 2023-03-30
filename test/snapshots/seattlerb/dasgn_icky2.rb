@@ -32,7 +32,7 @@ ProgramNode(0...76)(
                 KEYWORD_RESCUE(35...41)("rescue"),
                 [ConstantReadNode(42...51)()],
                 EQUAL_GREATER(52...54)("=>"),
-                LocalVariableWriteNode(55...56)((55...56), nil, nil, 1),
+                LocalVariableWriteNode(55...56)((55...56), nil, nil, 0),
                 StatementsNode(61...66)([BreakNode(61...66)(nil, (61...66))]),
                 nil
               ),

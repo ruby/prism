@@ -33,7 +33,7 @@ ProgramNode(0...48)(
             nil,
             IDENTIFIER(32...33)("p"),
             nil,
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(1)]),
+            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(0)]),
             nil,
             nil,
             "p"

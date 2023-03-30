@@ -121,7 +121,7 @@ ProgramNode(6...93)(
                    nil,
                    IDENTIFIER(82...83)("p"),
                    nil,
-                   ArgumentsNode(84...85)([LocalVariableReadNode(84...85)(1)]),
+                   ArgumentsNode(84...85)([LocalVariableReadNode(84...85)(0)]),
                    nil,
                    nil,
                    "p"

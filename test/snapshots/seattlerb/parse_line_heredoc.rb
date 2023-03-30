@@ -31,7 +31,7 @@ ProgramNode(6...81)(
        nil,
        IDENTIFIER(77...81)("puts"),
        nil,
-       ArgumentsNode(82...88)([LocalVariableReadNode(82...88)(1)]),
+       ArgumentsNode(82...88)([LocalVariableReadNode(82...88)(0)]),
        nil,
        nil,
        "puts"

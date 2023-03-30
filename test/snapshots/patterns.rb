@@ -3073,7 +3073,7 @@ ProgramNode(0...3655)(
        [InNode(2740...2758)(
           IfNode(2743...2753)(
             KEYWORD_IF_MODIFIER(2747...2749)("if"),
-            LocalVariableReadNode(2750...2753)(1),
+            LocalVariableReadNode(2750...2753)(0),
             StatementsNode(2743...2746)(
               [LocalVariableWriteNode(2743...2746)((2743...2746), nil, nil, 0)]
             ),
@@ -3102,7 +3102,7 @@ ProgramNode(0...3655)(
        [InNode(2773...2789)(
           IfNode(2776...2784)(
             KEYWORD_IF_MODIFIER(2778...2780)("if"),
-            LocalVariableReadNode(2781...2784)(1),
+            LocalVariableReadNode(2781...2784)(0),
             StatementsNode(2776...2777)([IntegerNode(2776...2777)()]),
             nil,
             nil
@@ -3129,7 +3129,7 @@ ProgramNode(0...3655)(
        [InNode(2804...2822)(
           IfNode(2807...2817)(
             KEYWORD_IF_MODIFIER(2811...2813)("if"),
-            LocalVariableReadNode(2814...2817)(1),
+            LocalVariableReadNode(2814...2817)(0),
             StatementsNode(2807...2810)([FloatNode(2807...2810)()]),
             nil,
             nil
@@ -3156,7 +3156,7 @@ ProgramNode(0...3655)(
        [InNode(2837...2854)(
           IfNode(2840...2849)(
             KEYWORD_IF_MODIFIER(2843...2845)("if"),
-            LocalVariableReadNode(2846...2849)(1),
+            LocalVariableReadNode(2846...2849)(0),
             StatementsNode(2840...2842)([ImaginaryNode(2840...2842)()]),
             nil,
             nil
@@ -3183,7 +3183,7 @@ ProgramNode(0...3655)(
        [InNode(2869...2886)(
           IfNode(2872...2881)(
             KEYWORD_IF_MODIFIER(2875...2877)("if"),
-            LocalVariableReadNode(2878...2881)(1),
+            LocalVariableReadNode(2878...2881)(0),
             StatementsNode(2872...2874)([RationalNode(2872...2874)()]),
             nil,
             nil
@@ -3210,7 +3210,7 @@ ProgramNode(0...3655)(
        [InNode(2901...2920)(
           IfNode(2904...2915)(
             KEYWORD_IF_MODIFIER(2909...2911)("if"),
-            LocalVariableReadNode(2912...2915)(1),
+            LocalVariableReadNode(2912...2915)(0),
             StatementsNode(2904...2908)(
               [SymbolNode(2904...2908)(
                  SYMBOL_BEGIN(2904...2905)(":"),
@@ -3244,7 +3244,7 @@ ProgramNode(0...3655)(
        [InNode(2935...2957)(
           IfNode(2938...2952)(
             KEYWORD_IF_MODIFIER(2946...2948)("if"),
-            LocalVariableReadNode(2949...2952)(1),
+            LocalVariableReadNode(2949...2952)(0),
             StatementsNode(2938...2945)(
               [SymbolNode(2938...2945)(
                  SYMBOL_BEGIN(2938...2941)("%s["),
@@ -3278,7 +3278,7 @@ ProgramNode(0...3655)(
        [InNode(2972...2993)(
           IfNode(2977...2988)(
             KEYWORD_IF_MODIFIER(2982...2984)("if"),
-            LocalVariableReadNode(2985...2988)(1),
+            LocalVariableReadNode(2985...2988)(0),
             StatementsNode(2977...2980)(
               [InterpolatedSymbolNode(2977...2980)(
                  SYMBOL_BEGIN(2975...2977)(":\""),
@@ -3316,7 +3316,7 @@ ProgramNode(0...3655)(
        [InNode(3008...3028)(
           IfNode(3011...3023)(
             KEYWORD_IF_MODIFIER(3017...3019)("if"),
-            LocalVariableReadNode(3020...3023)(1),
+            LocalVariableReadNode(3020...3023)(0),
             StatementsNode(3011...3016)(
               [RegularExpressionNode(3011...3016)(
                  REGEXP_BEGIN(3011...3012)("/"),
@@ -3350,7 +3350,7 @@ ProgramNode(0...3655)(
        [InNode(3043...3063)(
           IfNode(3046...3058)(
             KEYWORD_IF_MODIFIER(3052...3054)("if"),
-            LocalVariableReadNode(3055...3058)(1),
+            LocalVariableReadNode(3055...3058)(0),
             StatementsNode(3046...3051)(
               [XStringNode(3046...3051)(
                  BACKTICK(3046...3047)("`"),
@@ -3384,7 +3384,7 @@ ProgramNode(0...3655)(
        [InNode(3078...3100)(
           IfNode(3081...3095)(
             KEYWORD_IF_MODIFIER(3089...3091)("if"),
-            LocalVariableReadNode(3092...3095)(1),
+            LocalVariableReadNode(3092...3095)(0),
             StatementsNode(3081...3088)(
               [XStringNode(3081...3088)(
                  PERCENT_LOWER_X(3081...3084)("%x["),
@@ -3418,7 +3418,7 @@ ProgramNode(0...3655)(
        [InNode(3115...3137)(
           IfNode(3118...3132)(
             KEYWORD_IF_MODIFIER(3126...3128)("if"),
-            LocalVariableReadNode(3129...3132)(1),
+            LocalVariableReadNode(3129...3132)(0),
             StatementsNode(3118...3125)(
               [ArrayNode(3118...3125)(
                  [SymbolNode(3121...3124)(
@@ -3456,7 +3456,7 @@ ProgramNode(0...3655)(
        [InNode(3152...3174)(
           IfNode(3155...3169)(
             KEYWORD_IF_MODIFIER(3163...3165)("if"),
-            LocalVariableReadNode(3166...3169)(1),
+            LocalVariableReadNode(3166...3169)(0),
             StatementsNode(3155...3162)(
               [ArrayNode(3155...3162)(
                  [SymbolNode(3158...3161)(
@@ -3494,7 +3494,7 @@ ProgramNode(0...3655)(
        [InNode(3189...3211)(
           IfNode(3192...3206)(
             KEYWORD_IF_MODIFIER(3200...3202)("if"),
-            LocalVariableReadNode(3203...3206)(1),
+            LocalVariableReadNode(3203...3206)(0),
             StatementsNode(3192...3199)(
               [ArrayNode(3192...3199)(
                  [StringNode(3195...3198)(
@@ -3532,7 +3532,7 @@ ProgramNode(0...3655)(
        [InNode(3226...3248)(
           IfNode(3229...3243)(
             KEYWORD_IF_MODIFIER(3237...3239)("if"),
-            LocalVariableReadNode(3240...3243)(1),
+            LocalVariableReadNode(3240...3243)(0),
             StatementsNode(3229...3236)(
               [ArrayNode(3229...3236)(
                  [StringNode(3232...3235)(
@@ -3570,7 +3570,7 @@ ProgramNode(0...3655)(
        [InNode(3263...3285)(
           IfNode(3266...3280)(
             KEYWORD_IF_MODIFIER(3274...3276)("if"),
-            LocalVariableReadNode(3277...3280)(1),
+            LocalVariableReadNode(3277...3280)(0),
             StatementsNode(3266...3273)(
               [StringNode(3266...3273)(
                  STRING_BEGIN(3266...3269)("%q["),
@@ -3604,7 +3604,7 @@ ProgramNode(0...3655)(
        [InNode(3300...3322)(
           IfNode(3303...3317)(
             KEYWORD_IF_MODIFIER(3311...3313)("if"),
-            LocalVariableReadNode(3314...3317)(1),
+            LocalVariableReadNode(3314...3317)(0),
             StatementsNode(3303...3310)(
               [StringNode(3303...3310)(
                  STRING_BEGIN(3303...3306)("%Q["),
@@ -3638,7 +3638,7 @@ ProgramNode(0...3655)(
        [InNode(3337...3357)(
           IfNode(3340...3352)(
             KEYWORD_IF_MODIFIER(3346...3348)("if"),
-            LocalVariableReadNode(3349...3352)(1),
+            LocalVariableReadNode(3349...3352)(0),
             StatementsNode(3340...3345)(
               [StringNode(3340...3345)(
                  STRING_BEGIN(3340...3341)("\""),
@@ -3672,7 +3672,7 @@ ProgramNode(0...3655)(
        [InNode(3372...3390)(
           IfNode(3375...3385)(
             KEYWORD_IF_MODIFIER(3379...3381)("if"),
-            LocalVariableReadNode(3382...3385)(1),
+            LocalVariableReadNode(3382...3385)(0),
             StatementsNode(3375...3378)([NilNode(3375...3378)()]),
             nil,
             nil
@@ -3699,7 +3699,7 @@ ProgramNode(0...3655)(
        [InNode(3405...3424)(
           IfNode(3408...3419)(
             KEYWORD_IF_MODIFIER(3413...3415)("if"),
-            LocalVariableReadNode(3416...3419)(1),
+            LocalVariableReadNode(3416...3419)(0),
             StatementsNode(3408...3412)([SelfNode(3408...3412)()]),
             nil,
             nil
@@ -3726,7 +3726,7 @@ ProgramNode(0...3655)(
        [InNode(3439...3458)(
           IfNode(3442...3453)(
             KEYWORD_IF_MODIFIER(3447...3449)("if"),
-            LocalVariableReadNode(3450...3453)(1),
+            LocalVariableReadNode(3450...3453)(0),
             StatementsNode(3442...3446)([TrueNode(3442...3446)()]),
             nil,
             nil
@@ -3753,7 +3753,7 @@ ProgramNode(0...3655)(
        [InNode(3473...3493)(
           IfNode(3476...3488)(
             KEYWORD_IF_MODIFIER(3482...3484)("if"),
-            LocalVariableReadNode(3485...3488)(1),
+            LocalVariableReadNode(3485...3488)(0),
             StatementsNode(3476...3481)([FalseNode(3476...3481)()]),
             nil,
             nil
@@ -3780,7 +3780,7 @@ ProgramNode(0...3655)(
        [InNode(3508...3531)(
           IfNode(3511...3526)(
             KEYWORD_IF_MODIFIER(3520...3522)("if"),
-            LocalVariableReadNode(3523...3526)(1),
+            LocalVariableReadNode(3523...3526)(0),
             StatementsNode(3511...3519)([SourceFileNode(3511...3519)()]),
             nil,
             nil
@@ -3807,7 +3807,7 @@ ProgramNode(0...3655)(
        [InNode(3546...3569)(
           IfNode(3549...3564)(
             KEYWORD_IF_MODIFIER(3558...3560)("if"),
-            LocalVariableReadNode(3561...3564)(1),
+            LocalVariableReadNode(3561...3564)(0),
             StatementsNode(3549...3557)([SourceLineNode(3549...3557)()]),
             nil,
             nil
@@ -3834,7 +3834,7 @@ ProgramNode(0...3655)(
        [InNode(3584...3611)(
           IfNode(3587...3606)(
             KEYWORD_IF_MODIFIER(3600...3602)("if"),
-            LocalVariableReadNode(3603...3606)(1),
+            LocalVariableReadNode(3603...3606)(0),
             StatementsNode(3587...3599)([SourceEncodingNode(3587...3599)()]),
             nil,
             nil
@@ -3861,7 +3861,7 @@ ProgramNode(0...3655)(
        [InNode(3626...3651)(
           IfNode(3629...3646)(
             KEYWORD_IF_MODIFIER(3640...3642)("if"),
-            LocalVariableReadNode(3643...3646)(1),
+            LocalVariableReadNode(3643...3646)(0),
             StatementsNode(3629...3637)(
               [LambdaNode(3629...3637)(
                  ScopeNode(3629...3631)([]),

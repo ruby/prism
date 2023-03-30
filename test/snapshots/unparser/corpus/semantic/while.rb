@@ -65,7 +65,7 @@ ProgramNode(2...188)(
      ),
      WhileNode(46...45)(
        KEYWORD_WHILE_MODIFIER(46...51)("while"),
-       LocalVariableReadNode(52...55)(1),
+       LocalVariableReadNode(52...55)(0),
        StatementsNode(36...45)(
          [LocalVariableWriteNode(36...45)(
             (36...39),
@@ -145,7 +145,7 @@ ProgramNode(2...188)(
          (85...86),
          0
        ),
-       StatementsNode(91...92)([LocalVariableReadNode(91...92)(1)])
+       StatementsNode(91...92)([LocalVariableReadNode(91...92)(0)])
      ),
      UntilNode(100...99)(
        KEYWORD_UNTIL_MODIFIER(100...105)("until"),
@@ -183,7 +183,7 @@ ProgramNode(2...188)(
          ),
          "b"
        ),
-       StatementsNode(98...99)([LocalVariableReadNode(98...99)(1)])
+       StatementsNode(98...99)([LocalVariableReadNode(98...99)(0)])
      ),
      ModuleNode(132...188)(
        ScopeNode(132...138)([IDENTIFIER(143...146)("foo")]),
@@ -207,7 +207,7 @@ ProgramNode(2...188)(
           ),
           WhileNode(155...178)(
             KEYWORD_WHILE(155...160)("while"),
-            LocalVariableReadNode(161...164)(1),
+            LocalVariableReadNode(161...164)(0),
             StatementsNode(169...178)(
               [LocalVariableWriteNode(169...178)(
                  (169...172),
@@ -222,7 +222,7 @@ ProgramNode(2...188)(
                    "bar"
                  ),
                  (173...174),
-                 1
+                 0
                )]
             )
           )]
