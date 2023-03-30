@@ -41,10 +41,12 @@ module YARP
     test "AssocNode" do
       assert_location(AssocNode, "{ foo: :bar }", 2...11) { |node| node.elements.first }
       assert_location(AssocNode, "{ :foo => :bar }", 2...14) { |node| node.elements.first }
+      assert_location(AssocNode, "foo(bar: :baz)", 4...13) { |node| node.arguments.arguments.first.elements.first }
     end
 
     test "AssocSplatNode" do
       assert_location(AssocSplatNode, "{ **foo }", 2...7) { |node| node.elements.first }
+      assert_location(AssocSplatNode, "foo(**bar)", 4...9) { |node| node.arguments.arguments.first.elements.first }
     end
 
     test "BeginNode" do
