@@ -11,7 +11,7 @@ ProgramNode(0...29)(
        [InNode(8...25)(
           ArrayPatternNode(11...20)(
             ConstantReadNode(11...12)(),
-            [AsPatternNode(13...19)(
+            [CapturePatternNode(13...19)(
                ConstantReadNode(13...14)(),
                LocalVariableWriteNode(18...19)((18...19), nil, nil, 0),
                (15...17)
