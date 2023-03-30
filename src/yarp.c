@@ -8198,32 +8198,21 @@ parse_method_definition_name(yp_parser_t *parser) {
   }
 }
 
-// Take a heredoc node that is indented by a ~ and trim the leading whitespace.
-static void
-parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t quote) {
-  yp_node_list_t *node_list;
+// Calculate the common leading whitespace for each line in a heredoc.
+static int
+parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
+  int common_whitespace = -1;
 
-  if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-    node_list = &((yp_interpolated_x_string_node_t *) node)->parts;
-  } else {
-    node_list = &((yp_heredoc_node_t *) node)->parts;
-  }
+  for (size_t index = 0; index < nodes->size; index++) {
+    yp_node_t *node = nodes->nodes[index];
 
-  // Tilde heredocs trim the leading whitespace of all lines to the minimum
-  // amount of leading whitespace. We need to calculate the common amount of
-  // leading whitespace.
-  int min_whitespace = -1;
-
-  for (size_t i = 0; i < node_list->size; i++) {
-    yp_node_t *node = node_list->nodes[i];
     if (node->type != YP_NODE_STRING_NODE) continue;
-
     yp_token_t *content = &((yp_string_node_t *) node)->content;
 
     // If the previous node wasn't a string node, we don't want to trim
     // whitespace. This could happen after an interpolated expression or
     // variable.
-    if (*content->start != '\n' && (i == 0 || node_list->nodes[i-1]->type == YP_NODE_STRING_NODE)) {
+    if (*content->start != '\n' && (index == 0 || nodes->nodes[index - 1]->type == YP_NODE_STRING_NODE)) {
       int cur_whitespace;
       const char *cur_char = content->start;
 
@@ -8243,8 +8232,8 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
           cur_char++;
         }
 
-        if (cur_whitespace < min_whitespace || min_whitespace == -1) {
-          min_whitespace = cur_whitespace;
+        if (cur_whitespace < common_whitespace || common_whitespace == -1) {
+          common_whitespace = cur_whitespace;
         }
 
         cur_char = memchr(cur_char + 1, '\n', (size_t) (parser->end - (cur_char + 1)));
@@ -8253,72 +8242,86 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
     }
   }
 
-  // If there is no common leading whitespace to trin, then we can return at
-  // this point.
-  if (min_whitespace <= 0) return;
+  return common_whitespace;
+}
+
+// Take a heredoc node that is indented by a ~ and trim the leading whitespace.
+static void
+parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t quote) {
+  yp_node_list_t *nodes;
+
+  if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+    nodes = &((yp_interpolated_x_string_node_t *) node)->parts;
+  } else {
+    nodes = &((yp_heredoc_node_t *) node)->parts;
+  }
+
+  // First, calculate how much common whitespace we need to trim. If there is
+  // none or it's 0, then we can return early.
+  int common_whitespace;
+  if ((common_whitespace = parse_heredoc_common_whitespace(parser, nodes)) <= 0) return;
 
   if (node->type == YP_NODE_HEREDOC_NODE) {
-    ((yp_heredoc_node_t *) node)->dedent = min_whitespace;
+    ((yp_heredoc_node_t *) node)->dedent = common_whitespace;
   }
 
   // Iterate over all nodes, and trim whitespace accordingly
-  for (size_t i = 0; i < node_list->size; i++) {
-    yp_node_t *node = node_list->nodes[i];
+  for (size_t i = 0; i < nodes->size; i++) {
+    yp_node_t *node = nodes->nodes[i];
 
-    if (node->type == YP_NODE_STRING_NODE) {
-      yp_string_t *node_str = &((yp_string_node_t *) node)->unescaped;
+    if (node->type != YP_NODE_STRING_NODE) continue;
+    yp_string_t *node_str = &((yp_string_node_t *) node)->unescaped;
 
-      // We convert all strings to be "owned" to make it simpler to manipulate memory
-      if (node_str->type != YP_STRING_OWNED) {
-        size_t length = yp_string_length(node_str);
-        const char *original = yp_string_source(node_str);
-        yp_string_owned_init(node_str, malloc(length), length);
-        memcpy(node_str->as.owned.source, original, length);
-      }
-
-      const char *cur_char = node_str->as.owned.source;
-      size_t new_size = node_str->as.owned.length;
-
-      // Construct a new string, with which we'll replace the existing string
-      char new_str[node_str->as.owned.length];
-      int new_str_index = 0;
-
-      bool first_iteration = (i == 0);
-
-      while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
-        if (!first_iteration) {
-          new_str[new_str_index] = cur_char[0];
-          new_str_index++;
-          cur_char++;
-
-          if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
-            break;
-          }
-        }
-
-        // Skip over the whitespace
-        if (first_iteration || cur_char[-1] == '\n') {
-          first_iteration = false;
-          int trimmed_whitespace = 0;
-
-          while (trimmed_whitespace < min_whitespace && cur_char[0] != '\n' && cur_char < (node_str->as.owned.source + node_str->as.owned.length)) {
-            if (*cur_char == '\t') {
-              trimmed_whitespace = (trimmed_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
-              if (trimmed_whitespace > min_whitespace) break;
-            } else {
-              trimmed_whitespace++;
-            }
-
-            cur_char++;
-            new_size--;
-          }
-        }
-      }
-
-      // Copy over the new string
-      memcpy(node_str->as.owned.source, new_str, new_size);
-      node_str->as.owned.length = new_size;
+    // We convert all strings to be "owned" to make it simpler to manipulate memory
+    if (node_str->type != YP_STRING_OWNED) {
+      size_t length = yp_string_length(node_str);
+      const char *original = yp_string_source(node_str);
+      yp_string_owned_init(node_str, malloc(length), length);
+      memcpy(node_str->as.owned.source, original, length);
     }
+
+    const char *cur_char = node_str->as.owned.source;
+    size_t new_size = node_str->as.owned.length;
+
+    // Construct a new string, with which we'll replace the existing string
+    char new_str[node_str->as.owned.length];
+    int new_str_index = 0;
+
+    bool first_iteration = (i == 0);
+
+    while (cur_char < node_str->as.owned.source + node_str->as.owned.length) {
+      if (!first_iteration) {
+        new_str[new_str_index] = cur_char[0];
+        new_str_index++;
+        cur_char++;
+
+        if (cur_char == (node_str->as.owned.source + node_str->as.owned.length)) {
+          break;
+        }
+      }
+
+      // Skip over the whitespace
+      if (first_iteration || cur_char[-1] == '\n') {
+        first_iteration = false;
+        int trimmed_whitespace = 0;
+
+        while (trimmed_whitespace < common_whitespace && cur_char[0] != '\n' && cur_char < (node_str->as.owned.source + node_str->as.owned.length)) {
+          if (*cur_char == '\t') {
+            trimmed_whitespace = (trimmed_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
+            if (trimmed_whitespace > common_whitespace) break;
+          } else {
+            trimmed_whitespace++;
+          }
+
+          cur_char++;
+          new_size--;
+        }
+      }
+    }
+
+    // Copy over the new string
+    memcpy(node_str->as.owned.source, new_str, new_size);
+    node_str->as.owned.length = new_size;
   }
 }
 
