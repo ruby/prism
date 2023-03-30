@@ -503,7 +503,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
           YP_ISEQ_TYPE_BLOCK
         );
 
-        yp_compile_node(&block_compiler, node->block);
+        yp_compile_node(&block_compiler, (yp_node_t *) node->block);
         block_iseq = yp_iseq_new(&block_compiler);
       }
 
@@ -524,7 +524,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     }
     case YP_NODE_CLASS_VARIABLE_READ_NODE: {
       yp_class_variable_read_node_t *node = (yp_class_variable_read_node_t *) base_node;
-      push_getclassvariable(compiler, ID2SYM(parse_node_symbol(node)), yp_inline_storage_new(compiler));
+      push_getclassvariable(compiler, ID2SYM(parse_node_symbol((yp_node_t *) node)), yp_inline_storage_new(compiler));
       return;
     }
     case YP_NODE_CLASS_VARIABLE_WRITE_NODE: {
@@ -673,7 +673,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     }
     case YP_NODE_PROGRAM_NODE: {
       yp_program_node_t *node = (yp_program_node_t *) base_node;
-      yp_compile_node(compiler, node->statements);
+      yp_compile_node(compiler, (yp_node_t *) node->statements);
       push_leave(compiler);
       return;
     }
@@ -714,7 +714,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     }
     case YP_NODE_STRING_INTERPOLATED_NODE: {
       yp_string_interpolated_node_t *node = (yp_string_interpolated_node_t *) base_node;
-      yp_compile_node(compiler, node->statements);
+      yp_compile_node(compiler, (yp_node_t *) node->statements);
       return;
     }
     case YP_NODE_SYMBOL_NODE: {
