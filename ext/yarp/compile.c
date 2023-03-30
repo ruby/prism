@@ -40,6 +40,12 @@ typedef struct yp_iseq_compiler {
   // This is the type of the instruction sequence.
   yp_iseq_type_t type;
 
+  // This is the optional argument information.
+  VALUE optionals;
+
+  // This is the number of arguments.
+  int arg_size;
+
   // This is the current size of the instruction sequence's instructions and
   // operands.
   size_t size;
@@ -59,6 +65,8 @@ yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_iseq_compiler_t *parent, 
     .stack_max = 0,
     .name = name,
     .type = type,
+    .optionals = rb_hash_new(),
+    .arg_size = 0,
     .size = 0,
     .inline_storage_index = 0
   };
@@ -160,7 +168,7 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
   rb_ary_push(code_location, INT2FIX(0));
 
   VALUE data = rb_hash_new();
-  rb_hash_aset(data, ID2SYM(rb_intern("arg_size")), INT2FIX(0));
+  rb_hash_aset(data, ID2SYM(rb_intern("arg_size")), INT2FIX(compiler->arg_size));
   rb_hash_aset(data, ID2SYM(rb_intern("local_size")), INT2FIX(0));
   rb_hash_aset(data, ID2SYM(rb_intern("stack_max")), INT2FIX(compiler->stack_max));
   rb_hash_aset(data, ID2SYM(rb_intern("node_id")), INT2FIX(-1));
@@ -189,7 +197,7 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
   rb_ary_push(iseq, INT2FIX(1));
   rb_ary_push(iseq, type);
   rb_ary_push(iseq, rb_ary_new());
-  rb_ary_push(iseq, rb_hash_new());
+  rb_ary_push(iseq, compiler->optionals);
   rb_ary_push(iseq, rb_ary_new());
   rb_ary_push(iseq, compiler->insns);
 
@@ -344,6 +352,11 @@ push_newrange(yp_iseq_compiler_t *compiler, VALUE flag) {
 }
 
 static inline VALUE
+push_nop(yp_iseq_compiler_t *compiler) {
+  return push_insn(compiler, -2 + 1, 1, ID2SYM(rb_intern("nop")));
+}
+
+static inline VALUE
 push_objtostring(yp_iseq_compiler_t *compiler, VALUE calldata) {
   return push_insn(compiler, -1 + 1, 2, ID2SYM(rb_intern("objtostring")), calldata);
 }
@@ -465,8 +478,36 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     }
     case YP_NODE_BLOCK_NODE: {
       yp_block_node_t *node = (yp_block_node_t *) base_node;
-      push_ruby_event(compiler, YP_RUBY_EVENT_B_CALL);
-      yp_compile_node(compiler, node->statements);
+
+      VALUE optional_labels = rb_ary_new();
+      if (node->parameters &&
+          node->parameters->parameters &&
+          node->parameters->parameters->optionals.size > 0) {
+        compiler->arg_size += node->parameters->parameters->optionals.size;
+
+        yp_node_list_t *optionals = &node->parameters->parameters->optionals;
+        for (size_t i = 0; i < optionals->size; i++) {
+          VALUE label = push_label(compiler);
+          rb_ary_push(optional_labels, label);
+          yp_compile_node(compiler, optionals->nodes[i]);
+        }
+        VALUE label = push_label(compiler);
+        rb_ary_push(optional_labels, label);
+        rb_hash_aset(compiler->optionals, ID2SYM(rb_intern("opt")), optional_labels);
+
+        push_ruby_event(compiler, YP_RUBY_EVENT_B_CALL);
+        push_nop(compiler);
+      } else {
+        push_ruby_event(compiler, YP_RUBY_EVENT_B_CALL);
+      }
+
+
+
+      if (node->statements) {
+        yp_compile_node(compiler, node->statements);
+      } else {
+        push_putnil(compiler);
+      }
       push_ruby_event(compiler, YP_RUBY_EVENT_B_RETURN);
       push_leave(compiler);
       return;
@@ -543,13 +584,13 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       yp_constant_path_node_t *node = (yp_constant_path_node_t *) base_node;
       yp_compile_node(compiler, node->parent);
       push_putobject(compiler, Qfalse);
-      push_getconstant(compiler, ID2SYM(parse_node_symbol(node->child)));
+      push_getconstant(compiler, ID2SYM(parse_node_symbol((yp_node_t *) node->child)));
       return;
     }
     case YP_NODE_CONSTANT_READ_NODE:
       push_putnil(compiler);
       push_putobject(compiler, Qtrue);
-      push_getconstant(compiler, ID2SYM(parse_node_symbol(base_node)));
+      push_getconstant(compiler, ID2SYM(parse_node_symbol((yp_node_t *) base_node)));
       return;
     case YP_NODE_FALSE_NODE:
       push_putobject(compiler, Qfalse);
@@ -583,7 +624,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       return;
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
-      push_getinstancevariable(compiler, ID2SYM(parse_node_symbol(base_node)), yp_inline_storage_new(compiler));
+      push_getinstancevariable(compiler, ID2SYM(parse_node_symbol((yp_node_t *) base_node)), yp_inline_storage_new(compiler));
       return;
     case YP_NODE_INSTANCE_VARIABLE_WRITE_NODE: {
       yp_instance_variable_write_node_t *node = (yp_instance_variable_write_node_t *) base_node;
@@ -764,6 +805,14 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       push_putobject(compiler, parse_string(&node->unescaped));
       push_send(compiler, -1, yp_calldata_new(rb_intern("`"), YP_CALLDATA_FCALL | YP_CALLDATA_ARGS_SIMPLE, 1), Qnil);
       return;
+    }
+    case YP_NODE_OPTIONAL_PARAMETER_NODE: {
+      yp_optional_parameter_node_t *node = (yp_optional_parameter_node_t *) base_node;
+      int depth = 0;
+      int index = local_index(compiler, depth, node->name.start, node->name.end);
+      yp_compile_node(compiler, node->value);
+      push_setlocal(compiler, INT2FIX(index), INT2FIX(depth));
+      break;
     }
     default:
       rb_raise(rb_eNotImpError, "node type %d not implemented", base_node->type);
