@@ -18,20 +18,18 @@ EOF
 
 <<~EOF
   a
- #{b}
+ #{1}
 EOF
 
 <<~EOF
   a
-  #{b}
+  #{1}
 EOF
 
 <<~EOF
   a
   b
 EOF
-
-[]
 
 <<~EOF
   a
@@ -55,4 +53,9 @@ EOF
 <<~EOF
 	 a
 	b
+EOF
+
+<<~EOF
+  	a
+        b
 EOF
