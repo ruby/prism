@@ -8,6 +8,10 @@ module YARP
       assert_location(AliasNode, "alias foo bar")
     end
 
+    test "AlternationPatternNode" do
+      assert_location(AlternationPatternNode, "foo => bar | baz", 7...16, &:pattern)
+    end
+
     test "AndNode" do
       assert_location(AndNode, "foo and bar")
       assert_location(AndNode, "foo && bar")
@@ -23,6 +27,15 @@ module YARP
       assert_location(ArrayNode, "%I[foo bar baz]")
       assert_location(ArrayNode, "%w[foo bar baz]")
       assert_location(ArrayNode, "%W[foo bar baz]")
+    end
+
+    test "ArrayPatternNode" do
+      assert_location(ArrayPatternNode, "foo => bar, baz", 7...15, &:pattern)
+      assert_location(ArrayPatternNode, "foo => [bar, baz]", 7...17, &:pattern)
+      assert_location(ArrayPatternNode, "foo => *bar", 7...11, &:pattern)
+      assert_location(ArrayPatternNode, "foo => []", 7...9, &:pattern)
+      assert_location(ArrayPatternNode, "foo => Foo[]", 7...12, &:pattern)
+      assert_location(ArrayPatternNode, "foo => Foo[bar]", 7...15, &:pattern)
     end
 
     test "AssocNode" do
