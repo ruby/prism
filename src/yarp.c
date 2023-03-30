@@ -1467,28 +1467,6 @@ yp_hash_node_elements_append(yp_parser_t *parser, yp_hash_node_t *hash, yp_node_
   yp_node_list_append(parser, (yp_node_t *)hash, &hash->elements, element);
 }
 
-// Allocate a new HeredocNode node.
-static yp_heredoc_node_t *
-yp_heredoc_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing, int dedent) {
-  yp_heredoc_node_t *node = yp_alloc(parser, sizeof(yp_heredoc_node_t));
-
-  *node = (yp_heredoc_node_t) {
-    {
-      .type = YP_NODE_HEREDOC_NODE,
-      .location = {
-        .start = opening->start,
-        .end = closing->end
-      }
-    },
-    .opening = *opening,
-    .closing = *closing,
-    .dedent = dedent
-  };
-
-  yp_node_list_init(&node->parts);
-  return node;
-}
-
 // Allocate a new IfNode node.
 static yp_if_node_t *
 yp_if_node_create(yp_parser_t *parser,
@@ -1705,6 +1683,7 @@ yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *openin
   return node;
 }
 
+// Append a part to an InterpolatedStringNode node.
 static inline void
 yp_interpolated_string_node_append(yp_parser_t *parser, yp_interpolated_string_node_t *node, yp_node_t *part) {
   yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
@@ -8253,17 +8232,13 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
   if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
     nodes = &((yp_interpolated_x_string_node_t *) node)->parts;
   } else {
-    nodes = &((yp_heredoc_node_t *) node)->parts;
+    nodes = &((yp_interpolated_string_node_t *) node)->parts;
   }
 
   // First, calculate how much common whitespace we need to trim. If there is
   // none or it's 0, then we can return early.
   int common_whitespace;
   if ((common_whitespace = parse_heredoc_common_whitespace(parser, nodes)) <= 0) return;
-
-  if (node->type == YP_NODE_HEREDOC_NODE) {
-    ((yp_heredoc_node_t *) node)->dedent = common_whitespace;
-  }
 
   // Iterate over all nodes, and trim whitespace accordingly
   for (size_t i = 0; i < nodes->size; i++) {
@@ -9254,28 +9229,27 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return node;
     }
     case YP_TOKEN_HEREDOC_START: {
-      parser_lex(parser);
-      yp_node_t *node;
-
       assert(parser->lex_modes.current->mode == YP_LEX_HEREDOC);
       yp_heredoc_quote_t quote = parser->lex_modes.current->as.heredoc.quote;
       yp_heredoc_indent_t indent = parser->lex_modes.current->as.heredoc.indent;
 
+      yp_node_t *node;
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-        node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &parser->previous, &parser->previous);
+        node = (yp_node_t *) yp_interpolated_xstring_node_create(parser, &parser->current, &parser->current);
       } else {
-        node = (yp_node_t *) yp_heredoc_node_create(parser, &parser->previous, &parser->previous, 0);
+        node = (yp_node_t *) yp_interpolated_string_node_create(parser, &parser->current, NULL, &parser->current);
       }
 
+      parser_lex(parser);
+      yp_node_t *part;
+
       while (!match_any_type_p(parser, 2, YP_TOKEN_HEREDOC_END, YP_TOKEN_EOF)) {
-        yp_node_t *part = parse_string_part(parser);
-        if (part != NULL) {
-          if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
-            yp_interpolated_xstring_node_append(parser, (yp_interpolated_x_string_node_t *) node, part);
-          }
-          else {
-            yp_node_list_append(parser, node, &((yp_heredoc_node_t *) node)->parts, part);
-          }
+        if ((part = parse_string_part(parser)) == NULL) continue;
+
+        if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
+          yp_interpolated_xstring_node_append(parser, (yp_interpolated_x_string_node_t *) node, part);
+        } else {
+          yp_interpolated_string_node_append(parser, (yp_interpolated_string_node_t *) node, part);
         }
       }
 
@@ -9284,8 +9258,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         assert(node->type == YP_NODE_INTERPOLATED_X_STRING_NODE);
         ((yp_interpolated_x_string_node_t *) node)->closing = parser->previous;
       } else {
-        assert(node->type == YP_NODE_HEREDOC_NODE);
-        ((yp_heredoc_node_t *) node)->closing = parser->previous;
+        assert(node->type == YP_NODE_INTERPOLATED_STRING_NODE);
+        ((yp_interpolated_string_node_t *) node)->closing = parser->previous;
       }
 
       // If this is a heredoc that is indented with a ~, then we need to dedent

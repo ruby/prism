@@ -1,31 +1,27 @@
 ProgramNode(0...608)(
   ScopeNode(0...0)([]),
   StatementsNode(0...608)(
-    [HeredocNode(0...5)(
+    [InterpolatedStringNode(0...5)(
        HEREDOC_START(0...5)("<<DOC"),
        [],
-       HEREDOC_END(6...10)("DOC\n"),
-       0
+       HEREDOC_END(6...10)("DOC\n")
      ),
-     HeredocNode(11...18)(
+     InterpolatedStringNode(11...18)(
        HEREDOC_START(11...18)("<<'DOC'"),
        [],
-       HEREDOC_END(19...23)("DOC\n"),
-       0
+       HEREDOC_END(19...23)("DOC\n")
      ),
-     HeredocNode(24...30)(
+     InterpolatedStringNode(24...30)(
        HEREDOC_START(24...30)("<<~DOC"),
        [],
-       HEREDOC_END(31...35)("DOC\n"),
-       0
+       HEREDOC_END(31...35)("DOC\n")
      ),
-     HeredocNode(36...44)(
+     InterpolatedStringNode(36...44)(
        HEREDOC_START(36...44)("<<~'DOC'"),
        [],
-       HEREDOC_END(45...49)("DOC\n"),
-       0
+       HEREDOC_END(45...49)("DOC\n")
      ),
-     HeredocNode(56...60)(
+     InterpolatedStringNode(56...60)(
        HEREDOC_START(50...55)("<<DOC"),
        [StringNode(56...60)(
           nil,
@@ -33,10 +29,9 @@ ProgramNode(0...608)(
           nil,
           "  a\n"
         )],
-       HEREDOC_END(60...64)("DOC\n"),
-       0
+       HEREDOC_END(60...64)("DOC\n")
      ),
-     HeredocNode(73...77)(
+     InterpolatedStringNode(73...77)(
        HEREDOC_START(65...72)("<<'DOC'"),
        [StringNode(73...77)(
           nil,
@@ -44,10 +39,9 @@ ProgramNode(0...608)(
           nil,
           "  a\n"
         )],
-       HEREDOC_END(77...81)("DOC\n"),
-       0
+       HEREDOC_END(77...81)("DOC\n")
      ),
-     HeredocNode(88...98)(
+     InterpolatedStringNode(88...98)(
        HEREDOC_START(82...87)("<<DOC"),
        [StringNode(88...94)(
           nil,
@@ -61,10 +55,9 @@ ProgramNode(0...608)(
           EMBEXPR_END(96...97)("}")
         ),
         StringNode(97...98)(nil, STRING_CONTENT(97...98)("\n"), nil, "\n")],
-       HEREDOC_END(98...102)("DOC\n"),
-       0
+       HEREDOC_END(98...102)("DOC\n")
      ),
-     HeredocNode(110...120)(
+     InterpolatedStringNode(110...120)(
        HEREDOC_START(103...109)("<<~DOC"),
        [StringNode(110...116)(
           nil,
@@ -83,10 +76,9 @@ ProgramNode(0...608)(
           nil,
           "\n"
         )],
-       HEREDOC_END(120...124)("DOC\n"),
-       2
+       HEREDOC_END(120...124)("DOC\n")
      ),
-     HeredocNode(132...146)(
+     InterpolatedStringNode(132...146)(
        HEREDOC_START(125...131)("<<~DOC"),
        [StringNode(132...138)(
           nil,
@@ -105,10 +97,9 @@ ProgramNode(0...608)(
           nil,
           "\n" + "b\n"
         )],
-       HEREDOC_END(146...150)("DOC\n"),
-       2
+       HEREDOC_END(146...150)("DOC\n")
      ),
-     HeredocNode(158...168)(
+     InterpolatedStringNode(158...168)(
        HEREDOC_START(151...157)("<<~DOC"),
        [StringNode(158...168)(
           nil,
@@ -116,10 +107,9 @@ ProgramNode(0...608)(
           nil,
           "a\n" + "  b\n"
         )],
-       HEREDOC_END(168...172)("DOC\n"),
-       2
+       HEREDOC_END(168...172)("DOC\n")
      ),
-     HeredocNode(181...186)(
+     InterpolatedStringNode(181...186)(
        HEREDOC_START(173...180)("<<'DOC'"),
        [StringNode(181...186)(
           nil,
@@ -127,10 +117,9 @@ ProgramNode(0...608)(
           nil,
           "a\n" + "\n" + "b\n"
         )],
-       HEREDOC_END(186...190)("DOC\n"),
-       0
+       HEREDOC_END(186...190)("DOC\n")
      ),
-     HeredocNode(199...206)(
+     InterpolatedStringNode(199...206)(
        HEREDOC_START(191...198)("<<'DOC'"),
        [StringNode(199...206)(
           nil,
@@ -138,10 +127,9 @@ ProgramNode(0...608)(
           nil,
           " a\n" + "\n" + " b\n"
         )],
-       HEREDOC_END(206...210)("DOC\n"),
-       0
+       HEREDOC_END(206...210)("DOC\n")
      ),
-     HeredocNode(219...225)(
+     InterpolatedStringNode(219...225)(
        HEREDOC_START(211...218)("<<'DOC'"),
        [StringNode(219...225)(
           nil,
@@ -149,10 +137,9 @@ ProgramNode(0...608)(
           nil,
           " a\n" + "b\n"
         )],
-       HEREDOC_END(225...229)("DOC\n"),
-       0
+       HEREDOC_END(225...229)("DOC\n")
      ),
-     HeredocNode(236...247)(
+     InterpolatedStringNode(236...247)(
        HEREDOC_START(230...235)("<<DOC"),
        [StringInterpolatedNode(236...239)(
           EMBEXPR_BEGIN(236...238)("\#{"),
@@ -176,10 +163,9 @@ ProgramNode(0...608)(
           nil,
           "a\n"
         )],
-       HEREDOC_END(247...251)("DOC\n"),
-       0
+       HEREDOC_END(247...251)("DOC\n")
      ),
-     HeredocNode(258...271)(
+     InterpolatedStringNode(258...271)(
        HEREDOC_START(252...257)("<<DOC"),
        [StringNode(258...260)(nil, STRING_CONTENT(258...260)("  "), nil, "  "),
         StringInterpolatedNode(260...263)(
@@ -193,10 +179,9 @@ ProgramNode(0...608)(
           nil,
           "\n" + "  \#{}\n"
         )],
-       HEREDOC_END(271...275)("DOC\n"),
-       0
+       HEREDOC_END(271...275)("DOC\n")
      ),
-     HeredocNode(282...292)(
+     InterpolatedStringNode(282...292)(
        HEREDOC_START(276...281)("<<DOC"),
        [StringNode(282...284)(nil, STRING_CONTENT(282...284)(" a"), nil, " a"),
         StringInterpolatedNode(284...287)(
@@ -210,10 +195,9 @@ ProgramNode(0...608)(
           nil,
           "b\n" + " c\n"
         )],
-       HEREDOC_END(292...296)("DOC\n"),
-       0
+       HEREDOC_END(292...296)("DOC\n")
      ),
-     HeredocNode(304...310)(
+     InterpolatedStringNode(304...310)(
        HEREDOC_START(297...303)("<<~DOC"),
        [StringNode(304...306)(nil, STRING_CONTENT(304...306)("  "), nil, ""),
         StringInterpolatedNode(306...309)(
@@ -227,14 +211,13 @@ ProgramNode(0...608)(
           nil,
           "\n"
         )],
-       HEREDOC_END(310...314)("DOC\n"),
-       2
+       HEREDOC_END(310...314)("DOC\n")
      ),
      IfNode(315...340)(
        KEYWORD_IF(315...317)("if"),
        TrueNode(318...322)(),
        StatementsNode(332...340)(
-         [HeredocNode(332...340)(
+         [InterpolatedStringNode(332...340)(
             HEREDOC_START(325...331)("<<~DOC"),
             [StringNode(332...336)(
                nil,
@@ -253,8 +236,7 @@ ProgramNode(0...608)(
                nil,
                "\n"
              )],
-            HEREDOC_END(340...346)("  DOC\n"),
-            4
+            HEREDOC_END(340...346)("  DOC\n")
           )]
        ),
        nil,
@@ -264,7 +246,7 @@ ProgramNode(0...608)(
        KEYWORD_IF(351...353)("if"),
        TrueNode(354...358)(),
        StatementsNode(368...377)(
-         [HeredocNode(368...377)(
+         [InterpolatedStringNode(368...377)(
             HEREDOC_START(361...367)("<<~DOC"),
             [StringNode(368...373)(
                nil,
@@ -283,8 +265,7 @@ ProgramNode(0...608)(
                nil,
                "\n"
              )],
-            HEREDOC_END(377...383)("  DOC\n"),
-            4
+            HEREDOC_END(377...383)("  DOC\n")
           )]
        ),
        nil,
@@ -294,7 +275,7 @@ ProgramNode(0...608)(
        KEYWORD_IF(388...390)("if"),
        TrueNode(391...395)(),
        StatementsNode(405...414)(
-         [HeredocNode(405...414)(
+         [InterpolatedStringNode(405...414)(
             HEREDOC_START(398...404)("<<~DOC"),
             [StringNode(405...409)(
                nil,
@@ -313,8 +294,7 @@ ProgramNode(0...608)(
                nil,
                "a\n"
              )],
-            HEREDOC_END(414...420)("  DOC\n"),
-            4
+            HEREDOC_END(414...420)("  DOC\n")
           )]
        ),
        nil,
@@ -324,7 +304,7 @@ ProgramNode(0...608)(
        KEYWORD_IF(425...427)("if"),
        TrueNode(428...432)(),
        StatementsNode(444...455)(
-         [HeredocNode(444...455)(
+         [InterpolatedStringNode(444...455)(
             HEREDOC_START(435...443)("<<-'DOC'"),
             [StringNode(444...455)(
                nil,
@@ -332,8 +312,7 @@ ProgramNode(0...608)(
                nil,
                "   a\n" + "\n" + "   b\n"
              )],
-            HEREDOC_END(455...461)("  DOC\n"),
-            0
+            HEREDOC_END(455...461)("  DOC\n")
           )]
        ),
        nil,

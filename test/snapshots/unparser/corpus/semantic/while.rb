@@ -155,11 +155,10 @@ ProgramNode(2...188)(
          IDENTIFIER(106...107)("b"),
          PARENTHESIS_LEFT(107...108)("("),
          ArgumentsNode(108...114)(
-           [HeredocNode(108...114)(
+           [InterpolatedStringNode(108...114)(
               HEREDOC_START(108...114)("<<-FOO"),
               [],
-              HEREDOC_END(119...123)("FOO\n"),
-              0
+              HEREDOC_END(119...123)("FOO\n")
             )]
          ),
          PARENTHESIS_RIGHT(114...115)(")"),

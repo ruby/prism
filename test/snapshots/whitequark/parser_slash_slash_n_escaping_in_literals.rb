@@ -111,7 +111,7 @@ ProgramNode(0...210)(
        STRING_END(138...139)("'"),
        "a\n" + "b"
      ),
-     HeredocNode(151...156)(
+     InterpolatedStringNode(151...156)(
        HEREDOC_START(141...150)("<<-\"HERE\""),
        [StringNode(151...156)(
           nil,
@@ -119,10 +119,9 @@ ProgramNode(0...210)(
           nil,
           "a\n" + "b\n"
         )],
-       HEREDOC_END(156...161)("HERE\n"),
-       0
+       HEREDOC_END(156...161)("HERE\n")
      ),
-     HeredocNode(172...177)(
+     InterpolatedStringNode(172...177)(
        HEREDOC_START(162...171)("<<-'HERE'"),
        [StringNode(172...177)(
           nil,
@@ -130,8 +129,7 @@ ProgramNode(0...210)(
           nil,
           "a\n" + "b\n"
         )],
-       HEREDOC_END(177...182)("HERE\n"),
-       0
+       HEREDOC_END(177...182)("HERE\n")
      ),
      InterpolatedXStringNode(193...198)(
        HEREDOC_START(183...192)("<<-`HERE`"),

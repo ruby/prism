@@ -8,7 +8,7 @@ ProgramNode(0...1)(
        nil,
        ArgumentsNode(13...12)(
          [StringConcatNode(13...12)(
-            HeredocNode(13...17)(
+            InterpolatedStringNode(13...17)(
               HEREDOC_START(2...6)("<<~E"),
               [StringNode(13...17)(
                  nil,
@@ -16,8 +16,7 @@ ProgramNode(0...1)(
                  nil,
                  "x\n"
                )],
-              HEREDOC_END(17...19)("E\n"),
-              2
+              HEREDOC_END(17...19)("E\n")
             ),
             StringNode(7...12)(
               STRING_BEGIN(7...8)("\""),

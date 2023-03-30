@@ -23,7 +23,7 @@ ProgramNode(0...50)(
        STRING_END(29...30)("\""),
        "\u0003{1}"
      ),
-     HeredocNode(40...50)(
+     InterpolatedStringNode(40...50)(
        HEREDOC_START(32...39)("<<~HERE"),
        [StringNode(40...50)(
           nil,
@@ -31,8 +31,7 @@ ProgramNode(0...50)(
           nil,
           "\u0003{1}\n"
         )],
-       HEREDOC_END(50...55)("HERE\n"),
-       3
+       HEREDOC_END(50...55)("HERE\n")
      )]
   )
 )

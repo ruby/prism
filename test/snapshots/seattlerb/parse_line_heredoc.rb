@@ -4,7 +4,7 @@ ProgramNode(6...81)(
     [LocalVariableWriteNode(6...31)(
        (6...12),
        CallNode(32...31)(
-         HeredocNode(32...57)(
+         InterpolatedStringNode(32...57)(
            HEREDOC_START(15...25)("<<-HEREDOC"),
            [StringNode(32...57)(
               nil,
@@ -12,8 +12,7 @@ ProgramNode(6...81)(
               nil,
               "        very long string\n"
             )],
-           HEREDOC_END(57...71)("      HEREDOC\n"),
-           0
+           HEREDOC_END(57...71)("      HEREDOC\n")
          ),
          DOT(25...26)("."),
          IDENTIFIER(26...31)("strip"),

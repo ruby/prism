@@ -3,7 +3,7 @@ ProgramNode(6...67)(
   StatementsNode(6...67)(
     [LocalVariableWriteNode(6...48)(
        (6...12),
-       HeredocNode(23...48)(
+       InterpolatedStringNode(23...48)(
          HEREDOC_START(15...22)("<<-\"^D\""),
          [StringNode(23...48)(
             nil,
@@ -11,8 +11,7 @@ ProgramNode(6...67)(
             nil,
             "        very long string\n"
           )],
-         HEREDOC_END(48...57)("      ^D\n"),
-         0
+         HEREDOC_END(48...57)("      ^D\n")
        ),
        (13...14),
        0

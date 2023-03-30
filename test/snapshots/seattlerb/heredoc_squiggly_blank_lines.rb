@@ -3,7 +3,7 @@ ProgramNode(0...20)(
   StatementsNode(0...20)(
     [LocalVariableWriteNode(0...20)(
        (0...1),
-       HeredocNode(11...20)(
+       InterpolatedStringNode(11...20)(
          HEREDOC_START(4...10)("<<~EOF"),
          [StringNode(11...20)(
             nil,
@@ -11,8 +11,7 @@ ProgramNode(0...20)(
             nil,
             "x\n" + "\n" + "z\n"
           )],
-         HEREDOC_END(20...24)("EOF\n"),
-         2
+         HEREDOC_END(20...24)("EOF\n")
        ),
        (2...3),
        0

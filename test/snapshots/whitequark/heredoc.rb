@@ -1,7 +1,7 @@
 ProgramNode(9...61)(
   ScopeNode(0...0)([]),
   StatementsNode(9...61)(
-    [HeredocNode(9...17)(
+    [InterpolatedStringNode(9...17)(
        HEREDOC_START(0...8)("<<'HERE'"),
        [StringNode(9...17)(
           nil,
@@ -9,10 +9,9 @@ ProgramNode(9...61)(
           nil,
           "foo\n" + "bar\n"
         )],
-       HEREDOC_END(17...22)("HERE\n"),
-       0
+       HEREDOC_END(17...22)("HERE\n")
      ),
-     HeredocNode(30...38)(
+     InterpolatedStringNode(30...38)(
        HEREDOC_START(23...29)("<<HERE"),
        [StringNode(30...38)(
           nil,
@@ -20,8 +19,7 @@ ProgramNode(9...61)(
           nil,
           "foo\n" + "bar\n"
         )],
-       HEREDOC_END(38...43)("HERE\n"),
-       0
+       HEREDOC_END(38...43)("HERE\n")
      ),
      InterpolatedXStringNode(53...61)(
        HEREDOC_START(44...52)("<<`HERE`"),

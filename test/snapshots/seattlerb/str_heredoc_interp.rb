@@ -1,7 +1,7 @@
 ProgramNode(5...16)(
   ScopeNode(0...0)([]),
   StatementsNode(5...16)(
-    [HeredocNode(5...16)(
+    [InterpolatedStringNode(5...16)(
        HEREDOC_START(0...4)("<<\"\""),
        [StringInterpolatedNode(5...9)(
           EMBEXPR_BEGIN(5...7)("\#{"),
@@ -25,8 +25,7 @@ ProgramNode(5...16)(
           nil,
           "\n" + "blah2\n"
         )],
-       HEREDOC_END(16...17)("\n"),
-       0
+       HEREDOC_END(16...17)("\n")
      )]
   )
 )

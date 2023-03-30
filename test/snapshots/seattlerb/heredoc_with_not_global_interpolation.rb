@@ -1,7 +1,7 @@
 ProgramNode(11...15)(
   ScopeNode(0...0)([]),
   StatementsNode(11...15)(
-    [HeredocNode(11...15)(
+    [InterpolatedStringNode(11...15)(
        HEREDOC_START(0...10)("<<-HEREDOC"),
        [StringNode(11...15)(
           nil,
@@ -9,8 +9,7 @@ ProgramNode(11...15)(
           nil,
           "\#${\n"
         )],
-       HEREDOC_END(15...23)("HEREDOC\n"),
-       0
+       HEREDOC_END(15...23)("HEREDOC\n")
      )]
   )
 )
