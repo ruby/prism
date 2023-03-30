@@ -120,6 +120,7 @@ ProgramNode(0...402)(
              [RequiredParameterNode(54...55)(),
               RequiredParameterNode(57...61)()],
              [],
+             [],
              nil,
              [],
              nil,
@@ -298,6 +299,7 @@ ProgramNode(0...402)(
                   "[]"
                 )
               )],
+             [],
              nil,
              [],
              nil,
@@ -459,6 +461,7 @@ ProgramNode(0...402)(
                 EQUAL(265...266)("="),
                 IntegerNode(267...268)()
               )],
+             [],
              nil,
              [KeywordParameterNode(270...272)(LABEL(270...272)("z:"), nil)],
              nil,
@@ -484,6 +487,7 @@ ProgramNode(0...402)(
          BlockParametersNode(286...287)(
            ParametersNode(286...287)(
              [RequiredParameterNode(286...287)()],
+             [],
              [],
              nil,
              [],
@@ -517,6 +521,7 @@ ProgramNode(0...402)(
            ParametersNode(310...311)(
              [RequiredParameterNode(310...311)()],
              [],
+             [],
              nil,
              [],
              nil,
@@ -542,6 +547,7 @@ ProgramNode(0...402)(
          BlockParametersNode(326...327)(
            ParametersNode(326...327)(
              [RequiredParameterNode(326...327)()],
+             [],
              [],
              nil,
              [],
@@ -609,6 +615,7 @@ ProgramNode(0...402)(
                 ParametersNode(365...377)(
                   [],
                   [],
+                  [],
                   nil,
                   [KeywordParameterNode(365...369)(
                      LABEL(365...367)("a:"),
@@ -646,6 +653,7 @@ ProgramNode(0...402)(
          BlockParametersNode(393...397)(
            ParametersNode(393...397)(
              [RequiredParameterNode(393...396)()],
+             [],
              [],
              RestParameterNode(396...397)(COMMA(396...397)(","), nil),
              [],

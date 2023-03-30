@@ -5,8 +5,9 @@ ProgramNode(0...29)(
        IDENTIFIER(4...8)("call"),
        nil,
        ParametersNode(9...24)(
-         [RequiredParameterNode(9...15)(), RequiredParameterNode(20...24)()],
+         [RequiredParameterNode(9...15)()],
          [],
+         [RequiredParameterNode(20...24)()],
          RestParameterNode(17...18)(USTAR(17...18)("*"), nil),
          [],
          nil,

@@ -5,12 +5,13 @@ ProgramNode(0...24)(
        IDENTIFIER(4...5)("f"),
        nil,
        ParametersNode(7...19)(
-         [RequiredParameterNode(18...19)()],
+         [],
          [OptionalParameterNode(7...12)(
             IDENTIFIER(7...8)("a"),
             EQUAL(9...10)("="),
             IntegerNode(11...12)()
           )],
+         [RequiredParameterNode(18...19)()],
          RestParameterNode(14...16)(
            USTAR(14...15)("*"),
            IDENTIFIER(15...16)("b")

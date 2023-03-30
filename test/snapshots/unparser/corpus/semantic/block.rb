@@ -77,6 +77,7 @@ ProgramNode(0...148)(
            ParametersNode(74...75)(
              [RequiredParameterNode(74...75)()],
              [],
+             [],
              nil,
              [],
              nil,
@@ -114,6 +115,7 @@ ProgramNode(0...148)(
          BlockParametersNode(98...99)(
            ParametersNode(98...99)(
              [RequiredParameterNode(98...99)()],
+             [],
              [],
              nil,
              [],

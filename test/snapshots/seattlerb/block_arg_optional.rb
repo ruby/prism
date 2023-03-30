@@ -18,6 +18,7 @@ ProgramNode(0...13)(
                 EQUAL(7...8)("="),
                 IntegerNode(9...10)()
               )],
+             [],
              nil,
              [],
              nil,

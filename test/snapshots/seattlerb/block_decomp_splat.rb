@@ -21,6 +21,7 @@ ProgramNode(0...12)(
                 PARENTHESIS_RIGHT(8...9)(")")
               )],
              [],
+             [],
              nil,
              [],
              nil,

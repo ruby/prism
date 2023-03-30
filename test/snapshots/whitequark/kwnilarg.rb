@@ -9,6 +9,7 @@ ProgramNode(0...46)(
          ParametersNode(3...8)(
            [],
            [],
+           [],
            nil,
            [],
            NoKeywordsParameterNode(3...8)((3...5), (5...8)),
@@ -23,6 +24,7 @@ ProgramNode(0...46)(
        IDENTIFIER(18...19)("f"),
        nil,
        ParametersNode(20...25)(
+         [],
          [],
          [],
          nil,
@@ -50,6 +52,7 @@ ProgramNode(0...46)(
          ScopeNode(35...36)([]),
          BlockParametersNode(38...43)(
            ParametersNode(38...43)(
+             [],
              [],
              [],
              nil,

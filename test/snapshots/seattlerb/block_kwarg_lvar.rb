@@ -14,6 +14,7 @@ ProgramNode(0...20)(
            ParametersNode(6...14)(
              [],
              [],
+             [],
              nil,
              [KeywordParameterNode(6...14)(
                 LABEL(6...9)("kw:"),

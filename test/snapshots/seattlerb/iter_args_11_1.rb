@@ -17,13 +17,13 @@ ProgramNode(0...24)(
          ),
          BlockParametersNode(5...21)(
            ParametersNode(5...21)(
-             [RequiredParameterNode(5...6)(),
-              RequiredParameterNode(20...21)()],
+             [RequiredParameterNode(5...6)()],
              [OptionalParameterNode(8...14)(
                 IDENTIFIER(8...9)("b"),
                 EQUAL(10...11)("="),
                 IntegerNode(12...14)()
               )],
+             [RequiredParameterNode(20...21)()],
              RestParameterNode(16...18)(
                USTAR(16...17)("*"),
                IDENTIFIER(17...18)("c")

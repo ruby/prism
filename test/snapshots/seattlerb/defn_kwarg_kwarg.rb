@@ -7,6 +7,7 @@ ProgramNode(0...24)(
        ParametersNode(6...19)(
          [RequiredParameterNode(6...7)()],
          [],
+         [],
          nil,
          [KeywordParameterNode(9...13)(
             LABEL(9...11)("b:"),

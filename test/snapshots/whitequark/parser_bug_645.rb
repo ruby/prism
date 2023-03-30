@@ -17,6 +17,7 @@ ProgramNode(0...11)(
                 BRACE_RIGHT(9...10)("}")
               )
             )],
+           [],
            nil,
            [],
            nil,

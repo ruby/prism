@@ -33,6 +33,7 @@ ProgramNode(0...33)(
            ParametersNode(12...13)(
              [RequiredParameterNode(12...13)()],
              [],
+             [],
              nil,
              [],
              nil,

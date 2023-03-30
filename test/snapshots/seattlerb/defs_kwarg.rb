@@ -7,6 +7,7 @@ ProgramNode(0...19)(
        ParametersNode(11...15)(
          [],
          [],
+         [],
          nil,
          [KeywordParameterNode(11...15)(
             LABEL(11...13)("b:"),

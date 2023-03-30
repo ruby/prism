@@ -27,6 +27,7 @@ ProgramNode(0...76)(
              [RequiredParameterNode(21...22)(),
               RequiredParameterNode(24...25)()],
              [],
+             [],
              nil,
              [],
              nil,
@@ -56,6 +57,7 @@ ProgramNode(0...76)(
          ParametersNode(45...46)(
            [RequiredParameterNode(45...46)()],
            [],
+           [],
            nil,
            [],
            nil,
@@ -76,6 +78,7 @@ ProgramNode(0...76)(
          ParametersNode(55...59)(
            [RequiredParameterNode(55...56)(),
             RequiredParameterNode(58...59)()],
+           [],
            [],
            nil,
            [],
@@ -99,6 +102,7 @@ ProgramNode(0...76)(
          ParametersNode(68...72)(
            [RequiredParameterNode(68...69)(),
             RequiredParameterNode(71...72)()],
+           [],
            [],
            nil,
            [],

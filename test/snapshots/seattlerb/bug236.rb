@@ -14,6 +14,7 @@ ProgramNode(0...15)(
            ParametersNode(3...5)(
              [RequiredParameterNode(3...4)()],
              [],
+             [],
              RestParameterNode(4...5)(COMMA(4...5)(","), nil),
              [],
              nil,
@@ -39,6 +40,7 @@ ProgramNode(0...15)(
          BlockParametersNode(12...13)(
            ParametersNode(12...13)(
              [RequiredParameterNode(12...13)()],
+             [],
              [],
              nil,
              [],

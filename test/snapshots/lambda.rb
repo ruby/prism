@@ -9,6 +9,7 @@ ProgramNode(0...30)(
          ParametersNode(6...9)(
            [RequiredParameterNode(6...9)()],
            [],
+           [],
            nil,
            [],
            nil,
@@ -25,6 +26,7 @@ ProgramNode(0...30)(
        PARENTHESIS_LEFT(18...19)("("),
        BlockParametersNode(19...29)(
          ParametersNode(19...29)(
+           [],
            [],
            [],
            nil,

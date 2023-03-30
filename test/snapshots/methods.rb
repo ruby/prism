@@ -1,6 +1,6 @@
-ProgramNode(0...943)(
-  ScopeNode(0...0)([IDENTIFIER(238...239)("a"), IDENTIFIER(732...733)("c")]),
-  StatementsNode(0...943)(
+ProgramNode(0...995)(
+  ScopeNode(0...0)([IDENTIFIER(290...291)("a"), IDENTIFIER(784...785)("c")]),
+  StatementsNode(0...995)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -11,6 +11,7 @@ ProgramNode(0...943)(
             PARENTHESIS_LEFT(8...9)("("),
             PARENTHESIS_RIGHT(17...18)(")")
           )],
+         [],
          [],
          nil,
          [],
@@ -28,134 +29,176 @@ ProgramNode(0...943)(
        nil,
        (20...23)
      ),
-     DefNode(25...43)(
-       IDENTIFIER(29...30)("a"),
+     DefNode(25...74)(
+       IDENTIFIER(29...32)("foo"),
        nil,
-       nil,
-       BeginNode(0...43)(
+       ParametersNode(33...69)(
+         [RequiredDestructuredParameterNode(33...43)(
+            [RequiredParameterNode(34...37)(),
+             RequiredParameterNode(39...42)()],
+            PARENTHESIS_LEFT(33...34)("("),
+            PARENTHESIS_RIGHT(42...43)(")")
+          )],
+         [OptionalParameterNode(45...57)(
+            IDENTIFIER(45...53)("optional"),
+            EQUAL(54...55)("="),
+            IntegerNode(56...57)()
+          )],
+         [RequiredDestructuredParameterNode(59...69)(
+            [RequiredParameterNode(60...63)(),
+             RequiredParameterNode(65...68)()],
+            PARENTHESIS_LEFT(59...60)("("),
+            PARENTHESIS_RIGHT(68...69)(")")
+          )],
          nil,
+         [],
          nil,
-         nil,
-         nil,
-         EnsureNode(32...43)(
-           KEYWORD_ENSURE(32...38)("ensure"),
-           nil,
-           KEYWORD_END(40...43)("end")
-         ),
-         KEYWORD_END(40...43)("end")
+         nil
        ),
-       ScopeNode(25...28)([]),
+       nil,
+       ScopeNode(25...28)(
+         [IDENTIFIER(34...37)("bar"),
+          IDENTIFIER(39...42)("baz"),
+          IDENTIFIER(45...53)("optional"),
+          IDENTIFIER(60...63)("bin"),
+          IDENTIFIER(65...68)("bag")]
+       ),
        (25...28),
        nil,
+       (32...33),
+       (69...70),
        nil,
-       nil,
-       nil,
-       (40...43)
+       (71...74)
      ),
-     DefNode(45...58)(
-       IDENTIFIER(53...54)("a"),
-       ParenthesesNode(49...52)(
-         CallNode(50...51)(
+     DefNode(77...95)(
+       IDENTIFIER(81...82)("a"),
+       nil,
+       nil,
+       BeginNode(0...95)(
+         nil,
+         nil,
+         nil,
+         nil,
+         EnsureNode(84...95)(
+           KEYWORD_ENSURE(84...90)("ensure"),
+           nil,
+           KEYWORD_END(92...95)("end")
+         ),
+         KEYWORD_END(92...95)("end")
+       ),
+       ScopeNode(77...80)([]),
+       (77...80),
+       nil,
+       nil,
+       nil,
+       nil,
+       (92...95)
+     ),
+     DefNode(97...110)(
+       IDENTIFIER(105...106)("a"),
+       ParenthesesNode(101...104)(
+         CallNode(102...103)(
            nil,
            nil,
-           IDENTIFIER(50...51)("b"),
+           IDENTIFIER(102...103)("b"),
            nil,
            nil,
            nil,
            nil,
            "b"
          ),
-         (49...50),
-         (51...52)
+         (101...102),
+         (103...104)
        ),
        nil,
        nil,
-       ScopeNode(45...48)([]),
-       (45...48),
-       (52...53),
+       ScopeNode(97...100)([]),
+       (97...100),
+       (104...105),
        nil,
        nil,
        nil,
-       (55...58)
+       (107...110)
      ),
-     DefNode(60...74)(
-       IDENTIFIER(69...70)("b"),
-       ParenthesesNode(64...67)(
-         CallNode(65...66)(
+     DefNode(112...126)(
+       IDENTIFIER(121...122)("b"),
+       ParenthesesNode(116...119)(
+         CallNode(117...118)(
            nil,
            nil,
-           IDENTIFIER(65...66)("a"),
+           IDENTIFIER(117...118)("a"),
            nil,
            nil,
            nil,
            nil,
            "a"
          ),
-         (64...65),
-         (66...67)
+         (116...117),
+         (118...119)
        ),
        nil,
        nil,
-       ScopeNode(60...63)([]),
-       (60...63),
-       (67...69),
+       ScopeNode(112...115)([]),
+       (112...115),
+       (119...121),
        nil,
        nil,
        nil,
-       (71...74)
+       (123...126)
      ),
-     DefNode(76...91)(
-       IDENTIFIER(86...87)("a"),
-       FalseNode(80...85)(),
+     DefNode(128...143)(
+       IDENTIFIER(138...139)("a"),
+       FalseNode(132...137)(),
        nil,
        nil,
-       ScopeNode(76...79)([]),
-       (76...79),
-       (85...86),
+       ScopeNode(128...131)([]),
+       (128...131),
+       (137...138),
        nil,
        nil,
        nil,
-       (88...91)
+       (140...143)
      ),
-     DefNode(93...107)(
-       IDENTIFIER(97...98)("a"),
+     DefNode(145...159)(
+       IDENTIFIER(149...150)("a"),
        nil,
-       ParametersNode(99...102)(
+       ParametersNode(151...154)(
+         [],
          [],
          [],
          nil,
          [],
-         ForwardingParameterNode(99...102)(),
+         ForwardingParameterNode(151...154)(),
          nil
        ),
        nil,
-       ScopeNode(93...96)([UDOT_DOT_DOT(99...102)("...")]),
-       (93...96),
+       ScopeNode(145...148)([UDOT_DOT_DOT(151...154)("...")]),
+       (145...148),
        nil,
-       (98...99),
-       (102...103),
+       (150...151),
+       (154...155),
        nil,
-       (104...107)
+       (156...159)
      ),
-     DefNode(109...123)(
-       IDENTIFIER(118...119)("a"),
-       GlobalVariableReadNode(113...117)(GLOBAL_VARIABLE(113...117)("$var")),
+     DefNode(161...175)(
+       IDENTIFIER(170...171)("a"),
+       GlobalVariableReadNode(165...169)(GLOBAL_VARIABLE(165...169)("$var")),
        nil,
        nil,
-       ScopeNode(109...112)([]),
-       (109...112),
-       (117...118),
+       ScopeNode(161...164)([]),
+       (161...164),
+       (169...170),
        nil,
        nil,
        nil,
-       (120...123)
+       (172...175)
      ),
-     DefNode(125...136)(
-       IDENTIFIER(131...132)("b"),
-       CallNode(129...130)(
+     DefNode(177...188)(
+       IDENTIFIER(183...184)("b"),
+       CallNode(181...182)(
          nil,
          nil,
-         IDENTIFIER(129...130)("a"),
+         IDENTIFIER(181...182)("a"),
          nil,
          nil,
          nil,
@@ -164,181 +207,127 @@ ProgramNode(0...943)(
        ),
        nil,
        nil,
-       ScopeNode(125...128)([]),
-       (125...128),
-       (130...131),
+       ScopeNode(177...180)([]),
+       (177...180),
+       (182...183),
        nil,
        nil,
        nil,
-       (133...136)
+       (185...188)
      ),
-     DefNode(138...152)(
-       IDENTIFIER(147...148)("a"),
-       InstanceVariableReadNode(142...146)(),
+     DefNode(190...204)(
+       IDENTIFIER(199...200)("a"),
+       InstanceVariableReadNode(194...198)(),
        nil,
        nil,
-       ScopeNode(138...141)([]),
-       (138...141),
-       (146...147),
+       ScopeNode(190...193)([]),
+       (190...193),
+       (198...199),
        nil,
        nil,
        nil,
-       (149...152)
+       (201...204)
      ),
-     DefNode(154...167)(
-       IDENTIFIER(158...159)("a"),
+     DefNode(206...219)(
+       IDENTIFIER(210...211)("a"),
        nil,
-       ParametersNode(160...162)(
+       ParametersNode(212...214)(
+         [],
          [],
          [],
          nil,
-         [KeywordParameterNode(160...162)(LABEL(160...162)("b:"), nil)],
+         [KeywordParameterNode(212...214)(LABEL(212...214)("b:"), nil)],
          nil,
          nil
        ),
        nil,
-       ScopeNode(154...157)([LABEL(160...161)("b")]),
-       (154...157),
+       ScopeNode(206...209)([LABEL(212...213)("b")]),
+       (206...209),
        nil,
        nil,
        nil,
        nil,
-       (164...167)
+       (216...219)
      ),
-     StringNode(169...175)(
-       STRING_BEGIN(169...171)("%,"),
-       STRING_CONTENT(171...174)("abc"),
-       STRING_END(174...175)(","),
+     StringNode(221...227)(
+       STRING_BEGIN(221...223)("%,"),
+       STRING_CONTENT(223...226)("abc"),
+       STRING_END(226...227)(","),
        "abc"
      ),
-     DefNode(177...190)(
-       IDENTIFIER(181...182)("a"),
+     DefNode(229...242)(
+       IDENTIFIER(233...234)("a"),
        nil,
-       ParametersNode(183...185)(
+       ParametersNode(235...237)(
+         [],
          [],
          [],
          nil,
-         [KeywordParameterNode(183...185)(LABEL(183...185)("b:"), nil)],
+         [KeywordParameterNode(235...237)(LABEL(235...237)("b:"), nil)],
          nil,
          nil
        ),
        nil,
-       ScopeNode(177...180)([LABEL(183...184)("b")]),
-       (177...180),
+       ScopeNode(229...232)([LABEL(235...236)("b")]),
+       (229...232),
        nil,
-       (182...183),
-       (185...186),
+       (234...235),
+       (237...238),
        nil,
-       (187...190)
+       (239...242)
      ),
-     DefNode(192...206)(
-       IDENTIFIER(196...197)("a"),
+     DefNode(244...258)(
+       IDENTIFIER(248...249)("a"),
        nil,
-       ParametersNode(198...201)(
+       ParametersNode(250...253)(
+         [],
          [],
          [],
          nil,
          [],
-         KeywordRestParameterNode(198...201)(
-           USTAR_STAR(198...200)("**"),
-           IDENTIFIER(200...201)("b")
+         KeywordRestParameterNode(250...253)(
+           USTAR_STAR(250...252)("**"),
+           IDENTIFIER(252...253)("b")
          ),
          nil
        ),
        nil,
-       ScopeNode(192...195)([IDENTIFIER(200...201)("b")]),
-       (192...195),
+       ScopeNode(244...247)([IDENTIFIER(252...253)("b")]),
+       (244...247),
        nil,
-       (197...198),
-       (201...202),
+       (249...250),
+       (253...254),
        nil,
-       (203...206)
+       (255...258)
      ),
-     DefNode(208...221)(
-       IDENTIFIER(212...213)("a"),
+     DefNode(260...273)(
+       IDENTIFIER(264...265)("a"),
        nil,
-       ParametersNode(214...216)(
+       ParametersNode(266...268)(
+         [],
          [],
          [],
          nil,
          [],
-         KeywordRestParameterNode(214...216)(USTAR_STAR(214...216)("**"), nil),
+         KeywordRestParameterNode(266...268)(USTAR_STAR(266...268)("**"), nil),
          nil
        ),
        nil,
-       ScopeNode(208...211)([USTAR_STAR(214...216)("**")]),
-       (208...211),
+       ScopeNode(260...263)([USTAR_STAR(266...268)("**")]),
+       (260...263),
        nil,
-       (213...214),
-       (216...217),
-       nil,
-       (218...221)
-     ),
-     DefNode(223...236)(
-       IDENTIFIER(231...232)("a"),
-       ParenthesesNode(227...230)(
-         IntegerNode(228...229)(),
-         (227...228),
-         (229...230)
-       ),
-       nil,
-       nil,
-       ScopeNode(223...226)([]),
-       (223...226),
-       (230...231),
-       nil,
-       nil,
-       nil,
-       (233...236)
-     ),
-     LocalVariableWriteNode(238...243)(
-       (238...239),
-       IntegerNode(242...243)(),
-       (240...241),
-       0
-     ),
-     DefNode(245...254)(
-       IDENTIFIER(249...250)("a"),
-       nil,
-       nil,
-       nil,
-       ScopeNode(245...248)([]),
-       (245...248),
-       nil,
-       nil,
-       nil,
-       nil,
-       (251...254)
-     ),
-     DefNode(256...273)(
-       IDENTIFIER(260...261)("a"),
-       nil,
-       ParametersNode(262...269)(
-         [RequiredParameterNode(262...263)(),
-          RequiredParameterNode(265...266)(),
-          RequiredParameterNode(268...269)()],
-         [],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       nil,
-       ScopeNode(256...259)(
-         [IDENTIFIER(262...263)("b"),
-          IDENTIFIER(265...266)("c"),
-          IDENTIFIER(268...269)("d")]
-       ),
-       (256...259),
-       nil,
-       nil,
-       nil,
+       (265...266),
+       (268...269),
        nil,
        (270...273)
      ),
      DefNode(275...288)(
        IDENTIFIER(283...284)("a"),
-       NilNode(279...282)(),
+       ParenthesesNode(279...282)(
+         IntegerNode(280...281)(),
+         (279...280),
+         (281...282)
+       ),
        nil,
        nil,
        ScopeNode(275...278)([]),
@@ -349,159 +338,161 @@ ProgramNode(0...943)(
        nil,
        (285...288)
      ),
-     DefNode(290...308)(
-       IDENTIFIER(294...295)("a"),
+     LocalVariableWriteNode(290...295)(
+       (290...291),
+       IntegerNode(294...295)(),
+       (292...293),
+       0
+     ),
+     DefNode(297...306)(
+       IDENTIFIER(301...302)("a"),
        nil,
-       ParametersNode(296...304)(
+       nil,
+       nil,
+       ScopeNode(297...300)([]),
+       (297...300),
+       nil,
+       nil,
+       nil,
+       nil,
+       (303...306)
+     ),
+     DefNode(308...325)(
+       IDENTIFIER(312...313)("a"),
+       nil,
+       ParametersNode(314...321)(
+         [RequiredParameterNode(314...315)(),
+          RequiredParameterNode(317...318)(),
+          RequiredParameterNode(320...321)()],
          [],
          [],
          nil,
-         [KeywordParameterNode(296...298)(LABEL(296...298)("b:"), nil),
-          KeywordParameterNode(300...304)(
-            LABEL(300...302)("c:"),
-            IntegerNode(303...304)()
-          )],
+         [],
          nil,
          nil
        ),
        nil,
-       ScopeNode(290...293)([LABEL(296...297)("b"), LABEL(300...301)("c")]),
-       (290...293),
-       nil,
-       nil,
-       nil,
-       nil,
-       (305...308)
-     ),
-     DefNode(310...329)(
-       IDENTIFIER(314...315)("a"),
-       nil,
-       ParametersNode(316...324)(
-         [],
-         [],
-         nil,
-         [KeywordParameterNode(316...318)(LABEL(316...318)("b:"), nil),
-          KeywordParameterNode(320...324)(
-            LABEL(320...322)("c:"),
-            IntegerNode(323...324)()
-          )],
-         nil,
-         nil
+       ScopeNode(308...311)(
+         [IDENTIFIER(314...315)("b"),
+          IDENTIFIER(317...318)("c"),
+          IDENTIFIER(320...321)("d")]
        ),
+       (308...311),
        nil,
-       ScopeNode(310...313)([LABEL(316...317)("b"), LABEL(320...321)("c")]),
-       (310...313),
        nil,
-       (315...316),
-       (324...325),
        nil,
-       (326...329)
+       nil,
+       (322...325)
      ),
-     DefNode(331...352)(
+     DefNode(327...340)(
        IDENTIFIER(335...336)("a"),
+       NilNode(331...334)(),
        nil,
-       ParametersNode(337...347)(
+       nil,
+       ScopeNode(327...330)([]),
+       (327...330),
+       (334...335),
+       nil,
+       nil,
+       nil,
+       (337...340)
+     ),
+     DefNode(342...360)(
+       IDENTIFIER(346...347)("a"),
+       nil,
+       ParametersNode(348...356)(
+         [],
          [],
          [],
          nil,
-         [KeywordParameterNode(337...343)(
-            LABEL(337...339)("b:"),
-            IntegerNode(342...343)()
-          ),
-          KeywordParameterNode(345...347)(LABEL(345...347)("c:"), nil)],
+         [KeywordParameterNode(348...350)(LABEL(348...350)("b:"), nil),
+          KeywordParameterNode(352...356)(
+            LABEL(352...354)("c:"),
+            IntegerNode(355...356)()
+          )],
          nil,
          nil
        ),
        nil,
-       ScopeNode(331...334)([LABEL(337...338)("b"), LABEL(345...346)("c")]),
-       (331...334),
+       ScopeNode(342...345)([LABEL(348...349)("b"), LABEL(352...353)("c")]),
+       (342...345),
        nil,
-       (336...337),
-       (347...348),
        nil,
-       (349...352)
+       nil,
+       nil,
+       (357...360)
      ),
-     StringNode(354...360)(
-       STRING_BEGIN(354...356)("%."),
-       STRING_CONTENT(356...359)("abc"),
-       STRING_END(359...360)("."),
-       "abc"
-     ),
-     DefNode(362...384)(
+     DefNode(362...381)(
        IDENTIFIER(366...367)("a"),
        nil,
-       ParametersNode(368...380)(
+       ParametersNode(368...376)(
          [],
-         [OptionalParameterNode(368...373)(
-            IDENTIFIER(368...369)("b"),
-            EQUAL(370...371)("="),
-            IntegerNode(372...373)()
-          ),
-          OptionalParameterNode(375...380)(
-            IDENTIFIER(375...376)("c"),
-            EQUAL(377...378)("="),
-            IntegerNode(379...380)()
-          )],
+         [],
+         [],
          nil,
-         [],
+         [KeywordParameterNode(368...370)(LABEL(368...370)("b:"), nil),
+          KeywordParameterNode(372...376)(
+            LABEL(372...374)("c:"),
+            IntegerNode(375...376)()
+          )],
          nil,
          nil
        ),
        nil,
-       ScopeNode(362...365)(
-         [IDENTIFIER(368...369)("b"), IDENTIFIER(375...376)("c")]
-       ),
+       ScopeNode(362...365)([LABEL(368...369)("b"), LABEL(372...373)("c")]),
        (362...365),
        nil,
+       (367...368),
+       (376...377),
        nil,
-       nil,
-       nil,
-       (381...384)
+       (378...381)
      ),
-     DefNode(386...397)(
-       IDENTIFIER(390...391)("a"),
+     DefNode(383...404)(
+       IDENTIFIER(387...388)("a"),
        nil,
+       ParametersNode(389...399)(
+         [],
+         [],
+         [],
+         nil,
+         [KeywordParameterNode(389...395)(
+            LABEL(389...391)("b:"),
+            IntegerNode(394...395)()
+          ),
+          KeywordParameterNode(397...399)(LABEL(397...399)("c:"), nil)],
+         nil,
+         nil
+       ),
        nil,
+       ScopeNode(383...386)([LABEL(389...390)("b"), LABEL(397...398)("c")]),
+       (383...386),
        nil,
-       ScopeNode(386...389)([]),
-       (386...389),
+       (388...389),
+       (399...400),
        nil,
-       (391...392),
-       (392...393),
-       nil,
-       (394...397)
+       (401...404)
      ),
-     DefNode(399...417)(
-       IDENTIFIER(403...404)("a"),
+     StringNode(406...412)(
+       STRING_BEGIN(406...408)("%."),
+       STRING_CONTENT(408...411)("abc"),
+       STRING_END(411...412)("."),
+       "abc"
+     ),
+     DefNode(414...436)(
+       IDENTIFIER(418...419)("a"),
        nil,
-       ParametersNode(405...413)(
-         [RequiredParameterNode(405...406)()],
-         [OptionalParameterNode(408...413)(
-            IDENTIFIER(408...409)("c"),
-            EQUAL(410...411)("="),
-            IntegerNode(412...413)()
+       ParametersNode(420...432)(
+         [],
+         [OptionalParameterNode(420...425)(
+            IDENTIFIER(420...421)("b"),
+            EQUAL(422...423)("="),
+            IntegerNode(424...425)()
+          ),
+          OptionalParameterNode(427...432)(
+            IDENTIFIER(427...428)("c"),
+            EQUAL(429...430)("="),
+            IntegerNode(431...432)()
           )],
-         nil,
-         [],
-         nil,
-         nil
-       ),
-       nil,
-       ScopeNode(399...402)(
-         [IDENTIFIER(405...406)("b"), IDENTIFIER(408...409)("c")]
-       ),
-       (399...402),
-       nil,
-       nil,
-       nil,
-       nil,
-       (414...417)
-     ),
-     DefNode(419...430)(
-       IDENTIFIER(423...424)("a"),
-       nil,
-       ParametersNode(425...426)(
-         [RequiredParameterNode(425...426)()],
          [],
          nil,
          [],
@@ -509,166 +500,231 @@ ProgramNode(0...943)(
          nil
        ),
        nil,
-       ScopeNode(419...422)([IDENTIFIER(425...426)("b")]),
-       (419...422),
+       ScopeNode(414...417)(
+         [IDENTIFIER(420...421)("b"), IDENTIFIER(427...428)("c")]
+       ),
+       (414...417),
        nil,
        nil,
        nil,
        nil,
-       (427...430)
+       (433...436)
      ),
-     DefNode(432...464)(
-       IDENTIFIER(436...437)("a"),
+     DefNode(438...449)(
+       IDENTIFIER(442...443)("a"),
        nil,
        nil,
-       BeginNode(0...464)(
+       nil,
+       ScopeNode(438...441)([]),
+       (438...441),
+       nil,
+       (443...444),
+       (444...445),
+       nil,
+       (446...449)
+     ),
+     DefNode(451...469)(
+       IDENTIFIER(455...456)("a"),
+       nil,
+       ParametersNode(457...465)(
+         [RequiredParameterNode(457...458)()],
+         [OptionalParameterNode(460...465)(
+            IDENTIFIER(460...461)("c"),
+            EQUAL(462...463)("="),
+            IntegerNode(464...465)()
+          )],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(451...454)(
+         [IDENTIFIER(457...458)("b"), IDENTIFIER(460...461)("c")]
+       ),
+       (451...454),
+       nil,
+       nil,
+       nil,
+       nil,
+       (466...469)
+     ),
+     DefNode(471...482)(
+       IDENTIFIER(475...476)("a"),
+       nil,
+       ParametersNode(477...478)(
+         [RequiredParameterNode(477...478)()],
+         [],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(471...474)([IDENTIFIER(477...478)("b")]),
+       (471...474),
+       nil,
+       nil,
+       nil,
+       nil,
+       (479...482)
+     ),
+     DefNode(484...516)(
+       IDENTIFIER(488...489)("a"),
+       nil,
+       nil,
+       BeginNode(0...516)(
          nil,
          nil,
-         RescueNode(439...445)(
-           KEYWORD_RESCUE(439...445)("rescue"),
+         RescueNode(491...497)(
+           KEYWORD_RESCUE(491...497)("rescue"),
            [],
            nil,
            nil,
            nil,
            nil
          ),
-         ElseNode(447...459)(
-           KEYWORD_ELSE(447...451)("else"),
+         ElseNode(499...511)(
+           KEYWORD_ELSE(499...503)("else"),
            nil,
-           KEYWORD_ENSURE(453...459)("ensure")
+           KEYWORD_ENSURE(505...511)("ensure")
          ),
-         EnsureNode(453...464)(
-           KEYWORD_ENSURE(453...459)("ensure"),
+         EnsureNode(505...516)(
+           KEYWORD_ENSURE(505...511)("ensure"),
            nil,
-           KEYWORD_END(461...464)("end")
+           KEYWORD_END(513...516)("end")
          ),
-         KEYWORD_END(461...464)("end")
+         KEYWORD_END(513...516)("end")
        ),
-       ScopeNode(432...435)([]),
-       (432...435),
+       ScopeNode(484...487)([]),
+       (484...487),
        nil,
        nil,
        nil,
        nil,
-       (461...464)
+       (513...516)
      ),
-     DefNode(466...478)(
-       IDENTIFIER(470...471)("a"),
+     DefNode(518...530)(
+       IDENTIFIER(522...523)("a"),
        nil,
-       ParametersNode(472...474)(
+       ParametersNode(524...526)(
          [],
          [],
-         RestParameterNode(472...474)(
-           STAR(472...473)("*"),
-           IDENTIFIER(473...474)("b")
+         [],
+         RestParameterNode(524...526)(
+           STAR(524...525)("*"),
+           IDENTIFIER(525...526)("b")
          ),
          [],
          nil,
          nil
        ),
        nil,
-       ScopeNode(466...469)([IDENTIFIER(473...474)("b")]),
-       (466...469),
+       ScopeNode(518...521)([IDENTIFIER(525...526)("b")]),
+       (518...521),
        nil,
        nil,
        nil,
        nil,
-       (475...478)
+       (527...530)
      ),
-     DefNode(480...492)(
-       IDENTIFIER(484...485)("a"),
+     DefNode(532...544)(
+       IDENTIFIER(536...537)("a"),
        nil,
-       ParametersNode(486...487)(
+       ParametersNode(538...539)(
          [],
          [],
-         RestParameterNode(486...487)(USTAR(486...487)("*"), nil),
+         [],
+         RestParameterNode(538...539)(USTAR(538...539)("*"), nil),
          [],
          nil,
          nil
        ),
        nil,
-       ScopeNode(480...483)([USTAR(486...487)("*")]),
-       (480...483),
+       ScopeNode(532...535)([USTAR(538...539)("*")]),
+       (532...535),
        nil,
-       (485...486),
-       (487...488),
+       (537...538),
+       (539...540),
        nil,
-       (489...492)
+       (541...544)
      ),
-     DefNode(494...509)(
-       IDENTIFIER(498...499)("a"),
+     DefNode(546...561)(
+       IDENTIFIER(550...551)("a"),
        nil,
        nil,
-       StatementsNode(500...505)(
-         [LocalVariableWriteNode(500...505)(
-            (500...501),
-            IntegerNode(504...505)(),
-            (502...503),
+       StatementsNode(552...557)(
+         [LocalVariableWriteNode(552...557)(
+            (552...553),
+            IntegerNode(556...557)(),
+            (554...555),
             0
           )]
        ),
-       ScopeNode(494...497)([IDENTIFIER(500...501)("b")]),
-       (494...497),
+       ScopeNode(546...549)([IDENTIFIER(552...553)("b")]),
+       (546...549),
        nil,
        nil,
        nil,
        nil,
-       (506...509)
+       (558...561)
      ),
-     DefNode(511...525)(
-       IDENTIFIER(520...521)("a"),
-       SelfNode(515...519)(),
+     DefNode(563...577)(
+       IDENTIFIER(572...573)("a"),
+       SelfNode(567...571)(),
        nil,
        nil,
-       ScopeNode(511...514)([]),
-       (511...514),
-       (519...520),
+       ScopeNode(563...566)([]),
+       (563...566),
+       (571...572),
        nil,
        nil,
        nil,
-       (522...525)
+       (574...577)
      ),
-     DefNode(527...541)(
-       IDENTIFIER(536...537)("a"),
-       TrueNode(531...535)(),
+     DefNode(579...593)(
+       IDENTIFIER(588...589)("a"),
+       TrueNode(583...587)(),
        nil,
        nil,
-       ScopeNode(527...530)([]),
-       (527...530),
-       (535...536),
+       ScopeNode(579...582)([]),
+       (579...582),
+       (587...588),
        nil,
        nil,
        nil,
-       (538...541)
+       (590...593)
      ),
-     DefNode(543...552)(
-       IDENTIFIER(547...548)("a"),
+     DefNode(595...604)(
+       IDENTIFIER(599...600)("a"),
        nil,
        nil,
        nil,
-       ScopeNode(543...546)([]),
-       (543...546),
+       ScopeNode(595...598)([]),
+       (595...598),
        nil,
        nil,
        nil,
        nil,
-       (549...552)
+       (601...604)
      ),
-     DefNode(554...588)(
-       IDENTIFIER(558...560)("hi"),
+     DefNode(606...640)(
+       IDENTIFIER(610...612)("hi"),
        nil,
        nil,
-       StatementsNode(561...584)(
-         [IfNode(561...579)(
-            KEYWORD_IF_MODIFIER(572...574)("if"),
-            TrueNode(575...579)(),
-            StatementsNode(561...571)(
-              [ReturnNode(561...571)(
-                 KEYWORD_RETURN(561...567)("return"),
-                 ArgumentsNode(568...571)(
-                   [SymbolNode(568...571)(
-                      SYMBOL_BEGIN(568...569)(":"),
-                      IDENTIFIER(569...571)("hi"),
+       StatementsNode(613...636)(
+         [IfNode(613...631)(
+            KEYWORD_IF_MODIFIER(624...626)("if"),
+            TrueNode(627...631)(),
+            StatementsNode(613...623)(
+              [ReturnNode(613...623)(
+                 KEYWORD_RETURN(613...619)("return"),
+                 ArgumentsNode(620...623)(
+                   [SymbolNode(620...623)(
+                      SYMBOL_BEGIN(620...621)(":"),
+                      IDENTIFIER(621...623)("hi"),
                       nil,
                       "hi"
                     )]
@@ -678,429 +734,436 @@ ProgramNode(0...943)(
             nil,
             nil
           ),
-          SymbolNode(580...584)(
-            SYMBOL_BEGIN(580...581)(":"),
-            IDENTIFIER(581...584)("bye"),
+          SymbolNode(632...636)(
+            SYMBOL_BEGIN(632...633)(":"),
+            IDENTIFIER(633...636)("bye"),
             nil,
             "bye"
           )]
        ),
-       ScopeNode(554...557)([]),
-       (554...557),
+       ScopeNode(606...609)([]),
+       (606...609),
        nil,
        nil,
        nil,
        nil,
-       (585...588)
+       (637...640)
      ),
-     DefNode(590...601)(
-       IDENTIFIER(594...597)("foo"),
+     DefNode(642...653)(
+       IDENTIFIER(646...649)("foo"),
        nil,
        nil,
-       StatementsNode(600...601)([IntegerNode(600...601)()]),
-       ScopeNode(590...593)([]),
-       (590...593),
+       StatementsNode(652...653)([IntegerNode(652...653)()]),
+       ScopeNode(642...645)([]),
+       (642...645),
        nil,
        nil,
        nil,
-       (598...599),
+       (650...651),
        nil
      ),
-     DefNode(602...613)(
-       IDENTIFIER(606...609)("bar"),
+     DefNode(654...665)(
+       IDENTIFIER(658...661)("bar"),
        nil,
        nil,
-       StatementsNode(612...613)([IntegerNode(612...613)()]),
-       ScopeNode(602...605)([]),
-       (602...605),
+       StatementsNode(664...665)([IntegerNode(664...665)()]),
+       ScopeNode(654...657)([]),
+       (654...657),
        nil,
        nil,
        nil,
-       (610...611),
+       (662...663),
        nil
      ),
-     DefNode(615...633)(
-       IDENTIFIER(619...622)("foo"),
+     DefNode(667...685)(
+       IDENTIFIER(671...674)("foo"),
        nil,
-       ParametersNode(623...626)(
-         [RequiredParameterNode(623...626)()],
+       ParametersNode(675...678)(
+         [RequiredParameterNode(675...678)()],
+         [],
          [],
          nil,
          [],
          nil,
          nil
        ),
-       StatementsNode(630...633)([IntegerNode(630...633)()]),
-       ScopeNode(615...618)([IDENTIFIER(623...626)("bar")]),
-       (615...618),
+       StatementsNode(682...685)([IntegerNode(682...685)()]),
+       ScopeNode(667...670)([IDENTIFIER(675...678)("bar")]),
+       (667...670),
        nil,
-       (622...623),
-       (626...627),
-       (628...629),
-       nil
-     ),
-     DefNode(635...648)(
-       IDENTIFIER(639...642)("foo"),
-       nil,
-       nil,
-       StatementsNode(645...648)([IntegerNode(645...648)()]),
-       ScopeNode(635...638)([]),
-       (635...638),
-       nil,
-       nil,
-       nil,
-       (643...644),
-       nil
-     ),
-     DefNode(650...669)(
-       IDENTIFIER(654...655)("a"),
-       nil,
-       ParametersNode(656...657)(
-         [],
-         [],
-         RestParameterNode(656...657)(USTAR(656...657)("*"), nil),
-         [],
-         nil,
-         nil
-       ),
-       StatementsNode(660...664)(
-         [CallNode(660...664)(
-            nil,
-            nil,
-            IDENTIFIER(660...661)("b"),
-            PARENTHESIS_LEFT(661...662)("("),
-            ArgumentsNode(662...663)(
-              [SplatNode(662...663)(USTAR(662...663)("*"), nil)]
-            ),
-            PARENTHESIS_RIGHT(663...664)(")"),
-            nil,
-            "b"
-          )]
-       ),
-       ScopeNode(650...653)([USTAR(656...657)("*")]),
-       (650...653),
-       nil,
-       (655...656),
-       (657...658),
-       nil,
-       (666...669)
-     ),
-     DefNode(671...694)(
-       IDENTIFIER(675...676)("a"),
-       nil,
-       ParametersNode(677...680)(
-         [],
-         [],
-         nil,
-         [],
-         ForwardingParameterNode(677...680)(),
-         nil
-       ),
-       StatementsNode(683...689)(
-         [CallNode(683...689)(
-            nil,
-            nil,
-            IDENTIFIER(683...684)("b"),
-            PARENTHESIS_LEFT(684...685)("("),
-            ArgumentsNode(685...688)([ForwardingArgumentsNode(685...688)()]),
-            PARENTHESIS_RIGHT(688...689)(")"),
-            nil,
-            "b"
-          )]
-       ),
-       ScopeNode(671...674)([UDOT_DOT_DOT(677...680)("...")]),
-       (671...674),
-       nil,
-       (676...677),
+       (674...675),
+       (678...679),
        (680...681),
-       nil,
-       (691...694)
+       nil
      ),
-     DefNode(696...725)(
-       IDENTIFIER(700...701)("a"),
+     DefNode(687...700)(
+       IDENTIFIER(691...694)("foo"),
        nil,
-       ParametersNode(702...705)(
+       nil,
+       StatementsNode(697...700)([IntegerNode(697...700)()]),
+       ScopeNode(687...690)([]),
+       (687...690),
+       nil,
+       nil,
+       nil,
+       (695...696),
+       nil
+     ),
+     DefNode(702...721)(
+       IDENTIFIER(706...707)("a"),
+       nil,
+       ParametersNode(708...709)(
          [],
+         [],
+         [],
+         RestParameterNode(708...709)(USTAR(708...709)("*"), nil),
          [],
          nil,
-         [],
-         ForwardingParameterNode(702...705)(),
          nil
        ),
-       StatementsNode(708...720)(
-         [CallNode(708...720)(
+       StatementsNode(712...716)(
+         [CallNode(712...716)(
             nil,
             nil,
-            IDENTIFIER(708...709)("b"),
-            PARENTHESIS_LEFT(709...710)("("),
-            ArgumentsNode(710...719)(
-              [IntegerNode(710...711)(),
-               IntegerNode(713...714)(),
-               ForwardingArgumentsNode(716...719)()]
+            IDENTIFIER(712...713)("b"),
+            PARENTHESIS_LEFT(713...714)("("),
+            ArgumentsNode(714...715)(
+              [SplatNode(714...715)(USTAR(714...715)("*"), nil)]
             ),
-            PARENTHESIS_RIGHT(719...720)(")"),
+            PARENTHESIS_RIGHT(715...716)(")"),
             nil,
             "b"
           )]
        ),
-       ScopeNode(696...699)([UDOT_DOT_DOT(702...705)("...")]),
-       (696...699),
+       ScopeNode(702...705)([USTAR(708...709)("*")]),
+       (702...705),
        nil,
-       (701...702),
-       (705...706),
+       (707...708),
+       (709...710),
        nil,
-       (722...725)
+       (718...721)
      ),
-     DefNode(727...744)(
-       IDENTIFIER(739...740)("a"),
-       ParenthesesNode(731...738)(
-         LocalVariableWriteNode(732...737)(
-           (732...733),
-           CallNode(736...737)(
-             nil,
-             nil,
-             IDENTIFIER(736...737)("b"),
-             nil,
-             nil,
-             nil,
-             nil,
-             "b"
-           ),
-           (734...735),
-           0
-         ),
-         (731...732),
-         (737...738)
-       ),
+     DefNode(723...746)(
+       IDENTIFIER(727...728)("a"),
        nil,
-       nil,
-       ScopeNode(727...730)([]),
-       (727...730),
-       (738...739),
-       nil,
-       nil,
-       nil,
-       (741...744)
-     ),
-     DefNode(746...758)(
-       IDENTIFIER(750...751)("a"),
-       nil,
-       ParametersNode(752...754)(
+       ParametersNode(729...732)(
+         [],
          [],
          [],
          nil,
          [],
-         nil,
-         BlockParameterNode(752...754)(IDENTIFIER(753...754)("b"), (752...753))
-       ),
-       nil,
-       ScopeNode(746...749)([IDENTIFIER(753...754)("b")]),
-       (746...749),
-       nil,
-       nil,
-       nil,
-       nil,
-       (755...758)
-     ),
-     DefNode(760...772)(
-       IDENTIFIER(764...765)("a"),
-       nil,
-       ParametersNode(766...767)(
-         [],
-         [],
-         nil,
-         [],
-         nil,
-         BlockParameterNode(766...767)(nil, (766...767))
-       ),
-       nil,
-       ScopeNode(760...763)([AMPERSAND(766...767)("&")]),
-       (760...763),
-       nil,
-       (765...766),
-       (767...768),
-       nil,
-       (769...772)
-     ),
-     DefNode(774...789)(
-       IDENTIFIER(784...785)("a"),
-       ClassVariableReadNode(778...783)(),
-       nil,
-       nil,
-       ScopeNode(774...777)([]),
-       (774...777),
-       (783...784),
-       nil,
-       nil,
-       nil,
-       (786...789)
-     ),
-     DefNode(791...808)(
-       CONSTANT(803...804)("C"),
-       ParenthesesNode(795...802)(
-         LocalVariableWriteNode(796...801)(
-           (796...797),
-           CallNode(800...801)(
-             nil,
-             nil,
-             IDENTIFIER(800...801)("b"),
-             nil,
-             nil,
-             nil,
-             nil,
-             "b"
-           ),
-           (798...799),
-           0
-         ),
-         (795...796),
-         (801...802)
-       ),
-       nil,
-       nil,
-       ScopeNode(791...794)([]),
-       (791...794),
-       (802...803),
-       nil,
-       nil,
-       nil,
-       (805...808)
-     ),
-     DefNode(810...838)(
-       CONSTANT(819...833)("Array_function"),
-       SelfNode(814...818)(),
-       nil,
-       nil,
-       ScopeNode(810...813)([]),
-       (810...813),
-       (818...819),
-       nil,
-       nil,
-       nil,
-       (835...838)
-     ),
-     ConstantPathWriteNode(840...849)(
-       ConstantReadNode(840...845)(),
-       EQUAL(846...847)("="),
-       IntegerNode(848...849)()
-     ),
-     DefNode(851...866)(
-       IDENTIFIER(861...862)("a"),
-       ConstantReadNode(855...860)(),
-       nil,
-       nil,
-       ScopeNode(851...854)([]),
-       (851...854),
-       (860...861),
-       nil,
-       nil,
-       nil,
-       (863...866)
-     ),
-     DefNode(868...899)(
-       IDENTIFIER(872...873)("a"),
-       nil,
-       ParametersNode(874...877)(
-         [],
-         [],
-         nil,
-         [],
-         ForwardingParameterNode(874...877)(),
+         ForwardingParameterNode(729...732)(),
          nil
        ),
-       StatementsNode(880...894)(
-         [InterpolatedStringNode(880...894)(
-            STRING_BEGIN(880...881)("\""),
-            [StringNode(881...884)(
+       StatementsNode(735...741)(
+         [CallNode(735...741)(
+            nil,
+            nil,
+            IDENTIFIER(735...736)("b"),
+            PARENTHESIS_LEFT(736...737)("("),
+            ArgumentsNode(737...740)([ForwardingArgumentsNode(737...740)()]),
+            PARENTHESIS_RIGHT(740...741)(")"),
+            nil,
+            "b"
+          )]
+       ),
+       ScopeNode(723...726)([UDOT_DOT_DOT(729...732)("...")]),
+       (723...726),
+       nil,
+       (728...729),
+       (732...733),
+       nil,
+       (743...746)
+     ),
+     DefNode(748...777)(
+       IDENTIFIER(752...753)("a"),
+       nil,
+       ParametersNode(754...757)(
+         [],
+         [],
+         [],
+         nil,
+         [],
+         ForwardingParameterNode(754...757)(),
+         nil
+       ),
+       StatementsNode(760...772)(
+         [CallNode(760...772)(
+            nil,
+            nil,
+            IDENTIFIER(760...761)("b"),
+            PARENTHESIS_LEFT(761...762)("("),
+            ArgumentsNode(762...771)(
+              [IntegerNode(762...763)(),
+               IntegerNode(765...766)(),
+               ForwardingArgumentsNode(768...771)()]
+            ),
+            PARENTHESIS_RIGHT(771...772)(")"),
+            nil,
+            "b"
+          )]
+       ),
+       ScopeNode(748...751)([UDOT_DOT_DOT(754...757)("...")]),
+       (748...751),
+       nil,
+       (753...754),
+       (757...758),
+       nil,
+       (774...777)
+     ),
+     DefNode(779...796)(
+       IDENTIFIER(791...792)("a"),
+       ParenthesesNode(783...790)(
+         LocalVariableWriteNode(784...789)(
+           (784...785),
+           CallNode(788...789)(
+             nil,
+             nil,
+             IDENTIFIER(788...789)("b"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "b"
+           ),
+           (786...787),
+           0
+         ),
+         (783...784),
+         (789...790)
+       ),
+       nil,
+       nil,
+       ScopeNode(779...782)([]),
+       (779...782),
+       (790...791),
+       nil,
+       nil,
+       nil,
+       (793...796)
+     ),
+     DefNode(798...810)(
+       IDENTIFIER(802...803)("a"),
+       nil,
+       ParametersNode(804...806)(
+         [],
+         [],
+         [],
+         nil,
+         [],
+         nil,
+         BlockParameterNode(804...806)(IDENTIFIER(805...806)("b"), (804...805))
+       ),
+       nil,
+       ScopeNode(798...801)([IDENTIFIER(805...806)("b")]),
+       (798...801),
+       nil,
+       nil,
+       nil,
+       nil,
+       (807...810)
+     ),
+     DefNode(812...824)(
+       IDENTIFIER(816...817)("a"),
+       nil,
+       ParametersNode(818...819)(
+         [],
+         [],
+         [],
+         nil,
+         [],
+         nil,
+         BlockParameterNode(818...819)(nil, (818...819))
+       ),
+       nil,
+       ScopeNode(812...815)([AMPERSAND(818...819)("&")]),
+       (812...815),
+       nil,
+       (817...818),
+       (819...820),
+       nil,
+       (821...824)
+     ),
+     DefNode(826...841)(
+       IDENTIFIER(836...837)("a"),
+       ClassVariableReadNode(830...835)(),
+       nil,
+       nil,
+       ScopeNode(826...829)([]),
+       (826...829),
+       (835...836),
+       nil,
+       nil,
+       nil,
+       (838...841)
+     ),
+     DefNode(843...860)(
+       CONSTANT(855...856)("C"),
+       ParenthesesNode(847...854)(
+         LocalVariableWriteNode(848...853)(
+           (848...849),
+           CallNode(852...853)(
+             nil,
+             nil,
+             IDENTIFIER(852...853)("b"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "b"
+           ),
+           (850...851),
+           0
+         ),
+         (847...848),
+         (853...854)
+       ),
+       nil,
+       nil,
+       ScopeNode(843...846)([]),
+       (843...846),
+       (854...855),
+       nil,
+       nil,
+       nil,
+       (857...860)
+     ),
+     DefNode(862...890)(
+       CONSTANT(871...885)("Array_function"),
+       SelfNode(866...870)(),
+       nil,
+       nil,
+       ScopeNode(862...865)([]),
+       (862...865),
+       (870...871),
+       nil,
+       nil,
+       nil,
+       (887...890)
+     ),
+     ConstantPathWriteNode(892...901)(
+       ConstantReadNode(892...897)(),
+       EQUAL(898...899)("="),
+       IntegerNode(900...901)()
+     ),
+     DefNode(903...918)(
+       IDENTIFIER(913...914)("a"),
+       ConstantReadNode(907...912)(),
+       nil,
+       nil,
+       ScopeNode(903...906)([]),
+       (903...906),
+       (912...913),
+       nil,
+       nil,
+       nil,
+       (915...918)
+     ),
+     DefNode(920...951)(
+       IDENTIFIER(924...925)("a"),
+       nil,
+       ParametersNode(926...929)(
+         [],
+         [],
+         [],
+         nil,
+         [],
+         ForwardingParameterNode(926...929)(),
+         nil
+       ),
+       StatementsNode(932...946)(
+         [InterpolatedStringNode(932...946)(
+            STRING_BEGIN(932...933)("\""),
+            [StringNode(933...936)(
                nil,
-               STRING_CONTENT(881...884)("foo"),
+               STRING_CONTENT(933...936)("foo"),
                nil,
                "foo"
              ),
-             StringInterpolatedNode(884...893)(
-               EMBEXPR_BEGIN(884...886)("\#{"),
-               StatementsNode(886...892)(
-                 [CallNode(886...892)(
+             StringInterpolatedNode(936...945)(
+               EMBEXPR_BEGIN(936...938)("\#{"),
+               StatementsNode(938...944)(
+                 [CallNode(938...944)(
                     nil,
                     nil,
-                    IDENTIFIER(886...887)("b"),
-                    PARENTHESIS_LEFT(887...888)("("),
-                    ArgumentsNode(888...891)(
-                      [ForwardingArgumentsNode(888...891)()]
+                    IDENTIFIER(938...939)("b"),
+                    PARENTHESIS_LEFT(939...940)("("),
+                    ArgumentsNode(940...943)(
+                      [ForwardingArgumentsNode(940...943)()]
                     ),
-                    PARENTHESIS_RIGHT(891...892)(")"),
+                    PARENTHESIS_RIGHT(943...944)(")"),
                     nil,
                     "b"
                   )]
                ),
-               EMBEXPR_END(892...893)("}")
+               EMBEXPR_END(944...945)("}")
              )],
-            STRING_END(893...894)("\"")
+            STRING_END(945...946)("\"")
           )]
        ),
-       ScopeNode(868...871)([UDOT_DOT_DOT(874...877)("...")]),
-       (868...871),
+       ScopeNode(920...923)([UDOT_DOT_DOT(926...929)("...")]),
+       (920...923),
        nil,
-       (873...874),
-       (877...878),
+       (925...926),
+       (929...930),
        nil,
-       (896...899)
+       (948...951)
      ),
-     DefNode(901...943)(
-       IDENTIFIER(905...908)("foo"),
+     DefNode(953...995)(
+       IDENTIFIER(957...960)("foo"),
        nil,
        nil,
-       StatementsNode(911...939)(
-         [CallNode(911...939)(
-            HashNode(911...912)(
-              BRACE_LEFT(911...912)("{"),
+       StatementsNode(963...991)(
+         [CallNode(963...991)(
+            HashNode(963...964)(
+              BRACE_LEFT(963...964)("{"),
               [],
-              BRACE_RIGHT(912...913)("}")
+              BRACE_RIGHT(964...965)("}")
             ),
-            DOT(913...914)("."),
-            IDENTIFIER(914...919)("merge"),
+            DOT(965...966)("."),
+            IDENTIFIER(966...971)("merge"),
             nil,
-            ArgumentsNode(920...939)(
-              [HashNode(920...939)(
+            ArgumentsNode(972...991)(
+              [HashNode(972...991)(
                  nil,
-                 [AssocSplatNode(920...925)(
-                    CallNode(922...925)(
+                 [AssocSplatNode(972...977)(
+                    CallNode(974...977)(
                       nil,
                       nil,
-                      IDENTIFIER(922...925)("bar"),
+                      IDENTIFIER(974...977)("bar"),
                       nil,
                       nil,
                       nil,
                       nil,
                       "bar"
                     ),
-                    (920...922)
+                    (972...974)
                   ),
-                  AssocSplatNode(927...932)(
-                    CallNode(929...932)(
+                  AssocSplatNode(979...984)(
+                    CallNode(981...984)(
                       nil,
                       nil,
-                      IDENTIFIER(929...932)("baz"),
+                      IDENTIFIER(981...984)("baz"),
                       nil,
                       nil,
                       nil,
                       nil,
                       "baz"
                     ),
-                    (927...929)
+                    (979...981)
                   ),
-                  AssocSplatNode(934...939)(
-                    CallNode(936...939)(
+                  AssocSplatNode(986...991)(
+                    CallNode(988...991)(
                       nil,
                       nil,
-                      IDENTIFIER(936...939)("qux"),
+                      IDENTIFIER(988...991)("qux"),
                       nil,
                       nil,
                       nil,
                       nil,
                       "qux"
                     ),
-                    (934...936)
+                    (986...988)
                   )],
                  nil
                )]
@@ -1110,13 +1173,13 @@ ProgramNode(0...943)(
             "merge"
           )]
        ),
-       ScopeNode(901...904)([]),
-       (901...904),
+       ScopeNode(953...956)([]),
+       (953...956),
        nil,
        nil,
        nil,
        nil,
-       (940...943)
+       (992...995)
      )]
   )
 )

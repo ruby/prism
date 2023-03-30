@@ -126,6 +126,7 @@ ProgramNode(0...168)(
              ParametersNode(152...153)(
                [RequiredParameterNode(152...153)()],
                [],
+               [],
                nil,
                [],
                nil,

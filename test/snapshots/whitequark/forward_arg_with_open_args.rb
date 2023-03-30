@@ -9,6 +9,7 @@ ProgramNode(0...292)(
             ParametersNode(9...12)(
               [],
               [],
+              [],
               nil,
               [],
               ForwardingParameterNode(9...12)(),
@@ -46,6 +47,7 @@ ProgramNode(0...292)(
             ParametersNode(39...42)(
               [],
               [],
+              [],
               nil,
               [],
               ForwardingParameterNode(39...42)(),
@@ -81,6 +83,7 @@ ProgramNode(0...292)(
        ParametersNode(68...71)(
          [],
          [],
+         [],
          nil,
          [],
          ForwardingParameterNode(68...71)(),
@@ -99,6 +102,7 @@ ProgramNode(0...292)(
        IDENTIFIER(81...84)("foo"),
        nil,
        ParametersNode(85...88)(
+         [],
          [],
          [],
          nil,
@@ -132,6 +136,7 @@ ProgramNode(0...292)(
        ParametersNode(113...119)(
          [RequiredParameterNode(113...114)()],
          [],
+         [],
          nil,
          [],
          ForwardingParameterNode(116...119)(),
@@ -164,6 +169,7 @@ ProgramNode(0...292)(
        nil,
        ParametersNode(144...150)(
          [RequiredParameterNode(144...145)()],
+         [],
          [],
          nil,
          [],
@@ -202,6 +208,7 @@ ProgramNode(0...292)(
             EQUAL(180...181)("="),
             IntegerNode(182...183)()
           )],
+         [],
          nil,
          [],
          ForwardingParameterNode(185...188)(),
@@ -230,6 +237,7 @@ ProgramNode(0...292)(
             EQUAL(204...205)("="),
             IntegerNode(206...207)()
           )],
+         [],
          nil,
          [],
          ForwardingParameterNode(209...212)(),
@@ -267,6 +275,7 @@ ProgramNode(0...292)(
             EQUAL(239...240)("="),
             IntegerNode(241...242)()
           )],
+         [],
          nil,
          [],
          ForwardingParameterNode(244...247)(),
@@ -299,6 +308,7 @@ ProgramNode(0...292)(
        nil,
        ParametersNode(272...278)(
          [RequiredParameterNode(272...273)()],
+         [],
          [],
          nil,
          [],

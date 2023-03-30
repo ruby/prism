@@ -11,6 +11,7 @@ ProgramNode(0...6)(
            ParametersNode(7...12)(
              [],
              [],
+             [],
              RestParameterNode(7...12)(
                STAR(7...8)("*"),
                IDENTIFIER(8...12)("args")
