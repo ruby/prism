@@ -24,6 +24,10 @@ class CompileTest < Test::Unit::TestCase
     assert_compiles("foo { bar }")
   end
 
+  test "BlockNode with optionals" do
+    assert_compiles("foo { |x = 1| bar }")
+  end
+
   test "CallNode" do
     assert_compiles("foo")
     assert_compiles("foo(bar)")
@@ -152,8 +156,8 @@ class CompileTest < Test::Unit::TestCase
     assert_kind_of Integer, actual[4][:local_size]
     assert_kind_of Integer, actual[4][:node_id]
 
-    assert_equal expected[4][:code_location].length, actual[4][:code_location].length
-    assert_equal expected[4][:node_ids].length, actual[4][:node_ids].length
+    assert_equal expected[4][:code_location].length, actual[4][:code_location].length, "Unexpected difference in code_location length"
+    assert_equal expected[4][:node_ids].length, actual[4][:node_ids].length, "Unexpected difference in node_ids length"
 
     # Then we have the name of the iseq, the relative file path, the absolute
     # file path, and the line number. We don't have this working quite yet.
@@ -170,7 +174,7 @@ class CompileTest < Test::Unit::TestCase
 
     # Next we have the argument options. These are used in block and method
     # iseqs to reflect how the arguments are passed.
-    assert_equal expected[11], actual[11]
+    assert_equal expected[11], actual[11], "Unexpected difference in argument options"
 
     # Next we have the catch table entries. We don't have this working yet.
     assert_kind_of Array, actual[12]
