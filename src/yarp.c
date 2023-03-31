@@ -3930,8 +3930,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0x1111 is a hexadecimal number
       case 'x':
       case 'X':
-        if (yp_char_is_hexidecimal_digit(*++parser->current.end)) {
-          parser->current.end += yp_strspn_hexidecimal_number(parser->current.end, parser->end - parser->current.end);
+        if (yp_char_is_hexadecimal_digit(*++parser->current.end)) {
+          parser->current.end += yp_strspn_hexadecimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid hexadecimal number.");
         }

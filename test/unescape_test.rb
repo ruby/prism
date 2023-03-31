@@ -66,7 +66,7 @@ module UnescapeTest
       assert_unescape_all("a", "\\141")
     end
 
-    test "hexidecimal" do
+    test "hexadecimal" do
       assert_unescape_all("\a", "\\x7")
       assert_unescape_all("#", "\\x23")
       assert_unescape_all("a", "\\x61")

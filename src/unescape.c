@@ -5,9 +5,9 @@
 /******************************************************************************/
 
 static inline bool
-yp_char_is_hexidecimal_digits(const char *c, size_t length) {
+yp_char_is_hexadecimal_digits(const char *c, size_t length) {
   for (size_t index = 0; index < length; index++) {
-    if (!yp_char_is_hexidecimal_digit(c[index])) {
+    if (!yp_char_is_hexadecimal_digit(c[index])) {
       return false;
     }
   }
@@ -83,7 +83,7 @@ unescape_hexadecimal_digit(const char value) {
 static inline size_t
 unescape_hexadecimal(const char *backslash, unsigned char *value) {
   *value = unescape_hexadecimal_digit(backslash[2]);
-  if (!yp_char_is_hexidecimal_digit(backslash[3])) {
+  if (!yp_char_is_hexadecimal_digit(backslash[3])) {
     return 3;
   }
 
@@ -231,7 +231,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
         while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
           const char *unicode_start = unicode_cursor;
-          int hexadecimal_length = yp_strspn_hexidecimal_digit(unicode_cursor, end - unicode_cursor);
+          int hexadecimal_length = yp_strspn_hexadecimal_digit(unicode_cursor, end - unicode_cursor);
 
           // \u{nnnn} character literal allows only 1-6 hexadecimal digits
           if (hexadecimal_length > 6)
@@ -265,7 +265,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
         return unicode_cursor + 1;
       }
 
-      if ((backslash + 2) < end && yp_char_is_hexidecimal_digits(backslash + 2, 4)) {
+      if ((backslash + 2) < end && yp_char_is_hexadecimal_digits(backslash + 2, 4)) {
         uint32_t value;
         unescape_unicode(backslash + 2, 4, &value);
 
