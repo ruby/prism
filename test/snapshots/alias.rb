@@ -1,6 +1,6 @@
-ProgramNode(0...175)(
+ProgramNode(0...199)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...175)(
+  StatementsNode(0...199)(
     [AliasNode(0...15)(
        SymbolNode(6...10)(
          SYMBOL_BEGIN(6...7)(":"),
@@ -109,6 +109,26 @@ ProgramNode(0...175)(
          "eql?"
        ),
        (160...165)
+     ),
+     AliasNode(177...186)(
+       SymbolNode(183...184)(nil, CONSTANT(183...184)("A"), nil, "A"),
+       SymbolNode(185...186)(nil, CONSTANT(185...186)("B"), nil, "B"),
+       (177...182)
+     ),
+     AliasNode(188...199)(
+       SymbolNode(194...196)(
+         SYMBOL_BEGIN(194...195)(":"),
+         CONSTANT(195...196)("A"),
+         nil,
+         "A"
+       ),
+       SymbolNode(197...199)(
+         SYMBOL_BEGIN(197...198)(":"),
+         CONSTANT(198...199)("B"),
+         nil,
+         "B"
+       ),
+       (188...193)
      )]
   )
 )
