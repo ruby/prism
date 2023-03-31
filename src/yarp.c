@@ -3216,7 +3216,7 @@ token_is_numbered_parameter(yp_token_t *token) {
     (token->type == YP_TOKEN_IDENTIFIER) &&
     (token->end - token->start == 2) &&
     (token->start[0] == '_') &&
-    (char_is_decimal_number(token->start[1]));
+    (yp_char_is_decimal_digit(token->start[1]));
 }
 
 /******************************************************************************/
@@ -3801,7 +3801,7 @@ lex_state_arg_p(yp_parser_t *parser) {
 
 static inline bool
 lex_state_spcarg_p(yp_parser_t *parser, bool space_seen) {
-  return lex_state_arg_p(parser) && space_seen && !char_is_whitespace(*parser->current.end);
+  return lex_state_arg_p(parser) && space_seen && !yp_char_is_whitespace(*parser->current.end);
 }
 
 static inline bool
@@ -3846,7 +3846,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   // Here we're going to attempt to parse the optional decimal portion of a
   // float. If it's not there, then it's okay and we'll just continue on.
   if (peek(parser) == '.') {
-    if (char_is_decimal_number(peek_at(parser, 1))) {
+    if (yp_char_is_decimal_digit(peek_at(parser, 1))) {
       parser->current.end += 2;
       parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
       type = YP_TOKEN_FLOAT;
@@ -3862,7 +3862,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
   if (match(parser, 'e') || match(parser, 'E')) {
     (void) (match(parser, '+') || match(parser, '-'));
 
-    if (char_is_decimal_number(*parser->current.end)) {
+    if (yp_char_is_decimal_digit(*parser->current.end)) {
       parser->current.end++;
       parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
       type = YP_TOKEN_FLOAT;
@@ -3884,7 +3884,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0d1111 is a decimal number
       case 'd':
       case 'D':
-        if (char_is_decimal_number(*++parser->current.end)) {
+        if (yp_char_is_decimal_digit(*++parser->current.end)) {
           parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid decimal number.");
@@ -3895,7 +3895,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0b1111 is a binary number
       case 'b':
       case 'B':
-        if (char_is_binary_number(*++parser->current.end)) {
+        if (yp_char_is_binary_digit(*++parser->current.end)) {
           parser->current.end += yp_strspn_binary_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid binary number.");
@@ -3906,7 +3906,7 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0o1111 is an octal number
       case 'o':
       case 'O':
-        if (char_is_octal_number(*++parser->current.end)) {
+        if (yp_char_is_octal_digit(*++parser->current.end)) {
           parser->current.end += yp_strspn_octal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid octal number.");
@@ -3930,8 +3930,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       // 0x1111 is a hexadecimal number
       case 'x':
       case 'X':
-        if (char_is_hexadecimal_number(*++parser->current.end)) {
-          parser->current.end += yp_strspn_hexidecimal_number(parser->current.end, parser->end - parser->current.end);
+        if (yp_char_is_hexadecimal_digit(*++parser->current.end)) {
+          parser->current.end += yp_strspn_hexadecimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid hexadecimal number.");
         }
@@ -4322,7 +4322,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       // global variable.
       if (
         char_is_identifier_start(parser, check) ||
-        (pound[2] != '-' && (char_is_decimal_number(pound[2]) || char_is_global_name_punctuation(pound[2])))
+        (pound[2] != '-' && (yp_char_is_decimal_digit(pound[2]) || char_is_global_name_punctuation(pound[2])))
       ) {
         // In this case we've hit an embedded global variable. First check to
         // see if we've already consumed content. If we have, then we need to
@@ -4406,7 +4406,7 @@ lex_question_mark(yp_parser_t *parser) {
     return YP_TOKEN_CHARACTER_LITERAL;
   }
 
-  if (char_is_whitespace(*parser->current.end)) {
+  if (yp_char_is_whitespace(*parser->current.end)) {
     lex_state_set(parser, YP_LEX_STATE_BEG);
     return YP_TOKEN_QUESTION_MARK;
   }
@@ -4492,7 +4492,7 @@ lex_embdoc(yp_parser_t *parser) {
 
     // If we've hit the end of the embedded documentation then we'll return that
     // token here.
-    if (strncmp(parser->current.end, "=end", 4) == 0 && char_is_whitespace(parser->current.end[4])) {
+    if (strncmp(parser->current.end, "=end", 4) == 0 && yp_char_is_whitespace(parser->current.end[4])) {
       const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
       parser->current.end = newline == NULL ? parser->end : newline + 1;
       parser->current.type = YP_TOKEN_EMBDOC_END;
@@ -4609,7 +4609,7 @@ parser_lex(yp_parser_t *parser) {
             if (peek_at(parser, 1) == '\n') {
               parser->current.end += 2;
               space_seen = true;
-            } else if (char_is_non_newline_whitespace(*parser->current.end)) {
+            } else if (yp_char_is_inline_whitespace(*parser->current.end)) {
               parser->current.end += 2;
             } else {
               chomping = false;
@@ -4961,7 +4961,7 @@ parser_lex(yp_parser_t *parser) {
 
         // = => =~ == === =begin
         case '=':
-          if (current_token_starts_line(parser) && strncmp(parser->current.end, "begin", 5) == 0 && char_is_whitespace(parser->current.end[5])) {
+          if (current_token_starts_line(parser) && strncmp(parser->current.end, "begin", 5) == 0 && yp_char_is_whitespace(parser->current.end[5])) {
             yp_token_type_t type = lex_embdoc(parser);
 
             if (type == YP_TOKEN_EOF) {
@@ -5287,7 +5287,7 @@ parser_lex(yp_parser_t *parser) {
           if (lex_state_beg_p(parser) || spcarg) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
 
-            if (char_is_decimal_number(peek(parser))) {
+            if (yp_char_is_decimal_digit(peek(parser))) {
               parser->current.end++;
               yp_token_type_t type = lex_numeric(parser);
               lex_state_set(parser, YP_LEX_STATE_END);
@@ -5335,7 +5335,7 @@ parser_lex(yp_parser_t *parser) {
 
           if (lex_state_beg_p(parser) || spcarg) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
-            LEX(char_is_decimal_number(peek(parser)) ? YP_TOKEN_UMINUS_NUM : YP_TOKEN_UMINUS);
+            LEX(yp_char_is_decimal_digit(peek(parser)) ? YP_TOKEN_UMINUS_NUM : YP_TOKEN_UMINUS);
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -5393,7 +5393,7 @@ parser_lex(yp_parser_t *parser) {
             LEX(YP_TOKEN_COLON_COLON);
           }
 
-          if (lex_state_end_p(parser) || char_is_whitespace(*parser->current.end) || (*parser->current.end == '#')) {
+          if (lex_state_end_p(parser) || yp_char_is_whitespace(*parser->current.end) || (*parser->current.end == '#')) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
             LEX(YP_TOKEN_COLON);
           }
@@ -8253,7 +8253,7 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
 
         cur_whitespace = 0;
 
-        while (char_is_non_newline_whitespace(*cur_char) && cur_char < content->end) {
+        while (yp_char_is_inline_whitespace(*cur_char) && cur_char < content->end) {
           if (cur_char[0] == '\t') {
             cur_whitespace = (cur_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
           } else {
@@ -8334,7 +8334,7 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
         // to trim and we haven't reached the end of the string, we'll keep
         // trimming whitespace. Trimming in this context means skipping over
         // these bytes such that they aren't copied into the new string.
-        while ((source_cursor < source_end) && char_is_non_newline_whitespace(*source_cursor) && trimmed_whitespace < common_whitespace) {
+        while ((source_cursor < source_end) && yp_char_is_inline_whitespace(*source_cursor) && trimmed_whitespace < common_whitespace) {
           if (*source_cursor == '\t') {
             trimmed_whitespace = (trimmed_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
             if (trimmed_whitespace > common_whitespace) break;
