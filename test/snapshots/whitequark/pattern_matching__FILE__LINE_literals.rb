@@ -3,9 +3,7 @@ ProgramNode(8...111)(
   StatementsNode(8...111)(
     [CaseNode(8...111)(
        ArrayNode(13...51)(
-         [SourceFileNode(14...22)(
-            "/fixtures/whitequark/pattern_matching__FILE__LINE_literals.rb"
-          ),
+         [SourceFileNode(14...22)("/fixtures/whitequark/pattern_matching__FILE__LINE_literals.rb"),
           CallNode(24...36)(
             SourceLineNode(24...32)(),
             nil,
@@ -23,9 +21,7 @@ ProgramNode(8...111)(
        [InNode(62...99)(
           ArrayPatternNode(65...99)(
             nil,
-            [SourceFileNode(66...74)(
-               "/fixtures/whitequark/pattern_matching__FILE__LINE_literals.rb"
-             ),
+            [SourceFileNode(66...74)("/fixtures/whitequark/pattern_matching__FILE__LINE_literals.rb"),
              SourceLineNode(76...84)(),
              SourceEncodingNode(86...98)()],
             nil,

@@ -19,6 +19,20 @@ class ParseTest < Test::Unit::TestCase
     seattlerb/required_kwarg_no_value.rb
   ]
 
+  # Because the filepath in SourceFileNodes is different from one maching to the
+  # next, PP.pp(sexp, +"", 79) can have different results: both the path itself
+  # and the line breaks based on the length of the path.
+  def normalize_printed(printed)
+    printed
+      .gsub(
+        /SourceFileNode \s*
+          \(\s* (\d+\.\.\.\d+) \s*\) \s*
+          \(\s* ("[^"]*")      \s*\)
+        /mx,
+        'SourceFileNode(\1)(\2)')
+      .gsub(__dir__, "")
+  end
+
   Dir[File.expand_path("fixtures/**/*.rb", __dir__)].each do |filepath|
     relative = filepath.delete_prefix("#{File.expand_path("fixtures", __dir__)}/")
     next if known_failures.include?(relative)
@@ -37,18 +51,21 @@ class ParseTest < Test::Unit::TestCase
       # Next, parse the source and print the value.
       result = YARP.parse_file_dup(filepath)
       value = result.value
-      # This gsub removes most of the filepath in SourceFileNodes
-      # which allows comparing snapshots generated from
-      # different machines
-      printed = PP.pp(value, +"").gsub(__dir__, "")
+      printed = normalize_printed(PP.pp(value, +"", 79))
 
       # Next, assert that there were no errors during parsing.
       assert_empty result.errors, value
 
       if File.exist?(snapshot)
+        expected = File.read(snapshot)
+        normalized = normalize_printed(expected)
+        if expected != normalized
+          File.write(snapshot, normalized)
+          warn("Updated snapshot at #{snapshot}.")
+        end
         # If the snapshot file exists, then assert that the printed value
         # matches the snapshot.
-        assert_equal(File.read(snapshot), printed)
+        assert_equal(normalized, printed)
       else
         # If the snapshot file does not yet exist, then write it out now.
         File.write(snapshot, printed)
