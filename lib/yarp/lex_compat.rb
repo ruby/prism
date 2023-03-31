@@ -449,7 +449,7 @@ module YARP
 
                   # Blank lines do not count toward common leading whitespace
                   # calculation and do not need to be dedented.
-                  if line == "\n" && (dedent_next || index > 0)
+                  if dedent_next || index > 0
                     column = 0
                   end
 

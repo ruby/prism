@@ -1,6 +1,6 @@
-ProgramNode(7...370)(
+ProgramNode(7...396)(
   ScopeNode(0...0)([]),
-  StatementsNode(7...370)(
+  StatementsNode(7...396)(
     [InterpolatedStringNode(7...11)(
        HEREDOC_START(0...6)("<<~EOF"),
        [StringNode(7...11)(nil, STRING_CONTENT(7...11)("  a\n"), nil, "a\n")],
@@ -202,6 +202,22 @@ ProgramNode(7...370)(
           "a\n"
         )],
        HEREDOC_END(370...378)("    EOF\n")
+     ),
+     InterpolatedStringNode(386...396)(
+       HEREDOC_START(379...385)("<<~EOT"),
+       [StringNode(386...388)(nil, STRING_CONTENT(386...388)("  "), nil, ""),
+        StringInterpolatedNode(388...392)(
+          EMBEXPR_BEGIN(388...390)("\#{"),
+          StatementsNode(390...391)([IntegerNode(390...391)()]),
+          EMBEXPR_END(391...392)("}")
+        ),
+        StringNode(392...396)(
+          nil,
+          STRING_CONTENT(392...396)("\n" + "\tb\n"),
+          nil,
+          "\n" + "\tb\n"
+        )],
+       HEREDOC_END(396...400)("EOT\n")
      )]
   )
 )

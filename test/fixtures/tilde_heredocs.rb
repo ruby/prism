@@ -84,3 +84,8 @@ EOF
 
   #{1}a
     EOF
+
+<<~EOT
+  #{1}
+	b
+EOT
