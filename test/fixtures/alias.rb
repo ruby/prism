@@ -17,3 +17,7 @@ alias foo if
 alias foo <=>
 
 alias :== :eql?
+
+alias A B
+
+alias :A :B
