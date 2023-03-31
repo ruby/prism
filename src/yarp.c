@@ -3239,6 +3239,21 @@ yp_accepts_block_stack_p(yp_parser_t *parser) {
   return !yp_state_stack_p(&parser->accepts_block_stack);
 }
 
+static inline void
+yp_do_loop_stack_push(yp_parser_t *parser, bool value) {
+  yp_state_stack_push(&parser->do_loop_stack, value);
+}
+
+static inline void
+yp_do_loop_stack_pop(yp_parser_t *parser) {
+  yp_state_stack_pop(&parser->do_loop_stack);
+}
+
+static inline bool
+yp_do_loop_stack_p(yp_parser_t *parser) {
+  return yp_state_stack_p(&parser->do_loop_stack);
+}
+
 /******************************************************************************/
 /* Lexer check helpers                                                        */
 /******************************************************************************/
@@ -4163,7 +4178,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
     switch (width) {
       case 2:
         if (lex_keyword(parser, "do", YP_LEX_STATE_BEG, YP_TOKEN_KEYWORD_DO, YP_TOKEN_EOF) != YP_TOKEN_EOF) {
-          if (yp_state_stack_p(&parser->do_loop_stack)) {
+          if (yp_do_loop_stack_p(parser)) {
             return YP_TOKEN_KEYWORD_DO_LOOP;
           }
           return YP_TOKEN_KEYWORD_DO;
@@ -4359,7 +4374,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
       lex_mode_push(parser, (yp_lex_mode_t) { .mode = YP_LEX_EMBEXPR });
       parser->current.end = pound + 2;
       parser->command_start = true;
-      yp_state_stack_push(&parser->do_loop_stack, false);
+      yp_do_loop_stack_push(parser, false);
       return YP_TOKEN_EMBEXPR_BEGIN;
     default:
       // In this case we've hit a # that doesn't constitute interpolation. We'll
@@ -4798,7 +4813,7 @@ parser_lex(yp_parser_t *parser) {
 
           parser->enclosure_nesting++;
           lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
-          yp_state_stack_push(&parser->do_loop_stack, false);
+          yp_do_loop_stack_push(parser, false);
           LEX(type);
         }
 
@@ -4806,7 +4821,7 @@ parser_lex(yp_parser_t *parser) {
         case ')':
           parser->enclosure_nesting--;
           lex_state_set(parser, YP_LEX_STATE_ENDFN);
-          yp_state_stack_pop(&parser->do_loop_stack);
+          yp_do_loop_stack_pop(parser);
           LEX(YP_TOKEN_PARENTHESIS_RIGHT);
 
         // ;
@@ -4836,14 +4851,14 @@ parser_lex(yp_parser_t *parser) {
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_LABEL);
-          yp_state_stack_push(&parser->do_loop_stack, false);
+          yp_do_loop_stack_push(parser, false);
           LEX(type);
 
         // ]
         case ']':
           parser->enclosure_nesting--;
           lex_state_set(parser, YP_LEX_STATE_END);
-          yp_state_stack_pop(&parser->do_loop_stack);
+          yp_do_loop_stack_pop(parser);
           LEX(YP_TOKEN_BRACKET_RIGHT);
 
         // {
@@ -4873,7 +4888,7 @@ parser_lex(yp_parser_t *parser) {
 
           parser->enclosure_nesting++;
           parser->brace_nesting++;
-          yp_state_stack_push(&parser->do_loop_stack, false);
+          yp_do_loop_stack_push(parser, false);
 
           LEX(type);
         }
@@ -4881,7 +4896,7 @@ parser_lex(yp_parser_t *parser) {
         // }
         case '}':
           parser->enclosure_nesting--;
-          yp_state_stack_pop(&parser->do_loop_stack);
+          yp_do_loop_stack_pop(parser);
 
           if ((parser->lex_modes.current->mode == YP_LEX_EMBEXPR) && (parser->brace_nesting == 0)) {
             lex_mode_pop(parser);
@@ -7347,7 +7362,7 @@ parse_parameters(
   yp_parameters_node_t *params = yp_parameters_node_create(parser);
   bool looping = true;
 
-  yp_state_stack_push(&parser->do_loop_stack, false);
+  yp_do_loop_stack_push(parser, false);
 
   yp_parameters_order_t order = YP_PARAMETERS_ORDER_NONE;
 
@@ -7568,7 +7583,7 @@ parse_parameters(
     }
   } while (looping && accept(parser, YP_TOKEN_COMMA));
 
-  yp_state_stack_pop(&parser->do_loop_stack);
+  yp_do_loop_stack_pop(parser);
   return params;
 }
 
@@ -9640,7 +9655,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_KEYWORD_CLASS: {
       parser_lex(parser);
       yp_token_t class_keyword = parser->previous;
-      yp_state_stack_push(&parser->do_loop_stack, false);
+      yp_do_loop_stack_push(parser, false);
 
       if (accept(parser, YP_TOKEN_LESS_LESS)) {
         yp_token_t operator = parser->previous;
@@ -9663,7 +9678,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         yp_scope_node_t *scope = parser->current_scope->node;
         yp_parser_scope_pop(parser);
-        yp_state_stack_pop(&parser->do_loop_stack);
+        yp_do_loop_stack_pop(parser);
         return (yp_node_t *) yp_singleton_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
@@ -9703,7 +9718,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_scope_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
-      yp_state_stack_pop(&parser->do_loop_stack);
+      yp_do_loop_stack_pop(parser);
       return (yp_node_t *) yp_class_node_create(parser, scope, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_DEF: {
@@ -9904,7 +9919,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         yp_accepts_block_stack_push(parser, true);
-        yp_state_stack_push(&parser->do_loop_stack, false);
+        yp_do_loop_stack_push(parser, false);
 
         if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_KEYWORD_END)) {
           statements = (yp_node_t *) parse_statements(parser, YP_CONTEXT_DEF);
@@ -9916,7 +9931,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
 
         yp_accepts_block_stack_pop(parser);
-        yp_state_stack_pop(&parser->do_loop_stack);
+        yp_do_loop_stack_pop(parser);
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `def` statement.");
         end_keyword = parser->previous;
       }
@@ -9990,13 +10005,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t for_keyword = parser->previous;
 
       yp_node_t *index = parse_targets(parser, NULL, YP_BINDING_POWER_INDEX);
-      yp_state_stack_push(&parser->do_loop_stack, true);
+      yp_do_loop_stack_push(parser, true);
 
       expect(parser, YP_TOKEN_KEYWORD_IN, "Expected keyword in.");
       yp_token_t in_keyword = parser->previous;
 
       yp_node_t *collection = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected collection.");
-      yp_state_stack_pop(&parser->do_loop_stack);
+      yp_do_loop_stack_pop(parser);
 
       yp_token_t do_keyword;
       if (accept(parser, YP_TOKEN_KEYWORD_DO_LOOP)) {
@@ -10132,12 +10147,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
       return (yp_node_t *) yp_true_node_create(parser, &parser->previous);
     case YP_TOKEN_KEYWORD_UNTIL: {
-      yp_state_stack_push(&parser->do_loop_stack, true);
+      yp_do_loop_stack_push(parser, true);
       parser_lex(parser);
       yp_token_t keyword = parser->previous;
 
       yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected predicate expression after `until`.");
-      yp_state_stack_pop(&parser->do_loop_stack);
+      yp_do_loop_stack_pop(parser);
 
       accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       yp_statements_node_t *statements = NULL;
@@ -10151,12 +10166,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       return (yp_node_t *) yp_until_node_create(parser, &keyword, predicate, statements);
     }
     case YP_TOKEN_KEYWORD_WHILE: {
-      yp_state_stack_push(&parser->do_loop_stack, true);
+      yp_do_loop_stack_push(parser, true);
       parser_lex(parser);
       yp_token_t keyword = parser->previous;
 
       yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected predicate expression after `while`.");
-      yp_state_stack_pop(&parser->do_loop_stack);
+      yp_do_loop_stack_pop(parser);
 
       accept_any(parser, 3, YP_TOKEN_KEYWORD_DO_LOOP, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       yp_statements_node_t *statements = NULL;
