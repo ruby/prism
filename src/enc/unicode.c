@@ -2171,9 +2171,21 @@ unicode_codepoint_t unicode_isupper_codepoints[UNICODE_ISUPPER_CODEPOINTS_LENGTH
 
 static bool
 unicode_codepoint_match(unicode_codepoint_t codepoint, unicode_codepoint_t *codepoints, size_t size) {
-  for (size_t index = 0; index < size; index += 2) {
-    if (codepoint >= codepoints[index] && codepoint <= codepoints[index + 1])
+  size_t start = 0;
+  size_t end = size;
+  while (start < end) {
+    size_t middle = start + (end - start) / 2;
+    if ((middle % 2) != 0) {
+      middle--;
+    }
+    if (codepoint >= codepoints[middle] && codepoint <= codepoints[middle + 1]) {
       return true;
+    }
+    if (codepoint < codepoints[middle]) {
+      end = middle;
+    } else {
+      start = middle + 2;
+    }
   }
   return false;
 }
