@@ -10,7 +10,6 @@
 #include "yarp/util/yp_char.h"
 #include "yarp/util/yp_list.h"
 #include "yarp/util/yp_string.h"
-#include "yarp/util/yp_strspn.h"
 
 // The type of unescape we are performing.
 typedef enum {

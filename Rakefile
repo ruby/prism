@@ -44,8 +44,7 @@ TEMPLATES = [
   "src/node.c",
   "src/prettyprint.c",
   "src/serialize.c",
-  "src/token_type.c",
-  "src/util/yp_strspn.c"
+  "src/token_type.c"
 ]
 
 desc "Generate all ERB template based files"

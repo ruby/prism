@@ -20,7 +20,6 @@
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_char.h"
 #include "yarp/util/yp_strpbrk.h"
-#include "yarp/util/yp_strspn.h"
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 4
