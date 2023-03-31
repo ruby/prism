@@ -33,7 +33,7 @@ include/yarp/ast.h: bin/templates/include/yarp/ast.h.erb
 clean:
 	rm -f \
 		build/librubyparser.$(SOEXT) \
-		ext/yarp/node.c \
+		ext/yarp/{node.c,node_data.c} \
 		include/{ast.h,node.h} \
 		java/org/yarp/{AbstractNodeVisitor.java,Loader.java,Nodes.java} \
 		lib/yarp/{node,serialize}.rb \

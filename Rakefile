@@ -34,6 +34,7 @@ task default: :test
 
 TEMPLATES = [
   "ext/yarp/node.c",
+  "ext/yarp/node_data.c",
   "include/yarp/ast.h",
   "include/yarp/node.h",
   "java/org/yarp/Loader.java",

@@ -1,6 +1,7 @@
 #include "extension.h"
 
 VALUE rb_cYARP;
+VALUE rb_cYARPNode;
 VALUE rb_cYARPToken;
 VALUE rb_cYARPLocation;
 
@@ -286,7 +287,6 @@ parse_source(source_t *source, char *filepath) {
   };
 
   VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
-
   yp_node_destroy(&parser, node);
   yp_parser_free(&parser);
 
@@ -444,6 +444,7 @@ Init_yarp(void) {
   }
 
   rb_cYARP = rb_define_module("YARP");
+  rb_cYARPNode = rb_define_class_under(rb_cYARP, "Node", rb_cObject);
   rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
   rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
 
@@ -476,5 +477,6 @@ Init_yarp(void) {
 
   rb_define_singleton_method(rb_cYARP, "compile", compile, 1);
 
+  Init_yarp_node_data();
   Init_yarp_pack();
 }
