@@ -19,7 +19,7 @@ VALUE
 yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding);
 
 VALUE
-yp_compile(yp_node_t *node);
+yp_compile(yp_node_t *node, char **newline_locations);
 
 void
 Init_yarp_pack(void);

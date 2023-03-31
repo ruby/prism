@@ -7,7 +7,8 @@ typedef enum {
 
 typedef enum {
   YP_RUBY_EVENT_B_CALL,
-  YP_RUBY_EVENT_B_RETURN
+  YP_RUBY_EVENT_B_RETURN,
+  YP_RUBY_EVENT_LINE
 } yp_ruby_event_t;
 
 typedef struct yp_iseq_compiler {
@@ -21,6 +22,14 @@ typedef struct yp_iseq_compiler {
   // This is the instruction sequence that we are compiling. It's actually just
   // a Ruby array that maps to the output of RubyVM::InstructionSequence#to_a.
   VALUE insns;
+
+  // list of byte offsets of newline characters in the string
+  // used to find the line that a node starts on.
+  char **newline_locations;
+
+  // line last emitted as an event.
+  // used to not repeat the line number
+  int lineno;
 
   // This is a list of IDs coming from the instructions that are being compiled.
   // In theory they should be deterministic, but we don't have that
@@ -55,11 +64,13 @@ typedef struct yp_iseq_compiler {
 } yp_iseq_compiler_t;
 
 static void
-yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_iseq_compiler_t *parent, yp_token_list_t *locals, const char *name, yp_iseq_type_t type) {
+yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_iseq_compiler_t *parent, char **newline_locations, yp_token_list_t *locals, const char *name, yp_iseq_type_t type) {
   *compiler = (yp_iseq_compiler_t) {
     .parent = parent,
     .locals = locals,
     .insns = rb_ary_new(),
+    .lineno = 0,
+    .newline_locations = newline_locations,
     .node_ids = rb_ary_new(),
     .stack_size = 0,
     .stack_max = 0,
@@ -104,6 +115,27 @@ local_index(yp_iseq_compiler_t *compiler, int depth, const char *start, const ch
   }
 
   return -1;
+}
+
+static inline int
+node_line_number(yp_iseq_compiler_t *compiler, yp_node_t *node) {
+  const char *start = node->location.start;
+
+  // call nodes which are infix should use the message field for its line number
+  if (node->type == YP_NODE_CALL_NODE) {
+    start = ((yp_call_node_t *) node)->message.start;
+  }
+
+
+  int index = 0;
+
+  while (compiler->newline_locations[index] != NULL) {
+    if (start < compiler->newline_locations[index]) {
+      return index + 1;
+    }
+    index++;
+  }
+  return index == 0 ? 1 : index;
 }
 
 /******************************************************************************/
@@ -239,7 +271,12 @@ yp_inline_storage_new(yp_iseq_compiler_t *compiler) {
 /******************************************************************************/
 
 static VALUE
-push_insn(yp_iseq_compiler_t *compiler, int stack_change, size_t size, ...) {
+push_insn(yp_iseq_compiler_t *compiler, int stack_change, int lineno, size_t size, ...) {
+  if (lineno != compiler->lineno) {
+    rb_ary_push(compiler->insns, INT2FIX(lineno));
+    compiler->lineno = lineno;
+  }
+
   va_list opnds;
   va_start(opnds, size);
 
@@ -270,7 +307,12 @@ push_label(yp_iseq_compiler_t *compiler) {
 }
 
 static void
-push_ruby_event(yp_iseq_compiler_t *compiler, yp_ruby_event_t event) {
+push_ruby_event(yp_iseq_compiler_t *compiler, int lineno, yp_ruby_event_t event) {
+  if (lineno != compiler->lineno) {
+    rb_ary_push(compiler->insns, INT2FIX(lineno));
+    compiler->lineno = lineno;
+  }
+
   switch (event) {
     case YP_RUBY_EVENT_B_CALL:
       rb_ary_push(compiler->insns, ID2SYM(rb_intern("RUBY_EVENT_B_CALL")));
@@ -278,112 +320,115 @@ push_ruby_event(yp_iseq_compiler_t *compiler, yp_ruby_event_t event) {
     case YP_RUBY_EVENT_B_RETURN:
       rb_ary_push(compiler->insns, ID2SYM(rb_intern("RUBY_EVENT_B_RETURN")));
       break;
+    case YP_RUBY_EVENT_LINE:
+      rb_ary_push(compiler->insns, ID2SYM(rb_intern("RUBY_EVENT_LINE")));
+      break;
   }
 }
 
 static inline VALUE
-push_anytostring(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -2 + 1, 1, ID2SYM(rb_intern("anytostring")));
+push_anytostring(yp_iseq_compiler_t *compiler, int lineno) {
+  return push_insn(compiler, -2 + 1, lineno, 1, ID2SYM(rb_intern("anytostring")));
 }
 
 static inline VALUE
-push_branchif(yp_iseq_compiler_t *compiler, VALUE label) {
-  return push_insn(compiler, -1 + 0, 2, ID2SYM(rb_intern("branchif")), label);
+push_branchif(yp_iseq_compiler_t *compiler, int lineno, VALUE label) {
+  return push_insn(compiler, -1 + 0, lineno, 2, ID2SYM(rb_intern("branchif")), label);
 }
 
 static inline VALUE
-push_branchunless(yp_iseq_compiler_t *compiler, VALUE label) {
-  return push_insn(compiler, -1 + 0, 2, ID2SYM(rb_intern("branchunless")), label);
+push_branchunless(yp_iseq_compiler_t *compiler, int lineno, VALUE label) {
+  return push_insn(compiler, -1 + 0, lineno, 2, ID2SYM(rb_intern("branchunless")), label);
 }
 
 static inline VALUE
-push_concatstrings(yp_iseq_compiler_t *compiler, int count) {
-  return push_insn(compiler, -count + 1, 2, ID2SYM(rb_intern("concatstrings")), INT2FIX(count));
+push_concatstrings(yp_iseq_compiler_t *compiler, int lineno, int count) {
+  return push_insn(compiler, -count + 1, lineno, 2, ID2SYM(rb_intern("concatstrings")), INT2FIX(count));
 }
 
 static inline VALUE
-push_dup(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -1 + 2, 1, ID2SYM(rb_intern("dup")));
+push_dup(yp_iseq_compiler_t *compiler, int lineno) {
+  return push_insn(compiler, -1 + 2, lineno, 1, ID2SYM(rb_intern("dup")));
 }
 
 static inline VALUE
-push_getclassvariable(yp_iseq_compiler_t *compiler, VALUE name, VALUE inline_storage) {
-  return push_insn(compiler, -0 + 1, 3, ID2SYM(rb_intern("getclassvariable")), name, inline_storage);
+push_getclassvariable(yp_iseq_compiler_t *compiler, int lineno, VALUE name, VALUE inline_storage) {
+  return push_insn(compiler, -0 + 1, lineno, 3, ID2SYM(rb_intern("getclassvariable")), name, inline_storage);
 }
 
 static inline VALUE
-push_getconstant(yp_iseq_compiler_t *compiler, VALUE name) {
-  return push_insn(compiler, -2 + 1, 2, ID2SYM(rb_intern("getconstant")), name);
+push_getconstant(yp_iseq_compiler_t *compiler, int lineno, VALUE name) {
+  return push_insn(compiler, -2 + 1, lineno, 2, ID2SYM(rb_intern("getconstant")), name);
 }
 
 static inline VALUE
-push_getglobal(yp_iseq_compiler_t *compiler, VALUE name) {
-  return push_insn(compiler, -0 + 1, 2, ID2SYM(rb_intern("getglobal")), name);
+push_getglobal(yp_iseq_compiler_t *compiler, int lineno, VALUE name) {
+  return push_insn(compiler, -0 + 1, lineno, 2, ID2SYM(rb_intern("getglobal")), name);
 }
 
 static inline VALUE
-push_getinstancevariable(yp_iseq_compiler_t *compiler, VALUE name, VALUE inline_storage) {
-  return push_insn(compiler, -0 + 1, 3, ID2SYM(rb_intern("getinstancevariable")), name, inline_storage);
+push_getinstancevariable(yp_iseq_compiler_t *compiler, int lineno, VALUE name, VALUE inline_storage) {
+  return push_insn(compiler, -0 + 1, lineno, 3, ID2SYM(rb_intern("getinstancevariable")), name, inline_storage);
 }
 
 static inline VALUE
-push_getlocal(yp_iseq_compiler_t *compiler, VALUE index, VALUE depth) {
-  return push_insn(compiler, -0 + 1, 3, ID2SYM(rb_intern("getlocal")), index, depth);
+push_getlocal(yp_iseq_compiler_t *compiler, int lineno, VALUE index, VALUE depth) {
+  return push_insn(compiler, -0 + 1, lineno, 3, ID2SYM(rb_intern("getlocal")), index, depth);
 }
 
 static inline VALUE
 push_leave(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -1 + 0, 1, ID2SYM(rb_intern("leave")));
+  return push_insn(compiler, -1 + 0, compiler->lineno, 1, ID2SYM(rb_intern("leave")));
 }
 
 static inline VALUE
-push_newarray(yp_iseq_compiler_t *compiler, int count) {
-  return push_insn(compiler, -count + 1, 2, ID2SYM(rb_intern("newarray")), INT2FIX(count));
+push_newarray(yp_iseq_compiler_t *compiler, int lineno, int count) {
+  return push_insn(compiler, -count + 1, lineno, 2, ID2SYM(rb_intern("newarray")), INT2FIX(count));
 }
 
 static inline VALUE
-push_newhash(yp_iseq_compiler_t *compiler, int count) {
-  return push_insn(compiler, -count + 1, 2, ID2SYM(rb_intern("newhash")), INT2FIX(count));
+push_newhash(yp_iseq_compiler_t *compiler, int lineno, int count) {
+  return push_insn(compiler, -count + 1, lineno, 2, ID2SYM(rb_intern("newhash")), INT2FIX(count));
 }
 
 static inline VALUE
-push_newrange(yp_iseq_compiler_t *compiler, VALUE flag) {
-  return push_insn(compiler, -2 + 1, 2, ID2SYM(rb_intern("newrange")), flag);
+push_newrange(yp_iseq_compiler_t *compiler, int lineno, VALUE flag) {
+  return push_insn(compiler, -2 + 1, lineno, 2, ID2SYM(rb_intern("newrange")), flag);
 }
 
 static inline VALUE
-push_nop(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -2 + 1, 1, ID2SYM(rb_intern("nop")));
+push_nop(yp_iseq_compiler_t *compiler, int lineno) {
+  return push_insn(compiler, -2 + 1, lineno, 1, ID2SYM(rb_intern("nop")));
 }
 
 static inline VALUE
-push_objtostring(yp_iseq_compiler_t *compiler, VALUE calldata) {
-  return push_insn(compiler, -1 + 1, 2, ID2SYM(rb_intern("objtostring")), calldata);
+push_objtostring(yp_iseq_compiler_t *compiler, int lineno, VALUE calldata) {
+  return push_insn(compiler, -1 + 1, lineno, 2, ID2SYM(rb_intern("objtostring")), calldata);
 }
 
 static inline VALUE
-push_pop(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -1 + 0, 1, ID2SYM(rb_intern("pop")));
+push_pop(yp_iseq_compiler_t *compiler, int lineno) {
+  return push_insn(compiler, -1 + 0, lineno, 1, ID2SYM(rb_intern("pop")));
 }
 
 static inline VALUE
-push_putnil(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -0 + 1, 1, ID2SYM(rb_intern("putnil")));
+push_putnil(yp_iseq_compiler_t *compiler, int lineno) {
+  return push_insn(compiler, -0 + 1, lineno, 1, ID2SYM(rb_intern("putnil")));
 }
 
 static inline VALUE
-push_putobject(yp_iseq_compiler_t *compiler, VALUE value) {
-  return push_insn(compiler, -0 + 1, 2, ID2SYM(rb_intern("putobject")), value);
+push_putobject(yp_iseq_compiler_t *compiler, int lineno, VALUE value) {
+  return push_insn(compiler, -0 + 1, lineno, 2, ID2SYM(rb_intern("putobject")), value);
 }
 
 static inline VALUE
-push_putself(yp_iseq_compiler_t *compiler) {
-  return push_insn(compiler, -0 + 1, 1, ID2SYM(rb_intern("putself")));
+push_putself(yp_iseq_compiler_t *compiler, int lineno) {
+  return push_insn(compiler, -0 + 1, lineno, 1, ID2SYM(rb_intern("putself")));
 }
 
 static inline VALUE
-push_setlocal(yp_iseq_compiler_t *compiler, VALUE index, VALUE depth) {
-  return push_insn(compiler, -1 + 0, 3, ID2SYM(rb_intern("setlocal")), index, depth);
+push_setlocal(yp_iseq_compiler_t *compiler, int lineno, VALUE index, VALUE depth) {
+  return push_insn(compiler, -1 + 0, lineno, 3, ID2SYM(rb_intern("setlocal")), index, depth);
 }
 
 static const VALUE YP_SPECIALOBJECT_VMCORE = INT2FIX(1);
@@ -391,33 +436,33 @@ static const VALUE YP_SPECIALOBJECT_CBASE = INT2FIX(2);
 // static const VALUE YP_SPECIALOBJECT_CONST_BASE = INT2FIX(3);
 
 static inline VALUE
-push_putspecialobject(yp_iseq_compiler_t *compiler, VALUE object) {
-  return push_insn(compiler, -0 + 1, 2, ID2SYM(rb_intern("putspecialobject")), object);
+push_putspecialobject(yp_iseq_compiler_t *compiler, int lineno, VALUE object) {
+  return push_insn(compiler, -0 + 1, lineno, 2, ID2SYM(rb_intern("putspecialobject")), object);
 }
 
 static inline VALUE
-push_putstring(yp_iseq_compiler_t *compiler, VALUE string) {
-  return push_insn(compiler, -0 + 1, 2, ID2SYM(rb_intern("putstring")), string);
+push_putstring(yp_iseq_compiler_t *compiler, int lineno, VALUE string) {
+  return push_insn(compiler, -0 + 1, lineno, 2, ID2SYM(rb_intern("putstring")), string);
 }
 
 static inline VALUE
-push_send(yp_iseq_compiler_t *compiler, int stack_change, VALUE calldata, VALUE block_iseq) {
-  return push_insn(compiler, stack_change, 3, ID2SYM(rb_intern("send")), calldata, block_iseq);
+push_send(yp_iseq_compiler_t *compiler, int lineno, int stack_change, VALUE calldata, VALUE block_iseq) {
+  return push_insn(compiler, stack_change, lineno, 3, ID2SYM(rb_intern("send")), calldata, block_iseq);
 }
 
 static inline VALUE
-push_setclassvariable(yp_iseq_compiler_t *compiler, VALUE name, VALUE inline_storage) {
-  return push_insn(compiler, -1 + 0, 3, ID2SYM(rb_intern("setclassvariable")), name, inline_storage);
+push_setclassvariable(yp_iseq_compiler_t *compiler, int lineno, VALUE name, VALUE inline_storage) {
+  return push_insn(compiler, -1 + 0, lineno, 3, ID2SYM(rb_intern("setclassvariable")), name, inline_storage);
 }
 
 static inline VALUE
-push_setglobal(yp_iseq_compiler_t *compiler, VALUE name) {
-  return push_insn(compiler, -1 + 0, 2, ID2SYM(rb_intern("setglobal")), name);
+push_setglobal(yp_iseq_compiler_t *compiler, int lineno, VALUE name) {
+  return push_insn(compiler, -1 + 0, lineno, 2, ID2SYM(rb_intern("setglobal")), name);
 }
 
 static inline VALUE
-push_setinstancevariable(yp_iseq_compiler_t *compiler, VALUE name, VALUE inline_storage) {
-  return push_insn(compiler, -1 + 0, 3, ID2SYM(rb_intern("setinstancevariable")), name, inline_storage);
+push_setinstancevariable(yp_iseq_compiler_t *compiler, int lineno, VALUE name, VALUE inline_storage) {
+  return push_insn(compiler, -1 + 0, lineno, 3, ID2SYM(rb_intern("setinstancevariable")), name, inline_storage);
 }
 
 /******************************************************************************/
@@ -426,15 +471,17 @@ push_setinstancevariable(yp_iseq_compiler_t *compiler, VALUE name, VALUE inline_
 
 static void
 yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
+  int node_lineno = node_line_number(compiler, base_node);
+
   switch (base_node->type) {
     case YP_NODE_ALIAS_NODE: {
       yp_alias_node_t *node = (yp_alias_node_t *) base_node;
 
-      push_putspecialobject(compiler, YP_SPECIALOBJECT_VMCORE);
-      push_putspecialobject(compiler, YP_SPECIALOBJECT_CBASE);
+      push_putspecialobject(compiler, node_lineno, YP_SPECIALOBJECT_VMCORE);
+      push_putspecialobject(compiler, node_lineno, YP_SPECIALOBJECT_CBASE);
       yp_compile_node(compiler, node->new_name);
       yp_compile_node(compiler, node->old_name);
-      push_send(compiler, -3, yp_calldata_new(rb_intern("core#set_method_alias"), YP_CALLDATA_ARGS_SIMPLE, 3), Qnil);
+      push_send(compiler, node_lineno, -3, yp_calldata_new(rb_intern("core#set_method_alias"), YP_CALLDATA_ARGS_SIMPLE, 3), Qnil);
 
       return;
     }
@@ -442,10 +489,10 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       yp_and_node_t *node = (yp_and_node_t *) base_node;
 
       yp_compile_node(compiler, node->left);
-      push_dup(compiler);
-      VALUE branchunless = push_branchunless(compiler, Qnil);
+      push_dup(compiler, node_lineno);
+      VALUE branchunless = push_branchunless(compiler, node_lineno, Qnil);
 
-      push_pop(compiler);
+      push_pop(compiler, node_lineno);
       yp_compile_node(compiler, node->right);
 
       VALUE label = push_label(compiler);
@@ -467,7 +514,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       for (size_t index = 0; index < elements.size; index++) {
         yp_compile_node(compiler, elements.nodes[index]);
       }
-      push_newarray(compiler, sizet2int(elements.size));
+      push_newarray(compiler, node_lineno, sizet2int(elements.size));
       return;
     }
     case YP_NODE_ASSOC_NODE: {
@@ -495,20 +542,24 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         rb_ary_push(optional_labels, label);
         rb_hash_aset(compiler->optionals, ID2SYM(rb_intern("opt")), optional_labels);
 
-        push_ruby_event(compiler, YP_RUBY_EVENT_B_CALL);
-        push_nop(compiler);
-      } else {
-        push_ruby_event(compiler, YP_RUBY_EVENT_B_CALL);
+        push_ruby_event(compiler, node_lineno, YP_RUBY_EVENT_B_CALL);
+        push_nop(compiler, node_lineno);
       }
-
-
 
       if (node->statements) {
+        push_ruby_event(compiler, node_lineno, YP_RUBY_EVENT_LINE);
+
+        if (!(node->parameters &&
+              node->parameters->parameters &&
+              node->parameters->parameters->optionals.size > 0)) {
+          push_ruby_event(compiler, node_lineno, YP_RUBY_EVENT_B_CALL);
+        }
+        
         yp_compile_node(compiler, node->statements);
       } else {
-        push_putnil(compiler);
+        push_putnil(compiler, node_lineno);
       }
-      push_ruby_event(compiler, YP_RUBY_EVENT_B_RETURN);
+      push_ruby_event(compiler, node_lineno, YP_RUBY_EVENT_B_RETURN);
       push_leave(compiler);
       return;
     }
@@ -520,7 +571,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       size_t orig_argc;
 
       if (node->receiver == NULL) {
-        push_putself(compiler);
+        push_putself(compiler, node_lineno);
       } else {
         yp_compile_node(compiler, node->receiver);
       }
@@ -540,6 +591,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         yp_iseq_compiler_init(
           &block_compiler,
           compiler,
+          compiler->newline_locations,
           &node->block->scope->locals,
           "block in <compiled>",
           YP_ISEQ_TYPE_BLOCK
@@ -561,12 +613,12 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         }
       }
 
-      push_send(compiler, -sizet2int(orig_argc), yp_calldata_new(mid, flags, orig_argc), block_iseq);
+      push_send(compiler, node_lineno, -sizet2int(orig_argc), yp_calldata_new(mid, flags, orig_argc), block_iseq);
       return;
     }
     case YP_NODE_CLASS_VARIABLE_READ_NODE: {
       yp_class_variable_read_node_t *node = (yp_class_variable_read_node_t *) base_node;
-      push_getclassvariable(compiler, ID2SYM(parse_node_symbol((yp_node_t *) node)), yp_inline_storage_new(compiler));
+      push_getclassvariable(compiler, node_lineno, ID2SYM(parse_node_symbol((yp_node_t *) node)), yp_inline_storage_new(compiler));
       return;
     }
     case YP_NODE_CLASS_VARIABLE_WRITE_NODE: {
@@ -576,28 +628,28 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       }
 
       yp_compile_node(compiler, node->value);
-      push_dup(compiler);
-      push_setclassvariable(compiler, ID2SYM(parse_location_symbol(&node->name_loc)), yp_inline_storage_new(compiler));
+      push_dup(compiler, node_lineno);
+      push_setclassvariable(compiler, node_lineno, ID2SYM(parse_location_symbol(&node->name_loc)), yp_inline_storage_new(compiler));
       return;
     }
     case YP_NODE_CONSTANT_PATH_NODE: {
       yp_constant_path_node_t *node = (yp_constant_path_node_t *) base_node;
       yp_compile_node(compiler, node->parent);
-      push_putobject(compiler, Qfalse);
-      push_getconstant(compiler, ID2SYM(parse_node_symbol((yp_node_t *) node->child)));
+      push_putobject(compiler, node_lineno, Qfalse);
+      push_getconstant(compiler, node_lineno, ID2SYM(parse_node_symbol((yp_node_t *) node->child)));
       return;
     }
     case YP_NODE_CONSTANT_READ_NODE:
-      push_putnil(compiler);
-      push_putobject(compiler, Qtrue);
-      push_getconstant(compiler, ID2SYM(parse_node_symbol((yp_node_t *) base_node)));
+      push_putnil(compiler, node_lineno);
+      push_putobject(compiler, node_lineno, Qtrue);
+      push_getconstant(compiler, node_lineno, ID2SYM(parse_node_symbol((yp_node_t *) base_node)));
       return;
     case YP_NODE_FALSE_NODE:
-      push_putobject(compiler, Qfalse);
+      push_putobject(compiler, node_lineno, Qfalse);
       return;
     case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
       yp_global_variable_read_node_t *node = (yp_global_variable_read_node_t *) base_node;
-      push_getglobal(compiler, ID2SYM(parse_token_symbol(&node->name)));
+      push_getglobal(compiler, node_lineno, ID2SYM(parse_token_symbol(&node->name)));
       return;
     }
     case YP_NODE_GLOBAL_VARIABLE_WRITE_NODE: {
@@ -608,8 +660,8 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       }
 
       yp_compile_node(compiler, node->value);
-      push_dup(compiler);
-      push_setglobal(compiler, ID2SYM(parse_token_symbol(&node->name)));
+      push_dup(compiler, node_lineno);
+      push_setglobal(compiler, node_lineno, ID2SYM(parse_token_symbol(&node->name)));
       return;
     }
     case YP_NODE_HASH_NODE: {
@@ -620,11 +672,11 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         yp_compile_node(compiler, elements.nodes[index]);
       }
 
-      push_newhash(compiler, sizet2int(elements.size * 2));
+      push_newhash(compiler, node_lineno, sizet2int(elements.size * 2));
       return;
     }
     case YP_NODE_INSTANCE_VARIABLE_READ_NODE:
-      push_getinstancevariable(compiler, ID2SYM(parse_node_symbol((yp_node_t *) base_node)), yp_inline_storage_new(compiler));
+      push_getinstancevariable(compiler, node_lineno, ID2SYM(parse_node_symbol((yp_node_t *) base_node)), yp_inline_storage_new(compiler));
       return;
     case YP_NODE_INSTANCE_VARIABLE_WRITE_NODE: {
       yp_instance_variable_write_node_t *node = (yp_instance_variable_write_node_t *) base_node;
@@ -634,12 +686,12 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       }
 
       yp_compile_node(compiler, node->value);
-      push_dup(compiler);
-      push_setinstancevariable(compiler, ID2SYM(parse_location_symbol(&node->name_loc)), yp_inline_storage_new(compiler));
+      push_dup(compiler, node_lineno);
+      push_setinstancevariable(compiler, node_lineno, ID2SYM(parse_location_symbol(&node->name_loc)), yp_inline_storage_new(compiler));
       return;
     }
     case YP_NODE_INTEGER_NODE:
-      push_putobject(compiler, parse_number(base_node->location.start, base_node->location.end));
+      push_putobject(compiler, node_lineno, parse_number(base_node->location.start, base_node->location.end));
       return;
     case YP_NODE_INTERPOLATED_STRING_NODE: {
       yp_interpolated_string_node_t *node = (yp_interpolated_string_node_t *) base_node;
@@ -650,19 +702,19 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         switch (part->type) {
           case YP_NODE_STRING_NODE: {
             yp_string_node_t *string_node = (yp_string_node_t *) part;
-            push_putobject(compiler, parse_string(&string_node->unescaped));
+            push_putobject(compiler, node_lineno, parse_string(&string_node->unescaped));
             break;
           }
           default:
             yp_compile_node(compiler, part);
-            push_dup(compiler);
-            push_objtostring(compiler, yp_calldata_new(rb_intern("to_s"), YP_CALLDATA_FCALL | YP_CALLDATA_ARGS_SIMPLE, 0));
-            push_anytostring(compiler);
+            push_dup(compiler, node_lineno);
+            push_objtostring(compiler, node_lineno, yp_calldata_new(rb_intern("to_s"), YP_CALLDATA_FCALL | YP_CALLDATA_ARGS_SIMPLE, 0));
+            push_anytostring(compiler, node_lineno);
             break;
         }
       }
 
-      push_concatstrings(compiler, sizet2int(node->parts.size));
+      push_concatstrings(compiler, node_lineno, sizet2int(node->parts.size));
       return;
     }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
@@ -674,7 +726,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         node->base.location.end
       );
 
-      push_getlocal(compiler, INT2FIX(index), INT2FIX(node->depth));
+      push_getlocal(compiler, node_lineno, INT2FIX(index), INT2FIX(node->depth));
       return;
     }
     case YP_NODE_LOCAL_VARIABLE_WRITE_NODE: {
@@ -692,21 +744,21 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       );
 
       yp_compile_node(compiler, node->value);
-      push_dup(compiler);
-      push_setlocal(compiler, INT2FIX(index), INT2FIX(node->depth));
+      push_dup(compiler, node_lineno);
+      push_setlocal(compiler, node_lineno, INT2FIX(index), INT2FIX(node->depth));
       return;
     }
     case YP_NODE_NIL_NODE:
-      push_putnil(compiler);
+      push_putnil(compiler, node_lineno);
       return;
     case YP_NODE_OR_NODE: {
       yp_or_node_t *node = (yp_or_node_t *) base_node;
 
       yp_compile_node(compiler, node->left);
-      push_dup(compiler);
-      VALUE branchif = push_branchif(compiler, Qnil);
+      push_dup(compiler, node_lineno);
+      VALUE branchif = push_branchif(compiler, node_lineno, Qnil);
 
-      push_pop(compiler);
+      push_pop(compiler, node_lineno);
       yp_compile_node(compiler, node->right);
 
       VALUE label = push_label(compiler);
@@ -718,7 +770,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       yp_parentheses_node_t *node = (yp_parentheses_node_t *) base_node;
 
       if (node->statements == NULL) {
-        push_putnil(compiler);
+        push_putnil(compiler, node_lineno);
       } else {
         yp_compile_node(compiler, node->statements);
       }
@@ -729,7 +781,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       yp_program_node_t *node = (yp_program_node_t *) base_node;
 
       if (node->statements->body.size == 0) {
-        push_putnil(compiler);
+        push_putnil(compiler, node_lineno);
       } else {
         yp_compile_node(compiler, (yp_node_t *) node->statements);
       }
@@ -741,35 +793,38 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       yp_range_node_t *node = (yp_range_node_t *) base_node;
 
       if (node->left == NULL) {
-        push_putnil(compiler);
+        push_putnil(compiler, node_lineno);
       } else {
         yp_compile_node(compiler, node->left);
       }
 
       if (node->right == NULL) {
-        push_putnil(compiler);
+        push_putnil(compiler, node_lineno);
       } else {
         yp_compile_node(compiler, node->right);
       }
 
-      push_newrange(compiler, INT2FIX((node->operator_loc.end - node->operator_loc.start) == 3));
+      push_newrange(compiler, node_lineno, INT2FIX((node->operator_loc.end - node->operator_loc.start) == 3));
       return;
     }
     case YP_NODE_SELF_NODE:
-      push_putself(compiler);
+      push_putself(compiler, node_lineno);
       return;
     case YP_NODE_STATEMENTS_NODE: {
+      if (node_lineno != compiler->lineno) {
+        push_ruby_event(compiler, node_lineno, YP_RUBY_EVENT_LINE);
+      }
       yp_statements_node_t *node = (yp_statements_node_t *) base_node;
       yp_node_list_t node_list = node->body;
       for (size_t index = 0; index < node_list.size; index++) {
         yp_compile_node(compiler, node_list.nodes[index]);
-        if (index < node_list.size - 1) push_pop(compiler);
+        if (index < node_list.size - 1) push_pop(compiler, node_lineno);
       }
       return;
     }
     case YP_NODE_STRING_NODE: {
       yp_string_node_t *node = (yp_string_node_t *) base_node;
-      push_putstring(compiler, parse_string(&node->unescaped));
+      push_putstring(compiler, node_lineno, parse_string(&node->unescaped));
       return;
     }
     case YP_NODE_STRING_INTERPOLATED_NODE: {
@@ -779,31 +834,31 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     }
     case YP_NODE_SYMBOL_NODE: {
       yp_symbol_node_t *node = (yp_symbol_node_t *) base_node;
-      push_putobject(compiler, ID2SYM(parse_string_symbol(&node->unescaped)));
+      push_putobject(compiler, node_lineno, ID2SYM(parse_string_symbol(&node->unescaped)));
       return;
     }
     case YP_NODE_TRUE_NODE:
-      push_putobject(compiler, Qtrue);
+      push_putobject(compiler, node_lineno, Qtrue);
       return;
     case YP_NODE_UNDEF_NODE: {
       yp_undef_node_t *node = (yp_undef_node_t *) base_node;
 
       for (size_t index = 0; index < node->names.size; index++) {
-        push_putspecialobject(compiler, YP_SPECIALOBJECT_VMCORE);
-        push_putspecialobject(compiler, YP_SPECIALOBJECT_CBASE);
+        push_putspecialobject(compiler, node_lineno, YP_SPECIALOBJECT_VMCORE);
+        push_putspecialobject(compiler, node_lineno, YP_SPECIALOBJECT_CBASE);
         yp_compile_node(compiler, node->names.nodes[index]);
-        push_send(compiler, -2, yp_calldata_new(rb_intern("core#undef_method"), YP_CALLDATA_ARGS_SIMPLE, 2), Qnil);
+        push_send(compiler, node_lineno, -2, yp_calldata_new(rb_intern("core#undef_method"), YP_CALLDATA_ARGS_SIMPLE, 2), Qnil);
 
-        if (index < node->names.size - 1) push_pop(compiler);
+        if (index < node->names.size - 1) push_pop(compiler, node_lineno);
       }
 
       return;
     }
     case YP_NODE_X_STRING_NODE: {
       yp_x_string_node_t *node = (yp_x_string_node_t *) base_node;
-      push_putself(compiler);
-      push_putobject(compiler, parse_string(&node->unescaped));
-      push_send(compiler, -1, yp_calldata_new(rb_intern("`"), YP_CALLDATA_FCALL | YP_CALLDATA_ARGS_SIMPLE, 1), Qnil);
+      push_putself(compiler, node_lineno);
+      push_putobject(compiler, node_lineno, parse_string(&node->unescaped));
+      push_send(compiler, node_lineno, -1, yp_calldata_new(rb_intern("`"), YP_CALLDATA_FCALL | YP_CALLDATA_ARGS_SIMPLE, 1), Qnil);
       return;
     }
     case YP_NODE_OPTIONAL_PARAMETER_NODE: {
@@ -811,7 +866,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       int depth = 0;
       int index = local_index(compiler, depth, node->name.start, node->name.end);
       yp_compile_node(compiler, node->value);
-      push_setlocal(compiler, INT2FIX(index), INT2FIX(depth));
+      push_setlocal(compiler, node_lineno, INT2FIX(index), INT2FIX(depth));
       break;
     }
     default:
@@ -822,13 +877,14 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
 
 // This function compiles the given node into a list of instructions.
 VALUE
-yp_compile(yp_node_t *node) {
+yp_compile(yp_node_t *node, char **newline_locations) {
   assert(node->type == YP_NODE_PROGRAM_NODE);
 
   yp_iseq_compiler_t compiler;
   yp_iseq_compiler_init(
     &compiler,
     NULL,
+    newline_locations,
     &((yp_program_node_t *) node)->scope->locals,
     "<compiled>",
     YP_ISEQ_TYPE_TOP

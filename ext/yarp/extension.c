@@ -428,11 +428,33 @@ compile(VALUE self, VALUE string) {
   yp_parser_init(&parser, RSTRING_PTR(string), length, NULL);
 
   yp_node_t *node = yp_parse(&parser);
-  VALUE result = yp_compile(node);
+
+  // track the byte offset of newline characters.
+  // This allows us to lookup the line/column number in
+  // the compiler later without storing the line on each node
+  int index = 0;
+  int size = 10;
+  char ** newline_locations = malloc(sizeof(char*) * size);
+
+  char *source = StringValueCStr(string);
+  for (size_t i = 0; i < strlen(source); i++) {
+    if (source[i] == '\n') {
+      if (index + 1 == size) {
+        size *= 2;
+        realloc(newline_locations, size);
+      }
+      
+      newline_locations[index++] = &source[i];
+    }
+  }
+  newline_locations[index] = NULL;
+  
+  VALUE result = yp_compile(node, newline_locations);
 
   yp_node_destroy(&parser, node);
   yp_parser_free(&parser);
-
+  free(newline_locations);
+  
   return result;
 }
 

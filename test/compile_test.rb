@@ -188,6 +188,8 @@ class CompileTest < Test::Unit::TestCase
         assert_equal_iseqs expected_block, actual_block
       in Array | :RUBY_EVENT_B_CALL | :RUBY_EVENT_B_RETURN | /^label_\d+/
         assert_equal insn, actual[13].shift
+      in Integer | :RUBY_EVENT_LINE
+        assert_equal insn, actual[13].shift
       in Integer | /^RUBY_EVENT_/
         # skip these for now
       else
