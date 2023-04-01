@@ -705,7 +705,7 @@ ProgramNode(0...690)(
          nil,
          nil
        ),
-       nil,
+       StatementsNode(0...0)([]),
        ScopeNode(559...562)([LABEL(565...568)("foo")]),
        (559...562),
        nil,

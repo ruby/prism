@@ -362,6 +362,9 @@ struct yp_parser {
   // expression and impacts that calculation of newlines.
   bool pattern_matching_newlines;
 
+  // This flag indicates that we are currently parsing a keyword argument.
+  bool in_keyword_arg;
+
   // This is the path of the file being parsed
   // We use the filepath when constructing SourceFileNodes
   yp_string_t filepath_string;
