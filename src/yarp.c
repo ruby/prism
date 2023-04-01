@@ -4702,7 +4702,7 @@ parser_lex(yp_parser_t *parser) {
             case YP_IGNORED_NEWLINE_NONE:
               break;
             case YP_IGNORED_NEWLINE_PATTERN:
-              if (parser->pattern_matching_newlines) {
+              if (parser->pattern_matching_newlines || parser->in_keyword_arg) {
                 if (!lexed_comment) parser_lex_ignored_newline(parser);
                 lex_state_set(parser, YP_LEX_STATE_BEG);
                 parser->command_start = true;
@@ -7449,6 +7449,7 @@ parse_parameters(
         break;
       }
       case YP_TOKEN_LABEL: {
+        if (!uses_parentheses) parser->in_keyword_arg = true;
         update_parameter_state(parser, &parser->current, &order);
         parser_lex(parser);
 
@@ -7495,6 +7496,7 @@ parse_parameters(
           }
         }
 
+        parser->in_keyword_arg = false;
         break;
       }
       case YP_TOKEN_USTAR:
@@ -11495,6 +11497,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
     .encoding_comment_start = source,
     .lex_callback = NULL,
     .pattern_matching_newlines = false,
+    .in_keyword_arg = false,
     .filepath_string = filepath_string,
   };
 

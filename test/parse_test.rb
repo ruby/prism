@@ -16,7 +16,6 @@ class ParseTest < Test::Unit::TestCase
     seattlerb/heredoc_nested.rb
     seattlerb/heredoc_trailing_slash_continued_call.rb
     seattlerb/pct_w_heredoc_interp_nested.rb
-    seattlerb/required_kwarg_no_value.rb
   ]
 
   # Because the filepath in SourceFileNodes is different from one maching to the

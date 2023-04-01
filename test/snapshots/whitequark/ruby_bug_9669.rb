@@ -4,19 +4,18 @@ ProgramNode(0...31)(
     [DefNode(0...19)(
        IDENTIFIER(4...5)("a"),
        nil,
-       ParametersNode(6...15)(
+       ParametersNode(6...8)(
          [],
          [],
          [],
          nil,
-         [KeywordParameterNode(6...15)(
-            LABEL(6...8)("b:"),
-            ReturnNode(9...15)(KEYWORD_RETURN(9...15)("return"), nil)
-          )],
+         [KeywordParameterNode(6...8)(LABEL(6...8)("b:"), nil)],
          nil,
          nil
        ),
-       nil,
+       StatementsNode(9...15)(
+         [ReturnNode(9...15)(KEYWORD_RETURN(9...15)("return"), nil)]
+       ),
        ScopeNode(0...3)([LABEL(6...7)("b")]),
        (0...3),
        nil,
