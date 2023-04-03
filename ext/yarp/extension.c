@@ -436,6 +436,20 @@ compile(VALUE self, VALUE string) {
   return result;
 }
 
+static VALUE
+serialize(VALUE self, VALUE string) {
+  size_t length = RSTRING_LEN(string);
+
+  char *source_string = StringValueCStr(string);
+
+  yp_buffer_t buffer;
+  yp_buffer_init(&buffer);
+  yp_parse_serialize(source_string, length, &buffer);
+
+  VALUE result = rb_str_new(buffer.value, buffer.length);
+  return result;
+}
+
 RUBY_FUNC_EXPORTED void
 Init_yarp(void) {
   if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
@@ -475,6 +489,8 @@ Init_yarp(void) {
   rb_define_singleton_method(rb_cYARP, "memsize", memsize, 1);
 
   rb_define_singleton_method(rb_cYARP, "compile", compile, 1);
+
+  rb_define_singleton_method(rb_cYARP, "serialize", serialize, 1);
 
   Init_yarp_pack();
 }
