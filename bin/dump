@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
+
+source = File.read("test.rb")
+
+pp YARP.load(source, YARP.dump(source, "test.rb"))

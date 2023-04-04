@@ -26,7 +26,7 @@
 #define YP_VERSION_PATCH 0
 
 void
-yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
+yp_serialize_node(yp_parser_t *parser, yp_node_t *node, char **newline_locations, yp_buffer_t *buffer);
 
 void
 yp_print_node(yp_parser_t *parser, yp_node_t *node);

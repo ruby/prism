@@ -8,27 +8,68 @@
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_conversion.h"
 
+static inline uint32_t
+line_number(char **newline_locations, const char *start) {
+  uint32_t index = 0;
+
+  while (newline_locations[index] != NULL) {
+    if (start < newline_locations[index]) {
+      return index + 1;
+    }
+    index++;
+  }
+  return index == 0 ? 1 : index;
+}
+
+static inline uint32_t
+column_number(yp_parser_t *parser, char **newline_locations, const char *start) {
+  uint32_t index = 0;
+
+  while (newline_locations[index] != NULL) {
+    if (start < newline_locations[index]) {
+      if (index == 0) {
+        return start - parser->start;
+      } else {
+        return start - newline_locations[index - 1];
+      }
+    }
+    index++;
+  }
+  return index == 0 ? 1 : index;
+}
+
 static void
-serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
+serialize_token(yp_parser_t *parser, yp_token_t *token, char **newline_locations, yp_buffer_t *buffer) {
   assert(token->start);
   assert(token->end);
+
 
   yp_buffer_append_u8(buffer, token->type);
   yp_buffer_append_u32(buffer, yp_long_to_u32(token->start - parser->start));
   yp_buffer_append_u32(buffer, yp_long_to_u32(token->end - parser->start));
+
+  yp_buffer_append_u32(buffer, line_number(newline_locations, token->start));
+  yp_buffer_append_u32(buffer, column_number(parser, newline_locations, token->start));
+  yp_buffer_append_u32(buffer, line_number(newline_locations, token->end));
+  yp_buffer_append_u32(buffer, column_number(parser, newline_locations, token->end));
 }
 
 static void
-serialize_location(yp_parser_t *parser, yp_location_t *location, yp_buffer_t *buffer) {
+serialize_location(yp_parser_t *parser, yp_location_t *location, char **newline_locations, yp_buffer_t *buffer) {
   assert(location->start);
   assert(location->end);
 
   yp_buffer_append_u32(buffer, yp_long_to_u32(location->start - parser->start));
   yp_buffer_append_u32(buffer, yp_long_to_u32(location->end - parser->start));
+
+  yp_buffer_append_u32(buffer, line_number(newline_locations, location->start));
+  yp_buffer_append_u32(buffer, column_number(parser, newline_locations, location->start));
+  yp_buffer_append_u32(buffer, line_number(newline_locations, location->end));
+  yp_buffer_append_u32(buffer, column_number(parser, newline_locations, location->end));
 }
 
 void
-yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
+yp_serialize_node(yp_parser_t *parser, yp_node_t *node, char ** newline_locations, yp_buffer_t *buffer) {
   yp_buffer_append_u8(buffer, node->type);
 
   size_t offset = buffer->length;
@@ -37,8 +78,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   assert(node->location.start);
   assert(node->location.end);
 
-  yp_buffer_append_u32(buffer, yp_long_to_u32(node->location.start - parser->start));
-  yp_buffer_append_u32(buffer, yp_long_to_u32(node->location.end - parser->start));
+  serialize_location(parser, &node->location, newline_locations, buffer);
 
   switch (node->type) {
     <%- nodes.each do |node| -%>
@@ -46,12 +86,12 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       <%- node.params.each do |param| -%>
       <%- case param -%>
       <%- when NodeParam -%>
-      yp_serialize_node(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
+      yp_serialize_node(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, newline_locations, buffer);
       <%- when OptionalNodeParam -%>
       if (((yp_<%= node.human %>_t *)node)-><%= param.name %> == NULL) {
         yp_buffer_append_u8(buffer, 0);
       } else {
-        yp_serialize_node(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
+        yp_serialize_node(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, newline_locations, buffer);
       }
       <%- when StringParam -%>
       uint32_t <%= param.name %>_length = yp_ulong_to_u32(yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>));
@@ -61,30 +101,30 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
       yp_buffer_append_u32(buffer, <%= param.name %>_size);
       for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
-        yp_serialize_node(parser, (yp_node_t *) ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], buffer);
+        yp_serialize_node(parser, (yp_node_t *) ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], newline_locations, buffer);
       }
       <%- when TokenParam -%>
-      serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
+      serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, newline_locations, buffer);
       <%- when OptionalTokenParam -%>
       if (((yp_<%= node.human %>_t *)node)-><%= param.name %>.type == YP_TOKEN_NOT_PROVIDED) {
         yp_buffer_append_u8(buffer, 0);
       } else {
-        serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
+        serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, newline_locations, buffer);
       }
       <%- when TokenListParam -%>
       uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
       yp_buffer_append_u32(buffer, <%= param.name %>_size);
       for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
-        serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.tokens[index], buffer);
+        serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.tokens[index], newline_locations, buffer);
       }
       <%- when LocationParam -%>
-      serialize_location(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
+      serialize_location(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, newline_locations, buffer);
       <%- when OptionalLocationParam -%>
       if (((yp_<%= node.human %>_t *)node)-><%= param.name %>.start == NULL) {
         yp_buffer_append_u8(buffer, 0);
       } else {
         yp_buffer_append_u8(buffer, 1);
-        serialize_location(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
+        serialize_location(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, newline_locations, buffer);
       }
       <%- when IntegerParam -%>
       yp_buffer_append_int(buffer, ((yp_<%= node.human %>_t *)node)-><%= param.name %>);

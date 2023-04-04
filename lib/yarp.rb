@@ -5,9 +5,14 @@ module YARP
   class Location
     attr_reader :start_offset, :end_offset
 
-    def initialize(start_offset, end_offset)
+    def initialize(start_offset, end_offset, start_line = nil, start_column = nil, end_line = nil, end_column = nil)
       @start_offset = start_offset
       @end_offset = end_offset
+
+      @start_line = start_line
+      @start_column = start_column
+      @end_line = end_line
+      @end_column = end_column
     end
 
     def deconstruct_keys(keys)
@@ -15,7 +20,11 @@ module YARP
     end
 
     def pretty_print(q)
-      q.text("(#{start_offset}...#{end_offset})")
+      if @start_line
+        q.text("(#{start_offset}...#{end_offset})#{@start_line}:#{@start_column}-#{@end_line}:#{@end_column}")
+      else
+        q.text("(#{start_offset}...#{end_offset})")
+      end
     end
 
     def ==(other)

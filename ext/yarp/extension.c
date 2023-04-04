@@ -441,7 +441,7 @@ compile(VALUE self, VALUE string) {
     if (source[i] == '\n') {
       if (index + 1 == size) {
         size *= 2;
-        realloc(newline_locations, size);
+        newline_locations = realloc(newline_locations, sizeof(char*) * size);
       }
       
       newline_locations[index++] = &source[i];

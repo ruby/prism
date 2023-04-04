@@ -19,6 +19,10 @@ After the header comes the body of the serialized string. The body consistents o
 | `4` | byte offset into the serialized string where this node ends |
 | `4` | byte offset into the source string where this node begins |
 | `4` | byte offset into the source string where this node ends |
+| `4` | line number where this node begins |
+| `4` | column number where this node begins |
+| `4` | line number where this node end |
+| `4` | column number where this node ends |
 
 Each node's child is then appended to the serialized string. The child node types can be determined by referencing `config.yml`. Depending on the type of child node, it could take a couple of different forms, described below:
 

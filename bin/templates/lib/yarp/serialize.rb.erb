@@ -68,7 +68,9 @@ module YARP
 
       def load_location
         start_offset, end_offset = io.read(8).unpack("LL")
-        Location.new(start_offset, end_offset)
+        start_line, start_column = io.read(8).unpack("LL")
+        end_line, end_column = io.read(8).unpack("LL")
+        Location.new(start_offset, end_offset, start_line, start_column, end_line, end_column)
       end
 
       def load_optional_location

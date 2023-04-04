@@ -11572,8 +11572,29 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_buffer_append_u8(buffer, YP_VERSION_MINOR);
   yp_buffer_append_u8(buffer, YP_VERSION_PATCH);
 
-  yp_serialize_node(parser, node, buffer);
+  // track the byte offset of newline characters.
+  // This allows us to lookup the line/column number in
+  // the compiler later without storing the line on each node
+  size_t index = 0;
+  size_t size = 10;
+  char ** newline_locations = malloc(sizeof(char*) * size);
+
+  const char *source = parser->start;
+  for (size_t i = 0; i < strlen(source); i++) {
+    if (source[i] == '\n') {
+      if (index + 1 == size) {
+        size *= 2;
+        newline_locations = realloc(newline_locations, sizeof(char*) * size);
+      }
+
+      newline_locations[index++] = (char*)&source[i];
+    }
+  }
+  newline_locations[index] = NULL;
+
+  yp_serialize_node(parser, node, newline_locations, buffer);
   yp_buffer_append_str(buffer, "\0", 1);
+  free(newline_locations);
 }
 
 // Parse and serialize the AST represented by the given source to the given
