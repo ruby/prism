@@ -175,7 +175,7 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
   rb_hash_aset(data, ID2SYM(rb_intern("code_location")), code_location);
   rb_hash_aset(data, ID2SYM(rb_intern("node_ids")), compiler->node_ids);
 
-  VALUE type;
+  VALUE type = Qnil;
   switch (compiler->type) {
     case YP_ISEQ_TYPE_TOP:
       type = ID2SYM(rb_intern("top"));
