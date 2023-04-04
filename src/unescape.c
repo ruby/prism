@@ -231,7 +231,7 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 
         while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
           const char *unicode_start = unicode_cursor;
-          int hexadecimal_length = yp_strspn_hexadecimal_digit(unicode_cursor, end - unicode_cursor);
+          size_t hexadecimal_length = yp_strspn_hexadecimal_digit(unicode_cursor, end - unicode_cursor);
 
           // \u{nnnn} character literal allows only 1-6 hexadecimal digits
           if (hexadecimal_length > 6)
