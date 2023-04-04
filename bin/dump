@@ -1,0 +1,135 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
+require "fileutils"
+require "yaml"
+require_relative "node_types"
+
+config = YAML.load_file(File.expand_path("../config.yml", __dir__))
+
+nodes = config.fetch("nodes").map { |node| NodeType.new(node) }
+
+source = File.read(ARGV.fetch(0, "test.rb"))
+$source = source
+$tokens = config.fetch("tokens").map { |token| Token.new(token) }
+dump = YARP.dump_file(ARGV[0]).bytes
+
+def bytes_to_int(bytes)
+  bytes.reverse.reduce(0) { |sum, val| sum = (sum << 8) + val }
+end
+
+def parse_token(dump, index, indent)
+  token_type = dump[index]
+  index += 1
+  token_start = bytes_to_int(dump[index...index + 4])
+  index += 4
+  token_end = bytes_to_int(dump[index...index + 4])
+  index += 4
+  print " " * indent
+  puts "token #{$tokens[token_type].name}(#{token_start}...#{token_end}) '#{$source.bytes[token_start...token_end].map(&:chr).join("")}'"
+  index
+end
+
+def parse_location(dump, index, indent)
+  location_start = bytes_to_int(dump[index...index + 4])
+  index += 4
+  location_end = bytes_to_int(dump[index...index + 4])
+  index += 4
+
+  print " " * indent
+  puts "location(#{location_start}...#{location_end})"
+  index
+end
+
+def parse_dump(nodes, dump, index = 0, indent = 0)
+  node_type = dump[index]
+
+  if node_type == nil
+    binding.irb
+  end
+
+  node = nodes[node_type]
+
+  if node == nil
+    raise "nil node at #{index}"
+    return index
+  end
+
+  index += 1
+  serialized_end = bytes_to_int(dump[index...index + 4])
+  index += 4
+  source_start = bytes_to_int(dump[index...index + 4])
+  index += 4
+  source_end = bytes_to_int(dump[index...index + 4])
+  index += 4
+
+  print " " * indent
+  puts "node #{node.name}(#{source_start}...#{source_end})"
+
+  node.params.each do |param|
+    case param
+    when NodeParam
+      index = parse_dump(nodes, dump, index, indent + 2)
+    when OptionalNodeParam
+      if dump[index] == 0
+        # no optional node just progress
+        index += 1
+      else
+        index = parse_dump(nodes, dump, index, indent + 2)
+      end
+    when StringParam
+      str_len = bytes_to_int(dump[index...index+4])
+      index += 4
+      print " " * indent
+      puts "str: \"#{dump[index...index+str_len].map(&:chr).join("")}\""
+      index += str_len
+
+    when NodeListParam
+      node_list_len = bytes_to_int(dump[index...index+4])
+      index += 4
+      node_list_len.times do |i|
+        index = parse_dump(nodes, dump, index, indent + 2)
+      end
+    when TokenParam
+      index = parse_token(dump, index, indent + 2)
+    when OptionalTokenParam
+      if dump[index] == 0
+        # no optional node just progress
+        index += 1
+      else
+        index = parse_token(dump, index, indent + 2)
+      end
+    when TokenListParam
+      token_list_size = dump[index...index + 4]
+      index += 4
+
+      bytes_to_int(token_list_size).times do
+        index = parse_token(dump, index, indent + 2)
+      end
+
+    when LocationParam
+      index = parse_location(dump, index, indent)
+    when OptionalLocationParam
+      if dump[index] == 0
+        index += 1
+      else
+        index += 1
+        index = parse_location(dump, index, indent)
+      end
+
+    when IntegerParam
+      int_val = dump[index...index+4]
+      index += 4
+      print " " * indent
+      puts "int val #{int_val}"
+    else
+      raise "unknown node param: #{param}"
+    end
+  end
+  index
+end
+
+puts "== dump - header #{dump[0..3]} major: #{dump[4]}, minor: #{dump[5]}, patch: #{dump[6]} =="
+parse_dump(nodes, dump, 7, 0)
