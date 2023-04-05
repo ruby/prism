@@ -8,16 +8,25 @@ require "yarp"
 filepath = ARGV.first
 pattern = "%-70s %-70s"
 
+source = File.read(filepath)
+ripper = YARP.lex_ripper(source)
+yarp = YARP.lex_compat(source, filepath)
+if yarp.errors.any?
+  puts "Errors lexing:"
+  yarp.errors.map do |error|
+    puts "\e[1;31m- #{error.message}\e[0m"
+  end
+  puts "\n"
+end
+
 puts pattern % ["Ripper lex", "YARP lex"]
 puts pattern % ["-" * 70, "-" * 70]
 
-source = File.read(filepath)
-ripper = YARP.lex_ripper(source)
-yarp = YARP.lex_compat(source, filepath).value
+yarp_value = yarp.value
 
-[yarp.length, ripper.length].max.times do |index|
+[yarp_value.length, ripper.length].max.times do |index|
   left = ripper[index]
-  right = yarp[index]
+  right = yarp_value[index]
 
   color = left == right ? "38;5;102" : "1;31"
 
