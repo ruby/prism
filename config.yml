@@ -1,6 +1,6 @@
 tokens:
   - name: EOF
-    value: 0
+    value: 1
     comment: final token in the file
   - name: MISSING
     comment: "a token that was expected but not found"
