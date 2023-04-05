@@ -32,7 +32,7 @@ module YARP
         type =
           case number
           <%- tokens.each_with_index do |token, index| -%>
-          when <%= index %> then :<%= token.name %>
+          when <%= index + 1 %> then :<%= token.name %>
           <%- end -%>
           end
 
@@ -76,7 +76,7 @@ module YARP
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
-        when <%= index %> then <%= node.name %>.new(<%= (node.params.map { |param|
+        when <%= index + 1 %> then <%= node.name %>.new(<%= (node.params.map { |param|
           case param
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"

@@ -39,7 +39,7 @@ typedef struct yp_node_list {
 
 typedef enum {
 <%- nodes.each_with_index do |node, index| -%>
-  <%= node.type %> = <%= index %>,
+  <%= node.type %> = <%= index + 1 %>,
 <%- end -%>
 } yp_node_type_t;
 
