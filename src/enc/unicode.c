@@ -2235,11 +2235,6 @@ yp_encoding_utf_8_char_width(const char *c) {
 
 size_t
 yp_encoding_utf_8_alpha_char(const char *c) {
-  // is ascii
-  if (!((const unsigned char)*c & 0x80)) { 
-    return yp_encoding_ascii_alpha_char(c);
-  }
-  
   size_t width;
   unicode_codepoint_t codepoint = utf_8_codepoint((const unsigned char *) c, &width);
 
@@ -2252,10 +2247,6 @@ yp_encoding_utf_8_alpha_char(const char *c) {
 
 size_t
 yp_encoding_utf_8_alnum_char(const char *c) {
-  if (!((const unsigned char)*c & 0x80)) { 
-    return yp_encoding_ascii_alnum_char(c);
-  }
-  
   size_t width;
   unicode_codepoint_t codepoint = utf_8_codepoint((const unsigned char *) c, &width);
 
@@ -2268,9 +2259,6 @@ yp_encoding_utf_8_alnum_char(const char *c) {
 
 bool
 yp_encoding_utf_8_isupper_char(const char *c) {
-  if (!((const unsigned char)*c & 0x80)) { 
-    return yp_encoding_ascii_isupper_char(c);
-  }
   size_t width;
   unicode_codepoint_t codepoint = utf_8_codepoint((const unsigned char *) c, &width);
 
