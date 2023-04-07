@@ -17,7 +17,6 @@ test-native/run-one
 
 /ext/yarp/node.c
 /include/yarp/ast.h
-/include/yarp/node.h
 /java/org/yarp/AbstractNodeVisitor.java
 /java/org/yarp/Loader.java
 /java/org/yarp/Nodes.java
