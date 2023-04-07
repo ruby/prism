@@ -872,6 +872,18 @@ class ErrorsTest < Test::Unit::TestCase
     )
     assert_errors expected, "def foo(a, b = 1, c, d = 2, e)\nend", ["Unexpected parameter order"]
   end
+
+  test "case without when clauses errors on else clause" do
+    expected = CaseNode(
+      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+      [],
+      ElseNode(KEYWORD_ELSE("else"), nil, KEYWORD_END("end")),
+      Location(),
+      Location()
+    )
+
+    assert_errors expected, "case :a\nelse\nend", ["Unexpected else without no when clauses in case statement."]
+  end
   
   private
 
