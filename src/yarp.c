@@ -434,10 +434,10 @@ yp_arguments_node_create(yp_parser_t *parser) {
     {
       .type = YP_NODE_ARGUMENTS_NODE,
       .location = YP_LOCATION_NULL_VALUE(parser)
-    }
+    },
+    .arguments = YP_EMPTY_NODE_LIST
   };
 
-  yp_node_list_init(&node->arguments);
   return node;
 }
 
@@ -2752,10 +2752,10 @@ yp_scope_node_create(yp_parser_t *parser, const yp_token_t *token) {
     {
       .type = YP_NODE_SCOPE_NODE,
       .location = YP_LOCATION_TOKEN_VALUE(token)
-    }
+    },
+    .locals = YP_EMPTY_TOKEN_LIST
   };
 
-  yp_token_list_init(&node->locals);
   return node;
 }
 
@@ -2859,10 +2859,10 @@ yp_statements_node_create(yp_parser_t *parser) {
     {
       .type = YP_NODE_STATEMENTS_NODE,
       .location = YP_LOCATION_NULL_VALUE(parser)
-    }
+    },
+    .body = YP_EMPTY_NODE_LIST
   };
 
-  yp_node_list_init(&node->body);
   return node;
 }
 

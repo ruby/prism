@@ -27,4 +27,9 @@ yp_node_list_append(yp_parser_t *parser, yp_node_t *parent, yp_node_list_t *list
 // Clear the node but preserves the location.
 void
 yp_node_clear(yp_node_t *node);
+
+#define YP_EMPTY_NODE_LIST { .nodes = NULL, .size = 0, .capacity = 0 }
+
+#define YP_EMPTY_TOKEN_LIST { .tokens = NULL, .size = 0, .capacity = 0 }
+
 #endif // YARP_NODE_H
