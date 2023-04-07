@@ -9727,6 +9727,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           return (yp_node_t *) yp_return_node_create(parser, &keyword, arguments);
         default:
           assert(false && "unreachable");
+          return (yp_node_t *) yp_missing_node_create(parser, parser->previous.start, parser->previous.end);
       }
     }
     case YP_TOKEN_KEYWORD_SUPER: {
