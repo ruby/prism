@@ -1707,8 +1707,10 @@ yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
 
   yp_rational_node_t *node = yp_alloc(parser, sizeof(yp_rational_node_t));
 
-  *node = (yp_rational_node_t) {{ .type = YP_NODE_RATIONAL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
-  node->numeric = (yp_node_t *)numeric_node;
+  *node = (yp_rational_node_t) {
+    { .type = YP_NODE_RATIONAL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) },
+    .numeric = numeric_node,
+  };
   assert(parser->lex_modes.current->mode != YP_LEX_NUMERIC);
   return node;
 }
@@ -1750,8 +1752,10 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
 
   yp_imaginary_node_t *node = yp_alloc(parser, sizeof(yp_imaginary_node_t));
 
-  *node = (yp_imaginary_node_t) {{ .type = YP_NODE_IMAGINARY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
-  node->numeric = (yp_node_t *)numeric_node;
+  *node = (yp_imaginary_node_t) {
+    { .type = YP_NODE_IMAGINARY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) },
+    .numeric = numeric_node
+  };
   assert(parser->lex_modes.current->mode != YP_LEX_NUMERIC);
   return node;
 }
@@ -9643,7 +9647,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (case_node->conditions.size < 1) {
           yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected else without no when clauses in case statement.");
         }
-        
+
         yp_token_t else_keyword = parser->previous;
         yp_else_node_t *else_node;
 
