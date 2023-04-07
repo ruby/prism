@@ -22,7 +22,7 @@ endif
 all: build/librubyparser.$(SOEXT)
 
 build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h
-	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -Wno-missing-field-initializers -Wno-uninitialized -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
 
 build:
 	mkdir -p build
