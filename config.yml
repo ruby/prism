@@ -922,6 +922,9 @@ nodes:
           if foo then bar end
           ^^^^^^^^^^^^^^^^^^^
   - name: ImaginaryNode
+    child_nodes:
+      - name: numeric
+        type: node
     comment: |
       Represents an imaginary number literal.
 
@@ -1375,6 +1378,9 @@ nodes:
           c if a =~ /left/ ... b =~ /right/
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   - name: RationalNode
+    child_nodes:
+      - name: numeric
+        type: node
     comment: |
       Represents a rational number literal.
 

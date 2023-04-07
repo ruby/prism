@@ -268,12 +268,12 @@ ProgramNode(2...916)(
      ),
      IntegerNode(227...228)(),
      IntegerNode(229...230)(),
-     RationalNode(231...233)(),
-     RationalNode(234...238)(),
-     RationalNode(239...243)(),
-     ImaginaryNode(244...246)(),
+     RationalNode(231...233)(IntegerNode(231...233)()),
+     RationalNode(234...238)(FloatNode(234...238)()),
+     RationalNode(239...243)(FloatNode(239...243)()),
+     ImaginaryNode(244...246)(IntegerNode(244...246)()),
      CallNode(247...250)(
-       ImaginaryNode(248...250)(),
+       ImaginaryNode(248...250)(IntegerNode(248...250)()),
        nil,
        UMINUS_NUM(247...248)("-"),
        nil,
@@ -282,9 +282,9 @@ ProgramNode(2...916)(
        nil,
        "-@"
      ),
-     ImaginaryNode(251...255)(),
+     ImaginaryNode(251...255)(FloatNode(251...255)()),
      CallNode(256...261)(
-       ImaginaryNode(257...261)(),
+       ImaginaryNode(257...261)(FloatNode(257...261)()),
        nil,
        UMINUS_NUM(256...257)("-"),
        nil,
@@ -293,8 +293,10 @@ ProgramNode(2...916)(
        nil,
        "-@"
      ),
-     ImaginaryNode(262...294)(),
-     ImaginaryNode(295...298)(),
+     ImaginaryNode(262...294)(IntegerNode(262...294)()),
+     ImaginaryNode(295...298)(
+       RationalNode(295...298)(IntegerNode(295...297)())
+     ),
      StringConcatNode(299...310)(
        StringNode(299...304)(
          STRING_BEGIN(299...300)("\""),

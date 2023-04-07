@@ -170,6 +170,116 @@ debug_scope(yp_parser_t *parser) {
 #endif
 
 /******************************************************************************/
+/* Lex mode manipulations                                                     */
+/******************************************************************************/
+
+// Push a new lex state onto the stack. If we're still within the pre-allocated
+// space of the lex state stack, then we'll just use a new slot. Otherwise we'll
+// allocate a new pointer and use that.
+static void
+lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
+  lex_mode.prev = parser->lex_modes.current;
+  parser->lex_modes.index++;
+
+  if (parser->lex_modes.index > YP_LEX_STACK_SIZE - 1) {
+    parser->lex_modes.current = (yp_lex_mode_t *) malloc(sizeof(yp_lex_mode_t));
+    *parser->lex_modes.current = lex_mode;
+  } else {
+    parser->lex_modes.stack[parser->lex_modes.index] = lex_mode;
+    parser->lex_modes.current = &parser->lex_modes.stack[parser->lex_modes.index];
+  }
+}
+
+// Pop the current lex state off the stack. If we're within the pre-allocated
+// space of the lex state stack, then we'll just decrement the index. Otherwise
+// we'll free the current pointer and use the previous pointer.
+static void
+lex_mode_pop(yp_parser_t *parser) {
+  if (parser->lex_modes.index == 0) {
+    parser->lex_modes.current->mode = YP_LEX_DEFAULT;
+  } else if (parser->lex_modes.index < YP_LEX_STACK_SIZE) {
+    parser->lex_modes.index--;
+    parser->lex_modes.current = &parser->lex_modes.stack[parser->lex_modes.index];
+  } else {
+    parser->lex_modes.index--;
+    yp_lex_mode_t *prev = parser->lex_modes.current->prev;
+    free(parser->lex_modes.current);
+    parser->lex_modes.current = prev;
+  }
+}
+
+// This is the equivalent of IS_lex_state is CRuby.
+static inline bool
+lex_state_p(yp_parser_t *parser, yp_lex_state_t state) {
+  return parser->lex_state & state;
+}
+
+typedef enum {
+  YP_IGNORED_NEWLINE_NONE = 0,
+  YP_IGNORED_NEWLINE_ALL,
+  YP_IGNORED_NEWLINE_PATTERN
+} yp_ignored_newline_type_t;
+
+static inline yp_ignored_newline_type_t
+lex_state_ignored_p(yp_parser_t *parser) {
+  bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
+
+  if (ignored) {
+    return YP_IGNORED_NEWLINE_ALL;
+  } else if (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED)) {
+    return YP_IGNORED_NEWLINE_PATTERN;
+  } else {
+    return YP_IGNORED_NEWLINE_NONE;
+  }
+}
+
+static inline bool
+lex_state_beg_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_BEG_ANY) || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED));
+}
+
+static inline bool
+lex_state_arg_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_ARG_ANY);
+}
+
+static inline bool
+lex_state_spcarg_p(yp_parser_t *parser, bool space_seen) {
+  return lex_state_arg_p(parser) && space_seen && !yp_char_is_whitespace(*parser->current.end);
+}
+
+static inline bool
+lex_state_end_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_END_ANY);
+}
+
+// This is the equivalent of IS_AFTER_OPERATOR in CRuby.
+static inline bool
+lex_state_operator_p(yp_parser_t *parser) {
+  return lex_state_p(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT);
+}
+
+// Set the state of the lexer. This is defined as a function to be able to put a breakpoint in it.
+static inline void
+lex_state_set(yp_parser_t *parser, yp_lex_state_t state) {
+  parser->lex_state = state;
+}
+
+#if YP_DEBUG
+static inline void
+debug_lex_state_set(yp_parser_t *parser, yp_lex_state_t state, char const * caller_name, int line_number) {
+  fprintf(stderr, "Caller: %s:%d\nPrevious: ", caller_name, line_number);
+  debug_state(parser);
+  lex_state_set(parser, state);
+  fprintf(stderr, "Now: ");
+  debug_state(parser);
+  fprintf(stderr, "\n");
+}
+
+#define lex_state_set(parser, state) debug_lex_state_set(parser, state, __func__, __LINE__)
+#endif
+
+/******************************************************************************/
 /* Node-related functions                                                     */
 /******************************************************************************/
 
@@ -242,6 +352,14 @@ yp_statements_node_create(yp_parser_t *parser);
 // Append a new node to the given StatementsNode node's body.
 static void
 yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement);
+
+// Allocate a new MissingNode node.
+static yp_missing_node_t *
+yp_missing_node_create(yp_parser_t *parser, const char *start, const char *end) {
+  yp_missing_node_t *node = yp_alloc(parser, sizeof(yp_missing_node_t));
+  *node = (yp_missing_node_t) {{ .type = YP_NODE_MISSING_NODE, .location = { .start = start, .end = end } }};
+  return node;
+}
 
 // Allocate and initialize a new alias node.
 static yp_alias_node_t *
@@ -1548,13 +1666,93 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_to
   return yp_if_node_create(parser, question_mark, predicate, if_statements, (yp_node_t *)else_node, &end_keyword);
 }
 
+// Allocate and initialize a new IntegerNode node.
+static yp_integer_node_t *
+yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_INTEGER);
+  yp_integer_node_t *node = yp_alloc(parser, sizeof(yp_integer_node_t));
+  *node = (yp_integer_node_t) {{ .type = YP_NODE_INTEGER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  return node;
+}
+
+// Allocate and initialize a new RationalNode node.
+static yp_rational_node_t *
+yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
+  assert(token->type == YP_TOKEN_RATIONAL_NUMBER);
+  assert(parser->lex_modes.current->mode == YP_LEX_NUMERIC);
+
+  yp_node_t *numeric_node;
+  yp_token_t numeric_token = {
+    .type = parser->lex_modes.current->as.numeric.type,
+    .start = parser->lex_modes.current->as.numeric.start,
+    .end = parser->lex_modes.current->as.numeric.end
+  };
+  switch (parser->lex_modes.current->as.numeric.type) {
+    case YP_TOKEN_INTEGER: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_integer_node_create(parser, &numeric_token);
+      break;
+    }
+    case YP_TOKEN_FLOAT: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_float_node_create(parser, &numeric_token);
+      break;
+    }
+    default: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_missing_node_create(parser, numeric_token.start, numeric_token.end);
+      assert(false && "unreachable");
+    }
+  }
+
+  yp_rational_node_t *node = yp_alloc(parser, sizeof(yp_rational_node_t));
+
+  *node = (yp_rational_node_t) {{ .type = YP_NODE_RATIONAL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  node->numeric = (yp_node_t *)numeric_node;
+  assert(parser->lex_modes.current->mode != YP_LEX_NUMERIC);
+  return node;
+}
+
 // Allocate and initialize a new ImaginaryNode node.
 static yp_imaginary_node_t *
 yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
   assert(token->type == YP_TOKEN_IMAGINARY_NUMBER);
+  assert(parser->lex_modes.current->mode == YP_LEX_NUMERIC);
+
+  yp_node_t *numeric_node;
+  yp_token_t numeric_token = {
+    .type = parser->lex_modes.current->as.numeric.type,
+    .start = parser->lex_modes.current->as.numeric.start,
+    .end = parser->lex_modes.current->as.numeric.end
+  };
+  switch (parser->lex_modes.current->as.numeric.type) {
+    case YP_TOKEN_INTEGER: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_integer_node_create(parser, &numeric_token);
+      break;
+    }
+    case YP_TOKEN_FLOAT: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_float_node_create(parser, &numeric_token);
+      break;
+    }
+    case YP_TOKEN_RATIONAL_NUMBER: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_rational_node_create(parser, &numeric_token);
+      break;
+    }
+    default: {
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_missing_node_create(parser, numeric_token.start, numeric_token.end);
+      assert(false && "unreachable");
+    }
+  }
+
   yp_imaginary_node_t *node = yp_alloc(parser, sizeof(yp_imaginary_node_t));
 
   *node = (yp_imaginary_node_t) {{ .type = YP_NODE_IMAGINARY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  node->numeric = (yp_node_t *)numeric_node;
+  assert(parser->lex_modes.current->mode != YP_LEX_NUMERIC);
   return node;
 }
 
@@ -1619,15 +1817,6 @@ yp_instance_variable_write_node_create(yp_parser_t *parser, yp_instance_variable
     .value = value
   };
 
-  return node;
-}
-
-// Allocate and initialize a new IntegerNode node.
-static yp_integer_node_t *
-yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_INTEGER);
-  yp_integer_node_t *node = yp_alloc(parser, sizeof(yp_integer_node_t));
-  *node = (yp_integer_node_t) {{ .type = YP_NODE_INTEGER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
   return node;
 }
 
@@ -1918,14 +2107,6 @@ yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *
     .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 
-  return node;
-}
-
-// Allocate a new MissingNode node.
-static yp_missing_node_t *
-yp_missing_node_create(yp_parser_t *parser, const char *start, const char *end) {
-  yp_missing_node_t *node = yp_alloc(parser, sizeof(yp_missing_node_t));
-  *node = (yp_missing_node_t) {{ .type = YP_NODE_MISSING_NODE, .location = { .start = start, .end = end } }};
   return node;
 }
 
@@ -2379,16 +2560,6 @@ yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *ope
     .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
   };
 
-  return node;
-}
-
-// Allocate and initialize a new RationalNode node.
-static yp_rational_node_t *
-yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
-  assert(token->type == YP_TOKEN_RATIONAL_NUMBER);
-  yp_rational_node_t *node = yp_alloc(parser, sizeof(yp_rational_node_t));
-
-  *node = (yp_rational_node_t) {{ .type = YP_NODE_RATIONAL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
   return node;
 }
 
@@ -3741,116 +3912,6 @@ context_def_p(yp_parser_t *parser) {
 }
 
 /******************************************************************************/
-/* Lex mode manipulations                                                     */
-/******************************************************************************/
-
-// Push a new lex state onto the stack. If we're still within the pre-allocated
-// space of the lex state stack, then we'll just use a new slot. Otherwise we'll
-// allocate a new pointer and use that.
-static void
-lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
-  lex_mode.prev = parser->lex_modes.current;
-  parser->lex_modes.index++;
-
-  if (parser->lex_modes.index > YP_LEX_STACK_SIZE - 1) {
-    parser->lex_modes.current = (yp_lex_mode_t *) malloc(sizeof(yp_lex_mode_t));
-    *parser->lex_modes.current = lex_mode;
-  } else {
-    parser->lex_modes.stack[parser->lex_modes.index] = lex_mode;
-    parser->lex_modes.current = &parser->lex_modes.stack[parser->lex_modes.index];
-  }
-}
-
-// Pop the current lex state off the stack. If we're within the pre-allocated
-// space of the lex state stack, then we'll just decrement the index. Otherwise
-// we'll free the current pointer and use the previous pointer.
-static void
-lex_mode_pop(yp_parser_t *parser) {
-  if (parser->lex_modes.index == 0) {
-    parser->lex_modes.current->mode = YP_LEX_DEFAULT;
-  } else if (parser->lex_modes.index < YP_LEX_STACK_SIZE) {
-    parser->lex_modes.index--;
-    parser->lex_modes.current = &parser->lex_modes.stack[parser->lex_modes.index];
-  } else {
-    parser->lex_modes.index--;
-    yp_lex_mode_t *prev = parser->lex_modes.current->prev;
-    free(parser->lex_modes.current);
-    parser->lex_modes.current = prev;
-  }
-}
-
-// This is the equivalent of IS_lex_state is CRuby.
-static inline bool
-lex_state_p(yp_parser_t *parser, yp_lex_state_t state) {
-  return parser->lex_state & state;
-}
-
-typedef enum {
-  YP_IGNORED_NEWLINE_NONE = 0,
-  YP_IGNORED_NEWLINE_ALL,
-  YP_IGNORED_NEWLINE_PATTERN
-} yp_ignored_newline_type_t;
-
-static inline yp_ignored_newline_type_t
-lex_state_ignored_p(yp_parser_t *parser) {
-  bool ignored = lex_state_p(parser, YP_LEX_STATE_BEG | YP_LEX_STATE_CLASS | YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT) && !lex_state_p(parser, YP_LEX_STATE_LABELED);
-
-  if (ignored) {
-    return YP_IGNORED_NEWLINE_ALL;
-  } else if (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED)) {
-    return YP_IGNORED_NEWLINE_PATTERN;
-  } else {
-    return YP_IGNORED_NEWLINE_NONE;
-  }
-}
-
-static inline bool
-lex_state_beg_p(yp_parser_t *parser) {
-  return lex_state_p(parser, YP_LEX_STATE_BEG_ANY) || (parser->lex_state == (YP_LEX_STATE_ARG | YP_LEX_STATE_LABELED));
-}
-
-static inline bool
-lex_state_arg_p(yp_parser_t *parser) {
-  return lex_state_p(parser, YP_LEX_STATE_ARG_ANY);
-}
-
-static inline bool
-lex_state_spcarg_p(yp_parser_t *parser, bool space_seen) {
-  return lex_state_arg_p(parser) && space_seen && !yp_char_is_whitespace(*parser->current.end);
-}
-
-static inline bool
-lex_state_end_p(yp_parser_t *parser) {
-  return lex_state_p(parser, YP_LEX_STATE_END_ANY);
-}
-
-// This is the equivalent of IS_AFTER_OPERATOR in CRuby.
-static inline bool
-lex_state_operator_p(yp_parser_t *parser) {
-  return lex_state_p(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_DOT);
-}
-
-// Set the state of the lexer. This is defined as a function to be able to put a breakpoint in it.
-static inline void
-lex_state_set(yp_parser_t *parser, yp_lex_state_t state) {
-  parser->lex_state = state;
-}
-
-#if YP_DEBUG
-static inline void
-debug_lex_state_set(yp_parser_t *parser, yp_lex_state_t state, char const * caller_name, int line_number) {
-  fprintf(stderr, "Caller: %s:%d\nPrevious: ", caller_name, line_number);
-  debug_state(parser);
-  lex_state_set(parser, state);
-  fprintf(stderr, "Now: ");
-  debug_state(parser);
-  fprintf(stderr, "\n");
-}
-
-#define lex_state_set(parser, state) debug_lex_state_set(parser, state, __func__, __LINE__)
-#endif
-
-/******************************************************************************/
 /* Specific token lexers                                                      */
 /******************************************************************************/
 
@@ -3994,8 +4055,34 @@ lex_numeric(yp_parser_t *parser) {
     yp_token_type_t current = type;
     const char *end = parser->current.end;
 
-    if (match(parser, 'r')) type = YP_TOKEN_RATIONAL_NUMBER;
-    if (match(parser, 'i')) type = YP_TOKEN_IMAGINARY_NUMBER;
+    if (match(parser, 'r')) {
+      lex_mode_push(parser, (yp_lex_mode_t) {
+          .mode = YP_LEX_NUMERIC,
+          .as.numeric.type = current,
+          .as.numeric.start = parser->current.start,
+          .as.numeric.end = parser->current.end
+        });
+      type = YP_TOKEN_RATIONAL_NUMBER;
+    }
+
+    if (match(parser, 'i')) {
+      if (type == YP_TOKEN_RATIONAL_NUMBER) {
+        lex_mode_push(parser, (yp_lex_mode_t) {
+            .mode = YP_LEX_NUMERIC,
+            .as.numeric.type = type,
+            .as.numeric.start = parser->current.start,
+            .as.numeric.end = parser->current.end
+          });
+      } else {
+        lex_mode_push(parser, (yp_lex_mode_t) {
+            .mode = YP_LEX_NUMERIC,
+            .as.numeric.type = current,
+            .as.numeric.start = parser->current.start,
+            .as.numeric.end = parser->current.end
+          });
+      }
+      type = YP_TOKEN_IMAGINARY_NUMBER;
+    }
 
     const unsigned char uc = (const unsigned char) peek(parser);
     if (uc != '\0' && (uc >= 0x80 || ((uc >= 'a' && uc <= 'z') || (uc >= 'A' && uc <= 'Z')) || uc == '_')) {
@@ -4584,6 +4671,7 @@ parser_lex(yp_parser_t *parser) {
     case YP_LEX_DEFAULT:
     case YP_LEX_EMBEXPR:
     case YP_LEX_EMBVAR:
+    case YP_LEX_NUMERIC:
 
     // We have a specific named label here because we are going to jump back to
     // this location in the event that we have lexed a token that should not be
