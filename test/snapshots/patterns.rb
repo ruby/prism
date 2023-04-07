@@ -58,7 +58,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       ImaginaryNode(38...40)(),
+       ImaginaryNode(38...40)(IntegerNode(38...40)()),
        (35...37)
      ),
      MatchRequiredNode(41...50)(
@@ -72,7 +72,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       RationalNode(48...50)(),
+       RationalNode(48...50)(IntegerNode(48...50)()),
        (45...47)
      ),
      MatchRequiredNode(51...62)(
@@ -507,8 +507,8 @@ ProgramNode(0...3655)(
          "foo"
        ),
        RangeNode(394...402)(
-         ImaginaryNode(394...396)(),
-         ImaginaryNode(400...402)(),
+         ImaginaryNode(394...396)(IntegerNode(394...396)()),
+         ImaginaryNode(400...402)(IntegerNode(400...402)()),
          (397...399)
        ),
        (391...393)
@@ -525,8 +525,8 @@ ProgramNode(0...3655)(
          "foo"
        ),
        RangeNode(410...418)(
-         RationalNode(410...412)(),
-         RationalNode(416...418)(),
+         RationalNode(410...412)(IntegerNode(410...412)()),
+         RationalNode(416...418)(IntegerNode(416...418)()),
          (413...415)
        ),
        (407...409)
@@ -2010,7 +2010,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       ImaginaryNode(1668...1670)(),
+       ImaginaryNode(1668...1670)(IntegerNode(1668...1670)()),
        (1665...1667)
      ),
      MatchPredicateNode(1671...1680)(
@@ -2024,7 +2024,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       RationalNode(1678...1680)(),
+       RationalNode(1678...1680)(IntegerNode(1678...1680)()),
        (1675...1677)
      ),
      MatchPredicateNode(1681...1692)(
@@ -2486,7 +2486,7 @@ ProgramNode(0...3655)(
          "foo"
        ),
        [InNode(2071...2081)(
-          ImaginaryNode(2074...2076)(),
+          ImaginaryNode(2074...2076)(IntegerNode(2074...2076)()),
           nil,
           (2071...2073),
           (2077...2081)
@@ -2507,7 +2507,7 @@ ProgramNode(0...3655)(
          "foo"
        ),
        [InNode(2096...2106)(
-          RationalNode(2099...2101)(),
+          RationalNode(2099...2101)(IntegerNode(2099...2101)()),
           nil,
           (2096...2098),
           (2102...2106)
@@ -3147,7 +3147,9 @@ ProgramNode(0...3655)(
           IfNode(2840...2849)(
             KEYWORD_IF_MODIFIER(2843...2845)("if"),
             LocalVariableReadNode(2846...2849)(0),
-            StatementsNode(2840...2842)([ImaginaryNode(2840...2842)()]),
+            StatementsNode(2840...2842)(
+              [ImaginaryNode(2840...2842)(IntegerNode(2840...2842)())]
+            ),
             nil,
             nil
           ),
@@ -3174,7 +3176,9 @@ ProgramNode(0...3655)(
           IfNode(2872...2881)(
             KEYWORD_IF_MODIFIER(2875...2877)("if"),
             LocalVariableReadNode(2878...2881)(0),
-            StatementsNode(2872...2874)([RationalNode(2872...2874)()]),
+            StatementsNode(2872...2874)(
+              [RationalNode(2872...2874)(IntegerNode(2872...2874)())]
+            ),
             nil,
             nil
           ),

@@ -1,9 +1,9 @@
 ProgramNode(0...131)(
   ScopeNode(0...0)([]),
   StatementsNode(0...131)(
-    [RationalNode(0...4)(),
+    [RationalNode(0...4)(FloatNode(0...4)()),
      CallNode(5...8)(
-       RationalNode(6...8)(),
+       RationalNode(6...8)(IntegerNode(6...8)()),
        nil,
        UMINUS_NUM(5...6)("-"),
        nil,

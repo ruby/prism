@@ -1,6 +1,6 @@
-ProgramNode(0...97)(
+ProgramNode(0...161)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...97)(
+  StatementsNode(0...161)(
     [IntegerNode(0...1)(),
      IntegerNode(3...4)(),
      FloatNode(6...9)(),
@@ -20,8 +20,8 @@ ProgramNode(0...97)(
      IntegerNode(72...75)(),
      IntegerNode(77...80)(),
      IntegerNode(82...85)(),
-     ImaginaryNode(87...89)(),
-     RationalNode(91...93)(),
+     ImaginaryNode(87...89)(IntegerNode(87...89)()),
+     RationalNode(91...93)(IntegerNode(91...93)()),
      CallNode(95...97)(
        IntegerNode(96...97)(),
        nil,
@@ -31,6 +31,42 @@ ProgramNode(0...97)(
        nil,
        nil,
        "-@"
+     ),
+     ImaginaryNode(99...102)(RationalNode(99...102)(IntegerNode(99...101)())),
+     ImaginaryNode(104...109)(RationalNode(104...109)(FloatNode(104...108)())),
+     CallNode(111...115)(
+       ImaginaryNode(112...115)(
+         RationalNode(112...115)(IntegerNode(112...114)())
+       ),
+       nil,
+       UMINUS_NUM(111...112)("-"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "-@"
+     ),
+     CallNode(117...123)(
+       ImaginaryNode(118...123)(
+         RationalNode(118...123)(FloatNode(118...122)())
+       ),
+       nil,
+       UMINUS_NUM(117...118)("-"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "-@"
+     ),
+     RationalNode(125...129)(IntegerNode(125...129)()),
+     ImaginaryNode(131...135)(IntegerNode(131...135)()),
+     ImaginaryNode(137...142)(
+       RationalNode(137...142)(IntegerNode(137...141)())
+     ),
+     RationalNode(144...148)(IntegerNode(144...148)()),
+     ImaginaryNode(150...154)(IntegerNode(150...154)()),
+     ImaginaryNode(156...161)(
+       RationalNode(156...161)(IntegerNode(156...160)())
      )]
   )
 )
