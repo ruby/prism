@@ -28,7 +28,6 @@ end
 class NodeParam < Param
   include CTypes
   
-  def param = "yp_node_t *#{name}"
   def rbs_class = "Node"
   def java_type = "Node"
 end
@@ -38,7 +37,6 @@ end
 class OptionalNodeParam < Param
   include CTypes
   
-  def param = "yp_node_t *#{name}"
   def rbs_class = "Node?"
   def java_type = "Node"
 end
@@ -48,7 +46,6 @@ SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
 # This represents a parameter to a node that is a list of nodes. We pass them as
 # references and store them as references.
 class NodeListParam < Param
-  def param = nil
   def rbs_class = "Array[Node]"
   def java_type = "Node[]"
 end
@@ -56,49 +53,42 @@ end
 # This represents a parameter to a node that is a token. We pass them as
 # references and store them by copying.
 class TokenParam < Param
-  def param = "const yp_token_t *#{name}"
   def rbs_class = "Token"
   def java_type = "Token"
 end
 
 # This represents a parameter to a node that is a token that is optional.
 class OptionalTokenParam < Param
-  def param = "const yp_token_t *#{name}"
   def rbs_class = "Token?"
   def java_type = "Token"
 end
 
 # This represents a parameter to a node that is a list of tokens.
 class TokenListParam < Param
-  def param = nil
   def rbs_class = "Array[Token]"
   def java_type = "Token[]"
 end
 
 # This represents a parameter to a node that is a string.
 class StringParam < Param
-  def param = nil
   def rbs_class = "String"
   def java_type = "byte[]"
 end
 
 # This represents a parameter to a node that is a location.
 class LocationParam < Param
-  def param = "const yp_location_t *#{name}"
   def rbs_class = "Location"
   def java_type = "Location"
 end
 
 # This represents a parameter to a node that is a location that is optional.
 class OptionalLocationParam < Param
-  def param = "const yp_location_t *#{name}"
   def rbs_class = "Location?"
   def java_type = "Location"
 end
 
 # This represents an integer parameter.
 class IntegerParam < Param
-  def param = "int #{name}"
   def rbs_class = "Integer"
   def java_type = "int"
 end
