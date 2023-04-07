@@ -9552,6 +9552,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
       if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
+        if (case_node->conditions.size < 1) {
+          yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected else without no when clauses in case statement.");
+        }
+        
         yp_token_t else_keyword = parser->previous;
         yp_else_node_t *else_node;
 
