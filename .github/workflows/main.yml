@@ -21,6 +21,18 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
 
+  build-without-assertions:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+    - name: Run Ruby tests
+      run: bundle exec rake compile_no_debug
+
   lex-ruby:
     runs-on: ubuntu-latest
     steps:

@@ -10,6 +10,7 @@ Rake.add_rakelib("tasks")
 RubyMemcheck.config(binary_name: "yarp")
 
 task compile: :make
+task compile_no_debug: :make_no_debug
 
 Rake::ExtensionTask.new(:compile) do |ext|
   ext.name = "yarp"
@@ -52,6 +53,10 @@ task templates: TEMPLATES
 
 task make: :templates do
   sh "make"
+end
+
+task make_no_debug: :templates do
+  sh "make all-no-debug"
 end
 
 task generate_compilation_database: [:clobber, :templates] do
