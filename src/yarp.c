@@ -1038,7 +1038,7 @@ yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *
   node->receiver = receiver;
   node->message = *operator;
 
-  yp_string_constant_init(&node->name, name, strnlen(name, 2));
+  yp_string_constant_init(&node->name, name, strlen(name));
   return node;
 }
 
