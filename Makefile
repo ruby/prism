@@ -8,12 +8,12 @@ OPTFLAGS :=
 CFLAGS :=
 
 # Check for the presence of strncasecmp
-ifeq ($(shell echo '\#include <string.h>\nint main() { strncasecmp("", "", 0); }' | $(CC) -o /dev/null -x c - 2>/dev/null && echo 1), 1)
+ifeq ($(shell $(CC) -Iinclude -o /dev/null test/availability/strncasecmp.c 2>/dev/null && echo 1), 1)
 CFLAGS := $(CFLAGS) -DHAVE_STRNCASECMP
 endif
 
 # Check for the presence of strnstr
-ifeq ($(shell echo '\#include <string.h>\nint main() { strnstr("", "", 0); }' | $(CC) -o /dev/null -x c - 2>/dev/null && echo 1), 1)
+ifeq ($(shell $(CC) -Iinclude -o /dev/null test/availability/strnstr.c 2>/dev/null && echo 1), 1)
 CFLAGS := $(CFLAGS) -DHAVE_STRNSTR
 endif
 
