@@ -7,11 +7,6 @@ endif
 OPTFLAGS :=
 CFLAGS :=
 
-# Check for the presence of strnlen
-ifeq ($(shell echo '\#include <string.h>\nint main() { strnlen("", 0); }' | $(CC) -o /dev/null -x c - 2>/dev/null && echo 1), 1)
-CFLAGS := $(CFLAGS) -DHAVE_STRNLEN
-endif
-
 # Check for the presence of strncasecmp
 ifeq ($(shell echo '\#include <string.h>\nint main() { strncasecmp("", "", 0); }' | $(CC) -o /dev/null -x c - 2>/dev/null && echo 1), 1)
 CFLAGS := $(CFLAGS) -DHAVE_STRNCASECMP

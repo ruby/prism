@@ -1,6 +1,8 @@
 #ifndef YARP_UNESCAPE_H
 #define YARP_UNESCAPE_H
 
+#include "yarp/defines.h"
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>

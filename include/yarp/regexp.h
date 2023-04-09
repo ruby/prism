@@ -1,7 +1,9 @@
 #ifndef YARP_REGEXP_H
 #define YARP_REGEXP_H
 
-#include "parser.h"
+#include "yarp/defines.h"
+
+#include "yarp/parser.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>

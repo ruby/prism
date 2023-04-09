@@ -1,6 +1,8 @@
 #ifndef YARP_NODE_H
 #define YARP_NODE_H
 
+#include "yarp/defines.h"
+
 #include "yarp.h"
 #include "yarp/parser.h"
 
