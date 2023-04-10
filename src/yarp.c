@@ -5457,7 +5457,11 @@ parser_lex(yp_parser_t *parser) {
           if (match(parser, '.')) {
             if (match(parser, '.')) {
               if (context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
-                lex_state_set(parser, YP_LEX_STATE_ENDARG);
+		if (lex_state_p(parser, YP_LEX_STATE_END)) {
+		  lex_state_set(parser, YP_LEX_STATE_BEG);
+		} else {
+		  lex_state_set(parser, YP_LEX_STATE_ENDARG);
+		}
                 LEX(YP_TOKEN_UDOT_DOT_DOT);
               }
 

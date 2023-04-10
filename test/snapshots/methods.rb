@@ -1,6 +1,6 @@
-ProgramNode(0...995)(
+ProgramNode(0...1021)(
   ScopeNode(0...0)([IDENTIFIER(290...291)("a"), IDENTIFIER(784...785)("c")]),
-  StatementsNode(0...995)(
+  StatementsNode(0...1021)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -1180,6 +1180,41 @@ ProgramNode(0...995)(
        nil,
        nil,
        (992...995)
+     ),
+     DefNode(997...1021)(
+       IDENTIFIER(1001...1004)("bar"),
+       nil,
+       ParametersNode(1005...1016)(
+         [],
+         [],
+         [],
+         nil,
+         [KeywordParameterNode(1005...1016)(
+            LABEL(1005...1007)("a:"),
+            ParenthesesNode(1008...1016)(
+              StatementsNode(1009...1015)(
+                [IntegerNode(1009...1010)(),
+                 RangeNode(1010...1015)(
+                   nil,
+                   IntegerNode(1013...1015)(),
+                   (1010...1013)
+                 )]
+              ),
+              (1008...1009),
+              (1015...1016)
+            )
+          )],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(997...1000)([LABEL(1005...1006)("a")]),
+       (997...1000),
+       nil,
+       (1004...1005),
+       (1016...1017),
+       nil,
+       (1018...1021)
      )]
   )
 )

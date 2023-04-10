@@ -141,3 +141,6 @@ def a(...); "foo#{b(...)}"; end
 def foo
   {}.merge **bar, **baz, **qux
 end
+
+def bar(a: (1...10))
+end
