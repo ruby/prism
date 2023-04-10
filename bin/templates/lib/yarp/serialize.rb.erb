@@ -71,7 +71,7 @@ module YARP
       end
 
       def load_node
-        type, _length = io.read(5).unpack("CL")
+        type = io.read(1).unpack1("C")
         location = load_location
 
         case type

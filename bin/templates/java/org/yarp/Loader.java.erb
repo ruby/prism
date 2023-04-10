@@ -102,7 +102,6 @@ public class Loader {
 
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
-        int length = buffer.getInt();
         int startOffset = buffer.getInt();
         int endOffset = buffer.getInt();
 

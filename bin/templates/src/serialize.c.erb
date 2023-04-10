@@ -26,9 +26,6 @@ void
 yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_buffer_append_u8(buffer, node->type);
 
-  size_t offset = buffer->length;
-  yp_buffer_append_u32(buffer, 0); /* Updated below */
-
   assert(node->location.start);
   assert(node->location.end);
 
@@ -91,7 +88,4 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     }
     <%- end -%>
   }
-
-  uint32_t length = yp_ulong_to_u32(buffer->length - offset - sizeof(uint32_t));
-  memcpy(buffer->value + offset, &length, sizeof(uint32_t));
 }
