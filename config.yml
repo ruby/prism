@@ -351,6 +351,7 @@ nodes:
         type: node
       - name: operator
         type: token
+        java_exclude: true
     comment: |
       Represents the use of the `&&` operator or the `and` keyword.
 
@@ -373,6 +374,7 @@ nodes:
         type: token?
       - name: closing
         type: token?
+        java_exclude: true
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -418,6 +420,7 @@ nodes:
         type: node?
       - name: operator
         type: token?
+        java_exclude: true
     comment: |
       Represents a hash key/value pair.
 
@@ -429,6 +432,7 @@ nodes:
         type: node?
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents a splat in a hash literal.
 
@@ -438,6 +442,7 @@ nodes:
     child_nodes:
       - name: begin_keyword
         type: token?
+        java_exclude: true
       - name: statements
         type: node?
         kind: StatementsNode
@@ -452,6 +457,7 @@ nodes:
         kind: EnsureNode
       - name: end_keyword
         type: token?
+        java_exclude: true
     comment: |
       Represents a begin statement.
 
@@ -465,6 +471,7 @@ nodes:
         type: node?
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents block method arguments.
 
@@ -482,8 +489,10 @@ nodes:
         type: node?
       - name: opening_loc
         type: location
+        java_exclude: true
       - name: closing_loc
         type: location
+        java_exclude: true
     comment: |
       Represents a block of ruby code.
 
@@ -495,6 +504,7 @@ nodes:
         type: token?
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents a block parameter to a method, block, or lambda definition.
 
@@ -543,11 +553,13 @@ nodes:
         type: token?
       - name: opening
         type: token?
+        java_exclude: true
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: closing
         type: token?
+        java_exclude: true
       - name: block
         type: node?
         kind: BlockNode
@@ -581,6 +593,7 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents assigning to a local variable in pattern matching.
 
@@ -597,8 +610,10 @@ nodes:
         kind: ElseNode
       - name: case_keyword_loc
         type: location
+        java_exclude: true
       - name: end_keyword_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of a case statement.
 
@@ -613,16 +628,19 @@ nodes:
         kind: ScopeNode
       - name: class_keyword
         type: token
+        java_exclude: true
       - name: constant_path
         type: node
       - name: inheritance_operator
         type: token?
+        java_exclude: true
       - name: superclass
         type: node?
       - name: statements
         type: node?
       - name: end_keyword
         type: token
+        java_exclude: true
     comment: |
       Represents a class declaration involving the `class` keyword.
 
@@ -642,6 +660,7 @@ nodes:
         type: node?
       - name: operator_loc
         type: location?
+        java_exclude: true
     comment: |
       Represents writing to a class variable.
 
@@ -655,6 +674,7 @@ nodes:
         type: node
       - name: delimiter_loc
         type: location
+        java_exclude: true
     comment: |
       Represents accessing a constant through a path of `::` operators.
 
@@ -666,6 +686,7 @@ nodes:
         type: node
       - name: operator
         type: token?
+        java_exclude: true
       - name: value
         type: node?
     comment: |
@@ -698,16 +719,22 @@ nodes:
         kind: ScopeNode
       - name: def_keyword_loc
         type: location
+        java_exclude: true
       - name: operator_loc
         type: location?
+        java_exclude: true
       - name: lparen_loc
         type: location?
+        java_exclude: true
       - name: rparen_loc
         type: location?
+        java_exclude: true
       - name: equal_loc
         type: location?
+        java_exclude: true
       - name: end_keyword_loc
         type: location?
+        java_exclude: true
     comment: |
       Represents a method definition.
 
@@ -718,12 +745,15 @@ nodes:
     child_nodes:
       - name: lparen
         type: token?
+        java_exclude: true
       - name: value
         type: node
       - name: rparen
         type: token?
+        java_exclude: true
       - name: keyword_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `defined?` keyword.
 
@@ -733,11 +763,13 @@ nodes:
     child_nodes:
       - name: else_keyword
         type: token
+        java_exclude: true
       - name: statements
         type: node?
         kind: StatementsNode
       - name: end_keyword
         type: token?
+        java_exclude: true
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
@@ -747,11 +779,13 @@ nodes:
     child_nodes:
       - name: ensure_keyword
         type: token
+        java_exclude: true
       - name: statements
         type: node?
         kind: StatementsNode
       - name: end_keyword
         type: token
+        java_exclude: true
     comment: |
       Represents an `ensure` clause in a `begin` statement.
 
@@ -779,8 +813,10 @@ nodes:
         type: node
       - name: opening_loc
         type: location?
+        java_exclude: true
       - name: closing_loc
         type: location?
+        java_exclude: true
     comment: |
       Represents a find pattern in pattern matching.
 
@@ -809,12 +845,16 @@ nodes:
         kind: StatementsNode
       - name: for_keyword_loc
         type: location
+        java_exclude: true
       - name: in_keyword_loc
         type: location
+        java_exclude: true
       - name: do_keyword_loc
         type: location?
+        java_exclude: true
       - name: end_keyword_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `for` keyword.
 
@@ -860,6 +900,7 @@ nodes:
         type: token
       - name: operator
         type: token?
+        java_exclude: true
       - name: value
         type: node?
     comment: |
@@ -875,6 +916,7 @@ nodes:
         type: node[]
       - name: closing
         type: token?
+        java_exclude: true
     comment: |
       Represents a hash literal.
 
@@ -890,8 +932,10 @@ nodes:
         type: node?
       - name: opening_loc
         type: location?
+        java_exclude: true
       - name: closing_loc
         type: location?
+        java_exclude: true
     comment: |
       Represents a hash pattern in pattern matching.
 
@@ -904,6 +948,7 @@ nodes:
     child_nodes:
       - name: if_keyword
         type: token
+        java_exclude: true
       - name: predicate
         type: node
       - name: statements
@@ -913,6 +958,7 @@ nodes:
         type: node?
       - name: end_keyword
         type: token?
+        java_exclude: true
     comment: |
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
@@ -939,8 +985,11 @@ nodes:
         kind: StatementsNode
       - name: in_loc
         type: location
+        java_exclude: true
       - name: then_loc
         type: location?
+        java_exclude: true
+        
     comment: |
       Represents the use of the `in` keyword in a case statement.
 
@@ -960,6 +1009,7 @@ nodes:
         type: node?
       - name: operator_loc
         type: location?
+        java_exclude: true
     comment: |
       Represents writing to an instance variable.
 
@@ -975,10 +1025,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token
+        java_exclude: true
       - name: parts
         type: node[]
       - name: closing
         type: token
+        java_exclude: true
     comment: |
       Represents a regular expression literal that contains interpolation.
 
@@ -988,10 +1040,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token?
+        java_exclude: true
       - name: parts
         type: node[]
       - name: closing
         type: token?
+        java_exclude: true
     comment: |
       Represents a string literal that contains interpolation.
 
@@ -1001,10 +1055,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token?
+        java_exclude: true
       - name: parts
         type: node[]
       - name: closing
         type: token?
+        java_exclude: true
     comment: |
       Represents a symbol literal that contains interpolation.
 
@@ -1014,10 +1070,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token
+        java_exclude: true
       - name: parts
         type: node[]
       - name: closing
         type: token
+        java_exclude: true
     comment: |
       Represents an xstring literal that contains interpolation.
 
@@ -1058,6 +1116,7 @@ nodes:
         kind: ScopeNode
       - name: opening
         type: token
+        java_exclude: true
       - name: parameters
         type: node?
         kind: BlockParametersNode
@@ -1086,7 +1145,8 @@ nodes:
       - name: value
         type: node?
       - name: operator_loc
-        type: location?
+        type: location?        
+        java_exclude: true
       - name: depth
         type: integer
     comment: |
@@ -1102,6 +1162,7 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the modifier `in` operator.
 
@@ -1130,6 +1191,7 @@ nodes:
         type: node
         kind: ScopeNode
       - name: module_keyword
+        java_exclude: true
         type: token
       - name: constant_path
         type: node
@@ -1137,6 +1199,7 @@ nodes:
         type: node?
       - name: end_keyword
         type: token
+        java_exclude: true
     comment: |
       Represents a module declaration involving the `module` keyword.
 
@@ -1148,12 +1211,15 @@ nodes:
         type: node[]
       - name: operator
         type: token?
+        java_exclude: true
       - name: value
         type: node?
       - name: lparen_loc
         type: location?
+        java_exclude: true
       - name: rparen_loc
         type: location?
+        java_exclude: true
     comment: |
       Represents a multi-target expression.
 
@@ -1166,6 +1232,7 @@ nodes:
         kind: ArgumentsNode
       - name: keyword_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `next` keyword.
 
@@ -1181,8 +1248,10 @@ nodes:
     child_nodes:
       - name: operator_loc
         type: location
+        java_exclude: true
       - name: keyword_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of `**nil` inside method arguments.
 
@@ -1197,6 +1266,7 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `&&=` operator for assignment.
 
@@ -1223,6 +1293,7 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `||=` operator for assignment.
 
@@ -1234,6 +1305,7 @@ nodes:
         type: token
       - name: equal_operator
         type: token
+        java_exclude: true
       - name: value
         type: node
     comment: |
@@ -1250,6 +1322,7 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `||` operator or the `or` keyword.
 
@@ -1285,8 +1358,10 @@ nodes:
         type: node?
       - name: opening_loc
         type: location
+        java_exclude: true
       - name: closing_loc
         type: location
+        java_exclude: true
     comment: |
       Represents a parentesized expression
 
@@ -1298,10 +1373,13 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
       - name: lparen_loc
         type: location
+        java_exclude: true
       - name: rparen_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `^` operator for pinning an expression in a
       pattern matching expression.
@@ -1314,6 +1392,7 @@ nodes:
         type: node
       - name: operator_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `^` operator for pinning a variable in a pattern
       matching expression.
@@ -1327,10 +1406,13 @@ nodes:
         kind: StatementsNode
       - name: keyword_loc
         type: location
+        java_exclude: true
       - name: opening_loc
         type: location
+        java_exclude: true
       - name: closing_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `END` keyword.
 
@@ -1343,10 +1425,13 @@ nodes:
         kind: StatementsNode
       - name: keyword_loc
         type: location
+        java_exclude: true
       - name: opening_loc
         type: location
+        java_exclude: true
       - name: closing_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `BEGIN` keyword.
 
@@ -1396,6 +1481,7 @@ nodes:
     child_nodes:
       - name: opening
         type: token
+        java_exclude: true
       - name: content
         type: token
       - name: closing
@@ -1413,8 +1499,10 @@ nodes:
         type: node[]
       - name: opening
         type: token
+        java_exclude: true
       - name: closing
         type: token
+        java_exclude: true
     comment: |
       Represents a destructured required parameter node.
 
@@ -1434,6 +1522,7 @@ nodes:
         type: node
       - name: rescue_keyword
         type: token
+        java_exclude: true
       - name: rescue_expression
         type: node
     comment: |
@@ -1445,6 +1534,7 @@ nodes:
     child_nodes:
       - name: rescue_keyword
         type: token
+        java_exclude: true
       - name: exceptions
         type: node[]
       - name: equal_greater
@@ -1469,6 +1559,7 @@ nodes:
     child_nodes:
       - name: operator
         type: token
+        java_exclude: true
       - name: name
         type: token?
     comment: |
@@ -1487,6 +1578,7 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
+        java_exclude: true
       - name: arguments
         type: node?
         kind: ArgumentsNode
@@ -1515,6 +1607,7 @@ nodes:
         kind: ScopeNode
       - name: class_keyword
         type: token
+        java_exclude: true
       - name: operator
         type: token
       - name: expression
@@ -1523,6 +1616,7 @@ nodes:
         type: node?
       - name: end_keyword
         type: token
+        java_exclude: true
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 
@@ -1585,11 +1679,13 @@ nodes:
     child_nodes:
       - name: opening
         type: token
+        java_exclude: true
       - name: statements
         type: node?
         kind: StatementsNode
       - name: closing
         type: token
+        java_exclude: true
     comment: |
       Represents an interpolated set of statements within a string.
 
@@ -1599,10 +1695,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token?
+        java_exclude: true
       - name: content
         type: token
       - name: closing
         type: token?
+        java_exclude: true
       - name: unescaped
         type: string
     comment: |
@@ -1621,13 +1719,16 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
+        java_exclude: true
       - name: lparen
         type: token?
       - name: arguments
+        java_exclude: true
         type: node?
         kind: ArgumentsNode
       - name: rparen
         type: token?
+        java_exclude: true
       - name: block
         type: node?
         kind: BlockNode
@@ -1643,10 +1744,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token?
+        java_exclude: true
       - name: value
         type: token
       - name: closing
         type: token?
+        java_exclude: true
       - name: unescaped
         type: string
     comment: |
@@ -1669,6 +1772,7 @@ nodes:
         type: node[]
       - name: keyword_loc
         type: location
+        java_exclude: true
     comment: |
       Represents the use of the `undef` keyword.
 
@@ -1678,6 +1782,7 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
+        java_exclude: true
       - name: predicate
         type: node
       - name: statements
@@ -1688,6 +1793,7 @@ nodes:
         kind: ElseNode
       - name: end_keyword
         type: token?
+        java_exclude: true
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
@@ -1700,6 +1806,7 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
+        java_exclude: true
       - name: predicate
         type: node
       - name: statements
@@ -1717,6 +1824,7 @@ nodes:
     child_nodes:
       - name: when_keyword
         type: token
+        java_exclude: true
       - name: conditions
         type: node[]
       - name: statements
@@ -1731,6 +1839,7 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
+        java_exclude: true
       - name: predicate
         type: node
       - name: statements
@@ -1748,10 +1857,12 @@ nodes:
     child_nodes:
       - name: opening
         type: token
+        java_exclude: true
       - name: content
         type: token
       - name: closing
         type: token
+        java_exclude: true
       - name: unescaped
         type: string
     comment: |
@@ -1763,13 +1874,16 @@ nodes:
     child_nodes:
       - name: keyword
         type: token
+        java_exclude: true
       - name: lparen
         type: token?
+        java_exclude: true
       - name: arguments
         type: node?
         kind: ArgumentsNode
       - name: rparen
         type: token?
+        java_exclude: true
     comment: |
       Represents the use of the `yield` keyword.
 

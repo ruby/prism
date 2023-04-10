@@ -3,20 +3,29 @@
 require "rake/extensiontask"
 require "rake/testtask"
 require "rake/clean"
-require "ruby_memcheck"
 
 Rake.add_rakelib("tasks")
-
-RubyMemcheck.config(binary_name: "yarp")
 
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-Rake::ExtensionTask.new(:compile) do |ext|
-  ext.name = "yarp"
-  ext.ext_dir = "ext/yarp"
-  ext.lib_dir = "lib/yarp"
-  ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+if RUBY_ENGINE == 'jruby'
+  require 'rake/javaextensiontask'
+
+  Rake::JavaExtensionTask.new(:compile) do |ext|
+    ext.ext_dir = 'jruby'
+    ext.lib_dir = "lib/yarp"
+    ext.source_version = '1.8'
+    ext.target_version = '1.8'
+    ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+  end
+else
+  Rake::ExtensionTask.new(:compile) do |ext|
+    ext.name = "yarp"
+    ext.ext_dir = "ext/yarp"
+    ext.lib_dir = "lib/yarp"
+    ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+  end
 end
 
 test_config = lambda do |t|
@@ -27,8 +36,13 @@ end
 
 Rake::TestTask.new(test: :compile, &test_config)
 
-namespace :test do
-  RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
+if RUBY_ENGINE != 'jruby'
+  require "ruby_memcheck"
+
+  RubyMemcheck.config(binary_name: "yarp")
+  namespace :test do
+    RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
+  end
 end
 
 task default: :test

@@ -4,7 +4,26 @@ require "erb"
 require "fileutils"
 require "yaml"
 
+# Methods associated with template config transforming the nodes/tokens.
+module NodeTransformer
+  # We will not serialize an excluded field.
+  def exclude?
+    option_match?("exclude")
+  end
+
+  # Does an option field exist for the particular Ruby language implementation
+  # asking for it?  
+  def option_match?(name)
+    if $is_java_file
+      options[:"java_#{name}"]
+    else
+      options[:"ruby_#{name}"]
+    end
+  end
+end
+
 class Param
+  include NodeTransformer
   attr_reader :name, :options
   
   def initialize(name:, type:, **options)
@@ -110,7 +129,7 @@ PARAM_TYPES = {
 # YAML format. It contains information about the name of the node and the
 # various child nodes it contains.
 class NodeType
-  attr_reader :name, :type, :human, :params, :comment
+  attr_reader :name, :type, :human, :comment
 
   def initialize(config)
     @name = config.fetch("name")
@@ -125,6 +144,8 @@ class NodeType
     end
     @comment = config.fetch("comment")
   end
+
+  def params = @params.reject(&:exclude?)
 end
 
 # This represents a token in the lexer. They are configured through the
@@ -151,6 +172,7 @@ end
 # This templates out a file using ERB with the given locals. The locals are
 # derived from the config.yml file.
 def template(name, locals)
+  $is_java_file = name.end_with?(".java")
   filepath = "bin/templates/#{name}.erb"
   template = File.expand_path("../#{filepath}", __dir__)
   write_to = File.expand_path("../#{name}", __dir__)
