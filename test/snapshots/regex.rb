@@ -1,6 +1,6 @@
-ProgramNode(0...94)(
+ProgramNode(0...249)(
   ScopeNode(0...0)([IDENTIFIER(64...67)("foo")]),
-  StatementsNode(0...94)(
+  StatementsNode(0...249)(
     [CallNode(0...3)(
        nil,
        nil,
@@ -99,6 +99,34 @@ ProgramNode(0...94)(
        STRING_CONTENT(89...92)("abc"),
        REGEXP_END(92...94)("/i"),
        "abc"
+     ),
+     RegularExpressionNode(96...122)(
+       REGEXP_BEGIN(96...99)("%r/"),
+       STRING_CONTENT(99...120)("[a-z$._?][\\w$.?\#@~]*:"),
+       REGEXP_END(120...122)("/i"),
+       "[a-z$._?][w$.?\#@~]*:"
+     ),
+     RegularExpressionNode(124...161)(
+       REGEXP_BEGIN(124...127)("%r/"),
+       STRING_CONTENT(127...159)("([a-z$._?][\\w$.?\#@~]*)(\\s+)(equ)"),
+       REGEXP_END(159...161)("/i"),
+       "([a-z$._?][w$.?\#@~]*)( +)(equ)"
+     ),
+     RegularExpressionNode(163...188)(
+       REGEXP_BEGIN(163...166)("%r/"),
+       STRING_CONTENT(166...186)("[a-z$._?][\\w$.?\#@~]*"),
+       REGEXP_END(186...188)("/i"),
+       "[a-z$._?][w$.?\#@~]*"
+     ),
+     RegularExpressionNode(190...249)(
+       REGEXP_BEGIN(190...193)("%r("),
+       STRING_CONTENT(193...248)(
+         "\n" +
+         "(?:[\\w\#$%_']|\\(\\)|\\(,\\)|\\[\\]|[0-9])*\n" +
+         "  (?:[\\w\#$%_']+)\n"
+       ),
+       REGEXP_END(248...249)(")"),
+       "\n" + "(?:[w\#$%_']|()|(,)|[]|[0-9])*\n" + "  (?:[w\#$%_']+)\n"
      )]
   )
 )

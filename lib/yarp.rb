@@ -177,16 +177,17 @@ module YARP
       when :on_sp
         # skip
       when :on_tstring_content
-        if previous[1] == :on_tstring_content && token[2].start_with?("\#$")
+        if previous[1] == :on_tstring_content &&
+            (token[2].start_with?("\#$") || token[2].start_with?("\#@"))
           previous[2] << token[2]
         else
           results << token
+          previous = token
         end
       else
         results << token
+        previous = token
       end
-
-      previous = token
     end
 
     results
