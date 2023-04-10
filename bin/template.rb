@@ -104,7 +104,7 @@ PARAM_TYPES = {
   "location" => LocationParam,
   "location?" => OptionalLocationParam,
   "integer" => IntegerParam,
-  }
+}
 
 # This class represents a node in the tree, configured by the config.yml file in
 # YAML format. It contains information about the name of the node and the
