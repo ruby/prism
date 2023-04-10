@@ -4593,13 +4593,13 @@ lex_embdoc(yp_parser_t *parser) {
 
   // Now, loop until we find the end of the embedded documentation or the end of
   // the file.
-  while (parser->current.end + 4 < parser->end) {
+  while (parser->current.end + 4 <= parser->end) {
     parser->current.start = parser->current.end;
 
     // If we've hit the end of the embedded documentation then we'll return that
     // token here.
     if (strncmp(parser->current.end, "=end", 4) == 0 &&
-	(yp_char_is_whitespace(parser->current.end[4]) || parser->current.end + 4 == parser->end)) {
+	(parser->current.end + 4 == parser->end || yp_char_is_whitespace(parser->current.end[4]))) {
       const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
       parser->current.end = newline == NULL ? parser->end : newline + 1;
       parser->current.type = YP_TOKEN_EMBDOC_END;
