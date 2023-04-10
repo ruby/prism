@@ -1,6 +1,8 @@
 #ifndef YARP_PARSER_H
 #define YARP_PARSER_H
 
+#include "yarp/defines.h"
+
 #include <stdbool.h>
 
 #include "yarp/ast.h"

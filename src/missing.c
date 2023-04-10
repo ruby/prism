@@ -1,12 +1,5 @@
 #include "yarp/missing.h"
 
-size_t
-yp_strnlen(const char *string, size_t length) {
-  size_t index;
-  for (index = 0; index < length && string[index] != '\0'; index++);
-  return index;
-}
-
 const char *
 yp_strnstr(const char *haystack, const char *needle, size_t length) {
   size_t needle_length = strnlen(needle, length);

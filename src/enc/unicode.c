@@ -2221,6 +2221,7 @@ utf_8_codepoint(const unsigned char *c, size_t *width) {
     *width = 4;
     return (unicode_codepoint_t) (((c[0] & 0x07) << 18) | ((c[1] & 0x3F) << 12) | ((c[2] & 0x3F) << 6) | (c[3] & 0x3F));
   }
+  *width = 0;
   return 0;
 }
 

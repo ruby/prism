@@ -1,6 +1,8 @@
 #ifndef YARP_STRING_LIST_H
 #define YARP_STRING_LIST_H
 
+#include "yarp/defines.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 
