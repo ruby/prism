@@ -4125,7 +4125,7 @@ lex_global_variable(yp_parser_t *parser) {
     case '\'': // $': string after last match
     case '+':  // $+: string matches last paren.
       parser->current.end++;
-      return YP_TOKEN_BACK_REFERENCE;
+      return lex_state_p(parser, YP_LEX_STATE_FNAME) ? YP_TOKEN_GLOBAL_VARIABLE : YP_TOKEN_BACK_REFERENCE;
 
     case '0': {
       parser->current.end++;
