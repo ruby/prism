@@ -31,8 +31,7 @@
 - aws-sdk-sns-1.60.0
 - aws-sdk-ssm-1.150.0
 - backports-3.24.1
-- brakeman-5.4.1:
-  - bundle/ruby/3.1.0/gems/erubis-2.7.0/lib/erubis/helpers/rails_form_helper.rb
+- brakeman-5.4.1
 - bundler-2.4.11
 - capybara-3.39.0
 - concurrent-ruby-1.2.2
@@ -40,6 +39,7 @@
 - dalli-3.2.4
 - database_cleaner-2.0.2
 - devise-4.9.2:
+  - another one
   - lib/generators/active_record/templates/migration.rb
   - lib/generators/active_record/templates/migration_existing.rb
   - lib/generators/templates/controllers/confirmations_controller.rb
