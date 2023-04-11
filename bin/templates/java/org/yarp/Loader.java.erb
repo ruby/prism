@@ -108,7 +108,7 @@ public class Loader {
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
-            case <%= index %>:
+            case <%= index + 1 %>:
                 return new Nodes.<%= node.name %>(<%= (node.params.map { |param|
                     case param
                     when NodeParam then "loadNode()"
