@@ -1,6 +1,6 @@
-ProgramNode(0...249)(
+ProgramNode(0...267)(
   ScopeNode(0...0)([IDENTIFIER(64...67)("foo")]),
-  StatementsNode(0...249)(
+  StatementsNode(0...267)(
     [CallNode(0...3)(
        nil,
        nil,
@@ -127,6 +127,28 @@ ProgramNode(0...249)(
        ),
        REGEXP_END(248...249)(")"),
        "\n" + "(?:[w\#$%_']|()|(,)|[]|[0-9])*\n" + "  (?:[w\#$%_']+)\n"
+     ),
+     CallNode(251...267)(
+       RegularExpressionNode(251...259)(
+         REGEXP_BEGIN(251...252)("/"),
+         STRING_CONTENT(252...258)("(?#\\))"),
+         REGEXP_END(258...259)("/"),
+         "(?#))"
+       ),
+       nil,
+       EQUAL_TILDE(260...262)("=~"),
+       nil,
+       ArgumentsNode(263...267)(
+         [StringNode(263...267)(
+            STRING_BEGIN(263...264)("\""),
+            STRING_CONTENT(264...266)("hi"),
+            STRING_END(266...267)("\""),
+            "hi"
+          )]
+       ),
+       nil,
+       nil,
+       "=~"
      )]
   )
 )
