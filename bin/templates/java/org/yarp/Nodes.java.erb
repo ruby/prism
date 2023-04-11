@@ -11,6 +11,7 @@ import java.util.Arrays;
 public abstract class Nodes {
 
     public enum TokenType {
+        OPTIONAL_TOKEN,
         <%- tokens.each do |token| -%>
         <%= token.name %>,
         <%- end -%>
