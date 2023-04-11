@@ -27,7 +27,16 @@ public class Loader {
         expect((byte) 4);
         expect((byte) 0);
 
-        return loadNode();
+        Nodes.Node node = loadNode();
+
+        expect((byte) 0); // yp_serialize() appends a final \0 byte
+
+        int left = buffer.capacity() - buffer.position();
+        if (left != 0) {
+            throw new Error("Expected to consume all bytes while deserializing but there were " + left + " bytes left");
+        }
+
+        return node;
     }
 
     private byte[] loadString() {
