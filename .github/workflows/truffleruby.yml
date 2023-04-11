@@ -1,0 +1,54 @@
+name: Test Loader.java with TruffleRuby
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-loader:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone YARP
+      uses: actions/checkout@v3
+      with:
+        path: yarp
+    - name: Setup system Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+        working-directory: yarp
+
+    - run: mkdir truffleruby-ws
+    - name: Clone TruffleRuby
+      uses: actions/checkout@v3
+      with:
+        repository: oracle/truffleruby
+        path: truffleruby-ws/truffleruby
+    - name: Setup jt
+      run: echo "$PWD/truffleruby-ws/truffleruby/bin" >> $GITHUB_PATH
+
+    - name: Import latest YARP in TruffleRuby
+      run: tool/import-yarp.sh
+      working-directory: truffleruby-ws/truffleruby
+
+    - name: Install JVMCI
+      run: jt install jvmci
+    - name: Set JAVA_HOME
+      run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
+    - name: Build TruffleRuby
+      run: jt build
+      working-directory: truffleruby-ws/truffleruby
+
+    - name: Parse test/fixtures/**/*.rb
+      run: jt ruby -e 'Dir.glob("test/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
+      working-directory: yarp
+
+    - name: Parse src/main/ruby/truffleruby/**/*.rb
+      run: jt ruby -e 'Dir.glob("src/main/ruby/truffleruby/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
+      working-directory: truffleruby-ws/truffleruby
+
+    - name: Execute p 1+2
+      run: jt ruby -e 'Truffle::Debug.yarp_execute "p 1+2"'
