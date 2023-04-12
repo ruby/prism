@@ -60,6 +60,10 @@
 
 %w[a[] b[[]] c[]]
 
+%w[foo\ bar \#{1}]
+
+%w[foo\ bar baz]
+
 %W[a b#{c}d e]
 
 %W[a b c]

@@ -66,7 +66,7 @@ ProgramNode(0...210)(
           nil,
           STRING_CONTENT(81...85)("a\\\n" + "b"),
           nil,
-          "a\\\n" + "b"
+          "a\n" + "b"
         )],
        PERCENT_LOWER_W(78...81)("%w{"),
        STRING_END(85...86)("}")
