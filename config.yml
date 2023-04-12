@@ -966,6 +966,11 @@ nodes:
           @foo = 1
           ^^^^^^^^
   - name: IntegerNode
+    child_nodes:
+      - name: content_loc
+        type: location
+      - name: integer_base
+        type: integer
     comment: |
       Represents an integer number literal.
 

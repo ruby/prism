@@ -30,7 +30,7 @@ ProgramNode(0...74)(
             nil
           ),
           StatementsNode(15...21)(
-            [IntegerNode(15...16)(), TrueNode(17...21)()]
+            [IntegerNode(15...16)((15...16), 10), TrueNode(17...21)()]
           ),
           (9...11),
           nil
@@ -53,7 +53,7 @@ ProgramNode(0...74)(
             nil
           ),
           StatementsNode(30...36)(
-            [IntegerNode(30...31)(), TrueNode(32...36)()]
+            [IntegerNode(30...31)((30...31), 10), TrueNode(32...36)()]
           ),
           (22...24),
           nil
@@ -86,7 +86,7 @@ ProgramNode(0...74)(
                  LABEL_END(54...56)("\":"),
                  "foo"
                ),
-               IntegerNode(57...58)(),
+               IntegerNode(57...58)((57...58), 10),
                nil
              )],
             nil
@@ -120,7 +120,7 @@ ProgramNode(0...74)(
                  LABEL_END(71...72)(":"),
                  "foo"
                ),
-               IntegerNode(73...74)(),
+               IntegerNode(73...74)((73...74), 10),
                nil
              )],
             nil

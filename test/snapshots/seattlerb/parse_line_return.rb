@@ -12,7 +12,7 @@ ProgramNode(6...77)(
             StatementsNode(46...55)(
               [ReturnNode(46...55)(
                  KEYWORD_RETURN(46...52)("return"),
-                 ArgumentsNode(53...55)([IntegerNode(53...55)()])
+                 ArgumentsNode(53...55)([IntegerNode(53...55)((53...55), 10)])
                )]
             ),
             nil,

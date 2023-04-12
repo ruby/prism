@@ -4,7 +4,7 @@ ProgramNode(0...5)(
     [IfNode(0...5)(
        KEYWORD_IF(0...2)("if"),
        CallNode(3...5)(
-         IntegerNode(4...5)(),
+         IntegerNode(4...5)((4...5), 10),
          nil,
          UMINUS_NUM(3...4)("-"),
          nil,

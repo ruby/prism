@@ -10,7 +10,7 @@ ProgramNode(0...100)(
             nil,
             IDENTIFIER(10...11)("p"),
             nil,
-            ArgumentsNode(12...13)([IntegerNode(12...13)()]),
+            ArgumentsNode(12...13)([IntegerNode(12...13)((12...13), 10)]),
             nil,
             nil,
             "p"
@@ -29,7 +29,7 @@ ProgramNode(0...100)(
             DOT(17...18)("."),
             IDENTIFIER(18...19)("b"),
             nil,
-            ArgumentsNode(20...21)([IntegerNode(20...21)()]),
+            ArgumentsNode(20...21)([IntegerNode(20...21)((20...21), 10)]),
             nil,
             nil,
             "b"
@@ -49,7 +49,8 @@ ProgramNode(0...100)(
             IDENTIFIER(26...27)("d"),
             nil,
             ArgumentsNode(28...32)(
-              [IntegerNode(28...29)(), IntegerNode(31...32)()]
+              [IntegerNode(28...29)((28...29), 10),
+               IntegerNode(31...32)((31...32), 10)]
             ),
             nil,
             nil,
@@ -69,7 +70,7 @@ ProgramNode(0...100)(
             DOT(36...37)("."),
             IDENTIFIER(37...38)("f"),
             nil,
-            ArgumentsNode(39...40)([IntegerNode(39...40)()]),
+            ArgumentsNode(39...40)([IntegerNode(39...40)((39...40), 10)]),
             nil,
             nil,
             "f"
@@ -89,7 +90,8 @@ ProgramNode(0...100)(
             IDENTIFIER(45...46)("h"),
             nil,
             ArgumentsNode(47...51)(
-              [IntegerNode(47...48)(), IntegerNode(50...51)()]
+              [IntegerNode(47...48)((47...48), 10),
+               IntegerNode(50...51)((50...51), 10)]
             ),
             nil,
             nil,
@@ -100,7 +102,7 @@ ProgramNode(0...100)(
             nil,
             IDENTIFIER(54...55)("p"),
             PARENTHESIS_LEFT(55...56)("("),
-            ArgumentsNode(56...57)([IntegerNode(56...57)()]),
+            ArgumentsNode(56...57)([IntegerNode(56...57)((56...57), 10)]),
             PARENTHESIS_RIGHT(57...58)(")"),
             nil,
             "p"
@@ -119,7 +121,7 @@ ProgramNode(0...100)(
             DOT(62...63)("."),
             IDENTIFIER(63...64)("b"),
             PARENTHESIS_LEFT(64...65)("("),
-            ArgumentsNode(65...66)([IntegerNode(65...66)()]),
+            ArgumentsNode(65...66)([IntegerNode(65...66)((65...66), 10)]),
             PARENTHESIS_RIGHT(66...67)(")"),
             nil,
             "b"
@@ -139,7 +141,8 @@ ProgramNode(0...100)(
             IDENTIFIER(72...73)("d"),
             PARENTHESIS_LEFT(73...74)("("),
             ArgumentsNode(74...78)(
-              [IntegerNode(74...75)(), IntegerNode(77...78)()]
+              [IntegerNode(74...75)((74...75), 10),
+               IntegerNode(77...78)((77...78), 10)]
             ),
             PARENTHESIS_RIGHT(78...79)(")"),
             nil,
@@ -159,7 +162,7 @@ ProgramNode(0...100)(
             DOT(83...84)("."),
             IDENTIFIER(84...85)("f"),
             PARENTHESIS_LEFT(85...86)("("),
-            ArgumentsNode(86...87)([IntegerNode(86...87)()]),
+            ArgumentsNode(86...87)([IntegerNode(86...87)((86...87), 10)]),
             PARENTHESIS_RIGHT(87...88)(")"),
             nil,
             "f"
@@ -179,7 +182,8 @@ ProgramNode(0...100)(
             IDENTIFIER(93...94)("h"),
             PARENTHESIS_LEFT(94...95)("("),
             ArgumentsNode(95...99)(
-              [IntegerNode(95...96)(), IntegerNode(98...99)()]
+              [IntegerNode(95...96)((95...96), 10),
+               IntegerNode(98...99)((98...99), 10)]
             ),
             PARENTHESIS_RIGHT(99...100)(")"),
             nil,

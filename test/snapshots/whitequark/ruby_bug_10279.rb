@@ -13,7 +13,7 @@ ProgramNode(1...19)(
           IfNode(4...19)(
             KEYWORD_IF(4...6)("if"),
             TrueNode(7...11)(),
-            StatementsNode(17...19)([IntegerNode(17...19)()]),
+            StatementsNode(17...19)([IntegerNode(17...19)((17...19), 10)]),
             nil,
             KEYWORD_END(20...23)("end")
           ),

@@ -16,7 +16,7 @@ ProgramNode(0...14)(
              [OptionalParameterNode(5...8)(
                 IDENTIFIER(5...6)("b"),
                 EQUAL(6...7)("="),
-                IntegerNode(7...8)()
+                IntegerNode(7...8)((7...8), 10)
               )],
              [RequiredParameterNode(10...11)()],
              nil,

@@ -7,7 +7,7 @@ ProgramNode(0...16)(
        IDENTIFIER(0...1)("f"),
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...15)(
-         [IntegerNode(2...3)(),
+         [IntegerNode(2...3)((2...3), 10),
           HashNode(5...15)(
             nil,
             [AssocNode(5...10)(
@@ -17,10 +17,13 @@ ProgramNode(0...16)(
                  LABEL_END(7...8)(":"),
                  "kw"
                ),
-               IntegerNode(9...10)(),
+               IntegerNode(9...10)((9...10), 10),
                nil
              ),
-             AssocSplatNode(12...15)(IntegerNode(14...15)(), (12...14))],
+             AssocSplatNode(12...15)(
+               IntegerNode(14...15)((14...15), 10),
+               (12...14)
+             )],
             nil
           )]
        ),

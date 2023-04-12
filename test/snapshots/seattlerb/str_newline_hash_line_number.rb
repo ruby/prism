@@ -7,6 +7,6 @@ ProgramNode(0...13)(
        STRING_END(10...11)("\""),
        "\n" + "\n" + "\n" + "\n" + "#"
      ),
-     IntegerNode(12...13)()]
+     IntegerNode(12...13)((12...13), 10)]
   )
 )

@@ -10,7 +10,7 @@ ProgramNode(2...15)(
             LABEL_END(5...6)(":"),
             "foo"
           ),
-          IntegerNode(7...8)(),
+          IntegerNode(7...8)((7...8), 10),
           nil
         ),
         AssocSplatNode(10...15)(

@@ -15,7 +15,7 @@ ProgramNode(0...17)(
        DOT(3...4)("."),
        nil,
        PARENTHESIS_LEFT(4...5)("("),
-       ArgumentsNode(5...6)([IntegerNode(5...6)()]),
+       ArgumentsNode(5...6)([IntegerNode(5...6)((5...6), 10)]),
        PARENTHESIS_RIGHT(6...7)(")"),
        nil,
        "call"
@@ -34,7 +34,7 @@ ProgramNode(0...17)(
        COLON_COLON(12...14)("::"),
        nil,
        PARENTHESIS_LEFT(14...15)("("),
-       ArgumentsNode(15...16)([IntegerNode(15...16)()]),
+       ArgumentsNode(15...16)([IntegerNode(15...16)((15...16), 10)]),
        PARENTHESIS_RIGHT(16...17)(")"),
        nil,
        "call"

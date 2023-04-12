@@ -24,7 +24,7 @@ ProgramNode(0...48)(
           ),
           LocalVariableWriteNode(24...29)(
             (24...25),
-            IntegerNode(28...29)(),
+            IntegerNode(28...29)((28...29), 10),
             (26...27),
             0
           ),
@@ -40,7 +40,7 @@ ProgramNode(0...48)(
           ),
           LocalVariableWriteNode(38...42)(
             (38...39),
-            IntegerNode(41...42)(),
+            IntegerNode(41...42)((41...42), 10),
             (40...41),
             0
           )]

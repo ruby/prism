@@ -2,12 +2,12 @@ ProgramNode(0...11)(
   ScopeNode(0...0)([]),
   StatementsNode(0...11)(
     [ArrayNode(0...11)(
-       [IntegerNode(1...2)(),
+       [IntegerNode(1...2)((1...2), 10),
         HashNode(4...10)(
           nil,
           [AssocNode(4...10)(
-             IntegerNode(4...5)(),
-             IntegerNode(9...10)(),
+             IntegerNode(4...5)((4...5), 10),
+             IntegerNode(9...10)((9...10), 10),
              EQUAL_GREATER(6...8)("=>")
            )],
           nil

@@ -11,7 +11,7 @@ ProgramNode(0...10)(
          nil,
          nil
        ),
-       IntegerNode(9...10)(),
+       IntegerNode(9...10)((9...10), 10),
        (5...8)
      )]
   )

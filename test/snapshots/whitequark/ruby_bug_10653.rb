@@ -96,7 +96,7 @@ ProgramNode(6...93)(
        TrueNode(62...66)(),
        StatementsNode(69...89)(
          [CallNode(69...89)(
-            IntegerNode(69...70)(),
+            IntegerNode(69...70)((69...70), 10),
             DOT(70...71)("."),
             IDENTIFIER(71...74)("tap"),
             nil,
@@ -138,7 +138,7 @@ ProgramNode(6...93)(
        ),
        ElseNode(90...93)(
          COLON(90...91)(":"),
-         StatementsNode(92...93)([IntegerNode(92...93)()]),
+         StatementsNode(92...93)([IntegerNode(92...93)((92...93), 10)]),
          nil
        ),
        nil

@@ -99,6 +99,8 @@ typedef struct yp_lex_mode {
 
     // you lexed a number with extra information attached
     YP_LEX_NUMERIC,
+
+    YP_LEX_INTEGER,
   } mode;
 
   union {
@@ -154,6 +156,11 @@ typedef struct yp_lex_mode {
       const char *start;
       const char *end;
     } numeric;
+
+    struct {
+      yp_location_t content_loc;
+      int base;
+    } integer;
     
     struct {
       // These pointers point to the beginning and end of the heredoc

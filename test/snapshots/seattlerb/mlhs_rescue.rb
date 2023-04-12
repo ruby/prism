@@ -20,7 +20,7 @@ ProgramNode(0...18)(
          nil
        ),
        KEYWORD_RESCUE_MODIFIER(9...15)("rescue"),
-       IntegerNode(16...18)()
+       IntegerNode(16...18)((16...18), 10)
      )]
   )
 )

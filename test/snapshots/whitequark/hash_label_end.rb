@@ -29,7 +29,7 @@ ProgramNode(0...48)(
             ),
             ElseNode(9...11)(
               COLON(9...10)(":"),
-              StatementsNode(10...11)([IntegerNode(10...11)()]),
+              StatementsNode(10...11)([IntegerNode(10...11)((10...11), 10)]),
               nil
             ),
             nil
@@ -48,7 +48,7 @@ ProgramNode(0...48)(
             LABEL_END(20...22)("':"),
             "foo"
           ),
-          IntegerNode(23...24)(),
+          IntegerNode(23...24)((23...24), 10),
           nil
         )],
        BRACE_RIGHT(25...26)("}")
@@ -62,7 +62,7 @@ ProgramNode(0...48)(
             LABEL_END(34...36)("':"),
             "foo"
           ),
-          IntegerNode(37...38)(),
+          IntegerNode(37...38)((37...38), 10),
           nil
         ),
         AssocNode(40...48)(

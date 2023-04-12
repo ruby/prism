@@ -11,7 +11,7 @@ ProgramNode(0...1)(
             KEYWORD_BEGIN(2...7)("begin"),
             StatementsNode(8...24)(
               [CallNode(8...24)(
-                 IntegerNode(8...9)(),
+                 IntegerNode(8...9)((8...9), 10),
                  DOT(9...10)("."),
                  IDENTIFIER(10...15)("times"),
                  nil,
@@ -20,7 +20,9 @@ ProgramNode(0...1)(
                  BlockNode(16...24)(
                    ScopeNode(16...18)([]),
                    nil,
-                   StatementsNode(19...20)([IntegerNode(19...20)()]),
+                   StatementsNode(19...20)(
+                     [IntegerNode(19...20)((19...20), 10)]
+                   ),
                    (16...18),
                    (21...24)
                  ),

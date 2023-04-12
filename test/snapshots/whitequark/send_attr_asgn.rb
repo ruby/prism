@@ -15,7 +15,7 @@ ProgramNode(0...40)(
        DOT(3...4)("."),
        CONSTANT(4...5)("A"),
        nil,
-       ArgumentsNode(8...9)([IntegerNode(8...9)()]),
+       ArgumentsNode(8...9)([IntegerNode(8...9)((8...9), 10)]),
        nil,
        nil,
        "A="
@@ -34,7 +34,7 @@ ProgramNode(0...40)(
        DOT(14...15)("."),
        IDENTIFIER(15...16)("a"),
        nil,
-       ArgumentsNode(19...20)([IntegerNode(19...20)()]),
+       ArgumentsNode(19...20)([IntegerNode(19...20)((19...20), 10)]),
        nil,
        nil,
        "a="
@@ -55,7 +55,7 @@ ProgramNode(0...40)(
          (25...27)
        ),
        EQUAL(29...30)("="),
-       IntegerNode(31...32)()
+       IntegerNode(31...32)((31...32), 10)
      ),
      CallNode(34...40)(
        CallNode(34...37)(
@@ -71,7 +71,7 @@ ProgramNode(0...40)(
        COLON_COLON(37...39)("::"),
        IDENTIFIER(39...40)("a"),
        nil,
-       ArgumentsNode(43...44)([IntegerNode(43...44)()]),
+       ArgumentsNode(43...44)([IntegerNode(43...44)((43...44), 10)]),
        nil,
        nil,
        "a="

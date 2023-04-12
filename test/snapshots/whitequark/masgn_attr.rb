@@ -35,7 +35,8 @@ ProgramNode(0...63)(
           BRACKET_LEFT_RIGHT_EQUAL(31...32)("["),
           BRACKET_LEFT(31...32)("["),
           ArgumentsNode(32...36)(
-            [IntegerNode(32...33)(), IntegerNode(35...36)()]
+            [IntegerNode(32...33)((32...33), 10),
+             IntegerNode(35...36)((35...36), 10)]
           ),
           BRACKET_RIGHT(36...37)("]"),
           nil,

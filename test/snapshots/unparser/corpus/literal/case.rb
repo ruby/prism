@@ -393,7 +393,9 @@ ProgramNode(0...284)(
                DOT(274...275)("."),
                IDENTIFIER(275...278)("baz"),
                nil,
-               ArgumentsNode(279...280)([IntegerNode(279...280)()]),
+               ArgumentsNode(279...280)(
+                 [IntegerNode(279...280)((279...280), 10)]
+               ),
                nil,
                nil,
                "baz="

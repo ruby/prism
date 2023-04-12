@@ -18,7 +18,7 @@ ProgramNode(0...41)(
      ),
      LocalVariableWriteNode(35...41)(
        (35...36),
-       IntegerNode(39...41)(),
+       IntegerNode(39...41)((39...41), 10),
        (37...38),
        0
      )]

@@ -37,10 +37,10 @@ ProgramNode(0...11)(
            nil,
            "baz"
          ),
-         StatementsNode(24...25)([IntegerNode(24...25)()]),
+         StatementsNode(24...25)([IntegerNode(24...25)((24...25), 10)]),
          ElseNode(27...38)(
            KEYWORD_ELSE(27...31)("else"),
-           StatementsNode(32...33)([IntegerNode(32...33)()]),
+           StatementsNode(32...33)([IntegerNode(32...33)((32...33), 10)]),
            KEYWORD_END(35...38)("end")
          ),
          nil

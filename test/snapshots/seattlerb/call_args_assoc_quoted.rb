@@ -30,7 +30,7 @@ ProgramNode(0...24)(
                   )],
                  LABEL_END(7...9)("\":")
                ),
-               IntegerNode(9...11)(),
+               IntegerNode(9...11)((9...11), 10),
                nil
              )],
             nil
@@ -55,7 +55,7 @@ ProgramNode(0...24)(
                  LABEL_END(17...19)("\":"),
                  "k"
                ),
-               IntegerNode(19...21)(),
+               IntegerNode(19...21)((19...21), 10),
                nil
              )],
             nil
@@ -80,7 +80,7 @@ ProgramNode(0...24)(
                  LABEL_END(27...29)("':"),
                  "k"
                ),
-               IntegerNode(29...31)(),
+               IntegerNode(29...31)((29...31), 10),
                nil
              )],
             nil

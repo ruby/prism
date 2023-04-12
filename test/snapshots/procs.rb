@@ -121,7 +121,7 @@ ProgramNode(0...262)(
            [OptionalParameterNode(106...111)(
               IDENTIFIER(106...107)("b"),
               EQUAL(108...109)("="),
-              IntegerNode(110...111)()
+              IntegerNode(110...111)((110...111), 10)
             )],
            [],
            nil,
@@ -156,7 +156,7 @@ ProgramNode(0...262)(
            [OptionalParameterNode(138...143)(
               IDENTIFIER(138...139)("b"),
               EQUAL(140...141)("="),
-              IntegerNode(142...143)()
+              IntegerNode(142...143)((142...143), 10)
             )],
            [],
            RestParameterNode(145...147)(
@@ -197,7 +197,7 @@ ProgramNode(0...262)(
            [OptionalParameterNode(180...185)(
               IDENTIFIER(180...181)("b"),
               EQUAL(182...183)("="),
-              IntegerNode(184...185)()
+              IntegerNode(184...185)((184...185), 10)
             )],
            [],
            RestParameterNode(187...189)(

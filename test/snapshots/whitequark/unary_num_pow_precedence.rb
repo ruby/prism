@@ -6,18 +6,18 @@ ProgramNode(0...32)(
        nil,
        STAR_STAR(5...7)("**"),
        nil,
-       ArgumentsNode(8...10)([IntegerNode(8...10)()]),
+       ArgumentsNode(8...10)([IntegerNode(8...10)((8...10), 10)]),
        nil,
        nil,
        "**"
      ),
      CallNode(12...20)(
        CallNode(13...20)(
-         IntegerNode(13...14)(),
+         IntegerNode(13...14)((13...14), 10),
          nil,
          STAR_STAR(15...17)("**"),
          nil,
-         ArgumentsNode(18...20)([IntegerNode(18...20)()]),
+         ArgumentsNode(18...20)([IntegerNode(18...20)((18...20), 10)]),
          nil,
          nil,
          "**"
@@ -36,7 +36,7 @@ ProgramNode(0...32)(
          nil,
          STAR_STAR(27...29)("**"),
          nil,
-         ArgumentsNode(30...32)([IntegerNode(30...32)()]),
+         ArgumentsNode(30...32)([IntegerNode(30...32)((30...32), 10)]),
          nil,
          nil,
          "**"

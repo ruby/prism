@@ -5,7 +5,7 @@ ProgramNode(0...78)(
        IDENTIFIER(4...7)("foo"),
        nil,
        nil,
-       StatementsNode(12...14)([IntegerNode(12...14)()]),
+       StatementsNode(12...14)([IntegerNode(12...14)((12...14), 10)]),
        ScopeNode(0...3)([]),
        (0...3),
        nil,
@@ -32,7 +32,7 @@ ProgramNode(0...78)(
             nil,
             PLUS(31...32)("+"),
             nil,
-            ArgumentsNode(33...34)([IntegerNode(33...34)()]),
+            ArgumentsNode(33...34)([IntegerNode(33...34)((33...34), 10)]),
             nil,
             nil,
             "+"
@@ -59,7 +59,7 @@ ProgramNode(0...78)(
          "obj"
        ),
        nil,
-       StatementsNode(52...54)([IntegerNode(52...54)()]),
+       StatementsNode(52...54)([IntegerNode(52...54)((52...54), 10)]),
        ScopeNode(36...39)([]),
        (36...39),
        (43...44),
@@ -95,7 +95,7 @@ ProgramNode(0...78)(
             nil,
             PLUS(75...76)("+"),
             nil,
-            ArgumentsNode(77...78)([IntegerNode(77...78)()]),
+            ArgumentsNode(77...78)([IntegerNode(77...78)((77...78), 10)]),
             nil,
             nil,
             "+"

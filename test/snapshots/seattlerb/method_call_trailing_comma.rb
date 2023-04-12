@@ -15,7 +15,7 @@ ProgramNode(0...7)(
        DOT(1...2)("."),
        IDENTIFIER(2...3)("f"),
        PARENTHESIS_LEFT(3...4)("("),
-       ArgumentsNode(4...5)([IntegerNode(4...5)()]),
+       ArgumentsNode(4...5)([IntegerNode(4...5)((4...5), 10)]),
        PARENTHESIS_RIGHT(6...7)(")"),
        nil,
        "f"

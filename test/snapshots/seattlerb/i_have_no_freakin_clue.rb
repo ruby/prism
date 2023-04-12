@@ -3,7 +3,7 @@ ProgramNode(2...15)(
   StatementsNode(2...15)(
     [IfNode(2...13)(
        QUESTION_MARK(2...3)("?"),
-       IntegerNode(0...1)(),
+       IntegerNode(0...1)((0...1), 10),
        StatementsNode(4...9)(
          [CallNode(4...9)(
             nil,
@@ -25,7 +25,7 @@ ProgramNode(2...15)(
        ),
        ElseNode(10...13)(
          COLON(10...11)(":"),
-         StatementsNode(12...13)([IntegerNode(12...13)()]),
+         StatementsNode(12...13)([IntegerNode(12...13)((12...13), 10)]),
          nil
        ),
        nil
@@ -45,7 +45,7 @@ ProgramNode(2...15)(
                  LABEL_END(17...18)(":"),
                  "d"
                ),
-               IntegerNode(19...20)(),
+               IntegerNode(19...20)((19...20), 10),
                nil
              )],
             nil

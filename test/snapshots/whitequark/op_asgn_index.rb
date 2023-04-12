@@ -16,13 +16,15 @@ ProgramNode(0...14)(
          nil,
          BRACKET_LEFT_RIGHT_EQUAL(3...4)("["),
          BRACKET_LEFT(3...4)("["),
-         ArgumentsNode(4...8)([IntegerNode(4...5)(), IntegerNode(7...8)()]),
+         ArgumentsNode(4...8)(
+           [IntegerNode(4...5)((4...5), 10), IntegerNode(7...8)((7...8), 10)]
+         ),
          BRACKET_RIGHT(8...9)("]"),
          nil,
          "[]="
        ),
        PLUS_EQUAL(10...12)("+="),
-       IntegerNode(13...14)()
+       IntegerNode(13...14)((13...14), 10)
      )]
   )
 )

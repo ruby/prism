@@ -24,10 +24,14 @@ ProgramNode(0...24)(
                    nil,
                    "c"
                  ),
-                 StatementsNode(11...12)([IntegerNode(11...12)()]),
+                 StatementsNode(11...12)(
+                   [IntegerNode(11...12)((11...12), 10)]
+                 ),
                  ElseNode(13...23)(
                    KEYWORD_ELSE(13...17)("else"),
-                   StatementsNode(18...19)([IntegerNode(18...19)()]),
+                   StatementsNode(18...19)(
+                     [IntegerNode(18...19)((18...19), 10)]
+                   ),
                    KEYWORD_END(20...23)("end")
                  ),
                  KEYWORD_END(20...23)("end")

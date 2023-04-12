@@ -11,7 +11,7 @@ ProgramNode(0...33)(
               LABEL_END(7...8)(":"),
               "a"
             ),
-            IntegerNode(9...10)(),
+            IntegerNode(9...10)((9...10), 10),
             nil
           )],
          BRACE_RIGHT(10...11)("}")

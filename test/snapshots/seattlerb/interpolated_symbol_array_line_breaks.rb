@@ -7,6 +7,6 @@ ProgramNode(0...11)(
        PERCENT_UPPER_I(0...3)("%I("),
        STRING_END(8...9)(")")
      ),
-     IntegerNode(10...11)()]
+     IntegerNode(10...11)((10...11), 10)]
   )
 )

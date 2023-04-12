@@ -21,7 +21,7 @@ ProgramNode(0...40)(
             PARENTHESIS_LEFT(23...24)("("),
             ArgumentsNode(24...34)(
               [LocalVariableReadNode(24...25)(0),
-               IntegerNode(27...29)(),
+               IntegerNode(27...29)((27...29), 10),
                ForwardingArgumentsNode(31...34)()]
             ),
             PARENTHESIS_RIGHT(34...35)(")"),

@@ -841,12 +841,12 @@ class ErrorsTest < Test::Unit::TestCase
         [OptionalParameterNode(
            IDENTIFIER("b"),
            EQUAL("="),
-           IntegerNode()
+           IntegerNode(Location(), 10)
          ),
          OptionalParameterNode(
            IDENTIFIER("d"),
            EQUAL("="),
-           IntegerNode()
+           IntegerNode(Location(), 10)
          )],
         [RequiredParameterNode(),
          RequiredParameterNode()],

@@ -17,6 +17,6 @@ ProgramNode(0...13)(
        BRACKET_LEFT_ARRAY(0...1)("["),
        BRACKET_RIGHT(10...11)("]")
      ),
-     IntegerNode(12...13)()]
+     IntegerNode(12...13)((12...13), 10)]
   )
 )

@@ -40,7 +40,11 @@ ProgramNode(0...22)(
      ),
      ParenthesesNode(17...22)(
        StatementsNode(18...21)(
-         [RangeNode(18...21)(nil, IntegerNode(20...21)(), (18...20))]
+         [RangeNode(18...21)(
+            nil,
+            IntegerNode(20...21)((20...21), 10),
+            (18...20)
+          )]
        ),
        (17...18),
        (21...22)

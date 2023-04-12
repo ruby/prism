@@ -19,12 +19,13 @@ ProgramNode(0...408)(
        [InNode(9...31)(
           ArrayPatternNode(12...26)(
             ConstantReadNode(12...13)(),
-            [IntegerNode(14...15)(), IntegerNode(17...18)()],
+            [IntegerNode(14...15)((14...15), 10),
+             IntegerNode(17...18)((17...18), 10)],
             SplatNode(20...22)(
               USTAR(20...21)("*"),
               LocalVariableWriteNode(21...22)((21...22), nil, nil, 0)
             ),
-            [IntegerNode(24...25)()],
+            [IntegerNode(24...25)((24...25), 10)],
             (13...14),
             (25...26)
           ),
@@ -35,7 +36,8 @@ ProgramNode(0...408)(
         InNode(39...55)(
           ArrayPatternNode(42...50)(
             nil,
-            [IntegerNode(43...44)(), IntegerNode(46...47)()],
+            [IntegerNode(43...44)((43...44), 10),
+             IntegerNode(46...47)((46...47), 10)],
             nil,
             [],
             (42...43),
@@ -140,7 +142,7 @@ ProgramNode(0...408)(
                  LABEL_END(158...159)(":"),
                  "a"
                ),
-               IntegerNode(160...161)(),
+               IntegerNode(160...161)((160...161), 10),
                nil
              ),
              AssocNode(163...168)(
@@ -150,7 +152,7 @@ ProgramNode(0...408)(
                  LABEL_END(165...166)(":"),
                  "aa"
                ),
-               IntegerNode(167...168)(),
+               IntegerNode(167...168)((167...168), 10),
                nil
              )],
             nil,
@@ -193,7 +195,7 @@ ProgramNode(0...408)(
                  LABEL_END(229...231)("\":"),
                  "a"
                ),
-               IntegerNode(232...233)(),
+               IntegerNode(232...233)((232...233), 10),
                nil
              )],
             nil,
@@ -206,8 +208,8 @@ ProgramNode(0...408)(
         ),
         InNode(247...260)(
           AlternationPatternNode(250...255)(
-            IntegerNode(250...251)(),
-            IntegerNode(254...255)(),
+            IntegerNode(250...251)((250...251), 10),
+            IntegerNode(254...255)((254...255), 10),
             (252...253)
           ),
           StatementsNode(263...267)([TrueNode(263...267)()]),
@@ -216,7 +218,7 @@ ProgramNode(0...408)(
         ),
         InNode(268...282)(
           CapturePatternNode(271...277)(
-            IntegerNode(271...272)(),
+            IntegerNode(271...272)((271...272), 10),
             LocalVariableWriteNode(276...277)((276...277), nil, nil, 0),
             (273...275)
           ),
@@ -233,9 +235,14 @@ ProgramNode(0...408)(
           (290...292),
           (296...300)
         ),
-        InNode(308...312)(IntegerNode(311...312)(), nil, (308...310), nil),
+        InNode(308...312)(
+          IntegerNode(311...312)((311...312), 10),
+          nil,
+          (308...310),
+          nil
+        ),
         InNode(313...322)(
-          IntegerNode(316...317)(),
+          IntegerNode(316...317)((316...317), 10),
           StatementsNode(325...329)([TrueNode(325...329)()]),
           (313...315),
           (318...322)
@@ -262,12 +269,13 @@ ProgramNode(0...408)(
        [InNode(355...372)(
           ArrayPatternNode(358...372)(
             ConstantReadNode(358...359)(),
-            [IntegerNode(360...361)(), IntegerNode(363...364)()],
+            [IntegerNode(360...361)((360...361), 10),
+             IntegerNode(363...364)((363...364), 10)],
             SplatNode(366...368)(
               USTAR(366...367)("*"),
               LocalVariableWriteNode(367...368)((367...368), nil, nil, 0)
             ),
-            [IntegerNode(370...371)()],
+            [IntegerNode(370...371)((370...371), 10)],
             (359...360),
             (371...372)
           ),
@@ -305,7 +313,7 @@ ProgramNode(0...408)(
        (396...399)
      ),
      MatchPredicateNode(400...408)(
-       IntegerNode(400...401)(),
+       IntegerNode(400...401)((400...401), 10),
        ArrayPatternNode(405...408)(
          nil,
          [LocalVariableWriteNode(406...407)((406...407), nil, nil, 0)],

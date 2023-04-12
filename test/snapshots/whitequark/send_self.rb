@@ -26,7 +26,7 @@ ProgramNode(0...17)(
        nil,
        IDENTIFIER(11...14)("fun"),
        PARENTHESIS_LEFT(14...15)("("),
-       ArgumentsNode(15...16)([IntegerNode(15...16)()]),
+       ArgumentsNode(15...16)([IntegerNode(15...16)((15...16), 10)]),
        PARENTHESIS_RIGHT(16...17)(")"),
        nil,
        "fun"

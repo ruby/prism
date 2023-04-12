@@ -19,7 +19,7 @@ ProgramNode(0...31)(
        BRACKET_RIGHT(5...6)("]")
      ),
      ArrayNode(8...20)(
-       [IntegerNode(9...10)(),
+       [IntegerNode(9...10)((9...10), 10),
         SplatNode(13...16)(
           IDENTIFIER(13...16)("foo"),
           CallNode(13...16)(
@@ -33,12 +33,12 @@ ProgramNode(0...31)(
             "foo"
           )
         ),
-        IntegerNode(18...19)()],
+        IntegerNode(18...19)((18...19), 10)],
        BRACKET_LEFT_ARRAY(8...9)("["),
        BRACKET_RIGHT(19...20)("]")
      ),
      ArrayNode(22...31)(
-       [IntegerNode(23...24)(),
+       [IntegerNode(23...24)((23...24), 10),
         SplatNode(27...30)(
           IDENTIFIER(27...30)("foo"),
           CallNode(27...30)(

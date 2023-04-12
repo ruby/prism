@@ -10,7 +10,7 @@ ProgramNode(0...350)(
        StatementsNode(8...13)(
          [LocalVariableWriteNode(8...13)(
             (8...9),
-            IntegerNode(12...13)(),
+            IntegerNode(12...13)((12...13), 10),
             (10...11),
             0
           )]
@@ -77,7 +77,7 @@ ProgramNode(0...350)(
        StatementsNode(89...94)(
          [LocalVariableWriteNode(89...94)(
             (89...90),
-            IntegerNode(93...94)(),
+            IntegerNode(93...94)((93...94), 10),
             (91...92),
             0
           )]
@@ -254,11 +254,13 @@ ProgramNode(0...350)(
        SelfNode(311...315)(),
        StatementsNode(316...321)(
          [CallNode(316...321)(
-            IntegerNode(316...317)(),
+            IntegerNode(316...317)((316...317), 10),
             nil,
             PLUS(318...319)("+"),
             nil,
-            ArgumentsNode(320...321)([IntegerNode(320...321)()]),
+            ArgumentsNode(320...321)(
+              [IntegerNode(320...321)((320...321), 10)]
+            ),
             nil,
             nil,
             "+"
@@ -273,11 +275,13 @@ ProgramNode(0...350)(
        SelfNode(336...340)(),
        StatementsNode(341...346)(
          [CallNode(341...346)(
-            IntegerNode(341...342)(),
+            IntegerNode(341...342)((341...342), 10),
             nil,
             PLUS(343...344)("+"),
             nil,
-            ArgumentsNode(345...346)([IntegerNode(345...346)()]),
+            ArgumentsNode(345...346)(
+              [IntegerNode(345...346)((345...346), 10)]
+            ),
             nil,
             nil,
             "+"

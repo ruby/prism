@@ -9,7 +9,11 @@ ProgramNode(0...27)(
          "a"
        ),
        [InNode(8...19)(
-          RangeNode(11...14)(IntegerNode(11...12)(), nil, (12...14)),
+          RangeNode(11...14)(
+            IntegerNode(11...12)((11...12), 10),
+            nil,
+            (12...14)
+          ),
           StatementsNode(20...23)([NilNode(20...23)()]),
           (8...10),
           (15...19)

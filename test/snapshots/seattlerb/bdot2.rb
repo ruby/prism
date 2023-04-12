@@ -1,7 +1,7 @@
 ProgramNode(0...14)(
   ScopeNode(0...0)([]),
   StatementsNode(0...14)(
-    [RangeNode(0...4)(nil, IntegerNode(2...4)(), (0...2)),
+    [RangeNode(0...4)(nil, IntegerNode(2...4)((2...4), 10), (0...2)),
      RangeNode(7...10)(
        nil,
        CallNode(9...10)(

@@ -4,11 +4,11 @@ ProgramNode(0...22)(
     [GlobalVariableWriteNode(0...11)(
        GLOBAL_VARIABLE(0...7)("$测试"),
        EQUAL(8...9)("="),
-       IntegerNode(10...11)()
+       IntegerNode(10...11)((10...11), 10)
      ),
      LocalVariableWriteNode(12...22)(
        (12...18),
-       IntegerNode(21...22)(),
+       IntegerNode(21...22)((21...22), 10),
        (19...20),
        0
      )]

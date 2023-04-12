@@ -19,8 +19,8 @@ ProgramNode(0...10)(
          [HashNode(4...8)(
             nil,
             [AssocNode(4...8)(
-               IntegerNode(4...5)(),
-               IntegerNode(7...8)(),
+               IntegerNode(4...5)((4...5), 10),
+               IntegerNode(7...8)((7...8), 10),
                EQUAL_GREATER(5...7)("=>")
              )],
             nil

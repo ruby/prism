@@ -4,12 +4,12 @@ ProgramNode(0...91)(
     [UntilNode(0...13)(
        KEYWORD_UNTIL(0...5)("until"),
        TrueNode(6...10)(),
-       StatementsNode(12...13)([IntegerNode(12...13)()])
+       StatementsNode(12...13)([IntegerNode(12...13)((12...13), 10)])
      ),
      UntilNode(22...21)(
        KEYWORD_UNTIL_MODIFIER(22...27)("until"),
        TrueNode(28...32)(),
-       StatementsNode(20...21)([IntegerNode(20...21)()])
+       StatementsNode(20...21)([IntegerNode(20...21)((20...21), 10)])
      ),
      UntilNode(40...39)(
        KEYWORD_UNTIL_MODIFIER(40...45)("until"),

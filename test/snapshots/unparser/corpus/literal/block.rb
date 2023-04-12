@@ -137,7 +137,7 @@ ProgramNode(0...737)(
        nil,
        IDENTIFIER(64...67)("foo"),
        PARENTHESIS_LEFT(67...68)("("),
-       ArgumentsNode(68...69)([IntegerNode(68...69)()]),
+       ArgumentsNode(68...69)([IntegerNode(68...69)((68...69), 10)]),
        PARENTHESIS_RIGHT(69...70)(")"),
        BlockNode(71...80)(
          ScopeNode(71...72)([]),

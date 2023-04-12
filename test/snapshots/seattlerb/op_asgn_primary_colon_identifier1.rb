@@ -13,7 +13,7 @@ ProgramNode(0...9)(
          "b="
        ),
        PLUS_EQUAL(5...7)("+="),
-       IntegerNode(8...9)()
+       IntegerNode(8...9)((8...9), 10)
      )]
   )
 )

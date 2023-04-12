@@ -19,7 +19,7 @@ ProgramNode(0...10)(
          DOT(6...7)("."),
          IDENTIFIER(7...8)("c"),
          nil,
-         ArgumentsNode(9...10)([IntegerNode(9...10)()]),
+         ArgumentsNode(9...10)([IntegerNode(9...10)((9...10), 10)]),
          nil,
          nil,
          "c"

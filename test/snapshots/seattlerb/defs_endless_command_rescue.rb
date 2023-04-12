@@ -21,13 +21,13 @@ ProgramNode(0...45)(
               nil,
               IDENTIFIER(20...32)("other_method"),
               nil,
-              ArgumentsNode(33...35)([IntegerNode(33...35)()]),
+              ArgumentsNode(33...35)([IntegerNode(33...35)((33...35), 10)]),
               nil,
               nil,
               "other_method"
             ),
             KEYWORD_RESCUE_MODIFIER(36...42)("rescue"),
-            IntegerNode(43...45)()
+            IntegerNode(43...45)((43...45), 10)
           )]
        ),
        ScopeNode(0...3)([]),

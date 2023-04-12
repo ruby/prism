@@ -26,7 +26,7 @@ ProgramNode(0...46)(
                  nil,
                  "foo"
                ),
-               IntegerNode(17...18)(),
+               IntegerNode(17...18)((17...18), 10),
                EQUAL_GREATER(14...16)("=>")
              )],
             nil
@@ -61,7 +61,7 @@ ProgramNode(0...46)(
                  nil,
                  "foo"
                ),
-               IntegerNode(38...39)(),
+               IntegerNode(38...39)((38...39), 10),
                EQUAL_GREATER(35...37)("=>")
              )],
             nil

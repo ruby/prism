@@ -39,7 +39,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          IntegerNode(10...11)()]
+          IntegerNode(10...11)((10...11), 10)]
        ),
        nil,
        BlockNode(12...18)(
@@ -294,7 +294,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          IntegerNode(120...121)()]
+          IntegerNode(120...121)((120...121), 10)]
        ),
        nil,
        BlockNode(122...128)(
@@ -555,7 +555,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          IntegerNode(233...234)()]
+          IntegerNode(233...234)((233...234), 10)]
        ),
        nil,
        BlockNode(235...241)(
@@ -840,7 +840,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          IntegerNode(343...344)()]
+          IntegerNode(343...344)((343...344), 10)]
        ),
        nil,
        BlockNode(345...351)(

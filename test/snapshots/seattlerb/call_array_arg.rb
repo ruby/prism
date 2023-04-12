@@ -2,7 +2,7 @@ ProgramNode(0...13)(
   ScopeNode(0...0)([]),
   StatementsNode(0...13)(
     [CallNode(0...13)(
-       IntegerNode(0...1)(),
+       IntegerNode(0...1)((0...1), 10),
        nil,
        EQUAL_EQUAL(2...4)("=="),
        nil,

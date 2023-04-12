@@ -32,7 +32,7 @@ ProgramNode(0...0)(
             nil,
             "bar"
           ),
-          IntegerNode(23...24)()],
+          IntegerNode(23...24)((23...24), 10)],
          nil,
          nil
        ),

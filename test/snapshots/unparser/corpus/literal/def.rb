@@ -565,7 +565,7 @@ ProgramNode(0...913)(
          nil,
          [KeywordParameterNode(459...465)(
             LABEL(459...463)("bar:"),
-            IntegerNode(464...465)()
+            IntegerNode(464...465)((464...465), 10)
           )],
          nil,
          nil

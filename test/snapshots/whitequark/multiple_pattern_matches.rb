@@ -11,7 +11,7 @@ ProgramNode(1...52)(
               LABEL_END(2...3)(":"),
               "a"
             ),
-            IntegerNode(4...5)(),
+            IntegerNode(4...5)((4...5), 10),
             nil
           )],
          BRACE_RIGHT(5...6)("}")
@@ -44,7 +44,7 @@ ProgramNode(1...52)(
               LABEL_END(15...16)(":"),
               "a"
             ),
-            IntegerNode(17...18)(),
+            IntegerNode(17...18)((17...18), 10),
             nil
           )],
          BRACE_RIGHT(18...19)("}")
@@ -77,7 +77,7 @@ ProgramNode(1...52)(
               LABEL_END(29...30)(":"),
               "a"
             ),
-            IntegerNode(31...32)(),
+            IntegerNode(31...32)((31...32), 10),
             nil
           )],
          BRACE_RIGHT(32...33)("}")
@@ -110,7 +110,7 @@ ProgramNode(1...52)(
               LABEL_END(42...43)(":"),
               "a"
             ),
-            IntegerNode(44...45)(),
+            IntegerNode(44...45)((44...45), 10),
             nil
           )],
          BRACE_RIGHT(45...46)("}")

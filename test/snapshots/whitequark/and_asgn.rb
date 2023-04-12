@@ -21,7 +21,7 @@ ProgramNode(0...28)(
          nil,
          "a="
        ),
-       IntegerNode(10...11)(),
+       IntegerNode(10...11)((10...11), 10),
        (6...9)
      ),
      OperatorAndAssignmentNode(13...28)(
@@ -40,13 +40,14 @@ ProgramNode(0...28)(
          BRACKET_LEFT_RIGHT_EQUAL(16...17)("["),
          BRACKET_LEFT(16...17)("["),
          ArgumentsNode(17...21)(
-           [IntegerNode(17...18)(), IntegerNode(20...21)()]
+           [IntegerNode(17...18)((17...18), 10),
+            IntegerNode(20...21)((20...21), 10)]
          ),
          BRACKET_RIGHT(21...22)("]"),
          nil,
          "[]="
        ),
-       IntegerNode(27...28)(),
+       IntegerNode(27...28)((27...28), 10),
        (23...26)
      )]
   )

@@ -8,12 +8,12 @@ ProgramNode(0...77)(
          nil
        ),
        PLUS_EQUAL(4...6)("+="),
-       IntegerNode(7...8)()
+       IntegerNode(7...8)((7...8), 10)
      ),
      OperatorAssignmentNode(10...16)(
        ConstantPathWriteNode(10...11)(ConstantReadNode(10...11)(), nil, nil),
        PLUS_EQUAL(12...14)("+="),
-       IntegerNode(15...16)()
+       IntegerNode(15...16)((15...16), 10)
      ),
      OperatorAssignmentNode(18...27)(
        ConstantPathWriteNode(18...22)(
@@ -26,7 +26,7 @@ ProgramNode(0...77)(
          nil
        ),
        PLUS_EQUAL(23...25)("+="),
-       IntegerNode(26...27)()
+       IntegerNode(26...27)((26...27), 10)
      ),
      DefNode(29...50)(
        IDENTIFIER(33...34)("x"),
@@ -43,7 +43,7 @@ ProgramNode(0...77)(
               nil,
               nil
             ),
-            IntegerNode(44...45)(),
+            IntegerNode(44...45)((44...45), 10),
             (40...43)
           )]
        ),
@@ -70,7 +70,7 @@ ProgramNode(0...77)(
               nil,
               nil
             ),
-            IntegerNode(71...72)(),
+            IntegerNode(71...72)((71...72), 10),
             (67...70)
           )]
        ),

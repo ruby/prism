@@ -23,7 +23,7 @@ ProgramNode(0...16)(
                     nil,
                     "c"
                   ),
-                  IntegerNode(13...14)(),
+                  IntegerNode(13...14)((13...14), 10),
                   EQUAL_GREATER(10...12)("=>")
                 )],
                nil

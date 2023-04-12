@@ -9,7 +9,7 @@ ProgramNode(0...24)(
          [OptionalParameterNode(7...12)(
             IDENTIFIER(7...8)("a"),
             EQUAL(9...10)("="),
-            IntegerNode(11...12)()
+            IntegerNode(11...12)((11...12), 10)
           )],
          [RequiredParameterNode(18...19)()],
          RestParameterNode(14...16)(

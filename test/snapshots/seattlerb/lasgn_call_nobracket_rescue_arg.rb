@@ -9,7 +9,7 @@ ProgramNode(0...16)(
            nil,
            IDENTIFIER(4...5)("b"),
            nil,
-           ArgumentsNode(6...7)([IntegerNode(6...7)()]),
+           ArgumentsNode(6...7)([IntegerNode(6...7)((6...7), 10)]),
            nil,
            nil,
            "b"
@@ -18,7 +18,7 @@ ProgramNode(0...16)(
          0
        ),
        KEYWORD_RESCUE_MODIFIER(8...14)("rescue"),
-       IntegerNode(15...16)()
+       IntegerNode(15...16)((15...16), 10)
      )]
   )
 )

@@ -20,7 +20,7 @@ ProgramNode(0...20)(
              [OptionalParameterNode(8...13)(
                 IDENTIFIER(8...9)("c"),
                 EQUAL(10...11)("="),
-                IntegerNode(12...13)()
+                IntegerNode(12...13)((12...13), 10)
               )],
              [],
              RestParameterNode(15...17)(

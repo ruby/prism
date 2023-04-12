@@ -28,33 +28,33 @@ ProgramNode(0...242)(
      ),
      IfNode(19...27)(
        KEYWORD_IF(19...21)("if"),
-       IntegerNode(22...23)(),
-       StatementsNode(26...27)([IntegerNode(26...27)()]),
+       IntegerNode(22...23)((22...23), 10),
+       StatementsNode(26...27)([IntegerNode(26...27)((26...27), 10)]),
        nil,
        KEYWORD_END(28...31)("end")
      ),
      IfNode(32...40)(
        KEYWORD_IF(32...34)("if"),
-       IntegerNode(35...36)(),
-       StatementsNode(39...40)([IntegerNode(39...40)()]),
+       IntegerNode(35...36)((35...36), 10),
+       StatementsNode(39...40)([IntegerNode(39...40)((39...40), 10)]),
        ElseNode(41...53)(
          KEYWORD_ELSE(41...45)("else"),
-         StatementsNode(48...49)([IntegerNode(48...49)()]),
+         StatementsNode(48...49)([IntegerNode(48...49)((48...49), 10)]),
          KEYWORD_END(50...53)("end")
        ),
        KEYWORD_END(50...53)("end")
      ),
      UnlessNode(54...68)(
        KEYWORD_UNLESS(54...60)("unless"),
-       IntegerNode(61...62)(),
+       IntegerNode(61...62)((61...62), 10),
        StatementsNode(65...68)([NilNode(65...68)()]),
        nil,
        KEYWORD_END(69...72)("end")
      ),
      UnlessNode(73...85)(
        KEYWORD_UNLESS(73...79)("unless"),
-       IntegerNode(80...81)(),
-       StatementsNode(84...85)([IntegerNode(84...85)()]),
+       IntegerNode(80...81)((80...81), 10),
+       StatementsNode(84...85)([IntegerNode(84...85)((84...85), 10)]),
        nil,
        KEYWORD_END(86...89)("end")
      ),

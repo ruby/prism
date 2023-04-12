@@ -11,14 +11,14 @@ ProgramNode(0...22)(
             ScopeNode(2...4)([]),
             MINUS_GREATER(2...4)("->"),
             nil,
-            StatementsNode(8...9)([IntegerNode(8...9)()])
+            StatementsNode(8...9)([IntegerNode(8...9)((8...9), 10)])
           )]
        ),
        nil,
        BlockNode(14...22)(
          ScopeNode(14...16)([]),
          nil,
-         StatementsNode(17...18)([IntegerNode(17...18)()]),
+         StatementsNode(17...18)([IntegerNode(17...18)((17...18), 10)]),
          (14...16),
          (19...22)
        ),

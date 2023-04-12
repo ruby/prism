@@ -6,7 +6,7 @@ ProgramNode(0...4)(
        COLON_COLON(1...3)("::"),
        IDENTIFIER(3...4)("b"),
        nil,
-       ArgumentsNode(7...8)([IntegerNode(7...8)()]),
+       ArgumentsNode(7...8)([IntegerNode(7...8)((7...8), 10)]),
        nil,
        nil,
        "b="

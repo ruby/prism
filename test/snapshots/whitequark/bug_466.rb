@@ -16,11 +16,13 @@ ProgramNode(0...27)(
                     ParenthesesNode(7...12)(
                       StatementsNode(8...11)(
                         [CallNode(8...11)(
-                           IntegerNode(8...9)(),
+                           IntegerNode(8...9)((8...9), 10),
                            nil,
                            PLUS(9...10)("+"),
                            nil,
-                           ArgumentsNode(10...11)([IntegerNode(10...11)()]),
+                           ArgumentsNode(10...11)(
+                             [IntegerNode(10...11)((10...11), 10)]
+                           ),
                            nil,
                            nil,
                            "+"

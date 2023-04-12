@@ -8,7 +8,7 @@ ProgramNode(0...13)(
          (3...5)
        ),
        EQUAL(9...10)("="),
-       IntegerNode(11...13)()
+       IntegerNode(11...13)((11...13), 10)
      )]
   )
 )

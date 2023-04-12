@@ -109,7 +109,7 @@ ProgramNode(0...402)(
        DOT(40...41)("."),
        IDENTIFIER(41...47)("reduce"),
        PARENTHESIS_LEFT(47...48)("("),
-       ArgumentsNode(48...49)([IntegerNode(48...49)()]),
+       ArgumentsNode(48...49)([IntegerNode(48...49)((48...49), 10)]),
        PARENTHESIS_RIGHT(49...50)(")"),
        BlockNode(51...74)(
          ScopeNode(51...52)(
@@ -295,7 +295,9 @@ ProgramNode(0...402)(
                   nil,
                   BRACKET_LEFT_RIGHT(160...161)("["),
                   BRACKET_LEFT(160...161)("["),
-                  ArgumentsNode(161...162)([IntegerNode(161...162)()]),
+                  ArgumentsNode(161...162)(
+                    [IntegerNode(161...162)((161...162), 10)]
+                  ),
                   BRACKET_RIGHT(162...163)("]"),
                   nil,
                   "[]"
@@ -463,7 +465,7 @@ ProgramNode(0...402)(
              [OptionalParameterNode(263...268)(
                 IDENTIFIER(263...264)("y"),
                 EQUAL(265...266)("="),
-                IntegerNode(267...268)()
+                IntegerNode(267...268)((267...268), 10)
               )],
              [],
              nil,
@@ -512,7 +514,7 @@ ProgramNode(0...402)(
      ),
      LocalVariableWriteNode(292...300)(
        (292...296),
-       IntegerNode(299...300)(),
+       IntegerNode(299...300)((299...300), 10),
        (297...298),
        0
      ),
@@ -631,11 +633,11 @@ ProgramNode(0...402)(
                   nil,
                   [KeywordParameterNode(365...369)(
                      LABEL(365...367)("a:"),
-                     IntegerNode(368...369)()
+                     IntegerNode(368...369)((368...369), 10)
                    ),
                    KeywordParameterNode(373...377)(
                      LABEL(373...375)("b:"),
-                     IntegerNode(376...377)()
+                     IntegerNode(376...377)((376...377), 10)
                    )],
                   nil,
                   nil

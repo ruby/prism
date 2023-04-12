@@ -4,17 +4,17 @@ ProgramNode(0...141)(
     [UnlessNode(0...14)(
        KEYWORD_UNLESS(0...6)("unless"),
        TrueNode(7...11)(),
-       StatementsNode(13...14)([IntegerNode(13...14)()]),
+       StatementsNode(13...14)([IntegerNode(13...14)((13...14), 10)]),
        nil,
        KEYWORD_END(16...19)("end")
      ),
      UnlessNode(21...34)(
        KEYWORD_UNLESS(21...27)("unless"),
        TrueNode(28...32)(),
-       StatementsNode(33...34)([IntegerNode(33...34)()]),
+       StatementsNode(33...34)([IntegerNode(33...34)((33...34), 10)]),
        ElseNode(35...45)(
          KEYWORD_ELSE(35...39)("else"),
-         StatementsNode(40...41)([IntegerNode(40...41)()]),
+         StatementsNode(40...41)([IntegerNode(40...41)((40...41), 10)]),
          KEYWORD_END(42...45)("end")
        ),
        KEYWORD_END(42...45)("end")
@@ -22,7 +22,7 @@ ProgramNode(0...141)(
      UnlessNode(47...60)(
        KEYWORD_UNLESS_MODIFIER(49...55)("unless"),
        TrueNode(56...60)(),
-       StatementsNode(47...48)([IntegerNode(47...48)()]),
+       StatementsNode(47...48)([IntegerNode(47...48)((47...48), 10)]),
        nil,
        nil
      ),

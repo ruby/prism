@@ -47,7 +47,7 @@ ProgramNode(0...991)(
        StatementsNode(48...69)(
          [LocalVariableWriteNode(48...57)(
             (48...53),
-            IntegerNode(56...57)(),
+            IntegerNode(56...57)((56...57), 10),
             (54...55),
             0
           ),
@@ -411,8 +411,8 @@ ProgramNode(0...991)(
        ParenthesesNode(339...345)(
          StatementsNode(340...344)(
            [RangeNode(340...344)(
-              IntegerNode(340...341)(),
-              IntegerNode(343...344)(),
+              IntegerNode(340...341)((340...341), 10),
+              IntegerNode(343...344)((343...344), 10),
               (341...343)
             )]
          ),
@@ -517,9 +517,9 @@ ProgramNode(0...991)(
        "=~"
      ),
      RangeNode(396...404)(
-       IntegerNode(396...397)(),
+       IntegerNode(396...397)((396...397), 10),
        CallNode(399...404)(
-         IntegerNode(399...400)(),
+         IntegerNode(399...400)((399...400), 10),
          DOT(400...401)("."),
          IDENTIFIER(401...404)("max"),
          nil,
@@ -814,7 +814,8 @@ ProgramNode(0...991)(
        IDENTIFIER(530...533)("foo"),
        PARENTHESIS_LEFT(533...534)("("),
        ArgumentsNode(534...538)(
-         [IntegerNode(534...535)(), IntegerNode(537...538)()]
+         [IntegerNode(534...535)((534...535), 10),
+          IntegerNode(537...538)((537...538), 10)]
        ),
        PARENTHESIS_RIGHT(538...539)(")"),
        nil,
@@ -1587,7 +1588,8 @@ ProgramNode(0...991)(
        BRACKET_LEFT_RIGHT(875...876)("["),
        BRACKET_LEFT(875...876)("["),
        ArgumentsNode(876...880)(
-         [IntegerNode(876...877)(), IntegerNode(879...880)()]
+         [IntegerNode(876...877)((876...877), 10),
+          IntegerNode(879...880)((879...880), 10)]
        ),
        BRACKET_RIGHT(880...881)("]"),
        nil,

@@ -17,7 +17,7 @@ ProgramNode(0...1)(
                  nil,
                  IDENTIFIER(11...12)("a"),
                  PARENTHESIS_LEFT(12...13)("("),
-                 ArgumentsNode(13...14)([IntegerNode(13...14)()]),
+                 ArgumentsNode(13...14)([IntegerNode(13...14)((13...14), 10)]),
                  PARENTHESIS_RIGHT(14...15)(")"),
                  BlockNode(16...22)(
                    ScopeNode(16...18)([]),

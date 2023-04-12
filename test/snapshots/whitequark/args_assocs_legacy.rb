@@ -16,7 +16,7 @@ ProgramNode(0...114)(
                  nil,
                  "foo"
                ),
-               IntegerNode(12...13)(),
+               IntegerNode(12...13)((12...13), 10),
                EQUAL_GREATER(9...11)("=>")
              )],
             nil
@@ -41,7 +41,7 @@ ProgramNode(0...114)(
                  nil,
                  "foo"
                ),
-               IntegerNode(28...29)(),
+               IntegerNode(28...29)((28...29), 10),
                EQUAL_GREATER(25...27)("=>")
              )],
             nil
@@ -89,7 +89,7 @@ ProgramNode(0...114)(
                  nil,
                  "a"
                ),
-               IntegerNode(58...59)(),
+               IntegerNode(58...59)((58...59), 10),
                EQUAL_GREATER(55...57)("=>")
              )],
             nil
@@ -114,7 +114,7 @@ ProgramNode(0...114)(
                  nil,
                  "bar"
                ),
-               IntegerNode(74...75)(),
+               IntegerNode(74...75)((74...75), 10),
                EQUAL_GREATER(71...73)("=>")
              )],
             nil
@@ -137,7 +137,7 @@ ProgramNode(0...114)(
                  nil,
                  "foo"
                ),
-               IntegerNode(92...94)(),
+               IntegerNode(92...94)((92...94), 10),
                EQUAL_GREATER(89...91)("=>")
              )],
             nil
@@ -159,7 +159,7 @@ ProgramNode(0...114)(
                  nil,
                  "foo"
                ),
-               IntegerNode(111...113)(),
+               IntegerNode(111...113)((111...113), 10),
                EQUAL_GREATER(108...110)("=>")
              )],
             nil

@@ -13,11 +13,13 @@ ProgramNode(6...86)(
             nil,
             ArgumentsNode(22...29)(
               [ParenthesesNode(22...26)(
-                 StatementsNode(24...25)([IntegerNode(24...25)()]),
+                 StatementsNode(24...25)(
+                   [IntegerNode(24...25)((24...25), 10)]
+                 ),
                  (22...23),
                  (25...26)
                ),
-               IntegerNode(28...29)()]
+               IntegerNode(28...29)((28...29), 10)]
             ),
             nil,
             nil,
@@ -44,11 +46,13 @@ ProgramNode(6...86)(
             nil,
             ArgumentsNode(66...72)(
               [ParenthesesNode(66...69)(
-                 StatementsNode(67...68)([IntegerNode(67...68)()]),
+                 StatementsNode(67...68)(
+                   [IntegerNode(67...68)((67...68), 10)]
+                 ),
                  (66...67),
                  (68...69)
                ),
-               IntegerNode(71...72)()]
+               IntegerNode(71...72)((71...72), 10)]
             ),
             nil,
             nil,
@@ -70,11 +74,11 @@ ProgramNode(6...86)(
        nil,
        ArgumentsNode(87...94)(
          [ParenthesesNode(87...91)(
-            StatementsNode(89...90)([IntegerNode(89...90)()]),
+            StatementsNode(89...90)([IntegerNode(89...90)((89...90), 10)]),
             (87...88),
             (90...91)
           ),
-          IntegerNode(93...94)()]
+          IntegerNode(93...94)((93...94), 10)]
        ),
        nil,
        nil,

@@ -21,7 +21,8 @@ ProgramNode(0...29)(
        ),
        KEYWORD_RESCUE_MODIFIER(16...22)("rescue"),
        ArrayNode(23...29)(
-         [IntegerNode(24...25)(), IntegerNode(27...28)()],
+         [IntegerNode(24...25)((24...25), 10),
+          IntegerNode(27...28)((27...28), 10)],
          BRACKET_LEFT_ARRAY(23...24)("["),
          BRACKET_RIGHT(28...29)("]")
        )

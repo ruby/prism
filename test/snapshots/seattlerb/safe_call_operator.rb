@@ -15,7 +15,7 @@ ProgramNode(0...6)(
        AMPERSAND_DOT(1...3)("&."),
        GREATER(3...4)(">"),
        nil,
-       ArgumentsNode(5...6)([IntegerNode(5...6)()]),
+       ArgumentsNode(5...6)([IntegerNode(5...6)((5...6), 10)]),
        nil,
        nil,
        ">"

@@ -1,7 +1,12 @@
 ProgramNode(0...13)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("t")]),
   StatementsNode(0...13)(
-    [LocalVariableWriteNode(0...3)((0...1), IntegerNode(2...3)(), (1...2), 0),
+    [LocalVariableWriteNode(0...3)(
+       (0...1),
+       IntegerNode(2...3)((2...3), 10),
+       (1...2),
+       0
+     ),
      IfNode(9...13)(
        QUESTION_MARK(9...10)("?"),
        ParenthesesNode(4...9)(

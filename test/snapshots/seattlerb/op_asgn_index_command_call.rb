@@ -34,7 +34,8 @@ ProgramNode(0...11)(
          IDENTIFIER(10...11)("c"),
          nil,
          ArgumentsNode(12...16)(
-           [IntegerNode(12...13)(), IntegerNode(15...16)()]
+           [IntegerNode(12...13)((12...13), 10),
+            IntegerNode(15...16)((15...16), 10)]
          ),
          nil,
          nil,

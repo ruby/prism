@@ -42,7 +42,7 @@ ProgramNode(0...1133)(
          [OptionalParameterNode(45...57)(
             IDENTIFIER(45...53)("optional"),
             EQUAL(54...55)("="),
-            IntegerNode(56...57)()
+            IntegerNode(56...57)((56...57), 10)
           )],
          [RequiredDestructuredParameterNode(59...69)(
             [RequiredParameterNode(60...63)(),
@@ -323,7 +323,7 @@ ProgramNode(0...1133)(
      ),
      LocalVariableWriteNode(275...280)(
        (275...276),
-       IntegerNode(279...280)(),
+       IntegerNode(279...280)((279...280), 10),
        (277...278),
        0
      ),
@@ -391,7 +391,7 @@ ProgramNode(0...1133)(
          [KeywordParameterNode(333...335)(LABEL(333...335)("b:"), nil),
           KeywordParameterNode(337...341)(
             LABEL(337...339)("c:"),
-            IntegerNode(340...341)()
+            IntegerNode(340...341)((340...341), 10)
           )],
          nil,
          nil
@@ -416,7 +416,7 @@ ProgramNode(0...1133)(
          [KeywordParameterNode(353...355)(LABEL(353...355)("b:"), nil),
           KeywordParameterNode(357...361)(
             LABEL(357...359)("c:"),
-            IntegerNode(360...361)()
+            IntegerNode(360...361)((360...361), 10)
           )],
          nil,
          nil
@@ -440,7 +440,7 @@ ProgramNode(0...1133)(
          nil,
          [KeywordParameterNode(374...380)(
             LABEL(374...376)("b:"),
-            IntegerNode(379...380)()
+            IntegerNode(379...380)((379...380), 10)
           ),
           KeywordParameterNode(382...384)(LABEL(382...384)("c:"), nil)],
          nil,
@@ -469,12 +469,12 @@ ProgramNode(0...1133)(
          [OptionalParameterNode(405...410)(
             IDENTIFIER(405...406)("b"),
             EQUAL(407...408)("="),
-            IntegerNode(409...410)()
+            IntegerNode(409...410)((409...410), 10)
           ),
           OptionalParameterNode(412...417)(
             IDENTIFIER(412...413)("c"),
             EQUAL(414...415)("="),
-            IntegerNode(416...417)()
+            IntegerNode(416...417)((416...417), 10)
           )],
          [],
          nil,
@@ -514,7 +514,7 @@ ProgramNode(0...1133)(
          [OptionalParameterNode(445...450)(
             IDENTIFIER(445...446)("c"),
             EQUAL(447...448)("="),
-            IntegerNode(449...450)()
+            IntegerNode(449...450)((449...450), 10)
           )],
          [],
          nil,
@@ -641,7 +641,7 @@ ProgramNode(0...1133)(
        StatementsNode(537...542)(
          [LocalVariableWriteNode(537...542)(
             (537...538),
-            IntegerNode(541...542)(),
+            IntegerNode(541...542)((541...542), 10),
             (539...540),
             0
           )]
@@ -736,7 +736,7 @@ ProgramNode(0...1133)(
        IDENTIFIER(631...634)("foo"),
        nil,
        nil,
-       StatementsNode(637...638)([IntegerNode(637...638)()]),
+       StatementsNode(637...638)([IntegerNode(637...638)((637...638), 10)]),
        ScopeNode(627...630)([]),
        (627...630),
        nil,
@@ -749,7 +749,7 @@ ProgramNode(0...1133)(
        IDENTIFIER(643...646)("bar"),
        nil,
        nil,
-       StatementsNode(649...650)([IntegerNode(649...650)()]),
+       StatementsNode(649...650)([IntegerNode(649...650)((649...650), 10)]),
        ScopeNode(639...642)([]),
        (639...642),
        nil,
@@ -770,7 +770,7 @@ ProgramNode(0...1133)(
          nil,
          nil
        ),
-       StatementsNode(667...670)([IntegerNode(667...670)()]),
+       StatementsNode(667...670)([IntegerNode(667...670)((667...670), 10)]),
        ScopeNode(652...655)([IDENTIFIER(660...663)("bar")]),
        (652...655),
        nil,
@@ -783,7 +783,7 @@ ProgramNode(0...1133)(
        IDENTIFIER(676...679)("foo"),
        nil,
        nil,
-       StatementsNode(682...685)([IntegerNode(682...685)()]),
+       StatementsNode(682...685)([IntegerNode(682...685)((682...685), 10)]),
        ScopeNode(672...675)([]),
        (672...675),
        nil,
@@ -877,8 +877,8 @@ ProgramNode(0...1133)(
             IDENTIFIER(745...746)("b"),
             PARENTHESIS_LEFT(746...747)("("),
             ArgumentsNode(747...756)(
-              [IntegerNode(747...748)(),
-               IntegerNode(750...751)(),
+              [IntegerNode(747...748)((747...748), 10),
+               IntegerNode(750...751)((750...751), 10),
                ForwardingArgumentsNode(753...756)()]
             ),
             PARENTHESIS_RIGHT(756...757)(")"),
@@ -1027,7 +1027,7 @@ ProgramNode(0...1133)(
      ConstantPathWriteNode(877...886)(
        ConstantReadNode(877...882)(),
        EQUAL(883...884)("="),
-       IntegerNode(885...886)()
+       IntegerNode(885...886)((885...886), 10)
      ),
      DefNode(888...903)(
        IDENTIFIER(898...899)("a"),
@@ -1177,8 +1177,8 @@ ProgramNode(0...1133)(
             ParenthesesNode(993...1001)(
               StatementsNode(994...1000)(
                 [RangeNode(994...1000)(
-                   IntegerNode(994...995)(),
-                   IntegerNode(998...1000)(),
+                   IntegerNode(994...995)((994...995), 10),
+                   IntegerNode(998...1000)((998...1000), 10),
                    (995...998)
                  )]
               ),
@@ -1212,7 +1212,7 @@ ProgramNode(0...1133)(
               StatementsNode(1020...1025)(
                 [RangeNode(1020...1025)(
                    nil,
-                   IntegerNode(1023...1025)(),
+                   IntegerNode(1023...1025)((1023...1025), 10),
                    (1020...1023)
                  )]
               ),
@@ -1245,7 +1245,7 @@ ProgramNode(0...1133)(
             ParenthesesNode(1044...1050)(
               StatementsNode(1045...1049)(
                 [RangeNode(1045...1049)(
-                   IntegerNode(1045...1046)(),
+                   IntegerNode(1045...1046)((1045...1046), 10),
                    nil,
                    (1046...1049)
                  )]
@@ -1277,8 +1277,8 @@ ProgramNode(0...1133)(
             ParenthesesNode(1069...1077)(
               StatementsNode(1070...1076)(
                 [RangeNode(1070...1076)(
-                   IntegerNode(1070...1071)(),
-                   IntegerNode(1074...1076)(),
+                   IntegerNode(1070...1071)((1070...1071), 10),
+                   IntegerNode(1074...1076)((1074...1076), 10),
                    (1071...1074)
                  )]
               ),
@@ -1313,7 +1313,7 @@ ProgramNode(0...1133)(
               StatementsNode(1097...1102)(
                 [RangeNode(1097...1102)(
                    nil,
-                   IntegerNode(1100...1102)(),
+                   IntegerNode(1100...1102)((1100...1102), 10),
                    (1097...1100)
                  )]
               ),
@@ -1347,7 +1347,7 @@ ProgramNode(0...1133)(
             ParenthesesNode(1122...1128)(
               StatementsNode(1123...1127)(
                 [RangeNode(1123...1127)(
-                   IntegerNode(1123...1124)(),
+                   IntegerNode(1123...1124)((1123...1124), 10),
                    nil,
                    (1124...1127)
                  )]

@@ -9,7 +9,7 @@ ProgramNode(8...111)(
             nil,
             PLUS(33...34)("+"),
             nil,
-            ArgumentsNode(35...36)([IntegerNode(35...36)()]),
+            ArgumentsNode(35...36)([IntegerNode(35...36)((35...36), 10)]),
             nil,
             nil,
             "+"

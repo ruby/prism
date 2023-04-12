@@ -14,7 +14,7 @@ ProgramNode(0...43)(
        ),
        [WhenNode(10...27)(
           KEYWORD_WHEN(10...14)("when"),
-          [IntegerNode(15...16)(),
+          [IntegerNode(15...16)((15...16), 10),
            SplatNode(18...22)(
              USTAR(18...19)("*"),
              CallNode(19...22)(

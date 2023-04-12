@@ -22,7 +22,7 @@ ProgramNode(0...35)(
          "A="
        ),
        PLUS_EQUAL(6...8)("+="),
-       IntegerNode(9...10)()
+       IntegerNode(9...10)((9...10), 10)
      ),
      OperatorAssignmentNode(12...22)(
        CallNode(12...17)(
@@ -45,7 +45,7 @@ ProgramNode(0...35)(
          "a="
        ),
        PLUS_EQUAL(18...20)("+="),
-       IntegerNode(21...22)()
+       IntegerNode(21...22)((21...22), 10)
      ),
      OperatorAssignmentNode(24...35)(
        CallNode(24...30)(
@@ -68,7 +68,7 @@ ProgramNode(0...35)(
          "a="
        ),
        PLUS_EQUAL(31...33)("+="),
-       IntegerNode(34...35)()
+       IntegerNode(34...35)((34...35), 10)
      )]
   )
 )

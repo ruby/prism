@@ -8,7 +8,9 @@ ProgramNode(0...0)(
         )],
        EQUAL(3...4)("="),
        ArrayNode(0...0)(
-         [IntegerNode(5...6)(), IntegerNode(8...9)(), IntegerNode(11...12)()],
+         [IntegerNode(5...6)((5...6), 10),
+          IntegerNode(8...9)((8...9), 10),
+          IntegerNode(11...12)((11...12), 10)],
          nil,
          nil
        ),

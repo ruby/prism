@@ -6,7 +6,7 @@ ProgramNode(1...28)(
          REGEXP_BEGIN(0...1)("/"),
          [StringInterpolatedNode(1...5)(
             EMBEXPR_BEGIN(1...3)("\#{"),
-            StatementsNode(3...4)([IntegerNode(3...4)()]),
+            StatementsNode(3...4)([IntegerNode(3...4)((3...4), 10)]),
             EMBEXPR_END(4...5)("}")
           ),
           StringNode(5...18)(

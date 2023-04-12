@@ -7,7 +7,7 @@ ProgramNode(0...142)(
   StatementsNode(0...142)(
     [MatchRequiredNode(0...14)(
        ArrayNode(0...6)(
-         [IntegerNode(1...2)(), IntegerNode(4...5)()],
+         [IntegerNode(1...2)((1...2), 10), IntegerNode(4...5)((4...5), 10)],
          BRACKET_LEFT_ARRAY(0...1)("["),
          BRACKET_RIGHT(5...6)("]")
        ),
@@ -25,7 +25,8 @@ ProgramNode(0...142)(
      LocalVariableReadNode(16...17)(0),
      MatchPredicateNode(19...33)(
        ArrayNode(19...25)(
-         [IntegerNode(20...21)(), IntegerNode(23...24)()],
+         [IntegerNode(20...21)((20...21), 10),
+          IntegerNode(23...24)((23...24), 10)],
          BRACKET_LEFT_ARRAY(19...20)("["),
          BRACKET_RIGHT(24...25)("]")
        ),
@@ -51,7 +52,7 @@ ProgramNode(0...142)(
               LABEL_END(40...41)(":"),
               "a"
             ),
-            IntegerNode(42...43)(),
+            IntegerNode(42...43)((42...43), 10),
             nil
           )],
          BRACE_RIGHT(43...44)("}")
@@ -85,7 +86,7 @@ ProgramNode(0...142)(
               LABEL_END(57...58)(":"),
               "a"
             ),
-            IntegerNode(59...60)(),
+            IntegerNode(59...60)((59...60), 10),
             nil
           )],
          BRACE_RIGHT(60...61)("}")

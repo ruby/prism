@@ -8,7 +8,7 @@ ProgramNode(0...8)(
          nil
        ),
        AMPERSAND_EQUAL(4...6)("&="),
-       IntegerNode(7...8)()
+       IntegerNode(7...8)((7...8), 10)
      )]
   )
 )

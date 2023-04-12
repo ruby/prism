@@ -2,7 +2,7 @@ ProgramNode(0...51)(
   ScopeNode(0...0)([IDENTIFIER(6...7)("a"), IDENTIFIER(47...50)("foo")]),
   StatementsNode(0...51)(
     [MatchRequiredNode(0...8)(
-       IntegerNode(0...1)(),
+       IntegerNode(0...1)((0...1), 10),
        ArrayPatternNode(5...8)(
          nil,
          [LocalVariableWriteNode(6...7)((6...7), nil, nil, 0)],
@@ -14,7 +14,7 @@ ProgramNode(0...51)(
        (2...4)
      ),
      MatchRequiredNode(9...17)(
-       IntegerNode(9...10)(),
+       IntegerNode(9...10)((9...10), 10),
        ArrayPatternNode(14...17)(
          nil,
          [],
@@ -26,11 +26,11 @@ ProgramNode(0...51)(
        (11...13)
      ),
      MatchPredicateNode(18...33)(
-       IntegerNode(18...19)(),
+       IntegerNode(18...19)((18...19), 10),
        FindPatternNode(23...33)(
          nil,
          SplatNode(24...25)(USTAR(24...25)("*"), nil),
-         [IntegerNode(27...29)()],
+         [IntegerNode(27...29)((27...29), 10)],
          SplatNode(31...32)(USTAR(31...32)("*"), nil),
          (23...24),
          (32...33)
@@ -38,7 +38,7 @@ ProgramNode(0...51)(
        (20...22)
      ),
      MatchPredicateNode(34...51)(
-       IntegerNode(34...35)(),
+       IntegerNode(34...35)((34...35), 10),
        FindPatternNode(39...51)(
          nil,
          SplatNode(40...41)(USTAR(40...41)("*"), nil),

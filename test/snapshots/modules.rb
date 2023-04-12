@@ -8,7 +8,7 @@ ProgramNode(0...101)(
        StatementsNode(9...14)(
          [LocalVariableWriteNode(9...14)(
             (9...10),
-            IntegerNode(13...14)(),
+            IntegerNode(13...14)((13...14), 10),
             (11...12),
             0
           )]
@@ -71,7 +71,7 @@ ProgramNode(0...101)(
          StatementsNode(67...72)(
            [LocalVariableWriteNode(67...72)(
               (67...68),
-              IntegerNode(71...72)(),
+              IntegerNode(71...72)((71...72), 10),
               (69...70),
               0
             )]

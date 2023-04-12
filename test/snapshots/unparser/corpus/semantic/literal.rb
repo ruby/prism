@@ -3,7 +3,7 @@ ProgramNode(0...131)(
   StatementsNode(0...131)(
     [RationalNode(0...4)(FloatNode(0...4)()),
      CallNode(5...8)(
-       RationalNode(6...8)(IntegerNode(6...8)()),
+       RationalNode(6...8)(IntegerNode(6...8)((6...7), 10)),
        nil,
        UMINUS_NUM(5...6)("-"),
        nil,
@@ -12,8 +12,8 @@ ProgramNode(0...131)(
        nil,
        "-@"
      ),
-     IntegerNode(9...12)(),
-     IntegerNode(13...18)(),
+     IntegerNode(9...12)((11...12), 16),
+     IntegerNode(13...18)((13...18), 10),
      FloatNode(19...23)(),
      FloatNode(24...38)(),
      CallNode(39...54)(

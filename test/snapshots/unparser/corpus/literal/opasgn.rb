@@ -4,27 +4,27 @@ ProgramNode(0...233)(
     [OperatorAssignmentNode(0...6)(
        LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
        PLUS_EQUAL(2...4)("+="),
-       IntegerNode(5...6)()
+       IntegerNode(5...6)((5...6), 10)
      ),
      OperatorAssignmentNode(7...13)(
        LocalVariableWriteNode(7...8)((7...8), nil, nil, 0),
        MINUS_EQUAL(9...11)("-="),
-       IntegerNode(12...13)()
+       IntegerNode(12...13)((12...13), 10)
      ),
      OperatorAssignmentNode(14...21)(
        LocalVariableWriteNode(14...15)((14...15), nil, nil, 0),
        STAR_STAR_EQUAL(16...19)("**="),
-       IntegerNode(20...21)()
+       IntegerNode(20...21)((20...21), 10)
      ),
      OperatorAssignmentNode(22...28)(
        LocalVariableWriteNode(22...23)((22...23), nil, nil, 0),
        STAR_EQUAL(24...26)("*="),
-       IntegerNode(27...28)()
+       IntegerNode(27...28)((27...28), 10)
      ),
      OperatorAssignmentNode(29...35)(
        LocalVariableWriteNode(29...30)((29...30), nil, nil, 0),
        SLASH_EQUAL(31...33)("/="),
-       IntegerNode(34...35)()
+       IntegerNode(34...35)((34...35), 10)
      ),
      OperatorAndAssignmentNode(36...43)(
        LocalVariableWriteNode(36...37)((36...37), nil, nil, 0),
@@ -42,7 +42,7 @@ ProgramNode(0...233)(
      ),
      OperatorOrAssignmentNode(44...51)(
        LocalVariableWriteNode(44...45)((44...45), nil, nil, 0),
-       IntegerNode(50...51)(),
+       IntegerNode(50...51)((50...51), 10),
        (46...49)
      ),
      CallNode(52...65)(
@@ -50,7 +50,7 @@ ProgramNode(0...233)(
          StatementsNode(53...60)(
            [OperatorOrAssignmentNode(53...60)(
               LocalVariableWriteNode(53...54)((53...54), nil, nil, 0),
-              IntegerNode(59...60)(),
+              IntegerNode(59...60)((59...60), 10),
               (55...58)
             )]
          ),
@@ -122,7 +122,7 @@ ProgramNode(0...233)(
          "b="
        ),
        PLUS_EQUAL(88...90)("+="),
-       IntegerNode(91...92)()
+       IntegerNode(91...92)((91...92), 10)
      ),
      OperatorAssignmentNode(93...101)(
        CallNode(93...96)(
@@ -136,7 +136,7 @@ ProgramNode(0...233)(
          "b="
        ),
        MINUS_EQUAL(97...99)("-="),
-       IntegerNode(100...101)()
+       IntegerNode(100...101)((100...101), 10)
      ),
      OperatorAssignmentNode(102...111)(
        CallNode(102...105)(
@@ -150,7 +150,7 @@ ProgramNode(0...233)(
          "b="
        ),
        STAR_STAR_EQUAL(106...109)("**="),
-       IntegerNode(110...111)()
+       IntegerNode(110...111)((110...111), 10)
      ),
      OperatorAssignmentNode(112...120)(
        CallNode(112...115)(
@@ -164,7 +164,7 @@ ProgramNode(0...233)(
          "b="
        ),
        STAR_EQUAL(116...118)("*="),
-       IntegerNode(119...120)()
+       IntegerNode(119...120)((119...120), 10)
      ),
      OperatorAssignmentNode(121...129)(
        CallNode(121...124)(
@@ -178,7 +178,7 @@ ProgramNode(0...233)(
          "b="
        ),
        SLASH_EQUAL(125...127)("/="),
-       IntegerNode(128...129)()
+       IntegerNode(128...129)((128...129), 10)
      ),
      OperatorAndAssignmentNode(130...139)(
        CallNode(130...133)(
@@ -214,7 +214,7 @@ ProgramNode(0...233)(
          nil,
          "b="
        ),
-       IntegerNode(148...149)(),
+       IntegerNode(148...149)((148...149), 10),
        (144...147)
      ),
      OperatorAssignmentNode(150...159)(
@@ -240,7 +240,7 @@ ProgramNode(0...233)(
          "[]="
        ),
        PLUS_EQUAL(155...157)("+="),
-       IntegerNode(158...159)()
+       IntegerNode(158...159)((158...159), 10)
      ),
      OperatorAssignmentNode(160...169)(
        CallNode(160...164)(
@@ -265,7 +265,7 @@ ProgramNode(0...233)(
          "[]="
        ),
        MINUS_EQUAL(165...167)("-="),
-       IntegerNode(168...169)()
+       IntegerNode(168...169)((168...169), 10)
      ),
      OperatorAssignmentNode(170...180)(
        CallNode(170...174)(
@@ -290,7 +290,7 @@ ProgramNode(0...233)(
          "[]="
        ),
        STAR_STAR_EQUAL(175...178)("**="),
-       IntegerNode(179...180)()
+       IntegerNode(179...180)((179...180), 10)
      ),
      OperatorAssignmentNode(181...190)(
        CallNode(181...185)(
@@ -315,7 +315,7 @@ ProgramNode(0...233)(
          "[]="
        ),
        STAR_EQUAL(186...188)("*="),
-       IntegerNode(189...190)()
+       IntegerNode(189...190)((189...190), 10)
      ),
      OperatorAssignmentNode(191...200)(
        CallNode(191...195)(
@@ -340,7 +340,7 @@ ProgramNode(0...233)(
          "[]="
        ),
        SLASH_EQUAL(196...198)("/="),
-       IntegerNode(199...200)()
+       IntegerNode(199...200)((199...200), 10)
      ),
      OperatorAndAssignmentNode(201...211)(
        CallNode(201...205)(
@@ -398,7 +398,7 @@ ProgramNode(0...233)(
          nil,
          "[]="
        ),
-       IntegerNode(221...222)(),
+       IntegerNode(221...222)((221...222), 10),
        (217...220)
      ),
      OperatorAssignmentNode(223...233)(
@@ -422,7 +422,7 @@ ProgramNode(0...233)(
          "A="
        ),
        PLUS_EQUAL(229...231)("+="),
-       IntegerNode(232...233)()
+       IntegerNode(232...233)((232...233), 10)
      )]
   )
 )

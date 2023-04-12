@@ -5,17 +5,17 @@ ProgramNode(0...168)(
      BreakNode(7...26)(
        ArgumentsNode(13...26)(
          [ParenthesesNode(13...16)(
-            StatementsNode(14...15)([IntegerNode(14...15)()]),
+            StatementsNode(14...15)([IntegerNode(14...15)((14...15), 10)]),
             (13...14),
             (15...16)
           ),
           ParenthesesNode(18...21)(
-            StatementsNode(19...20)([IntegerNode(19...20)()]),
+            StatementsNode(19...20)([IntegerNode(19...20)((19...20), 10)]),
             (18...19),
             (20...21)
           ),
           ParenthesesNode(23...26)(
-            StatementsNode(24...25)([IntegerNode(24...25)()]),
+            StatementsNode(24...25)([IntegerNode(24...25)((24...25), 10)]),
             (23...24),
             (25...26)
           )]
@@ -23,31 +23,31 @@ ProgramNode(0...168)(
        (7...12)
      ),
      BreakNode(28...35)(
-       ArgumentsNode(34...35)([IntegerNode(34...35)()]),
+       ArgumentsNode(34...35)([IntegerNode(34...35)((34...35), 10)]),
        (28...33)
      ),
      BreakNode(37...50)(
        ArgumentsNode(43...50)(
-         [IntegerNode(43...44)(),
-          IntegerNode(46...47)(),
-          IntegerNode(49...50)()]
+         [IntegerNode(43...44)((43...44), 10),
+          IntegerNode(46...47)((46...47), 10),
+          IntegerNode(49...50)((49...50), 10)]
        ),
        (37...42)
      ),
      BreakNode(52...65)(
        ArgumentsNode(58...65)(
-         [IntegerNode(58...59)(),
-          IntegerNode(61...62)(),
-          IntegerNode(64...65)()]
+         [IntegerNode(58...59)((58...59), 10),
+          IntegerNode(61...62)((61...62), 10),
+          IntegerNode(64...65)((64...65), 10)]
        ),
        (52...57)
      ),
      BreakNode(67...82)(
        ArgumentsNode(73...82)(
          [ArrayNode(73...82)(
-            [IntegerNode(74...75)(),
-             IntegerNode(77...78)(),
-             IntegerNode(80...81)()],
+            [IntegerNode(74...75)((74...75), 10),
+             IntegerNode(77...78)((77...78), 10),
+             IntegerNode(80...81)((80...81), 10)],
             BRACKET_LEFT_ARRAY(73...74)("["),
             BRACKET_RIGHT(81...82)("]")
           )]
@@ -58,7 +58,8 @@ ProgramNode(0...168)(
        ArgumentsNode(89...100)(
          [ParenthesesNode(89...100)(
             StatementsNode(93...98)(
-              [IntegerNode(93...94)(), IntegerNode(97...98)()]
+              [IntegerNode(93...94)((93...94), 10),
+               IntegerNode(97...98)((97...98), 10)]
             ),
             (89...90),
             (99...100)
@@ -75,7 +76,9 @@ ProgramNode(0...168)(
      BreakNode(111...119)(
        ArgumentsNode(116...119)(
          [ParenthesesNode(116...119)(
-            StatementsNode(117...118)([IntegerNode(117...118)()]),
+            StatementsNode(117...118)(
+              [IntegerNode(117...118)((117...118), 10)]
+            ),
             (116...117),
             (118...119)
           )]
@@ -95,7 +98,9 @@ ProgramNode(0...168)(
            nil,
            StatementsNode(127...135)(
              [BreakNode(127...135)(
-                ArgumentsNode(133...135)([IntegerNode(133...135)()]),
+                ArgumentsNode(133...135)(
+                  [IntegerNode(133...135)((133...135), 10)]
+                ),
                 (127...132)
               )]
            ),
@@ -107,7 +112,7 @@ ProgramNode(0...168)(
        nil,
        EQUAL_EQUAL(138...140)("=="),
        nil,
-       ArgumentsNode(141...143)([IntegerNode(141...143)()]),
+       ArgumentsNode(141...143)([IntegerNode(141...143)((141...143), 10)]),
        nil,
        nil,
        "=="
@@ -145,7 +150,7 @@ ProgramNode(0...168)(
        nil,
        EQUAL_EQUAL(163...165)("=="),
        nil,
-       ArgumentsNode(166...168)([IntegerNode(166...168)()]),
+       ArgumentsNode(166...168)([IntegerNode(166...168)((166...168), 10)]),
        nil,
        nil,
        "=="

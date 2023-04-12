@@ -48,7 +48,7 @@ ProgramNode(0...42)(
        nil,
        IDENTIFIER(32...35)("fun"),
        PARENTHESIS_LEFT(35...36)("("),
-       ArgumentsNode(36...37)([IntegerNode(36...37)()]),
+       ArgumentsNode(36...37)([IntegerNode(36...37)((36...37), 10)]),
        PARENTHESIS_RIGHT(37...38)(")"),
        BlockNode(39...42)(
          ScopeNode(39...40)([]),

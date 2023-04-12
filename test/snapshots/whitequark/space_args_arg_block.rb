@@ -17,7 +17,7 @@ ProgramNode(0...43)(
        nil,
        ArgumentsNode(8...11)(
          [ParenthesesNode(8...11)(
-            StatementsNode(9...10)([IntegerNode(9...10)()]),
+            StatementsNode(9...10)([IntegerNode(9...10)((9...10), 10)]),
             (8...9),
             (10...11)
           )]
@@ -48,7 +48,7 @@ ProgramNode(0...43)(
        nil,
        ArgumentsNode(25...28)(
          [ParenthesesNode(25...28)(
-            StatementsNode(26...27)([IntegerNode(26...27)()]),
+            StatementsNode(26...27)([IntegerNode(26...27)((26...27), 10)]),
             (25...26),
             (27...28)
           )]
@@ -70,7 +70,7 @@ ProgramNode(0...43)(
        nil,
        ArgumentsNode(37...40)(
          [ParenthesesNode(37...40)(
-            StatementsNode(38...39)([IntegerNode(38...39)()]),
+            StatementsNode(38...39)([IntegerNode(38...39)((38...39), 10)]),
             (37...38),
             (39...40)
           )]

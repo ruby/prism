@@ -18,14 +18,14 @@ ProgramNode(0...31)(
                  LABEL_END(19...20)(":"),
                  "b"
                ),
-               IntegerNode(21...22)(),
+               IntegerNode(21...22)((21...22), 10),
                nil
              )],
             nil,
             (17...18),
             (22...23)
           ),
-          StatementsNode(26...27)([IntegerNode(26...27)()]),
+          StatementsNode(26...27)([IntegerNode(26...27)((26...27), 10)]),
           (8...10),
           nil
         )],

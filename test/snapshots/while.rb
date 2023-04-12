@@ -4,12 +4,12 @@ ProgramNode(0...309)(
     [WhileNode(0...13)(
        KEYWORD_WHILE(0...5)("while"),
        TrueNode(6...10)(),
-       StatementsNode(12...13)([IntegerNode(12...13)()])
+       StatementsNode(12...13)([IntegerNode(12...13)((12...13), 10)])
      ),
      WhileNode(22...21)(
        KEYWORD_WHILE_MODIFIER(22...27)("while"),
        TrueNode(28...32)(),
-       StatementsNode(20...21)([IntegerNode(20...21)()])
+       StatementsNode(20...21)([IntegerNode(20...21)((20...21), 10)])
      ),
      WhileNode(40...39)(
        KEYWORD_WHILE_MODIFIER(40...45)("while"),

@@ -16,12 +16,12 @@ ProgramNode(0...18)(
              [OptionalParameterNode(6...9)(
                 IDENTIFIER(6...7)("b"),
                 EQUAL(7...8)("="),
-                IntegerNode(8...9)()
+                IntegerNode(8...9)((8...9), 10)
               ),
               OptionalParameterNode(11...14)(
                 IDENTIFIER(11...12)("c"),
                 EQUAL(12...13)("="),
-                IntegerNode(13...14)()
+                IntegerNode(13...14)((13...14), 10)
               )],
              [],
              nil,

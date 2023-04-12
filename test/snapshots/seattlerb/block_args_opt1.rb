@@ -16,7 +16,7 @@ ProgramNode(0...24)(
              [OptionalParameterNode(8...14)(
                 IDENTIFIER(8...9)("b"),
                 EQUAL(10...11)("="),
-                IntegerNode(12...14)()
+                IntegerNode(12...14)((12...14), 10)
               )],
              [],
              nil,

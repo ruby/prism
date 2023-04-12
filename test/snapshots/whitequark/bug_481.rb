@@ -26,7 +26,7 @@ ProgramNode(0...28)(
        "m"
      ),
      CallNode(16...28)(
-       IntegerNode(16...17)(),
+       IntegerNode(16...17)((16...17), 10),
        DOT(17...18)("."),
        IDENTIFIER(18...21)("tap"),
        nil,

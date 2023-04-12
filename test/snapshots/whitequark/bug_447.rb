@@ -28,7 +28,7 @@ ProgramNode(0...27)(
             BRACKET_LEFT_ARRAY(15...16)("["),
             BRACKET_RIGHT(16...17)("]")
           ),
-          IntegerNode(19...20)()]
+          IntegerNode(19...20)((19...20), 10)]
        ),
        nil,
        BlockNode(21...27)(

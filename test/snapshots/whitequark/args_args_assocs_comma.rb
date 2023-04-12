@@ -35,7 +35,7 @@ ProgramNode(0...20)(
                  nil,
                  "baz"
                ),
-               IntegerNode(17...18)(),
+               IntegerNode(17...18)((17...18), 10),
                EQUAL_GREATER(14...16)("=>")
              )],
             nil

@@ -10,7 +10,7 @@ ProgramNode(2...10)(
             nil,
             "s1"
           ),
-          IntegerNode(9...10)(),
+          IntegerNode(9...10)((9...10), 10),
           EQUAL_GREATER(6...8)("=>")
         )],
        BRACE_RIGHT(12...13)("}")

@@ -428,7 +428,7 @@ ProgramNode(0...437)(
            nil,
            BRACKET_LEFT_RIGHT_EQUAL(377...378)("["),
            BRACKET_LEFT(377...378)("["),
-           ArgumentsNode(378...379)([IntegerNode(378...379)()]),
+           ArgumentsNode(378...379)([IntegerNode(378...379)((378...379), 10)]),
            BRACKET_RIGHT(379...380)("]"),
            nil,
            "[]="
@@ -466,7 +466,7 @@ ProgramNode(0...437)(
            nil,
            BRACKET_LEFT_RIGHT_EQUAL(409...410)("["),
            BRACKET_LEFT(409...410)("["),
-           ArgumentsNode(410...411)([IntegerNode(410...411)()]),
+           ArgumentsNode(410...411)([IntegerNode(410...411)((410...411), 10)]),
            BRACKET_RIGHT(411...412)("]"),
            nil,
            "[]="

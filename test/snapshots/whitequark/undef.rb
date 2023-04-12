@@ -19,7 +19,7 @@ ProgramNode(0...26)(
            ),
            StringInterpolatedNode(22...26)(
              EMBEXPR_BEGIN(22...24)("\#{"),
-             StatementsNode(24...25)([IntegerNode(24...25)()]),
+             StatementsNode(24...25)([IntegerNode(24...25)((24...25), 10)]),
              EMBEXPR_END(25...26)("}")
            )],
           STRING_END(26...27)("\"")

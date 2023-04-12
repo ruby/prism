@@ -7,7 +7,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(0...4)("meth"),
          nil,
-         ArgumentsNode(5...6)([IntegerNode(5...6)()]),
+         ArgumentsNode(5...6)([IntegerNode(5...6)((5...6), 10)]),
          nil,
          BlockNode(7...13)(ScopeNode(7...9)([]), nil, nil, (7...9), (10...13)),
          "meth"
@@ -37,7 +37,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(23...27)("meth"),
          nil,
-         ArgumentsNode(28...29)([IntegerNode(28...29)()]),
+         ArgumentsNode(28...29)([IntegerNode(28...29)((28...29), 10)]),
          nil,
          BlockNode(30...36)(
            ScopeNode(30...32)([]),
@@ -79,7 +79,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(53...57)("meth"),
          nil,
-         ArgumentsNode(58...59)([IntegerNode(58...59)()]),
+         ArgumentsNode(58...59)([IntegerNode(58...59)((58...59), 10)]),
          nil,
          BlockNode(60...66)(
            ScopeNode(60...62)([]),
@@ -110,7 +110,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(75...79)("meth"),
          nil,
-         ArgumentsNode(80...81)([IntegerNode(80...81)()]),
+         ArgumentsNode(80...81)([IntegerNode(80...81)((80...81), 10)]),
          nil,
          BlockNode(82...88)(
            ScopeNode(82...84)([]),
@@ -146,7 +146,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(99...103)("meth"),
          nil,
-         ArgumentsNode(104...105)([IntegerNode(104...105)()]),
+         ArgumentsNode(104...105)([IntegerNode(104...105)((104...105), 10)]),
          nil,
          BlockNode(106...112)(
            ScopeNode(106...108)([]),
@@ -188,7 +188,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(126...130)("meth"),
          nil,
-         ArgumentsNode(131...132)([IntegerNode(131...132)()]),
+         ArgumentsNode(131...132)([IntegerNode(131...132)((131...132), 10)]),
          nil,
          BlockNode(133...139)(
            ScopeNode(133...135)([]),
@@ -224,7 +224,7 @@ ProgramNode(0...173)(
          nil,
          IDENTIFIER(150...154)("meth"),
          nil,
-         ArgumentsNode(155...156)([IntegerNode(155...156)()]),
+         ArgumentsNode(155...156)([IntegerNode(155...156)((155...156), 10)]),
          nil,
          BlockNode(157...163)(
            ScopeNode(157...159)([]),

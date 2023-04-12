@@ -17,7 +17,7 @@ ProgramNode(0...11)(
        nil,
        ArgumentsNode(4...7)(
          [ParenthesesNode(4...7)(
-            StatementsNode(5...6)([IntegerNode(5...6)()]),
+            StatementsNode(5...6)([IntegerNode(5...6)((5...6), 10)]),
             (4...5),
             (6...7)
           )]

@@ -4,7 +4,7 @@ ProgramNode(0...106)(
     [ReturnNode(0...17)(
        KEYWORD_RETURN(0...6)("return"),
        ArgumentsNode(7...17)(
-         [IntegerNode(7...8)(),
+         [IntegerNode(7...8)((7...8), 10),
           HashNode(10...17)(
             nil,
             [AssocNode(10...17)(
@@ -14,7 +14,7 @@ ProgramNode(0...106)(
                  nil,
                  "z"
                ),
-               IntegerNode(16...17)(),
+               IntegerNode(16...17)((16...17), 10),
                EQUAL_GREATER(13...15)("=>")
              )],
             nil
@@ -24,7 +24,7 @@ ProgramNode(0...106)(
      ReturnNode(19...45)(
        KEYWORD_RETURN(19...25)("return"),
        ArgumentsNode(26...45)(
-         [IntegerNode(26...27)(),
+         [IntegerNode(26...27)((26...27), 10),
           HashNode(29...45)(
             nil,
             [AssocNode(29...36)(
@@ -34,7 +34,7 @@ ProgramNode(0...106)(
                  nil,
                  "z"
                ),
-               IntegerNode(35...36)(),
+               IntegerNode(35...36)((35...36), 10),
                EQUAL_GREATER(32...34)("=>")
              ),
              AssocNode(38...45)(
@@ -44,7 +44,7 @@ ProgramNode(0...106)(
                  nil,
                  "w"
                ),
-               IntegerNode(44...45)(),
+               IntegerNode(44...45)((44...45), 10),
                EQUAL_GREATER(41...43)("=>")
              )],
             nil
@@ -69,7 +69,7 @@ ProgramNode(0...106)(
                       nil,
                       "z"
                     ),
-                    IntegerNode(60...61)(),
+                    IntegerNode(60...61)((60...61), 10),
                     EQUAL_GREATER(58...60)("=>")
                   )],
                  nil
@@ -99,7 +99,7 @@ ProgramNode(0...106)(
                       LABEL_END(73...74)(":"),
                       "z"
                     ),
-                    IntegerNode(74...75)(),
+                    IntegerNode(74...75)((74...75), 10),
                     nil
                   )],
                  nil
@@ -129,7 +129,7 @@ ProgramNode(0...106)(
                       LABEL_END(87...88)(":"),
                       "z"
                     ),
-                    IntegerNode(88...89)(),
+                    IntegerNode(88...89)((88...89), 10),
                     nil
                   )],
                  nil
@@ -163,7 +163,7 @@ ProgramNode(0...106)(
                       nil,
                       "z"
                     ),
-                    IntegerNode(104...105)(),
+                    IntegerNode(104...105)((104...105), 10),
                     EQUAL_GREATER(102...104)("=>")
                   )],
                  nil

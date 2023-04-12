@@ -15,7 +15,9 @@ ProgramNode(0...9)(
        nil,
        BRACKET_LEFT_RIGHT(3...4)("["),
        BRACKET_LEFT(3...4)("["),
-       ArgumentsNode(4...8)([IntegerNode(4...5)(), IntegerNode(7...8)()]),
+       ArgumentsNode(4...8)(
+         [IntegerNode(4...5)((4...5), 10), IntegerNode(7...8)((7...8), 10)]
+       ),
        BRACKET_RIGHT(8...9)("]"),
        nil,
        "[]"

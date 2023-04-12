@@ -14,8 +14,8 @@ ProgramNode(0...143)(
          nil
        ),
        RangeNode(9...14)(
-         IntegerNode(9...10)(),
-         IntegerNode(12...14)(),
+         IntegerNode(9...10)((9...10), 10),
+         IntegerNode(12...14)((12...14), 10),
          (10...12)
        ),
        StatementsNode(15...16)([LocalVariableReadNode(15...16)(0)]),
@@ -33,8 +33,8 @@ ProgramNode(0...143)(
          nil
        ),
        RangeNode(31...36)(
-         IntegerNode(31...32)(),
-         IntegerNode(34...36)(),
+         IntegerNode(31...32)((31...32), 10),
+         IntegerNode(34...36)((34...36), 10),
          (32...34)
        ),
        StatementsNode(38...39)([LocalVariableReadNode(38...39)(0)]),
@@ -53,8 +53,8 @@ ProgramNode(0...143)(
          nil
        ),
        RangeNode(57...62)(
-         IntegerNode(57...58)(),
-         IntegerNode(60...62)(),
+         IntegerNode(57...58)((57...58), 10),
+         IntegerNode(60...62)((60...62), 10),
          (58...60)
        ),
        StatementsNode(63...64)([LocalVariableReadNode(63...64)(0)]),
@@ -74,8 +74,8 @@ ProgramNode(0...143)(
          nil
        ),
        RangeNode(83...88)(
-         IntegerNode(83...84)(),
-         IntegerNode(86...88)(),
+         IntegerNode(83...84)((83...84), 10),
+         IntegerNode(86...88)((86...88), 10),
          (84...86)
        ),
        StatementsNode(89...90)([LocalVariableReadNode(89...90)(0)]),
@@ -93,8 +93,8 @@ ProgramNode(0...143)(
          nil
        ),
        RangeNode(105...110)(
-         IntegerNode(105...106)(),
-         IntegerNode(108...110)(),
+         IntegerNode(105...106)((105...106), 10),
+         IntegerNode(108...110)((108...110), 10),
          (106...108)
        ),
        StatementsNode(114...115)([LocalVariableReadNode(114...115)(0)]),
@@ -112,8 +112,8 @@ ProgramNode(0...143)(
          nil
        ),
        RangeNode(130...135)(
-         IntegerNode(130...131)(),
-         IntegerNode(133...135)(),
+         IntegerNode(130...131)((130...131), 10),
+         IntegerNode(133...135)((133...135), 10),
          (131...133)
        ),
        StatementsNode(137...138)([LocalVariableReadNode(137...138)(0)]),

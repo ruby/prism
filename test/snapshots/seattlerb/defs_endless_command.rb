@@ -20,7 +20,7 @@ ProgramNode(0...32)(
             nil,
             IDENTIFIER(20...32)("other_method"),
             nil,
-            ArgumentsNode(33...35)([IntegerNode(33...35)()]),
+            ArgumentsNode(33...35)([IntegerNode(33...35)((33...35), 10)]),
             nil,
             nil,
             "other_method"

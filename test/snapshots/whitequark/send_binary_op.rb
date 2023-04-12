@@ -15,7 +15,7 @@ ProgramNode(0...200)(
        nil,
        BANG_EQUAL(4...6)("!="),
        nil,
-       ArgumentsNode(7...8)([IntegerNode(7...8)()]),
+       ArgumentsNode(7...8)([IntegerNode(7...8)((7...8), 10)]),
        nil,
        nil,
        "!="
@@ -34,7 +34,7 @@ ProgramNode(0...200)(
        nil,
        BANG_TILDE(14...16)("!~"),
        nil,
-       ArgumentsNode(17...18)([IntegerNode(17...18)()]),
+       ArgumentsNode(17...18)([IntegerNode(17...18)((17...18), 10)]),
        nil,
        nil,
        "!~"
@@ -53,7 +53,7 @@ ProgramNode(0...200)(
        nil,
        PERCENT(24...25)("%"),
        nil,
-       ArgumentsNode(26...27)([IntegerNode(26...27)()]),
+       ArgumentsNode(26...27)([IntegerNode(26...27)((26...27), 10)]),
        nil,
        nil,
        "%"
@@ -72,7 +72,7 @@ ProgramNode(0...200)(
        nil,
        AMPERSAND(33...34)("&"),
        nil,
-       ArgumentsNode(35...36)([IntegerNode(35...36)()]),
+       ArgumentsNode(35...36)([IntegerNode(35...36)((35...36), 10)]),
        nil,
        nil,
        "&"
@@ -91,7 +91,7 @@ ProgramNode(0...200)(
        nil,
        STAR(42...43)("*"),
        nil,
-       ArgumentsNode(44...45)([IntegerNode(44...45)()]),
+       ArgumentsNode(44...45)([IntegerNode(44...45)((44...45), 10)]),
        nil,
        nil,
        "*"
@@ -110,7 +110,7 @@ ProgramNode(0...200)(
        nil,
        STAR_STAR(51...53)("**"),
        nil,
-       ArgumentsNode(54...55)([IntegerNode(54...55)()]),
+       ArgumentsNode(54...55)([IntegerNode(54...55)((54...55), 10)]),
        nil,
        nil,
        "**"
@@ -129,7 +129,7 @@ ProgramNode(0...200)(
        nil,
        PLUS(61...62)("+"),
        nil,
-       ArgumentsNode(63...64)([IntegerNode(63...64)()]),
+       ArgumentsNode(63...64)([IntegerNode(63...64)((63...64), 10)]),
        nil,
        nil,
        "+"
@@ -148,7 +148,7 @@ ProgramNode(0...200)(
        nil,
        MINUS(70...71)("-"),
        nil,
-       ArgumentsNode(72...73)([IntegerNode(72...73)()]),
+       ArgumentsNode(72...73)([IntegerNode(72...73)((72...73), 10)]),
        nil,
        nil,
        "-"
@@ -167,7 +167,7 @@ ProgramNode(0...200)(
        nil,
        SLASH(79...80)("/"),
        nil,
-       ArgumentsNode(81...82)([IntegerNode(81...82)()]),
+       ArgumentsNode(81...82)([IntegerNode(81...82)((81...82), 10)]),
        nil,
        nil,
        "/"
@@ -186,7 +186,7 @@ ProgramNode(0...200)(
        nil,
        LESS(88...89)("<"),
        nil,
-       ArgumentsNode(90...91)([IntegerNode(90...91)()]),
+       ArgumentsNode(90...91)([IntegerNode(90...91)((90...91), 10)]),
        nil,
        nil,
        "<"
@@ -205,7 +205,7 @@ ProgramNode(0...200)(
        nil,
        LESS_LESS(97...99)("<<"),
        nil,
-       ArgumentsNode(100...101)([IntegerNode(100...101)()]),
+       ArgumentsNode(100...101)([IntegerNode(100...101)((100...101), 10)]),
        nil,
        nil,
        "<<"
@@ -224,7 +224,7 @@ ProgramNode(0...200)(
        nil,
        LESS_EQUAL(107...109)("<="),
        nil,
-       ArgumentsNode(110...111)([IntegerNode(110...111)()]),
+       ArgumentsNode(110...111)([IntegerNode(110...111)((110...111), 10)]),
        nil,
        nil,
        "<="
@@ -243,7 +243,7 @@ ProgramNode(0...200)(
        nil,
        LESS_EQUAL_GREATER(117...120)("<=>"),
        nil,
-       ArgumentsNode(121...122)([IntegerNode(121...122)()]),
+       ArgumentsNode(121...122)([IntegerNode(121...122)((121...122), 10)]),
        nil,
        nil,
        "<=>"
@@ -262,7 +262,7 @@ ProgramNode(0...200)(
        nil,
        EQUAL_EQUAL(128...130)("=="),
        nil,
-       ArgumentsNode(131...132)([IntegerNode(131...132)()]),
+       ArgumentsNode(131...132)([IntegerNode(131...132)((131...132), 10)]),
        nil,
        nil,
        "=="
@@ -281,7 +281,7 @@ ProgramNode(0...200)(
        nil,
        EQUAL_EQUAL_EQUAL(138...141)("==="),
        nil,
-       ArgumentsNode(142...143)([IntegerNode(142...143)()]),
+       ArgumentsNode(142...143)([IntegerNode(142...143)((142...143), 10)]),
        nil,
        nil,
        "==="
@@ -300,7 +300,7 @@ ProgramNode(0...200)(
        nil,
        EQUAL_TILDE(149...151)("=~"),
        nil,
-       ArgumentsNode(152...153)([IntegerNode(152...153)()]),
+       ArgumentsNode(152...153)([IntegerNode(152...153)((152...153), 10)]),
        nil,
        nil,
        "=~"
@@ -319,7 +319,7 @@ ProgramNode(0...200)(
        nil,
        GREATER(159...160)(">"),
        nil,
-       ArgumentsNode(161...162)([IntegerNode(161...162)()]),
+       ArgumentsNode(161...162)([IntegerNode(161...162)((161...162), 10)]),
        nil,
        nil,
        ">"
@@ -338,7 +338,7 @@ ProgramNode(0...200)(
        nil,
        GREATER_EQUAL(168...170)(">="),
        nil,
-       ArgumentsNode(171...172)([IntegerNode(171...172)()]),
+       ArgumentsNode(171...172)([IntegerNode(171...172)((171...172), 10)]),
        nil,
        nil,
        ">="
@@ -357,7 +357,7 @@ ProgramNode(0...200)(
        nil,
        GREATER_GREATER(178...180)(">>"),
        nil,
-       ArgumentsNode(181...182)([IntegerNode(181...182)()]),
+       ArgumentsNode(181...182)([IntegerNode(181...182)((181...182), 10)]),
        nil,
        nil,
        ">>"
@@ -376,7 +376,7 @@ ProgramNode(0...200)(
        nil,
        CARET(188...189)("^"),
        nil,
-       ArgumentsNode(190...191)([IntegerNode(190...191)()]),
+       ArgumentsNode(190...191)([IntegerNode(190...191)((190...191), 10)]),
        nil,
        nil,
        "^"
@@ -395,7 +395,7 @@ ProgramNode(0...200)(
        nil,
        PIPE(197...198)("|"),
        nil,
-       ArgumentsNode(199...200)([IntegerNode(199...200)()]),
+       ArgumentsNode(199...200)([IntegerNode(199...200)((199...200), 10)]),
        nil,
        nil,
        "|"

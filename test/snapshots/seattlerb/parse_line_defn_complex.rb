@@ -27,7 +27,7 @@ ProgramNode(0...40)(
           OperatorAssignmentNode(18...24)(
             LocalVariableWriteNode(18...19)((18...19), nil, nil, 0),
             STAR_EQUAL(20...22)("*="),
-            IntegerNode(23...24)()
+            IntegerNode(23...24)((23...24), 10)
           ),
           ReturnNode(27...35)(
             KEYWORD_RETURN(27...33)("return"),

@@ -1,7 +1,12 @@
 ProgramNode(0...49)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...49)(
-    [LocalVariableWriteNode(0...5)((0...1), IntegerNode(4...5)(), (2...3), 0),
+    [LocalVariableWriteNode(0...5)(
+       (0...1),
+       IntegerNode(4...5)((4...5), 10),
+       (2...3),
+       0
+     ),
      CallNode(7...0)(
        nil,
        nil,
@@ -17,7 +22,7 @@ ProgramNode(0...49)(
                  LABEL_END(10...11)(":"),
                  "b"
                ),
-               IntegerNode(12...13)(),
+               IntegerNode(12...13)((12...13), 10),
                nil
              )],
             nil

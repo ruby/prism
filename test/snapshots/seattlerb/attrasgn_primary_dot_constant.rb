@@ -15,7 +15,7 @@ ProgramNode(0...3)(
        DOT(1...2)("."),
        CONSTANT(2...3)("B"),
        nil,
-       ArgumentsNode(6...7)([IntegerNode(6...7)()]),
+       ArgumentsNode(6...7)([IntegerNode(6...7)((6...7), 10)]),
        nil,
        nil,
        "B="

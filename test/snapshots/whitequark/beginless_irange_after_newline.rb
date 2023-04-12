@@ -11,6 +11,6 @@ ProgramNode(0...9)(
        nil,
        "foo"
      ),
-     RangeNode(4...9)(nil, IntegerNode(6...9)(), (4...6))]
+     RangeNode(4...9)(nil, IntegerNode(6...9)((6...9), 10), (4...6))]
   )
 )

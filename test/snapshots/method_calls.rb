@@ -158,9 +158,9 @@ ProgramNode(0...1045)(
        nil,
        PARENTHESIS_LEFT(66...67)("("),
        ArgumentsNode(67...74)(
-         [IntegerNode(67...68)(),
-          IntegerNode(70...71)(),
-          IntegerNode(73...74)()]
+         [IntegerNode(67...68)((67...68), 10),
+          IntegerNode(70...71)((70...71), 10),
+          IntegerNode(73...74)((73...74), 10)]
        ),
        PARENTHESIS_RIGHT(74...75)(")"),
        nil,
@@ -199,7 +199,7 @@ ProgramNode(0...1045)(
        DOT(86...87)("."),
        IDENTIFIER(87...90)("bar"),
        nil,
-       ArgumentsNode(93...94)([IntegerNode(93...94)()]),
+       ArgumentsNode(93...94)([IntegerNode(93...94)((93...94), 10)]),
        nil,
        nil,
        "bar="
@@ -471,7 +471,8 @@ ProgramNode(0...1045)(
         )],
        EQUAL(190...191)("="),
        ArrayNode(0...0)(
-         [IntegerNode(192...193)(), IntegerNode(195...196)()],
+         [IntegerNode(192...193)((192...193), 10),
+          IntegerNode(195...196)((195...196), 10)],
          nil,
          nil
        ),
@@ -754,7 +755,7 @@ ProgramNode(0...1045)(
        IDENTIFIER(334...336)("hi"),
        nil,
        ArgumentsNode(337...381)(
-         [IntegerNode(337...340)(),
+         [IntegerNode(337...340)((337...340), 10),
           HashNode(344...381)(
             BRACE_LEFT(342...343)("{"),
             [AssocNode(344...361)(
@@ -1185,7 +1186,7 @@ ProgramNode(0...1045)(
        IDENTIFIER(653...662)("some_func"),
        nil,
        ArgumentsNode(663...674)(
-         [IntegerNode(663...664)(),
+         [IntegerNode(663...664)((663...664), 10),
           HashNode(666...674)(
             nil,
             [AssocNode(666...674)(
@@ -1195,7 +1196,7 @@ ProgramNode(0...1045)(
                  LABEL_END(671...672)(":"),
                  "kwarg"
                ),
-               IntegerNode(673...674)(),
+               IntegerNode(673...674)((673...674), 10),
                nil
              )],
             nil
@@ -1210,7 +1211,7 @@ ProgramNode(0...1045)(
        DOT(682...683)("."),
        CONSTANT(683...690)("Integer"),
        PARENTHESIS_LEFT(690...691)("("),
-       ArgumentsNode(691...693)([IntegerNode(691...693)()]),
+       ArgumentsNode(691...693)([IntegerNode(691...693)((691...693), 10)]),
        PARENTHESIS_RIGHT(693...694)(")"),
        nil,
        "Integer"
@@ -1352,7 +1353,7 @@ ProgramNode(0...1045)(
                  "a"
                ),
                CallNode(781...783)(
-                 IntegerNode(782...783)(),
+                 IntegerNode(782...783)((782...783), 10),
                  nil,
                  UMINUS_NUM(781...782)("-"),
                  nil,
@@ -1642,7 +1643,7 @@ ProgramNode(0...1045)(
             KEYWORD_BEGIN(961...966)("begin"),
             StatementsNode(967...983)(
               [CallNode(967...983)(
-                 IntegerNode(967...968)(),
+                 IntegerNode(967...968)((967...968), 10),
                  DOT(968...969)("."),
                  IDENTIFIER(969...974)("times"),
                  nil,
@@ -1651,7 +1652,9 @@ ProgramNode(0...1045)(
                  BlockNode(975...983)(
                    ScopeNode(975...977)([]),
                    nil,
-                   StatementsNode(978...979)([IntegerNode(978...979)()]),
+                   StatementsNode(978...979)(
+                     [IntegerNode(978...979)((978...979), 10)]
+                   ),
                    (975...977),
                    (980...983)
                  ),

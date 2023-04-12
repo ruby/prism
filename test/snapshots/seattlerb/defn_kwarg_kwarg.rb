@@ -11,11 +11,11 @@ ProgramNode(0...24)(
          nil,
          [KeywordParameterNode(9...13)(
             LABEL(9...11)("b:"),
-            IntegerNode(12...13)()
+            IntegerNode(12...13)((12...13), 10)
           ),
           KeywordParameterNode(15...19)(
             LABEL(15...17)("c:"),
-            IntegerNode(18...19)()
+            IntegerNode(18...19)((18...19), 10)
           )],
          nil,
          nil

@@ -255,9 +255,9 @@ ProgramNode(2...916)(
         GlobalVariableReadNode(217...219)(GLOBAL_VARIABLE(217...219)("$a"))],
        STRING_END(219...220)("\"")
      ),
-     IntegerNode(221...222)(),
+     IntegerNode(221...222)((221...222), 10),
      CallNode(223...226)(
-       IntegerNode(224...226)(),
+       IntegerNode(224...226)((224...226), 10),
        nil,
        UPLUS(223...224)("+"),
        nil,
@@ -266,14 +266,14 @@ ProgramNode(2...916)(
        nil,
        "+@"
      ),
-     IntegerNode(227...228)(),
-     IntegerNode(229...230)(),
-     RationalNode(231...233)(IntegerNode(231...233)()),
+     IntegerNode(227...228)((227...228), 10),
+     IntegerNode(229...230)((229...230), 10),
+     RationalNode(231...233)(IntegerNode(231...233)((231...232), 10)),
      RationalNode(234...238)(FloatNode(234...238)()),
      RationalNode(239...243)(FloatNode(239...243)()),
-     ImaginaryNode(244...246)(IntegerNode(244...246)()),
+     ImaginaryNode(244...246)(IntegerNode(244...246)((244...245), 10)),
      CallNode(247...250)(
-       ImaginaryNode(248...250)(IntegerNode(248...250)()),
+       ImaginaryNode(248...250)(IntegerNode(248...250)((248...249), 10)),
        nil,
        UMINUS_NUM(247...248)("-"),
        nil,
@@ -293,9 +293,9 @@ ProgramNode(2...916)(
        nil,
        "-@"
      ),
-     ImaginaryNode(262...294)(IntegerNode(262...294)()),
+     ImaginaryNode(262...294)(IntegerNode(262...294)((262...293), 10)),
      ImaginaryNode(295...298)(
-       RationalNode(295...298)(IntegerNode(295...297)())
+       RationalNode(295...298)(IntegerNode(295...297)((295...296), 10))
      ),
      StringConcatNode(299...310)(
        StringNode(299...304)(
@@ -347,7 +347,7 @@ ProgramNode(2...916)(
         ),
         StringInterpolatedNode(331...335)(
           EMBEXPR_BEGIN(331...333)("\#{"),
-          StatementsNode(333...334)([IntegerNode(333...334)()]),
+          StatementsNode(333...334)([IntegerNode(333...334)((333...334), 10)]),
           EMBEXPR_END(334...335)("}")
         ),
         StringNode(335...338)(
@@ -660,11 +660,11 @@ ProgramNode(2...916)(
          (610...611),
          (620...621)
        ),
-       IntegerNode(623...624)(),
+       IntegerNode(623...624)((623...624), 10),
        (621...623)
      ),
      RangeNode(625...639)(
-       IntegerNode(625...626)(),
+       IntegerNode(625...626)((625...626), 10),
        ParenthesesNode(628...639)(
          StatementsNode(629...638)(
            [CallNode(629...638)(
@@ -700,7 +700,7 @@ ProgramNode(2...916)(
          (640...641),
          (650...651)
        ),
-       IntegerNode(653...656)(),
+       IntegerNode(653...656)((653...656), 10),
        (651...653)
      ),
      CallNode(657...661)(
@@ -715,12 +715,13 @@ ProgramNode(2...916)(
      ),
      FloatNode(662...665)(),
      ArrayNode(666...672)(
-       [IntegerNode(667...668)(), IntegerNode(670...671)()],
+       [IntegerNode(667...668)((667...668), 10),
+        IntegerNode(670...671)((670...671), 10)],
        BRACKET_LEFT_ARRAY(666...667)("["),
        BRACKET_RIGHT(671...672)("]")
      ),
      ArrayNode(673...684)(
-       [IntegerNode(674...675)(),
+       [IntegerNode(674...675)((674...675), 10),
         ParenthesesNode(677...679)(nil, (677...678), (678...679)),
         CallNode(681...683)(
           nil,
@@ -736,7 +737,7 @@ ProgramNode(2...916)(
        BRACKET_RIGHT(683...684)("]")
      ),
      ArrayNode(685...688)(
-       [IntegerNode(686...687)()],
+       [IntegerNode(686...687)((686...687), 10)],
        BRACKET_LEFT_ARRAY(685...686)("["),
        BRACKET_RIGHT(687...688)("]")
      ),
@@ -746,7 +747,7 @@ ProgramNode(2...916)(
        BRACKET_RIGHT(690...691)("]")
      ),
      ArrayNode(692...702)(
-       [IntegerNode(693...694)(),
+       [IntegerNode(693...694)((693...694), 10),
         SplatNode(697...701)(
           INSTANCE_VARIABLE(697...701)("@foo"),
           InstanceVariableReadNode(697...701)()
@@ -759,7 +760,7 @@ ProgramNode(2...916)(
           INSTANCE_VARIABLE(705...709)("@foo"),
           InstanceVariableReadNode(705...709)()
         ),
-        IntegerNode(711...712)()],
+        IntegerNode(711...712)((711...712), 10)],
        BRACKET_LEFT_ARRAY(703...704)("["),
        BRACKET_RIGHT(712...713)("]")
      ),
@@ -792,8 +793,8 @@ ProgramNode(2...916)(
      HashNode(747...753)(
        BRACE_LEFT(745...746)("{"),
        [AssocNode(747...753)(
-          IntegerNode(747...748)(),
-          IntegerNode(752...753)(),
+          IntegerNode(747...748)((747...748), 10),
+          IntegerNode(752...753)((752...753), 10),
           EQUAL_GREATER(749...751)("=>")
         )],
        BRACE_RIGHT(754...755)("}")
@@ -801,13 +802,13 @@ ProgramNode(2...916)(
      HashNode(758...772)(
        BRACE_LEFT(756...757)("{"),
        [AssocNode(758...764)(
-          IntegerNode(758...759)(),
-          IntegerNode(763...764)(),
+          IntegerNode(758...759)((758...759), 10),
+          IntegerNode(763...764)((763...764), 10),
           EQUAL_GREATER(760...762)("=>")
         ),
         AssocNode(766...772)(
-          IntegerNode(766...767)(),
-          IntegerNode(771...772)(),
+          IntegerNode(766...767)((766...767), 10),
+          IntegerNode(771...772)((771...772), 10),
           EQUAL_GREATER(768...770)("=>")
         )],
        BRACE_RIGHT(773...774)("}")
@@ -824,7 +825,7 @@ ProgramNode(2...916)(
           ParenthesesNode(780...794)(
             StatementsNode(781...793)(
               [RescueModifierNode(781...793)(
-                 IntegerNode(781...782)(),
+                 IntegerNode(781...782)((781...782), 10),
                  KEYWORD_RESCUE_MODIFIER(783...789)("rescue"),
                  CallNode(790...793)(
                    nil,
@@ -850,7 +851,7 @@ ProgramNode(2...916)(
             LABEL_END(797...798)(":"),
             "b"
           ),
-          IntegerNode(799...800)(),
+          IntegerNode(799...800)((799...800), 10),
           nil
         )],
        BRACE_RIGHT(801...802)("}")
@@ -864,7 +865,7 @@ ProgramNode(2...916)(
             LABEL_END(806...807)(":"),
             "a"
           ),
-          IntegerNode(808...809)(),
+          IntegerNode(808...809)((808...809), 10),
           nil
         ),
         AssocNode(811...815)(
@@ -874,7 +875,7 @@ ProgramNode(2...916)(
             LABEL_END(812...813)(":"),
             "b"
           ),
-          IntegerNode(814...815)(),
+          IntegerNode(814...815)((814...815), 10),
           nil
         )],
        BRACE_RIGHT(816...817)("}")
@@ -911,7 +912,7 @@ ProgramNode(2...916)(
              )],
             STRING_END(835...836)("\"")
           ),
-          IntegerNode(840...841)(),
+          IntegerNode(840...841)((840...841), 10),
           EQUAL_GREATER(837...839)("=>")
         )],
        BRACE_RIGHT(842...843)("}")
@@ -925,7 +926,7 @@ ProgramNode(2...916)(
             nil,
             "-@"
           ),
-          IntegerNode(853...854)(),
+          IntegerNode(853...854)((853...854), 10),
           EQUAL_GREATER(850...852)("=>")
         )],
        BRACE_RIGHT(855...856)("}")

@@ -517,7 +517,7 @@ ProgramNode(0...616)(
      WhileNode(509...524)(
        KEYWORD_WHILE(509...514)("while"),
        FalseNode(515...520)(),
-       StatementsNode(523...524)([IntegerNode(523...524)()])
+       StatementsNode(523...524)([IntegerNode(523...524)((523...524), 10)])
      ),
      WhileNode(529...552)(
        KEYWORD_WHILE(529...534)("while"),
@@ -560,7 +560,7 @@ ProgramNode(0...616)(
      UntilNode(573...588)(
        KEYWORD_UNTIL(573...578)("until"),
        FalseNode(579...584)(),
-       StatementsNode(587...588)([IntegerNode(587...588)()])
+       StatementsNode(587...588)([IntegerNode(587...588)((587...588), 10)])
      ),
      UntilNode(593...616)(
        KEYWORD_UNTIL(593...598)("until"),

@@ -20,7 +20,7 @@ ProgramNode(0...33)(
               nil,
               nil
             ),
-            StatementsNode(27...29)([IntegerNode(27...29)()]),
+            StatementsNode(27...29)([IntegerNode(27...29)((27...29), 10)]),
             ScopeNode(10...13)([IDENTIFIER(22...23)("o")]),
             (10...13),
             (18...19),

@@ -19,7 +19,7 @@ ProgramNode(0...9)(
           ),
           HashNode(5...8)(
             nil,
-            [AssocSplatNode(5...8)(IntegerNode(7...8)(), (5...7))],
+            [AssocSplatNode(5...8)(IntegerNode(7...8)((7...8), 10), (5...7))],
             nil
           )]
        ),

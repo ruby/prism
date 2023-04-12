@@ -2,7 +2,7 @@ ProgramNode(0...24)(
   ScopeNode(0...0)([IDENTIFIER(6...7)("a")]),
   StatementsNode(0...24)(
     [MatchRequiredNode(0...8)(
-       IntegerNode(0...1)(),
+       IntegerNode(0...1)((0...1), 10),
        ArrayPatternNode(5...8)(
          nil,
          [LocalVariableWriteNode(6...7)((6...7), nil, nil, 0)],
@@ -15,7 +15,7 @@ ProgramNode(0...24)(
      ),
      LocalVariableReadNode(10...11)(0),
      MatchPredicateNode(13...21)(
-       IntegerNode(13...14)(),
+       IntegerNode(13...14)((13...14), 10),
        ArrayPatternNode(18...21)(
          nil,
          [LocalVariableWriteNode(19...20)((19...20), nil, nil, 0)],

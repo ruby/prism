@@ -10,7 +10,8 @@ ProgramNode(1...0)(
         LocalVariableWriteNode(6...9)((6...9), nil, nil, 0)],
        EQUAL(11...12)("="),
        ArrayNode(0...0)(
-         [IntegerNode(13...14)(), IntegerNode(16...17)()],
+         [IntegerNode(13...14)((13...14), 10),
+          IntegerNode(16...17)((16...17), 10)],
          nil,
          nil
        ),
@@ -22,7 +23,8 @@ ProgramNode(1...0)(
         LocalVariableWriteNode(24...27)((24...27), nil, nil, 0)],
        EQUAL(28...29)("="),
        ArrayNode(0...0)(
-         [IntegerNode(30...31)(), IntegerNode(33...34)()],
+         [IntegerNode(30...31)((30...31), 10),
+          IntegerNode(33...34)((33...34), 10)],
          nil,
          nil
        ),
@@ -35,7 +37,8 @@ ProgramNode(1...0)(
         LocalVariableWriteNode(46...49)((46...49), nil, nil, 0)],
        EQUAL(50...51)("="),
        ArrayNode(0...0)(
-         [IntegerNode(52...53)(), IntegerNode(55...56)()],
+         [IntegerNode(52...53)((52...53), 10),
+          IntegerNode(55...56)((55...56), 10)],
          nil,
          nil
        ),

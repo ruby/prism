@@ -147,7 +147,11 @@ ProgramNode(0...747)(
          "a"
        ),
        [InNode(127...136)(
-          RangeNode(131...136)(nil, IntegerNode(134...136)(), (131...134)),
+          RangeNode(131...136)(
+            nil,
+            IntegerNode(134...136)((134...136), 10),
+            (131...134)
+          ),
           nil,
           (127...129),
           nil
@@ -164,7 +168,11 @@ ProgramNode(0...747)(
          "a"
        ),
        [InNode(151...159)(
-          RangeNode(155...159)(nil, IntegerNode(157...159)(), (155...157)),
+          RangeNode(155...159)(
+            nil,
+            IntegerNode(157...159)((157...159), 10),
+            (155...157)
+          ),
           nil,
           (151...153),
           nil
@@ -181,7 +189,11 @@ ProgramNode(0...747)(
          "a"
        ),
        [InNode(174...182)(
-          RangeNode(178...182)(IntegerNode(178...179)(), nil, (179...182)),
+          RangeNode(178...182)(
+            IntegerNode(178...179)((178...179), 10),
+            nil,
+            (179...182)
+          ),
           nil,
           (174...176),
           nil
@@ -199,8 +211,8 @@ ProgramNode(0...747)(
        ),
        [InNode(197...206)(
           RangeNode(201...206)(
-            IntegerNode(201...202)(),
-            IntegerNode(205...206)(),
+            IntegerNode(201...202)((201...202), 10),
+            IntegerNode(205...206)((205...206), 10),
             (202...205)
           ),
           nil,
@@ -218,7 +230,12 @@ ProgramNode(0...747)(
          nil,
          "a"
        ),
-       [InNode(221...227)(IntegerNode(225...227)(), nil, (221...223), nil)],
+       [InNode(221...227)(
+          IntegerNode(225...227)((225...227), 10),
+          nil,
+          (221...223),
+          nil
+        )],
        nil,
        (213...217),
        (229...232)

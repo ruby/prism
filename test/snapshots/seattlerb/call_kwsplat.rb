@@ -9,7 +9,7 @@ ProgramNode(0...6)(
        ArgumentsNode(2...5)(
          [HashNode(2...5)(
             nil,
-            [AssocSplatNode(2...5)(IntegerNode(4...5)(), (2...4))],
+            [AssocSplatNode(2...5)(IntegerNode(4...5)((4...5), 10), (2...4))],
             nil
           )]
        ),

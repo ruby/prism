@@ -28,7 +28,7 @@ ProgramNode(0...29)(
           ),
           BeginNode(5...29)(
             KEYWORD_BEGIN(5...10)("begin"),
-            StatementsNode(18...20)([IntegerNode(18...20)()]),
+            StatementsNode(18...20)([IntegerNode(18...20)((18...20), 10)]),
             nil,
             nil,
             nil,

@@ -5,8 +5,8 @@ ProgramNode(0...25)(
        [HashNode(2...8)(
           nil,
           [AssocNode(2...8)(
-             IntegerNode(2...3)(),
-             IntegerNode(7...8)(),
+             IntegerNode(2...3)((2...3), 10),
+             IntegerNode(7...8)((7...8), 10),
              EQUAL_GREATER(4...6)("=>")
            )],
           nil
@@ -15,12 +15,12 @@ ProgramNode(0...25)(
        BRACKET_RIGHT(9...10)("]")
      ),
      ArrayNode(12...25)(
-       [IntegerNode(14...15)(),
+       [IntegerNode(14...15)((14...15), 10),
         HashNode(17...23)(
           nil,
           [AssocNode(17...23)(
-             IntegerNode(17...18)(),
-             IntegerNode(22...23)(),
+             IntegerNode(17...18)((17...18), 10),
+             IntegerNode(22...23)((22...23), 10),
              EQUAL_GREATER(19...21)("=>")
            )],
           nil

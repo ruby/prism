@@ -22,7 +22,8 @@ ProgramNode(0...56)(
                LocalVariableWriteNode(43...44)((43...44), nil, nil, 0)],
               EQUAL(46...47)("="),
               ArrayNode(48...54)(
-                [IntegerNode(49...50)(), IntegerNode(52...53)()],
+                [IntegerNode(49...50)((49...50), 10),
+                 IntegerNode(52...53)((52...53), 10)],
                 BRACKET_LEFT_ARRAY(48...49)("["),
                 BRACKET_RIGHT(53...54)("]")
               ),

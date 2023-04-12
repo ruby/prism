@@ -3,21 +3,25 @@ ProgramNode(0...85)(
   StatementsNode(0...85)(
     [ParenthesesNode(0...6)(
        StatementsNode(1...5)(
-         [RangeNode(1...5)(nil, IntegerNode(4...5)(), (1...4))]
+         [RangeNode(1...5)(nil, IntegerNode(4...5)((4...5), 10), (1...4))]
        ),
        (0...1),
        (5...6)
      ),
      ParenthesesNode(8...13)(
        StatementsNode(9...12)(
-         [RangeNode(9...12)(nil, IntegerNode(11...12)(), (9...11))]
+         [RangeNode(9...12)(
+            nil,
+            IntegerNode(11...12)((11...12), 10),
+            (9...11)
+          )]
        ),
        (8...9),
        (12...13)
      ),
      RangeNode(15...20)(
-       IntegerNode(15...16)(),
-       IntegerNode(19...20)(),
+       IntegerNode(15...16)((15...16), 10),
+       IntegerNode(19...20)((19...20), 10),
        (16...19)
      ),
      CallNode(22...31)(
@@ -35,7 +39,11 @@ ProgramNode(0...85)(
        BRACKET_LEFT_RIGHT(25...26)("["),
        BRACKET_LEFT(25...26)("["),
        ArgumentsNode(26...30)(
-         [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29))]
+         [RangeNode(26...30)(
+            nil,
+            IntegerNode(29...30)((29...30), 10),
+            (26...29)
+          )]
        ),
        BRACKET_RIGHT(30...31)("]"),
        nil,
@@ -70,14 +78,18 @@ ProgramNode(0...85)(
      ),
      ParenthesesNode(50...56)(
        StatementsNode(51...55)(
-         [RangeNode(51...55)(IntegerNode(51...52)(), nil, (52...55))]
+         [RangeNode(51...55)(
+            IntegerNode(51...52)((51...52), 10),
+            nil,
+            (52...55)
+          )]
        ),
        (50...51),
        (55...56)
      ),
      RangeNode(58...62)(
-       IntegerNode(58...59)(),
-       IntegerNode(61...62)(),
+       IntegerNode(58...59)((58...59), 10),
+       IntegerNode(61...62)((61...62), 10),
        (59...61)
      ),
      HashNode(66...76)(
@@ -109,7 +121,11 @@ ProgramNode(0...85)(
      ),
      ParenthesesNode(80...85)(
        StatementsNode(81...84)(
-         [RangeNode(81...84)(IntegerNode(81...82)(), nil, (82...84))]
+         [RangeNode(81...84)(
+            IntegerNode(81...82)((81...82), 10),
+            nil,
+            (82...84)
+          )]
        ),
        (80...81),
        (84...85)

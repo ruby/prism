@@ -36,12 +36,12 @@ ProgramNode(0...92)(
          (22...24)
        ),
        EQUAL(26...27)("="),
-       IntegerNode(28...29)()
+       IntegerNode(28...29)((28...29), 10)
      ),
      ConstantPathWriteNode(31...36)(
        ConstantReadNode(31...32)(),
        EQUAL(33...34)("="),
-       IntegerNode(35...36)()
+       IntegerNode(35...36)((35...36), 10)
      ),
      ConstantReadNode(38...41)(),
      CallNode(43...0)(
@@ -49,7 +49,7 @@ ProgramNode(0...92)(
        nil,
        CONSTANT(43...46)("Foo"),
        nil,
-       ArgumentsNode(47...48)([IntegerNode(47...48)()]),
+       ArgumentsNode(47...48)([IntegerNode(47...48)((47...48), 10)]),
        nil,
        nil,
        "Foo"
@@ -67,7 +67,7 @@ ProgramNode(0...92)(
      ConstantPathWriteNode(60...67)(
        ConstantPathNode(60...63)(nil, ConstantReadNode(62...63)(), (60...62)),
        EQUAL(64...65)("="),
-       IntegerNode(66...67)()
+       IntegerNode(66...67)((66...67), 10)
      ),
      ConstantPathWriteNode(69...79)(
        ConstantPathNode(69...75)(
@@ -80,7 +80,7 @@ ProgramNode(0...92)(
          (72...74)
        ),
        EQUAL(76...77)("="),
-       IntegerNode(78...79)()
+       IntegerNode(78...79)((78...79), 10)
      ),
      ConstantPathNode(81...87)(
        ConstantPathNode(81...84)(nil, ConstantReadNode(83...84)(), (81...83)),

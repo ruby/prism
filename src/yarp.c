@@ -1669,10 +1669,17 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_to
 
 // Allocate and initialize a new IntegerNode node.
 static yp_integer_node_t *
-yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
+yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token, const yp_location_t *content_loc, int base) {
   assert(token->type == YP_TOKEN_INTEGER);
   yp_integer_node_t *node = yp_alloc(parser, sizeof(yp_integer_node_t));
-  *node = (yp_integer_node_t) {{ .type = YP_NODE_INTEGER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
+  *node = (yp_integer_node_t) {
+    {
+      .type = YP_NODE_INTEGER_NODE,
+      .location = YP_LOCATION_TOKEN_VALUE(token)
+    },
+    .content_loc = *content_loc,
+    .integer_base = base
+  };
   return node;
 }
 
@@ -1691,7 +1698,11 @@ yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
   switch (parser->lex_modes.current->as.numeric.type) {
     case YP_TOKEN_INTEGER: {
       lex_mode_pop(parser);
-      numeric_node = (yp_node_t *)yp_integer_node_create(parser, &numeric_token);
+      assert(parser->lex_modes.current->mode == YP_LEX_INTEGER);
+      yp_location_t content_loc = parser->lex_modes.current->as.integer.content_loc;
+      int base = parser->lex_modes.current->as.integer.base;
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_integer_node_create(parser, &numeric_token, &content_loc, base);
       break;
     }
     case YP_TOKEN_FLOAT: {
@@ -1731,7 +1742,11 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
   switch (parser->lex_modes.current->as.numeric.type) {
     case YP_TOKEN_INTEGER: {
       lex_mode_pop(parser);
-      numeric_node = (yp_node_t *)yp_integer_node_create(parser, &numeric_token);
+      assert(parser->lex_modes.current->mode == YP_LEX_INTEGER);
+      yp_location_t content_loc = parser->lex_modes.current->as.integer.content_loc;
+      int base = parser->lex_modes.current->as.integer.base;
+      lex_mode_pop(parser);
+      numeric_node = (yp_node_t *)yp_integer_node_create(parser, &numeric_token, &content_loc, base);
       break;
     }
     case YP_TOKEN_FLOAT: {
@@ -3959,7 +3974,7 @@ lex_optional_float_suffix(yp_parser_t *parser) {
 }
 
 static yp_token_type_t
-lex_numeric_prefix(yp_parser_t *parser) {
+lex_numeric_prefix(yp_parser_t *parser, const char **content_start, int *integer_base) {
   yp_token_type_t type = YP_TOKEN_INTEGER;
 
   if (parser->current.end[-1] == '0') {
@@ -3968,6 +3983,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'd':
       case 'D':
         if (yp_char_is_decimal_digit(*++parser->current.end)) {
+          *integer_base = 10;
+          *content_start = parser->current.end;
           parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid decimal number.");
@@ -3979,6 +3996,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'b':
       case 'B':
         if (yp_char_is_binary_digit(*++parser->current.end)) {
+          *integer_base = 2;
+          *content_start = parser->current.end;
           parser->current.end += yp_strspn_binary_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid binary number.");
@@ -3990,6 +4009,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'o':
       case 'O':
         if (yp_char_is_octal_digit(*++parser->current.end)) {
+          *integer_base = 8;
+          *content_start = parser->current.end;
           parser->current.end += yp_strspn_octal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid octal number.");
@@ -4007,6 +4028,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case '5':
       case '6':
       case '7':
+        *integer_base = 8;
+        *content_start = parser->current.end;
         parser->current.end += yp_strspn_octal_number(parser->current.end, parser->end - parser->current.end);
         break;
 
@@ -4014,6 +4037,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
       case 'x':
       case 'X':
         if (yp_char_is_hexadecimal_digit(*++parser->current.end)) {
+          *integer_base = 16;
+          *content_start = parser->current.end;
           parser->current.end += yp_strspn_hexadecimal_number(parser->current.end, parser->end - parser->current.end);
         } else {
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid hexadecimal number.");
@@ -4057,7 +4082,18 @@ lex_numeric(yp_parser_t *parser) {
   yp_token_type_t type = YP_TOKEN_INTEGER;
 
   if (parser->current.end < parser->end) {
-    type = lex_numeric_prefix(parser);
+    const char *content_start = parser->current.start;
+    int integer_base = 10;
+    type = lex_numeric_prefix(parser, &content_start, &integer_base);
+
+    if (type == YP_TOKEN_INTEGER) {
+      lex_mode_push(parser, (yp_lex_mode_t) {
+          .mode = YP_LEX_INTEGER,
+          .as.integer.content_loc.start = content_start,
+          .as.integer.content_loc.end = parser->current.end,
+          .as.integer.base = integer_base
+        });
+    }
 
     yp_token_type_t current = type;
     const char *end = parser->current.end;
@@ -4096,6 +4132,13 @@ lex_numeric(yp_parser_t *parser) {
       type = current;
       parser->current.end = end;
     }
+  } else {
+    lex_mode_push(parser, (yp_lex_mode_t) {
+        .mode = YP_LEX_INTEGER,
+        .as.integer.content_loc.start = parser->current.start,
+        .as.integer.content_loc.end = parser->current.end,
+        .as.integer.base = 10
+      });
   }
 
   return type;
@@ -4678,6 +4721,7 @@ parser_lex(yp_parser_t *parser) {
     case YP_LEX_EMBEXPR:
     case YP_LEX_EMBVAR:
     case YP_LEX_NUMERIC:
+    case YP_LEX_INTEGER:
 
     // We have a specific named label here because we are going to jump back to
     // this location in the event that we have lexed a token that should not be
@@ -9503,9 +9547,17 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       return node;
     }
-    case YP_TOKEN_INTEGER:
+    case YP_TOKEN_INTEGER: {
+      if (parser->lex_modes.current->mode == YP_LEX_NUMERIC) {
+        lex_mode_pop(parser);
+      }
+      assert(parser->lex_modes.current->mode == YP_LEX_INTEGER);
+      yp_location_t content_loc = parser->lex_modes.current->as.integer.content_loc;
+      int base = parser->lex_modes.current->as.integer.base;
+      lex_mode_pop(parser);
       parser_lex(parser);
-      return (yp_node_t *) yp_integer_node_create(parser, &parser->previous);
+      return (yp_node_t *) yp_integer_node_create(parser, &parser->previous, &content_loc, base);
+    }
     case YP_TOKEN_KEYWORD___ENCODING__:
       parser_lex(parser);
       return (yp_node_t *) yp_source_encoding_node_create(parser, &parser->previous);

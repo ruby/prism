@@ -9,7 +9,7 @@ ProgramNode(0...44)(
          [OptionalParameterNode(6...13)(
             IDENTIFIER(6...9)("foo"),
             EQUAL(10...11)("="),
-            IntegerNode(12...13)()
+            IntegerNode(12...13)((12...13), 10)
           )],
          [],
          nil,
@@ -34,12 +34,12 @@ ProgramNode(0...44)(
          [OptionalParameterNode(26...31)(
             IDENTIFIER(26...29)("foo"),
             EQUAL(29...30)("="),
-            IntegerNode(30...31)()
+            IntegerNode(30...31)((30...31), 10)
           ),
           OptionalParameterNode(33...38)(
             IDENTIFIER(33...36)("bar"),
             EQUAL(36...37)("="),
-            IntegerNode(37...38)()
+            IntegerNode(37...38)((37...38), 10)
           )],
          [],
          nil,

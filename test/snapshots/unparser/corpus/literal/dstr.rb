@@ -151,7 +151,9 @@ ProgramNode(0...299)(
                   ),
                   StringInterpolatedNode(206...211)(
                     EMBEXPR_BEGIN(206...208)("\#{"),
-                    StatementsNode(208...210)([IntegerNode(208...210)()]),
+                    StatementsNode(208...210)(
+                      [IntegerNode(208...210)((208...210), 10)]
+                    ),
                     EMBEXPR_END(210...211)("}")
                   ),
                   StringNode(211...212)(

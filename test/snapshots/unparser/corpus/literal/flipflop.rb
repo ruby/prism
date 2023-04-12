@@ -22,7 +22,9 @@ ProgramNode(0...64)(
                      nil,
                      EQUAL_EQUAL(7...9)("=="),
                      nil,
-                     ArgumentsNode(10...11)([IntegerNode(10...11)()]),
+                     ArgumentsNode(10...11)(
+                       [IntegerNode(10...11)((10...11), 10)]
+                     ),
                      nil,
                      nil,
                      "=="
@@ -47,7 +49,9 @@ ProgramNode(0...64)(
                      nil,
                      EQUAL_EQUAL(17...19)("=="),
                      nil,
-                     ArgumentsNode(20...21)([IntegerNode(20...21)()]),
+                     ArgumentsNode(20...21)(
+                       [IntegerNode(20...21)((20...21), 10)]
+                     ),
                      nil,
                      nil,
                      "=="
@@ -98,7 +102,9 @@ ProgramNode(0...64)(
                      nil,
                      EQUAL_EQUAL(41...43)("=="),
                      nil,
-                     ArgumentsNode(44...45)([IntegerNode(44...45)()]),
+                     ArgumentsNode(44...45)(
+                       [IntegerNode(44...45)((44...45), 10)]
+                     ),
                      nil,
                      nil,
                      "=="
@@ -123,7 +129,9 @@ ProgramNode(0...64)(
                      nil,
                      EQUAL_EQUAL(52...54)("=="),
                      nil,
-                     ArgumentsNode(55...56)([IntegerNode(55...56)()]),
+                     ArgumentsNode(55...56)(
+                       [IntegerNode(55...56)((55...56), 10)]
+                     ),
                      nil,
                      nil,
                      "=="

@@ -7,9 +7,9 @@ ProgramNode(0...47)(
        nil,
        StatementsNode(10...20)(
          [RescueModifierNode(10...20)(
-            IntegerNode(10...11)(),
+            IntegerNode(10...11)((10...11), 10),
             KEYWORD_RESCUE_MODIFIER(12...18)("rescue"),
-            IntegerNode(19...20)()
+            IntegerNode(19...20)((19...20), 10)
           )]
        ),
        ScopeNode(0...3)([]),
@@ -26,9 +26,9 @@ ProgramNode(0...47)(
        nil,
        StatementsNode(37...47)(
          [RescueModifierNode(37...47)(
-            IntegerNode(37...38)(),
+            IntegerNode(37...38)((37...38), 10),
             KEYWORD_RESCUE_MODIFIER(39...45)("rescue"),
-            IntegerNode(46...47)()
+            IntegerNode(46...47)((46...47), 10)
           )]
        ),
        ScopeNode(22...25)([]),

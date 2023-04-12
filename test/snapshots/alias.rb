@@ -52,7 +52,7 @@ ProgramNode(0...199)(
          [StringNode(69...72)(nil, STRING_CONTENT(69...72)("abc"), nil, "abc"),
           StringInterpolatedNode(72...76)(
             EMBEXPR_BEGIN(72...74)("\#{"),
-            StatementsNode(74...75)([IntegerNode(74...75)()]),
+            StatementsNode(74...75)([IntegerNode(74...75)((74...75), 10)]),
             EMBEXPR_END(75...76)("}")
           )],
          STRING_END(76...77)("\"")

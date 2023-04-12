@@ -20,7 +20,7 @@ ProgramNode(0...18)(
              [OptionalParameterNode(8...12)(
                 IDENTIFIER(8...9)("b"),
                 EQUAL(9...10)("="),
-                IntegerNode(10...12)()
+                IntegerNode(10...12)((10...12), 10)
               )],
              [RequiredParameterNode(14...15)()],
              nil,

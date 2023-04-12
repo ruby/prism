@@ -2,7 +2,7 @@ ProgramNode(0...54)(
   ScopeNode(0...0)([]),
   StatementsNode(0...54)(
     [CallNode(0...2)(
-       IntegerNode(1...2)(),
+       IntegerNode(1...2)((1...2), 10),
        nil,
        BANG(0...1)("!"),
        nil,
@@ -15,7 +15,7 @@ ProgramNode(0...54)(
        ParenthesesNode(4...8)(
          StatementsNode(5...7)(
            [CallNode(5...7)(
-              IntegerNode(6...7)(),
+              IntegerNode(6...7)((6...7), 10),
               nil,
               BANG(5...6)("!"),
               nil,
@@ -94,7 +94,7 @@ ProgramNode(0...54)(
          ParenthesesNode(27...31)(
            StatementsNode(28...30)(
              [CallNode(28...30)(
-                IntegerNode(29...30)(),
+                IntegerNode(29...30)((29...30), 10),
                 nil,
                 BANG(28...29)("!"),
                 nil,

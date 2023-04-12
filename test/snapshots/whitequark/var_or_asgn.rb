@@ -3,7 +3,7 @@ ProgramNode(0...7)(
   StatementsNode(0...7)(
     [OperatorOrAssignmentNode(0...7)(
        LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
-       IntegerNode(6...7)(),
+       IntegerNode(6...7)((6...7), 10),
        (2...5)
      )]
   )

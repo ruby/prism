@@ -54,9 +54,9 @@ ProgramNode(0...328)(
             "baz"
           ),
           ArrayNode(0...0)(
-            [IntegerNode(22...23)(),
-             IntegerNode(25...26)(),
-             IntegerNode(28...29)()],
+            [IntegerNode(22...23)((22...23), 10),
+             IntegerNode(25...26)((25...26), 10),
+             IntegerNode(28...29)((28...29), 10)],
             nil,
             nil
           )]
@@ -117,7 +117,7 @@ ProgramNode(0...328)(
           nil,
           "c"
         ),
-        IntegerNode(60...61)(),
+        IntegerNode(60...61)((60...61), 10),
         SymbolNode(66...68)(
           SYMBOL_BEGIN(66...67)(":"),
           IDENTIFIER(67...68)("d"),
@@ -146,7 +146,7 @@ ProgramNode(0...328)(
           nil,
           "c"
         ),
-        IntegerNode(86...87)(),
+        IntegerNode(86...87)((86...87), 10),
         SymbolNode(92...94)(
           SYMBOL_BEGIN(92...93)(":"),
           IDENTIFIER(93...94)("d"),
@@ -407,7 +407,7 @@ ProgramNode(0...328)(
           nil,
           BRACKET_LEFT_RIGHT_EQUAL(194...195)("["),
           BRACKET_LEFT(194...195)("["),
-          ArgumentsNode(195...196)([IntegerNode(195...196)()]),
+          ArgumentsNode(195...196)([IntegerNode(195...196)((195...196), 10)]),
           BRACKET_RIGHT(196...197)("]"),
           nil,
           "[]="
@@ -426,14 +426,15 @@ ProgramNode(0...328)(
           nil,
           BRACKET_LEFT_RIGHT_EQUAL(202...203)("["),
           BRACKET_LEFT(202...203)("["),
-          ArgumentsNode(203...204)([IntegerNode(203...204)()]),
+          ArgumentsNode(203...204)([IntegerNode(203...204)((203...204), 10)]),
           BRACKET_RIGHT(204...205)("]"),
           nil,
           "[]="
         )],
        EQUAL(206...207)("="),
        ArrayNode(0...0)(
-         [IntegerNode(208...209)(), IntegerNode(211...212)()],
+         [IntegerNode(208...209)((208...209), 10),
+          IntegerNode(211...212)((211...212), 10)],
          nil,
          nil
        ),
@@ -608,7 +609,7 @@ ProgramNode(0...328)(
        BRACKET_RIGHT(274...275)("]")
      ),
      ArrayNode(277...286)(
-       [IntegerNode(278...279)(),
+       [IntegerNode(278...279)((278...279), 10),
         HashNode(281...285)(
           nil,
           [AssocSplatNode(281...285)(
@@ -630,7 +631,7 @@ ProgramNode(0...328)(
        BRACKET_RIGHT(285...286)("]")
      ),
      ArrayNode(288...309)(
-       [IntegerNode(289...290)(),
+       [IntegerNode(289...290)((289...290), 10),
         HashNode(292...308)(
           nil,
           [AssocSplatNode(292...296)(

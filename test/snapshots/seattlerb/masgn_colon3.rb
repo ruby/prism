@@ -14,7 +14,8 @@ ProgramNode(0...0)(
         )],
        EQUAL(9...10)("="),
        ArrayNode(0...0)(
-         [IntegerNode(11...12)(), IntegerNode(14...15)()],
+         [IntegerNode(11...12)((11...12), 10),
+          IntegerNode(14...15)((14...15), 10)],
          nil,
          nil
        ),

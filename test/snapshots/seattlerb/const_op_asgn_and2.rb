@@ -7,7 +7,7 @@ ProgramNode(0...9)(
          nil,
          nil
        ),
-       IntegerNode(8...9)(),
+       IntegerNode(8...9)((8...9), 10),
        (4...7)
      )]
   )

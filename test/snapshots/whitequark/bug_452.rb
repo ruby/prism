@@ -9,7 +9,7 @@ ProgramNode(0...37)(
        ArgumentsNode(3...21)(
          [CallNode(3...21)(
             ParenthesesNode(3...10)(
-              StatementsNode(4...9)([IntegerNode(4...9)()]),
+              StatementsNode(4...9)([IntegerNode(4...9)((4...9), 10)]),
               (3...4),
               (9...10)
             ),

@@ -11,7 +11,7 @@ ProgramNode(0...39)(
               LABEL_END(7...8)(":"),
               "a"
             ),
-            IntegerNode(9...10)(),
+            IntegerNode(9...10)((9...10), 10),
             nil
           )],
          BRACE_RIGHT(10...11)("}")
@@ -26,7 +26,7 @@ ProgramNode(0...39)(
                  LABEL_END(17...18)(":"),
                  "a"
                ),
-               IntegerNode(19...20)(),
+               IntegerNode(19...20)((19...20), 10),
                nil
              ),
              NoKeywordsParameterNode(22...27)((22...24), (24...27))],

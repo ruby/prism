@@ -10,7 +10,7 @@ ProgramNode(0...711)(
     [GlobalVariableWriteNode(0...6)(
        GLOBAL_VARIABLE(0...2)("$a"),
        EQUAL(3...4)("="),
-       IntegerNode(5...6)()
+       IntegerNode(5...6)((5...6), 10)
      ),
      MultiWriteNode(8...24)(
        [GlobalVariableWriteNode(8...10)(
@@ -25,7 +25,8 @@ ProgramNode(0...711)(
         )],
        EQUAL(16...17)("="),
        ArrayNode(18...24)(
-         [IntegerNode(19...20)(), IntegerNode(22...23)()],
+         [IntegerNode(19...20)((19...20), 10),
+          IntegerNode(22...23)((22...23), 10)],
          BRACKET_LEFT_ARRAY(18...19)("["),
          BRACKET_RIGHT(23...24)("]")
        ),
@@ -43,7 +44,7 @@ ProgramNode(0...711)(
         ),
         LocalVariableWriteNode(32...33)((32...33), nil, nil, 0)],
        EQUAL(35...36)("="),
-       IntegerNode(37...38)(),
+       IntegerNode(37...38)((37...38), 10),
        (25...26),
        (33...34)
      ),
@@ -68,7 +69,8 @@ ProgramNode(0...711)(
         )],
        EQUAL(56...57)("="),
        ArrayNode(58...64)(
-         [IntegerNode(59...60)(), IntegerNode(62...63)()],
+         [IntegerNode(59...60)((59...60), 10),
+          IntegerNode(62...63)((62...63), 10)],
          BRACKET_LEFT_ARRAY(58...59)("["),
          BRACKET_RIGHT(63...64)("]")
        ),
@@ -80,7 +82,8 @@ ProgramNode(0...711)(
         ClassVariableWriteNode(71...74)((71...74), nil, nil)],
        EQUAL(76...77)("="),
        ArrayNode(78...84)(
-         [IntegerNode(79...80)(), IntegerNode(82...83)()],
+         [IntegerNode(79...80)((79...80), 10),
+          IntegerNode(82...83)((82...83), 10)],
          BRACKET_LEFT_ARRAY(78...79)("["),
          BRACKET_RIGHT(83...84)("]")
        ),
@@ -92,7 +95,8 @@ ProgramNode(0...711)(
         InstanceVariableWriteNode(90...92)((90...92), nil, nil)],
        EQUAL(94...95)("="),
        ArrayNode(96...102)(
-         [IntegerNode(97...98)(), IntegerNode(100...101)()],
+         [IntegerNode(97...98)((97...98), 10),
+          IntegerNode(100...101)((100...101), 10)],
          BRACKET_LEFT_ARRAY(96...97)("["),
          BRACKET_RIGHT(101...102)("]")
        ),
@@ -111,9 +115,10 @@ ProgramNode(0...711)(
         )],
        EQUAL(115...116)("="),
        ArrayNode(117...128)(
-         [IntegerNode(118...119)(),
+         [IntegerNode(118...119)((118...119), 10),
           ArrayNode(121...127)(
-            [IntegerNode(122...123)(), IntegerNode(125...126)()],
+            [IntegerNode(122...123)((122...123), 10),
+             IntegerNode(125...126)((125...126), 10)],
             BRACKET_LEFT_ARRAY(121...122)("["),
             BRACKET_RIGHT(126...127)("]")
           )],
@@ -128,7 +133,8 @@ ProgramNode(0...711)(
         SplatNode(133...134)(USTAR(133...134)("*"), nil)],
        EQUAL(136...137)("="),
        ArrayNode(138...144)(
-         [IntegerNode(139...140)(), IntegerNode(142...143)()],
+         [IntegerNode(139...140)((139...140), 10),
+          IntegerNode(142...143)((142...143), 10)],
          BRACKET_LEFT_ARRAY(138...139)("["),
          BRACKET_RIGHT(143...144)("]")
        ),
@@ -143,7 +149,8 @@ ProgramNode(0...711)(
         )],
        EQUAL(155...156)("="),
        ArrayNode(157...163)(
-         [IntegerNode(158...159)(), IntegerNode(161...162)()],
+         [IntegerNode(158...159)((158...159), 10),
+          IntegerNode(161...162)((161...162), 10)],
          BRACKET_LEFT_ARRAY(157...158)("["),
          BRACKET_RIGHT(162...163)("]")
        ),
@@ -155,7 +162,8 @@ ProgramNode(0...711)(
         LocalVariableWriteNode(168...169)((168...169), nil, nil, 0)],
        EQUAL(171...172)("="),
        ArrayNode(173...179)(
-         [IntegerNode(174...175)(), IntegerNode(177...178)()],
+         [IntegerNode(174...175)((174...175), 10),
+          IntegerNode(177...178)((177...178), 10)],
          BRACKET_LEFT_ARRAY(173...174)("["),
          BRACKET_RIGHT(178...179)("]")
        ),
@@ -201,7 +209,8 @@ ProgramNode(0...711)(
         )],
        EQUAL(219...220)("="),
        ArrayNode(221...227)(
-         [IntegerNode(222...223)(), IntegerNode(225...226)()],
+         [IntegerNode(222...223)((222...223), 10),
+          IntegerNode(225...226)((225...226), 10)],
          BRACKET_LEFT_ARRAY(221...222)("["),
          BRACKET_RIGHT(226...227)("]")
        ),
@@ -229,14 +238,15 @@ ProgramNode(0...711)(
           nil,
           BRACKET_LEFT_RIGHT_EQUAL(239...240)("["),
           BRACKET_LEFT(239...240)("["),
-          ArgumentsNode(240...241)([IntegerNode(240...241)()]),
+          ArgumentsNode(240...241)([IntegerNode(240...241)((240...241), 10)]),
           BRACKET_RIGHT(241...242)("]"),
           nil,
           "[]="
         )],
        EQUAL(244...245)("="),
        ArrayNode(246...252)(
-         [IntegerNode(247...248)(), IntegerNode(250...251)()],
+         [IntegerNode(247...248)((247...248), 10),
+          IntegerNode(250...251)((250...251), 10)],
          BRACKET_LEFT_ARRAY(246...247)("["),
          BRACKET_RIGHT(251...252)("]")
        ),
@@ -249,7 +259,7 @@ ProgramNode(0...711)(
           nil,
           BRACKET_LEFT_RIGHT_EQUAL(255...256)("["),
           BRACKET_LEFT(255...256)("["),
-          ArgumentsNode(256...257)([IntegerNode(256...257)()]),
+          ArgumentsNode(256...257)([IntegerNode(256...257)((256...257), 10)]),
           BRACKET_RIGHT(257...258)("]"),
           nil,
           "[]="
@@ -259,14 +269,15 @@ ProgramNode(0...711)(
           nil,
           BRACKET_LEFT_RIGHT_EQUAL(261...262)("["),
           BRACKET_LEFT(261...262)("["),
-          ArgumentsNode(262...263)([IntegerNode(262...263)()]),
+          ArgumentsNode(262...263)([IntegerNode(262...263)((262...263), 10)]),
           BRACKET_RIGHT(263...264)("]"),
           nil,
           "[]="
         )],
        EQUAL(266...267)("="),
        ArrayNode(268...274)(
-         [IntegerNode(269...270)(), IntegerNode(272...273)()],
+         [IntegerNode(269...270)((269...270), 10),
+          IntegerNode(272...273)((272...273), 10)],
          BRACKET_LEFT_ARRAY(268...269)("["),
          BRACKET_RIGHT(273...274)("]")
        ),
@@ -288,7 +299,7 @@ ProgramNode(0...711)(
           )
         )],
        EQUAL(284...285)("="),
-       IntegerNode(286...287)(),
+       IntegerNode(286...287)((286...287), 10),
        (275...276),
        (282...283)
      ),
@@ -307,18 +318,18 @@ ProgramNode(0...711)(
      ),
      ClassVariableWriteNode(302...309)(
        (302...305),
-       IntegerNode(308...309)(),
+       IntegerNode(308...309)((308...309), 10),
        (306...307)
      ),
      InstanceVariableWriteNode(310...316)(
        (310...312),
-       IntegerNode(315...316)(),
+       IntegerNode(315...316)((315...316), 10),
        (313...314)
      ),
      ConstantPathWriteNode(317...326)(
        ConstantReadNode(317...322)(),
        EQUAL(323...324)("="),
-       IntegerNode(325...326)()
+       IntegerNode(325...326)((325...326), 10)
      ),
      ConstantPathWriteNode(327...350)(
        ConstantPathNode(327...346)(
@@ -331,7 +342,7 @@ ProgramNode(0...711)(
          (339...341)
        ),
        EQUAL(347...348)("="),
-       IntegerNode(349...350)()
+       IntegerNode(349...350)((349...350), 10)
      ),
      LocalVariableWriteNode(351...367)(
        (351...352),
@@ -341,7 +352,7 @@ ProgramNode(0...711)(
               [LocalVariableWriteNode(357...358)((357...358), nil, nil, 0),
                LocalVariableWriteNode(360...361)((360...361), nil, nil, 0)],
               EQUAL(363...364)("="),
-              IntegerNode(365...366)(),
+              IntegerNode(365...366)((365...366), 10),
               (356...357),
               (361...362)
             )]
@@ -354,7 +365,7 @@ ProgramNode(0...711)(
      ),
      LocalVariableWriteNode(368...373)(
        (368...369),
-       IntegerNode(372...373)(),
+       IntegerNode(372...373)((372...373), 10),
        (370...371),
        0
      ),
@@ -389,7 +400,8 @@ ProgramNode(0...711)(
        BRACKET_LEFT_RIGHT_EQUAL(400...403)("[]="),
        PARENTHESIS_LEFT(403...404)("("),
        ArgumentsNode(404...408)(
-         [IntegerNode(404...405)(), IntegerNode(407...408)()]
+         [IntegerNode(404...405)((404...405), 10),
+          IntegerNode(407...408)((407...408), 10)]
        ),
        PARENTHESIS_RIGHT(408...409)(")"),
        nil,
@@ -446,8 +458,8 @@ ProgramNode(0...711)(
        BRACKET_LEFT(445...446)("["),
        ArgumentsNode(446...459)(
          [RangeNode(446...450)(
-            IntegerNode(446...447)(),
-            IntegerNode(449...450)(),
+            IntegerNode(446...447)((446...447), 10),
+            IntegerNode(449...450)((449...450), 10),
             (447...449)
           ),
           CallNode(454...459)(
@@ -470,7 +482,7 @@ ProgramNode(0...711)(
        nil,
        BRACKET_LEFT_RIGHT_EQUAL(463...464)("["),
        BRACKET_LEFT(463...464)("["),
-       ArgumentsNode(468...469)([IntegerNode(468...469)()]),
+       ArgumentsNode(468...469)([IntegerNode(468...469)((468...469), 10)]),
        BRACKET_RIGHT(464...465)("]"),
        nil,
        "[]="
