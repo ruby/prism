@@ -1,6 +1,6 @@
-ProgramNode(0...1021)(
+ProgramNode(0...1148)(
   ScopeNode(0...0)([IDENTIFIER(290...291)("a"), IDENTIFIER(784...785)("c")]),
-  StatementsNode(0...1021)(
+  StatementsNode(0...1148)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -1193,9 +1193,8 @@ ProgramNode(0...1021)(
             LABEL(1005...1007)("a:"),
             ParenthesesNode(1008...1016)(
               StatementsNode(1009...1015)(
-                [IntegerNode(1009...1010)(),
-                 RangeNode(1010...1015)(
-                   nil,
+                [RangeNode(1009...1015)(
+                   IntegerNode(1009...1010)(),
                    IntegerNode(1013...1015)(),
                    (1010...1013)
                  )]
@@ -1215,6 +1214,179 @@ ProgramNode(0...1021)(
        (1016...1017),
        nil,
        (1018...1021)
+     ),
+     DefNode(1023...1046)(
+       IDENTIFIER(1027...1030)("bar"),
+       nil,
+       ParametersNode(1031...1041)(
+         [],
+         [],
+         [],
+         nil,
+         [KeywordParameterNode(1031...1041)(
+            LABEL(1031...1033)("a:"),
+            ParenthesesNode(1034...1041)(
+              StatementsNode(1035...1040)(
+                [RangeNode(1035...1040)(
+                   nil,
+                   IntegerNode(1038...1040)(),
+                   (1035...1038)
+                 )]
+              ),
+              (1034...1035),
+              (1040...1041)
+            )
+          )],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(1023...1026)([LABEL(1031...1032)("a")]),
+       (1023...1026),
+       nil,
+       (1030...1031),
+       (1041...1042),
+       nil,
+       (1043...1046)
+     ),
+     DefNode(1048...1070)(
+       IDENTIFIER(1052...1055)("bar"),
+       nil,
+       ParametersNode(1056...1065)(
+         [],
+         [],
+         [],
+         nil,
+         [KeywordParameterNode(1056...1065)(
+            LABEL(1056...1058)("a:"),
+            ParenthesesNode(1059...1065)(
+              StatementsNode(1060...1064)(
+                [RangeNode(1060...1064)(
+                   IntegerNode(1060...1061)(),
+                   nil,
+                   (1061...1064)
+                 )]
+              ),
+              (1059...1060),
+              (1064...1065)
+            )
+          )],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(1048...1051)([LABEL(1056...1057)("a")]),
+       (1048...1051),
+       nil,
+       (1055...1056),
+       (1065...1066),
+       nil,
+       (1067...1070)
+     ),
+     DefNode(1072...1097)(
+       IDENTIFIER(1076...1079)("bar"),
+       nil,
+       ParametersNode(1080...1092)(
+         [],
+         [OptionalParameterNode(1080...1092)(
+            IDENTIFIER(1080...1081)("a"),
+            EQUAL(1082...1083)("="),
+            ParenthesesNode(1084...1092)(
+              StatementsNode(1085...1091)(
+                [RangeNode(1085...1091)(
+                   IntegerNode(1085...1086)(),
+                   IntegerNode(1089...1091)(),
+                   (1086...1089)
+                 )]
+              ),
+              (1084...1085),
+              (1091...1092)
+            )
+          )],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(1072...1075)([IDENTIFIER(1080...1081)("a")]),
+       (1072...1075),
+       nil,
+       (1079...1080),
+       (1092...1093),
+       nil,
+       (1094...1097)
+     ),
+     DefNode(1099...1123)(
+       IDENTIFIER(1103...1106)("bar"),
+       nil,
+       ParametersNode(1107...1118)(
+         [],
+         [OptionalParameterNode(1107...1118)(
+            IDENTIFIER(1107...1108)("a"),
+            EQUAL(1109...1110)("="),
+            ParenthesesNode(1111...1118)(
+              StatementsNode(1112...1117)(
+                [RangeNode(1112...1117)(
+                   nil,
+                   IntegerNode(1115...1117)(),
+                   (1112...1115)
+                 )]
+              ),
+              (1111...1112),
+              (1117...1118)
+            )
+          )],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(1099...1102)([IDENTIFIER(1107...1108)("a")]),
+       (1099...1102),
+       nil,
+       (1106...1107),
+       (1118...1119),
+       nil,
+       (1120...1123)
+     ),
+     DefNode(1125...1148)(
+       IDENTIFIER(1129...1132)("bar"),
+       nil,
+       ParametersNode(1133...1143)(
+         [],
+         [OptionalParameterNode(1133...1143)(
+            IDENTIFIER(1133...1134)("a"),
+            EQUAL(1135...1136)("="),
+            ParenthesesNode(1137...1143)(
+              StatementsNode(1138...1142)(
+                [RangeNode(1138...1142)(
+                   IntegerNode(1138...1139)(),
+                   nil,
+                   (1139...1142)
+                 )]
+              ),
+              (1137...1138),
+              (1142...1143)
+            )
+          )],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       nil,
+       ScopeNode(1125...1128)([IDENTIFIER(1133...1134)("a")]),
+       (1125...1128),
+       nil,
+       (1132...1133),
+       (1143...1144),
+       nil,
+       (1145...1148)
      )]
   )
 )

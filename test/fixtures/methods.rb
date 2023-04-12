@@ -144,3 +144,18 @@ end
 
 def bar(a: (1...10))
 end
+
+def bar(a: (...10))
+end
+
+def bar(a: (1...))
+end
+
+def bar(a = (1...10))
+end
+
+def bar(a = (...10))
+end
+
+def bar(a = (1...))
+end

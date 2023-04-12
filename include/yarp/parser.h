@@ -195,6 +195,7 @@ typedef enum {
   YP_CONTEXT_CLASS,          // a class declaration
   YP_CONTEXT_DEF,            // a method definition
   YP_CONTEXT_DEF_PARAMS,     // a method definition's parameters
+  YP_CONTEXT_DEFAULT_PARAMS, // a method definition's default parameter
   YP_CONTEXT_ELSE,           // an else clause
   YP_CONTEXT_ELSIF,          // an elsif clause
   YP_CONTEXT_EMBEXPR,        // an interpolated expression
