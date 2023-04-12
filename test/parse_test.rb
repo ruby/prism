@@ -12,7 +12,6 @@ class ParseTest < Test::Unit::TestCase
   end
 
   known_failures = %w[
-    seattlerb/heredoc__backslash_dos_format.rb
     seattlerb/heredoc_nested.rb
     seattlerb/heredoc_trailing_slash_continued_call.rb
     seattlerb/pct_w_heredoc_interp_nested.rb

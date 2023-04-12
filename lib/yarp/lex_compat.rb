@@ -303,7 +303,7 @@ module YARP
                 if split
                   # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind
                   # to keep the delimiter in the result.
-                  token.value.split(/(?<=[^\\]\\\n)/).each_with_index do |value, index|
+                  token.value.split(/(?<=[^\\]\\\n)|(?<=[^\\]\\\r\n)/).each_with_index do |value, index|
                     column = 0 if index > 0
                     results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
                     lineno += value.count("\n")
@@ -472,8 +472,12 @@ module YARP
                     # Gather up all of the characters that we're going to
                     # delete, stopping when you hit a character that would put
                     # you over the dedent amount.
-                    line.each_char do |char|
+                    line.each_char.with_index do |char, i|
                       case char
+                      when "\r"
+                        if line.chars[i + 1] == "\n"
+                          break
+                        end
                       when "\n"
                         break
                       when "\t"

@@ -4598,7 +4598,7 @@ lex_embdoc(yp_parser_t *parser) {
     // If we've hit the end of the embedded documentation then we'll return that
     // token here.
     if (strncmp(parser->current.end, "=end", 4) == 0 &&
-	(parser->current.end + 4 == parser->end || yp_char_is_whitespace(parser->current.end[4]))) {
+        (parser->current.end + 4 == parser->end || yp_char_is_whitespace(parser->current.end[4]))) {
       const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
       parser->current.end = newline == NULL ? parser->end : newline + 1;
       parser->current.type = YP_TOKEN_EMBDOC_END;
@@ -4715,6 +4715,9 @@ parser_lex(yp_parser_t *parser) {
           case '\\':
             if (peek_at(parser, 1) == '\n') {
               parser->current.end += 2;
+              space_seen = true;
+            } else if (parser->current.end + 2 < parser->end && peek_at(parser, 1) == '\r' && peek_at(parser, 2) == '\n') {
+              parser->current.end += 3;
               space_seen = true;
             } else if (yp_char_is_inline_whitespace(*parser->current.end)) {
               parser->current.end += 2;
@@ -5453,11 +5456,11 @@ parser_lex(yp_parser_t *parser) {
           if (match(parser, '.')) {
             if (match(parser, '.')) {
               if (context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
-		if (lex_state_p(parser, YP_LEX_STATE_END)) {
-		  lex_state_set(parser, YP_LEX_STATE_BEG);
-		} else {
-		  lex_state_set(parser, YP_LEX_STATE_ENDARG);
-		}
+                if (lex_state_p(parser, YP_LEX_STATE_END)) {
+                  lex_state_set(parser, YP_LEX_STATE_BEG);
+                } else {
+                  lex_state_set(parser, YP_LEX_STATE_ENDARG);
+                }
                 LEX(YP_TOKEN_UDOT_DOT_DOT);
               }
 
@@ -5610,6 +5613,10 @@ parser_lex(yp_parser_t *parser) {
                 .as.string.interpolation = true,
                 .as.string.label_allowed = false
               });
+
+              if (*parser->current.end == '\r') {
+                parser->current.end++;
+              }
 
               parser->current.end++;
               LEX(YP_TOKEN_STRING_BEGIN);
@@ -6131,7 +6138,11 @@ parser_lex(yp_parser_t *parser) {
 
           // Otherwise we need to switch back to the parent lex mode and
           // return the end of the string.
-          parser->current.end = breakpoint + 1;
+          if (*parser->current.end == '\r' && parser->current.end + 1 < parser->end && parser->current.end[1] == '\n') {
+            parser->current.end = breakpoint + 2;
+          } else {
+            parser->current.end = breakpoint + 1;
+          }
 
           if (
             parser->lex_modes.current->as.string.label_allowed &&
@@ -8037,7 +8048,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   case YP_TOKEN_KEYWORD_RETURN: case YP_TOKEN_KEYWORD_SELF: case YP_TOKEN_KEYWORD_SUPER: case YP_TOKEN_KEYWORD_THEN: \
   case YP_TOKEN_KEYWORD_TRUE: case YP_TOKEN_KEYWORD_UNDEF: case YP_TOKEN_KEYWORD_UNLESS: case YP_TOKEN_KEYWORD_UNTIL: \
   case YP_TOKEN_KEYWORD_WHEN: case YP_TOKEN_KEYWORD_WHILE: case YP_TOKEN_KEYWORD_YIELD
-  
+
 
 // This macro allows you to define a case statement for all of the operators.
 // It's meant to be used in a switch statement.
@@ -8359,6 +8370,8 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
       while (cur_char && cur_char < content->end) {
         // Any empty newlines aren't included in the minimum whitespace calculation
         while (cur_char < content->end && *cur_char == '\n') cur_char++;
+        while (cur_char + 1 < content->end && *cur_char == '\r' && cur_char[1] == '\n') cur_char += 2;
+
         if (cur_char == content->end) break;
 
         cur_whitespace = 0;
@@ -11200,7 +11213,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
         __attribute__((unused)) bool captured_group_names =
         yp_regexp_named_capture_group_names(content->start, (size_t) (content->end - content->start), &named_captures);
-	// We assert that the the regex was successfully parsed
+        // We assert that the the regex was successfully parsed
         assert(captured_group_names);
 
         for (size_t index = 0; index < named_captures.length; index++) {
