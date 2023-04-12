@@ -1,5 +1,16 @@
 # frozen_string_literal: true
 
+# These files are not valid Ruby
+known_failures = %w(
+  test/fixtures/seattlerb/begin_else_return_value.rb
+  test/fixtures/seattlerb/block_yield.rb
+  test/fixtures/seattlerb/bug_begin_else.rb
+  test/fixtures/seattlerb/bug170.rb
+  test/fixtures/seattlerb/call_block_arg_unnamed.rb
+  test/fixtures/seattlerb/iter_array_curly.rb
+  test/fixtures/seattlerb/magic_encoding_comment__bad.rb
+)
+
 namespace :seattlerb do
   desc "Ensure there's a local copy of seattlerb/ruby_parser"
   file "tmp/seattlerb" do
@@ -39,12 +50,8 @@ namespace :seattlerb do
         File.write(filepath, "#{codes.uniq.sort.join("\n\n")}\n")
       end
 
-      # These files are not valid Ruby
-      rm "test/fixtures/seattlerb/block_yield.rb"
-      rm "test/fixtures/seattlerb/bug170.rb"
-      rm "test/fixtures/seattlerb/call_block_arg_unnamed.rb"
-      rm "test/fixtures/seattlerb/iter_array_curly.rb"
-      rm "test/fixtures/seattlerb/magic_encoding_comment__bad.rb"
+      # Remove all invalid Ruby files
+      known_failures.each { rm _1 }
     end
   end
 
