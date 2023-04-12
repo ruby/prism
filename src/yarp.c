@@ -4157,8 +4157,7 @@ lex_global_variable(yp_parser_t *parser) {
 
     case '-':
       parser->current.end++;
-      __attribute__((fallthrough));
-
+      /* fallthrough */
     default: {
       size_t width;
 
@@ -4766,9 +4765,8 @@ parser_lex(yp_parser_t *parser) {
           }
 
           lexed_comment = true;
-          __attribute__((fallthrough));
         }
-
+        /* fallthrough */
         case '\r': {
           // The only way you can have carriage returns in this particular loop
           // is if you have a carriage return followed by a newline. In that
@@ -4778,10 +4776,8 @@ parser_lex(yp_parser_t *parser) {
           // we haven't already lexed a comment here because that falls through
           // into here as well.
           if (!lexed_comment) parser->current.end++;
-
-          __attribute__((fallthrough));
         }
-
+        /* fallthrough */
         case '\n': {
           if (parser->heredoc_end != NULL) {
             parser_flush_heredoc_end(parser);
@@ -4802,7 +4798,7 @@ parser_lex(yp_parser_t *parser) {
                 parser->current.type = YP_TOKEN_NEWLINE;
                 return;
               }
-              __attribute__((fallthrough));
+              /* fallthrough */
             case YP_IGNORED_NEWLINE_ALL:
               if (!lexed_comment) parser_lex_ignored_newline(parser);
               lexed_comment = false;
@@ -6877,8 +6873,8 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       // call ending with = or a local variable write, so it must be a
       // syntax error. In this case we'll fall through to our default
       // handling.
-      __attribute__((fallthrough));
     }
+    /* fallthrough */
     default:
       // In this case we have a node that we don't know how to convert into a
       // target. We need to treat it as an error. For now, we'll mark it as an
@@ -7258,9 +7254,8 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             break;
           }
         }
-
-        __attribute__((fallthrough));
       }
+      /* fallthrough */
       default: {
         if (argument == NULL) {
           argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
@@ -9012,8 +9007,8 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
         leading_rest = true;
         break;
       }
-      __attribute__((fallthrough));
     }
+    /* fallthrough */
     default:
       node = parse_pattern_primitives(parser, message);
       break;
@@ -11026,9 +11021,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           if (yp_call_node_vcall_p(call_node)) {
             yp_parser_local_add(parser, &call_node->message);
           }
-
-          __attribute__((fallthrough));
         }
+        /* fallthrough */
         case YP_CASE_WRITABLE: {
           parser_lex(parser);
           yp_node_t *value = parse_assignment_value(parser, previous_binding_power, binding_power, "Expected a value after =.");
@@ -11045,9 +11039,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
             }
             default: {}
           }
-
-          __attribute__((fallthrough));
         }
+        /* fallthrough */
         default:
           parser_lex(parser);
 
@@ -11069,9 +11062,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           if (yp_call_node_vcall_p(call_node)) {
             yp_parser_local_add(parser, &call_node->message);
           }
-
-          __attribute__((fallthrough));
         }
+        /* fallthrough */
         case YP_CASE_WRITABLE: {
           yp_token_t operator = parser->current;
           parser_lex(parser);
@@ -11107,9 +11099,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           if (yp_call_node_vcall_p(call_node)) {
             yp_parser_local_add(parser, &call_node->message);
           }
-
-          __attribute__((fallthrough));
         }
+        /* fallthrough */
         case YP_CASE_WRITABLE: {
           yp_token_t operator = parser->current;
           parser_lex(parser);
@@ -11155,9 +11146,8 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
           if (yp_call_node_vcall_p(call_node)) {
             yp_parser_local_add(parser, &call_node->message);
           }
-
-          __attribute__((fallthrough));
         }
+        /* fallthrough */
         case YP_CASE_WRITABLE: {
           yp_token_t operator = not_provided(parser);
           node = parse_target(parser, node, &operator, NULL);
