@@ -30,6 +30,7 @@ debug_context(yp_context_t context) {
     case YP_CONTEXT_CASE_WHEN: return "CASE_WHEN";
     case YP_CONTEXT_DEF: return "DEF";
     case YP_CONTEXT_DEF_PARAMS: return "DEF_PARAMS";
+    case YP_CONTEXT_DEFAULT_PARAMS: return "DEFAULT_PARAMS";
     case YP_CONTEXT_ENSURE: return "ENSURE";
     case YP_CONTEXT_ELSE: return "ELSE";
     case YP_CONTEXT_ELSIF: return "ELSIF";
@@ -3801,6 +3802,8 @@ context_terminator(yp_context_t context, yp_token_t *token) {
     case YP_CONTEXT_MAIN:
     case YP_CONTEXT_DEF_PARAMS:
       return token->type == YP_TOKEN_EOF;
+    case YP_CONTEXT_DEFAULT_PARAMS:
+      return token->type == YP_TOKEN_COMMA || token->type == YP_TOKEN_PARENTHESIS_RIGHT;
     case YP_CONTEXT_PREEXE:
     case YP_CONTEXT_POSTEXE:
       return token->type == YP_TOKEN_BRACE_RIGHT;
@@ -5455,12 +5458,14 @@ parser_lex(yp_parser_t *parser) {
 
           if (match(parser, '.')) {
             if (match(parser, '.')) {
-              if (context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
-                if (lex_state_p(parser, YP_LEX_STATE_END)) {
-                  lex_state_set(parser, YP_LEX_STATE_BEG);
-                } else {
-                  lex_state_set(parser, YP_LEX_STATE_ENDARG);
-                }
+              // If we're _not_ inside a range within default parameters
+              if (!context_p(parser, YP_CONTEXT_DEFAULT_PARAMS) &&
+		  context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
+		if (lex_state_p(parser, YP_LEX_STATE_END)) {
+		  lex_state_set(parser, YP_LEX_STATE_BEG);
+		} else {
+		  lex_state_set(parser, YP_LEX_STATE_ENDARG);
+		}
                 LEX(YP_TOKEN_UDOT_DOT_DOT);
               }
 
@@ -7529,10 +7534,12 @@ parse_parameters(
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
           yp_token_t operator = parser->previous;
+          context_push(parser, YP_CONTEXT_DEFAULT_PARAMS);
           yp_node_t *value = parse_expression(parser, binding_power, "Expected to find a default value for the parameter.");
 
           yp_optional_parameter_node_t *param = yp_optional_parameter_node_create(parser, &name, &operator, value);
           yp_parameters_node_optionals_append(params, param);
+          context_pop(parser);
 
           // If parsing the value of the parameter resulted in error recovery,
           // then we can put a missing node in its place and stop parsing the
@@ -7583,7 +7590,9 @@ parse_parameters(
           default: {
             yp_node_t *value = NULL;
             if (token_begins_expression_p(parser->current.type)) {
+              context_push(parser, YP_CONTEXT_DEFAULT_PARAMS);
               value = parse_expression(parser, binding_power, "Expected to find a default value for the keyword parameter.");
+              context_pop(parser);
             }
 
             yp_node_t *param = (yp_node_t *) yp_keyword_parameter_node_create(parser, &name, value);
