@@ -187,10 +187,10 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
       }
 
       if (backslash[2] == '\n') {
-	if (write_to_str) {
-	  dest[(*dest_length)++] = (char) unescape_char(unescape_chars[(unsigned char) backslash[1]], flags);
-	}
-	return backslash + 3;
+        if (write_to_str) {
+          dest[(*dest_length)++] = (char) unescape_char(unescape_chars[(unsigned char) backslash[1]], flags);
+        }
+        return backslash + 3;
       }
       return backslash + 2;
     }

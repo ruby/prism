@@ -5459,13 +5459,15 @@ parser_lex(yp_parser_t *parser) {
           if (match(parser, '.')) {
             if (match(parser, '.')) {
               // If we're _not_ inside a range within default parameters
-              if (!context_p(parser, YP_CONTEXT_DEFAULT_PARAMS) &&
-		  context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
-		if (lex_state_p(parser, YP_LEX_STATE_END)) {
-		  lex_state_set(parser, YP_LEX_STATE_BEG);
-		} else {
-		  lex_state_set(parser, YP_LEX_STATE_ENDARG);
-		}
+              if (
+                !context_p(parser, YP_CONTEXT_DEFAULT_PARAMS) &&
+                context_p(parser, YP_CONTEXT_DEF_PARAMS)
+              ) {
+                if (lex_state_p(parser, YP_LEX_STATE_END)) {
+                  lex_state_set(parser, YP_LEX_STATE_BEG);
+                } else {
+                  lex_state_set(parser, YP_LEX_STATE_ENDARG);
+                }
                 LEX(YP_TOKEN_UDOT_DOT_DOT);
               }
 
