@@ -408,7 +408,7 @@ yp_regexp_parse_group(yp_regexp_parser_t *parser) {
         if (*parser->cursor != '-') break;
 
         // Otherwise, fallthrough to the - case.
-        __attribute__((fallthrough));
+        /* fallthrough */
       case '-':
         parser->cursor++;
         while (!yp_regexp_char_is_eof(parser) && *parser->cursor != ':' && *parser->cursor != ')') {
