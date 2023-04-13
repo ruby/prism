@@ -41,9 +41,6 @@ end
 def a(**)
 end
 
-def (1).a
-end
-
 a = 1; def a
 end
 

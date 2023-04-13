@@ -11,6 +11,13 @@
 # APIs provided to the test suite (for example the ParseHelper module below).
 # This is obviously relatively brittle, but it's effective for now.
 
+# These files are not valid Ruby
+known_failures = %w(
+  test/fixtures/whitequark/range_endless.rb
+  test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.rb
+  test/fixtures/whitequark/pattern_match.rb
+)
+
 namespace :whitequark do
   desc "Ensure there's a local copy of whitequark/parser"
   file "tmp/whitequark" do
@@ -78,14 +85,8 @@ namespace :whitequark do
         File.write("test/fixtures/whitequark/#{name}.rb", "#{codes.sort.join("\n\n")}\n")
       end
 
-      # We need to gsub a file because of
-      # https://github.com/whitequark/parser/issues/919.
-      filepath = "test/fixtures/whitequark/pattern_match.rb"
-      File.write(filepath, File.read(filepath).gsub(/case foo; in \"\#{.+?}\"/, "case foo; in \"a\""))
-
-      # These test files just straight up doesn't work.
-      rm "test/fixtures/whitequark/range_endless.rb"
-      rm "test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.rb"
+      # Remove all invalid Ruby files
+      known_failures.each { rm _1 }
     end
   end
 
