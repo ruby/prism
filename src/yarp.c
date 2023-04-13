@@ -5459,13 +5459,15 @@ parser_lex(yp_parser_t *parser) {
           if (match(parser, '.')) {
             if (match(parser, '.')) {
               // If we're _not_ inside a range within default parameters
-              if (!context_p(parser, YP_CONTEXT_DEFAULT_PARAMS) &&
-		  context_p(parser, YP_CONTEXT_DEF_PARAMS)) {
-		if (lex_state_p(parser, YP_LEX_STATE_END)) {
-		  lex_state_set(parser, YP_LEX_STATE_BEG);
-		} else {
-		  lex_state_set(parser, YP_LEX_STATE_ENDARG);
-		}
+              if (
+                !context_p(parser, YP_CONTEXT_DEFAULT_PARAMS) &&
+                context_p(parser, YP_CONTEXT_DEF_PARAMS)
+              ) {
+                if (lex_state_p(parser, YP_LEX_STATE_END)) {
+                  lex_state_set(parser, YP_LEX_STATE_BEG);
+                } else {
+                  lex_state_set(parser, YP_LEX_STATE_ENDARG);
+                }
                 LEX(YP_TOKEN_UDOT_DOT_DOT);
               }
 
@@ -7960,7 +7962,9 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   yp_statements_node_t *statements = NULL;
 
   if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_ELSIF, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
+    yp_accepts_block_stack_push(parser, true);
     statements = parse_statements(parser, context);
+    yp_accepts_block_stack_pop(parser);
     accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
   }
 
