@@ -1,6 +1,6 @@
-ProgramNode(0...960)(
+ProgramNode(0...992)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...960)(
+  StatementsNode(0...992)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1667,6 +1667,71 @@ ProgramNode(0...960)(
        nil,
        nil,
        "p"
+     ),
+     CallNode(989...992)(
+       nil,
+       nil,
+       IDENTIFIER(989...992)("foo"),
+       nil,
+       ArgumentsNode(993...1034)(
+         [SymbolNode(993...995)(
+            SYMBOL_BEGIN(993...994)(":"),
+            IDENTIFIER(994...995)("a"),
+            nil,
+            "a"
+          ),
+          IfNode(999...1034)(
+            KEYWORD_IF(999...1001)("if"),
+            CallNode(1002...1003)(
+              nil,
+              nil,
+              IDENTIFIER(1002...1003)("x"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "x"
+            ),
+            StatementsNode(1008...1034)(
+              [CallNode(1008...1034)(
+                 nil,
+                 nil,
+                 IDENTIFIER(1008...1011)("bar"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(1012...1034)(
+                   ScopeNode(1012...1014)([IDENTIFIER(1016...1017)("a")]),
+                   BlockParametersNode(1015...1018)(
+                     ParametersNode(1016...1017)(
+                       [RequiredParameterNode(1016...1017)()],
+                       [],
+                       [],
+                       nil,
+                       [],
+                       nil,
+                       nil
+                     ),
+                     [],
+                     (1015...1016),
+                     (1017...1018)
+                   ),
+                   StatementsNode(1025...1026)(
+                     [LocalVariableReadNode(1025...1026)(0)]
+                   ),
+                   (1012...1014),
+                   (1031...1034)
+                 ),
+                 "bar"
+               )]
+            ),
+            nil,
+            KEYWORD_END(1037...1040)("end")
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
      )]
   )
 )
