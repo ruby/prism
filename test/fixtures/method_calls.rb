@@ -118,3 +118,14 @@ foo :a,
       a
     end
   end
+
+foo :a,
+  while x
+    bar do |a|
+      a
+    end
+  end,
+  until x
+    baz do
+    end
+  end

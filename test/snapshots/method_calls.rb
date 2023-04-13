@@ -1,6 +1,6 @@
-ProgramNode(0...992)(
+ProgramNode(0...1045)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...992)(
+  StatementsNode(0...1045)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1727,6 +1727,100 @@ ProgramNode(0...992)(
             ),
             nil,
             KEYWORD_END(1037...1040)("end")
+          )]
+       ),
+       nil,
+       nil,
+       "foo"
+     ),
+     CallNode(1042...1045)(
+       nil,
+       nil,
+       IDENTIFIER(1042...1045)("foo"),
+       nil,
+       ArgumentsNode(1046...1126)(
+         [SymbolNode(1046...1048)(
+            SYMBOL_BEGIN(1046...1047)(":"),
+            IDENTIFIER(1047...1048)("a"),
+            nil,
+            "a"
+          ),
+          WhileNode(1052...1090)(
+            KEYWORD_WHILE(1052...1057)("while"),
+            CallNode(1058...1059)(
+              nil,
+              nil,
+              IDENTIFIER(1058...1059)("x"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "x"
+            ),
+            StatementsNode(1064...1090)(
+              [CallNode(1064...1090)(
+                 nil,
+                 nil,
+                 IDENTIFIER(1064...1067)("bar"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(1068...1090)(
+                   ScopeNode(1068...1070)([IDENTIFIER(1072...1073)("a")]),
+                   BlockParametersNode(1071...1074)(
+                     ParametersNode(1072...1073)(
+                       [RequiredParameterNode(1072...1073)()],
+                       [],
+                       [],
+                       nil,
+                       [],
+                       nil,
+                       nil
+                     ),
+                     [],
+                     (1071...1072),
+                     (1073...1074)
+                   ),
+                   StatementsNode(1081...1082)(
+                     [LocalVariableReadNode(1081...1082)(0)]
+                   ),
+                   (1068...1070),
+                   (1087...1090)
+                 ),
+                 "bar"
+               )]
+            )
+          ),
+          UntilNode(1100...1126)(
+            KEYWORD_UNTIL(1100...1105)("until"),
+            CallNode(1106...1107)(
+              nil,
+              nil,
+              IDENTIFIER(1106...1107)("x"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "x"
+            ),
+            StatementsNode(1112...1126)(
+              [CallNode(1112...1126)(
+                 nil,
+                 nil,
+                 IDENTIFIER(1112...1115)("baz"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(1116...1126)(
+                   ScopeNode(1116...1118)([]),
+                   nil,
+                   nil,
+                   (1116...1118),
+                   (1123...1126)
+                 ),
+                 "baz"
+               )]
+            )
           )]
        ),
        nil,
