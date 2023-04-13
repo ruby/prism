@@ -7962,7 +7962,9 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   yp_statements_node_t *statements = NULL;
 
   if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_ELSIF, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
+    yp_accepts_block_stack_push(parser, true);
     statements = parse_statements(parser, context);
+    yp_accepts_block_stack_pop(parser);
     accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
   }
 

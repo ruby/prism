@@ -111,3 +111,10 @@ foo module Bar baz do end end
 foo [baz do end]
 
 p begin 1.times do 1 end end
+
+foo :a,
+  if x
+    bar do |a|
+      a
+    end
+  end
