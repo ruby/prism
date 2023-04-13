@@ -4065,48 +4065,60 @@ lex_numeric_prefix(yp_parser_t *parser) {
 }
 
 static yp_token_type_t
+lex_finalize_numeric_type(yp_parser_t *parser, yp_token_type_t numeric_type, const char *numeric_end, const char *rational_end, const char *imaginary_end) {
+  if (rational_end || imaginary_end) {
+    lex_mode_push(parser, (yp_lex_mode_t) {
+        .mode = YP_LEX_NUMERIC,
+        .as.numeric.type = numeric_type,
+        .as.numeric.start = parser->current.start,
+        .as.numeric.end = numeric_end
+      });
+  }
+
+  if (rational_end && imaginary_end) {
+    lex_mode_push(parser, (yp_lex_mode_t) {
+        .mode = YP_LEX_NUMERIC,
+        .as.numeric.type = YP_TOKEN_RATIONAL_NUMBER,
+        .as.numeric.start = parser->current.start,
+        .as.numeric.end = rational_end
+      });
+  }
+
+  if (imaginary_end) {
+    return YP_TOKEN_IMAGINARY_NUMBER;
+  }
+
+  if (rational_end) {
+    return YP_TOKEN_RATIONAL_NUMBER;
+  }
+
+  return numeric_type;
+}
+
+static yp_token_type_t
 lex_numeric(yp_parser_t *parser) {
   yp_token_type_t type = YP_TOKEN_INTEGER;
 
   if (parser->current.end < parser->end) {
     type = lex_numeric_prefix(parser);
 
-    yp_token_type_t current = type;
     const char *end = parser->current.end;
+    const char *rational_end = NULL;
+    const char *imaginary_end = NULL;
 
     if (match(parser, 'r')) {
-      lex_mode_push(parser, (yp_lex_mode_t) {
-          .mode = YP_LEX_NUMERIC,
-          .as.numeric.type = current,
-          .as.numeric.start = parser->current.start,
-          .as.numeric.end = parser->current.end
-        });
-      type = YP_TOKEN_RATIONAL_NUMBER;
+      rational_end = parser->current.end;
     }
 
     if (match(parser, 'i')) {
-      if (type == YP_TOKEN_RATIONAL_NUMBER) {
-        lex_mode_push(parser, (yp_lex_mode_t) {
-            .mode = YP_LEX_NUMERIC,
-            .as.numeric.type = type,
-            .as.numeric.start = parser->current.start,
-            .as.numeric.end = parser->current.end
-          });
-      } else {
-        lex_mode_push(parser, (yp_lex_mode_t) {
-            .mode = YP_LEX_NUMERIC,
-            .as.numeric.type = current,
-            .as.numeric.start = parser->current.start,
-            .as.numeric.end = parser->current.end
-          });
-      }
-      type = YP_TOKEN_IMAGINARY_NUMBER;
+      imaginary_end = parser->current.end;
     }
 
     const unsigned char uc = (const unsigned char) peek(parser);
     if (uc != '\0' && (uc >= 0x80 || ((uc >= 'a' && uc <= 'z') || (uc >= 'A' && uc <= 'Z')) || uc == '_')) {
-      type = current;
       parser->current.end = end;
+    } else {
+      type = lex_finalize_numeric_type(parser, type, end, rational_end, imaginary_end);
     }
   }
 
