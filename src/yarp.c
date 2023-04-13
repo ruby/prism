@@ -10280,7 +10280,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_statements_node_t *statements = NULL;
 
       if (!accept(parser, YP_TOKEN_KEYWORD_END)) {
+        yp_accepts_block_stack_push(parser, true);
         statements = parse_statements(parser, YP_CONTEXT_UNTIL);
+        yp_accepts_block_stack_pop(parser);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
       }
@@ -10299,7 +10301,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_statements_node_t *statements = NULL;
 
       if (!accept(parser, YP_TOKEN_KEYWORD_END)) {
+        yp_accepts_block_stack_push(parser, true);
         statements = parse_statements(parser, YP_CONTEXT_WHILE);
+        yp_accepts_block_stack_pop(parser);
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
       }
