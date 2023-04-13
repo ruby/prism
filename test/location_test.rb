@@ -241,6 +241,10 @@ module YARP
       assert_location(IntegerNode, "0b1_000")
       assert_location(IntegerNode, "0o1")
       assert_location(IntegerNode, "0o1_000")
+      assert_location(IntegerNode, "0x1_000", 2...7, method: :content_loc)
+      assert_location(IntegerNode, "0b1_000", 2...7, method: :content_loc)
+      assert_location(IntegerNode, "0o1_000", 2...7, method: :content_loc)
+      assert_location(IntegerNode, "01_000", 1...6, method: :content_loc)
     end
 
     test "NextNode" do
@@ -419,15 +423,15 @@ module YARP
 
     private
 
-    def assert_location(kind, source, expected = 0...source.length)
+    def assert_location(kind, source, expected = 0...source.length, method: :location)
       YARP.parse_dup(source) => ParseResult[comments: [], errors: [], value: node]
 
       node => ProgramNode[statements: [*, node]]
       node = yield node if block_given?
 
       assert_kind_of kind, node
-      assert_equal expected.begin, node.location.start_offset
-      assert_equal expected.end, node.location.end_offset
+      assert_equal expected.begin, node.__send__(method).start_offset
+      assert_equal expected.end, node.__send__(method).end_offset
     end
   end
 end
