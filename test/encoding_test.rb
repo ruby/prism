@@ -30,11 +30,38 @@ class EncodingTest < Test::Unit::TestCase
     windows-31j
     windows-1251
     windows-1252
+    CP1251
+    CP1252
   ].each do |encoding|
-    test encoding do
+    test "encoding: #{encoding}"  do
       result = YARP.parse_dup("# encoding: #{encoding}\nident")
       actual = result.value.statements.body.first.message.value.encoding
       assert_equal Encoding.find(encoding), actual
+    end
+  end
+
+  test "coding"  do
+    result = YARP.parse_dup("# coding: utf-8\nident")
+    actual = result.value.statements.body.first.message.value.encoding
+    assert_equal Encoding.find("utf-8"), actual
+  end
+
+  test "-*- emacs style -*-"  do
+    result = YARP.parse_dup("# -*- coding: utf-8 -*-\nident")
+    actual = result.value.statements.body.first.message.value.encoding
+    assert_equal Encoding.find("utf-8"), actual
+  end
+
+  test "utf-8 variations" do
+    %w[
+      utf-8-unix
+      utf-8-dos
+      utf-8-mac
+      utf-8-*
+    ].each do |encoding|
+      result = YARP.parse_dup("# coding: #{encoding}\nident")
+      actual = result.value.statements.body.first.message.value.encoding
+      assert_equal Encoding.find("utf-8"), actual
     end
   end
 end

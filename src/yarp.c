@@ -3752,8 +3752,18 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     return; \
   }
 
+  // Extensions like utf-8 can contain extra encoding details like,
+  // utf-8-dos, utf-8-linux, utf-8-mac
+  // We treat these all as utf-8 should treat any encoding starting utf-8 as utf-8
+#define ENCODING_EXTENDABLE(value, prebuilt) \
+  if (strncasecmp(encoding_start, value, sizeof(value) - 1) == 0) { \
+    parser->encoding = prebuilt; \
+    if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
+    return; \
+  }
+
   // Check most common first. (This is pretty arbitrary.)
-  ENCODING("utf-8", yp_encoding_utf_8);
+  ENCODING_EXTENDABLE("utf-8", yp_encoding_utf_8);
   ENCODING("ascii", yp_encoding_ascii);
   ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
   ENCODING("us-ascii", yp_encoding_ascii);
@@ -3781,6 +3791,8 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
   ENCODING("windows-31j", yp_encoding_windows_31j);
   ENCODING("windows-1251", yp_encoding_windows_1251);
   ENCODING("windows-1252", yp_encoding_windows_1252);
+  ENCODING("cp1251", yp_encoding_windows_1251);
+  ENCODING("cp1252", yp_encoding_windows_1252);
   ENCODING("cp932", yp_encoding_windows_31j);
 
 #undef ENCODING
