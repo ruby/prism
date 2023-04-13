@@ -1,6 +1,6 @@
-ProgramNode(0...267)(
+ProgramNode(0...278)(
   ScopeNode(0...0)([IDENTIFIER(64...67)("foo")]),
-  StatementsNode(0...267)(
+  StatementsNode(0...278)(
     [CallNode(0...3)(
        nil,
        nil,
@@ -149,6 +149,12 @@ ProgramNode(0...267)(
        nil,
        nil,
        "=~"
+     ),
+     RegularExpressionNode(269...278)(
+       REGEXP_BEGIN(269...272)("%r#"),
+       STRING_CONTENT(272...277)("pound"),
+       REGEXP_END(277...278)("#"),
+       "pound"
      )]
   )
 )

@@ -6024,13 +6024,18 @@ parser_lex(yp_parser_t *parser) {
               LEX(type);
             }
 
-            // If we haven't returned at this point then we had something
-            // that looked like an interpolated class or instance variable
-            // like "#@" but wasn't actually. In this case we'll just skip
-            // to the next breakpoint.
-            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
-            break;
+            // We need to check if the terminator was # before skipping over
+            // to the next breakpoint
+            if (parser->lex_modes.current->as.regexp.terminator != '#') {
+              // If we haven't returned at this point then we had something
+              // that looked like an interpolated class or instance variable
+              // like "#@" but wasn't actually. In this case we'll just skip
+              // to the next breakpoint.
+              breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+              break;
+            }
           }
+          /* fallthrough */
           default: {
             if (*breakpoint == parser->lex_modes.current->as.regexp.incrementor) {
               // If we've hit the incrementor, then we need to skip past it and
