@@ -1,6 +1,6 @@
-ProgramNode(0...278)(
+ProgramNode(0...243)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...278)(
+  StatementsNode(0...243)(
     [DefNode(0...14)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -216,7 +216,7 @@ ProgramNode(0...278)(
        (144...145),
        nil
      ),
-     DefNode(154...214)(
+     DefNode(154...176)(
        IDENTIFIER(158...165)("rescued"),
        nil,
        ParametersNode(166...167)(
@@ -228,43 +228,43 @@ ProgramNode(0...278)(
          nil,
          nil
        ),
-       StatementsNode(171...214)(
-         [RescueModifierNode(171...214)(
-            CallNode(171...176)(
-              nil,
-              nil,
-              IDENTIFIER(171...176)("raise"),
-              nil,
-              ArgumentsNode(177...191)(
-                [StringNode(177...191)(
+       StatementsNode(171...176)(
+         [CallNode(171...176)(
+            nil,
+            nil,
+            IDENTIFIER(171...176)("raise"),
+            nil,
+            ArgumentsNode(177...214)(
+              [RescueModifierNode(177...214)(
+                 StringNode(177...191)(
                    STRING_BEGIN(177...178)("\""),
                    STRING_CONTENT(178...190)("to be caught"),
                    STRING_END(190...191)("\""),
                    "to be caught"
-                 )]
-              ),
-              nil,
-              nil,
-              "raise"
-            ),
-            KEYWORD_RESCUE_MODIFIER(192...198)("rescue"),
-            InterpolatedStringNode(199...214)(
-              STRING_BEGIN(199...200)("\""),
-              [StringNode(200...209)(
-                 nil,
-                 STRING_CONTENT(200...209)("instance "),
-                 nil,
-                 "instance "
-               ),
-               StringInterpolatedNode(209...213)(
-                 EMBEXPR_BEGIN(209...211)("\#{"),
-                 StatementsNode(211...212)(
-                   [LocalVariableReadNode(211...212)(0)]
                  ),
-                 EMBEXPR_END(212...213)("}")
-               )],
-              STRING_END(213...214)("\"")
-            )
+                 KEYWORD_RESCUE_MODIFIER(192...198)("rescue"),
+                 InterpolatedStringNode(199...214)(
+                   STRING_BEGIN(199...200)("\""),
+                   [StringNode(200...209)(
+                      nil,
+                      STRING_CONTENT(200...209)("instance "),
+                      nil,
+                      "instance "
+                    ),
+                    StringInterpolatedNode(209...213)(
+                      EMBEXPR_BEGIN(209...211)("\#{"),
+                      StatementsNode(211...212)(
+                        [LocalVariableReadNode(211...212)(0)]
+                      ),
+                      EMBEXPR_END(212...213)("}")
+                    )],
+                   STRING_END(213...214)("\"")
+                 )
+               )]
+            ),
+            nil,
+            nil,
+            "raise"
           )]
        ),
        ScopeNode(154...157)([IDENTIFIER(166...167)("x")]),
@@ -275,7 +275,7 @@ ProgramNode(0...278)(
        (169...170),
        nil
      ),
-     DefNode(216...278)(
+     DefNode(216...243)(
        IDENTIFIER(225...232)("rescued"),
        SelfNode(220...224)(),
        ParametersNode(233...234)(
@@ -287,43 +287,43 @@ ProgramNode(0...278)(
          nil,
          nil
        ),
-       StatementsNode(238...278)(
-         [RescueModifierNode(238...278)(
-            CallNode(238...243)(
-              nil,
-              nil,
-              IDENTIFIER(238...243)("raise"),
-              nil,
-              ArgumentsNode(244...258)(
-                [StringNode(244...258)(
+       StatementsNode(238...243)(
+         [CallNode(238...243)(
+            nil,
+            nil,
+            IDENTIFIER(238...243)("raise"),
+            nil,
+            ArgumentsNode(244...278)(
+              [RescueModifierNode(244...278)(
+                 StringNode(244...258)(
                    STRING_BEGIN(244...245)("\""),
                    STRING_CONTENT(245...257)("to be caught"),
                    STRING_END(257...258)("\""),
                    "to be caught"
-                 )]
-              ),
-              nil,
-              nil,
-              "raise"
-            ),
-            KEYWORD_RESCUE_MODIFIER(259...265)("rescue"),
-            InterpolatedStringNode(266...278)(
-              STRING_BEGIN(266...267)("\""),
-              [StringNode(267...273)(
-                 nil,
-                 STRING_CONTENT(267...273)("class "),
-                 nil,
-                 "class "
-               ),
-               StringInterpolatedNode(273...277)(
-                 EMBEXPR_BEGIN(273...275)("\#{"),
-                 StatementsNode(275...276)(
-                   [LocalVariableReadNode(275...276)(0)]
                  ),
-                 EMBEXPR_END(276...277)("}")
-               )],
-              STRING_END(277...278)("\"")
-            )
+                 KEYWORD_RESCUE_MODIFIER(259...265)("rescue"),
+                 InterpolatedStringNode(266...278)(
+                   STRING_BEGIN(266...267)("\""),
+                   [StringNode(267...273)(
+                      nil,
+                      STRING_CONTENT(267...273)("class "),
+                      nil,
+                      "class "
+                    ),
+                    StringInterpolatedNode(273...277)(
+                      EMBEXPR_BEGIN(273...275)("\#{"),
+                      StatementsNode(275...276)(
+                        [LocalVariableReadNode(275...276)(0)]
+                      ),
+                      EMBEXPR_END(276...277)("}")
+                    )],
+                   STRING_END(277...278)("\"")
+                 )
+               )]
+            ),
+            nil,
+            nil,
+            "raise"
           )]
        ),
        ScopeNode(216...219)([IDENTIFIER(233...234)("x")]),
