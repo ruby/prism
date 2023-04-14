@@ -1,6 +1,6 @@
-ProgramNode(0...1045)(
+ProgramNode(0...1143)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...1045)(
+  StatementsNode(0...1143)(
     [CallNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -1826,6 +1826,37 @@ ProgramNode(0...1045)(
        nil,
        nil,
        "foo"
+     ),
+     CallNode(1134...1143)(
+       HashNode(1134...1135)(
+         BRACE_LEFT(1134...1135)("{"),
+         [],
+         BRACE_RIGHT(1135...1136)("}")
+       ),
+       nil,
+       PLUS(1137...1138)("+"),
+       nil,
+       ArgumentsNode(1139...1143)(
+         [CallNode(1139...1143)(
+            nil,
+            nil,
+            CONSTANT(1139...1140)("A"),
+            nil,
+            nil,
+            nil,
+            BlockNode(1141...1143)(
+              ScopeNode(1141...1142)([]),
+              nil,
+              nil,
+              (1141...1142),
+              (1142...1143)
+            ),
+            "A"
+          )]
+       ),
+       nil,
+       nil,
+       "+"
      )]
   )
 )

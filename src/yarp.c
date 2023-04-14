@@ -9351,7 +9351,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       if (
         match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) ||
         (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR))) ||
-        (yp_accepts_block_stack_p(parser) && match_type_p(parser, YP_TOKEN_KEYWORD_DO))
+        (yp_accepts_block_stack_p(parser) && match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_DO, YP_TOKEN_BRACE_LEFT))
       ) {
         yp_arguments_t arguments = yp_arguments(parser);
         parse_arguments_list(parser, &arguments, true);

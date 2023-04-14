@@ -129,3 +129,5 @@ foo :a,
     baz do
     end
   end
+
+{} + A {}
