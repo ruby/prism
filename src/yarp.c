@@ -6505,8 +6505,12 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
   [YP_TOKEN_KEYWORD_WHILE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
   [YP_TOKEN_KEYWORD_IN] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER),
 
-  // rescue
-  [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_MODIFIER_RESCUE),
+  // rescue modifier
+  [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = {
+    YP_BINDING_POWER_ASSIGNMENT,
+    YP_BINDING_POWER_MODIFIER_RESCUE + 1,
+    true
+  },
 
   // and or
   [YP_TOKEN_KEYWORD_AND] = LEFT_ASSOCIATIVE(YP_BINDING_POWER_COMPOSITION),
@@ -7293,7 +7297,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
       /* fallthrough */
       default: {
         if (argument == NULL) {
-          argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
+          argument = parse_expression(parser, YP_BINDING_POWER_ASSIGNMENT + 1, "Expected to be able to parse an argument.");
         }
 
         if (yp_symbol_node_label_p(argument) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
@@ -10045,9 +10049,16 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         context_push(parser, YP_CONTEXT_DEF);
         statements = (yp_node_t *) yp_statements_node_create(parser);
 
-        yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_MODIFIER_RESCUE, "Expected to be able to parse body of endless method definition.");
-        yp_statements_node_body_append((yp_statements_node_t *) statements, statement);
+        yp_node_t *statement = parse_expression(parser, YP_BINDING_POWER_ASSIGNMENT + 1, "Expected to be able to parse body of endless method definition.");
 
+        if (accept(parser, YP_TOKEN_KEYWORD_RESCUE_MODIFIER)) {
+          yp_token_t rescue_keyword = parser->previous;
+          yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the rescue keyword.");
+          yp_rescue_modifier_node_t *rescue_node = yp_rescue_modifier_node_create(parser, statement, &rescue_keyword, value);
+          statement = (yp_node_t *)rescue_node;
+        }
+
+        yp_statements_node_body_append((yp_statements_node_t *) statements, statement);
         context_pop(parser);
         end_keyword = not_provided(parser);
       } else {
