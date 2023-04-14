@@ -1,6 +1,6 @@
-ProgramNode(0...212)(
-  ScopeNode(0...0)([]),
-  StatementsNode(0...212)(
+ProgramNode(0...291)(
+  ScopeNode(0...0)([IDENTIFIER(217...218)("a")]),
+  StatementsNode(0...291)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -205,6 +205,70 @@ ProgramNode(0...212)(
          (209...212)
        ),
        "foo"
+     ),
+     IfNode(214...241)(
+       KEYWORD_IF(214...216)("if"),
+       RescueModifierNode(217...235)(
+         LocalVariableWriteNode(217...224)(
+           (217...218),
+           CallNode(221...224)(
+             nil,
+             nil,
+             IDENTIFIER(221...224)("foo"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "foo"
+           ),
+           (219...220),
+           0
+         ),
+         KEYWORD_RESCUE_MODIFIER(225...231)("rescue"),
+         NilNode(232...235)()
+       ),
+       StatementsNode(238...241)(
+         [CallNode(238...241)(
+            nil,
+            nil,
+            IDENTIFIER(238...241)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          )]
+       ),
+       nil,
+       KEYWORD_END(242...245)("end")
+     ),
+     DefNode(247...291)(
+       IDENTIFIER(251...262)("some_method"),
+       nil,
+       nil,
+       StatementsNode(265...291)(
+         [RescueModifierNode(265...291)(
+            CallNode(265...277)(
+              nil,
+              nil,
+              IDENTIFIER(265...277)("other_method"),
+              nil,
+              ArgumentsNode(278...280)([IntegerNode(278...280)()]),
+              nil,
+              nil,
+              "other_method"
+            ),
+            KEYWORD_RESCUE_MODIFIER(281...287)("rescue"),
+            NilNode(288...291)()
+          )]
+       ),
+       ScopeNode(247...250)([]),
+       (247...250),
+       nil,
+       nil,
+       nil,
+       (263...264),
+       nil
      )]
   )
 )

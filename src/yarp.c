@@ -6507,7 +6507,7 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // rescue modifier
   [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = {
-    YP_BINDING_POWER_ASSIGNMENT,
+    YP_BINDING_POWER_DEFINED - 1,
     YP_BINDING_POWER_MODIFIER_RESCUE + 1,
     true
   },
@@ -7297,7 +7297,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
       /* fallthrough */
       default: {
         if (argument == NULL) {
-          argument = parse_expression(parser, YP_BINDING_POWER_ASSIGNMENT + 1, "Expected to be able to parse an argument.");
+          argument = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to be able to parse an argument.");
         }
 
         if (yp_symbol_node_label_p(argument) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
