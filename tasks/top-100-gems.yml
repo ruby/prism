@@ -9,8 +9,7 @@
 - activemodel-7.0.4.3
 - activerecord-7.0.4.3
 - activestorage-7.0.4.3
-- activesupport-7.0.4.3:
-  - lib/active_support/messages/rotator.rb
+- activesupport-7.0.4.3
 - addressable-2.8.4
 - autoprefixer-rails-10.4.13.0
 - aws-partitions-1.744.0

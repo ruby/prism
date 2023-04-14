@@ -328,7 +328,7 @@ task "lex:topgems": :compile do
   elsif (updated_todos_by_gem_name != previous_todos_by_gem_name)
     puts "There are files that were previously failing but are no longer failing:"
     puts "Please update #{TOP_100_GEM_FILENAME} with the following"
-    puts (updated_todos_by_gem_name.map do |k, v|
+    puts (updated_todos_by_gem_name.sort_by(&:first).map do |k, v|
       v.any? ? { k => v } : k
     end).to_yaml
     exit(1)
