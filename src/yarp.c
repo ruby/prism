@@ -6507,7 +6507,7 @@ yp_binding_powers_t yp_binding_powers[YP_TOKEN_MAXIMUM] = {
 
   // rescue modifier
   [YP_TOKEN_KEYWORD_RESCUE_MODIFIER] = {
-    YP_BINDING_POWER_DEFINED - 1,
+    YP_BINDING_POWER_ASSIGNMENT,
     YP_BINDING_POWER_MODIFIER_RESCUE + 1,
     true
   },

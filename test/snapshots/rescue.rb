@@ -1,6 +1,6 @@
-ProgramNode(0...291)(
+ProgramNode(0...277)(
   ScopeNode(0...0)([IDENTIFIER(217...218)("a")]),
-  StatementsNode(0...291)(
+  StatementsNode(0...277)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -208,9 +208,9 @@ ProgramNode(0...291)(
      ),
      IfNode(214...241)(
        KEYWORD_IF(214...216)("if"),
-       RescueModifierNode(217...235)(
-         LocalVariableWriteNode(217...224)(
-           (217...218),
+       LocalVariableWriteNode(217...235)(
+         (217...218),
+         RescueModifierNode(221...235)(
            CallNode(221...224)(
              nil,
              nil,
@@ -221,11 +221,11 @@ ProgramNode(0...291)(
              nil,
              "foo"
            ),
-           (219...220),
-           0
+           KEYWORD_RESCUE_MODIFIER(225...231)("rescue"),
+           NilNode(232...235)()
          ),
-         KEYWORD_RESCUE_MODIFIER(225...231)("rescue"),
-         NilNode(232...235)()
+         (219...220),
+         0
        ),
        StatementsNode(238...241)(
          [CallNode(238...241)(
@@ -242,24 +242,26 @@ ProgramNode(0...291)(
        nil,
        KEYWORD_END(242...245)("end")
      ),
-     DefNode(247...291)(
+     DefNode(247...277)(
        IDENTIFIER(251...262)("some_method"),
        nil,
        nil,
-       StatementsNode(265...291)(
-         [RescueModifierNode(265...291)(
-            CallNode(265...277)(
-              nil,
-              nil,
-              IDENTIFIER(265...277)("other_method"),
-              nil,
-              ArgumentsNode(278...280)([IntegerNode(278...280)()]),
-              nil,
-              nil,
-              "other_method"
+       StatementsNode(265...277)(
+         [CallNode(265...277)(
+            nil,
+            nil,
+            IDENTIFIER(265...277)("other_method"),
+            nil,
+            ArgumentsNode(278...291)(
+              [RescueModifierNode(278...291)(
+                 IntegerNode(278...280)(),
+                 KEYWORD_RESCUE_MODIFIER(281...287)("rescue"),
+                 NilNode(288...291)()
+               )]
             ),
-            KEYWORD_RESCUE_MODIFIER(281...287)("rescue"),
-            NilNode(288...291)()
+            nil,
+            nil,
+            "other_method"
           )]
        ),
        ScopeNode(247...250)([]),
