@@ -1,6 +1,6 @@
-ProgramNode(0...497)(
+ProgramNode(0...608)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...497)(
+  StatementsNode(0...608)(
     [StringNode(0...6)(
        STRING_BEGIN(0...2)("%%"),
        STRING_CONTENT(2...5)("abc"),
@@ -417,6 +417,84 @@ ProgramNode(0...497)(
        STRING_CONTENT(493...496)("abc"),
        STRING_END(496...497)("}"),
        "abc"
+     ),
+     StringNode(499...505)(
+       STRING_BEGIN(499...501)("% "),
+       STRING_CONTENT(501...504)("foo"),
+       STRING_END(504...505)(" "),
+       "foo"
+     ),
+     StringNode(507...513)(
+       STRING_BEGIN(507...509)("%\t"),
+       STRING_CONTENT(509...512)("foo"),
+       STRING_END(512...513)("\t"),
+       "foo"
+     ),
+     StringNode(515...521)(
+       STRING_BEGIN(515...517)("%\v"),
+       STRING_CONTENT(517...520)("foo"),
+       STRING_END(520...521)("\v"),
+       "foo"
+     ),
+     StringNode(523...529)(
+       STRING_BEGIN(523...525)("%\r"),
+       STRING_CONTENT(525...528)("foo"),
+       STRING_END(528...529)("\r"),
+       "foo"
+     ),
+     StringNode(531...537)(
+       STRING_BEGIN(531...533)("%\n"),
+       STRING_CONTENT(533...536)("foo"),
+       STRING_END(536...537)("\n"),
+       "foo"
+     ),
+     StringNode(539...545)(
+       STRING_BEGIN(539...541)("%\u0000"),
+       STRING_CONTENT(541...544)("foo"),
+       STRING_END(544...545)("\u0000"),
+       "foo"
+     ),
+     StringNode(547...555)(
+       STRING_BEGIN(547...550)("%\r\n"),
+       STRING_CONTENT(550...553)("foo"),
+       STRING_END(553...555)("\r\n"),
+       "foo"
+     ),
+     StringNode(557...564)(
+       STRING_BEGIN(557...559)("%\n"),
+       STRING_CONTENT(559...563)("\rfoo"),
+       STRING_END(563...564)("\n"),
+       "\rfoo"
+     ),
+     StringNode(567...574)(
+       STRING_BEGIN(567...569)("%\n"),
+       STRING_CONTENT(569...573)("\rfoo"),
+       STRING_END(573...574)("\n"),
+       "\rfoo"
+     ),
+     StringNode(576...583)(
+       STRING_BEGIN(576...579)("%\r\n"),
+       STRING_CONTENT(579...582)("foo"),
+       STRING_END(582...583)("\n"),
+       "foo"
+     ),
+     StringNode(585...591)(
+       STRING_BEGIN(585...587)("%\r"),
+       STRING_CONTENT(587...590)("foo"),
+       STRING_END(590...591)("\r"),
+       "foo"
+     ),
+     StringNode(593...599)(
+       STRING_BEGIN(593...595)("%\n"),
+       STRING_CONTENT(595...598)("foo"),
+       STRING_END(598...599)("\n"),
+       "foo"
+     ),
+     StringNode(601...608)(
+       STRING_BEGIN(601...603)("%\n"),
+       STRING_CONTENT(603...606)("foo"),
+       STRING_END(606...608)("\r\n"),
+       "foo"
      )]
   )
 )

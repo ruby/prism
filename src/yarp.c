@@ -5671,7 +5671,9 @@ parser_lex(yp_parser_t *parser) {
                 .as.string.label_allowed = false
               });
 
-              if (*parser->current.end == '\r') {
+              if (*parser->current.end == '\r' &&
+                  parser->current.end + 1 < parser->end &&
+                  *(parser->current.end + 1) == '\n') {
                 parser->current.end++;
               }
 
@@ -6151,7 +6153,7 @@ parser_lex(yp_parser_t *parser) {
 
       // These are the places where we need to split up the content of the
       // string. We'll use strpbrk to find the first of these characters.
-      char breakpoints[] = "\n\\\0\0\0";
+      char breakpoints[] = "\n\\\0\0\0\0";
       size_t index = 2;
 
       // Now add in the terminator.
@@ -6167,6 +6169,11 @@ parser_lex(yp_parser_t *parser) {
       // well.
       if (parser->lex_modes.current->as.string.incrementor != '\0') {
         breakpoints[index++] = parser->lex_modes.current->as.string.incrementor;
+      }
+
+      // newline terminators also need to stop on \r to check for \r\n
+      if (parser->lex_modes.current->as.string.terminator == '\n') {
+        breakpoints[index++] = '\r';
       }
 
       const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
@@ -6226,10 +6233,48 @@ parser_lex(yp_parser_t *parser) {
           LEX(YP_TOKEN_STRING_END);
         }
 
+        // If your % string terminator is \n, you also need to terminate on
+        // \r\n, so we can handle this case specifically
+        if (*breakpoint == '\r') {
+          if (breakpoint + 1 < parser->end &&
+              *(breakpoint + 1) == '\n' &&
+              parser->lex_modes.current->as.string.terminator == '\n') {
+            // Here we've hit the terminator. If we have already consumed content
+            // then we need to return that content as string content first.
+            if (breakpoint > parser->current.start) {
+              parser->current.end = breakpoint;
+              LEX(YP_TOKEN_STRING_CONTENT);
+            }
+
+            parser->current.end = breakpoint + 2;
+            lex_state_set(parser, YP_LEX_STATE_END);
+            lex_mode_pop(parser);
+            LEX(YP_TOKEN_STRING_END);
+          }
+          breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+          continue;
+        }
+
         // When we hit a newline, we need to flush any potential heredocs. Note
         // that this has to happen after we check for the terminator in case the
         // terminator is a newline character.
         if (*breakpoint == '\n') {
+          // we also need to do the reverse of the above and allow \n
+          // to be ended by \r\n
+          if (parser->lex_modes.current->as.string.terminator == '\r') {
+            // Here we've hit the terminator. If we have already consumed content
+            // then we need to return that content as string content first.
+            if (breakpoint > parser->current.start) {
+              parser->current.end = breakpoint;
+              LEX(YP_TOKEN_STRING_CONTENT);
+            }
+
+            parser->current.end = breakpoint + 1;
+            lex_state_set(parser, YP_LEX_STATE_END);
+            lex_mode_pop(parser);
+            LEX(YP_TOKEN_STRING_END);
+          }
+
           if (parser->heredoc_end == NULL) {
             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
             continue;
