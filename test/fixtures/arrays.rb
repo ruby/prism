@@ -57,3 +57,24 @@ foo[bar] = baz
 [
   foo => bar,
 ]
+
+
+%i#one two three#
+
+%w#one two three#
+
+%x#one two three#
+
+
+%i@one two three@
+
+%w@one two three@
+
+%x@one two three@
+
+
+%i{one two three}
+
+%w{one two three}
+
+%x{one two three}

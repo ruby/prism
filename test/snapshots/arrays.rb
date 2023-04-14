@@ -1,6 +1,6 @@
-ProgramNode(0...328)(
+ProgramNode(0...502)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...328)(
+  StatementsNode(0...502)(
     [ArrayNode(0...4)(
        [SplatNode(2...3)(
           IDENTIFIER(2...3)("a"),
@@ -702,6 +702,156 @@ ProgramNode(0...328)(
         )],
        BRACKET_LEFT_ARRAY(311...312)("["),
        BRACKET_RIGHT(327...328)("]")
+     ),
+     ArrayNode(331...348)(
+       [SymbolNode(334...337)(
+          nil,
+          STRING_CONTENT(334...337)("one"),
+          nil,
+          "one"
+        ),
+        SymbolNode(338...341)(
+          nil,
+          STRING_CONTENT(338...341)("two"),
+          nil,
+          "two"
+        ),
+        SymbolNode(342...347)(
+          nil,
+          STRING_CONTENT(342...347)("three"),
+          nil,
+          "three"
+        )],
+       PERCENT_LOWER_I(331...334)("%i#"),
+       STRING_END(347...348)("#")
+     ),
+     ArrayNode(350...367)(
+       [StringNode(353...356)(
+          nil,
+          STRING_CONTENT(353...356)("one"),
+          nil,
+          "one"
+        ),
+        StringNode(357...360)(
+          nil,
+          STRING_CONTENT(357...360)("two"),
+          nil,
+          "two"
+        ),
+        StringNode(361...366)(
+          nil,
+          STRING_CONTENT(361...366)("three"),
+          nil,
+          "three"
+        )],
+       PERCENT_LOWER_W(350...353)("%w#"),
+       STRING_END(366...367)("#")
+     ),
+     XStringNode(369...386)(
+       PERCENT_LOWER_X(369...372)("%x#"),
+       STRING_CONTENT(372...385)("one two three"),
+       STRING_END(385...386)("#"),
+       "one two three"
+     ),
+     ArrayNode(389...406)(
+       [SymbolNode(392...395)(
+          nil,
+          STRING_CONTENT(392...395)("one"),
+          nil,
+          "one"
+        ),
+        SymbolNode(396...399)(
+          nil,
+          STRING_CONTENT(396...399)("two"),
+          nil,
+          "two"
+        ),
+        SymbolNode(400...405)(
+          nil,
+          STRING_CONTENT(400...405)("three"),
+          nil,
+          "three"
+        )],
+       PERCENT_LOWER_I(389...392)("%i@"),
+       STRING_END(405...406)("@")
+     ),
+     ArrayNode(408...425)(
+       [StringNode(411...414)(
+          nil,
+          STRING_CONTENT(411...414)("one"),
+          nil,
+          "one"
+        ),
+        StringNode(415...418)(
+          nil,
+          STRING_CONTENT(415...418)("two"),
+          nil,
+          "two"
+        ),
+        StringNode(419...424)(
+          nil,
+          STRING_CONTENT(419...424)("three"),
+          nil,
+          "three"
+        )],
+       PERCENT_LOWER_W(408...411)("%w@"),
+       STRING_END(424...425)("@")
+     ),
+     XStringNode(427...444)(
+       PERCENT_LOWER_X(427...430)("%x@"),
+       STRING_CONTENT(430...443)("one two three"),
+       STRING_END(443...444)("@"),
+       "one two three"
+     ),
+     ArrayNode(447...464)(
+       [SymbolNode(450...453)(
+          nil,
+          STRING_CONTENT(450...453)("one"),
+          nil,
+          "one"
+        ),
+        SymbolNode(454...457)(
+          nil,
+          STRING_CONTENT(454...457)("two"),
+          nil,
+          "two"
+        ),
+        SymbolNode(458...463)(
+          nil,
+          STRING_CONTENT(458...463)("three"),
+          nil,
+          "three"
+        )],
+       PERCENT_LOWER_I(447...450)("%i{"),
+       STRING_END(463...464)("}")
+     ),
+     ArrayNode(466...483)(
+       [StringNode(469...472)(
+          nil,
+          STRING_CONTENT(469...472)("one"),
+          nil,
+          "one"
+        ),
+        StringNode(473...476)(
+          nil,
+          STRING_CONTENT(473...476)("two"),
+          nil,
+          "two"
+        ),
+        StringNode(477...482)(
+          nil,
+          STRING_CONTENT(477...482)("three"),
+          nil,
+          "three"
+        )],
+       PERCENT_LOWER_W(466...469)("%w{"),
+       STRING_END(482...483)("}")
+     ),
+     XStringNode(485...502)(
+       PERCENT_LOWER_X(485...488)("%x{"),
+       STRING_CONTENT(488...501)("one two three"),
+       STRING_END(501...502)("}"),
+       "one two three"
      )]
   )
 )

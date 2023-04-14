@@ -5943,18 +5943,22 @@ parser_lex(yp_parser_t *parser) {
             parser->current.end = breakpoint;
             LEX(YP_TOKEN_STRING_CONTENT);
           case '#': {
-            yp_token_type_t type = lex_interpolation(parser, breakpoint);
-            if (type != YP_TOKEN_NOT_PROVIDED) {
-              LEX(type);
-            }
+            // if # is the terminator, we need to fall into the default case
+            if (parser->lex_modes.current->as.list.terminator != '#') {
+              yp_token_type_t type = lex_interpolation(parser, breakpoint);
+              if (type != YP_TOKEN_NOT_PROVIDED) {
+                LEX(type);
+              }
 
-            // If we haven't returned at this point then we had something
-            // that looked like an interpolated class or instance variable
-            // like "#@" but wasn't actually. In this case we'll just skip
-            // to the next breakpoint.
-            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
-            break;
+              // If we haven't returned at this point then we had something
+              // that looked like an interpolated class or instance variable
+              // like "#@" but wasn't actually. In this case we'll just skip
+              // to the next breakpoint.
+              breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+              break;
+            }
           }
+          /* fallthrough */
           default:
             if (*breakpoint == parser->lex_modes.current->as.list.incrementor) {
               // If we've hit the incrementor, then we need to skip past it and
