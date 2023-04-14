@@ -168,11 +168,12 @@ module YARP
 
   # This lexes with the Ripper lex. It drops any space events but otherwise
   # returns the same tokens.
+  # [raises SyntaxError] if the syntax in source is invalid
   def self.lex_ripper(source)
     previous = []
     results = []
 
-    Ripper.lex(source).each do |token|
+    Ripper.lex(source, raise_errors: true).each do |token|
       case token[1]
       when :on_sp
         # skip

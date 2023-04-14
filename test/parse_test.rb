@@ -83,8 +83,13 @@ class ParseTest < Test::Unit::TestCase
       # Finally, assert that we can lex the source and get the same tokens as
       # Ripper.
       YARP.lex_compat(source) => { errors: [], value: tokens }
-      YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
-        assert_equal ripper, yarp
+
+      begin
+        YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
+          assert_equal ripper, yarp
+        end
+      rescue SyntaxError
+        raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
     end
   end
