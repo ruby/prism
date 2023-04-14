@@ -1313,13 +1313,19 @@ yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t 
 static yp_else_node_t *
 yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_statements_node_t *statements, const yp_token_t *end_keyword) {
   yp_else_node_t *node = yp_alloc(parser, sizeof(yp_else_node_t));
+  const char *end = NULL;
+  if ((end_keyword->type == YP_TOKEN_NOT_PROVIDED) && (statements != NULL)) {
+    end = statements->base.location.end;
+  } else {
+    end = end_keyword->end;
+  }
 
   *node = (yp_else_node_t) {
     {
       .type = YP_NODE_ELSE_NODE,
       .location = {
         .start = else_keyword->start,
-        .end = end_keyword->type == YP_TOKEN_NOT_PROVIDED ? statements->base.location.end : end_keyword->end
+        .end = end,
       },
     },
     .else_keyword = *else_keyword,
@@ -4803,9 +4809,7 @@ parser_lex(yp_parser_t *parser) {
 
           // If this is an ignored newline, then we can continue lexing after
           // calling the callback with the ignored newline token.
-          yp_ignored_newline_type_t ignored_newline_type;
-
-          switch (ignored_newline_type = lex_state_ignored_p(parser)) {
+          switch (lex_state_ignored_p(parser)) {
             case YP_IGNORED_NEWLINE_NONE:
               break;
             case YP_IGNORED_NEWLINE_PATTERN:
@@ -8498,8 +8502,6 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
           source_cursor++;
           dest_length--;
         }
-
-        dedent_next = false;
       }
 
       // At this point we have dedented all that we need to, so we need to find
@@ -8987,6 +8989,9 @@ parse_pattern_primitives(yp_parser_t *parser, const char *message) {
       }
       case YP_TOKEN_PARENTHESIS_LEFT: {
         parser_lex(parser);
+        if (node != NULL) {
+          yp_node_destroy(parser, node);
+        }
         node = parse_pattern(parser, false, "Expected a pattern after the opening parenthesis.");
 
         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a closing parenthesis after the pattern.");
@@ -10192,6 +10197,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
           yp_undef_node_append(undef, name);
         }
+      } else {
+        yp_node_destroy(parser, name);
       }
 
       return (yp_node_t *) undef;
