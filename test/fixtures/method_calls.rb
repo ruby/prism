@@ -129,3 +129,11 @@ foo :a,
     baz do
     end
   end
+
+{} + A {}
+
+{} + A { |a| a }
+
+A {} + A {}
+
+lst << A {}
