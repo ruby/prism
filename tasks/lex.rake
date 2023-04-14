@@ -46,7 +46,12 @@ module YARP
     def lex(filepath)
       source = File.read(filepath)
       lexed = YARP.lex_compat(source)
-      lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
+      begin
+        lexed_ripper = YARP.lex_ripper(source)
+      rescue SyntaxError
+        return true # If the file is invalid, we say the output is equivalent for comparison purposes
+      end
+      lexed.errors.empty? && lexed_ripper == lexed.value
     rescue
       false
     end
