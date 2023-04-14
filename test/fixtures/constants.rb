@@ -22,3 +22,8 @@ Foo 1
 
 ::A
 
+A::!
+
+A::false
+
+A::B::true

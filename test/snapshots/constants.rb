@@ -1,6 +1,6 @@
-ProgramNode(0...92)(
+ProgramNode(0...120)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...92)(
+  StatementsNode(0...120)(
     [ConstantPathNode(0...4)(
        ConstantReadNode(0...1)(),
        ConstantReadNode(3...4)(),
@@ -87,6 +87,40 @@ ProgramNode(0...92)(
        ConstantReadNode(86...87)(),
        (84...86)
      ),
-     ConstantPathNode(89...92)(nil, ConstantReadNode(91...92)(), (89...91))]
+     ConstantPathNode(89...92)(nil, ConstantReadNode(91...92)(), (89...91)),
+     CallNode(94...98)(
+       ConstantReadNode(94...95)(),
+       COLON_COLON(95...97)("::"),
+       BANG(97...98)("!"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "!"
+     ),
+     CallNode(100...108)(
+       ConstantReadNode(100...101)(),
+       COLON_COLON(101...103)("::"),
+       IDENTIFIER(103...108)("false"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "false"
+     ),
+     CallNode(110...120)(
+       ConstantPathNode(110...114)(
+         ConstantReadNode(110...111)(),
+         ConstantReadNode(113...114)(),
+         (111...113)
+       ),
+       COLON_COLON(114...116)("::"),
+       IDENTIFIER(116...120)("true"),
+       nil,
+       nil,
+       nil,
+       nil,
+       "true"
+     )]
   )
 )

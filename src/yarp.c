@@ -11459,6 +11459,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
           return path;
         }
+        case YP_TOKEN_BANG:
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
 
