@@ -1,0 +1,11 @@
+ProgramNode(0...18)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...18)(
+    [StringNode(0...18)(
+       STRING_BEGIN(0...3)("%\r\n"),
+       STRING_CONTENT(3...16)("sdfsdsdfsdfsd"),
+       STRING_END(16...18)("\r\n"),
+       "sdfsdsdfsdfsd"
+     )]
+  )
+)

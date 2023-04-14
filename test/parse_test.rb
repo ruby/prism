@@ -14,6 +14,30 @@ class ParseTest < Test::Unit::TestCase
   known_failures = %w[
     seattlerb/heredoc_nested.rb
     seattlerb/pct_w_heredoc_interp_nested.rb
+    rubylexer/unending_stuff.rb
+    rubylexer/stuffydog.rb
+    rubylexer/stuff.rb
+    rubylexer/stuff2.rb
+    rubylexer/stuff3.rb
+    rubylexer/stuff4.rb
+    rubylexer/s.rb
+    rubylexer/newsyntax.rb
+    rubylexer/pre.rb
+    rubylexer/pleac.rb
+    rubylexer/pre.unix.rb
+    rubylexer/heremonsters_dos.rb
+    rubylexer/heremonsters_broken.rb
+    rubylexer/heremonsters.rb
+    rubylexer/here_escnl_dos.rb
+    rubylexer/here_escnl.rb
+    rubylexer/hdr_dos.rb
+    rubylexer/hdateof.rb
+    rubylexer/blockassigntest.rb
+    rubylexer/here_escnl.rb
+    rubylexer/23.rb
+    rubylexer/__eof2.rb
+    rubylexer/__eof5.rb
+    rubylexer/maven2_builer_test.rb
   ]
 
   # Because the filepath in SourceFileNodes is different from one maching to the
@@ -31,6 +55,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   Dir[File.expand_path("fixtures/**/*.rb", __dir__)].each do |filepath|
+    # next if filepath.match?("rubylexer")
     relative = filepath.delete_prefix("#{File.expand_path("fixtures", __dir__)}/")
     next if known_failures.include?(relative)
 

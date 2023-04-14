@@ -1,0 +1,21 @@
+ProgramNode(0...15)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...15)(
+    [InterpolatedStringNode(0...15)(
+       STRING_BEGIN(0...1)("\""),
+       [StringNode(1...5)(nil, STRING_CONTENT(1...5)("fooo"), nil, "fooo"),
+        StringInterpolatedNode(5...10)(
+          EMBEXPR_BEGIN(5...7)("\#{"),
+          StatementsNode(7...9)([IntegerNode(7...9)()]),
+          EMBEXPR_END(9...10)("}")
+        ),
+        StringNode(10...14)(
+          nil,
+          STRING_CONTENT(10...14)("fsfd"),
+          nil,
+          "fsfd"
+        )],
+       STRING_END(14...15)("\"")
+     )]
+  )
+)

@@ -1,0 +1,110 @@
+ProgramNode(10...166)(
+  ScopeNode(0...0)([]),
+  StatementsNode(10...166)(
+    [InterpolatedStringNode(10...166)(
+       HEREDOC_START(0...8)("<<HEADER"),
+       [StringNode(10...16)(
+          nil,
+          STRING_CONTENT(10...16)("class "),
+          nil,
+          "class "
+        ),
+        StringInterpolatedNode(16...38)(
+          EMBEXPR_BEGIN(16...18)("\#{"),
+          StatementsNode(18...37)(
+            [CallNode(18...37)(
+               CallNode(18...26)(
+                 nil,
+                 nil,
+                 IDENTIFIER(18...26)("filename"),
+                 nil,
+                 nil,
+                 nil,
+                 nil,
+                 "filename"
+               ),
+               DOT(26...27)("."),
+               IDENTIFIER(27...37)("capitalize"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "capitalize"
+             )]
+          ),
+          EMBEXPR_END(37...38)("}")
+        ),
+        StringNode(38...85)(
+          nil,
+          STRING_CONTENT(38...85)(
+            "TestCase\r\n" + "        def set_up\r\n" + "                @"
+          ),
+          nil,
+          "TestCase\r\n" + "        def set_up\r\n" + "                @"
+        ),
+        StringInterpolatedNode(85...105)(
+          EMBEXPR_BEGIN(85...87)("\#{"),
+          StatementsNode(87...104)(
+            [CallNode(87...104)(
+               CallNode(87...95)(
+                 nil,
+                 nil,
+                 IDENTIFIER(87...95)("filename"),
+                 nil,
+                 nil,
+                 nil,
+                 nil,
+                 "filename"
+               ),
+               DOT(95...96)("."),
+               IDENTIFIER(96...104)("downcase"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "downcase"
+             )]
+          ),
+          EMBEXPR_END(104...105)("}")
+        ),
+        StringNode(105...125)(
+          nil,
+          STRING_CONTENT(105...125)("s\r\n" + "                @"),
+          nil,
+          "s\r\n" + "                @"
+        ),
+        StringInterpolatedNode(125...145)(
+          EMBEXPR_BEGIN(125...127)("\#{"),
+          StatementsNode(127...144)(
+            [CallNode(127...144)(
+               CallNode(127...135)(
+                 nil,
+                 nil,
+                 IDENTIFIER(127...135)("filename"),
+                 nil,
+                 nil,
+                 nil,
+                 nil,
+                 "filename"
+               ),
+               DOT(135...136)("."),
+               IDENTIFIER(136...144)("downcase"),
+               nil,
+               nil,
+               nil,
+               nil,
+               "downcase"
+             )]
+          ),
+          EMBEXPR_END(144...145)("}")
+        ),
+        StringNode(145...166)(
+          nil,
+          STRING_CONTENT(145...166)("s\r\n" + "        end\r\n" + "end\r\n"),
+          nil,
+          "s\r\n" + "        end\r\n" + "end\r\n"
+        )],
+       HEREDOC_END(166...174)("HEADER\r\n")
+     )]
+  )
+)

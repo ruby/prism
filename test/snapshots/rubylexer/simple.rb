@@ -1,0 +1,26 @@
+ProgramNode(0...1)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...1)(
+    [CallNode(0...1)(
+       nil,
+       nil,
+       IDENTIFIER(0...1)("p"),
+       nil,
+       ArgumentsNode(2...8)(
+         [CallNode(2...8)(
+            nil,
+            nil,
+            IDENTIFIER(2...8)("simple"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "simple"
+          )]
+       ),
+       nil,
+       nil,
+       "p"
+     )]
+  )
+)

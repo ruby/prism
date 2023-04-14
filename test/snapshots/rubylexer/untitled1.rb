@@ -1,0 +1,22 @@
+ProgramNode(0...7)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...7)(
+    [CallNode(0...7)(
+       nil,
+       nil,
+       IDENTIFIER(0...7)("require"),
+       nil,
+       ArgumentsNode(8...13)(
+         [StringNode(8...13)(
+            STRING_BEGIN(8...9)("'"),
+            STRING_CONTENT(9...12)("foo"),
+            STRING_END(12...13)("'"),
+            "foo"
+          )]
+       ),
+       nil,
+       nil,
+       "require"
+     )]
+  )
+)

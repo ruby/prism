@@ -1,0 +1,70 @@
+ProgramNode(0...1)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...1)(
+    [CallNode(0...1)(
+       nil,
+       nil,
+       IDENTIFIER(0...1)("p"),
+       nil,
+       ArgumentsNode(35...34)(
+         [CallNode(35...34)(
+            InterpolatedStringNode(35...103)(
+              HEREDOC_START(2...9)("<<stuff"),
+              [StringNode(35...103)(
+                 nil,
+                 STRING_CONTENT(35...103)(
+                   "+\"more stuff\"\n" +
+                   "12345678\n" +
+                   "the quick brown fox jumped over the lazy dog\n"
+                 ),
+                 nil,
+                 "+\"more stuff\"\n" +
+                 "12345678\n" +
+                 "the quick brown fox jumped over the lazy dog\n"
+               )],
+              HEREDOC_END(103...109)("stuff\n")
+            ),
+            nil,
+            PLUS(9...10)("+"),
+            nil,
+            ArgumentsNode(10...34)(
+              [CallNode(10...34)(
+                 StringNode(10...18)(
+                   STRING_BEGIN(10...11)("'"),
+                   STRING_CONTENT(11...17)("foobar"),
+                   STRING_END(17...18)("'"),
+                   "foobar"
+                 ),
+                 DOT(18...19)("."),
+                 IDENTIFIER(19...21)("tr"),
+                 PARENTHESIS_LEFT(21...22)("("),
+                 ArgumentsNode(22...33)(
+                   [StringNode(22...27)(
+                      STRING_BEGIN(22...23)("'"),
+                      STRING_CONTENT(23...26)("j-l"),
+                      STRING_END(26...27)("'"),
+                      "j-l"
+                    ),
+                    StringNode(28...33)(
+                      STRING_BEGIN(28...29)("'"),
+                      STRING_CONTENT(29...32)("d-f"),
+                      STRING_END(32...33)("'"),
+                      "d-f"
+                    )]
+                 ),
+                 PARENTHESIS_RIGHT(33...34)(")"),
+                 nil,
+                 "tr"
+               )]
+            ),
+            nil,
+            nil,
+            "+"
+          )]
+       ),
+       nil,
+       nil,
+       "p"
+     )]
+  )
+)

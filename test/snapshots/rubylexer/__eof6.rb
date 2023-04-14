@@ -1,0 +1,11 @@
+ProgramNode(0...9)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...9)(
+    [PreExecutionNode(0...9)(
+       StatementsNode(6...8)([IntegerNode(6...8)()]),
+       (0...5),
+       (5...6),
+       (8...9)
+     )]
+  )
+)

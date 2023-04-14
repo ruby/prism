@@ -22,7 +22,8 @@ end
 test_config = lambda do |t|
   t.libs << "test"
   t.libs << "lib"
-  t.test_files = FileList["test/**/*_test.rb"]
+  # reject any test files found in `fixtures` because those examples can end in _test.rb
+  t.test_files = FileList["test/**/*_test.rb"].reject { |file| file.match?("fixtures") }
 end
 
 Rake::TestTask.new(test: :compile, &test_config)

@@ -1,0 +1,10 @@
+ProgramNode(0...3)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...3)(
+    [InterpolatedStringNode(0...3)(
+       HEREDOC_START(0...3)("<<p"),
+       [],
+       HEREDOC_END(4...6)("p\n")
+     )]
+  )
+)

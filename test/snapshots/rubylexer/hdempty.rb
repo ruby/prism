@@ -1,0 +1,21 @@
+ProgramNode(0...1)(
+  ScopeNode(0...0)([]),
+  StatementsNode(0...1)(
+    [CallNode(0...1)(
+       nil,
+       nil,
+       IDENTIFIER(0...1)("p"),
+       nil,
+       ArgumentsNode(2...5)(
+         [InterpolatedStringNode(2...5)(
+            HEREDOC_START(2...5)("<<f"),
+            [],
+            HEREDOC_END(6...8)("f\n")
+          )]
+       ),
+       nil,
+       nil,
+       "p"
+     )]
+  )
+)

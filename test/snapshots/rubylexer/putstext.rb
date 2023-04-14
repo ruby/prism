@@ -1,0 +1,22 @@
+ProgramNode(24...28)(
+  ScopeNode(0...0)([]),
+  StatementsNode(24...28)(
+    [CallNode(24...28)(
+       nil,
+       nil,
+       IDENTIFIER(24...28)("puts"),
+       nil,
+       ArgumentsNode(29...35)(
+         [StringNode(29...35)(
+            STRING_BEGIN(29...30)("\""),
+            STRING_CONTENT(30...34)("text"),
+            STRING_END(34...35)("\""),
+            "text"
+          )]
+       ),
+       nil,
+       nil,
+       "puts"
+     )]
+  )
+)
