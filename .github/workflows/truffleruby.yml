@@ -53,6 +53,7 @@ jobs:
         repository: oracle/graal
         path: truffleruby-ws/graal
         ref: ${{ steps.graal_commit.outputs.graal_commit }}
+
     - name: Download dependencies
       run: jt -q mx --env jvm graalvm-dist-name
       working-directory: truffleruby-ws/truffleruby
