@@ -38,8 +38,11 @@ jobs:
       run: jt install jvmci
     - name: Set JAVA_HOME
       run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
+    - name: Download dependencies
+      run: jt -q mx --env jvm graalvm-dist-name
+      working-directory: truffleruby-ws/truffleruby
     - name: Build TruffleRuby
-      run: jt build
+      run: jt build -- --dependencies "$(jt -q mx --env jvm graalvm-dist-name)"
       working-directory: truffleruby-ws/truffleruby
 
     - name: Parse test/fixtures/**/*.rb
