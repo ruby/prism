@@ -30,6 +30,12 @@ jobs:
     - name: Setup jt
       run: echo "$PWD/truffleruby-ws/truffleruby/bin" >> $GITHUB_PATH
 
+    - name: Restore ~/.mx/cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.mx/cache
+        key: mx-cache-${{ runner.os }}
+
     - name: Import latest YARP in TruffleRuby
       run: tool/import-yarp.sh
       working-directory: truffleruby-ws/truffleruby
