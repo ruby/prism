@@ -38,6 +38,15 @@ jobs:
       run: jt install jvmci
     - name: Set JAVA_HOME
       run: echo "JAVA_HOME=$(jt install jvmci)" >> $GITHUB_ENV
+    - name: Get graal commit
+      id: graal_commit
+      run: echo "graal_commit=$(jt truffle_version)" >> $GITHUB_OUTPUT
+    - name: Clone Graal
+      uses: actions/checkout@v3
+      with:
+        repository: oracle/graal
+        path: truffleruby-ws/graal
+        ref: ${{ steps.graal_commit.outputs.graal_commit }}
     - name: Download dependencies
       run: jt -q mx --env jvm graalvm-dist-name
       working-directory: truffleruby-ws/truffleruby
