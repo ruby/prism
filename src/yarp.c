@@ -10225,6 +10225,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_arguments_t arguments = yp_arguments(parser);
       yp_node_t *receiver = NULL;
 
+      accept(parser, YP_TOKEN_NEWLINE);
+
       if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
         arguments.opening = parser->previous;
 

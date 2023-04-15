@@ -1,6 +1,6 @@
-ProgramNode(0...46)(
+ProgramNode(0...125)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...46)(
+  StatementsNode(0...125)(
     [AndNode(0...19)(
        CallNode(0...7)(
          CallNode(4...7)(
@@ -92,6 +92,129 @@ ProgramNode(0...46)(
        nil,
        nil,
        "!"
+     ),
+     AndNode(48...69)(
+       CallNode(48...55)(
+         CallNode(52...55)(
+           nil,
+           nil,
+           IDENTIFIER(52...55)("foo"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "foo"
+         ),
+         nil,
+         KEYWORD_NOT(48...51)("not"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "!"
+       ),
+       CallNode(60...69)(
+         CallNode(66...69)(
+           nil,
+           nil,
+           IDENTIFIER(66...69)("bar"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "bar"
+         ),
+         nil,
+         KEYWORD_NOT(60...63)("not"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "!"
+       ),
+       KEYWORD_AND(56...59)("and")
+     ),
+     AndNode(72...97)(
+       CallNode(72...79)(
+         CallNode(76...79)(
+           nil,
+           nil,
+           IDENTIFIER(76...79)("foo"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "foo"
+         ),
+         nil,
+         KEYWORD_NOT(72...75)("not"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "!"
+       ),
+       CallNode(88...97)(
+         CallNode(94...97)(
+           nil,
+           nil,
+           IDENTIFIER(94...97)("bar"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "bar"
+         ),
+         nil,
+         KEYWORD_NOT(88...91)("not"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "!"
+       ),
+       KEYWORD_AND(80...83)("and")
+     ),
+     AndNode(100...125)(
+       CallNode(100...107)(
+         CallNode(104...107)(
+           nil,
+           nil,
+           IDENTIFIER(104...107)("foo"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "foo"
+         ),
+         nil,
+         KEYWORD_NOT(100...103)("not"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "!"
+       ),
+       CallNode(114...125)(
+         CallNode(122...125)(
+           nil,
+           nil,
+           IDENTIFIER(122...125)("bar"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "bar"
+         ),
+         nil,
+         KEYWORD_NOT(114...117)("not"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "!"
+       ),
+       KEYWORD_AND(108...111)("and")
      )]
   )
 )
