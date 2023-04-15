@@ -1708,6 +1708,7 @@ yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
     default: {
       lex_mode_pop(parser);
       numeric_node = (yp_node_t *)yp_missing_node_create(parser, numeric_token.start, numeric_token.end);
+      (void)numeric_node; // Suppress clang-analyzer-deadcode.DeadStores warning
       assert(false && "unreachable");
     }
   }
@@ -1753,6 +1754,7 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
     default: {
       lex_mode_pop(parser);
       numeric_node = (yp_node_t *)yp_missing_node_create(parser, numeric_token.start, numeric_token.end);
+      (void)numeric_node; // Suppress clang-analyzer-deadcode.DeadStores warning
       assert(false && "unreachable");
     }
   }
