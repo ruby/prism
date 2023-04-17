@@ -7498,7 +7498,8 @@ parse_parameters(
   yp_parser_t *parser,
   yp_binding_power_t binding_power,
   bool uses_parentheses,
-  bool allows_trailing_comma
+  bool allows_trailing_comma,
+  bool allows_forwarding_parameter
 ) {
   yp_parameters_node_t *params = yp_parameters_node_create(parser);
   bool looping = true;
@@ -7540,6 +7541,9 @@ parse_parameters(
         break;
       }
       case YP_TOKEN_UDOT_DOT_DOT: {
+        if (!allows_forwarding_parameter) {
+          yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected ...");
+        }
         if (order > YP_PARAMETERS_ORDER_NOTHING_AFTER) {
           update_parameter_state(parser, &parser->current, &order);
           parser_lex(parser);
@@ -7868,7 +7872,13 @@ parse_block_parameters(
 ) {
   yp_parameters_node_t *parameters = NULL;
   if (!match_type_p(parser, YP_TOKEN_SEMICOLON)) {
-    parameters = parse_parameters(parser, is_lambda_literal ? YP_BINDING_POWER_DEFINED : YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
+    parameters = parse_parameters(
+      parser,
+      is_lambda_literal ? YP_BINDING_POWER_DEFINED : YP_BINDING_POWER_INDEX,
+      false,
+      allows_trailing_comma,
+      false
+    );
   }
 
   yp_block_parameters_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters, opening);
@@ -10030,7 +10040,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
             params = NULL;
           } else {
-            params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, true, false);
+            params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, true, false, true);
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -10043,7 +10053,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         case YP_CASE_PARAMETER: {
           lparen = not_provided(parser);
           rparen = not_provided(parser);
-          params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, false, false);
+          params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, false, false, true);
           break;
         }
         default: {

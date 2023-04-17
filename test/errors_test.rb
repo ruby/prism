@@ -884,7 +884,39 @@ class ErrorsTest < Test::Unit::TestCase
 
     assert_errors expected, "case :a\nelse\nend", ["Unexpected else without no when clauses in case statement."]
   end
-  
+
+  test "do not allow forward arguments in lambda literals" do
+    expected = LambdaNode(
+      ScopeNode([UDOT_DOT_DOT("...")]),
+      MINUS_GREATER("->"),
+      BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
+      nil
+    )
+
+    assert_errors expected, "->(...) {}", ["Unexpected ..."]
+  end
+
+  test "do not allow forward arguments in blocks" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        ScopeNode([UDOT_DOT_DOT("...")]),
+        BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
+        nil,
+        Location(),
+        Location()
+      ),
+      "a"
+    )
+
+    assert_errors expected, "a do |...| end", ["Unexpected ..."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)
