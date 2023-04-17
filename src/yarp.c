@@ -7860,10 +7860,15 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_statements_node_t *statements) {
 
 // Parse a list of parameters and local on a block definition.
 static yp_block_parameters_node_t *
-parse_block_parameters(yp_parser_t *parser, bool allows_trailing_comma, const yp_token_t *opening) {
+parse_block_parameters(
+  yp_parser_t *parser,
+  bool allows_trailing_comma,
+  const yp_token_t *opening,
+  bool is_lambda_literal
+) {
   yp_parameters_node_t *parameters = NULL;
   if (!match_type_p(parser, YP_TOKEN_SEMICOLON)) {
-    parameters = parse_parameters(parser, YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
+    parameters = parse_parameters(parser, is_lambda_literal ? YP_BINDING_POWER_DEFINED : YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
   }
 
   yp_block_parameters_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters, opening);
@@ -7896,7 +7901,7 @@ parse_block(yp_parser_t *parser) {
       parser->command_start = true;
       parser_lex(parser);
     } else {
-      parameters = parse_block_parameters(parser, true, &block_parameters_opening);
+      parameters = parse_block_parameters(parser, true, &block_parameters_opening, false);
       accept(parser, YP_TOKEN_NEWLINE);
       parser->command_start = true;
       expect(parser, YP_TOKEN_PIPE, "Expected block parameters to end with '|'.");
@@ -10849,7 +10854,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
             params = yp_block_parameters_node_create(parser, NULL, &block_parameters_opening);
           } else {
-            params = parse_block_parameters(parser, false, &block_parameters_opening);
+            params = parse_block_parameters(parser, false, &block_parameters_opening, true);
           }
 
           accept(parser, YP_TOKEN_NEWLINE);
@@ -10860,7 +10865,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
         case YP_CASE_PARAMETER: {
           yp_token_t opening = not_provided(parser);
-          params = parse_block_parameters(parser, false, &opening);
+          params = parse_block_parameters(parser, false, &opening, true);
           break;
         }
         default: {
