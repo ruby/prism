@@ -4101,48 +4101,60 @@ lex_numeric_prefix(yp_parser_t *parser) {
 }
 
 static yp_token_type_t
+lex_finalize_numeric_type(yp_parser_t *parser, yp_token_type_t numeric_type, const char *numeric_end, const char *rational_end, const char *imaginary_end) {
+  if (rational_end || imaginary_end) {
+    lex_mode_push(parser, (yp_lex_mode_t) {
+        .mode = YP_LEX_NUMERIC,
+        .as.numeric.type = numeric_type,
+        .as.numeric.start = parser->current.start,
+        .as.numeric.end = numeric_end
+      });
+  }
+
+  if (rational_end && imaginary_end) {
+    lex_mode_push(parser, (yp_lex_mode_t) {
+        .mode = YP_LEX_NUMERIC,
+        .as.numeric.type = YP_TOKEN_RATIONAL_NUMBER,
+        .as.numeric.start = parser->current.start,
+        .as.numeric.end = rational_end
+      });
+  }
+
+  if (imaginary_end) {
+    return YP_TOKEN_IMAGINARY_NUMBER;
+  }
+
+  if (rational_end) {
+    return YP_TOKEN_RATIONAL_NUMBER;
+  }
+
+  return numeric_type;
+}
+
+static yp_token_type_t
 lex_numeric(yp_parser_t *parser) {
   yp_token_type_t type = YP_TOKEN_INTEGER;
 
   if (parser->current.end < parser->end) {
     type = lex_numeric_prefix(parser);
 
-    yp_token_type_t current = type;
     const char *end = parser->current.end;
+    const char *rational_end = NULL;
+    const char *imaginary_end = NULL;
 
     if (match(parser, 'r')) {
-      lex_mode_push(parser, (yp_lex_mode_t) {
-          .mode = YP_LEX_NUMERIC,
-          .as.numeric.type = current,
-          .as.numeric.start = parser->current.start,
-          .as.numeric.end = parser->current.end
-        });
-      type = YP_TOKEN_RATIONAL_NUMBER;
+      rational_end = parser->current.end;
     }
 
     if (match(parser, 'i')) {
-      if (type == YP_TOKEN_RATIONAL_NUMBER) {
-        lex_mode_push(parser, (yp_lex_mode_t) {
-            .mode = YP_LEX_NUMERIC,
-            .as.numeric.type = type,
-            .as.numeric.start = parser->current.start,
-            .as.numeric.end = parser->current.end
-          });
-      } else {
-        lex_mode_push(parser, (yp_lex_mode_t) {
-            .mode = YP_LEX_NUMERIC,
-            .as.numeric.type = current,
-            .as.numeric.start = parser->current.start,
-            .as.numeric.end = parser->current.end
-          });
-      }
-      type = YP_TOKEN_IMAGINARY_NUMBER;
+      imaginary_end = parser->current.end;
     }
 
     const unsigned char uc = (const unsigned char) peek(parser);
     if (uc != '\0' && (uc >= 0x80 || ((uc >= 'a' && uc <= 'z') || (uc >= 'A' && uc <= 'Z')) || uc == '_')) {
-      type = current;
       parser->current.end = end;
+    } else {
+      type = lex_finalize_numeric_type(parser, type, end, rational_end, imaginary_end);
     }
   }
 
@@ -6759,8 +6771,10 @@ token_begins_expression_p(yp_token_type_t type) {
     case YP_TOKEN_KEYWORD_DO:
     case YP_TOKEN_KEYWORD_DO_LOOP:
     case YP_TOKEN_KEYWORD_END:
+    case YP_TOKEN_KEYWORD_ELSE:
     case YP_TOKEN_KEYWORD_ELSIF:
     case YP_TOKEN_KEYWORD_THEN:
+    case YP_TOKEN_KEYWORD_RESCUE:
     case YP_TOKEN_KEYWORD_WHEN:
     case YP_TOKEN_NEWLINE:
     case YP_TOKEN_PARENTHESIS_RIGHT:
@@ -7526,7 +7540,8 @@ parse_parameters(
   yp_parser_t *parser,
   yp_binding_power_t binding_power,
   bool uses_parentheses,
-  bool allows_trailing_comma
+  bool allows_trailing_comma,
+  bool allows_forwarding_parameter
 ) {
   yp_parameters_node_t *params = yp_parameters_node_create(parser);
   bool looping = true;
@@ -7568,6 +7583,9 @@ parse_parameters(
         break;
       }
       case YP_TOKEN_UDOT_DOT_DOT: {
+        if (!allows_forwarding_parameter) {
+          yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected ...");
+        }
         if (order > YP_PARAMETERS_ORDER_NOTHING_AFTER) {
           update_parameter_state(parser, &parser->current, &order);
           parser_lex(parser);
@@ -7896,7 +7914,13 @@ parse_block_parameters(
 ) {
   yp_parameters_node_t *parameters = NULL;
   if (!match_type_p(parser, YP_TOKEN_SEMICOLON)) {
-    parameters = parse_parameters(parser, is_lambda_literal ? YP_BINDING_POWER_DEFINED : YP_BINDING_POWER_INDEX, false, allows_trailing_comma);
+    parameters = parse_parameters(
+      parser,
+      is_lambda_literal ? YP_BINDING_POWER_DEFINED : YP_BINDING_POWER_INDEX,
+      false,
+      allows_trailing_comma,
+      false
+    );
   }
 
   yp_block_parameters_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters, opening);
@@ -8328,12 +8352,13 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
 }
 
 // Parse an argument to undef which can either be a bare word, a
-// symbol, or an interpolated symbol.
+// symbol, a constant, or an interpolated symbol.
 static inline yp_node_t *
 parse_undef_argument(yp_parser_t *parser) {
   switch (parser->current.type) {
-    case YP_CASE_OPERATOR:
     case YP_CASE_KEYWORD:
+    case YP_CASE_OPERATOR:
+    case YP_TOKEN_CONSTANT:
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
 
@@ -10066,7 +10091,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           if (match_type_p(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
             params = NULL;
           } else {
-            params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, true, false);
+            params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, true, false, true);
           }
 
           lex_state_set(parser, YP_LEX_STATE_BEG);
@@ -10079,7 +10104,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         case YP_CASE_PARAMETER: {
           lparen = not_provided(parser);
           rparen = not_provided(parser);
-          params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, false, false);
+          params = parse_parameters(parser, YP_BINDING_POWER_DEFINED, false, false, true);
           break;
         }
         default: {

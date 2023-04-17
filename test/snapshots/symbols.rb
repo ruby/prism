@@ -128,8 +128,8 @@ ProgramNode(0...345)(
      ArrayNode(97...113)(
        [IntegerNode(98...99)(),
         FloatNode(101...104)(),
-        RationalNode(106...108)(IntegerNode(106...108)()),
-        ImaginaryNode(110...112)(IntegerNode(110...112)())],
+        RationalNode(106...108)(IntegerNode(106...107)()),
+        ImaginaryNode(110...112)(IntegerNode(110...111)())],
        BRACKET_LEFT_ARRAY(97...98)("["),
        BRACKET_RIGHT(112...113)("]")
      ),

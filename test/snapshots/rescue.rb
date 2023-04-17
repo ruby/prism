@@ -1,6 +1,6 @@
-ProgramNode(0...277)(
+ProgramNode(0...316)(
   ScopeNode(0...0)([IDENTIFIER(217...218)("a")]),
-  StatementsNode(0...277)(
+  StatementsNode(0...316)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -271,6 +271,59 @@ ProgramNode(0...277)(
        nil,
        (263...264),
        nil
+     ),
+     DefNode(293...316)(
+       IDENTIFIER(297...298)("a"),
+       nil,
+       nil,
+       BeginNode(0...316)(
+         nil,
+         StatementsNode(301...302)(
+           [CallNode(301...302)(
+              nil,
+              nil,
+              IDENTIFIER(301...302)("a"),
+              nil,
+              ArgumentsNode(303...305)(
+                [HashNode(303...305)(
+                   nil,
+                   [AssocNode(303...305)(
+                      SymbolNode(303...305)(
+                        nil,
+                        LABEL(303...304)("b"),
+                        LABEL_END(304...305)(":"),
+                        "b"
+                      ),
+                      nil,
+                      nil
+                    )],
+                   nil
+                 )]
+              ),
+              nil,
+              nil,
+              "a"
+            )]
+         ),
+         RescueNode(306...312)(
+           KEYWORD_RESCUE(306...312)("rescue"),
+           [],
+           nil,
+           nil,
+           nil,
+           nil
+         ),
+         nil,
+         nil,
+         KEYWORD_END(313...316)("end")
+       ),
+       ScopeNode(293...296)([]),
+       (293...296),
+       nil,
+       nil,
+       nil,
+       nil,
+       (313...316)
      )]
   )
 )
