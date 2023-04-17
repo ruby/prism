@@ -13,3 +13,5 @@ undef :a, :b, :c
 undef :'abc'
 
 undef :"abc#{1}"
+
+undef Constant

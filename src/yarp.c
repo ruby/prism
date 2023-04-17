@@ -8309,12 +8309,13 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
 }
 
 // Parse an argument to undef which can either be a bare word, a
-// symbol, or an interpolated symbol.
+// symbol, a constant, or an interpolated symbol.
 static inline yp_node_t *
 parse_undef_argument(yp_parser_t *parser) {
   switch (parser->current.type) {
-    case YP_CASE_OPERATOR:
     case YP_CASE_KEYWORD:
+    case YP_CASE_OPERATOR:
+    case YP_TOKEN_CONSTANT:
     case YP_TOKEN_IDENTIFIER: {
       parser_lex(parser);
 
