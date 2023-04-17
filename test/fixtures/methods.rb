@@ -156,3 +156,7 @@ end
 
 def bar(a = (1...))
 end
+
+def method(a)
+  item >> a {}
+end

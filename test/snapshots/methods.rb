@@ -1,6 +1,6 @@
-ProgramNode(0...1133)(
+ProgramNode(0...1167)(
   ScopeNode(0...0)([IDENTIFIER(275...276)("a"), IDENTIFIER(769...770)("c")]),
-  StatementsNode(0...1133)(
+  StatementsNode(0...1167)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -1370,6 +1370,64 @@ ProgramNode(0...1133)(
        (1128...1129),
        nil,
        (1130...1133)
+     ),
+     DefNode(1135...1167)(
+       IDENTIFIER(1139...1145)("method"),
+       nil,
+       ParametersNode(1146...1147)(
+         [RequiredParameterNode(1146...1147)()],
+         [],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       StatementsNode(1151...1163)(
+         [CallNode(1151...1163)(
+            CallNode(1151...1155)(
+              nil,
+              nil,
+              IDENTIFIER(1151...1155)("item"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "item"
+            ),
+            nil,
+            GREATER_GREATER(1156...1158)(">>"),
+            nil,
+            ArgumentsNode(1159...1163)(
+              [CallNode(1159...1163)(
+                 nil,
+                 nil,
+                 IDENTIFIER(1159...1160)("a"),
+                 nil,
+                 nil,
+                 nil,
+                 BlockNode(1161...1163)(
+                   ScopeNode(1161...1162)([]),
+                   nil,
+                   nil,
+                   (1161...1162),
+                   (1162...1163)
+                 ),
+                 "a"
+               )]
+            ),
+            nil,
+            nil,
+            ">>"
+          )]
+       ),
+       ScopeNode(1135...1138)([IDENTIFIER(1146...1147)("a")]),
+       (1135...1138),
+       nil,
+       (1145...1146),
+       (1147...1148),
+       nil,
+       (1164...1167)
      )]
   )
 )
