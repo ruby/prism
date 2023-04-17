@@ -3476,6 +3476,24 @@ match(yp_parser_t *parser, char value) {
   return false;
 }
 
+// If the characters to be read match the given string, then return true.
+// Does not advance the current pointer.
+static inline bool
+peek_string(yp_parser_t *parser, const char *value) {
+  const char *source_ptr = parser->current.end;
+  const char *value_ptr = value;
+
+  while (*value_ptr != '\0') {
+    if (*source_ptr != *value_ptr || source_ptr >= parser->end) {
+      return false;
+    }
+    source_ptr++;
+    value_ptr++;
+  }
+
+  return true;
+}
+
 // Returns the incrementor character that should be used to increment the
 // nesting count if one is possible.
 static inline char
@@ -4544,6 +4562,12 @@ lex_question_mark(yp_parser_t *parser) {
   if (parser->current.start[1] == '\\') {
     parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, true, &parser->error_list);
   } else {
+    // There is a case in Ruby where empty??true:false is lexed as a ternary
+    // This is an explicit check for all variations of that case (true, false, nil)
+    if (peek_string(parser, "true") || peek_string(parser, "false") || peek_string(parser, "nil")) {
+      lex_state_set(parser, YP_LEX_STATE_BEG);
+      return YP_TOKEN_QUESTION_MARK;
+    }
     parser->current.end += parser->encoding.char_width(parser->current.end);
   }
 
