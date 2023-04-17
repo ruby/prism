@@ -4560,15 +4560,24 @@ lex_question_mark(yp_parser_t *parser) {
     return YP_TOKEN_QUESTION_MARK;
   }
 
-  lex_state_set(parser, YP_LEX_STATE_END);
+  lex_state_set(parser, YP_LEX_STATE_BEG);
 
   if (parser->current.start[1] == '\\') {
+    lex_state_set(parser, YP_LEX_STATE_END);
     parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, true, &parser->error_list);
+    return YP_TOKEN_CHARACTER_LITERAL;
   } else {
-    parser->current.end += parser->encoding.char_width(parser->current.end);
+    // There is a case in Ruby where empty??true:false is lexed as a ternary
+    // This is an explicit check for all variations of that case (true, false, nil)
+    int encoding_width = parser->encoding.char_width(parser->current.end);
+    if (!parser->encoding.alnum_char(&(parser->current.end + encoding_width)[0])) {
+      lex_state_set(parser, YP_LEX_STATE_END);
+      parser->current.end += encoding_width;
+      return YP_TOKEN_CHARACTER_LITERAL;
+    }
   }
 
-  return YP_TOKEN_CHARACTER_LITERAL;
+  return YP_TOKEN_QUESTION_MARK;
 }
 
 // Lex a variable that starts with an @ sign (either an instance or class
