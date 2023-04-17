@@ -9782,6 +9782,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       begin_node->base.location.end = parser->previous.end;
       yp_begin_node_end_keyword_set(begin_node, &parser->previous);
 
+      if ((begin_node->else_clause != NULL) && (begin_node->rescue_clause == NULL)) {
+        yp_diagnostic_list_append(
+          &parser->error_list,
+          begin_node->else_clause->base.location.start,
+          begin_node->else_clause->base.location.end,
+          "else without rescue is useless"
+        );
+      }
+
       return (yp_node_t *) begin_node;
     }
     case YP_TOKEN_KEYWORD_BEGIN_UPCASE: {
