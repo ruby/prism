@@ -8604,8 +8604,12 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
     if (accept(parser, YP_TOKEN_BRACKET_LEFT)) {
       opening = parser->previous;
 
+      accept(parser, YP_TOKEN_NEWLINE);
+
       if (!accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
         inner = parse_pattern(parser, true, "Expected a pattern expression after the [ operator.");
+        accept(parser, YP_TOKEN_NEWLINE);
+
         expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a ] to close the pattern expression.");
       }
 
@@ -8794,6 +8798,8 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
       // Otherwise, we'll parse the inner pattern, then deal with it depending
       // on the type it returns.
       yp_node_t *inner = parse_pattern(parser, true, "Expected a pattern expression after the [ operator.");
+
+      accept(parser, YP_TOKEN_NEWLINE);
 
       expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a ] to close the pattern expression.");
       yp_token_t closing = parser->previous;
