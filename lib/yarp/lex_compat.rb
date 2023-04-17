@@ -656,7 +656,13 @@ module YARP
             state = :heredoc_closed
           end
         when :heredoc_closed
-          if %i[on_nl on_ignored_nl on_comment].include?(event) || (event == :on_tstring_content && value.end_with?("\n"))
+          if event == :on_heredoc_beg
+            tokens << token
+            state = :heredoc_opened
+            heredoc_stack.last << Heredoc.build(token)
+          elsif heredoc_stack.size > 1
+            heredoc_stack[-2].last << token
+          else
             if heredoc_stack.size > 1
               flushing = heredoc_stack.pop
               heredoc_stack.last.last << token
@@ -678,19 +684,16 @@ module YARP
               heredoc_stack.last.clear
               state = :default
             end
-          elsif event == :on_heredoc_beg
-            tokens << token
-            state = :heredoc_opened
-            heredoc_stack.last << Heredoc.build(token)
-          elsif heredoc_stack.size > 1
-            heredoc_stack[-2].last << token
-          else
-            tokens << token
           end
         end
       end
 
-      ParseResult.new(tokens[0...-1], result.comments, result.errors, result.warnings)
+      tokens.reject! { |t| t.event == :on_eof }
+
+      # We sort by location to compare against Ripper's output
+      tokens.sort_by!(&:location)
+
+      ParseResult.new(tokens, result.comments, result.errors, result.warnings)
     end
 
     private
