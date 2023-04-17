@@ -20,3 +20,8 @@ then bar
 end
 
 a if b if c
+
+if true
+  a b:
+else
+end

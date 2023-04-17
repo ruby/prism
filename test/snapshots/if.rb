@@ -1,6 +1,6 @@
-ProgramNode(0...234)(
+ProgramNode(0...247)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...234)(
+  StatementsNode(0...247)(
     [IfNode(0...10)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
@@ -163,6 +163,43 @@ ProgramNode(0...234)(
        ),
        nil,
        nil
+     ),
+     IfNode(236...247)(
+       KEYWORD_IF(236...238)("if"),
+       TrueNode(239...243)(),
+       StatementsNode(246...247)(
+         [CallNode(246...247)(
+            nil,
+            nil,
+            IDENTIFIER(246...247)("a"),
+            nil,
+            ArgumentsNode(248...250)(
+              [HashNode(248...250)(
+                 nil,
+                 [AssocNode(248...250)(
+                    SymbolNode(248...250)(
+                      nil,
+                      LABEL(248...249)("b"),
+                      LABEL_END(249...250)(":"),
+                      "b"
+                    ),
+                    nil,
+                    nil
+                  )],
+                 nil
+               )]
+            ),
+            nil,
+            nil,
+            "a"
+          )]
+       ),
+       ElseNode(251...259)(
+         KEYWORD_ELSE(251...255)("else"),
+         StatementsNode(0...0)([]),
+         KEYWORD_END(256...259)("end")
+       ),
+       KEYWORD_END(256...259)("end")
      )]
   )
 )
