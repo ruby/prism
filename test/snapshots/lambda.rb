@@ -1,6 +1,6 @@
-ProgramNode(0...30)(
+ProgramNode(0...48)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...30)(
+  StatementsNode(0...48)(
     [LambdaNode(0...11)(
        ScopeNode(0...2)([IDENTIFIER(6...9)("foo")]),
        MINUS_GREATER(0...2)("->"),
@@ -64,6 +64,46 @@ ProgramNode(0...30)(
          [],
          (18...19),
          (29...30)
+       ),
+       nil
+     ),
+     LambdaNode(36...48)(
+       ScopeNode(36...38)([LABEL(39...40)("a")]),
+       MINUS_GREATER(36...38)("->"),
+       BlockParametersNode(38...48)(
+         ParametersNode(39...47)(
+           [],
+           [],
+           [],
+           nil,
+           [KeywordParameterNode(39...47)(
+              LABEL(39...41)("a:"),
+              CallNode(42...47)(
+                CallNode(42...43)(
+                  nil,
+                  nil,
+                  IDENTIFIER(42...43)("b"),
+                  nil,
+                  nil,
+                  nil,
+                  nil,
+                  "b"
+                ),
+                nil,
+                STAR(44...45)("*"),
+                nil,
+                ArgumentsNode(46...47)([IntegerNode(46...47)()]),
+                nil,
+                nil,
+                "*"
+              )
+            )],
+           nil,
+           nil
+         ),
+         [],
+         (38...39),
+         (47...48)
        ),
        nil
      )]
