@@ -3403,6 +3403,15 @@ token_is_numbered_parameter(yp_token_t *token) {
     (yp_char_is_decimal_digit(token->start[1]));
 }
 
+static inline bool
+token_is_setter_name(yp_token_t *token) {
+  return (
+    (token->type == YP_TOKEN_IDENTIFIER) &&
+    (token->end - token->start >= 2) &&
+    (token->end[-1] == '=')
+  );
+}
+
 /******************************************************************************/
 /* Stack helpers                                                              */
 /******************************************************************************/
@@ -10070,6 +10079,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_token_t end_keyword;
 
       if (accept(parser, YP_TOKEN_EQUAL)) {
+        if (token_is_setter_name(&name)) {
+          yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "Setter method cannot be defined in an endless method definition");
+        }
         equal = parser->previous;
 
         context_push(parser, YP_CONTEXT_DEF);

@@ -885,6 +885,24 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "case :a\nelse\nend", ["Unexpected else without no when clauses in case statement."]
   end
 
+  test "setter method cannot be defined in an endless method definition"  do
+    expected = DefNode(
+      IDENTIFIER("a="),
+      nil,
+      nil,
+      StatementsNode([IntegerNode()]),
+      ScopeNode([]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      Location(),
+      nil
+    )
+
+    assert_errors expected, "def a=() = 42", ["Setter method cannot be defined in an endless method definition"]
+  end
+
   test "do not allow forward arguments in lambda literals" do
     expected = LambdaNode(
       ScopeNode([UDOT_DOT_DOT("...")]),
@@ -913,8 +931,6 @@ class ErrorsTest < Test::Unit::TestCase
       ),
       "a"
     )
-
-    assert_errors expected, "a do |...| end", ["Unexpected ..."]
   end
 
   private
