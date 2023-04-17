@@ -9820,8 +9820,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
           return (yp_node_t *) yp_break_node_create(parser, &keyword, arguments);
         case YP_TOKEN_KEYWORD_NEXT:
           return (yp_node_t *) yp_next_node_create(parser, &keyword, arguments);
-        case YP_TOKEN_KEYWORD_RETURN:
+        case YP_TOKEN_KEYWORD_RETURN: {
+          if (
+            (parser->current_context->context == YP_CONTEXT_CLASS) ||
+            (parser->current_context->context == YP_CONTEXT_MODULE)
+          ) {
+            yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid return in class/module body");
+          }
           return (yp_node_t *) yp_return_node_create(parser, &keyword, arguments);
+        }
         default:
           assert(false && "unreachable");
           return (yp_node_t *) yp_missing_node_create(parser, parser->previous.start, parser->previous.end);
@@ -9912,6 +9919,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       }
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
+
+      if (context_def_p(parser)) {
+        yp_diagnostic_list_append(&parser->error_list, class_keyword.start, class_keyword.end, "Class definition in method body");
+      }
 
       yp_scope_node_t *scope = parser->current_scope->node;
       yp_parser_scope_pop(parser);
