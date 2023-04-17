@@ -1,10 +1,10 @@
-ProgramNode(0...3655)(
+ProgramNode(0...3667)(
   ScopeNode(0...0)(
     [IDENTIFIER(7...10)("bar"),
      IDENTIFIER(1195...1198)("baz"),
      IDENTIFIER(1245...1248)("qux")]
   ),
-  StatementsNode(0...3655)(
+  StatementsNode(0...3667)(
     [MatchRequiredNode(0...10)(
        CallNode(0...3)(
          nil,
@@ -3878,6 +3878,33 @@ ProgramNode(0...3655)(
        nil,
        (3616...3620),
        (3652...3655)
+     ),
+     IfNode(3657...3667)(
+       KEYWORD_IF(3657...3659)("if"),
+       MatchPredicateNode(3660...3667)(
+         CallNode(3660...3661)(
+           nil,
+           nil,
+           IDENTIFIER(3660...3661)("a"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "a"
+         ),
+         ArrayPatternNode(3665...3667)(
+           nil,
+           [],
+           nil,
+           [],
+           (3665...3666),
+           (3666...3667)
+         ),
+         (3662...3664)
+       ),
+       nil,
+       nil,
+       KEYWORD_END(3668...3671)("end")
      )]
   )
 )

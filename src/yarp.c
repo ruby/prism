@@ -7983,7 +7983,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   yp_token_t keyword = parser->previous;
 
   context_push(parser, YP_CONTEXT_PREDICATE);
-  yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the conditional.");
+  yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_MODIFIER, "Expected to find a predicate for the conditional.");
 
   // Predicates are closed by a term, a "then", or a term and then a "then".
   accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
