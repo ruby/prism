@@ -1,10 +1,12 @@
-ProgramNode(0...3667)(
+ProgramNode(0...3725)(
   ScopeNode(0...0)(
     [IDENTIFIER(7...10)("bar"),
      IDENTIFIER(1195...1198)("baz"),
-     IDENTIFIER(1245...1248)("qux")]
+     IDENTIFIER(1245...1248)("qux"),
+     IDENTIFIER(3682...3683)("b"),
+     IDENTIFIER(3718...3719)("a")]
   ),
-  StatementsNode(0...3667)(
+  StatementsNode(0...3725)(
     [MatchRequiredNode(0...10)(
        CallNode(0...3)(
          nil,
@@ -3905,6 +3907,76 @@ ProgramNode(0...3667)(
        nil,
        nil,
        KEYWORD_END(3668...3671)("end")
+     ),
+     MatchRequiredNode(3673...3685)(
+       CallNode(3673...3674)(
+         nil,
+         nil,
+         IDENTIFIER(3673...3674)("a"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a"
+       ),
+       ArrayPatternNode(3678...3685)(
+         nil,
+         [LocalVariableWriteNode(3682...3683)((3682...3683), nil, nil, 0)],
+         nil,
+         [],
+         (3678...3679),
+         (3684...3685)
+       ),
+       (3675...3677)
+     ),
+     MatchPredicateNode(3687...3725)(
+       CallNode(3687...3690)(
+         nil,
+         nil,
+         IDENTIFIER(3687...3690)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       HashPatternNode(3694...3725)(
+         ConstantReadNode(3694...3695)(),
+         [AssocNode(3699...3723)(
+            SymbolNode(3699...3703)(
+              nil,
+              LABEL(3699...3702)("bar"),
+              LABEL_END(3702...3703)(":"),
+              "bar"
+            ),
+            HashPatternNode(3704...3723)(
+              ConstantReadNode(3704...3705)(),
+              [AssocNode(3711...3719)(
+                 SymbolNode(3711...3717)(
+                   nil,
+                   LABEL(3711...3716)("value"),
+                   LABEL_END(3716...3717)(":"),
+                   "value"
+                 ),
+                 LocalVariableWriteNode(3718...3719)(
+                   (3718...3719),
+                   nil,
+                   nil,
+                   0
+                 ),
+                 nil
+               )],
+              nil,
+              (3705...3706),
+              (3722...3723)
+            ),
+            nil
+          )],
+         nil,
+         (3695...3696),
+         (3724...3725)
+       ),
+       (3691...3693)
      )]
   )
 )
