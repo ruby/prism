@@ -120,8 +120,8 @@ public class Loader {
             case <%= index + 1 %>:
                 return new Nodes.<%= node.name %>(<%= (node.params.map { |param|
                     case param
-                    when NodeParam then "loadNode()"
-                    when OptionalNodeParam then "loadOptionalNode()"
+                    when NodeParam then "#{param.java_cast}loadNode()"
+                    when OptionalNodeParam then "#{param.java_cast}loadOptionalNode()"
                     when StringParam then "loadString()"
                     when NodeListParam then "loadNodes()"
                     when TokenParam then "loadToken()"

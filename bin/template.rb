@@ -12,12 +12,22 @@ class Param
   end
 end
 
-module CTypes
+module KindTypes
   def c_type
     if options[:kind]
       "yp_#{options[:kind].gsub(/(?<=.)[A-Z]/, "_\\0").downcase}"
     else
       "yp_node"
+    end
+  end
+
+  def java_type = options[:kind] || "Node"
+
+  def java_cast
+    if options[:kind]
+      "(Nodes.#{options[:kind]}) "
+    else
+      ""
     end
   end
 end
@@ -26,19 +36,17 @@ end
 # This represents a parameter to a node that is itself a node. We pass them as
 # references and store them as references.
 class NodeParam < Param
-  include CTypes
+  include KindTypes
   
   def rbs_class = "Node"
-  def java_type = "Node"
 end
 
 # This represents a parameter to a node that is itself a node and can be
 # optionally null. We pass them as references and store them as references.
 class OptionalNodeParam < Param
-  include CTypes
+  include KindTypes
   
   def rbs_class = "Node?"
-  def java_type = "Node"
 end
 
 SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
