@@ -538,7 +538,7 @@ module YARP
 
     def initialize(source, filepath = "")
       @source = source
-      @filepath = filepath
+      @filepath = filepath || ""
       @offsets = find_offsets(source)
     end
 
