@@ -6308,10 +6308,10 @@ parser_lex(yp_parser_t *parser) {
 
           if (matched) {
             if (*parser->lex_modes.current->as.heredoc.next_start == '\\') {
-		parser->next_start = NULL;
+	      parser->next_start = NULL;
             } else {
-		parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-		parser->heredoc_end = parser->current.end;
+	      parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+	      parser->heredoc_end = parser->current.end;
             }
 
 

@@ -1,6 +1,6 @@
-ProgramNode(7...396)(
+ProgramNode(7...383)(
   ScopeNode(0...0)([]),
-  StatementsNode(7...396)(
+  StatementsNode(7...383)(
     [InterpolatedStringNode(7...11)(
        HEREDOC_START(0...6)("<<~EOF"),
        [StringNode(7...11)(nil, STRING_CONTENT(7...11)("  a\n"), nil, "a\n")],
@@ -150,74 +150,72 @@ ProgramNode(7...396)(
         )],
        HEREDOC_END(271...275)("EOF\n")
      ),
-     InterpolatedStringNode(283...293)(
+     InterpolatedStringNode(283...292)(
        HEREDOC_START(276...282)("<<~EOF"),
-       [StringNode(283...293)(
+       [StringNode(283...292)(
           nil,
-          STRING_CONTENT(283...293)("  a\n" + " \n" + "  b\n"),
+          STRING_CONTENT(283...292)("  a\n" + "\n" + "  b\n"),
           nil,
           "a\n" + "\n" + "b\n"
         )],
-       HEREDOC_END(293...297)("EOF\n")
+       HEREDOC_END(292...296)("EOF\n")
      ),
-     InterpolatedStringNode(305...318)(
-       HEREDOC_START(298...304)("<<~EOF"),
-       [StringNode(305...318)(
+     InterpolatedStringNode(304...313)(
+       HEREDOC_START(297...303)("<<~EOF"),
+       [StringNode(304...313)(
           nil,
-          STRING_CONTENT(305...318)("  a\n" + "    \n" + "  b\n"),
+          STRING_CONTENT(304...313)("  a\n" + "\n" + "  b\n"),
           nil,
-          "a\n" + "  \n" + "b\n"
+          "a\n" + "\n" + "b\n"
         )],
-       HEREDOC_END(318...322)("EOF\n")
+       HEREDOC_END(313...317)("EOF\n")
      ),
-     InterpolatedStringNode(330...349)(
-       HEREDOC_START(323...329)("<<~EOF"),
-       [StringNode(330...349)(
+     InterpolatedStringNode(325...336)(
+       HEREDOC_START(318...324)("<<~EOF"),
+       [StringNode(325...336)(
           nil,
-          STRING_CONTENT(330...349)(
-            "  a\n" + "    \n" + "\n" + "    \n" + "  b\n"
-          ),
+          STRING_CONTENT(325...336)("  a\n" + "\n" + "\n" + "\n" + "  b\n"),
           nil,
-          "a\n" + "  \n" + "\n" + "  \n" + "b\n"
+          "a\n" + "\n" + "\n" + "\n" + "b\n"
         )],
-       HEREDOC_END(349...353)("EOF\n")
+       HEREDOC_END(336...340)("EOF\n")
      ),
-     InterpolatedStringNode(361...370)(
-       HEREDOC_START(354...360)("<<~EOF"),
-       [StringNode(361...364)(
+     InterpolatedStringNode(348...357)(
+       HEREDOC_START(341...347)("<<~EOF"),
+       [StringNode(348...351)(
           nil,
-          STRING_CONTENT(361...364)("\n" + "  "),
+          STRING_CONTENT(348...351)("\n" + "  "),
           nil,
           "\n"
         ),
-        StringInterpolatedNode(364...368)(
-          EMBEXPR_BEGIN(364...366)("\#{"),
-          StatementsNode(366...367)([IntegerNode(366...367)()]),
-          EMBEXPR_END(367...368)("}")
+        StringInterpolatedNode(351...355)(
+          EMBEXPR_BEGIN(351...353)("\#{"),
+          StatementsNode(353...354)([IntegerNode(353...354)()]),
+          EMBEXPR_END(354...355)("}")
         ),
-        StringNode(368...370)(
+        StringNode(355...357)(
           nil,
-          STRING_CONTENT(368...370)("a\n"),
+          STRING_CONTENT(355...357)("a\n"),
           nil,
           "a\n"
         )],
-       HEREDOC_END(370...378)("    EOF\n")
+       HEREDOC_END(357...365)("    EOF\n")
      ),
-     InterpolatedStringNode(386...396)(
-       HEREDOC_START(379...385)("<<~EOT"),
-       [StringNode(386...388)(nil, STRING_CONTENT(386...388)("  "), nil, ""),
-        StringInterpolatedNode(388...392)(
-          EMBEXPR_BEGIN(388...390)("\#{"),
-          StatementsNode(390...391)([IntegerNode(390...391)()]),
-          EMBEXPR_END(391...392)("}")
+     InterpolatedStringNode(373...383)(
+       HEREDOC_START(366...372)("<<~EOT"),
+       [StringNode(373...375)(nil, STRING_CONTENT(373...375)("  "), nil, ""),
+        StringInterpolatedNode(375...379)(
+          EMBEXPR_BEGIN(375...377)("\#{"),
+          StatementsNode(377...378)([IntegerNode(377...378)()]),
+          EMBEXPR_END(378...379)("}")
         ),
-        StringNode(392...396)(
+        StringNode(379...383)(
           nil,
-          STRING_CONTENT(392...396)("\n" + "\tb\n"),
+          STRING_CONTENT(379...383)("\n" + "\tb\n"),
           nil,
           "\n" + "\tb\n"
         )],
-       HEREDOC_END(396...400)("EOT\n")
+       HEREDOC_END(383...387)("EOT\n")
      )]
   )
 )

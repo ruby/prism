@@ -656,13 +656,7 @@ module YARP
             state = :heredoc_closed
           end
         when :heredoc_closed
-          if event == :on_heredoc_beg
-            tokens << token
-            state = :heredoc_opened
-            heredoc_stack.last << Heredoc.build(token)
-          elsif heredoc_stack.size > 1
-            heredoc_stack[-2].last << token
-          else
+          if %i[on_nl on_ignored_nl on_comment].include?(event) || (event == :on_tstring_content && value.end_with?("\n"))
             if heredoc_stack.size > 1
               flushing = heredoc_stack.pop
               heredoc_stack.last.last << token
@@ -674,17 +668,26 @@ module YARP
               end
 
               state = :heredoc_opened
-            else
-              tokens << token
-
-              heredoc_stack.last.each do |heredoc|
-                tokens.concat(heredoc.to_a)
-              end
-
-              heredoc_stack.last.clear
-              state = :default
+              next
             end
+          elsif event == :on_heredoc_beg
+            tokens << token
+            state = :heredoc_opened
+            heredoc_stack.last << Heredoc.build(token)
+            next
+          elsif heredoc_stack.size > 1
+            heredoc_stack[-2].last << token
+            next
           end
+
+          heredoc_stack.last.each do |heredoc|
+            tokens.concat(heredoc.to_a)
+          end
+
+          heredoc_stack.last.clear
+          state = :default
+
+          tokens << token
         end
       end
 
