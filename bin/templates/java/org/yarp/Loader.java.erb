@@ -85,7 +85,8 @@ public class Loader {
     private Nodes.Token loadToken() {
         int type = buffer.get() & 0xFF;
         int startOffset = buffer.getInt();
-        int endOffset = buffer.getInt();
+        int length = buffer.getInt();
+        int endOffset = startOffset + length;
 
         final Nodes.TokenType tokenType = Nodes.TOKEN_TYPES[type];
         return new Nodes.Token(tokenType, startOffset, endOffset);
@@ -93,7 +94,8 @@ public class Loader {
 
     private Nodes.Location loadLocation() {
         int startOffset = buffer.getInt();
-        int endOffset = buffer.getInt();
+        int length = buffer.getInt();
+        int endOffset = startOffset + length;
         return new Nodes.Location(startOffset, endOffset);
     }
 
@@ -112,7 +114,8 @@ public class Loader {
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         int startOffset = buffer.getInt();
-        int endOffset = buffer.getInt();
+        int length = buffer.getInt();
+        int endOffset = startOffset + length;
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
