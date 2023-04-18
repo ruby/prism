@@ -30,7 +30,7 @@ yarp_value = yarp.value
 
   color = left == right ? "38;5;102" : "1;31"
 
-  if !ENV["QUIET"] || (left != right)
+  if ENV["VERBOSE"] || (left != right)
     puts "\033[#{color}m#{pattern}\033[0m" % [left.inspect, right.inspect]
   end
 end
