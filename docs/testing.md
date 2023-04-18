@@ -31,8 +31,20 @@ As you are working, you will likely want to test your code locally. `test.rb` is
 $ bin/lex test.rb
 ```
 
+`bin/lex` can also be used with `-e` and then source code, like this:
+
+```
+$ bin/lex -e "1 + 2"
+```
+
 2. **bin/parse** takes a filepath and outputs YARP's parsed node structure generated from reading the file.
 
 ```
 $ bin/parse test.rb
+```
+
+`bin/parse` can also be used with `-e` and then source code, like this:
+
+```
+$ bin/parse -e "1 + 2"
 ```
