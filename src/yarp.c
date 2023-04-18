@@ -490,6 +490,7 @@ yp_array_node_size(yp_array_node_t *node) {
 static inline void
 yp_array_node_elements_append(yp_array_node_t *node, yp_node_t *element) {
   yp_node_list_append2(&node->elements, element);
+  node->base.location.end = element->location.end;
 }
 
 // Set the closing token and end location of an array node.
