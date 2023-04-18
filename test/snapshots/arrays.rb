@@ -18,7 +18,7 @@ ProgramNode(0...502)(
        BRACKET_LEFT_ARRAY(0...1)("["),
        BRACKET_RIGHT(3...4)("]")
      ),
-     CallNode(6...0)(
+     CallNode(6...29)(
        CallNode(6...9)(
          nil,
          nil,
@@ -32,7 +32,7 @@ ProgramNode(0...502)(
        nil,
        BRACKET_LEFT_RIGHT_EQUAL(9...10)("["),
        BRACKET_LEFT(9...10)("["),
-       ArgumentsNode(10...0)(
+       ArgumentsNode(10...29)(
          [CallNode(10...13)(
             nil,
             nil,
@@ -53,7 +53,7 @@ ProgramNode(0...502)(
             nil,
             "baz"
           ),
-          ArrayNode(0...0)(
+          ArrayNode(0...29)(
             [IntegerNode(22...23)(),
              IntegerNode(25...26)(),
              IntegerNode(28...29)()],
@@ -392,7 +392,7 @@ ProgramNode(0...502)(
        nil,
        "[]="
      ),
-     MultiWriteNode(191...0)(
+     MultiWriteNode(191...212)(
        [CallNode(191...197)(
           CallNode(191...194)(
             nil,
@@ -432,7 +432,7 @@ ProgramNode(0...502)(
           "[]="
         )],
        EQUAL(206...207)("="),
-       ArrayNode(0...0)(
+       ArrayNode(0...212)(
          [IntegerNode(208...209)(), IntegerNode(211...212)()],
          nil,
          nil
