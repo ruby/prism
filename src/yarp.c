@@ -6307,14 +6307,18 @@ parser_lex(yp_parser_t *parser) {
         }
 
         if (strncmp(start, ident_start, ident_length) == 0) {
-          bool matched = false;
+          bool matched = true;
+          bool at_end = false;
 
           if (start[ident_length] == '\n') {
             parser->current.end = start + ident_length + 1;
-            matched = true;
           } else if ((start[ident_length] == '\r') && (start[ident_length + 1] == '\n')) {
             parser->current.end = start + ident_length + 2;
-            matched = true;
+          } else if (parser->end == (start + ident_length)) {
+            parser->current.end = start + ident_length;
+            at_end = true;
+          } else {
+            matched = false;
           }
 
           if (matched) {
@@ -6327,7 +6331,9 @@ parser_lex(yp_parser_t *parser) {
 
 
             lex_mode_pop(parser);
-            lex_state_set(parser, YP_LEX_STATE_END);
+            if (!at_end) {
+	      lex_state_set(parser, YP_LEX_STATE_END);
+            }
             LEX(YP_TOKEN_HEREDOC_END);
           }
         }
@@ -9555,6 +9561,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         }
       }
 
+      lex_state_set(parser, YP_LEX_STATE_END);
       expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
       if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
         assert(node->type == YP_NODE_INTERPOLATED_X_STRING_NODE);
