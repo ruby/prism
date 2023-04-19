@@ -8066,7 +8066,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   if (context == YP_CONTEXT_IF) {
     while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
       yp_token_t elsif_keyword = parser->previous;
-      yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
+      yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_MODIFIER, "Expected to find a predicate for the elsif clause.");
 
       // Predicates are closed by a term, a "then", or a term and then a "then".
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
