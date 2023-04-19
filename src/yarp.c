@@ -9644,7 +9644,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         predicate = NULL;
       } else {
         predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
-        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+        while (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {

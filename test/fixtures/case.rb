@@ -24,3 +24,7 @@ else
   # empty
 end
 
+case type;
+  ;when :b;
+  ;  else;
+   end
