@@ -11,3 +11,8 @@ module A
 module ::A
 end
 
+module A[]::B
+end
+
+module A[1]::B
+end

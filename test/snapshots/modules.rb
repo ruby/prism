@@ -1,6 +1,6 @@
-ProgramNode(0...101)(
+ProgramNode(0...140)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...101)(
+  StatementsNode(0...140)(
     [ModuleNode(0...18)(
        ScopeNode(0...6)([IDENTIFIER(9...10)("a")]),
        KEYWORD_MODULE(0...6)("module"),
@@ -96,6 +96,46 @@ ProgramNode(0...101)(
        ConstantPathNode(94...97)(nil, ConstantReadNode(96...97)(), (94...96)),
        nil,
        KEYWORD_END(98...101)("end")
+     ),
+     ModuleNode(103...120)(
+       ScopeNode(103...109)([]),
+       KEYWORD_MODULE(103...109)("module"),
+       ConstantPathNode(110...116)(
+         CallNode(110...113)(
+           ConstantReadNode(110...111)(),
+           nil,
+           BRACKET_LEFT_RIGHT(111...112)("["),
+           BRACKET_LEFT(111...112)("["),
+           nil,
+           BRACKET_RIGHT(112...113)("]"),
+           nil,
+           "[]"
+         ),
+         ConstantReadNode(115...116)(),
+         (113...115)
+       ),
+       nil,
+       KEYWORD_END(117...120)("end")
+     ),
+     ModuleNode(122...140)(
+       ScopeNode(122...128)([]),
+       KEYWORD_MODULE(122...128)("module"),
+       ConstantPathNode(129...136)(
+         CallNode(129...133)(
+           ConstantReadNode(129...130)(),
+           nil,
+           BRACKET_LEFT_RIGHT(130...131)("["),
+           BRACKET_LEFT(130...131)("["),
+           ArgumentsNode(131...132)([IntegerNode(131...132)()]),
+           BRACKET_RIGHT(132...133)("]"),
+           nil,
+           "[]"
+         ),
+         ConstantReadNode(135...136)(),
+         (133...135)
+       ),
+       nil,
+       KEYWORD_END(137...140)("end")
      )]
   )
 )

@@ -30,3 +30,6 @@ class << self
 end
 
 class << self;1 + 2;end
+
+class A < B[1]
+end
