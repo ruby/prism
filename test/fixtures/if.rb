@@ -25,3 +25,7 @@ if true
   a b:
 else
 end
+
+if type in 1
+elsif type in B
+end

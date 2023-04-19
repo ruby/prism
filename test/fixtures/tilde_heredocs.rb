@@ -62,21 +62,21 @@ EOF
 
 <<~EOF
   a
- 
+
   b
 EOF
 
 <<~EOF
   a
-    
+
   b
 EOF
 
 <<~EOF
   a
-    
 
-    
+
+
   b
 EOF
 

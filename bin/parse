@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-$:.unshift(File.expand_path("../lib", __dir__))
-require "yarp"
-
 # Usage:
 #   bin/parse <filename>
 #   bin/parse -e "<source-code>"
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
 
 if ARGV[0] == "-e"
   pp YARP.parse(ARGV[1])

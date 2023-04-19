@@ -1,7 +1,7 @@
-ProgramNode(0...0)(
+ProgramNode(0...14)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
-  StatementsNode(0...0)(
-    [MultiWriteNode(0...0)(
+  StatementsNode(0...14)(
+    [MultiWriteNode(0...14)(
        [LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
         ConstantPathWriteNode(3...7)(
           ConstantPathNode(3...7)(
@@ -22,7 +22,7 @@ ProgramNode(0...0)(
           nil
         )],
        EQUAL(8...9)("="),
-       ArrayNode(0...0)(
+       ArrayNode(0...14)(
          [IntegerNode(10...11)(), IntegerNode(13...14)()],
          nil,
          nil

@@ -430,7 +430,7 @@ ProgramNode(0...1187)(
        nil,
        "b"
      ),
-     MultiWriteNode(173...0)(
+     MultiWriteNode(173...196)(
        [CallNode(173...180)(
           CallNode(173...176)(
             nil,
@@ -470,7 +470,7 @@ ProgramNode(0...1187)(
           "bar="
         )],
        EQUAL(190...191)("="),
-       ArrayNode(0...0)(
+       ArrayNode(0...196)(
          [IntegerNode(192...193)(), IntegerNode(195...196)()],
          nil,
          nil

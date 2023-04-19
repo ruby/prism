@@ -490,6 +490,7 @@ yp_array_node_size(yp_array_node_t *node) {
 static inline void
 yp_array_node_elements_append(yp_array_node_t *node, yp_node_t *element) {
   yp_node_list_append2(&node->elements, element);
+  node->base.location.end = element->location.end;
 }
 
 // Set the closing token and end location of an array node.
@@ -6307,8 +6308,13 @@ parser_lex(yp_parser_t *parser) {
           }
 
           if (matched) {
-            parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-            parser->heredoc_end = parser->current.end;
+            if (*parser->lex_modes.current->as.heredoc.next_start == '\\') {
+	      parser->next_start = NULL;
+            } else {
+	      parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+	      parser->heredoc_end = parser->current.end;
+            }
+
 
             lex_mode_pop(parser);
             lex_state_set(parser, YP_LEX_STATE_END);
@@ -8060,7 +8066,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
   if (context == YP_CONTEXT_IF) {
     while (accept(parser, YP_TOKEN_KEYWORD_ELSIF)) {
       yp_token_t elsif_keyword = parser->previous;
-      yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected to find a predicate for the elsif clause.");
+      yp_node_t *predicate = parse_expression(parser, YP_BINDING_POWER_MODIFIER, "Expected to find a predicate for the elsif clause.");
 
       // Predicates are closed by a term, a "then", or a term and then a "then".
       accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
@@ -9638,7 +9644,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         predicate = NULL;
       } else {
         predicate = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected a value after case keyword.");
-        accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
+        while (accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON));
       }
 
       if (accept(parser, YP_TOKEN_KEYWORD_END)) {
@@ -9892,7 +9898,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         return (yp_node_t *) yp_singleton_class_node_create(parser, scope, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
-      yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_CALL, "Expected to find a class name after `class`.");
+      yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected to find a class name after `class`.");
       yp_token_t inheritance_operator;
       yp_node_t *superclass;
 
@@ -10312,7 +10318,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       parser_lex(parser);
 
       yp_token_t module_keyword = parser->previous;
-      yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_CALL, "Expected to find a module name after `module`.");
+      yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected to find a module name after `module`.");
 
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
@@ -11520,7 +11526,82 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
           return path;
         }
+        case YP_TOKEN_AMPERSAND:
+        case YP_TOKEN_BACKTICK:
         case YP_TOKEN_BANG:
+        case YP_TOKEN_BANG_EQUAL:
+        case YP_TOKEN_BANG_TILDE:
+        case YP_TOKEN_CARET:
+        case YP_TOKEN_EQUAL_EQUAL:
+        case YP_TOKEN_EQUAL_EQUAL_EQUAL:
+        case YP_TOKEN_EQUAL_TILDE:
+        case YP_TOKEN_GREATER:
+        case YP_TOKEN_GREATER_EQUAL:
+        case YP_TOKEN_GREATER_GREATER:
+        case YP_TOKEN_HEREDOC_START:
+        case YP_TOKEN_IGNORED_NEWLINE:
+        case YP_TOKEN_KEYWORD_ALIAS:
+        case YP_TOKEN_KEYWORD_AND:
+        case YP_TOKEN_KEYWORD_BEGIN:
+        case YP_TOKEN_KEYWORD_BEGIN_UPCASE:
+        case YP_TOKEN_KEYWORD_BREAK:
+        case YP_TOKEN_KEYWORD_CASE:
+        case YP_TOKEN_KEYWORD_CLASS:
+        case YP_TOKEN_KEYWORD_DEF:
+        case YP_TOKEN_KEYWORD_DEFINED:
+        case YP_TOKEN_KEYWORD_DO:
+        case YP_TOKEN_KEYWORD_ELSE:
+        case YP_TOKEN_KEYWORD_ELSIF:
+        case YP_TOKEN_KEYWORD_END:
+        case YP_TOKEN_KEYWORD_END_UPCASE:
+        case YP_TOKEN_KEYWORD_ENSURE:
+        case YP_TOKEN_KEYWORD_FALSE:
+        case YP_TOKEN_KEYWORD_FOR:
+        case YP_TOKEN_KEYWORD_IF:
+        case YP_TOKEN_KEYWORD_IN:
+        case YP_TOKEN_KEYWORD_NEXT:
+        case YP_TOKEN_KEYWORD_NIL:
+        case YP_TOKEN_KEYWORD_NOT:
+        case YP_TOKEN_KEYWORD_OR:
+        case YP_TOKEN_KEYWORD_REDO:
+        case YP_TOKEN_KEYWORD_RESCUE:
+        case YP_TOKEN_KEYWORD_RETRY:
+        case YP_TOKEN_KEYWORD_RETURN:
+        case YP_TOKEN_KEYWORD_SELF:
+        case YP_TOKEN_KEYWORD_SUPER:
+        case YP_TOKEN_KEYWORD_THEN:
+        case YP_TOKEN_KEYWORD_TRUE:
+        case YP_TOKEN_KEYWORD_UNDEF:
+        case YP_TOKEN_KEYWORD_UNLESS:
+        case YP_TOKEN_KEYWORD_UNTIL:
+        case YP_TOKEN_KEYWORD_WHEN:
+        case YP_TOKEN_KEYWORD_WHILE:
+        case YP_TOKEN_KEYWORD_YIELD:
+        case YP_TOKEN_KEYWORD___ENCODING__:
+        case YP_TOKEN_KEYWORD___FILE__:
+        case YP_TOKEN_KEYWORD___LINE__:
+        case YP_TOKEN_LESS:
+        case YP_TOKEN_LESS_EQUAL:
+        case YP_TOKEN_LESS_EQUAL_GREATER:
+        case YP_TOKEN_LESS_LESS:
+        case YP_TOKEN_MINUS:
+        case YP_TOKEN_PERCENT:
+        case YP_TOKEN_PERCENT_LOWER_I:
+        case YP_TOKEN_PERCENT_LOWER_W:
+        case YP_TOKEN_PERCENT_LOWER_X:
+        case YP_TOKEN_PERCENT_UPPER_I:
+        case YP_TOKEN_PERCENT_UPPER_W:
+        case YP_TOKEN_PIPE:
+        case YP_TOKEN_PLUS:
+        case YP_TOKEN_REGEXP_BEGIN:
+        case YP_TOKEN_SLASH:
+        case YP_TOKEN_STAR:
+        case YP_TOKEN_STAR_STAR:
+        case YP_TOKEN_TILDE:
+        case YP_TOKEN_UCOLON_COLON:
+        case YP_TOKEN_UDOT_DOT:
+        case YP_TOKEN_UDOT_DOT_DOT:
+        case YP_TOKEN___END__:
         case YP_TOKEN_IDENTIFIER: {
           parser_lex(parser);
 

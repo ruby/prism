@@ -1,6 +1,6 @@
-ProgramNode(0...0)(
+ProgramNode(0...41)(
   ScopeNode(0...0)([IDENTIFIER(0...3)("foo")]),
-  StatementsNode(0...0)(
+  StatementsNode(0...41)(
     [LocalVariableWriteNode(0...10)(
        (0...3),
        SplatNode(6...10)(
@@ -19,9 +19,9 @@ ProgramNode(0...0)(
        (4...5),
        0
      ),
-     LocalVariableWriteNode(12...0)(
+     LocalVariableWriteNode(12...24)(
        (12...15),
-       ArrayNode(0...0)(
+       ArrayNode(0...24)(
          [CallNode(18...21)(
             nil,
             nil,
@@ -39,9 +39,9 @@ ProgramNode(0...0)(
        (16...17),
        0
      ),
-     LocalVariableWriteNode(26...0)(
+     LocalVariableWriteNode(26...41)(
        (26...29),
-       ArrayNode(0...0)(
+       ArrayNode(0...41)(
          [CallNode(32...35)(
             nil,
             nil,
