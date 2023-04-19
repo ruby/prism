@@ -4571,8 +4571,10 @@ lex_question_mark(yp_parser_t *parser) {
     int encoding_width = parser->encoding.char_width(parser->current.end);
     // We only want to return a character literal if there's exactly one
     // alphanumeric character right after the `?`
-    if (!parser->encoding.alnum_char(parser->current.end) ||
-	!parser->encoding.alnum_char(parser->current.end + encoding_width)) {
+    if (
+      !parser->encoding.alnum_char(parser->current.end) ||
+      !parser->encoding.alnum_char(parser->current.end + encoding_width)
+    ) {
       lex_state_set(parser, YP_LEX_STATE_END);
       parser->current.end += encoding_width;
       return YP_TOKEN_CHARACTER_LITERAL;
@@ -6319,12 +6321,11 @@ parser_lex(yp_parser_t *parser) {
 
           if (matched) {
             if (*parser->lex_modes.current->as.heredoc.next_start == '\\') {
-	      parser->next_start = NULL;
+              parser->next_start = NULL;
             } else {
-	      parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-	      parser->heredoc_end = parser->current.end;
+              parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+              parser->heredoc_end = parser->current.end;
             }
-
 
             lex_mode_pop(parser);
             lex_state_set(parser, YP_LEX_STATE_END);
