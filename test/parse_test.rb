@@ -13,7 +13,6 @@ class ParseTest < Test::Unit::TestCase
 
   known_failures = %w[
     seattlerb/heredoc_nested.rb
-    seattlerb/heredoc_trailing_slash_continued_call.rb
     seattlerb/pct_w_heredoc_interp_nested.rb
   ]
 
