@@ -70,8 +70,8 @@ ProgramNode(0...131)(
        nil,
        IDENTIFIER(121...122)("w"),
        PARENTHESIS_LEFT(122...123)("("),
-       ArgumentsNode(123...126)(
-         [CallNode(123...126)(
+       ArgumentsNode(123...130)(
+         [CallNode(123...130)(
             nil,
             nil,
             IDENTIFIER(123...126)("foo"),

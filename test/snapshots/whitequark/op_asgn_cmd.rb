@@ -1,7 +1,7 @@
-ProgramNode(0...60)(
+ProgramNode(0...64)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...60)(
-    [OperatorAssignmentNode(0...10)(
+  StatementsNode(0...64)(
+    [OperatorAssignmentNode(0...14)(
        CallNode(0...5)(
          CallNode(0...3)(
            nil,
@@ -22,7 +22,7 @@ ProgramNode(0...60)(
          "A="
        ),
        PLUS_EQUAL(6...8)("+="),
-       CallNode(9...10)(
+       CallNode(9...14)(
          nil,
          nil,
          IDENTIFIER(9...10)("m"),
@@ -44,7 +44,7 @@ ProgramNode(0...60)(
          "m"
        )
      ),
-     OperatorAssignmentNode(16...26)(
+     OperatorAssignmentNode(16...30)(
        CallNode(16...21)(
          CallNode(16...19)(
            nil,
@@ -65,7 +65,7 @@ ProgramNode(0...60)(
          "a="
        ),
        PLUS_EQUAL(22...24)("+="),
-       CallNode(25...26)(
+       CallNode(25...30)(
          nil,
          nil,
          IDENTIFIER(25...26)("m"),
@@ -87,7 +87,7 @@ ProgramNode(0...60)(
          "m"
        )
      ),
-     OperatorAssignmentNode(32...43)(
+     OperatorAssignmentNode(32...47)(
        ConstantPathWriteNode(32...38)(
          ConstantPathNode(32...38)(
            CallNode(32...35)(
@@ -107,7 +107,7 @@ ProgramNode(0...60)(
          nil
        ),
        PLUS_EQUAL(39...41)("+="),
-       CallNode(42...43)(
+       CallNode(42...47)(
          nil,
          nil,
          IDENTIFIER(42...43)("m"),
@@ -129,7 +129,7 @@ ProgramNode(0...60)(
          "m"
        )
      ),
-     OperatorAssignmentNode(49...60)(
+     OperatorAssignmentNode(49...64)(
        CallNode(49...55)(
          CallNode(49...52)(
            nil,
@@ -150,7 +150,7 @@ ProgramNode(0...60)(
          "a="
        ),
        PLUS_EQUAL(56...58)("+="),
-       CallNode(59...60)(
+       CallNode(59...64)(
          nil,
          nil,
          IDENTIFIER(59...60)("m"),

@@ -1,7 +1,7 @@
-ProgramNode(0...32)(
+ProgramNode(0...35)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...32)(
-    [DefNode(0...32)(
+  StatementsNode(0...35)(
+    [DefNode(0...35)(
        IDENTIFIER(6...17)("some_method"),
        CallNode(4...5)(
          nil,
@@ -14,8 +14,8 @@ ProgramNode(0...32)(
          "x"
        ),
        nil,
-       StatementsNode(20...32)(
-         [CallNode(20...32)(
+       StatementsNode(20...35)(
+         [CallNode(20...35)(
             nil,
             nil,
             IDENTIFIER(20...32)("other_method"),

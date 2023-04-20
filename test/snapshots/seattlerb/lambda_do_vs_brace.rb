@@ -1,7 +1,7 @@
-ProgramNode(0...38)(
+ProgramNode(0...43)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...38)(
-    [CallNode(0...1)(
+  StatementsNode(0...43)(
+    [CallNode(0...4)(
        nil,
        nil,
        IDENTIFIER(0...1)("f"),
@@ -18,7 +18,7 @@ ProgramNode(0...38)(
        nil,
        "f"
      ),
-     CallNode(13...14)(
+     CallNode(13...17)(
        nil,
        nil,
        IDENTIFIER(13...14)("f"),
@@ -35,7 +35,7 @@ ProgramNode(0...38)(
        nil,
        "f"
      ),
-     CallNode(22...23)(
+     CallNode(22...28)(
        nil,
        nil,
        IDENTIFIER(22...23)("f"),
@@ -52,7 +52,7 @@ ProgramNode(0...38)(
        nil,
        "f"
      ),
-     CallNode(37...38)(
+     CallNode(37...43)(
        nil,
        nil,
        IDENTIFIER(37...38)("f"),

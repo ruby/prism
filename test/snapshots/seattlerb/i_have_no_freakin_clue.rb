@@ -1,6 +1,6 @@
-ProgramNode(2...15)(
+ProgramNode(2...20)(
   ScopeNode(0...0)([]),
-  StatementsNode(2...15)(
+  StatementsNode(2...20)(
     [IfNode(2...13)(
        QUESTION_MARK(2...3)("?"),
        IntegerNode(0...1)(),
@@ -30,7 +30,7 @@ ProgramNode(2...15)(
        ),
        nil
      ),
-     CallNode(14...15)(
+     CallNode(14...20)(
        nil,
        nil,
        IDENTIFIER(14...15)("a"),

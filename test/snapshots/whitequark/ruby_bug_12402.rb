@@ -1,10 +1,10 @@
 ProgramNode(0...437)(
   ScopeNode(0...0)([IDENTIFIER(0...3)("foo")]),
   StatementsNode(0...437)(
-    [OperatorAssignmentNode(0...12)(
+    [OperatorAssignmentNode(0...27)(
        LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),
        PLUS_EQUAL(4...6)("+="),
-       CallNode(7...12)(
+       CallNode(7...27)(
          nil,
          nil,
          IDENTIFIER(7...12)("raise"),
@@ -59,9 +59,9 @@ ProgramNode(0...437)(
          NilNode(54...57)()
        )
      ),
-     LocalVariableWriteNode(59...70)(
+     LocalVariableWriteNode(59...85)(
        (59...62),
-       CallNode(65...70)(
+       CallNode(65...85)(
          nil,
          nil,
          IDENTIFIER(65...70)("raise"),
@@ -119,7 +119,7 @@ ProgramNode(0...437)(
        (91...92),
        0
      ),
-     OperatorAssignmentNode(116...130)(
+     OperatorAssignmentNode(116...145)(
        CallNode(116...121)(
          LocalVariableReadNode(116...119)(0),
          DOT(119...120)("."),
@@ -131,7 +131,7 @@ ProgramNode(0...437)(
          "C="
        ),
        PLUS_EQUAL(122...124)("+="),
-       CallNode(125...130)(
+       CallNode(125...145)(
          nil,
          nil,
          IDENTIFIER(125...130)("raise"),
@@ -195,7 +195,7 @@ ProgramNode(0...437)(
          NilNode(174...177)()
        )
      ),
-     OperatorAssignmentNode(179...193)(
+     OperatorAssignmentNode(179...208)(
        CallNode(179...184)(
          LocalVariableReadNode(179...182)(0),
          DOT(182...183)("."),
@@ -207,7 +207,7 @@ ProgramNode(0...437)(
          "m="
        ),
        PLUS_EQUAL(185...187)("+="),
-       CallNode(188...193)(
+       CallNode(188...208)(
          nil,
          nil,
          IDENTIFIER(188...193)("raise"),
@@ -271,7 +271,7 @@ ProgramNode(0...437)(
          NilNode(237...240)()
        )
      ),
-     OperatorOrAssignmentNode(242...258)(
+     OperatorOrAssignmentNode(242...273)(
        ConstantPathWriteNode(242...248)(
          ConstantPathNode(242...248)(
            LocalVariableReadNode(242...245)(0),
@@ -281,7 +281,7 @@ ProgramNode(0...437)(
          nil,
          nil
        ),
-       CallNode(253...258)(
+       CallNode(253...273)(
          nil,
          nil,
          IDENTIFIER(253...258)("raise"),
@@ -345,7 +345,7 @@ ProgramNode(0...437)(
        ),
        (282...285)
      ),
-     OperatorAssignmentNode(309...324)(
+     OperatorAssignmentNode(309...339)(
        CallNode(309...315)(
          LocalVariableReadNode(309...312)(0),
          COLON_COLON(312...314)("::"),
@@ -357,7 +357,7 @@ ProgramNode(0...437)(
          "m="
        ),
        PLUS_EQUAL(316...318)("+="),
-       CallNode(319...324)(
+       CallNode(319...339)(
          nil,
          nil,
          IDENTIFIER(319...324)("raise"),
@@ -421,7 +421,7 @@ ProgramNode(0...437)(
          NilNode(369...372)()
        )
      ),
-     OperatorAssignmentNode(374...389)(
+     OperatorAssignmentNode(374...404)(
        CallNode(374...380)(
          LocalVariableReadNode(374...377)(0),
          nil,
@@ -433,7 +433,7 @@ ProgramNode(0...437)(
          "[]="
        ),
        PLUS_EQUAL(381...383)("+="),
-       CallNode(384...389)(
+       CallNode(384...404)(
          nil,
          nil,
          IDENTIFIER(384...389)("raise"),

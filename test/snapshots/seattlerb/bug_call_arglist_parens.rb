@@ -1,12 +1,12 @@
-ProgramNode(6...86)(
+ProgramNode(6...94)(
   ScopeNode(0...0)([]),
-  StatementsNode(6...86)(
+  StatementsNode(6...94)(
     [DefNode(6...39)(
        IDENTIFIER(10...11)("f"),
        nil,
        nil,
-       StatementsNode(20...21)(
-         [CallNode(20...21)(
+       StatementsNode(20...29)(
+         [CallNode(20...29)(
             nil,
             nil,
             IDENTIFIER(20...21)("g"),
@@ -36,8 +36,8 @@ ProgramNode(6...86)(
        IDENTIFIER(52...53)("f"),
        nil,
        nil,
-       StatementsNode(64...65)(
-         [CallNode(64...65)(
+       StatementsNode(64...72)(
+         [CallNode(64...72)(
             nil,
             nil,
             IDENTIFIER(64...65)("g"),
@@ -63,7 +63,7 @@ ProgramNode(6...86)(
        nil,
        (79...82)
      ),
-     CallNode(85...86)(
+     CallNode(85...94)(
        nil,
        nil,
        IDENTIFIER(85...86)("g"),

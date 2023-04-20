@@ -44,7 +44,7 @@ ProgramNode(0...709)(
        IntegerNode(35...36)()
      ),
      ConstantReadNode(38...41)(),
-     CallNode(43...0)(
+     CallNode(43...48)(
        nil,
        nil,
        CONSTANT(43...46)("Foo"),

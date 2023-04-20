@@ -28,7 +28,7 @@ ProgramNode(0...48)(
             (26...27),
             0
           ),
-          CallNode(32...33)(
+          CallNode(32...35)(
             nil,
             nil,
             IDENTIFIER(32...33)("p"),

@@ -19,8 +19,8 @@ ProgramNode(0...48)(
          nil,
          "foo"
        ),
-       StatementsNode(16...17)(
-         [CallNode(16...17)(
+       StatementsNode(16...19)(
+         [CallNode(16...19)(
             nil,
             nil,
             IDENTIFIER(16...17)("p"),
@@ -54,8 +54,8 @@ ProgramNode(0...48)(
          nil,
          "foo"
        ),
-       StatementsNode(40...41)(
-         [CallNode(40...41)(
+       StatementsNode(40...43)(
+         [CallNode(40...43)(
             nil,
             nil,
             IDENTIFIER(40...41)("p"),

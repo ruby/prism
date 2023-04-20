@@ -1,6 +1,6 @@
-ProgramNode(6...81)(
+ProgramNode(6...88)(
   ScopeNode(0...0)([IDENTIFIER(6...12)("string")]),
-  StatementsNode(6...81)(
+  StatementsNode(6...88)(
     [LocalVariableWriteNode(6...31)(
        (6...12),
        CallNode(32...31)(
@@ -25,7 +25,7 @@ ProgramNode(6...81)(
        (13...14),
        0
      ),
-     CallNode(77...81)(
+     CallNode(77...88)(
        nil,
        nil,
        IDENTIFIER(77...81)("puts"),

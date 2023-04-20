@@ -1,11 +1,11 @@
-ProgramNode(0...26)(
+ProgramNode(0...30)(
   ScopeNode(0...0)([IDENTIFIER(0...3)("foo"), IDENTIFIER(6...9)("bar")]),
-  StatementsNode(0...26)(
-    [LocalVariableWriteNode(0...13)(
+  StatementsNode(0...30)(
+    [LocalVariableWriteNode(0...17)(
        (0...3),
-       LocalVariableWriteNode(6...13)(
+       LocalVariableWriteNode(6...17)(
          (6...9),
-         CallNode(12...13)(
+         CallNode(12...17)(
            nil,
            nil,
            IDENTIFIER(12...13)("m"),
@@ -21,9 +21,9 @@ ProgramNode(0...26)(
        (4...5),
        0
      ),
-     LocalVariableWriteNode(19...26)(
+     LocalVariableWriteNode(19...30)(
        (19...22),
-       CallNode(25...26)(
+       CallNode(25...30)(
          nil,
          nil,
          IDENTIFIER(25...26)("m"),

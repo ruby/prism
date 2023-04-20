@@ -1,6 +1,6 @@
-ProgramNode(0...91)(
+ProgramNode(0...98)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...91)(
+  StatementsNode(0...98)(
     [UntilNode(0...13)(
        KEYWORD_UNTIL(0...5)("until"),
        TrueNode(6...10)(),
@@ -28,7 +28,7 @@ ProgramNode(0...91)(
          [ReturnNode(69...75)(KEYWORD_RETURN(69...75)("return"), nil)]
        )
      ),
-     UntilNode(99...91)(
+     UntilNode(99...98)(
        KEYWORD_UNTIL_MODIFIER(99...104)("until"),
        CallNode(105...109)(
          nil,
@@ -40,8 +40,8 @@ ProgramNode(0...91)(
          nil,
          "bar?"
        ),
-       StatementsNode(88...91)(
-         [CallNode(88...91)(
+       StatementsNode(88...98)(
+         [CallNode(88...98)(
             nil,
             nil,
             IDENTIFIER(88...91)("foo"),

@@ -5,7 +5,7 @@ ProgramNode(0...100)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(10...100)(
-         [CallNode(10...11)(
+         [CallNode(10...13)(
             nil,
             nil,
             IDENTIFIER(10...11)("p"),

@@ -1,15 +1,15 @@
-ProgramNode(0...3)(
+ProgramNode(0...11)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...3)(
-    [CallNode(0...3)(
+  StatementsNode(0...11)(
+    [CallNode(0...11)(
        nil,
        nil,
        IDENTIFIER(0...3)("fun"),
        nil,
        ArgumentsNode(4...11)(
          [ParenthesesNode(4...11)(
-            StatementsNode(5...6)(
-              [CallNode(5...6)(
+            StatementsNode(5...10)(
+              [CallNode(5...10)(
                  nil,
                  nil,
                  IDENTIFIER(5...6)("f"),
