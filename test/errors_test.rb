@@ -959,6 +959,8 @@ class ErrorsTest < Test::Unit::TestCase
       ),
       "a"
     )
+
+    assert_errors expected, "a {|...|}", ["Unexpected ..."]
   end
 
   test "don't allow return inside class body" do
