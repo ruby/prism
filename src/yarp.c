@@ -4568,7 +4568,7 @@ lex_question_mark(yp_parser_t *parser) {
     parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, true, &parser->error_list);
     return YP_TOKEN_CHARACTER_LITERAL;
   } else {
-    int encoding_width = parser->encoding.char_width(parser->current.end);
+    size_t encoding_width = parser->encoding.char_width(parser->current.end);
     // We only want to return a character literal if there's exactly one
     // alphanumeric character right after the `?`
     if (!parser->encoding.alnum_char(parser->current.end) ||
@@ -6310,9 +6310,9 @@ parser_lex(yp_parser_t *parser) {
           bool matched = true;
           bool at_end = false;
 
-          if (start[ident_length] == '\n') {
+          if ((start + ident_length < parser->end) && (start[ident_length] == '\n')) {
             parser->current.end = start + ident_length + 1;
-          } else if ((start[ident_length] == '\r') && (start[ident_length + 1] == '\n')) {
+          } else if ((start + ident_length + 1 < parser->end) && (start[ident_length] == '\r') && (start[ident_length + 1] == '\n')) {
             parser->current.end = start + ident_length + 2;
           } else if (parser->end == (start + ident_length)) {
             parser->current.end = start + ident_length;
@@ -6323,16 +6323,16 @@ parser_lex(yp_parser_t *parser) {
 
           if (matched) {
             if (*parser->lex_modes.current->as.heredoc.next_start == '\\') {
-	      parser->next_start = NULL;
+              parser->next_start = NULL;
             } else {
-	      parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
-	      parser->heredoc_end = parser->current.end;
+              parser->next_start = parser->lex_modes.current->as.heredoc.next_start;
+              parser->heredoc_end = parser->current.end;
             }
 
 
             lex_mode_pop(parser);
             if (!at_end) {
-	      lex_state_set(parser, YP_LEX_STATE_END);
+              lex_state_set(parser, YP_LEX_STATE_END);
             }
             LEX(YP_TOKEN_HEREDOC_END);
           }
