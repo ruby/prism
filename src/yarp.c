@@ -6373,11 +6373,11 @@ parser_lex(yp_parser_t *parser) {
             // content. Then, the next time a token is lexed, it will match
             // again and return the end of the heredoc.
             if (
-              (start + ident_length < parser->end) &&
+              (start + ident_length <= parser->end) &&
               (strncmp(start, ident_start, ident_length) == 0)
             ) {
-              // Heredoc terminators must be followed by a newline to be valid.
-              if (start[ident_length] == '\n') {
+              // Heredoc terminators must be followed by a newline or EOF to be valid.
+              if (start + ident_length == parser->end || start[ident_length] == '\n') {
                 parser->current.end = breakpoint + 1;
                 LEX(YP_TOKEN_STRING_CONTENT);
               }
