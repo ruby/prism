@@ -1,7 +1,7 @@
-ProgramNode(0...24)(
+ProgramNode(0...31)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...24)(
-    [CallNode(0...1)(
+  StatementsNode(0...31)(
+    [CallNode(0...11)(
        nil,
        nil,
        IDENTIFIER(0...1)("x"),
@@ -40,7 +40,7 @@ ProgramNode(0...24)(
        nil,
        "x"
      ),
-     CallNode(13...14)(
+     CallNode(13...21)(
        nil,
        nil,
        IDENTIFIER(13...14)("x"),
@@ -65,7 +65,7 @@ ProgramNode(0...24)(
        nil,
        "x"
      ),
-     CallNode(23...24)(
+     CallNode(23...31)(
        nil,
        nil,
        IDENTIFIER(23...24)("x"),

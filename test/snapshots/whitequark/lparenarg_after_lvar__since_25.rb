@@ -1,7 +1,7 @@
-ProgramNode(0...20)(
+ProgramNode(0...31)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...20)(
-    [CallNode(0...3)(
+  StatementsNode(0...31)(
+    [CallNode(0...14)(
        nil,
        nil,
        IDENTIFIER(0...3)("foo"),
@@ -37,7 +37,7 @@ ProgramNode(0...20)(
        nil,
        "foo"
      ),
-     CallNode(16...20)(
+     CallNode(16...31)(
        nil,
        nil,
        IDENTIFIER(16...20)("meth"),

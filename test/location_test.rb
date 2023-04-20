@@ -157,6 +157,9 @@ module YARP
       assert_location(CallNode, "foo::()")
       assert_location(CallNode, "foo::(bar)")
       assert_location(CallNode, "foo::(bar, baz)")
+
+      assert_location(CallNode, "foo bar baz")
+      assert_location(CallNode, "foo bar('baz')")
     end
 
     test "CaseNode" do

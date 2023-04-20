@@ -1,7 +1,7 @@
-ProgramNode(0...31)(
+ProgramNode(0...52)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...31)(
-    [CallNode(0...6)(
+  StatementsNode(0...52)(
+    [CallNode(0...15)(
        nil,
        nil,
        IDENTIFIER(0...6)("assert"),
@@ -26,7 +26,7 @@ ProgramNode(0...31)(
        nil,
        "assert"
      ),
-     CallNode(17...23)(
+     CallNode(17...28)(
        nil,
        nil,
        IDENTIFIER(17...23)("assert"),
@@ -47,7 +47,7 @@ ProgramNode(0...31)(
        nil,
        "assert"
      ),
-     CallNode(30...31)(
+     CallNode(30...52)(
        nil,
        nil,
        IDENTIFIER(30...31)("f"),

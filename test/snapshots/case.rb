@@ -24,11 +24,11 @@ ProgramNode(0...272)(
      ),
      CaseNode(23...81)(
        TrueNode(28...32)(),
-       [WhenNode(34...49)(
+       [WhenNode(34...53)(
           KEYWORD_WHEN(34...38)("when"),
           [TrueNode(39...43)()],
-          StatementsNode(45...49)(
-            [CallNode(45...49)(
+          StatementsNode(45...53)(
+            [CallNode(45...53)(
                nil,
                nil,
                IDENTIFIER(45...49)("puts"),
@@ -47,11 +47,11 @@ ProgramNode(0...272)(
              )]
           )
         ),
-        WhenNode(55...71)(
+        WhenNode(55...76)(
           KEYWORD_WHEN(55...59)("when"),
           [FalseNode(60...65)()],
-          StatementsNode(67...71)(
-            [CallNode(67...71)(
+          StatementsNode(67...76)(
+            [CallNode(67...76)(
                nil,
                nil,
                IDENTIFIER(67...71)("puts"),

@@ -61,8 +61,8 @@ ProgramNode(0...141)(
          nil,
          "bar?"
        ),
-       StatementsNode(119...122)(
-         [CallNode(119...122)(
+       StatementsNode(119...129)(
+         [CallNode(119...129)(
             nil,
             nil,
             IDENTIFIER(119...122)("foo"),

@@ -6,7 +6,7 @@ ProgramNode(0...20)(
        KEYWORD_CLASS(0...5)("class"),
        ConstantReadNode(6...9)(),
        LESS(10...11)("<"),
-       CallNode(12...13)(
+       CallNode(12...15)(
          nil,
          nil,
          IDENTIFIER(12...13)("a"),

@@ -5,8 +5,8 @@ ProgramNode(0...49)(
        IDENTIFIER(4...7)("foo"),
        nil,
        nil,
-       StatementsNode(9...10)(
-         [CallNode(9...10)(
+       StatementsNode(9...12)(
+         [CallNode(9...12)(
             nil,
             nil,
             IDENTIFIER(9...10)("a"),
@@ -36,8 +36,8 @@ ProgramNode(0...49)(
        IDENTIFIER(22...25)("foo"),
        nil,
        nil,
-       StatementsNode(28...29)(
-         [CallNode(28...29)(
+       StatementsNode(28...31)(
+         [CallNode(28...31)(
             nil,
             nil,
             IDENTIFIER(28...29)("a"),
@@ -73,8 +73,8 @@ ProgramNode(0...49)(
        BlockNode(39...49)(
          ScopeNode(39...40)([]),
          BlockParametersNode(41...43)(nil, [], (41...42), (42...43)),
-         StatementsNode(44...45)(
-           [CallNode(44...45)(
+         StatementsNode(44...47)(
+           [CallNode(44...47)(
               nil,
               nil,
               IDENTIFIER(44...45)("a"),

@@ -970,6 +970,10 @@ yp_call_node_fcall_create(yp_parser_t *parser, yp_token_t *message, yp_arguments
   node->base.location.start = message->start;
   if (arguments->block != NULL) {
     node->base.location.end = arguments->block->base.location.end;
+  } else if (arguments->closing.type != YP_TOKEN_NOT_PROVIDED) {
+    node->base.location.end = arguments->closing.end;
+  } else if (arguments->arguments != NULL) {
+    node->base.location.end = arguments->arguments->base.location.end;
   } else {
     node->base.location.end = arguments->closing.end;
   }
@@ -9510,7 +9514,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         if (arguments.block != NULL) {
           call->base.location.end = arguments.block->base.location.end;
         } else if (arguments.closing.type == YP_TOKEN_NOT_PROVIDED) {
-          call->base.location.end = call->message.end;
+          if (arguments.arguments != NULL) {
+            call->base.location.end = arguments.arguments->base.location.end;
+          } else {
+            call->base.location.end = call->message.end;
+          }
         } else {
           call->base.location.end = arguments.closing.end;
         }

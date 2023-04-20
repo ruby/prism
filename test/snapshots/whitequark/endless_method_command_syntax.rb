@@ -1,12 +1,12 @@
-ProgramNode(0...243)(
+ProgramNode(0...278)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...243)(
-    [DefNode(0...14)(
+  StatementsNode(0...278)(
+    [DefNode(0...22)(
        IDENTIFIER(4...7)("foo"),
        nil,
        nil,
-       StatementsNode(10...14)(
-         [CallNode(10...14)(
+       StatementsNode(10...22)(
+         [CallNode(10...22)(
             nil,
             nil,
             IDENTIFIER(10...14)("puts"),
@@ -32,12 +32,12 @@ ProgramNode(0...243)(
        (8...9),
        nil
      ),
-     DefNode(24...40)(
+     DefNode(24...48)(
        IDENTIFIER(28...31)("foo"),
        nil,
        nil,
-       StatementsNode(36...40)(
-         [CallNode(36...40)(
+       StatementsNode(36...48)(
+         [CallNode(36...48)(
             nil,
             nil,
             IDENTIFIER(36...40)("puts"),
@@ -63,7 +63,7 @@ ProgramNode(0...243)(
        (34...35),
        nil
      ),
-     DefNode(50...67)(
+     DefNode(50...69)(
        IDENTIFIER(54...57)("foo"),
        nil,
        ParametersNode(58...59)(
@@ -75,8 +75,8 @@ ProgramNode(0...243)(
          nil,
          nil
        ),
-       StatementsNode(63...67)(
-         [CallNode(63...67)(
+       StatementsNode(63...69)(
+         [CallNode(63...69)(
             nil,
             nil,
             IDENTIFIER(63...67)("puts"),
@@ -95,7 +95,7 @@ ProgramNode(0...243)(
        (61...62),
        nil
      ),
-     DefNode(71...89)(
+     DefNode(71...97)(
        IDENTIFIER(79...82)("foo"),
        CallNode(75...78)(
          nil,
@@ -108,8 +108,8 @@ ProgramNode(0...243)(
          "obj"
        ),
        nil,
-       StatementsNode(85...89)(
-         [CallNode(85...89)(
+       StatementsNode(85...97)(
+         [CallNode(85...97)(
             nil,
             nil,
             IDENTIFIER(85...89)("puts"),
@@ -135,7 +135,7 @@ ProgramNode(0...243)(
        (83...84),
        nil
      ),
-     DefNode(99...119)(
+     DefNode(99...127)(
        IDENTIFIER(107...110)("foo"),
        CallNode(103...106)(
          nil,
@@ -148,8 +148,8 @@ ProgramNode(0...243)(
          "obj"
        ),
        nil,
-       StatementsNode(115...119)(
-         [CallNode(115...119)(
+       StatementsNode(115...127)(
+         [CallNode(115...127)(
             nil,
             nil,
             IDENTIFIER(115...119)("puts"),
@@ -175,7 +175,7 @@ ProgramNode(0...243)(
        (113...114),
        nil
      ),
-     DefNode(129...150)(
+     DefNode(129...152)(
        IDENTIFIER(137...140)("foo"),
        CallNode(133...136)(
          nil,
@@ -196,8 +196,8 @@ ProgramNode(0...243)(
          nil,
          nil
        ),
-       StatementsNode(146...150)(
-         [CallNode(146...150)(
+       StatementsNode(146...152)(
+         [CallNode(146...152)(
             nil,
             nil,
             IDENTIFIER(146...150)("puts"),
@@ -216,7 +216,7 @@ ProgramNode(0...243)(
        (144...145),
        nil
      ),
-     DefNode(154...176)(
+     DefNode(154...214)(
        IDENTIFIER(158...165)("rescued"),
        nil,
        ParametersNode(166...167)(
@@ -228,8 +228,8 @@ ProgramNode(0...243)(
          nil,
          nil
        ),
-       StatementsNode(171...176)(
-         [CallNode(171...176)(
+       StatementsNode(171...214)(
+         [CallNode(171...214)(
             nil,
             nil,
             IDENTIFIER(171...176)("raise"),
@@ -275,7 +275,7 @@ ProgramNode(0...243)(
        (169...170),
        nil
      ),
-     DefNode(216...243)(
+     DefNode(216...278)(
        IDENTIFIER(225...232)("rescued"),
        SelfNode(220...224)(),
        ParametersNode(233...234)(
@@ -287,8 +287,8 @@ ProgramNode(0...243)(
          nil,
          nil
        ),
-       StatementsNode(238...243)(
-         [CallNode(238...243)(
+       StatementsNode(238...278)(
+         [CallNode(238...278)(
             nil,
             nil,
             IDENTIFIER(238...243)("raise"),

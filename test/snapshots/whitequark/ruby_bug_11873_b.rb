@@ -17,7 +17,7 @@ ProgramNode(0...25)(
             BlockNode(3...13)(
               ScopeNode(3...4)([]),
               nil,
-              StatementsNode(4...10)(
+              StatementsNode(4...12)(
                 [CallNode(4...8)(
                    nil,
                    nil,
@@ -39,7 +39,7 @@ ProgramNode(0...25)(
                    nil,
                    "p"
                  ),
-                 CallNode(9...10)(
+                 CallNode(9...12)(
                    nil,
                    nil,
                    IDENTIFIER(9...10)("p"),

@@ -1,7 +1,7 @@
-ProgramNode(0...5)(
+ProgramNode(0...67)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...5)(
-    [CallNode(0...5)(
+  StatementsNode(0...67)(
+    [CallNode(0...67)(
        nil,
        nil,
        IDENTIFIER(0...5)("mount"),

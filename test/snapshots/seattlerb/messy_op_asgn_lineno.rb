@@ -1,15 +1,15 @@
-ProgramNode(0...1)(
+ProgramNode(0...15)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...1)(
-    [CallNode(0...1)(
+  StatementsNode(0...15)(
+    [CallNode(0...15)(
        nil,
        nil,
        IDENTIFIER(0...1)("a"),
        nil,
        ArgumentsNode(2...15)(
          [ParenthesesNode(2...15)(
-            StatementsNode(3...12)(
-              [OperatorAssignmentNode(3...12)(
+            StatementsNode(3...14)(
+              [OperatorAssignmentNode(3...14)(
                  ConstantPathWriteNode(3...7)(
                    ConstantPathNode(3...7)(
                      ConstantReadNode(3...4)(),
@@ -20,7 +20,7 @@ ProgramNode(0...1)(
                    nil
                  ),
                  STAR_EQUAL(8...10)("*="),
-                 CallNode(11...12)(
+                 CallNode(11...14)(
                    nil,
                    nil,
                    IDENTIFIER(11...12)("d"),

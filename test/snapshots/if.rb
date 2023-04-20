@@ -164,11 +164,11 @@ ProgramNode(0...273)(
        nil,
        nil
      ),
-     IfNode(236...247)(
+     IfNode(236...250)(
        KEYWORD_IF(236...238)("if"),
        TrueNode(239...243)(),
-       StatementsNode(246...247)(
-         [CallNode(246...247)(
+       StatementsNode(246...250)(
+         [CallNode(246...250)(
             nil,
             nil,
             IDENTIFIER(246...247)("a"),

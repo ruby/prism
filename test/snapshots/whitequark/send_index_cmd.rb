@@ -15,8 +15,8 @@ ProgramNode(0...10)(
        nil,
        BRACKET_LEFT_RIGHT(3...4)("["),
        BRACKET_LEFT(3...4)("["),
-       ArgumentsNode(4...5)(
-         [CallNode(4...5)(
+       ArgumentsNode(4...9)(
+         [CallNode(4...9)(
             nil,
             nil,
             IDENTIFIER(4...5)("m"),

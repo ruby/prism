@@ -147,8 +147,8 @@ ProgramNode(0...316)(
            (164...165),
            (166...167)
          ),
-         StatementsNode(170...0)(
-           [RescueModifierNode(170...0)(
+         StatementsNode(170...208)(
+           [RescueModifierNode(170...208)(
               CallNode(170...176)(
                 nil,
                 nil,
@@ -171,13 +171,13 @@ ProgramNode(0...316)(
                 "bar"
               ),
               KEYWORD_RESCUE_MODIFIER(177...183)("rescue"),
-              CallNode(184...0)(
+              CallNode(184...208)(
                 nil,
                 nil,
                 CONSTANT(184...197)("ArgumentError"),
                 nil,
-                ArgumentsNode(198...202)(
-                  [CallNode(198...202)(
+                ArgumentsNode(198...208)(
+                  [CallNode(198...208)(
                      nil,
                      nil,
                      IDENTIFIER(198...202)("fail"),
@@ -242,12 +242,12 @@ ProgramNode(0...316)(
        nil,
        KEYWORD_END(242...245)("end")
      ),
-     DefNode(247...277)(
+     DefNode(247...291)(
        IDENTIFIER(251...262)("some_method"),
        nil,
        nil,
-       StatementsNode(265...277)(
-         [CallNode(265...277)(
+       StatementsNode(265...291)(
+         [CallNode(265...291)(
             nil,
             nil,
             IDENTIFIER(265...277)("other_method"),
@@ -278,8 +278,8 @@ ProgramNode(0...316)(
        nil,
        BeginNode(0...316)(
          nil,
-         StatementsNode(301...302)(
-           [CallNode(301...302)(
+         StatementsNode(301...305)(
+           [CallNode(301...305)(
               nil,
               nil,
               IDENTIFIER(301...302)("a"),

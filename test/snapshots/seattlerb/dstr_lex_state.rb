@@ -5,8 +5,8 @@ ProgramNode(0...8)(
        STRING_BEGIN(0...1)("\""),
        [StringInterpolatedNode(1...7)(
           EMBEXPR_BEGIN(1...3)("\#{"),
-          StatementsNode(3...4)(
-            [CallNode(3...4)(
+          StatementsNode(3...6)(
+            [CallNode(3...6)(
                nil,
                nil,
                IDENTIFIER(3...4)("p"),

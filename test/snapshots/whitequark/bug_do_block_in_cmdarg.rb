@@ -1,7 +1,7 @@
-ProgramNode(0...3)(
+ProgramNode(0...17)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...3)(
-    [CallNode(0...3)(
+  StatementsNode(0...17)(
+    [CallNode(0...17)(
        nil,
        nil,
        IDENTIFIER(0...3)("tap"),
