@@ -221,6 +221,10 @@ module YARP
       assert_location(ForwardingSuperNode, "super {}")
     end
 
+    test "IfNode" do
+      assert_location(IfNode, "if foo; end")
+    end
+
     test "ImaginaryNode" do
       assert_location(ImaginaryNode, "1i")
       assert_location(ImaginaryNode, "1ri")
@@ -413,6 +417,10 @@ module YARP
     test "UndefNode" do
       assert_location(UndefNode, "undef foo")
       assert_location(UndefNode, "undef foo, bar")
+    end
+
+    test "UnlessNode" do
+      assert_location(UnlessNode, "unless foo; bar; end")
     end
 
     test "XStringNode" do

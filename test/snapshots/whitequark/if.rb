@@ -1,7 +1,7 @@
-ProgramNode(0...33)(
+ProgramNode(0...38)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...33)(
-    [IfNode(0...15)(
+  StatementsNode(0...38)(
+    [IfNode(0...20)(
        KEYWORD_IF(0...2)("if"),
        CallNode(3...6)(
          nil,
@@ -28,7 +28,7 @@ ProgramNode(0...33)(
        nil,
        KEYWORD_END(17...20)("end")
      ),
-     IfNode(22...33)(
+     IfNode(22...38)(
        KEYWORD_IF(22...24)("if"),
        CallNode(25...28)(
          nil,

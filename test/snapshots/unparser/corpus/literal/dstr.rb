@@ -1,7 +1,7 @@
 ProgramNode(0...299)(
   ScopeNode(0...0)([]),
   StatementsNode(0...299)(
-    [IfNode(0...16)(
+    [IfNode(0...20)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(10...16)(
@@ -19,7 +19,7 @@ ProgramNode(0...299)(
        nil,
        KEYWORD_END(17...20)("end")
      ),
-     IfNode(21...64)(
+     IfNode(21...68)(
        KEYWORD_IF(21...23)("if"),
        TrueNode(24...28)(),
        StatementsNode(42...64)(
@@ -134,7 +134,7 @@ ProgramNode(0...299)(
         ClassVariableReadNode(169...172)()],
        STRING_END(172...173)("\"")
      ),
-     IfNode(174...212)(
+     IfNode(174...225)(
        KEYWORD_IF(174...176)("if"),
        TrueNode(177...181)(),
        StatementsNode(184...212)(

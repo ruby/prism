@@ -1,7 +1,7 @@
-ProgramNode(0...4)(
+ProgramNode(0...18)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...4)(
-    [IfNode(0...4)(
+  StatementsNode(0...18)(
+    [IfNode(0...18)(
        KEYWORD_IF(0...2)("if"),
        IntegerNode(3...4)(),
        nil,
