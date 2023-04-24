@@ -71,13 +71,7 @@ class ParseTest < Test::Unit::TestCase
 
       # Next, assert that the value can be serialized and deserialized without
       # changing the shape of the tree.
-      assert_equal_nodes(
-        value,
-        YARP.load(source, YARP.dump(source, filepath)),
-        # We should be comparing the location here, but can't because of bugs.
-        # We should fix this.
-        compare_location: false
-      )
+      assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
 
       # Finally, assert that we can lex the source and get the same tokens as
       # Ripper.
