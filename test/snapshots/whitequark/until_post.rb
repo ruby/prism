@@ -1,7 +1,7 @@
-ProgramNode(15...14)(
+ProgramNode(0...24)(
   ScopeNode(0...0)([]),
-  StatementsNode(15...14)(
-    [UntilNode(15...14)(
+  StatementsNode(0...24)(
+    [UntilNode(0...24)(
        KEYWORD_UNTIL_MODIFIER(15...20)("until"),
        CallNode(21...24)(
          nil,

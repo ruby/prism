@@ -150,8 +150,8 @@ ProgramNode(0...616)(
        ScopeNode(148...154)([IDENTIFIER(159...162)("foo")]),
        KEYWORD_MODULE(148...154)("module"),
        ConstantReadNode(155...156)(),
-       StatementsNode(169...168)(
-         [UntilNode(169...168)(
+       StatementsNode(159...178)(
+         [UntilNode(159...178)(
             KEYWORD_UNTIL_MODIFIER(169...174)("until"),
             LocalVariableReadNode(175...178)(0),
             StatementsNode(159...168)(
@@ -421,7 +421,7 @@ ProgramNode(0...616)(
           )]
        )
      ),
-     UntilNode(451...450)(
+     UntilNode(429...460)(
        KEYWORD_UNTIL_MODIFIER(451...456)("until"),
        CallNode(457...460)(
          nil,

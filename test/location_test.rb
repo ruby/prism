@@ -415,6 +415,11 @@ module YARP
       assert_location(UndefNode, "undef foo, bar")
     end
 
+    test "UntilNode" do
+      assert_location(UntilNode, "foo = bar until baz")
+      assert_location(UntilNode, "until bar;baz;end", 0..13)
+    end
+
     test "XStringNode" do
       assert_location(XStringNode, "`foo`")
       assert_location(XStringNode, "%x[foo]")

@@ -3164,13 +3164,28 @@ yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const 
 static yp_until_node_t *
 yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
   yp_until_node_t *node = yp_alloc(parser, sizeof(yp_until_node_t));
+  bool has_statements = (statements != NULL) && (statements->body.size != 0);
+
+  const char *start = NULL;
+  if (has_statements && (keyword->start > statements->base.location.start)) {
+    start = statements->base.location.start;
+  } else {
+    start = keyword->start;
+  }
+
+  const char *end = NULL;
+  if (has_statements && (predicate->location.end < statements->base.location.end)) {
+    end = statements->base.location.end;
+  } else {
+    end = predicate->location.end;
+  }
 
   *node = (yp_until_node_t) {
     {
       .type = YP_NODE_UNTIL_NODE,
       .location = {
-        .start = keyword->start,
-        .end = statements == NULL ? predicate->location.end : statements->base.location.end
+        .start = start,
+        .end = end,
       },
     },
     .keyword = *keyword,
