@@ -63,7 +63,7 @@ ProgramNode(2...188)(
           )]
        )
      ),
-     WhileNode(46...45)(
+     WhileNode(36...55)(
        KEYWORD_WHILE_MODIFIER(46...51)("while"),
        LocalVariableReadNode(52...55)(0),
        StatementsNode(36...45)(

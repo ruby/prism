@@ -66,8 +66,8 @@ ProgramNode(0...616)(
        IDENTIFIER(74...77)("foo"),
        nil,
        nil,
-       StatementsNode(90...89)(
-         [WhileNode(90...89)(
+       StatementsNode(80...106)(
+         [WhileNode(80...106)(
             KEYWORD_WHILE_MODIFIER(90...95)("while"),
             CallNode(96...106)(
               LocalVariableReadNode(96...99)(0),
@@ -121,8 +121,8 @@ ProgramNode(0...616)(
        ScopeNode(112...118)([IDENTIFIER(123...126)("foo")]),
        KEYWORD_MODULE(112...118)("module"),
        ConstantReadNode(119...120)(),
-       StatementsNode(133...132)(
-         [WhileNode(133...132)(
+       StatementsNode(123...142)(
+         [WhileNode(123...142)(
             KEYWORD_WHILE_MODIFIER(133...138)("while"),
             LocalVariableReadNode(139...142)(0),
             StatementsNode(123...132)(
@@ -345,8 +345,8 @@ ProgramNode(0...616)(
      LocalVariableWriteNode(371...402)(
        (371...372),
        ParenthesesNode(375...402)(
-         StatementsNode(392...391)(
-           [WhileNode(392...391)(
+         StatementsNode(376...401)(
+           [WhileNode(376...401)(
               KEYWORD_WHILE_MODIFIER(392...397)("while"),
               CallNode(398...401)(
                 nil,
@@ -387,7 +387,7 @@ ProgramNode(0...616)(
        (373...374),
        0
      ),
-     WhileNode(419...418)(
+     WhileNode(403...428)(
        KEYWORD_WHILE_MODIFIER(419...424)("while"),
        CallNode(425...428)(
          nil,
@@ -465,7 +465,7 @@ ProgramNode(0...616)(
           )]
        )
      ),
-     WhileNode(483...482)(
+     WhileNode(461...492)(
        KEYWORD_WHILE_MODIFIER(483...488)("while"),
        CallNode(489...492)(
          nil,

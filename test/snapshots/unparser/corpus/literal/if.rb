@@ -1,9 +1,9 @@
-ProgramNode(0...242)(
+ProgramNode(0...246)(
   ScopeNode(0...0)(
     [IDENTIFIER(184...187)("foo"), IDENTIFIER(225...229)("pair")]
   ),
-  StatementsNode(0...242)(
-    [IfNode(0...14)(
+  StatementsNode(0...246)(
+    [IfNode(0...18)(
        KEYWORD_IF(0...2)("if"),
        RegularExpressionNode(3...8)(
          REGEXP_BEGIN(3...4)("/"),
@@ -26,7 +26,7 @@ ProgramNode(0...242)(
        nil,
        KEYWORD_END(15...18)("end")
      ),
-     IfNode(19...27)(
+     IfNode(19...31)(
        KEYWORD_IF(19...21)("if"),
        IntegerNode(22...23)(),
        StatementsNode(26...27)([IntegerNode(26...27)()]),
@@ -44,21 +44,21 @@ ProgramNode(0...242)(
        ),
        KEYWORD_END(50...53)("end")
      ),
-     UnlessNode(54...68)(
+     UnlessNode(54...72)(
        KEYWORD_UNLESS(54...60)("unless"),
        IntegerNode(61...62)(),
        StatementsNode(65...68)([NilNode(65...68)()]),
        nil,
        KEYWORD_END(69...72)("end")
      ),
-     UnlessNode(73...85)(
+     UnlessNode(73...89)(
        KEYWORD_UNLESS(73...79)("unless"),
        IntegerNode(80...81)(),
        StatementsNode(84...85)([IntegerNode(84...85)()]),
        nil,
        KEYWORD_END(86...89)("end")
      ),
-     IfNode(90...96)(
+     IfNode(90...100)(
        KEYWORD_IF(90...92)("if"),
        CallNode(93...96)(
          nil,
@@ -136,7 +136,7 @@ ProgramNode(0...242)(
        ),
        KEYWORD_END(167...170)("end")
      ),
-     UnlessNode(171...193)(
+     UnlessNode(171...197)(
        KEYWORD_UNLESS(171...177)("unless"),
        CallNode(178...181)(
          nil,
@@ -168,7 +168,7 @@ ProgramNode(0...242)(
        nil,
        KEYWORD_END(194...197)("end")
      ),
-     IfNode(198...242)(
+     IfNode(198...246)(
        KEYWORD_IF(198...200)("if"),
        CallNode(201...222)(
          nil,

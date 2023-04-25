@@ -6,29 +6,29 @@ ProgramNode(0...309)(
        TrueNode(6...10)(),
        StatementsNode(12...13)([IntegerNode(12...13)()])
      ),
-     WhileNode(22...21)(
+     WhileNode(20...32)(
        KEYWORD_WHILE_MODIFIER(22...27)("while"),
        TrueNode(28...32)(),
        StatementsNode(20...21)([IntegerNode(20...21)()])
      ),
-     WhileNode(40...39)(
+     WhileNode(34...50)(
        KEYWORD_WHILE_MODIFIER(40...45)("while"),
        TrueNode(46...50)(),
        StatementsNode(34...39)([BreakNode(34...39)(nil, (34...39))])
      ),
-     WhileNode(57...56)(
+     WhileNode(52...67)(
        KEYWORD_WHILE_MODIFIER(57...62)("while"),
        TrueNode(63...67)(),
        StatementsNode(52...56)([NextNode(52...56)(nil, (52...56))])
      ),
-     WhileNode(76...75)(
+     WhileNode(69...86)(
        KEYWORD_WHILE_MODIFIER(76...81)("while"),
        TrueNode(82...86)(),
        StatementsNode(69...75)(
          [ReturnNode(69...75)(KEYWORD_RETURN(69...75)("return"), nil)]
        )
      ),
-     WhileNode(99...98)(
+     WhileNode(88...109)(
        KEYWORD_WHILE_MODIFIER(99...104)("while"),
        CallNode(105...109)(
          nil,
