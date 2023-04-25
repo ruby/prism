@@ -1,7 +1,7 @@
-ProgramNode(0...64)(
+ProgramNode(0...68)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...64)(
-    [IfNode(0...29)(
+  StatementsNode(0...68)(
+    [IfNode(0...33)(
        KEYWORD_IF(0...2)("if"),
        ParenthesesNode(3...23)(
          StatementsNode(4...22)(
@@ -77,7 +77,7 @@ ProgramNode(0...64)(
        nil,
        KEYWORD_END(30...33)("end")
      ),
-     IfNode(34...64)(
+     IfNode(34...68)(
        KEYWORD_IF(34...36)("if"),
        ParenthesesNode(37...58)(
          StatementsNode(38...57)(

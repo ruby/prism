@@ -5,8 +5,8 @@ ProgramNode(6...77)(
        IDENTIFIER(10...14)("blah"),
        nil,
        nil,
-       StatementsNode(23...55)(
-         [IfNode(23...55)(
+       StatementsNode(23...67)(
+         [IfNode(23...67)(
             KEYWORD_IF(23...25)("if"),
             TrueNode(26...30)(),
             StatementsNode(46...55)(

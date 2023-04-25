@@ -1613,7 +1613,7 @@ yp_if_node_create(yp_parser_t *parser,
     end = end_keyword->end;
   } else if (consequent != NULL) {
     end = consequent->location.end;
-  } else if (statements != NULL) {
+  } else if ((statements != NULL) && (statements->body.size != 0)) {
     end = statements->base.location.end;
   } else {
     end = predicate->location.end;
@@ -8131,9 +8131,11 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     switch (context) {
       case YP_CONTEXT_IF:
         ((yp_if_node_t *) parent)->end_keyword = parser->previous;
+        parent->location.end = parser->previous.end;
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
+        parent->location.end = parser->previous.end;
         break;
       default:
         assert(false && "unreachable");
