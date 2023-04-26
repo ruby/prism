@@ -41,7 +41,7 @@ ProgramNode(0...43)(
          ),
          KEYWORD_END(27...30)("end")
        ),
-       nil
+       KEYWORD_END(27...30)("end")
      ),
      IfNode(32...43)(
        KEYWORD_IF(32...34)("if"),
@@ -83,7 +83,7 @@ ProgramNode(0...43)(
          ),
          KEYWORD_END(55...58)("end")
        ),
-       nil
+       KEYWORD_END(55...58)("end")
      )]
   )
 )

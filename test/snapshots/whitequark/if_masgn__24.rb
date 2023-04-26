@@ -1,7 +1,7 @@
-ProgramNode(0...20)(
+ProgramNode(0...15)(
   ScopeNode(0...0)([IDENTIFIER(4...5)("a"), IDENTIFIER(7...8)("b")]),
-  StatementsNode(0...20)(
-    [IfNode(0...20)(
+  StatementsNode(0...15)(
+    [IfNode(0...15)(
        KEYWORD_IF(0...2)("if"),
        ParenthesesNode(3...15)(
          StatementsNode(4...14)(

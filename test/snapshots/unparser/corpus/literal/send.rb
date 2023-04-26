@@ -346,7 +346,7 @@ ProgramNode(0...991)(
        "bar"
      ),
      CallNode(304...318)(
-       IfNode(304...314)(
+       IfNode(304...310)(
          KEYWORD_IF(304...306)("if"),
          CallNode(307...310)(
            nil,

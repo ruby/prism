@@ -1,7 +1,7 @@
-ProgramNode(0...104)(
+ProgramNode(0...100)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...104)(
-    [IfNode(0...104)(
+  StatementsNode(0...100)(
+    [IfNode(0...100)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(10...100)(

@@ -206,7 +206,7 @@ ProgramNode(0...316)(
        ),
        "foo"
      ),
-     IfNode(214...245)(
+     IfNode(214...241)(
        KEYWORD_IF(214...216)("if"),
        LocalVariableWriteNode(217...235)(
          (217...218),

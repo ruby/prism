@@ -1,7 +1,7 @@
 ProgramNode(0...141)(
   ScopeNode(0...0)([]),
   StatementsNode(0...141)(
-    [UnlessNode(0...19)(
+    [UnlessNode(0...14)(
        KEYWORD_UNLESS(0...6)("unless"),
        TrueNode(7...11)(),
        StatementsNode(13...14)([IntegerNode(13...14)()]),
@@ -17,7 +17,7 @@ ProgramNode(0...141)(
          StatementsNode(40...41)([IntegerNode(40...41)()]),
          KEYWORD_END(42...45)("end")
        ),
-       nil
+       KEYWORD_END(42...45)("end")
      ),
      UnlessNode(47...60)(
        KEYWORD_UNLESS_MODIFIER(49...55)("unless"),

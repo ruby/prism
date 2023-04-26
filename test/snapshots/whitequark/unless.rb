@@ -1,7 +1,7 @@
-ProgramNode(0...46)(
+ProgramNode(0...41)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...46)(
-    [UnlessNode(0...24)(
+  StatementsNode(0...41)(
+    [UnlessNode(0...19)(
        KEYWORD_UNLESS(0...6)("unless"),
        CallNode(7...10)(
          nil,
@@ -28,7 +28,7 @@ ProgramNode(0...46)(
        nil,
        KEYWORD_END(21...24)("end")
      ),
-     UnlessNode(26...46)(
+     UnlessNode(26...41)(
        KEYWORD_UNLESS(26...32)("unless"),
        CallNode(33...36)(
          nil,

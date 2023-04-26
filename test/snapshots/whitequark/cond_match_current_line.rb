@@ -1,6 +1,6 @@
-ProgramNode(0...21)(
+ProgramNode(0...16)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...21)(
+  StatementsNode(0...16)(
     [CallNode(0...6)(
        RegularExpressionNode(1...6)(
          REGEXP_BEGIN(1...2)("/"),
@@ -16,7 +16,7 @@ ProgramNode(0...21)(
        nil,
        "!"
      ),
-     IfNode(8...21)(
+     IfNode(8...16)(
        KEYWORD_IF(8...10)("if"),
        RegularExpressionNode(11...16)(
          REGEXP_BEGIN(11...12)("/"),

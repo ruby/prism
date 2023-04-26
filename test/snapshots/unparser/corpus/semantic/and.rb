@@ -1,6 +1,6 @@
-ProgramNode(0...77)(
+ProgramNode(0...73)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...77)(
+  StatementsNode(0...73)(
     [OrNode(0...14)(
        RangeNode(0...5)(
          CallNode(0...1)(
@@ -99,7 +99,7 @@ ProgramNode(0...77)(
        ),
        KEYWORD_AND(21...24)("and")
      ),
-     IfNode(32...53)(
+     IfNode(32...49)(
        KEYWORD_IF(32...34)("if"),
        OrNode(35...49)(
          RangeNode(35...40)(
@@ -154,7 +154,7 @@ ProgramNode(0...77)(
        nil,
        KEYWORD_END(50...53)("end")
      ),
-     IfNode(55...77)(
+     IfNode(55...73)(
        KEYWORD_IF(55...57)("if"),
        AndNode(58...73)(
          RangeNode(58...63)(

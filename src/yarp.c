@@ -8130,9 +8130,11 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     switch (context) {
       case YP_CONTEXT_IF:
         ((yp_if_node_t *) current)->consequent = (yp_node_t *) else_node;
+        ((yp_if_node_t *) parent)->end_keyword = parser->previous;
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->consequent = else_node;
+        ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
         break;
       default:
         assert(false && "unreachable");
@@ -8144,11 +8146,9 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     switch (context) {
       case YP_CONTEXT_IF:
         ((yp_if_node_t *) parent)->end_keyword = parser->previous;
-        parent->location.end = parser->previous.end;
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
-        parent->location.end = parser->previous.end;
         break;
       default:
         assert(false && "unreachable");

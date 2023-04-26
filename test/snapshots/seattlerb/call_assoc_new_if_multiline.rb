@@ -30,7 +30,7 @@ ProgramNode(0...24)(
                    StatementsNode(18...19)([IntegerNode(18...19)()]),
                    KEYWORD_END(20...23)("end")
                  ),
-                 nil
+                 KEYWORD_END(20...23)("end")
                ),
                nil
              )],

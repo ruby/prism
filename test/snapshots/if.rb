@@ -1,7 +1,7 @@
-ProgramNode(0...293)(
+ProgramNode(0...273)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...293)(
-    [IfNode(0...15)(
+  StatementsNode(0...273)(
+    [IfNode(0...10)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(9...10)([IntegerNode(9...10)()]),
@@ -17,7 +17,7 @@ ProgramNode(0...293)(
          StatementsNode(32...33)([IntegerNode(32...33)()]),
          KEYWORD_END(34...37)("end")
        ),
-       nil
+       KEYWORD_END(34...37)("end")
      ),
      IfNode(39...56)(
        KEYWORD_IF(39...41)("if"),
@@ -40,7 +40,7 @@ ProgramNode(0...293)(
          ),
          nil
        ),
-       nil
+       KEYWORD_END(109...112)("end")
      ),
      IfNode(114...123)(
        KEYWORD_IF_MODIFIER(116...118)("if"),
@@ -72,7 +72,7 @@ ProgramNode(0...293)(
        nil,
        nil
      ),
-     IfNode(170...200)(
+     IfNode(170...196)(
        KEYWORD_IF(170...172)("if"),
        CallNode(173...182)(
          nil,
@@ -93,7 +93,7 @@ ProgramNode(0...293)(
        nil,
        KEYWORD_END(197...200)("end")
      ),
-     IfNode(202...221)(
+     IfNode(202...217)(
        KEYWORD_IF(202...204)("if"),
        CallNode(205...208)(
          nil,
@@ -199,9 +199,9 @@ ProgramNode(0...293)(
          StatementsNode(0...0)([]),
          KEYWORD_END(256...259)("end")
        ),
-       nil
+       KEYWORD_END(256...259)("end")
      ),
-     IfNode(261...293)(
+     IfNode(261...273)(
        KEYWORD_IF(261...263)("if"),
        MatchPredicateNode(264...273)(
          CallNode(264...268)(
