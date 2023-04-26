@@ -417,7 +417,7 @@ module YARP
 
     test "WhileNode" do
       assert_location(WhileNode, "foo = bar while foo != baz")
-      assert_location(WhileNode, "while a;bar;baz;end", 0..15)
+      assert_location(WhileNode, "while a;bar;baz;end")
     end
 
     test "XStringNode" do

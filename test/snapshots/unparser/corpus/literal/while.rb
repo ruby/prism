@@ -31,8 +31,8 @@ ProgramNode(0...616)(
                 (17...18),
                 (21...22)
               ),
-              StatementsNode(27...52)(
-                [WhileNode(27...52)(
+              StatementsNode(27...60)(
+                [WhileNode(27...60)(
                    KEYWORD_WHILE(27...32)("while"),
                    CallNode(33...36)(
                      nil,
@@ -179,8 +179,8 @@ ProgramNode(0...616)(
        ScopeNode(184...190)([IDENTIFIER(209...212)("foo")]),
        KEYWORD_MODULE(184...190)("module"),
        ConstantReadNode(191...192)(),
-       StatementsNode(195...218)(
-         [WhileNode(195...218)(
+       StatementsNode(195...224)(
+         [WhileNode(195...224)(
             KEYWORD_WHILE(195...200)("while"),
             CallNode(201...204)(
               nil,
@@ -243,8 +243,8 @@ ProgramNode(0...616)(
                 (248...249),
                 (252...253)
               ),
-              StatementsNode(258...283)(
-                [WhileNode(258...283)(
+              StatementsNode(258...291)(
+                [WhileNode(258...291)(
                    KEYWORD_WHILE(258...263)("while"),
                    CallNode(264...267)(
                      nil,
@@ -311,8 +311,8 @@ ProgramNode(0...616)(
                 (319...320),
                 (323...324)
               ),
-              StatementsNode(329...354)(
-                [WhileNode(329...354)(
+              StatementsNode(329...362)(
+                [WhileNode(329...362)(
                    KEYWORD_WHILE(329...334)("while"),
                    LocalVariableReadNode(335...338)(0),
                    StatementsNode(345...354)(
@@ -509,17 +509,17 @@ ProgramNode(0...616)(
           )]
        )
      ),
-     WhileNode(493...504)(
+     WhileNode(493...508)(
        KEYWORD_WHILE(493...498)("while"),
        FalseNode(499...504)(),
        nil
      ),
-     WhileNode(509...524)(
+     WhileNode(509...528)(
        KEYWORD_WHILE(509...514)("while"),
        FalseNode(515...520)(),
        StatementsNode(523...524)([IntegerNode(523...524)()])
      ),
-     WhileNode(529...552)(
+     WhileNode(529...556)(
        KEYWORD_WHILE(529...534)("while"),
        ParenthesesNode(535...544)(
          StatementsNode(536...543)(

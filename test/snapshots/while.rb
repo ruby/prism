@@ -1,7 +1,7 @@
-ProgramNode(0...309)(
+ProgramNode(0...314)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...309)(
-    [WhileNode(0...13)(
+  StatementsNode(0...314)(
+    [WhileNode(0...18)(
        KEYWORD_WHILE(0...5)("while"),
        TrueNode(6...10)(),
        StatementsNode(12...13)([IntegerNode(12...13)()])
@@ -66,7 +66,7 @@ ProgramNode(0...309)(
           )]
        )
      ),
-     WhileNode(111...156)(
+     WhileNode(111...161)(
        KEYWORD_WHILE(111...116)("while"),
        DefNode(117...149)(
          IDENTIFIER(126...129)("foo"),
@@ -110,7 +110,7 @@ ProgramNode(0...309)(
        ),
        StatementsNode(151...156)([BreakNode(151...156)(nil, (151...156))])
      ),
-     WhileNode(163...205)(
+     WhileNode(163...210)(
        KEYWORD_WHILE(163...168)("while"),
        ClassNode(169...198)(
          ScopeNode(169...174)([IDENTIFIER(179...180)("a")]),
@@ -145,7 +145,7 @@ ProgramNode(0...309)(
        ),
        StatementsNode(200...205)([BreakNode(200...205)(nil, (200...205))])
      ),
-     WhileNode(212...255)(
+     WhileNode(212...260)(
        KEYWORD_WHILE(212...217)("while"),
        SingletonClassNode(218...248)(
          ScopeNode(218...223)([]),
@@ -174,7 +174,7 @@ ProgramNode(0...309)(
        ),
        StatementsNode(250...255)([BreakNode(250...255)(nil, (250...255))])
      ),
-     WhileNode(262...309)(
+     WhileNode(262...314)(
        KEYWORD_WHILE(262...267)("while"),
        SingletonClassNode(268...302)(
          ScopeNode(268...273)([IDENTIFIER(283...284)("a")]),
