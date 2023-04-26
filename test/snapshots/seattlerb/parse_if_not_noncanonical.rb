@@ -51,7 +51,7 @@ ProgramNode(0...26)(
          ),
          KEYWORD_END(38...41)("end")
        ),
-       KEYWORD_END(38...41)("end")
+       nil
      )]
   )
 )

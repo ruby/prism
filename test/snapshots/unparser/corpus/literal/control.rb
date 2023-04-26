@@ -75,7 +75,7 @@ ProgramNode(0...131)(
               StatementsNode(139...140)([IntegerNode(139...140)()]),
               KEYWORD_END(141...144)("end")
             ),
-            KEYWORD_END(141...144)("end")
+            nil
           )]
        )
      )]

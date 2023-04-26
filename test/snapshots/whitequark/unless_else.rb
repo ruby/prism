@@ -41,7 +41,7 @@ ProgramNode(0...51)(
          ),
          KEYWORD_END(31...34)("end")
        ),
-       KEYWORD_END(31...34)("end")
+       nil
      ),
      UnlessNode(36...51)(
        KEYWORD_UNLESS(36...42)("unless"),
@@ -83,7 +83,7 @@ ProgramNode(0...51)(
          ),
          KEYWORD_END(63...66)("end")
        ),
-       KEYWORD_END(63...66)("end")
+       nil
      )]
   )
 )

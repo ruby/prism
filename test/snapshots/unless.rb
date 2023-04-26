@@ -17,7 +17,7 @@ ProgramNode(0...141)(
          StatementsNode(40...41)([IntegerNode(40...41)()]),
          KEYWORD_END(42...45)("end")
        ),
-       KEYWORD_END(42...45)("end")
+       nil
      ),
      UnlessNode(47...60)(
        KEYWORD_UNLESS_MODIFIER(49...55)("unless"),

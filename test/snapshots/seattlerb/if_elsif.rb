@@ -5,7 +5,7 @@ ProgramNode(0...18)(
        KEYWORD_IF(0...2)("if"),
        IntegerNode(3...4)(),
        nil,
-       IfNode(6...13)(
+       IfNode(6...0)(
          KEYWORD_ELSIF(6...11)("elsif"),
          IntegerNode(12...13)(),
          StatementsNode(0...0)([]),
