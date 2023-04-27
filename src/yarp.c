@@ -10449,7 +10449,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
       }
 
-      return (yp_node_t *) yp_until_node_create(parser, &keyword, predicate, statements);
+      yp_until_node_t *until_node = yp_until_node_create(parser, &keyword, predicate, statements);
+      if (parser->previous.type == YP_TOKEN_KEYWORD_END) {
+        until_node->base.location.end = parser->previous.end;
+      }
+
+      return (yp_node_t *) until_node;
     }
     case YP_TOKEN_KEYWORD_WHILE: {
       yp_do_loop_stack_push(parser, true);

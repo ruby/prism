@@ -1,7 +1,7 @@
-ProgramNode(0...38)(
+ProgramNode(0...42)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...38)(
-    [UntilNode(0...17)(
+  StatementsNode(0...42)(
+    [UntilNode(0...21)(
        KEYWORD_UNTIL(0...5)("until"),
        CallNode(6...9)(
          nil,
@@ -26,7 +26,7 @@ ProgramNode(0...38)(
           )]
        )
      ),
-     UntilNode(23...38)(
+     UntilNode(23...42)(
        KEYWORD_UNTIL(23...28)("until"),
        CallNode(29...32)(
          nil,

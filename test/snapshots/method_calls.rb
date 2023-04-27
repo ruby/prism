@@ -1733,12 +1733,12 @@ ProgramNode(0...1187)(
        nil,
        "foo"
      ),
-     CallNode(1042...1126)(
+     CallNode(1042...1132)(
        nil,
        nil,
        IDENTIFIER(1042...1045)("foo"),
        nil,
-       ArgumentsNode(1046...1126)(
+       ArgumentsNode(1046...1132)(
          [SymbolNode(1046...1048)(
             SYMBOL_BEGIN(1046...1047)(":"),
             IDENTIFIER(1047...1048)("a"),
@@ -1791,7 +1791,7 @@ ProgramNode(0...1187)(
                )]
             )
           ),
-          UntilNode(1100...1126)(
+          UntilNode(1100...1132)(
             KEYWORD_UNTIL(1100...1105)("until"),
             CallNode(1106...1107)(
               nil,
