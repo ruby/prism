@@ -414,6 +414,34 @@ class ErrorsTest < Test::Unit::TestCase
     ", ["Module definition in method body"]
   end
 
+  test "class definition in method body" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      nil,
+      StatementsNode(
+        [ClassNode(
+           ScopeNode([]),
+           KEYWORD_CLASS("class"),
+           ConstantReadNode(),
+           nil,
+           nil,
+           nil,
+           KEYWORD_END("end")
+         )]
+      ),
+      ScopeNode([]),
+      Location(),
+      nil,
+      nil,
+      nil,
+      nil,
+      Location()
+    )
+
+    assert_errors expected, "def foo;class A;end;end", ["Class definition in method body"]
+  end
+
   test "bad arguments" do
     expected = DefNode(
       IDENTIFIER("foo"),
@@ -884,7 +912,83 @@ class ErrorsTest < Test::Unit::TestCase
 
     assert_errors expected, "case :a\nelse\nend", ["Unexpected else without no when clauses in case statement."]
   end
-  
+
+  test "setter method cannot be defined in an endless method definition"  do
+    expected = DefNode(
+      IDENTIFIER("a="),
+      nil,
+      nil,
+      StatementsNode([IntegerNode()]),
+      ScopeNode([]),
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      Location(),
+      nil
+    )
+
+    assert_errors expected, "def a=() = 42", ["Setter method cannot be defined in an endless method definition"]
+  end
+
+  test "do not allow forward arguments in lambda literals" do
+    expected = LambdaNode(
+      ScopeNode([UDOT_DOT_DOT("...")]),
+      MINUS_GREATER("->"),
+      BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
+      nil
+    )
+
+    assert_errors expected, "->(...) {}", ["Unexpected ..."]
+  end
+
+  test "do not allow forward arguments in blocks" do
+    expected = CallNode(
+      nil,
+      nil,
+      IDENTIFIER("a"),
+      nil,
+      nil,
+      nil,
+      BlockNode(
+        ScopeNode([UDOT_DOT_DOT("...")]),
+        BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
+        nil,
+        Location(),
+        Location()
+      ),
+      "a"
+    )
+
+    assert_errors expected, "a {|...|}", ["Unexpected ..."]
+  end
+
+  test "don't allow return inside class body" do
+    expected = ClassNode(
+      ScopeNode([]),
+      KEYWORD_CLASS("class"),
+      ConstantReadNode(),
+      nil,
+      nil,
+      StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
+      KEYWORD_END("end")
+    )
+
+    assert_errors expected, "class A; return; end", ["Invalid return in class/module body"]
+  end
+
+  test "don't allow return inside module body" do
+    expected = ModuleNode(
+      ScopeNode([]),
+      KEYWORD_MODULE("module"),
+      ConstantReadNode(),
+      StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
+      KEYWORD_END("end")
+    )
+
+    assert_errors expected, "module A; return; end", ["Invalid return in class/module body"]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

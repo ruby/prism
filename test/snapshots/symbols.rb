@@ -1,6 +1,6 @@
-ProgramNode(0...308)(
+ProgramNode(0...345)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...308)(
+  StatementsNode(0...345)(
     [SymbolNode(0...6)(
        SYMBOL_BEGIN(0...2)(":'"),
        STRING_CONTENT(2...5)("abc"),
@@ -128,8 +128,8 @@ ProgramNode(0...308)(
      ArrayNode(97...113)(
        [IntegerNode(98...99)(),
         FloatNode(101...104)(),
-        RationalNode(106...108)(IntegerNode(106...108)()),
-        ImaginaryNode(110...112)(IntegerNode(110...112)())],
+        RationalNode(106...108)(IntegerNode(106...107)()),
+        ImaginaryNode(110...112)(IntegerNode(110...111)())],
        BRACKET_LEFT_ARRAY(97...98)("["),
        BRACKET_RIGHT(112...113)("]")
      ),
@@ -378,6 +378,24 @@ ProgramNode(0...308)(
        LESS(307...308)("<"),
        nil,
        "<"
+     ),
+     SymbolNode(310...319)(
+       SYMBOL_BEGIN(310...311)(":"),
+       KEYWORD___LINE__(311...319)("__LINE__"),
+       nil,
+       "__LINE__"
+     ),
+     SymbolNode(321...330)(
+       SYMBOL_BEGIN(321...322)(":"),
+       KEYWORD___FILE__(322...330)("__FILE__"),
+       nil,
+       "__FILE__"
+     ),
+     SymbolNode(332...345)(
+       SYMBOL_BEGIN(332...333)(":"),
+       KEYWORD___ENCODING__(333...345)("__ENCODING__"),
+       nil,
+       "__ENCODING__"
      )]
   )
 )

@@ -1,6 +1,6 @@
-ProgramNode(0...230)(
+ProgramNode(0...272)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...230)(
+  StatementsNode(0...272)(
     [CaseNode(0...21)(
        SymbolNode(5...8)(
          SYMBOL_BEGIN(5...6)(":"),
@@ -24,11 +24,11 @@ ProgramNode(0...230)(
      ),
      CaseNode(23...81)(
        TrueNode(28...32)(),
-       [WhenNode(34...49)(
+       [WhenNode(34...53)(
           KEYWORD_WHEN(34...38)("when"),
           [TrueNode(39...43)()],
-          StatementsNode(45...49)(
-            [CallNode(45...49)(
+          StatementsNode(45...53)(
+            [CallNode(45...53)(
                nil,
                nil,
                IDENTIFIER(45...49)("puts"),
@@ -47,11 +47,11 @@ ProgramNode(0...230)(
              )]
           )
         ),
-        WhenNode(55...71)(
+        WhenNode(55...76)(
           KEYWORD_WHEN(55...59)("when"),
           [FalseNode(60...65)()],
-          StatementsNode(67...71)(
-            [CallNode(67...71)(
+          StatementsNode(67...76)(
+            [CallNode(67...76)(
                nil,
                nil,
                IDENTIFIER(67...71)("puts"),
@@ -212,6 +212,35 @@ ProgramNode(0...230)(
        ),
        (200...204),
        (227...230)
+     ),
+     CaseNode(232...272)(
+       CallNode(237...241)(
+         nil,
+         nil,
+         IDENTIFIER(237...241)("type"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "type"
+       ),
+       [WhenNode(246...253)(
+          KEYWORD_WHEN(246...250)("when"),
+          [SymbolNode(251...253)(
+             SYMBOL_BEGIN(251...252)(":"),
+             IDENTIFIER(252...253)("b"),
+             nil,
+             "b"
+           )],
+          StatementsNode(0...0)([])
+        )],
+       ElseNode(260...272)(
+         KEYWORD_ELSE(260...264)("else"),
+         StatementsNode(0...0)([]),
+         KEYWORD_END(269...272)("end")
+       ),
+       (232...236),
+       (269...272)
      )]
   )
 )

@@ -12,8 +12,8 @@ ProgramNode(0...444)(
             nil,
             IDENTIFIER(2...3)("b"),
             PARENTHESIS_LEFT(3...4)("("),
-            ArgumentsNode(4...5)(
-              [CallNode(4...5)(
+            ArgumentsNode(4...7)(
+              [CallNode(4...7)(
                  nil,
                  nil,
                  IDENTIFIER(4...5)("c"),
@@ -62,8 +62,8 @@ ProgramNode(0...444)(
             nil,
             IDENTIFIER(22...23)("b"),
             PARENTHESIS_LEFT(23...24)("("),
-            ArgumentsNode(24...25)(
-              [CallNode(24...25)(
+            ArgumentsNode(24...27)(
+              [CallNode(24...27)(
                  nil,
                  nil,
                  IDENTIFIER(24...25)("c"),
@@ -112,8 +112,8 @@ ProgramNode(0...444)(
             nil,
             IDENTIFIER(44...45)("b"),
             PARENTHESIS_LEFT(45...46)("("),
-            ArgumentsNode(46...47)(
-              [CallNode(46...47)(
+            ArgumentsNode(46...49)(
+              [CallNode(46...49)(
                  nil,
                  nil,
                  IDENTIFIER(46...47)("c"),
@@ -139,7 +139,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          ImaginaryNode(52...56)(FloatNode(52...56)())]
+          ImaginaryNode(52...56)(FloatNode(52...55)())]
        ),
        nil,
        BlockNode(57...63)(
@@ -162,8 +162,8 @@ ProgramNode(0...444)(
             nil,
             IDENTIFIER(67...68)("b"),
             PARENTHESIS_LEFT(68...69)("("),
-            ArgumentsNode(69...70)(
-              [CallNode(69...70)(
+            ArgumentsNode(69...72)(
+              [CallNode(69...72)(
                  nil,
                  nil,
                  IDENTIFIER(69...70)("c"),
@@ -189,7 +189,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          RationalNode(75...79)(FloatNode(75...79)())]
+          RationalNode(75...79)(FloatNode(75...78)())]
        ),
        nil,
        BlockNode(80...86)(
@@ -212,8 +212,8 @@ ProgramNode(0...444)(
             nil,
             IDENTIFIER(90...91)("b"),
             PARENTHESIS_LEFT(91...92)("("),
-            ArgumentsNode(92...93)(
-              [CallNode(92...93)(
+            ArgumentsNode(92...95)(
+              [CallNode(92...95)(
                  nil,
                  nil,
                  IDENTIFIER(92...93)("c"),
@@ -394,7 +394,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          ImaginaryNode(164...168)(FloatNode(164...168)())]
+          ImaginaryNode(164...168)(FloatNode(164...167)())]
        ),
        nil,
        BlockNode(169...175)(
@@ -444,7 +444,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          RationalNode(188...192)(FloatNode(188...192)())]
+          RationalNode(188...192)(FloatNode(188...191)())]
        ),
        nil,
        BlockNode(193...199)(
@@ -527,8 +527,8 @@ ProgramNode(0...444)(
             BlockNode(226...231)(
               ScopeNode(226...227)([]),
               nil,
-              StatementsNode(227...228)(
-                [CallNode(227...228)(
+              StatementsNode(227...230)(
+                [CallNode(227...230)(
                    nil,
                    nil,
                    IDENTIFIER(227...228)("c"),
@@ -583,8 +583,8 @@ ProgramNode(0...444)(
             BlockNode(246...251)(
               ScopeNode(246...247)([]),
               nil,
-              StatementsNode(247...248)(
-                [CallNode(247...248)(
+              StatementsNode(247...250)(
+                [CallNode(247...250)(
                    nil,
                    nil,
                    IDENTIFIER(247...248)("c"),
@@ -639,8 +639,8 @@ ProgramNode(0...444)(
             BlockNode(268...273)(
               ScopeNode(268...269)([]),
               nil,
-              StatementsNode(269...270)(
-                [CallNode(269...270)(
+              StatementsNode(269...272)(
+                [CallNode(269...272)(
                    nil,
                    nil,
                    IDENTIFIER(269...270)("c"),
@@ -667,7 +667,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          ImaginaryNode(275...279)(FloatNode(275...279)())]
+          ImaginaryNode(275...279)(FloatNode(275...278)())]
        ),
        nil,
        BlockNode(280...286)(
@@ -695,8 +695,8 @@ ProgramNode(0...444)(
             BlockNode(291...296)(
               ScopeNode(291...292)([]),
               nil,
-              StatementsNode(292...293)(
-                [CallNode(292...293)(
+              StatementsNode(292...295)(
+                [CallNode(292...295)(
                    nil,
                    nil,
                    IDENTIFIER(292...293)("c"),
@@ -723,7 +723,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          RationalNode(298...302)(FloatNode(298...302)())]
+          RationalNode(298...302)(FloatNode(298...301)())]
        ),
        nil,
        BlockNode(303...309)(
@@ -751,8 +751,8 @@ ProgramNode(0...444)(
             BlockNode(314...319)(
               ScopeNode(314...315)([]),
               nil,
-              StatementsNode(315...316)(
-                [CallNode(315...316)(
+              StatementsNode(315...318)(
+                [CallNode(315...318)(
                    nil,
                    nil,
                    IDENTIFIER(315...316)("c"),
@@ -952,7 +952,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          ImaginaryNode(387...391)(FloatNode(387...391)())]
+          ImaginaryNode(387...391)(FloatNode(387...390)())]
        ),
        nil,
        BlockNode(392...398)(
@@ -1008,7 +1008,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          RationalNode(411...415)(FloatNode(411...415)())]
+          RationalNode(411...415)(FloatNode(411...414)())]
        ),
        nil,
        BlockNode(416...422)(

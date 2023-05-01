@@ -1,13 +1,13 @@
-ProgramNode(0...71)(
+ProgramNode(0...74)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a"), IDENTIFIER(5...6)("b")]),
-  StatementsNode(0...71)(
-    [OperatorAssignmentNode(0...15)(
+  StatementsNode(0...74)(
+    [OperatorAssignmentNode(0...18)(
        LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
        PLUS_EQUAL(2...4)("+="),
-       OperatorAssignmentNode(5...15)(
+       OperatorAssignmentNode(5...18)(
          LocalVariableWriteNode(5...6)((5...6), nil, nil, 0),
          PLUS_EQUAL(7...9)("+="),
-         CallNode(10...15)(
+         CallNode(10...18)(
            nil,
            nil,
            IDENTIFIER(10...15)("raise"),
@@ -26,12 +26,12 @@ ProgramNode(0...71)(
          )
        )
      ),
-     OperatorAssignmentNode(20...34)(
+     OperatorAssignmentNode(20...37)(
        LocalVariableWriteNode(20...21)((20...21), nil, nil, 0),
        PLUS_EQUAL(22...24)("+="),
-       LocalVariableWriteNode(25...34)(
+       LocalVariableWriteNode(25...37)(
          (25...26),
-         CallNode(29...34)(
+         CallNode(29...37)(
            nil,
            nil,
            IDENTIFIER(29...34)("raise"),
@@ -52,12 +52,12 @@ ProgramNode(0...71)(
          0
        )
      ),
-     LocalVariableWriteNode(39...53)(
+     LocalVariableWriteNode(39...56)(
        (39...40),
-       OperatorAssignmentNode(43...53)(
+       OperatorAssignmentNode(43...56)(
          LocalVariableWriteNode(43...44)((43...44), nil, nil, 0),
          PLUS_EQUAL(45...47)("+="),
-         CallNode(48...53)(
+         CallNode(48...56)(
            nil,
            nil,
            IDENTIFIER(48...53)("raise"),
@@ -78,11 +78,11 @@ ProgramNode(0...71)(
        (41...42),
        0
      ),
-     LocalVariableWriteNode(58...71)(
+     LocalVariableWriteNode(58...74)(
        (58...59),
-       LocalVariableWriteNode(62...71)(
+       LocalVariableWriteNode(62...74)(
          (62...63),
-         CallNode(66...71)(
+         CallNode(66...74)(
            nil,
            nil,
            IDENTIFIER(66...71)("raise"),

@@ -1,10 +1,12 @@
-ProgramNode(0...3655)(
+ProgramNode(0...3725)(
   ScopeNode(0...0)(
     [IDENTIFIER(7...10)("bar"),
      IDENTIFIER(1195...1198)("baz"),
-     IDENTIFIER(1245...1248)("qux")]
+     IDENTIFIER(1245...1248)("qux"),
+     IDENTIFIER(3682...3683)("b"),
+     IDENTIFIER(3718...3719)("a")]
   ),
-  StatementsNode(0...3655)(
+  StatementsNode(0...3725)(
     [MatchRequiredNode(0...10)(
        CallNode(0...3)(
          nil,
@@ -58,7 +60,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       ImaginaryNode(38...40)(IntegerNode(38...40)()),
+       ImaginaryNode(38...40)(IntegerNode(38...39)()),
        (35...37)
      ),
      MatchRequiredNode(41...50)(
@@ -72,7 +74,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       RationalNode(48...50)(IntegerNode(48...50)()),
+       RationalNode(48...50)(IntegerNode(48...49)()),
        (45...47)
      ),
      MatchRequiredNode(51...62)(
@@ -507,8 +509,8 @@ ProgramNode(0...3655)(
          "foo"
        ),
        RangeNode(394...402)(
-         ImaginaryNode(394...396)(IntegerNode(394...396)()),
-         ImaginaryNode(400...402)(IntegerNode(400...402)()),
+         ImaginaryNode(394...396)(IntegerNode(394...395)()),
+         ImaginaryNode(400...402)(IntegerNode(400...401)()),
          (397...399)
        ),
        (391...393)
@@ -525,8 +527,8 @@ ProgramNode(0...3655)(
          "foo"
        ),
        RangeNode(410...418)(
-         RationalNode(410...412)(IntegerNode(410...412)()),
-         RationalNode(416...418)(IntegerNode(416...418)()),
+         RationalNode(410...412)(IntegerNode(410...411)()),
+         RationalNode(416...418)(IntegerNode(416...417)()),
          (413...415)
        ),
        (407...409)
@@ -2010,7 +2012,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       ImaginaryNode(1668...1670)(IntegerNode(1668...1670)()),
+       ImaginaryNode(1668...1670)(IntegerNode(1668...1669)()),
        (1665...1667)
      ),
      MatchPredicateNode(1671...1680)(
@@ -2024,7 +2026,7 @@ ProgramNode(0...3655)(
          nil,
          "foo"
        ),
-       RationalNode(1678...1680)(IntegerNode(1678...1680)()),
+       RationalNode(1678...1680)(IntegerNode(1678...1679)()),
        (1675...1677)
      ),
      MatchPredicateNode(1681...1692)(
@@ -2486,7 +2488,7 @@ ProgramNode(0...3655)(
          "foo"
        ),
        [InNode(2071...2081)(
-          ImaginaryNode(2074...2076)(IntegerNode(2074...2076)()),
+          ImaginaryNode(2074...2076)(IntegerNode(2074...2075)()),
           nil,
           (2071...2073),
           (2077...2081)
@@ -2507,7 +2509,7 @@ ProgramNode(0...3655)(
          "foo"
        ),
        [InNode(2096...2106)(
-          RationalNode(2099...2101)(IntegerNode(2099...2101)()),
+          RationalNode(2099...2101)(IntegerNode(2099...2100)()),
           nil,
           (2096...2098),
           (2102...2106)
@@ -3148,7 +3150,7 @@ ProgramNode(0...3655)(
             KEYWORD_IF_MODIFIER(2843...2845)("if"),
             LocalVariableReadNode(2846...2849)(0),
             StatementsNode(2840...2842)(
-              [ImaginaryNode(2840...2842)(IntegerNode(2840...2842)())]
+              [ImaginaryNode(2840...2842)(IntegerNode(2840...2841)())]
             ),
             nil,
             nil
@@ -3177,7 +3179,7 @@ ProgramNode(0...3655)(
             KEYWORD_IF_MODIFIER(2875...2877)("if"),
             LocalVariableReadNode(2878...2881)(0),
             StatementsNode(2872...2874)(
-              [RationalNode(2872...2874)(IntegerNode(2872...2874)())]
+              [RationalNode(2872...2874)(IntegerNode(2872...2873)())]
             ),
             nil,
             nil
@@ -3878,6 +3880,103 @@ ProgramNode(0...3655)(
        nil,
        (3616...3620),
        (3652...3655)
+     ),
+     IfNode(3657...3671)(
+       KEYWORD_IF(3657...3659)("if"),
+       MatchPredicateNode(3660...3667)(
+         CallNode(3660...3661)(
+           nil,
+           nil,
+           IDENTIFIER(3660...3661)("a"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "a"
+         ),
+         ArrayPatternNode(3665...3667)(
+           nil,
+           [],
+           nil,
+           [],
+           (3665...3666),
+           (3666...3667)
+         ),
+         (3662...3664)
+       ),
+       nil,
+       nil,
+       KEYWORD_END(3668...3671)("end")
+     ),
+     MatchRequiredNode(3673...3685)(
+       CallNode(3673...3674)(
+         nil,
+         nil,
+         IDENTIFIER(3673...3674)("a"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a"
+       ),
+       ArrayPatternNode(3678...3685)(
+         nil,
+         [LocalVariableWriteNode(3682...3683)((3682...3683), nil, nil, 0)],
+         nil,
+         [],
+         (3678...3679),
+         (3684...3685)
+       ),
+       (3675...3677)
+     ),
+     MatchPredicateNode(3687...3725)(
+       CallNode(3687...3690)(
+         nil,
+         nil,
+         IDENTIFIER(3687...3690)("foo"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "foo"
+       ),
+       HashPatternNode(3694...3725)(
+         ConstantReadNode(3694...3695)(),
+         [AssocNode(3699...3723)(
+            SymbolNode(3699...3703)(
+              nil,
+              LABEL(3699...3702)("bar"),
+              LABEL_END(3702...3703)(":"),
+              "bar"
+            ),
+            HashPatternNode(3704...3723)(
+              ConstantReadNode(3704...3705)(),
+              [AssocNode(3711...3719)(
+                 SymbolNode(3711...3717)(
+                   nil,
+                   LABEL(3711...3716)("value"),
+                   LABEL_END(3716...3717)(":"),
+                   "value"
+                 ),
+                 LocalVariableWriteNode(3718...3719)(
+                   (3718...3719),
+                   nil,
+                   nil,
+                   0
+                 ),
+                 nil
+               )],
+              nil,
+              (3705...3706),
+              (3722...3723)
+            ),
+            nil
+          )],
+         nil,
+         (3695...3696),
+         (3724...3725)
+       ),
+       (3691...3693)
      )]
   )
 )

@@ -1,7 +1,7 @@
-ProgramNode(0...9)(
+ProgramNode(0...11)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...9)(
-    [OperatorAssignmentNode(0...9)(
+  StatementsNode(0...11)(
+    [OperatorAssignmentNode(0...11)(
        CallNode(0...4)(
          CallNode(0...1)(
            nil,
@@ -22,7 +22,7 @@ ProgramNode(0...9)(
          "b="
        ),
        PLUS_EQUAL(5...7)("+="),
-       CallNode(8...9)(
+       CallNode(8...11)(
          nil,
          nil,
          IDENTIFIER(8...9)("x"),

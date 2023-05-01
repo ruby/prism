@@ -1,7 +1,7 @@
 ProgramNode(0...48)(
   ScopeNode(0...0)([IDENTIFIER(24...25)("b"), IDENTIFIER(38...39)("c")]),
   StatementsNode(0...48)(
-    [IfNode(0...42)(
+    [IfNode(0...46)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(15...42)(
@@ -28,7 +28,7 @@ ProgramNode(0...48)(
             (26...27),
             0
           ),
-          CallNode(32...33)(
+          CallNode(32...35)(
             nil,
             nil,
             IDENTIFIER(32...33)("p"),

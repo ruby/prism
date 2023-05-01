@@ -20,8 +20,8 @@ ProgramNode(0...28)(
          nil,
          "foo"
        ),
-       StatementsNode(17...18)(
-         [CallNode(17...18)(
+       StatementsNode(17...23)(
+         [CallNode(17...23)(
             nil,
             nil,
             IDENTIFIER(17...18)("p"),

@@ -41,9 +41,6 @@ end
 def a(**)
 end
 
-def (1).a
-end
-
 a = 1; def a
 end
 
@@ -143,4 +140,23 @@ def foo
 end
 
 def bar(a: (1...10))
+end
+
+def bar(a: (...10))
+end
+
+def bar(a: (1...))
+end
+
+def bar(a = (1...10))
+end
+
+def bar(a = (...10))
+end
+
+def bar(a = (1...))
+end
+
+def method(a)
+  item >> a {}
 end

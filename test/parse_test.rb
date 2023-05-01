@@ -12,9 +12,7 @@ class ParseTest < Test::Unit::TestCase
   end
 
   known_failures = %w[
-    seattlerb/heredoc__backslash_dos_format.rb
     seattlerb/heredoc_nested.rb
-    seattlerb/heredoc_trailing_slash_continued_call.rb
     seattlerb/pct_w_heredoc_interp_nested.rb
   ]
 
@@ -73,19 +71,18 @@ class ParseTest < Test::Unit::TestCase
 
       # Next, assert that the value can be serialized and deserialized without
       # changing the shape of the tree.
-      assert_equal_nodes(
-        value,
-        YARP.load(source, YARP.dump(source, filepath)),
-        # We should be comparing the location here, but can't because of bugs.
-        # We should fix this.
-        compare_location: false
-      )
+      assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
 
       # Finally, assert that we can lex the source and get the same tokens as
       # Ripper.
       YARP.lex_compat(source) => { errors: [], value: tokens }
-      YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
-        assert_equal ripper, yarp
+
+      begin
+        YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
+          assert_equal ripper, yarp
+        end
+      rescue SyntaxError
+        raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
     end
   end

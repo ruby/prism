@@ -1,6 +1,6 @@
-ProgramNode(0...212)(
-  ScopeNode(0...0)([]),
-  StatementsNode(0...212)(
+ProgramNode(0...316)(
+  ScopeNode(0...0)([IDENTIFIER(217...218)("a")]),
+  StatementsNode(0...316)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
          nil,
@@ -147,8 +147,8 @@ ProgramNode(0...212)(
            (164...165),
            (166...167)
          ),
-         StatementsNode(170...0)(
-           [RescueModifierNode(170...0)(
+         StatementsNode(170...208)(
+           [RescueModifierNode(170...208)(
               CallNode(170...176)(
                 nil,
                 nil,
@@ -171,13 +171,13 @@ ProgramNode(0...212)(
                 "bar"
               ),
               KEYWORD_RESCUE_MODIFIER(177...183)("rescue"),
-              CallNode(184...0)(
+              CallNode(184...208)(
                 nil,
                 nil,
                 CONSTANT(184...197)("ArgumentError"),
                 nil,
-                ArgumentsNode(198...202)(
-                  [CallNode(198...202)(
+                ArgumentsNode(198...208)(
+                  [CallNode(198...208)(
                      nil,
                      nil,
                      IDENTIFIER(198...202)("fail"),
@@ -205,6 +205,125 @@ ProgramNode(0...212)(
          (209...212)
        ),
        "foo"
+     ),
+     IfNode(214...245)(
+       KEYWORD_IF(214...216)("if"),
+       LocalVariableWriteNode(217...235)(
+         (217...218),
+         RescueModifierNode(221...235)(
+           CallNode(221...224)(
+             nil,
+             nil,
+             IDENTIFIER(221...224)("foo"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "foo"
+           ),
+           KEYWORD_RESCUE_MODIFIER(225...231)("rescue"),
+           NilNode(232...235)()
+         ),
+         (219...220),
+         0
+       ),
+       StatementsNode(238...241)(
+         [CallNode(238...241)(
+            nil,
+            nil,
+            IDENTIFIER(238...241)("bar"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "bar"
+          )]
+       ),
+       nil,
+       KEYWORD_END(242...245)("end")
+     ),
+     DefNode(247...291)(
+       IDENTIFIER(251...262)("some_method"),
+       nil,
+       nil,
+       StatementsNode(265...291)(
+         [CallNode(265...291)(
+            nil,
+            nil,
+            IDENTIFIER(265...277)("other_method"),
+            nil,
+            ArgumentsNode(278...291)(
+              [RescueModifierNode(278...291)(
+                 IntegerNode(278...280)(),
+                 KEYWORD_RESCUE_MODIFIER(281...287)("rescue"),
+                 NilNode(288...291)()
+               )]
+            ),
+            nil,
+            nil,
+            "other_method"
+          )]
+       ),
+       ScopeNode(247...250)([]),
+       (247...250),
+       nil,
+       nil,
+       nil,
+       (263...264),
+       nil
+     ),
+     DefNode(293...316)(
+       IDENTIFIER(297...298)("a"),
+       nil,
+       nil,
+       BeginNode(0...316)(
+         nil,
+         StatementsNode(301...305)(
+           [CallNode(301...305)(
+              nil,
+              nil,
+              IDENTIFIER(301...302)("a"),
+              nil,
+              ArgumentsNode(303...305)(
+                [HashNode(303...305)(
+                   nil,
+                   [AssocNode(303...305)(
+                      SymbolNode(303...305)(
+                        nil,
+                        LABEL(303...304)("b"),
+                        LABEL_END(304...305)(":"),
+                        "b"
+                      ),
+                      nil,
+                      nil
+                    )],
+                   nil
+                 )]
+              ),
+              nil,
+              nil,
+              "a"
+            )]
+         ),
+         RescueNode(306...312)(
+           KEYWORD_RESCUE(306...312)("rescue"),
+           [],
+           nil,
+           nil,
+           nil,
+           nil
+         ),
+         nil,
+         nil,
+         KEYWORD_END(313...316)("end")
+       ),
+       ScopeNode(293...296)([]),
+       (293...296),
+       nil,
+       nil,
+       nil,
+       nil,
+       (313...316)
      )]
   )
 )

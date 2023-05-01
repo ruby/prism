@@ -1,8 +1,8 @@
-ProgramNode(0...5)(
+ProgramNode(0...9)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...5)(
-    [CallNode(0...5)(
-       CallNode(4...5)(
+  StatementsNode(0...9)(
+    [CallNode(0...9)(
+       CallNode(4...9)(
          nil,
          nil,
          IDENTIFIER(4...5)("m"),

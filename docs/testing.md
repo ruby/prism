@@ -25,14 +25,32 @@ If the parsed files do not match, it will raise an error. If there is not a corr
 
 As you are working, you will likely want to test your code locally. `test.rb` is ignored by git, so it can be used for local testing. There are also two executables which may help you:
 
-1. **bin/lex** takes a filepath and compares YARP's lexed output to Ripper's lexed output. It will highlight any lexed output that doesn't match. It does some minor transformations to the lexed output in order to compare them, like split YARP's heredoc tokens to mirror Ripper's.
+1. **bin/lex** takes a filepath and compares YARP's lexed output to Ripper's lexed output. It prints any lexed output that doesn't match. It does some minor transformations to the lexed output in order to compare them, like split YARP's heredoc tokens to mirror Ripper's.
 
 ```
 $ bin/lex test.rb
+```
+
+If you would like to see the full lexed comparison, and not only the output that doesn't match, you can run with `VERBOSE=1`:
+
+```
+$ VERBOSE=1 bin/lex test.rb
+```
+
+`bin/lex` can also be used with `-e` and then source code, like this:
+
+```
+$ bin/lex -e "1 + 2"
 ```
 
 2. **bin/parse** takes a filepath and outputs YARP's parsed node structure generated from reading the file.
 
 ```
 $ bin/parse test.rb
+```
+
+`bin/parse` can also be used with `-e` and then source code, like this:
+
+```
+$ bin/parse -e "1 + 2"
 ```

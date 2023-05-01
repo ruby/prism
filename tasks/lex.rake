@@ -46,7 +46,12 @@ module YARP
     def lex(filepath)
       source = File.read(filepath)
       lexed = YARP.lex_compat(source)
-      lexed.errors.empty? && YARP.lex_ripper(source) == lexed.value
+      begin
+        lexed_ripper = YARP.lex_ripper(source)
+      rescue SyntaxError
+        return true # If the file is invalid, we say the output is equivalent for comparison purposes
+      end
+      lexed.errors.empty? && lexed_ripper == lexed.value
     rescue
       false
     end
@@ -223,4 +228,114 @@ task "lex:rubygems": :compile do
     FAILING=#{failing_gem_count}
     PERCENT=#{(passing_gem_count.to_f / (passing_gem_count + failing_gem_count) * 100).round(2)}%
   RESULTS
+end
+
+# This task lexes against the top 100 gems, and will exit(1)
+# if the existing failures in tasks/top-100-gems.yml are no
+# longer correct.
+desc "Lex against the top 100 rubygems"
+task "lex:topgems": :compile do
+  TOP_100_GEM_FILENAME = "tasks/top-100-gems.yml"
+
+  $:.unshift(File.expand_path("../lib", __dir__))
+  require "net/http"
+  require "ripper"
+  require "rubygems/package"
+  require "tmpdir"
+  require "yarp"
+
+  previous_todos_by_gem_name = {}
+
+  YAML.safe_load_file(TOP_100_GEM_FILENAME).each do |gem_info|
+    if gem_info.class == Hash
+      previous_todos_by_gem_name.merge!(gem_info)
+    else
+      previous_todos_by_gem_name[gem_info] = []
+    end
+  end
+
+  queue = Queue.new
+  previous_todos_by_gem_name.keys.each do |gem_name|
+    gem_url = "https://rubygems.org/gems/#{gem_name}.gem"
+    queue << [gem_name, gem_url]
+  end
+
+  warn_failing = ENV.fetch("VERBOSE", false)
+
+  # An array of hashes with gem_name => [new_failing_files] for any new
+  # failures that we didn't previously have. If there is anything in
+  # this list, the task will report it and exit(1)
+  new_failing_files_by_gem = []
+
+  # An array of hashes with gem_name => [all_failing_files] for all failures
+  # (including pre-existing ones). If there are fewer failures than before,
+  # this list will be used to generate the new yml file before exit(1)
+  updated_todos_by_gem_name = {}
+
+  workers =
+    ENV.fetch("WORKERS", 16).times.map do
+      Thread.new do
+        Net::HTTP.start("rubygems.org", 443, use_ssl: true) do |http|
+          until queue.empty?
+            (gem_name, gem_url) = queue.shift
+            puts "Lexing #{gem_name}"
+
+            http.request(Net::HTTP::Get.new(gem_url)) do |response|
+              # Skip unexpected responses
+              next unless response.is_a?(Net::HTTPSuccess)
+
+              Dir.mktmpdir do |directory|
+                filepath = File.join(directory, "#{gem_name}.gem")
+                File.write(filepath, response.body)
+
+                begin
+                  Gem::Package.new(filepath).extract_files(directory, "[!~]*")
+
+                  todos = previous_todos_by_gem_name[gem_name].map do |todo_filepath|
+                    File.join(directory, todo_filepath)
+                  end
+                  lex_task = YARP::LexTask.new(todos)
+                  Dir[File.join(directory, "**", "*.rb")].each do |filepath|
+                    lex_task.compare(filepath)
+                  end
+
+                  todos = lex_task.todos.map { _1.gsub("#{directory}/", "") }
+
+                  updated_todos_by_gem_name.merge!({ gem_name => todos })
+
+                  if lex_task.failed?
+                    new_failing_files_by_gem << { gem_name => todos }
+                  end
+                rescue
+                  # If the gem fails to extract, we'll just skip it
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+  workers.each(&:join)
+
+  failing_gem_count, passing_gem_count = updated_todos_by_gem_name.partition { |_, todos| todos.any? }.map(&:size)
+
+  puts(<<~RESULTS)
+    PASSING=#{passing_gem_count}
+    FAILING=#{failing_gem_count}
+    PERCENT=#{(passing_gem_count.to_f / (passing_gem_count + failing_gem_count) * 100).round(2)}%
+  RESULTS
+
+  if new_failing_files_by_gem.any?
+    puts "Oh no! There were new failures:"
+    puts new_failing_files_by_gem.to_yaml
+    exit(1)
+  elsif (updated_todos_by_gem_name != previous_todos_by_gem_name)
+    puts "There are files that were previously failing but are no longer failing:"
+    puts "Please update #{TOP_100_GEM_FILENAME} with the following"
+    puts (updated_todos_by_gem_name.sort_by(&:first).map do |k, v|
+      v.any? ? { k => v } : k
+    end).to_yaml
+    exit(1)
+  end
 end

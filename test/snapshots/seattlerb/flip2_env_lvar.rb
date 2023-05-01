@@ -1,7 +1,7 @@
-ProgramNode(0...7)(
+ProgramNode(0...16)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...7)(
-    [IfNode(0...7)(
+  StatementsNode(0...16)(
+    [IfNode(0...16)(
        KEYWORD_IF(0...2)("if"),
        RangeNode(3...7)(
          CallNode(3...4)(

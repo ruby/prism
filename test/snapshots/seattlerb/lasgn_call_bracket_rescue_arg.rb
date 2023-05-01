@@ -1,9 +1,9 @@
 ProgramNode(0...17)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
   StatementsNode(0...17)(
-    [RescueModifierNode(0...17)(
-       LocalVariableWriteNode(0...8)(
-         (0...1),
+    [LocalVariableWriteNode(0...17)(
+       (0...1),
+       RescueModifierNode(4...17)(
          CallNode(4...8)(
            nil,
            nil,
@@ -14,11 +14,11 @@ ProgramNode(0...17)(
            nil,
            "b"
          ),
-         (2...3),
-         0
+         KEYWORD_RESCUE_MODIFIER(9...15)("rescue"),
+         IntegerNode(16...17)()
        ),
-       KEYWORD_RESCUE_MODIFIER(9...15)("rescue"),
-       IntegerNode(16...17)()
+       (2...3),
+       0
      )]
   )
 )

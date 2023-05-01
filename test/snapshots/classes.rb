@@ -1,6 +1,6 @@
-ProgramNode(0...350)(
+ProgramNode(0...370)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...350)(
+  StatementsNode(0...370)(
     [ClassNode(0...17)(
        ScopeNode(0...5)([IDENTIFIER(8...9)("a")]),
        KEYWORD_CLASS(0...5)("class"),
@@ -284,6 +284,24 @@ ProgramNode(0...350)(
           )]
        ),
        KEYWORD_END(347...350)("end")
+     ),
+     ClassNode(352...370)(
+       ScopeNode(352...357)([]),
+       KEYWORD_CLASS(352...357)("class"),
+       ConstantReadNode(358...359)(),
+       LESS(360...361)("<"),
+       CallNode(362...366)(
+         ConstantReadNode(362...363)(),
+         nil,
+         BRACKET_LEFT_RIGHT(363...364)("["),
+         BRACKET_LEFT(363...364)("["),
+         ArgumentsNode(364...365)([IntegerNode(364...365)()]),
+         BRACKET_RIGHT(365...366)("]"),
+         nil,
+         "[]"
+       ),
+       nil,
+       KEYWORD_END(367...370)("end")
      )]
   )
 )

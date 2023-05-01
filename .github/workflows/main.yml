@@ -8,7 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby
@@ -68,6 +72,18 @@ jobs:
         bundler-cache: true
     - name: Lex discourse/discourse
       run: bundle exec rake lex:discourse
+
+  lex-top-100:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+    - name: Lex Top 100 Gems
+      run: bundle exec rake lex:topgems
 
   memcheck:
     runs-on: ubuntu-latest

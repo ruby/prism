@@ -20,8 +20,8 @@ ProgramNode(0...161)(
      IntegerNode(72...75)(),
      IntegerNode(77...80)(),
      IntegerNode(82...85)(),
-     ImaginaryNode(87...89)(IntegerNode(87...89)()),
-     RationalNode(91...93)(IntegerNode(91...93)()),
+     ImaginaryNode(87...89)(IntegerNode(87...88)()),
+     RationalNode(91...93)(IntegerNode(91...92)()),
      CallNode(95...97)(
        IntegerNode(96...97)(),
        nil,
@@ -32,11 +32,11 @@ ProgramNode(0...161)(
        nil,
        "-@"
      ),
-     ImaginaryNode(99...102)(RationalNode(99...102)(IntegerNode(99...101)())),
-     ImaginaryNode(104...109)(RationalNode(104...109)(FloatNode(104...108)())),
+     ImaginaryNode(99...102)(RationalNode(99...101)(IntegerNode(99...100)())),
+     ImaginaryNode(104...109)(RationalNode(104...108)(FloatNode(104...107)())),
      CallNode(111...115)(
        ImaginaryNode(112...115)(
-         RationalNode(112...115)(IntegerNode(112...114)())
+         RationalNode(112...114)(IntegerNode(112...113)())
        ),
        nil,
        UMINUS_NUM(111...112)("-"),
@@ -48,7 +48,7 @@ ProgramNode(0...161)(
      ),
      CallNode(117...123)(
        ImaginaryNode(118...123)(
-         RationalNode(118...123)(FloatNode(118...122)())
+         RationalNode(118...122)(FloatNode(118...121)())
        ),
        nil,
        UMINUS_NUM(117...118)("-"),
@@ -58,15 +58,15 @@ ProgramNode(0...161)(
        nil,
        "-@"
      ),
-     RationalNode(125...129)(IntegerNode(125...129)()),
-     ImaginaryNode(131...135)(IntegerNode(131...135)()),
+     RationalNode(125...129)(IntegerNode(125...128)()),
+     ImaginaryNode(131...135)(IntegerNode(131...134)()),
      ImaginaryNode(137...142)(
-       RationalNode(137...142)(IntegerNode(137...141)())
+       RationalNode(137...141)(IntegerNode(137...140)())
      ),
-     RationalNode(144...148)(IntegerNode(144...148)()),
-     ImaginaryNode(150...154)(IntegerNode(150...154)()),
+     RationalNode(144...148)(IntegerNode(144...147)()),
+     ImaginaryNode(150...154)(IntegerNode(150...153)()),
      ImaginaryNode(156...161)(
-       RationalNode(156...161)(IntegerNode(156...160)())
+       RationalNode(156...160)(IntegerNode(156...159)())
      )]
   )
 )

@@ -12,8 +12,8 @@ ProgramNode(0...272)(
             nil,
             IDENTIFIER(2...3)("b"),
             PARENTHESIS_LEFT(3...4)("("),
-            ArgumentsNode(4...5)(
-              [CallNode(4...5)(
+            ArgumentsNode(4...7)(
+              [CallNode(4...7)(
                  nil,
                  nil,
                  IDENTIFIER(4...5)("c"),
@@ -67,8 +67,8 @@ ProgramNode(0...272)(
             nil,
             IDENTIFIER(24...25)("b"),
             PARENTHESIS_LEFT(25...26)("("),
-            ArgumentsNode(26...27)(
-              [CallNode(26...27)(
+            ArgumentsNode(26...29)(
+              [CallNode(26...29)(
                  nil,
                  nil,
                  IDENTIFIER(26...27)("c"),
@@ -122,8 +122,8 @@ ProgramNode(0...272)(
             nil,
             IDENTIFIER(46...47)("b"),
             PARENTHESIS_LEFT(47...48)("("),
-            ArgumentsNode(48...49)(
-              [CallNode(48...49)(
+            ArgumentsNode(48...51)(
+              [CallNode(48...51)(
                  nil,
                  nil,
                  IDENTIFIER(48...49)("c"),
@@ -347,8 +347,8 @@ ProgramNode(0...272)(
             BlockNode(140...145)(
               ScopeNode(140...141)([]),
               nil,
-              StatementsNode(141...142)(
-                [CallNode(141...142)(
+              StatementsNode(141...144)(
+                [CallNode(141...144)(
                    nil,
                    nil,
                    IDENTIFIER(141...142)("c"),
@@ -408,8 +408,8 @@ ProgramNode(0...272)(
             BlockNode(162...167)(
               ScopeNode(162...163)([]),
               nil,
-              StatementsNode(163...164)(
-                [CallNode(163...164)(
+              StatementsNode(163...166)(
+                [CallNode(163...166)(
                    nil,
                    nil,
                    IDENTIFIER(163...164)("c"),
@@ -469,8 +469,8 @@ ProgramNode(0...272)(
             BlockNode(184...189)(
               ScopeNode(184...185)([]),
               nil,
-              StatementsNode(185...186)(
-                [CallNode(185...186)(
+              StatementsNode(185...188)(
+                [CallNode(185...188)(
                    nil,
                    nil,
                    IDENTIFIER(185...186)("c"),

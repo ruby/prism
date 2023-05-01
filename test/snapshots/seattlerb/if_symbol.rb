@@ -1,9 +1,9 @@
-ProgramNode(0...4)(
+ProgramNode(0...12)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...4)(
-    [IfNode(0...4)(
+  StatementsNode(0...12)(
+    [IfNode(0...12)(
        KEYWORD_IF(0...2)("if"),
-       CallNode(3...4)(
+       CallNode(3...7)(
          nil,
          nil,
          IDENTIFIER(3...4)("f"),

@@ -51,10 +51,10 @@ ProgramNode(0...106)(
           )]
        )
      ),
-     ReturnNode(47...55)(
+     ReturnNode(47...61)(
        KEYWORD_RETURN(47...53)("return"),
-       ArgumentsNode(54...55)(
-         [CallNode(54...55)(
+       ArgumentsNode(54...61)(
+         [CallNode(54...61)(
             nil,
             nil,
             IDENTIFIER(54...55)("y"),
@@ -81,10 +81,10 @@ ProgramNode(0...106)(
           )]
        )
      ),
-     ReturnNode(63...71)(
+     ReturnNode(63...75)(
        KEYWORD_RETURN(63...69)("return"),
-       ArgumentsNode(70...71)(
-         [CallNode(70...71)(
+       ArgumentsNode(70...75)(
+         [CallNode(70...75)(
             nil,
             nil,
             IDENTIFIER(70...71)("y"),

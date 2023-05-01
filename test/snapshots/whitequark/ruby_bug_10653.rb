@@ -118,8 +118,8 @@ ProgramNode(6...93)(
                 (78...79),
                 (80...81)
               ),
-              StatementsNode(82...83)(
-                [CallNode(82...83)(
+              StatementsNode(82...85)(
+                [CallNode(82...85)(
                    nil,
                    nil,
                    IDENTIFIER(82...83)("p"),

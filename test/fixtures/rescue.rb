@@ -18,3 +18,14 @@ begin; a; rescue *b; end
 foo do |x|
   bar(y) rescue ArgumentError fail "baz"
 end
+
+if a = foo rescue nil
+  bar
+end
+
+def some_method = other_method 42 rescue nil
+
+def a
+  a b:
+rescue
+end

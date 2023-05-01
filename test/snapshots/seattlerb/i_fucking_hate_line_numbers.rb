@@ -1,11 +1,11 @@
-ProgramNode(0...100)(
+ProgramNode(0...104)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...100)(
-    [IfNode(0...100)(
+  StatementsNode(0...104)(
+    [IfNode(0...104)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(10...100)(
-         [CallNode(10...11)(
+         [CallNode(10...13)(
             nil,
             nil,
             IDENTIFIER(10...11)("p"),

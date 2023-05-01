@@ -1,11 +1,11 @@
-ProgramNode(0...0)(
+ProgramNode(0...139)(
   ScopeNode(0...0)(
     [IDENTIFIER(12...13)("c"),
      IDENTIFIER(15...16)("d"),
      IDENTIFIER(25...26)("b"),
      IDENTIFIER(67...68)("a")]
   ),
-  StatementsNode(0...0)(
+  StatementsNode(0...139)(
     [MultiWriteNode(0...7)(
        [SplatNode(0...1)(USTAR(0...1)("*"), nil)],
        EQUAL(2...3)("="),
@@ -187,11 +187,11 @@ ProgramNode(0...0)(
        nil,
        nil
      ),
-     MultiWriteNode(123...0)(
+     MultiWriteNode(123...139)(
        [LocalVariableWriteNode(123...124)((123...124), nil, nil, 0),
         LocalVariableWriteNode(126...127)((126...127), nil, nil, 0)],
        EQUAL(128...129)("="),
-       ArrayNode(0...0)(
+       ArrayNode(0...139)(
          [SplatNode(130...134)(
             USTAR(130...131)("*"),
             CallNode(131...134)(

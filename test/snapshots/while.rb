@@ -28,7 +28,7 @@ ProgramNode(0...309)(
          [ReturnNode(69...75)(KEYWORD_RETURN(69...75)("return"), nil)]
        )
      ),
-     WhileNode(99...91)(
+     WhileNode(99...98)(
        KEYWORD_WHILE_MODIFIER(99...104)("while"),
        CallNode(105...109)(
          nil,
@@ -40,8 +40,8 @@ ProgramNode(0...309)(
          nil,
          "bar?"
        ),
-       StatementsNode(88...91)(
-         [CallNode(88...91)(
+       StatementsNode(88...98)(
+         [CallNode(88...98)(
             nil,
             nil,
             IDENTIFIER(88...91)("foo"),

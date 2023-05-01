@@ -52,8 +52,8 @@ module YARP
     test "BeginNode" do
       assert_location(BeginNode, "begin foo end")
       assert_location(BeginNode, "begin foo rescue bar end")
-      assert_location(BeginNode, "begin foo rescue bar\nelse baz end")
-      assert_location(BeginNode, "begin foo rescue bar\nelse baz\nensure qux end")
+      assert_location(BeginNode, "begin foo; rescue bar\nelse baz end")
+      assert_location(BeginNode, "begin foo; rescue bar\nelse baz\nensure qux end")
 
       assert_location(BeginNode, "class Foo\nrescue then end", &:statements)
       assert_location(BeginNode, "module Foo\nrescue then end", &:statements)
@@ -157,6 +157,9 @@ module YARP
       assert_location(CallNode, "foo::()")
       assert_location(CallNode, "foo::(bar)")
       assert_location(CallNode, "foo::(bar, baz)")
+
+      assert_location(CallNode, "foo bar baz")
+      assert_location(CallNode, "foo bar('baz')")
     end
 
     test "CaseNode" do
@@ -216,6 +219,10 @@ module YARP
     test "ForwardingSuperNode" do
       assert_location(ForwardingSuperNode, "super")
       assert_location(ForwardingSuperNode, "super {}")
+    end
+
+    test "IfNode" do
+      assert_location(IfNode, "if type in 1;elsif type in B;end")
     end
 
     test "ImaginaryNode" do
@@ -379,7 +386,7 @@ module YARP
       assert_location(StatementsNode, "begin; foo; end", 7...10, &:statements)
       assert_location(StatementsNode, "begin; rescue; foo; end", 15...18) { |node| node.rescue_clause.statements }
       assert_location(StatementsNode, "begin; ensure; foo; end", 15...18) { |node| node.ensure_clause.statements }
-      assert_location(StatementsNode, "begin; else; foo; end", 13...16) { |node| node.else_clause.statements }
+      assert_location(StatementsNode, "begin; rescue; else; foo; end", 21...24) { |node| node.else_clause.statements }
 
       assert_location(StatementsNode, "class Foo; foo; end", 11...14, &:statements)
       assert_location(StatementsNode, "module Foo; foo; end", 12...15, &:statements)

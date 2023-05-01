@@ -1,7 +1,7 @@
-ProgramNode(0...234)(
+ProgramNode(0...293)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...234)(
-    [IfNode(0...10)(
+  StatementsNode(0...293)(
+    [IfNode(0...15)(
        KEYWORD_IF(0...2)("if"),
        TrueNode(3...7)(),
        StatementsNode(9...10)([IntegerNode(9...10)()]),
@@ -72,7 +72,7 @@ ProgramNode(0...234)(
        nil,
        nil
      ),
-     IfNode(170...196)(
+     IfNode(170...200)(
        KEYWORD_IF(170...172)("if"),
        CallNode(173...182)(
          nil,
@@ -93,7 +93,7 @@ ProgramNode(0...234)(
        nil,
        KEYWORD_END(197...200)("end")
      ),
-     IfNode(202...217)(
+     IfNode(202...221)(
        KEYWORD_IF(202...204)("if"),
        CallNode(205...208)(
          nil,
@@ -163,6 +163,82 @@ ProgramNode(0...234)(
        ),
        nil,
        nil
+     ),
+     IfNode(236...250)(
+       KEYWORD_IF(236...238)("if"),
+       TrueNode(239...243)(),
+       StatementsNode(246...250)(
+         [CallNode(246...250)(
+            nil,
+            nil,
+            IDENTIFIER(246...247)("a"),
+            nil,
+            ArgumentsNode(248...250)(
+              [HashNode(248...250)(
+                 nil,
+                 [AssocNode(248...250)(
+                    SymbolNode(248...250)(
+                      nil,
+                      LABEL(248...249)("b"),
+                      LABEL_END(249...250)(":"),
+                      "b"
+                    ),
+                    nil,
+                    nil
+                  )],
+                 nil
+               )]
+            ),
+            nil,
+            nil,
+            "a"
+          )]
+       ),
+       ElseNode(251...259)(
+         KEYWORD_ELSE(251...255)("else"),
+         StatementsNode(0...0)([]),
+         KEYWORD_END(256...259)("end")
+       ),
+       KEYWORD_END(256...259)("end")
+     ),
+     IfNode(261...293)(
+       KEYWORD_IF(261...263)("if"),
+       MatchPredicateNode(264...273)(
+         CallNode(264...268)(
+           nil,
+           nil,
+           IDENTIFIER(264...268)("type"),
+           nil,
+           nil,
+           nil,
+           nil,
+           "type"
+         ),
+         IntegerNode(272...273)(),
+         (269...271)
+       ),
+       nil,
+       IfNode(274...289)(
+         KEYWORD_ELSIF(274...279)("elsif"),
+         MatchPredicateNode(280...289)(
+           CallNode(280...284)(
+             nil,
+             nil,
+             IDENTIFIER(280...284)("type"),
+             nil,
+             nil,
+             nil,
+             nil,
+             "type"
+           ),
+           ConstantReadNode(288...289)(),
+           (285...287)
+         ),
+         StatementsNode(0...0)([]),
+         nil,
+         nil
+       ),
+       KEYWORD_END(290...293)("end")
      )]
   )
 )

@@ -158,7 +158,7 @@ ProgramNode(0...402)(
        ),
        "foo"
      ),
-     CallNode(88...91)(
+     CallNode(88...109)(
        nil,
        nil,
        IDENTIFIER(88...91)("foo"),
@@ -233,8 +233,8 @@ ProgramNode(0...402)(
        nil,
        IDENTIFIER(127...130)("foo"),
        nil,
-       ArgumentsNode(131...134)(
-         [CallNode(131...134)(
+       ArgumentsNode(131...138)(
+         [CallNode(131...138)(
             nil,
             nil,
             IDENTIFIER(131...134)("bar"),
@@ -606,7 +606,7 @@ ProgramNode(0...402)(
        ),
        "C"
      ),
-     CallNode(348...351)(
+     CallNode(348...383)(
        nil,
        nil,
        IDENTIFIER(348...351)("foo"),

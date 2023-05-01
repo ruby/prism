@@ -1,6 +1,6 @@
-ProgramNode(0...99)(
+ProgramNode(0...116)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...99)(
+  StatementsNode(0...116)(
     [UndefNode(0...7)(
        [SymbolNode(6...7)(nil, IDENTIFIER(6...7)("a"), nil, "a")],
        (0...5)
@@ -79,6 +79,15 @@ ProgramNode(0...99)(
           STRING_END(99...100)("\"")
         )],
        (84...89)
+     ),
+     UndefNode(102...116)(
+       [SymbolNode(108...116)(
+          nil,
+          CONSTANT(108...116)("Constant"),
+          nil,
+          "Constant"
+        )],
+       (102...107)
      )]
   )
 )

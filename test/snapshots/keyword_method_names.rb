@@ -27,7 +27,7 @@ ProgramNode(0...185)(
        nil,
        (29...32)
      ),
-     CallNode(34...41)(
+     CallNode(34...68)(
        nil,
        nil,
        IDENTIFIER(34...41)("private"),

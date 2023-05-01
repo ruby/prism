@@ -1,7 +1,7 @@
 ProgramNode(0...9)(
   ScopeNode(0...0)([]),
   StatementsNode(0...9)(
-    [CallNode(0...1)(
+    [CallNode(0...7)(
        nil,
        nil,
        IDENTIFIER(0...1)("a"),

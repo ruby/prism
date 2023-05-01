@@ -1,7 +1,7 @@
-ProgramNode(0...94)(
+ProgramNode(0...278)(
   ScopeNode(0...0)([IDENTIFIER(64...67)("foo")]),
-  StatementsNode(0...94)(
-    [CallNode(0...3)(
+  StatementsNode(0...278)(
+    [CallNode(0...9)(
        nil,
        nil,
        IDENTIFIER(0...3)("foo"),
@@ -99,6 +99,62 @@ ProgramNode(0...94)(
        STRING_CONTENT(89...92)("abc"),
        REGEXP_END(92...94)("/i"),
        "abc"
+     ),
+     RegularExpressionNode(96...122)(
+       REGEXP_BEGIN(96...99)("%r/"),
+       STRING_CONTENT(99...120)("[a-z$._?][\\w$.?\#@~]*:"),
+       REGEXP_END(120...122)("/i"),
+       "[a-z$._?][w$.?\#@~]*:"
+     ),
+     RegularExpressionNode(124...161)(
+       REGEXP_BEGIN(124...127)("%r/"),
+       STRING_CONTENT(127...159)("([a-z$._?][\\w$.?\#@~]*)(\\s+)(equ)"),
+       REGEXP_END(159...161)("/i"),
+       "([a-z$._?][w$.?\#@~]*)( +)(equ)"
+     ),
+     RegularExpressionNode(163...188)(
+       REGEXP_BEGIN(163...166)("%r/"),
+       STRING_CONTENT(166...186)("[a-z$._?][\\w$.?\#@~]*"),
+       REGEXP_END(186...188)("/i"),
+       "[a-z$._?][w$.?\#@~]*"
+     ),
+     RegularExpressionNode(190...249)(
+       REGEXP_BEGIN(190...193)("%r("),
+       STRING_CONTENT(193...248)(
+         "\n" +
+         "(?:[\\w\#$%_']|\\(\\)|\\(,\\)|\\[\\]|[0-9])*\n" +
+         "  (?:[\\w\#$%_']+)\n"
+       ),
+       REGEXP_END(248...249)(")"),
+       "\n" + "(?:[w\#$%_']|()|(,)|[]|[0-9])*\n" + "  (?:[w\#$%_']+)\n"
+     ),
+     CallNode(251...267)(
+       RegularExpressionNode(251...259)(
+         REGEXP_BEGIN(251...252)("/"),
+         STRING_CONTENT(252...258)("(?#\\))"),
+         REGEXP_END(258...259)("/"),
+         "(?#))"
+       ),
+       nil,
+       EQUAL_TILDE(260...262)("=~"),
+       nil,
+       ArgumentsNode(263...267)(
+         [StringNode(263...267)(
+            STRING_BEGIN(263...264)("\""),
+            STRING_CONTENT(264...266)("hi"),
+            STRING_END(266...267)("\""),
+            "hi"
+          )]
+       ),
+       nil,
+       nil,
+       "=~"
+     ),
+     RegularExpressionNode(269...278)(
+       REGEXP_BEGIN(269...272)("%r#"),
+       STRING_CONTENT(272...277)("pound"),
+       REGEXP_END(277...278)("#"),
+       "pound"
      )]
   )
 )

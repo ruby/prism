@@ -303,7 +303,7 @@ module YARP
                 if split
                   # Split on "\\\n" to mimic Ripper's behavior. Use a lookbehind
                   # to keep the delimiter in the result.
-                  token.value.split(/(?<=[^\\]\\\n)/).each_with_index do |value, index|
+                  token.value.split(/(?<=[^\\]\\\n)|(?<=[^\\]\\\r\n)/).each_with_index do |value, index|
                     column = 0 if index > 0
                     results << Token.new([[lineno, column], :on_tstring_content, value, token.state])
                     lineno += value.count("\n")
@@ -472,8 +472,12 @@ module YARP
                     # Gather up all of the characters that we're going to
                     # delete, stopping when you hit a character that would put
                     # you over the dedent amount.
-                    line.each_char do |char|
+                    line.each_char.with_index do |char, i|
                       case char
+                      when "\r"
+                        if line.chars[i + 1] == "\n"
+                          break
+                        end
                       when "\n"
                         break
                       when "\t"
@@ -534,7 +538,7 @@ module YARP
 
     def initialize(source, filepath = "")
       @source = source
-      @filepath = filepath
+      @filepath = filepath || ""
       @offsets = find_offsets(source)
     end
 
@@ -664,29 +668,35 @@ module YARP
               end
 
               state = :heredoc_opened
-            else
-              tokens << token
-
-              heredoc_stack.last.each do |heredoc|
-                tokens.concat(heredoc.to_a)
-              end
-
-              heredoc_stack.last.clear
-              state = :default
+              next
             end
           elsif event == :on_heredoc_beg
             tokens << token
             state = :heredoc_opened
             heredoc_stack.last << Heredoc.build(token)
+            next
           elsif heredoc_stack.size > 1
             heredoc_stack[-2].last << token
-          else
-            tokens << token
+            next
           end
+
+          heredoc_stack.last.each do |heredoc|
+            tokens.concat(heredoc.to_a)
+          end
+
+          heredoc_stack.last.clear
+          state = :default
+
+          tokens << token
         end
       end
 
-      ParseResult.new(tokens[0...-1], result.comments, result.errors, result.warnings)
+      tokens.reject! { |t| t.event == :on_eof }
+
+      # We sort by location to compare against Ripper's output
+      tokens.sort_by!(&:location)
+
+      ParseResult.new(tokens, result.comments, result.errors, result.warnings)
     end
 
     private

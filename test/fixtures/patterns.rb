@@ -176,3 +176,16 @@ case foo; in __FILE__ if baz then end
 case foo; in __LINE__ if baz then end
 case foo; in __ENCODING__ if baz then end
 case foo; in -> { bar } if baz then end
+
+if a in []
+end
+
+a => [
+  b
+]
+
+foo in A[
+  bar: B[
+    value: a
+  ]
+]

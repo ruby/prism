@@ -1,9 +1,9 @@
 ProgramNode(0...131)(
   ScopeNode(0...0)([]),
   StatementsNode(0...131)(
-    [RationalNode(0...4)(FloatNode(0...4)()),
+    [RationalNode(0...4)(FloatNode(0...3)()),
      CallNode(5...8)(
-       RationalNode(6...8)(IntegerNode(6...8)()),
+       RationalNode(6...8)(IntegerNode(6...7)()),
        nil,
        UMINUS_NUM(5...6)("-"),
        nil,
@@ -70,8 +70,8 @@ ProgramNode(0...131)(
        nil,
        IDENTIFIER(121...122)("w"),
        PARENTHESIS_LEFT(122...123)("("),
-       ArgumentsNode(123...126)(
-         [CallNode(123...126)(
+       ArgumentsNode(123...130)(
+         [CallNode(123...130)(
             nil,
             nil,
             IDENTIFIER(123...126)("foo"),

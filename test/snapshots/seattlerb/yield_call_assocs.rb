@@ -55,11 +55,11 @@ ProgramNode(0...100)(
        ),
        nil
      ),
-     YieldNode(45...52)(
+     YieldNode(45...58)(
        KEYWORD_YIELD(45...50)("yield"),
        nil,
-       ArgumentsNode(51...52)(
-         [CallNode(51...52)(
+       ArgumentsNode(51...58)(
+         [CallNode(51...58)(
             nil,
             nil,
             IDENTIFIER(51...52)("y"),
@@ -87,11 +87,11 @@ ProgramNode(0...100)(
        ),
        nil
      ),
-     YieldNode(60...67)(
+     YieldNode(60...71)(
        KEYWORD_YIELD(60...65)("yield"),
        nil,
-       ArgumentsNode(66...67)(
-         [CallNode(66...67)(
+       ArgumentsNode(66...71)(
+         [CallNode(66...71)(
             nil,
             nil,
             IDENTIFIER(66...67)("y"),

@@ -27,7 +27,16 @@ public class Loader {
         expect((byte) 4);
         expect((byte) 0);
 
-        return loadNode();
+        Nodes.Node node = loadNode();
+
+        expect((byte) 0); // yp_serialize() appends a final \0 byte
+
+        int left = buffer.capacity() - buffer.position();
+        if (left != 0) {
+            throw new Error("Expected to consume all bytes while deserializing but there were " + left + " bytes left");
+        }
+
+        return node;
     }
 
     private byte[] loadString() {
@@ -107,11 +116,11 @@ public class Loader {
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
-            case <%= index %>:
+            case <%= index + 1 %>:
                 return new Nodes.<%= node.name %>(<%= (node.params.map { |param|
                     case param
-                    when NodeParam then "loadNode()"
-                    when OptionalNodeParam then "loadOptionalNode()"
+                    when NodeParam then "#{param.java_cast}loadNode()"
+                    when OptionalNodeParam then "#{param.java_cast}loadOptionalNode()"
                     when StringParam then "loadString()"
                     when NodeListParam then "loadNodes()"
                     when TokenParam then "loadToken()"

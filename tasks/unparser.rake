@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# These files are not valid Ruby
+known_failures = %w(
+  test/fixtures/unparser/corpus/literal/binary.rb
+)
+
 namespace :unparser do
   desc "Ensure there's a local copy of mbj/unparser"
   file "tmp/unparser" do
@@ -20,6 +25,9 @@ namespace :unparser do
     # until https://github.com/mbj/unparser/issues/340 is closed.
     filepath = "test/fixtures/unparser/corpus/literal/pattern.rb"
     File.write(filepath, File.read(filepath).gsub("\"\#{\"a\"}\"", "\"a\""))
+
+    # Remove all invalid Ruby files
+    known_failures.each { rm _1 }
   end
 
   desc "Clean up tmp files related to unparser"

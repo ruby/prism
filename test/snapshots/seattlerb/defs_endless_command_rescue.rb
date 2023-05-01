@@ -15,19 +15,21 @@ ProgramNode(0...45)(
        ),
        nil,
        StatementsNode(20...45)(
-         [RescueModifierNode(20...45)(
-            CallNode(20...32)(
-              nil,
-              nil,
-              IDENTIFIER(20...32)("other_method"),
-              nil,
-              ArgumentsNode(33...35)([IntegerNode(33...35)()]),
-              nil,
-              nil,
-              "other_method"
+         [CallNode(20...45)(
+            nil,
+            nil,
+            IDENTIFIER(20...32)("other_method"),
+            nil,
+            ArgumentsNode(33...45)(
+              [RescueModifierNode(33...45)(
+                 IntegerNode(33...35)(),
+                 KEYWORD_RESCUE_MODIFIER(36...42)("rescue"),
+                 IntegerNode(43...45)()
+               )]
             ),
-            KEYWORD_RESCUE_MODIFIER(36...42)("rescue"),
-            IntegerNode(43...45)()
+            nil,
+            nil,
+            "other_method"
           )]
        ),
        ScopeNode(0...3)([]),

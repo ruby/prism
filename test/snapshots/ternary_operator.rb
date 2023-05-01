@@ -1,6 +1,6 @@
-ProgramNode(2...38)(
+ProgramNode(2...117)(
   ScopeNode(0...0)([]),
-  StatementsNode(2...38)(
+  StatementsNode(2...117)(
     [IfNode(2...9)(
        QUESTION_MARK(2...3)("?"),
        CallNode(0...1)(
@@ -89,6 +89,128 @@ ProgramNode(2...38)(
               ),
               nil,
               (28...36)
+            )]
+         ),
+         nil
+       ),
+       nil
+     ),
+     IfNode(46...55)(
+       QUESTION_MARK(46...47)("?"),
+       CallNode(40...46)(
+         nil,
+         nil,
+         IDENTIFIER(40...46)("empty?"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "empty?"
+       ),
+       StatementsNode(47...51)([TrueNode(47...51)()]),
+       ElseNode(51...55)(
+         COLON(51...52)(":"),
+         StatementsNode(52...55)([NilNode(52...55)()]),
+         nil
+       ),
+       nil
+     ),
+     IfNode(63...73)(
+       QUESTION_MARK(63...64)("?"),
+       CallNode(57...63)(
+         nil,
+         nil,
+         IDENTIFIER(57...63)("empty?"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "empty?"
+       ),
+       StatementsNode(64...69)([FalseNode(64...69)()]),
+       ElseNode(69...73)(
+         COLON(69...70)(":"),
+         StatementsNode(70...73)([NilNode(70...73)()]),
+         nil
+       ),
+       nil
+     ),
+     IfNode(81...89)(
+       QUESTION_MARK(81...82)("?"),
+       CallNode(75...81)(
+         nil,
+         nil,
+         IDENTIFIER(75...81)("empty?"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "empty?"
+       ),
+       StatementsNode(82...85)([NilNode(82...85)()]),
+       ElseNode(85...89)(
+         COLON(85...86)(":"),
+         StatementsNode(86...89)([NilNode(86...89)()]),
+         nil
+       ),
+       nil
+     ),
+     IfNode(93...101)(
+       QUESTION_MARK(93...94)("?"),
+       CallNode(91...93)(
+         nil,
+         nil,
+         IDENTIFIER(91...93)("a?"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a?"
+       ),
+       StatementsNode(94...97)([NilNode(94...97)()]),
+       ElseNode(97...101)(
+         COLON(97...98)(":"),
+         StatementsNode(98...101)([NilNode(98...101)()]),
+         nil
+       ),
+       nil
+     ),
+     IfNode(105...117)(
+       QUESTION_MARK(105...106)("?"),
+       CallNode(103...104)(
+         nil,
+         nil,
+         IDENTIFIER(103...104)("a"),
+         nil,
+         nil,
+         nil,
+         nil,
+         "a"
+       ),
+       StatementsNode(106...110)(
+         [CallNode(106...110)(
+            nil,
+            nil,
+            IDENTIFIER(106...110)("var1"),
+            nil,
+            nil,
+            nil,
+            nil,
+            "var1"
+          )]
+       ),
+       ElseNode(111...117)(
+         COLON(111...112)(":"),
+         StatementsNode(113...117)(
+           [CallNode(113...117)(
+              nil,
+              nil,
+              IDENTIFIER(113...117)("var2"),
+              nil,
+              nil,
+              nil,
+              nil,
+              "var2"
             )]
          ),
          nil
