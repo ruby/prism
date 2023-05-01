@@ -221,6 +221,10 @@ module YARP
       assert_location(ForwardingSuperNode, "super {}")
     end
 
+    test "IfNode" do
+      assert_location(IfNode, "if type in 1;elsif type in B;end")
+    end
+
     test "ImaginaryNode" do
       assert_location(ImaginaryNode, "1i")
       assert_location(ImaginaryNode, "1ri")

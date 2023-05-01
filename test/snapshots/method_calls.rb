@@ -1668,19 +1668,19 @@ ProgramNode(0...1187)(
        nil,
        "p"
      ),
-     CallNode(989...1034)(
+     CallNode(989...1040)(
        nil,
        nil,
        IDENTIFIER(989...992)("foo"),
        nil,
-       ArgumentsNode(993...1034)(
+       ArgumentsNode(993...1040)(
          [SymbolNode(993...995)(
             SYMBOL_BEGIN(993...994)(":"),
             IDENTIFIER(994...995)("a"),
             nil,
             "a"
           ),
-          IfNode(999...1034)(
+          IfNode(999...1040)(
             KEYWORD_IF(999...1001)("if"),
             CallNode(1002...1003)(
               nil,

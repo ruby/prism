@@ -3881,7 +3881,7 @@ ProgramNode(0...3725)(
        (3616...3620),
        (3652...3655)
      ),
-     IfNode(3657...3667)(
+     IfNode(3657...3671)(
        KEYWORD_IF(3657...3659)("if"),
        MatchPredicateNode(3660...3667)(
          CallNode(3660...3661)(
