@@ -107,6 +107,7 @@ debug_lex_mode(yp_parser_t *parser) {
       case YP_LEX_LIST: fprintf(stderr, "LIST (terminator=%c, interpolation=%d)", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); break;
       case YP_LEX_REGEXP: fprintf(stderr, "REGEXP (terminator=%c)", lex_mode->as.regexp.terminator); break;
       case YP_LEX_STRING: fprintf(stderr, "STRING (terminator=%c, interpolation=%d)", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); break;
+      case YP_LEX_NUMERIC: fprintf(stderr, "NUMERIC (token_type=%s)", yp_token_type_to_str(lex_mode->as.numeric.type)); break;
     }
 
     lex_mode = lex_mode->prev;
