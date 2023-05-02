@@ -6,10 +6,10 @@ ProgramNode(0...30)(
        nil,
        IDENTIFIER(0...1)("p"),
        nil,
-       ArgumentsNode(12...30)(
-         [CallNode(12...30)(
-            CallNode(12...26)(
-              InterpolatedStringNode(12...16)(
+       ArgumentsNode(2...30)(
+         [CallNode(2...30)(
+            CallNode(2...26)(
+              InterpolatedStringNode(2...22)(
                 HEREDOC_START(2...8)("<<-END"),
                 [StringNode(12...16)(
                    nil,

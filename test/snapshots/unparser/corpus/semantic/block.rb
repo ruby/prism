@@ -98,8 +98,8 @@ ProgramNode(0...148)(
        nil,
        IDENTIFIER(82...85)("foo"),
        PARENTHESIS_LEFT(85...86)("("),
-       ArgumentsNode(101...105)(
-         [InterpolatedStringNode(101...105)(
+       ArgumentsNode(86...109)(
+         [InterpolatedStringNode(86...109)(
             HEREDOC_START(86...92)("<<-DOC"),
             [StringNode(101...105)(
                nil,
@@ -138,8 +138,8 @@ ProgramNode(0...148)(
        nil,
        IDENTIFIER(118...121)("foo"),
        PARENTHESIS_LEFT(121...122)("("),
-       ArgumentsNode(133...137)(
-         [InterpolatedStringNode(133...137)(
+       ArgumentsNode(122...141)(
+         [InterpolatedStringNode(122...141)(
             HEREDOC_START(122...128)("<<-DOC"),
             [StringNode(133...137)(
                nil,

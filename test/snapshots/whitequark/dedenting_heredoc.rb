@@ -1,13 +1,13 @@
 ProgramNode(0...329)(
   ScopeNode(0...0)([]),
   StatementsNode(0...329)(
-    [CallNode(0...26)(
+    [CallNode(0...28)(
        nil,
        nil,
        IDENTIFIER(0...1)("p"),
        nil,
-       ArgumentsNode(9...26)(
-         [InterpolatedStringNode(9...26)(
+       ArgumentsNode(2...28)(
+         [InterpolatedStringNode(2...28)(
             HEREDOC_START(2...8)("<<~\"E\""),
             [StringNode(9...17)(
                nil,
@@ -40,13 +40,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(29...53)(
+     CallNode(29...55)(
        nil,
        nil,
        IDENTIFIER(29...30)("p"),
        nil,
-       ArgumentsNode(38...53)(
-         [InterpolatedStringNode(38...53)(
+       ArgumentsNode(31...55)(
+         [InterpolatedStringNode(31...55)(
             HEREDOC_START(31...37)("<<~\"E\""),
             [StringNode(38...46)(
                nil,
@@ -83,13 +83,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(56...76)(
+     CallNode(56...78)(
        nil,
        nil,
        IDENTIFIER(56...57)("p"),
        nil,
-       ArgumentsNode(63...76)(
-         [InterpolatedStringNode(63...76)(
+       ArgumentsNode(58...78)(
+         [InterpolatedStringNode(58...78)(
             HEREDOC_START(58...62)("<<~E"),
             [StringNode(63...76)(
                nil,
@@ -104,13 +104,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(79...95)(
+     CallNode(79...97)(
        nil,
        nil,
        IDENTIFIER(79...80)("p"),
        nil,
-       ArgumentsNode(86...95)(
-         [InterpolatedStringNode(86...95)(
+       ArgumentsNode(81...97)(
+         [InterpolatedStringNode(81...97)(
             HEREDOC_START(81...85)("<<~E"),
             [StringNode(86...95)(
                nil,
@@ -125,13 +125,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(98...122)(
+     CallNode(98...124)(
        nil,
        nil,
        IDENTIFIER(98...99)("p"),
        nil,
-       ArgumentsNode(105...122)(
-         [InterpolatedStringNode(105...122)(
+       ArgumentsNode(100...124)(
+         [InterpolatedStringNode(100...124)(
             HEREDOC_START(100...104)("<<~E"),
             [StringNode(105...122)(
                nil,
@@ -146,13 +146,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(125...146)(
+     CallNode(125...148)(
        nil,
        nil,
        IDENTIFIER(125...126)("p"),
        nil,
-       ArgumentsNode(132...146)(
-         [InterpolatedStringNode(132...146)(
+       ArgumentsNode(127...148)(
+         [InterpolatedStringNode(127...148)(
             HEREDOC_START(127...131)("<<~E"),
             [StringNode(132...146)(
                nil,
@@ -167,13 +167,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(149...168)(
+     CallNode(149...170)(
        nil,
        nil,
        IDENTIFIER(149...150)("p"),
        nil,
-       ArgumentsNode(156...168)(
-         [InterpolatedStringNode(156...168)(
+       ArgumentsNode(151...170)(
+         [InterpolatedStringNode(151...170)(
             HEREDOC_START(151...155)("<<~E"),
             [StringNode(156...168)(
                nil,
@@ -188,13 +188,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(171...191)(
+     CallNode(171...193)(
        nil,
        nil,
        IDENTIFIER(171...172)("p"),
        nil,
-       ArgumentsNode(178...191)(
-         [InterpolatedStringNode(178...191)(
+       ArgumentsNode(173...193)(
+         [InterpolatedStringNode(173...193)(
             HEREDOC_START(173...177)("<<~E"),
             [StringNode(178...191)(
                nil,
@@ -209,13 +209,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(194...200)(
+     CallNode(194...205)(
        nil,
        nil,
        IDENTIFIER(194...195)("p"),
        nil,
-       ArgumentsNode(196...200)(
-         [InterpolatedStringNode(196...200)(
+       ArgumentsNode(196...205)(
+         [InterpolatedStringNode(196...205)(
             HEREDOC_START(196...200)("<<~E"),
             [],
             HEREDOC_END(201...205)("  E\n")
@@ -225,13 +225,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(206...220)(
+     CallNode(206...222)(
        nil,
        nil,
        IDENTIFIER(206...207)("p"),
        nil,
-       ArgumentsNode(213...220)(
-         [InterpolatedStringNode(213...220)(
+       ArgumentsNode(208...222)(
+         [InterpolatedStringNode(208...222)(
             HEREDOC_START(208...212)("<<~E"),
             [StringNode(213...220)(
                nil,
@@ -246,13 +246,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(223...243)(
+     CallNode(223...245)(
        nil,
        nil,
        IDENTIFIER(223...224)("p"),
        nil,
-       ArgumentsNode(230...243)(
-         [InterpolatedStringNode(230...243)(
+       ArgumentsNode(225...245)(
+         [InterpolatedStringNode(225...245)(
             HEREDOC_START(225...229)("<<~E"),
             [StringNode(230...243)(
                nil,
@@ -267,13 +267,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(246...263)(
+     CallNode(246...265)(
        nil,
        nil,
        IDENTIFIER(246...247)("p"),
        nil,
-       ArgumentsNode(253...263)(
-         [InterpolatedStringNode(253...263)(
+       ArgumentsNode(248...265)(
+         [InterpolatedStringNode(248...265)(
             HEREDOC_START(248...252)("<<~E"),
             [StringNode(253...263)(
                nil,
@@ -288,13 +288,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(266...277)(
+     CallNode(266...279)(
        nil,
        nil,
        IDENTIFIER(266...267)("p"),
        nil,
-       ArgumentsNode(273...277)(
-         [InterpolatedStringNode(273...277)(
+       ArgumentsNode(268...279)(
+         [InterpolatedStringNode(268...279)(
             HEREDOC_START(268...272)("<<~E"),
             [StringNode(273...277)(
                nil,
@@ -309,13 +309,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(280...292)(
+     CallNode(280...294)(
        nil,
        nil,
        IDENTIFIER(280...281)("p"),
        nil,
-       ArgumentsNode(287...292)(
-         [InterpolatedStringNode(287...292)(
+       ArgumentsNode(282...294)(
+         [InterpolatedStringNode(282...294)(
             HEREDOC_START(282...286)("<<~E"),
             [StringNode(287...292)(
                nil,
@@ -330,13 +330,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(295...301)(
+     CallNode(295...304)(
        nil,
        nil,
        IDENTIFIER(295...296)("p"),
        nil,
-       ArgumentsNode(297...301)(
-         [InterpolatedStringNode(297...301)(
+       ArgumentsNode(297...304)(
+         [InterpolatedStringNode(297...304)(
             HEREDOC_START(297...301)("<<~E"),
             [],
             HEREDOC_END(302...304)("E\n")

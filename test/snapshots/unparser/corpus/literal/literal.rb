@@ -3,14 +3,14 @@ ProgramNode(2...916)(
   StatementsNode(2...916)(
     [HashNode(2...36)(
        BRACE_LEFT(0...1)("{"),
-       [AssocNode(2...45)(
+       [AssocNode(2...53)(
           StringNode(2...7)(
             STRING_BEGIN(2...3)("\""),
             STRING_CONTENT(3...6)("foo"),
             STRING_END(6...7)("\""),
             "foo"
           ),
-          InterpolatedStringNode(39...45)(
+          InterpolatedStringNode(11...53)(
             HEREDOC_START(11...21)("<<-HEREDOC"),
             [StringNode(39...41)(
                nil,
@@ -106,8 +106,8 @@ ProgramNode(2...916)(
          nil,
          IDENTIFIER(98...99)("a"),
          PARENTHESIS_LEFT(99...100)("("),
-         ArgumentsNode(114...120)(
-           [InterpolatedStringNode(114...120)(
+         ArgumentsNode(100...128)(
+           [InterpolatedStringNode(100...128)(
               HEREDOC_START(100...110)("<<-HEREDOC"),
               [StringNode(114...116)(
                  nil,
@@ -169,14 +169,14 @@ ProgramNode(2...916)(
      ),
      HashNode(139...165)(
        BRACE_LEFT(137...138)("{"),
-       [AssocNode(139...174)(
+       [AssocNode(139...182)(
           StringNode(139...144)(
             STRING_BEGIN(139...140)("\""),
             STRING_CONTENT(140...143)("foo"),
             STRING_END(143...144)("\""),
             "foo"
           ),
-          InterpolatedStringNode(168...174)(
+          InterpolatedStringNode(148...182)(
             HEREDOC_START(148...158)("<<-HEREDOC"),
             [StringNode(168...170)(
                nil,

@@ -1,9 +1,9 @@
-ProgramNode(0...25)(
+ProgramNode(0...31)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
-  StatementsNode(0...25)(
-    [LocalVariableWriteNode(0...25)(
+  StatementsNode(0...31)(
+    [LocalVariableWriteNode(0...31)(
        (0...1),
-       InterpolatedStringNode(13...25)(
+       InterpolatedStringNode(4...31)(
          HEREDOC_START(4...12)("<<~\"EOF\""),
          [StringNode(13...25)(
             nil,

@@ -3,7 +3,7 @@ ProgramNode(0...38)(
   StatementsNode(0...38)(
     [ArrayNode(0...14)(
        [StringNode(3...6)(nil, STRING_CONTENT(3...6)("foo"), nil, "foo"),
-        InterpolatedStringNode(7...13)(
+        InterpolatedStringNode(0...13)(
           nil,
           [StringInterpolatedNode(7...13)(
              EMBEXPR_BEGIN(7...9)("\#{"),
@@ -28,7 +28,7 @@ ProgramNode(0...38)(
      ),
      ArrayNode(16...38)(
        [StringNode(19...22)(nil, STRING_CONTENT(19...22)("foo"), nil, "foo"),
-        InterpolatedStringNode(23...37)(
+        InterpolatedStringNode(0...37)(
           nil,
           [StringInterpolatedNode(23...29)(
              EMBEXPR_BEGIN(23...25)("\#{"),

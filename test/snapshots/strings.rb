@@ -298,7 +298,7 @@ ProgramNode(0...497)(
      ),
      ArrayNode(324...338)(
        [StringNode(327...328)(nil, STRING_CONTENT(327...328)("a"), nil, "a"),
-        InterpolatedStringNode(329...335)(
+        InterpolatedStringNode(0...335)(
           nil,
           [StringNode(329...330)(
              nil,
