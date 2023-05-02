@@ -3,8 +3,6 @@
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_conversion.h"
 
-#define LOCATION_WIDTH 8
-
 static void
 serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
   assert(token->start);
@@ -41,6 +39,9 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     case <%= node.type %>: {
     <%- if node.needs_length? -%>
         // serialize length
+        // encoding of location u32s make us need to save this offset.
+        size_t length_offset = buffer->length;
+
         yp_buffer_append_u32(buffer, 0); /* Updated below */
       <%- end -%>
       <%- node.params.each do |param| -%>
@@ -95,7 +96,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
       <%- if node.needs_length? -%>
         // serialize length
         uint32_t length = yp_ulong_to_u32(buffer->length - offset - sizeof(uint32_t));
-        memcpy(buffer->value + offset + LOCATION_WIDTH, &length, sizeof(uint32_t));      
+        memcpy(buffer->value + length_offset, &length, sizeof(uint32_t));      
       <%- end -%>
       break;
     }
