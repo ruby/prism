@@ -24,7 +24,7 @@ ProgramNode(0...178)(
        ScopeNode(40...45)([]),
        KEYWORD_CLASS(40...45)("class"),
        ConstantPathNode(46...82)(
-         WhileNode(46...70)(
+         WhileNode(46...74)(
            KEYWORD_WHILE(46...51)("while"),
            TrueNode(52...56)(),
            StatementsNode(58...70)(
@@ -63,7 +63,7 @@ ProgramNode(0...178)(
        ScopeNode(130...136)([]),
        KEYWORD_MODULE(130...136)("module"),
        ConstantPathNode(137...173)(
-         WhileNode(137...161)(
+         WhileNode(137...165)(
            KEYWORD_WHILE(137...142)("while"),
            TrueNode(143...147)(),
            StatementsNode(149...161)(

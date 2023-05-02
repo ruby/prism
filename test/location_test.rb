@@ -419,6 +419,11 @@ module YARP
       assert_location(UndefNode, "undef foo, bar")
     end
 
+    test "WhileNode" do
+      assert_location(WhileNode, "foo = bar while foo != baz")
+      assert_location(WhileNode, "while a;bar;baz;end")
+    end
+
     test "XStringNode" do
       assert_location(XStringNode, "`foo`")
       assert_location(XStringNode, "%x[foo]")
