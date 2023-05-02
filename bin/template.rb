@@ -133,6 +133,12 @@ class NodeType
     end
     @comment = config.fetch("comment")
   end
+
+  # Should emit serialized length of node so implementations can skip
+  # the node to enable lazy parsing.
+  def needs_length?
+    @name == "DefNode"
+  end
 end
 
 # This represents a token in the lexer. They are configured through the

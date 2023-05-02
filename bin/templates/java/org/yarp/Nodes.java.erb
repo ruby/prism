@@ -78,15 +78,26 @@ public abstract class Nodes {
 
     <%= "#{node.comment.split("\n").map { |line| "// #{line}" }.join("\n    ")}\n" if node.comment -%>
     public static final class <%= node.name -%> extends Node {
+        <%- if node.needs_length? -%>
+        public final int length;
+        <%- end -%>
         <%- node.params.each do |param| -%>
         public final <%= param.java_type %> <%= param.name %>;<%= ' // optional' if param.class.name.start_with?('Optional') %>
         <%- end -%>
 
-        public <%=node.name -%>(<%= (node.params.map { "#{_1.java_type} #{_1.name}" } + ["int startOffset", "int endOffset"]).join(", ") %>) {
+        <%-
+          params = node.needs_length? ? ["int length"] : []
+          params.concat node.params.map { "#{_1.java_type} #{_1.name}" }
+          params.concat ["int startOffset", "int endOffset"]
+        -%>
+        public <%=node.name -%>(<%= params.join(", ") %>) {
             super(startOffset, endOffset);
-      <%- node.params.each do |param| -%>
+        <%- if node.needs_length? -%>
+            this.length = length;
+        <%- end -%>
+        <%- node.params.each do |param| -%>
             this.<%= param.name %> = <%= param.name %>;
-      <%- end -%>
+        <%- end -%>
         }
 
         public Node[] childNodes() {
