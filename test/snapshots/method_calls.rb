@@ -748,14 +748,14 @@ ProgramNode(0...1187)(
        nil,
        "foo"
      ),
-     CallNode(334...381)(
+     CallNode(334...383)(
        nil,
        nil,
        IDENTIFIER(334...336)("hi"),
        nil,
-       ArgumentsNode(337...381)(
+       ArgumentsNode(337...383)(
          [IntegerNode(337...340)(),
-          HashNode(344...381)(
+          HashNode(342...383)(
             BRACE_LEFT(342...343)("{"),
             [AssocNode(344...361)(
                SymbolNode(344...350)(
@@ -772,8 +772,8 @@ ProgramNode(0...1187)(
                ),
                EQUAL_GREATER(351...353)("=>")
              ),
-             AssocSplatNode(363...366)(
-               HashNode(365...366)(
+             AssocSplatNode(363...367)(
+               HashNode(365...367)(
                  BRACE_LEFT(365...366)("{"),
                  [],
                  BRACE_RIGHT(366...367)("}")
@@ -919,8 +919,8 @@ ProgramNode(0...1187)(
                ),
                EQUAL_GREATER(452...454)("=>")
              ),
-             AssocSplatNode(464...467)(
-               HashNode(466...467)(
+             AssocSplatNode(464...468)(
+               HashNode(466...468)(
                  BRACE_LEFT(466...467)("{"),
                  [],
                  BRACE_RIGHT(467...468)("}")
@@ -972,8 +972,8 @@ ProgramNode(0...1187)(
                ),
                EQUAL_GREATER(494...496)("=>")
              ),
-             AssocSplatNode(506...509)(
-               HashNode(508...509)(
+             AssocSplatNode(506...510)(
+               HashNode(508...510)(
                  BRACE_LEFT(508...509)("{"),
                  [],
                  BRACE_RIGHT(509...510)("}")
@@ -1007,8 +1007,8 @@ ProgramNode(0...1187)(
        nil,
        IDENTIFIER(527...530)("foo"),
        PARENTHESIS_LEFT(530...531)("("),
-       ArgumentsNode(533...562)(
-         [HashNode(533...550)(
+       ArgumentsNode(531...562)(
+         [HashNode(531...553)(
             BRACE_LEFT(531...532)("{"),
             [AssocNode(533...540)(
                SymbolNode(533...535)(
@@ -1370,22 +1370,22 @@ ProgramNode(0...1187)(
        nil,
        "foo"
      ),
-     CallNode(786...812)(
+     CallNode(786...814)(
        nil,
        nil,
        IDENTIFIER(786...789)("foo"),
        nil,
-       ArgumentsNode(790...812)(
-         [HashNode(790...812)(
+       ArgumentsNode(790...814)(
+         [HashNode(790...814)(
             nil,
-            [AssocNode(790...812)(
+            [AssocNode(790...814)(
                SymbolNode(790...794)(
                  nil,
                  LABEL(790...793)("bar"),
                  LABEL_END(793...794)(":"),
                  "bar"
                ),
-               HashNode(797...812)(
+               HashNode(795...814)(
                  BRACE_LEFT(795...796)("{"),
                  [AssocNode(797...812)(
                     SymbolNode(797...801)(
@@ -1423,22 +1423,22 @@ ProgramNode(0...1187)(
        nil,
        "foo"
      ),
-     CallNode(816...838)(
+     CallNode(816...840)(
        nil,
        nil,
        IDENTIFIER(816...819)("foo"),
        nil,
-       ArgumentsNode(820...838)(
-         [HashNode(820...838)(
+       ArgumentsNode(820...840)(
+         [HashNode(820...840)(
             nil,
-            [AssocNode(820...838)(
+            [AssocNode(820...840)(
                SymbolNode(820...824)(
                  nil,
                  LABEL(820...823)("bar"),
                  LABEL_END(823...824)(":"),
                  "bar"
                ),
-               HashNode(827...838)(
+               HashNode(825...840)(
                  BRACE_LEFT(825...826)("{"),
                  [AssocSplatNode(827...838)(
                     CallNode(829...838)(
@@ -1828,7 +1828,7 @@ ProgramNode(0...1187)(
        "foo"
      ),
      CallNode(1134...1143)(
-       HashNode(1134...1135)(
+       HashNode(1134...1136)(
          BRACE_LEFT(1134...1135)("{"),
          [],
          BRACE_RIGHT(1135...1136)("}")
@@ -1859,7 +1859,7 @@ ProgramNode(0...1187)(
        "+"
      ),
      CallNode(1145...1161)(
-       HashNode(1145...1146)(
+       HashNode(1145...1147)(
          BRACE_LEFT(1145...1146)("{"),
          [],
          BRACE_RIGHT(1146...1147)("}")

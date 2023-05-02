@@ -221,6 +221,11 @@ module YARP
       assert_location(ForwardingSuperNode, "super {}")
     end
 
+    test "HashNode" do
+      assert_location(HashNode, "{ foo: 2 }")
+      assert_location(HashNode, "{ \nfoo: 2, \nbar: 3 \n}")
+    end
+
     test "IfNode" do
       assert_location(IfNode, "if type in 1;elsif type in B;end")
     end

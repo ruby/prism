@@ -1,7 +1,7 @@
-ProgramNode(2...916)(
+ProgramNode(0...916)(
   ScopeNode(0...0)([]),
-  StatementsNode(2...916)(
-    [HashNode(2...36)(
+  StatementsNode(0...916)(
+    [HashNode(0...38)(
        BRACE_LEFT(0...1)("{"),
        [AssocNode(2...45)(
           StringNode(2...7)(
@@ -50,7 +50,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(37...38)("}")
      ),
-     HashNode(55...82)(
+     HashNode(53...84)(
        BRACE_LEFT(53...54)("{"),
        [AssocNode(55...67)(
           StringNode(55...60)(
@@ -167,7 +167,7 @@ ProgramNode(2...916)(
        nil,
        "a"
      ),
-     HashNode(139...165)(
+     HashNode(137...167)(
        BRACE_LEFT(137...138)("{"),
        [AssocNode(139...174)(
           StringNode(139...144)(
@@ -214,7 +214,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(166...167)("}")
      ),
-     HashNode(184...203)(
+     HashNode(182...205)(
        BRACE_LEFT(182...183)("{"),
        [AssocNode(184...196)(
           StringNode(184...189)(
@@ -775,12 +775,12 @@ ProgramNode(2...916)(
        BRACKET_LEFT_ARRAY(714...715)("["),
        BRACKET_RIGHT(727...728)("]")
      ),
-     HashNode(729...730)(
+     HashNode(729...731)(
        BRACE_LEFT(729...730)("{"),
        [],
        BRACE_RIGHT(730...731)("}")
      ),
-     HashNode(734...742)(
+     HashNode(732...744)(
        BRACE_LEFT(732...733)("{"),
        [AssocNode(734...742)(
           ParenthesesNode(734...736)(nil, (734...735), (735...736)),
@@ -789,7 +789,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(743...744)("}")
      ),
-     HashNode(747...753)(
+     HashNode(745...755)(
        BRACE_LEFT(745...746)("{"),
        [AssocNode(747...753)(
           IntegerNode(747...748)(),
@@ -798,7 +798,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(754...755)("}")
      ),
-     HashNode(758...772)(
+     HashNode(756...774)(
        BRACE_LEFT(756...757)("{"),
        [AssocNode(758...764)(
           IntegerNode(758...759)(),
@@ -812,7 +812,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(773...774)("}")
      ),
-     HashNode(777...800)(
+     HashNode(775...802)(
        BRACE_LEFT(775...776)("{"),
        [AssocNode(777...794)(
           SymbolNode(777...779)(
@@ -855,7 +855,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(801...802)("}")
      ),
-     HashNode(805...815)(
+     HashNode(803...817)(
        BRACE_LEFT(803...804)("{"),
        [AssocNode(805...809)(
           SymbolNode(805...807)(
@@ -879,7 +879,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(816...817)("}")
      ),
-     HashNode(820...825)(
+     HashNode(818...827)(
        BRACE_LEFT(818...819)("{"),
        [AssocNode(820...825)(
           SymbolNode(820...822)(
@@ -898,7 +898,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(826...827)("}")
      ),
-     HashNode(832...841)(
+     HashNode(828...843)(
        BRACE_LEFT(828...829)("{"),
        [AssocNode(832...841)(
           InterpolatedSymbolNode(832...835)(
@@ -916,7 +916,7 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(842...843)("}")
      ),
-     HashNode(846...854)(
+     HashNode(844...856)(
        BRACE_LEFT(844...845)("{"),
        [AssocNode(846...854)(
           SymbolNode(846...849)(
