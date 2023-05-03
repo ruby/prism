@@ -1,7 +1,7 @@
-ProgramNode(0...16)(
+ProgramNode(0...23)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...16)(
-    [WhileNode(0...16)(
+  StatementsNode(0...23)(
+    [WhileNode(0...23)(
        KEYWORD_WHILE(0...5)("while"),
        CallNode(6...16)(
          ParenthesesNode(10...16)(

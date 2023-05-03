@@ -63,7 +63,7 @@ ProgramNode(0...188)(
           )]
        )
      ),
-     WhileNode(46...45)(
+     WhileNode(36...55)(
        KEYWORD_WHILE_MODIFIER(46...51)("while"),
        LocalVariableReadNode(52...55)(0),
        StatementsNode(36...45)(
@@ -128,7 +128,7 @@ ProgramNode(0...188)(
           )]
        )
      ),
-     WhileNode(77...92)(
+     WhileNode(77...96)(
        KEYWORD_WHILE(77...82)("while"),
        LocalVariableWriteNode(83...88)(
          (83...84),
@@ -188,7 +188,7 @@ ProgramNode(0...188)(
        ScopeNode(132...138)([IDENTIFIER(143...146)("foo")]),
        KEYWORD_MODULE(132...138)("module"),
        ConstantReadNode(139...140)(),
-       StatementsNode(143...178)(
+       StatementsNode(143...184)(
          [LocalVariableWriteNode(143...152)(
             (143...146),
             CallNode(149...152)(
@@ -204,7 +204,7 @@ ProgramNode(0...188)(
             (147...148),
             0
           ),
-          WhileNode(155...178)(
+          WhileNode(155...184)(
             KEYWORD_WHILE(155...160)("while"),
             LocalVariableReadNode(161...164)(0),
             StatementsNode(169...178)(

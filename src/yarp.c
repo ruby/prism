@@ -107,6 +107,7 @@ debug_lex_mode(yp_parser_t *parser) {
       case YP_LEX_LIST: fprintf(stderr, "LIST (terminator=%c, interpolation=%d)", lex_mode->as.list.terminator, lex_mode->as.list.interpolation); break;
       case YP_LEX_REGEXP: fprintf(stderr, "REGEXP (terminator=%c)", lex_mode->as.regexp.terminator); break;
       case YP_LEX_STRING: fprintf(stderr, "STRING (terminator=%c, interpolation=%d)", lex_mode->as.string.terminator, lex_mode->as.string.interpolation); break;
+      case YP_LEX_NUMERIC: fprintf(stderr, "NUMERIC (token_type=%s)", yp_token_type_to_str(lex_mode->as.numeric.type)); break;
     }
 
     lex_mode = lex_mode->prev;
@@ -1613,7 +1614,7 @@ yp_if_node_create(yp_parser_t *parser,
     end = end_keyword->end;
   } else if (consequent != NULL) {
     end = consequent->location.end;
-  } else if (statements != NULL) {
+  } else if ((statements != NULL) && (statements->body.size != 0)) {
     end = statements->base.location.end;
   } else {
     end = predicate->location.end;
@@ -3239,12 +3240,27 @@ static yp_while_node_t *
 yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
   yp_while_node_t *node = yp_alloc(parser, sizeof(yp_while_node_t));
 
+  const char *start = NULL;
+  bool has_statements = (statements != NULL) && (statements->body.size != 0);
+  if (has_statements && (keyword->start > statements->base.location.start)) {
+    start = statements->base.location.start;
+  } else {
+    start = keyword->start;
+  }
+
+  const char *end = NULL;
+  if (has_statements && (predicate->location.end < statements->base.location.end)) {
+    end = statements->base.location.end;
+  } else {
+    end = predicate->location.end;
+  }
+
   *node = (yp_while_node_t) {
     {
       .type = YP_NODE_WHILE_NODE,
       .location = {
-        .start = keyword->start,
-        .end = statements == NULL ? predicate->location.end : statements->base.location.end
+        .start = start,
+        .end = end,
       },
     },
     .keyword = *keyword,
@@ -8146,9 +8162,11 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     switch (context) {
       case YP_CONTEXT_IF:
         ((yp_if_node_t *) parent)->end_keyword = parser->previous;
+        parent->location.end = parser->previous.end;
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
+        parent->location.end = parser->previous.end;
         break;
       default:
         assert(false && "unreachable");
@@ -10475,7 +10493,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
       }
 
-      return (yp_node_t *) yp_while_node_create(parser, &keyword, predicate, statements);
+      yp_while_node_t *while_node = yp_while_node_create(parser, &keyword, predicate, statements);
+      if (parser->previous.type == YP_TOKEN_KEYWORD_END) {
+        while_node->base.location.end = parser->previous.end;
+      }
+      return (yp_node_t *) while_node;
     }
     case YP_TOKEN_PERCENT_LOWER_I: {
       parser_lex(parser);

@@ -298,7 +298,7 @@ ProgramNode(0...991)(
        "bar"
      ),
      CallNode(273...290)(
-       WhileNode(273...282)(
+       WhileNode(273...286)(
          KEYWORD_WHILE(273...278)("while"),
          CallNode(279...282)(
            nil,
@@ -346,7 +346,7 @@ ProgramNode(0...991)(
        "bar"
      ),
      CallNode(304...318)(
-       IfNode(304...310)(
+       IfNode(304...314)(
          KEYWORD_IF(304...306)("if"),
          CallNode(307...310)(
            nil,

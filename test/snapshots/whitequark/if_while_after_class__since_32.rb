@@ -5,7 +5,7 @@ ProgramNode(0...178)(
        ScopeNode(0...5)([]),
        KEYWORD_CLASS(0...5)("class"),
        ConstantPathNode(6...33)(
-         IfNode(6...21)(
+         IfNode(6...25)(
            KEYWORD_IF(6...8)("if"),
            TrueNode(9...13)(),
            StatementsNode(15...21)([ConstantReadNode(15...21)()]),
@@ -24,7 +24,7 @@ ProgramNode(0...178)(
        ScopeNode(40...45)([]),
        KEYWORD_CLASS(40...45)("class"),
        ConstantPathNode(46...82)(
-         WhileNode(46...70)(
+         WhileNode(46...74)(
            KEYWORD_WHILE(46...51)("while"),
            TrueNode(52...56)(),
            StatementsNode(58...70)(
@@ -46,7 +46,7 @@ ProgramNode(0...178)(
        ScopeNode(89...95)([]),
        KEYWORD_MODULE(89...95)("module"),
        ConstantPathNode(96...123)(
-         IfNode(96...111)(
+         IfNode(96...115)(
            KEYWORD_IF(96...98)("if"),
            TrueNode(99...103)(),
            StatementsNode(105...111)([ConstantReadNode(105...111)()]),
@@ -63,7 +63,7 @@ ProgramNode(0...178)(
        ScopeNode(130...136)([]),
        KEYWORD_MODULE(130...136)("module"),
        ConstantPathNode(137...173)(
-         WhileNode(137...161)(
+         WhileNode(137...165)(
            KEYWORD_WHILE(137...142)("while"),
            TrueNode(143...147)(),
            StatementsNode(149...161)(

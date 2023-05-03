@@ -1,7 +1,7 @@
-ProgramNode(5...4)(
+ProgramNode(0...14)(
   ScopeNode(0...0)([]),
-  StatementsNode(5...4)(
-    [WhileNode(5...4)(
+  StatementsNode(0...14)(
+    [WhileNode(0...14)(
        KEYWORD_WHILE_MODIFIER(5...10)("while"),
        CallNode(11...14)(
          nil,

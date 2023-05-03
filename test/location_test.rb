@@ -221,6 +221,10 @@ module YARP
       assert_location(ForwardingSuperNode, "super {}")
     end
 
+    test "IfNode" do
+      assert_location(IfNode, "if type in 1;elsif type in B;end")
+    end
+
     test "ImaginaryNode" do
       assert_location(ImaginaryNode, "1i")
       assert_location(ImaginaryNode, "1ri")
@@ -418,6 +422,11 @@ module YARP
     test "UntilNode" do
       assert_location(UntilNode, "foo = bar until baz")
       assert_location(UntilNode, "until bar;baz;end")
+    end
+
+    test "WhileNode" do
+      assert_location(WhileNode, "foo = bar while foo != baz")
+      assert_location(WhileNode, "while a;bar;baz;end")
     end
 
     test "XStringNode" do
