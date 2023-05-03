@@ -1,6 +1,6 @@
-ProgramNode(0...616)(
+ProgramNode(0...620)(
   ScopeNode(0...0)([IDENTIFIER(371...372)("x")]),
-  StatementsNode(0...616)(
+  StatementsNode(0...620)(
     [ModuleNode(0...68)(
        ScopeNode(0...6)([]),
        KEYWORD_MODULE(0...6)("module"),
@@ -150,8 +150,8 @@ ProgramNode(0...616)(
        ScopeNode(148...154)([IDENTIFIER(159...162)("foo")]),
        KEYWORD_MODULE(148...154)("module"),
        ConstantReadNode(155...156)(),
-       StatementsNode(169...168)(
-         [UntilNode(169...168)(
+       StatementsNode(159...178)(
+         [UntilNode(159...178)(
             KEYWORD_UNTIL_MODIFIER(169...174)("until"),
             LocalVariableReadNode(175...178)(0),
             StatementsNode(159...168)(
@@ -421,7 +421,7 @@ ProgramNode(0...616)(
           )]
        )
      ),
-     UntilNode(451...450)(
+     UntilNode(429...460)(
        KEYWORD_UNTIL_MODIFIER(451...456)("until"),
        CallNode(457...460)(
          nil,
@@ -552,17 +552,17 @@ ProgramNode(0...616)(
           )]
        )
      ),
-     UntilNode(557...568)(
+     UntilNode(557...572)(
        KEYWORD_UNTIL(557...562)("until"),
        FalseNode(563...568)(),
        nil
      ),
-     UntilNode(573...588)(
+     UntilNode(573...592)(
        KEYWORD_UNTIL(573...578)("until"),
        FalseNode(579...584)(),
        StatementsNode(587...588)([IntegerNode(587...588)()])
      ),
-     UntilNode(593...616)(
+     UntilNode(593...620)(
        KEYWORD_UNTIL(593...598)("until"),
        ParenthesesNode(599...608)(
          StatementsNode(600...607)(

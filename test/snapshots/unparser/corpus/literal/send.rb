@@ -275,7 +275,7 @@ ProgramNode(0...991)(
        "bar"
      ),
      CallNode(255...272)(
-       UntilNode(255...264)(
+       UntilNode(255...268)(
          KEYWORD_UNTIL(255...260)("until"),
          CallNode(261...264)(
            nil,

@@ -419,6 +419,11 @@ module YARP
       assert_location(UndefNode, "undef foo, bar")
     end
 
+    test "UntilNode" do
+      assert_location(UntilNode, "foo = bar until baz")
+      assert_location(UntilNode, "until bar;baz;end")
+    end
+
     test "WhileNode" do
       assert_location(WhileNode, "foo = bar while foo != baz")
       assert_location(WhileNode, "while a;bar;baz;end")

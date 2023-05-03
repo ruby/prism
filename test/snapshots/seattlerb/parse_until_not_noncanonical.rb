@@ -1,7 +1,7 @@
-ProgramNode(0...26)(
+ProgramNode(0...30)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...26)(
-    [UntilNode(0...26)(
+  StatementsNode(0...30)(
+    [UntilNode(0...30)(
        KEYWORD_UNTIL(0...5)("until"),
        CallNode(6...18)(
          CallNode(10...18)(
