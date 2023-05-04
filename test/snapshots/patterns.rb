@@ -115,7 +115,7 @@ ProgramNode(0...3725)(
        ),
        (67...69)
      ),
-     MatchRequiredNode(78...90)(
+     MatchRequiredNode(78...91)(
        CallNode(78...81)(
          nil,
          nil,
@@ -126,7 +126,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       InterpolatedSymbolNode(87...90)(
+       InterpolatedSymbolNode(85...91)(
          SYMBOL_BEGIN(85...87)(":\""),
          [StringNode(87...90)(
             nil,
@@ -589,7 +589,7 @@ ProgramNode(0...3725)(
        ),
        (443...445)
      ),
-     MatchRequiredNode(465...487)(
+     MatchRequiredNode(465...488)(
        CallNode(465...468)(
          nil,
          nil,
@@ -600,8 +600,8 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       RangeNode(474...487)(
-         InterpolatedSymbolNode(474...477)(
+       RangeNode(472...488)(
+         InterpolatedSymbolNode(472...478)(
            SYMBOL_BEGIN(472...474)(":\""),
            [StringNode(474...477)(
               nil,
@@ -611,7 +611,7 @@ ProgramNode(0...3725)(
             )],
            STRING_END(477...478)("\"")
          ),
-         InterpolatedSymbolNode(484...487)(
+         InterpolatedSymbolNode(482...488)(
            SYMBOL_BEGIN(482...484)(":\""),
            [StringNode(484...487)(
               nil,
@@ -2067,7 +2067,7 @@ ProgramNode(0...3725)(
        ),
        (1697...1699)
      ),
-     MatchPredicateNode(1708...1720)(
+     MatchPredicateNode(1708...1721)(
        CallNode(1708...1711)(
          nil,
          nil,
@@ -2078,7 +2078,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       InterpolatedSymbolNode(1717...1720)(
+       InterpolatedSymbolNode(1715...1721)(
          SYMBOL_BEGIN(1715...1717)(":\""),
          [StringNode(1717...1720)(
             nil,
@@ -2582,7 +2582,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        [InNode(2178...2192)(
-          InterpolatedSymbolNode(2183...2186)(
+          InterpolatedSymbolNode(2181...2187)(
             SYMBOL_BEGIN(2181...2183)(":\""),
             [StringNode(2183...2186)(
                nil,
@@ -3272,11 +3272,11 @@ ProgramNode(0...3725)(
          "foo"
        ),
        [InNode(2972...2993)(
-          IfNode(2977...2988)(
+          IfNode(2975...2988)(
             KEYWORD_IF_MODIFIER(2982...2984)("if"),
             LocalVariableReadNode(2985...2988)(0),
-            StatementsNode(2977...2980)(
-              [InterpolatedSymbolNode(2977...2980)(
+            StatementsNode(2975...2981)(
+              [InterpolatedSymbolNode(2975...2981)(
                  SYMBOL_BEGIN(2975...2977)(":\""),
                  [StringNode(2977...2980)(
                     nil,

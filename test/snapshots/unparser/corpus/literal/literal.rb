@@ -472,7 +472,7 @@ ProgramNode(2...916)(
        nil,
        "foo"
      ),
-     InterpolatedSymbolNode(451...454)(
+     InterpolatedSymbolNode(449...455)(
        SYMBOL_BEGIN(449...451)(":\""),
        [StringNode(451...454)(
           nil,
@@ -488,7 +488,7 @@ ProgramNode(2...916)(
        nil,
        "foo"
      ),
-     InterpolatedSymbolNode(463...466)(
+     InterpolatedSymbolNode(461...467)(
        SYMBOL_BEGIN(461...463)(":\""),
        [StringNode(463...466)(
           nil,
@@ -498,7 +498,7 @@ ProgramNode(2...916)(
         )],
        STRING_END(466...467)("\"")
      ),
-     InterpolatedSymbolNode(470...474)(
+     InterpolatedSymbolNode(468...475)(
        SYMBOL_BEGIN(468...470)(":\""),
        [StringNode(470...474)(
           nil,
@@ -508,7 +508,7 @@ ProgramNode(2...916)(
         )],
        STRING_END(474...475)("\"")
      ),
-     InterpolatedSymbolNode(476...478)(
+     InterpolatedSymbolNode(476...479)(
        SYMBOL_BEGIN(476...478)(":\""),
        [],
        STRING_END(478...479)("\"")
@@ -595,7 +595,7 @@ ProgramNode(2...916)(
        REGEXP_END(579...581)("/x"),
        "//"
      ),
-     InterpolatedSymbolNode(584...596)(
+     InterpolatedSymbolNode(582...597)(
        SYMBOL_BEGIN(582...584)(":\""),
        [StringNode(584...587)(
           nil,
@@ -627,7 +627,7 @@ ProgramNode(2...916)(
         )],
        STRING_END(596...597)("\"")
      ),
-     InterpolatedSymbolNode(600...608)(
+     InterpolatedSymbolNode(598...609)(
        SYMBOL_BEGIN(598...600)(":\""),
        [StringInterpolatedNode(600...608)(
           EMBEXPR_BEGIN(600...602)("\#{"),
@@ -898,10 +898,10 @@ ProgramNode(2...916)(
         )],
        BRACE_RIGHT(826...827)("}")
      ),
-     HashNode(832...841)(
+     HashNode(830...841)(
        BRACE_LEFT(828...829)("{"),
-       [AssocNode(832...841)(
-          InterpolatedSymbolNode(832...835)(
+       [AssocNode(830...841)(
+          InterpolatedSymbolNode(830...836)(
             SYMBOL_BEGIN(830...832)(":\""),
             [StringNode(832...835)(
                nil,
@@ -994,7 +994,7 @@ ProgramNode(2...916)(
        ),
        "foo"
      ),
-     InterpolatedSymbolNode(895...900)(
+     InterpolatedSymbolNode(893...901)(
        SYMBOL_BEGIN(893...895)(":\""),
        [StringNode(895...900)(
           nil,
