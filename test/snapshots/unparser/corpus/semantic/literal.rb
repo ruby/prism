@@ -44,7 +44,7 @@ ProgramNode(0...131)(
        REGEXP_END(69...70)(")"),
        ")"
      ),
-     InterpolatedRegularExpressionNode(74...85)(
+     InterpolatedRegularExpressionNode(71...85)(
        REGEXP_BEGIN(71...74)("%r("),
        [StringInterpolatedNode(74...81)(
           EMBEXPR_BEGIN(74...76)("\#{"),

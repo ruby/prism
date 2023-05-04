@@ -1,8 +1,8 @@
-ProgramNode(1...28)(
+ProgramNode(0...28)(
   ScopeNode(0...0)([]),
-  StatementsNode(1...28)(
-    [CallNode(1...28)(
-       InterpolatedRegularExpressionNode(1...19)(
+  StatementsNode(0...28)(
+    [CallNode(0...28)(
+       InterpolatedRegularExpressionNode(0...19)(
          REGEXP_BEGIN(0...1)("/"),
          [StringInterpolatedNode(1...5)(
             EMBEXPR_BEGIN(1...3)("\#{"),
