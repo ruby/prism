@@ -131,7 +131,7 @@ ProgramNode(0...210)(
         )],
        HEREDOC_END(177...182)("HERE\n")
      ),
-     InterpolatedXStringNode(193...198)(
+     InterpolatedXStringNode(183...203)(
        HEREDOC_START(183...192)("<<-`HERE`"),
        [StringNode(193...198)(
           nil,

@@ -1,7 +1,7 @@
-ProgramNode(1...14)(
+ProgramNode(0...14)(
   ScopeNode(0...0)([]),
-  StatementsNode(1...14)(
-    [InterpolatedXStringNode(1...14)(
+  StatementsNode(0...14)(
+    [InterpolatedXStringNode(0...14)(
        BACKTICK(0...1)("`"),
        [StringNode(1...4)(nil, STRING_CONTENT(1...4)("foo"), nil, "foo"),
         StringInterpolatedNode(4...10)(

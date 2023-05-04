@@ -1,6 +1,6 @@
-ProgramNode(0...329)(
+ProgramNode(0...331)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...329)(
+  StatementsNode(0...331)(
     [CallNode(0...26)(
        nil,
        nil,
@@ -346,13 +346,13 @@ ProgramNode(0...329)(
        nil,
        "p"
      ),
-     CallNode(305...329)(
+     CallNode(305...331)(
        nil,
        nil,
        IDENTIFIER(305...306)("p"),
        nil,
-       ArgumentsNode(314...329)(
-         [InterpolatedXStringNode(314...329)(
+       ArgumentsNode(307...331)(
+         [InterpolatedXStringNode(307...331)(
             HEREDOC_START(307...313)("<<~`E`"),
             [StringNode(314...322)(
                nil,

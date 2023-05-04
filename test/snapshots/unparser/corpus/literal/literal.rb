@@ -433,7 +433,7 @@ ProgramNode(2...916)(
        STRING_END(416...417)("`"),
        "foo"
      ),
-     InterpolatedXStringNode(419...430)(
+     InterpolatedXStringNode(418...430)(
        BACKTICK(418...419)("`"),
        [StringNode(419...422)(
           nil,
@@ -1004,7 +1004,7 @@ ProgramNode(2...916)(
         )],
        STRING_END(900...901)("\"")
      ),
-     InterpolatedXStringNode(903...916)(
+     InterpolatedXStringNode(902...916)(
        BACKTICK(902...903)("`"),
        [StringNode(903...907)(
           nil,

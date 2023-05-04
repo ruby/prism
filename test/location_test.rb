@@ -250,6 +250,10 @@ module YARP
       assert_location(IntegerNode, "0o1_000")
     end
 
+    test "InterpolatedXStringNode" do
+      assert_location(InterpolatedXStringNode, '`foo #{bar} baz`')
+    end
+
     test "NextNode" do
       assert_location(NextNode, "next")
       assert_location(NextNode, "next foo")
