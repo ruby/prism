@@ -263,6 +263,10 @@ module YARP
       assert_location(InterpolatedStringNode, "<<~A\nhello world\nA")
     end
 
+    test "InterpolatedSymbolNode" do
+      assert_location(InterpolatedSymbolNode, ':"#{foo}bar"')
+    end
+
     test "InterpolatedXStringNode" do
       assert_location(InterpolatedXStringNode, '`foo #{bar} baz`')
     end

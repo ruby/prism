@@ -47,7 +47,7 @@ ProgramNode(0...199)(
        (40...45)
      ),
      AliasNode(61...84)(
-       InterpolatedSymbolNode(69...76)(
+       InterpolatedSymbolNode(67...77)(
          SYMBOL_BEGIN(67...69)(":\""),
          [StringNode(69...72)(nil, STRING_CONTENT(69...72)("abc"), nil, "abc"),
           StringInterpolatedNode(72...76)(

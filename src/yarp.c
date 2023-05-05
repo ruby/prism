@@ -1943,8 +1943,15 @@ yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *openin
 }
 
 static inline void
-yp_interpolated_symbol_node_append(yp_parser_t *parser, yp_interpolated_symbol_node_t *node, yp_node_t *part) {
-  yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
+yp_interpolated_symbol_node_append(yp_interpolated_symbol_node_t *node, yp_node_t *part) {
+  yp_node_list_append2(&node->parts, part);
+  node->base.location.end = part->location.end;
+}
+
+static inline void
+yp_interpolated_symbol_node_closing_set(yp_interpolated_symbol_node_t *node, const yp_token_t *closing) {
+  node->closing = *closing;
+  node->base.location.end = closing->end;
 }
 
 // Allocate a new InterpolatedXStringNode node.
@@ -8390,7 +8397,7 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
     while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
       yp_node_t *part = parse_string_part(parser);
       if (part != NULL) {
-        yp_node_list_append(parser, (yp_node_t *) interpolated, &interpolated->parts, part);
+        yp_interpolated_symbol_node_append(interpolated, part);
       }
     }
 
@@ -8399,7 +8406,7 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
     }
     expect(parser, YP_TOKEN_STRING_END, "Expected a closing delimiter for an interpolated symbol.");
 
-    interpolated->closing = parser->previous;
+    yp_interpolated_symbol_node_closing_set(interpolated, &parser->previous);
     return (yp_node_t *) interpolated;
   }
 
@@ -10594,7 +10601,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               // interpolated string, then we need to append the string content
               // to the list of child nodes.
               yp_node_t *part = parse_string_part(parser);
-              yp_interpolated_symbol_node_append(parser, (yp_interpolated_symbol_node_t *) current, part);
+              yp_interpolated_symbol_node_append((yp_interpolated_symbol_node_t *) current, part);
             } else {
               assert(false && "unreachable");
             }
@@ -10618,7 +10625,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_interpolated_symbol_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
               current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
-              yp_interpolated_symbol_node_append(parser, interpolated, current);
+              yp_interpolated_symbol_node_append(interpolated, current);
               current = (yp_node_t *) interpolated;
             } else {
               // If we hit an embedded variable and the current node is an
@@ -10626,7 +10633,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_interpolated_symbol_node_append(parser, (yp_interpolated_symbol_node_t *) current, part);
+            yp_interpolated_symbol_node_append((yp_interpolated_symbol_node_t *) current, part);
             break;
           }
           case YP_TOKEN_EMBEXPR_BEGIN: {
@@ -10647,7 +10654,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_interpolated_symbol_node_t *interpolated = yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
 
               current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
-              yp_interpolated_symbol_node_append(parser, interpolated, current);
+              yp_interpolated_symbol_node_append(interpolated, current);
               current = (yp_node_t *) interpolated;
             } else if (current->type == YP_NODE_INTERPOLATED_SYMBOL_NODE) {
               // If we hit an embedded expression and the current node is an
@@ -10657,7 +10664,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             }
 
             yp_node_t *part = parse_string_part(parser);
-            yp_interpolated_symbol_node_append(parser, (yp_interpolated_symbol_node_t *) current, part);
+            yp_interpolated_symbol_node_append((yp_interpolated_symbol_node_t *) current, part);
             break;
           }
           default:

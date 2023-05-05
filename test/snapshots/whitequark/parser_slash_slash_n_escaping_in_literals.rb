@@ -95,7 +95,7 @@ ProgramNode(0...210)(
        REGEXP_END(120...121)("/"),
        "a\n" + "b"
      ),
-     InterpolatedSymbolNode(125...129)(
+     InterpolatedSymbolNode(123...130)(
        SYMBOL_BEGIN(123...125)(":\""),
        [StringNode(125...129)(
           nil,

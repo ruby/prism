@@ -1,13 +1,13 @@
 ProgramNode(0...32)(
   ScopeNode(0...0)([]),
   StatementsNode(0...32)(
-    [AliasNode(0...16)(
-       InterpolatedSymbolNode(8...10)(
+    [AliasNode(0...17)(
+       InterpolatedSymbolNode(6...11)(
          SYMBOL_BEGIN(6...8)(":\""),
          [StringNode(8...10)(nil, STRING_CONTENT(8...10)("<<"), nil, "<<")],
          STRING_END(10...11)("\"")
        ),
-       InterpolatedSymbolNode(14...16)(
+       InterpolatedSymbolNode(12...17)(
          SYMBOL_BEGIN(12...14)(":\""),
          [StringNode(14...16)(nil, STRING_CONTENT(14...16)(">>"), nil, ">>")],
          STRING_END(16...17)("\"")

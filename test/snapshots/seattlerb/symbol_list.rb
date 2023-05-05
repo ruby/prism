@@ -2,7 +2,7 @@ ProgramNode(0...13)(
   ScopeNode(0...0)([]),
   StatementsNode(0...13)(
     [ArrayNode(0...13)(
-       [InterpolatedSymbolNode(3...7)(
+       [InterpolatedSymbolNode(0...7)(
           nil,
           [StringInterpolatedNode(3...7)(
              EMBEXPR_BEGIN(3...5)("\#{"),
@@ -22,7 +22,7 @@ ProgramNode(0...13)(
            )],
           nil
         ),
-        InterpolatedSymbolNode(8...12)(
+        InterpolatedSymbolNode(0...12)(
           nil,
           [StringInterpolatedNode(8...12)(
              EMBEXPR_BEGIN(8...10)("\#{"),

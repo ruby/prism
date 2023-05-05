@@ -1,7 +1,7 @@
-ProgramNode(2...14)(
+ProgramNode(0...15)(
   ScopeNode(0...0)([]),
-  StatementsNode(2...14)(
-    [InterpolatedSymbolNode(2...14)(
+  StatementsNode(0...15)(
+    [InterpolatedSymbolNode(0...15)(
        SYMBOL_BEGIN(0...2)(":\""),
        [StringNode(2...5)(nil, STRING_CONTENT(2...5)("foo"), nil, "foo"),
         StringInterpolatedNode(5...11)(
