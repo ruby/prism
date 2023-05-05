@@ -1865,8 +1865,15 @@ yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_tok
 }
 
 static inline void
-yp_interpolated_regular_expression_node_append(yp_parser_t *parser, yp_interpolated_regular_expression_node_t *node, yp_node_t *part) {
-  yp_node_list_append(parser, (yp_node_t *) node, &node->parts, part);
+yp_interpolated_regular_expression_node_append(yp_interpolated_regular_expression_node_t *node, yp_node_t *part) {
+  yp_node_list_append2(&node->parts, part);
+  node->base.location.end = part->location.end;
+}
+
+static inline void
+yp_interpolated_regular_expression_node_closing_set(yp_interpolated_regular_expression_node_t *node, const yp_token_t *closing) {
+  node->closing = *closing;
+  node->base.location.end = closing->end;
 }
 
 // Allocate and initialize a new InterpolatedStringNode node.
@@ -10851,7 +10858,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
         yp_node_t *part = (yp_node_t *) yp_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
-        yp_interpolated_regular_expression_node_append(parser, node, part);
+        yp_interpolated_regular_expression_node_append(node, part);
       } else {
         // If the first part of the body of the regular expression is not a
         // string content, then we have interpolation and we need to create an
@@ -10864,13 +10871,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       while (!match_any_type_p(parser, 2, YP_TOKEN_REGEXP_END, YP_TOKEN_EOF)) {
         yp_node_t *part = parse_string_part(parser);
         if (part != NULL) {
-          yp_interpolated_regular_expression_node_append(parser, node, part);
+          yp_interpolated_regular_expression_node_append(node, part);
         }
       }
 
       expect(parser, YP_TOKEN_REGEXP_END, "Expected a closing delimiter for a regular expression.");
-      node->closing = parser->previous;
-      node->base.location.end = parser->previous.end;
+      yp_interpolated_regular_expression_node_closing_set(node, &parser->previous);
 
       return (yp_node_t *) node;
     }
