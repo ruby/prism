@@ -41,7 +41,7 @@ ProgramNode(0...223)(
        nil,
        "+"
      ),
-     InterpolatedXStringNode(68...77)(
+     InterpolatedXStringNode(59...81)(
        HEREDOC_START(59...67)("<<-`EOF`"),
        [StringNode(68...72)(
           nil,

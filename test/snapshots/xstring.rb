@@ -7,7 +7,7 @@ ProgramNode(0...40)(
        STRING_END(6...7)("]"),
        "foo"
      ),
-     InterpolatedXStringNode(10...25)(
+     InterpolatedXStringNode(9...25)(
        BACKTICK(9...10)("`"),
        [StringNode(10...14)(nil, STRING_CONTENT(10...14)("foo "), nil, "foo "),
         StringInterpolatedNode(14...20)(

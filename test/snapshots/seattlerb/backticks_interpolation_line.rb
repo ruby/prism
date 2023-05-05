@@ -6,8 +6,8 @@ ProgramNode(0...8)(
        nil,
        IDENTIFIER(0...1)("x"),
        nil,
-       ArgumentsNode(3...8)(
-         [InterpolatedXStringNode(3...8)(
+       ArgumentsNode(2...8)(
+         [InterpolatedXStringNode(2...8)(
             BACKTICK(2...3)("`"),
             [StringInterpolatedNode(3...7)(
                EMBEXPR_BEGIN(3...5)("\#{"),
