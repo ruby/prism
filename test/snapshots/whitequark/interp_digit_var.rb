@@ -189,7 +189,7 @@ ProgramNode(1...471)(
        REGEXP_END(289...290)("/"),
        "\#@@1"
      ),
-     InterpolatedSymbolNode(296...299)(
+     InterpolatedSymbolNode(294...300)(
        SYMBOL_BEGIN(294...296)(":\""),
        [StringNode(296...299)(
           nil,
@@ -199,7 +199,7 @@ ProgramNode(1...471)(
         )],
        STRING_END(299...300)("\"")
      ),
-     InterpolatedSymbolNode(306...310)(
+     InterpolatedSymbolNode(304...311)(
        SYMBOL_BEGIN(304...306)(":\""),
        [StringNode(306...310)(
           nil,

@@ -7,7 +7,7 @@ ProgramNode(0...345)(
        STRING_END(5...6)("'"),
        "abc"
      ),
-     InterpolatedSymbolNode(10...16)(
+     InterpolatedSymbolNode(8...17)(
        SYMBOL_BEGIN(8...10)(":\""),
        [StringInterpolatedNode(10...16)(
           EMBEXPR_BEGIN(10...12)("\#{"),
@@ -27,7 +27,7 @@ ProgramNode(0...345)(
         )],
        STRING_END(16...17)("\"")
      ),
-     InterpolatedSymbolNode(21...28)(
+     InterpolatedSymbolNode(19...29)(
        SYMBOL_BEGIN(19...21)(":\""),
        [StringNode(21...24)(nil, STRING_CONTENT(21...24)("abc"), nil, "abc"),
         StringInterpolatedNode(24...28)(
@@ -177,7 +177,7 @@ ProgramNode(0...345)(
      ),
      ArrayNode(160...184)(
        [SymbolNode(163...164)(nil, STRING_CONTENT(163...164)("a"), nil, "a"),
-        InterpolatedSymbolNode(165...170)(
+        InterpolatedSymbolNode(0...170)(
           nil,
           [StringNode(165...166)(
              nil,
@@ -192,7 +192,7 @@ ProgramNode(0...345)(
            )],
           nil
         ),
-        InterpolatedSymbolNode(171...176)(
+        InterpolatedSymbolNode(0...176)(
           nil,
           [StringInterpolatedNode(171...175)(
              EMBEXPR_BEGIN(171...173)("\#{"),
@@ -207,7 +207,7 @@ ProgramNode(0...345)(
            )],
           nil
         ),
-        InterpolatedSymbolNode(177...183)(
+        InterpolatedSymbolNode(0...183)(
           nil,
           [StringNode(177...178)(
              nil,

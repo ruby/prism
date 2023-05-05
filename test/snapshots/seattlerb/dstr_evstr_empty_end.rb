@@ -1,7 +1,7 @@
-ProgramNode(2...10)(
+ProgramNode(0...11)(
   ScopeNode(0...0)([]),
-  StatementsNode(2...10)(
-    [InterpolatedSymbolNode(2...10)(
+  StatementsNode(0...11)(
+    [InterpolatedSymbolNode(0...11)(
        SYMBOL_BEGIN(0...2)(":\""),
        [StringInterpolatedNode(2...10)(
           EMBEXPR_BEGIN(2...4)("\#{"),
