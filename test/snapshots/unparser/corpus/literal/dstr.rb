@@ -22,8 +22,8 @@ ProgramNode(0...299)(
      IfNode(21...68)(
        KEYWORD_IF(21...23)("if"),
        TrueNode(24...28)(),
-       StatementsNode(42...64)(
-         [InterpolatedStringNode(42...51)(
+       StatementsNode(31...64)(
+         [InterpolatedStringNode(31...61)(
             HEREDOC_START(31...41)("<<-HEREDOC"),
             [StringNode(42...44)(
                nil,
@@ -58,7 +58,7 @@ ProgramNode(0...299)(
        nil,
        KEYWORD_END(65...68)("end")
      ),
-     InterpolatedStringNode(80...101)(
+     InterpolatedStringNode(69...109)(
        HEREDOC_START(69...79)("<<-HEREDOC"),
        [StringNode(80...89)(
           nil,
@@ -91,8 +91,8 @@ ProgramNode(0...299)(
         )],
        HEREDOC_END(101...109)("HEREDOC\n")
      ),
-     RescueModifierNode(131...130)(
-       InterpolatedStringNode(131...137)(
+     RescueModifierNode(109...130)(
+       InterpolatedStringNode(109...145)(
          HEREDOC_START(109...119)("<<-HEREDOC"),
          [StringInterpolatedNode(131...134)(
             EMBEXPR_BEGIN(131...133)("\#{"),
@@ -137,11 +137,11 @@ ProgramNode(0...299)(
      IfNode(174...225)(
        KEYWORD_IF(174...176)("if"),
        TrueNode(177...181)(),
-       StatementsNode(184...212)(
-         [ReturnNode(184...212)(
+       StatementsNode(184...222)(
+         [ReturnNode(184...222)(
             KEYWORD_RETURN(184...190)("return"),
-            ArgumentsNode(202...212)(
-              [InterpolatedStringNode(202...212)(
+            ArgumentsNode(191...222)(
+              [InterpolatedStringNode(191...222)(
                  HEREDOC_START(191...201)("<<-HEREDOC"),
                  [StringNode(202...206)(
                     nil,
@@ -173,8 +173,8 @@ ProgramNode(0...299)(
        nil,
        IDENTIFIER(226...229)("foo"),
        PARENTHESIS_LEFT(229...230)("("),
-       ArgumentsNode(242...251)(
-         [InterpolatedStringNode(242...251)(
+       ArgumentsNode(230...259)(
+         [InterpolatedStringNode(230...259)(
             HEREDOC_START(230...240)("<<-HEREDOC"),
             [StringNode(242...244)(
                nil,
@@ -216,8 +216,8 @@ ProgramNode(0...299)(
        nil,
        IDENTIFIER(259...262)("foo"),
        PARENTHESIS_LEFT(262...263)("("),
-       ArgumentsNode(281...290)(
-         [InterpolatedStringNode(281...290)(
+       ArgumentsNode(263...298)(
+         [InterpolatedStringNode(263...298)(
             HEREDOC_START(263...273)("<<-HEREDOC"),
             [StringNode(281...283)(
                nil,

@@ -8,9 +8,9 @@ ProgramNode(0...20)(
          nil,
          IDENTIFIER(4...7)("foo"),
          PARENTHESIS_LEFT(7...8)("("),
-         ArgumentsNode(21...19)(
-           [CallNode(21...19)(
-              InterpolatedStringNode(21...36)(
+         ArgumentsNode(8...19)(
+           [CallNode(8...19)(
+              InterpolatedStringNode(8...42)(
                 HEREDOC_START(8...14)("<<~EOF"),
                 [StringNode(21...26)(
                    nil,

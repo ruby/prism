@@ -1,9 +1,9 @@
-ProgramNode(0...17)(
+ProgramNode(0...21)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("s")]),
-  StatementsNode(0...17)(
-    [LocalVariableWriteNode(0...17)(
+  StatementsNode(0...21)(
+    [LocalVariableWriteNode(0...21)(
        (0...1),
-       InterpolatedStringNode(10...17)(
+       InterpolatedStringNode(4...21)(
          HEREDOC_START(4...9)("<<eos"),
          [StringNode(10...17)(
             nil,

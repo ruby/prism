@@ -154,8 +154,8 @@ ProgramNode(0...188)(
          nil,
          IDENTIFIER(106...107)("b"),
          PARENTHESIS_LEFT(107...108)("("),
-         ArgumentsNode(108...114)(
-           [InterpolatedStringNode(108...114)(
+         ArgumentsNode(108...123)(
+           [InterpolatedStringNode(108...123)(
               HEREDOC_START(108...114)("<<-FOO"),
               [],
               HEREDOC_END(119...123)("FOO\n")

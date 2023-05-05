@@ -1,7 +1,7 @@
-ProgramNode(7...18)(
+ProgramNode(0...23)(
   ScopeNode(0...0)([]),
-  StatementsNode(7...18)(
-    [InterpolatedStringNode(7...18)(
+  StatementsNode(0...23)(
+    [InterpolatedStringNode(0...23)(
        HEREDOC_START(0...5)("<<EOS"),
        [StringNode(7...18)(
           nil,
