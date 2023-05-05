@@ -1,7 +1,7 @@
-ProgramNode(1...23)(
+ProgramNode(0...24)(
   ScopeNode(0...0)([]),
-  StatementsNode(1...23)(
-    [HashNode(1...23)(
+  StatementsNode(0...24)(
+    [HashNode(0...24)(
        BRACE_LEFT(0...1)("{"),
        [AssocNode(1...23)(
           SymbolNode(1...3)(

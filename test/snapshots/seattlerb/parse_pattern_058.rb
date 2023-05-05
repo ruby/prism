@@ -2,7 +2,7 @@ ProgramNode(0...43)(
   ScopeNode(0...0)([IDENTIFIER(22...26)("rest")]),
   StatementsNode(0...43)(
     [CaseNode(0...43)(
-       HashNode(6...10)(
+       HashNode(5...11)(
          BRACE_LEFT(5...6)("{"),
          [AssocNode(6...10)(
             SymbolNode(6...8)(

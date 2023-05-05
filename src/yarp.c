@@ -1594,8 +1594,12 @@ yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_tok
 }
 
 static inline void
-yp_hash_node_elements_append(yp_parser_t *parser, yp_hash_node_t *hash, yp_node_t *element) {
-  yp_node_list_append(parser, (yp_node_t *)hash, &hash->elements, element);
+yp_hash_node_elements_append(yp_hash_node_t *hash, yp_node_t *element) {
+  yp_node_list_append2(&hash->elements, element);
+  if ((hash->opening.type == YP_TOKEN_NOT_PROVIDED) && (hash->elements.size == 1)) {
+    hash->base.location.start = element->location.start;
+  }
+  hash->base.location.end = element->location.end;
 }
 
 // Allocate a new IfNode node.
@@ -7266,7 +7270,7 @@ parse_assocs(yp_parser_t *parser, yp_hash_node_t *node) {
       }
     }
 
-    yp_node_list_append(parser, (yp_node_t *)node, &node->elements, element);
+    yp_hash_node_elements_append(node, element);
 
     // If there's no comma after the element, then we're done.
     if (!accept(parser, YP_TOKEN_COMMA)) return;
@@ -7411,7 +7415,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
           yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
 
           argument = (yp_node_t *) yp_assoc_node_create(parser, argument, &operator, value);
-          yp_hash_node_elements_append(parser, bare_hash, argument);
+          yp_hash_node_elements_append(bare_hash, argument);
           argument = (yp_node_t *) bare_hash;
 
           // Then parse more if we have a comma
@@ -9307,7 +9311,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
             yp_node_t *assoc = (yp_node_t *) yp_assoc_node_create(parser, element, &operator, value);
-            yp_hash_node_elements_append(parser, hash, assoc);
+            yp_hash_node_elements_append(hash, assoc);
 
             element = (yp_node_t *)hash;
             if (accept(parser, YP_TOKEN_COMMA) && !match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
@@ -9434,6 +9438,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_accepts_block_stack_pop(parser);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
       node->closing = parser->previous;
+      node->base.location.end = parser->previous.end;
 
       return (yp_node_t *)node;
     }
