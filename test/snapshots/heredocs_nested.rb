@@ -1,13 +1,13 @@
-ProgramNode(8...42)(
+ProgramNode(0...47)(
   ScopeNode(0...0)([]),
-  StatementsNode(8...42)(
-    [InterpolatedStringNode(8...42)(
+  StatementsNode(0...47)(
+    [InterpolatedStringNode(0...47)(
        HEREDOC_START(0...7)("<<~RUBY"),
        [StringNode(8...12)(nil, STRING_CONTENT(8...12)("pre\n"), nil, "pre\n"),
         StringInterpolatedNode(12...36)(
           EMBEXPR_BEGIN(12...14)("\#{"),
-          StatementsNode(22...30)(
-            [InterpolatedStringNode(22...30)(
+          StatementsNode(15...35)(
+            [InterpolatedStringNode(15...35)(
                HEREDOC_START(15...21)("<<RUBY"),
                [StringNode(22...30)(
                   nil,

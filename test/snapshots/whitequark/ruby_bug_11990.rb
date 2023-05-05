@@ -6,9 +6,9 @@ ProgramNode(0...12)(
        nil,
        IDENTIFIER(0...1)("p"),
        nil,
-       ArgumentsNode(13...12)(
-         [StringConcatNode(13...12)(
-            InterpolatedStringNode(13...17)(
+       ArgumentsNode(2...12)(
+         [StringConcatNode(2...12)(
+            InterpolatedStringNode(2...19)(
               HEREDOC_START(2...6)("<<~E"),
               [StringNode(13...17)(
                  nil,

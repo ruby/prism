@@ -1,7 +1,7 @@
-ProgramNode(2...35)(
+ProgramNode(0...37)(
   ScopeNode(0...0)([]),
-  StatementsNode(2...35)(
-    [HashNode(2...8)(
+  StatementsNode(0...37)(
+    [HashNode(0...10)(
        BRACE_LEFT(0...1)("{"),
        [AssocNode(2...8)(
           IntegerNode(2...3)(),
@@ -10,7 +10,7 @@ ProgramNode(2...35)(
         )],
        BRACE_RIGHT(9...10)("}")
      ),
-     HashNode(14...35)(
+     HashNode(12...37)(
        BRACE_LEFT(12...13)("{"),
        [AssocNode(14...20)(
           IntegerNode(14...15)(),

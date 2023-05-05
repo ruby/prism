@@ -1,19 +1,19 @@
-ProgramNode(0...224)(
+ProgramNode(0...225)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...224)(
-    [CallNode(0...41)(
+  StatementsNode(0...225)(
+    [CallNode(0...42)(
        nil,
        nil,
        IDENTIFIER(0...1)("p"),
        nil,
-       ArgumentsNode(2...41)(
+       ArgumentsNode(2...42)(
          [SymbolNode(2...6)(
             SYMBOL_BEGIN(2...3)(":"),
             IDENTIFIER(3...6)("foo"),
             nil,
             "foo"
           ),
-          HashNode(9...41)(
+          HashNode(8...42)(
             BRACE_LEFT(8...9)("{"),
             [AssocNode(9...25)(
                SymbolNode(9...13)(
@@ -72,19 +72,19 @@ ProgramNode(0...224)(
        nil,
        "p"
      ),
-     CallNode(44...83)(
+     CallNode(44...84)(
        nil,
        nil,
        IDENTIFIER(44...45)("p"),
        nil,
-       ArgumentsNode(46...83)(
+       ArgumentsNode(46...84)(
          [SymbolNode(46...50)(
             SYMBOL_BEGIN(46...47)(":"),
             IDENTIFIER(47...50)("foo"),
             nil,
             "foo"
           ),
-          HashNode(53...83)(
+          HashNode(52...84)(
             BRACE_LEFT(52...53)("{"),
             [AssocSplatNode(53...67)(
                CallNode(56...67)(
@@ -137,19 +137,19 @@ ProgramNode(0...224)(
        nil,
        "p"
      ),
-     CallNode(86...128)(
+     CallNode(86...129)(
        nil,
        nil,
        IDENTIFIER(86...87)("p"),
        nil,
-       ArgumentsNode(88...128)(
+       ArgumentsNode(88...129)(
          [SymbolNode(88...92)(
             SYMBOL_BEGIN(88...89)(":"),
             IDENTIFIER(89...92)("foo"),
             nil,
             "foo"
           ),
-          HashNode(95...128)(
+          HashNode(94...129)(
             BRACE_LEFT(94...95)("{"),
             [AssocNode(95...112)(
                SymbolNode(95...97)(
@@ -208,19 +208,19 @@ ProgramNode(0...224)(
        nil,
        "p"
      ),
-     CallNode(131...170)(
+     CallNode(131...171)(
        nil,
        nil,
        IDENTIFIER(131...132)("p"),
        nil,
-       ArgumentsNode(133...170)(
+       ArgumentsNode(133...171)(
          [SymbolNode(133...137)(
             SYMBOL_BEGIN(133...134)(":"),
             IDENTIFIER(134...137)("foo"),
             nil,
             "foo"
           ),
-          HashNode(140...170)(
+          HashNode(139...171)(
             BRACE_LEFT(139...140)("{"),
             [AssocNode(140...154)(
                SymbolNode(140...142)(
@@ -279,19 +279,19 @@ ProgramNode(0...224)(
        nil,
        "p"
      ),
-     CallNode(173...224)(
+     CallNode(173...225)(
        nil,
        nil,
        IDENTIFIER(173...174)("p"),
        nil,
-       ArgumentsNode(175...224)(
+       ArgumentsNode(175...225)(
          [SymbolNode(175...179)(
             SYMBOL_BEGIN(175...176)(":"),
             IDENTIFIER(176...179)("foo"),
             nil,
             "foo"
           ),
-          HashNode(182...224)(
+          HashNode(181...225)(
             BRACE_LEFT(181...182)("{"),
             [AssocNode(182...208)(
                CallNode(182...193)(

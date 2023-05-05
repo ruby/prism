@@ -67,10 +67,10 @@ ProgramNode(0...233)(
      ),
      CallNode(66...83)(
        ParenthesesNode(66...76)(
-         StatementsNode(67...74)(
-           [OperatorOrAssignmentNode(67...74)(
+         StatementsNode(67...75)(
+           [OperatorOrAssignmentNode(67...75)(
               LocalVariableWriteNode(67...68)((67...68), nil, nil, 0),
-              HashNode(73...74)(
+              HashNode(73...75)(
                 BRACE_LEFT(73...74)("{"),
                 [],
                 BRACE_RIGHT(74...75)("}")

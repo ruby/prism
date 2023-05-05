@@ -1,7 +1,7 @@
-ProgramNode(5...12)(
+ProgramNode(0...14)(
   ScopeNode(0...0)([]),
-  StatementsNode(5...12)(
-    [InterpolatedStringNode(5...12)(
+  StatementsNode(0...14)(
+    [InterpolatedStringNode(0...14)(
        HEREDOC_START(0...4)("<<-A"),
        [StringNode(5...7)(nil, STRING_CONTENT(5...7)("a\n"), nil, "a\n"),
         StringInterpolatedNode(7...11)(
