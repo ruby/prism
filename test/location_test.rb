@@ -255,6 +255,10 @@ module YARP
       assert_location(IntegerNode, "0o1_000")
     end
 
+    test "InterpolatedRegularExpressionNode" do
+      assert_location(InterpolatedRegularExpressionNode, "/\#{foo}/")
+    end
+
     test "InterpolatedStringNode" do
       assert_location(InterpolatedStringNode, "<<~A\nhello world\nA")
     end
