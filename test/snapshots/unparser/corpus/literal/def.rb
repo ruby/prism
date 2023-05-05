@@ -1006,8 +1006,8 @@ ProgramNode(0...913)(
        IDENTIFIER(860...861)("f"),
        nil,
        nil,
-       StatementsNode(875...883)(
-         [InterpolatedStringNode(875...883)(
+       StatementsNode(864...893)(
+         [InterpolatedStringNode(864...893)(
             HEREDOC_START(864...874)("<<-HEREDOC"),
             [StringNode(875...879)(
                nil,

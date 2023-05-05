@@ -36,7 +36,7 @@ ProgramNode(0...108)(
        PERCENT_UPPER_I(28...31)("%I{"),
        STRING_END(36...37)("}")
      ),
-     InterpolatedStringNode(47...70)(
+     InterpolatedStringNode(41...73)(
        HEREDOC_START(41...45)("<<-E"),
        [StringNode(47...70)(
           nil,
@@ -64,9 +64,9 @@ ProgramNode(0...108)(
          nil,
          IDENTIFIER(92...95)("foo"),
          PARENTHESIS_LEFT(95...96)("("),
-         ArgumentsNode(110...107)(
-           [CallNode(110...107)(
-              InterpolatedStringNode(110...121)(
+         ArgumentsNode(96...107)(
+           [CallNode(96...107)(
+              InterpolatedStringNode(96...128)(
                 HEREDOC_START(96...102)("<<~EOF"),
                 [StringNode(110...121)(
                    nil,

@@ -1,8 +1,8 @@
-ProgramNode(1...52)(
+ProgramNode(0...52)(
   ScopeNode(0...0)([]),
-  StatementsNode(1...52)(
-    [MatchRequiredNode(1...12)(
-       HashNode(1...5)(
+  StatementsNode(0...52)(
+    [MatchRequiredNode(0...12)(
+       HashNode(0...6)(
          BRACE_LEFT(0...1)("{"),
          [AssocNode(1...5)(
             SymbolNode(1...3)(
@@ -34,8 +34,8 @@ ProgramNode(1...52)(
        ),
        (7...9)
      ),
-     MatchRequiredNode(14...25)(
-       HashNode(14...18)(
+     MatchRequiredNode(13...25)(
+       HashNode(13...19)(
          BRACE_LEFT(13...14)("{"),
          [AssocNode(14...18)(
             SymbolNode(14...16)(
@@ -67,8 +67,8 @@ ProgramNode(1...52)(
        ),
        (20...22)
      ),
-     MatchPredicateNode(28...39)(
-       HashNode(28...32)(
+     MatchPredicateNode(27...39)(
+       HashNode(27...33)(
          BRACE_LEFT(27...28)("{"),
          [AssocNode(28...32)(
             SymbolNode(28...30)(
@@ -100,8 +100,8 @@ ProgramNode(1...52)(
        ),
        (34...36)
      ),
-     MatchPredicateNode(41...52)(
-       HashNode(41...45)(
+     MatchPredicateNode(40...52)(
+       HashNode(40...46)(
          BRACE_LEFT(40...41)("{"),
          [AssocNode(41...45)(
             SymbolNode(41...43)(

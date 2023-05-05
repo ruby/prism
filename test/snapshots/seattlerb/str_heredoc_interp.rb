@@ -1,7 +1,7 @@
-ProgramNode(5...16)(
+ProgramNode(0...17)(
   ScopeNode(0...0)([]),
-  StatementsNode(5...16)(
-    [InterpolatedStringNode(5...16)(
+  StatementsNode(0...17)(
+    [InterpolatedStringNode(0...17)(
        HEREDOC_START(0...4)("<<\"\""),
        [StringInterpolatedNode(5...9)(
           EMBEXPR_BEGIN(5...7)("\#{"),

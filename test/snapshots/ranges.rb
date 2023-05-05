@@ -41,7 +41,7 @@ ProgramNode(0...85)(
        nil,
        "[]"
      ),
-     HashNode(35...46)(
+     HashNode(33...48)(
        BRACE_LEFT(33...34)("{"),
        [AssocNode(35...46)(
           SymbolNode(35...39)(
@@ -80,7 +80,7 @@ ProgramNode(0...85)(
        IntegerNode(61...62)(),
        (59...61)
      ),
-     HashNode(66...76)(
+     HashNode(64...78)(
        BRACE_LEFT(64...65)("{"),
        [AssocNode(66...76)(
           SymbolNode(66...70)(

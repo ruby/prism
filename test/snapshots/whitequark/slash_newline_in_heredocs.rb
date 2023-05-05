@@ -1,7 +1,7 @@
-ProgramNode(5...54)(
+ProgramNode(0...56)(
   ScopeNode(0...0)([]),
-  StatementsNode(5...54)(
-    [InterpolatedStringNode(5...25)(
+  StatementsNode(0...56)(
+    [InterpolatedStringNode(0...27)(
        HEREDOC_START(0...4)("<<-E"),
        [StringNode(5...25)(
           nil,
@@ -11,7 +11,7 @@ ProgramNode(5...54)(
         )],
        HEREDOC_END(25...27)("E\n")
      ),
-     InterpolatedStringNode(34...54)(
+     InterpolatedStringNode(29...56)(
        HEREDOC_START(29...33)("<<~E"),
        [StringNode(34...54)(
           nil,

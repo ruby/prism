@@ -1,6 +1,6 @@
-ProgramNode(0...88)(
+ProgramNode(0...93)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...88)(
+  StatementsNode(0...93)(
     [StringNode(0...40)(
        STRING_BEGIN(0...1)("\""),
        STRING_CONTENT(1...39)(
@@ -9,7 +9,7 @@ ProgramNode(0...88)(
        STRING_END(39...40)("\""),
        "  why would someone do this? \n" + "  blah\n"
      ),
-     InterpolatedStringNode(50...88)(
+     InterpolatedStringNode(42...93)(
        HEREDOC_START(42...49)("<<-DESC"),
        [StringNode(50...88)(
           nil,

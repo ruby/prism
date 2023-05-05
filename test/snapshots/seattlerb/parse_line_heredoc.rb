@@ -3,8 +3,8 @@ ProgramNode(6...88)(
   StatementsNode(6...88)(
     [LocalVariableWriteNode(6...31)(
        (6...12),
-       CallNode(32...31)(
-         InterpolatedStringNode(32...57)(
+       CallNode(15...31)(
+         InterpolatedStringNode(15...71)(
            HEREDOC_START(15...25)("<<-HEREDOC"),
            [StringNode(32...57)(
               nil,

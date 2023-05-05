@@ -1,7 +1,7 @@
-ProgramNode(7...219)(
+ProgramNode(0...223)(
   ScopeNode(0...0)([]),
-  StatementsNode(7...219)(
-    [InterpolatedStringNode(7...11)(
+  StatementsNode(0...223)(
+    [InterpolatedStringNode(0...15)(
        HEREDOC_START(0...6)("<<-EOF"),
        [StringNode(7...11)(
           nil,
@@ -11,8 +11,8 @@ ProgramNode(7...219)(
         )],
        HEREDOC_END(11...15)("EOF\n")
      ),
-     CallNode(37...51)(
-       InterpolatedStringNode(37...41)(
+     CallNode(16...58)(
+       InterpolatedStringNode(16...47)(
          HEREDOC_START(16...24)("<<-FIRST"),
          [StringNode(37...41)(
             nil,
@@ -25,8 +25,8 @@ ProgramNode(7...219)(
        nil,
        PLUS(25...26)("+"),
        nil,
-       ArgumentsNode(47...51)(
-         [InterpolatedStringNode(47...51)(
+       ArgumentsNode(27...58)(
+         [InterpolatedStringNode(27...58)(
             HEREDOC_START(27...36)("<<-SECOND"),
             [StringNode(47...51)(
                nil,
@@ -68,7 +68,7 @@ ProgramNode(7...219)(
         StringNode(76...77)(nil, STRING_CONTENT(76...77)("\n"), nil, "\n")],
        HEREDOC_END(77...81)("EOF\n")
      ),
-     InterpolatedStringNode(98...102)(
+     InterpolatedStringNode(82...106)(
        HEREDOC_START(82...88)("<<-EOF"),
        [StringNode(98...102)(
           nil,
@@ -78,7 +78,7 @@ ProgramNode(7...219)(
         )],
        HEREDOC_END(102...106)("EOF\n")
      ),
-     InterpolatedStringNode(114...122)(
+     InterpolatedStringNode(107...128)(
        HEREDOC_START(107...113)("<<-EOF"),
        [StringNode(114...122)(
           nil,
@@ -88,7 +88,7 @@ ProgramNode(7...219)(
         )],
        HEREDOC_END(122...128)("  EOF\n")
      ),
-     InterpolatedStringNode(138...147)(
+     InterpolatedStringNode(129...151)(
        HEREDOC_START(129...137)("<<-\"EOF\""),
        [StringNode(138...142)(
           nil,
@@ -120,7 +120,7 @@ ProgramNode(7...219)(
         )],
        HEREDOC_END(147...151)("EOF\n")
      ),
-     InterpolatedStringNode(159...168)(
+     InterpolatedStringNode(152...172)(
        HEREDOC_START(152...158)("<<-EOF"),
        [StringNode(159...163)(
           nil,
@@ -158,7 +158,7 @@ ProgramNode(7...219)(
        STRING_END(178...179)("#"),
        "abc"
      ),
-     InterpolatedStringNode(188...196)(
+     InterpolatedStringNode(181...200)(
        HEREDOC_START(181...187)("<<-EOF"),
        [StringNode(188...196)(
           nil,
@@ -168,7 +168,7 @@ ProgramNode(7...219)(
         )],
        HEREDOC_END(196...200)("EOF\n")
      ),
-     InterpolatedStringNode(210...219)(
+     InterpolatedStringNode(201...223)(
        HEREDOC_START(201...209)("<<-'EOF'"),
        [StringNode(210...219)(
           nil,

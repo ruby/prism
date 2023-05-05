@@ -1,8 +1,8 @@
-ProgramNode(7...22)(
+ProgramNode(0...22)(
   ScopeNode(0...0)([]),
-  StatementsNode(7...22)(
-    [CallNode(7...22)(
-       InterpolatedStringNode(7...12)(
+  StatementsNode(0...22)(
+    [CallNode(0...22)(
+       InterpolatedStringNode(0...16)(
          HEREDOC_START(0...5)("<<END"),
          [StringNode(7...12)(
             nil,
