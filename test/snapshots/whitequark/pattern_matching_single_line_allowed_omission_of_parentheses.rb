@@ -41,8 +41,8 @@ ProgramNode(0...142)(
        (26...28)
      ),
      LocalVariableReadNode(35...36)(0),
-     MatchRequiredNode(39...50)(
-       HashNode(39...43)(
+     MatchRequiredNode(38...50)(
+       HashNode(38...44)(
          BRACE_LEFT(38...39)("{"),
          [AssocNode(39...43)(
             SymbolNode(39...41)(
@@ -75,8 +75,8 @@ ProgramNode(0...142)(
        (45...47)
      ),
      LocalVariableReadNode(52...53)(0),
-     MatchPredicateNode(56...67)(
-       HashNode(56...60)(
+     MatchPredicateNode(55...67)(
+       HashNode(55...61)(
          BRACE_LEFT(55...56)("{"),
          [AssocNode(56...60)(
             SymbolNode(56...58)(
@@ -109,8 +109,8 @@ ProgramNode(0...142)(
        (62...64)
      ),
      LocalVariableReadNode(69...70)(0),
-     MatchRequiredNode(73...99)(
-       HashNode(73...84)(
+     MatchRequiredNode(72...99)(
+       HashNode(72...85)(
          BRACE_LEFT(72...73)("{"),
          [AssocNode(73...84)(
             SymbolNode(73...77)(
@@ -148,8 +148,8 @@ ProgramNode(0...142)(
        (86...88)
      ),
      LocalVariableReadNode(101...106)(0),
-     MatchPredicateNode(109...135)(
-       HashNode(109...120)(
+     MatchPredicateNode(108...135)(
+       HashNode(108...121)(
          BRACE_LEFT(108...109)("{"),
          [AssocNode(109...120)(
             SymbolNode(109...113)(

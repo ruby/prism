@@ -571,10 +571,10 @@ ProgramNode(0...502)(
        "[]="
      ),
      ArrayNode(261...267)(
-       [HashNode(262...265)(
+       [HashNode(262...266)(
           nil,
-          [AssocSplatNode(262...265)(
-             HashNode(264...265)(
+          [AssocSplatNode(262...266)(
+             HashNode(264...266)(
                BRACE_LEFT(264...265)("{"),
                [],
                BRACE_RIGHT(265...266)("}")
@@ -646,8 +646,8 @@ ProgramNode(0...502)(
              ),
              (292...294)
            ),
-           AssocSplatNode(298...301)(
-             HashNode(300...301)(
+           AssocSplatNode(298...302)(
+             HashNode(300...302)(
                BRACE_LEFT(300...301)("{"),
                [],
                BRACE_RIGHT(301...302)("}")

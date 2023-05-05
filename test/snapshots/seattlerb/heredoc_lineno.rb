@@ -1,9 +1,9 @@
 ProgramNode(0...41)(
   ScopeNode(0...0)([IDENTIFIER(0...1)("c"), IDENTIFIER(35...36)("d")]),
   StatementsNode(0...41)(
-    [LocalVariableWriteNode(0...30)(
+    [LocalVariableWriteNode(0...34)(
        (0...1),
-       InterpolatedStringNode(12...30)(
+       InterpolatedStringNode(4...34)(
          HEREDOC_START(4...11)("<<'CCC'"),
          [StringNode(12...30)(
             nil,

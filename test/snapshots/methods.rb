@@ -1098,7 +1098,7 @@ ProgramNode(0...1167)(
        nil,
        StatementsNode(948...976)(
          [CallNode(948...976)(
-            HashNode(948...949)(
+            HashNode(948...950)(
               BRACE_LEFT(948...949)("{"),
               [],
               BRACE_RIGHT(949...950)("}")

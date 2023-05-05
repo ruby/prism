@@ -221,6 +221,11 @@ module YARP
       assert_location(ForwardingSuperNode, "super {}")
     end
 
+    test "HashNode" do
+      assert_location(HashNode, "{ foo: 2 }")
+      assert_location(HashNode, "{ \nfoo: 2, \nbar: 3 \n}")
+    end
+
     test "IfNode" do
       assert_location(IfNode, "if type in 1;elsif type in B;end")
     end
@@ -252,6 +257,10 @@ module YARP
 
     test "InterpolatedRegularExpressionNode" do
       assert_location(InterpolatedRegularExpressionNode, "/\#{foo}/")
+    end
+
+    test "InterpolatedStringNode" do
+      assert_location(InterpolatedStringNode, "<<~A\nhello world\nA")
     end
 
     test "NextNode" do

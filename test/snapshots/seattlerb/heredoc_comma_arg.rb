@@ -12,7 +12,7 @@ ProgramNode(0...47)(
        BRACKET_RIGHT(16...17)("]")
      ),
      ArrayNode(19...47)(
-       [InterpolatedStringNode(29...41)(
+       [InterpolatedStringNode(20...46)(
           HEREDOC_START(20...27)("<<-FILE"),
           [StringNode(29...41)(
              nil,

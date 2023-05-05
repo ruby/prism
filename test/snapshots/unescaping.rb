@@ -1,6 +1,6 @@
-ProgramNode(0...50)(
+ProgramNode(0...55)(
   ScopeNode(0...0)([]),
-  StatementsNode(0...50)(
+  StatementsNode(0...55)(
     [ArrayNode(0...10)(
        [StringNode(1...9)(
           STRING_BEGIN(1...2)("\""),
@@ -23,7 +23,7 @@ ProgramNode(0...50)(
        STRING_END(29...30)("\""),
        "\u0003{1}"
      ),
-     InterpolatedStringNode(40...50)(
+     InterpolatedStringNode(32...55)(
        HEREDOC_START(32...39)("<<~HERE"),
        [StringNode(40...50)(
           nil,

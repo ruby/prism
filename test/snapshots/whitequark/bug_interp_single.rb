@@ -11,7 +11,7 @@ ProgramNode(0...16)(
        STRING_END(5...6)("\"")
      ),
      ArrayNode(8...16)(
-       [InterpolatedStringNode(11...15)(
+       [InterpolatedStringNode(0...15)(
           nil,
           [StringInterpolatedNode(11...15)(
              EMBEXPR_BEGIN(11...13)("\#{"),

@@ -1,6 +1,6 @@
-ProgramNode(0...31)(
+ProgramNode(0...33)(
   ScopeNode(0...0)([IDENTIFIER(21...22)("o")]),
-  StatementsNode(0...31)(
+  StatementsNode(0...33)(
     [DefNode(0...19)(
        IDENTIFIER(4...5)("a"),
        nil,
@@ -24,9 +24,9 @@ ProgramNode(0...31)(
        nil,
        (16...19)
      ),
-     LocalVariableWriteNode(21...31)(
+     LocalVariableWriteNode(21...33)(
        (21...22),
-       HashNode(27...31)(
+       HashNode(25...33)(
          BRACE_LEFT(25...26)("{"),
          [AssocNode(27...31)(
             SymbolNode(27...29)(

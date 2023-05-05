@@ -6,8 +6,8 @@ ProgramNode(0...23)(
        nil,
        IDENTIFIER(0...1)("f"),
        nil,
-       ArgumentsNode(2...10)(
-         [InterpolatedStringNode(2...10)(
+       ArgumentsNode(2...20)(
+         [InterpolatedStringNode(2...20)(
             HEREDOC_START(2...10)("<<-TABLE"),
             [],
             HEREDOC_END(14...20)("TABLE\n")
