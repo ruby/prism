@@ -11,7 +11,7 @@ module YARP
   module Assertions
     private
 
-    def assert_equal_nodes(expected, actual, compare_location: true)
+    def assert_equal_nodes(expected, actual, compare_location: true, parent: nil)
       assert_equal expected.class, actual.class
   
       case expected
@@ -22,7 +22,8 @@ module YARP
           assert_equal_nodes(
             expected,
             actual,
-            compare_location: compare_location
+            compare_location: compare_location,
+            parent: actual
           )
         end
       when YARP::SourceFileNode
@@ -45,10 +46,14 @@ module YARP
           assert_equal_nodes(
             deconstructed_expected[key],
             deconstructed_actual[key],
-            compare_location: compare_location
+            compare_location: compare_location,
+            parent: actual
           )
         end
       when YARP::Location
+        assert_operator actual.start_offset, :<=, actual.end_offset, -> {
+          "start_offset > end_offset for #{actual.inspect}, parent is #{parent.pretty_inspect}"
+        }
         if compare_location
           assert_equal expected.start_offset, actual.start_offset
           assert_equal expected.end_offset, actual.end_offset
