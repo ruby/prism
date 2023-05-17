@@ -696,6 +696,10 @@ module YARP
       # We sort by location to compare against Ripper's output
       tokens.sort_by!(&:location)
 
+      if result_value.size - 1 > tokens.size
+        raise StandardError, "Lost tokens when performing lex_compat"
+      end
+
       ParseResult.new(tokens, result.comments, result.errors, result.warnings)
     end
 
