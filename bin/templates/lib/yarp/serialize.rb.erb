@@ -71,12 +71,16 @@ module YARP
       end
 
       def load_node
-        type, _length = io.read(5).unpack("CL")
+        type = io.read(1).unpack1("C")
         location = load_location
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
-        when <%= index + 1 %> then <%= node.name %>.new(<%= (node.params.map { |param|
+        when <%= index + 1 %> then
+        <%- if node.needs_length? -%>
+          io.read(4)
+        <%- end -%>
+        <%= node.name %>.new(<%= (node.params.map { |param|
           case param
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"
@@ -87,7 +91,7 @@ module YARP
           when OptionalTokenParam then "load_optional_token"
           when LocationParam then "load_location"
           when OptionalLocationParam then "load_optional_location"
-          when IntegerParam then "io.read(4).unpack1(\"L\")"
+          when IntegerParam then 'io.read(4).unpack1("L")'
           else raise
           end
         } + ["location"]).join(", ") -%>)

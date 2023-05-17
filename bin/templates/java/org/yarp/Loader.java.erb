@@ -111,28 +111,32 @@ public class Loader {
 
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
-        int length = buffer.getInt();
         int startOffset = buffer.getInt();
         int endOffset = buffer.getInt();
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
             case <%= index + 1 %>:
-                return new Nodes.<%= node.name %>(<%= (node.params.map { |param|
-                    case param
-                    when NodeParam then "#{param.java_cast}loadNode()"
-                    when OptionalNodeParam then "#{param.java_cast}loadOptionalNode()"
-                    when StringParam then "loadString()"
-                    when NodeListParam then "loadNodes()"
-                    when TokenParam then "loadToken()"
-                    when TokenListParam then "loadTokens()"
-                    when OptionalTokenParam then "loadOptionalToken()"
-                    when LocationParam then "loadLocation()"
-                    when OptionalLocationParam then "loadOptionalLocation()"
-                    when IntegerParam then "loadInteger()"
-                    else raise
-                    end
-            } + ["startOffset", "endOffset"]).join(", ") -%>);
+            <%-
+            params = node.needs_length? ? ["loadInteger()"] : []
+            params.concat node.params.map { |param|
+              case param
+              when NodeParam then "#{param.java_cast}loadNode()"
+              when OptionalNodeParam then "#{param.java_cast}loadOptionalNode()"
+              when StringParam then "loadString()"
+              when NodeListParam then "loadNodes()"
+              when TokenParam then "loadToken()"
+              when TokenListParam then "loadTokens()"
+              when OptionalTokenParam then "loadOptionalToken()"
+              when LocationParam then "loadLocation()"
+              when OptionalLocationParam then "loadOptionalLocation()"
+              when IntegerParam then "loadInteger()"
+              else raise
+              end
+            }
+            params.concat ["startOffset", "endOffset"]
+            -%>
+                return new Nodes.<%= node.name %>(<%= params.join(", ") -%>);
             <%- end -%>
             default:
                 throw new Error("Unknown node type: " + type);
