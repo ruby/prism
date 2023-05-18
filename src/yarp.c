@@ -6402,7 +6402,8 @@ parser_lex(yp_parser_t *parser) {
       // we need to split up the content of the heredoc. We'll use strpbrk to
       // find the first of these characters.
       char breakpoints[] = "\n\\#";
-      if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
+      yp_heredoc_quote_t quote = parser->lex_modes.current->as.heredoc.quote;
+      if (quote == YP_HEREDOC_QUOTE_SINGLE) {
         breakpoints[2] = '\0';
       }
 
@@ -6465,7 +6466,8 @@ parser_lex(yp_parser_t *parser) {
             if (breakpoint[1] == '\n') {
               breakpoint++;
             } else {
-              size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, false, &parser->error_list);
+              yp_unescape_type_t unescape_type = (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL;
+              size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, false, &parser->error_list);
               breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
             }
             break;
@@ -8261,12 +8263,20 @@ parse_string_part(yp_parser_t *parser) {
     //     "aaa #{bbb} #@ccc ddd"
     //      ^^^^      ^     ^^^^
     case YP_TOKEN_STRING_CONTENT: {
+      yp_unescape_type_t unescape_type = YP_UNESCAPE_ALL;
+
+      if (parser->lex_modes.current->mode == YP_LEX_HEREDOC) {
+        if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
+          unescape_type = YP_UNESCAPE_MINIMAL;
+        }
+      }
+
       parser_lex(parser);
 
       yp_token_t opening = not_provided(parser);
       yp_token_t closing = not_provided(parser);
 
-      return (yp_node_t *) yp_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, YP_UNESCAPE_ALL);
+      return (yp_node_t *) yp_string_node_create_and_unescape(parser, &opening, &parser->previous, &closing, unescape_type);
     }
     // Here the lexer has returned the beginning of an embedded expression. In
     // that case we'll parse the inner statements and return that as the part.

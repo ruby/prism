@@ -127,7 +127,7 @@ ProgramNode(0...210)(
           nil,
           STRING_CONTENT(172...177)("a\\\n" + "b\n"),
           nil,
-          "a\n" + "b\n"
+          "a\\\n" + "b\n"
         )],
        HEREDOC_END(177...182)("HERE\n")
      ),

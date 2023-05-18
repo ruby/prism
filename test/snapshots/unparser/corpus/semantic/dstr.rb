@@ -135,7 +135,7 @@ ProgramNode(0...608)(
           nil,
           STRING_CONTENT(219...225)(" a\\nb\n"),
           nil,
-          " a\n" + "b\n"
+          " a\\nb\n"
         )],
        HEREDOC_END(225...229)("DOC\n")
      ),
