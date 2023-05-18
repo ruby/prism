@@ -7,7 +7,7 @@ ProgramNode(0...26)(
           nil,
           STRING_CONTENT(9...22)("  baz\\\n" + "  qux\n"),
           nil,
-          "baz\n" + "qux\n"
+          "baz\\\n" + "qux\n"
         )],
        HEREDOC_END(22...26)("FOO\n")
      )]
