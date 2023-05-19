@@ -179,7 +179,7 @@ ProgramNode(0...530)(
             "a"
           )]
        ),
-       RescueNode(164...176)(
+       RescueNode(164...189)(
          KEYWORD_RESCUE(164...170)("rescue"),
          [ConstantReadNode(171...172)()],
          nil,

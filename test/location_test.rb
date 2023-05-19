@@ -356,6 +356,18 @@ module YARP
       assert_location(RedoNode, "redo")
     end
 
+    test "RescueNode" do
+      code = <<~RUBY
+      begin
+        body
+      rescue TypeError
+      rescue ArgumentError
+      end
+      RUBY
+      assert_location(RescueNode, code, 13...36) { |node| node.rescue_clause }
+      assert_location(RescueNode, code, 30...36) { |node| node.rescue_clause.consequent }
+    end
+
     test "RetryNode" do
       assert_location(RetryNode, "retry")
     end

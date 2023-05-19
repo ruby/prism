@@ -210,7 +210,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(145...153)(
+       RescueNode(145...162)(
          KEYWORD_RESCUE(145...151)("rescue"),
          [],
          nil,
@@ -227,7 +227,7 @@ ProgramNode(0...578)(
               "b"
             )]
          ),
-         RescueNode(154...162)(
+         RescueNode(154...171)(
            KEYWORD_RESCUE(154...160)("rescue"),
            [],
            nil,
@@ -283,7 +283,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(187...213)(
+       RescueNode(187...265)(
          KEYWORD_RESCUE(187...193)("rescue"),
          [ConstantReadNode(194...203)()],
          EQUAL_GREATER(204...206)("=>"),

@@ -2735,6 +2735,13 @@ yp_rescue_node_statements_set(yp_rescue_node_t *node, yp_statements_node_t *stat
   node->base.location.end = statements->base.location.end;
 }
 
+// Set the consequent of a resuce node, and update the location.
+static void
+yp_rescue_node_consequent_set(yp_rescue_node_t *node, yp_rescue_node_t *consequent) {
+  node->consequent = consequent;
+  node->base.location.end = consequent->base.location.end;
+}
+
 // Allocate a new RestParameterNode node.
 static yp_rest_parameter_node_t *
 yp_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
@@ -7918,7 +7925,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
     if (current == NULL) {
       yp_begin_node_rescue_clause_set(parent_node, rescue);
     } else {
-      current->consequent = rescue;
+      yp_rescue_node_consequent_set(current, rescue);
     }
 
     current = rescue;
