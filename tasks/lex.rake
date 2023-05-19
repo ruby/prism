@@ -230,13 +230,93 @@ task "lex:rubygems": :compile do
   RESULTS
 end
 
+TOP_100_GEM_FILENAME = "tasks/top-100-gems.yml"
+TOP_100_GEMS_DIR = "top-100-gems"
+TOP_100_GEMS_INVALID_SYNTAX_PREFIXES = %w[
+  top-100-gems/brakeman-5.4.1/bundle/ruby/3.1.0/gems/erubis-2.7.0/lib/erubis/helpers/rails_form_helper.rb
+  top-100-gems/devise-4.9.2/lib/generators/active_record/templates/
+  top-100-gems/devise-4.9.2/lib/generators/templates/controllers/
+  top-100-gems/fastlane-2.212.1/fastlane/lib/assets/custom_action_template.rb
+]
+
+desc "Download the top 100 rubygems under #{TOP_100_GEMS_DIR}/"
+task "download:topgems" do
+  $:.unshift(File.expand_path("../lib", __dir__))
+  require "net/http"
+  require "rubygems/package"
+  require "tmpdir"
+
+  queue = Queue.new
+  YAML.safe_load_file(TOP_100_GEM_FILENAME).each do |gem_name|
+    gem_url = "https://rubygems.org/gems/#{gem_name}.gem"
+    queue << [gem_name, gem_url]
+  end
+
+  Dir.mkdir TOP_100_GEMS_DIR unless File.directory? TOP_100_GEMS_DIR
+
+  workers =
+    ENV.fetch("WORKERS", 16).times.map do
+      Thread.new do
+        Net::HTTP.start("rubygems.org", 443, use_ssl: true) do |http|
+          until queue.empty?
+            (gem_name, gem_url) = queue.shift
+            directory = File.expand_path("#{TOP_100_GEMS_DIR}/#{gem_name}")
+            unless File.directory? directory
+              puts "Downloading #{gem_name}"
+
+              http.request(Net::HTTP::Get.new(gem_url)) do |response|
+                # Skip unexpected responses
+                raise gem_url unless response.is_a?(Net::HTTPSuccess)
+
+                Dir.mktmpdir do |tmpdir|
+                  filepath = File.join(tmpdir, "#{gem_name}.gem")
+                  File.write(filepath, response.body)
+
+                  Gem::Package.new(filepath).extract_files(directory, "**/*.rb")
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+  workers.each(&:join)
+end
+
+# This task parses each .rb file of the top 100 gems with YARP and ensures they parse
+# successfully (unless they are invalid syntax as confirmed by "ruby -c").
+# It also does some sanity check for every location recorded in the AST.
+desc "Parse the top 100 rubygems"
+task "parse:topgems": ["download:topgems", :compile] do
+  require "yarp"
+  require_relative "../test/test_helper"
+
+  class ParseTop100GemsTest < Test::Unit::TestCase
+    Dir["#{TOP_100_GEMS_DIR}/**/*.rb"].each do |filepath|
+      test filepath do
+        result = YARP.parse_file_dup(filepath)
+
+        if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
+          assert_false result.success?
+          # ensure it is actually invalid syntax
+          assert_false system(RbConfig.ruby, "-c", filepath, out: File::NULL, err: File::NULL)
+          next
+        end
+
+        assert result.success?, "failed to parse #{filepath}"
+        value = result.value
+        assert_valid_locations(value)
+      end
+    end
+  end
+end
+
 # This task lexes against the top 100 gems, and will exit(1)
 # if the existing failures in tasks/top-100-gems.yml are no
 # longer correct.
 desc "Lex against the top 100 rubygems"
-task "lex:topgems": :compile do
-  TOP_100_GEM_FILENAME = "tasks/top-100-gems.yml"
-
+task "lex:topgems": ["download:topgems", :compile] do
   $:.unshift(File.expand_path("../lib", __dir__))
   require "net/http"
   require "ripper"
@@ -254,12 +334,6 @@ task "lex:topgems": :compile do
     end
   end
 
-  queue = Queue.new
-  previous_todos_by_gem_name.keys.each do |gem_name|
-    gem_url = "https://rubygems.org/gems/#{gem_name}.gem"
-    queue << [gem_name, gem_url]
-  end
-
   warn_failing = ENV.fetch("VERBOSE", false)
 
   # An array of hashes with gem_name => [new_failing_files] for any new
@@ -272,51 +346,26 @@ task "lex:topgems": :compile do
   # this list will be used to generate the new yml file before exit(1)
   updated_todos_by_gem_name = {}
 
-  workers =
-    ENV.fetch("WORKERS", 16).times.map do
-      Thread.new do
-        Net::HTTP.start("rubygems.org", 443, use_ssl: true) do |http|
-          until queue.empty?
-            (gem_name, gem_url) = queue.shift
-            puts "Lexing #{gem_name}"
+  previous_todos_by_gem_name.keys.each do |gem_name|
+    puts "Lexing #{gem_name}"
+    directory = "#{TOP_100_GEMS_DIR}/#{gem_name}"
 
-            http.request(Net::HTTP::Get.new(gem_url)) do |response|
-              # Skip unexpected responses
-              next unless response.is_a?(Net::HTTPSuccess)
-
-              Dir.mktmpdir do |directory|
-                filepath = File.join(directory, "#{gem_name}.gem")
-                File.write(filepath, response.body)
-
-                begin
-                  Gem::Package.new(filepath).extract_files(directory, "[!~]*")
-
-                  todos = previous_todos_by_gem_name[gem_name].map do |todo_filepath|
-                    File.join(directory, todo_filepath)
-                  end
-                  lex_task = YARP::LexTask.new(todos)
-                  Dir[File.join(directory, "**", "*.rb")].each do |filepath|
-                    lex_task.compare(filepath)
-                  end
-
-                  todos = lex_task.todos.map { _1.gsub("#{directory}/", "") }
-
-                  updated_todos_by_gem_name.merge!({ gem_name => todos })
-
-                  if lex_task.failed?
-                    new_failing_files_by_gem << { gem_name => todos }
-                  end
-                rescue
-                  # If the gem fails to extract, we'll just skip it
-                end
-              end
-            end
-          end
-        end
-      end
+    todos = previous_todos_by_gem_name[gem_name].map do |todo_filepath|
+      File.join(directory, todo_filepath)
+    end
+    lex_task = YARP::LexTask.new(todos)
+    Dir[File.join(directory, "**", "*.rb")].each do |filepath|
+      lex_task.compare(filepath)
     end
 
-  workers.each(&:join)
+    todos = lex_task.todos.map { _1.gsub("#{directory}/", "") }
+
+    updated_todos_by_gem_name.merge!({ gem_name => todos })
+
+    if lex_task.failed?
+      new_failing_files_by_gem << { gem_name => todos }
+    end
+  end
 
   failing_gem_count, passing_gem_count = updated_todos_by_gem_name.partition { |_, todos| todos.any? }.map(&:size)
 

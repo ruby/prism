@@ -84,6 +84,8 @@ jobs:
         bundler-cache: true
     - name: Lex Top 100 Gems
       run: bundle exec rake lex:topgems
+    - name: Parse Top 100 Gems
+      run: bundle exec rake parse:topgems
 
   memcheck:
     runs-on: ubuntu-latest
