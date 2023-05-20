@@ -8033,10 +8033,10 @@ parse_block(yp_parser_t *parser) {
     expect(parser, YP_TOKEN_KEYWORD_END, "Expected block beginning with 'do' to end with 'end'.");
   }
 
-  yp_token_list_t *locals = &parser->current_scope->locals;
+  yp_token_list_t locals = parser->current_scope->locals;
   yp_parser_scope_pop(parser);
   yp_accepts_block_stack_pop(parser);
-  return yp_block_node_create(parser, locals, &opening, parameters, statements, &parser->previous);
+  return yp_block_node_create(parser, &locals, &opening, parameters, statements, &parser->previous);
 }
 
 // Parse a list of arguments and their surrounding parentheses if they are
@@ -9977,10 +9977,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `class` statement.");
 
-        yp_token_list_t *locals = &parser->current_scope->locals;
+        yp_token_list_t locals = parser->current_scope->locals;
         yp_parser_scope_pop(parser);
         yp_do_loop_stack_pop(parser);
-        return (yp_node_t *) yp_singleton_class_node_create(parser, locals, &class_keyword, &operator, expression, statements, &parser->previous);
+        return (yp_node_t *) yp_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous);
       }
 
       yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected to find a class name after `class`.");
@@ -10021,10 +10021,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_diagnostic_list_append(&parser->error_list, class_keyword.start, class_keyword.end, "Class definition in method body");
       }
 
-      yp_token_list_t *locals = &parser->current_scope->locals;
+      yp_token_list_t locals = parser->current_scope->locals;
       yp_parser_scope_pop(parser);
       yp_do_loop_stack_pop(parser);
-      return (yp_node_t *) yp_class_node_create(parser, locals, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
+      return (yp_node_t *) yp_class_node_create(parser, &locals, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_DEF: {
       yp_token_t def_keyword = parser->current;
@@ -10251,7 +10251,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         end_keyword = parser->previous;
       }
 
-      yp_token_list_t *locals = &parser->current_scope->locals;
+      yp_token_list_t locals = parser->current_scope->locals;
       yp_parser_scope_pop(parser);
 
       return (yp_node_t *) yp_def_node_create(
@@ -10260,7 +10260,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         receiver,
         params,
         statements,
-        locals,
+        &locals,
         &def_keyword,
         &operator,
         &lparen,
@@ -10410,12 +10410,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       // If we can recover from a syntax error that occurred while parsing the
       // name of the module, then we'll handle that here.
       if (name->type == YP_NODE_MISSING_NODE) {
-        yp_token_list_t *locals = (yp_token_list_t *)yp_alloc(parser, sizeof(yp_token_list_t));
-        locals->size = 0;
-        locals->capacity = 0;
-        locals->tokens = NULL;
+        yp_token_list_t locals = YP_EMPTY_TOKEN_LIST;
         yp_token_t end_keyword = (yp_token_t) { .type = YP_TOKEN_MISSING, .start = parser->previous.end, .end = parser->previous.end };
-        return (yp_node_t *) yp_module_node_create(parser, locals, &module_keyword, name, NULL, &end_keyword);
+        return (yp_node_t *) yp_module_node_create(parser, &locals, &module_keyword, name, NULL, &end_keyword);
       }
 
       while (accept(parser, YP_TOKEN_COLON_COLON)) {
@@ -10442,7 +10439,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         statements = (yp_node_t *) parse_rescues_as_begin(parser, (yp_statements_node_t *) statements);
       }
 
-      yp_token_list_t *locals = &parser->current_scope->locals;
+      yp_token_list_t locals = parser->current_scope->locals;
       yp_parser_scope_pop(parser);
 
       expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `module` statement.");
@@ -10451,7 +10448,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_diagnostic_list_append(&parser->error_list, module_keyword.start, module_keyword.end, "Module definition in method body");
       }
 
-      return (yp_node_t *) yp_module_node_create(parser, locals, &module_keyword, name, statements, &parser->previous);
+      return (yp_node_t *) yp_module_node_create(parser, &locals, &module_keyword, name, statements, &parser->previous);
     }
     case YP_TOKEN_KEYWORD_NIL:
       parser_lex(parser);
@@ -11053,10 +11050,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         expect(parser, YP_TOKEN_KEYWORD_END, "Expecting 'end' keyword to close lambda block.");
       }
 
-      yp_token_list_t *locals = &parser->current_scope->locals;
+      yp_token_list_t locals = parser->current_scope->locals;
       yp_parser_scope_pop(parser);
       yp_accepts_block_stack_pop(parser);
-      return (yp_node_t *) yp_lambda_node_create(parser, locals, &opening, params, body);
+      return (yp_node_t *) yp_lambda_node_create(parser, &locals, &opening, params, body);
     }
     case YP_TOKEN_UPLUS: {
       parser_lex(parser);
@@ -11847,7 +11844,7 @@ parse_program(yp_parser_t *parser) {
   parser_lex(parser);
 
   yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_MAIN);
-  yp_token_list_t *locals = &parser->current_scope->locals;
+  yp_token_list_t locals = parser->current_scope->locals;
   yp_parser_scope_pop(parser);
 
   // If this is an empty file, then we're still going to parse all of the
@@ -11857,7 +11854,7 @@ parse_program(yp_parser_t *parser) {
     yp_statements_node_location_set(statements, parser->start, parser->start);
   }
 
-  return (yp_node_t *) yp_program_node_create(parser, locals, statements);
+  return (yp_node_t *) yp_program_node_create(parser, &locals, statements);
 }
 
 /******************************************************************************/
