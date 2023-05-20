@@ -25,8 +25,28 @@ module YARP
 
       private
 
+      # variable-length integer using https://en.wikipedia.org/wiki/LEB128
+      # This is also what protobuf uses: https://protobuf.dev/programming-guides/encoding/#varints
+      def load_varint
+        n = io.getbyte
+        if n < 128
+          n
+        else
+          n -= 128
+          shift = 0
+          while (b = io.getbyte) >= 128
+            n += (b - 128) << (shift += 7)
+          end
+          n + (b << (shift + 7))
+        end
+      end
+
+      def load_serialized_length
+        io.read(4).unpack1("L")
+      end
+
       def load_token
-        number = io.read(1).unpack1("C")
+        number = io.getbyte
         location = load_location
 
         type =
@@ -43,56 +63,56 @@ module YARP
       end
 
       def load_optional_node
-        if io.read(1).unpack1("C") != 0
+        if io.getbyte != 0
           io.pos -= 1
           load_node
         end
       end
 
       def load_optional_token
-        if io.read(1).unpack1("C") != 0
+        if io.getbyte != 0
           io.pos -= 1
           load_token
         end
       end
 
       def load_string
-        length = io.read(4).unpack1("L")
+        length = load_varint
         io.read(length).force_encoding(encoding)
       end
 
       def load_location
-        start_offset, length = io.read(8).unpack("LL")
+        start_offset, length = load_varint, load_varint
         end_offset = start_offset + length
         Location.new(start_offset, end_offset)
       end
 
       def load_optional_location
-        load_location if io.read(1).unpack1("C") != 0
+        load_location if io.getbyte != 0
       end
 
       def load_node
-        type = io.read(1).unpack1("C")
+        type = io.getbyte
         location = load_location
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
         when <%= index + 1 %> then
         <%- if node.needs_length? -%>
-          io.read(4)
+          load_serialized_length
         <%- end -%>
         <%= node.name %>.new(<%= (node.params.map { |param|
           case param
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"
           when StringParam then "load_string"
-          when NodeListParam then "io.read(4).unpack1(\"L\").times.map { load_node }"
+          when NodeListParam then "load_varint.times.map { load_node }"
           when TokenParam then "load_token"
-          when TokenListParam then "io.read(4).unpack1(\"L\").times.map { load_token }"
+          when TokenListParam then "load_varint.times.map { load_token }"
           when OptionalTokenParam then "load_optional_token"
           when LocationParam then "load_location"
           when OptionalLocationParam then "load_optional_location"
-          when UInt32Param then 'io.read(4).unpack1("L")'
+          when UInt32Param then 'load_varint'
           else raise
           end
         } + ["location"]).join(", ") -%>)

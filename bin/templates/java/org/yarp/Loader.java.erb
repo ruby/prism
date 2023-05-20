@@ -40,7 +40,7 @@ public class Loader {
     }
 
     private byte[] loadString() {
-        int length = buffer.getInt();
+        int length = loadVarInt();
         byte[] string = new byte[length];
         buffer.get(string);
         return string;
@@ -65,7 +65,7 @@ public class Loader {
     }
 
     private Nodes.Token[] loadTokens() {
-        int length = buffer.getInt();
+        int length = loadVarInt();
         Nodes.Token[] tokens = new Nodes.Token[length];
         for (int i = 0; i < length; i++) {
             tokens[i] = loadToken();
@@ -74,7 +74,7 @@ public class Loader {
     }
 
     private Nodes.Node[] loadNodes() {
-        int length = buffer.getInt();
+        int length = loadVarInt();
         Nodes.Node[] nodes = new Nodes.Node[length];
         for (int i = 0; i < length; i++) {
             nodes[i] = loadNode();
@@ -84,8 +84,8 @@ public class Loader {
 
     private Nodes.Token loadToken() {
         int type = buffer.get() & 0xFF;
-        int startOffset = buffer.getInt();
-        int length = buffer.getInt();
+        int startOffset = loadVarInt();
+        int length = loadVarInt();
         int endOffset = startOffset + length;
 
         final Nodes.TokenType tokenType = Nodes.TOKEN_TYPES[type];
@@ -93,8 +93,8 @@ public class Loader {
     }
 
     private Nodes.Location loadLocation() {
-        int startOffset = buffer.getInt();
-        int length = buffer.getInt();
+        int startOffset = loadVarInt();
+        int length = loadVarInt();
         int endOffset = startOffset + length;
         return new Nodes.Location(startOffset, endOffset);
     }
@@ -107,21 +107,35 @@ public class Loader {
         }
     }
 
-    private int loadInteger() {
-        return buffer.getInt();
+    // From https://github.com/protocolbuffers/protobuf/blob/v23.1/java/core/src/main/java/com/google/protobuf/BinaryReader.java#L1507
+    private int loadVarInt() {
+        int x;
+        if ((x = buffer.get()) >= 0) {
+            return x;
+        } else if ((x ^= (buffer.get() << 7)) < 0) {
+            x ^= (~0 << 7);
+        } else if ((x ^= (buffer.get() << 14)) >= 0) {
+            x ^= (~0 << 7) ^ (~0 << 14);
+        } else if ((x ^= (buffer.get() << 21)) < 0) {
+            x ^= (~0 << 7) ^ (~0 << 14) ^ (~0 << 21);
+        } else {
+            x ^= buffer.get() << 28;
+            x ^= (~0 << 7) ^ (~0 << 14) ^ (~0 << 21) ^ (~0 << 28);
+        }
+        return x;
     }
 
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
-        int startOffset = buffer.getInt();
-        int length = buffer.getInt();
+        int startOffset = loadVarInt();
+        int length = loadVarInt();
         int endOffset = startOffset + length;
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
             case <%= index + 1 %>:
             <%-
-            params = node.needs_length? ? ["loadInteger()"] : []
+            params = node.needs_length? ? ["buffer.getInt()"] : []
             params.concat node.params.map { |param|
               case param
               when NodeParam then "#{param.java_cast}loadNode()"
@@ -133,7 +147,7 @@ public class Loader {
               when OptionalTokenParam then "loadOptionalToken()"
               when LocationParam then "loadLocation()"
               when OptionalLocationParam then "loadOptionalLocation()"
-              when UInt32Param then "loadInteger()"
+              when UInt32Param then "loadVarInt()"
               else raise
               end
             }

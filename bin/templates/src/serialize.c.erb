@@ -40,7 +40,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
         // encoding of location u32s make us need to save this offset.
         size_t length_offset = buffer->length;
 
-        yp_buffer_append_u32(buffer, 0); /* Updated below */
+        yp_buffer_append_str(buffer, "\0\0\0\0", 4); /* consume 4 bytes, updated below */
       <%- end -%>
       <%- node.params.each do |param| -%>
       <%- case param -%>
