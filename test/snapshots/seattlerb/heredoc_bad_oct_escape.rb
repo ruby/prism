@@ -1,5 +1,5 @@
 ProgramNode(0...27)(
-  ScopeNode(0...0)([IDENTIFIER(0...1)("s")]),
+  [IDENTIFIER(0...1)("s")],
   StatementsNode(0...27)(
     [LocalVariableWriteNode(0...27)(
        (0...1),

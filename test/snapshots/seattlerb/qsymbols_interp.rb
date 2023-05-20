@@ -1,5 +1,5 @@
 ProgramNode(0...15)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...15)(
     [ArrayNode(0...15)(
        [SymbolNode(3...4)(nil, STRING_CONTENT(3...4)("a"), nil, "a"),

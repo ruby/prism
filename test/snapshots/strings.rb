@@ -1,5 +1,5 @@
 ProgramNode(0...497)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...497)(
     [StringNode(0...6)(
        STRING_BEGIN(0...2)("%%"),

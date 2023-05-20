@@ -1,8 +1,8 @@
 ProgramNode(0...22)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...22)(
     [LambdaNode(0...14)(
-       ScopeNode(0...2)([]),
+       [],
        MINUS_GREATER(0...2)("->"),
        nil,
        StatementsNode(7...14)(

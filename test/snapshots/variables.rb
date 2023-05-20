@@ -1,10 +1,8 @@
 ProgramNode(0...293)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(85...88)("abc"),
-     IDENTIFIER(152...155)("foo"),
-     IDENTIFIER(219...222)("bar"),
-     IDENTIFIER(242...245)("baz")]
-  ),
+  [IDENTIFIER(85...88)("abc"),
+   IDENTIFIER(152...155)("foo"),
+   IDENTIFIER(219...222)("bar"),
+   IDENTIFIER(242...245)("baz")],
   StatementsNode(0...293)(
     [ClassVariableReadNode(0...5)(),
      ClassVariableWriteNode(7...16)(

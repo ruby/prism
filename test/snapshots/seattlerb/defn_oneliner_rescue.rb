@@ -1,5 +1,5 @@
 ProgramNode(0...130)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...130)(
     [DefNode(0...44)(
        IDENTIFIER(4...8)("exec"),
@@ -39,7 +39,7 @@ ProgramNode(0...130)(
          nil,
          KEYWORD_END(41...44)("end")
        ),
-       ScopeNode(0...3)([IDENTIFIER(9...12)("cmd")]),
+       [IDENTIFIER(9...12)("cmd")],
        (0...3),
        nil,
        (8...9),
@@ -75,7 +75,7 @@ ProgramNode(0...130)(
             NilNode(82...85)()
           )]
        ),
-       ScopeNode(47...50)([IDENTIFIER(56...59)("cmd")]),
+       [IDENTIFIER(56...59)("cmd")],
        (47...50),
        nil,
        (55...56),
@@ -111,7 +111,7 @@ ProgramNode(0...130)(
             NilNode(127...130)()
           )]
        ),
-       ScopeNode(92...95)([IDENTIFIER(101...104)("cmd")]),
+       [IDENTIFIER(101...104)("cmd")],
        (92...95),
        nil,
        (100...101),

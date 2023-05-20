@@ -1,5 +1,5 @@
 ProgramNode(0...106)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...106)(
     [ReturnNode(0...17)(
        KEYWORD_RETURN(0...6)("return"),

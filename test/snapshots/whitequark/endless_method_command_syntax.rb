@@ -1,5 +1,5 @@
 ProgramNode(0...278)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...278)(
     [DefNode(0...22)(
        IDENTIFIER(4...7)("foo"),
@@ -24,7 +24,7 @@ ProgramNode(0...278)(
             "puts"
           )]
        ),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        nil,
@@ -55,7 +55,7 @@ ProgramNode(0...278)(
             "puts"
           )]
        ),
-       ScopeNode(24...27)([]),
+       [],
        (24...27),
        nil,
        (31...32),
@@ -87,7 +87,7 @@ ProgramNode(0...278)(
             "puts"
           )]
        ),
-       ScopeNode(50...53)([IDENTIFIER(58...59)("x")]),
+       [IDENTIFIER(58...59)("x")],
        (50...53),
        nil,
        (57...58),
@@ -127,7 +127,7 @@ ProgramNode(0...278)(
             "puts"
           )]
        ),
-       ScopeNode(71...74)([]),
+       [],
        (71...74),
        (78...79),
        nil,
@@ -167,7 +167,7 @@ ProgramNode(0...278)(
             "puts"
           )]
        ),
-       ScopeNode(99...102)([]),
+       [],
        (99...102),
        (106...107),
        (110...111),
@@ -208,7 +208,7 @@ ProgramNode(0...278)(
             "puts"
           )]
        ),
-       ScopeNode(129...132)([IDENTIFIER(141...142)("x")]),
+       [IDENTIFIER(141...142)("x")],
        (129...132),
        (136...137),
        (140...141),
@@ -267,7 +267,7 @@ ProgramNode(0...278)(
             "raise"
           )]
        ),
-       ScopeNode(154...157)([IDENTIFIER(166...167)("x")]),
+       [IDENTIFIER(166...167)("x")],
        (154...157),
        nil,
        (165...166),
@@ -326,7 +326,7 @@ ProgramNode(0...278)(
             "raise"
           )]
        ),
-       ScopeNode(216...219)([IDENTIFIER(233...234)("x")]),
+       [IDENTIFIER(233...234)("x")],
        (216...219),
        (224...225),
        (232...233),

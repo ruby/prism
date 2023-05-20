@@ -1,5 +1,5 @@
 ProgramNode(0...12)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...12)(
     [IntegerNode(0...3)(),
      CallNode(5...8)(

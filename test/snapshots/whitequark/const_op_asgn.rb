@@ -1,5 +1,5 @@
 ProgramNode(0...77)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...77)(
     [OperatorAssignmentNode(0...8)(
        ConstantPathWriteNode(0...3)(
@@ -47,7 +47,7 @@ ProgramNode(0...77)(
             (40...43)
           )]
        ),
-       ScopeNode(29...32)([]),
+       [],
        (29...32),
        nil,
        nil,
@@ -74,7 +74,7 @@ ProgramNode(0...77)(
             (67...70)
           )]
        ),
-       ScopeNode(52...55)([]),
+       [],
        (52...55),
        nil,
        nil,

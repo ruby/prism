@@ -1,5 +1,5 @@
 ProgramNode(0...47)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...47)(
     [InterpolatedStringNode(0...47)(
        HEREDOC_START(0...7)("<<~RUBY"),

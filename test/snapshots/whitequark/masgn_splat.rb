@@ -1,10 +1,8 @@
 ProgramNode(0...139)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(12...13)("c"),
-     IDENTIFIER(15...16)("d"),
-     IDENTIFIER(25...26)("b"),
-     IDENTIFIER(67...68)("a")]
-  ),
+  [IDENTIFIER(12...13)("c"),
+   IDENTIFIER(15...16)("d"),
+   IDENTIFIER(25...26)("b"),
+   IDENTIFIER(67...68)("a")],
   StatementsNode(0...139)(
     [MultiWriteNode(0...7)(
        [SplatNode(0...1)(USTAR(0...1)("*"), nil)],

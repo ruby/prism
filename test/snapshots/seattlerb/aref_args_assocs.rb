@@ -1,5 +1,5 @@
 ProgramNode(0...8)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...8)(
     [ArrayNode(0...8)(
        [HashNode(1...7)(

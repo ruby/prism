@@ -1,5 +1,5 @@
 ProgramNode(0...913)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...913)(
     [DefNode(0...46)(
        IDENTIFIER(4...7)("foo"),
@@ -72,7 +72,7 @@ ProgramNode(0...913)(
          ),
          KEYWORD_END(43...46)("end")
        ),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        nil,
@@ -164,7 +164,7 @@ ProgramNode(0...913)(
          ),
          KEYWORD_END(100...103)("end")
        ),
-       ScopeNode(48...51)([]),
+       [],
        (48...51),
        nil,
        nil,
@@ -186,9 +186,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(105...108)(
-         [LABEL(113...116)("bar"), LABEL(119...122)("baz")]
-       ),
+       [LABEL(113...116)("bar"), LABEL(119...122)("baz")],
        (105...108),
        nil,
        (112...113),
@@ -201,7 +199,7 @@ ProgramNode(0...913)(
        nil,
        nil,
        nil,
-       ScopeNode(130...133)([]),
+       [],
        (130...133),
        nil,
        nil,
@@ -225,7 +223,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       ScopeNode(143...146)([]),
+       [],
        (143...146),
        nil,
        nil,
@@ -289,7 +287,7 @@ ProgramNode(0...913)(
          ),
          KEYWORD_END(202...205)("end")
        ),
-       ScopeNode(162...165)([]),
+       [],
        (162...165),
        nil,
        nil,
@@ -335,7 +333,7 @@ ProgramNode(0...913)(
          ),
          KEYWORD_END(234...237)("end")
        ),
-       ScopeNode(207...210)([]),
+       [],
        (207...210),
        nil,
        nil,
@@ -384,7 +382,7 @@ ProgramNode(0...913)(
          nil,
          KEYWORD_END(266...269)("end")
        ),
-       ScopeNode(239...242)([]),
+       [],
        (239...242),
        nil,
        nil,
@@ -405,7 +403,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(286...289)([LocalVariableReadNode(286...289)(0)]),
-       ScopeNode(271...274)([IDENTIFIER(279...282)("bar")]),
+       [IDENTIFIER(279...282)("bar")],
        (271...274),
        nil,
        (278...279),
@@ -427,9 +425,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(315...318)([LocalVariableReadNode(315...318)(0)]),
-       ScopeNode(295...298)(
-         [IDENTIFIER(303...306)("bar"), IDENTIFIER(308...311)("baz")]
-       ),
+       [IDENTIFIER(303...306)("bar"), IDENTIFIER(308...311)("baz")],
        (295...298),
        nil,
        (302...303),
@@ -454,7 +450,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(344...347)([LocalVariableReadNode(344...347)(0)]),
-       ScopeNode(324...327)([IDENTIFIER(332...335)("bar")]),
+       [IDENTIFIER(332...335)("bar")],
        (324...327),
        nil,
        (331...332),
@@ -495,7 +491,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(353...356)([IDENTIFIER(361...364)("bar")]),
+       [IDENTIFIER(361...364)("bar")],
        (353...356),
        nil,
        (360...361),
@@ -520,7 +516,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(406...409)([LocalVariableReadNode(406...409)(0)]),
-       ScopeNode(384...387)([IDENTIFIER(392...395)("bar")]),
+       [IDENTIFIER(392...395)("bar")],
        (384...387),
        nil,
        (391...392),
@@ -545,9 +541,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(442...445)([LocalVariableReadNode(442...445)(0)]),
-       ScopeNode(415...418)(
-         [IDENTIFIER(423...426)("bar"), IDENTIFIER(428...431)("baz")]
-       ),
+       [IDENTIFIER(423...426)("bar"), IDENTIFIER(428...431)("baz")],
        (415...418),
        nil,
        (422...423),
@@ -571,7 +565,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(451...454)([LABEL(459...462)("bar")]),
+       [LABEL(459...462)("bar")],
        (451...454),
        nil,
        (458...459),
@@ -604,7 +598,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(472...475)([LABEL(480...483)("bar")]),
+       [LABEL(480...483)("bar")],
        (472...475),
        nil,
        (479...480),
@@ -637,7 +631,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(495...498)([LABEL(503...506)("bar")]),
+       [LABEL(503...506)("bar")],
        (495...498),
        nil,
        (502...503),
@@ -669,7 +663,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       ScopeNode(520...523)([USTAR(528...529)("*")]),
+       [USTAR(528...529)("*")],
        (520...523),
        nil,
        (527...528),
@@ -693,7 +687,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(558...561)([LocalVariableReadNode(558...561)(0)]),
-       ScopeNode(542...545)([IDENTIFIER(551...554)("bar")]),
+       [IDENTIFIER(551...554)("bar")],
        (542...545),
        nil,
        (549...550),
@@ -717,9 +711,7 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(588...591)([LocalVariableReadNode(588...591)(0)]),
-       ScopeNode(567...570)(
-         [IDENTIFIER(575...578)("bar"), IDENTIFIER(581...584)("baz")]
-       ),
+       [IDENTIFIER(575...578)("bar"), IDENTIFIER(581...584)("baz")],
        (567...570),
        nil,
        (574...575),
@@ -758,9 +750,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       ScopeNode(597...600)(
-         [IDENTIFIER(605...608)("baz"), IDENTIFIER(618...621)("bor")]
-       ),
+       [IDENTIFIER(605...608)("baz"), IDENTIFIER(618...621)("bor")],
        (597...600),
        nil,
        (604...605),
@@ -802,11 +792,9 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       ScopeNode(634...637)(
-         [IDENTIFIER(642...645)("baz"),
-          IDENTIFIER(655...658)("bor"),
-          IDENTIFIER(661...666)("block")]
-       ),
+       [IDENTIFIER(642...645)("baz"),
+        IDENTIFIER(655...658)("bor"),
+        IDENTIFIER(661...666)("block")],
        (634...637),
        nil,
        (641...642),
@@ -834,11 +822,9 @@ ProgramNode(0...913)(
          nil
        ),
        StatementsNode(712...715)([LocalVariableReadNode(712...715)(0)]),
-       ScopeNode(679...682)(
-         [IDENTIFIER(687...690)("bar"),
-          IDENTIFIER(692...695)("baz"),
-          IDENTIFIER(705...708)("bor")]
-       ),
+       [IDENTIFIER(687...690)("bar"),
+        IDENTIFIER(692...695)("baz"),
+        IDENTIFIER(705...708)("bor")],
        (679...682),
        nil,
        (686...687),
@@ -873,7 +859,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       ScopeNode(721...724)([IDENTIFIER(730...735)("block")]),
+       [IDENTIFIER(730...735)("block")],
        (721...724),
        nil,
        (728...729),
@@ -897,9 +883,7 @@ ProgramNode(0...913)(
          )
        ),
        StatementsNode(771...774)([LocalVariableReadNode(771...774)(0)]),
-       ScopeNode(748...751)(
-         [IDENTIFIER(756...759)("bar"), IDENTIFIER(762...767)("block")]
-       ),
+       [IDENTIFIER(756...759)("bar"), IDENTIFIER(762...767)("block")],
        (748...751),
        nil,
        (755...756),
@@ -933,7 +917,7 @@ ProgramNode(0...913)(
             "baz"
           )]
        ),
-       ScopeNode(780...783)([]),
+       [],
        (780...783),
        nil,
        nil,
@@ -962,7 +946,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(805...808)([IDENTIFIER(813...814)("a")]),
+       [IDENTIFIER(813...814)("a")],
        (805...808),
        nil,
        (810...811),
@@ -992,9 +976,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       ScopeNode(823...826)(
-         [LABEL(831...834)("bar"), LABEL(837...840)("baz")]
-       ),
+       [LABEL(831...834)("bar"), LABEL(837...840)("baz")],
        (823...826),
        nil,
        (830...831),
@@ -1029,7 +1011,7 @@ ProgramNode(0...913)(
             HEREDOC_END(883...893)("  HEREDOC\n")
           )]
        ),
-       ScopeNode(856...859)([]),
+       [],
        (856...859),
        nil,
        nil,
@@ -1049,7 +1031,7 @@ ProgramNode(0...913)(
             ""
           )]
        ),
-       ScopeNode(898...901)([]),
+       [],
        (898...901),
        nil,
        nil,

@@ -1,5 +1,5 @@
 ProgramNode(0...314)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...314)(
     [WhileNode(0...18)(
        KEYWORD_WHILE(0...5)("while"),
@@ -83,13 +83,7 @@ ProgramNode(0...314)(
                 nil,
                 nil,
                 nil,
-                BlockNode(138...144)(
-                  ScopeNode(138...140)([]),
-                  nil,
-                  nil,
-                  (138...140),
-                  (141...144)
-                ),
+                BlockNode(138...144)([], nil, nil, (138...140), (141...144)),
                 "tap"
               )
             )],
@@ -100,7 +94,7 @@ ProgramNode(0...314)(
            nil
          ),
          nil,
-         ScopeNode(117...120)([IDENTIFIER(130...131)("a")]),
+         [IDENTIFIER(130...131)("a")],
          (117...120),
          (125...126),
          nil,
@@ -113,7 +107,7 @@ ProgramNode(0...314)(
      WhileNode(163...210)(
        KEYWORD_WHILE(163...168)("while"),
        ClassNode(169...198)(
-         ScopeNode(169...174)([IDENTIFIER(179...180)("a")]),
+         [IDENTIFIER(179...180)("a")],
          KEYWORD_CLASS(169...174)("class"),
          ConstantReadNode(175...178)(),
          nil,
@@ -128,13 +122,7 @@ ProgramNode(0...314)(
                 nil,
                 nil,
                 nil,
-                BlockNode(187...193)(
-                  ScopeNode(187...189)([]),
-                  nil,
-                  nil,
-                  (187...189),
-                  (190...193)
-                ),
+                BlockNode(187...193)([], nil, nil, (187...189), (190...193)),
                 "tap"
               ),
               (181...182),
@@ -148,7 +136,7 @@ ProgramNode(0...314)(
      WhileNode(212...260)(
        KEYWORD_WHILE(212...217)("while"),
        SingletonClassNode(218...248)(
-         ScopeNode(218...223)([]),
+         [],
          KEYWORD_CLASS(218...223)("class"),
          LESS_LESS(224...226)("<<"),
          SelfNode(227...231)(),
@@ -160,13 +148,7 @@ ProgramNode(0...314)(
               nil,
               nil,
               nil,
-              BlockNode(237...243)(
-                ScopeNode(237...239)([]),
-                nil,
-                nil,
-                (237...239),
-                (240...243)
-              ),
+              BlockNode(237...243)([], nil, nil, (237...239), (240...243)),
               "tap"
             )]
          ),
@@ -177,7 +159,7 @@ ProgramNode(0...314)(
      WhileNode(262...314)(
        KEYWORD_WHILE(262...267)("while"),
        SingletonClassNode(268...302)(
-         ScopeNode(268...273)([IDENTIFIER(283...284)("a")]),
+         [IDENTIFIER(283...284)("a")],
          KEYWORD_CLASS(268...273)("class"),
          LESS_LESS(274...276)("<<"),
          SelfNode(277...281)(),
@@ -191,13 +173,7 @@ ProgramNode(0...314)(
                 nil,
                 nil,
                 nil,
-                BlockNode(291...297)(
-                  ScopeNode(291...293)([]),
-                  nil,
-                  nil,
-                  (291...293),
-                  (294...297)
-                ),
+                BlockNode(291...297)([], nil, nil, (291...293), (294...297)),
                 "tap"
               ),
               (285...286),

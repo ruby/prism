@@ -1,5 +1,5 @@
 ProgramNode(0...46)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...46)(
     [UnlessNode(0...24)(
        KEYWORD_UNLESS(0...6)("unless"),

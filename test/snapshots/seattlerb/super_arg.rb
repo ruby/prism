@@ -1,5 +1,5 @@
 ProgramNode(0...8)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...8)(
     [SuperNode(0...8)(
        KEYWORD_SUPER(0...5)("super"),

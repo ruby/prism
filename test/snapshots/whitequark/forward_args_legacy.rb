@@ -1,5 +1,5 @@
 ProgramNode(0...77)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...77)(
     [DefNode(0...27)(
        IDENTIFIER(4...7)("foo"),
@@ -25,7 +25,7 @@ ProgramNode(0...77)(
             "bar"
           )]
        ),
-       ScopeNode(0...3)([UDOT_DOT_DOT(8...11)("...")]),
+       [UDOT_DOT_DOT(8...11)("...")],
        (0...3),
        nil,
        (7...8),
@@ -46,7 +46,7 @@ ProgramNode(0...77)(
          nil
        ),
        nil,
-       ScopeNode(29...32)([UDOT_DOT_DOT(37...40)("...")]),
+       [UDOT_DOT_DOT(37...40)("...")],
        (29...32),
        nil,
        (36...37),
@@ -75,7 +75,7 @@ ProgramNode(0...77)(
             nil
           )]
        ),
-       ScopeNode(48...51)([UDOT_DOT_DOT(56...59)("...")]),
+       [UDOT_DOT_DOT(56...59)("...")],
        (48...51),
        nil,
        (55...56),

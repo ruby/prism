@@ -1,5 +1,5 @@
 ProgramNode(0...14)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...14)(
     [InterpolatedStringNode(0...14)(
        STRING_BEGIN(0...1)("\""),
@@ -7,7 +7,7 @@ ProgramNode(0...14)(
           EMBEXPR_BEGIN(1...3)("\#{"),
           StatementsNode(3...9)(
             [LambdaNode(3...9)(
-               ScopeNode(3...5)([IDENTIFIER(6...9)("foo")]),
+               [IDENTIFIER(6...9)("foo")],
                MINUS_GREATER(3...5)("->"),
                BlockParametersNode(6...9)(
                  ParametersNode(6...9)(

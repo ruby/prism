@@ -1,5 +1,5 @@
 ProgramNode(0...159)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...159)(
     [ForwardingSuperNode(0...5)(nil),
      SuperNode(6...13)(
@@ -119,7 +119,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             BlockNode(74...83)(
-              ScopeNode(74...75)([]),
+              [],
               nil,
               StatementsNode(78...81)(
                 [CallNode(78...81)(
@@ -144,7 +144,7 @@ ProgramNode(0...159)(
      ),
      ForwardingSuperNode(85...100)(
        BlockNode(91...100)(
-         ScopeNode(91...92)([]),
+         [],
          nil,
          StatementsNode(95...98)(
            [CallNode(95...98)(
@@ -179,7 +179,7 @@ ProgramNode(0...159)(
        ),
        PARENTHESIS_RIGHT(108...109)(")"),
        BlockNode(110...119)(
-         ScopeNode(110...111)([]),
+         [],
          nil,
          StatementsNode(114...117)(
            [CallNode(114...117)(
@@ -203,7 +203,7 @@ ProgramNode(0...159)(
        nil,
        PARENTHESIS_RIGHT(126...127)(")"),
        BlockNode(128...137)(
-         ScopeNode(128...129)([]),
+         [],
          nil,
          StatementsNode(132...135)(
            [CallNode(132...135)(
@@ -248,7 +248,7 @@ ProgramNode(0...159)(
        ),
        PARENTHESIS_RIGHT(148...149)(")"),
        BlockNode(150...159)(
-         ScopeNode(150...151)([]),
+         [],
          nil,
          StatementsNode(154...157)(
            [CallNode(154...157)(

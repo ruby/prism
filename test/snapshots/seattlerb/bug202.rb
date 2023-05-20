@@ -1,5 +1,5 @@
 ProgramNode(0...22)(
-  ScopeNode(0...0)([IDENTIFIER(12...18)("测试")]),
+  [IDENTIFIER(12...18)("测试")],
   StatementsNode(0...22)(
     [GlobalVariableWriteNode(0...11)(
        GLOBAL_VARIABLE(0...7)("$测试"),

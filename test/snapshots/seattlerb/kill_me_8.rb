@@ -1,5 +1,5 @@
 ProgramNode(0...20)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...20)(
     [CallNode(0...20)(
        nil,
@@ -9,11 +9,9 @@ ProgramNode(0...20)(
        nil,
        nil,
        BlockNode(2...20)(
-         ScopeNode(2...3)(
-           [IDENTIFIER(5...6)("a"),
-            IDENTIFIER(9...10)("b"),
-            IDENTIFIER(15...16)("c")]
-         ),
+         [IDENTIFIER(5...6)("a"),
+          IDENTIFIER(9...10)("b"),
+          IDENTIFIER(15...16)("c")],
          BlockParametersNode(4...18)(
            ParametersNode(5...17)(
              [RequiredParameterNode(5...6)(),

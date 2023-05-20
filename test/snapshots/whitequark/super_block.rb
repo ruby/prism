@@ -1,8 +1,8 @@
 ProgramNode(0...35)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...35)(
     [ForwardingSuperNode(0...12)(
-       BlockNode(6...12)(ScopeNode(6...8)([]), nil, nil, (6...8), (9...12))
+       BlockNode(6...12)([], nil, nil, (6...8), (9...12))
      ),
      SuperNode(14...35)(
        KEYWORD_SUPER(14...19)("super"),
@@ -30,13 +30,7 @@ ProgramNode(0...35)(
           )]
        ),
        nil,
-       BlockNode(29...35)(
-         ScopeNode(29...31)([]),
-         nil,
-         nil,
-         (29...31),
-         (32...35)
-       )
+       BlockNode(29...35)([], nil, nil, (29...31), (32...35))
      )]
   )
 )

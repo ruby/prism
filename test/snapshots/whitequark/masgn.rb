@@ -1,9 +1,7 @@
 ProgramNode(1...56)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(1...4)("foo"),
-     IDENTIFIER(6...9)("bar"),
-     IDENTIFIER(46...49)("baz")]
-  ),
+  [IDENTIFIER(1...4)("foo"),
+   IDENTIFIER(6...9)("bar"),
+   IDENTIFIER(46...49)("baz")],
   StatementsNode(1...56)(
     [MultiWriteNode(1...17)(
        [LocalVariableWriteNode(1...4)((1...4), nil, nil, 0),

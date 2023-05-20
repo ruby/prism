@@ -154,7 +154,7 @@ typedef struct yp_lex_mode {
       const char *start;
       const char *end;
     } numeric;
-    
+
     struct {
       // These pointers point to the beginning and end of the heredoc
       // identifier.
@@ -283,7 +283,8 @@ typedef struct {
 typedef struct yp_scope {
   // A pointer to the node that holds the tokens that correspond to the locals
   // in the given scope.
-  yp_scope_node_t *node;
+  // yp_scope_node_t *node;
+  yp_token_list_t locals;
 
   // A boolean indicating whether or not this scope can see into its parent. If
   // top is true, then the scope cannot see into its parent.

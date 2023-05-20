@@ -1,5 +1,5 @@
 ProgramNode(0...55)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...55)(
     [DefNode(0...21)(
        IDENTIFIER(4...7)("foo"),
@@ -43,7 +43,7 @@ ProgramNode(0...55)(
             (16...17)
           )]
        ),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        nil,
@@ -71,7 +71,7 @@ ProgramNode(0...55)(
             ConstantReadNode(42...51)()
           )]
        ),
-       ScopeNode(23...26)([]),
+       [],
        (23...26),
        nil,
        nil,

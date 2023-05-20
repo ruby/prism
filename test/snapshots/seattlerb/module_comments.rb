@@ -1,8 +1,8 @@
 ProgramNode(24...77)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(24...77)(
     [ModuleNode(24...77)(
-       ScopeNode(24...30)([]),
+       [],
        KEYWORD_MODULE(24...30)("module"),
        ConstantReadNode(31...32)(),
        StatementsNode(46...73)(
@@ -11,7 +11,7 @@ ProgramNode(24...77)(
             nil,
             nil,
             nil,
-            ScopeNode(46...49)([]),
+            [],
             (46...49),
             nil,
             nil,

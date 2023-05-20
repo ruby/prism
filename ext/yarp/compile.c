@@ -540,7 +540,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         yp_iseq_compiler_init(
           &block_compiler,
           compiler,
-          &node->block->scope->locals,
+          &node->block->locals,
           "block in <compiled>",
           YP_ISEQ_TYPE_BLOCK
         );
@@ -728,10 +728,10 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     case YP_NODE_PROGRAM_NODE: {
       yp_program_node_t *node = (yp_program_node_t *) base_node;
 
-      if (node->statements->body.size == 0) {
-        push_putnil(compiler);
-      } else {
+      if ((node->statements != NULL) && (node->statements->body.size != 0)) {
         yp_compile_node(compiler, (yp_node_t *) node->statements);
+      } else {
+        push_putnil(compiler);
       }
 
       push_leave(compiler);
@@ -829,7 +829,7 @@ yp_compile(yp_node_t *node) {
   yp_iseq_compiler_init(
     &compiler,
     NULL,
-    &((yp_program_node_t *) node)->scope->locals,
+    &((yp_program_node_t *) node)->locals,
     "<compiled>",
     YP_ISEQ_TYPE_TOP
   );

@@ -1,5 +1,5 @@
 ProgramNode(0...24)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...24)(
     [CallNode(0...24)(
        nil,

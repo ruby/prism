@@ -1,5 +1,5 @@
 ProgramNode(1...476)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(1...476)(
     [StringNode(1...6)(
        STRING_BEGIN(1...2)("\""),

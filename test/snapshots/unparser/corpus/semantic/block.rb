@@ -1,5 +1,5 @@
 ProgramNode(0...148)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...148)(
     [CallNode(0...10)(
        nil,
@@ -8,7 +8,7 @@ ProgramNode(0...148)(
        nil,
        nil,
        nil,
-       BlockNode(4...10)(ScopeNode(4...6)([]), nil, nil, (4...6), (7...10)),
+       BlockNode(4...10)([], nil, nil, (4...6), (7...10)),
        "foo"
      ),
      CallNode(12...29)(
@@ -19,7 +19,7 @@ ProgramNode(0...148)(
        nil,
        nil,
        BlockNode(16...29)(
-         ScopeNode(16...18)([]),
+         [],
          nil,
          BeginNode(0...29)(
            nil,
@@ -49,7 +49,7 @@ ProgramNode(0...148)(
        nil,
        nil,
        BlockNode(35...64)(
-         ScopeNode(35...37)([]),
+         [],
          nil,
          StatementsNode(40...60)(
            [RescueModifierNode(40...54)(
@@ -72,7 +72,7 @@ ProgramNode(0...148)(
        nil,
        nil,
        BlockNode(70...80)(
-         ScopeNode(70...72)([IDENTIFIER(74...75)("a")]),
+         [IDENTIFIER(74...75)("a")],
          BlockParametersNode(73...76)(
            ParametersNode(74...75)(
              [RequiredParameterNode(74...75)()],
@@ -112,7 +112,7 @@ ProgramNode(0...148)(
        ),
        PARENTHESIS_RIGHT(92...93)(")"),
        BlockNode(94...116)(
-         ScopeNode(94...96)([IDENTIFIER(98...99)("a")]),
+         [IDENTIFIER(98...99)("a")],
          BlockParametersNode(97...100)(
            ParametersNode(98...99)(
              [RequiredParameterNode(98...99)()],
@@ -152,7 +152,7 @@ ProgramNode(0...148)(
        ),
        PARENTHESIS_RIGHT(128...129)(")"),
        BlockNode(130...148)(
-         ScopeNode(130...132)([]),
+         [],
          nil,
          StatementsNode(143...144)(
            [CallNode(143...144)(

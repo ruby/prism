@@ -1,8 +1,8 @@
 ProgramNode(0...29)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...29)(
     [ClassNode(0...13)(
-       ScopeNode(0...5)([]),
+       [],
        KEYWORD_CLASS(0...5)("class"),
        ConstantReadNode(6...9)(),
        nil,
@@ -11,7 +11,7 @@ ProgramNode(0...29)(
        KEYWORD_END(10...13)("end")
      ),
      ClassNode(15...29)(
-       ScopeNode(15...20)([]),
+       [],
        KEYWORD_CLASS(15...20)("class"),
        ConstantReadNode(21...24)(),
        nil,

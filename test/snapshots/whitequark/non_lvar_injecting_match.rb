@@ -1,5 +1,5 @@
 ProgramNode(0...28)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...28)(
     [CallNode(0...28)(
        InterpolatedRegularExpressionNode(0...19)(

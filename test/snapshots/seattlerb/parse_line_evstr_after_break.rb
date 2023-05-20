@@ -1,5 +1,5 @@
 ProgramNode(0...11)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...11)(
     [StringConcatNode(0...11)(
        StringNode(0...3)(

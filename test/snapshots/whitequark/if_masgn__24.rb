@@ -1,5 +1,5 @@
 ProgramNode(0...20)(
-  ScopeNode(0...0)([IDENTIFIER(4...5)("a"), IDENTIFIER(7...8)("b")]),
+  [IDENTIFIER(4...5)("a"), IDENTIFIER(7...8)("b")],
   StatementsNode(0...20)(
     [IfNode(0...20)(
        KEYWORD_IF(0...2)("if"),

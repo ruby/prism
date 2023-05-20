@@ -1,5 +1,5 @@
 ProgramNode(0...14)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...14)(
     [InterpolatedXStringNode(0...14)(
        BACKTICK(0...1)("`"),

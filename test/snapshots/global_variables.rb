@@ -1,5 +1,5 @@
 ProgramNode(0...340)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...340)(
     [GlobalVariableReadNode(0...16)(
        GLOBAL_VARIABLE(0...16)("$global_variable")

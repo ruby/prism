@@ -1,5 +1,5 @@
 ProgramNode(0...33)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...33)(
     [CaseNode(0...33)(
        HashNode(5...11)(

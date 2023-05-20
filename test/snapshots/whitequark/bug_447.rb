@@ -1,5 +1,5 @@
 ProgramNode(0...27)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...27)(
     [CallNode(0...11)(
        nil,
@@ -14,7 +14,7 @@ ProgramNode(0...27)(
           )]
        ),
        nil,
-       BlockNode(5...11)(ScopeNode(5...7)([]), nil, nil, (5...7), (8...11)),
+       BlockNode(5...11)([], nil, nil, (5...7), (8...11)),
        "m"
      ),
      CallNode(13...27)(
@@ -31,13 +31,7 @@ ProgramNode(0...27)(
           IntegerNode(19...20)()]
        ),
        nil,
-       BlockNode(21...27)(
-         ScopeNode(21...23)([]),
-         nil,
-         nil,
-         (21...23),
-         (24...27)
-       ),
+       BlockNode(21...27)([], nil, nil, (21...23), (24...27)),
        "m"
      )]
   )

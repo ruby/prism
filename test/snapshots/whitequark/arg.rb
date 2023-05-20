@@ -1,5 +1,5 @@
 ProgramNode(0...37)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...37)(
     [DefNode(0...15)(
        IDENTIFIER(4...5)("f"),
@@ -14,7 +14,7 @@ ProgramNode(0...37)(
          nil
        ),
        nil,
-       ScopeNode(0...3)([IDENTIFIER(6...9)("foo")]),
+       [IDENTIFIER(6...9)("foo")],
        (0...3),
        nil,
        (5...6),
@@ -35,9 +35,7 @@ ProgramNode(0...37)(
          nil
        ),
        nil,
-       ScopeNode(17...20)(
-         [IDENTIFIER(23...26)("foo"), IDENTIFIER(28...31)("bar")]
-       ),
+       [IDENTIFIER(23...26)("foo"), IDENTIFIER(28...31)("bar")],
        (17...20),
        nil,
        (22...23),

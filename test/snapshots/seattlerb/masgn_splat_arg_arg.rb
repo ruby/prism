@@ -1,7 +1,5 @@
 ProgramNode(0...12)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(1...2)("a"), IDENTIFIER(4...5)("b"), IDENTIFIER(7...8)("c")]
-  ),
+  [IDENTIFIER(1...2)("a"), IDENTIFIER(4...5)("b"), IDENTIFIER(7...8)("c")],
   StatementsNode(0...12)(
     [MultiWriteNode(0...12)(
        [MultiWriteNode(0...2)(

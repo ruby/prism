@@ -1,12 +1,12 @@
 ProgramNode(0...78)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...78)(
     [DefNode(0...14)(
        IDENTIFIER(4...7)("foo"),
        nil,
        nil,
        StatementsNode(12...14)([IntegerNode(12...14)()]),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        (7...8),
@@ -38,7 +38,7 @@ ProgramNode(0...78)(
             "+"
           )]
        ),
-       ScopeNode(16...19)([IDENTIFIER(24...25)("x")]),
+       [IDENTIFIER(24...25)("x")],
        (16...19),
        nil,
        (23...24),
@@ -60,7 +60,7 @@ ProgramNode(0...78)(
        ),
        nil,
        StatementsNode(52...54)([IntegerNode(52...54)()]),
-       ScopeNode(36...39)([]),
+       [],
        (36...39),
        (43...44),
        (47...48),
@@ -101,7 +101,7 @@ ProgramNode(0...78)(
             "+"
           )]
        ),
-       ScopeNode(56...59)([IDENTIFIER(68...69)("x")]),
+       [IDENTIFIER(68...69)("x")],
        (56...59),
        (63...64),
        (67...68),

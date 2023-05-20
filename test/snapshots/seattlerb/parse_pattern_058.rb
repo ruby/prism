@@ -1,5 +1,5 @@
 ProgramNode(0...43)(
-  ScopeNode(0...0)([IDENTIFIER(22...26)("rest")]),
+  [IDENTIFIER(22...26)("rest")],
   StatementsNode(0...43)(
     [CaseNode(0...43)(
        HashNode(5...11)(

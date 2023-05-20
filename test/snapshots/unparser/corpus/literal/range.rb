@@ -1,5 +1,5 @@
 ProgramNode(0...23)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...23)(
     [ParenthesesNode(0...5)(
        StatementsNode(1...4)(

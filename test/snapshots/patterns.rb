@@ -1,11 +1,9 @@
 ProgramNode(0...3725)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(7...10)("bar"),
-     IDENTIFIER(1195...1198)("baz"),
-     IDENTIFIER(1245...1248)("qux"),
-     IDENTIFIER(3682...3683)("b"),
-     IDENTIFIER(3718...3719)("a")]
-  ),
+  [IDENTIFIER(7...10)("bar"),
+   IDENTIFIER(1195...1198)("baz"),
+   IDENTIFIER(1245...1248)("qux"),
+   IDENTIFIER(3682...3683)("b"),
+   IDENTIFIER(3718...3719)("a")],
   StatementsNode(0...3725)(
     [MatchRequiredNode(0...10)(
        CallNode(0...3)(
@@ -454,7 +452,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        LambdaNode(343...351)(
-         ScopeNode(343...345)([]),
+         [],
          MINUS_GREATER(343...345)("->"),
          nil,
          StatementsNode(348...351)([LocalVariableReadNode(348...351)(1)])
@@ -1076,13 +1074,13 @@ ProgramNode(0...3725)(
        ),
        RangeNode(916...938)(
          LambdaNode(916...924)(
-           ScopeNode(916...918)([]),
+           [],
            MINUS_GREATER(916...918)("->"),
            nil,
            StatementsNode(921...924)([LocalVariableReadNode(921...924)(1)])
          ),
          LambdaNode(930...938)(
-           ScopeNode(930...932)([]),
+           [],
            MINUS_GREATER(930...932)("->"),
            nil,
            StatementsNode(935...938)([LocalVariableReadNode(935...938)(1)])
@@ -2406,7 +2404,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        LambdaNode(1973...1981)(
-         ScopeNode(1973...1975)([]),
+         [],
          MINUS_GREATER(1973...1975)("->"),
          nil,
          StatementsNode(1978...1981)([LocalVariableReadNode(1978...1981)(1)])
@@ -3036,7 +3034,7 @@ ProgramNode(0...3725)(
        ),
        [InNode(2706...2724)(
           LambdaNode(2709...2717)(
-            ScopeNode(2709...2711)([]),
+            [],
             MINUS_GREATER(2709...2711)("->"),
             nil,
             StatementsNode(2714...2717)(
@@ -3862,7 +3860,7 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3643...3646)(0),
             StatementsNode(3629...3637)(
               [LambdaNode(3629...3637)(
-                 ScopeNode(3629...3631)([]),
+                 [],
                  MINUS_GREATER(3629...3631)("->"),
                  nil,
                  StatementsNode(3634...3637)(

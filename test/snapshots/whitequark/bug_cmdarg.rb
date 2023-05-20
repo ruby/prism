@@ -1,5 +1,5 @@
 ProgramNode(0...52)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...52)(
     [CallNode(0...15)(
        nil,
@@ -63,7 +63,7 @@ ProgramNode(0...52)(
                  "x"
                ),
                LambdaNode(35...52)(
-                 ScopeNode(35...37)([]),
+                 [],
                  MINUS_GREATER(35...37)("->"),
                  nil,
                  StatementsNode(41...52)(
@@ -74,13 +74,7 @@ ProgramNode(0...52)(
                       nil,
                       nil,
                       nil,
-                      BlockNode(46...52)(
-                        ScopeNode(46...48)([]),
-                        nil,
-                        nil,
-                        (46...48),
-                        (49...52)
-                      ),
+                      BlockNode(46...52)([], nil, nil, (46...48), (49...52)),
                       "meth"
                     )]
                  )

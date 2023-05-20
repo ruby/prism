@@ -1,5 +1,5 @@
 ProgramNode(0...49)(
-  ScopeNode(0...0)([IDENTIFIER(0...1)("a")]),
+  [IDENTIFIER(0...1)("a")],
   StatementsNode(0...49)(
     [LocalVariableWriteNode(0...5)((0...1), IntegerNode(4...5)(), (2...3), 0),
      CallNode(7...13)(
@@ -63,7 +63,7 @@ ProgramNode(0...49)(
             "raise"
           )]
        ),
-       ScopeNode(15...18)([IDENTIFIER(23...28)("raise")]),
+       [IDENTIFIER(23...28)("raise")],
        (15...18),
        nil,
        nil,

@@ -1,5 +1,5 @@
 ProgramNode(0...29)(
-  ScopeNode(0...0)([IDENTIFIER(0...3)("foo"), IDENTIFIER(5...8)("bar")]),
+  [IDENTIFIER(0...3)("foo"), IDENTIFIER(5...8)("bar")],
   StatementsNode(0...29)(
     [MultiWriteNode(0...29)(
        [LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),

@@ -1,5 +1,5 @@
 ProgramNode(0...31)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...31)(
     [ArrayNode(0...6)(
        [SplatNode(2...5)(

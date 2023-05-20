@@ -1,5 +1,5 @@
 ProgramNode(0...292)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...292)(
     [ParenthesesNode(0...28)(
        StatementsNode(1...27)(
@@ -27,7 +27,7 @@ ProgramNode(0...292)(
                  "bar"
                )]
             ),
-            ScopeNode(1...4)([UDOT_DOT_DOT(9...12)("...")]),
+            [UDOT_DOT_DOT(9...12)("...")],
             (1...4),
             nil,
             nil,
@@ -65,7 +65,7 @@ ProgramNode(0...292)(
                  "bar"
                )]
             ),
-            ScopeNode(31...34)([UDOT_DOT_DOT(39...42)("...")]),
+            [UDOT_DOT_DOT(39...42)("...")],
             (31...34),
             nil,
             nil,
@@ -90,7 +90,7 @@ ProgramNode(0...292)(
          nil
        ),
        nil,
-       ScopeNode(60...63)([UDOT_DOT_DOT(68...71)("...")]),
+       [UDOT_DOT_DOT(68...71)("...")],
        (60...63),
        nil,
        nil,
@@ -122,7 +122,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       ScopeNode(77...80)([UDOT_DOT_DOT(85...88)("...")]),
+       [UDOT_DOT_DOT(85...88)("...")],
        (77...80),
        nil,
        nil,
@@ -154,9 +154,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       ScopeNode(105...108)(
-         [IDENTIFIER(113...114)("a"), UDOT_DOT_DOT(116...119)("...")]
-       ),
+       [IDENTIFIER(113...114)("a"), UDOT_DOT_DOT(116...119)("...")],
        (105...108),
        nil,
        nil,
@@ -188,9 +186,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       ScopeNode(136...139)(
-         [IDENTIFIER(144...145)("a"), UDOT_DOT_DOT(147...150)("...")]
-       ),
+       [IDENTIFIER(144...145)("a"), UDOT_DOT_DOT(147...150)("...")],
        (136...139),
        nil,
        nil,
@@ -215,11 +211,9 @@ ProgramNode(0...292)(
          nil
        ),
        nil,
-       ScopeNode(167...170)(
-         [IDENTIFIER(175...176)("a"),
-          IDENTIFIER(178...179)("b"),
-          UDOT_DOT_DOT(185...188)("...")]
-       ),
+       [IDENTIFIER(175...176)("a"),
+        IDENTIFIER(178...179)("b"),
+        UDOT_DOT_DOT(185...188)("...")],
        (167...170),
        nil,
        nil,
@@ -255,9 +249,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       ScopeNode(194...197)(
-         [IDENTIFIER(202...203)("b"), UDOT_DOT_DOT(209...212)("...")]
-       ),
+       [IDENTIFIER(202...203)("b"), UDOT_DOT_DOT(209...212)("...")],
        (194...197),
        nil,
        nil,
@@ -293,9 +285,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       ScopeNode(229...232)(
-         [IDENTIFIER(237...238)("b"), UDOT_DOT_DOT(244...247)("...")]
-       ),
+       [IDENTIFIER(237...238)("b"), UDOT_DOT_DOT(244...247)("...")],
        (229...232),
        nil,
        nil,
@@ -327,9 +317,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       ScopeNode(264...267)(
-         [IDENTIFIER(272...273)("a"), UDOT_DOT_DOT(275...278)("...")]
-       ),
+       [IDENTIFIER(272...273)("a"), UDOT_DOT_DOT(275...278)("...")],
        (264...267),
        nil,
        (271...272),

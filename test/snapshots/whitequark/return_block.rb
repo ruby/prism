@@ -1,5 +1,5 @@
 ProgramNode(0...21)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...21)(
     [ReturnNode(0...21)(
        KEYWORD_RETURN(0...6)("return"),
@@ -22,13 +22,7 @@ ProgramNode(0...21)(
                )]
             ),
             nil,
-            BlockNode(15...21)(
-              ScopeNode(15...17)([]),
-              nil,
-              nil,
-              (15...17),
-              (18...21)
-            ),
+            BlockNode(15...21)([], nil, nil, (15...17), (18...21)),
             "fun"
           )]
        )

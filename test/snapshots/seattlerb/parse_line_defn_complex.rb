@@ -1,5 +1,5 @@
 ProgramNode(0...40)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...40)(
     [DefNode(0...40)(
        IDENTIFIER(4...5)("x"),
@@ -34,7 +34,7 @@ ProgramNode(0...40)(
             ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(0)])
           )]
        ),
-       ScopeNode(0...3)([IDENTIFIER(6...7)("y")]),
+       [IDENTIFIER(6...7)("y")],
        (0...3),
        nil,
        (5...6),

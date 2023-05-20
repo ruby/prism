@@ -1,5 +1,5 @@
 ProgramNode(0...51)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...51)(
     [BeginNode(0...51)(
        KEYWORD_BEGIN(0...5)("begin"),

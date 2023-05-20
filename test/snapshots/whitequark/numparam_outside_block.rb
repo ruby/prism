@@ -1,5 +1,5 @@
 ProgramNode(0...83)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...83)(
     [CallNode(0...2)(
        nil,
@@ -12,7 +12,7 @@ ProgramNode(0...83)(
        "_1"
      ),
      SingletonClassNode(4...25)(
-       ScopeNode(4...9)([]),
+       [],
        KEYWORD_CLASS(4...9)("class"),
        LESS_LESS(10...12)("<<"),
        CallNode(13...16)(
@@ -40,7 +40,7 @@ ProgramNode(0...83)(
        KEYWORD_END(22...25)("end")
      ),
      ClassNode(27...43)(
-       ScopeNode(27...32)([]),
+       [],
        KEYWORD_CLASS(27...32)("class"),
        ConstantReadNode(33...34)(),
        nil,
@@ -75,7 +75,7 @@ ProgramNode(0...83)(
             "_1"
           )]
        ),
-       ScopeNode(45...48)([]),
+       [],
        (45...48),
        (53...54),
        nil,
@@ -84,7 +84,7 @@ ProgramNode(0...83)(
        (61...64)
      ),
      ModuleNode(66...83)(
-       ScopeNode(66...72)([]),
+       [],
        KEYWORD_MODULE(66...72)("module"),
        ConstantReadNode(73...74)(),
        StatementsNode(76...78)(

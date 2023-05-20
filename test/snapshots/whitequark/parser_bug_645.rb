@@ -1,8 +1,8 @@
 ProgramNode(0...11)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...11)(
     [LambdaNode(0...11)(
-       ScopeNode(0...2)([IDENTIFIER(4...7)("arg")]),
+       [IDENTIFIER(4...7)("arg")],
        MINUS_GREATER(0...2)("->"),
        BlockParametersNode(3...11)(
          ParametersNode(4...10)(

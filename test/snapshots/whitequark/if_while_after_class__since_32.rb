@@ -1,8 +1,8 @@
 ProgramNode(0...178)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...178)(
     [ClassNode(0...38)(
-       ScopeNode(0...5)([]),
+       [],
        KEYWORD_CLASS(0...5)("class"),
        ConstantPathNode(6...33)(
          IfNode(6...25)(
@@ -21,7 +21,7 @@ ProgramNode(0...178)(
        KEYWORD_END(35...38)("end")
      ),
      ClassNode(40...87)(
-       ScopeNode(40...45)([]),
+       [],
        KEYWORD_CLASS(40...45)("class"),
        ConstantPathNode(46...82)(
          WhileNode(46...74)(
@@ -43,7 +43,7 @@ ProgramNode(0...178)(
        KEYWORD_END(84...87)("end")
      ),
      ModuleNode(89...128)(
-       ScopeNode(89...95)([]),
+       [],
        KEYWORD_MODULE(89...95)("module"),
        ConstantPathNode(96...123)(
          IfNode(96...115)(
@@ -60,7 +60,7 @@ ProgramNode(0...178)(
        KEYWORD_END(125...128)("end")
      ),
      ModuleNode(130...178)(
-       ScopeNode(130...136)([]),
+       [],
        KEYWORD_MODULE(130...136)("module"),
        ConstantPathNode(137...173)(
          WhileNode(137...165)(

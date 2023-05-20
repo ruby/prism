@@ -1,5 +1,5 @@
 ProgramNode(0...16)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...16)(
     [InterpolatedStringNode(0...6)(
        STRING_BEGIN(0...1)("\""),

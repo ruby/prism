@@ -1,5 +1,5 @@
 ProgramNode(0...11)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...11)(
     [OperatorAssignmentNode(0...11)(
        ConstantPathWriteNode(0...4)(

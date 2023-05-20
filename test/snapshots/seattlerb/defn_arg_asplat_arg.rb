@@ -1,5 +1,5 @@
 ProgramNode(0...29)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...29)(
     [DefNode(0...29)(
        IDENTIFIER(4...8)("call"),
@@ -14,11 +14,9 @@ ProgramNode(0...29)(
          nil
        ),
        nil,
-       ScopeNode(0...3)(
-         [IDENTIFIER(9...15)("interp"),
-          USTAR(17...18)("*"),
-          IDENTIFIER(20...24)("args")]
-       ),
+       [IDENTIFIER(9...15)("interp"),
+        USTAR(17...18)("*"),
+        IDENTIFIER(20...24)("args")],
        (0...3),
        nil,
        (8...9),

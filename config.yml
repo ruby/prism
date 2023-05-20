@@ -472,9 +472,8 @@ nodes:
           ^^^^^^^^^^
   - name: BlockNode
     child_nodes:
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: parameters
         type: node?
         kind: BlockParametersNode
@@ -608,9 +607,8 @@ nodes:
       end
   - name: ClassNode
     child_nodes:
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: class_keyword
         type: token
       - name: constant_path
@@ -693,9 +691,8 @@ nodes:
         kind: ParametersNode
       - name: statements
         type: node?
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: def_keyword_loc
         type: location
       - name: operator_loc
@@ -1053,9 +1050,8 @@ nodes:
           end
   - name: LambdaNode
     child_nodes:
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: opening
         type: token
       - name: parameters
@@ -1126,9 +1122,8 @@ nodes:
       error.
   - name: ModuleNode
     child_nodes:
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: module_keyword
         type: token
       - name: constant_path
@@ -1354,9 +1349,8 @@ nodes:
           ^^^^^^^^^^^^^
   - name: ProgramNode
     child_nodes:
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: statements
         type: node
         kind: StatementsNode
@@ -1495,13 +1489,6 @@ nodes:
 
           return 1
           ^^^^^^^^
-  - name: ScopeNode
-    child_nodes:
-      - name: locals
-        type: token[]
-    comment: |
-      Represents the local variables within a given lexical scope. These are
-      attached to nodes where a new scope is created.
   - name: SelfNode
     comment: |
       Represents the `self` keyword.
@@ -1510,9 +1497,8 @@ nodes:
           ^^^^
   - name: SingletonClassNode
     child_nodes:
-      - name: scope
-        type: node
-        kind: ScopeNode
+      - name: locals
+        type: token[]
       - name: class_keyword
         type: token
       - name: operator

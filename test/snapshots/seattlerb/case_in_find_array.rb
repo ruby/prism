@@ -1,5 +1,5 @@
 ProgramNode(0...28)(
-  ScopeNode(0...0)([IDENTIFIER(19...20)("c")]),
+  [IDENTIFIER(19...20)("c")],
   StatementsNode(0...28)(
     [CaseNode(0...28)(
        SymbolNode(5...7)(

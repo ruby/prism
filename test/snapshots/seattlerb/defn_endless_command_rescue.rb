@@ -1,5 +1,5 @@
 ProgramNode(0...43)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...43)(
     [DefNode(0...43)(
        IDENTIFIER(4...15)("some_method"),
@@ -23,7 +23,7 @@ ProgramNode(0...43)(
             "other_method"
           )]
        ),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        nil,

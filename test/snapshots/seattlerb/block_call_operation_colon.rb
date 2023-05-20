@@ -1,5 +1,5 @@
 ProgramNode(0...15)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...15)(
     [CallNode(0...15)(
        CallNode(0...12)(
@@ -29,7 +29,7 @@ ProgramNode(0...15)(
             )]
          ),
          nil,
-         BlockNode(6...12)(ScopeNode(6...8)([]), nil, nil, (6...8), (9...12)),
+         BlockNode(6...12)([], nil, nil, (6...8), (9...12)),
          "b"
        ),
        COLON_COLON(12...14)("::"),

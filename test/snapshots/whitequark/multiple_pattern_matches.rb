@@ -1,5 +1,5 @@
 ProgramNode(0...52)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...52)(
     [MatchRequiredNode(0...12)(
        HashNode(0...6)(

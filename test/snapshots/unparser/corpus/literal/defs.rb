@@ -1,12 +1,12 @@
 ProgramNode(0...266)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...266)(
     [DefNode(0...16)(
        IDENTIFIER(9...12)("foo"),
        SelfNode(4...8)(),
        nil,
        nil,
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        (8...9),
        nil,
@@ -30,7 +30,7 @@ ProgramNode(0...266)(
             "bar"
           )]
        ),
-       ScopeNode(18...21)([]),
+       [],
        (18...21),
        (26...27),
        nil,
@@ -64,7 +64,7 @@ ProgramNode(0...266)(
             "baz"
           )]
        ),
-       ScopeNode(42...45)([]),
+       [],
        (42...45),
        (50...51),
        nil,
@@ -88,7 +88,7 @@ ProgramNode(0...266)(
             "bar"
           )]
        ),
-       ScopeNode(72...75)([]),
+       [],
        (72...75),
        (79...80),
        nil,
@@ -107,7 +107,7 @@ ProgramNode(0...266)(
            nil,
            nil,
            BlockNode(104...113)(
-             ScopeNode(104...105)([IDENTIFIER(107...110)("bar")]),
+             [IDENTIFIER(107...110)("bar")],
              BlockParametersNode(106...111)(
                ParametersNode(107...110)(
                  [RequiredParameterNode(107...110)()],
@@ -144,7 +144,7 @@ ProgramNode(0...266)(
             "bar"
           )]
        ),
-       ScopeNode(95...98)([]),
+       [],
        (95...98),
        (114...115),
        nil,
@@ -181,7 +181,7 @@ ProgramNode(0...266)(
             "bar"
           )]
        ),
-       ScopeNode(130...133)([]),
+       [],
        (130...133),
        (142...143),
        nil,
@@ -222,7 +222,7 @@ ProgramNode(0...266)(
             "baz"
           )]
        ),
-       ScopeNode(158...161)([]),
+       [],
        (158...161),
        (176...177),
        nil,
@@ -254,7 +254,7 @@ ProgramNode(0...266)(
             "baz"
           )]
        ),
-       ScopeNode(192...195)([]),
+       [],
        (192...195),
        (206...207),
        nil,
@@ -278,7 +278,7 @@ ProgramNode(0...266)(
             "baz"
           )]
        ),
-       ScopeNode(222...225)([]),
+       [],
        (222...225),
        (229...230),
        nil,
@@ -311,7 +311,7 @@ ProgramNode(0...266)(
             "baz"
           )]
        ),
-       ScopeNode(245...248)([]),
+       [],
        (245...248),
        (252...253),
        nil,

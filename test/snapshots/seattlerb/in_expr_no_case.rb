@@ -1,5 +1,5 @@
 ProgramNode(0...16)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...16)(
     [MatchPredicateNode(0...16)(
        StringNode(0...6)(

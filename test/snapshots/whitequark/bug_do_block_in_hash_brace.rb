@@ -1,5 +1,5 @@
 ProgramNode(0...225)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...225)(
     [CallNode(0...42)(
        nil,
@@ -29,13 +29,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(19...25)(
-                   ScopeNode(19...21)([]),
-                   nil,
-                   nil,
-                   (19...21),
-                   (22...25)
-                 ),
+                 BlockNode(19...25)([], nil, nil, (19...21), (22...25)),
                  "proc"
                ),
                nil
@@ -54,13 +48,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(35...41)(
-                   ScopeNode(35...37)([]),
-                   nil,
-                   nil,
-                   (35...37),
-                   (38...41)
-                 ),
+                 BlockNode(35...41)([], nil, nil, (35...37), (38...41)),
                  "proc"
                ),
                nil
@@ -94,13 +82,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(61...67)(
-                   ScopeNode(61...63)([]),
-                   nil,
-                   nil,
-                   (61...63),
-                   (64...67)
-                 ),
+                 BlockNode(61...67)([], nil, nil, (61...63), (64...67)),
                  "proc"
                ),
                (53...55)
@@ -119,13 +101,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(77...83)(
-                   ScopeNode(77...79)([]),
-                   nil,
-                   nil,
-                   (77...79),
-                   (80...83)
-                 ),
+                 BlockNode(77...83)([], nil, nil, (77...79), (80...83)),
                  "proc"
                ),
                nil
@@ -165,13 +141,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(106...112)(
-                   ScopeNode(106...108)([]),
-                   nil,
-                   nil,
-                   (106...108),
-                   (109...112)
-                 ),
+                 BlockNode(106...112)([], nil, nil, (106...108), (109...112)),
                  "proc"
                ),
                EQUAL_GREATER(98...100)("=>")
@@ -190,13 +160,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(122...128)(
-                   ScopeNode(122...124)([]),
-                   nil,
-                   nil,
-                   (122...124),
-                   (125...128)
-                 ),
+                 BlockNode(122...128)([], nil, nil, (122...124), (125...128)),
                  "proc"
                ),
                nil
@@ -236,13 +200,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(148...154)(
-                   ScopeNode(148...150)([]),
-                   nil,
-                   nil,
-                   (148...150),
-                   (151...154)
-                 ),
+                 BlockNode(148...154)([], nil, nil, (148...150), (151...154)),
                  "proc"
                ),
                nil
@@ -261,13 +219,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(164...170)(
-                   ScopeNode(164...166)([]),
-                   nil,
-                   nil,
-                   (164...166),
-                   (167...170)
-                 ),
+                 BlockNode(164...170)([], nil, nil, (164...166), (167...170)),
                  "proc"
                ),
                nil
@@ -301,13 +253,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(187...193)(
-                   ScopeNode(187...189)([]),
-                   nil,
-                   nil,
-                   (187...189),
-                   (190...193)
-                 ),
+                 BlockNode(187...193)([], nil, nil, (187...189), (190...193)),
                  "proc"
                ),
                CallNode(197...208)(
@@ -317,13 +263,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(202...208)(
-                   ScopeNode(202...204)([]),
-                   nil,
-                   nil,
-                   (202...204),
-                   (205...208)
-                 ),
+                 BlockNode(202...208)([], nil, nil, (202...204), (205...208)),
                  "proc"
                ),
                EQUAL_GREATER(194...196)("=>")
@@ -342,13 +282,7 @@ ProgramNode(0...225)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(218...224)(
-                   ScopeNode(218...220)([]),
-                   nil,
-                   nil,
-                   (218...220),
-                   (221...224)
-                 ),
+                 BlockNode(218...224)([], nil, nil, (218...220), (221...224)),
                  "proc"
                ),
                nil

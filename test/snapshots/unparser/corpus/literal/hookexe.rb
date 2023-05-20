@@ -1,5 +1,5 @@
 ProgramNode(0...33)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...33)(
     [PreExecutionNode(0...15)(
        StatementsNode(10...13)(

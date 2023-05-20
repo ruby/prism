@@ -1,5 +1,5 @@
 ProgramNode(0...7)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...7)(
     [RegularExpressionNode(0...7)(
        REGEXP_BEGIN(0...1)("/"),

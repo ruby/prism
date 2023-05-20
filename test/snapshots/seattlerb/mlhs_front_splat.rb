@@ -1,10 +1,8 @@
 ProgramNode(0...15)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(1...2)("s"),
-     IDENTIFIER(4...5)("x"),
-     IDENTIFIER(7...8)("y"),
-     IDENTIFIER(10...11)("z")]
-  ),
+  [IDENTIFIER(1...2)("s"),
+   IDENTIFIER(4...5)("x"),
+   IDENTIFIER(7...8)("y"),
+   IDENTIFIER(10...11)("z")],
   StatementsNode(0...15)(
     [MultiWriteNode(0...15)(
        [MultiWriteNode(0...2)(

@@ -1,13 +1,11 @@
 ProgramNode(0...747)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(297...298)("_"),
-     IDENTIFIER(377...380)("lhs"),
-     IDENTIFIER(382...383)("x"),
-     IDENTIFIER(386...389)("rhs"),
-     IDENTIFIER(462...463)("c"),
-     IDENTIFIER(486...487)("b"),
-     IDENTIFIER(498...499)("e")]
-  ),
+  [IDENTIFIER(297...298)("_"),
+   IDENTIFIER(377...380)("lhs"),
+   IDENTIFIER(382...383)("x"),
+   IDENTIFIER(386...389)("rhs"),
+   IDENTIFIER(462...463)("c"),
+   IDENTIFIER(486...487)("b"),
+   IDENTIFIER(498...499)("e")],
   StatementsNode(0...747)(
     [CaseNode(0...21)(
        SymbolNode(5...7)(
@@ -442,7 +440,7 @@ ProgramNode(0...747)(
           ArrayPatternNode(445...464)(
             nil,
             [LambdaNode(446...458)(
-               ScopeNode(446...448)([IDENTIFIER(449...450)("b")]),
+               [IDENTIFIER(449...450)("b")],
                MINUS_GREATER(446...448)("->"),
                BlockParametersNode(448...451)(
                  ParametersNode(449...450)(

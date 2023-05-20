@@ -1,5 +1,5 @@
 ProgramNode(0...53)(
-  ScopeNode(0...0)([IDENTIFIER(22...23)("a")]),
+  [IDENTIFIER(22...23)("a")],
   StatementsNode(0...53)(
     [OperatorAssignmentNode(0...11)(
        ClassVariableWriteNode(0...5)((0...5), nil, nil),
@@ -27,7 +27,7 @@ ProgramNode(0...53)(
             IntegerNode(46...48)()
           )]
        ),
-       ScopeNode(30...33)([]),
+       [],
        (30...33),
        nil,
        nil,

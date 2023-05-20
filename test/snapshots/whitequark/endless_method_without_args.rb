@@ -1,12 +1,12 @@
 ProgramNode(0...86)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...86)(
     [DefNode(0...12)(
        IDENTIFIER(4...7)("foo"),
        nil,
        nil,
        StatementsNode(10...12)([IntegerNode(10...12)()]),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        nil,
@@ -25,7 +25,7 @@ ProgramNode(0...86)(
             NilNode(34...37)()
           )]
        ),
-       ScopeNode(14...17)([]),
+       [],
        (14...17),
        nil,
        nil,
@@ -38,7 +38,7 @@ ProgramNode(0...86)(
        SelfNode(43...47)(),
        nil,
        StatementsNode(54...56)([IntegerNode(54...56)()]),
-       ScopeNode(39...42)([]),
+       [],
        (39...42),
        (47...48),
        nil,
@@ -57,7 +57,7 @@ ProgramNode(0...86)(
             NilNode(83...86)()
           )]
        ),
-       ScopeNode(58...61)([]),
+       [],
        (58...61),
        (66...67),
        nil,

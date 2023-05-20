@@ -1,5 +1,5 @@
 ProgramNode(0...13)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...13)(
     [HashNode(0...13)(
        BRACE_LEFT(0...1)("{"),

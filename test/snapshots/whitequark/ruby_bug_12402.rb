@@ -1,5 +1,5 @@
 ProgramNode(0...437)(
-  ScopeNode(0...0)([IDENTIFIER(0...3)("foo")]),
+  [IDENTIFIER(0...3)("foo")],
   StatementsNode(0...437)(
     [OperatorAssignmentNode(0...27)(
        LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),

@@ -14,12 +14,12 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "module name recoverable" do
     expected = ModuleNode(
-      ScopeNode([]),
+      [],
       KEYWORD_MODULE("module"),
       ConstantReadNode(),
       StatementsNode(
         [ModuleNode(
-           ScopeNode([]),
+           [],
            KEYWORD_MODULE("module"),
            MissingNode(),
            nil,
@@ -346,14 +346,14 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       StatementsNode(
         [ModuleNode(
-           ScopeNode([]),
+           [],
            KEYWORD_MODULE("module"),
            ConstantReadNode(),
            nil,
            KEYWORD_END("end")
          )]
       ),
-      ScopeNode([]),
+      [],
       Location(),
       nil,
       nil,
@@ -379,11 +379,11 @@ class ErrorsTest < Test::Unit::TestCase
            nil,
            nil,
            BlockNode(
-             ScopeNode([]),
+             [],
              nil,
              StatementsNode(
                [ModuleNode(
-                  ScopeNode([]),
+                  [],
                   KEYWORD_MODULE("module"),
                   ConstantReadNode(),
                   nil,
@@ -396,7 +396,7 @@ class ErrorsTest < Test::Unit::TestCase
            "bar"
          )]
       ),
-      ScopeNode([]),
+      [],
       Location(),
       nil,
       nil,
@@ -421,7 +421,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       StatementsNode(
         [ClassNode(
-           ScopeNode([]),
+           [],
            KEYWORD_CLASS("class"),
            ConstantReadNode(),
            nil,
@@ -430,7 +430,7 @@ class ErrorsTest < Test::Unit::TestCase
            KEYWORD_END("end")
          )]
       ),
-      ScopeNode([]),
+      [],
       Location(),
       nil,
       nil,
@@ -448,7 +448,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], [], nil, [], nil, nil),
       nil,
-      ScopeNode([]),
+      [],
       Location(),
       nil,
       Location(),
@@ -557,7 +557,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode([IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")]),
+      [IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")],
       Location(),
       nil,
       Location(),
@@ -573,7 +573,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "do not allow trailing commas in lambda parameters" do
     expected = LambdaNode(
-      ScopeNode([IDENTIFIER("a"), IDENTIFIER("b")]),
+      [IDENTIFIER("a"), IDENTIFIER("b")],
       MINUS_GREATER("->"),
       BlockParametersNode(
         ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
@@ -640,7 +640,7 @@ class ErrorsTest < Test::Unit::TestCase
         BlockParameterNode(IDENTIFIER("block"), Location())
       ),
       nil,
-      ScopeNode([IDENTIFIER("block"), IDENTIFIER("a")]),
+      [IDENTIFIER("block"), IDENTIFIER("a")],
       Location(),
       nil,
       Location(),
@@ -657,7 +657,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], [RequiredParameterNode()], nil, [], nil, BlockParameterNode(nil, Location())),
       nil,
-      ScopeNode([AMPERSAND("&"), IDENTIFIER("a")]),
+      [AMPERSAND("&"), IDENTIFIER("a")],
       Location(),
       nil,
       Location(),
@@ -683,7 +683,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode([UDOT_DOT_DOT("..."), IDENTIFIER("a")]),
+      [UDOT_DOT_DOT("..."), IDENTIFIER("a")],
       Location(),
       nil,
       Location(),
@@ -708,7 +708,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode([LABEL("b"), IDENTIFIER("a")]),
+      [LABEL("b"), IDENTIFIER("a")],
       Location(),
       nil,
       Location(),
@@ -736,7 +736,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode([IDENTIFIER("rest"), LABEL("b")]),
+      [IDENTIFIER("rest"), LABEL("b")],
       Location(),
       nil,
       Location(),
@@ -753,7 +753,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil),
       nil,
-      ScopeNode([UDOT_DOT_DOT("...")]),
+      [UDOT_DOT_DOT("...")],
       Location(),
       nil,
       Location(),
@@ -781,11 +781,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode(
-        [IDENTIFIER("args"),
-         IDENTIFIER("a"),
-         LABEL("b")]
-      ),
+      [IDENTIFIER("args"), IDENTIFIER("a"), LABEL("b")],
       Location(),
       nil,
       Location(),
@@ -813,11 +809,9 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode(
-        [IDENTIFIER("args"),
-         IDENTIFIER("a"),
-         LABEL("b")]
-      ),
+      [IDENTIFIER("args"),
+        IDENTIFIER("a"),
+        LABEL("b")],
       Location(),
       nil,
       Location(),
@@ -845,11 +839,9 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode(
-        [IDENTIFIER("args"),
-         IDENTIFIER("a"),
-         LABEL("b")]
-      ),
+      [IDENTIFIER("args"),
+        IDENTIFIER("a"),
+        LABEL("b")],
       Location(),
       nil,
       Location(),
@@ -884,13 +876,11 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      ScopeNode(
-        [IDENTIFIER("a"),
-         IDENTIFIER("b"),
-         IDENTIFIER("c"),
-         IDENTIFIER("d"),
-         IDENTIFIER("e")]
-      ),
+      [IDENTIFIER("a"),
+        IDENTIFIER("b"),
+        IDENTIFIER("c"),
+        IDENTIFIER("d"),
+        IDENTIFIER("e")],
       Location(),
       nil,
       Location(),
@@ -919,7 +909,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       StatementsNode([IntegerNode()]),
-      ScopeNode([]),
+      [],
       Location(),
       nil,
       Location(),
@@ -933,7 +923,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "do not allow forward arguments in lambda literals" do
     expected = LambdaNode(
-      ScopeNode([UDOT_DOT_DOT("...")]),
+      [UDOT_DOT_DOT("...")],
       MINUS_GREATER("->"),
       BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
       nil
@@ -951,7 +941,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        ScopeNode([UDOT_DOT_DOT("...")]),
+        [UDOT_DOT_DOT("...")],
         BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
         nil,
         Location(),
@@ -965,7 +955,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "don't allow return inside class body" do
     expected = ClassNode(
-      ScopeNode([]),
+      [],
       KEYWORD_CLASS("class"),
       ConstantReadNode(),
       nil,
@@ -979,7 +969,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   test "don't allow return inside module body" do
     expected = ModuleNode(
-      ScopeNode([]),
+      [],
       KEYWORD_MODULE("module"),
       ConstantReadNode(),
       StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),

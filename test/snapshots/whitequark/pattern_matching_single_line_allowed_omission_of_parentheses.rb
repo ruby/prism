@@ -1,9 +1,7 @@
 ProgramNode(0...142)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(10...11)("a"),
-     IDENTIFIER(13...14)("b"),
-     IDENTIFIER(94...99)("value")]
-  ),
+  [IDENTIFIER(10...11)("a"),
+   IDENTIFIER(13...14)("b"),
+   IDENTIFIER(94...99)("value")],
   StatementsNode(0...142)(
     [MatchRequiredNode(0...14)(
        ArrayNode(0...6)(

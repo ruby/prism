@@ -1,5 +1,5 @@
 ProgramNode(0...43)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...43)(
     [CallNode(0...14)(
        CallNode(0...3)(
@@ -23,13 +23,7 @@ ProgramNode(0...43)(
           )]
        ),
        nil,
-       BlockNode(12...14)(
-         ScopeNode(12...13)([]),
-         nil,
-         nil,
-         (12...13),
-         (13...14)
-       ),
+       BlockNode(12...14)([], nil, nil, (12...13), (13...14)),
        "fun"
      ),
      CallNode(16...31)(
@@ -54,13 +48,7 @@ ProgramNode(0...43)(
           )]
        ),
        nil,
-       BlockNode(29...31)(
-         ScopeNode(29...30)([]),
-         nil,
-         nil,
-         (29...30),
-         (30...31)
-       ),
+       BlockNode(29...31)([], nil, nil, (29...30), (30...31)),
        "}"
      ),
      CallNode(33...43)(
@@ -76,13 +64,7 @@ ProgramNode(0...43)(
           )]
        ),
        nil,
-       BlockNode(41...43)(
-         ScopeNode(41...42)([]),
-         nil,
-         nil,
-         (41...42),
-         (42...43)
-       ),
+       BlockNode(41...43)([], nil, nil, (41...42), (42...43)),
        "fun"
      )]
   )
