@@ -2735,7 +2735,7 @@ yp_rescue_node_statements_set(yp_rescue_node_t *node, yp_statements_node_t *stat
   node->base.location.end = statements->base.location.end;
 }
 
-// Set the consequent of a resuce node, and update the location.
+// Set the consequent of a rescue node, and update the location.
 static void
 yp_rescue_node_consequent_set(yp_rescue_node_t *node, yp_rescue_node_t *consequent) {
   node->consequent = consequent;
