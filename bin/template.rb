@@ -96,7 +96,7 @@ class OptionalLocationParam < Param
 end
 
 # This represents an integer parameter.
-class IntegerParam < Param
+class UInt32Param < Param
   def rbs_class = "Integer"
   def java_type = "int"
 end
@@ -111,7 +111,7 @@ PARAM_TYPES = {
   "token[]" => TokenListParam,
   "location" => LocationParam,
   "location?" => OptionalLocationParam,
-  "integer" => IntegerParam,
+  "uint32" => UInt32Param,
 }
 
 # This class represents a node in the tree, configured by the config.yml file in

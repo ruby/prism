@@ -91,7 +91,7 @@ module YARP
           when OptionalTokenParam then "load_optional_token"
           when LocationParam then "load_location"
           when OptionalLocationParam then "load_optional_location"
-          when IntegerParam then 'io.read(4).unpack1("L")'
+          when UInt32Param then 'io.read(4).unpack1("L")'
           else raise
           end
         } + ["location"]).join(", ") -%>)
