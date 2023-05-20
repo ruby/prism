@@ -364,8 +364,8 @@ module YARP
       rescue ArgumentError
       end
       RUBY
-      assert_location(RescueNode, code, 13...36) { |node| node.rescue_clause }
-      assert_location(RescueNode, code, 30...36) { |node| node.rescue_clause.consequent }
+      assert_location(RescueNode, code, 13...50) { |node| node.rescue_clause }
+      assert_location(RescueNode, code, 30...50) { |node| node.rescue_clause.consequent }
     end
 
     test "RetryNode" do

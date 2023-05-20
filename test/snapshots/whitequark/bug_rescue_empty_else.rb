@@ -4,7 +4,7 @@ ProgramNode(0...34)(
     [BeginNode(0...34)(
        KEYWORD_BEGIN(0...5)("begin"),
        nil,
-       RescueNode(7...13)(
+       RescueNode(7...23)(
          KEYWORD_RESCUE(7...13)("rescue"),
          [ConstantReadNode(14...23)()],
          nil,

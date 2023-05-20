@@ -138,7 +138,7 @@ ProgramNode(0...530)(
      BeginNode(107...125)(
        KEYWORD_BEGIN(107...112)("begin"),
        nil,
-       RescueNode(113...119)(
+       RescueNode(113...121)(
          KEYWORD_RESCUE(113...119)("rescue"),
          [ConstantReadNode(120...121)()],
          nil,
@@ -331,7 +331,7 @@ ProgramNode(0...530)(
             )
           )]
        ),
-       RescueNode(317...323)(
+       RescueNode(317...333)(
          KEYWORD_RESCUE(317...323)("rescue"),
          [ConstantReadNode(324...333)()],
          nil,

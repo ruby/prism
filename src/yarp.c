@@ -2732,7 +2732,9 @@ yp_rescue_node_exception_set(yp_rescue_node_t *node, yp_node_t *exception) {
 static void
 yp_rescue_node_statements_set(yp_rescue_node_t *node, yp_statements_node_t *statements) {
   node->statements = statements;
-  node->base.location.end = statements->base.location.end;
+  if ((statements != NULL) && (statements->body.size > 0)) {
+    node->base.location.end = statements->base.location.end;
+  }
 }
 
 // Set the consequent of a rescue node, and update the location.
@@ -2740,6 +2742,13 @@ static void
 yp_rescue_node_consequent_set(yp_rescue_node_t *node, yp_rescue_node_t *consequent) {
   node->consequent = consequent;
   node->base.location.end = consequent->base.location.end;
+}
+
+// Append an exception node to a rescue node, and update the location.
+static void
+yp_rescue_node_exceptions_append(yp_rescue_node_t *node, yp_node_t *exception) {
+  yp_node_list_append(&node->exceptions, exception);
+  node->base.location.end = exception->location.end;
 }
 
 // Allocate a new RestParameterNode node.
@@ -7888,7 +7897,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
 
           do {
             yp_node_t *expression = parse_starred_expression(parser, YP_BINDING_POWER_DEFINED, "Expected to find a rescued expression.");
-            yp_node_list_append(&rescue->exceptions, expression);
+            yp_rescue_node_exceptions_append(rescue, expression);
 
             // If we hit a newline, then this is the end of the rescue expression. We
             // can continue on to parse the statements.

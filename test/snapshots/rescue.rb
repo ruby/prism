@@ -100,7 +100,7 @@ ProgramNode(0...316)(
             "a"
           )]
        ),
-       RescueNode(141...147)(
+       RescueNode(141...150)(
          KEYWORD_RESCUE(141...147)("rescue"),
          [SplatNode(148...150)(
             USTAR(148...149)("*"),
