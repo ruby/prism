@@ -281,9 +281,7 @@ typedef struct {
 // This struct represents a node in a linked list of scopes. Some scopes can see
 // into their parent scopes, while others cannot.
 typedef struct yp_scope {
-  // A pointer to the node that holds the tokens that correspond to the locals
-  // in the given scope.
-  // yp_scope_node_t *node;
+  // Locals in the given scope.
   yp_token_list_t locals;
 
   // A boolean indicating whether or not this scope can see into its parent. If
