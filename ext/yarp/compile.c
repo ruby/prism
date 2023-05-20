@@ -728,10 +728,10 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     case YP_NODE_PROGRAM_NODE: {
       yp_program_node_t *node = (yp_program_node_t *) base_node;
 
-      if ((node->statements != NULL) && (node->statements->body.size != 0)) {
-        yp_compile_node(compiler, (yp_node_t *) node->statements);
-      } else {
+      if (node->statements->body.size == 0) {
         push_putnil(compiler);
+      } else {
+        yp_compile_node(compiler, (yp_node_t *) node->statements);
       }
 
       push_leave(compiler);
