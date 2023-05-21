@@ -10,6 +10,10 @@ module YARP
       @end_offset = end_offset
     end
 
+    def length
+      @end_offset - @start_offset
+    end
+
     def deconstruct_keys(keys)
       { start_offset: start_offset, end_offset: end_offset }
     end
