@@ -55,7 +55,7 @@ module YARP
         type =
           case number
           <%- tokens.each_with_index do |token, index| -%>
-          when <%= index + 1 %> then :<%= token.name %>
+          when <%= index + 1 %> then :<%= token.name.inspect %>
           <%- end -%>
           end
 
