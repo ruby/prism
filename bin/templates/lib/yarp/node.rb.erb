@@ -6,15 +6,14 @@ module YARP
     attr_reader :<%= param.name %>
 
     <%- end -%>
-    # attr_reader location: Location
-    attr_reader :location
 
-    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["location: Location"]).join(", ") %>) -> void
-    def initialize(<%= (node.params.map(&:name) + ["location"]).join(", ") %>)
+    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["start_offset: Integer", "end_offset: Integer"]).join(", ") %>) -> void
+    def initialize(<%= (node.params.map(&:name) + ["start_offset", "end_offset"]).join(", ") %>)
       <%- node.params.each do |param| -%>
       @<%= param.name %> = <%= param.name %>
       <%- end -%>
-      @location = location
+      @start_offset = start_offset
+      @end_offset = end_offset
     end
 
     # def accept: (visitor: Visitor) -> void
@@ -61,14 +60,14 @@ module YARP
 
     # Create a new <%= node.name %> node
     def <%= node.name %>(<%= node.params.map(&:name).join(", ") %>)
-      <%= node.name %>.new(<%= (node.params.map(&:name) + ["Location.null"]).join(", ") %>)
+      <%= node.name %>.new(<%= (node.params.map(&:name) + ["0", "0"]).join(", ") %>)
     end
     <%- end -%>
     <%- tokens.each do |token| -%>
 
     # Create a new <%= token.name %> token
     def <%= token.name %>(value, location = Location.null)
-      Token.new(:<%= token.name %>, value, location)
+      Token.new(:<%= token.name %>, value, location.start_offset, location.end_offset)
     end
     <%- end -%>
   end

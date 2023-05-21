@@ -20,10 +20,11 @@ yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding) {
   VALUE argv[] = {
     ID2SYM(rb_intern(yp_token_type_to_str(token->type))),
     rb_enc_str_new(token->start, token->end - token->start, encoding),
-    location_new(parser, token->start, token->end)
+    LONG2FIX(token->start - parser->start),
+    LONG2FIX(token->end - parser->start)
   };
 
-  return rb_class_new_instance(3, argv, rb_cYARPToken);
+  return rb_class_new_instance(4, argv, rb_cYARPToken);
 }
 
 VALUE
@@ -31,7 +32,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
   switch (node->type) {
     <%- nodes.each do |node| -%>
     case <%= node.type %>: {
-      VALUE argv[<%= node.params.length + 1 %>];
+      VALUE argv[<%= node.params.length + 2 %>];
       <%- node.params.each_with_index do |param, index| -%>
 
       // <%= param.name %>
@@ -68,9 +69,10 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
       <%- end -%>
 
       // location
-      argv[<%= node.params.length %>] = location_new(parser, node->location.start, node->location.end);
+      argv[<%= node.params.length %>] = LONG2FIX(node->location.start - parser->start);
+      argv[<%= node.params.length + 1 %>] = LONG2FIX(node->location.end - parser->start);
 
-      return rb_class_new_instance(<%= node.params.length + 1 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= node.name %>")));
+      return rb_class_new_instance(<%= node.params.length + 2 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= node.name %>")));
     }
     <%- end -%>
     default:
