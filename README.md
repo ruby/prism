@@ -4,7 +4,7 @@ This is an early work-in-progress project geared at replacing the existing CRuby
 
 * Portability - we want the ability to use this parser in other projects, implementations, and tools.
 * Error tolerance - we want this parser to be able to recover from as many syntax errors as possible.
-* Maintainability - we want this to be a long-standing projects with good hygiene. This means tutorials, examples, documentation, clean code, good test coverage, etc.
+* Maintainability - we want this to be a long-standing project with good hygiene. This means tutorials, examples, documentation, clean code, good test coverage, etc.
 
 ## Background
 
