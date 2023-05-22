@@ -6899,7 +6899,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
       yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &name, operator, value);
       if ((name.type == YP_TOKEN_BACK_REFERENCE) || (name.type == YP_TOKEN_NTH_REFERENCE)) {
         char *message = malloc(strlen("Can't set variable $1") * sizeof(char));
-        sprintf(message, "Can't set variable %.*s", 2, name.start);
+        snprintf(message, strlen("Can't set variable $1") + 1, "Can't set variable %.*s", 2, name.start);
         yp_diagnostic_list_append(
           &parser->error_list,
           name.start,
