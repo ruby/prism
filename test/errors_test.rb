@@ -983,14 +983,14 @@ class ErrorsTest < Test::Unit::TestCase
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       StatementsNode([GlobalVariableWriteNode(BACK_REFERENCE("$+"), EQUAL("="), NilNode()),
-       GlobalVariableWriteNode(NTH_REFERENCE("$1"), EQUAL("="), NilNode())]),
+       GlobalVariableWriteNode(NTH_REFERENCE("$1466"), EQUAL("="), NilNode())]),
       nil,
       nil,
       nil,
       KEYWORD_END("end")
     )
 
-    assert_errors expected, "begin\n$+ = nil\n$1 = nil\nend", ["Can't set variable $+", "Can't set variable $1"]
+    assert_errors expected, "begin\n$+ = nil\n$1466 = nil\nend", ["Can't set variable $+", "Can't set variable $1466"]
   end
 
   private
