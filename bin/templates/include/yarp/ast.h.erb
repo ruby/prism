@@ -75,7 +75,7 @@ typedef struct yp_<%= node.human %> {
   in TokenListParam then "yp_token_list_t #{param.name}"
   in StringParam then "yp_string_t #{param.name}"
   in LocationParam | OptionalLocationParam then "yp_location_t #{param.name}"
-  in IntegerParam then "int #{param.name}"
+  in UInt32Param then "uint32_t #{param.name}"
   end
   %>;
 <%- end -%>

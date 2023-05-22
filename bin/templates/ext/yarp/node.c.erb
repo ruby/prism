@@ -60,8 +60,8 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
       argv[<%= index %>] = location_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.start, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.end);
       <%- when OptionalLocationParam -%>
       argv[<%= index %>] = ((yp_<%= node.human %>_t *)node)-><%= param.name %>.start == NULL ? Qnil : location_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.start, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.end);
-      <%- when IntegerParam -%>
-      argv[<%= index %>] = INT2FIX(((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+      <%- when UInt32Param -%>
+      argv[<%= index %>] = ULONG2NUM(((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- else -%>
       <%- raise -%>
       <%- end -%>

@@ -1067,7 +1067,7 @@ nodes:
   - name: LocalVariableReadNode
     child_nodes:
       - name: depth
-        type: integer
+        type: uint32
     comment: |
       Represents reading a local variable. Note that this requires that a local
       variable of the same name has already been written to in the same scope,
@@ -1084,7 +1084,7 @@ nodes:
       - name: operator_loc
         type: location?
       - name: depth
-        type: integer
+        type: uint32
     comment: |
       Represents writing to a local variable.
 

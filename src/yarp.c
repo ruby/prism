@@ -2056,7 +2056,7 @@ yp_lambda_node_create(
 
 // Allocate a new LocalVariableReadNode node.
 static yp_local_variable_read_node_t *
-yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, int depth) {
+yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, uint32_t depth) {
   yp_local_variable_read_node_t *node = yp_alloc(parser, sizeof(yp_local_variable_read_node_t));
 
   *node = (yp_local_variable_read_node_t) {
@@ -2072,7 +2072,7 @@ yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, 
 
 // Allocate and initialize a new LocalVariableWriteNode node.
 static yp_local_variable_write_node_t *
-yp_local_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, yp_node_t *value, const yp_token_t *operator, int depth) {
+yp_local_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, yp_node_t *value, const yp_token_t *operator, uint32_t depth) {
   yp_local_variable_write_node_t *node = yp_alloc(parser, sizeof(yp_local_variable_write_node_t));
 
   *node = (yp_local_variable_write_node_t) {
@@ -6885,7 +6885,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
       yp_location_t name_loc = target->location;
-      int depth = ((yp_local_variable_read_node_t *) target)->depth;
+      uint32_t depth = ((yp_local_variable_read_node_t *) target)->depth;
       yp_node_destroy(parser, target);
 
       return (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator, depth);
@@ -8485,7 +8485,7 @@ parse_vcall(yp_parser_t *parser) {
     (parser->previous.end[-1] != '?') &&
     (depth = yp_parser_local_depth(parser, &parser->previous)) != -1
   ) {
-    return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, depth);
+    return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, (uint32_t) depth);
   }
 
   return (yp_node_t *) yp_call_node_vcall_create(parser, &parser->previous);

@@ -65,12 +65,9 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
       } else {
         prettyprint_location(buffer, parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       }
-      <%- when IntegerParam -%>
+      <%- when UInt32Param -%>
       char <%= param.name %>_buffer[12];
       snprintf(<%= param.name %>_buffer, 12, "+%d", ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> < 0) {
-        <%= param.name %>_buffer[0] = '-';
-      }
       yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
       <%- else -%>
       <%- raise -%>

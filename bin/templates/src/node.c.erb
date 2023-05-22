@@ -107,7 +107,7 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
     case <%= node.type %>:
       <%- node.params.each do |param| -%>
       <%- case param -%>
-      <%- when TokenParam, OptionalTokenParam, LocationParam, OptionalLocationParam, IntegerParam -%>
+      <%- when TokenParam, OptionalTokenParam, LocationParam, OptionalLocationParam, UInt32Param -%>
       <%- when NodeParam -%>
       yp_node_destroy(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when OptionalNodeParam -%>
@@ -158,8 +158,8 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
       memsize->memsize += yp_token_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
       <%- when LocationParam, OptionalLocationParam -%>
       memsize->memsize += sizeof(yp_location_t);
-      <%- when IntegerParam -%>
-      memsize->memsize += sizeof(int);
+      <%- when UInt32Param -%>
+      memsize->memsize += sizeof(uint32_t);
       <%- else -%>
       <%- raise -%>
       <%- end -%>
