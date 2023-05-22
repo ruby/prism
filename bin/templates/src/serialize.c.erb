@@ -7,19 +7,21 @@ static void
 serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {
   assert(token->start);
   assert(token->end);
+  assert(token->start <= token->end);
 
   yp_buffer_append_u8(buffer, token->type);
   yp_buffer_append_u32(buffer, yp_long_to_u32(token->start - parser->start));
-  yp_buffer_append_u32(buffer, yp_long_to_u32(token->end - parser->start));
+  yp_buffer_append_u32(buffer, yp_long_to_u32(token->end - token->start));
 }
 
 static void
 serialize_location(yp_parser_t *parser, yp_location_t *location, yp_buffer_t *buffer) {
   assert(location->start);
   assert(location->end);
+  assert(location->start <= location->end);
 
   yp_buffer_append_u32(buffer, yp_long_to_u32(location->start - parser->start));
-  yp_buffer_append_u32(buffer, yp_long_to_u32(location->end - parser->start));
+  yp_buffer_append_u32(buffer, yp_long_to_u32(location->end - location->start));
 }
 
 void
@@ -28,11 +30,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 
   size_t offset = buffer->length;
 
-  assert(node->location.start);
-  assert(node->location.end);
-
-  yp_buffer_append_u32(buffer, yp_long_to_u32(node->location.start - parser->start));
-  yp_buffer_append_u32(buffer, yp_long_to_u32(node->location.end - parser->start));
+  serialize_location(parser, &node->location, buffer);
 
   switch (node->type) {
     <%- nodes.each do |node| -%>
