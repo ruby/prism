@@ -1,5 +1,5 @@
 ProgramNode(0...24)(
-  ScopeNode(0...0)([IDENTIFIER(6...7)("a")]),
+  [IDENTIFIER(6...7)("a")],
   StatementsNode(0...24)(
     [MatchRequiredNode(0...8)(
        IntegerNode(0...1)(),

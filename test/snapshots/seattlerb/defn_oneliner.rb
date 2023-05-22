@@ -1,5 +1,5 @@
 ProgramNode(0...27)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...27)(
     [DefNode(0...27)(
        IDENTIFIER(4...8)("exec"),
@@ -25,7 +25,7 @@ ProgramNode(0...27)(
             "system"
           )]
        ),
-       ScopeNode(0...3)([IDENTIFIER(9...12)("cmd")]),
+       [IDENTIFIER(9...12)("cmd")],
        (0...3),
        nil,
        (8...9),

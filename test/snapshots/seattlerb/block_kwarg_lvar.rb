@@ -1,5 +1,5 @@
 ProgramNode(0...20)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...20)(
     [CallNode(0...20)(
        nil,
@@ -9,7 +9,7 @@ ProgramNode(0...20)(
        nil,
        nil,
        BlockNode(3...20)(
-         ScopeNode(3...4)([LABEL(6...8)("kw")]),
+         [LABEL(6...8)("kw")],
          BlockParametersNode(5...15)(
            ParametersNode(6...14)(
              [],

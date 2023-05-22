@@ -1,5 +1,5 @@
 ProgramNode(0...31)(
-  ScopeNode(0...0)([IDENTIFIER(4...9)("match")]),
+  [IDENTIFIER(4...9)("match")],
   StatementsNode(0...31)(
     [CallNode(0...24)(
        RegularExpressionNode(0...15)(

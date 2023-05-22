@@ -1,5 +1,5 @@
 ProgramNode(0...15)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...15)(
     [MultiWriteNode(0...15)(
        [ConstantPathWriteNode(0...3)(

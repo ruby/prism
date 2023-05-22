@@ -1,5 +1,5 @@
 ProgramNode(6...77)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(6...77)(
     [DefNode(6...77)(
        IDENTIFIER(10...14)("blah"),
@@ -19,7 +19,7 @@ ProgramNode(6...77)(
             KEYWORD_END(64...67)("end")
           )]
        ),
-       ScopeNode(6...9)([]),
+       [],
        (6...9),
        nil,
        nil,

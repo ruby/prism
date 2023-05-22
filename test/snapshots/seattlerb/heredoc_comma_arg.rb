@@ -1,5 +1,5 @@
 ProgramNode(0...47)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...47)(
     [ArrayNode(0...17)(
        [StringNode(1...15)(

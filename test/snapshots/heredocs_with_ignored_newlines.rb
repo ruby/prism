@@ -1,5 +1,5 @@
 ProgramNode(0...106)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...106)(
     [InterpolatedStringNode(0...14)(
        HEREDOC_START(0...7)("<<-HERE"),

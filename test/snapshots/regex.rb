@@ -1,5 +1,5 @@
 ProgramNode(0...278)(
-  ScopeNode(0...0)([IDENTIFIER(64...67)("foo")]),
+  [IDENTIFIER(64...67)("foo")],
   StatementsNode(0...278)(
     [CallNode(0...9)(
        nil,

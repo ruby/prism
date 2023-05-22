@@ -1,5 +1,5 @@
 ProgramNode(0...32)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...32)(
     [AliasNode(0...17)(
        InterpolatedSymbolNode(6...11)(

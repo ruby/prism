@@ -1,11 +1,9 @@
 ProgramNode(0...719)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(27...28)("a"),
-     IDENTIFIER(32...33)("b"),
-     IDENTIFIER(51...54)("foo"),
-     IDENTIFIER(111...112)("c"),
-     IDENTIFIER(507...508)("x")]
-  ),
+  [IDENTIFIER(27...28)("a"),
+   IDENTIFIER(32...33)("b"),
+   IDENTIFIER(51...54)("foo"),
+   IDENTIFIER(111...112)("c"),
+   IDENTIFIER(507...508)("x")],
   StatementsNode(0...719)(
     [GlobalVariableWriteNode(0...6)(
        GLOBAL_VARIABLE(0...2)("$a"),

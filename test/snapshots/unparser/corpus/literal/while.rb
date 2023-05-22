@@ -1,8 +1,8 @@
 ProgramNode(0...620)(
-  ScopeNode(0...0)([IDENTIFIER(371...372)("x")]),
+  [IDENTIFIER(371...372)("x")],
   StatementsNode(0...620)(
     [ModuleNode(0...68)(
-       ScopeNode(0...6)([]),
+       [],
        KEYWORD_MODULE(0...6)("module"),
        ConstantReadNode(7...8)(),
        StatementsNode(11...64)(
@@ -14,9 +14,7 @@ ProgramNode(0...620)(
             nil,
             nil,
             BlockNode(15...64)(
-              ScopeNode(15...16)(
-                [IDENTIFIER(18...21)("bar"), IDENTIFIER(43...46)("foo")]
-              ),
+              [IDENTIFIER(18...21)("bar"), IDENTIFIER(43...46)("foo")],
               BlockParametersNode(17...22)(
                 ParametersNode(18...21)(
                   [RequiredParameterNode(18...21)()],
@@ -109,7 +107,7 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       ScopeNode(70...73)([IDENTIFIER(80...83)("foo")]),
+       [IDENTIFIER(80...83)("foo")],
        (70...73),
        nil,
        nil,
@@ -118,7 +116,7 @@ ProgramNode(0...620)(
        (107...110)
      ),
      ModuleNode(112...146)(
-       ScopeNode(112...118)([IDENTIFIER(123...126)("foo")]),
+       [IDENTIFIER(123...126)("foo")],
        KEYWORD_MODULE(112...118)("module"),
        ConstantReadNode(119...120)(),
        StatementsNode(123...142)(
@@ -147,7 +145,7 @@ ProgramNode(0...620)(
        KEYWORD_END(143...146)("end")
      ),
      ModuleNode(148...182)(
-       ScopeNode(148...154)([IDENTIFIER(159...162)("foo")]),
+       [IDENTIFIER(159...162)("foo")],
        KEYWORD_MODULE(148...154)("module"),
        ConstantReadNode(155...156)(),
        StatementsNode(159...178)(
@@ -176,7 +174,7 @@ ProgramNode(0...620)(
        KEYWORD_END(179...182)("end")
      ),
      ModuleNode(184...228)(
-       ScopeNode(184...190)([IDENTIFIER(209...212)("foo")]),
+       [IDENTIFIER(209...212)("foo")],
        KEYWORD_MODULE(184...190)("module"),
        ConstantReadNode(191...192)(),
        StatementsNode(195...224)(
@@ -214,7 +212,7 @@ ProgramNode(0...620)(
        KEYWORD_END(225...228)("end")
      ),
      ModuleNode(230...299)(
-       ScopeNode(230...236)([]),
+       [],
        KEYWORD_MODULE(230...236)("module"),
        ConstantReadNode(237...238)(),
        StatementsNode(241...295)(
@@ -226,9 +224,7 @@ ProgramNode(0...620)(
             nil,
             nil,
             BlockNode(246...295)(
-              ScopeNode(246...247)(
-                [IDENTIFIER(249...252)("baz"), IDENTIFIER(274...277)("foo")]
-              ),
+              [IDENTIFIER(249...252)("baz"), IDENTIFIER(274...277)("foo")],
               BlockParametersNode(248...253)(
                 ParametersNode(249...252)(
                   [RequiredParameterNode(249...252)()],
@@ -284,7 +280,7 @@ ProgramNode(0...620)(
        KEYWORD_END(296...299)("end")
      ),
      ModuleNode(301...370)(
-       ScopeNode(301...307)([]),
+       [],
        KEYWORD_MODULE(301...307)("module"),
        ConstantReadNode(308...309)(),
        StatementsNode(312...366)(
@@ -296,7 +292,7 @@ ProgramNode(0...620)(
             nil,
             nil,
             BlockNode(317...366)(
-              ScopeNode(317...318)([IDENTIFIER(320...323)("foo")]),
+              [IDENTIFIER(320...323)("foo")],
               BlockParametersNode(319...324)(
                 ParametersNode(320...323)(
                   [RequiredParameterNode(320...323)()],
@@ -530,13 +526,7 @@ ProgramNode(0...620)(
               nil,
               nil,
               nil,
-              BlockNode(540...543)(
-                ScopeNode(540...541)([]),
-                nil,
-                nil,
-                (540...541),
-                (542...543)
-              ),
+              BlockNode(540...543)([], nil, nil, (540...541), (542...543)),
               "foo"
             )]
          ),
@@ -573,13 +563,7 @@ ProgramNode(0...620)(
               nil,
               nil,
               nil,
-              BlockNode(604...607)(
-                ScopeNode(604...605)([]),
-                nil,
-                nil,
-                (604...605),
-                (606...607)
-              ),
+              BlockNode(604...607)([], nil, nil, (604...605), (606...607)),
               "foo"
             )]
          ),

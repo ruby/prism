@@ -8,6 +8,6 @@ class MemsizeTest < Test::Unit::TestCase
 
     assert_equal 5, result[:length]
     assert_kind_of Integer, result[:memsize]
-    assert_equal 7, result[:node_count]
+    assert_equal 6, result[:node_count]
   end
 end

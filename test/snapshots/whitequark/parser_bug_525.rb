@@ -1,5 +1,5 @@
 ProgramNode(0...32)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...32)(
     [CallNode(0...32)(
        nil,
@@ -33,7 +33,7 @@ ProgramNode(0...32)(
        ),
        nil,
        BlockNode(12...32)(
-         ScopeNode(12...14)([]),
+         [],
          nil,
          StatementsNode(16...27)(
            [CallNode(16...27)(
@@ -43,13 +43,7 @@ ProgramNode(0...32)(
               PARENTHESIS_LEFT(18...19)("("),
               nil,
               PARENTHESIS_RIGHT(19...20)(")"),
-              BlockNode(21...27)(
-                ScopeNode(21...23)([]),
-                nil,
-                nil,
-                (21...23),
-                (24...27)
-              ),
+              BlockNode(21...27)([], nil, nil, (21...23), (24...27)),
               "m3"
             )]
          ),

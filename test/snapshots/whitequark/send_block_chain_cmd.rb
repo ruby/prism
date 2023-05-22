@@ -1,5 +1,5 @@
 ProgramNode(0...173)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...173)(
     [CallNode(0...21)(
        CallNode(0...13)(
@@ -9,7 +9,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(5...6)([IntegerNode(5...6)()]),
          nil,
-         BlockNode(7...13)(ScopeNode(7...9)([]), nil, nil, (7...9), (10...13)),
+         BlockNode(7...13)([], nil, nil, (7...9), (10...13)),
          "meth"
        ),
        DOT(13...14)("."),
@@ -39,13 +39,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(28...29)([IntegerNode(28...29)()]),
          nil,
-         BlockNode(30...36)(
-           ScopeNode(30...32)([]),
-           nil,
-           nil,
-           (30...32),
-           (33...36)
-         ),
+         BlockNode(30...36)([], nil, nil, (30...32), (33...36)),
          "meth"
        ),
        DOT(36...37)("."),
@@ -64,13 +58,7 @@ ProgramNode(0...173)(
           )]
        ),
        nil,
-       BlockNode(45...51)(
-         ScopeNode(45...47)([]),
-         nil,
-         nil,
-         (45...47),
-         (48...51)
-       ),
+       BlockNode(45...51)([], nil, nil, (45...47), (48...51)),
        "fun"
      ),
      CallNode(53...73)(
@@ -81,13 +69,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(58...59)([IntegerNode(58...59)()]),
          nil,
-         BlockNode(60...66)(
-           ScopeNode(60...62)([]),
-           nil,
-           nil,
-           (60...62),
-           (63...66)
-         ),
+         BlockNode(60...66)([], nil, nil, (60...62), (63...66)),
          "meth"
        ),
        DOT(66...67)("."),
@@ -95,13 +77,7 @@ ProgramNode(0...173)(
        nil,
        nil,
        nil,
-       BlockNode(71...73)(
-         ScopeNode(71...72)([]),
-         nil,
-         nil,
-         (71...72),
-         (72...73)
-       ),
+       BlockNode(71...73)([], nil, nil, (71...72), (72...73)),
        "fun"
      ),
      CallNode(75...97)(
@@ -112,13 +88,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(80...81)([IntegerNode(80...81)()]),
          nil,
-         BlockNode(82...88)(
-           ScopeNode(82...84)([]),
-           nil,
-           nil,
-           (82...84),
-           (85...88)
-         ),
+         BlockNode(82...88)([], nil, nil, (82...84), (85...88)),
          "meth"
        ),
        DOT(88...89)("."),
@@ -148,13 +118,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(104...105)([IntegerNode(104...105)()]),
          nil,
-         BlockNode(106...112)(
-           ScopeNode(106...108)([]),
-           nil,
-           nil,
-           (106...108),
-           (109...112)
-         ),
+         BlockNode(106...112)([], nil, nil, (106...108), (109...112)),
          "meth"
        ),
        DOT(112...113)("."),
@@ -173,13 +137,7 @@ ProgramNode(0...173)(
           )]
        ),
        PARENTHESIS_RIGHT(120...121)(")"),
-       BlockNode(122...124)(
-         ScopeNode(122...123)([]),
-         nil,
-         nil,
-         (122...123),
-         (123...124)
-       ),
+       BlockNode(122...124)([], nil, nil, (122...123), (123...124)),
        "fun"
      ),
      CallNode(126...148)(
@@ -190,13 +148,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(131...132)([IntegerNode(131...132)()]),
          nil,
-         BlockNode(133...139)(
-           ScopeNode(133...135)([]),
-           nil,
-           nil,
-           (133...135),
-           (136...139)
-         ),
+         BlockNode(133...139)([], nil, nil, (133...135), (136...139)),
          "meth"
        ),
        COLON_COLON(139...141)("::"),
@@ -226,13 +178,7 @@ ProgramNode(0...173)(
          nil,
          ArgumentsNode(155...156)([IntegerNode(155...156)()]),
          nil,
-         BlockNode(157...163)(
-           ScopeNode(157...159)([]),
-           nil,
-           nil,
-           (157...159),
-           (160...163)
-         ),
+         BlockNode(157...163)([], nil, nil, (157...159), (160...163)),
          "meth"
        ),
        COLON_COLON(163...165)("::"),

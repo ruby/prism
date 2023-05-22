@@ -1,5 +1,5 @@
 ProgramNode(0...30)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...30)(
     [WhileNode(0...30)(
        KEYWORD_WHILE(0...5)("while"),

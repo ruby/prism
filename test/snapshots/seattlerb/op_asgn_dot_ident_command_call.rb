@@ -1,5 +1,5 @@
 ProgramNode(0...11)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...11)(
     [OperatorOrAssignmentNode(0...11)(
        CallNode(0...3)(

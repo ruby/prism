@@ -1,7 +1,5 @@
 ProgramNode(0...246)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(184...187)("foo"), IDENTIFIER(225...229)("pair")]
-  ),
+  [IDENTIFIER(184...187)("foo"), IDENTIFIER(225...229)("pair")],
   StatementsNode(0...246)(
     [IfNode(0...18)(
        KEYWORD_IF(0...2)("if"),
@@ -75,7 +73,7 @@ ProgramNode(0...246)(
        KEYWORD_END(97...100)("end")
      ),
      ModuleNode(102...133)(
-       ScopeNode(102...108)([IDENTIFIER(113...116)("foo")]),
+       [IDENTIFIER(113...116)("foo")],
        KEYWORD_MODULE(102...108)("module"),
        ConstantReadNode(109...110)(),
        StatementsNode(113...129)(
@@ -106,7 +104,7 @@ ProgramNode(0...246)(
        KEYWORD_END(130...133)("end")
      ),
      ModuleNode(135...170)(
-       ScopeNode(135...141)([IDENTIFIER(146...149)("foo")]),
+       [IDENTIFIER(146...149)("foo")],
        KEYWORD_MODULE(135...141)("module"),
        ConstantReadNode(142...143)(),
        StatementsNode(146...166)(
@@ -178,7 +176,7 @@ ProgramNode(0...246)(
          nil,
          nil,
          BlockNode(205...222)(
-           ScopeNode(205...206)([IDENTIFIER(208...212)("pair")]),
+           [IDENTIFIER(208...212)("pair")],
            BlockParametersNode(207...213)(
              ParametersNode(208...212)(
                [RequiredParameterNode(208...212)()],

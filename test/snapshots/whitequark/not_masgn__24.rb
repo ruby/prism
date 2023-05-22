@@ -1,5 +1,5 @@
 ProgramNode(0...13)(
-  ScopeNode(0...0)([IDENTIFIER(2...3)("a"), IDENTIFIER(5...6)("b")]),
+  [IDENTIFIER(2...3)("a"), IDENTIFIER(5...6)("b")],
   StatementsNode(0...13)(
     [CallNode(0...13)(
        ParenthesesNode(1...13)(

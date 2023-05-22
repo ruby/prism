@@ -1,5 +1,5 @@
 ProgramNode(0...22)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...22)(
     [CallNode(0...22)(
        InterpolatedStringNode(0...16)(

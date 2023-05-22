@@ -1,5 +1,5 @@
 ProgramNode(0...48)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...48)(
     [InterpolatedStringNode(0...34)(
        HEREDOC_START(0...8)("<<-EOFOO"),
@@ -12,7 +12,7 @@ ProgramNode(0...48)(
        HEREDOC_END(28...34)("EOFOO\n")
      ),
      ClassNode(35...48)(
-       ScopeNode(35...40)([]),
+       [],
        KEYWORD_CLASS(35...40)("class"),
        ConstantReadNode(41...44)(),
        nil,

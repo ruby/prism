@@ -1,5 +1,5 @@
 ProgramNode(0...916)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...916)(
     [HashNode(0...38)(
        BRACE_LEFT(0...1)("{"),
@@ -959,7 +959,7 @@ ProgramNode(0...916)(
        nil,
        nil,
        BlockNode(874...892)(
-         ScopeNode(874...875)([]),
+         [],
          nil,
          StatementsNode(878...890)(
            [InterpolatedStringNode(878...890)(

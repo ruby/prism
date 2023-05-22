@@ -1,5 +1,5 @@
 ProgramNode(2...20)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(2...20)(
     [IfNode(2...13)(
        QUESTION_MARK(2...3)("?"),

@@ -1,5 +1,5 @@
 ProgramNode(0...20)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...20)(
     [BreakNode(0...20)(
        ArgumentsNode(6...20)(
@@ -21,13 +21,7 @@ ProgramNode(0...20)(
                )]
             ),
             nil,
-            BlockNode(14...20)(
-              ScopeNode(14...16)([]),
-              nil,
-              nil,
-              (14...16),
-              (17...20)
-            ),
+            BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
             "fun"
           )]
        ),

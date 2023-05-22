@@ -1,8 +1,8 @@
 ProgramNode(0...46)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...46)(
     [LambdaNode(0...9)(
-       ScopeNode(0...2)([]),
+       [],
        MINUS_GREATER(0...2)("->"),
        BlockParametersNode(2...9)(
          ParametersNode(3...8)(
@@ -33,7 +33,7 @@ ProgramNode(0...46)(
          nil
        ),
        nil,
-       ScopeNode(14...17)([]),
+       [],
        (14...17),
        nil,
        (19...20),
@@ -49,7 +49,7 @@ ProgramNode(0...46)(
        nil,
        nil,
        BlockNode(35...46)(
-         ScopeNode(35...36)([]),
+         [],
          BlockParametersNode(37...44)(
            ParametersNode(38...43)(
              [],

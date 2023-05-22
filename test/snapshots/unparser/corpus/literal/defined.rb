@@ -1,5 +1,5 @@
 ProgramNode(0...56)(
-  ScopeNode(0...0)([IDENTIFIER(40...41)("a"), IDENTIFIER(43...44)("b")]),
+  [IDENTIFIER(40...41)("a"), IDENTIFIER(43...44)("b")],
   StatementsNode(0...56)(
     [DefinedNode(0...14)(
        PARENTHESIS_LEFT(8...9)("("),

@@ -1,5 +1,5 @@
 ProgramNode(0...20)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...20)(
     [InterpolatedStringNode(0...20)(
        STRING_BEGIN(0...2)("%{"),

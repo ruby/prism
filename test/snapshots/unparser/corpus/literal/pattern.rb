@@ -1,9 +1,7 @@
 ProgramNode(0...408)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(21...22)("a"),
-     IDENTIFIER(132...133)("x"),
-     IDENTIFIER(135...136)("y")]
-  ),
+  [IDENTIFIER(21...22)("a"),
+   IDENTIFIER(132...133)("x"),
+   IDENTIFIER(135...136)("y")],
   StatementsNode(0...408)(
     [CaseNode(0...345)(
        CallNode(5...8)(

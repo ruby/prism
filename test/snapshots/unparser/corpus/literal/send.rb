@@ -1,12 +1,10 @@
 ProgramNode(0...991)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...991)(
     [ModuleNode(0...35)(
-       ScopeNode(0...6)(
-         [IDENTIFIER(11...14)("foo"),
-          IDENTIFIER(21...22)("a"),
-          IDENTIFIER(24...25)("_")]
-       ),
+       [IDENTIFIER(11...14)("foo"),
+        IDENTIFIER(21...22)("a"),
+        IDENTIFIER(24...25)("_")],
        KEYWORD_MODULE(0...6)("module"),
        ConstantReadNode(7...8)(),
        StatementsNode(11...31)(
@@ -41,7 +39,7 @@ ProgramNode(0...991)(
        KEYWORD_END(32...35)("end")
      ),
      ModuleNode(37...73)(
-       ScopeNode(37...43)([IDENTIFIER(48...53)("local")]),
+       [IDENTIFIER(48...53)("local")],
        KEYWORD_MODULE(37...43)("module"),
        ConstantReadNode(44...45)(),
        StatementsNode(48...69)(
@@ -66,7 +64,7 @@ ProgramNode(0...991)(
      ),
      CallNode(74...89)(
        ClassNode(74...85)(
-         ScopeNode(74...79)([]),
+         [],
          KEYWORD_CLASS(74...79)("class"),
          ConstantReadNode(80...81)(),
          nil,
@@ -84,7 +82,7 @@ ProgramNode(0...991)(
      ),
      CallNode(90...106)(
        ModuleNode(90...102)(
-         ScopeNode(90...96)([]),
+         [],
          KEYWORD_MODULE(90...96)("module"),
          ConstantReadNode(97...98)(),
          nil,
@@ -131,7 +129,7 @@ ProgramNode(0...991)(
                 nil,
                 nil,
                 nil,
-                ScopeNode(134...137)([]),
+                [],
                 (134...137),
                 nil,
                 nil,
@@ -215,7 +213,7 @@ ProgramNode(0...991)(
      ),
      CallNode(196...217)(
        SingletonClassNode(196...213)(
-         ScopeNode(196...201)([]),
+         [],
          KEYWORD_CLASS(196...201)("class"),
          LESS_LESS(202...204)("<<"),
          SelfNode(205...209)(),
@@ -236,7 +234,7 @@ ProgramNode(0...991)(
          SelfNode(222...226)(),
          nil,
          nil,
-         ScopeNode(218...221)([]),
+         [],
          (218...221),
          (226...227),
          nil,
@@ -258,7 +256,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
-         ScopeNode(239...242)([]),
+         [],
          (239...242),
          nil,
          nil,
@@ -328,13 +326,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
-         BlockNode(296...299)(
-           ScopeNode(296...297)([]),
-           nil,
-           nil,
-           (296...297),
-           (298...299)
-         ),
+         BlockNode(296...299)([], nil, nil, (296...297), (298...299)),
          "loop"
        ),
        DOT(299...300)("."),

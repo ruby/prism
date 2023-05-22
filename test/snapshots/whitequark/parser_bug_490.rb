@@ -1,5 +1,5 @@
 ProgramNode(0...132)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...132)(
     [DefNode(0...39)(
        IDENTIFIER(4...5)("m"),
@@ -7,7 +7,7 @@ ProgramNode(0...132)(
        nil,
        StatementsNode(7...34)(
          [SingletonClassNode(7...34)(
-            ScopeNode(7...12)([]),
+            [],
             KEYWORD_CLASS(7...12)("class"),
             LESS_LESS(13...15)("<<"),
             SelfNode(16...20)(),
@@ -21,7 +21,7 @@ ProgramNode(0...132)(
             KEYWORD_END(31...34)("end")
           )]
        ),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        nil,
@@ -35,13 +35,13 @@ ProgramNode(0...132)(
        nil,
        StatementsNode(48...80)(
          [SingletonClassNode(48...80)(
-            ScopeNode(48...53)([]),
+            [],
             KEYWORD_CLASS(48...53)("class"),
             LESS_LESS(54...56)("<<"),
             SelfNode(57...61)(),
             StatementsNode(63...75)(
               [ClassNode(63...75)(
-                 ScopeNode(63...68)([]),
+                 [],
                  KEYWORD_CLASS(63...68)("class"),
                  ConstantReadNode(69...70)(),
                  nil,
@@ -53,7 +53,7 @@ ProgramNode(0...132)(
             KEYWORD_END(77...80)("end")
           )]
        ),
-       ScopeNode(41...44)([]),
+       [],
        (41...44),
        nil,
        nil,
@@ -67,13 +67,13 @@ ProgramNode(0...132)(
        nil,
        StatementsNode(94...127)(
          [SingletonClassNode(94...127)(
-            ScopeNode(94...99)([]),
+            [],
             KEYWORD_CLASS(94...99)("class"),
             LESS_LESS(100...102)("<<"),
             SelfNode(103...107)(),
             StatementsNode(109...122)(
               [ModuleNode(109...122)(
-                 ScopeNode(109...115)([]),
+                 [],
                  KEYWORD_MODULE(109...115)("module"),
                  ConstantReadNode(116...117)(),
                  nil,
@@ -83,7 +83,7 @@ ProgramNode(0...132)(
             KEYWORD_END(124...127)("end")
           )]
        ),
-       ScopeNode(87...90)([]),
+       [],
        (87...90),
        nil,
        nil,

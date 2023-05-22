@@ -1,5 +1,5 @@
 ProgramNode(0...76)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...76)(
     [CallNode(0...76)(
        nil,
@@ -9,7 +9,7 @@ ProgramNode(0...76)(
        nil,
        nil,
        BlockNode(2...76)(
-         ScopeNode(2...4)([IDENTIFIER(7...8)("v")]),
+         [IDENTIFIER(7...8)("v")],
          nil,
          StatementsNode(7...72)(
            [LocalVariableWriteNode(7...14)(

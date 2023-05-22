@@ -1,5 +1,5 @@
 ProgramNode(0...40)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...40)(
     [CallNode(0...19)(
        nil,
@@ -8,7 +8,7 @@ ProgramNode(0...40)(
        nil,
        ArgumentsNode(2...19)(
          [LambdaNode(2...19)(
-            ScopeNode(2...4)([IDENTIFIER(5...6)("a")]),
+            [IDENTIFIER(5...6)("a")],
             MINUS_GREATER(2...4)("->"),
             BlockParametersNode(4...16)(
               ParametersNode(5...14)(
@@ -17,7 +17,7 @@ ProgramNode(0...40)(
                    IDENTIFIER(5...6)("a"),
                    EQUAL(7...8)("="),
                    LambdaNode(9...14)(
-                     ScopeNode(9...11)([]),
+                     [],
                      MINUS_GREATER(9...11)("->"),
                      nil,
                      StatementsNode(12...14)(
@@ -58,7 +58,7 @@ ProgramNode(0...40)(
        nil,
        ArgumentsNode(24...40)(
          [LambdaNode(24...40)(
-            ScopeNode(24...26)([LABEL(27...28)("a")]),
+            [LABEL(27...28)("a")],
             MINUS_GREATER(24...26)("->"),
             BlockParametersNode(26...37)(
               ParametersNode(27...35)(
@@ -69,7 +69,7 @@ ProgramNode(0...40)(
                 [KeywordParameterNode(27...35)(
                    LABEL(27...29)("a:"),
                    LambdaNode(30...35)(
-                     ScopeNode(30...32)([]),
+                     [],
                      MINUS_GREATER(30...32)("->"),
                      nil,
                      StatementsNode(33...35)(

@@ -1,5 +1,5 @@
 ProgramNode(8...111)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(8...111)(
     [CaseNode(8...111)(
        ArrayNode(13...51)(

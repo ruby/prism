@@ -1,5 +1,5 @@
 ProgramNode(0...25)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...25)(
     [InterpolatedStringNode(0...25)(
        HEREDOC_START(0...5)("<<EOS"),

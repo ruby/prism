@@ -1,5 +1,5 @@
 ProgramNode(0...16)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...16)(
     [IfNode(0...16)(
        KEYWORD_IF(0...2)("if"),

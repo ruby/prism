@@ -1,5 +1,5 @@
 ProgramNode(6...66)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(6...66)(
     [HashNode(6...66)(
        BRACE_LEFT(6...7)("{"),
@@ -18,7 +18,7 @@ ProgramNode(6...66)(
             nil,
             nil,
             BlockNode(26...41)(
-              ScopeNode(26...27)([]),
+              [],
               nil,
               StatementsNode(30...39)(
                 [IfNode(30...39)(

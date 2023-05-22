@@ -1,5 +1,5 @@
 ProgramNode(0...77)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...77)(
     [OrNode(0...14)(
        RangeNode(0...5)(

@@ -1,5 +1,5 @@
 ProgramNode(0...131)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...131)(
     [NextNode(0...4)(nil, (0...4)),
      ReturnNode(5...11)(KEYWORD_RETURN(5...11)("return"), nil),

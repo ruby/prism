@@ -1,5 +1,5 @@
 ProgramNode(0...26)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...26)(
     [DefNode(0...26)(
        IDENTIFIER(4...7)("fun"),
@@ -22,7 +22,7 @@ ProgramNode(0...26)(
          nil
        ),
        StatementsNode(19...21)([LocalVariableReadNode(19...21)(0)]),
-       ScopeNode(0...3)([LABEL(8...10)("kw")]),
+       [LABEL(8...10)("kw")],
        (0...3),
        nil,
        (7...8),

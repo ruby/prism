@@ -1,5 +1,5 @@
 ProgramNode(0...188)(
-  ScopeNode(0...0)([IDENTIFIER(36...39)("foo"), IDENTIFIER(83...84)("a")]),
+  [IDENTIFIER(36...39)("foo"), IDENTIFIER(83...84)("a")],
   StatementsNode(0...188)(
     [UntilNode(0...13)(
        KEYWORD_UNTIL_MODIFIER(2...7)("until"),
@@ -10,13 +10,7 @@ ProgramNode(0...188)(
          nil,
          nil,
          nil,
-         BlockNode(11...13)(
-           ScopeNode(11...12)([]),
-           nil,
-           nil,
-           (11...12),
-           (12...13)
-         ),
+         BlockNode(11...13)([], nil, nil, (11...12), (12...13)),
          "b?"
        ),
        StatementsNode(0...1)(
@@ -41,13 +35,7 @@ ProgramNode(0...188)(
          nil,
          nil,
          nil,
-         BlockNode(24...26)(
-           ScopeNode(24...25)([]),
-           nil,
-           nil,
-           (24...25),
-           (25...26)
-         ),
+         BlockNode(24...26)([], nil, nil, (24...25), (25...26)),
          "b?"
        ),
        StatementsNode(29...30)(
@@ -104,13 +92,7 @@ ProgramNode(0...188)(
            nil,
            nil,
            nil,
-           BlockNode(72...75)(
-             ScopeNode(72...73)([]),
-             nil,
-             nil,
-             (72...73),
-             (74...75)
-           ),
+           BlockNode(72...75)([], nil, nil, (72...73), (74...75)),
            "a"
          ),
          AMPERSAND_AMPERSAND(67...69)("&&")
@@ -163,7 +145,7 @@ ProgramNode(0...188)(
          ),
          PARENTHESIS_RIGHT(114...115)(")"),
          BlockNode(116...130)(
-           ScopeNode(116...118)([]),
+           [],
            nil,
            StatementsNode(125...126)(
              [CallNode(125...126)(
@@ -185,7 +167,7 @@ ProgramNode(0...188)(
        StatementsNode(98...99)([LocalVariableReadNode(98...99)(0)])
      ),
      ModuleNode(132...188)(
-       ScopeNode(132...138)([IDENTIFIER(143...146)("foo")]),
+       [IDENTIFIER(143...146)("foo")],
        KEYWORD_MODULE(132...138)("module"),
        ConstantReadNode(139...140)(),
        StatementsNode(143...184)(

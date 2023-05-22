@@ -1,5 +1,5 @@
 ProgramNode(0...26)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...26)(
     [InterpolatedStringNode(0...26)(
        STRING_BEGIN(0...3)("%Q["),

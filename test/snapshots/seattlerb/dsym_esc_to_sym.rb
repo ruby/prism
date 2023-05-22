@@ -1,5 +1,5 @@
 ProgramNode(0...17)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...17)(
     [InterpolatedSymbolNode(0...17)(
        SYMBOL_BEGIN(0...2)(":\""),

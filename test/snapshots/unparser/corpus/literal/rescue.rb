@@ -1,5 +1,5 @@
 ProgramNode(0...64)(
-  ScopeNode(0...0)([IDENTIFIER(37...38)("x")]),
+  [IDENTIFIER(37...38)("x")],
   StatementsNode(0...64)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(

@@ -1,5 +1,5 @@
 ProgramNode(0...24)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...24)(
     [ImaginaryNode(0...5)(FloatNode(0...4)()),
      ImaginaryNode(7...13)(RationalNode(7...12)(FloatNode(7...11)())),

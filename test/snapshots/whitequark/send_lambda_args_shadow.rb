@@ -1,12 +1,10 @@
 ProgramNode(0...15)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...15)(
     [LambdaNode(0...15)(
-       ScopeNode(0...2)(
-         [IDENTIFIER(3...4)("a"),
-          IDENTIFIER(6...9)("foo"),
-          IDENTIFIER(11...14)("bar")]
-       ),
+       [IDENTIFIER(3...4)("a"),
+        IDENTIFIER(6...9)("foo"),
+        IDENTIFIER(11...14)("bar")],
        MINUS_GREATER(0...2)("->"),
        BlockParametersNode(2...15)(
          ParametersNode(3...4)(

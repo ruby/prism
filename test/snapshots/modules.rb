@@ -1,8 +1,8 @@
 ProgramNode(0...140)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...140)(
     [ModuleNode(0...18)(
-       ScopeNode(0...6)([IDENTIFIER(9...10)("a")]),
+       [IDENTIFIER(9...10)("a")],
        KEYWORD_MODULE(0...6)("module"),
        ConstantReadNode(7...8)(),
        StatementsNode(9...14)(
@@ -43,7 +43,7 @@ ProgramNode(0...140)(
        STRING_END(37...38)("}")
      ),
      ModuleNode(40...55)(
-       ScopeNode(40...46)([]),
+       [],
        KEYWORD_MODULE(40...46)("module"),
        ConstantPathNode(47...51)(
          CallNode(47...48)(
@@ -63,7 +63,7 @@ ProgramNode(0...140)(
        KEYWORD_END(52...55)("end")
      ),
      ModuleNode(57...85)(
-       ScopeNode(57...63)([IDENTIFIER(67...68)("x")]),
+       [IDENTIFIER(67...68)("x")],
        KEYWORD_MODULE(57...63)("module"),
        ConstantReadNode(64...65)(),
        BeginNode(0...85)(
@@ -91,14 +91,14 @@ ProgramNode(0...140)(
        KEYWORD_END(82...85)("end")
      ),
      ModuleNode(87...101)(
-       ScopeNode(87...93)([]),
+       [],
        KEYWORD_MODULE(87...93)("module"),
        ConstantPathNode(94...97)(nil, ConstantReadNode(96...97)(), (94...96)),
        nil,
        KEYWORD_END(98...101)("end")
      ),
      ModuleNode(103...120)(
-       ScopeNode(103...109)([]),
+       [],
        KEYWORD_MODULE(103...109)("module"),
        ConstantPathNode(110...116)(
          CallNode(110...113)(
@@ -118,7 +118,7 @@ ProgramNode(0...140)(
        KEYWORD_END(117...120)("end")
      ),
      ModuleNode(122...140)(
-       ScopeNode(122...128)([]),
+       [],
        KEYWORD_MODULE(122...128)("module"),
        ConstantPathNode(129...136)(
          CallNode(129...133)(

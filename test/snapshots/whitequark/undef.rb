@@ -1,5 +1,5 @@
 ProgramNode(0...27)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...27)(
     [UndefNode(0...27)(
        [SymbolNode(6...9)(nil, IDENTIFIER(6...9)("foo"), nil, "foo"),

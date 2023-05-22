@@ -1,5 +1,5 @@
 ProgramNode(0...179)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...179)(
     [DefNode(0...28)(
        BANG_EQUAL(4...6)("!="),
@@ -25,7 +25,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       ScopeNode(0...3)([IDENTIFIER(7...12)("other")]),
+       [IDENTIFIER(7...12)("other")],
        (0...3),
        nil,
        (6...7),
@@ -57,7 +57,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       ScopeNode(30...33)([IDENTIFIER(37...42)("other")]),
+       [IDENTIFIER(37...42)("other")],
        (30...33),
        nil,
        (36...37),
@@ -89,7 +89,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       ScopeNode(60...63)([IDENTIFIER(67...72)("other")]),
+       [IDENTIFIER(67...72)("other")],
        (60...63),
        nil,
        (66...67),
@@ -121,7 +121,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       ScopeNode(90...93)([IDENTIFIER(97...102)("other")]),
+       [IDENTIFIER(97...102)("other")],
        (90...93),
        nil,
        (96...97),
@@ -153,7 +153,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       ScopeNode(120...123)([IDENTIFIER(128...133)("other")]),
+       [IDENTIFIER(128...133)("other")],
        (120...123),
        nil,
        (127...128),
@@ -185,7 +185,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       ScopeNode(151...154)([IDENTIFIER(158...163)("other")]),
+       [IDENTIFIER(158...163)("other")],
        (151...154),
        nil,
        (157...158),

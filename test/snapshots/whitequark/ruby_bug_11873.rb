@@ -1,5 +1,5 @@
 ProgramNode(0...272)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...272)(
     [CallNode(0...20)(
        nil,
@@ -47,13 +47,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(14...20)(
-         ScopeNode(14...16)([]),
-         nil,
-         nil,
-         (14...16),
-         (17...20)
-       ),
+       BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
        "a"
      ),
      CallNode(22...42)(
@@ -102,13 +96,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(36...42)(
-         ScopeNode(36...38)([]),
-         nil,
-         nil,
-         (36...38),
-         (39...42)
-       ),
+       BlockNode(36...42)([], nil, nil, (36...38), (39...42)),
        "a"
      ),
      CallNode(44...65)(
@@ -157,13 +145,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(59...65)(
-         ScopeNode(59...61)([]),
-         nil,
-         nil,
-         (59...61),
-         (62...65)
-       ),
+       BlockNode(59...65)([], nil, nil, (59...61), (62...65)),
        "a"
      ),
      CallNode(67...88)(
@@ -212,13 +194,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(82...88)(
-         ScopeNode(82...84)([]),
-         nil,
-         nil,
-         (82...84),
-         (85...88)
-       ),
+       BlockNode(82...88)([], nil, nil, (82...84), (85...88)),
        "a"
      ),
      CallNode(90...111)(
@@ -267,13 +243,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(105...111)(
-         ScopeNode(105...107)([]),
-         nil,
-         nil,
-         (105...107),
-         (108...111)
-       ),
+       BlockNode(105...111)([], nil, nil, (105...107), (108...111)),
        "a"
      ),
      CallNode(113...135)(
@@ -322,13 +292,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(129...135)(
-         ScopeNode(129...131)([]),
-         nil,
-         nil,
-         (129...131),
-         (132...135)
-       ),
+       BlockNode(129...135)([], nil, nil, (129...131), (132...135)),
        "a"
      ),
      CallNode(137...157)(
@@ -345,7 +309,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             BlockNode(140...145)(
-              ScopeNode(140...141)([]),
+              [],
               nil,
               StatementsNode(141...144)(
                 [CallNode(141...144)(
@@ -383,13 +347,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(151...157)(
-         ScopeNode(151...153)([]),
-         nil,
-         nil,
-         (151...153),
-         (154...157)
-       ),
+       BlockNode(151...157)([], nil, nil, (151...153), (154...157)),
        "a"
      ),
      CallNode(159...179)(
@@ -406,7 +364,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             BlockNode(162...167)(
-              ScopeNode(162...163)([]),
+              [],
               nil,
               StatementsNode(163...166)(
                 [CallNode(163...166)(
@@ -444,13 +402,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(173...179)(
-         ScopeNode(173...175)([]),
-         nil,
-         nil,
-         (173...175),
-         (176...179)
-       ),
+       BlockNode(173...179)([], nil, nil, (173...175), (176...179)),
        "a"
      ),
      CallNode(181...202)(
@@ -467,7 +419,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             BlockNode(184...189)(
-              ScopeNode(184...185)([]),
+              [],
               nil,
               StatementsNode(185...188)(
                 [CallNode(185...188)(
@@ -505,13 +457,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(196...202)(
-         ScopeNode(196...198)([]),
-         nil,
-         nil,
-         (196...198),
-         (199...202)
-       ),
+       BlockNode(196...202)([], nil, nil, (196...198), (199...202)),
        "a"
      ),
      CallNode(204...225)(
@@ -528,7 +474,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             BlockNode(207...213)(
-              ScopeNode(207...208)([]),
+              [],
               nil,
               StatementsNode(208...212)(
                 [CallNode(208...212)(
@@ -566,13 +512,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(219...225)(
-         ScopeNode(219...221)([]),
-         nil,
-         nil,
-         (219...221),
-         (222...225)
-       ),
+       BlockNode(219...225)([], nil, nil, (219...221), (222...225)),
        "a"
      ),
      CallNode(227...248)(
@@ -589,7 +529,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             BlockNode(230...236)(
-              ScopeNode(230...231)([]),
+              [],
               nil,
               StatementsNode(231...235)(
                 [CallNode(231...235)(
@@ -627,13 +567,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(242...248)(
-         ScopeNode(242...244)([]),
-         nil,
-         nil,
-         (242...244),
-         (245...248)
-       ),
+       BlockNode(242...248)([], nil, nil, (242...244), (245...248)),
        "a"
      ),
      CallNode(250...272)(
@@ -650,7 +584,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             BlockNode(253...259)(
-              ScopeNode(253...254)([]),
+              [],
               nil,
               StatementsNode(254...258)(
                 [CallNode(254...258)(
@@ -688,13 +622,7 @@ ProgramNode(0...272)(
           )]
        ),
        nil,
-       BlockNode(266...272)(
-         ScopeNode(266...268)([]),
-         nil,
-         nil,
-         (266...268),
-         (269...272)
-       ),
+       BlockNode(266...272)([], nil, nil, (266...268), (269...272)),
        "a"
      )]
   )

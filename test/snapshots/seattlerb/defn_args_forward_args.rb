@@ -1,5 +1,5 @@
 ProgramNode(0...41)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...41)(
     [DefNode(0...41)(
        IDENTIFIER(4...5)("a"),
@@ -36,12 +36,10 @@ ProgramNode(0...41)(
             "b"
           )]
        ),
-       ScopeNode(0...3)(
-         [IDENTIFIER(6...7)("x"),
-          IDENTIFIER(9...10)("y"),
-          IDENTIFIER(12...13)("z"),
-          UDOT_DOT_DOT(15...18)("...")]
-       ),
+       [IDENTIFIER(6...7)("x"),
+        IDENTIFIER(9...10)("y"),
+        IDENTIFIER(12...13)("z"),
+        UDOT_DOT_DOT(15...18)("...")],
        (0...3),
        nil,
        (5...6),

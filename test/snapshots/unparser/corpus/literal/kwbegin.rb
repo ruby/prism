@@ -1,9 +1,7 @@
 ProgramNode(0...530)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(145...148)("foo"),
-     IDENTIFIER(361...364)("bar"),
-     IDENTIFIER(468...477)("exception")]
-  ),
+  [IDENTIFIER(145...148)("foo"),
+   IDENTIFIER(361...364)("bar"),
+   IDENTIFIER(468...477)("exception")],
   StatementsNode(0...530)(
     [BeginNode(0...16)(
        KEYWORD_BEGIN(0...5)("begin"),
@@ -404,7 +402,7 @@ ProgramNode(0...530)(
        KEYWORD_END(484...487)("end")
      ),
      SingletonClassNode(489...530)(
-       ScopeNode(489...494)([]),
+       [],
        KEYWORD_CLASS(489...494)("class"),
        LESS_LESS(495...497)("<<"),
        SelfNode(498...502)(),

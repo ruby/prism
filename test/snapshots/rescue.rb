@@ -1,5 +1,5 @@
 ProgramNode(0...316)(
-  ScopeNode(0...0)([IDENTIFIER(217...218)("a")]),
+  [IDENTIFIER(217...218)("a")],
   StatementsNode(0...316)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
@@ -132,7 +132,7 @@ ProgramNode(0...316)(
        nil,
        nil,
        BlockNode(161...212)(
-         ScopeNode(161...163)([IDENTIFIER(165...166)("x")]),
+         [IDENTIFIER(165...166)("x")],
          BlockParametersNode(164...167)(
            ParametersNode(165...166)(
              [RequiredParameterNode(165...166)()],
@@ -264,7 +264,7 @@ ProgramNode(0...316)(
             "other_method"
           )]
        ),
-       ScopeNode(247...250)([]),
+       [],
        (247...250),
        nil,
        nil,
@@ -317,7 +317,7 @@ ProgramNode(0...316)(
          nil,
          KEYWORD_END(313...316)("end")
        ),
-       ScopeNode(293...296)([]),
+       [],
        (293...296),
        nil,
        nil,

@@ -1,5 +1,5 @@
 ProgramNode(0...24)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...24)(
     [AliasNode(0...11)(
        GlobalVariableReadNode(6...8)(GLOBAL_VARIABLE(6...8)("$a")),

@@ -1,12 +1,10 @@
 ProgramNode(0...23)(
-  ScopeNode(0...0)(
-    [IDENTIFIER(0...1)("a"),
-     IDENTIFIER(3...4)("b"),
-     IDENTIFIER(6...7)("c"),
-     IDENTIFIER(12...13)("x"),
-     IDENTIFIER(15...16)("y"),
-     IDENTIFIER(18...19)("z")]
-  ),
+  [IDENTIFIER(0...1)("a"),
+   IDENTIFIER(3...4)("b"),
+   IDENTIFIER(6...7)("c"),
+   IDENTIFIER(12...13)("x"),
+   IDENTIFIER(15...16)("y"),
+   IDENTIFIER(18...19)("z")],
   StatementsNode(0...23)(
     [MultiWriteNode(0...23)(
        [LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),

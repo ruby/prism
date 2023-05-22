@@ -1,5 +1,5 @@
 ProgramNode(6...93)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(6...93)(
     [IfNode(6...33)(
        QUESTION_MARK(6...7)("?"),
@@ -12,13 +12,7 @@ ProgramNode(6...93)(
             nil,
             nil,
             nil,
-            BlockNode(14...20)(
-              ScopeNode(14...16)([]),
-              nil,
-              nil,
-              (14...16),
-              (17...20)
-            ),
+            BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
             "raise"
           )]
        ),
@@ -32,13 +26,7 @@ ProgramNode(6...93)(
               nil,
               nil,
               nil,
-              BlockNode(27...33)(
-                ScopeNode(27...29)([]),
-                nil,
-                nil,
-                (27...29),
-                (30...33)
-              ),
+              BlockNode(27...33)([], nil, nil, (27...29), (30...33)),
               "tap"
             )]
          ),
@@ -57,13 +45,7 @@ ProgramNode(6...93)(
             nil,
             nil,
             nil,
-            BlockNode(49...51)(
-              ScopeNode(49...50)([]),
-              nil,
-              nil,
-              (49...50),
-              (50...51)
-            ),
+            BlockNode(49...51)([], nil, nil, (49...50), (50...51)),
             "raise"
           )]
        ),
@@ -77,13 +59,7 @@ ProgramNode(6...93)(
               nil,
               nil,
               nil,
-              BlockNode(58...60)(
-                ScopeNode(58...59)([]),
-                nil,
-                nil,
-                (58...59),
-                (59...60)
-              ),
+              BlockNode(58...60)([], nil, nil, (58...59), (59...60)),
               "tap"
             )]
          ),
@@ -103,7 +79,7 @@ ProgramNode(6...93)(
             nil,
             nil,
             BlockNode(75...89)(
-              ScopeNode(75...77)([IDENTIFIER(79...80)("n")]),
+              [IDENTIFIER(79...80)("n")],
               BlockParametersNode(78...81)(
                 ParametersNode(79...80)(
                   [RequiredParameterNode(79...80)()],

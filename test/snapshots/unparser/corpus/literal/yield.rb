@@ -1,5 +1,5 @@
 ProgramNode(0...26)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...26)(
     [YieldNode(0...5)(KEYWORD_YIELD(0...5)("yield"), nil, nil, nil),
      YieldNode(6...14)(

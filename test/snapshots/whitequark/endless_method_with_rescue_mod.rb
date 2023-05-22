@@ -1,5 +1,5 @@
 ProgramNode(0...47)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...47)(
     [DefNode(0...20)(
        IDENTIFIER(4...5)("m"),
@@ -12,7 +12,7 @@ ProgramNode(0...47)(
             IntegerNode(19...20)()
           )]
        ),
-       ScopeNode(0...3)([]),
+       [],
        (0...3),
        nil,
        (5...6),
@@ -31,7 +31,7 @@ ProgramNode(0...47)(
             IntegerNode(46...47)()
           )]
        ),
-       ScopeNode(22...25)([]),
+       [],
        (22...25),
        (30...31),
        (32...33),

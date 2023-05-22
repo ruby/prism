@@ -1,5 +1,5 @@
 ProgramNode(0...24)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...24)(
     [UntilNode(0...24)(
        KEYWORD_UNTIL_MODIFIER(15...20)("until"),

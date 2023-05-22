@@ -1,5 +1,5 @@
 ProgramNode(0...40)(
-  ScopeNode(0...0)([IDENTIFIER(8...9)("a"), IDENTIFIER(11...12)("b")]),
+  [IDENTIFIER(8...9)("a"), IDENTIFIER(11...12)("b")],
   StatementsNode(0...40)(
     [AndNode(0...19)(
        CallNode(0...3)(

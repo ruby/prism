@@ -1,5 +1,5 @@
 ProgramNode(0...299)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...299)(
     [IfNode(0...20)(
        KEYWORD_IF(0...2)("if"),
@@ -252,7 +252,7 @@ ProgramNode(0...299)(
        ),
        PARENTHESIS_RIGHT(273...274)(")"),
        BlockNode(275...299)(
-         ScopeNode(275...276)([IDENTIFIER(278...279)("x")]),
+         [IDENTIFIER(278...279)("x")],
          BlockParametersNode(277...280)(
            ParametersNode(278...279)(
              [RequiredParameterNode(278...279)()],

@@ -1,5 +1,5 @@
 ProgramNode(0...14)(
-  ScopeNode(0...0)([]),
+  [],
   StatementsNode(0...14)(
     [DefNode(0...14)(
        IDENTIFIER(4...5)("f"),
@@ -14,7 +14,7 @@ ProgramNode(0...14)(
          nil
        ),
        nil,
-       ScopeNode(0...3)([USTAR_STAR(6...8)("**")]),
+       [USTAR_STAR(6...8)("**")],
        (0...3),
        nil,
        (5...6),
