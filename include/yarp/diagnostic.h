@@ -6,13 +6,14 @@
 #include <stdlib.h>
 
 #include "yarp/util/yp_list.h"
+#include "yarp/util/yp_string.h"
 
 // This struct represents a diagnostic found during parsing.
 typedef struct {
   yp_list_node_t node;
   const char *start;
   const char *end;
-  const char *message;
+  yp_string_t *message;
 } yp_diagnostic_t;
 
 // Append a diagnostic to the given list of diagnostics.
