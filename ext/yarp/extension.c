@@ -156,7 +156,7 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding) {
     };
 
     VALUE error_argv[] = {
-      rb_enc_str_new_cstr(yp_string_source(error->message), encoding),
+      rb_enc_str_new_cstr(error->message, encoding),
       rb_class_new_instance(2, location_argv, rb_cYARPLocation)
     };
 
@@ -179,7 +179,7 @@ parser_warnings(yp_parser_t *parser, rb_encoding *encoding) {
     };
 
     VALUE warning_argv[] = {
-      rb_enc_str_new_cstr(yp_string_source(warning->message), encoding),
+      rb_enc_str_new_cstr(warning->message, encoding),
       rb_class_new_instance(2, location_argv, rb_cYARPLocation)
     };
 
