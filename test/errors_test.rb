@@ -990,7 +990,7 @@ class ErrorsTest < Test::Unit::TestCase
       KEYWORD_END("end")
     )
 
-    assert_errors expected, "begin\n$+ = nil\n$1 = nil\nend", ["Can't set variable", "Can't set variable"]
+    assert_errors expected, "begin\n$+ = nil\n$1 = nil\nend", ["Can't set variable $+", "Can't set variable $1"]
   end
 
   private
