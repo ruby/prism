@@ -867,11 +867,11 @@ nodes:
   - name: HashNode
     child_nodes:
       - name: opening
-        type: token?
+        type: token
       - name: elements
         type: node[]
       - name: closing
-        type: token?
+        type: token
     comment: |
       Represents a hash literal.
 

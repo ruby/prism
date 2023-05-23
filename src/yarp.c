@@ -1565,14 +1565,16 @@ yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name
 // Allocate a new HashNode node.
 static yp_hash_node_t *
 yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
+  assert(opening != NULL);
+  assert(closing != NULL);
   yp_hash_node_t *node = yp_alloc(parser, sizeof(yp_hash_node_t));
 
   *node = (yp_hash_node_t) {
     {
       .type = YP_NODE_HASH_NODE,
       .location = {
-        .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? NULL : opening->start),
-        .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? NULL : closing->end)
+        .start = opening->start,
+        .end = closing->end
       },
     },
     .opening = *opening,
