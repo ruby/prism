@@ -7269,6 +7269,7 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 // Parse all of the elements of a hash.
 static void
 parse_assocs(yp_parser_t *parser, yp_node_t *node) {
+  assert((node->type == YP_NODE_HASH_NODE) || (node->type == YP_NODE_KEYWORD_HASH_NODE));
   while (true) {
     yp_node_t *element;
 

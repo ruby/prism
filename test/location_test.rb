@@ -271,6 +271,10 @@ module YARP
       assert_location(InterpolatedXStringNode, '`foo #{bar} baz`')
     end
 
+    test "KeywordHashNode" do
+      assert_location(KeywordHashNode, "foo(a, b: 1)", 7...11) { |node| node.arguments.arguments[1] }
+    end
+
     test "NextNode" do
       assert_location(NextNode, "next")
       assert_location(NextNode, "next foo")
