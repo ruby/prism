@@ -1594,34 +1594,6 @@ yp_hash_node_elements_append(yp_hash_node_t *hash, yp_node_t *element) {
   hash->base.location.end = element->location.end;
 }
 
-// Allocate a new KeywordHashNode node.
-static yp_keyword_hash_node_t *
-yp_keyword_hash_node_create(yp_parser_t *parser) {
-  yp_keyword_hash_node_t *node = yp_alloc(parser, sizeof(yp_keyword_hash_node_t));
-
-  *node = (yp_keyword_hash_node_t) {
-    .base = {
-      .type = YP_NODE_KEYWORD_HASH_NODE,
-      .location = {
-        .start = NULL,
-        .end = NULL
-      },
-    }
-  };
-
-  yp_node_list_init(&node->elements);
-  return node;
-}
-
-static inline void
-yp_keyword_hash_node_elements_append(yp_keyword_hash_node_t *hash, yp_node_t *element) {
-  yp_node_list_append(&hash->elements, element);
-  if (hash->elements.size == 1) {
-    hash->base.location.start = element->location.start;
-  }
-  hash->base.location.end = element->location.end;
-}
-
 // Allocate a new IfNode node.
 static yp_if_node_t *
 yp_if_node_create(yp_parser_t *parser,
@@ -2005,6 +1977,35 @@ static inline void
 yp_interpolated_xstring_node_closing_set(yp_interpolated_x_string_node_t *node, const yp_token_t *closing) {
   node->closing = *closing;
   node->base.location.end = closing->end;
+}
+
+// Allocate a new KeywordHashNode node.
+static yp_keyword_hash_node_t *
+yp_keyword_hash_node_create(yp_parser_t *parser) {
+  yp_keyword_hash_node_t *node = yp_alloc(parser, sizeof(yp_keyword_hash_node_t));
+
+  *node = (yp_keyword_hash_node_t) {
+    .base = {
+      .type = YP_NODE_KEYWORD_HASH_NODE,
+      .location = {
+        .start = NULL,
+        .end = NULL
+      },
+    }
+  };
+
+  yp_node_list_init(&node->elements);
+  return node;
+}
+
+// Append an element to a KeywordHashNode node.
+static void
+yp_keyword_hash_node_elements_append(yp_keyword_hash_node_t *hash, yp_node_t *element) {
+  yp_node_list_append(&hash->elements, element);
+  if (hash->elements.size == 1) {
+    hash->base.location.start = element->location.start;
+  }
+  hash->base.location.end = element->location.end;
 }
 
 // Allocate a new KeywordParameterNode node.
