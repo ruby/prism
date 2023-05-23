@@ -7,8 +7,7 @@ ProgramNode(0...6)(
        IDENTIFIER(0...1)("a"),
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...5)(
-         [HashNode(2...5)(
-            nil,
+         [KeywordHashNode(2...5)(
             [AssocNode(2...5)(
                SymbolNode(2...4)(
                  nil,
@@ -18,8 +17,7 @@ ProgramNode(0...6)(
                ),
                IntegerNode(4...5)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(5...6)(")"),

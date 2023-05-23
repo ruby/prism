@@ -8,8 +8,7 @@ ProgramNode(0...49)(
        IDENTIFIER(7...8)("a"),
        nil,
        ArgumentsNode(9...13)(
-         [HashNode(9...13)(
-            nil,
+         [KeywordHashNode(9...13)(
             [AssocNode(9...13)(
                SymbolNode(9...11)(
                  nil,
@@ -19,8 +18,7 @@ ProgramNode(0...49)(
                ),
                IntegerNode(12...13)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,

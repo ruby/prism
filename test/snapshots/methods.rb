@@ -1097,8 +1097,7 @@ ProgramNode(0...1167)(
             IDENTIFIER(951...956)("merge"),
             nil,
             ArgumentsNode(957...976)(
-              [HashNode(957...976)(
-                 nil,
+              [KeywordHashNode(957...976)(
                  [AssocSplatNode(957...962)(
                     CallNode(959...962)(
                       nil,
@@ -1137,8 +1136,7 @@ ProgramNode(0...1167)(
                       "qux"
                     ),
                     (971...973)
-                  )],
-                 nil
+                  )]
                )]
             ),
             nil,

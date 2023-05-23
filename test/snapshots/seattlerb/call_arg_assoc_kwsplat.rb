@@ -8,8 +8,7 @@ ProgramNode(0...16)(
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...15)(
          [IntegerNode(2...3)(),
-          HashNode(5...15)(
-            nil,
+          KeywordHashNode(5...15)(
             [AssocNode(5...10)(
                SymbolNode(5...8)(
                  nil,
@@ -20,8 +19,7 @@ ProgramNode(0...16)(
                IntegerNode(9...10)(),
                nil
              ),
-             AssocSplatNode(12...15)(IntegerNode(14...15)(), (12...14))],
-            nil
+             AssocSplatNode(12...15)(IntegerNode(14...15)(), (12...14))]
           )]
        ),
        PARENTHESIS_RIGHT(15...16)(")"),

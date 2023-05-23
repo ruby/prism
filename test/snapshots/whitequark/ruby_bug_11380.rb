@@ -20,8 +20,7 @@ ProgramNode(0...28)(
                )]
             )
           ),
-          HashNode(17...21)(
-            nil,
+          KeywordHashNode(17...21)(
             [AssocNode(17...21)(
                SymbolNode(17...19)(
                  nil,
@@ -31,8 +30,7 @@ ProgramNode(0...28)(
                ),
                IntegerNode(20...21)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,

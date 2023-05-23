@@ -26,8 +26,7 @@ ProgramNode(0...20)(
             nil,
             "bar"
           ),
-          HashNode(9...18)(
-            nil,
+          KeywordHashNode(9...18)(
             [AssocNode(9...18)(
                SymbolNode(9...13)(
                  SYMBOL_BEGIN(9...10)(":"),
@@ -37,8 +36,7 @@ ProgramNode(0...20)(
                ),
                IntegerNode(17...18)(),
                EQUAL_GREATER(14...16)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        BRACKET_RIGHT(19...20)("]"),

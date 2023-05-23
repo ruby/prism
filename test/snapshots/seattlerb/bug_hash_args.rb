@@ -13,8 +13,7 @@ ProgramNode(0...19)(
             nil,
             "bar"
           ),
-          HashNode(10...18)(
-            nil,
+          KeywordHashNode(10...18)(
             [AssocNode(10...18)(
                SymbolNode(10...14)(
                  nil,
@@ -24,8 +23,7 @@ ProgramNode(0...19)(
                ),
                NilNode(15...18)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(18...19)(")"),

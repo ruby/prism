@@ -20,10 +20,8 @@ ProgramNode(0...25)(
             IDENTIFIER(13...16)("bar"),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...19)(
-              [HashNode(17...19)(
-                 nil,
-                 [AssocSplatNode(17...19)(nil, (17...19))],
-                 nil
+              [KeywordHashNode(17...19)(
+                 [AssocSplatNode(17...19)(nil, (17...19))]
                )]
             ),
             PARENTHESIS_RIGHT(19...20)(")"),

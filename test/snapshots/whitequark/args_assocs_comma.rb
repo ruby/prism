@@ -16,8 +16,7 @@ ProgramNode(0...15)(
        BRACKET_LEFT_RIGHT(3...4)("["),
        BRACKET_LEFT(3...4)("["),
        ArgumentsNode(4...13)(
-         [HashNode(4...13)(
-            nil,
+         [KeywordHashNode(4...13)(
             [AssocNode(4...13)(
                SymbolNode(4...8)(
                  SYMBOL_BEGIN(4...5)(":"),
@@ -27,8 +26,7 @@ ProgramNode(0...15)(
                ),
                IntegerNode(12...13)(),
                EQUAL_GREATER(9...11)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        BRACKET_RIGHT(14...15)("]"),

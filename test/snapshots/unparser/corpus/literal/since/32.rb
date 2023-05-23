@@ -21,10 +21,8 @@ ProgramNode(0...90)(
             PARENTHESIS_LEFT(27...28)("("),
             ArgumentsNode(28...40)(
               [LocalVariableReadNode(28...36)(0),
-               HashNode(38...40)(
-                 nil,
-                 [AssocSplatNode(38...40)(nil, (38...40))],
-                 nil
+               KeywordHashNode(38...40)(
+                 [AssocSplatNode(38...40)(nil, (38...40))]
                )]
             ),
             PARENTHESIS_RIGHT(40...41)(")"),

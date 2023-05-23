@@ -23,13 +23,11 @@ ProgramNode(0...45)(
             IDENTIFIER(20...30)("test_splat"),
             PARENTHESIS_LEFT(30...31)("("),
             ArgumentsNode(31...40)(
-              [HashNode(31...40)(
-                 nil,
+              [KeywordHashNode(31...40)(
                  [AssocSplatNode(31...40)(
                     LocalVariableReadNode(33...40)(0),
                     (31...33)
-                  )],
-                 nil
+                  )]
                )]
             ),
             PARENTHESIS_RIGHT(40...41)(")"),

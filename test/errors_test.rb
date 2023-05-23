@@ -254,8 +254,7 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [HashNode(
-           nil,
+        [KeywordHashNode(
            [AssocSplatNode(
               CallNode(
                 nil,
@@ -268,8 +267,7 @@ class ErrorsTest < Test::Unit::TestCase
                 "kwargs"
               ),
               Location()
-            )],
-           nil
+            )]
          ),
          SplatNode(
            USTAR("*"),
@@ -317,14 +315,12 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("a"),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
-        [HashNode(
-           nil,
+        [KeywordHashNode(
            [AssocNode(
               SymbolNode(nil, LABEL("foo"), LABEL_END(":"), "foo"),
               CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
               nil
-            )],
-           nil
+            )]
          ),
          SplatNode(
            USTAR("*"),

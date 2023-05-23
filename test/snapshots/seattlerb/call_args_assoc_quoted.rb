@@ -7,8 +7,7 @@ ProgramNode(0...31)(
        IDENTIFIER(0...1)("x"),
        nil,
        ArgumentsNode(2...11)(
-         [HashNode(2...11)(
-            nil,
+         [KeywordHashNode(2...11)(
             [AssocNode(2...11)(
                InterpolatedSymbolNode(2...9)(
                  STRING_BEGIN(2...3)("\""),
@@ -32,8 +31,7 @@ ProgramNode(0...31)(
                ),
                IntegerNode(9...11)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -46,8 +44,7 @@ ProgramNode(0...31)(
        IDENTIFIER(13...14)("x"),
        nil,
        ArgumentsNode(15...21)(
-         [HashNode(15...21)(
-            nil,
+         [KeywordHashNode(15...21)(
             [AssocNode(15...21)(
                SymbolNode(15...19)(
                  STRING_BEGIN(15...16)("\""),
@@ -57,8 +54,7 @@ ProgramNode(0...31)(
                ),
                IntegerNode(19...21)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -71,8 +67,7 @@ ProgramNode(0...31)(
        IDENTIFIER(23...24)("x"),
        nil,
        ArgumentsNode(25...31)(
-         [HashNode(25...31)(
-            nil,
+         [KeywordHashNode(25...31)(
             [AssocNode(25...31)(
                SymbolNode(25...29)(
                  STRING_BEGIN(25...26)("'"),
@@ -82,8 +77,7 @@ ProgramNode(0...31)(
                ),
                IntegerNode(29...31)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,

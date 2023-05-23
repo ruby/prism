@@ -1565,14 +1565,16 @@ yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name
 // Allocate a new HashNode node.
 static yp_hash_node_t *
 yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
+  assert(opening != NULL);
+  assert(closing != NULL);
   yp_hash_node_t *node = yp_alloc(parser, sizeof(yp_hash_node_t));
 
   *node = (yp_hash_node_t) {
     {
       .type = YP_NODE_HASH_NODE,
       .location = {
-        .start = (opening->type == YP_TOKEN_NOT_PROVIDED ? NULL : opening->start),
-        .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? NULL : closing->end)
+        .start = opening->start,
+        .end = closing->end
       },
     },
     .opening = *opening,
@@ -1975,6 +1977,35 @@ static inline void
 yp_interpolated_xstring_node_closing_set(yp_interpolated_x_string_node_t *node, const yp_token_t *closing) {
   node->closing = *closing;
   node->base.location.end = closing->end;
+}
+
+// Allocate a new KeywordHashNode node.
+static yp_keyword_hash_node_t *
+yp_keyword_hash_node_create(yp_parser_t *parser) {
+  yp_keyword_hash_node_t *node = yp_alloc(parser, sizeof(yp_keyword_hash_node_t));
+
+  *node = (yp_keyword_hash_node_t) {
+    .base = {
+      .type = YP_NODE_KEYWORD_HASH_NODE,
+      .location = {
+        .start = NULL,
+        .end = NULL
+      },
+    }
+  };
+
+  yp_node_list_init(&node->elements);
+  return node;
+}
+
+// Append an element to a KeywordHashNode node.
+static void
+yp_keyword_hash_node_elements_append(yp_keyword_hash_node_t *hash, yp_node_t *element) {
+  yp_node_list_append(&hash->elements, element);
+  if (hash->base.location.start == NULL) {
+    hash->base.location.start = element->location.start;
+  }
+  hash->base.location.end = element->location.end;
 }
 
 // Allocate a new KeywordParameterNode node.
@@ -7249,7 +7280,8 @@ parse_statements(yp_parser_t *parser, yp_context_t context) {
 
 // Parse all of the elements of a hash.
 static void
-parse_assocs(yp_parser_t *parser, yp_hash_node_t *node) {
+parse_assocs(yp_parser_t *parser, yp_node_t *node) {
+  assert((node->type == YP_NODE_HASH_NODE) || (node->type == YP_NODE_KEYWORD_HASH_NODE));
   while (true) {
     yp_node_t *element;
 
@@ -7299,7 +7331,11 @@ parse_assocs(yp_parser_t *parser, yp_hash_node_t *node) {
       }
     }
 
-    yp_hash_node_elements_append(node, element);
+    if (node->type == YP_NODE_HASH_NODE) {
+      yp_hash_node_elements_append((yp_hash_node_t *) node, element);
+    } else {
+      yp_keyword_hash_node_elements_append((yp_keyword_hash_node_t *) node, element);
+    }
 
     // If there's no comma after the element, then we're done.
     if (!accept(parser, YP_TOKEN_COMMA)) return;
@@ -7349,13 +7385,11 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
           yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
         }
 
-        yp_token_t opening = not_provided(parser);
-        yp_token_t closing = not_provided(parser);
-        yp_hash_node_t *hash = yp_hash_node_create(parser, &opening, &closing);
+        yp_keyword_hash_node_t *hash = yp_keyword_hash_node_create(parser);
         argument = (yp_node_t *)hash;
 
         if (!match_any_type_p(parser, 7, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
-          parse_assocs(parser, hash);
+          parse_assocs(parser, (yp_node_t *) hash);
         }
 
         parsed_bare_hash = true;
@@ -7436,15 +7470,13 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             operator = not_provided(parser);
           }
 
-          yp_token_t opening = not_provided(parser);
-          yp_token_t closing = not_provided(parser);
-          yp_hash_node_t *bare_hash = yp_hash_node_create(parser, &opening, &closing);
+          yp_keyword_hash_node_t *bare_hash = yp_keyword_hash_node_create(parser);
 
           // Finish parsing the one we are part way through
           yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
 
           argument = (yp_node_t *) yp_assoc_node_create(parser, argument, &operator, value);
-          yp_hash_node_elements_append(bare_hash, argument);
+          yp_keyword_hash_node_elements_append(bare_hash, argument);
           argument = (yp_node_t *) bare_hash;
 
           // Then parse more if we have a comma
@@ -7452,7 +7484,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
             token_begins_expression_p(parser->current.type) ||
             match_any_type_p(parser, 2, YP_TOKEN_USTAR_STAR, YP_TOKEN_LABEL)
           )) {
-            parse_assocs(parser, bare_hash);
+            parse_assocs(parser, (yp_node_t *) bare_hash);
           }
 
           parsed_bare_hash = true;
@@ -9317,13 +9349,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
           }
 
-          yp_token_t opening = not_provided(parser);
-          yp_token_t closing = not_provided(parser);
-          yp_hash_node_t *hash = yp_hash_node_create(parser, &opening, &closing);
+          yp_keyword_hash_node_t *hash = yp_keyword_hash_node_create(parser);
           element = (yp_node_t *)hash;
 
           if (!match_any_type_p(parser, 8, YP_TOKEN_EOF, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
-            parse_assocs(parser, hash);
+            parse_assocs(parser, (yp_node_t *) hash);
           }
 
           parsed_bare_hash = true;
@@ -9335,9 +9365,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
               yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected bare hash.");
             }
 
-            yp_token_t opening = not_provided(parser);
-            yp_token_t closing = not_provided(parser);
-            yp_hash_node_t *hash = yp_hash_node_create(parser, &opening, &closing);
+            yp_keyword_hash_node_t *hash = yp_keyword_hash_node_create(parser);
 
             yp_token_t operator;
             if (parser->previous.type == YP_TOKEN_EQUAL_GREATER) {
@@ -9348,11 +9376,11 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
             yp_node_t *assoc = (yp_node_t *) yp_assoc_node_create(parser, element, &operator, value);
-            yp_hash_node_elements_append(hash, assoc);
+            yp_keyword_hash_node_elements_append(hash, assoc);
 
             element = (yp_node_t *)hash;
             if (accept(parser, YP_TOKEN_COMMA) && !match_type_p(parser, YP_TOKEN_BRACKET_RIGHT)) {
-              parse_assocs(parser, hash);
+              parse_assocs(parser, (yp_node_t *) hash);
             }
 
             parsed_bare_hash = true;
@@ -9468,7 +9496,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
       yp_hash_node_t *node = yp_hash_node_create(parser, &opening, &opening);
 
       if (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
-        parse_assocs(parser, node);
+        parse_assocs(parser, (yp_node_t *) node);
         accept(parser, YP_TOKEN_NEWLINE);
       }
 

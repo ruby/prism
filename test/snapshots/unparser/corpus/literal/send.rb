@@ -1123,8 +1123,7 @@ ProgramNode(0...991)(
        IDENTIFIER(683...686)("bar"),
        PARENTHESIS_LEFT(686...687)("("),
        ArgumentsNode(687...695)(
-         [HashNode(687...695)(
-            nil,
+         [KeywordHashNode(687...695)(
             [AssocNode(687...695)(
                SymbolNode(687...691)(
                  nil,
@@ -1143,8 +1142,7 @@ ProgramNode(0...991)(
                  "boz"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(695...696)(")"),
@@ -1176,8 +1174,7 @@ ProgramNode(0...991)(
             nil,
             "foo"
           ),
-          HashNode(710...722)(
-            nil,
+          KeywordHashNode(710...722)(
             [AssocNode(710...722)(
                StringNode(710...715)(
                  STRING_BEGIN(710...711)("\""),
@@ -1196,8 +1193,7 @@ ProgramNode(0...991)(
                  "boz"
                ),
                EQUAL_GREATER(716...718)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(722...723)(")"),
@@ -1423,8 +1419,7 @@ ProgramNode(0...991)(
        IDENTIFIER(829...832)("foo"),
        PARENTHESIS_LEFT(832...833)("("),
        ArgumentsNode(833...837)(
-         [HashNode(833...837)(
-            nil,
+         [KeywordHashNode(833...837)(
             [AssocNode(833...837)(
                SymbolNode(833...835)(
                  nil,
@@ -1443,8 +1438,7 @@ ProgramNode(0...991)(
                  "b"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(837...838)(")"),
@@ -1466,8 +1460,7 @@ ProgramNode(0...991)(
        AMPERSAND(843...844)("&"),
        PARENTHESIS_LEFT(844...845)("("),
        ArgumentsNode(845...849)(
-         [HashNode(845...849)(
-            nil,
+         [KeywordHashNode(845...849)(
             [AssocNode(845...849)(
                SymbolNode(845...847)(
                  nil,
@@ -1486,8 +1479,7 @@ ProgramNode(0...991)(
                  "b"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(849...850)(")"),
@@ -1509,8 +1501,7 @@ ProgramNode(0...991)(
        AMPERSAND(855...856)("&"),
        PARENTHESIS_LEFT(856...857)("("),
        ArgumentsNode(857...860)(
-         [HashNode(857...860)(
-            nil,
+         [KeywordHashNode(857...860)(
             [AssocSplatNode(857...860)(
                CallNode(859...860)(
                  nil,
@@ -1523,8 +1514,7 @@ ProgramNode(0...991)(
                  "a"
                ),
                (857...859)
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(860...861)(")"),
@@ -1884,8 +1874,7 @@ ProgramNode(0...991)(
        IDENTIFIER(967...968)("x"),
        PARENTHESIS_LEFT(968...969)("("),
        ArgumentsNode(969...974)(
-         [HashNode(969...974)(
-            nil,
+         [KeywordHashNode(969...974)(
             [AssocSplatNode(969...974)(
                CallNode(971...974)(
                  nil,
@@ -1898,8 +1887,7 @@ ProgramNode(0...991)(
                  "foo"
                ),
                (969...971)
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(974...975)(")"),

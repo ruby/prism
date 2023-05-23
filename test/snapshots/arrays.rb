@@ -66,8 +66,7 @@ ProgramNode(0...502)(
        "[]="
      ),
      ArrayNode(31...44)(
-       [HashNode(32...43)(
-          nil,
+       [KeywordHashNode(32...43)(
           [AssocNode(32...43)(
              SymbolNode(32...34)(
                nil,
@@ -92,8 +91,7 @@ ProgramNode(0...502)(
                BRACKET_RIGHT(42...43)("]")
              ),
              nil
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(31...32)("["),
        BRACKET_RIGHT(43...44)("]")
@@ -157,8 +155,7 @@ ProgramNode(0...502)(
        BRACKET_RIGHT(97...98)("]")
      ),
      ArrayNode(100...112)(
-       [HashNode(101...111)(
-          nil,
+       [KeywordHashNode(101...111)(
           [AssocNode(101...111)(
              CallNode(101...104)(
                nil,
@@ -181,8 +178,7 @@ ProgramNode(0...502)(
                "bar"
              ),
              EQUAL_GREATER(105...107)("=>")
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(100...101)("["),
        BRACKET_RIGHT(111...112)("]")
@@ -571,8 +567,7 @@ ProgramNode(0...502)(
        "[]="
      ),
      ArrayNode(261...267)(
-       [HashNode(262...266)(
-          nil,
+       [KeywordHashNode(262...266)(
           [AssocSplatNode(262...266)(
              HashNode(264...266)(
                BRACE_LEFT(264...265)("{"),
@@ -580,15 +575,13 @@ ProgramNode(0...502)(
                BRACE_RIGHT(265...266)("}")
              ),
              (262...264)
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(261...262)("["),
        BRACKET_RIGHT(266...267)("]")
      ),
      ArrayNode(269...275)(
-       [HashNode(270...274)(
-          nil,
+       [KeywordHashNode(270...274)(
           [AssocSplatNode(270...274)(
              CallNode(272...274)(
                nil,
@@ -601,16 +594,14 @@ ProgramNode(0...502)(
                "kw"
              ),
              (270...272)
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(269...270)("["),
        BRACKET_RIGHT(274...275)("]")
      ),
      ArrayNode(277...286)(
        [IntegerNode(278...279)(),
-        HashNode(281...285)(
-          nil,
+        KeywordHashNode(281...285)(
           [AssocSplatNode(281...285)(
              CallNode(283...285)(
                nil,
@@ -623,16 +614,14 @@ ProgramNode(0...502)(
                "kw"
              ),
              (281...283)
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(277...278)("["),
        BRACKET_RIGHT(285...286)("]")
      ),
      ArrayNode(288...309)(
        [IntegerNode(289...290)(),
-        HashNode(292...308)(
-          nil,
+        KeywordHashNode(292...308)(
           [AssocSplatNode(292...296)(
              CallNode(294...296)(
                nil,
@@ -666,15 +655,13 @@ ProgramNode(0...502)(
                "kw"
              ),
              (304...306)
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(288...289)("["),
        BRACKET_RIGHT(308...309)("]")
      ),
      ArrayNode(311...328)(
-       [HashNode(315...325)(
-          nil,
+       [KeywordHashNode(315...325)(
           [AssocNode(315...325)(
              CallNode(315...318)(
                nil,
@@ -697,8 +684,7 @@ ProgramNode(0...502)(
                "bar"
              ),
              EQUAL_GREATER(319...321)("=>")
-           )],
-          nil
+           )]
         )],
        BRACKET_LEFT_ARRAY(311...312)("["),
        BRACKET_RIGHT(327...328)("]")

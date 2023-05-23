@@ -665,6 +665,17 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       push_concatstrings(compiler, sizet2int(node->parts.size));
       return;
     }
+    case YP_NODE_KEYWORD_HASH_NODE: {
+      yp_keyword_hash_node_t *node = (yp_keyword_hash_node_t *) base_node;
+      yp_node_list_t elements = node->elements;
+
+      for (size_t index = 0; index < elements.size; index++) {
+        yp_compile_node(compiler, elements.nodes[index]);
+      }
+
+      push_newhash(compiler, sizet2int(elements.size * 2));
+      return;
+    }
     case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
       yp_local_variable_read_node_t *node = (yp_local_variable_read_node_t *) base_node;
       int index = local_index(

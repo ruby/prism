@@ -7,8 +7,7 @@ ProgramNode(0...52)(
        IDENTIFIER(0...6)("assert"),
        nil,
        ArgumentsNode(7...15)(
-         [HashNode(7...15)(
-            nil,
+         [KeywordHashNode(7...15)(
             [AssocNode(7...15)(
                SymbolNode(7...10)(
                  nil,
@@ -18,8 +17,7 @@ ProgramNode(0...52)(
                ),
                TrueNode(11...15)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -53,8 +51,7 @@ ProgramNode(0...52)(
        IDENTIFIER(30...31)("f"),
        nil,
        ArgumentsNode(32...52)(
-         [HashNode(32...52)(
-            nil,
+         [KeywordHashNode(32...52)(
             [AssocNode(32...52)(
                SymbolNode(32...34)(
                  nil,
@@ -80,8 +77,7 @@ ProgramNode(0...52)(
                  )
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
