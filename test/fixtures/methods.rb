@@ -160,3 +160,6 @@ end
 def method(a)
   item >> a {}
 end
+
+def foo(_a, _a, b, c)
+end

@@ -3423,6 +3423,14 @@ yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
   }
 }
 
+// Add a parameter name to the current scope and check whether the name of the parameter is unique or not.
+static void
+yp_parser_parameter_name_check(yp_parser_t *parser, yp_token_t *name) {
+  if ((name->start[0] != '_') && (yp_token_list_includes(&parser->current_scope->locals, name))) {
+    yp_diagnostic_list_append(&parser->error_list, name->start, name->end, "Duplicated argument name.");
+  }
+}
+
 // Pop the current scope off the scope stack.
 static void
 yp_parser_scope_pop(yp_parser_t *parser) {
@@ -7676,6 +7684,7 @@ parse_parameters(
 
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
+          yp_parser_parameter_name_check(parser, &name);
           yp_parser_local_add(parser, &name);
         } else {
           name = not_provided(parser);
@@ -7713,6 +7722,7 @@ parse_parameters(
         }
 
         yp_token_t name = parser->previous;
+        yp_parser_parameter_name_check(parser, &name);
         yp_parser_local_add(parser, &name);
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
@@ -7749,6 +7759,8 @@ parse_parameters(
         yp_token_t name = parser->previous;
         yp_token_t local = name;
         local.end -= 1;
+
+        yp_parser_parameter_name_check(parser, &local);
         yp_parser_local_add(parser, &local);
 
         switch (parser->current.type) {
@@ -7804,6 +7816,7 @@ parse_parameters(
 
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
+          yp_parser_parameter_name_check(parser, &name);
           yp_parser_local_add(parser, &name);
         } else {
           name = not_provided(parser);
@@ -7829,6 +7842,7 @@ parse_parameters(
 
           if (accept(parser, YP_TOKEN_IDENTIFIER)) {
             name = parser->previous;
+            yp_parser_parameter_name_check(parser, &name);
             yp_parser_local_add(parser, &name);
           } else {
             name = not_provided(parser);
