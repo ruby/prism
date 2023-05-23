@@ -979,6 +979,20 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "module A; return; end", ["Invalid return in class/module body"]
   end
 
+  test "don't allow setting to back and nth reference" do
+    expected = BeginNode(
+      KEYWORD_BEGIN("begin"),
+      StatementsNode([GlobalVariableWriteNode(BACK_REFERENCE("$+"), EQUAL("="), NilNode()),
+       GlobalVariableWriteNode(NTH_REFERENCE("$1466"), EQUAL("="), NilNode())]),
+      nil,
+      nil,
+      nil,
+      KEYWORD_END("end")
+    )
+
+    assert_errors expected, "begin\n$+ = nil\n$1466 = nil\nend", ["Can't set variable", "Can't set variable"]
+  end
+
   test "duplicated parameter names" do
     expected = DefNode(
       IDENTIFIER("foo"),
