@@ -985,7 +985,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode([RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
       nil,
-      [IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("a")],
+      [IDENTIFIER("a"), IDENTIFIER("b")],
       Location(),
       nil,
       Location(),

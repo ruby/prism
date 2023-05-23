@@ -3384,7 +3384,7 @@ yp_parser_local_depth(yp_parser_t *parser, yp_token_t *token) {
   return -1;
 }
 
-// Add a local variable to the current scope iff the current scope does not contain the given token.
+// Add a local variable to the current scope.
 static void
 yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
   if (!yp_token_list_includes(&parser->current_scope->locals, token)) {
@@ -3392,19 +3392,10 @@ yp_parser_local_add(yp_parser_t *parser, yp_token_t *token) {
   }
 }
 
-// Add a local variable to the current scope regardless. If the current scope has the given token already, then
-// return `false`, otherwise `true`.
-static bool
-yp_parser_local_append(yp_parser_t *parser, yp_token_t *token) {
-  bool result = !yp_token_list_includes(&parser->current_scope->locals, token);
-  yp_token_list_append(&parser->current_scope->locals, token);
-  return result;
-}
-
 // Add a parameter name to the current scope and check whether the name of the parameter is unique or not.
 static void
-yp_parser_parameter_name_append(yp_parser_t *parser, yp_token_t *name) {
-  if (!yp_parser_local_append(parser, name) && name->start[0] != '_') {
+yp_parser_parameter_name_check(yp_parser_t *parser, yp_token_t *name) {
+  if ((name->start[0] != '_') && (yp_token_list_includes(&parser->current_scope->locals, name))) {
     yp_diagnostic_list_append(&parser->error_list, name->start, name->end, "Duplicated argument name.");
   }
 }
@@ -7652,7 +7643,8 @@ parse_parameters(
 
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
-          yp_parser_parameter_name_append(parser, &name);
+          yp_parser_parameter_name_check(parser, &name);
+          yp_parser_local_add(parser, &name);
         } else {
           name = not_provided(parser);
           yp_parser_local_add(parser, &operator);
@@ -7689,7 +7681,8 @@ parse_parameters(
         }
 
         yp_token_t name = parser->previous;
-        yp_parser_parameter_name_append(parser, &name);
+        yp_parser_parameter_name_check(parser, &name);
+        yp_parser_local_add(parser, &name);
 
         if (accept(parser, YP_TOKEN_EQUAL)) {
           yp_token_t operator = parser->previous;
@@ -7726,7 +7719,8 @@ parse_parameters(
         yp_token_t local = name;
         local.end -= 1;
 
-        yp_parser_parameter_name_append(parser, &local);
+        yp_parser_parameter_name_check(parser, &local);
+        yp_parser_local_add(parser, &local);
 
         switch (parser->current.type) {
           case YP_TOKEN_COMMA:
@@ -7781,7 +7775,8 @@ parse_parameters(
 
         if (accept(parser, YP_TOKEN_IDENTIFIER)) {
           name = parser->previous;
-          yp_parser_parameter_name_append(parser, &name);
+          yp_parser_parameter_name_check(parser, &name);
+          yp_parser_local_add(parser, &name);
         } else {
           name = not_provided(parser);
           yp_parser_local_add(parser, &operator);
@@ -7806,7 +7801,8 @@ parse_parameters(
 
           if (accept(parser, YP_TOKEN_IDENTIFIER)) {
             name = parser->previous;
-            yp_parser_parameter_name_append(parser, &name);
+            yp_parser_parameter_name_check(parser, &name);
+            yp_parser_local_add(parser, &name);
           } else {
             name = not_provided(parser);
             yp_parser_local_add(parser, &operator);
