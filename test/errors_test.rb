@@ -979,6 +979,23 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "module A; return; end", ["Invalid return in class/module body"]
   end
 
+  test "duplicated parameter names" do
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
+      nil,
+      [IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("a")],
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(a,b,a);end", ["Duplicated argument name."]
+  end
+
   private
 
   def assert_errors(expected, source, errors)

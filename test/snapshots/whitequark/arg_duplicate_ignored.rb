@@ -14,7 +14,7 @@ ProgramNode(0...40)(
          nil
        ),
        nil,
-       [IDENTIFIER(8...9)("_")],
+       [IDENTIFIER(8...9)("_"), IDENTIFIER(11...12)("_")],
        (0...3),
        nil,
        (7...8),
@@ -35,7 +35,7 @@ ProgramNode(0...40)(
          nil
        ),
        nil,
-       [IDENTIFIER(28...30)("_a")],
+       [IDENTIFIER(28...30)("_a"), IDENTIFIER(32...34)("_a")],
        (20...23),
        nil,
        (27...28),
