@@ -1025,10 +1025,10 @@ nodes:
       - name: elements
         type: node[]
     comment: |
-      Represents a hash literal.
+      Represents a hash literal without an opening and closing braces.
 
-          a => b
-          ^^^^^^^^^^
+          foo(a: b)
+              ^^^^
   - name: KeywordParameterNode
     child_nodes:
       - name: name
