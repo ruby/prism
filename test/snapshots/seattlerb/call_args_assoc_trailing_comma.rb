@@ -8,14 +8,12 @@ ProgramNode(0...11)(
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...9)(
          [IntegerNode(2...3)(),
-          HashNode(5...9)(
-            nil,
+          KeywordHashNode(5...9)(
             [AssocNode(5...9)(
                IntegerNode(5...6)(),
                IntegerNode(8...9)(),
                EQUAL_GREATER(6...8)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(10...11)(")"),

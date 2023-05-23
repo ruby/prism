@@ -7,8 +7,7 @@ ProgramNode(0...32)(
        IDENTIFIER(0...2)("m1"),
        nil,
        ArgumentsNode(3...11)(
-         [HashNode(3...11)(
-            nil,
+         [KeywordHashNode(3...11)(
             [AssocNode(3...11)(
                SymbolNode(3...5)(
                  SYMBOL_BEGIN(3...4)(":"),
@@ -27,8 +26,7 @@ ProgramNode(0...32)(
                  "m2"
                ),
                EQUAL_GREATER(6...8)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        nil,

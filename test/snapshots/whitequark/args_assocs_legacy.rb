@@ -7,8 +7,7 @@ ProgramNode(0...114)(
        IDENTIFIER(0...3)("fun"),
        PARENTHESIS_LEFT(3...4)("("),
        ArgumentsNode(4...13)(
-         [HashNode(4...13)(
-            nil,
+         [KeywordHashNode(4...13)(
             [AssocNode(4...13)(
                SymbolNode(4...8)(
                  SYMBOL_BEGIN(4...5)(":"),
@@ -18,8 +17,7 @@ ProgramNode(0...114)(
                ),
                IntegerNode(12...13)(),
                EQUAL_GREATER(9...11)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(13...14)(")"),
@@ -32,8 +30,7 @@ ProgramNode(0...114)(
        IDENTIFIER(16...19)("fun"),
        PARENTHESIS_LEFT(19...20)("("),
        ArgumentsNode(20...35)(
-         [HashNode(20...29)(
-            nil,
+         [KeywordHashNode(20...29)(
             [AssocNode(20...29)(
                SymbolNode(20...24)(
                  SYMBOL_BEGIN(20...21)(":"),
@@ -43,8 +40,7 @@ ProgramNode(0...114)(
                ),
                IntegerNode(28...29)(),
                EQUAL_GREATER(25...27)("=>")
-             )],
-            nil
+             )]
           ),
           BlockArgumentNode(31...35)(
             CallNode(32...35)(
@@ -80,8 +76,7 @@ ProgramNode(0...114)(
             nil,
             "foo"
           ),
-          HashNode(52...59)(
-            nil,
+          KeywordHashNode(52...59)(
             [AssocNode(52...59)(
                SymbolNode(52...54)(
                  SYMBOL_BEGIN(52...53)(":"),
@@ -91,8 +86,7 @@ ProgramNode(0...114)(
                ),
                IntegerNode(58...59)(),
                EQUAL_GREATER(55...57)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -105,8 +99,7 @@ ProgramNode(0...114)(
        BRACKET_LEFT_RIGHT(65...66)("["),
        BRACKET_LEFT(65...66)("["),
        ArgumentsNode(66...75)(
-         [HashNode(66...75)(
-            nil,
+         [KeywordHashNode(66...75)(
             [AssocNode(66...75)(
                SymbolNode(66...70)(
                  SYMBOL_BEGIN(66...67)(":"),
@@ -116,8 +109,7 @@ ProgramNode(0...114)(
                ),
                IntegerNode(74...75)(),
                EQUAL_GREATER(71...73)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        BRACKET_RIGHT(75...76)("]"),
@@ -128,8 +120,7 @@ ProgramNode(0...114)(
        KEYWORD_SUPER(78...83)("super"),
        PARENTHESIS_LEFT(83...84)("("),
        ArgumentsNode(84...94)(
-         [HashNode(84...94)(
-            nil,
+         [KeywordHashNode(84...94)(
             [AssocNode(84...94)(
                SymbolNode(84...88)(
                  SYMBOL_BEGIN(84...85)(":"),
@@ -139,8 +130,7 @@ ProgramNode(0...114)(
                ),
                IntegerNode(92...94)(),
                EQUAL_GREATER(89...91)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(94...95)(")"),
@@ -150,8 +140,7 @@ ProgramNode(0...114)(
        KEYWORD_YIELD(97...102)("yield"),
        PARENTHESIS_LEFT(102...103)("("),
        ArgumentsNode(103...113)(
-         [HashNode(103...113)(
-            nil,
+         [KeywordHashNode(103...113)(
             [AssocNode(103...113)(
                SymbolNode(103...107)(
                  SYMBOL_BEGIN(103...104)(":"),
@@ -161,8 +150,7 @@ ProgramNode(0...114)(
                ),
                IntegerNode(111...113)(),
                EQUAL_GREATER(108...110)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(113...114)(")")

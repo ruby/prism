@@ -244,8 +244,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(111...112)("a"),
        PARENTHESIS_LEFT(112...113)("("),
        ArgumentsNode(113...121)(
-         [HashNode(113...121)(
-            nil,
+         [KeywordHashNode(113...121)(
             [AssocSplatNode(113...121)(
                CallNode(115...121)(
                  nil,
@@ -258,8 +257,7 @@ ProgramNode(0...1187)(
                  "kwargs"
                ),
                (113...115)
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(121...122)(")"),
@@ -690,8 +688,7 @@ ProgramNode(0...1187)(
             nil,
             "a"
           ),
-          HashNode(300...324)(
-            nil,
+          KeywordHashNode(300...324)(
             [AssocNode(300...314)(
                SymbolNode(300...302)(
                  SYMBOL_BEGIN(300...301)(":"),
@@ -731,8 +728,7 @@ ProgramNode(0...1187)(
                  "b"
                ),
                EQUAL_GREATER(319...321)("=>")
-             )],
-            nil
+             )]
           ),
           BlockArgumentNode(326...331)(
             SymbolNode(327...331)(
@@ -814,8 +810,7 @@ ProgramNode(0...1187)(
             nil,
             "a"
           ),
-          HashNode(393...400)(
-            nil,
+          KeywordHashNode(393...400)(
             [AssocNode(393...400)(
                SymbolNode(393...395)(
                  nil,
@@ -825,8 +820,7 @@ ProgramNode(0...1187)(
                ),
                TrueNode(396...400)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -870,8 +864,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(423...425)("hi"),
        nil,
        ArgumentsNode(426...440)(
-         [HashNode(426...440)(
-            nil,
+         [KeywordHashNode(426...440)(
             [AssocNode(426...440)(
                SymbolNode(426...432)(
                  nil,
@@ -886,8 +879,7 @@ ProgramNode(0...1187)(
                  "friend"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -900,8 +892,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(442...444)("hi"),
        nil,
        ArgumentsNode(445...482)(
-         [HashNode(445...482)(
-            nil,
+         [KeywordHashNode(445...482)(
             [AssocNode(445...462)(
                SymbolNode(445...451)(
                  SYMBOL_BEGIN(445...446)(":"),
@@ -939,8 +930,7 @@ ProgramNode(0...1187)(
                  "dog"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -953,8 +943,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(484...486)("hi"),
        PARENTHESIS_LEFT(486...487)("("),
        ArgumentsNode(487...524)(
-         [HashNode(487...524)(
-            nil,
+         [KeywordHashNode(487...524)(
             [AssocNode(487...504)(
                SymbolNode(487...493)(
                  SYMBOL_BEGIN(487...488)(":"),
@@ -992,8 +981,7 @@ ProgramNode(0...1187)(
                  "dog"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(524...525)(")"),
@@ -1050,8 +1038,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(565...567)("hi"),
        nil,
        ArgumentsNode(568...585)(
-         [HashNode(568...585)(
-            nil,
+         [KeywordHashNode(568...585)(
             [AssocNode(568...585)(
                SymbolNode(568...574)(
                  SYMBOL_BEGIN(568...569)(":"),
@@ -1066,8 +1053,7 @@ ProgramNode(0...1187)(
                  "friend"
                ),
                EQUAL_GREATER(575...577)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -1109,8 +1095,7 @@ ProgramNode(0...1187)(
             nil,
             "a"
           ),
-          HashNode(611...616)(
-            nil,
+          KeywordHashNode(611...616)(
             [AssocNode(611...616)(
                SymbolNode(611...613)(
                  nil,
@@ -1125,8 +1110,7 @@ ProgramNode(0...1187)(
                  "c"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(618...619)(")"),
@@ -1139,8 +1123,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(621...624)("foo"),
        nil,
        ArgumentsNode(625...651)(
-         [HashNode(625...642)(
-            nil,
+         [KeywordHashNode(625...642)(
             [AssocNode(625...632)(
                SymbolNode(625...627)(
                  nil,
@@ -1160,8 +1143,7 @@ ProgramNode(0...1187)(
                ),
                FalseNode(637...642)(),
                nil
-             )],
-            nil
+             )]
           ),
           BlockArgumentNode(644...651)(
             SymbolNode(645...651)(
@@ -1184,8 +1166,7 @@ ProgramNode(0...1187)(
        nil,
        ArgumentsNode(663...674)(
          [IntegerNode(663...664)(),
-          HashNode(666...674)(
-            nil,
+          KeywordHashNode(666...674)(
             [AssocNode(666...674)(
                SymbolNode(666...672)(
                  nil,
@@ -1195,8 +1176,7 @@ ProgramNode(0...1187)(
                ),
                IntegerNode(673...674)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -1328,8 +1308,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(772...775)("foo"),
        PARENTHESIS_LEFT(775...776)("("),
        ArgumentsNode(776...783)(
-         [HashNode(776...783)(
-            nil,
+         [KeywordHashNode(776...783)(
             [AssocNode(776...783)(
                SymbolNode(776...780)(
                  STRING_BEGIN(776...777)("\""),
@@ -1348,8 +1327,7 @@ ProgramNode(0...1187)(
                  "-@"
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(783...784)(")"),
@@ -1362,8 +1340,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(786...789)("foo"),
        nil,
        ArgumentsNode(790...814)(
-         [HashNode(790...814)(
-            nil,
+         [KeywordHashNode(790...814)(
             [AssocNode(790...814)(
                SymbolNode(790...794)(
                  nil,
@@ -1401,8 +1378,7 @@ ProgramNode(0...1187)(
                  BRACE_RIGHT(813...814)("}")
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -1415,8 +1391,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(816...819)("foo"),
        nil,
        ArgumentsNode(820...840)(
-         [HashNode(820...840)(
-            nil,
+         [KeywordHashNode(820...840)(
             [AssocNode(820...840)(
                SymbolNode(820...824)(
                  nil,
@@ -1448,8 +1423,7 @@ ProgramNode(0...1187)(
                  BRACE_RIGHT(839...840)("}")
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,

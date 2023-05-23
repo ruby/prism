@@ -52,8 +52,7 @@ ProgramNode(0...67)(
             nil,
             "new"
           ),
-          HashNode(50...67)(
-            nil,
+          KeywordHashNode(50...67)(
             [AssocNode(50...67)(
                SymbolNode(50...53)(
                  SYMBOL_BEGIN(50...51)(":"),
@@ -68,8 +67,7 @@ ProgramNode(0...67)(
                  "endpoint"
                ),
                EQUAL_GREATER(54...56)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        nil,

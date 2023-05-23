@@ -1020,6 +1020,15 @@ nodes:
 
           `foo #{bar} baz`
           ^^^^^^^^^^^^^^^^
+  - name: KeywordHashNode
+    child_nodes:
+      - name: elements
+        type: node[]
+    comment: |
+      Represents a hash literal.
+
+          a => b
+          ^^^^^^^^^^
   - name: KeywordParameterNode
     child_nodes:
       - name: name

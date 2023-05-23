@@ -5,8 +5,7 @@ ProgramNode(0...106)(
        KEYWORD_RETURN(0...6)("return"),
        ArgumentsNode(7...17)(
          [IntegerNode(7...8)(),
-          HashNode(10...17)(
-            nil,
+          KeywordHashNode(10...17)(
             [AssocNode(10...17)(
                SymbolNode(10...12)(
                  SYMBOL_BEGIN(10...11)(":"),
@@ -16,8 +15,7 @@ ProgramNode(0...106)(
                ),
                IntegerNode(16...17)(),
                EQUAL_GREATER(13...15)("=>")
-             )],
-            nil
+             )]
           )]
        )
      ),
@@ -25,8 +23,7 @@ ProgramNode(0...106)(
        KEYWORD_RETURN(19...25)("return"),
        ArgumentsNode(26...45)(
          [IntegerNode(26...27)(),
-          HashNode(29...45)(
-            nil,
+          KeywordHashNode(29...45)(
             [AssocNode(29...36)(
                SymbolNode(29...31)(
                  SYMBOL_BEGIN(29...30)(":"),
@@ -46,8 +43,7 @@ ProgramNode(0...106)(
                ),
                IntegerNode(44...45)(),
                EQUAL_GREATER(41...43)("=>")
-             )],
-            nil
+             )]
           )]
        )
      ),
@@ -60,8 +56,7 @@ ProgramNode(0...106)(
             IDENTIFIER(54...55)("y"),
             nil,
             ArgumentsNode(56...61)(
-              [HashNode(56...61)(
-                 nil,
+              [KeywordHashNode(56...61)(
                  [AssocNode(56...61)(
                     SymbolNode(56...58)(
                       SYMBOL_BEGIN(56...57)(":"),
@@ -71,8 +66,7 @@ ProgramNode(0...106)(
                     ),
                     IntegerNode(60...61)(),
                     EQUAL_GREATER(58...60)("=>")
-                  )],
-                 nil
+                  )]
                )]
             ),
             nil,
@@ -90,8 +84,7 @@ ProgramNode(0...106)(
             IDENTIFIER(70...71)("y"),
             nil,
             ArgumentsNode(72...75)(
-              [HashNode(72...75)(
-                 nil,
+              [KeywordHashNode(72...75)(
                  [AssocNode(72...75)(
                     SymbolNode(72...74)(
                       nil,
@@ -101,8 +94,7 @@ ProgramNode(0...106)(
                     ),
                     IntegerNode(74...75)(),
                     nil
-                  )],
-                 nil
+                  )]
                )]
             ),
             nil,
@@ -120,8 +112,7 @@ ProgramNode(0...106)(
             IDENTIFIER(84...85)("y"),
             PARENTHESIS_LEFT(85...86)("("),
             ArgumentsNode(86...89)(
-              [HashNode(86...89)(
-                 nil,
+              [KeywordHashNode(86...89)(
                  [AssocNode(86...89)(
                     SymbolNode(86...88)(
                       nil,
@@ -131,8 +122,7 @@ ProgramNode(0...106)(
                     ),
                     IntegerNode(88...89)(),
                     nil
-                  )],
-                 nil
+                  )]
                )]
             ),
             PARENTHESIS_RIGHT(89...90)(")"),
@@ -150,8 +140,7 @@ ProgramNode(0...106)(
             IDENTIFIER(99...100)("y"),
             PARENTHESIS_LEFT(100...101)("("),
             ArgumentsNode(101...105)(
-              [HashNode(101...105)(
-                 nil,
+              [KeywordHashNode(101...105)(
                  [AssocNode(101...105)(
                     CallNode(101...102)(
                       nil,
@@ -165,8 +154,7 @@ ProgramNode(0...106)(
                     ),
                     IntegerNode(104...105)(),
                     EQUAL_GREATER(102...104)("=>")
-                  )],
-                 nil
+                  )]
                )]
             ),
             PARENTHESIS_RIGHT(105...106)(")"),

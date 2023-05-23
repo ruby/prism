@@ -285,8 +285,7 @@ ProgramNode(0...316)(
               IDENTIFIER(301...302)("a"),
               nil,
               ArgumentsNode(303...305)(
-                [HashNode(303...305)(
-                   nil,
+                [KeywordHashNode(303...305)(
                    [AssocNode(303...305)(
                       SymbolNode(303...305)(
                         nil,
@@ -296,8 +295,7 @@ ProgramNode(0...316)(
                       ),
                       nil,
                       nil
-                    )],
-                   nil
+                    )]
                  )]
               ),
               nil,

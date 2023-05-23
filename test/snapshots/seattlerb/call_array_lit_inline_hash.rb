@@ -14,8 +14,7 @@ ProgramNode(0...16)(
                nil,
                "b"
              ),
-             HashNode(7...14)(
-               nil,
+             KeywordHashNode(7...14)(
                [AssocNode(7...14)(
                   SymbolNode(7...9)(
                     SYMBOL_BEGIN(7...8)(":"),
@@ -25,8 +24,7 @@ ProgramNode(0...16)(
                   ),
                   IntegerNode(13...14)(),
                   EQUAL_GREATER(10...12)("=>")
-                )],
-               nil
+                )]
              )],
             BRACKET_LEFT_ARRAY(2...3)("["),
             BRACKET_RIGHT(14...15)("]")

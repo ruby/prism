@@ -17,10 +17,8 @@ ProgramNode(0...9)(
             nil,
             "b"
           ),
-          HashNode(5...8)(
-            nil,
-            [AssocSplatNode(5...8)(IntegerNode(7...8)(), (5...7))],
-            nil
+          KeywordHashNode(5...8)(
+            [AssocSplatNode(5...8)(IntegerNode(7...8)(), (5...7))]
           )]
        ),
        PARENTHESIS_RIGHT(8...9)(")"),

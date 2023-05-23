@@ -7,8 +7,7 @@ ProgramNode(0...12)(
        IDENTIFIER(0...4)("puts"),
        nil,
        ArgumentsNode(5...12)(
-         [HashNode(5...12)(
-            nil,
+         [KeywordHashNode(5...12)(
             [AssocNode(5...12)(
                SymbolNode(5...9)(
                  STRING_BEGIN(5...6)("'"),
@@ -22,8 +21,7 @@ ProgramNode(0...12)(
                  BRACE_RIGHT(11...12)("}")
                ),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,

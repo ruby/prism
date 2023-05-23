@@ -20,8 +20,7 @@ ProgramNode(0...41)(
             IDENTIFIER(13...16)("bar"),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...35)(
-              [HashNode(17...35)(
-                 nil,
+              [KeywordHashNode(17...35)(
                  [AssocSplatNode(17...19)(nil, (17...19)),
                   AssocNode(21...35)(
                     SymbolNode(21...30)(
@@ -32,8 +31,7 @@ ProgramNode(0...41)(
                     ),
                     TrueNode(31...35)(),
                     nil
-                  )],
-                 nil
+                  )]
                )]
             ),
             PARENTHESIS_RIGHT(35...36)(")"),

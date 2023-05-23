@@ -77,8 +77,7 @@ ProgramNode(0...74)(
        IDENTIFIER(46...49)("set"),
        nil,
        ArgumentsNode(50...58)(
-         [HashNode(50...58)(
-            nil,
+         [KeywordHashNode(50...58)(
             [AssocNode(50...58)(
                SymbolNode(50...56)(
                  STRING_BEGIN(50...51)("\""),
@@ -88,8 +87,7 @@ ProgramNode(0...74)(
                ),
                IntegerNode(57...58)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,
@@ -111,8 +109,7 @@ ProgramNode(0...74)(
        IDENTIFIER(64...67)("set"),
        nil,
        ArgumentsNode(68...74)(
-         [HashNode(68...74)(
-            nil,
+         [KeywordHashNode(68...74)(
             [AssocNode(68...74)(
                SymbolNode(68...72)(
                  nil,
@@ -122,8 +119,7 @@ ProgramNode(0...74)(
                ),
                IntegerNode(73...74)(),
                nil
-             )],
-            nil
+             )]
           )]
        ),
        nil,

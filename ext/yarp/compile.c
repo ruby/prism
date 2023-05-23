@@ -612,7 +612,8 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
       push_setglobal(compiler, ID2SYM(parse_token_symbol(&node->name)));
       return;
     }
-    case YP_NODE_HASH_NODE: {
+    case YP_NODE_HASH_NODE:
+    case YP_NODE_KEYWORD_HASH_NODE: {
       yp_hash_node_t *node = (yp_hash_node_t *) base_node;
       yp_node_list_t elements = node->elements;
 

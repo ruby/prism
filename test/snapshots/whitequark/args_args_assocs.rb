@@ -17,8 +17,7 @@ ProgramNode(0...46)(
             nil,
             "foo"
           ),
-          HashNode(9...18)(
-            nil,
+          KeywordHashNode(9...18)(
             [AssocNode(9...18)(
                SymbolNode(9...13)(
                  SYMBOL_BEGIN(9...10)(":"),
@@ -28,8 +27,7 @@ ProgramNode(0...46)(
                ),
                IntegerNode(17...18)(),
                EQUAL_GREATER(14...16)("=>")
-             )],
-            nil
+             )]
           )]
        ),
        PARENTHESIS_RIGHT(18...19)(")"),
@@ -52,8 +50,7 @@ ProgramNode(0...46)(
             nil,
             "foo"
           ),
-          HashNode(30...39)(
-            nil,
+          KeywordHashNode(30...39)(
             [AssocNode(30...39)(
                SymbolNode(30...34)(
                  SYMBOL_BEGIN(30...31)(":"),
@@ -63,8 +60,7 @@ ProgramNode(0...46)(
                ),
                IntegerNode(38...39)(),
                EQUAL_GREATER(35...37)("=>")
-             )],
-            nil
+             )]
           ),
           BlockArgumentNode(41...45)(
             CallNode(42...45)(
