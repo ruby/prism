@@ -1008,6 +1008,51 @@ class ErrorsTest < Test::Unit::TestCase
       Location()
     )
     assert_errors expected, "def foo(a,b,a);end", ["Duplicated argument name."]
+
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], RestParameterNode(USTAR("*"), IDENTIFIER("a")), [], nil, nil),
+      nil,
+      [IDENTIFIER("a"), IDENTIFIER("b")],
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(a,b,*a);end", ["Duplicated argument name."]
+
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], KeywordRestParameterNode(USTAR_STAR("**"), IDENTIFIER("a")), nil),
+      nil,
+      [IDENTIFIER("a"), IDENTIFIER("b")],
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(a,b,**a);end", ["Duplicated argument name."]
+
+    expected = DefNode(
+      IDENTIFIER("foo"),
+      nil,
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, BlockParameterNode(IDENTIFIER("a"), Location())),
+      nil,
+      [IDENTIFIER("a"), IDENTIFIER("b")],
+      Location(),
+      nil,
+      Location(),
+      Location(),
+      nil,
+      Location()
+    )
+    assert_errors expected, "def foo(a,b,&a);end", ["Duplicated argument name."]
   end
 
   private

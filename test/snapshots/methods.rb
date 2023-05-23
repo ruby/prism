@@ -1,6 +1,6 @@
-ProgramNode(0...1167)(
+ProgramNode(0...1194)(
   [IDENTIFIER(275...276)("a"), IDENTIFIER(769...770)("c")],
-  StatementsNode(0...1167)(
+  StatementsNode(0...1194)(
     [DefNode(0...23)(
        IDENTIFIER(4...7)("foo"),
        nil,
@@ -1418,6 +1418,32 @@ ProgramNode(0...1167)(
        (1147...1148),
        nil,
        (1164...1167)
+     ),
+     DefNode(1169...1194)(
+       IDENTIFIER(1173...1176)("foo"),
+       nil,
+       ParametersNode(1177...1189)(
+         [RequiredParameterNode(1177...1179)(),
+          RequiredParameterNode(1181...1183)(),
+          RequiredParameterNode(1185...1186)(),
+          RequiredParameterNode(1188...1189)()],
+         [],
+         [],
+         nil,
+         [],
+         nil,
+         nil
+       ),
+       nil,
+       [IDENTIFIER(1177...1179)("_a"),
+        IDENTIFIER(1185...1186)("b"),
+        IDENTIFIER(1188...1189)("c")],
+       (1169...1172),
+       nil,
+       (1176...1177),
+       (1189...1190),
+       nil,
+       (1191...1194)
      )]
   )
 )
