@@ -6895,7 +6895,16 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     case YP_NODE_CONSTANT_READ_NODE:
       return (yp_node_t *) yp_constant_path_write_node_create(parser, target, operator, value);
     case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
-      yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &((yp_global_variable_read_node_t *) target)->name, operator, value);
+      yp_token_t name = ((yp_global_variable_read_node_t *) target)->name;
+      yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &name, operator, value);
+      if ((name.type == YP_TOKEN_BACK_REFERENCE) || (name.type == YP_TOKEN_NTH_REFERENCE)) {
+        yp_diagnostic_list_append(
+          &parser->error_list,
+          name.start,
+          name.end,
+          "Can't set variable"
+        );
+      }
       yp_node_destroy(parser, target);
       return (yp_node_t *) result;
     }
