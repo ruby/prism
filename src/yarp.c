@@ -2002,7 +2002,7 @@ yp_keyword_hash_node_create(yp_parser_t *parser) {
 static void
 yp_keyword_hash_node_elements_append(yp_keyword_hash_node_t *hash, yp_node_t *element) {
   yp_node_list_append(&hash->elements, element);
-  if (hash->elements.size == 1) {
+  if (hash->base.location.start == NULL) {
     hash->base.location.start = element->location.start;
   }
   hash->base.location.end = element->location.end;

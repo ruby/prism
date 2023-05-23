@@ -1025,7 +1025,7 @@ nodes:
       - name: elements
         type: node[]
     comment: |
-      Represents a hash literal without an opening and closing braces.
+      Represents a hash literal without opening and closing braces.
 
           foo(a: b)
               ^^^^
