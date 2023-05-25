@@ -12,8 +12,8 @@ module YARP
       attr_reader :source, :io, :encoding
 
       def initialize(source, io)
-        # This is wrong, we should be dumping and loading the encoding. For now,
-        # we assume that the source is UTF-8.
+        # TODO: This is wrong, we should be dumping and loading the encoding.
+        # For now, we assume that the source is UTF-8.
         @encoding = Encoding::UTF_8
         @source = source.dup.force_encoding(@encoding).freeze
         @io = io
