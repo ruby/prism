@@ -10,6 +10,10 @@ module YARP
       @end_offset = end_offset
     end
 
+    def length
+      @end_offset - @start_offset
+    end
+
     def deconstruct_keys(keys)
       { start_offset: start_offset, end_offset: end_offset }
     end
@@ -97,12 +101,17 @@ module YARP
 
   # This represents a token from the Ruby source.
   class Token
-    attr_reader :type, :value, :location
+    attr_reader :type, :value, :start_offset, :end_offset
 
-    def initialize(type, value, location)
+    def initialize(type, value, start_offset, end_offset)
       @type = type
       @value = value
-      @location = location
+      @start_offset = start_offset
+      @end_offset = end_offset
+    end
+
+    def location
+      Location.new(@start_offset, @end_offset)
     end
 
     def deconstruct_keys(keys)
@@ -130,6 +139,12 @@ module YARP
 
   # This represents a node in the tree.
   class Node
+    attr_reader :start_offset, :end_offset
+
+    def location
+      Location.new(@start_offset, @end_offset)
+    end
+
     def pretty_print(q)
       q.group do
         q.text(self.class.name.split("::").last)

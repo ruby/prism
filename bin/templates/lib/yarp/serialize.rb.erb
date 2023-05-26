@@ -12,9 +12,11 @@ module YARP
       attr_reader :source, :io, :encoding
 
       def initialize(source, io)
-        @source = source.b
-        @io = io
+        # TODO: This is wrong, we should be dumping and loading the encoding.
+        # For now, we assume that the source is UTF-8.
         @encoding = Encoding::UTF_8
+        @source = source.dup.force_encoding(@encoding).freeze
+        @io = io
       end
 
       def load
@@ -47,19 +49,18 @@ module YARP
 
       def load_token
         number = io.getbyte
-        location = load_location
+        start_offset, length = load_varint, load_varint
+        end_offset = start_offset + length
 
         type =
           case number
           <%- tokens.each_with_index do |token, index| -%>
-          when <%= index + 1 %> then :<%= token.name %>
+          when <%= index + 1 %> then :<%= token.name.inspect %>
           <%- end -%>
           end
 
-        # This is wrong, we should be dumping and loading the encoding. For now,
-        # we assume that the source is UTF-8.
-        range = source[location.start_offset...location.end_offset]
-        Token.new(type, range.force_encoding(encoding), location)
+        range = source.byteslice(start_offset, length)
+        Token.new(type, range, start_offset, end_offset)
       end
 
       def load_optional_node
@@ -93,7 +94,8 @@ module YARP
 
       def load_node
         type = io.getbyte
-        location = load_location
+        start_offset, length = load_varint, load_varint
+        end_offset = start_offset + length
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
@@ -106,16 +108,16 @@ module YARP
           when NodeParam then "load_node"
           when OptionalNodeParam then "load_optional_node"
           when StringParam then "load_string"
-          when NodeListParam then "load_varint.times.map { load_node }"
+          when NodeListParam then "Array.new(load_varint) { load_node }"
           when TokenParam then "load_token"
-          when TokenListParam then "load_varint.times.map { load_token }"
+          when TokenListParam then "Array.new(load_varint) { load_token }"
           when OptionalTokenParam then "load_optional_token"
           when LocationParam then "load_location"
           when OptionalLocationParam then "load_optional_location"
           when UInt32Param then 'load_varint'
           else raise
           end
-        } + ["location"]).join(", ") -%>)
+        } + ["start_offset", "end_offset"]).join(", ") -%>)
         <%- end -%>
         end
       end
