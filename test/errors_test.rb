@@ -5,14 +5,14 @@ require "test_helper"
 class ErrorsTest < Test::Unit::TestCase
   include YARP::DSL
 
-  test "constant path with invalid token after" do
+  def test_constant_path_with_invalid_token_after
     assert_error_messages "A::$b", [
       "Expected identifier or constant after '::'",
       "Expected a newline or semicolon after statement."
     ]
   end
 
-  test "module name recoverable" do
+  def test_module_name_recoverable
     expected = ModuleNode(
       [],
       KEYWORD_MODULE("module"),
@@ -34,7 +34,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "for loops index missing" do
+  def test_for_loops_index_missing
     expected = ForNode(
       MissingNode(),
       expression("1..10"),
@@ -48,7 +48,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "for in 1..10\ni\nend", ["Expected index after for."]
   end
 
-  test "for loops only end" do
+  def test_for_loops_only_end
     expected = ForNode(
       MissingNode(),
       MissingNode(),
@@ -62,7 +62,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "for end", ["Expected index after for.", "Expected keyword in.", "Expected collection."]
   end
 
-  test "pre execution missing {" do
+  def test_pre_execution_missing_brace
     expected = PreExecutionNode(
       StatementsNode([expression("1")]),
       Location(),
@@ -73,7 +73,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "BEGIN 1 }", ["Expected '{' after 'BEGIN'."]
   end
 
-  test "pre execution context" do
+  def test_pre_execution_context
     expected = PreExecutionNode(
       StatementsNode([
         CallNode(
@@ -95,43 +95,43 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "BEGIN { 1 + }", ["Expected a value after the operator."]
   end
 
-  test "unterminated embdoc" do
+  def test_unterminated_embdoc
     assert_errors expression("1"), "1\n=begin\n", ["Unterminated embdoc"]
   end
 
-  test "unterminated %i list" do
+  def test_unterminated_i_list
     assert_errors expression("%i["), "%i[", ["Expected a closing delimiter for a `%i` list."]
   end
 
-  test "unterminated %w list" do
+  def test_unterminated_w_list
     assert_errors expression("%w["), "%w[", ["Expected a closing delimiter for a `%w` list."]
   end
 
-  test "unterminated %W list" do
+  def test_unterminated_W_list
     assert_errors expression("%W["), "%W[", ["Expected a closing delimiter for a `%W` list."]
   end
 
-  test "unterminated regular expression" do
+  def test_unterminated_regular_expression
     assert_errors expression("/hello"), "/hello", ["Expected a closing delimiter for a regular expression."]
   end
 
-  test "unterminated xstring" do
+  def test_unterminated_xstring
     assert_errors expression("`hello"), "`hello", ["Expected a closing delimiter for an xstring."]
   end
 
-  test "unterminated string" do
+  def test_unterminated_string
     assert_errors expression('"hello'), '"hello', ["Expected a closing delimiter for an interpolated string."]
   end
 
-  test "unterminated %s symbol" do
+  def test_unterminated_s_symbol
     assert_errors expression("%s[abc"), "%s[abc", ["Expected a closing delimiter for a dynamic symbol."]
   end
 
-  test "unterminated parenthesized expression" do
+  def test_unterminated_parenthesized_expression
     assert_errors expression('(1 + 2'), '(1 + 2', ["Expected to be able to parse an expression.", "Expected a closing parenthesis."]
   end
 
-  test "(1, 2, 3)" do
+  def test_1_2_3
     assert_errors expression("(1, 2, 3)"), "(1, 2, 3)", [
       "Expected to be able to parse an expression.",
       "Expected a closing parenthesis.",
@@ -144,7 +144,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "return(1, 2, 3)" do
+  def test_return_1_2_3
     assert_error_messages "return(1, 2, 3)", [
       "Expected to be able to parse an expression.",
       "Expected a closing parenthesis.",
@@ -153,11 +153,11 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "return 1,;" do
+  def test_return_1
     assert_errors expression("return 1,;"), "return 1,;", ["Expected to be able to parse an argument."]
   end
 
-  test "next(1, 2, 3)" do
+  def test_next_1_2_3
     assert_errors expression("next(1, 2, 3)"), "next(1, 2, 3)", [
       "Expected to be able to parse an expression.",
       "Expected a closing parenthesis.",
@@ -166,11 +166,11 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "next 1,;" do
+  def test_next_1
     assert_errors expression("next 1,;"), "next 1,;", ["Expected to be able to parse an argument."]
   end
 
-  test "break(1, 2, 3)" do
+  def test_break_1_2_3
     errors = [
       "Expected to be able to parse an expression.",
       "Expected a closing parenthesis.",
@@ -181,51 +181,51 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expression("break(1, 2, 3)"), "break(1, 2, 3)", errors
   end
 
-  test "break 1,;" do
+  def test_break_1
     assert_errors expression("break 1,;"), "break 1,;", ["Expected to be able to parse an argument."]
   end
 
-  test "argument forwarding when parent is not forwarding" do
+  def test_argument_forwarding_when_parent_is_not_forwarding
     assert_errors expression('def a(x, y, z); b(...); end'), 'def a(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
   end
 
-  test "argument forwarding only effects its own internals" do
+  def test_argument_forwarding_only_effects_its_own_internals
     assert_errors expression('def a(...); b(...); end; def c(x, y, z); b(...); end'), 'def a(...); b(...); end; def c(x, y, z); b(...); end', ["unexpected ... when parent method is not forwarding."]
   end
 
-  test "top level constant with downcased identifier" do
+  def test_top_level_constant_with_downcased_identifier
     assert_error_messages "::foo", [
       "Expected a constant after ::.",
       "Expected a newline or semicolon after statement."
     ]
   end
 
-  test "top level constant starting with downcased identifier" do
+  def test_top_level_constant_starting_with_downcased_identifier
     assert_error_messages "::foo::A", [
       "Expected a constant after ::.",
       "Expected a newline or semicolon after statement."
     ]
   end
 
-  test "aliasing global variable with non global variable" do
+  def test_aliasing_global_variable_with_non_global_variable
     assert_errors expression("alias $a b"), "alias $a b", ["Expected a global variable."]
   end
 
-  test "aliasing non global variable with global variable" do
+  def test_aliasing_non_global_variable_with_global_variable
     assert_errors expression("alias a $b"), "alias a $b", ["Expected a bare word or symbol argument."]
   end
 
-  test "aliasing global variable with global number variable" do
+  def test_aliasing_global_variable_with_global_number_variable
     assert_errors expression("alias $a $1"), "alias $a $1", ["Can't make alias for number variables."]
   end
 
-  test "def with expression receiver and no identifier" do
+  def test_def_with_expression_receiver_and_no_identifier
     assert_errors expression("def (a); end"), "def (a); end", [
       "Expected '.' or '::' after receiver"
     ]
   end
 
-  test "def with multiple statements receiver" do
+  def test_def_with_multiple_statements_receiver
     assert_errors expression("def (\na\nb\n).c; end"), "def (\na\nb\n).c; end", [
       "Expected closing ')' for receiver.",
       "Expected '.' or '::' after receiver",
@@ -234,11 +234,11 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "def with empty expression receiver" do
+  def test_def_with_empty_expression_receiver
     assert_errors expression("def ().a; end"), "def ().a; end", ["Expected to be able to parse receiver."]
   end
 
-  test "block beginning with '{' and ending with 'end'" do
+  def test_block_beginning_with_brace_and_ending_with_end
     assert_error_messages "x.each { x end", [
       "Expected a newline or semicolon after statement.",
       "Expected to be able to parse an expression.",
@@ -247,7 +247,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "double splat followed by splat argument" do
+  def test_double_splat_followed_by_splat_argument
     expected = CallNode(
       nil,
       nil,
@@ -282,7 +282,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "a(**kwargs, *args)", ["Unexpected splat argument after double splat."]
   end
 
-  test "arguments after block" do
+  def test_arguments_after_block
     expected = CallNode(
       nil,
       nil,
@@ -300,7 +300,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "a(&block, foo)", ["Unexpected argument after block argument."]
   end
 
-  test "arguments binding power for and" do
+  def test_arguments_binding_power_for_and
     assert_error_messages "foo(*bar and baz)", [
       "Expected a ')' to close the argument list.",
       "Expected a newline or semicolon after statement.",
@@ -308,7 +308,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "splat argument after keyword argument" do
+  def test_splat_argument_after_keyword_argument
     expected = CallNode(
       nil,
       nil,
@@ -335,7 +335,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "a(foo: bar, *args)", ["Unexpected splat argument after double splat."]
   end
 
-  test "module definition in method body" do
+  def test_module_definition_in_method_body
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -361,7 +361,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo;module A;end;end", ["Module definition in method body"]
   end
 
-  test "module definition in method body within block" do
+  def test_module_definition_in_method_body_within_block
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -410,7 +410,7 @@ class ErrorsTest < Test::Unit::TestCase
     ", ["Module definition in method body"]
   end
 
-  test "class definition in method body" do
+  def test_class_definition_in_method_body
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -438,7 +438,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo;class A;end;end", ["Class definition in method body"]
   end
 
-  test "bad arguments" do
+  def test_bad_arguments
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -461,7 +461,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "cannot assign to a reserved numbered parameter" do
+  def test_cannot_assign_to_a_reserved_numbered_parameter
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       StatementsNode(
@@ -539,7 +539,7 @@ class ErrorsTest < Test::Unit::TestCase
     ", Array.new(9, "reserved for numbered parameter")
   end
 
-  test "do not allow trailing commas in method parameters" do
+  def test_do_not_allow_trailing_commas_in_method_parameters
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -567,7 +567,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "do not allow trailing commas in lambda parameters" do
+  def test_do_not_allow_trailing_commas_in_lambda_parameters
     expected = LambdaNode(
       [IDENTIFIER("a"), IDENTIFIER("b")],
       MINUS_GREATER("->"),
@@ -584,7 +584,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "do not allow multiple codepoints in a single character literal" do
+  def test_do_not_allow_multiple_codepoints_in_a_single_character_literal
     expected = StringNode(
       STRING_BEGIN("?"),
       STRING_CONTENT('\u{0001 0002}'),
@@ -596,7 +596,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "do not allow more than 6 hexadecimal digits in \u{} Unicode character notation" do
+  def test_do_not_allow_more_than_6_hexadecimal_digits_in_u_Unicode_character_notation
     expected = StringNode(
       STRING_BEGIN('"'),
       STRING_CONTENT('\u{0000001}'),
@@ -609,7 +609,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "do not allow characters other than 0-9, a-f and A-F in \u{} Unicode character notation" do
+  def test_do_not_allow_characters_other_than_0_9_a_f_and_A_F_in_u_Unicode_character_notation
     expected = StringNode(
       STRING_BEGIN('"'),
       STRING_CONTENT('\u{000z}'),
@@ -622,7 +622,7 @@ class ErrorsTest < Test::Unit::TestCase
     ]
   end
 
-  test "method parameters after block" do
+  def test_method_parameters_after_block
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -647,7 +647,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(&block, a)\nend", ["Unexpected parameter order"]
   end
 
-  test "method with arguments after anonamous block" do
+  def test_method_with_arguments_after_anonamous_block
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -665,7 +665,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(&, a)\nend", ["Unexpected parameter order"]
   end
 
-  test "method parameters after arguments forwarding" do
+  def test_method_parameters_after_arguments_forwarding
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -690,7 +690,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(..., a)\nend", ["Unexpected parameter order"]
   end
 
-  test "keywords parameters before required parameters" do
+  def test_keywords_parameters_before_required_parameters
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -715,7 +715,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(b:, a)\nend", ["Unexpected parameter order"]
   end
 
-  test "rest keywords parameters before required parameters" do
+  def test_rest_keywords_parameters_before_required_parameters
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -743,7 +743,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(**rest, b:)\nend", ["Unexpected parameter order"]
   end
 
-  test "double arguments forwarding" do
+  def test_double_arguments_forwarding
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -760,7 +760,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(..., ...)\nend", ["Unexpected parameter order"]
   end
 
-  test "multiple error in parameters order" do
+  def test_multiple_error_in_parameters_order
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -788,7 +788,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
-  test "switching to optional arguments twice" do
+  def test_switching_to_optional_arguments_twice
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -818,7 +818,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
-  test "switching to named arguments twice" do
+  def test_switching_to_named_arguments_twice
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -848,7 +848,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
-  test "returning to optional parameters multiple times" do
+  def test_returning_to_optional_parameters_multiple_times
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
@@ -887,7 +887,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(a, b = 1, c, d = 2, e)\nend", ["Unexpected parameter order"]
   end
 
-  test "case without when clauses errors on else clause" do
+  def test_case_without_when_clauses_errors_on_else_clause
     expected = CaseNode(
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
       [],
@@ -899,7 +899,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "case :a\nelse\nend", ["Unexpected else without no when clauses in case statement."]
   end
 
-  test "setter method cannot be defined in an endless method definition"  do
+  def test_setter_method_cannot_be_defined_in_an_endless_method_definition
     expected = DefNode(
       IDENTIFIER("a="),
       nil,
@@ -917,7 +917,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def a=() = 42", ["Setter method cannot be defined in an endless method definition"]
   end
 
-  test "do not allow forward arguments in lambda literals" do
+  def test_do_not_allow_forward_arguments_in_lambda_literals
     expected = LambdaNode(
       [UDOT_DOT_DOT("...")],
       MINUS_GREATER("->"),
@@ -928,7 +928,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "->(...) {}", ["Unexpected ..."]
   end
 
-  test "do not allow forward arguments in blocks" do
+  def test_do_not_allow_forward_arguments_in_blocks
     expected = CallNode(
       nil,
       nil,
@@ -949,7 +949,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "a {|...|}", ["Unexpected ..."]
   end
 
-  test "don't allow return inside class body" do
+  def test_dont_allow_return_inside_class_body
     expected = ClassNode(
       [],
       KEYWORD_CLASS("class"),
@@ -963,7 +963,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "class A; return; end", ["Invalid return in class/module body"]
   end
 
-  test "don't allow return inside module body" do
+  def test_dont_allow_return_inside_module_body
     expected = ModuleNode(
       [],
       KEYWORD_MODULE("module"),
@@ -975,7 +975,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "module A; return; end", ["Invalid return in class/module body"]
   end
 
-  test "don't allow setting to back and nth reference" do
+  def test_dont_allow_setting_to_back_and_nth_reference
     expected = BeginNode(
       KEYWORD_BEGIN("begin"),
       StatementsNode([GlobalVariableWriteNode(BACK_REFERENCE("$+"), EQUAL("="), NilNode()),
@@ -989,7 +989,7 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "begin\n$+ = nil\n$1466 = nil\nend", ["Can't set variable", "Can't set variable"]
   end
 
-  test "duplicated parameter names" do
+  def test_duplicated_parameter_names
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,

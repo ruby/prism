@@ -3,11 +3,11 @@
 require "test_helper"
 
 class ParseTest < Test::Unit::TestCase
-  test "Ruby 3.2+" do
+  def test_Ruby_3_2_plus
     assert_operator Gem::Version.new(RUBY_VERSION), :>=, Gem::Version.new("3.2.0"), "ParseTest requires Ruby 3.2+"
   end
 
-  test "empty string" do
+  def test_empty_string
     YARP.parse("") => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: []]]]
   end
 
@@ -38,7 +38,7 @@ class ParseTest < Test::Unit::TestCase
     directory = File.dirname(snapshot)
     FileUtils.mkdir_p(directory) unless File.directory?(directory)
 
-    test(filepath) do
+    define_method "test_filepath_#{filepath}" do
       # First, read the source from the filepath and make sure that it can be
       # correctly parsed by Ripper. If it can't, then we have a fixture that is
       # invalid Ruby.

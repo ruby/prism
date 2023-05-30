@@ -5,11 +5,11 @@ require "test_helper"
 class CommentsTest < Test::Unit::TestCase
   include YARP::DSL
 
-  test "comment inline" do
+  def test_comment_inline
     assert_comment "# comment", :inline
   end
 
-  test "comment __END__" do
+  def test_comment___END__
     source = <<~RUBY
       __END__
       comment
@@ -18,7 +18,7 @@ class CommentsTest < Test::Unit::TestCase
     assert_comment source, :__END__
   end
 
-  test "comment embedded document" do
+  def test_comment_embedded_document
     source = <<~RUBY
       =begin
       comment
@@ -28,7 +28,7 @@ class CommentsTest < Test::Unit::TestCase
     assert_comment source, :embdoc
   end
 
-  test "comment embedded document with content on same line" do
+  def test_comment_embedded_document_with_content_on_same_line
     source = <<~RUBY
       =begin other stuff
       =end

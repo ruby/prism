@@ -3,102 +3,102 @@
 require "test_helper"
 
 class CompileTest < Test::Unit::TestCase
-  test "AliasNode" do
+  def test_AliasNode
     assert_compiles("alias foo bar")
   end
 
-  test "AndNode" do
+  def test_AndNode
     assert_compiles("true && false")
   end
 
-  test "ArrayNode" do
+  def test_ArrayNode
     assert_compiles("[]")
     assert_compiles("[foo, bar, baz]")
   end
 
-  test "AssocNode" do
+  def test_AssocNode
     assert_compiles("{ foo: bar }")
   end
 
-  test "BlockNode" do
+  def test_BlockNode
     assert_compiles("foo { bar }")
   end
 
-  test "BlockNode with optionals" do
+  def test_BlockNode_with_optionals
     assert_compiles("foo { |x = 1| bar }")
   end
 
-  test "CallNode" do
+  def test_CallNode
     assert_compiles("foo")
     assert_compiles("foo(bar)")
   end
 
-  test "ClassVariableReadNode" do
+  def test_ClassVariableReadNode
     assert_compiles("@@foo")
   end
 
-  test "ClassVariableWriteNode" do
+  def test_ClassVariableWriteNode
     assert_compiles("@@foo = 1")
   end
 
-  test "FalseNode" do
+  def test_FalseNode
     assert_compiles("false")
   end
 
-  test "GlobalVariableReadNode" do
+  def test_GlobalVariableReadNode
     assert_compiles("$foo")
   end
 
-  test "GlobalVariableWriteNode" do
+  def test_GlobalVariableWriteNode
     assert_compiles("$foo = 1")
   end
 
-  test "HashNode" do
+  def test_HashNode
     assert_compiles("{ foo: bar }")
   end
 
-  test "InstanceVariableReadNode" do
+  def test_InstanceVariableReadNode
     assert_compiles("@foo")
   end
 
-  test "InstanceVariableWriteNode" do
+  def test_InstanceVariableWriteNode
     assert_compiles("@foo = 1")
   end
 
-  test "IntegerNode" do
+  def test_IntegerNode
     assert_compiles("1")
     assert_compiles("1_000")
   end
 
-  test "InterpolatedStringNode" do
+  def test_InterpolatedStringNode
     assert_compiles("\"foo \#{bar} baz\"")
   end
 
-  test "LocalVariableWriteNode" do
+  def test_LocalVariableWriteNode
     assert_compiles("foo = 1")
   end
 
-  test "LocalVariableReadNode" do
+  def test_LocalVariableReadNode
     assert_compiles("[foo = 1, foo]")
   end
 
-  test "NilNode" do
+  def test_NilNode
     assert_compiles("nil")
   end
 
-  test "OrNode" do
+  def test_OrNode
     assert_compiles("true || false")
   end
 
-  test "ParenthesesNode" do
+  def test_ParenthesesNode
     assert_compiles("()")
   end
 
-  test "ProgramNode" do
+  def test_ProgramNode
     assert_compiles("")
   end
 
-  test "RangeNode" do
+  def test_RangeNode
     assert_compiles("foo..bar")
     assert_compiles("foo...bar")
     assert_compiles("(foo..)")
@@ -107,27 +107,27 @@ class CompileTest < Test::Unit::TestCase
     assert_compiles("(...bar)")
   end
 
-  test "SelfNode" do
+  def test_SelfNode
     assert_compiles("self")
   end
 
-  test "StringNode" do
+  def test_StringNode
     assert_compiles("\"foo\"")
   end
 
-  test "SymbolNode" do
+  def test_SymbolNode
     assert_compiles(":foo")
   end
 
-  test "TrueNode" do
+  def test_TrueNode
     assert_compiles("true")
   end
 
-  test "UndefNode" do
+  def test_UndefNode
     assert_compiles("undef :foo, :bar, :baz")
   end
 
-  test "XStringNode" do
+  def test_XStringNode
     assert_compiles("`foo`")
   end
 

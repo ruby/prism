@@ -3,7 +3,7 @@
 require "test_helper"
 
 class VersionTest < Test::Unit::TestCase
-  test "version is set" do
+  def test_version_is_set
     refute_nil YARP::VERSION
   end
 end

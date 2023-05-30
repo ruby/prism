@@ -4,24 +4,24 @@ require "test_helper"
 
 module YARP
   class LocationTest < Test::Unit::TestCase
-    test "AliasNode" do
+    def test_AliasNode
       assert_location(AliasNode, "alias foo bar")
     end
 
-    test "AlternationPatternNode" do
+    def test_AlternationPatternNode
       assert_location(AlternationPatternNode, "foo => bar | baz", 7...16, &:pattern)
     end
 
-    test "AndNode" do
+    def test_AndNode
       assert_location(AndNode, "foo and bar")
       assert_location(AndNode, "foo && bar")
     end
 
-    test "ArgumentsNode" do
+    def test_ArgumentsNode
       assert_location(ArgumentsNode, "foo(bar, baz, qux)", 4...17, &:arguments)
     end
 
-    test "ArrayNode" do
+    def test_ArrayNode
       assert_location(ArrayNode, "[foo, bar, baz]")
       assert_location(ArrayNode, "%i[foo bar baz]")
       assert_location(ArrayNode, "%I[foo bar baz]")
@@ -29,7 +29,7 @@ module YARP
       assert_location(ArrayNode, "%W[foo bar baz]")
     end
 
-    test "ArrayPatternNode" do
+    def test_ArrayPatternNode
       assert_location(ArrayPatternNode, "foo => bar, baz", 7...15, &:pattern)
       assert_location(ArrayPatternNode, "foo => [bar, baz]", 7...17, &:pattern)
       assert_location(ArrayPatternNode, "foo => *bar", 7...11, &:pattern)
@@ -38,18 +38,18 @@ module YARP
       assert_location(ArrayPatternNode, "foo => Foo[bar]", 7...15, &:pattern)
     end
 
-    test "AssocNode" do
+    def test_AssocNode
       assert_location(AssocNode, "{ foo: :bar }", 2...11) { |node| node.elements.first }
       assert_location(AssocNode, "{ :foo => :bar }", 2...14) { |node| node.elements.first }
       assert_location(AssocNode, "foo(bar: :baz)", 4...13) { |node| node.arguments.arguments.first.elements.first }
     end
 
-    test "AssocSplatNode" do
+    def test_AssocSplatNode
       assert_location(AssocSplatNode, "{ **foo }", 2...7) { |node| node.elements.first }
       assert_location(AssocSplatNode, "foo(**bar)", 4...9) { |node| node.arguments.arguments.first.elements.first }
     end
 
-    test "BeginNode" do
+    def test_BeginNode
       assert_location(BeginNode, "begin foo end")
       assert_location(BeginNode, "begin foo rescue bar end")
       assert_location(BeginNode, "begin foo; rescue bar\nelse baz end")
@@ -59,20 +59,20 @@ module YARP
       assert_location(BeginNode, "module Foo\nrescue then end", &:statements)
     end
 
-    test "BlockArgumentNode" do
+    def test_BlockArgumentNode
       assert_location(BlockArgumentNode, "foo(&bar)", 4...8) { |node| node.arguments.arguments.last }
     end
 
-    test "BlockNode" do
+    def test_BlockNode
       assert_location(BlockNode, "foo {}", 4...6, &:block)
       assert_location(BlockNode, "foo do end", 4...10, &:block)
     end
 
-    test "BlockParameterNode" do
+    def test_BlockParameterNode
       assert_location(BlockParameterNode, "def foo(&bar) end", 8...12) { |node| node.parameters.block }
     end
 
-    test "BlockParametersNode" do
+    def test_BlockParametersNode
       assert_location(BlockParametersNode, "foo { || }", 6...8) { |node| node.block.parameters }
       assert_location(BlockParametersNode, "foo { |bar| baz }", 6...11) { |node| node.block.parameters }
       assert_location(BlockParametersNode, "foo { |bar; baz| baz }", 6...16) { |node| node.block.parameters }
@@ -82,14 +82,14 @@ module YARP
       assert_location(BlockParametersNode, "-> (bar; baz) { baz }", 3...13, &:parameters)
     end
 
-    test "BreakNode" do
+    def test_BreakNode
       assert_location(BreakNode, "break")
       assert_location(BreakNode, "break foo")
       assert_location(BreakNode, "break foo, bar")
       assert_location(BreakNode, "break(foo)")
     end
 
-    test "CallNode" do
+    def test_CallNode
       assert_location(CallNode, "foo")
       assert_location(CallNode, "foo?")
       assert_location(CallNode, "foo!")
@@ -162,88 +162,88 @@ module YARP
       assert_location(CallNode, "foo bar('baz')")
     end
 
-    test "CaseNode" do
+    def test_CaseNode
       assert_location(CaseNode, "case foo; when bar; end")
       assert_location(CaseNode, "case foo; when bar; else; end")
       assert_location(CaseNode, "case foo; when bar; when baz; end")
       assert_location(CaseNode, "case foo; when bar; when baz; else; end")
     end
 
-    test "ClassVariableReadNode" do
+    def test_ClassVariableReadNode
       assert_location(ClassVariableReadNode, "@@foo")
     end
 
-    test "ClassVariableWriteNode" do
+    def test_ClassVariableWriteNode
       assert_location(ClassVariableWriteNode, "@@foo = bar")
     end
 
-    test "ConstantPathNode" do
+    def test_ConstantPathNode
       assert_location(ConstantPathNode, "Foo::Bar")
       assert_location(ConstantPathNode, "::Foo")
       assert_location(ConstantPathNode, "::Foo::Bar")
     end
 
-    test "ConstantReadNode" do
+    def test_ConstantReadNode
       assert_location(ConstantReadNode, "Foo")
       assert_location(ConstantReadNode, "Foo::Bar", 5...8, &:child)
     end
 
-    test "FalseNode" do
+    def test_FalseNode
       assert_location(FalseNode, "false")
     end
 
-    test "FloatNode" do
+    def test_FloatNode
       assert_location(FloatNode, "0.0")
       assert_location(FloatNode, "1.0")
       assert_location(FloatNode, "1.0e10")
       assert_location(FloatNode, "1.0e-10")
     end
 
-    test "ForNode" do
+    def test_ForNode
       assert_location(ForNode, "for foo in bar; end")
       assert_location(ForNode, "for foo, bar in baz do end")
     end
 
-    test "ForwardingArgumentsNode" do
+    def test_ForwardingArgumentsNode
       assert_location(ForwardingArgumentsNode, "def foo(...); bar(...); end", 18...21) do |node|
         node.statements.body.first.arguments.arguments.first
       end
     end
 
-    test "ForwardingParameterNode" do
+    def test_ForwardingParameterNode
       assert_location(ForwardingParameterNode, "def foo(...); end", 8...11) do |node|
         node.parameters.keyword_rest
       end
     end
 
-    test "ForwardingSuperNode" do
+    def test_ForwardingSuperNode
       assert_location(ForwardingSuperNode, "super")
       assert_location(ForwardingSuperNode, "super {}")
     end
 
-    test "HashNode" do
+    def test_HashNode
       assert_location(HashNode, "{ foo: 2 }")
       assert_location(HashNode, "{ \nfoo: 2, \nbar: 3 \n}")
     end
 
-    test "IfNode" do
+    def test_IfNode
       assert_location(IfNode, "if type in 1;elsif type in B;end")
     end
 
-    test "ImaginaryNode" do
+    def test_ImaginaryNode
       assert_location(ImaginaryNode, "1i")
       assert_location(ImaginaryNode, "1ri")
     end
 
-    test "InstanceVariableReadNode" do
+    def test_InstanceVariableReadNode
       assert_location(InstanceVariableReadNode, "@foo")
     end
 
-    test "InstanceVariableWriteNode" do
+    def test_InstanceVariableWriteNode
       assert_location(InstanceVariableWriteNode, "@foo = bar")
     end
 
-    test "IntegerNode" do
+    def test_IntegerNode
       assert_location(IntegerNode, "0")
       assert_location(IntegerNode, "1")
       assert_location(IntegerNode, "1_000")
@@ -255,42 +255,42 @@ module YARP
       assert_location(IntegerNode, "0o1_000")
     end
 
-    test "InterpolatedRegularExpressionNode" do
+    def test_InterpolatedRegularExpressionNode
       assert_location(InterpolatedRegularExpressionNode, "/\#{foo}/")
     end
 
-    test "InterpolatedStringNode" do
+    def test_InterpolatedStringNode
       assert_location(InterpolatedStringNode, "<<~A\nhello world\nA")
     end
 
-    test "InterpolatedSymbolNode" do
+    def test_InterpolatedSymbolNode
       assert_location(InterpolatedSymbolNode, ':"#{foo}bar"')
     end
 
-    test "InterpolatedXStringNode" do
+    def test_InterpolatedXStringNode
       assert_location(InterpolatedXStringNode, '`foo #{bar} baz`')
     end
 
-    test "KeywordHashNode" do
+    def test_KeywordHashNode
       assert_location(KeywordHashNode, "foo(a, b: 1)", 7...11) { |node| node.arguments.arguments[1] }
     end
 
-    test "NextNode" do
+    def test_NextNode
       assert_location(NextNode, "next")
       assert_location(NextNode, "next foo")
       assert_location(NextNode, "next foo, bar")
       assert_location(NextNode, "next(foo)")
     end
 
-    test "NilNode" do
+    def test_NilNode
       assert_location(NilNode, "nil")
     end
 
-    test "NoKeywordsParameterNode" do
+    def test_NoKeywordsParameterNode
       assert_location(NoKeywordsParameterNode, "def foo(**nil); end", 8...13) { |node| node.parameters.keyword_rest }
     end
 
-    test "OperatorAndAssignmentNode" do
+    def test_OperatorAndAssignmentNode
       assert_location(OperatorAndAssignmentNode, "foo = 1; foo &&= bar", 9...20)
 
       assert_location(OperatorAndAssignmentNode, "foo &&= bar")
@@ -305,7 +305,7 @@ module YARP
       assert_location(OperatorAndAssignmentNode, "Foo::Foo &&= bar")
     end
 
-    test "OperatorOrAssignmentNode" do
+    def test_OperatorOrAssignmentNode
       assert_location(OperatorOrAssignmentNode, "foo = 1; foo ||= bar", 9...20)
 
       assert_location(OperatorOrAssignmentNode, "foo ||= bar")
@@ -320,27 +320,27 @@ module YARP
       assert_location(OperatorOrAssignmentNode, "Foo::Foo ||= bar")
     end
 
-    test "OrNode" do
+    def test_OrNode
       assert_location(OrNode, "foo || bar")
       assert_location(OrNode, "foo or bar")
     end
 
-    test "ParenthesesNode" do
+    def test_ParenthesesNode
       assert_location(ParenthesesNode, "()")
       assert_location(ParenthesesNode, "(foo)")
       assert_location(ParenthesesNode, "foo (bar), baz", 4...9) { |node| node.arguments.arguments.first }
       assert_location(ParenthesesNode, "def (foo).bar; end", 4...9, &:receiver)
     end
 
-    test "PostExecutionNode" do
+    def test_PostExecutionNode
       assert_location(PostExecutionNode, "END { foo }")
     end
 
-    test "PreExecutionNode" do
+    def test_PreExecutionNode
       assert_location(PreExecutionNode, "BEGIN { foo }")
     end
 
-    test "RangeNode" do
+    def test_RangeNode
       assert_location(RangeNode, "1..2")
       assert_location(RangeNode, "1...2")
 
@@ -351,16 +351,16 @@ module YARP
       assert_location(RangeNode, "1...")
     end
 
-    test "RationalNode" do
+    def test_RationalNode
       assert_location(RationalNode, "1r")
       assert_location(RationalNode, "1.0r")
     end
 
-    test "RedoNode" do
+    def test_RedoNode
       assert_location(RedoNode, "redo")
     end
 
-    test "RescueNode" do
+    def test_RescueNode
       code = <<~RUBY
       begin
         body
@@ -372,27 +372,27 @@ module YARP
       assert_location(RescueNode, code, 30...50) { |node| node.rescue_clause.consequent }
     end
 
-    test "RetryNode" do
+    def test_RetryNode
       assert_location(RetryNode, "retry")
     end
 
-    test "SelfNode" do
+    def test_SelfNode
       assert_location(SelfNode, "self")
     end
 
-    test "SourceEncodingNode" do
+    def test_SourceEncodingNode
       assert_location(SourceEncodingNode, "__ENCODING__")
     end
 
-    test "SourceFileNode" do
+    def test_SourceFileNode
       assert_location(SourceFileNode, "__FILE__")
     end
 
-    test "SourceLineNode" do
+    def test_SourceLineNode
       assert_location(SourceLineNode, "__LINE__")
     end
 
-    test "StatementsNode" do
+    def test_StatementsNode
       assert_location(StatementsNode, "foo { 1 }", 6...7) { |node| node.block.statements }
 
       assert_location(StatementsNode, "(1)", 1...2, &:statements)
@@ -436,7 +436,7 @@ module YARP
       assert_location(StatementsNode, "\"\#{foo}\"", 3...6) { |node| node.parts.first.statements }
     end
 
-    test "SuperNode" do
+    def test_SuperNode
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")
 
@@ -447,26 +447,26 @@ module YARP
       assert_location(SuperNode, "super() {}")
     end
 
-    test "TrueNode" do
+    def test_TrueNode
       assert_location(TrueNode, "true")
     end
 
-    test "UndefNode" do
+    def test_UndefNode
       assert_location(UndefNode, "undef foo")
       assert_location(UndefNode, "undef foo, bar")
     end
 
-    test "UntilNode" do
+    def test_UntilNode
       assert_location(UntilNode, "foo = bar until baz")
       assert_location(UntilNode, "until bar;baz;end")
     end
 
-    test "WhileNode" do
+    def test_WhileNode
       assert_location(WhileNode, "foo = bar while foo != baz")
       assert_location(WhileNode, "while a;bar;baz;end")
     end
 
-    test "XStringNode" do
+    def test_XStringNode
       assert_location(XStringNode, "`foo`")
       assert_location(XStringNode, "%x[foo]")
     end
