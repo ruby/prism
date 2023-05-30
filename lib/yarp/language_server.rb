@@ -103,7 +103,7 @@ module YARP
       diagnostics.map do |diagnostic|
         message = diagnostic[:message]
         issue_content = URI.encode_www_form_component(GITHUB_TEMPLATE % {error: message})
-        issue_link = "https://github.com/Shopify/yarp/issues/new?&labels=Bug&body=#{issue_content}"
+        issue_link = "https://github.com/ruby/yarp/issues/new?&labels=Bug&body=#{issue_content}"
 
         {
           title: "Report incorrect error: `#{diagnostic[:message]}`",
