@@ -6,8 +6,6 @@ on:
 
 jobs:
   release:
-    runs-on: shopify-ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
         name: Checkout

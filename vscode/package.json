@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Shopify/yarp.git"
+    "url": "https://github.com/ruby/yarp.git"
   },
   "engines": {
     "vscode": "^1.75.0"

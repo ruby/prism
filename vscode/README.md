@@ -1,6 +1,6 @@
 # VSCode YARP LSP
 
-VSCode support for [YARP](https://github.com/shopify/yarp). Currently YARP is under development, so this LSP is acting as a way to minimize the effort for reporting incorrect diagnostics.
+VSCode support for [YARP](https://github.com/ruby/yarp). Currently YARP is under development, so this LSP is acting as a way to minimize the effort for reporting incorrect diagnostics.
 
 ## Getting Started
 To install, download the latest `yarp-lsp.vsix` release and run the following command:
@@ -8,7 +8,7 @@ To install, download the latest `yarp-lsp.vsix` release and run the following co
 code --install-extension /path/to/yarp-lsp.vsix
 ```
 
-Once installed, clone the [YARP repository](https://github.com/shopify/yarp), running `rake` to build.
+Once installed, clone the [YARP repository](https://github.com/ruby/yarp), running `rake` to build.
 
 Either add `bin/yarp-lsp` to your path or use the `yarp-lsp.commandPath` override in your VSCode settings.
 

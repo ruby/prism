@@ -187,7 +187,7 @@ export async function activate(context: ExtensionContext) {
       }
     }
 
-    commands.executeCommand('vscode.open', `https://github.com/Shopify/yarp/issues/new?&labels=Bug&body=${encodeURIComponent(issueContent)}`);
+    commands.executeCommand('vscode.open', `https://github.com/ruby/yarp/issues/new?&labels=Bug&body=${encodeURIComponent(issueContent)}`);
   }
 }
 
