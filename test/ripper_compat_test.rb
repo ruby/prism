@@ -4,11 +4,11 @@ require "test_helper"
 
 module YARP
   class RipperCompatTest < Test::Unit::TestCase
-    test "1 + 2" do
+    def test_1_plus_2
       assert_equivalent("1 + 2")
     end
 
-    test "2 - 3" do
+    def test_2_minus_3
       assert_equivalent("2 - 3")
     end
 

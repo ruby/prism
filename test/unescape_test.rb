@@ -4,11 +4,11 @@ require "test_helper"
 
 module UnescapeTest
   class UnescapeNoneTest < Test::Unit::TestCase
-    test "backslash" do
+    def test_backslash
       assert_unescape_none("\\")
     end
 
-    test "single quote" do
+    def test_single_quote
       assert_unescape_none("'")
     end
 
@@ -20,15 +20,15 @@ module UnescapeTest
   end
 
   class UnescapeMinimalTest < Test::Unit::TestCase
-    test "backslash" do
+    def test_backslash
       assert_unescape_minimal("\\", "\\\\")
     end
 
-    test "single quote" do
+    def test_single_quote
       assert_unescape_minimal("'", "\\'")
     end
 
-    test "single char" do
+    def test_single_char
       assert_unescape_minimal("\\a", "\\a")
     end
 
@@ -40,15 +40,15 @@ module UnescapeTest
   end
 
   class UnescapeAllTest < Test::Unit::TestCase
-    test "backslash" do
+    def test_backslash
       assert_unescape_all("\\", "\\\\")
     end
 
-    test "single quote" do
+    def test_single_quote
       assert_unescape_all("'", "\\'")
     end
 
-    test "single char" do
+    def test_single_char
       assert_unescape_all("\a", "\\a")
       assert_unescape_all("\b", "\\b")
       assert_unescape_all("\e", "\\e")
@@ -60,24 +60,24 @@ module UnescapeTest
       assert_unescape_all("\v", "\\v")
     end
 
-    test "octal" do
+    def test_octal
       assert_unescape_all("\a", "\\7")
       assert_unescape_all("#", "\\43")
       assert_unescape_all("a", "\\141")
     end
 
-    test "hexadecimal" do
+    def test_hexadecimal
       assert_unescape_all("\a", "\\x7")
       assert_unescape_all("#", "\\x23")
       assert_unescape_all("a", "\\x61")
     end
 
-    test "deletes" do
+    def test_deletes
       assert_unescape_all("\x7f", "\\c?")
       assert_unescape_all("\x7f", "\\C-?")
     end
 
-    test "unicode codepoint" do
+    def test_unicode_codepoint
       assert_unescape_all("a", "\\u0061")
       assert_unescape_all("Ā", "\\u0100", "UTF-8")
       assert_unescape_all("က", "\\u1000", "UTF-8")
@@ -86,7 +86,7 @@ module UnescapeTest
       assert_nil(YARP.unescape_all("\\uxxxx"))
     end
 
-    test "unicode codepoints" do
+    def test_unicode_codepoints
       assert_unescape_all("a", "\\u{61}")
       assert_unescape_all("Ā", "\\u{0100}", "UTF-8")
       assert_unescape_all("က", "\\u{1000}", "UTF-8")
@@ -99,7 +99,7 @@ module UnescapeTest
       assert_nil(YARP.unescape_all("\\u{110000 110001 110002}"))
     end
 
-    test "control characters" do
+    def test_control_characters
       each_printable do |chr|
         byte = eval("\"\\c#{chr}\"").bytes.first
         assert_unescape_all(byte.chr, "\\c#{chr}")
@@ -109,14 +109,14 @@ module UnescapeTest
       end
     end
 
-    test "meta characters" do
+    def test_meta_characters
       each_printable do |chr|
         byte = eval("\"\\M-#{chr}\"").bytes.first
         assert_unescape_all(byte.chr, "\\M-#{chr}")
       end
     end
 
-    test "meta control characters" do
+    def test_meta_control_characters
       each_printable do |chr|
         byte = eval("\"\\M-\\c#{chr}\"").bytes.first
         assert_unescape_all(byte.chr, "\\M-\\c#{chr}")
@@ -129,7 +129,7 @@ module UnescapeTest
       end
     end
 
-    test "escaping normal characters" do
+    def test_escaping_normal_characters
       assert_unescape_all("d", "\\d")
       assert_unescape_all("g", "\\g")
     end
