@@ -100,7 +100,7 @@ module YARP
         case type
         <%- nodes.each_with_index do |node, index| -%>
         when <%= index + 1 %> then
-        <%- if node.needs_length? -%>
+        <%- if node.needs_serialized_length? -%>
           load_serialized_length
         <%- end -%>
         <%= node.name %>.new(<%= (node.params.map { |param|

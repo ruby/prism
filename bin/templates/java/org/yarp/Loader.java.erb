@@ -135,7 +135,7 @@ public class Loader {
             <%- nodes.each_with_index do |node, index| -%>
             case <%= index + 1 %>:
             <%-
-            params = node.needs_length? ? ["buffer.getInt()"] : []
+            params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
             params.concat node.params.map { |param|
               case param
               when NodeParam then "#{param.java_cast}loadNode()"

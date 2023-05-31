@@ -102,22 +102,22 @@ public abstract class Nodes {
 
     <%= "#{node.comment.split("\n").map { |line| "// #{line}" }.join("\n    ")}\n" if node.comment -%>
     public static final class <%= node.name -%> extends Node {
-        <%- if node.needs_length? -%>
-        public final int length;
+        <%- if node.needs_serialized_length? -%>
+        public final int serializedLength;
         <%- end -%>
         <%- node.params.each do |param| -%>
         public final <%= param.java_type %> <%= param.name %>;<%= ' // optional' if param.class.name.start_with?('Optional') %>
         <%- end -%>
 
         <%-
-          params = node.needs_length? ? ["int length"] : []
+          params = node.needs_serialized_length? ? ["int serializedLength"] : []
           params.concat node.params.map { "#{_1.java_type} #{_1.name}" }
           params.concat ["int startOffset", "int endOffset"]
         -%>
         public <%=node.name -%>(<%= params.join(", ") %>) {
             super(startOffset, endOffset);
-        <%- if node.needs_length? -%>
-            this.length = length;
+        <%- if node.needs_serialized_length? -%>
+            this.serializedLength = serializedLength;
         <%- end -%>
         <%- node.params.each do |param| -%>
             this.<%= param.name %> = <%= param.name %>;
