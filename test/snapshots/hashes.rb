@@ -26,7 +26,7 @@ ProgramNode(0...120)(
             nil,
             "b"
           ),
-          EQUAL_GREATER(13...15)("=>")
+          (13...15)
         ),
         AssocNode(19...25)(
           CallNode(19...20)(
@@ -49,7 +49,7 @@ ProgramNode(0...120)(
             nil,
             "d"
           ),
-          EQUAL_GREATER(21...23)("=>")
+          (21...23)
         )],
        BRACE_RIGHT(26...27)("}")
      ),
@@ -76,7 +76,7 @@ ProgramNode(0...120)(
             nil,
             "b"
           ),
-          EQUAL_GREATER(33...35)("=>")
+          (33...35)
         ),
         AssocSplatNode(39...42)(
           CallNode(41...42)(

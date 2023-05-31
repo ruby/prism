@@ -6,7 +6,7 @@ ProgramNode(0...25)(
           [AssocNode(2...8)(
              IntegerNode(2...3)(),
              IntegerNode(7...8)(),
-             EQUAL_GREATER(4...6)("=>")
+             (4...6)
            )]
         )],
        (0...1),
@@ -18,7 +18,7 @@ ProgramNode(0...25)(
           [AssocNode(17...23)(
              IntegerNode(17...18)(),
              IntegerNode(22...23)(),
-             EQUAL_GREATER(19...21)("=>")
+             (19...21)
            )]
         )],
        (12...13),

@@ -144,7 +144,7 @@ ProgramNode(0...225)(
                  BlockNode(106...112)([], nil, nil, (106...108), (109...112)),
                  "proc"
                ),
-               EQUAL_GREATER(98...100)("=>")
+               (98...100)
              ),
              AssocNode(114...128)(
                SymbolNode(114...116)(
@@ -266,7 +266,7 @@ ProgramNode(0...225)(
                  BlockNode(202...208)([], nil, nil, (202...204), (205...208)),
                  "proc"
                ),
-               EQUAL_GREATER(194...196)("=>")
+               (194...196)
              ),
              AssocNode(210...224)(
                SymbolNode(210...212)(

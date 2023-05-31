@@ -20,7 +20,7 @@ ProgramNode(0...10)(
             [AssocNode(4...8)(
                IntegerNode(4...5)(),
                IntegerNode(7...8)(),
-               EQUAL_GREATER(5...7)("=>")
+               (5...7)
              )]
           )]
        ),

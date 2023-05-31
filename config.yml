@@ -427,8 +427,8 @@ nodes:
         type: node
       - name: value
         type: node?
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
     comment: |
       Represents a hash key/value pair.
 

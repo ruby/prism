@@ -14,7 +14,7 @@ ProgramNode(0...106)(
                  "z"
                ),
                IntegerNode(16...17)(),
-               EQUAL_GREATER(13...15)("=>")
+               (13...15)
              )]
           )]
        )
@@ -32,7 +32,7 @@ ProgramNode(0...106)(
                  "z"
                ),
                IntegerNode(35...36)(),
-               EQUAL_GREATER(32...34)("=>")
+               (32...34)
              ),
              AssocNode(38...45)(
                SymbolNode(38...40)(
@@ -42,7 +42,7 @@ ProgramNode(0...106)(
                  "w"
                ),
                IntegerNode(44...45)(),
-               EQUAL_GREATER(41...43)("=>")
+               (41...43)
              )]
           )]
        )
@@ -65,7 +65,7 @@ ProgramNode(0...106)(
                       "z"
                     ),
                     IntegerNode(60...61)(),
-                    EQUAL_GREATER(58...60)("=>")
+                    (58...60)
                   )]
                )]
             ),
@@ -153,7 +153,7 @@ ProgramNode(0...106)(
                       "z"
                     ),
                     IntegerNode(104...105)(),
-                    EQUAL_GREATER(102...104)("=>")
+                    (102...104)
                   )]
                )]
             ),

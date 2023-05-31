@@ -35,7 +35,7 @@ ProgramNode(0...20)(
                  "baz"
                ),
                IntegerNode(17...18)(),
-               EQUAL_GREATER(14...16)("=>")
+               (14...16)
              )]
           )]
        ),

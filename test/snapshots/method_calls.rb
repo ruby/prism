@@ -712,7 +712,7 @@ ProgramNode(0...1187)(
                  (306...307),
                  (313...314)
                ),
-               EQUAL_GREATER(303...305)("=>")
+               (303...305)
              ),
              AssocNode(316...324)(
                SymbolNode(316...318)(
@@ -727,7 +727,7 @@ ProgramNode(0...1187)(
                  nil,
                  "b"
                ),
-               EQUAL_GREATER(319...321)("=>")
+               (319...321)
              )]
           ),
           BlockArgumentNode(326...331)(
@@ -766,7 +766,7 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(351...353)("=>")
+               (351...353)
              ),
              AssocSplatNode(363...367)(
                HashNode(365...367)(
@@ -906,7 +906,7 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(452...454)("=>")
+               (452...454)
              ),
              AssocSplatNode(464...468)(
                HashNode(466...468)(
@@ -957,7 +957,7 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(494...496)("=>")
+               (494...496)
              ),
              AssocSplatNode(506...510)(
                HashNode(508...510)(
@@ -1052,7 +1052,7 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(575...577)("=>")
+               (575...577)
              )]
           )]
        ),

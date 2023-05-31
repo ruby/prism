@@ -11,7 +11,7 @@ ProgramNode(0...13)(
             "s1"
           ),
           IntegerNode(9...10)(),
-          EQUAL_GREATER(6...8)("=>")
+          (6...8)
         )],
        BRACE_RIGHT(12...13)("}")
      )]

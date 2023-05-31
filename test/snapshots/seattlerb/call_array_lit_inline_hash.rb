@@ -23,7 +23,7 @@ ProgramNode(0...16)(
                     "c"
                   ),
                   IntegerNode(13...14)(),
-                  EQUAL_GREATER(10...12)("=>")
+                  (10...12)
                 )]
              )],
             (2...3),

@@ -31,7 +31,7 @@ ProgramNode(0...916)(
              )],
             HEREDOC_END(45...53)("HEREDOC\n")
           ),
-          EQUAL_GREATER(8...10)("=>")
+          (8...10)
         ),
         AssocNode(23...36)(
           StringNode(23...28)(
@@ -46,7 +46,7 @@ ProgramNode(0...916)(
             nil,
             "baz"
           ),
-          EQUAL_GREATER(29...31)("=>")
+          (29...31)
         )],
        BRACE_RIGHT(37...38)("}")
      ),
@@ -65,7 +65,7 @@ ProgramNode(0...916)(
             STRING_END(66...67)(")"),
             ""
           ),
-          EQUAL_GREATER(61...63)("=>")
+          (61...63)
         ),
         AssocNode(69...82)(
           StringNode(69...74)(
@@ -80,7 +80,7 @@ ProgramNode(0...916)(
             nil,
             "baz"
           ),
-          EQUAL_GREATER(75...77)("=>")
+          (75...77)
         )],
        BRACE_RIGHT(83...84)("}")
      ),
@@ -197,7 +197,7 @@ ProgramNode(0...916)(
              )],
             HEREDOC_END(174...182)("HEREDOC\n")
           ),
-          EQUAL_GREATER(145...147)("=>")
+          (145...147)
         ),
         AssocSplatNode(160...165)(
           CallNode(162...165)(
@@ -229,7 +229,7 @@ ProgramNode(0...916)(
             STRING_END(195...196)(")"),
             ""
           ),
-          EQUAL_GREATER(190...192)("=>")
+          (190...192)
         ),
         AssocSplatNode(198...203)(
           CallNode(200...203)(
@@ -790,7 +790,7 @@ ProgramNode(0...916)(
        [AssocNode(734...742)(
           ParenthesesNode(734...736)(nil, (734...735), (735...736)),
           ParenthesesNode(740...742)(nil, (740...741), (741...742)),
-          EQUAL_GREATER(737...739)("=>")
+          (737...739)
         )],
        BRACE_RIGHT(743...744)("}")
      ),
@@ -799,7 +799,7 @@ ProgramNode(0...916)(
        [AssocNode(747...753)(
           IntegerNode(747...748)(),
           IntegerNode(752...753)(),
-          EQUAL_GREATER(749...751)("=>")
+          (749...751)
         )],
        BRACE_RIGHT(754...755)("}")
      ),
@@ -808,12 +808,12 @@ ProgramNode(0...916)(
        [AssocNode(758...764)(
           IntegerNode(758...759)(),
           IntegerNode(763...764)(),
-          EQUAL_GREATER(760...762)("=>")
+          (760...762)
         ),
         AssocNode(766...772)(
           IntegerNode(766...767)(),
           IntegerNode(771...772)(),
-          EQUAL_GREATER(768...770)("=>")
+          (768...770)
         )],
        BRACE_RIGHT(773...774)("}")
      ),
@@ -917,7 +917,7 @@ ProgramNode(0...916)(
             STRING_END(835...836)("\"")
           ),
           IntegerNode(840...841)(),
-          EQUAL_GREATER(837...839)("=>")
+          (837...839)
         )],
        BRACE_RIGHT(842...843)("}")
      ),
@@ -931,7 +931,7 @@ ProgramNode(0...916)(
             "-@"
           ),
           IntegerNode(853...854)(),
-          EQUAL_GREATER(850...852)("=>")
+          (850...852)
         )],
        BRACE_RIGHT(855...856)("}")
      ),

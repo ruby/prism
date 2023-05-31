@@ -66,7 +66,7 @@ ProgramNode(0...67)(
                  STRING_END(66...67)("'"),
                  "endpoint"
                ),
-               EQUAL_GREATER(54...56)("=>")
+               (54...56)
              )]
           )]
        ),

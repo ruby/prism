@@ -26,7 +26,7 @@ ProgramNode(0...46)(
                  "foo"
                ),
                IntegerNode(17...18)(),
-               EQUAL_GREATER(14...16)("=>")
+               (14...16)
              )]
           )]
        ),
@@ -59,7 +59,7 @@ ProgramNode(0...46)(
                  "foo"
                ),
                IntegerNode(38...39)(),
-               EQUAL_GREATER(35...37)("=>")
+               (35...37)
              )]
           ),
           BlockArgumentNode(41...45)(
