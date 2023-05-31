@@ -124,10 +124,7 @@ ProgramNode(0...262)(
            [KeywordParameterNode(113...115)(LABEL(113...115)("c:"), nil),
             KeywordParameterNode(117...119)(LABEL(117...119)("d:"), nil)],
            nil,
-           BlockParameterNode(121...123)(
-             IDENTIFIER(122...123)("e"),
-             (121...122)
-           )
+           BlockParameterNode(121...123)((122...123), (121...122))
          ),
          [],
          nil,
@@ -163,10 +160,7 @@ ProgramNode(0...262)(
              USTAR_STAR(157...159)("**"),
              IDENTIFIER(159...160)("f")
            ),
-           BlockParameterNode(162...164)(
-             IDENTIFIER(163...164)("g"),
-             (162...163)
-           )
+           BlockParameterNode(162...164)((163...164), (162...163))
          ),
          [],
          (134...135),
@@ -202,10 +196,7 @@ ProgramNode(0...262)(
              USTAR_STAR(199...201)("**"),
              IDENTIFIER(201...202)("f")
            ),
-           BlockParameterNode(204...206)(
-             IDENTIFIER(205...206)("g"),
-             (204...205)
-           )
+           BlockParameterNode(204...206)((205...206), (204...205))
          ),
          [],
          (176...177),

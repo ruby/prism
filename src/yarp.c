@@ -790,7 +790,7 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, cons
         .end = (name->type == YP_TOKEN_NOT_PROVIDED ? operator->end : name->end)
       },
     },
-    .name = *name,
+    .name_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(name),
     .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
   };
 

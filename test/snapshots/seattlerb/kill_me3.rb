@@ -23,7 +23,7 @@ ProgramNode(0...17)(
              ),
              [],
              nil,
-             BlockParameterNode(12...14)(IDENTIFIER(13...14)("c"), (12...13))
+             BlockParameterNode(12...14)((13...14), (12...13))
            ),
            [],
            (4...5),

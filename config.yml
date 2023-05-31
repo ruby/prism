@@ -501,8 +501,8 @@ nodes:
                      ^^^^^^^^^^^^^^
   - name: BlockParameterNode
     child_nodes:
-      - name: name
-        type: token?
+      - name: name_loc
+        type: location?
       - name: operator_loc
         type: location
     comment: |

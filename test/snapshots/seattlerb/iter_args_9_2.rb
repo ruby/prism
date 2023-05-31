@@ -24,7 +24,7 @@ ProgramNode(0...21)(
              nil,
              [],
              nil,
-             BlockParameterNode(16...18)(IDENTIFIER(17...18)("c"), (16...17))
+             BlockParameterNode(16...18)((17...18), (16...17))
            ),
            [],
            (4...5),

@@ -634,7 +634,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil,
         [],
         nil,
-        BlockParameterNode(IDENTIFIER("block"), Location())
+        BlockParameterNode(Location(), Location())
       ),
       nil,
       [IDENTIFIER("block"), IDENTIFIER("a")],
@@ -1039,7 +1039,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, BlockParameterNode(IDENTIFIER("a"), Location())),
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, BlockParameterNode(Location(), Location())),
       nil,
       [IDENTIFIER("a"), IDENTIFIER("b")],
       Location(),

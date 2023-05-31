@@ -775,10 +775,7 @@ ProgramNode(0...913)(
          ),
          [],
          nil,
-         BlockParameterNode(660...666)(
-           IDENTIFIER(661...666)("block"),
-           (660...661)
-         )
+         BlockParameterNode(660...666)((661...666), (660...661))
        ),
        StatementsNode(670...673)(
          [CallNode(670...673)(
@@ -842,10 +839,7 @@ ProgramNode(0...913)(
          nil,
          [],
          nil,
-         BlockParameterNode(729...735)(
-           IDENTIFIER(730...735)("block"),
-           (729...730)
-         )
+         BlockParameterNode(729...735)((730...735), (729...730))
        ),
        StatementsNode(739...742)(
          [CallNode(739...742)(
@@ -877,10 +871,7 @@ ProgramNode(0...913)(
          nil,
          [],
          nil,
-         BlockParameterNode(761...767)(
-           IDENTIFIER(762...767)("block"),
-           (761...762)
-         )
+         BlockParameterNode(761...767)((762...767), (761...762))
        ),
        StatementsNode(771...774)([LocalVariableReadNode(771...774)(0)]),
        [IDENTIFIER(756...759)("bar"), IDENTIFIER(762...767)("block")],

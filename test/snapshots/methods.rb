@@ -925,7 +925,7 @@ ProgramNode(0...1194)(
          nil,
          [],
          nil,
-         BlockParameterNode(789...791)(IDENTIFIER(790...791)("b"), (789...790))
+         BlockParameterNode(789...791)((790...791), (789...790))
        ),
        nil,
        [IDENTIFIER(790...791)("b")],
