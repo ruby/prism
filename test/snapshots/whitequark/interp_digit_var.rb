@@ -20,8 +20,8 @@ ProgramNode(1...476)(
           nil,
           "\#@1"
         )],
-       PERCENT_UPPER_I(20...23)("%I["),
-       STRING_END(26...27)("]")
+       (20...23),
+       (26...27)
      ),
      ArrayNode(31...39)(
        [SymbolNode(34...38)(
@@ -30,8 +30,8 @@ ProgramNode(1...476)(
           nil,
           "\#@@1"
         )],
-       PERCENT_UPPER_I(31...34)("%I["),
-       STRING_END(38...39)("]")
+       (31...34),
+       (38...39)
      ),
      StringNode(43...50)(
        STRING_BEGIN(43...46)("%Q{"),
@@ -52,8 +52,8 @@ ProgramNode(1...476)(
           nil,
           "\#@1"
         )],
-       PERCENT_UPPER_W(66...69)("%W["),
-       STRING_END(72...73)("]")
+       (66...69),
+       (72...73)
      ),
      ArrayNode(77...85)(
        [StringNode(80...84)(
@@ -62,8 +62,8 @@ ProgramNode(1...476)(
           nil,
           "\#@@1"
         )],
-       PERCENT_UPPER_W(77...80)("%W["),
-       STRING_END(84...85)("]")
+       (77...80),
+       (84...85)
      ),
      ArrayNode(89...98)(
        [SymbolNode(93...96)(
@@ -72,8 +72,8 @@ ProgramNode(1...476)(
           nil,
           "\#@1"
         )],
-       PERCENT_LOWER_I(89...92)("%i["),
-       STRING_END(97...98)("]")
+       (89...92),
+       (97...98)
      ),
      ArrayNode(102...112)(
        [SymbolNode(106...110)(
@@ -82,8 +82,8 @@ ProgramNode(1...476)(
           nil,
           "\#@@1"
         )],
-       PERCENT_LOWER_I(102...105)("%i["),
-       STRING_END(111...112)("]")
+       (102...105),
+       (111...112)
      ),
      StringNode(116...123)(
        STRING_BEGIN(116...119)("%q{"),
@@ -130,8 +130,8 @@ ProgramNode(1...476)(
           nil,
           "\#@1"
         )],
-       PERCENT_LOWER_W(185...188)("%w["),
-       STRING_END(193...194)("]")
+       (185...188),
+       (193...194)
      ),
      ArrayNode(198...208)(
        [StringNode(202...206)(
@@ -140,8 +140,8 @@ ProgramNode(1...476)(
           nil,
           "\#@@1"
         )],
-       PERCENT_LOWER_W(198...201)("%w["),
-       STRING_END(207...208)("]")
+       (198...201),
+       (207...208)
      ),
      XStringNode(212...219)(
        PERCENT_LOWER_X(212...215)("%x{"),

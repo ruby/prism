@@ -6,13 +6,7 @@ ProgramNode(0...27)(
        nil,
        IDENTIFIER(0...1)("m"),
        nil,
-       ArgumentsNode(2...4)(
-         [ArrayNode(2...4)(
-            [],
-            BRACKET_LEFT_ARRAY(2...3)("["),
-            BRACKET_RIGHT(3...4)("]")
-          )]
-       ),
+       ArgumentsNode(2...4)([ArrayNode(2...4)([], (2...3), (3...4))]),
        nil,
        BlockNode(5...11)([], nil, nil, (5...7), (8...11)),
        "m"
@@ -23,12 +17,7 @@ ProgramNode(0...27)(
        IDENTIFIER(13...14)("m"),
        nil,
        ArgumentsNode(15...20)(
-         [ArrayNode(15...17)(
-            [],
-            BRACKET_LEFT_ARRAY(15...16)("["),
-            BRACKET_RIGHT(16...17)("]")
-          ),
-          IntegerNode(19...20)()]
+         [ArrayNode(15...17)([], (15...16), (16...17)), IntegerNode(19...20)()]
        ),
        nil,
        BlockNode(21...27)([], nil, nil, (21...23), (24...27)),

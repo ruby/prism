@@ -8,8 +8,8 @@ ProgramNode(0...47)(
           STRING_END(14...15)("\""),
           "  some text\n"
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(16...17)("]")
+       (0...1),
+       (16...17)
      ),
      ArrayNode(19...47)(
        [InterpolatedStringNode(20...46)(
@@ -22,8 +22,8 @@ ProgramNode(0...47)(
            )],
           HEREDOC_END(41...46)("FILE\n")
         )],
-       BRACKET_LEFT_ARRAY(19...20)("["),
-       BRACKET_RIGHT(46...47)("]")
+       (19...20),
+       (46...47)
      )]
   )
 )

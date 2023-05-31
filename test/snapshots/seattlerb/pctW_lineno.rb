@@ -19,8 +19,8 @@ ProgramNode(0...28)(
         StringNode(17...19)(nil, STRING_CONTENT(17...19)("gy"), nil, "gy"),
         StringNode(20...23)(nil, STRING_CONTENT(20...23)("h\\y"), nil, "hy"),
         StringNode(24...27)(nil, STRING_CONTENT(24...27)("i\\y"), nil, "iy")],
-       PERCENT_UPPER_W(0...3)("%W("),
-       STRING_END(27...28)(")")
+       (0...3),
+       (27...28)
      )]
   )
 )

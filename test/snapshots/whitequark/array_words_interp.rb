@@ -23,8 +23,8 @@ ProgramNode(0...38)(
            )],
           nil
         )],
-       PERCENT_UPPER_W(0...3)("%W["),
-       STRING_END(13...14)("]")
+       (0...3),
+       (13...14)
      ),
      ArrayNode(16...38)(
        [StringNode(19...22)(nil, STRING_CONTENT(19...22)("foo"), nil, "foo"),
@@ -55,8 +55,8 @@ ProgramNode(0...38)(
            InstanceVariableReadNode(33...37)()],
           nil
         )],
-       PERCENT_UPPER_W(16...19)("%W["),
-       STRING_END(37...38)("]")
+       (16...19),
+       (37...38)
      )]
   )
 )

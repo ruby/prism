@@ -19,8 +19,8 @@ ProgramNode(0...29)(
          KEYWORD_RESCUE_MODIFIER(16...22)("rescue"),
          ArrayNode(23...29)(
            [IntegerNode(24...25)(), IntegerNode(27...28)()],
-           BRACKET_LEFT_ARRAY(23...24)("["),
-           BRACKET_RIGHT(28...29)("]")
+           (23...24),
+           (28...29)
          )
        ),
        nil,

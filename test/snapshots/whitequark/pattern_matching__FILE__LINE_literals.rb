@@ -15,8 +15,8 @@ ProgramNode(8...111)(
             "+"
           ),
           SourceEncodingNode(38...50)()],
-         BRACKET_LEFT_ARRAY(13...14)("["),
-         BRACKET_RIGHT(50...51)("]")
+         (13...14),
+         (50...51)
        ),
        [InNode(62...99)(
           ArrayPatternNode(65...99)(

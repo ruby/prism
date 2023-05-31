@@ -46,8 +46,8 @@ ProgramNode(0...33)(
                   nil,
                   "a"
                 )],
-               BRACKET_LEFT_ARRAY(26...27)("["),
-               BRACKET_RIGHT(28...29)("]")
+               (26...27),
+               (28...29)
              )]
           ),
           (12...14),

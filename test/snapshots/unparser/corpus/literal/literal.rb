@@ -97,8 +97,8 @@ ProgramNode(0...916)(
           STRING_END(95...96)(")"),
           ""
         )],
-       BRACKET_LEFT_ARRAY(85...86)("["),
-       BRACKET_RIGHT(96...97)("]")
+       (85...86),
+       (96...97)
      ),
      CallNode(98...113)(
        CallNode(98...111)(
@@ -725,8 +725,8 @@ ProgramNode(0...916)(
      FloatNode(662...665)(),
      ArrayNode(666...672)(
        [IntegerNode(667...668)(), IntegerNode(670...671)()],
-       BRACKET_LEFT_ARRAY(666...667)("["),
-       BRACKET_RIGHT(671...672)("]")
+       (666...667),
+       (671...672)
      ),
      ArrayNode(673...684)(
        [IntegerNode(674...675)(),
@@ -741,27 +741,23 @@ ProgramNode(0...916)(
           nil,
           "n2"
         )],
-       BRACKET_LEFT_ARRAY(673...674)("["),
-       BRACKET_RIGHT(683...684)("]")
+       (673...674),
+       (683...684)
      ),
      ArrayNode(685...688)(
        [IntegerNode(686...687)()],
-       BRACKET_LEFT_ARRAY(685...686)("["),
-       BRACKET_RIGHT(687...688)("]")
+       (685...686),
+       (687...688)
      ),
-     ArrayNode(689...691)(
-       [],
-       BRACKET_LEFT_ARRAY(689...690)("["),
-       BRACKET_RIGHT(690...691)("]")
-     ),
+     ArrayNode(689...691)([], (689...690), (690...691)),
      ArrayNode(692...702)(
        [IntegerNode(693...694)(),
         SplatNode(697...701)(
           INSTANCE_VARIABLE(697...701)("@foo"),
           InstanceVariableReadNode(697...701)()
         )],
-       BRACKET_LEFT_ARRAY(692...693)("["),
-       BRACKET_RIGHT(701...702)("]")
+       (692...693),
+       (701...702)
      ),
      ArrayNode(703...713)(
        [SplatNode(705...709)(
@@ -769,8 +765,8 @@ ProgramNode(0...916)(
           InstanceVariableReadNode(705...709)()
         ),
         IntegerNode(711...712)()],
-       BRACKET_LEFT_ARRAY(703...704)("["),
-       BRACKET_RIGHT(712...713)("]")
+       (703...704),
+       (712...713)
      ),
      ArrayNode(714...728)(
        [SplatNode(716...720)(
@@ -781,8 +777,8 @@ ProgramNode(0...916)(
           INSTANCE_VARIABLE(723...727)("@baz"),
           InstanceVariableReadNode(723...727)()
         )],
-       BRACKET_LEFT_ARRAY(714...715)("["),
-       BRACKET_RIGHT(727...728)("]")
+       (714...715),
+       (727...728)
      ),
      HashNode(729...731)(
        BRACE_LEFT(729...730)("{"),

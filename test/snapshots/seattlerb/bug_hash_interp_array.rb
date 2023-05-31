@@ -13,11 +13,7 @@ ProgramNode(0...13)(
              )],
             LABEL_END(6...8)("\":")
           ),
-          ArrayNode(9...11)(
-            [],
-            BRACKET_LEFT_ARRAY(9...10)("["),
-            BRACKET_RIGHT(10...11)("]")
-          ),
+          ArrayNode(9...11)([], (9...10), (10...11)),
           nil
         )],
        BRACE_RIGHT(12...13)("}")

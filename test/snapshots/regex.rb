@@ -97,8 +97,8 @@ ProgramNode(0...278)(
           "=~"
         ),
         LocalVariableReadNode(82...85)(0)],
-       BRACKET_LEFT_ARRAY(59...60)("["),
-       BRACKET_RIGHT(85...86)("]")
+       (59...60),
+       (85...86)
      ),
      RegularExpressionNode(88...94)(
        REGEXP_BEGIN(88...89)("/"),

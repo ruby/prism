@@ -10,8 +10,8 @@ ProgramNode(0...11)(
              EQUAL_GREATER(6...8)("=>")
            )]
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(10...11)("]")
+       (0...1),
+       (10...11)
      )]
   )
 )

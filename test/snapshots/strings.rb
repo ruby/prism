@@ -73,11 +73,7 @@ ProgramNode(0...497)(
        STRING_END(93...94)("?"),
        "abc"
      ),
-     ArrayNode(96...104)(
-       [],
-       PERCENT_LOWER_W(96...99)("%w{"),
-       STRING_END(103...104)("}")
-     ),
+     ArrayNode(96...104)([], (96...99), (103...104)),
      StringNode(106...112)(
        STRING_BEGIN(106...108)("%/"),
        STRING_CONTENT(108...111)("abc"),
@@ -239,8 +235,8 @@ ProgramNode(0...497)(
        [StringNode(259...260)(nil, STRING_CONTENT(259...260)("a"), nil, "a"),
         StringNode(261...262)(nil, STRING_CONTENT(261...262)("b"), nil, "b"),
         StringNode(263...264)(nil, STRING_CONTENT(263...264)("c"), nil, "c")],
-       PERCENT_LOWER_W(256...259)("%w["),
-       STRING_END(264...265)("]")
+       (256...259),
+       (264...265)
      ),
      ArrayNode(267...284)(
        [StringNode(270...273)(
@@ -261,8 +257,8 @@ ProgramNode(0...497)(
           nil,
           "c[]"
         )],
-       PERCENT_LOWER_W(267...270)("%w["),
-       STRING_END(283...284)("]")
+       (267...270),
+       (283...284)
      ),
      ArrayNode(286...304)(
        [StringNode(289...297)(
@@ -277,8 +273,8 @@ ProgramNode(0...497)(
           nil,
           "\#{1}"
         )],
-       PERCENT_LOWER_W(286...289)("%w["),
-       STRING_END(303...304)("]")
+       (286...289),
+       (303...304)
      ),
      ArrayNode(306...322)(
        [StringNode(309...317)(
@@ -293,8 +289,8 @@ ProgramNode(0...497)(
           nil,
           "baz"
         )],
-       PERCENT_LOWER_W(306...309)("%w["),
-       STRING_END(321...322)("]")
+       (306...309),
+       (321...322)
      ),
      ArrayNode(324...338)(
        [StringNode(327...328)(nil, STRING_CONTENT(327...328)("a"), nil, "a"),
@@ -331,22 +327,22 @@ ProgramNode(0...497)(
           nil
         ),
         StringNode(336...337)(nil, STRING_CONTENT(336...337)("e"), nil, "e")],
-       PERCENT_UPPER_W(324...327)("%W["),
-       STRING_END(337...338)("]")
+       (324...327),
+       (337...338)
      ),
      ArrayNode(340...349)(
        [StringNode(343...344)(nil, STRING_CONTENT(343...344)("a"), nil, "a"),
         StringNode(345...346)(nil, STRING_CONTENT(345...346)("b"), nil, "b"),
         StringNode(347...348)(nil, STRING_CONTENT(347...348)("c"), nil, "c")],
-       PERCENT_UPPER_W(340...343)("%W["),
-       STRING_END(348...349)("]")
+       (340...343),
+       (348...349)
      ),
      ArrayNode(351...368)(
        [StringNode(357...358)(nil, STRING_CONTENT(357...358)("a"), nil, "a"),
         StringNode(361...362)(nil, STRING_CONTENT(361...362)("b"), nil, "b"),
         StringNode(365...366)(nil, STRING_CONTENT(365...366)("c"), nil, "c")],
-       PERCENT_LOWER_W(351...354)("%w["),
-       STRING_END(367...368)("]")
+       (351...354),
+       (367...368)
      ),
      StringNode(370...385)(
        STRING_BEGIN(370...371)("'"),

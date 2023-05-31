@@ -25,8 +25,8 @@ ProgramNode(0...15)(
           nil
         ),
         SymbolNode(13...14)(nil, STRING_CONTENT(13...14)("c"), nil, "c")],
-       PERCENT_UPPER_I(0...3)("%I("),
-       STRING_END(14...15)(")")
+       (0...3),
+       (14...15)
      )]
   )
 )

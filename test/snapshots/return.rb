@@ -55,8 +55,8 @@ ProgramNode(0...139)(
             [IntegerNode(91...92)(),
              IntegerNode(94...95)(),
              IntegerNode(97...98)()],
-            BRACKET_LEFT_ARRAY(90...91)("["),
-            BRACKET_RIGHT(98...99)("]")
+            (90...91),
+            (98...99)
           )]
        )
      ),

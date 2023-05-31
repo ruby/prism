@@ -14,8 +14,8 @@ ProgramNode(0...13)(
           STRING_END(9...10)("'"),
           "b"
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(10...11)("]")
+       (0...1),
+       (10...11)
      ),
      IntegerNode(12...13)()]
   )

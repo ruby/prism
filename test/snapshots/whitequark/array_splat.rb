@@ -15,8 +15,8 @@ ProgramNode(0...31)(
             "foo"
           )
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(5...6)("]")
+       (0...1),
+       (5...6)
      ),
      ArrayNode(8...20)(
        [IntegerNode(9...10)(),
@@ -34,8 +34,8 @@ ProgramNode(0...31)(
           )
         ),
         IntegerNode(18...19)()],
-       BRACKET_LEFT_ARRAY(8...9)("["),
-       BRACKET_RIGHT(19...20)("]")
+       (8...9),
+       (19...20)
      ),
      ArrayNode(22...31)(
        [IntegerNode(23...24)(),
@@ -52,8 +52,8 @@ ProgramNode(0...31)(
             "foo"
           )
         )],
-       BRACKET_LEFT_ARRAY(22...23)("["),
-       BRACKET_RIGHT(30...31)("]")
+       (22...23),
+       (30...31)
      )]
   )
 )

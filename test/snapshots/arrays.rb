@@ -15,8 +15,8 @@ ProgramNode(0...502)(
             "a"
           )
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(3...4)("]")
+       (0...1),
+       (3...4)
      ),
      CallNode(6...29)(
        CallNode(6...9)(
@@ -87,14 +87,14 @@ ProgramNode(0...502)(
                   nil,
                   "c"
                 )],
-               BRACKET_LEFT_ARRAY(35...36)("["),
-               BRACKET_RIGHT(42...43)("]")
+               (35...36),
+               (42...43)
              ),
              nil
            )]
         )],
-       BRACKET_LEFT_ARRAY(31...32)("["),
-       BRACKET_RIGHT(43...44)("]")
+       (31...32),
+       (43...44)
      ),
      ArrayNode(48...71)(
        [SymbolNode(49...51)(
@@ -122,8 +122,8 @@ ProgramNode(0...502)(
           nil,
           "d"
         )],
-       BRACKET_LEFT_ARRAY(48...49)("["),
-       BRACKET_RIGHT(70...71)("]")
+       (48...49),
+       (70...71)
      ),
      ArrayNode(74...98)(
        [SymbolNode(75...77)(
@@ -151,8 +151,8 @@ ProgramNode(0...502)(
           nil,
           "d"
         )],
-       BRACKET_LEFT_ARRAY(74...75)("["),
-       BRACKET_RIGHT(97...98)("]")
+       (74...75),
+       (97...98)
      ),
      ArrayNode(100...112)(
        [KeywordHashNode(101...111)(
@@ -180,8 +180,8 @@ ProgramNode(0...502)(
              EQUAL_GREATER(105...107)("=>")
            )]
         )],
-       BRACKET_LEFT_ARRAY(100...101)("["),
-       BRACKET_RIGHT(111...112)("]")
+       (100...101),
+       (111...112)
      ),
      CallNode(114...133)(
        CallNode(114...122)(
@@ -293,11 +293,7 @@ ProgramNode(0...502)(
        nil,
        "[]"
      ),
-     ArrayNode(150...153)(
-       [],
-       BRACKET_LEFT_ARRAY(150...151)("["),
-       BRACKET_RIGHT(152...153)("]")
-     ),
+     ArrayNode(150...153)([], (150...151), (152...153)),
      CallNode(155...168)(
        CallNode(155...158)(
          nil,
@@ -577,8 +573,8 @@ ProgramNode(0...502)(
              (262...264)
            )]
         )],
-       BRACKET_LEFT_ARRAY(261...262)("["),
-       BRACKET_RIGHT(266...267)("]")
+       (261...262),
+       (266...267)
      ),
      ArrayNode(269...275)(
        [KeywordHashNode(270...274)(
@@ -596,8 +592,8 @@ ProgramNode(0...502)(
              (270...272)
            )]
         )],
-       BRACKET_LEFT_ARRAY(269...270)("["),
-       BRACKET_RIGHT(274...275)("]")
+       (269...270),
+       (274...275)
      ),
      ArrayNode(277...286)(
        [IntegerNode(278...279)(),
@@ -616,8 +612,8 @@ ProgramNode(0...502)(
              (281...283)
            )]
         )],
-       BRACKET_LEFT_ARRAY(277...278)("["),
-       BRACKET_RIGHT(285...286)("]")
+       (277...278),
+       (285...286)
      ),
      ArrayNode(288...309)(
        [IntegerNode(289...290)(),
@@ -657,8 +653,8 @@ ProgramNode(0...502)(
              (304...306)
            )]
         )],
-       BRACKET_LEFT_ARRAY(288...289)("["),
-       BRACKET_RIGHT(308...309)("]")
+       (288...289),
+       (308...309)
      ),
      ArrayNode(311...328)(
        [KeywordHashNode(315...325)(
@@ -686,8 +682,8 @@ ProgramNode(0...502)(
              EQUAL_GREATER(319...321)("=>")
            )]
         )],
-       BRACKET_LEFT_ARRAY(311...312)("["),
-       BRACKET_RIGHT(327...328)("]")
+       (311...312),
+       (327...328)
      ),
      ArrayNode(331...348)(
        [SymbolNode(334...337)(
@@ -708,8 +704,8 @@ ProgramNode(0...502)(
           nil,
           "three"
         )],
-       PERCENT_LOWER_I(331...334)("%i#"),
-       STRING_END(347...348)("#")
+       (331...334),
+       (347...348)
      ),
      ArrayNode(350...367)(
        [StringNode(353...356)(
@@ -730,8 +726,8 @@ ProgramNode(0...502)(
           nil,
           "three"
         )],
-       PERCENT_LOWER_W(350...353)("%w#"),
-       STRING_END(366...367)("#")
+       (350...353),
+       (366...367)
      ),
      XStringNode(369...386)(
        PERCENT_LOWER_X(369...372)("%x#"),
@@ -758,8 +754,8 @@ ProgramNode(0...502)(
           nil,
           "three"
         )],
-       PERCENT_LOWER_I(389...392)("%i@"),
-       STRING_END(405...406)("@")
+       (389...392),
+       (405...406)
      ),
      ArrayNode(408...425)(
        [StringNode(411...414)(
@@ -780,8 +776,8 @@ ProgramNode(0...502)(
           nil,
           "three"
         )],
-       PERCENT_LOWER_W(408...411)("%w@"),
-       STRING_END(424...425)("@")
+       (408...411),
+       (424...425)
      ),
      XStringNode(427...444)(
        PERCENT_LOWER_X(427...430)("%x@"),
@@ -808,8 +804,8 @@ ProgramNode(0...502)(
           nil,
           "three"
         )],
-       PERCENT_LOWER_I(447...450)("%i{"),
-       STRING_END(463...464)("}")
+       (447...450),
+       (463...464)
      ),
      ArrayNode(466...483)(
        [StringNode(469...472)(
@@ -830,8 +826,8 @@ ProgramNode(0...502)(
           nil,
           "three"
         )],
-       PERCENT_LOWER_W(466...469)("%w{"),
-       STRING_END(482...483)("}")
+       (466...469),
+       (482...483)
      ),
      XStringNode(485...502)(
        PERCENT_LOWER_X(485...488)("%x{"),

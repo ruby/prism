@@ -18,8 +18,8 @@ ProgramNode(0...13)(
        ArgumentsNode(2...13)(
          [ArrayNode(2...8)(
             [IntegerNode(3...4)(), IntegerNode(6...7)()],
-            BRACKET_LEFT_ARRAY(2...3)("["),
-            BRACKET_RIGHT(7...8)("]")
+            (2...3),
+            (7...8)
           ),
           IntegerNode(12...13)()]
        ),

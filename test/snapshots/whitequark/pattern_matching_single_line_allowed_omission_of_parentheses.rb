@@ -6,8 +6,8 @@ ProgramNode(0...142)(
     [MatchRequiredNode(0...14)(
        ArrayNode(0...6)(
          [IntegerNode(1...2)(), IntegerNode(4...5)()],
-         BRACKET_LEFT_ARRAY(0...1)("["),
-         BRACKET_RIGHT(5...6)("]")
+         (0...1),
+         (5...6)
        ),
        ArrayPatternNode(10...14)(
          nil,
@@ -24,8 +24,8 @@ ProgramNode(0...142)(
      MatchPredicateNode(19...33)(
        ArrayNode(19...25)(
          [IntegerNode(20...21)(), IntegerNode(23...24)()],
-         BRACKET_LEFT_ARRAY(19...20)("["),
-         BRACKET_RIGHT(24...25)("]")
+         (19...20),
+         (24...25)
        ),
        ArrayPatternNode(29...33)(
          nil,

@@ -42,8 +42,8 @@ ProgramNode(0...13)(
            )],
           nil
         )],
-       PERCENT_UPPER_I(0...3)("%I["),
-       STRING_END(12...13)("]")
+       (0...3),
+       (12...13)
      )]
   )
 )

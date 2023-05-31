@@ -33,8 +33,8 @@ ProgramNode(0...108)(
           nil,
           "a\u0000\u0000b"
         )],
-       PERCENT_UPPER_I(28...31)("%I{"),
-       STRING_END(36...37)("}")
+       (28...31),
+       (36...37)
      ),
      InterpolatedStringNode(41...73)(
        HEREDOC_START(41...45)("<<-E"),

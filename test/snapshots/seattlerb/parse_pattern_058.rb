@@ -50,8 +50,8 @@ ProgramNode(0...43)(
                   "a"
                 ),
                 LocalVariableReadNode(34...38)(0)],
-               BRACKET_LEFT_ARRAY(30...31)("["),
-               BRACKET_RIGHT(38...39)("]")
+               (30...31),
+               (38...39)
              )]
           ),
           (12...14),

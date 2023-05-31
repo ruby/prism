@@ -15,8 +15,8 @@ ProgramNode(0...43)(
             nil,
             "b"
           )],
-         BRACKET_LEFT_ARRAY(5...6)("["),
-         BRACKET_RIGHT(12...13)("]")
+         (5...6),
+         (12...13)
        ),
        [InNode(14...35)(
           ArrayPatternNode(17...30)(

@@ -709,8 +709,8 @@ ProgramNode(0...1187)(
                     nil,
                     "y"
                   )],
-                 BRACKET_LEFT_ARRAY(306...307)("["),
-                 BRACKET_RIGHT(313...314)("]")
+                 (306...307),
+                 (313...314)
                ),
                EQUAL_GREATER(303...305)("=>")
              ),
@@ -1560,8 +1560,8 @@ ProgramNode(0...1187)(
                BlockNode(950...956)([], nil, nil, (950...952), (953...956)),
                "baz"
              )],
-            BRACKET_LEFT_ARRAY(945...946)("["),
-            BRACKET_RIGHT(956...957)("]")
+            (945...946),
+            (956...957)
           )]
        ),
        nil,

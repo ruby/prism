@@ -9,8 +9,8 @@ ProgramNode(0...8)(
              EQUAL_GREATER(3...5)("=>")
            )]
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(7...8)("]")
+       (0...1),
+       (7...8)
      )]
   )
 )

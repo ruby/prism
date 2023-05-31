@@ -4,8 +4,8 @@ ProgramNode(0...36)(
     [CaseNode(0...36)(
        ArrayNode(5...14)(
          [IntegerNode(6...7)(), IntegerNode(9...10)(), IntegerNode(12...13)()],
-         BRACKET_LEFT_ARRAY(5...6)("["),
-         BRACKET_RIGHT(13...14)("]")
+         (5...6),
+         (13...14)
        ),
        [InNode(15...32)(
           ArrayPatternNode(18...25)(

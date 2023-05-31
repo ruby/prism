@@ -62,8 +62,8 @@ ProgramNode(0...345)(
           nil,
           "ρ"
         )],
-       BRACKET_LEFT_ARRAY(31...32)("["),
-       BRACKET_RIGHT(50...51)("]")
+       (31...32),
+       (50...51)
      ),
      SymbolNode(53...56)(
        SYMBOL_BEGIN(53...54)(":"),
@@ -130,8 +130,8 @@ ProgramNode(0...345)(
         FloatNode(101...104)(),
         RationalNode(106...108)(IntegerNode(106...107)()),
         ImaginaryNode(110...112)(IntegerNode(110...111)())],
-       BRACKET_LEFT_ARRAY(97...98)("["),
-       BRACKET_RIGHT(112...113)("]")
+       (97...98),
+       (112...113)
      ),
      SymbolNode(115...117)(
        SYMBOL_BEGIN(115...116)(":"),
@@ -149,8 +149,8 @@ ProgramNode(0...345)(
        [SymbolNode(126...127)(nil, STRING_CONTENT(126...127)("a"), nil, "a"),
         SymbolNode(128...129)(nil, STRING_CONTENT(128...129)("b"), nil, "b"),
         SymbolNode(130...131)(nil, STRING_CONTENT(130...131)("c"), nil, "c")],
-       PERCENT_LOWER_I(123...126)("%i["),
-       STRING_END(131...132)("]")
+       (123...126),
+       (131...132)
      ),
      ArrayNode(134...158)(
        [SymbolNode(137...138)(nil, STRING_CONTENT(137...138)("a"), nil, "a"),
@@ -172,8 +172,8 @@ ProgramNode(0...345)(
           nil,
           "d\#{3}f"
         )],
-       PERCENT_LOWER_I(134...137)("%i["),
-       STRING_END(157...158)("]")
+       (134...137),
+       (157...158)
      ),
      ArrayNode(160...184)(
        [SymbolNode(163...164)(nil, STRING_CONTENT(163...164)("a"), nil, "a"),
@@ -228,8 +228,8 @@ ProgramNode(0...345)(
            )],
           nil
         )],
-       PERCENT_UPPER_I(160...163)("%I["),
-       STRING_END(183...184)("]")
+       (160...163),
+       (183...184)
      ),
      SymbolNode(186...190)(
        SYMBOL_BEGIN(186...187)(":"),
@@ -250,8 +250,8 @@ ProgramNode(0...345)(
           nil,
           "a\b"
         )],
-       PERCENT_LOWER_I(199...202)("%i["),
-       STRING_END(205...206)("]")
+       (199...202),
+       (205...206)
      ),
      SymbolNode(208...211)(
        SYMBOL_BEGIN(208...209)(":"),

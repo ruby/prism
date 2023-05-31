@@ -24,8 +24,8 @@ ProgramNode(0...719)(
        EQUAL(16...17)("="),
        ArrayNode(18...24)(
          [IntegerNode(19...20)(), IntegerNode(22...23)()],
-         BRACKET_LEFT_ARRAY(18...19)("["),
-         BRACKET_RIGHT(23...24)("]")
+         (18...19),
+         (23...24)
        ),
        (7...8),
        (14...15)
@@ -51,11 +51,7 @@ ProgramNode(0...719)(
           LocalVariableWriteNode(41...42)((41...42), nil, nil, 0)
         )],
        EQUAL(44...45)("="),
-       ArrayNode(46...48)(
-         [],
-         BRACKET_LEFT_ARRAY(46...47)("["),
-         BRACKET_RIGHT(47...48)("]")
-       ),
+       ArrayNode(46...48)([], (46...47), (47...48)),
        (39...40),
        (42...43)
      ),
@@ -67,8 +63,8 @@ ProgramNode(0...719)(
        EQUAL(56...57)("="),
        ArrayNode(58...64)(
          [IntegerNode(59...60)(), IntegerNode(62...63)()],
-         BRACKET_LEFT_ARRAY(58...59)("["),
-         BRACKET_RIGHT(63...64)("]")
+         (58...59),
+         (63...64)
        ),
        (49...50),
        (54...55)
@@ -79,8 +75,8 @@ ProgramNode(0...719)(
        EQUAL(76...77)("="),
        ArrayNode(78...84)(
          [IntegerNode(79...80)(), IntegerNode(82...83)()],
-         BRACKET_LEFT_ARRAY(78...79)("["),
-         BRACKET_RIGHT(83...84)("]")
+         (78...79),
+         (83...84)
        ),
        (65...66),
        (74...75)
@@ -91,8 +87,8 @@ ProgramNode(0...719)(
        EQUAL(94...95)("="),
        ArrayNode(96...102)(
          [IntegerNode(97...98)(), IntegerNode(100...101)()],
-         BRACKET_LEFT_ARRAY(96...97)("["),
-         BRACKET_RIGHT(101...102)("]")
+         (96...97),
+         (101...102)
        ),
        (85...86),
        (92...93)
@@ -112,11 +108,11 @@ ProgramNode(0...719)(
          [IntegerNode(118...119)(),
           ArrayNode(121...127)(
             [IntegerNode(122...123)(), IntegerNode(125...126)()],
-            BRACKET_LEFT_ARRAY(121...122)("["),
-            BRACKET_RIGHT(126...127)("]")
+            (121...122),
+            (126...127)
           )],
-         BRACKET_LEFT_ARRAY(117...118)("["),
-         BRACKET_RIGHT(127...128)("]")
+         (117...118),
+         (127...128)
        ),
        (103...104),
        (113...114)
@@ -127,8 +123,8 @@ ProgramNode(0...719)(
        EQUAL(136...137)("="),
        ArrayNode(138...144)(
          [IntegerNode(139...140)(), IntegerNode(142...143)()],
-         BRACKET_LEFT_ARRAY(138...139)("["),
-         BRACKET_RIGHT(143...144)("]")
+         (138...139),
+         (143...144)
        ),
        (129...130),
        (134...135)
@@ -142,8 +138,8 @@ ProgramNode(0...719)(
        EQUAL(155...156)("="),
        ArrayNode(157...163)(
          [IntegerNode(158...159)(), IntegerNode(161...162)()],
-         BRACKET_LEFT_ARRAY(157...158)("["),
-         BRACKET_RIGHT(162...163)("]")
+         (157...158),
+         (162...163)
        ),
        (145...146),
        (153...154)
@@ -154,8 +150,8 @@ ProgramNode(0...719)(
        EQUAL(171...172)("="),
        ArrayNode(173...179)(
          [IntegerNode(174...175)(), IntegerNode(177...178)()],
-         BRACKET_LEFT_ARRAY(173...174)("["),
-         BRACKET_RIGHT(178...179)("]")
+         (173...174),
+         (178...179)
        ),
        (164...165),
        (169...170)
@@ -200,8 +196,8 @@ ProgramNode(0...719)(
        EQUAL(219...220)("="),
        ArrayNode(221...227)(
          [IntegerNode(222...223)(), IntegerNode(225...226)()],
-         BRACKET_LEFT_ARRAY(221...222)("["),
-         BRACKET_RIGHT(226...227)("]")
+         (221...222),
+         (226...227)
        ),
        (204...205),
        (217...218)
@@ -235,8 +231,8 @@ ProgramNode(0...719)(
        EQUAL(244...245)("="),
        ArrayNode(246...252)(
          [IntegerNode(247...248)(), IntegerNode(250...251)()],
-         BRACKET_LEFT_ARRAY(246...247)("["),
-         BRACKET_RIGHT(251...252)("]")
+         (246...247),
+         (251...252)
        ),
        (228...229),
        (242...243)
@@ -265,8 +261,8 @@ ProgramNode(0...719)(
        EQUAL(266...267)("="),
        ArrayNode(268...274)(
          [IntegerNode(269...270)(), IntegerNode(272...273)()],
-         BRACKET_LEFT_ARRAY(268...269)("["),
-         BRACKET_RIGHT(273...274)("]")
+         (268...269),
+         (273...274)
        ),
        (253...254),
        (264...265)

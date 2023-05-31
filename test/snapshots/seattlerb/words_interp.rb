@@ -12,8 +12,8 @@ ProgramNode(0...9)(
            StringNode(7...8)(nil, STRING_CONTENT(7...8)("b"), nil, "b")],
           nil
         )],
-       PERCENT_UPPER_W(0...3)("%W("),
-       STRING_END(8...9)(")")
+       (0...3),
+       (8...9)
      )]
   )
 )

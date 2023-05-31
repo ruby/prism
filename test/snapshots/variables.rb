@@ -177,8 +177,8 @@ ProgramNode(0...293)(
          [IntegerNode(249...250)(),
           ArrayNode(252...258)(
             [IntegerNode(253...254)(), IntegerNode(256...257)()],
-            BRACKET_LEFT_ARRAY(252...253)("["),
-            BRACKET_RIGHT(257...258)("]")
+            (252...253),
+            (257...258)
           )],
          nil,
          nil

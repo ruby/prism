@@ -23,8 +23,8 @@ ProgramNode(0...56)(
               EQUAL(46...47)("="),
               ArrayNode(48...54)(
                 [IntegerNode(49...50)(), IntegerNode(52...53)()],
-                BRACKET_LEFT_ARRAY(48...49)("["),
-                BRACKET_RIGHT(53...54)("]")
+                (48...49),
+                (53...54)
               ),
               (39...40),
               (44...45)

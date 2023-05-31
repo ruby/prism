@@ -14,8 +14,8 @@ ProgramNode(0...210)(
           nil,
           "a\n" + "b"
         )],
-       PERCENT_UPPER_I(8...11)("%I{"),
-       STRING_END(15...16)("}")
+       (8...11),
+       (15...16)
      ),
      StringNode(18...26)(
        STRING_BEGIN(18...21)("%Q{"),
@@ -30,8 +30,8 @@ ProgramNode(0...210)(
           nil,
           "a\n" + "b"
         )],
-       PERCENT_UPPER_W(28...31)("%W{"),
-       STRING_END(35...36)("}")
+       (28...31),
+       (35...36)
      ),
      ArrayNode(38...46)(
        [SymbolNode(41...45)(
@@ -40,8 +40,8 @@ ProgramNode(0...210)(
           nil,
           "a\n" + "b"
         )],
-       PERCENT_LOWER_I(38...41)("%i{"),
-       STRING_END(45...46)("}")
+       (38...41),
+       (45...46)
      ),
      StringNode(48...56)(
        STRING_BEGIN(48...51)("%q{"),
@@ -69,8 +69,8 @@ ProgramNode(0...210)(
           nil,
           "a\n" + "b"
         )],
-       PERCENT_LOWER_W(78...81)("%w{"),
-       STRING_END(85...86)("}")
+       (78...81),
+       (85...86)
      ),
      XStringNode(88...96)(
        PERCENT_LOWER_X(88...91)("%x{"),

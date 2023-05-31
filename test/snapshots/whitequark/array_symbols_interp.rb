@@ -23,8 +23,8 @@ ProgramNode(0...29)(
            )],
           nil
         )],
-       PERCENT_UPPER_I(0...3)("%I["),
-       STRING_END(13...14)("]")
+       (0...3),
+       (13...14)
      ),
      ArrayNode(16...29)(
        [InterpolatedSymbolNode(0...28)(
@@ -53,8 +53,8 @@ ProgramNode(0...29)(
            )],
           nil
         )],
-       PERCENT_UPPER_I(16...19)("%I["),
-       STRING_END(28...29)("]")
+       (16...19),
+       (28...29)
      )]
   )
 )

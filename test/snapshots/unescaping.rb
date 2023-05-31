@@ -8,8 +8,8 @@ ProgramNode(0...55)(
           STRING_END(8...9)("\""),
           "\u0003{1}"
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(9...10)("]")
+       (0...1),
+       (9...10)
      ),
      RegularExpressionNode(12...20)(
        REGEXP_BEGIN(12...13)("/"),

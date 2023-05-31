@@ -9,8 +9,8 @@ ProgramNode(0...25)(
              EQUAL_GREATER(4...6)("=>")
            )]
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(9...10)("]")
+       (0...1),
+       (9...10)
      ),
      ArrayNode(12...25)(
        [IntegerNode(14...15)(),
@@ -21,8 +21,8 @@ ProgramNode(0...25)(
              EQUAL_GREATER(19...21)("=>")
            )]
         )],
-       BRACKET_LEFT_ARRAY(12...13)("["),
-       BRACKET_RIGHT(24...25)("]")
+       (12...13),
+       (24...25)
      )]
   )
 )

@@ -50,8 +50,8 @@ ProgramNode(0...747)(
           ArrayNode(34...41)(
             [SymbolNode(37...38)(nil, STRING_CONTENT(37...38)("a"), nil, "a"),
              SymbolNode(39...40)(nil, STRING_CONTENT(39...40)("b"), nil, "b")],
-            PERCENT_UPPER_I(34...37)("%I["),
-            STRING_END(40...41)("]")
+            (34...37),
+            (40...41)
           ),
           nil,
           (31...33),
@@ -72,8 +72,8 @@ ProgramNode(0...747)(
           ArrayNode(58...65)(
             [StringNode(61...62)(nil, STRING_CONTENT(61...62)("a"), nil, "a"),
              StringNode(63...64)(nil, STRING_CONTENT(63...64)("b"), nil, "b")],
-            PERCENT_UPPER_W(58...61)("%W["),
-            STRING_END(64...65)("]")
+            (58...61),
+            (64...65)
           ),
           nil,
           (55...57),
@@ -94,8 +94,8 @@ ProgramNode(0...747)(
           ArrayNode(82...89)(
             [SymbolNode(85...86)(nil, STRING_CONTENT(85...86)("a"), nil, "a"),
              SymbolNode(87...88)(nil, STRING_CONTENT(87...88)("b"), nil, "b")],
-            PERCENT_LOWER_I(82...85)("%i["),
-            STRING_END(88...89)("]")
+            (82...85),
+            (88...89)
           ),
           nil,
           (79...81),
@@ -126,8 +126,8 @@ ProgramNode(0...747)(
                nil,
                "b"
              )],
-            PERCENT_LOWER_W(106...109)("%w["),
-            STRING_END(112...113)("]")
+            (106...109),
+            (112...113)
           ),
           nil,
           (103...105),
