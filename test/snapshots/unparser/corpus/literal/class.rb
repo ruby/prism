@@ -3,12 +3,12 @@ ProgramNode(0...213)(
   StatementsNode(0...213)(
     [ClassNode(0...11)(
        [],
-       KEYWORD_CLASS(0...5)("class"),
+       (0...5),
        ConstantReadNode(6...7)(),
        nil,
        nil,
        nil,
-       KEYWORD_END(8...11)("end")
+       (8...11)
      ),
      SingletonClassNode(13...27)(
        [],
@@ -57,7 +57,7 @@ ProgramNode(0...213)(
      ),
      ClassNode(49...63)(
        [],
-       KEYWORD_CLASS(49...54)("class"),
+       (49...54),
        ConstantPathNode(55...59)(
          ConstantReadNode(55...56)(),
          ConstantReadNode(58...59)(),
@@ -66,11 +66,11 @@ ProgramNode(0...213)(
        nil,
        nil,
        nil,
-       KEYWORD_END(60...63)("end")
+       (60...63)
      ),
      ClassNode(65...82)(
        [],
-       KEYWORD_CLASS(65...70)("class"),
+       (65...70),
        ConstantPathNode(71...78)(
          ConstantPathNode(71...75)(
            ConstantReadNode(71...72)(),
@@ -83,50 +83,50 @@ ProgramNode(0...213)(
        nil,
        nil,
        nil,
-       KEYWORD_END(79...82)("end")
+       (79...82)
      ),
      ClassNode(84...99)(
        [],
-       KEYWORD_CLASS(84...89)("class"),
+       (84...89),
        ConstantReadNode(90...91)(),
-       LESS(92...93)("<"),
+       (92...93),
        ConstantReadNode(94...95)(),
        nil,
-       KEYWORD_END(96...99)("end")
+       (96...99)
      ),
      ClassNode(101...119)(
        [],
-       KEYWORD_CLASS(101...106)("class"),
+       (101...106),
        ConstantReadNode(107...108)(),
-       LESS(109...110)("<"),
+       (109...110),
        ConstantPathNode(111...115)(
          ConstantReadNode(111...112)(),
          ConstantReadNode(114...115)(),
          (112...114)
        ),
        nil,
-       KEYWORD_END(116...119)("end")
+       (116...119)
      ),
      ClassNode(121...142)(
        [],
-       KEYWORD_CLASS(121...126)("class"),
+       (121...126),
        ConstantPathNode(127...131)(
          ConstantReadNode(127...128)(),
          ConstantReadNode(130...131)(),
          (128...130)
        ),
-       LESS(132...133)("<"),
+       (132...133),
        ConstantPathNode(134...138)(
          ConstantReadNode(134...135)(),
          ConstantReadNode(137...138)(),
          (135...137)
        ),
        nil,
-       KEYWORD_END(139...142)("end")
+       (139...142)
      ),
      ClassNode(144...198)(
        [],
-       KEYWORD_CLASS(144...149)("class"),
+       (144...149),
        ConstantReadNode(150...151)(),
        nil,
        nil,
@@ -173,11 +173,11 @@ ProgramNode(0...213)(
             (191...194)
           )]
        ),
-       KEYWORD_END(195...198)("end")
+       (195...198)
      ),
      ClassNode(200...213)(
        [],
-       KEYWORD_CLASS(200...205)("class"),
+       (200...205),
        ConstantPathNode(206...209)(
          nil,
          ConstantReadNode(208...209)(),
@@ -186,7 +186,7 @@ ProgramNode(0...213)(
        nil,
        nil,
        nil,
-       KEYWORD_END(210...213)("end")
+       (210...213)
      )]
   )
 )

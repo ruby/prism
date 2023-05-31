@@ -65,12 +65,12 @@ ProgramNode(0...991)(
      CallNode(74...89)(
        ClassNode(74...85)(
          [],
-         KEYWORD_CLASS(74...79)("class"),
+         (74...79),
          ConstantReadNode(80...81)(),
          nil,
          nil,
          nil,
-         KEYWORD_END(82...85)("end")
+         (82...85)
        ),
        DOT(85...86)("."),
        IDENTIFIER(86...89)("bar"),

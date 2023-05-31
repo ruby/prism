@@ -3,7 +3,7 @@ ProgramNode(0...370)(
   StatementsNode(0...370)(
     [ClassNode(0...17)(
        [IDENTIFIER(8...9)("a")],
-       KEYWORD_CLASS(0...5)("class"),
+       (0...5),
        ConstantReadNode(6...7)(),
        nil,
        nil,
@@ -15,11 +15,11 @@ ProgramNode(0...370)(
             0
           )]
        ),
-       KEYWORD_END(14...17)("end")
+       (14...17)
      ),
      ClassNode(19...39)(
        [],
-       KEYWORD_CLASS(19...24)("class"),
+       (19...24),
        ConstantReadNode(25...26)(),
        nil,
        nil,
@@ -35,11 +35,11 @@ ProgramNode(0...370)(
          ),
          (36...39)
        ),
-       KEYWORD_END(36...39)("end")
+       (36...39)
      ),
      ClassNode(41...75)(
        [],
-       KEYWORD_CLASS(41...46)("class"),
+       (41...46),
        ConstantReadNode(47...48)(),
        nil,
        nil,
@@ -66,13 +66,13 @@ ProgramNode(0...370)(
          ),
          (72...75)
        ),
-       KEYWORD_END(72...75)("end")
+       (72...75)
      ),
      ClassNode(77...98)(
        [IDENTIFIER(89...90)("a")],
-       KEYWORD_CLASS(77...82)("class"),
+       (77...82),
        ConstantReadNode(83...84)(),
-       LESS(85...86)("<"),
+       (85...86),
        ConstantReadNode(87...88)(),
        StatementsNode(89...94)(
          [LocalVariableWriteNode(89...94)(
@@ -82,7 +82,7 @@ ProgramNode(0...370)(
             0
           )]
        ),
-       KEYWORD_END(95...98)("end")
+       (95...98)
      ),
      SingletonClassNode(100...120)(
        [],
@@ -112,7 +112,7 @@ ProgramNode(0...370)(
      ),
      ClassNode(122...162)(
        [],
-       KEYWORD_CLASS(122...127)("class"),
+       (122...127),
        ConstantReadNode(128...129)(),
        nil,
        nil,
@@ -137,11 +137,11 @@ ProgramNode(0...370)(
             KEYWORD_END(154...157)("end")
           )]
        ),
-       KEYWORD_END(159...162)("end")
+       (159...162)
      ),
      ClassNode(164...218)(
        [],
-       KEYWORD_CLASS(164...169)("class"),
+       (164...169),
        ConstantReadNode(170...171)(),
        nil,
        nil,
@@ -177,7 +177,7 @@ ProgramNode(0...370)(
             KEYWORD_END(210...213)("end")
           )]
        ),
-       KEYWORD_END(215...218)("end")
+       (215...218)
      ),
      SingletonClassNode(220...240)(
        [],
@@ -287,9 +287,9 @@ ProgramNode(0...370)(
      ),
      ClassNode(352...370)(
        [],
-       KEYWORD_CLASS(352...357)("class"),
+       (352...357),
        ConstantReadNode(358...359)(),
-       LESS(360...361)("<"),
+       (360...361),
        CallNode(362...366)(
          ConstantReadNode(362...363)(),
          nil,
@@ -301,7 +301,7 @@ ProgramNode(0...370)(
          "[]"
        ),
        nil,
-       KEYWORD_END(367...370)("end")
+       (367...370)
      )]
   )
 )

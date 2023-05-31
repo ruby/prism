@@ -108,7 +108,7 @@ ProgramNode(0...314)(
        KEYWORD_WHILE(163...168)("while"),
        ClassNode(169...198)(
          [IDENTIFIER(179...180)("a")],
-         KEYWORD_CLASS(169...174)("class"),
+         (169...174),
          ConstantReadNode(175...178)(),
          nil,
          nil,
@@ -129,7 +129,7 @@ ProgramNode(0...314)(
               0
             )]
          ),
-         KEYWORD_END(195...198)("end")
+         (195...198)
        ),
        StatementsNode(200...205)([BreakNode(200...205)(nil, (200...205))])
      ),

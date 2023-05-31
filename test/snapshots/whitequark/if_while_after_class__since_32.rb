@@ -3,7 +3,7 @@ ProgramNode(0...178)(
   StatementsNode(0...178)(
     [ClassNode(0...38)(
        [],
-       KEYWORD_CLASS(0...5)("class"),
+       (0...5),
        ConstantPathNode(6...33)(
          IfNode(6...25)(
            KEYWORD_IF(6...8)("if"),
@@ -18,11 +18,11 @@ ProgramNode(0...178)(
        nil,
        nil,
        nil,
-       KEYWORD_END(35...38)("end")
+       (35...38)
      ),
      ClassNode(40...87)(
        [],
-       KEYWORD_CLASS(40...45)("class"),
+       (40...45),
        ConstantPathNode(46...82)(
          WhileNode(46...74)(
            KEYWORD_WHILE(46...51)("while"),
@@ -40,7 +40,7 @@ ProgramNode(0...178)(
        nil,
        nil,
        nil,
-       KEYWORD_END(84...87)("end")
+       (84...87)
      ),
      ModuleNode(89...128)(
        [],

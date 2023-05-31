@@ -1491,7 +1491,7 @@ ProgramNode(0...1187)(
        ArgumentsNode(884...908)(
          [ClassNode(884...908)(
             [],
-            KEYWORD_CLASS(884...889)("class"),
+            (884...889),
             ConstantReadNode(890...893)(),
             nil,
             nil,
@@ -1507,7 +1507,7 @@ ProgramNode(0...1187)(
                  "baz"
                )]
             ),
-            KEYWORD_END(905...908)("end")
+            (905...908)
           )]
        ),
        nil,

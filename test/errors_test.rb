@@ -418,12 +418,12 @@ class ErrorsTest < Test::Unit::TestCase
       StatementsNode(
         [ClassNode(
            [],
-           KEYWORD_CLASS("class"),
+           Location(),
            ConstantReadNode(),
            nil,
            nil,
            nil,
-           KEYWORD_END("end")
+           Location()
          )]
       ),
       [],
@@ -953,12 +953,12 @@ class ErrorsTest < Test::Unit::TestCase
   def test_dont_allow_return_inside_class_body
     expected = ClassNode(
       [],
-      KEYWORD_CLASS("class"),
+      Location(),
       ConstantReadNode(),
       nil,
       nil,
       StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
-      KEYWORD_END("end")
+      Location()
     )
 
     assert_errors expected, "class A; return; end", ["Invalid return in class/module body"]

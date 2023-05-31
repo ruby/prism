@@ -42,12 +42,12 @@ ProgramNode(0...132)(
             StatementsNode(63...75)(
               [ClassNode(63...75)(
                  [],
-                 KEYWORD_CLASS(63...68)("class"),
+                 (63...68),
                  ConstantReadNode(69...70)(),
                  nil,
                  nil,
                  nil,
-                 KEYWORD_END(72...75)("end")
+                 (72...75)
                )]
             ),
             KEYWORD_END(77...80)("end")

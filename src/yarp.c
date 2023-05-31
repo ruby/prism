@@ -1169,12 +1169,12 @@ yp_class_node_create(yp_parser_t *parser, yp_token_list_t *locals, const yp_toke
       .location = { .start = class_keyword->start, .end = end_keyword->end },
     },
     .locals = *locals,
-    .class_keyword = *class_keyword,
+    .class_keyword_loc = YP_LOCATION_TOKEN_VALUE(class_keyword),
     .constant_path = constant_path,
-    .inheritance_operator = *inheritance_operator,
+    .inheritance_operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(inheritance_operator),
     .superclass = superclass,
     .statements = statements,
-    .end_keyword = *end_keyword
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;

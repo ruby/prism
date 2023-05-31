@@ -56,7 +56,7 @@ ProgramNode(0...197)(
        KEYWORD_WHILE(104...109)("while"),
        ClassNode(110...139)(
          [IDENTIFIER(120...121)("a")],
-         KEYWORD_CLASS(110...115)("class"),
+         (110...115),
          ConstantReadNode(116...119)(),
          nil,
          nil,
@@ -77,7 +77,7 @@ ProgramNode(0...197)(
               0
             )]
          ),
-         KEYWORD_END(136...139)("end")
+         (136...139)
        ),
        StatementsNode(141...146)([BreakNode(141...146)(nil, (141...146))])
      ),
@@ -85,7 +85,7 @@ ProgramNode(0...197)(
        KEYWORD_WHILE(153...158)("while"),
        ClassNode(159...185)(
          [],
-         KEYWORD_CLASS(159...164)("class"),
+         (159...164),
          ConstantReadNode(165...168)(),
          nil,
          nil,
@@ -101,7 +101,7 @@ ProgramNode(0...197)(
               "tap"
             )]
          ),
-         KEYWORD_END(182...185)("end")
+         (182...185)
        ),
        StatementsNode(187...192)([BreakNode(187...192)(nil, (187...192))])
      )]

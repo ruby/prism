@@ -13,12 +13,12 @@ ProgramNode(0...48)(
      ),
      ClassNode(35...48)(
        [],
-       KEYWORD_CLASS(35...40)("class"),
+       (35...40),
        ConstantReadNode(41...44)(),
        nil,
        nil,
        nil,
-       KEYWORD_END(45...48)("end")
+       (45...48)
      )]
   )
 )

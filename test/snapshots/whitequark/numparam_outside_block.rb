@@ -41,7 +41,7 @@ ProgramNode(0...83)(
      ),
      ClassNode(27...43)(
        [],
-       KEYWORD_CLASS(27...32)("class"),
+       (27...32),
        ConstantReadNode(33...34)(),
        nil,
        nil,
@@ -57,7 +57,7 @@ ProgramNode(0...83)(
             "_1"
           )]
        ),
-       KEYWORD_END(40...43)("end")
+       (40...43)
      ),
      DefNode(45...64)(
        IDENTIFIER(54...55)("m"),
