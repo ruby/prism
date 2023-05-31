@@ -14,10 +14,10 @@ ProgramNode(0...27)(
            nil,
            "!"
          ),
-         KEYWORD_AND(5...8)("and")
+         (5...8)
        ),
        TrueNode(23...27)(),
-       KEYWORD_AND(19...22)("and")
+       (19...22)
      )]
   )
 )

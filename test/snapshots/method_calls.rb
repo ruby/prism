@@ -599,7 +599,7 @@ ProgramNode(0...1187)(
            nil,
            "qux"
          ),
-         KEYWORD_AND(254...257)("and")
+         (254...257)
        ),
        StatementsNode(228...238)(
          [CallNode(228...238)(

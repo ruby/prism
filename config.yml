@@ -360,8 +360,8 @@ nodes:
         type: node
       - name: right
         type: node
-      - name: operator
-        type: token
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `&&` operator or the `and` keyword.
 

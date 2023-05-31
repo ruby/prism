@@ -434,7 +434,7 @@ yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *opera
       },
     },
     .left = left,
-    .operator = *operator,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
     .right = right
   };
 

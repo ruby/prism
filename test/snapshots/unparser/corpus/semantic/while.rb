@@ -95,7 +95,7 @@ ProgramNode(0...188)(
            BlockNode(72...75)([], nil, nil, (72...73), (74...75)),
            "a"
          ),
-         AMPERSAND_AMPERSAND(67...69)("&&")
+         (67...69)
        ),
        StatementsNode(57...58)(
          [CallNode(57...58)(

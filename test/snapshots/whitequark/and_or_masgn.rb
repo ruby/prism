@@ -35,7 +35,7 @@ ProgramNode(0...40)(
          (7...8),
          (18...19)
        ),
-       AMPERSAND_AMPERSAND(4...6)("&&")
+       (4...6)
      ),
      OrNode(21...40)(
        CallNode(21...24)(

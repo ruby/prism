@@ -22,7 +22,7 @@ ProgramNode(0...23)(
          nil,
          "bar"
        ),
-       AMPERSAND_AMPERSAND(4...6)("&&")
+       (4...6)
      ),
      AndNode(12...23)(
        CallNode(12...15)(
@@ -45,7 +45,7 @@ ProgramNode(0...23)(
          nil,
          "bar"
        ),
-       KEYWORD_AND(16...19)("and")
+       (16...19)
      )]
   )
 )

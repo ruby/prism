@@ -97,7 +97,7 @@ ProgramNode(0...77)(
          ),
          (26...29)
        ),
-       KEYWORD_AND(21...24)("and")
+       (21...24)
      ),
      IfNode(32...53)(
        KEYWORD_IF(32...34)("if"),
@@ -203,7 +203,7 @@ ProgramNode(0...77)(
            ),
            (69...72)
          ),
-         KEYWORD_AND(64...67)("and")
+         (64...67)
        ),
        nil,
        nil,

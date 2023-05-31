@@ -4,7 +4,7 @@ ProgramNode(0...78)(
     [AndNode(0...25)(
        DefinedNode(0...10)(nil, IntegerNode(9...10)(), nil, (0...8)),
        DefinedNode(15...25)(nil, IntegerNode(24...25)(), nil, (15...23)),
-       KEYWORD_AND(11...14)("and")
+       (11...14)
      ),
      DefinedNode(27...43)(
        PARENTHESIS_LEFT(35...36)("("),
@@ -39,7 +39,7 @@ ProgramNode(0...78)(
            nil,
            "bar"
          ),
-         KEYWORD_AND(58...61)("and")
+         (58...61)
        ),
        PARENTHESIS_RIGHT(65...66)(")"),
        (45...53)
