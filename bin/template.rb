@@ -136,7 +136,7 @@ class NodeType
 
   # Should emit serialized length of node so implementations can skip
   # the node to enable lazy parsing.
-  def needs_length?
+  def needs_serialized_length?
     @name == "DefNode"
   end
 end
