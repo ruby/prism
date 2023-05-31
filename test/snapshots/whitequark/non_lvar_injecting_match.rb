@@ -15,7 +15,8 @@ ProgramNode(0...28)(
             nil,
             "(?<match>bar)"
           )],
-         REGEXP_END(18...19)("/")
+         REGEXP_END(18...19)("/"),
+         0
        ),
        nil,
        EQUAL_TILDE(20...22)("=~"),

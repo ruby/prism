@@ -316,6 +316,17 @@ tokens:
     comment: "a separator between words in a list"
   - name: __END__
     comment: "marker for the point in the file at which the parser should stop"
+flags:
+  - name: RegularExpressionFlags
+    values:
+      - IGNORECASE # i - ignores the case of characters when matching
+      - MULTILINE  # m - allows $ to match the end of lines within strings
+      - EXTEND     # x - ignores whitespace and allows comments in regular expressions
+      - EUCJP      # e - forces the EUC-JP encoding
+      - ASCII8BIT  # n - forces the ASCII-8BIT encoding
+      - WINDOWS31J # s - forces the Windows-31J encoding
+      - UTF8       # u - forces the UTF-8 encoding
+      - ONCE       # o - only interpolates values into the regular expression once
 nodes:
   - name: AliasNode
     child_nodes:
@@ -976,6 +987,8 @@ nodes:
         type: node[]
       - name: closing
         type: token
+      - name: flags
+        type: uint32
     comment: |
       Represents a regular expression literal that contains interpolation.
 
@@ -1405,6 +1418,8 @@ nodes:
         type: token
       - name: unescaped
         type: string
+      - name: flags
+        type: uint32
     comment: |
       Represents a regular expression literal with no interpolation.
 

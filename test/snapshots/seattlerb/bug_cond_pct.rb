@@ -9,7 +9,8 @@ ProgramNode(0...28)(
              REGEXP_BEGIN(11...14)("%r%"),
              STRING_CONTENT(14...22)("blahblah"),
              REGEXP_END(22...23)("%"),
-             "blahblah"
+             "blahblah",
+             0
            )],
           nil
         )],

@@ -6,7 +6,8 @@ ProgramNode(0...31)(
          REGEXP_BEGIN(0...1)("/"),
          STRING_CONTENT(1...14)("(?<match>bar)"),
          REGEXP_END(14...15)("/"),
-         "(?<match>bar)"
+         "(?<match>bar)",
+         0
        ),
        nil,
        EQUAL_TILDE(16...18)("=~"),

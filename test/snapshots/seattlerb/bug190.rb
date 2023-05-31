@@ -5,7 +5,8 @@ ProgramNode(0...6)(
        REGEXP_BEGIN(0...3)("%r'"),
        STRING_CONTENT(3...5)("\\'"),
        REGEXP_END(5...6)("'"),
-       "'"
+       "'",
+       0
      )]
   )
 )

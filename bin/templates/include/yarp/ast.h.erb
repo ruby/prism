@@ -62,8 +62,8 @@ typedef struct yp_node {
   // containing a start and an end.
   yp_location_t location;
 } yp_node_t;
-
 <%- nodes.each do |node| -%>
+
 // <%= node.name %>
 typedef struct yp_<%= node.human %> {
   yp_node_t base;
@@ -80,6 +80,15 @@ typedef struct yp_<%= node.human %> {
   %>;
 <%- end -%>
 } yp_<%= node.human %>_t;
-
 <%- end -%>
+<%- flags.each do |flag| -%>
+
+// <%= flag.name %>
+typedef enum {
+  <%- flag.values.each_with_index do |value, index| -%>
+  YP_<%= flag.human.upcase %>_<%= value %> = 1 << <%= index %>,
+  <%- end -%>
+} yp_<%= flag.human %>_t;
+<%- end -%>
+
 #endif // YARP_AST_H

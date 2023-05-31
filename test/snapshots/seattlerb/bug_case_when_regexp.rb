@@ -14,7 +14,8 @@ ProgramNode(0...26)(
              REGEXP_BEGIN(14...15)("/"),
              STRING_CONTENT(15...16)("x"),
              REGEXP_END(16...17)("/"),
-             "x"
+             "x",
+             0
            )],
           nil
         )],

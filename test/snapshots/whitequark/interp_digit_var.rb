@@ -101,13 +101,15 @@ ProgramNode(1...476)(
        REGEXP_BEGIN(139...142)("%r{"),
        STRING_CONTENT(142...145)("\#@1"),
        REGEXP_END(145...146)("}"),
-       "\#@1"
+       "\#@1",
+       0
      ),
      RegularExpressionNode(150...158)(
        REGEXP_BEGIN(150...153)("%r{"),
        STRING_CONTENT(153...157)("\#@@1"),
        REGEXP_END(157...158)("}"),
-       "\#@@1"
+       "\#@@1",
+       0
      ),
      SymbolNode(162...169)(
        SYMBOL_BEGIN(162...165)("%s{"),
@@ -181,13 +183,15 @@ ProgramNode(1...476)(
        REGEXP_BEGIN(275...276)("/"),
        STRING_CONTENT(276...279)("\#@1"),
        REGEXP_END(279...280)("/"),
-       "\#@1"
+       "\#@1",
+       0
      ),
      RegularExpressionNode(284...290)(
        REGEXP_BEGIN(284...285)("/"),
        STRING_CONTENT(285...289)("\#@@1"),
        REGEXP_END(289...290)("/"),
-       "\#@@1"
+       "\#@@1",
+       0
      ),
      InterpolatedSymbolNode(294...300)(
        SYMBOL_BEGIN(294...296)(":\""),

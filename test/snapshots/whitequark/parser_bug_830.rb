@@ -5,7 +5,8 @@ ProgramNode(0...4)(
        REGEXP_BEGIN(0...1)("/"),
        STRING_CONTENT(1...3)("\\("),
        REGEXP_END(3...4)("/"),
-       "("
+       "(",
+       0
      )]
   )
 )

@@ -21,7 +21,8 @@ ProgramNode(0...14)(
           EMBEXPR_END(9...10)("}")
         ),
         StringNode(10...13)(nil, STRING_CONTENT(10...13)("baz"), nil, "baz")],
-       REGEXP_END(13...14)("/")
+       REGEXP_END(13...14)("/"),
+       0
      )]
   )
 )
