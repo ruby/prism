@@ -2,7 +2,7 @@ ProgramNode(0...51)(
   [],
   StatementsNode(0...51)(
     [BeginNode(0...51)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...11)(
          [CallNode(7...11)(
             nil,
@@ -66,7 +66,7 @@ ProgramNode(0...51)(
          ),
          KEYWORD_END(48...51)("end")
        ),
-       KEYWORD_END(48...51)("end")
+       (48...51)
      )]
   )
 )

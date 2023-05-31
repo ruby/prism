@@ -37,7 +37,7 @@ ProgramNode(0...130)(
          ),
          nil,
          nil,
-         KEYWORD_END(41...44)("end")
+         (41...44)
        ),
        [IDENTIFIER(9...12)("cmd")],
        (0...3),

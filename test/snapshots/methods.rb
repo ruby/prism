@@ -80,7 +80,7 @@ ProgramNode(0...1194)(
            nil,
            KEYWORD_END(92...95)("end")
          ),
-         KEYWORD_END(92...95)("end")
+         (92...95)
        ),
        [],
        (77...80),
@@ -569,7 +569,7 @@ ProgramNode(0...1194)(
            nil,
            KEYWORD_END(498...501)("end")
          ),
-         KEYWORD_END(498...501)("end")
+         (498...501)
        ),
        [],
        (469...472),

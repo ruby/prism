@@ -2,7 +2,7 @@ ProgramNode(0...215)(
   [],
   StatementsNode(0...215)(
     [BeginNode(0...16)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        nil,
        RescueNode(6...12)(
          KEYWORD_RESCUE(6...12)("rescue"),
@@ -14,10 +14,10 @@ ProgramNode(0...215)(
        ),
        nil,
        nil,
-       KEYWORD_END(13...16)("end")
+       (13...16)
      ),
      BeginNode(18...39)(
-       KEYWORD_BEGIN(18...23)("begin"),
+       (18...23),
        nil,
        RescueNode(24...30)(
          KEYWORD_RESCUE(24...30)("rescue"),
@@ -33,10 +33,10 @@ ProgramNode(0...215)(
          KEYWORD_END(36...39)("end")
        ),
        nil,
-       KEYWORD_END(36...39)("end")
+       (36...39)
      ),
      BeginNode(41...54)(
-       KEYWORD_BEGIN(41...46)("begin"),
+       (41...46),
        StatementsNode(49...50)(
          [CallNode(49...50)(
             nil,
@@ -52,10 +52,10 @@ ProgramNode(0...215)(
        nil,
        nil,
        nil,
-       KEYWORD_END(51...54)("end")
+       (51...54)
      ),
      BeginNode(56...80)(
-       KEYWORD_BEGIN(56...61)("begin"),
+       (56...61),
        StatementsNode(64...65)(
          [CallNode(64...65)(
             nil,
@@ -89,10 +89,10 @@ ProgramNode(0...215)(
        ),
        nil,
        nil,
-       KEYWORD_END(77...80)("end")
+       (77...80)
      ),
      BeginNode(82...110)(
-       KEYWORD_BEGIN(82...87)("begin"),
+       (82...87),
        StatementsNode(90...95)(
          [CallNode(90...91)(
             nil,
@@ -136,10 +136,10 @@ ProgramNode(0...215)(
        ),
        nil,
        nil,
-       KEYWORD_END(107...110)("end")
+       (107...110)
      ),
      BeginNode(112...135)(
-       KEYWORD_BEGIN(112...117)("begin"),
+       (112...117),
        nil,
        RescueNode(118...126)(
          KEYWORD_RESCUE(118...124)("rescue"),
@@ -155,10 +155,10 @@ ProgramNode(0...215)(
          KEYWORD_END(132...135)("end")
        ),
        nil,
-       KEYWORD_END(132...135)("end")
+       (132...135)
      ),
      BeginNode(137...163)(
-       KEYWORD_BEGIN(137...142)("begin"),
+       (137...142),
        nil,
        RescueNode(144...152)(
          KEYWORD_RESCUE(144...150)("rescue"),
@@ -174,10 +174,10 @@ ProgramNode(0...215)(
          KEYWORD_END(160...163)("end")
        ),
        nil,
-       KEYWORD_END(160...163)("end")
+       (160...163)
      ),
      BeginNode(165...215)(
-       KEYWORD_BEGIN(165...170)("begin"),
+       (165...170),
        StatementsNode(173...174)(
          [CallNode(173...174)(
             nil,
@@ -244,7 +244,7 @@ ProgramNode(0...215)(
          ),
          KEYWORD_END(212...215)("end")
        ),
-       KEYWORD_END(212...215)("end")
+       (212...215)
      )]
   )
 )

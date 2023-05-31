@@ -2,7 +2,7 @@ ProgramNode(0...73)(
   [IDENTIFIER(61...63)("ex")],
   StatementsNode(0...73)(
     [BeginNode(0...36)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...11)(
          [CallNode(7...11)(
             nil,
@@ -36,10 +36,10 @@ ProgramNode(0...73)(
        ),
        nil,
        nil,
-       KEYWORD_END(33...36)("end")
+       (33...36)
      ),
      BeginNode(38...73)(
-       KEYWORD_BEGIN(38...43)("begin"),
+       (38...43),
        StatementsNode(45...49)(
          [CallNode(45...49)(
             nil,
@@ -73,7 +73,7 @@ ProgramNode(0...73)(
        ),
        nil,
        nil,
-       KEYWORD_END(70...73)("end")
+       (70...73)
      )]
   )
 )

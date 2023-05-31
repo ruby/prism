@@ -39,7 +39,7 @@ ProgramNode(0...262)(
            nil,
            KEYWORD_END(36...39)("end")
          ),
-         KEYWORD_END(36...39)("end")
+         (36...39)
        )
      ),
      LambdaNode(41...69)(
@@ -67,7 +67,7 @@ ProgramNode(0...262)(
            nil,
            KEYWORD_END(66...69)("end")
          ),
-         KEYWORD_END(66...69)("end")
+         (66...69)
        )
      ),
      LambdaNode(71...79)(

@@ -2,7 +2,7 @@ ProgramNode(0...578)(
   [IDENTIFIER(207...209)("ex")],
   StatementsNode(0...578)(
     [BeginNode(0...33)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...8)(
          [CallNode(7...8)(
             nil,
@@ -51,10 +51,10 @@ ProgramNode(0...578)(
          KEYWORD_END(30...33)("end")
        ),
        nil,
-       KEYWORD_END(30...33)("end")
+       (30...33)
      ),
      BeginNode(35...79)(
-       KEYWORD_BEGIN(35...40)("begin"),
+       (35...40),
        StatementsNode(42...43)(
          [CallNode(42...43)(
             nil,
@@ -118,10 +118,10 @@ ProgramNode(0...578)(
          ),
          KEYWORD_END(76...79)("end")
        ),
-       KEYWORD_END(76...79)("end")
+       (76...79)
      ),
      BeginNode(81...92)(
-       KEYWORD_BEGIN(81...86)("begin"),
+       (81...86),
        StatementsNode(87...88)(
          [CallNode(87...88)(
             nil,
@@ -137,10 +137,10 @@ ProgramNode(0...578)(
        nil,
        nil,
        nil,
-       KEYWORD_END(89...92)("end")
+       (89...92)
      ),
      BeginNode(94...107)(
-       KEYWORD_BEGIN(94...99)("begin"),
+       (94...99),
        StatementsNode(101...102)(
          [CallNode(101...102)(
             nil,
@@ -156,10 +156,10 @@ ProgramNode(0...578)(
        nil,
        nil,
        nil,
-       KEYWORD_END(104...107)("end")
+       (104...107)
      ),
      BeginNode(109...121)(
-       KEYWORD_BEGIN(109...114)("begin"),
+       (109...114),
        StatementsNode(115...116)(
          [CallNode(115...116)(
             nil,
@@ -175,10 +175,10 @@ ProgramNode(0...578)(
        nil,
        nil,
        nil,
-       KEYWORD_END(118...121)("end")
+       (118...121)
      ),
      BeginNode(123...135)(
-       KEYWORD_BEGIN(123...128)("begin"),
+       (123...128),
        StatementsNode(129...130)(
          [CallNode(129...130)(
             nil,
@@ -194,10 +194,10 @@ ProgramNode(0...578)(
        nil,
        nil,
        nil,
-       KEYWORD_END(132...135)("end")
+       (132...135)
      ),
      BeginNode(137...175)(
-       KEYWORD_BEGIN(137...142)("begin"),
+       (137...142),
        StatementsNode(143...144)(
          [CallNode(143...144)(
             nil,
@@ -267,10 +267,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(172...175)("end")
+       (172...175)
      ),
      BeginNode(177...269)(
-       KEYWORD_BEGIN(177...182)("begin"),
+       (177...182),
        StatementsNode(185...186)(
          [CallNode(185...186)(
             nil,
@@ -322,10 +322,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(266...269)("end")
+       (266...269)
      ),
      BeginNode(271...322)(
-       KEYWORD_BEGIN(271...276)("begin"),
+       (271...276),
        StatementsNode(279...280)(
          [CallNode(279...280)(
             nil,
@@ -374,7 +374,7 @@ ProgramNode(0...578)(
          ),
          KEYWORD_END(319...322)("end")
        ),
-       KEYWORD_END(319...322)("end")
+       (319...322)
      ),
      StringNode(324...330)(
        STRING_BEGIN(324...326)("%!"),
@@ -383,7 +383,7 @@ ProgramNode(0...578)(
        "abc"
      ),
      BeginNode(332...352)(
-       KEYWORD_BEGIN(332...337)("begin"),
+       (332...337),
        StatementsNode(338...339)(
          [CallNode(338...339)(
             nil,
@@ -417,10 +417,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(349...352)("end")
+       (349...352)
      ),
      BeginNode(354...374)(
-       KEYWORD_BEGIN(354...359)("begin"),
+       (354...359),
        StatementsNode(360...361)(
          [CallNode(360...361)(
             nil,
@@ -454,10 +454,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(371...374)("end")
+       (371...374)
      ),
      BeginNode(376...396)(
-       KEYWORD_BEGIN(376...381)("begin"),
+       (376...381),
        StatementsNode(382...383)(
          [CallNode(382...383)(
             nil,
@@ -491,10 +491,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(393...396)("end")
+       (393...396)
      ),
      BeginNode(398...428)(
-       KEYWORD_BEGIN(398...403)("begin"),
+       (398...403),
        StatementsNode(404...405)(
          [CallNode(404...405)(
             nil,
@@ -528,10 +528,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(425...428)("end")
+       (425...428)
      ),
      BeginNode(430...477)(
-       KEYWORD_BEGIN(430...435)("begin"),
+       (430...435),
        StatementsNode(436...437)(
          [CallNode(436...437)(
             nil,
@@ -565,10 +565,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(474...477)("end")
+       (474...477)
      ),
      BeginNode(479...536)(
-       KEYWORD_BEGIN(479...484)("begin"),
+       (479...484),
        StatementsNode(487...488)(
          [CallNode(487...488)(
             nil,
@@ -602,10 +602,10 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(533...536)("end")
+       (533...536)
      ),
      BeginNode(538...578)(
-       KEYWORD_BEGIN(538...543)("begin"),
+       (538...543),
        StatementsNode(546...547)(
          [CallNode(546...547)(
             nil,
@@ -639,7 +639,7 @@ ProgramNode(0...578)(
        ),
        nil,
        nil,
-       KEYWORD_END(575...578)("end")
+       (575...578)
      )]
   )
 )

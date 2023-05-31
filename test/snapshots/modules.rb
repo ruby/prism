@@ -86,7 +86,7 @@ ProgramNode(0...140)(
          ),
          nil,
          nil,
-         KEYWORD_END(82...85)("end")
+         (82...85)
        ),
        KEYWORD_END(82...85)("end")
      ),

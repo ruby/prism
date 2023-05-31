@@ -98,7 +98,7 @@ ProgramNode(0...991)(
      ),
      CallNode(107...127)(
        BeginNode(107...123)(
-         KEYWORD_BEGIN(107...112)("begin"),
+         (107...112),
          nil,
          RescueNode(113...119)(
            KEYWORD_RESCUE(113...119)("rescue"),
@@ -110,7 +110,7 @@ ProgramNode(0...991)(
          ),
          nil,
          nil,
-         KEYWORD_END(120...123)("end")
+         (120...123)
        ),
        DOT(123...124)("."),
        IDENTIFIER(124...127)("bar"),

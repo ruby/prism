@@ -1575,7 +1575,7 @@ ProgramNode(0...1187)(
        nil,
        ArgumentsNode(961...987)(
          [BeginNode(961...987)(
-            KEYWORD_BEGIN(961...966)("begin"),
+            (961...966),
             StatementsNode(967...983)(
               [CallNode(967...983)(
                  IntegerNode(967...968)(),
@@ -1597,7 +1597,7 @@ ProgramNode(0...1187)(
             nil,
             nil,
             nil,
-            KEYWORD_END(984...987)("end")
+            (984...987)
           )]
        ),
        nil,

@@ -302,7 +302,8 @@ not_provided(yp_parser_t *parser) {
 #define YP_LOCATION_TOKEN_VALUE(token) ((yp_location_t) { .start = (token)->start, .end = (token)->end })
 #define YP_LOCATION_NODE_VALUE(node) ((yp_location_t) { .start = (node)->location.start, .end = (node)->location.end })
 #define YP_LOCATION_NODE_BASE_VALUE(node) ((yp_location_t) { .start = (node)->base.location.start, .end = (node)->base.location.end })
-#define YP_OPTIONAL_LOCATION_TOKEN_VALUE(token) ((token)->type == YP_TOKEN_NOT_PROVIDED ? (yp_location_t) { .start = NULL, .end = NULL } : YP_LOCATION_TOKEN_VALUE(token))
+#define YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE ((yp_location_t) { .start = NULL, .end = NULL })
+#define YP_OPTIONAL_LOCATION_TOKEN_VALUE(token) ((token)->type == YP_TOKEN_NOT_PROVIDED ? YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE : YP_LOCATION_TOKEN_VALUE(token))
 #define YP_TOKEN_NOT_PROVIDED_VALUE(parser) ((yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = (parser)->start, .end = (parser)->start })
 
 // This is a special out parameter to the parse_arguments_list function that
@@ -697,9 +698,9 @@ yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_st
         .end = statements == NULL ? begin_keyword->end : statements->base.location.end
       },
     },
-    .begin_keyword = *begin_keyword,
+    .begin_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(begin_keyword),
     .statements = statements,
-    .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
   };
 
   return node;
@@ -732,7 +733,7 @@ yp_begin_node_end_keyword_set(yp_begin_node_t *node, const yp_token_t *end_keywo
   assert(end_keyword->type == YP_TOKEN_KEYWORD_END || end_keyword->type == YP_TOKEN_MISSING);
 
   node->base.location.end = end_keyword->end;
-  node->end_keyword = *end_keyword;
+  node->end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword);
 }
 
 // Allocate and initialize a new BlockArgumentNode node.

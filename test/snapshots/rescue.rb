@@ -87,7 +87,7 @@ ProgramNode(0...316)(
        )
      ),
      BeginNode(131...155)(
-       KEYWORD_BEGIN(131...136)("begin"),
+       (131...136),
        StatementsNode(138...139)(
          [CallNode(138...139)(
             nil,
@@ -122,7 +122,7 @@ ProgramNode(0...316)(
        ),
        nil,
        nil,
-       KEYWORD_END(152...155)("end")
+       (152...155)
      ),
      CallNode(157...212)(
        nil,
@@ -313,7 +313,7 @@ ProgramNode(0...316)(
          ),
          nil,
          nil,
-         KEYWORD_END(313...316)("end")
+         (313...316)
        ),
        [],
        (293...296),

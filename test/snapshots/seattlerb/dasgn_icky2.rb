@@ -19,7 +19,7 @@ ProgramNode(0...76)(
               0
             ),
             BeginNode(17...72)(
-              KEYWORD_BEGIN(17...22)("begin"),
+              (17...22),
               StatementsNode(27...32)(
                 [YieldNode(27...32)(
                    KEYWORD_YIELD(27...32)("yield"),
@@ -38,7 +38,7 @@ ProgramNode(0...76)(
               ),
               nil,
               nil,
-              KEYWORD_END(69...72)("end")
+              (69...72)
             )]
          ),
          (2...4),

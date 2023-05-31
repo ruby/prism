@@ -60,7 +60,7 @@ ProgramNode(0...66)(
              ),
              KEYWORD_END(63...66)("end")
            ),
-           KEYWORD_END(63...66)("end")
+           (63...66)
          ),
          (4...6),
          (63...66)

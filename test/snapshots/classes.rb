@@ -33,7 +33,7 @@ ProgramNode(0...370)(
            nil,
            KEYWORD_END(36...39)("end")
          ),
-         KEYWORD_END(36...39)("end")
+         (36...39)
        ),
        KEYWORD_END(36...39)("end")
      ),
@@ -64,7 +64,7 @@ ProgramNode(0...370)(
            nil,
            KEYWORD_END(72...75)("end")
          ),
-         KEYWORD_END(72...75)("end")
+         (72...75)
        ),
        KEYWORD_END(72...75)("end")
      ),
@@ -132,7 +132,7 @@ ProgramNode(0...370)(
                 nil,
                 KEYWORD_END(154...157)("end")
               ),
-              KEYWORD_END(154...157)("end")
+              (154...157)
             ),
             KEYWORD_END(154...157)("end")
           )]
@@ -172,7 +172,7 @@ ProgramNode(0...370)(
                 nil,
                 KEYWORD_END(210...213)("end")
               ),
-              KEYWORD_END(210...213)("end")
+              (210...213)
             ),
             KEYWORD_END(210...213)("end")
           )]

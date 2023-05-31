@@ -463,7 +463,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_cannot_assign_to_a_reserved_numbered_parameter
     expected = BeginNode(
-      KEYWORD_BEGIN("begin"),
+      Location(),
       StatementsNode(
         [LocalVariableWriteNode(
            Location(),
@@ -529,14 +529,15 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       nil,
-      KEYWORD_END("end")
+      Location()
     )
-    assert_errors expected, "
+
+    assert_errors expected, <<~RUBY, Array.new(9, "reserved for numbered parameter")
     begin
       _1=:a;_2=:a;_3=:a;_4=:a;_5=:a
       _6=:a;_7=:a;_8=:a;_9=:a;_10=:a
     end
-    ", Array.new(9, "reserved for numbered parameter")
+    RUBY
   end
 
   def test_do_not_allow_trailing_commas_in_method_parameters
@@ -977,13 +978,13 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_dont_allow_setting_to_back_and_nth_reference
     expected = BeginNode(
-      KEYWORD_BEGIN("begin"),
+      Location(),
       StatementsNode([GlobalVariableWriteNode(BACK_REFERENCE("$+"), EQUAL("="), NilNode()),
        GlobalVariableWriteNode(NTH_REFERENCE("$1466"), EQUAL("="), NilNode())]),
       nil,
       nil,
       nil,
-      KEYWORD_END("end")
+      Location()
     )
 
     assert_errors expected, "begin\n$+ = nil\n$1466 = nil\nend", ["Can't set variable", "Can't set variable"]

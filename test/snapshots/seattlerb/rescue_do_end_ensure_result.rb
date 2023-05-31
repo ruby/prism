@@ -36,7 +36,7 @@ ProgramNode(0...42)(
                ),
                KEYWORD_END(34...37)("end")
              ),
-             KEYWORD_END(34...37)("end")
+             (34...37)
            ),
            (5...7),
            (34...37)

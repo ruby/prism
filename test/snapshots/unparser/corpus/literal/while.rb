@@ -356,7 +356,7 @@ ProgramNode(0...620)(
               ),
               StatementsNode(376...391)(
                 [BeginNode(376...391)(
-                   KEYWORD_BEGIN(376...381)("begin"),
+                   (376...381),
                    StatementsNode(384...387)(
                      [CallNode(384...387)(
                         nil,
@@ -372,7 +372,7 @@ ProgramNode(0...620)(
                    nil,
                    nil,
                    nil,
-                   KEYWORD_END(388...391)("end")
+                   (388...391)
                  )]
               )
             )]
@@ -397,7 +397,7 @@ ProgramNode(0...620)(
        ),
        StatementsNode(403...418)(
          [BeginNode(403...418)(
-            KEYWORD_BEGIN(403...408)("begin"),
+            (403...408),
             StatementsNode(411...414)(
               [CallNode(411...414)(
                  nil,
@@ -413,7 +413,7 @@ ProgramNode(0...620)(
             nil,
             nil,
             nil,
-            KEYWORD_END(415...418)("end")
+            (415...418)
           )]
        )
      ),
@@ -431,7 +431,7 @@ ProgramNode(0...620)(
        ),
        StatementsNode(429...450)(
          [BeginNode(429...450)(
-            KEYWORD_BEGIN(429...434)("begin"),
+            (429...434),
             StatementsNode(437...446)(
               [CallNode(437...440)(
                  nil,
@@ -457,7 +457,7 @@ ProgramNode(0...620)(
             nil,
             nil,
             nil,
-            KEYWORD_END(447...450)("end")
+            (447...450)
           )]
        )
      ),
@@ -475,7 +475,7 @@ ProgramNode(0...620)(
        ),
        StatementsNode(461...482)(
          [BeginNode(461...482)(
-            KEYWORD_BEGIN(461...466)("begin"),
+            (461...466),
             StatementsNode(469...478)(
               [CallNode(469...472)(
                  nil,
@@ -501,7 +501,7 @@ ProgramNode(0...620)(
             nil,
             nil,
             nil,
-            KEYWORD_END(479...482)("end")
+            (479...482)
           )]
        )
      ),

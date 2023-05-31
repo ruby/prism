@@ -39,7 +39,7 @@ ProgramNode(0...35)(
              ),
              KEYWORD_END(32...35)("end")
            ),
-           KEYWORD_END(32...35)("end")
+           (32...35)
          ),
          (4...6),
          (32...35)
