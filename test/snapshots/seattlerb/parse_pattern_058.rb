@@ -3,7 +3,7 @@ ProgramNode(0...43)(
   StatementsNode(0...43)(
     [CaseNode(0...43)(
        HashNode(5...11)(
-         BRACE_LEFT(5...6)("{"),
+         (5...6),
          [AssocNode(6...10)(
             SymbolNode(6...8)(
               nil,
@@ -14,7 +14,7 @@ ProgramNode(0...43)(
             IntegerNode(9...10)(),
             nil
           )],
-         BRACE_RIGHT(10...11)("}")
+         (10...11)
        ),
        [InNode(12...39)(
           HashPatternNode(15...27)(

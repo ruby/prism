@@ -2,7 +2,7 @@ ProgramNode(0...6)(
   [],
   StatementsNode(0...6)(
     [HashNode(0...6)(
-       BRACE_LEFT(0...1)("{"),
+       (0...1),
        [AssocNode(2...4)(
           SymbolNode(2...4)(
             nil,
@@ -13,7 +13,7 @@ ProgramNode(0...6)(
           nil,
           nil
         )],
-       BRACE_RIGHT(5...6)("}")
+       (5...6)
      )]
   )
 )

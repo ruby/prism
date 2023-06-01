@@ -41,7 +41,7 @@ ProgramNode(0...142)(
      LocalVariableReadNode(35...36)(0),
      MatchRequiredNode(38...50)(
        HashNode(38...44)(
-         BRACE_LEFT(38...39)("{"),
+         (38...39),
          [AssocNode(39...43)(
             SymbolNode(39...41)(
               nil,
@@ -52,7 +52,7 @@ ProgramNode(0...142)(
             IntegerNode(42...43)(),
             nil
           )],
-         BRACE_RIGHT(43...44)("}")
+         (43...44)
        ),
        HashPatternNode(48...50)(
          nil,
@@ -75,7 +75,7 @@ ProgramNode(0...142)(
      LocalVariableReadNode(52...53)(0),
      MatchPredicateNode(55...67)(
        HashNode(55...61)(
-         BRACE_LEFT(55...56)("{"),
+         (55...56),
          [AssocNode(56...60)(
             SymbolNode(56...58)(
               nil,
@@ -86,7 +86,7 @@ ProgramNode(0...142)(
             IntegerNode(59...60)(),
             nil
           )],
-         BRACE_RIGHT(60...61)("}")
+         (60...61)
        ),
        HashPatternNode(65...67)(
          nil,
@@ -109,7 +109,7 @@ ProgramNode(0...142)(
      LocalVariableReadNode(69...70)(0),
      MatchRequiredNode(72...99)(
        HashNode(72...85)(
-         BRACE_LEFT(72...73)("{"),
+         (72...73),
          [AssocNode(73...84)(
             SymbolNode(73...77)(
               nil,
@@ -125,7 +125,7 @@ ProgramNode(0...142)(
             ),
             nil
           )],
-         BRACE_RIGHT(84...85)("}")
+         (84...85)
        ),
        HashPatternNode(89...99)(
          nil,
@@ -148,7 +148,7 @@ ProgramNode(0...142)(
      LocalVariableReadNode(101...106)(0),
      MatchPredicateNode(108...135)(
        HashNode(108...121)(
-         BRACE_LEFT(108...109)("{"),
+         (108...109),
          [AssocNode(109...120)(
             SymbolNode(109...113)(
               nil,
@@ -164,7 +164,7 @@ ProgramNode(0...142)(
             ),
             nil
           )],
-         BRACE_RIGHT(120...121)("}")
+         (120...121)
        ),
        HashPatternNode(125...135)(
          nil,

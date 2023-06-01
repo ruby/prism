@@ -1330,11 +1330,7 @@ ProgramNode(0...991)(
             nil,
             "foo"
           ),
-          HashNode(785...787)(
-            BRACE_LEFT(785...786)("{"),
-            [],
-            BRACE_RIGHT(786...787)("}")
-          )]
+          HashNode(785...787)((785...786), [], (786...787))]
        ),
        PARENTHESIS_RIGHT(787...788)(")"),
        nil,
@@ -1356,7 +1352,7 @@ ProgramNode(0...991)(
        PARENTHESIS_LEFT(796...797)("("),
        ArgumentsNode(797...814)(
          [HashNode(797...809)(
-            BRACE_LEFT(797...798)("{"),
+            (797...798),
             [AssocNode(799...807)(
                SymbolNode(799...803)(
                  nil,
@@ -1376,7 +1372,7 @@ ProgramNode(0...991)(
                ),
                nil
              )],
-            BRACE_RIGHT(808...809)("}")
+            (808...809)
           ),
           CallNode(811...814)(
             nil,

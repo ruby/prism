@@ -2,12 +2,12 @@ ProgramNode(0...37)(
   [],
   StatementsNode(0...37)(
     [HashNode(0...10)(
-       BRACE_LEFT(0...1)("{"),
+       (0...1),
        [AssocNode(2...8)(IntegerNode(2...3)(), IntegerNode(7...8)(), (4...6))],
-       BRACE_RIGHT(9...10)("}")
+       (9...10)
      ),
      HashNode(12...37)(
-       BRACE_LEFT(12...13)("{"),
+       (12...13),
        [AssocNode(14...20)(
           IntegerNode(14...15)(),
           IntegerNode(19...20)(),
@@ -28,7 +28,7 @@ ProgramNode(0...37)(
           ),
           (27...29)
         )],
-       BRACE_RIGHT(36...37)("}")
+       (36...37)
      )]
   )
 )

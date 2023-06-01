@@ -2,7 +2,7 @@ ProgramNode(0...25)(
   [],
   StatementsNode(0...25)(
     [HashNode(0...6)(
-       BRACE_LEFT(0...1)("{"),
+       (0...1),
        [AssocNode(1...5)(
           SymbolNode(1...5)(
             nil,
@@ -13,10 +13,10 @@ ProgramNode(0...25)(
           nil,
           nil
         )],
-       BRACE_RIGHT(5...6)("}")
+       (5...6)
      ),
      HashNode(8...16)(
-       BRACE_LEFT(8...9)("{"),
+       (8...9),
        [AssocNode(9...11)(
           SymbolNode(9...11)(
             nil,
@@ -37,10 +37,10 @@ ProgramNode(0...25)(
           nil,
           nil
         )],
-       BRACE_RIGHT(15...16)("}")
+       (15...16)
      ),
      HashNode(18...25)(
-       BRACE_LEFT(18...19)("{"),
+       (18...19),
        [AssocNode(19...24)(
           SymbolNode(19...24)(
             nil,
@@ -51,7 +51,7 @@ ProgramNode(0...25)(
           nil,
           nil
         )],
-       BRACE_RIGHT(24...25)("}")
+       (24...25)
      )]
   )
 )

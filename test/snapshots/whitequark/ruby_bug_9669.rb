@@ -27,7 +27,7 @@ ProgramNode(0...33)(
      LocalVariableWriteNode(21...33)(
        (21...22),
        HashNode(25...33)(
-         BRACE_LEFT(25...26)("{"),
+         (25...26),
          [AssocNode(27...31)(
             SymbolNode(27...29)(
               nil,
@@ -38,7 +38,7 @@ ProgramNode(0...33)(
             IntegerNode(30...31)(),
             nil
           )],
-         BRACE_RIGHT(32...33)("}")
+         (32...33)
        ),
        (23...24),
        0

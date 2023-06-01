@@ -40,7 +40,7 @@ ProgramNode(0...50)(
        "f"
      ),
      HashNode(14...26)(
-       BRACE_LEFT(14...15)("{"),
+       (14...15),
        [AssocNode(16...24)(
           SymbolNode(16...22)(
             STRING_BEGIN(16...17)("'"),
@@ -51,10 +51,10 @@ ProgramNode(0...50)(
           IntegerNode(23...24)(),
           nil
         )],
-       BRACE_RIGHT(25...26)("}")
+       (25...26)
      ),
      HashNode(28...50)(
-       BRACE_LEFT(28...29)("{"),
+       (28...29),
        [AssocNode(30...38)(
           SymbolNode(30...36)(
             STRING_BEGIN(30...31)("'"),
@@ -72,14 +72,10 @@ ProgramNode(0...50)(
             LABEL_END(44...46)("':"),
             "bar"
           ),
-          HashNode(47...49)(
-            BRACE_LEFT(47...48)("{"),
-            [],
-            BRACE_RIGHT(48...49)("}")
-          ),
+          HashNode(47...49)((47...48), [], (48...49)),
           nil
         )],
-       BRACE_RIGHT(49...50)("}")
+       (49...50)
      )]
   )
 )

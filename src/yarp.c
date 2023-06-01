@@ -1589,9 +1589,8 @@ yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name
 
 // Allocate a new HashNode node.
 static yp_hash_node_t *
-yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
+yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening) {
   assert(opening != NULL);
-  assert(closing != NULL);
   yp_hash_node_t *node = yp_alloc(parser, sizeof(yp_hash_node_t));
 
   *node = (yp_hash_node_t) {
@@ -1599,11 +1598,11 @@ yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_tok
       .type = YP_NODE_HASH_NODE,
       .location = {
         .start = opening->start,
-        .end = closing->end
+        .end = opening->end
       },
     },
-    .opening = *opening,
-    .closing = *closing
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_NULL_VALUE(parser)
   };
 
   yp_node_list_init(&node->elements);
@@ -1613,10 +1612,12 @@ yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_tok
 static inline void
 yp_hash_node_elements_append(yp_hash_node_t *hash, yp_node_t *element) {
   yp_node_list_append(&hash->elements, element);
-  if ((hash->opening.type == YP_TOKEN_NOT_PROVIDED) && (hash->elements.size == 1)) {
-    hash->base.location.start = element->location.start;
-  }
-  hash->base.location.end = element->location.end;
+}
+
+static inline void
+yp_hash_node_closing_loc_set(yp_hash_node_t *hash, yp_token_t *token) {
+  hash->base.location.end = token->end;
+  hash->closing_loc = YP_LOCATION_TOKEN_VALUE(token);
 }
 
 // Allocate a new IfNode node.
@@ -9532,9 +9533,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
     case YP_TOKEN_BRACE_LEFT: {
       yp_accepts_block_stack_push(parser, true);
       parser_lex(parser);
-
-      yp_token_t opening = parser->previous;
-      yp_hash_node_t *node = yp_hash_node_create(parser, &opening, &opening);
+      yp_hash_node_t *node = yp_hash_node_create(parser, &parser->previous);
 
       if (!match_any_type_p(parser, 2, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_EOF)) {
         parse_assocs(parser, (yp_node_t *) node);
@@ -9543,10 +9542,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
       yp_accepts_block_stack_pop(parser);
       expect(parser, YP_TOKEN_BRACE_RIGHT, "Expected a closing delimiter for a hash literal.");
-      node->closing = parser->previous;
-      node->base.location.end = parser->previous.end;
+      yp_hash_node_closing_loc_set(node, &parser->previous);
 
-      return (yp_node_t *)node;
+      return (yp_node_t *) node;
     }
     case YP_TOKEN_CHARACTER_LITERAL: {
       parser_lex(parser);

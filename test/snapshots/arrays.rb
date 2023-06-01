@@ -565,11 +565,7 @@ ProgramNode(0...502)(
      ArrayNode(261...267)(
        [KeywordHashNode(262...266)(
           [AssocSplatNode(262...266)(
-             HashNode(264...266)(
-               BRACE_LEFT(264...265)("{"),
-               [],
-               BRACE_RIGHT(265...266)("}")
-             ),
+             HashNode(264...266)((264...265), [], (265...266)),
              (262...264)
            )]
         )],
@@ -632,11 +628,7 @@ ProgramNode(0...502)(
              (292...294)
            ),
            AssocSplatNode(298...302)(
-             HashNode(300...302)(
-               BRACE_LEFT(300...301)("{"),
-               [],
-               BRACE_RIGHT(301...302)("}")
-             ),
+             HashNode(300...302)((300...301), [], (301...302)),
              (298...300)
            ),
            AssocSplatNode(304...308)(

@@ -10,11 +10,7 @@ ProgramNode(0...11)(
            [OptionalParameterNode(4...10)(
               IDENTIFIER(4...7)("arg"),
               EQUAL(7...8)("="),
-              HashNode(8...10)(
-                BRACE_LEFT(8...9)("{"),
-                [],
-                BRACE_RIGHT(9...10)("}")
-              )
+              HashNode(8...10)((8...9), [], (9...10))
             )],
            [],
            nil,

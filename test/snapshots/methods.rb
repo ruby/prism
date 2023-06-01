@@ -1076,11 +1076,7 @@ ProgramNode(0...1194)(
        nil,
        StatementsNode(948...976)(
          [CallNode(948...976)(
-            HashNode(948...950)(
-              BRACE_LEFT(948...949)("{"),
-              [],
-              BRACE_RIGHT(949...950)("}")
-            ),
+            HashNode(948...950)((948...949), [], (949...950)),
             DOT(950...951)("."),
             IDENTIFIER(951...956)("merge"),
             nil,

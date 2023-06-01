@@ -70,11 +70,7 @@ ProgramNode(0...233)(
          StatementsNode(67...75)(
            [OperatorOrAssignmentNode(67...75)(
               LocalVariableWriteNode(67...68)((67...68), nil, nil, 0),
-              HashNode(73...75)(
-                BRACE_LEFT(73...74)("{"),
-                [],
-                BRACE_RIGHT(74...75)("}")
-              ),
+              HashNode(73...75)((73...74), [], (74...75)),
               (69...72)
             )]
          ),

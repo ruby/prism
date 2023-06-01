@@ -2,7 +2,7 @@ ProgramNode(0...916)(
   [],
   StatementsNode(0...916)(
     [HashNode(0...38)(
-       BRACE_LEFT(0...1)("{"),
+       (0...1),
        [AssocNode(2...53)(
           StringNode(2...7)(
             STRING_BEGIN(2...3)("\""),
@@ -48,10 +48,10 @@ ProgramNode(0...916)(
           ),
           (29...31)
         )],
-       BRACE_RIGHT(37...38)("}")
+       (37...38)
      ),
      HashNode(53...84)(
-       BRACE_LEFT(53...54)("{"),
+       (53...54),
        [AssocNode(55...67)(
           StringNode(55...60)(
             STRING_BEGIN(55...56)("\""),
@@ -82,7 +82,7 @@ ProgramNode(0...916)(
           ),
           (75...77)
         )],
-       BRACE_RIGHT(83...84)("}")
+       (83...84)
      ),
      ArrayNode(85...97)(
        [StringNode(86...91)(
@@ -168,7 +168,7 @@ ProgramNode(0...916)(
        "a"
      ),
      HashNode(137...167)(
-       BRACE_LEFT(137...138)("{"),
+       (137...138),
        [AssocNode(139...182)(
           StringNode(139...144)(
             STRING_BEGIN(139...140)("\""),
@@ -212,10 +212,10 @@ ProgramNode(0...916)(
           ),
           (160...162)
         )],
-       BRACE_RIGHT(166...167)("}")
+       (166...167)
      ),
      HashNode(182...205)(
-       BRACE_LEFT(182...183)("{"),
+       (182...183),
        [AssocNode(184...196)(
           StringNode(184...189)(
             STRING_BEGIN(184...185)("\""),
@@ -244,7 +244,7 @@ ProgramNode(0...916)(
           ),
           (198...200)
         )],
-       BRACE_RIGHT(204...205)("}")
+       (204...205)
      ),
      InterpolatedStringNode(206...220)(
        STRING_BEGIN(206...207)("\""),
@@ -780,31 +780,27 @@ ProgramNode(0...916)(
        (714...715),
        (727...728)
      ),
-     HashNode(729...731)(
-       BRACE_LEFT(729...730)("{"),
-       [],
-       BRACE_RIGHT(730...731)("}")
-     ),
+     HashNode(729...731)((729...730), [], (730...731)),
      HashNode(732...744)(
-       BRACE_LEFT(732...733)("{"),
+       (732...733),
        [AssocNode(734...742)(
           ParenthesesNode(734...736)(nil, (734...735), (735...736)),
           ParenthesesNode(740...742)(nil, (740...741), (741...742)),
           (737...739)
         )],
-       BRACE_RIGHT(743...744)("}")
+       (743...744)
      ),
      HashNode(745...755)(
-       BRACE_LEFT(745...746)("{"),
+       (745...746),
        [AssocNode(747...753)(
           IntegerNode(747...748)(),
           IntegerNode(752...753)(),
           (749...751)
         )],
-       BRACE_RIGHT(754...755)("}")
+       (754...755)
      ),
      HashNode(756...774)(
-       BRACE_LEFT(756...757)("{"),
+       (756...757),
        [AssocNode(758...764)(
           IntegerNode(758...759)(),
           IntegerNode(763...764)(),
@@ -815,10 +811,10 @@ ProgramNode(0...916)(
           IntegerNode(771...772)(),
           (768...770)
         )],
-       BRACE_RIGHT(773...774)("}")
+       (773...774)
      ),
      HashNode(775...802)(
-       BRACE_LEFT(775...776)("{"),
+       (775...776),
        [AssocNode(777...794)(
           SymbolNode(777...779)(
             nil,
@@ -858,10 +854,10 @@ ProgramNode(0...916)(
           IntegerNode(799...800)(),
           nil
         )],
-       BRACE_RIGHT(801...802)("}")
+       (801...802)
      ),
      HashNode(803...817)(
-       BRACE_LEFT(803...804)("{"),
+       (803...804),
        [AssocNode(805...809)(
           SymbolNode(805...807)(
             nil,
@@ -882,10 +878,10 @@ ProgramNode(0...916)(
           IntegerNode(814...815)(),
           nil
         )],
-       BRACE_RIGHT(816...817)("}")
+       (816...817)
      ),
      HashNode(818...827)(
-       BRACE_LEFT(818...819)("{"),
+       (818...819),
        [AssocNode(820...825)(
           SymbolNode(820...822)(
             nil,
@@ -901,10 +897,10 @@ ProgramNode(0...916)(
           ),
           nil
         )],
-       BRACE_RIGHT(826...827)("}")
+       (826...827)
      ),
      HashNode(828...843)(
-       BRACE_LEFT(828...829)("{"),
+       (828...829),
        [AssocNode(830...841)(
           InterpolatedSymbolNode(830...836)(
             SYMBOL_BEGIN(830...832)(":\""),
@@ -919,10 +915,10 @@ ProgramNode(0...916)(
           IntegerNode(840...841)(),
           (837...839)
         )],
-       BRACE_RIGHT(842...843)("}")
+       (842...843)
      ),
      HashNode(844...856)(
-       BRACE_LEFT(844...845)("{"),
+       (844...845),
        [AssocNode(846...854)(
           SymbolNode(846...849)(
             SYMBOL_BEGIN(846...847)(":"),
@@ -933,7 +929,7 @@ ProgramNode(0...916)(
           IntegerNode(853...854)(),
           (850...852)
         )],
-       BRACE_RIGHT(855...856)("}")
+       (855...856)
      ),
      InterpolatedStringNode(857...869)(
        STRING_BEGIN(857...858)("\""),

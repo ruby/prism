@@ -14,7 +14,7 @@ ProgramNode(0...225)(
             "foo"
           ),
           HashNode(8...42)(
-            BRACE_LEFT(8...9)("{"),
+            (8...9),
             [AssocNode(9...25)(
                SymbolNode(9...13)(
                  STRING_BEGIN(9...10)("\""),
@@ -53,7 +53,7 @@ ProgramNode(0...225)(
                ),
                nil
              )],
-            BRACE_RIGHT(41...42)("}")
+            (41...42)
           )]
        ),
        nil,
@@ -73,7 +73,7 @@ ProgramNode(0...225)(
             "foo"
           ),
           HashNode(52...84)(
-            BRACE_LEFT(52...53)("{"),
+            (52...53),
             [AssocSplatNode(53...67)(
                CallNode(56...67)(
                  nil,
@@ -106,7 +106,7 @@ ProgramNode(0...225)(
                ),
                nil
              )],
-            BRACE_RIGHT(83...84)("}")
+            (83...84)
           )]
        ),
        nil,
@@ -126,7 +126,7 @@ ProgramNode(0...225)(
             "foo"
           ),
           HashNode(94...129)(
-            BRACE_LEFT(94...95)("{"),
+            (94...95),
             [AssocNode(95...112)(
                SymbolNode(95...97)(
                  SYMBOL_BEGIN(95...96)(":"),
@@ -165,7 +165,7 @@ ProgramNode(0...225)(
                ),
                nil
              )],
-            BRACE_RIGHT(128...129)("}")
+            (128...129)
           )]
        ),
        nil,
@@ -185,7 +185,7 @@ ProgramNode(0...225)(
             "foo"
           ),
           HashNode(139...171)(
-            BRACE_LEFT(139...140)("{"),
+            (139...140),
             [AssocNode(140...154)(
                SymbolNode(140...142)(
                  nil,
@@ -224,7 +224,7 @@ ProgramNode(0...225)(
                ),
                nil
              )],
-            BRACE_RIGHT(170...171)("}")
+            (170...171)
           )]
        ),
        nil,
@@ -244,7 +244,7 @@ ProgramNode(0...225)(
             "foo"
           ),
           HashNode(181...225)(
-            BRACE_LEFT(181...182)("{"),
+            (181...182),
             [AssocNode(182...208)(
                CallNode(182...193)(
                  nil,
@@ -287,7 +287,7 @@ ProgramNode(0...225)(
                ),
                nil
              )],
-            BRACE_RIGHT(224...225)("}")
+            (224...225)
           )]
        ),
        nil,

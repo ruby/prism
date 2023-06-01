@@ -15,11 +15,7 @@ ProgramNode(0...12)(
                  LABEL_END(7...9)("':"),
                  "a"
                ),
-               HashNode(10...12)(
-                 BRACE_LEFT(10...11)("{"),
-                 [],
-                 BRACE_RIGHT(11...12)("}")
-               ),
+               HashNode(10...12)((10...11), [], (11...12)),
                nil
              )]
           )]
