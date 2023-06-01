@@ -2,32 +2,32 @@ ProgramNode(0...314)(
   [],
   StatementsNode(0...314)(
     [WhileNode(0...18)(
-       KEYWORD_WHILE(0...5)("while"),
+       (0...5),
        TrueNode(6...10)(),
        StatementsNode(12...13)([IntegerNode(12...13)()])
      ),
      WhileNode(20...32)(
-       KEYWORD_WHILE_MODIFIER(22...27)("while"),
+       (22...27),
        TrueNode(28...32)(),
        StatementsNode(20...21)([IntegerNode(20...21)()])
      ),
      WhileNode(34...50)(
-       KEYWORD_WHILE_MODIFIER(40...45)("while"),
+       (40...45),
        TrueNode(46...50)(),
        StatementsNode(34...39)([BreakNode(34...39)(nil, (34...39))])
      ),
      WhileNode(52...67)(
-       KEYWORD_WHILE_MODIFIER(57...62)("while"),
+       (57...62),
        TrueNode(63...67)(),
        StatementsNode(52...56)([NextNode(52...56)(nil, (52...56))])
      ),
      WhileNode(69...86)(
-       KEYWORD_WHILE_MODIFIER(76...81)("while"),
+       (76...81),
        TrueNode(82...86)(),
        StatementsNode(69...75)([ReturnNode(69...75)((69...75), nil)])
      ),
      WhileNode(88...109)(
-       KEYWORD_WHILE_MODIFIER(99...104)("while"),
+       (99...104),
        CallNode(105...109)(
          nil,
          nil,
@@ -65,7 +65,7 @@ ProgramNode(0...314)(
        )
      ),
      WhileNode(111...161)(
-       KEYWORD_WHILE(111...116)("while"),
+       (111...116),
        DefNode(117...149)(
          IDENTIFIER(126...129)("foo"),
          SelfNode(121...125)(),
@@ -103,7 +103,7 @@ ProgramNode(0...314)(
        StatementsNode(151...156)([BreakNode(151...156)(nil, (151...156))])
      ),
      WhileNode(163...210)(
-       KEYWORD_WHILE(163...168)("while"),
+       (163...168),
        ClassNode(169...198)(
          [IDENTIFIER(179...180)("a")],
          (169...174),
@@ -132,7 +132,7 @@ ProgramNode(0...314)(
        StatementsNode(200...205)([BreakNode(200...205)(nil, (200...205))])
      ),
      WhileNode(212...260)(
-       KEYWORD_WHILE(212...217)("while"),
+       (212...217),
        SingletonClassNode(218...248)(
          [],
          (218...223),
@@ -155,7 +155,7 @@ ProgramNode(0...314)(
        StatementsNode(250...255)([BreakNode(250...255)(nil, (250...255))])
      ),
      WhileNode(262...314)(
-       KEYWORD_WHILE(262...267)("while"),
+       (262...267),
        SingletonClassNode(268...302)(
          [IDENTIFIER(283...284)("a")],
          (268...273),

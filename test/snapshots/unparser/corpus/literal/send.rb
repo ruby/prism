@@ -297,7 +297,7 @@ ProgramNode(0...991)(
      ),
      CallNode(273...290)(
        WhileNode(273...286)(
-         KEYWORD_WHILE(273...278)("while"),
+         (273...278),
          CallNode(279...282)(
            nil,
            nil,

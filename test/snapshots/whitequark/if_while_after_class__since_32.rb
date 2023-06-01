@@ -25,7 +25,7 @@ ProgramNode(0...178)(
        (40...45),
        ConstantPathNode(46...82)(
          WhileNode(46...74)(
-           KEYWORD_WHILE(46...51)("while"),
+           (46...51),
            TrueNode(52...56)(),
            StatementsNode(58...70)(
              [BreakNode(58...70)(
@@ -64,7 +64,7 @@ ProgramNode(0...178)(
        (130...136),
        ConstantPathNode(137...173)(
          WhileNode(137...165)(
-           KEYWORD_WHILE(137...142)("while"),
+           (137...142),
            TrueNode(143...147)(),
            StatementsNode(149...161)(
              [BreakNode(149...161)(

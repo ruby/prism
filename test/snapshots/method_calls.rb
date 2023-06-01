@@ -1665,7 +1665,7 @@ ProgramNode(0...1187)(
             "a"
           ),
           WhileNode(1052...1096)(
-            KEYWORD_WHILE(1052...1057)("while"),
+            (1052...1057),
             CallNode(1058...1059)(
               nil,
               nil,

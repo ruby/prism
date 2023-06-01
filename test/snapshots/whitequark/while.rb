@@ -2,7 +2,7 @@ ProgramNode(0...42)(
   [],
   StatementsNode(0...42)(
     [WhileNode(0...21)(
-       KEYWORD_WHILE(0...5)("while"),
+       (0...5),
        CallNode(6...9)(
          nil,
          nil,
@@ -27,7 +27,7 @@ ProgramNode(0...42)(
        )
      ),
      WhileNode(23...42)(
-       KEYWORD_WHILE(23...28)("while"),
+       (23...28),
        CallNode(29...32)(
          nil,
          nil,

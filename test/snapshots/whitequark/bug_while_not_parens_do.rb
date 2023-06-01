@@ -2,7 +2,7 @@ ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
     [WhileNode(0...23)(
-       KEYWORD_WHILE(0...5)("while"),
+       (0...5),
        CallNode(6...16)(
          ParenthesesNode(10...16)(
            StatementsNode(11...15)([TrueNode(11...15)()]),

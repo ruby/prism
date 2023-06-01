@@ -2,7 +2,7 @@ ProgramNode(0...190)(
   [],
   StatementsNode(0...190)(
     [WhileNode(0...45)(
-       KEYWORD_WHILE(0...5)("while"),
+       (0...5),
        DefNode(6...33)(
          IDENTIFIER(10...13)("foo"),
          nil,
@@ -40,7 +40,7 @@ ProgramNode(0...190)(
        StatementsNode(35...40)([BreakNode(35...40)(nil, (35...40))])
      ),
      WhileNode(47...89)(
-       KEYWORD_WHILE(47...52)("while"),
+       (47...52),
        DefNode(53...77)(
          IDENTIFIER(57...60)("foo"),
          nil,
@@ -68,7 +68,7 @@ ProgramNode(0...190)(
        StatementsNode(79...84)([BreakNode(79...84)(nil, (79...84))])
      ),
      WhileNode(91...141)(
-       KEYWORD_WHILE(91...96)("while"),
+       (91...96),
        DefNode(97...129)(
          IDENTIFIER(106...109)("foo"),
          SelfNode(101...105)(),
@@ -106,7 +106,7 @@ ProgramNode(0...190)(
        StatementsNode(131...136)([BreakNode(131...136)(nil, (131...136))])
      ),
      WhileNode(143...190)(
-       KEYWORD_WHILE(143...148)("while"),
+       (143...148),
        DefNode(149...178)(
          IDENTIFIER(158...161)("foo"),
          SelfNode(153...157)(),

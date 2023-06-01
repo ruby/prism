@@ -52,7 +52,7 @@ ProgramNode(0...188)(
        )
      ),
      WhileNode(36...55)(
-       KEYWORD_WHILE_MODIFIER(46...51)("while"),
+       (46...51),
        LocalVariableReadNode(52...55)(0),
        StatementsNode(36...45)(
          [LocalVariableWriteNode(36...45)(
@@ -111,7 +111,7 @@ ProgramNode(0...188)(
        )
      ),
      WhileNode(77...96)(
-       KEYWORD_WHILE(77...82)("while"),
+       (77...82),
        LocalVariableWriteNode(83...88)(
          (83...84),
          CallNode(87...88)(
@@ -183,7 +183,7 @@ ProgramNode(0...188)(
             0
           ),
           WhileNode(155...184)(
-            KEYWORD_WHILE(155...160)("while"),
+            (155...160),
             LocalVariableReadNode(161...164)(0),
             StatementsNode(169...178)(
               [LocalVariableWriteNode(169...178)(
