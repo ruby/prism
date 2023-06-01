@@ -9395,8 +9395,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         yp_node_t *element;
 
         if (accept(parser, YP_TOKEN_USTAR)) {
+          yp_token_t operator = parser->previous;
           yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
-          element = (yp_node_t *) yp_splat_node_create(parser, &parser->previous, expression);
+          element = (yp_node_t *) yp_splat_node_create(parser, &operator, expression);
         } else if (match_any_type_p(parser, 2, YP_TOKEN_LABEL, YP_TOKEN_USTAR_STAR)) {
           if (parsed_bare_hash) {
             yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
