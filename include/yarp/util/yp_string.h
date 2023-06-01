@@ -55,15 +55,15 @@ void
 yp_string_ensure_owned(yp_string_t *string);
 
 // Returns the length associated with the string.
-EXPORTED extern size_t
+YP_EXPORTED_FUNCTION extern size_t
 yp_string_length(const yp_string_t *string);
 
 // Returns the start pointer associated with the string.
-EXPORTED extern const char *
+YP_EXPORTED_FUNCTION extern const char *
 yp_string_source(const yp_string_t *string);
 
 // Free the associated memory of the given string.
-EXPORTED extern void
+YP_EXPORTED_FUNCTION extern void
 yp_string_free(yp_string_t *string);
 
 #endif // YARP_STRING_H
