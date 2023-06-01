@@ -67,7 +67,7 @@ ProgramNode(0...40)(
                 [],
                 nil,
                 [KeywordParameterNode(27...35)(
-                   LABEL(27...29)("a:"),
+                   (27...29),
                    LambdaNode(30...35)(
                      [],
                      MINUS_GREATER(30...32)("->"),

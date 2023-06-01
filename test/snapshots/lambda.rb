@@ -30,7 +30,7 @@ ProgramNode(0...48)(
            [],
            nil,
            [KeywordParameterNode(19...29)(
-              LABEL(19...21)("x:"),
+              (19...21),
               InterpolatedStringNode(22...29)(
                 (22...23),
                 [StringNode(23...24)(
@@ -77,7 +77,7 @@ ProgramNode(0...48)(
            [],
            nil,
            [KeywordParameterNode(39...47)(
-              LABEL(39...41)("a:"),
+              (39...41),
               CallNode(42...47)(
                 CallNode(42...43)(
                   nil,

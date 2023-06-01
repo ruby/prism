@@ -180,8 +180,8 @@ ProgramNode(0...913)(
          [],
          [],
          nil,
-         [KeywordParameterNode(113...117)(LABEL(113...117)("bar:"), nil),
-          KeywordParameterNode(119...123)(LABEL(119...123)("baz:"), nil)],
+         [KeywordParameterNode(113...117)((113...117), nil),
+          KeywordParameterNode(119...123)((119...123), nil)],
          nil,
          nil
        ),
@@ -558,7 +558,7 @@ ProgramNode(0...913)(
          [],
          nil,
          [KeywordParameterNode(459...465)(
-            LABEL(459...463)("bar:"),
+            (459...463),
             IntegerNode(464...465)()
           )],
          nil,
@@ -582,7 +582,7 @@ ProgramNode(0...913)(
          [],
          nil,
          [KeywordParameterNode(480...488)(
-            LABEL(480...484)("bar:"),
+            (480...484),
             CallNode(485...488)(
               nil,
               nil,
@@ -615,7 +615,7 @@ ProgramNode(0...913)(
          [],
          nil,
          [KeywordParameterNode(503...513)(
-            LABEL(503...507)("bar:"),
+            (503...507),
             CallNode(508...513)(
               nil,
               nil,
@@ -953,9 +953,9 @@ ProgramNode(0...913)(
          [],
          [],
          nil,
-         [KeywordParameterNode(831...835)(LABEL(831...835)("bar:"), nil),
+         [KeywordParameterNode(831...835)((831...835), nil),
           KeywordParameterNode(837...849)(
-            LABEL(837...841)("baz:"),
+            (837...841),
             StringNode(842...849)(
               STRING_BEGIN(842...843)("\""),
               STRING_CONTENT(843...848)("value"),

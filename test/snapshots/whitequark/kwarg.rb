@@ -9,7 +9,7 @@ ProgramNode(0...16)(
          [],
          [],
          nil,
-         [KeywordParameterNode(6...10)(LABEL(6...10)("foo:"), nil)],
+         [KeywordParameterNode(6...10)((6...10), nil)],
          nil,
          nil
        ),

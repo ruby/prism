@@ -9,10 +9,7 @@ ProgramNode(0...20)(
          [],
          [],
          nil,
-         [KeywordParameterNode(6...10)(
-            LABEL(6...8)("b:"),
-            IntegerNode(9...10)()
-          )],
+         [KeywordParameterNode(6...10)((6...8), IntegerNode(9...10)())],
          KeywordRestParameterNode(12...15)(
            USTAR_STAR(12...14)("**"),
            IDENTIFIER(14...15)("c")

@@ -228,7 +228,7 @@ ProgramNode(0...1194)(
          [],
          [],
          nil,
-         [KeywordParameterNode(212...214)(LABEL(212...214)("b:"), nil)],
+         [KeywordParameterNode(212...214)((212...214), nil)],
          nil,
          nil
        ),
@@ -255,7 +255,7 @@ ProgramNode(0...1194)(
          [],
          [],
          nil,
-         [KeywordParameterNode(235...237)(LABEL(235...237)("b:"), nil)],
+         [KeywordParameterNode(235...237)((235...237), nil)],
          nil,
          nil
        ),
@@ -378,9 +378,9 @@ ProgramNode(0...1194)(
          [],
          [],
          nil,
-         [KeywordParameterNode(333...335)(LABEL(333...335)("b:"), nil),
+         [KeywordParameterNode(333...335)((333...335), nil),
           KeywordParameterNode(337...341)(
-            LABEL(337...339)("c:"),
+            (337...339),
             IntegerNode(340...341)()
           )],
          nil,
@@ -403,9 +403,9 @@ ProgramNode(0...1194)(
          [],
          [],
          nil,
-         [KeywordParameterNode(353...355)(LABEL(353...355)("b:"), nil),
+         [KeywordParameterNode(353...355)((353...355), nil),
           KeywordParameterNode(357...361)(
-            LABEL(357...359)("c:"),
+            (357...359),
             IntegerNode(360...361)()
           )],
          nil,
@@ -429,10 +429,10 @@ ProgramNode(0...1194)(
          [],
          nil,
          [KeywordParameterNode(374...380)(
-            LABEL(374...376)("b:"),
+            (374...376),
             IntegerNode(379...380)()
           ),
-          KeywordParameterNode(382...384)(LABEL(382...384)("c:"), nil)],
+          KeywordParameterNode(382...384)((382...384), nil)],
          nil,
          nil
        ),
@@ -1145,7 +1145,7 @@ ProgramNode(0...1194)(
          [],
          nil,
          [KeywordParameterNode(990...1001)(
-            LABEL(990...992)("a:"),
+            (990...992),
             ParenthesesNode(993...1001)(
               StatementsNode(994...1000)(
                 [RangeNode(994...1000)(
@@ -1179,7 +1179,7 @@ ProgramNode(0...1194)(
          [],
          nil,
          [KeywordParameterNode(1016...1026)(
-            LABEL(1016...1018)("a:"),
+            (1016...1018),
             ParenthesesNode(1019...1026)(
               StatementsNode(1020...1025)(
                 [RangeNode(1020...1025)(
@@ -1213,7 +1213,7 @@ ProgramNode(0...1194)(
          [],
          nil,
          [KeywordParameterNode(1041...1050)(
-            LABEL(1041...1043)("a:"),
+            (1041...1043),
             ParenthesesNode(1044...1050)(
               StatementsNode(1045...1049)(
                 [RangeNode(1045...1049)(

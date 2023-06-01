@@ -700,7 +700,7 @@ class ErrorsTest < Test::Unit::TestCase
         [],
         [RequiredParameterNode()],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [KeywordParameterNode(Location(), nil)],
         nil,
         nil
       ),
@@ -725,7 +725,7 @@ class ErrorsTest < Test::Unit::TestCase
         [],
         [],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(
           USTAR_STAR("**"),
           IDENTIFIER("rest")
@@ -770,7 +770,7 @@ class ErrorsTest < Test::Unit::TestCase
         [],
         [RequiredParameterNode()],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(
           USTAR_STAR("**"),
           IDENTIFIER("args")
@@ -798,7 +798,7 @@ class ErrorsTest < Test::Unit::TestCase
         [],
         [RequiredParameterNode()],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(
           USTAR_STAR("**"),
           IDENTIFIER("args")
@@ -828,7 +828,7 @@ class ErrorsTest < Test::Unit::TestCase
         [],
         [RequiredParameterNode()],
         nil,
-        [KeywordParameterNode(LABEL("b:"), nil)],
+        [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(
           USTAR_STAR("**"),
           IDENTIFIER("args")

@@ -1044,8 +1044,8 @@ nodes:
               ^^^^
   - name: KeywordParameterNode
     child_nodes:
-      - name: name
-        type: token
+      - name: name_loc
+        type: location
       - name: value
         type: node?
     comment: |
