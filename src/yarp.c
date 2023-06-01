@@ -3411,10 +3411,10 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_to
         .end = end
       },
     },
-    .keyword = *keyword,
-    .lparen = *lparen,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(lparen),
     .arguments = arguments,
-    .rparen = *rparen
+    .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(rparen)
   };
 
   return node;

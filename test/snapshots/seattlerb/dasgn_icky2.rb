@@ -21,12 +21,7 @@ ProgramNode(0...76)(
             BeginNode(17...72)(
               (17...22),
               StatementsNode(27...32)(
-                [YieldNode(27...32)(
-                   KEYWORD_YIELD(27...32)("yield"),
-                   nil,
-                   nil,
-                   nil
-                 )]
+                [YieldNode(27...32)((27...32), nil, nil, nil)]
               ),
               RescueNode(35...66)(
                 KEYWORD_RESCUE(35...41)("rescue"),

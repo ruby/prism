@@ -1771,15 +1771,15 @@ nodes:
           ^^^^^
   - name: YieldNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: lparen
-        type: token?
+      - name: keyword_loc
+        type: location
+      - name: lparen_loc
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
-      - name: rparen
-        type: token?
+      - name: rparen_loc
+        type: location?
     comment: |
       Represents the use of the `yield` keyword.
 

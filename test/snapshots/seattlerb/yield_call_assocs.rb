@@ -2,7 +2,7 @@ ProgramNode(0...100)(
   [],
   StatementsNode(0...100)(
     [YieldNode(0...16)(
-       KEYWORD_YIELD(0...5)("yield"),
+       (0...5),
        nil,
        ArgumentsNode(6...16)(
          [IntegerNode(6...7)(),
@@ -22,7 +22,7 @@ ProgramNode(0...100)(
        nil
      ),
      YieldNode(18...43)(
-       KEYWORD_YIELD(18...23)("yield"),
+       (18...23),
        nil,
        ArgumentsNode(24...43)(
          [IntegerNode(24...25)(),
@@ -52,7 +52,7 @@ ProgramNode(0...100)(
        nil
      ),
      YieldNode(45...58)(
-       KEYWORD_YIELD(45...50)("yield"),
+       (45...50),
        nil,
        ArgumentsNode(51...58)(
          [CallNode(51...58)(
@@ -82,7 +82,7 @@ ProgramNode(0...100)(
        nil
      ),
      YieldNode(60...71)(
-       KEYWORD_YIELD(60...65)("yield"),
+       (60...65),
        nil,
        ArgumentsNode(66...71)(
          [CallNode(66...71)(
@@ -112,7 +112,7 @@ ProgramNode(0...100)(
        nil
      ),
      YieldNode(73...85)(
-       KEYWORD_YIELD(73...78)("yield"),
+       (73...78),
        nil,
        ArgumentsNode(79...85)(
          [CallNode(79...85)(
@@ -142,7 +142,7 @@ ProgramNode(0...100)(
        nil
      ),
      YieldNode(87...100)(
-       KEYWORD_YIELD(87...92)("yield"),
+       (87...92),
        nil,
        ArgumentsNode(93...100)(
          [CallNode(93...100)(

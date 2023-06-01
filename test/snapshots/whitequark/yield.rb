@@ -1,9 +1,9 @@
 ProgramNode(0...37)(
   [],
   StatementsNode(0...37)(
-    [YieldNode(0...5)(KEYWORD_YIELD(0...5)("yield"), nil, nil, nil),
+    [YieldNode(0...5)((0...5), nil, nil, nil),
      YieldNode(7...16)(
-       KEYWORD_YIELD(7...12)("yield"),
+       (7...12),
        nil,
        ArgumentsNode(13...16)(
          [CallNode(13...16)(
@@ -19,15 +19,10 @@ ProgramNode(0...37)(
        ),
        nil
      ),
-     YieldNode(18...25)(
-       KEYWORD_YIELD(18...23)("yield"),
-       PARENTHESIS_LEFT(23...24)("("),
-       nil,
-       PARENTHESIS_RIGHT(24...25)(")")
-     ),
+     YieldNode(18...25)((18...23), (23...24), nil, (24...25)),
      YieldNode(27...37)(
-       KEYWORD_YIELD(27...32)("yield"),
-       PARENTHESIS_LEFT(32...33)("("),
+       (27...32),
+       (32...33),
        ArgumentsNode(33...36)(
          [CallNode(33...36)(
             nil,
@@ -40,7 +35,7 @@ ProgramNode(0...37)(
             "foo"
           )]
        ),
-       PARENTHESIS_RIGHT(36...37)(")")
+       (36...37)
      )]
   )
 )

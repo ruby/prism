@@ -1,28 +1,23 @@
 ProgramNode(0...40)(
   [],
   StatementsNode(0...40)(
-    [YieldNode(0...5)(KEYWORD_YIELD(0...5)("yield"), nil, nil, nil),
-     YieldNode(7...14)(
-       KEYWORD_YIELD(7...12)("yield"),
-       PARENTHESIS_LEFT(12...13)("("),
-       nil,
-       PARENTHESIS_RIGHT(13...14)(")")
-     ),
+    [YieldNode(0...5)((0...5), nil, nil, nil),
+     YieldNode(7...14)((7...12), (12...13), nil, (13...14)),
      YieldNode(16...24)(
-       KEYWORD_YIELD(16...21)("yield"),
-       PARENTHESIS_LEFT(21...22)("("),
+       (16...21),
+       (21...22),
        ArgumentsNode(22...23)([IntegerNode(22...23)()]),
-       PARENTHESIS_RIGHT(23...24)(")")
+       (23...24)
      ),
      YieldNode(26...40)(
-       KEYWORD_YIELD(26...31)("yield"),
-       PARENTHESIS_LEFT(31...32)("("),
+       (26...31),
+       (31...32),
        ArgumentsNode(32...39)(
          [IntegerNode(32...33)(),
           IntegerNode(35...36)(),
           IntegerNode(38...39)()]
        ),
-       PARENTHESIS_RIGHT(39...40)(")")
+       (39...40)
      )]
   )
 )

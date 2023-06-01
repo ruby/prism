@@ -137,8 +137,8 @@ ProgramNode(0...114)(
        nil
      ),
      YieldNode(97...114)(
-       KEYWORD_YIELD(97...102)("yield"),
-       PARENTHESIS_LEFT(102...103)("("),
+       (97...102),
+       (102...103),
        ArgumentsNode(103...113)(
          [KeywordHashNode(103...113)(
             [AssocNode(103...113)(
@@ -153,7 +153,7 @@ ProgramNode(0...114)(
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(113...114)(")")
+       (113...114)
      )]
   )
 )
