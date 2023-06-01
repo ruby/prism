@@ -1461,12 +1461,12 @@ nodes:
         ^^^^^^^^^^^^^^
   - name: RescueNode
     child_nodes:
-      - name: rescue_keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: exceptions
         type: node[]
-      - name: equal_greater
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: exception
         type: node?
       - name: statements

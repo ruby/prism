@@ -71,14 +71,7 @@ ProgramNode(0...140)(
               0
             )]
          ),
-         RescueNode(74...80)(
-           KEYWORD_RESCUE(74...80)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(74...80)((74...80), [], nil, nil, nil, nil),
          nil,
          nil,
          (82...85)

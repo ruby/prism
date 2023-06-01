@@ -42,14 +42,7 @@ ProgramNode(0...370)(
        BeginNode(0...75)(
          nil,
          nil,
-         RescueNode(50...56)(
-           KEYWORD_RESCUE(50...56)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(50...56)((50...56), [], nil, nil, nil, nil),
          ElseNode(58...70)((58...62), nil, (64...70)),
          EnsureNode(64...75)((64...70), nil, (72...75)),
          (72...75)
@@ -138,14 +131,7 @@ ProgramNode(0...370)(
             BeginNode(0...213)(
               nil,
               nil,
-              RescueNode(188...194)(
-                KEYWORD_RESCUE(188...194)("rescue"),
-                [],
-                nil,
-                nil,
-                nil,
-                nil
-              ),
+              RescueNode(188...194)((188...194), [], nil, nil, nil, nil),
               ElseNode(196...208)((196...200), nil, (202...208)),
               EnsureNode(202...213)((202...208), nil, (210...213)),
               (210...213)

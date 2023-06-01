@@ -16,7 +16,7 @@ ProgramNode(0...44)(
           )]
        ),
        RescueNode(13...39)(
-         KEYWORD_RESCUE(13...19)("rescue"),
+         (13...19),
          [ConstantReadNode(20...29)(),
           CallNode(31...34)(
             nil,

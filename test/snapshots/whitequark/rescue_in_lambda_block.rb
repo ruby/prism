@@ -8,14 +8,7 @@ ProgramNode(0...17)(
        BeginNode(0...17)(
          nil,
          nil,
-         RescueNode(6...12)(
-           KEYWORD_RESCUE(6...12)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(6...12)((6...12), [], nil, nil, nil, nil),
          nil,
          nil,
          (14...17)

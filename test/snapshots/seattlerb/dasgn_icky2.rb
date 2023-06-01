@@ -24,9 +24,9 @@ ProgramNode(0...76)(
                 [YieldNode(27...32)((27...32), nil, nil, nil)]
               ),
               RescueNode(35...66)(
-                KEYWORD_RESCUE(35...41)("rescue"),
+                (35...41),
                 [ConstantReadNode(42...51)()],
-                EQUAL_GREATER(52...54)("=>"),
+                (52...54),
                 LocalVariableWriteNode(55...56)((55...56), nil, nil, 0),
                 StatementsNode(61...66)([BreakNode(61...66)(nil, (61...66))]),
                 nil

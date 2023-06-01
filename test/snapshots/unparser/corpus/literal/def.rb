@@ -20,7 +20,7 @@ ProgramNode(0...913)(
             )]
          ),
          RescueNode(12...22)(
-           KEYWORD_RESCUE(12...18)("rescue"),
+           (12...18),
            [],
            nil,
            nil,
@@ -112,7 +112,7 @@ ProgramNode(0...913)(
             )]
          ),
          RescueNode(69...79)(
-           KEYWORD_RESCUE(69...75)("rescue"),
+           (69...75),
            [],
            nil,
            nil,
@@ -250,7 +250,7 @@ ProgramNode(0...913)(
             )]
          ),
          RescueNode(176...188)(
-           KEYWORD_RESCUE(176...182)("rescue"),
+           (176...182),
            [],
            nil,
            nil,
@@ -360,7 +360,7 @@ ProgramNode(0...913)(
             )]
          ),
          RescueNode(253...265)(
-           KEYWORD_RESCUE(253...259)("rescue"),
+           (253...259),
            [],
            nil,
            nil,

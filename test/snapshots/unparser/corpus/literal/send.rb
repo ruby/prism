@@ -100,14 +100,7 @@ ProgramNode(0...991)(
        BeginNode(107...123)(
          (107...112),
          nil,
-         RescueNode(113...119)(
-           KEYWORD_RESCUE(113...119)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(113...119)((113...119), [], nil, nil, nil, nil),
          nil,
          nil,
          (120...123)

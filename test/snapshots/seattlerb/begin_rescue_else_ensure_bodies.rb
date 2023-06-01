@@ -5,7 +5,7 @@ ProgramNode(0...44)(
        (0...5),
        StatementsNode(8...9)([IntegerNode(8...9)()]),
        RescueNode(10...20)(
-         KEYWORD_RESCUE(10...16)("rescue"),
+         (10...16),
          [],
          nil,
          nil,

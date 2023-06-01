@@ -24,14 +24,7 @@ ProgramNode(0...148)(
          BeginNode(0...29)(
            nil,
            nil,
-           RescueNode(19...25)(
-             KEYWORD_RESCUE(19...25)("rescue"),
-             [],
-             nil,
-             nil,
-             nil,
-             nil
-           ),
+           RescueNode(19...25)((19...25), [], nil, nil, nil, nil),
            nil,
            nil,
            (26...29)

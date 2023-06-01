@@ -705,9 +705,9 @@ ProgramNode(0...737)(
            nil,
            nil,
            RescueNode(365...386)(
-             KEYWORD_RESCUE(365...371)("rescue"),
+             (365...371),
              [ConstantReadNode(372...381)()],
-             EQUAL_GREATER(382...384)("=>"),
+             (382...384),
              LocalVariableWriteNode(385...386)((385...386), nil, nil, 0),
              nil,
              nil
@@ -746,9 +746,9 @@ ProgramNode(0...737)(
               )]
            ),
            RescueNode(402...431)(
-             KEYWORD_RESCUE(402...408)("rescue"),
+             (402...408),
              [ConstantReadNode(409...418)()],
-             EQUAL_GREATER(419...421)("=>"),
+             (419...421),
              LocalVariableWriteNode(422...425)((422...425), nil, nil, 0),
              StatementsNode(428...431)([LocalVariableReadNode(428...431)(0)]),
              nil
@@ -787,7 +787,7 @@ ProgramNode(0...737)(
               )]
            ),
            RescueNode(447...475)(
-             KEYWORD_RESCUE(447...453)("rescue"),
+             (447...453),
              [ConstantReadNode(454...463)(),
               SplatNode(465...469)(
                 (465...466),
@@ -852,7 +852,7 @@ ProgramNode(0...737)(
               )]
            ),
            RescueNode(491...532)(
-             KEYWORD_RESCUE(491...497)("rescue"),
+             (491...497),
              [ConstantReadNode(498...507)(),
               SplatNode(509...513)(
                 (509...510),
@@ -867,7 +867,7 @@ ProgramNode(0...737)(
                   "bar"
                 )
               )],
-             EQUAL_GREATER(514...516)("=>"),
+             (514...516),
              LocalVariableWriteNode(517...526)((517...526), nil, nil, 0),
              StatementsNode(529...532)(
                [CallNode(529...532)(
@@ -917,7 +917,7 @@ ProgramNode(0...737)(
               )]
            ),
            RescueNode(548...565)(
-             KEYWORD_RESCUE(548...554)("rescue"),
+             (548...554),
              [SplatNode(555...559)(
                 (555...556),
                 CallNode(556...559)(
@@ -981,7 +981,7 @@ ProgramNode(0...737)(
               )]
            ),
            RescueNode(581...597)(
-             KEYWORD_RESCUE(581...587)("rescue"),
+             (581...587),
              [ConstantReadNode(588...597)()],
              nil,
              nil,
@@ -1021,14 +1021,7 @@ ProgramNode(0...737)(
                 "bar"
               )]
            ),
-           RescueNode(613...619)(
-             KEYWORD_RESCUE(613...619)("rescue"),
-             [],
-             nil,
-             nil,
-             nil,
-             nil
-           ),
+           RescueNode(613...619)((613...619), [], nil, nil, nil, nil),
            ElseNode(620...634)(
              (620...624),
              StatementsNode(627...630)(
@@ -1078,7 +1071,7 @@ ProgramNode(0...737)(
               )]
            ),
            RescueNode(646...676)(
-             KEYWORD_RESCUE(646...652)("rescue"),
+             (646...652),
              [SplatNode(653...657)(
                 (653...654),
                 CallNode(654...657)(
@@ -1092,7 +1085,7 @@ ProgramNode(0...737)(
                   "bar"
                 )
               )],
-             EQUAL_GREATER(658...660)("=>"),
+             (658...660),
              LocalVariableWriteNode(661...670)((661...670), nil, nil, 0),
              StatementsNode(673...676)(
                [CallNode(673...676)(
@@ -1153,14 +1146,7 @@ ProgramNode(0...737)(
          BeginNode(0...719)(
            nil,
            nil,
-           RescueNode(702...708)(
-             KEYWORD_RESCUE(702...708)("rescue"),
-             [],
-             nil,
-             nil,
-             nil,
-             nil
-           ),
+           RescueNode(702...708)((702...708), [], nil, nil, nil, nil),
            nil,
            EnsureNode(709...719)((709...715), nil, (716...719)),
            (716...719)

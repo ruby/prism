@@ -2766,19 +2766,19 @@ yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const
 
 // Allocate and initiliaze a new RescueNode node.
 static yp_rescue_node_t *
-yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *rescue_keyword) {
+yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
   yp_rescue_node_t *node = yp_alloc(parser, sizeof(yp_rescue_node_t));
 
   *node = (yp_rescue_node_t) {
     {
       .type = YP_NODE_RESCUE_NODE,
       .location = {
-        .start = rescue_keyword->start,
-        .end = rescue_keyword->end
+        .start = keyword->start,
+        .end = keyword->end
       }
     },
-    .rescue_keyword = *rescue_keyword,
-    .equal_greater = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .operator_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
     .exception = NULL,
     .statements = NULL,
     .consequent = NULL
@@ -2786,6 +2786,11 @@ yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *rescue_keyword) {
 
   yp_node_list_init(&node->exceptions);
   return node;
+}
+
+static inline void
+yp_rescue_node_operator_set(yp_rescue_node_t *node, const yp_token_t *operator) {
+  node->operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
 }
 
 // Set the exception of a rescue node, and update the location of the node.
@@ -7955,7 +7960,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
         // we're going to have an empty list of exceptions to rescue (which
         // implies StandardError).
         parser_lex(parser);
-        rescue->equal_greater = parser->previous;
+        yp_rescue_node_operator_set(rescue, &parser->previous);
 
         yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
         yp_token_t operator = not_provided(parser);
@@ -7986,7 +7991,7 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
             // If we hit a `=>` then we're going to parse the exception variable. Once
             // we've done that, we'll break out of the loop and parse the statements.
             if (accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-              rescue->equal_greater = parser->previous;
+              yp_rescue_node_operator_set(rescue, &parser->previous);
 
               yp_node_t *node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected an exception variable after `=>` in rescue statement.");
               yp_token_t operator = not_provided(parser);

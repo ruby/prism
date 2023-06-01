@@ -4,14 +4,7 @@ ProgramNode(0...215)(
     [BeginNode(0...16)(
        (0...5),
        nil,
-       RescueNode(6...12)(
-         KEYWORD_RESCUE(6...12)("rescue"),
-         [],
-         nil,
-         nil,
-         nil,
-         nil
-       ),
+       RescueNode(6...12)((6...12), [], nil, nil, nil, nil),
        nil,
        nil,
        (13...16)
@@ -19,14 +12,7 @@ ProgramNode(0...215)(
      BeginNode(18...39)(
        (18...23),
        nil,
-       RescueNode(24...30)(
-         KEYWORD_RESCUE(24...30)("rescue"),
-         [],
-         nil,
-         nil,
-         nil,
-         nil
-       ),
+       RescueNode(24...30)((24...30), [], nil, nil, nil, nil),
        ElseNode(31...39)((31...35), nil, (36...39)),
        nil,
        (36...39)
@@ -65,7 +51,7 @@ ProgramNode(0...215)(
           )]
        ),
        RescueNode(66...76)(
-         KEYWORD_RESCUE(66...72)("rescue"),
+         (66...72),
          [],
          nil,
          nil,
@@ -112,7 +98,7 @@ ProgramNode(0...215)(
           )]
        ),
        RescueNode(96...106)(
-         KEYWORD_RESCUE(96...102)("rescue"),
+         (96...102),
          [],
          nil,
          nil,
@@ -138,7 +124,7 @@ ProgramNode(0...215)(
        (112...117),
        nil,
        RescueNode(118...126)(
-         KEYWORD_RESCUE(118...124)("rescue"),
+         (118...124),
          [ConstantReadNode(125...126)()],
          nil,
          nil,
@@ -153,7 +139,7 @@ ProgramNode(0...215)(
        (137...142),
        nil,
        RescueNode(144...152)(
-         KEYWORD_RESCUE(144...150)("rescue"),
+         (144...150),
          [ConstantReadNode(151...152)()],
          nil,
          nil,
@@ -179,7 +165,7 @@ ProgramNode(0...215)(
           )]
        ),
        RescueNode(175...200)(
-         KEYWORD_RESCUE(175...181)("rescue"),
+         (175...181),
          [ConstantReadNode(182...183)()],
          nil,
          nil,
@@ -196,7 +182,7 @@ ProgramNode(0...215)(
             )]
          ),
          RescueNode(188...200)(
-           KEYWORD_RESCUE(188...194)("rescue"),
+           (188...194),
            [ConstantReadNode(195...196)()],
            nil,
            nil,

@@ -101,7 +101,7 @@ ProgramNode(0...316)(
           )]
        ),
        RescueNode(141...150)(
-         KEYWORD_RESCUE(141...147)("rescue"),
+         (141...147),
          [SplatNode(148...150)(
             (148...149),
             CallNode(149...150)(
@@ -303,14 +303,7 @@ ProgramNode(0...316)(
               "a"
             )]
          ),
-         RescueNode(306...312)(
-           KEYWORD_RESCUE(306...312)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(306...312)((306...312), [], nil, nil, nil, nil),
          nil,
          nil,
          (313...316)
