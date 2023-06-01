@@ -559,11 +559,7 @@ ProgramNode(0...1194)(
            nil,
            nil
          ),
-         ElseNode(484...496)(
-           KEYWORD_ELSE(484...488)("else"),
-           nil,
-           KEYWORD_ENSURE(490...496)("ensure")
-         ),
+         ElseNode(484...496)((484...488), nil, (490...496)),
          EnsureNode(490...501)(
            KEYWORD_ENSURE(490...496)("ensure"),
            nil,

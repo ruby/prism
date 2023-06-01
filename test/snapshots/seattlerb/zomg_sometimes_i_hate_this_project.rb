@@ -46,7 +46,7 @@ ProgramNode(6...66)(
                       )]
                    ),
                    ElseNode(36...39)(
-                     COLON(36...37)(":"),
+                     (36...37),
                      StatementsNode(38...39)(
                        [CallNode(38...39)(
                           nil,

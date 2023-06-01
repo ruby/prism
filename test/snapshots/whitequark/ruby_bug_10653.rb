@@ -17,7 +17,7 @@ ProgramNode(6...93)(
           )]
        ),
        ElseNode(21...33)(
-         COLON(21...22)(":"),
+         (21...22),
          StatementsNode(23...33)(
            [CallNode(23...33)(
               nil,
@@ -50,7 +50,7 @@ ProgramNode(6...93)(
           )]
        ),
        ElseNode(52...60)(
-         COLON(52...53)(":"),
+         (52...53),
          StatementsNode(54...60)(
            [CallNode(54...60)(
               nil,
@@ -113,7 +113,7 @@ ProgramNode(6...93)(
           )]
        ),
        ElseNode(90...93)(
-         COLON(90...91)(":"),
+         (90...91),
          StatementsNode(92...93)([IntegerNode(92...93)()]),
          nil
        ),

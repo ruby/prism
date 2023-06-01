@@ -1349,9 +1349,9 @@ yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_stat
         .end = end,
       },
     },
-    .else_keyword = *else_keyword,
+    .else_keyword_loc = YP_LOCATION_TOKEN_VALUE(else_keyword),
     .statements = statements,
-    .end_keyword = *end_keyword
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;

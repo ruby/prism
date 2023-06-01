@@ -26,7 +26,7 @@ ProgramNode(0...43)(
           )]
        ),
        ElseNode(17...30)(
-         KEYWORD_ELSE(17...21)("else"),
+         (17...21),
          StatementsNode(22...25)(
            [CallNode(22...25)(
               nil,
@@ -39,7 +39,7 @@ ProgramNode(0...43)(
               "baz"
             )]
          ),
-         KEYWORD_END(27...30)("end")
+         (27...30)
        ),
        KEYWORD_END(27...30)("end")
      ),
@@ -68,7 +68,7 @@ ProgramNode(0...43)(
           )]
        ),
        ElseNode(45...58)(
-         KEYWORD_ELSE(45...49)("else"),
+         (45...49),
          StatementsNode(50...53)(
            [CallNode(50...53)(
               nil,
@@ -81,7 +81,7 @@ ProgramNode(0...43)(
               "baz"
             )]
          ),
-         KEYWORD_END(55...58)("end")
+         (55...58)
        ),
        KEYWORD_END(55...58)("end")
      )]

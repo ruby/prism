@@ -28,7 +28,7 @@ ProgramNode(0...50)(
                )]
             ),
             ElseNode(9...11)(
-              COLON(9...10)(":"),
+              (9...10),
               StatementsNode(10...11)([IntegerNode(10...11)()]),
               nil
             ),

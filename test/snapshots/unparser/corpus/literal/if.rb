@@ -37,9 +37,9 @@ ProgramNode(0...246)(
        IntegerNode(35...36)(),
        StatementsNode(39...40)([IntegerNode(39...40)()]),
        ElseNode(41...53)(
-         KEYWORD_ELSE(41...45)("else"),
+         (41...45),
          StatementsNode(48...49)([IntegerNode(48...49)()]),
-         KEYWORD_END(50...53)("end")
+         (50...53)
        ),
        KEYWORD_END(50...53)("end")
      ),

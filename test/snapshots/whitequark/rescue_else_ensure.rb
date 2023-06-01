@@ -35,7 +35,7 @@ ProgramNode(0...51)(
          nil
        ),
        ElseNode(26...42)(
-         KEYWORD_ELSE(26...30)("else"),
+         (26...30),
          StatementsNode(31...34)(
            [CallNode(31...34)(
               nil,
@@ -48,7 +48,7 @@ ProgramNode(0...51)(
               "foo"
             )]
          ),
-         KEYWORD_ENSURE(36...42)("ensure")
+         (36...42)
        ),
        EnsureNode(36...51)(
          KEYWORD_ENSURE(36...42)("ensure"),

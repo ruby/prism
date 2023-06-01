@@ -42,7 +42,7 @@ ProgramNode(2...15)(
           )]
        ),
        ElseNode(10...15)(
-         COLON(10...11)(":"),
+         (10...11),
          StatementsNode(12...15)([NilNode(12...15)()]),
          nil
        ),

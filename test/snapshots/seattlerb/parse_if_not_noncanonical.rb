@@ -40,7 +40,7 @@ ProgramNode(0...26)(
           )]
        ),
        ElseNode(27...41)(
-         KEYWORD_ELSE(27...31)("else"),
+         (27...31),
          StatementsNode(32...37)(
            [StringNode(32...37)(
               STRING_BEGIN(32...33)("'"),
@@ -49,7 +49,7 @@ ProgramNode(0...26)(
               "bar"
             )]
          ),
-         KEYWORD_END(38...41)("end")
+         (38...41)
        ),
        KEYWORD_END(38...41)("end")
      )]

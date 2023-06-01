@@ -13,9 +13,9 @@ ProgramNode(0...141)(
        TrueNode(28...32)(),
        StatementsNode(33...34)([IntegerNode(33...34)()]),
        ElseNode(35...45)(
-         KEYWORD_ELSE(35...39)("else"),
+         (35...39),
          StatementsNode(40...41)([IntegerNode(40...41)()]),
-         KEYWORD_END(42...45)("end")
+         (42...45)
        ),
        KEYWORD_END(42...45)("end")
      ),

@@ -22,7 +22,7 @@ ProgramNode(0...131)(
             TrueNode(57...61)(),
             StatementsNode(64...65)([IntegerNode(64...65)()]),
             ElseNode(66...69)(
-              COLON(66...67)(":"),
+              (66...67),
               StatementsNode(68...69)([IntegerNode(68...69)()]),
               nil
             ),
@@ -37,7 +37,7 @@ ProgramNode(0...131)(
             TrueNode(76...80)(),
             StatementsNode(83...84)([IntegerNode(83...84)()]),
             ElseNode(85...88)(
-              COLON(85...86)(":"),
+              (85...86),
               StatementsNode(87...88)([IntegerNode(87...88)()]),
               nil
             ),
@@ -53,7 +53,7 @@ ProgramNode(0...131)(
             TrueNode(94...98)(),
             StatementsNode(101...102)([IntegerNode(101...102)()]),
             ElseNode(103...106)(
-              COLON(103...104)(":"),
+              (103...104),
               StatementsNode(105...106)([IntegerNode(105...106)()]),
               nil
             ),
@@ -71,9 +71,9 @@ ProgramNode(0...131)(
             TrueNode(123...127)(),
             StatementsNode(130...131)([IntegerNode(130...131)()]),
             ElseNode(132...144)(
-              KEYWORD_ELSE(132...136)("else"),
+              (132...136),
               StatementsNode(139...140)([IntegerNode(139...140)()]),
-              KEYWORD_END(141...144)("end")
+              (141...144)
             ),
             KEYWORD_END(141...144)("end")
           )]

@@ -892,7 +892,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CaseNode(
       SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
       [],
-      ElseNode(KEYWORD_ELSE("else"), nil, KEYWORD_END("end")),
+      ElseNode(Location(), nil, Location()),
       Location(),
       Location()
     )

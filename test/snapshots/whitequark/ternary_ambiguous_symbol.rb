@@ -22,7 +22,7 @@ ProgramNode(0...13)(
        ),
        StatementsNode(10...11)([LocalVariableReadNode(10...11)(0)]),
        ElseNode(11...13)(
-         COLON(11...12)(":"),
+         (11...12),
          StatementsNode(12...13)([ConstantReadNode(12...13)()]),
          nil
        ),

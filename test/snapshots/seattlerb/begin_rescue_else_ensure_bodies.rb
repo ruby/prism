@@ -13,9 +13,9 @@ ProgramNode(0...44)(
          nil
        ),
        ElseNode(21...36)(
-         KEYWORD_ELSE(21...25)("else"),
+         (21...25),
          StatementsNode(28...29)([IntegerNode(28...29)()]),
-         KEYWORD_ENSURE(30...36)("ensure")
+         (30...36)
        ),
        EnsureNode(30...44)(
          KEYWORD_ENSURE(30...36)("ensure"),

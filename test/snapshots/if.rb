@@ -13,9 +13,9 @@ ProgramNode(0...293)(
        TrueNode(20...24)(),
        StatementsNode(25...26)([IntegerNode(25...26)()]),
        ElseNode(27...37)(
-         KEYWORD_ELSE(27...31)("else"),
+         (27...31),
          StatementsNode(32...33)([IntegerNode(32...33)()]),
-         KEYWORD_END(34...37)("end")
+         (34...37)
        ),
        KEYWORD_END(34...37)("end")
      ),
@@ -32,9 +32,9 @@ ProgramNode(0...293)(
            NilNode(86...89)(),
            StatementsNode(95...98)([NilNode(95...98)()]),
            ElseNode(99...112)(
-             KEYWORD_ELSE(99...103)("else"),
+             (99...103),
              StatementsNode(104...108)([SelfNode(104...108)()]),
-             KEYWORD_END(109...112)("end")
+             (109...112)
            ),
            nil
          ),
@@ -193,9 +193,9 @@ ProgramNode(0...293)(
           )]
        ),
        ElseNode(251...259)(
-         KEYWORD_ELSE(251...255)("else"),
+         (251...255),
          StatementsNode(0...0)([]),
-         KEYWORD_END(256...259)("end")
+         (256...259)
        ),
        KEYWORD_END(256...259)("end")
      ),

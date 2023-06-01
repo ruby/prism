@@ -27,11 +27,7 @@ ProgramNode(0...215)(
          nil,
          nil
        ),
-       ElseNode(31...39)(
-         KEYWORD_ELSE(31...35)("else"),
-         nil,
-         KEYWORD_END(36...39)("end")
-       ),
+       ElseNode(31...39)((31...35), nil, (36...39)),
        nil,
        (36...39)
      ),
@@ -149,11 +145,7 @@ ProgramNode(0...215)(
          nil,
          nil
        ),
-       ElseNode(127...135)(
-         KEYWORD_ELSE(127...131)("else"),
-         nil,
-         KEYWORD_END(132...135)("end")
-       ),
+       ElseNode(127...135)((127...131), nil, (132...135)),
        nil,
        (132...135)
      ),
@@ -168,11 +160,7 @@ ProgramNode(0...215)(
          nil,
          nil
        ),
-       ElseNode(154...163)(
-         KEYWORD_ELSE(154...158)("else"),
-         nil,
-         KEYWORD_END(160...163)("end")
-       ),
+       ElseNode(154...163)((154...158), nil, (160...163)),
        nil,
        (160...163)
      ),

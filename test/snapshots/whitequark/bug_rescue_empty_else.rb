@@ -12,11 +12,7 @@ ProgramNode(0...34)(
          nil,
          nil
        ),
-       ElseNode(25...34)(
-         KEYWORD_ELSE(25...29)("else"),
-         nil,
-         KEYWORD_END(31...34)("end")
-       ),
+       ElseNode(25...34)((25...29), nil, (31...34)),
        nil,
        (31...34)
      )]

@@ -298,7 +298,7 @@ ProgramNode(0...284)(
           )
         )],
        ElseNode(211...226)(
-         KEYWORD_ELSE(211...215)("else"),
+         (211...215),
          StatementsNode(218...222)(
            [SymbolNode(218...222)(
               SYMBOL_BEGIN(218...219)(":"),
@@ -307,7 +307,7 @@ ProgramNode(0...284)(
               "foo"
             )]
          ),
-         KEYWORD_END(223...226)("end")
+         (223...226)
        ),
        (187...191),
        (223...226)

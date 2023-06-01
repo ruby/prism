@@ -72,7 +72,7 @@ ProgramNode(0...23)(
                   )]
                ),
                ElseNode(17...21)(
-                 COLON(17...18)(":"),
+                 (17...18),
                  StatementsNode(19...21)(
                    [StringNode(19...21)(
                       STRING_BEGIN(19...20)("\""),

@@ -1036,7 +1036,7 @@ ProgramNode(0...737)(
              nil
            ),
            ElseNode(620...634)(
-             KEYWORD_ELSE(620...624)("else"),
+             (620...624),
              StatementsNode(627...630)(
                [CallNode(627...630)(
                   nil,
@@ -1049,7 +1049,7 @@ ProgramNode(0...737)(
                   "baz"
                 )]
              ),
-             KEYWORD_END(631...634)("end")
+             (631...634)
            ),
            nil,
            (631...634)

@@ -22,7 +22,7 @@ ProgramNode(2...20)(
           )]
        ),
        ElseNode(6...9)(
-         COLON(6...7)(":"),
+         (6...7),
          StatementsNode(8...9)(
            [CallNode(8...9)(
               nil,
@@ -60,7 +60,7 @@ ProgramNode(2...20)(
           )]
        ),
        ElseNode(17...20)(
-         COLON(17...18)(":"),
+         (17...18),
          StatementsNode(19...20)(
            [CallNode(19...20)(
               nil,

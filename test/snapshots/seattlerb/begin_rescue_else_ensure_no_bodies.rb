@@ -12,11 +12,7 @@ ProgramNode(0...32)(
          nil,
          nil
        ),
-       ElseNode(15...27)(
-         KEYWORD_ELSE(15...19)("else"),
-         nil,
-         KEYWORD_ENSURE(21...27)("ensure")
-       ),
+       ElseNode(15...27)((15...19), nil, (21...27)),
        EnsureNode(21...32)(
          KEYWORD_ENSURE(21...27)("ensure"),
          nil,

@@ -25,9 +25,9 @@ ProgramNode(0...24)(
                  ),
                  StatementsNode(11...12)([IntegerNode(11...12)()]),
                  ElseNode(13...23)(
-                   KEYWORD_ELSE(13...17)("else"),
+                   (13...17),
                    StatementsNode(18...19)([IntegerNode(18...19)()]),
-                   KEYWORD_END(20...23)("end")
+                   (20...23)
                  ),
                  KEYWORD_END(20...23)("end")
                ),

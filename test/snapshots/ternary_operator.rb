@@ -26,7 +26,7 @@ ProgramNode(2...117)(
           )]
        ),
        ElseNode(6...9)(
-         COLON(6...7)(":"),
+         (6...7),
          StatementsNode(8...9)(
            [CallNode(8...9)(
               nil,
@@ -73,7 +73,7 @@ ProgramNode(2...117)(
           )]
        ),
        ElseNode(26...38)(
-         COLON(26...27)(":"),
+         (26...27),
          StatementsNode(28...38)(
            [DefinedNode(28...38)(
               nil,
@@ -109,7 +109,7 @@ ProgramNode(2...117)(
        ),
        StatementsNode(47...51)([TrueNode(47...51)()]),
        ElseNode(51...55)(
-         COLON(51...52)(":"),
+         (51...52),
          StatementsNode(52...55)([NilNode(52...55)()]),
          nil
        ),
@@ -129,7 +129,7 @@ ProgramNode(2...117)(
        ),
        StatementsNode(64...69)([FalseNode(64...69)()]),
        ElseNode(69...73)(
-         COLON(69...70)(":"),
+         (69...70),
          StatementsNode(70...73)([NilNode(70...73)()]),
          nil
        ),
@@ -149,7 +149,7 @@ ProgramNode(2...117)(
        ),
        StatementsNode(82...85)([NilNode(82...85)()]),
        ElseNode(85...89)(
-         COLON(85...86)(":"),
+         (85...86),
          StatementsNode(86...89)([NilNode(86...89)()]),
          nil
        ),
@@ -169,7 +169,7 @@ ProgramNode(2...117)(
        ),
        StatementsNode(94...97)([NilNode(94...97)()]),
        ElseNode(97...101)(
-         COLON(97...98)(":"),
+         (97...98),
          StatementsNode(98...101)([NilNode(98...101)()]),
          nil
        ),
@@ -200,7 +200,7 @@ ProgramNode(2...117)(
           )]
        ),
        ElseNode(111...117)(
-         COLON(111...112)(":"),
+         (111...112),
          StatementsNode(113...117)(
            [CallNode(113...117)(
               nil,

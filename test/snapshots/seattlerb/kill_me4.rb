@@ -17,7 +17,7 @@ ProgramNode(0...17)(
          ),
          StatementsNode(6...10)([TrueNode(6...10)()]),
          ElseNode(10...17)(
-           COLON(10...11)(":"),
+           (10...11),
            StatementsNode(12...17)([FalseNode(12...17)()]),
            nil
          ),

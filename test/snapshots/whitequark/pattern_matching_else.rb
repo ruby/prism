@@ -10,9 +10,9 @@ ProgramNode(0...29)(
           nil
         )],
        ElseNode(17...29)(
-         KEYWORD_ELSE(17...21)("else"),
+         (17...21),
          StatementsNode(23...24)([IntegerNode(23...24)()]),
-         KEYWORD_END(26...29)("end")
+         (26...29)
        ),
        (0...4),
        (26...29)

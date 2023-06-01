@@ -115,7 +115,7 @@ ProgramNode(0...272)(
           nil
         )],
        ElseNode(123...134)(
-         KEYWORD_ELSE(123...127)("else"),
+         (123...127),
          StatementsNode(128...130)(
            [SymbolNode(128...130)(
               SYMBOL_BEGIN(128...129)(":"),
@@ -124,7 +124,7 @@ ProgramNode(0...272)(
               "b"
             )]
          ),
-         KEYWORD_END(131...134)("end")
+         (131...134)
        ),
        (105...109),
        (131...134)
@@ -205,11 +205,7 @@ ProgramNode(0...272)(
            )],
           nil
         )],
-       ElseNode(212...230)(
-         KEYWORD_ELSE(212...216)("else"),
-         nil,
-         KEYWORD_END(227...230)("end")
-       ),
+       ElseNode(212...230)((212...216), nil, (227...230)),
        (200...204),
        (227...230)
      ),
@@ -235,9 +231,9 @@ ProgramNode(0...272)(
           StatementsNode(0...0)([])
         )],
        ElseNode(260...272)(
-         KEYWORD_ELSE(260...264)("else"),
+         (260...264),
          StatementsNode(0...0)([]),
-         KEYWORD_END(269...272)("end")
+         (269...272)
        ),
        (232...236),
        (269...272)

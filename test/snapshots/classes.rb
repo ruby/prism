@@ -54,11 +54,7 @@ ProgramNode(0...370)(
            nil,
            nil
          ),
-         ElseNode(58...70)(
-           KEYWORD_ELSE(58...62)("else"),
-           nil,
-           KEYWORD_ENSURE(64...70)("ensure")
-         ),
+         ElseNode(58...70)((58...62), nil, (64...70)),
          EnsureNode(64...75)(
            KEYWORD_ENSURE(64...70)("ensure"),
            nil,
@@ -162,11 +158,7 @@ ProgramNode(0...370)(
                 nil,
                 nil
               ),
-              ElseNode(196...208)(
-                KEYWORD_ELSE(196...200)("else"),
-                nil,
-                KEYWORD_ENSURE(202...208)("ensure")
-              ),
+              ElseNode(196...208)((196...200), nil, (202...208)),
               EnsureNode(202...213)(
                 KEYWORD_ENSURE(202...208)("ensure"),
                 nil,

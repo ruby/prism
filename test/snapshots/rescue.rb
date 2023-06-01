@@ -79,7 +79,7 @@ ProgramNode(0...316)(
          NilNode(118...121)(),
          StatementsNode(124...125)([IntegerNode(124...125)()]),
          ElseNode(126...129)(
-           COLON(126...127)(":"),
+           (126...127),
            StatementsNode(128...129)([IntegerNode(128...129)()]),
            nil
          ),
