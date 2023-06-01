@@ -627,7 +627,7 @@ ProgramNode(0...402)(
              [RequiredParameterNode(393...396)()],
              [],
              [],
-             RestParameterNode(396...397)(COMMA(396...397)(","), nil),
+             RestParameterNode(396...397)((396...397), nil),
              [],
              nil,
              nil

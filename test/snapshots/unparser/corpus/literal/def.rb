@@ -646,7 +646,7 @@ ProgramNode(0...913)(
          [],
          [],
          [],
-         RestParameterNode(528...529)(USTAR(528...529)("*"), nil),
+         RestParameterNode(528...529)((528...529), nil),
          [],
          nil,
          nil
@@ -678,10 +678,7 @@ ProgramNode(0...913)(
          [],
          [],
          [],
-         RestParameterNode(550...554)(
-           USTAR(550...551)("*"),
-           IDENTIFIER(551...554)("bar")
-         ),
+         RestParameterNode(550...554)((550...551), (551...554)),
          [],
          nil,
          nil
@@ -702,10 +699,7 @@ ProgramNode(0...913)(
          [RequiredParameterNode(575...578)()],
          [],
          [],
-         RestParameterNode(580...584)(
-           USTAR(580...581)("*"),
-           IDENTIFIER(581...584)("baz")
-         ),
+         RestParameterNode(580...584)((580...581), (581...584)),
          [],
          nil,
          nil
@@ -730,10 +724,7 @@ ProgramNode(0...913)(
             TrueNode(611...615)()
           )],
          [],
-         RestParameterNode(617...621)(
-           USTAR(617...618)("*"),
-           IDENTIFIER(618...621)("bor")
-         ),
+         RestParameterNode(617...621)((617...618), (618...621)),
          [],
          nil,
          nil
@@ -769,10 +760,7 @@ ProgramNode(0...913)(
             TrueNode(648...652)()
           )],
          [],
-         RestParameterNode(654...658)(
-           USTAR(654...655)("*"),
-           IDENTIFIER(655...658)("bor")
-         ),
+         RestParameterNode(654...658)((654...655), (655...658)),
          [],
          nil,
          BlockParameterNode(660...666)((661...666), (660...661))
@@ -810,10 +798,7 @@ ProgramNode(0...913)(
             TrueNode(698...702)()
           )],
          [],
-         RestParameterNode(704...708)(
-           USTAR(704...705)("*"),
-           IDENTIFIER(705...708)("bor")
-         ),
+         RestParameterNode(704...708)((704...705), (705...708)),
          [],
          nil,
          nil

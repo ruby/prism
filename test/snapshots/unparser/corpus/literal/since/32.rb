@@ -45,7 +45,7 @@ ProgramNode(0...90)(
          [RequiredParameterNode(55...63)()],
          [],
          [],
-         RestParameterNode(65...66)(USTAR(65...66)("*"), nil),
+         RestParameterNode(65...66)((65...66), nil),
          [],
          nil,
          nil

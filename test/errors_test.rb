@@ -969,7 +969,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], RestParameterNode(USTAR("*"), IDENTIFIER("a")), [], nil, nil),
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], RestParameterNode(Location(), Location()), [], nil, nil),
       nil,
       [IDENTIFIER("a"), IDENTIFIER("b")],
       Location(),

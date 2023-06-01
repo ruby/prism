@@ -22,10 +22,7 @@ ProgramNode(0...22)(
                 IntegerNode(7...8)()
               )],
              [RequiredParameterNode(14...15)()],
-             RestParameterNode(10...12)(
-               USTAR(10...11)("*"),
-               IDENTIFIER(11...12)("c")
-             ),
+             RestParameterNode(10...12)((10...11), (11...12)),
              [],
              nil,
              BlockParameterNode(17...19)((18...19), (17...18))

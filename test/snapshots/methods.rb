@@ -571,10 +571,7 @@ ProgramNode(0...1194)(
          [],
          [],
          [],
-         RestParameterNode(509...511)(
-           STAR(509...510)("*"),
-           IDENTIFIER(510...511)("b")
-         ),
+         RestParameterNode(509...511)((509...510), (510...511)),
          [],
          nil,
          nil
@@ -595,7 +592,7 @@ ProgramNode(0...1194)(
          [],
          [],
          [],
-         RestParameterNode(523...524)(USTAR(523...524)("*"), nil),
+         RestParameterNode(523...524)((523...524), nil),
          [],
          nil,
          nil
@@ -774,7 +771,7 @@ ProgramNode(0...1194)(
          [],
          [],
          [],
-         RestParameterNode(693...694)(USTAR(693...694)("*"), nil),
+         RestParameterNode(693...694)((693...694), nil),
          [],
          nil,
          nil

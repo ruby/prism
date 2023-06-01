@@ -11,10 +11,7 @@ ProgramNode(0...12)(
              [],
              [],
              [],
-             RestParameterNode(7...12)(
-               STAR(7...8)("*"),
-               IDENTIFIER(8...12)("args")
-             ),
+             RestParameterNode(7...12)((7...8), (8...12)),
              [],
              nil,
              nil

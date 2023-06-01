@@ -8,7 +8,7 @@ ProgramNode(0...13)(
          [],
          [],
          [],
-         RestParameterNode(6...7)(USTAR(6...7)("*"), nil),
+         RestParameterNode(6...7)((6...7), nil),
          [],
          nil,
          nil

@@ -99,7 +99,7 @@ ProgramNode(0...550)(
              [],
              [],
              [],
-             RestParameterNode(50...51)(USTAR(50...51)("*"), nil),
+             RestParameterNode(50...51)((50...51), nil),
              [],
              nil,
              BlockParameterNode(53...55)((54...55), (53...54))
@@ -130,10 +130,7 @@ ProgramNode(0...550)(
              [],
              [],
              [RequiredParameterNode(68...69)()],
-             RestParameterNode(64...66)(
-               USTAR(64...65)("*"),
-               IDENTIFIER(65...66)("r")
-             ),
+             RestParameterNode(64...66)((64...65), (65...66)),
              [],
              nil,
              BlockParameterNode(71...73)((72...73), (71...72))
@@ -162,10 +159,7 @@ ProgramNode(0...550)(
              [],
              [],
              [],
-             RestParameterNode(82...84)(
-               USTAR(82...83)("*"),
-               IDENTIFIER(83...84)("s")
-             ),
+             RestParameterNode(82...84)((82...83), (83...84)),
              [],
              nil,
              BlockParameterNode(86...88)((87...88), (86...87))
@@ -194,10 +188,7 @@ ProgramNode(0...550)(
              [],
              [],
              [],
-             RestParameterNode(97...99)(
-               USTAR(97...98)("*"),
-               IDENTIFIER(98...99)("s")
-             ),
+             RestParameterNode(97...99)((97...98), (98...99)),
              [],
              nil,
              nil
@@ -226,7 +217,7 @@ ProgramNode(0...550)(
              [],
              [],
              [],
-             RestParameterNode(108...109)(USTAR(108...109)("*"), nil),
+             RestParameterNode(108...109)((108...109), nil),
              [],
              nil,
              nil
@@ -328,7 +319,7 @@ ProgramNode(0...550)(
              [RequiredParameterNode(156...157)()],
              [],
              [],
-             RestParameterNode(159...160)(USTAR(159...160)("*"), nil),
+             RestParameterNode(159...160)((159...160), nil),
              [],
              nil,
              BlockParameterNode(162...164)((163...164), (162...163))
@@ -360,10 +351,7 @@ ProgramNode(0...550)(
              [RequiredParameterNode(173...174)()],
              [],
              [RequiredParameterNode(180...181)()],
-             RestParameterNode(176...178)(
-               USTAR(176...177)("*"),
-               IDENTIFIER(177...178)("r")
-             ),
+             RestParameterNode(176...178)((176...177), (177...178)),
              [],
              nil,
              BlockParameterNode(183...185)((184...185), (183...184))
@@ -394,10 +382,7 @@ ProgramNode(0...550)(
              [RequiredParameterNode(194...195)()],
              [],
              [],
-             RestParameterNode(197...199)(
-               USTAR(197...198)("*"),
-               IDENTIFIER(198...199)("s")
-             ),
+             RestParameterNode(197...199)((197...198), (198...199)),
              [],
              nil,
              BlockParameterNode(201...203)((202...203), (201...202))
@@ -426,10 +411,7 @@ ProgramNode(0...550)(
              [RequiredParameterNode(212...213)()],
              [],
              [],
-             RestParameterNode(215...217)(
-               USTAR(215...216)("*"),
-               IDENTIFIER(216...217)("s")
-             ),
+             RestParameterNode(215...217)((215...216), (216...217)),
              [],
              nil,
              nil
@@ -458,7 +440,7 @@ ProgramNode(0...550)(
              [RequiredParameterNode(226...227)()],
              [],
              [],
-             RestParameterNode(229...230)(USTAR(229...230)("*"), nil),
+             RestParameterNode(229...230)((229...230), nil),
              [],
              nil,
              nil
@@ -488,7 +470,7 @@ ProgramNode(0...550)(
               RequiredParameterNode(242...243)()],
              [],
              [],
-             RestParameterNode(243...244)(COMMA(243...244)(","), nil),
+             RestParameterNode(243...244)((243...244), nil),
              [],
              nil,
              nil
@@ -590,10 +572,7 @@ ProgramNode(0...550)(
                 IntegerNode(290...291)()
               )],
              [RequiredParameterNode(297...298)()],
-             RestParameterNode(293...295)(
-               USTAR(293...294)("*"),
-               IDENTIFIER(294...295)("r")
-             ),
+             RestParameterNode(293...295)((293...294), (294...295)),
              [],
              nil,
              BlockParameterNode(300...302)((301...302), (300...301))
@@ -635,10 +614,7 @@ ProgramNode(0...550)(
                 IntegerNode(322...323)()
               )],
              [],
-             RestParameterNode(325...327)(
-               USTAR(325...326)("*"),
-               IDENTIFIER(326...327)("r")
-             ),
+             RestParameterNode(325...327)((325...326), (326...327)),
              [],
              nil,
              BlockParameterNode(329...331)((330...331), (329...330))
@@ -703,7 +679,7 @@ ProgramNode(0...550)(
              [RequiredParameterNode(362...363)()],
              [],
              [],
-             RestParameterNode(363...364)(COMMA(363...364)(","), nil),
+             RestParameterNode(363...364)((363...364), nil),
              [],
              nil,
              nil
@@ -958,10 +934,7 @@ ProgramNode(0...550)(
                 IntegerNode(487...488)()
               )],
              [],
-             RestParameterNode(490...492)(
-               USTAR(490...491)("*"),
-               IDENTIFIER(491...492)("r")
-             ),
+             RestParameterNode(490...492)((490...491), (491...492)),
              [],
              nil,
              BlockParameterNode(494...496)((495...496), (494...495))
@@ -997,10 +970,7 @@ ProgramNode(0...550)(
                 IntegerNode(507...508)()
               )],
              [RequiredParameterNode(514...515)()],
-             RestParameterNode(510...512)(
-               USTAR(510...511)("*"),
-               IDENTIFIER(511...512)("r")
-             ),
+             RestParameterNode(510...512)((510...511), (511...512)),
              [],
              nil,
              BlockParameterNode(517...519)((518...519), (517...518))

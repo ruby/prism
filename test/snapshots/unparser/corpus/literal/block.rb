@@ -54,7 +54,7 @@ ProgramNode(0...737)(
              [RequiredParameterNode(27...28)()],
              [],
              [],
-             RestParameterNode(28...29)(COMMA(28...29)(","), nil),
+             RestParameterNode(28...29)((28...29), nil),
              [],
              nil,
              nil
@@ -83,7 +83,7 @@ ProgramNode(0...737)(
              [RequiredParameterNode(40...41)()],
              [],
              [],
-             RestParameterNode(41...42)(COMMA(41...42)(","), nil),
+             RestParameterNode(41...42)((41...42), nil),
              [],
              nil,
              nil
@@ -158,10 +158,7 @@ ProgramNode(0...737)(
              [RequiredParameterNode(88...89)()],
              [],
              [],
-             RestParameterNode(91...93)(
-               USTAR(91...92)("*"),
-               IDENTIFIER(92...93)("b")
-             ),
+             RestParameterNode(91...93)((91...92), (92...93)),
              [],
              nil,
              nil
@@ -190,7 +187,7 @@ ProgramNode(0...737)(
              [RequiredParameterNode(110...111)()],
              [],
              [],
-             RestParameterNode(113...114)(USTAR(113...114)("*"), nil),
+             RestParameterNode(113...114)((113...114), nil),
              [],
              nil,
              nil
@@ -312,10 +309,7 @@ ProgramNode(0...737)(
              [],
              [],
              [],
-             RestParameterNode(177...179)(
-               USTAR(177...178)("*"),
-               IDENTIFIER(178...179)("a")
-             ),
+             RestParameterNode(177...179)((177...178), (178...179)),
              [],
              nil,
              nil
@@ -421,7 +415,7 @@ ProgramNode(0...737)(
              [],
              [],
              [],
-             RestParameterNode(237...238)(USTAR(237...238)("*"), nil),
+             RestParameterNode(237...238)((237...238), nil),
              [],
              nil,
              nil

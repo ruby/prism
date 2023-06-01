@@ -9,7 +9,7 @@ ProgramNode(0...23)(
            [],
            [],
            [],
-           RestParameterNode(3...4)(STAR(3...4)("*"), nil),
+           RestParameterNode(3...4)((3...4), nil),
            [],
            nil,
            nil

@@ -21,10 +21,7 @@ ProgramNode(0...20)(
                 IntegerNode(12...13)()
               )],
              [],
-             RestParameterNode(15...17)(
-               USTAR(15...16)("*"),
-               IDENTIFIER(16...17)("d")
-             ),
+             RestParameterNode(15...17)((15...16), (16...17)),
              [],
              nil,
              nil
