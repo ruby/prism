@@ -9,4 +9,8 @@
 #define _XOPEN_SOURCE 700
 #endif
 
+#ifndef EXPORTED
+#define EXPORTED __attribute__((__visibility__("default")))
+#endif
+
 #endif
