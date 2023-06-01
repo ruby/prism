@@ -38,8 +38,8 @@ ProgramNode(0...1194)(
             PARENTHESIS_RIGHT(42...43)(")")
           )],
          [OptionalParameterNode(45...57)(
-            IDENTIFIER(45...53)("optional"),
-            EQUAL(54...55)("="),
+            (45...53),
+            (54...55),
             IntegerNode(56...57)()
           )],
          [RequiredDestructuredParameterNode(59...69)(
@@ -454,13 +454,13 @@ ProgramNode(0...1194)(
        ParametersNode(405...417)(
          [],
          [OptionalParameterNode(405...410)(
-            IDENTIFIER(405...406)("b"),
-            EQUAL(407...408)("="),
+            (405...406),
+            (407...408),
             IntegerNode(409...410)()
           ),
           OptionalParameterNode(412...417)(
-            IDENTIFIER(412...413)("c"),
-            EQUAL(414...415)("="),
+            (412...413),
+            (414...415),
             IntegerNode(416...417)()
           )],
          [],
@@ -497,8 +497,8 @@ ProgramNode(0...1194)(
        ParametersNode(442...450)(
          [RequiredParameterNode(442...443)()],
          [OptionalParameterNode(445...450)(
-            IDENTIFIER(445...446)("c"),
-            EQUAL(447...448)("="),
+            (445...446),
+            (447...448),
             IntegerNode(449...450)()
           )],
          [],
@@ -1241,8 +1241,8 @@ ProgramNode(0...1194)(
        ParametersNode(1065...1077)(
          [],
          [OptionalParameterNode(1065...1077)(
-            IDENTIFIER(1065...1066)("a"),
-            EQUAL(1067...1068)("="),
+            (1065...1066),
+            (1067...1068),
             ParenthesesNode(1069...1077)(
               StatementsNode(1070...1076)(
                 [RangeNode(1070...1076)(
@@ -1276,8 +1276,8 @@ ProgramNode(0...1194)(
        ParametersNode(1092...1103)(
          [],
          [OptionalParameterNode(1092...1103)(
-            IDENTIFIER(1092...1093)("a"),
-            EQUAL(1094...1095)("="),
+            (1092...1093),
+            (1094...1095),
             ParenthesesNode(1096...1103)(
               StatementsNode(1097...1102)(
                 [RangeNode(1097...1102)(
@@ -1311,8 +1311,8 @@ ProgramNode(0...1194)(
        ParametersNode(1118...1128)(
          [],
          [OptionalParameterNode(1118...1128)(
-            IDENTIFIER(1118...1119)("a"),
-            EQUAL(1120...1121)("="),
+            (1118...1119),
+            (1120...1121),
             ParenthesesNode(1122...1128)(
               StatementsNode(1123...1127)(
                 [RangeNode(1123...1127)(

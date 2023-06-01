@@ -439,8 +439,8 @@ ProgramNode(0...913)(
        ParametersNode(332...340)(
          [],
          [OptionalParameterNode(332...340)(
-            IDENTIFIER(332...335)("bar"),
-            EQUAL(336...337)("="),
+            (332...335),
+            (336...337),
             ParenthesesNode(338...340)(nil, (338...339), (339...340))
           )],
          [],
@@ -464,8 +464,8 @@ ProgramNode(0...913)(
        ParametersNode(361...377)(
          [],
          [OptionalParameterNode(361...377)(
-            IDENTIFIER(361...364)("bar"),
-            EQUAL(365...366)("="),
+            (361...364),
+            (365...366),
             ParenthesesNode(367...377)(
               StatementsNode(368...376)(
                 [CallNode(368...371)(
@@ -505,8 +505,8 @@ ProgramNode(0...913)(
        ParametersNode(392...402)(
          [],
          [OptionalParameterNode(392...402)(
-            IDENTIFIER(392...395)("bar"),
-            EQUAL(396...397)("="),
+            (392...395),
+            (396...397),
             TrueNode(398...402)()
           )],
          [],
@@ -530,8 +530,8 @@ ProgramNode(0...913)(
        ParametersNode(423...438)(
          [RequiredParameterNode(423...426)()],
          [OptionalParameterNode(428...438)(
-            IDENTIFIER(428...431)("baz"),
-            EQUAL(432...433)("="),
+            (428...431),
+            (432...433),
             TrueNode(434...438)()
           )],
          [],
@@ -725,8 +725,8 @@ ProgramNode(0...913)(
        ParametersNode(605...621)(
          [],
          [OptionalParameterNode(605...615)(
-            IDENTIFIER(605...608)("baz"),
-            EQUAL(609...610)("="),
+            (605...608),
+            (609...610),
             TrueNode(611...615)()
           )],
          [],
@@ -764,8 +764,8 @@ ProgramNode(0...913)(
        ParametersNode(642...666)(
          [],
          [OptionalParameterNode(642...652)(
-            IDENTIFIER(642...645)("baz"),
-            EQUAL(646...647)("="),
+            (642...645),
+            (646...647),
             TrueNode(648...652)()
           )],
          [],
@@ -805,8 +805,8 @@ ProgramNode(0...913)(
        ParametersNode(687...708)(
          [RequiredParameterNode(687...690)()],
          [OptionalParameterNode(692...702)(
-            IDENTIFIER(692...695)("baz"),
-            EQUAL(696...697)("="),
+            (692...695),
+            (696...697),
             TrueNode(698...702)()
           )],
          [],

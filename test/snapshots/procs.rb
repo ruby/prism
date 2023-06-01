@@ -103,8 +103,8 @@ ProgramNode(0...262)(
          ParametersNode(103...123)(
            [RequiredParameterNode(103...104)()],
            [OptionalParameterNode(106...111)(
-              IDENTIFIER(106...107)("b"),
-              EQUAL(108...109)("="),
+              (106...107),
+              (108...109),
               IntegerNode(110...111)()
             )],
            [],
@@ -133,8 +133,8 @@ ProgramNode(0...262)(
          ParametersNode(135...164)(
            [RequiredParameterNode(135...136)()],
            [OptionalParameterNode(138...143)(
-              IDENTIFIER(138...139)("b"),
-              EQUAL(140...141)("="),
+              (138...139),
+              (140...141),
               IntegerNode(142...143)()
             )],
            [],
@@ -166,8 +166,8 @@ ProgramNode(0...262)(
          ParametersNode(177...206)(
            [RequiredParameterNode(177...178)()],
            [OptionalParameterNode(180...185)(
-              IDENTIFIER(180...181)("b"),
-              EQUAL(182...183)("="),
+              (180...181),
+              (182...183),
               IntegerNode(184...185)()
             )],
            [],

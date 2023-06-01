@@ -74,8 +74,8 @@ ProgramNode(0...314)(
          ParametersNode(130...144)(
            [],
            [OptionalParameterNode(130...144)(
-              IDENTIFIER(130...131)("a"),
-              EQUAL(132...133)("="),
+              (130...131),
+              (132...133),
               CallNode(134...144)(
                 nil,
                 nil,

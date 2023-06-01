@@ -16,13 +16,13 @@ ProgramNode(0...35)(
            ParametersNode(5...22)(
              [RequiredParameterNode(5...6)()],
              [OptionalParameterNode(8...14)(
-                IDENTIFIER(8...9)("b"),
-                EQUAL(10...11)("="),
+                (8...9),
+                (10...11),
                 IntegerNode(12...14)()
               ),
               OptionalParameterNode(16...22)(
-                IDENTIFIER(16...17)("c"),
-                EQUAL(18...19)("="),
+                (16...17),
+                (18...19),
                 IntegerNode(20...22)()
               )],
              [],

@@ -2394,7 +2394,7 @@ yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, co
 
 // Allocate a new OptionalParameterNode node.
 static yp_optional_parameter_node_t *
-yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *equal_operator, yp_node_t *value) {
+yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator, yp_node_t *value) {
   yp_optional_parameter_node_t *node = yp_alloc(parser, sizeof(yp_optional_parameter_node_t));
 
   *node = (yp_optional_parameter_node_t) {
@@ -2405,8 +2405,8 @@ yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, c
         .end = value->location.end
       }
     },
-    .name = *name,
-    .equal_operator = *equal_operator,
+    .name_loc = YP_LOCATION_TOKEN_VALUE(name),
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
     .value = value
   };
 

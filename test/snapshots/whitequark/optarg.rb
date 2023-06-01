@@ -7,8 +7,8 @@ ProgramNode(0...44)(
        ParametersNode(6...13)(
          [],
          [OptionalParameterNode(6...13)(
-            IDENTIFIER(6...9)("foo"),
-            EQUAL(10...11)("="),
+            (6...9),
+            (10...11),
             IntegerNode(12...13)()
           )],
          [],
@@ -32,13 +32,13 @@ ProgramNode(0...44)(
        ParametersNode(26...38)(
          [],
          [OptionalParameterNode(26...31)(
-            IDENTIFIER(26...29)("foo"),
-            EQUAL(29...30)("="),
+            (26...29),
+            (29...30),
             IntegerNode(30...31)()
           ),
           OptionalParameterNode(33...38)(
-            IDENTIFIER(33...36)("bar"),
-            EQUAL(36...37)("="),
+            (33...36),
+            (36...37),
             IntegerNode(37...38)()
           )],
          [],

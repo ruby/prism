@@ -12,8 +12,8 @@ ProgramNode(0...21)(
          ParametersNode(3...20)(
            [RequiredParameterNode(3...4)()],
            [OptionalParameterNode(6...9)(
-              IDENTIFIER(6...7)("c"),
-              EQUAL(7...8)("="),
+              (6...7),
+              (7...8),
               IntegerNode(8...9)()
             )],
            [RequiredParameterNode(15...16)()],

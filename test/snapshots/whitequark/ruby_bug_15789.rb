@@ -14,8 +14,8 @@ ProgramNode(0...40)(
               ParametersNode(5...14)(
                 [],
                 [OptionalParameterNode(5...14)(
-                   IDENTIFIER(5...6)("a"),
-                   EQUAL(7...8)("="),
+                   (5...6),
+                   (7...8),
                    LambdaNode(9...14)(
                      [],
                      MINUS_GREATER(9...11)("->"),

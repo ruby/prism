@@ -7,8 +7,8 @@ ProgramNode(0...23)(
        ParametersNode(6...18)(
          [RequiredParameterNode(6...7)()],
          [OptionalParameterNode(9...15)(
-            IDENTIFIER(9...10)("b"),
-            EQUAL(11...12)("="),
+            (9...10),
+            (11...12),
             SymbolNode(13...15)(
               SYMBOL_BEGIN(13...14)(":"),
               IDENTIFIER(14...15)("c"),

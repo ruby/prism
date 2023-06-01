@@ -7,8 +7,8 @@ ProgramNode(0...21)(
        ParametersNode(6...17)(
          [],
          [OptionalParameterNode(6...17)(
-            IDENTIFIER(6...9)("arg"),
-            EQUAL(10...11)("="),
+            (6...9),
+            (10...11),
             FalseNode(12...17)()
           )],
          [],

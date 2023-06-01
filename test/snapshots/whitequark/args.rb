@@ -539,8 +539,8 @@ ProgramNode(0...690)(
        ParametersNode(459...469)(
          [RequiredParameterNode(459...460)()],
          [OptionalParameterNode(462...465)(
-            IDENTIFIER(462...463)("o"),
-            EQUAL(463...464)("="),
+            (462...463),
+            (463...464),
             IntegerNode(464...465)()
           )],
          [],
@@ -566,8 +566,8 @@ ProgramNode(0...690)(
        ParametersNode(482...496)(
          [RequiredParameterNode(482...483)()],
          [OptionalParameterNode(485...488)(
-            IDENTIFIER(485...486)("o"),
-            EQUAL(486...487)("="),
+            (485...486),
+            (486...487),
             IntegerNode(487...488)()
           )],
          [],
@@ -597,8 +597,8 @@ ProgramNode(0...690)(
        ParametersNode(509...526)(
          [RequiredParameterNode(509...510)()],
          [OptionalParameterNode(512...515)(
-            IDENTIFIER(512...513)("o"),
-            EQUAL(513...514)("="),
+            (512...513),
+            (513...514),
             IntegerNode(514...515)()
           )],
          [RequiredParameterNode(521...522)()],
@@ -629,8 +629,8 @@ ProgramNode(0...690)(
        ParametersNode(539...552)(
          [RequiredParameterNode(539...540)()],
          [OptionalParameterNode(542...545)(
-            IDENTIFIER(542...543)("o"),
-            EQUAL(543...544)("="),
+            (542...543),
+            (543...544),
             IntegerNode(544...545)()
           )],
          [RequiredParameterNode(547...548)()],
@@ -711,8 +711,8 @@ ProgramNode(0...690)(
        ParametersNode(604...611)(
          [],
          [OptionalParameterNode(604...607)(
-            IDENTIFIER(604...605)("o"),
-            EQUAL(605...606)("="),
+            (604...605),
+            (605...606),
             IntegerNode(606...607)()
           )],
          [],
@@ -736,8 +736,8 @@ ProgramNode(0...690)(
        ParametersNode(624...635)(
          [],
          [OptionalParameterNode(624...627)(
-            IDENTIFIER(624...625)("o"),
-            EQUAL(625...626)("="),
+            (624...625),
+            (625...626),
             IntegerNode(626...627)()
           )],
          [],
@@ -766,8 +766,8 @@ ProgramNode(0...690)(
        ParametersNode(648...662)(
          [],
          [OptionalParameterNode(648...651)(
-            IDENTIFIER(648...649)("o"),
-            EQUAL(649...650)("="),
+            (648...649),
+            (649...650),
             IntegerNode(650...651)()
           )],
          [RequiredParameterNode(657...658)()],
@@ -797,8 +797,8 @@ ProgramNode(0...690)(
        ParametersNode(675...685)(
          [],
          [OptionalParameterNode(675...678)(
-            IDENTIFIER(675...676)("o"),
-            EQUAL(676...677)("="),
+            (675...676),
+            (676...677),
             IntegerNode(677...678)()
           )],
          [RequiredParameterNode(680...681)()],

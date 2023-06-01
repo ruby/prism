@@ -821,16 +821,10 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode(
         [RequiredParameterNode()],
-        [OptionalParameterNode(
-           IDENTIFIER("b"),
-           EQUAL("="),
-           IntegerNode()
-         ),
-         OptionalParameterNode(
-           IDENTIFIER("d"),
-           EQUAL("="),
-           IntegerNode()
-         )],
+        [
+          OptionalParameterNode(Location(), Location(), IntegerNode()),
+          OptionalParameterNode(Location(), Location(), IntegerNode())
+        ],
         [RequiredParameterNode(),
          RequiredParameterNode()],
         nil,

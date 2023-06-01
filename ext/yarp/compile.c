@@ -820,7 +820,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
     case YP_NODE_OPTIONAL_PARAMETER_NODE: {
       yp_optional_parameter_node_t *node = (yp_optional_parameter_node_t *) base_node;
       int depth = 0;
-      int index = local_index(compiler, depth, node->name.start, node->name.end);
+      int index = local_index(compiler, depth, node->name_loc.start, node->name_loc.end);
       yp_compile_node(compiler, node->value);
       push_setlocal(compiler, INT2FIX(index), INT2FIX(depth));
       break;

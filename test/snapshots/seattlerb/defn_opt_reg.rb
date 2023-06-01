@@ -6,11 +6,7 @@ ProgramNode(0...19)(
        nil,
        ParametersNode(6...14)(
          [],
-         [OptionalParameterNode(6...11)(
-            IDENTIFIER(6...7)("a"),
-            EQUAL(7...8)("="),
-            NilNode(8...11)()
-          )],
+         [OptionalParameterNode(6...11)((6...7), (7...8), NilNode(8...11)())],
          [RequiredParameterNode(13...14)()],
          nil,
          [],

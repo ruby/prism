@@ -1247,10 +1247,10 @@ nodes:
           ^^^^^^^^^^^^^^^^
   - name: OptionalParameterNode
     child_nodes:
-      - name: name
-        type: token
-      - name: equal_operator
-        type: token
+      - name: name_loc
+        type: location
+      - name: operator_loc
+        type: location
       - name: value
         type: node
     comment: |

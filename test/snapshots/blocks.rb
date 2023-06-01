@@ -253,8 +253,8 @@ ProgramNode(0...402)(
            ParametersNode(155...163)(
              [],
              [OptionalParameterNode(155...163)(
-                IDENTIFIER(155...156)("a"),
-                EQUAL(157...158)("="),
+                (155...156),
+                (157...158),
                 CallNode(159...163)(
                   CallNode(159...160)(
                     nil,
@@ -433,8 +433,8 @@ ProgramNode(0...402)(
            ParametersNode(260...272)(
              [RequiredParameterNode(260...261)()],
              [OptionalParameterNode(263...268)(
-                IDENTIFIER(263...264)("y"),
-                EQUAL(265...266)("="),
+                (263...264),
+                (265...266),
                 IntegerNode(267...268)()
               )],
              [],
