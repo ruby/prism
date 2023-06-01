@@ -1523,16 +1523,16 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: class_keyword
-        type: token
-      - name: operator
-        type: token
+      - name: class_keyword_loc
+        type: location
+      - name: operator_loc
+        type: location
       - name: expression
         type: node
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 

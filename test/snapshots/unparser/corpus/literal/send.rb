@@ -214,11 +214,11 @@ ProgramNode(0...991)(
      CallNode(196...217)(
        SingletonClassNode(196...213)(
          [],
-         KEYWORD_CLASS(196...201)("class"),
-         LESS_LESS(202...204)("<<"),
+         (196...201),
+         (202...204),
          SelfNode(205...209)(),
          nil,
-         KEYWORD_END(210...213)("end")
+         (210...213)
        ),
        DOT(213...214)("."),
        IDENTIFIER(214...217)("bar"),

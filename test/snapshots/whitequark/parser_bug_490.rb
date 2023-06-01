@@ -8,8 +8,8 @@ ProgramNode(0...132)(
        StatementsNode(7...34)(
          [SingletonClassNode(7...34)(
             [],
-            KEYWORD_CLASS(7...12)("class"),
-            LESS_LESS(13...15)("<<"),
+            (7...12),
+            (13...15),
             SelfNode(16...20)(),
             StatementsNode(22...29)(
               [ConstantPathWriteNode(22...29)(
@@ -18,7 +18,7 @@ ProgramNode(0...132)(
                  NilNode(26...29)()
                )]
             ),
-            KEYWORD_END(31...34)("end")
+            (31...34)
           )]
        ),
        [],
@@ -36,8 +36,8 @@ ProgramNode(0...132)(
        StatementsNode(48...80)(
          [SingletonClassNode(48...80)(
             [],
-            KEYWORD_CLASS(48...53)("class"),
-            LESS_LESS(54...56)("<<"),
+            (48...53),
+            (54...56),
             SelfNode(57...61)(),
             StatementsNode(63...75)(
               [ClassNode(63...75)(
@@ -50,7 +50,7 @@ ProgramNode(0...132)(
                  (72...75)
                )]
             ),
-            KEYWORD_END(77...80)("end")
+            (77...80)
           )]
        ),
        [],
@@ -68,8 +68,8 @@ ProgramNode(0...132)(
        StatementsNode(94...127)(
          [SingletonClassNode(94...127)(
             [],
-            KEYWORD_CLASS(94...99)("class"),
-            LESS_LESS(100...102)("<<"),
+            (94...99),
+            (100...102),
             SelfNode(103...107)(),
             StatementsNode(109...122)(
               [ModuleNode(109...122)(
@@ -80,7 +80,7 @@ ProgramNode(0...132)(
                  (119...122)
                )]
             ),
-            KEYWORD_END(124...127)("end")
+            (124...127)
           )]
        ),
        [],

@@ -2892,11 +2892,11 @@ yp_singleton_class_node_create(yp_parser_t *parser, yp_token_list_t *locals, con
       }
     },
     .locals = *locals,
-    .class_keyword = *class_keyword,
-    .operator = *operator,
+    .class_keyword_loc = YP_LOCATION_TOKEN_VALUE(class_keyword),
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
     .expression = expression,
     .statements = statements,
-    .end_keyword = *end_keyword
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;

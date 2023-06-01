@@ -5,8 +5,8 @@ ProgramNode(0...197)(
        KEYWORD_WHILE(0...5)("while"),
        SingletonClassNode(6...40)(
          [IDENTIFIER(21...22)("a")],
-         KEYWORD_CLASS(6...11)("class"),
-         LESS_LESS(12...14)("<<"),
+         (6...11),
+         (12...14),
          SelfNode(15...19)(),
          StatementsNode(21...35)(
            [LocalVariableWriteNode(21...35)(
@@ -25,7 +25,7 @@ ProgramNode(0...197)(
               0
             )]
          ),
-         KEYWORD_END(37...40)("end")
+         (37...40)
        ),
        StatementsNode(42...47)([BreakNode(42...47)(nil, (42...47))])
      ),
@@ -33,8 +33,8 @@ ProgramNode(0...197)(
        KEYWORD_WHILE(54...59)("while"),
        SingletonClassNode(60...90)(
          [],
-         KEYWORD_CLASS(60...65)("class"),
-         LESS_LESS(66...68)("<<"),
+         (60...65),
+         (66...68),
          SelfNode(69...73)(),
          StatementsNode(75...85)(
            [CallNode(75...85)(
@@ -48,7 +48,7 @@ ProgramNode(0...197)(
               "tap"
             )]
          ),
-         KEYWORD_END(87...90)("end")
+         (87...90)
        ),
        StatementsNode(92...97)([BreakNode(92...97)(nil, (92...97))])
      ),

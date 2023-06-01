@@ -13,8 +13,8 @@ ProgramNode(0...83)(
      ),
      SingletonClassNode(4...25)(
        [],
-       KEYWORD_CLASS(4...9)("class"),
-       LESS_LESS(10...12)("<<"),
+       (4...9),
+       (10...12),
        CallNode(13...16)(
          nil,
          nil,
@@ -37,7 +37,7 @@ ProgramNode(0...83)(
             "_1"
           )]
        ),
-       KEYWORD_END(22...25)("end")
+       (22...25)
      ),
      ClassNode(27...43)(
        [],

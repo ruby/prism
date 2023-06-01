@@ -74,8 +74,8 @@ ProgramNode(0...370)(
      ),
      SingletonClassNode(100...120)(
        [],
-       KEYWORD_CLASS(100...105)("class"),
-       LESS_LESS(106...108)("<<"),
+       (100...105),
+       (106...108),
        CallNode(109...116)(
          CallNode(113...116)(
            nil,
@@ -96,7 +96,7 @@ ProgramNode(0...370)(
          "!"
        ),
        nil,
-       KEYWORD_END(117...120)("end")
+       (117...120)
      ),
      ClassNode(122...162)(
        [],
@@ -107,8 +107,8 @@ ProgramNode(0...370)(
        StatementsNode(131...157)(
          [SingletonClassNode(131...157)(
             [],
-            KEYWORD_CLASS(131...136)("class"),
-            LESS_LESS(137...139)("<<"),
+            (131...136),
+            (137...139),
             SelfNode(140...144)(),
             BeginNode(0...157)(
               nil,
@@ -118,7 +118,7 @@ ProgramNode(0...370)(
               EnsureNode(146...157)((146...152), nil, (154...157)),
               (154...157)
             ),
-            KEYWORD_END(154...157)("end")
+            (154...157)
           )]
        ),
        (159...162)
@@ -132,8 +132,8 @@ ProgramNode(0...370)(
        StatementsNode(173...213)(
          [SingletonClassNode(173...213)(
             [],
-            KEYWORD_CLASS(173...178)("class"),
-            LESS_LESS(179...181)("<<"),
+            (173...178),
+            (179...181),
             SelfNode(182...186)(),
             BeginNode(0...213)(
               nil,
@@ -150,15 +150,15 @@ ProgramNode(0...370)(
               EnsureNode(202...213)((202...208), nil, (210...213)),
               (210...213)
             ),
-            KEYWORD_END(210...213)("end")
+            (210...213)
           )]
        ),
        (215...218)
      ),
      SingletonClassNode(220...240)(
        [],
-       KEYWORD_CLASS(220...225)("class"),
-       LESS_LESS(226...228)("<<"),
+       (220...225),
+       (226...228),
        CallNode(229...236)(
          CallNode(229...232)(
            nil,
@@ -179,12 +179,12 @@ ProgramNode(0...370)(
          "bar"
        ),
        nil,
-       KEYWORD_END(237...240)("end")
+       (237...240)
      ),
      SingletonClassNode(242...262)(
        [],
-       KEYWORD_CLASS(242...247)("class"),
-       LESS_LESS(248...250)("<<"),
+       (242...247),
+       (248...250),
        CallNode(251...258)(
          CallNode(251...254)(
            nil,
@@ -205,28 +205,28 @@ ProgramNode(0...370)(
          "bar"
        ),
        nil,
-       KEYWORD_END(259...262)("end")
+       (259...262)
      ),
      SingletonClassNode(264...281)(
        [],
-       KEYWORD_CLASS(264...269)("class"),
-       LESS_LESS(270...272)("<<"),
+       (264...269),
+       (270...272),
        SelfNode(273...277)(),
        nil,
-       KEYWORD_END(278...281)("end")
+       (278...281)
      ),
      SingletonClassNode(283...300)(
        [],
-       KEYWORD_CLASS(283...288)("class"),
-       LESS_LESS(289...291)("<<"),
+       (283...288),
+       (289...291),
        SelfNode(292...296)(),
        nil,
-       KEYWORD_END(297...300)("end")
+       (297...300)
      ),
      SingletonClassNode(302...325)(
        [],
-       KEYWORD_CLASS(302...307)("class"),
-       LESS_LESS(308...310)("<<"),
+       (302...307),
+       (308...310),
        SelfNode(311...315)(),
        StatementsNode(316...321)(
          [CallNode(316...321)(
@@ -240,12 +240,12 @@ ProgramNode(0...370)(
             "+"
           )]
        ),
-       KEYWORD_END(322...325)("end")
+       (322...325)
      ),
      SingletonClassNode(327...350)(
        [],
-       KEYWORD_CLASS(327...332)("class"),
-       LESS_LESS(333...335)("<<"),
+       (327...332),
+       (333...335),
        SelfNode(336...340)(),
        StatementsNode(341...346)(
          [CallNode(341...346)(
@@ -259,7 +259,7 @@ ProgramNode(0...370)(
             "+"
           )]
        ),
-       KEYWORD_END(347...350)("end")
+       (347...350)
      ),
      ClassNode(352...370)(
        [],

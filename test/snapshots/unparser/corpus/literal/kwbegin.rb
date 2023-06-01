@@ -399,8 +399,8 @@ ProgramNode(0...530)(
      ),
      SingletonClassNode(489...530)(
        [],
-       KEYWORD_CLASS(489...494)("class"),
-       LESS_LESS(495...497)("<<"),
+       (489...494),
+       (495...497),
        SelfNode(498...502)(),
        StatementsNode(505...526)(
          [RescueModifierNode(505...526)(
@@ -417,7 +417,7 @@ ProgramNode(0...530)(
             NilNode(523...526)()
           )]
        ),
-       KEYWORD_END(527...530)("end")
+       (527...530)
      )]
   )
 )
