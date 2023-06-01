@@ -2111,7 +2111,7 @@ yp_lambda_node_create(
       },
     },
     .locals = *locals,
-    .opening = *opening,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
     .parameters = parameters,
     .statements = statements
   };

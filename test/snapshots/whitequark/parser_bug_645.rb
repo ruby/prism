@@ -3,7 +3,7 @@ ProgramNode(0...11)(
   StatementsNode(0...11)(
     [LambdaNode(0...11)(
        [IDENTIFIER(4...7)("arg")],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        BlockParametersNode(3...11)(
          ParametersNode(4...10)(
            [],

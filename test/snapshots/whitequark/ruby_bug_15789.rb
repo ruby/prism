@@ -9,7 +9,7 @@ ProgramNode(0...40)(
        ArgumentsNode(2...19)(
          [LambdaNode(2...19)(
             [IDENTIFIER(5...6)("a")],
-            MINUS_GREATER(2...4)("->"),
+            (2...4),
             BlockParametersNode(4...16)(
               ParametersNode(5...14)(
                 [],
@@ -18,7 +18,7 @@ ProgramNode(0...40)(
                    (7...8),
                    LambdaNode(9...14)(
                      [],
-                     MINUS_GREATER(9...11)("->"),
+                     (9...11),
                      nil,
                      StatementsNode(12...14)(
                        [CallNode(12...14)(
@@ -59,7 +59,7 @@ ProgramNode(0...40)(
        ArgumentsNode(24...40)(
          [LambdaNode(24...40)(
             [LABEL(27...28)("a")],
-            MINUS_GREATER(24...26)("->"),
+            (24...26),
             BlockParametersNode(26...37)(
               ParametersNode(27...35)(
                 [],
@@ -70,7 +70,7 @@ ProgramNode(0...40)(
                    (27...29),
                    LambdaNode(30...35)(
                      [],
-                     MINUS_GREATER(30...32)("->"),
+                     (30...32),
                      nil,
                      StatementsNode(33...35)(
                        [CallNode(33...35)(

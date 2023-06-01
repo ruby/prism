@@ -549,7 +549,7 @@ class ErrorsTest < Test::Unit::TestCase
   def test_do_not_allow_trailing_commas_in_lambda_parameters
     expected = LambdaNode(
       [IDENTIFIER("a"), IDENTIFIER("b")],
-      MINUS_GREATER("->"),
+      Location(),
       BlockParametersNode(
         ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
         [],
@@ -869,7 +869,7 @@ class ErrorsTest < Test::Unit::TestCase
   def test_do_not_allow_forward_arguments_in_lambda_literals
     expected = LambdaNode(
       [UDOT_DOT_DOT("...")],
-      MINUS_GREATER("->"),
+      Location(),
       BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
       nil
     )

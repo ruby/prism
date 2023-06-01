@@ -6,9 +6,7 @@ ProgramNode(0...43)(
        nil,
        IDENTIFIER(0...1)("f"),
        nil,
-       ArgumentsNode(2...4)(
-         [LambdaNode(2...4)([], MINUS_GREATER(2...4)("->"), nil, nil)]
-       ),
+       ArgumentsNode(2...4)([LambdaNode(2...4)([], (2...4), nil, nil)]),
        nil,
        nil,
        "f"
@@ -18,9 +16,7 @@ ProgramNode(0...43)(
        nil,
        IDENTIFIER(13...14)("f"),
        nil,
-       ArgumentsNode(15...17)(
-         [LambdaNode(15...17)([], MINUS_GREATER(15...17)("->"), nil, nil)]
-       ),
+       ArgumentsNode(15...17)([LambdaNode(15...17)([], (15...17), nil, nil)]),
        nil,
        nil,
        "f"
@@ -33,7 +29,7 @@ ProgramNode(0...43)(
        ArgumentsNode(24...28)(
          [LambdaNode(24...28)(
             [],
-            MINUS_GREATER(24...26)("->"),
+            (24...26),
             BlockParametersNode(26...28)(nil, [], (26...27), (27...28)),
             nil
           )]
@@ -50,7 +46,7 @@ ProgramNode(0...43)(
        ArgumentsNode(39...43)(
          [LambdaNode(39...43)(
             [],
-            MINUS_GREATER(39...41)("->"),
+            (39...41),
             BlockParametersNode(41...43)(nil, [], (41...42), (42...43)),
             nil
           )]

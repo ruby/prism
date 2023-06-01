@@ -10,7 +10,7 @@ ProgramNode(0...18)(
          [ArrayNode(2...11)(
             [LambdaNode(3...7)(
                [],
-               MINUS_GREATER(3...5)("->"),
+               (3...5),
                BlockParametersNode(5...7)(nil, [], (5...6), (6...7)),
                nil
              )],

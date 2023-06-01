@@ -3,7 +3,7 @@ ProgramNode(0...17)(
   StatementsNode(0...17)(
     [LambdaNode(0...17)(
        [],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        nil,
        BeginNode(0...17)(
          nil,

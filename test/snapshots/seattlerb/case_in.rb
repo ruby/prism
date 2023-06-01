@@ -432,7 +432,7 @@ ProgramNode(0...747)(
             nil,
             [LambdaNode(446...458)(
                [IDENTIFIER(449...450)("b")],
-               MINUS_GREATER(446...448)("->"),
+               (446...448),
                BlockParametersNode(448...451)(
                  ParametersNode(449...450)(
                    [RequiredParameterNode(449...450)()],

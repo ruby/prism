@@ -8,7 +8,7 @@ ProgramNode(0...14)(
           StatementsNode(3...9)(
             [LambdaNode(3...9)(
                [IDENTIFIER(6...9)("foo")],
-               MINUS_GREATER(3...5)("->"),
+               (3...5),
                BlockParametersNode(6...9)(
                  ParametersNode(6...9)(
                    [RequiredParameterNode(6...9)()],

@@ -3,7 +3,7 @@ ProgramNode(0...9)(
   StatementsNode(0...9)(
     [LambdaNode(0...9)(
        [LABEL(4...5)("k")],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        BlockParametersNode(3...9)(
          ParametersNode(4...8)(
            [],

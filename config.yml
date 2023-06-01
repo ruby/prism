@@ -1074,8 +1074,8 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: parameters
         type: node?
         kind: BlockParametersNode

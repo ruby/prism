@@ -5,7 +5,7 @@ ProgramNode(0...12)(
        (0...1),
        LambdaNode(4...12)(
          [IDENTIFIER(8...12)("args")],
-         MINUS_GREATER(4...6)("->"),
+         (4...6),
          BlockParametersNode(7...12)(
            ParametersNode(7...12)(
              [],
