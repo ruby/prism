@@ -33,19 +33,7 @@ end
 
 task default: :test
 
-TEMPLATES = [
-  "ext/yarp/node.c",
-  "include/yarp/ast.h",
-  "java/org/yarp/Loader.java",
-  "java/org/yarp/Nodes.java",
-  "java/org/yarp/AbstractNodeVisitor.java",
-  "lib/yarp/node.rb",
-  "lib/yarp/serialize.rb",
-  "src/node.c",
-  "src/prettyprint.c",
-  "src/serialize.c",
-  "src/token_type.c"
-]
+require_relative "bin/template"
 
 desc "Generate all ERB template based files"
 task templates: TEMPLATES
@@ -76,7 +64,6 @@ CLOBBER << "lib/yarp.#{dylib_extension}"
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"
   file filepath => ["bin/templates/#{filepath}.erb", "bin/template.rb", "config.yml"] do |t|
-    require_relative "bin/template"
     template(t.name, locals)
   end
 end

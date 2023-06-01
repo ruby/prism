@@ -210,3 +210,21 @@ def locals
     tokens: config.fetch("tokens").map { |token| Token.new(token) }
   }
 end
+
+TEMPLATES = [
+  "ext/yarp/node.c",
+  "include/yarp/ast.h",
+  "java/org/yarp/Loader.java",
+  "java/org/yarp/Nodes.java",
+  "java/org/yarp/AbstractNodeVisitor.java",
+  "lib/yarp/node.rb",
+  "lib/yarp/serialize.rb",
+  "src/node.c",
+  "src/prettyprint.c",
+  "src/serialize.c",
+  "src/token_type.c"
+]
+
+if __FILE__ == $0
+  TEMPLATES.each { |f| template f, locals }
+end
