@@ -29,7 +29,7 @@ ProgramNode(0...293)(
      ),
      GlobalVariableWriteNode(50...58)(
        GLOBAL_VARIABLE(50...54)("$abc"),
-       EQUAL(55...56)("="),
+       (55...56),
        IntegerNode(57...58)()
      ),
      GlobalVariableReadNode(60...64)(GLOBAL_VARIABLE(60...64)("$abc")),
@@ -73,7 +73,7 @@ ProgramNode(0...293)(
      ),
      GlobalVariableWriteNode(110...121)(
        GLOBAL_VARIABLE(110...114)("$foo"),
-       EQUAL(115...116)("="),
+       (115...116),
        ArrayNode(0...121)(
          [IntegerNode(117...118)(), IntegerNode(120...121)()],
          nil,

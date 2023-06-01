@@ -927,8 +927,10 @@ class ErrorsTest < Test::Unit::TestCase
   def test_dont_allow_setting_to_back_and_nth_reference
     expected = BeginNode(
       Location(),
-      StatementsNode([GlobalVariableWriteNode(BACK_REFERENCE("$+"), EQUAL("="), NilNode()),
-       GlobalVariableWriteNode(NTH_REFERENCE("$1466"), EQUAL("="), NilNode())]),
+      StatementsNode([
+        GlobalVariableWriteNode(BACK_REFERENCE("$+"), Location(), NilNode()),
+        GlobalVariableWriteNode(NTH_REFERENCE("$1466"), Location(), NilNode())
+      ]),
       nil,
       nil,
       nil,

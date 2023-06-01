@@ -1580,7 +1580,7 @@ yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name
       },
     },
     .name = *name,
-    .operator = *operator,
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
     .value = value
   };
 

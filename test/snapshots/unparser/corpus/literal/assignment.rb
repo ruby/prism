@@ -7,7 +7,7 @@ ProgramNode(0...719)(
   StatementsNode(0...719)(
     [GlobalVariableWriteNode(0...6)(
        GLOBAL_VARIABLE(0...2)("$a"),
-       EQUAL(3...4)("="),
+       (3...4),
        IntegerNode(5...6)()
      ),
      MultiWriteNode(8...24)(

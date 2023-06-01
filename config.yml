@@ -866,8 +866,8 @@ nodes:
     child_nodes:
       - name: name
         type: token
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: value
         type: node?
     comment: |
