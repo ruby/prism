@@ -7,17 +7,17 @@ ProgramNode(0...78)(
        (11...14)
      ),
      DefinedNode(27...43)(
-       PARENTHESIS_LEFT(35...36)("("),
+       (35...36),
        OperatorAssignmentNode(36...42)(
          LocalVariableWriteNode(36...37)((36...37), nil, nil, 0),
          PERCENT_EQUAL(38...40)("%="),
          IntegerNode(41...42)()
        ),
-       PARENTHESIS_RIGHT(42...43)(")"),
+       (42...43),
        (27...35)
      ),
      DefinedNode(45...66)(
-       PARENTHESIS_LEFT(53...54)("("),
+       (53...54),
        AndNode(54...65)(
          CallNode(54...57)(
            nil,
@@ -41,7 +41,7 @@ ProgramNode(0...78)(
          ),
          (58...61)
        ),
-       PARENTHESIS_RIGHT(65...66)(")"),
+       (65...66),
        (45...53)
      ),
      DefinedNode(68...78)(nil, IntegerNode(77...78)(), nil, (68...76))]

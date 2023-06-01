@@ -1321,9 +1321,9 @@ yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t 
         .end = (rparen->type == YP_TOKEN_NOT_PROVIDED ? value->location.end : rparen->end)
       },
     },
-    .lparen = *lparen,
+    .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(lparen),
     .value = value,
-    .rparen = *rparen,
+    .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(rparen),
     .keyword_loc = *keyword_loc
   };
 

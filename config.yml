@@ -724,12 +724,12 @@ nodes:
           ^^^^^^^^^^
   - name: DefinedNode
     child_nodes:
-      - name: lparen
-        type: token?
+      - name: lparen_loc
+        type: location?
       - name: value
         type: node
-      - name: rparen
-        type: token?
+      - name: rparen_loc
+        type: location?
       - name: keyword_loc
         type: location
     comment: |

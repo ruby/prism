@@ -23,7 +23,7 @@ ProgramNode(0...42)(
        (15...23)
      ),
      DefinedNode(29...42)(
-       PARENTHESIS_LEFT(37...38)("("),
+       (37...38),
        CallNode(38...41)(
          nil,
          nil,
@@ -34,7 +34,7 @@ ProgramNode(0...42)(
          nil,
          "foo"
        ),
-       PARENTHESIS_RIGHT(41...42)(")"),
+       (41...42),
        (29...37)
      )]
   )
