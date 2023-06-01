@@ -21,7 +21,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(17...23)("rescue"),
+              (17...23),
               NilNode(24...27)()
             )]
          ),
@@ -55,7 +55,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(47...53)("rescue"),
+         (47...53),
          NilNode(54...57)()
        )
      ),
@@ -78,7 +78,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(75...81)("rescue"),
+              (75...81),
               NilNode(82...85)()
             )]
          ),
@@ -113,7 +113,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(104...110)("rescue"),
+         (104...110),
          NilNode(111...114)()
        ),
        (91...92),
@@ -148,7 +148,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(135...141)("rescue"),
+              (135...141),
               NilNode(142...145)()
             )]
          ),
@@ -191,7 +191,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(167...173)("rescue"),
+         (167...173),
          NilNode(174...177)()
        )
      ),
@@ -224,7 +224,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(198...204)("rescue"),
+              (198...204),
               NilNode(205...208)()
             )]
          ),
@@ -267,7 +267,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(230...236)("rescue"),
+         (230...236),
          NilNode(237...240)()
        )
      ),
@@ -298,7 +298,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(263...269)("rescue"),
+              (263...269),
               NilNode(270...273)()
             )]
          ),
@@ -340,7 +340,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(297...303)("rescue"),
+         (297...303),
          NilNode(304...307)()
        ),
        (282...285)
@@ -374,7 +374,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(329...335)("rescue"),
+              (329...335),
               NilNode(336...339)()
             )]
          ),
@@ -417,7 +417,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(362...368)("rescue"),
+         (362...368),
          NilNode(369...372)()
        )
      ),
@@ -450,7 +450,7 @@ ProgramNode(0...437)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(394...400)("rescue"),
+              (394...400),
               NilNode(401...404)()
             )]
          ),
@@ -493,7 +493,7 @@ ProgramNode(0...437)(
            nil,
            "raise"
          ),
-         KEYWORD_RESCUE_MODIFIER(427...433)("rescue"),
+         (427...433),
          NilNode(434...437)()
        )
      )]

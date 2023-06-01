@@ -98,7 +98,7 @@ ProgramNode(0...913)(
                 nil,
                 "a"
               ),
-              KEYWORD_RESCUE_MODIFIER(60...66)("rescue"),
+              (60...66),
               CallNode(67...68)(
                 nil,
                 nil,

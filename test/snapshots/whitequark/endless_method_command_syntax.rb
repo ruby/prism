@@ -242,7 +242,7 @@ ProgramNode(0...278)(
                    STRING_END(190...191)("\""),
                    "to be caught"
                  ),
-                 KEYWORD_RESCUE_MODIFIER(192...198)("rescue"),
+                 (192...198),
                  InterpolatedStringNode(199...214)(
                    (199...200),
                    [StringNode(200...209)(
@@ -301,7 +301,7 @@ ProgramNode(0...278)(
                    STRING_END(257...258)("\""),
                    "to be caught"
                  ),
-                 KEYWORD_RESCUE_MODIFIER(259...265)("rescue"),
+                 (259...265),
                  InterpolatedStringNode(266...278)(
                    (266...267),
                    [StringNode(267...273)(

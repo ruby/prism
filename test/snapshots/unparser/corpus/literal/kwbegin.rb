@@ -307,7 +307,7 @@ ProgramNode(0...530)(
               nil,
               "raise"
             ),
-            KEYWORD_RESCUE_MODIFIER(300...306)("rescue"),
+            (300...306),
             LocalVariableWriteNode(307...316)(
               (307...310),
               CallNode(313...316)(
@@ -413,7 +413,7 @@ ProgramNode(0...530)(
                )],
               (505...510)
             ),
-            KEYWORD_RESCUE_MODIFIER(516...522)("rescue"),
+            (516...522),
             NilNode(523...526)()
           )]
        ),

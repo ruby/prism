@@ -14,7 +14,7 @@ ProgramNode(0...17)(
            nil,
            "b"
          ),
-         KEYWORD_RESCUE_MODIFIER(9...15)("rescue"),
+         (9...15),
          IntegerNode(16...17)()
        ),
        (2...3),

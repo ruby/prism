@@ -67,7 +67,7 @@ ProgramNode(0...55)(
               nil,
               "a"
             ),
-            KEYWORD_RESCUE_MODIFIER(35...41)("rescue"),
+            (35...41),
             ConstantReadNode(42...51)()
           )]
        ),

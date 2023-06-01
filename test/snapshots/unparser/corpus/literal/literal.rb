@@ -806,7 +806,7 @@ ProgramNode(0...916)(
             StatementsNode(781...793)(
               [RescueModifierNode(781...793)(
                  IntegerNode(781...782)(),
-                 KEYWORD_RESCUE_MODIFIER(783...789)("rescue"),
+                 (783...789),
                  CallNode(790...793)(
                    nil,
                    nil,

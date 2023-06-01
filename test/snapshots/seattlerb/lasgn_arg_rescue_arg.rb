@@ -5,7 +5,7 @@ ProgramNode(0...14)(
        (0...1),
        RescueModifierNode(4...14)(
          IntegerNode(4...5)(),
-         KEYWORD_RESCUE_MODIFIER(6...12)("rescue"),
+         (6...12),
          IntegerNode(13...14)()
        ),
        (2...3),

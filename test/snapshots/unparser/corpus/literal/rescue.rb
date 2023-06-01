@@ -12,7 +12,7 @@ ProgramNode(0...64)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(4...10)("rescue"),
+       (4...10),
        CallNode(11...14)(
          nil,
          nil,
@@ -35,7 +35,7 @@ ProgramNode(0...64)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(19...25)("rescue"),
+       (19...25),
        ReturnNode(26...36)(
          KEYWORD_RETURN(26...32)("return"),
          ArgumentsNode(33...36)(
@@ -67,7 +67,7 @@ ProgramNode(0...64)(
                 nil,
                 "foo"
               ),
-              KEYWORD_RESCUE_MODIFIER(46...52)("rescue"),
+              (46...52),
               ReturnNode(53...63)(
                 KEYWORD_RETURN(53...59)("return"),
                 ArgumentsNode(60...63)(

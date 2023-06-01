@@ -54,7 +54,7 @@ ProgramNode(0...148)(
          StatementsNode(40...60)(
            [RescueModifierNode(40...54)(
               NilNode(40...43)(),
-              KEYWORD_RESCUE_MODIFIER(44...50)("rescue"),
+              (44...50),
               NilNode(51...54)()
             ),
             NilNode(57...60)()]

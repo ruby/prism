@@ -71,7 +71,7 @@ ProgramNode(0...130)(
               nil,
               "system"
             ),
-            KEYWORD_RESCUE_MODIFIER(75...81)("rescue"),
+            (75...81),
             NilNode(82...85)()
           )]
        ),
@@ -107,7 +107,7 @@ ProgramNode(0...130)(
               nil,
               "system"
             ),
-            KEYWORD_RESCUE_MODIFIER(120...126)("rescue"),
+            (120...126),
             NilNode(127...130)()
           )]
        ),

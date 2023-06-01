@@ -107,7 +107,7 @@ ProgramNode(0...299)(
           )],
          (137...145)
        ),
-       KEYWORD_RESCUE_MODIFIER(120...126)("rescue"),
+       (120...126),
        NilNode(127...130)()
      ),
      InterpolatedStringNode(145...151)(

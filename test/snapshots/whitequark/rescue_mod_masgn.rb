@@ -16,7 +16,7 @@ ProgramNode(0...29)(
            nil,
            "meth"
          ),
-         KEYWORD_RESCUE_MODIFIER(16...22)("rescue"),
+         (16...22),
          ArrayNode(23...29)(
            [IntegerNode(24...25)(), IntegerNode(27...28)()],
            (23...24),

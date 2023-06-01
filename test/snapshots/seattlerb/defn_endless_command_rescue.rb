@@ -14,7 +14,7 @@ ProgramNode(0...43)(
             ArgumentsNode(31...43)(
               [RescueModifierNode(31...43)(
                  IntegerNode(31...33)(),
-                 KEYWORD_RESCUE_MODIFIER(34...40)("rescue"),
+                 (34...40),
                  IntegerNode(41...43)()
                )]
             ),

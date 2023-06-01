@@ -12,7 +12,7 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(4...10)("rescue"),
+       (4...10),
        NilNode(11...14)()
      ),
      RescueModifierNode(16...30)(
@@ -26,22 +26,22 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(20...26)("rescue"),
+       (20...26),
        NilNode(27...30)()
      ),
      RescueModifierNode(32...48)(
        BreakNode(32...37)(nil, (32...37)),
-       KEYWORD_RESCUE_MODIFIER(38...44)("rescue"),
+       (38...44),
        NilNode(45...48)()
      ),
      RescueModifierNode(50...65)(
        NextNode(50...54)(nil, (50...54)),
-       KEYWORD_RESCUE_MODIFIER(55...61)("rescue"),
+       (55...61),
        NilNode(62...65)()
      ),
      RescueModifierNode(67...84)(
        ReturnNode(67...73)(KEYWORD_RETURN(67...73)("return"), nil),
-       KEYWORD_RESCUE_MODIFIER(74...80)("rescue"),
+       (74...80),
        NilNode(81...84)()
      ),
      RescueModifierNode(86...105)(
@@ -55,7 +55,7 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(90...96)("rescue"),
+       (90...96),
        OrNode(97...105)(
          NilNode(97...100)(),
          IntegerNode(104...105)(),
@@ -73,7 +73,7 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(111...117)("rescue"),
+       (111...117),
        IfNode(122...129)(
          (122...123),
          NilNode(118...121)(),
@@ -170,7 +170,7 @@ ProgramNode(0...316)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(177...183)("rescue"),
+              (177...183),
               CallNode(184...208)(
                 nil,
                 nil,
@@ -221,7 +221,7 @@ ProgramNode(0...316)(
              nil,
              "foo"
            ),
-           KEYWORD_RESCUE_MODIFIER(225...231)("rescue"),
+           (225...231),
            NilNode(232...235)()
          ),
          (219...220),
@@ -255,7 +255,7 @@ ProgramNode(0...316)(
             ArgumentsNode(278...291)(
               [RescueModifierNode(278...291)(
                  IntegerNode(278...280)(),
-                 KEYWORD_RESCUE_MODIFIER(281...287)("rescue"),
+                 (281...287),
                  NilNode(288...291)()
                )]
             ),

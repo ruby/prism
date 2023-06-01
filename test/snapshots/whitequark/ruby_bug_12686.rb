@@ -20,7 +20,7 @@ ProgramNode(0...16)(
                    nil,
                    "g"
                  ),
-                 KEYWORD_RESCUE_MODIFIER(5...11)("rescue"),
+                 (5...11),
                  NilNode(12...15)()
                )]
             ),

@@ -2745,7 +2745,7 @@ yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) 
 
 // Allocate a new RescueModifierNode node.
 static yp_rescue_modifier_node_t *
-yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *rescue_keyword, yp_node_t *rescue_expression) {
+yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *keyword, yp_node_t *rescue_expression) {
   yp_rescue_modifier_node_t *node = yp_alloc(parser, sizeof(yp_rescue_modifier_node_t));
 
   *node = (yp_rescue_modifier_node_t) {
@@ -2757,7 +2757,7 @@ yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const
       }
     },
     .expression = expression,
-    .rescue_keyword = *rescue_keyword,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
     .rescue_expression = rescue_expression
   };
 

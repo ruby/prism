@@ -21,7 +21,7 @@ ProgramNode(0...86)(
        StatementsNode(24...37)(
          [RescueModifierNode(24...37)(
             IntegerNode(24...26)(),
-            KEYWORD_RESCUE_MODIFIER(27...33)("rescue"),
+            (27...33),
             NilNode(34...37)()
           )]
        ),
@@ -53,7 +53,7 @@ ProgramNode(0...86)(
        StatementsNode(73...86)(
          [RescueModifierNode(73...86)(
             IntegerNode(73...75)(),
-            KEYWORD_RESCUE_MODIFIER(76...82)("rescue"),
+            (76...82),
             NilNode(83...86)()
           )]
        ),

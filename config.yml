@@ -1450,8 +1450,8 @@ nodes:
     child_nodes:
       - name: expression
         type: node
-      - name: rescue_keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: rescue_expression
         type: node
     comment: |
