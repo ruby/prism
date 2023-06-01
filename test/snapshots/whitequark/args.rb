@@ -56,7 +56,7 @@ ProgramNode(0...690)(
        nil,
        ParametersNode(42...45)(
          [RequiredDestructuredParameterNode(42...45)(
-            [SplatNode(43...44)(USTAR(43...44)("*"), nil)],
+            [SplatNode(43...44)((43...44), nil)],
             (42...43),
             (44...45)
           )],
@@ -81,7 +81,7 @@ ProgramNode(0...690)(
        nil,
        ParametersNode(60...66)(
          [RequiredDestructuredParameterNode(60...66)(
-            [SplatNode(61...62)(USTAR(61...62)("*"), nil),
+            [SplatNode(61...62)((61...62), nil),
              RequiredParameterNode(64...65)()],
             (60...61),
             (65...66)
@@ -107,10 +107,7 @@ ProgramNode(0...690)(
        nil,
        ParametersNode(81...85)(
          [RequiredDestructuredParameterNode(81...85)(
-            [SplatNode(82...84)(
-               USTAR(82...83)("*"),
-               RequiredParameterNode(83...84)()
-             )],
+            [SplatNode(82...84)((82...83), RequiredParameterNode(83...84)())],
             (81...82),
             (84...85)
           )],
@@ -136,7 +133,7 @@ ProgramNode(0...690)(
        ParametersNode(100...107)(
          [RequiredDestructuredParameterNode(100...107)(
             [SplatNode(101...103)(
-               USTAR(101...102)("*"),
+               (101...102),
                RequiredParameterNode(102...103)()
              ),
              RequiredParameterNode(105...106)()],
@@ -165,7 +162,7 @@ ProgramNode(0...690)(
        ParametersNode(122...128)(
          [RequiredDestructuredParameterNode(122...128)(
             [RequiredParameterNode(123...124)(),
-             SplatNode(126...127)(USTAR(126...127)("*"), nil)],
+             SplatNode(126...127)((126...127), nil)],
             (122...123),
             (127...128)
           )],
@@ -191,7 +188,7 @@ ProgramNode(0...690)(
        ParametersNode(143...152)(
          [RequiredDestructuredParameterNode(143...152)(
             [RequiredParameterNode(144...145)(),
-             SplatNode(147...148)(USTAR(147...148)("*"), nil),
+             SplatNode(147...148)((147...148), nil),
              RequiredParameterNode(150...151)()],
             (143...144),
             (151...152)
@@ -219,7 +216,7 @@ ProgramNode(0...690)(
          [RequiredDestructuredParameterNode(167...174)(
             [RequiredParameterNode(168...169)(),
              SplatNode(171...173)(
-               USTAR(171...172)("*"),
+               (171...172),
                RequiredParameterNode(172...173)()
              )],
             (167...168),
@@ -248,7 +245,7 @@ ProgramNode(0...690)(
          [RequiredDestructuredParameterNode(189...199)(
             [RequiredParameterNode(190...191)(),
              SplatNode(193...195)(
-               USTAR(193...194)("*"),
+               (193...194),
                RequiredParameterNode(194...195)()
              ),
              RequiredParameterNode(197...198)()],

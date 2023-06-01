@@ -264,7 +264,7 @@ class ErrorsTest < Test::Unit::TestCase
             )]
          ),
          SplatNode(
-           USTAR("*"),
+           Location(),
            CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
          )]
       ),
@@ -317,7 +317,7 @@ class ErrorsTest < Test::Unit::TestCase
             )]
          ),
          SplatNode(
-           USTAR("*"),
+           Location(),
            CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
          )]
       ),

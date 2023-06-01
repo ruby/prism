@@ -374,7 +374,7 @@ ProgramNode(0...530)(
          KEYWORD_RESCUE(442...448)("rescue"),
          [ConstantReadNode(449...458)(),
           SplatNode(460...464)(
-            USTAR(460...461)("*"),
+            (460...461),
             LocalVariableReadNode(461...464)(0)
           )],
          EQUAL_GREATER(465...467)("=>"),

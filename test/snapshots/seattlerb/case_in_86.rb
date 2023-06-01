@@ -26,7 +26,7 @@ ProgramNode(0...43)(
                ConstantReadNode(19...27)(),
                (17...19)
              )],
-            SplatNode(29...30)(USTAR(29...30)("*"), nil),
+            SplatNode(29...30)((29...30), nil),
             [],
             nil,
             nil

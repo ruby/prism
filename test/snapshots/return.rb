@@ -25,7 +25,7 @@ ProgramNode(0...139)(
      ReturnNode(30...39)(
        (30...36),
        ArgumentsNode(37...39)(
-         [SplatNode(37...39)(USTAR(37...38)("*"), IntegerNode(38...39)())]
+         [SplatNode(37...39)((37...38), IntegerNode(38...39)())]
        )
      ),
      ReturnNode(41...49)(

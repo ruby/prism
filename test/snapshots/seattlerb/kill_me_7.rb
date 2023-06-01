@@ -15,7 +15,7 @@ ProgramNode(0...17)(
              [RequiredParameterNode(5...6)(),
               RequiredDestructuredParameterNode(8...14)(
                 [RequiredParameterNode(9...10)(),
-                 SplatNode(12...13)(USTAR(12...13)("*"), nil)],
+                 SplatNode(12...13)((12...13), nil)],
                 (8...9),
                 (13...14)
               )],

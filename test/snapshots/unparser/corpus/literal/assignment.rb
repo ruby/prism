@@ -33,7 +33,7 @@ ProgramNode(0...719)(
      MultiWriteNode(27...38)(
        [MultiWriteNode(27...29)(
           [LocalVariableWriteNode(27...28)((27...28), nil, nil, 0),
-           SplatNode(28...29)(COMMA(28...29)(","), nil)],
+           SplatNode(28...29)((28...29), nil)],
           nil,
           nil,
           (26...27),
@@ -47,7 +47,7 @@ ProgramNode(0...719)(
      ),
      MultiWriteNode(40...48)(
        [SplatNode(40...42)(
-          USTAR(40...41)("*"),
+          (40...41),
           LocalVariableWriteNode(41...42)((41...42), nil, nil, 0)
         )],
        EQUAL(44...45)("="),
@@ -57,7 +57,7 @@ ProgramNode(0...719)(
      ),
      MultiWriteNode(50...64)(
        [SplatNode(50...54)(
-          USTAR(50...51)("*"),
+          (50...51),
           LocalVariableWriteNode(51...54)((51...54), nil, nil, 0)
         )],
        EQUAL(56...57)("="),
@@ -119,7 +119,7 @@ ProgramNode(0...719)(
      ),
      MultiWriteNode(130...144)(
        [LocalVariableWriteNode(130...131)((130...131), nil, nil, 0),
-        SplatNode(133...134)(USTAR(133...134)("*"), nil)],
+        SplatNode(133...134)((133...134), nil)],
        EQUAL(136...137)("="),
        ArrayNode(138...144)(
          [IntegerNode(139...140)(), IntegerNode(142...143)()],
@@ -132,7 +132,7 @@ ProgramNode(0...719)(
      MultiWriteNode(146...163)(
        [LocalVariableWriteNode(146...147)((146...147), nil, nil, 0),
         SplatNode(149...153)(
-          USTAR(149...150)("*"),
+          (149...150),
           LocalVariableWriteNode(150...153)((150...153), nil, nil, 0)
         )],
        EQUAL(155...156)("="),
@@ -166,7 +166,7 @@ ProgramNode(0...719)(
      ),
      MultiWriteNode(194...203)(
        [LocalVariableWriteNode(194...195)((194...195), nil, nil, 0),
-        SplatNode(195...196)(COMMA(195...196)(","), nil)],
+        SplatNode(195...196)((195...196), nil)],
        EQUAL(198...199)("="),
        LocalVariableReadNode(200...203)(0),
        (193...194),
@@ -210,7 +210,7 @@ ProgramNode(0...719)(
           BRACKET_LEFT(230...231)("["),
           ArgumentsNode(231...235)(
             [SplatNode(231...235)(
-               USTAR(231...232)("*"),
+               (231...232),
                LocalVariableReadNode(232...235)(0)
              )]
           ),
@@ -269,7 +269,7 @@ ProgramNode(0...719)(
      ),
      MultiWriteNode(276...287)(
        [SplatNode(276...282)(
-          USTAR(276...277)("*"),
+          (276...277),
           CallNode(277...282)(
             LocalVariableReadNode(277...278)(0),
             DOT(278...279)("."),
@@ -406,7 +406,7 @@ ProgramNode(0...719)(
        BRACKET_LEFT(425...426)("["),
        ArgumentsNode(426...441)(
          [SplatNode(426...432)(
-            USTAR(426...427)("*"),
+            (426...427),
             CallNode(427...432)(
               nil,
               nil,

@@ -462,7 +462,7 @@ ProgramNode(0...737)(
          BlockParametersNode(256...261)(
            ParametersNode(257...260)(
              [RequiredDestructuredParameterNode(257...260)(
-                [SplatNode(258...259)(USTAR(258...259)("*"), nil)],
+                [SplatNode(258...259)((258...259), nil)],
                 (257...258),
                 (259...260)
               )],
@@ -516,7 +516,7 @@ ProgramNode(0...737)(
            ParametersNode(279...284)(
              [RequiredDestructuredParameterNode(279...284)(
                 [RequiredDestructuredParameterNode(280...283)(
-                   [SplatNode(281...282)(USTAR(281...282)("*"), nil)],
+                   [SplatNode(281...282)((281...282), nil)],
                    (280...281),
                    (282...283)
                  )],
@@ -574,7 +574,7 @@ ProgramNode(0...737)(
              [RequiredDestructuredParameterNode(303...311)(
                 [RequiredParameterNode(304...305)(),
                  RequiredDestructuredParameterNode(307...310)(
-                   [SplatNode(308...309)(USTAR(308...309)("*"), nil)],
+                   [SplatNode(308...309)((308...309), nil)],
                    (307...308),
                    (309...310)
                  )],
@@ -790,7 +790,7 @@ ProgramNode(0...737)(
              KEYWORD_RESCUE(447...453)("rescue"),
              [ConstantReadNode(454...463)(),
               SplatNode(465...469)(
-                USTAR(465...466)("*"),
+                (465...466),
                 CallNode(466...469)(
                   nil,
                   nil,
@@ -855,7 +855,7 @@ ProgramNode(0...737)(
              KEYWORD_RESCUE(491...497)("rescue"),
              [ConstantReadNode(498...507)(),
               SplatNode(509...513)(
-                USTAR(509...510)("*"),
+                (509...510),
                 CallNode(510...513)(
                   nil,
                   nil,
@@ -919,7 +919,7 @@ ProgramNode(0...737)(
            RescueNode(548...565)(
              KEYWORD_RESCUE(548...554)("rescue"),
              [SplatNode(555...559)(
-                USTAR(555...556)("*"),
+                (555...556),
                 CallNode(556...559)(
                   nil,
                   nil,
@@ -1080,7 +1080,7 @@ ProgramNode(0...737)(
            RescueNode(646...676)(
              KEYWORD_RESCUE(646...652)("rescue"),
              [SplatNode(653...657)(
-                USTAR(653...654)("*"),
+                (653...654),
                 CallNode(654...657)(
                   nil,
                   nil,

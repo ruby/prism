@@ -1389,7 +1389,7 @@ ProgramNode(0...3725)(
          ConstantReadNode(1185...1188)(),
          [],
          SplatNode(1189...1193)(
-           USTAR(1189...1190)("*"),
+           (1189...1190),
            LocalVariableWriteNode(1190...1193)((1190...1193), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1195...1198)((1195...1198), nil, nil, 0)],
@@ -1413,7 +1413,7 @@ ProgramNode(0...3725)(
          ConstantReadNode(1207...1210)(),
          [LocalVariableWriteNode(1211...1214)((1211...1214), nil, nil, 0)],
          SplatNode(1216...1220)(
-           USTAR(1216...1217)("*"),
+           (1216...1217),
            LocalVariableWriteNode(1217...1220)((1217...1220), nil, nil, 0)
          ),
          [],
@@ -1436,12 +1436,12 @@ ProgramNode(0...3725)(
        FindPatternNode(1229...1249)(
          ConstantReadNode(1229...1232)(),
          SplatNode(1233...1237)(
-           USTAR(1233...1234)("*"),
+           (1233...1234),
            LocalVariableWriteNode(1234...1237)((1234...1237), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1239...1242)((1239...1242), nil, nil, 0)],
          SplatNode(1244...1248)(
-           USTAR(1244...1245)("*"),
+           (1244...1245),
            LocalVariableWriteNode(1245...1248)((1245...1248), nil, nil, 0)
          ),
          (1232...1233),
@@ -1550,7 +1550,7 @@ ProgramNode(0...3725)(
          ConstantReadNode(1321...1324)(),
          [],
          SplatNode(1325...1329)(
-           USTAR(1325...1326)("*"),
+           (1325...1326),
            LocalVariableWriteNode(1326...1329)((1326...1329), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1331...1334)((1331...1334), nil, nil, 0)],
@@ -1574,7 +1574,7 @@ ProgramNode(0...3725)(
          ConstantReadNode(1343...1346)(),
          [LocalVariableWriteNode(1347...1350)((1347...1350), nil, nil, 0)],
          SplatNode(1352...1356)(
-           USTAR(1352...1353)("*"),
+           (1352...1353),
            LocalVariableWriteNode(1353...1356)((1353...1356), nil, nil, 0)
          ),
          [],
@@ -1597,12 +1597,12 @@ ProgramNode(0...3725)(
        FindPatternNode(1365...1385)(
          ConstantReadNode(1365...1368)(),
          SplatNode(1369...1373)(
-           USTAR(1369...1370)("*"),
+           (1369...1370),
            LocalVariableWriteNode(1370...1373)((1370...1373), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1375...1378)((1375...1378), nil, nil, 0)],
          SplatNode(1380...1384)(
-           USTAR(1380...1381)("*"),
+           (1380...1381),
            LocalVariableWriteNode(1381...1384)((1381...1384), nil, nil, 0)
          ),
          (1368...1369),
@@ -1625,7 +1625,7 @@ ProgramNode(0...3725)(
          nil,
          [],
          SplatNode(1394...1398)(
-           USTAR(1394...1395)("*"),
+           (1394...1395),
            LocalVariableWriteNode(1395...1398)((1395...1398), nil, nil, 0)
          ),
          [],
@@ -1649,7 +1649,7 @@ ProgramNode(0...3725)(
          nil,
          [],
          SplatNode(1406...1410)(
-           USTAR(1406...1407)("*"),
+           (1406...1407),
            LocalVariableWriteNode(1407...1410)((1407...1410), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1412...1415)((1412...1415), nil, nil, 0),
@@ -1674,7 +1674,7 @@ ProgramNode(0...3725)(
          nil,
          [LocalVariableWriteNode(1428...1431)((1428...1431), nil, nil, 0)],
          SplatNode(1433...1437)(
-           USTAR(1433...1434)("*"),
+           (1433...1434),
            LocalVariableWriteNode(1434...1437)((1434...1437), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1439...1442)((1439...1442), nil, nil, 0)],
@@ -1699,7 +1699,7 @@ ProgramNode(0...3725)(
          [LocalVariableWriteNode(1450...1453)((1450...1453), nil, nil, 0),
           LocalVariableWriteNode(1455...1458)((1455...1458), nil, nil, 0)],
          SplatNode(1460...1464)(
-           USTAR(1460...1461)("*"),
+           (1460...1461),
            LocalVariableWriteNode(1461...1464)((1461...1464), nil, nil, 0)
          ),
          [],
@@ -1722,12 +1722,12 @@ ProgramNode(0...3725)(
        FindPatternNode(1472...1487)(
          nil,
          SplatNode(1472...1476)(
-           USTAR(1472...1473)("*"),
+           (1472...1473),
            LocalVariableWriteNode(1473...1476)((1473...1476), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1478...1481)((1478...1481), nil, nil, 0)],
          SplatNode(1483...1487)(
-           USTAR(1483...1484)("*"),
+           (1483...1484),
            LocalVariableWriteNode(1484...1487)((1484...1487), nil, nil, 0)
          ),
          nil,
@@ -1820,7 +1820,7 @@ ProgramNode(0...3725)(
          nil,
          [],
          SplatNode(1526...1530)(
-           USTAR(1526...1527)("*"),
+           (1526...1527),
            LocalVariableWriteNode(1527...1530)((1527...1530), nil, nil, 0)
          ),
          [],
@@ -1844,7 +1844,7 @@ ProgramNode(0...3725)(
          nil,
          [],
          SplatNode(1540...1544)(
-           USTAR(1540...1541)("*"),
+           (1540...1541),
            LocalVariableWriteNode(1541...1544)((1541...1544), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1546...1549)((1546...1549), nil, nil, 0),
@@ -1869,7 +1869,7 @@ ProgramNode(0...3725)(
          nil,
          [LocalVariableWriteNode(1564...1567)((1564...1567), nil, nil, 0)],
          SplatNode(1569...1573)(
-           USTAR(1569...1570)("*"),
+           (1569...1570),
            LocalVariableWriteNode(1570...1573)((1570...1573), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1575...1578)((1575...1578), nil, nil, 0)],
@@ -1894,7 +1894,7 @@ ProgramNode(0...3725)(
          [LocalVariableWriteNode(1588...1591)((1588...1591), nil, nil, 0),
           LocalVariableWriteNode(1593...1596)((1593...1596), nil, nil, 0)],
          SplatNode(1598...1602)(
-           USTAR(1598...1599)("*"),
+           (1598...1599),
            LocalVariableWriteNode(1599...1602)((1599...1602), nil, nil, 0)
          ),
          [],
@@ -1917,12 +1917,12 @@ ProgramNode(0...3725)(
        FindPatternNode(1611...1628)(
          nil,
          SplatNode(1612...1616)(
-           USTAR(1612...1613)("*"),
+           (1612...1613),
            LocalVariableWriteNode(1613...1616)((1613...1616), nil, nil, 0)
          ),
          [LocalVariableWriteNode(1618...1621)((1618...1621), nil, nil, 0)],
          SplatNode(1623...1627)(
-           USTAR(1623...1624)("*"),
+           (1623...1624),
            LocalVariableWriteNode(1624...1627)((1624...1627), nil, nil, 0)
          ),
          (1611...1612),

@@ -12,7 +12,7 @@ ProgramNode(0...31)(
           ArrayPatternNode(11...22)(
             nil,
             [],
-            SplatNode(12...13)(USTAR(12...13)("*"), nil),
+            SplatNode(12...13)((12...13), nil),
             [SymbolNode(15...17)(
                SYMBOL_BEGIN(15...16)(":"),
                IDENTIFIER(16...17)("b"),

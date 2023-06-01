@@ -86,7 +86,7 @@ ProgramNode(0...119)(
        MultiWriteNode(61...68)(
          [LocalVariableWriteNode(62...63)((62...63), nil, nil, 0),
           SplatNode(65...67)(
-            USTAR(65...66)("*"),
+            (65...66),
             LocalVariableWriteNode(66...67)((66...67), nil, nil, 0)
           )],
          nil,

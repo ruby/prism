@@ -236,7 +236,7 @@ ProgramNode(0...284)(
        [WhenNode(164...182)(
           KEYWORD_WHEN(164...168)("when"),
           [SplatNode(169...173)(
-             USTAR(169...170)("*"),
+             (169...170),
              CallNode(170...173)(
                nil,
                nil,
@@ -326,7 +326,7 @@ ProgramNode(0...284)(
        [WhenNode(236...251)(
           KEYWORD_WHEN(236...240)("when"),
           [SplatNode(241...251)(
-             USTAR(241...242)("*"),
+             (241...242),
              CallNode(242...251)(
                CallNode(242...245)(
                  nil,
@@ -378,7 +378,7 @@ ProgramNode(0...284)(
        [WhenNode(265...278)(
           KEYWORD_WHEN(265...269)("when"),
           [SplatNode(270...278)(
-             USTAR(270...271)("*"),
+             (270...271),
              CallNode(271...278)(
                CallNode(271...274)(
                  nil,

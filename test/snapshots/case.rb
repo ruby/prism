@@ -79,7 +79,7 @@ ProgramNode(0...272)(
        [WhenNode(89...98)(
           KEYWORD_WHEN(89...93)("when"),
           [SplatNode(94...98)(
-             USTAR(94...95)("*"),
+             (94...95),
              CallNode(95...98)(
                nil,
                nil,

@@ -15,7 +15,7 @@ ProgramNode(0...25)(
        [WhenNode(8...15)(
           KEYWORD_WHEN(8...12)("when"),
           [SplatNode(13...15)(
-             USTAR(13...14)("*"),
+             (13...14),
              CallNode(14...15)(
                nil,
                nil,

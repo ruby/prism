@@ -4,7 +4,7 @@ ProgramNode(2...30)(
     [MultiWriteNode(2...13)(
        [MultiWriteNode(2...4)(
           [LocalVariableWriteNode(2...3)((2...3), nil, nil, 0),
-           SplatNode(3...4)(COMMA(3...4)(","), nil)],
+           SplatNode(3...4)((3...4), nil)],
           nil,
           nil,
           (1...2),

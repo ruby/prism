@@ -1562,8 +1562,8 @@ nodes:
           ^^^^^^^^
   - name: SplatNode
     child_nodes:
-      - name: operator
-        type: token
+      - name: operator_loc
+        type: location
       - name: expression
         type: node?
     comment: |

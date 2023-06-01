@@ -751,7 +751,7 @@ ProgramNode(0...991)(
        PARENTHESIS_LEFT(498...499)("("),
        ArgumentsNode(499...512)(
          [SplatNode(499...504)(
-            USTAR(499...500)("*"),
+            (499...500),
             CallNode(500...504)(
               nil,
               nil,
@@ -788,7 +788,7 @@ ProgramNode(0...991)(
        PARENTHESIS_LEFT(517...518)("("),
        ArgumentsNode(518...528)(
          [SplatNode(518...528)(
-            USTAR(518...519)("*"),
+            (518...519),
             CallNode(519...528)(
               nil,
               nil,
@@ -855,7 +855,7 @@ ProgramNode(0...991)(
             "bar"
           ),
           SplatNode(558...563)(
-            USTAR(558...559)("*"),
+            (558...559),
             CallNode(559...563)(
               nil,
               nil,
@@ -959,7 +959,7 @@ ProgramNode(0...991)(
        PARENTHESIS_LEFT(604...605)("("),
        ArgumentsNode(605...622)(
          [SplatNode(605...610)(
-            USTAR(605...606)("*"),
+            (605...606),
             CallNode(606...610)(
               nil,
               nil,
@@ -982,7 +982,7 @@ ProgramNode(0...991)(
             "foo"
           ),
           SplatNode(617...622)(
-            USTAR(617...618)("*"),
+            (617...618),
             CallNode(618...622)(
               nil,
               nil,
@@ -1015,7 +1015,7 @@ ProgramNode(0...991)(
        PARENTHESIS_LEFT(631...632)("("),
        ArgumentsNode(632...637)(
          [SplatNode(632...637)(
-            USTAR(632...633)("*"),
+            (632...633),
             CallNode(633...637)(
               nil,
               nil,
@@ -1048,7 +1048,7 @@ ProgramNode(0...991)(
        PARENTHESIS_LEFT(646...647)("("),
        ArgumentsNode(647...657)(
          [SplatNode(647...652)(
-            USTAR(647...648)("*"),
+            (647...648),
             CallNode(648...652)(
               nil,
               nil,
@@ -1232,7 +1232,7 @@ ProgramNode(0...991)(
             "foo"
           ),
           SplatNode(737...742)(
-            USTAR(737...738)("*"),
+            (737...738),
             CallNode(738...742)(
               nil,
               nil,
@@ -1275,7 +1275,7 @@ ProgramNode(0...991)(
             "foo"
           ),
           SplatNode(757...762)(
-            USTAR(757...758)("*"),
+            (757...758),
             CallNode(758...762)(
               nil,
               nil,
@@ -1539,7 +1539,7 @@ ProgramNode(0...991)(
        BRACKET_LEFT(865...866)("["),
        ArgumentsNode(866...870)(
          [SplatNode(866...870)(
-            USTAR(866...867)("*"),
+            (866...867),
             CallNode(867...870)(
               nil,
               nil,
@@ -1848,7 +1848,7 @@ ProgramNode(0...991)(
             PARENTHESIS_LEFT(962...963)("("),
             ArgumentsNode(963...965)(
               [SplatNode(963...965)(
-                 USTAR(963...964)("*"),
+                 (963...964),
                  CallNode(964...965)(
                    nil,
                    nil,

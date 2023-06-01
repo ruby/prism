@@ -103,7 +103,7 @@ ProgramNode(0...316)(
        RescueNode(141...150)(
          KEYWORD_RESCUE(141...147)("rescue"),
          [SplatNode(148...150)(
-            USTAR(148...149)("*"),
+            (148...149),
             CallNode(149...150)(
               nil,
               nil,

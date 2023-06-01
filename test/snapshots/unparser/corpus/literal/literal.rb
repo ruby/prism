@@ -733,7 +733,7 @@ ProgramNode(0...916)(
      ArrayNode(692...702)(
        [IntegerNode(693...694)(),
         SplatNode(696...701)(
-          USTAR(696...697)("*"),
+          (696...697),
           InstanceVariableReadNode(697...701)()
         )],
        (692...693),
@@ -741,7 +741,7 @@ ProgramNode(0...916)(
      ),
      ArrayNode(703...713)(
        [SplatNode(704...709)(
-          USTAR(704...705)("*"),
+          (704...705),
           InstanceVariableReadNode(705...709)()
         ),
         IntegerNode(711...712)()],
@@ -750,11 +750,11 @@ ProgramNode(0...916)(
      ),
      ArrayNode(714...728)(
        [SplatNode(715...720)(
-          USTAR(715...716)("*"),
+          (715...716),
           InstanceVariableReadNode(716...720)()
         ),
         SplatNode(722...727)(
-          USTAR(722...723)("*"),
+          (722...723),
           InstanceVariableReadNode(723...727)()
         )],
        (714...715),

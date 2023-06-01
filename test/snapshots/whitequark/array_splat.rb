@@ -3,7 +3,7 @@ ProgramNode(0...31)(
   StatementsNode(0...31)(
     [ArrayNode(0...6)(
        [SplatNode(1...5)(
-          USTAR(1...2)("*"),
+          (1...2),
           CallNode(2...5)(
             nil,
             nil,
@@ -21,7 +21,7 @@ ProgramNode(0...31)(
      ArrayNode(8...20)(
        [IntegerNode(9...10)(),
         SplatNode(12...16)(
-          USTAR(12...13)("*"),
+          (12...13),
           CallNode(13...16)(
             nil,
             nil,
@@ -40,7 +40,7 @@ ProgramNode(0...31)(
      ArrayNode(22...31)(
        [IntegerNode(23...24)(),
         SplatNode(26...30)(
-          USTAR(26...27)("*"),
+          (26...27),
           CallNode(27...30)(
             nil,
             nil,

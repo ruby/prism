@@ -18,7 +18,7 @@ ProgramNode(0...36)(
             "foo"
           ),
           SplatNode(9...13)(
-            USTAR(9...10)("*"),
+            (9...10),
             CallNode(10...13)(
               nil,
               nil,
@@ -52,7 +52,7 @@ ProgramNode(0...36)(
             "foo"
           ),
           SplatNode(25...29)(
-            USTAR(25...26)("*"),
+            (25...26),
             CallNode(26...29)(
               nil,
               nil,

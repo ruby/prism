@@ -3,7 +3,7 @@ ProgramNode(0...12)(
   StatementsNode(0...12)(
     [MultiWriteNode(0...12)(
        [SplatNode(0...2)(
-          USTAR(0...1)("*"),
+          (0...1),
           LocalVariableWriteNode(1...2)((1...2), nil, nil, 0)
         )],
        EQUAL(3...4)("="),

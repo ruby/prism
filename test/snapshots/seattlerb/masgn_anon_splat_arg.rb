@@ -3,7 +3,7 @@ ProgramNode(0...8)(
   StatementsNode(0...8)(
     [MultiWriteNode(0...8)(
        [MultiWriteNode(0...1)(
-          [SplatNode(0...1)(USTAR(0...1)("*"), nil)],
+          [SplatNode(0...1)((0...1), nil)],
           nil,
           nil,
           nil,

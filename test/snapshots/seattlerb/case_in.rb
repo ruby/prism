@@ -284,7 +284,7 @@ ProgramNode(0...747)(
                "b"
              )],
             SplatNode(296...298)(
-              USTAR(296...297)("*"),
+              (296...297),
               LocalVariableWriteNode(297...298)((297...298), nil, nil, 0)
             ),
             [SymbolNode(300...302)(
@@ -381,12 +381,12 @@ ProgramNode(0...747)(
           FindPatternNode(369...390)(
             ConstantReadNode(369...375)(),
             SplatNode(376...380)(
-              USTAR(376...377)("*"),
+              (376...377),
               LocalVariableWriteNode(377...380)((377...380), nil, nil, 0)
             ),
             [LocalVariableWriteNode(382...383)((382...383), nil, nil, 0)],
             SplatNode(385...389)(
-              USTAR(385...386)("*"),
+              (385...386),
               LocalVariableWriteNode(386...389)((386...389), nil, nil, 0)
             ),
             (375...376),
@@ -411,12 +411,12 @@ ProgramNode(0...747)(
           FindPatternNode(407...428)(
             ConstantReadNode(407...413)(),
             SplatNode(414...418)(
-              USTAR(414...415)("*"),
+              (414...415),
               LocalVariableWriteNode(415...418)((415...418), nil, nil, 0)
             ),
             [LocalVariableWriteNode(420...421)((420...421), nil, nil, 0)],
             SplatNode(423...427)(
-              USTAR(423...424)("*"),
+              (423...424),
               LocalVariableWriteNode(424...427)((424...427), nil, nil, 0)
             ),
             (413...414),
@@ -500,7 +500,7 @@ ProgramNode(0...747)(
                   "d"
                 )],
                SplatNode(497...499)(
-                 USTAR(497...498)("*"),
+                 (497...498),
                  LocalVariableWriteNode(498...499)((498...499), nil, nil, 0)
                ),
                [NilNode(501...504)()],
@@ -531,7 +531,7 @@ ProgramNode(0...747)(
           ArrayPatternNode(523...532)(
             nil,
             [ConstantReadNode(524...525)()],
-            SplatNode(527...528)(USTAR(527...528)("*"), nil),
+            SplatNode(527...528)((527...528), nil),
             [ConstantReadNode(530...531)()],
             (523...524),
             (531...532)

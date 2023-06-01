@@ -2952,7 +2952,7 @@ yp_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t 
         .end = (expression == NULL ? operator->end : expression->location.end)
       }
     },
-    .operator = *operator,
+    .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
     .expression = expression
   };
 

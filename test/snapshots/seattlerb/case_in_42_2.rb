@@ -13,7 +13,7 @@ ProgramNode(0...32)(
             ConstantReadNode(11...12)(),
             [],
             SplatNode(13...18)(
-              USTAR(13...14)("*"),
+              (13...14),
               LocalVariableWriteNode(14...18)((14...18), nil, nil, 0)
             ),
             [],

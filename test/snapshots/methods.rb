@@ -782,9 +782,7 @@ ProgramNode(0...1194)(
             nil,
             IDENTIFIER(697...698)("b"),
             PARENTHESIS_LEFT(698...699)("("),
-            ArgumentsNode(699...700)(
-              [SplatNode(699...700)(USTAR(699...700)("*"), nil)]
-            ),
+            ArgumentsNode(699...700)([SplatNode(699...700)((699...700), nil)]),
             PARENTHESIS_RIGHT(700...701)(")"),
             nil,
             "b"

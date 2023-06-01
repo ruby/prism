@@ -22,7 +22,7 @@ ProgramNode(0...43)(
           ArrayPatternNode(17...30)(
             nil,
             [],
-            SplatNode(17...18)(USTAR(17...18)("*"), nil),
+            SplatNode(17...18)((17...18), nil),
             [ConstantPathNode(20...30)(
                nil,
                ConstantReadNode(22...30)(),

@@ -340,7 +340,7 @@ ProgramNode(0...1187)(
        PARENTHESIS_LEFT(146...147)("("),
        ArgumentsNode(147...152)(
          [SplatNode(147...152)(
-            USTAR(147...148)("*"),
+            (147...148),
             CallNode(148...152)(
               nil,
               nil,
@@ -659,7 +659,7 @@ ProgramNode(0...1187)(
        PARENTHESIS_LEFT(283...284)("("),
        ArgumentsNode(284...289)(
          [SplatNode(284...289)(
-            USTAR(284...285)("*"),
+            (284...285),
             CallNode(285...289)(
               nil,
               nil,

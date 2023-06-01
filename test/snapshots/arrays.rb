@@ -3,7 +3,7 @@ ProgramNode(0...502)(
   StatementsNode(0...502)(
     [ArrayNode(0...4)(
        [SplatNode(1...3)(
-          USTAR(1...2)("*"),
+          (1...2),
           CallNode(2...3)(
             nil,
             nil,

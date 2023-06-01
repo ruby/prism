@@ -58,7 +58,7 @@ ProgramNode(0...90)(
             PARENTHESIS_LEFT(73...74)("("),
             ArgumentsNode(74...85)(
               [LocalVariableReadNode(74...82)(0),
-               SplatNode(84...85)(USTAR(84...85)("*"), nil)]
+               SplatNode(84...85)((84...85), nil)]
             ),
             PARENTHESIS_RIGHT(85...86)(")"),
             nil,

@@ -4,7 +4,7 @@ ProgramNode(0...41)(
     [LocalVariableWriteNode(0...10)(
        (0...3),
        SplatNode(6...10)(
-         USTAR(6...7)("*"),
+         (6...7),
          CallNode(7...10)(
            nil,
            nil,
@@ -53,7 +53,7 @@ ProgramNode(0...41)(
             "baz"
           ),
           SplatNode(37...41)(
-            USTAR(37...38)("*"),
+            (37...38),
             CallNode(38...41)(
               nil,
               nil,
