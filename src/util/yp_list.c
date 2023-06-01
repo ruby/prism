@@ -7,13 +7,13 @@ yp_list_alloc(void) {
 }
 
 // Initializes a new list.
-__attribute__((__visibility__("default"))) extern void
+EXPORTED extern void
 yp_list_init(yp_list_t *list) {
   *list = (yp_list_t) { .head = NULL, .tail = NULL };
 }
 
 // Returns true if the given list is empty.
-__attribute__((__visibility__("default"))) extern bool
+EXPORTED extern bool
 yp_list_empty_p(yp_list_t *list) {
   return list->head == NULL;
 }
@@ -30,7 +30,7 @@ yp_list_append(yp_list_t *list, yp_list_node_t *node) {
 }
 
 // Deallocate the internal state of the given list.
-__attribute__((__visibility__("default"))) extern void
+EXPORTED extern void
 yp_list_free(yp_list_t *list) {
   yp_list_node_t *node = list->head;
   yp_list_node_t *next;
