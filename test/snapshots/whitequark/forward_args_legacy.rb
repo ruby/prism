@@ -68,10 +68,10 @@ ProgramNode(0...77)(
        ),
        StatementsNode(62...72)(
          [SuperNode(62...72)(
-            KEYWORD_SUPER(62...67)("super"),
-            PARENTHESIS_LEFT(67...68)("("),
+            (62...67),
+            (67...68),
             ArgumentsNode(68...71)([ForwardingArgumentsNode(68...71)()]),
-            PARENTHESIS_RIGHT(71...72)(")"),
+            (71...72),
             nil
           )]
        ),

@@ -117,8 +117,8 @@ ProgramNode(0...114)(
        "[]"
      ),
      SuperNode(78...95)(
-       KEYWORD_SUPER(78...83)("super"),
-       PARENTHESIS_LEFT(83...84)("("),
+       (78...83),
+       (83...84),
        ArgumentsNode(84...94)(
          [KeywordHashNode(84...94)(
             [AssocNode(84...94)(
@@ -133,7 +133,7 @@ ProgramNode(0...114)(
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(94...95)(")"),
+       (94...95),
        nil
      ),
      YieldNode(97...114)(

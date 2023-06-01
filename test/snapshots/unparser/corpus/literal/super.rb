@@ -2,16 +2,10 @@ ProgramNode(0...159)(
   [],
   StatementsNode(0...159)(
     [ForwardingSuperNode(0...5)(nil),
-     SuperNode(6...13)(
-       KEYWORD_SUPER(6...11)("super"),
-       PARENTHESIS_LEFT(11...12)("("),
-       nil,
-       PARENTHESIS_RIGHT(12...13)(")"),
-       nil
-     ),
+     SuperNode(6...13)((6...11), (11...12), nil, (12...13), nil),
      SuperNode(14...22)(
-       KEYWORD_SUPER(14...19)("super"),
-       PARENTHESIS_LEFT(19...20)("("),
+       (14...19),
+       (19...20),
        ArgumentsNode(20...21)(
          [CallNode(20...21)(
             nil,
@@ -24,12 +18,12 @@ ProgramNode(0...159)(
             "a"
           )]
        ),
-       PARENTHESIS_RIGHT(21...22)(")"),
+       (21...22),
        nil
      ),
      SuperNode(23...34)(
-       KEYWORD_SUPER(23...28)("super"),
-       PARENTHESIS_LEFT(28...29)("("),
+       (23...28),
+       (28...29),
        ArgumentsNode(29...33)(
          [CallNode(29...30)(
             nil,
@@ -52,12 +46,12 @@ ProgramNode(0...159)(
             "b"
           )]
        ),
-       PARENTHESIS_RIGHT(33...34)(")"),
+       (33...34),
        nil
      ),
      SuperNode(35...48)(
-       KEYWORD_SUPER(35...40)("super"),
-       PARENTHESIS_LEFT(40...41)("("),
+       (35...40),
+       (40...41),
        ArgumentsNode(41...47)(
          [BlockArgumentNode(41...47)(
             CallNode(42...47)(
@@ -73,12 +67,12 @@ ProgramNode(0...159)(
             (41...42)
           )]
        ),
-       PARENTHESIS_RIGHT(47...48)(")"),
+       (47...48),
        nil
      ),
      SuperNode(49...65)(
-       KEYWORD_SUPER(49...54)("super"),
-       PARENTHESIS_LEFT(54...55)("("),
+       (49...54),
+       (54...55),
        ArgumentsNode(55...64)(
          [CallNode(55...56)(
             nil,
@@ -104,12 +98,12 @@ ProgramNode(0...159)(
             (58...59)
           )]
        ),
-       PARENTHESIS_RIGHT(64...65)(")"),
+       (64...65),
        nil
      ),
      SuperNode(66...84)(
-       KEYWORD_SUPER(66...71)("super"),
-       PARENTHESIS_LEFT(71...72)("("),
+       (66...71),
+       (71...72),
        ArgumentsNode(72...83)(
          [CallNode(72...83)(
             nil,
@@ -139,7 +133,7 @@ ProgramNode(0...159)(
             "a"
           )]
        ),
-       PARENTHESIS_RIGHT(83...84)(")"),
+       (83...84),
        nil
      ),
      ForwardingSuperNode(85...100)(
@@ -163,8 +157,8 @@ ProgramNode(0...159)(
        )
      ),
      SuperNode(101...119)(
-       KEYWORD_SUPER(101...106)("super"),
-       PARENTHESIS_LEFT(106...107)("("),
+       (101...106),
+       (106...107),
        ArgumentsNode(107...108)(
          [CallNode(107...108)(
             nil,
@@ -177,7 +171,7 @@ ProgramNode(0...159)(
             "a"
           )]
        ),
-       PARENTHESIS_RIGHT(108...109)(")"),
+       (108...109),
        BlockNode(110...119)(
          [],
          nil,
@@ -198,10 +192,10 @@ ProgramNode(0...159)(
        )
      ),
      SuperNode(120...137)(
-       KEYWORD_SUPER(120...125)("super"),
-       PARENTHESIS_LEFT(125...126)("("),
+       (120...125),
+       (125...126),
        nil,
-       PARENTHESIS_RIGHT(126...127)(")"),
+       (126...127),
        BlockNode(128...137)(
          [],
          nil,
@@ -222,8 +216,8 @@ ProgramNode(0...159)(
        )
      ),
      SuperNode(138...159)(
-       KEYWORD_SUPER(138...143)("super"),
-       PARENTHESIS_LEFT(143...144)("("),
+       (138...143),
+       (143...144),
        ArgumentsNode(144...148)(
          [CallNode(144...145)(
             nil,
@@ -246,7 +240,7 @@ ProgramNode(0...159)(
             "b"
           )]
        ),
-       PARENTHESIS_RIGHT(148...149)(")"),
+       (148...149),
        BlockNode(150...159)(
          [],
          nil,

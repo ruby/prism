@@ -2,7 +2,7 @@ ProgramNode(0...30)(
   [],
   StatementsNode(0...30)(
     [SuperNode(0...9)(
-       KEYWORD_SUPER(0...5)("super"),
+       (0...5),
        nil,
        ArgumentsNode(6...9)(
          [CallNode(6...9)(
@@ -19,16 +19,10 @@ ProgramNode(0...30)(
        nil,
        nil
      ),
-     SuperNode(11...18)(
-       KEYWORD_SUPER(11...16)("super"),
-       PARENTHESIS_LEFT(16...17)("("),
-       nil,
-       PARENTHESIS_RIGHT(17...18)(")"),
-       nil
-     ),
+     SuperNode(11...18)((11...16), (16...17), nil, (17...18), nil),
      SuperNode(20...30)(
-       KEYWORD_SUPER(20...25)("super"),
-       PARENTHESIS_LEFT(25...26)("("),
+       (20...25),
+       (25...26),
        ArgumentsNode(26...29)(
          [CallNode(26...29)(
             nil,
@@ -41,7 +35,7 @@ ProgramNode(0...30)(
             "foo"
           )]
        ),
-       PARENTHESIS_RIGHT(29...30)(")"),
+       (29...30),
        nil
      )]
   )

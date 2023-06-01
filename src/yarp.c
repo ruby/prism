@@ -3086,10 +3086,10 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
         .end = end,
       }
     },
-    .keyword = *keyword,
-    .lparen = arguments->opening,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
+    .lparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(&arguments->opening),
     .arguments = arguments->arguments,
-    .rparen = arguments->closing,
+    .rparen_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(&arguments->closing),
     .block = arguments->block
   };
 

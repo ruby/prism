@@ -5,7 +5,7 @@ ProgramNode(0...35)(
        BlockNode(6...12)([], nil, nil, (6...8), (9...12))
      ),
      SuperNode(14...35)(
-       KEYWORD_SUPER(14...19)("super"),
+       (14...19),
        nil,
        ArgumentsNode(20...28)(
          [CallNode(20...23)(
