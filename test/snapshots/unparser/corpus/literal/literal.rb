@@ -427,12 +427,7 @@ ProgramNode(0...916)(
        STRING_END(410...411)("\""),
        "foo\n" + "bar"
      ),
-     XStringNode(412...417)(
-       BACKTICK(412...413)("`"),
-       STRING_CONTENT(413...416)("foo"),
-       STRING_END(416...417)("`"),
-       "foo"
-     ),
+     XStringNode(412...417)((412...413), (413...416), (416...417), "foo"),
      InterpolatedXStringNode(418...430)(
        (418...419),
        [StringNode(419...422)(
@@ -448,24 +443,9 @@ ProgramNode(0...916)(
         )],
        (429...430)
      ),
-     XStringNode(431...434)(
-       BACKTICK(431...432)("`"),
-       STRING_CONTENT(432...433)(")"),
-       STRING_END(433...434)("`"),
-       ")"
-     ),
-     XStringNode(435...439)(
-       BACKTICK(435...436)("`"),
-       STRING_CONTENT(436...438)("\\`"),
-       STRING_END(438...439)("`"),
-       "`"
-     ),
-     XStringNode(440...443)(
-       BACKTICK(440...441)("`"),
-       STRING_CONTENT(441...442)("\""),
-       STRING_END(442...443)("`"),
-       "\""
-     ),
+     XStringNode(431...434)((431...432), (432...433), (433...434), ")"),
+     XStringNode(435...439)((435...436), (436...438), (438...439), "`"),
+     XStringNode(440...443)((440...441), (441...442), (442...443), "\""),
      SymbolNode(444...448)(
        SYMBOL_BEGIN(444...445)(":"),
        IDENTIFIER(445...448)("foo"),

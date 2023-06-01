@@ -1,11 +1,6 @@
 ProgramNode(0...8)(
   [],
   StatementsNode(0...8)(
-    [XStringNode(0...8)(
-       BACKTICK(0...1)("`"),
-       STRING_CONTENT(1...7)("foobar"),
-       STRING_END(7...8)("`"),
-       "foobar"
-     )]
+    [XStringNode(0...8)((0...1), (1...7), (7...8), "foobar")]
   )
 )

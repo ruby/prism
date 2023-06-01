@@ -722,9 +722,9 @@ ProgramNode(0...502)(
        (366...367)
      ),
      XStringNode(369...386)(
-       PERCENT_LOWER_X(369...372)("%x#"),
-       STRING_CONTENT(372...385)("one two three"),
-       STRING_END(385...386)("#"),
+       (369...372),
+       (372...385),
+       (385...386),
        "one two three"
      ),
      ArrayNode(389...406)(
@@ -772,9 +772,9 @@ ProgramNode(0...502)(
        (424...425)
      ),
      XStringNode(427...444)(
-       PERCENT_LOWER_X(427...430)("%x@"),
-       STRING_CONTENT(430...443)("one two three"),
-       STRING_END(443...444)("@"),
+       (427...430),
+       (430...443),
+       (443...444),
        "one two three"
      ),
      ArrayNode(447...464)(
@@ -822,9 +822,9 @@ ProgramNode(0...502)(
        (482...483)
      ),
      XStringNode(485...502)(
-       PERCENT_LOWER_X(485...488)("%x{"),
-       STRING_CONTENT(488...501)("one two three"),
-       STRING_END(501...502)("}"),
+       (485...488),
+       (488...501),
+       (501...502),
        "one two three"
      )]
   )

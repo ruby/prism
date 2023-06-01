@@ -3379,9 +3379,9 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
         .end = closing->end
       },
     },
-    .opening = *opening,
-    .content = *content,
-    .closing = *closing
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .content_loc = YP_LOCATION_TOKEN_VALUE(content),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;

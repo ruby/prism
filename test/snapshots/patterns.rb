@@ -167,12 +167,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       XStringNode(112...117)(
-         BACKTICK(112...113)("`"),
-         STRING_CONTENT(113...116)("foo"),
-         STRING_END(116...117)("`"),
-         "foo"
-       ),
+       XStringNode(112...117)((112...113), (113...116), (116...117), "foo"),
        (109...111)
      ),
      MatchRequiredNode(118...132)(
@@ -186,12 +181,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       XStringNode(125...132)(
-         PERCENT_LOWER_X(125...128)("%x["),
-         STRING_CONTENT(128...131)("foo"),
-         STRING_END(131...132)("]"),
-         "foo"
-       ),
+       XStringNode(125...132)((125...128), (128...131), (131...132), "foo"),
        (122...124)
      ),
      MatchRequiredNode(133...147)(
@@ -666,18 +656,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RangeNode(518...532)(
-         XStringNode(518...523)(
-           BACKTICK(518...519)("`"),
-           STRING_CONTENT(519...522)("foo"),
-           STRING_END(522...523)("`"),
-           "foo"
-         ),
-         XStringNode(527...532)(
-           BACKTICK(527...528)("`"),
-           STRING_CONTENT(528...531)("foo"),
-           STRING_END(531...532)("`"),
-           "foo"
-         ),
+         XStringNode(518...523)((518...519), (519...522), (522...523), "foo"),
+         XStringNode(527...532)((527...528), (528...531), (531...532), "foo"),
          (524...526)
        ),
        (515...517)
@@ -694,18 +674,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RangeNode(540...558)(
-         XStringNode(540...547)(
-           PERCENT_LOWER_X(540...543)("%x["),
-           STRING_CONTENT(543...546)("foo"),
-           STRING_END(546...547)("]"),
-           "foo"
-         ),
-         XStringNode(551...558)(
-           PERCENT_LOWER_X(551...554)("%x["),
-           STRING_CONTENT(554...557)("foo"),
-           STRING_END(557...558)("]"),
-           "foo"
-         ),
+         XStringNode(540...547)((540...543), (543...546), (546...547), "foo"),
+         XStringNode(551...558)((551...554), (554...557), (557...558), "foo"),
          (548...550)
        ),
        (537...539)
@@ -2123,9 +2093,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        XStringNode(1742...1747)(
-         BACKTICK(1742...1743)("`"),
-         STRING_CONTENT(1743...1746)("foo"),
-         STRING_END(1746...1747)("`"),
+         (1742...1743),
+         (1743...1746),
+         (1746...1747),
          "foo"
        ),
        (1739...1741)
@@ -2142,9 +2112,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        XStringNode(1755...1762)(
-         PERCENT_LOWER_X(1755...1758)("%x["),
-         STRING_CONTENT(1758...1761)("foo"),
-         STRING_END(1761...1762)("]"),
+         (1755...1758),
+         (1758...1761),
+         (1761...1762),
          "foo"
        ),
        (1752...1754)
@@ -2642,9 +2612,9 @@ ProgramNode(0...3725)(
        ),
        [InNode(2235...2248)(
           XStringNode(2238...2243)(
-            BACKTICK(2238...2239)("`"),
-            STRING_CONTENT(2239...2242)("foo"),
-            STRING_END(2242...2243)("`"),
+            (2238...2239),
+            (2239...2242),
+            (2242...2243),
             "foo"
           ),
           nil,
@@ -2668,9 +2638,9 @@ ProgramNode(0...3725)(
        ),
        [InNode(2263...2278)(
           XStringNode(2266...2273)(
-            PERCENT_LOWER_X(2266...2269)("%x["),
-            STRING_CONTENT(2269...2272)("foo"),
-            STRING_END(2272...2273)("]"),
+            (2266...2269),
+            (2269...2272),
+            (2272...2273),
             "foo"
           ),
           nil,
@@ -3353,9 +3323,9 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3055...3058)(0),
             StatementsNode(3046...3051)(
               [XStringNode(3046...3051)(
-                 BACKTICK(3046...3047)("`"),
-                 STRING_CONTENT(3047...3050)("foo"),
-                 STRING_END(3050...3051)("`"),
+                 (3046...3047),
+                 (3047...3050),
+                 (3050...3051),
                  "foo"
                )]
             ),
@@ -3387,9 +3357,9 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3092...3095)(0),
             StatementsNode(3081...3088)(
               [XStringNode(3081...3088)(
-                 PERCENT_LOWER_X(3081...3084)("%x["),
-                 STRING_CONTENT(3084...3087)("foo"),
-                 STRING_END(3087...3088)("]"),
+                 (3081...3084),
+                 (3084...3087),
+                 (3087...3088),
                  "foo"
                )]
             ),

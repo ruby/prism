@@ -706,9 +706,9 @@ ProgramNode(0...747)(
        ),
        [InNode(657...669)(
           XStringNode(660...669)(
-            BACKTICK(660...661)("`"),
-            STRING_CONTENT(661...668)("echo hi"),
-            STRING_END(668...669)("`"),
+            (660...661),
+            (661...668),
+            (668...669),
             "echo hi"
           ),
           nil,

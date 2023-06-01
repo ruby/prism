@@ -72,12 +72,7 @@ ProgramNode(0...210)(
        (78...81),
        (85...86)
      ),
-     XStringNode(88...96)(
-       PERCENT_LOWER_X(88...91)("%x{"),
-       STRING_CONTENT(91...95)("a\\\n" + "b"),
-       STRING_END(95...96)("}"),
-       "a\n" + "b"
-     ),
+     XStringNode(88...96)((88...91), (91...95), (95...96), "a\n" + "b"),
      StringNode(98...105)(
        STRING_BEGIN(98...100)("%{"),
        STRING_CONTENT(100...104)("a\\\n" + "b"),
@@ -144,9 +139,9 @@ ProgramNode(0...210)(
        (198...203)
      ),
      XStringNode(204...210)(
-       BACKTICK(204...205)("`"),
-       STRING_CONTENT(205...209)("a\\\n" + "b"),
-       STRING_END(209...210)("`"),
+       (204...205),
+       (205...209),
+       (209...210),
        "a\n" + "b"
      )]
   )
