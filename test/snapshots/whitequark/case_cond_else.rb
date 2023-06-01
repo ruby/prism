@@ -4,7 +4,7 @@ ProgramNode(0...38)(
     [CaseNode(0...38)(
        nil,
        [WhenNode(6...21)(
-          KEYWORD_WHEN(6...10)("when"),
+          (6...10),
           [CallNode(11...14)(
              nil,
              nil,

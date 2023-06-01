@@ -13,7 +13,7 @@ ProgramNode(0...34)(
          "foo"
        ),
        [WhenNode(10...29)(
-          KEYWORD_WHEN(10...14)("when"),
+          (10...14),
           [StringNode(15...20)((15...16), (16...19), (19...20), "bar")],
           StatementsNode(26...29)(
             [CallNode(26...29)(

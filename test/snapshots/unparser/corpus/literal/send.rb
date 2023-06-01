@@ -148,7 +148,7 @@ ProgramNode(0...991)(
            (151...152)
          ),
          [WhenNode(153...161)(
-            KEYWORD_WHEN(153...157)("when"),
+            (153...157),
             [CallNode(158...161)(
                nil,
                nil,
@@ -186,7 +186,7 @@ ProgramNode(0...991)(
            "foo"
          ),
          [WhenNode(179...187)(
-            KEYWORD_WHEN(179...183)("when"),
+            (179...183),
             [CallNode(184...187)(
                nil,
                nil,

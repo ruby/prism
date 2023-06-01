@@ -1725,8 +1725,8 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^
   - name: WhenNode
     child_nodes:
-      - name: when_keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: conditions
         type: node[]
       - name: statements

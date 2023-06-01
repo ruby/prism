@@ -9,7 +9,7 @@ ProgramNode(0...26)(
          "x"
        ),
        [WhenNode(9...17)(
-          KEYWORD_WHEN(9...13)("when"),
+          (9...13),
           [RegularExpressionNode(14...17)(
              (14...15),
              (15...16),

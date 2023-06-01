@@ -13,7 +13,7 @@ ProgramNode(0...43)(
          "foo"
        ),
        [WhenNode(10...27)(
-          KEYWORD_WHEN(10...14)("when"),
+          (10...14),
           [IntegerNode(15...16)(),
            SplatNode(18...22)(
              (18...19),
@@ -42,7 +42,7 @@ ProgramNode(0...43)(
           )
         ),
         WhenNode(29...38)(
-          KEYWORD_WHEN(29...33)("when"),
+          (29...33),
           [SplatNode(34...38)(
              (34...35),
              CallNode(35...38)(

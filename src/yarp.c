@@ -3295,18 +3295,18 @@ yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 
 // Allocate and initialize a new WhenNode node.
 static yp_when_node_t *
-yp_when_node_create(yp_parser_t *parser, const yp_token_t *when_keyword) {
+yp_when_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
   yp_when_node_t *node = yp_alloc(parser, sizeof(yp_when_node_t));
 
   *node = (yp_when_node_t) {
     {
       .type = YP_NODE_WHEN_NODE,
       .location = {
-        .start = when_keyword->start,
+        .start = keyword->start,
         .end = NULL
       }
     },
-    .when_keyword = *when_keyword,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
     .statements = NULL
   };
 
