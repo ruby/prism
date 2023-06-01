@@ -15,18 +15,12 @@ class ErrorsTest < Test::Unit::TestCase
   def test_module_name_recoverable
     expected = ModuleNode(
       [],
-      KEYWORD_MODULE("module"),
+      Location(),
       ConstantReadNode(),
       StatementsNode(
-        [ModuleNode(
-           [],
-           KEYWORD_MODULE("module"),
-           MissingNode(),
-           nil,
-           MISSING("")
-         )]
+        [ModuleNode([], Location(), MissingNode(), nil, Location())]
       ),
-      KEYWORD_END("end")
+      Location()
     )
 
     assert_errors expected, "module Parent module end", [
@@ -340,15 +334,7 @@ class ErrorsTest < Test::Unit::TestCase
       IDENTIFIER("foo"),
       nil,
       nil,
-      StatementsNode(
-        [ModuleNode(
-           [],
-           KEYWORD_MODULE("module"),
-           ConstantReadNode(),
-           nil,
-           KEYWORD_END("end")
-         )]
-      ),
+      StatementsNode([ModuleNode([], Location(), ConstantReadNode(), nil, Location())]),
       [],
       Location(),
       nil,
@@ -377,15 +363,7 @@ class ErrorsTest < Test::Unit::TestCase
            BlockNode(
              [],
              nil,
-             StatementsNode(
-               [ModuleNode(
-                  [],
-                  KEYWORD_MODULE("module"),
-                  ConstantReadNode(),
-                  nil,
-                  KEYWORD_END("end")
-                )]
-             ),
+             StatementsNode([ModuleNode([], Location(), ConstantReadNode(), nil, Location())]),
              Location(),
              Location()
            ),
@@ -955,10 +933,10 @@ class ErrorsTest < Test::Unit::TestCase
   def test_dont_allow_return_inside_module_body
     expected = ModuleNode(
       [],
-      KEYWORD_MODULE("module"),
+      Location(),
       ConstantReadNode(),
       StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
-      KEYWORD_END("end")
+      Location()
     )
 
     assert_errors expected, "module A; return; end", ["Invalid return in class/module body"]

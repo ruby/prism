@@ -3,7 +3,7 @@ ProgramNode(24...77)(
   StatementsNode(24...77)(
     [ModuleNode(24...77)(
        [],
-       KEYWORD_MODULE(24...30)("module"),
+       (24...30),
        ConstantReadNode(31...32)(),
        StatementsNode(46...73)(
          [DefNode(46...73)(
@@ -20,7 +20,7 @@ ProgramNode(24...77)(
             (70...73)
           )]
        ),
-       KEYWORD_END(74...77)("end")
+       (74...77)
      )]
   )
 )

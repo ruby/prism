@@ -74,10 +74,10 @@ ProgramNode(0...132)(
             StatementsNode(109...122)(
               [ModuleNode(109...122)(
                  [],
-                 KEYWORD_MODULE(109...115)("module"),
+                 (109...115),
                  ConstantReadNode(116...117)(),
                  nil,
-                 KEYWORD_END(119...122)("end")
+                 (119...122)
                )]
             ),
             KEYWORD_END(124...127)("end")

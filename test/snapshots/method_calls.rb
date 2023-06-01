@@ -1510,7 +1510,7 @@ ProgramNode(0...1187)(
        ArgumentsNode(914...939)(
          [ModuleNode(914...939)(
             [],
-            KEYWORD_MODULE(914...920)("module"),
+            (914...920),
             ConstantReadNode(921...924)(),
             StatementsNode(925...935)(
               [CallNode(925...935)(
@@ -1524,7 +1524,7 @@ ProgramNode(0...1187)(
                  "baz"
                )]
             ),
-            KEYWORD_END(936...939)("end")
+            (936...939)
           )]
        ),
        nil,

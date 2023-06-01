@@ -5,7 +5,7 @@ ProgramNode(0...991)(
        [IDENTIFIER(11...14)("foo"),
         IDENTIFIER(21...22)("a"),
         IDENTIFIER(24...25)("_")],
-       KEYWORD_MODULE(0...6)("module"),
+       (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(11...31)(
          [OperatorOrAssignmentNode(11...31)(
@@ -36,11 +36,11 @@ ProgramNode(0...991)(
             (15...18)
           )]
        ),
-       KEYWORD_END(32...35)("end")
+       (32...35)
      ),
      ModuleNode(37...73)(
        [IDENTIFIER(48...53)("local")],
-       KEYWORD_MODULE(37...43)("module"),
+       (37...43),
        ConstantReadNode(44...45)(),
        StatementsNode(48...69)(
          [LocalVariableWriteNode(48...57)(
@@ -60,7 +60,7 @@ ProgramNode(0...991)(
             "bar"
           )]
        ),
-       KEYWORD_END(70...73)("end")
+       (70...73)
      ),
      CallNode(74...89)(
        ClassNode(74...85)(
@@ -83,10 +83,10 @@ ProgramNode(0...991)(
      CallNode(90...106)(
        ModuleNode(90...102)(
          [],
-         KEYWORD_MODULE(90...96)("module"),
+         (90...96),
          ConstantReadNode(97...98)(),
          nil,
-         KEYWORD_END(99...102)("end")
+         (99...102)
        ),
        DOT(102...103)("."),
        IDENTIFIER(103...106)("bar"),

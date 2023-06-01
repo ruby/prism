@@ -75,7 +75,7 @@ ProgramNode(0...246)(
      ),
      ModuleNode(102...133)(
        [IDENTIFIER(113...116)("foo")],
-       KEYWORD_MODULE(102...108)("module"),
+       (102...108),
        ConstantReadNode(109...110)(),
        StatementsNode(113...129)(
          [IfNode(113...129)(
@@ -102,11 +102,11 @@ ProgramNode(0...246)(
             nil
           )]
        ),
-       KEYWORD_END(130...133)("end")
+       (130...133)
      ),
      ModuleNode(135...170)(
        [IDENTIFIER(146...149)("foo")],
-       KEYWORD_MODULE(135...141)("module"),
+       (135...141),
        ConstantReadNode(142...143)(),
        StatementsNode(146...166)(
          [UnlessNode(146...166)(
@@ -133,7 +133,7 @@ ProgramNode(0...246)(
             nil
           )]
        ),
-       KEYWORD_END(167...170)("end")
+       (167...170)
      ),
      UnlessNode(171...197)(
        KEYWORD_UNLESS(171...177)("unless"),

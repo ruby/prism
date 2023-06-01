@@ -85,7 +85,7 @@ ProgramNode(0...83)(
      ),
      ModuleNode(66...83)(
        [],
-       KEYWORD_MODULE(66...72)("module"),
+       (66...72),
        ConstantReadNode(73...74)(),
        StatementsNode(76...78)(
          [CallNode(76...78)(
@@ -99,7 +99,7 @@ ProgramNode(0...83)(
             "_1"
           )]
        ),
-       KEYWORD_END(80...83)("end")
+       (80...83)
      )]
   )
 )

@@ -3,7 +3,7 @@ ProgramNode(0...620)(
   StatementsNode(0...620)(
     [ModuleNode(0...68)(
        [],
-       KEYWORD_MODULE(0...6)("module"),
+       (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(11...64)(
          [CallNode(11...64)(
@@ -58,7 +58,7 @@ ProgramNode(0...620)(
             "foo"
           )]
        ),
-       KEYWORD_END(65...68)("end")
+       (65...68)
      ),
      DefNode(70...110)(
        IDENTIFIER(74...77)("foo"),
@@ -117,7 +117,7 @@ ProgramNode(0...620)(
      ),
      ModuleNode(112...146)(
        [IDENTIFIER(123...126)("foo")],
-       KEYWORD_MODULE(112...118)("module"),
+       (112...118),
        ConstantReadNode(119...120)(),
        StatementsNode(123...142)(
          [WhileNode(123...142)(
@@ -142,11 +142,11 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       KEYWORD_END(143...146)("end")
+       (143...146)
      ),
      ModuleNode(148...182)(
        [IDENTIFIER(159...162)("foo")],
-       KEYWORD_MODULE(148...154)("module"),
+       (148...154),
        ConstantReadNode(155...156)(),
        StatementsNode(159...178)(
          [UntilNode(159...178)(
@@ -171,11 +171,11 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       KEYWORD_END(179...182)("end")
+       (179...182)
      ),
      ModuleNode(184...228)(
        [IDENTIFIER(209...212)("foo")],
-       KEYWORD_MODULE(184...190)("module"),
+       (184...190),
        ConstantReadNode(191...192)(),
        StatementsNode(195...224)(
          [WhileNode(195...224)(
@@ -209,11 +209,11 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       KEYWORD_END(225...228)("end")
+       (225...228)
      ),
      ModuleNode(230...299)(
        [],
-       KEYWORD_MODULE(230...236)("module"),
+       (230...236),
        ConstantReadNode(237...238)(),
        StatementsNode(241...295)(
          [CallNode(241...295)(
@@ -277,11 +277,11 @@ ProgramNode(0...620)(
             "each"
           )]
        ),
-       KEYWORD_END(296...299)("end")
+       (296...299)
      ),
      ModuleNode(301...370)(
        [],
-       KEYWORD_MODULE(301...307)("module"),
+       (301...307),
        ConstantReadNode(308...309)(),
        StatementsNode(312...366)(
          [CallNode(312...366)(
@@ -336,7 +336,7 @@ ProgramNode(0...620)(
             "each"
           )]
        ),
-       KEYWORD_END(367...370)("end")
+       (367...370)
      ),
      LocalVariableWriteNode(371...402)(
        (371...372),

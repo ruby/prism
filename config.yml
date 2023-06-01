@@ -1146,14 +1146,14 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: module_keyword
-        type: token
+      - name: module_keyword_loc
+        type: location
       - name: constant_path
         type: node
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents a module declaration involving the `module` keyword.
 

@@ -44,7 +44,7 @@ ProgramNode(0...178)(
      ),
      ModuleNode(89...128)(
        [],
-       KEYWORD_MODULE(89...95)("module"),
+       (89...95),
        ConstantPathNode(96...123)(
          IfNode(96...115)(
            (96...98),
@@ -57,11 +57,11 @@ ProgramNode(0...178)(
          (115...117)
        ),
        nil,
-       KEYWORD_END(125...128)("end")
+       (125...128)
      ),
      ModuleNode(130...178)(
        [],
-       KEYWORD_MODULE(130...136)("module"),
+       (130...136),
        ConstantPathNode(137...173)(
          WhileNode(137...165)(
            KEYWORD_WHILE(137...142)("while"),
@@ -77,7 +77,7 @@ ProgramNode(0...178)(
          (165...167)
        ),
        nil,
-       KEYWORD_END(175...178)("end")
+       (175...178)
      )]
   )
 )

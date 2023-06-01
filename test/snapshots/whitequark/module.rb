@@ -3,10 +3,10 @@ ProgramNode(0...15)(
   StatementsNode(0...15)(
     [ModuleNode(0...15)(
        [],
-       KEYWORD_MODULE(0...6)("module"),
+       (0...6),
        ConstantReadNode(7...10)(),
        nil,
-       KEYWORD_END(12...15)("end")
+       (12...15)
      )]
   )
 )

@@ -164,7 +164,7 @@ ProgramNode(0...188)(
      ),
      ModuleNode(132...188)(
        [IDENTIFIER(143...146)("foo")],
-       KEYWORD_MODULE(132...138)("module"),
+       (132...138),
        ConstantReadNode(139...140)(),
        StatementsNode(143...184)(
          [LocalVariableWriteNode(143...152)(
@@ -204,7 +204,7 @@ ProgramNode(0...188)(
             )
           )]
        ),
-       KEYWORD_END(185...188)("end")
+       (185...188)
      )]
   )
 )
