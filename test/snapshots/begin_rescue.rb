@@ -103,7 +103,7 @@ ProgramNode(0...578)(
          (65...71)
        ),
        EnsureNode(65...79)(
-         KEYWORD_ENSURE(65...71)("ensure"),
+         (65...71),
          StatementsNode(73...74)(
            [CallNode(73...74)(
               nil,
@@ -116,7 +116,7 @@ ProgramNode(0...578)(
               "d"
             )]
          ),
-         KEYWORD_END(76...79)("end")
+         (76...79)
        ),
        (76...79)
      ),
@@ -359,7 +359,7 @@ ProgramNode(0...578)(
        ),
        nil,
        EnsureNode(308...322)(
-         KEYWORD_ENSURE(308...314)("ensure"),
+         (308...314),
          StatementsNode(317...318)(
            [CallNode(317...318)(
               nil,
@@ -372,7 +372,7 @@ ProgramNode(0...578)(
               "b"
             )]
          ),
-         KEYWORD_END(319...322)("end")
+         (319...322)
        ),
        (319...322)
      ),

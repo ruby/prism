@@ -34,11 +34,7 @@ ProgramNode(0...262)(
          nil,
          nil,
          nil,
-         EnsureNode(29...39)(
-           KEYWORD_ENSURE(29...35)("ensure"),
-           nil,
-           KEYWORD_END(36...39)("end")
-         ),
+         EnsureNode(29...39)((29...35), nil, (36...39)),
          (36...39)
        )
      ),
@@ -58,11 +54,7 @@ ProgramNode(0...262)(
            nil
          ),
          ElseNode(54...65)((54...58), nil, (59...65)),
-         EnsureNode(59...69)(
-           KEYWORD_ENSURE(59...65)("ensure"),
-           nil,
-           KEYWORD_END(66...69)("end")
-         ),
+         EnsureNode(59...69)((59...65), nil, (66...69)),
          (66...69)
        )
      ),

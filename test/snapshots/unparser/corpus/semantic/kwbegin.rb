@@ -217,7 +217,7 @@ ProgramNode(0...215)(
        ),
        nil,
        EnsureNode(201...215)(
-         KEYWORD_ENSURE(201...207)("ensure"),
+         (201...207),
          StatementsNode(210...211)(
            [CallNode(210...211)(
               nil,
@@ -230,7 +230,7 @@ ProgramNode(0...215)(
               "d"
             )]
          ),
-         KEYWORD_END(212...215)("end")
+         (212...215)
        ),
        (212...215)
      )]

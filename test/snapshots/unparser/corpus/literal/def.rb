@@ -55,7 +55,7 @@ ProgramNode(0...913)(
            (32...38)
          ),
          EnsureNode(32...46)(
-           KEYWORD_ENSURE(32...38)("ensure"),
+           (32...38),
            StatementsNode(41...42)(
              [CallNode(41...42)(
                 nil,
@@ -68,7 +68,7 @@ ProgramNode(0...913)(
                 "d"
               )]
            ),
-           KEYWORD_END(43...46)("end")
+           (43...46)
          ),
          (43...46)
        ),
@@ -147,7 +147,7 @@ ProgramNode(0...913)(
            (89...95)
          ),
          EnsureNode(89...103)(
-           KEYWORD_ENSURE(89...95)("ensure"),
+           (89...95),
            StatementsNode(98...99)(
              [CallNode(98...99)(
                 nil,
@@ -160,7 +160,7 @@ ProgramNode(0...913)(
                 "d"
               )]
            ),
-           KEYWORD_END(100...103)("end")
+           (100...103)
          ),
          (100...103)
        ),
@@ -270,7 +270,7 @@ ProgramNode(0...913)(
          ),
          nil,
          EnsureNode(189...205)(
-           KEYWORD_ENSURE(189...195)("ensure"),
+           (189...195),
            StatementsNode(198...201)(
              [CallNode(198...201)(
                 nil,
@@ -283,7 +283,7 @@ ProgramNode(0...913)(
                 "baz"
               )]
            ),
-           KEYWORD_END(202...205)("end")
+           (202...205)
          ),
          (202...205)
        ),
@@ -316,7 +316,7 @@ ProgramNode(0...913)(
          nil,
          nil,
          EnsureNode(221...237)(
-           KEYWORD_ENSURE(221...227)("ensure"),
+           (221...227),
            StatementsNode(230...233)(
              [CallNode(230...233)(
                 nil,
@@ -329,7 +329,7 @@ ProgramNode(0...913)(
                 "baz"
               )]
            ),
-           KEYWORD_END(234...237)("end")
+           (234...237)
          ),
          (234...237)
        ),

@@ -1370,9 +1370,9 @@ yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_
         .end = end_keyword->end
       },
     },
-    .ensure_keyword = *ensure_keyword,
+    .ensure_keyword_loc = YP_LOCATION_TOKEN_VALUE(ensure_keyword),
     .statements = statements,
-    .end_keyword = *end_keyword
+    .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;

@@ -1138,11 +1138,7 @@ ProgramNode(0...737)(
            nil,
            nil,
            nil,
-           EnsureNode(686...696)(
-             KEYWORD_ENSURE(686...692)("ensure"),
-             nil,
-             KEYWORD_END(693...696)("end")
-           ),
+           EnsureNode(686...696)((686...692), nil, (693...696)),
            (693...696)
          ),
          (683...685),
@@ -1172,11 +1168,7 @@ ProgramNode(0...737)(
              nil
            ),
            nil,
-           EnsureNode(709...719)(
-             KEYWORD_ENSURE(709...715)("ensure"),
-             nil,
-             KEYWORD_END(716...719)("end")
-           ),
+           EnsureNode(709...719)((709...715), nil, (716...719)),
            (716...719)
          ),
          (699...701),

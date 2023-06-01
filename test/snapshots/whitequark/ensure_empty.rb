@@ -6,11 +6,7 @@ ProgramNode(0...16)(
        nil,
        nil,
        nil,
-       EnsureNode(6...16)(
-         KEYWORD_ENSURE(6...12)("ensure"),
-         nil,
-         KEYWORD_END(13...16)("end")
-       ),
+       EnsureNode(6...16)((6...12), nil, (13...16)),
        (13...16)
      )]
   )

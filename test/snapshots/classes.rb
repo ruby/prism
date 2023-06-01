@@ -28,11 +28,7 @@ ProgramNode(0...370)(
          nil,
          nil,
          nil,
-         EnsureNode(28...39)(
-           KEYWORD_ENSURE(28...34)("ensure"),
-           nil,
-           KEYWORD_END(36...39)("end")
-         ),
+         EnsureNode(28...39)((28...34), nil, (36...39)),
          (36...39)
        ),
        (36...39)
@@ -55,11 +51,7 @@ ProgramNode(0...370)(
            nil
          ),
          ElseNode(58...70)((58...62), nil, (64...70)),
-         EnsureNode(64...75)(
-           KEYWORD_ENSURE(64...70)("ensure"),
-           nil,
-           KEYWORD_END(72...75)("end")
-         ),
+         EnsureNode(64...75)((64...70), nil, (72...75)),
          (72...75)
        ),
        (72...75)
@@ -123,11 +115,7 @@ ProgramNode(0...370)(
               nil,
               nil,
               nil,
-              EnsureNode(146...157)(
-                KEYWORD_ENSURE(146...152)("ensure"),
-                nil,
-                KEYWORD_END(154...157)("end")
-              ),
+              EnsureNode(146...157)((146...152), nil, (154...157)),
               (154...157)
             ),
             KEYWORD_END(154...157)("end")
@@ -159,11 +147,7 @@ ProgramNode(0...370)(
                 nil
               ),
               ElseNode(196...208)((196...200), nil, (202...208)),
-              EnsureNode(202...213)(
-                KEYWORD_ENSURE(202...208)("ensure"),
-                nil,
-                KEYWORD_END(210...213)("end")
-              ),
+              EnsureNode(202...213)((202...208), nil, (210...213)),
               (210...213)
             ),
             KEYWORD_END(210...213)("end")

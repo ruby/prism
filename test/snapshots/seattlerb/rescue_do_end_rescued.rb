@@ -53,7 +53,7 @@ ProgramNode(0...65)(
              (45...51)
            ),
            EnsureNode(45...65)(
-             KEYWORD_ENSURE(45...51)("ensure"),
+             (45...51),
              StatementsNode(54...61)(
                [SymbolNode(54...61)(
                   SYMBOL_BEGIN(54...55)(":"),
@@ -62,7 +62,7 @@ ProgramNode(0...65)(
                   "ensure"
                 )]
              ),
-             KEYWORD_END(62...65)("end")
+             (62...65)
            ),
            (62...65)
          ),

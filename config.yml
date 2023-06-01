@@ -753,13 +753,13 @@ nodes:
                       ^^^^^^^^^^
   - name: EnsureNode
     child_nodes:
-      - name: ensure_keyword
-        type: token
+      - name: ensure_keyword_loc
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents an `ensure` clause in a `begin` statement.
 

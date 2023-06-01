@@ -18,9 +18,9 @@ ProgramNode(0...44)(
          (30...36)
        ),
        EnsureNode(30...44)(
-         KEYWORD_ENSURE(30...36)("ensure"),
+         (30...36),
          StatementsNode(39...40)([IntegerNode(39...40)()]),
-         KEYWORD_END(41...44)("end")
+         (41...44)
        ),
        (41...44)
      )]
