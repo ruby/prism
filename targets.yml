@@ -10,10 +10,6 @@ ruby:
   excludes:
     - spec/ruby/command_line/fixtures/bad_syntax.rb
 
-rails:
-  repo: https://github.com/rails/rails
-  sha: 8e3449908c59858384ae230d1416c7dcabc8c2dc
-
 discourse:
   repo: https://github.com/discourse/discourse
   sha: 964f37476dbbfb978bf99608a62d0da9ddf531fa
