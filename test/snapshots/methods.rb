@@ -8,8 +8,8 @@ ProgramNode(0...1194)(
          [RequiredDestructuredParameterNode(8...18)(
             [RequiredParameterNode(9...12)(),
              RequiredParameterNode(14...17)()],
-            PARENTHESIS_LEFT(8...9)("("),
-            PARENTHESIS_RIGHT(17...18)(")")
+            (8...9),
+            (17...18)
           )],
          [],
          [],
@@ -34,8 +34,8 @@ ProgramNode(0...1194)(
          [RequiredDestructuredParameterNode(33...43)(
             [RequiredParameterNode(34...37)(),
              RequiredParameterNode(39...42)()],
-            PARENTHESIS_LEFT(33...34)("("),
-            PARENTHESIS_RIGHT(42...43)(")")
+            (33...34),
+            (42...43)
           )],
          [OptionalParameterNode(45...57)(
             (45...53),
@@ -45,8 +45,8 @@ ProgramNode(0...1194)(
          [RequiredDestructuredParameterNode(59...69)(
             [RequiredParameterNode(60...63)(),
              RequiredParameterNode(65...68)()],
-            PARENTHESIS_LEFT(59...60)("("),
-            PARENTHESIS_RIGHT(68...69)(")")
+            (59...60),
+            (68...69)
           )],
          nil,
          [],

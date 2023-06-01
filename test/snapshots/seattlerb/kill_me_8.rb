@@ -19,8 +19,8 @@ ProgramNode(0...20)(
                 [RequiredParameterNode(9...10)(),
                  SplatNode(12...13)(USTAR(12...13)("*"), nil),
                  RequiredParameterNode(15...16)()],
-                PARENTHESIS_LEFT(8...9)("("),
-                PARENTHESIS_RIGHT(16...17)(")")
+                (8...9),
+                (16...17)
               )],
              [],
              [],

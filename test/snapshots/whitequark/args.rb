@@ -29,11 +29,11 @@ ProgramNode(0...690)(
          [RequiredDestructuredParameterNode(22...27)(
             [RequiredDestructuredParameterNode(23...26)(
                [RequiredParameterNode(24...25)()],
-               PARENTHESIS_LEFT(23...24)("("),
-               PARENTHESIS_RIGHT(25...26)(")")
+               (23...24),
+               (25...26)
              )],
-            PARENTHESIS_LEFT(22...23)("("),
-            PARENTHESIS_RIGHT(26...27)(")")
+            (22...23),
+            (26...27)
           )],
          [],
          [],
@@ -57,8 +57,8 @@ ProgramNode(0...690)(
        ParametersNode(42...45)(
          [RequiredDestructuredParameterNode(42...45)(
             [SplatNode(43...44)(USTAR(43...44)("*"), nil)],
-            PARENTHESIS_LEFT(42...43)("("),
-            PARENTHESIS_RIGHT(44...45)(")")
+            (42...43),
+            (44...45)
           )],
          [],
          [],
@@ -83,8 +83,8 @@ ProgramNode(0...690)(
          [RequiredDestructuredParameterNode(60...66)(
             [SplatNode(61...62)(USTAR(61...62)("*"), nil),
              RequiredParameterNode(64...65)()],
-            PARENTHESIS_LEFT(60...61)("("),
-            PARENTHESIS_RIGHT(65...66)(")")
+            (60...61),
+            (65...66)
           )],
          [],
          [],
@@ -111,8 +111,8 @@ ProgramNode(0...690)(
                USTAR(82...83)("*"),
                RequiredParameterNode(83...84)()
              )],
-            PARENTHESIS_LEFT(81...82)("("),
-            PARENTHESIS_RIGHT(84...85)(")")
+            (81...82),
+            (84...85)
           )],
          [],
          [],
@@ -140,8 +140,8 @@ ProgramNode(0...690)(
                RequiredParameterNode(102...103)()
              ),
              RequiredParameterNode(105...106)()],
-            PARENTHESIS_LEFT(100...101)("("),
-            PARENTHESIS_RIGHT(106...107)(")")
+            (100...101),
+            (106...107)
           )],
          [],
          [],
@@ -166,8 +166,8 @@ ProgramNode(0...690)(
          [RequiredDestructuredParameterNode(122...128)(
             [RequiredParameterNode(123...124)(),
              SplatNode(126...127)(USTAR(126...127)("*"), nil)],
-            PARENTHESIS_LEFT(122...123)("("),
-            PARENTHESIS_RIGHT(127...128)(")")
+            (122...123),
+            (127...128)
           )],
          [],
          [],
@@ -193,8 +193,8 @@ ProgramNode(0...690)(
             [RequiredParameterNode(144...145)(),
              SplatNode(147...148)(USTAR(147...148)("*"), nil),
              RequiredParameterNode(150...151)()],
-            PARENTHESIS_LEFT(143...144)("("),
-            PARENTHESIS_RIGHT(151...152)(")")
+            (143...144),
+            (151...152)
           )],
          [],
          [],
@@ -222,8 +222,8 @@ ProgramNode(0...690)(
                USTAR(171...172)("*"),
                RequiredParameterNode(172...173)()
              )],
-            PARENTHESIS_LEFT(167...168)("("),
-            PARENTHESIS_RIGHT(173...174)(")")
+            (167...168),
+            (173...174)
           )],
          [],
          [],
@@ -252,8 +252,8 @@ ProgramNode(0...690)(
                RequiredParameterNode(194...195)()
              ),
              RequiredParameterNode(197...198)()],
-            PARENTHESIS_LEFT(189...190)("("),
-            PARENTHESIS_RIGHT(198...199)(")")
+            (189...190),
+            (198...199)
           )],
          [],
          [],
@@ -280,8 +280,8 @@ ProgramNode(0...690)(
          [RequiredDestructuredParameterNode(214...221)(
             [RequiredParameterNode(215...216)(),
              RequiredParameterNode(218...220)()],
-            PARENTHESIS_LEFT(214...215)("("),
-            PARENTHESIS_RIGHT(220...221)(")")
+            (214...215),
+            (220...221)
           )],
          [],
          [],

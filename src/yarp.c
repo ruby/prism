@@ -2712,7 +2712,8 @@ yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_tok
       .type = YP_NODE_REQUIRED_DESTRUCTURED_PARAMETER_NODE,
       .location = YP_LOCATION_TOKEN_VALUE(opening)
     },
-    .opening = *opening
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = { .start = NULL, .end = NULL }
   };
 
   yp_node_list_init(&node->parameters);
@@ -2728,7 +2729,7 @@ yp_required_destructured_parameter_node_append_parameter(yp_required_destructure
 // Set the closing token of the given RequiredDestructuredParameterNode node.
 static void
 yp_required_destructured_parameter_node_closing_set(yp_required_destructured_parameter_node_t *node, const yp_token_t *closing) {
-  node->closing = *closing;
+  node->closing_loc = YP_LOCATION_TOKEN_VALUE(closing);
   node->base.location.end = closing->end;
 }
 

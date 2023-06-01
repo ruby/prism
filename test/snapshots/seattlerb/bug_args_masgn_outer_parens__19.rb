@@ -18,12 +18,12 @@ ProgramNode(0...19)(
                 [RequiredDestructuredParameterNode(6...12)(
                    [RequiredParameterNode(7...8)(),
                     RequiredParameterNode(10...11)()],
-                   PARENTHESIS_LEFT(6...7)("("),
-                   PARENTHESIS_RIGHT(11...12)(")")
+                   (6...7),
+                   (11...12)
                  ),
                  RequiredParameterNode(14...15)()],
-                PARENTHESIS_LEFT(5...6)("("),
-                PARENTHESIS_RIGHT(15...16)(")")
+                (5...6),
+                (15...16)
               )],
              [],
              [],

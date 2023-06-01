@@ -257,8 +257,8 @@ ProgramNode(0...737)(
              [RequiredDestructuredParameterNode(149...155)(
                 [RequiredParameterNode(150...151)(),
                  RequiredParameterNode(153...154)()],
-                PARENTHESIS_LEFT(149...150)("("),
-                PARENTHESIS_RIGHT(154...155)(")")
+                (149...150),
+                (154...155)
               ),
               RequiredParameterNode(157...158)()],
              [],
@@ -469,8 +469,8 @@ ProgramNode(0...737)(
            ParametersNode(257...260)(
              [RequiredDestructuredParameterNode(257...260)(
                 [SplatNode(258...259)(USTAR(258...259)("*"), nil)],
-                PARENTHESIS_LEFT(257...258)("("),
-                PARENTHESIS_RIGHT(259...260)(")")
+                (257...258),
+                (259...260)
               )],
              [],
              [],
@@ -523,11 +523,11 @@ ProgramNode(0...737)(
              [RequiredDestructuredParameterNode(279...284)(
                 [RequiredDestructuredParameterNode(280...283)(
                    [SplatNode(281...282)(USTAR(281...282)("*"), nil)],
-                   PARENTHESIS_LEFT(280...281)("("),
-                   PARENTHESIS_RIGHT(282...283)(")")
+                   (280...281),
+                   (282...283)
                  )],
-                PARENTHESIS_LEFT(279...280)("("),
-                PARENTHESIS_RIGHT(283...284)(")")
+                (279...280),
+                (283...284)
               )],
              [],
              [],
@@ -581,11 +581,11 @@ ProgramNode(0...737)(
                 [RequiredParameterNode(304...305)(),
                  RequiredDestructuredParameterNode(307...310)(
                    [SplatNode(308...309)(USTAR(308...309)("*"), nil)],
-                   PARENTHESIS_LEFT(307...308)("("),
-                   PARENTHESIS_RIGHT(309...310)(")")
+                   (307...308),
+                   (309...310)
                  )],
-                PARENTHESIS_LEFT(303...304)("("),
-                PARENTHESIS_RIGHT(310...311)(")")
+                (303...304),
+                (310...311)
               )],
              [],
              [],
@@ -638,8 +638,8 @@ ProgramNode(0...737)(
              [RequiredDestructuredParameterNode(330...336)(
                 [RequiredParameterNode(331...332)(),
                  RequiredParameterNode(334...335)()],
-                PARENTHESIS_LEFT(330...331)("("),
-                PARENTHESIS_RIGHT(335...336)(")")
+                (330...331),
+                (335...336)
               )],
              [],
              [],

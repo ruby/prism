@@ -248,8 +248,8 @@ ProgramNode(0...262)(
            [RequiredDestructuredParameterNode(251...257)(
               [RequiredParameterNode(252...253)(),
                RequiredParameterNode(255...256)()],
-              PARENTHESIS_LEFT(251...252)("("),
-              PARENTHESIS_RIGHT(256...257)(")")
+              (251...252),
+              (256...257)
             )],
            [],
            [],

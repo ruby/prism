@@ -19,8 +19,8 @@ ProgramNode(0...20)(
               RequiredDestructuredParameterNode(8...14)(
                 [RequiredParameterNode(9...10)(),
                  RequiredParameterNode(12...13)()],
-                PARENTHESIS_LEFT(8...9)("("),
-                PARENTHESIS_RIGHT(13...14)(")")
+                (8...9),
+                (13...14)
               ),
               RequiredParameterNode(16...17)()],
              [],

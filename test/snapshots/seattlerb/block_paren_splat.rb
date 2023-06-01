@@ -18,8 +18,8 @@ ProgramNode(0...15)(
                    USTAR(9...10)("*"),
                    RequiredParameterNode(10...11)()
                  )],
-                PARENTHESIS_LEFT(5...6)("("),
-                PARENTHESIS_RIGHT(11...12)(")")
+                (5...6),
+                (11...12)
               )],
              [],
              [],

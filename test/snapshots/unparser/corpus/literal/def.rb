@@ -923,11 +923,11 @@ ProgramNode(0...913)(
          [RequiredDestructuredParameterNode(811...816)(
             [RequiredDestructuredParameterNode(812...815)(
                [RequiredParameterNode(813...814)()],
-               PARENTHESIS_LEFT(812...813)("("),
-               PARENTHESIS_RIGHT(814...815)(")")
+               (812...813),
+               (814...815)
              )],
-            PARENTHESIS_LEFT(811...812)("("),
-            PARENTHESIS_RIGHT(815...816)(")")
+            (811...812),
+            (815...816)
           )],
          [],
          [],

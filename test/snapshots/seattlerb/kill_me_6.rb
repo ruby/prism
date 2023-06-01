@@ -23,8 +23,8 @@ ProgramNode(0...21)(
                    RequiredParameterNode(13...14)()
                  ),
                  RequiredParameterNode(16...17)()],
-                PARENTHESIS_LEFT(8...9)("("),
-                PARENTHESIS_RIGHT(17...18)(")")
+                (8...9),
+                (17...18)
               )],
              [],
              [],
