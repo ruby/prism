@@ -3214,11 +3214,11 @@ yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t 
         .end = end
       },
     },
-    .keyword = *keyword,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
     .predicate = predicate,
     .statements = statements,
     .consequent = NULL,
-    .end_keyword = YP_TOKEN_NOT_PROVIDED_VALUE(parser)
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
   };
 
   return node;
@@ -3240,14 +3240,20 @@ yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const 
         .end = predicate->location.end
       },
     },
-    .keyword = *unless_keyword,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(unless_keyword),
     .predicate = predicate,
     .statements = statements,
     .consequent = NULL,
-    .end_keyword = not_provided(parser)
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
   };
 
   return node;
+}
+
+static inline void
+yp_unless_node_end_keyword_loc_set(yp_unless_node_t *node, const yp_token_t *end_keyword) {
+  node->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
+  node->base.location.end = end_keyword->end;
 }
 
 // Allocate a new UntilNode node.
@@ -8264,7 +8270,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->consequent = else_node;
-        ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
+        yp_unless_node_end_keyword_loc_set((yp_unless_node_t *) parent, &parser->previous);
         break;
       default:
         assert(false && "unreachable");
@@ -8278,8 +8284,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
         yp_if_node_end_keyword_loc_set((yp_if_node_t *) parent, &parser->previous);
         break;
       case YP_CONTEXT_UNLESS:
-        ((yp_unless_node_t *) parent)->end_keyword = parser->previous;
-        parent->location.end = parser->previous.end;
+        yp_unless_node_end_keyword_loc_set((yp_unless_node_t *) parent, &parser->previous);
         break;
       default:
         assert(false && "unreachable");

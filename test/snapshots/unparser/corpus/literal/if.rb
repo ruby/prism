@@ -38,18 +38,18 @@ ProgramNode(0...246)(
        (50...53)
      ),
      UnlessNode(54...72)(
-       KEYWORD_UNLESS(54...60)("unless"),
+       (54...60),
        IntegerNode(61...62)(),
        StatementsNode(65...68)([NilNode(65...68)()]),
        nil,
-       KEYWORD_END(69...72)("end")
+       (69...72)
      ),
      UnlessNode(73...89)(
-       KEYWORD_UNLESS(73...79)("unless"),
+       (73...79),
        IntegerNode(80...81)(),
        StatementsNode(84...85)([IntegerNode(84...85)()]),
        nil,
-       KEYWORD_END(86...89)("end")
+       (86...89)
      ),
      IfNode(90...100)(
        (90...92),
@@ -104,7 +104,7 @@ ProgramNode(0...246)(
        ConstantReadNode(142...143)(),
        StatementsNode(146...166)(
          [UnlessNode(146...166)(
-            KEYWORD_UNLESS_MODIFIER(156...162)("unless"),
+            (156...162),
             LocalVariableReadNode(163...166)(0),
             StatementsNode(146...155)(
               [LocalVariableWriteNode(146...155)(
@@ -130,7 +130,7 @@ ProgramNode(0...246)(
        (167...170)
      ),
      UnlessNode(171...197)(
-       KEYWORD_UNLESS(171...177)("unless"),
+       (171...177),
        CallNode(178...181)(
          nil,
          nil,
@@ -159,7 +159,7 @@ ProgramNode(0...246)(
           )]
        ),
        nil,
-       KEYWORD_END(194...197)("end")
+       (194...197)
      ),
      IfNode(198...246)(
        (198...200),
