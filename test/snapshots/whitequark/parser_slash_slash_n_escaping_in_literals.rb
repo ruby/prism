@@ -134,14 +134,14 @@ ProgramNode(0...210)(
        (177...182)
      ),
      InterpolatedXStringNode(183...203)(
-       HEREDOC_START(183...192)("<<-`HERE`"),
+       (183...192),
        [StringNode(193...198)(
           nil,
           STRING_CONTENT(193...198)("a\\\n" + "b\n"),
           nil,
           "a\n" + "b\n"
         )],
-       HEREDOC_END(198...203)("HERE\n")
+       (198...203)
      ),
      XStringNode(204...210)(
        BACKTICK(204...205)("`"),

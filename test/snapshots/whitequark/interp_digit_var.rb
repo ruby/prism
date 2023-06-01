@@ -278,24 +278,24 @@ ProgramNode(1...476)(
        (430...435)
      ),
      InterpolatedXStringNode(436...455)(
-       HEREDOC_START(436...445)("<<-`HERE`"),
+       (436...445),
        [StringNode(446...450)(
           nil,
           STRING_CONTENT(446...450)("\#@1\n"),
           nil,
           "\#@1\n"
         )],
-       HEREDOC_END(450...455)("HERE\n")
+       (450...455)
      ),
      InterpolatedXStringNode(456...476)(
-       HEREDOC_START(456...465)("<<-`HERE`"),
+       (456...465),
        [StringNode(466...471)(
           nil,
           STRING_CONTENT(466...471)("\#@@1\n"),
           nil,
           "\#@@1\n"
         )],
-       HEREDOC_END(471...476)("HERE\n")
+       (471...476)
      )]
   )
 )

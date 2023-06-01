@@ -1993,8 +1993,8 @@ yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *openi
         .end = closing->end
       },
     },
-    .opening = *opening,
-    .closing = *closing
+    .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
   };
 
   yp_node_list_init(&node->parts);
@@ -2009,7 +2009,7 @@ yp_interpolated_xstring_node_append(yp_interpolated_x_string_node_t *node, yp_no
 
 static inline void
 yp_interpolated_xstring_node_closing_set(yp_interpolated_x_string_node_t *node, const yp_token_t *closing) {
-  node->closing = *closing;
+  node->closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing);
   node->base.location.end = closing->end;
 }
 

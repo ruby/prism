@@ -434,7 +434,7 @@ ProgramNode(0...916)(
        "foo"
      ),
      InterpolatedXStringNode(418...430)(
-       BACKTICK(418...419)("`"),
+       (418...419),
        [StringNode(419...422)(
           nil,
           STRING_CONTENT(419...422)("foo"),
@@ -446,7 +446,7 @@ ProgramNode(0...916)(
           StatementsNode(424...428)([InstanceVariableReadNode(424...428)()]),
           EMBEXPR_END(428...429)("}")
         )],
-       STRING_END(429...430)("`")
+       (429...430)
      ),
      XStringNode(431...434)(
        BACKTICK(431...432)("`"),
@@ -1006,7 +1006,7 @@ ProgramNode(0...916)(
        STRING_END(900...901)("\"")
      ),
      InterpolatedXStringNode(902...916)(
-       BACKTICK(902...903)("`"),
+       (902...903),
        [StringNode(903...907)(
           nil,
           STRING_CONTENT(903...907)("  x\n"),
@@ -1035,7 +1035,7 @@ ProgramNode(0...916)(
           nil,
           "\n" + "#"
         )],
-       STRING_END(915...916)("`")
+       (915...916)
      )]
   )
 )

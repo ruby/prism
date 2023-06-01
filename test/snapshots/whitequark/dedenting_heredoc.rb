@@ -345,7 +345,7 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(307...331)(
          [InterpolatedXStringNode(307...331)(
-            HEREDOC_START(307...313)("<<~`E`"),
+            (307...313),
             [StringNode(314...322)(
                nil,
                STRING_CONTENT(314...322)("    x\n" + "  "),
@@ -374,7 +374,7 @@ ProgramNode(0...331)(
                nil,
                "\n"
              )],
-            HEREDOC_END(329...331)("E\n")
+            (329...331)
           )]
        ),
        nil,

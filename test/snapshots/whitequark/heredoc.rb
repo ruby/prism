@@ -22,14 +22,14 @@ ProgramNode(0...66)(
        (38...43)
      ),
      InterpolatedXStringNode(44...66)(
-       HEREDOC_START(44...52)("<<`HERE`"),
+       (44...52),
        [StringNode(53...61)(
           nil,
           STRING_CONTENT(53...61)("foo\n" + "bar\n"),
           nil,
           "foo\n" + "bar\n"
         )],
-       HEREDOC_END(61...66)("HERE\n")
+       (61...66)
      )]
   )
 )

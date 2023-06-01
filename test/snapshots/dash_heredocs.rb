@@ -42,7 +42,7 @@ ProgramNode(0...223)(
        "+"
      ),
      InterpolatedXStringNode(59...81)(
-       HEREDOC_START(59...67)("<<-`EOF`"),
+       (59...67),
        [StringNode(68...72)(
           nil,
           STRING_CONTENT(68...72)("  a\n"),
@@ -66,7 +66,7 @@ ProgramNode(0...223)(
           EMBEXPR_END(75...76)("}")
         ),
         StringNode(76...77)(nil, STRING_CONTENT(76...77)("\n"), nil, "\n")],
-       HEREDOC_END(77...81)("EOF\n")
+       (77...81)
      ),
      InterpolatedStringNode(82...106)(
        (82...88),

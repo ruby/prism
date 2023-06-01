@@ -8,7 +8,7 @@ ProgramNode(0...40)(
        "foo"
      ),
      InterpolatedXStringNode(9...25)(
-       BACKTICK(9...10)("`"),
+       (9...10),
        [StringNode(10...14)(nil, STRING_CONTENT(10...14)("foo "), nil, "foo "),
         StringInterpolatedNode(14...20)(
           EMBEXPR_BEGIN(14...16)("\#{"),
@@ -32,7 +32,7 @@ ProgramNode(0...40)(
           nil,
           " baz"
         )],
-       STRING_END(24...25)("`")
+       (24...25)
      ),
      XStringNode(27...33)(
        BACKTICK(27...28)("`"),
