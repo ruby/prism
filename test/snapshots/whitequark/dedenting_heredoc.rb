@@ -16,7 +16,7 @@ ProgramNode(0...331)(
                "  x\n"
              ),
              StringInterpolatedNode(17...25)(
-               EMBEXPR_BEGIN(17...19)("\#{"),
+               (17...19),
                StatementsNode(19...24)(
                  [StringNode(19...24)(
                     STRING_BEGIN(19...20)("\""),
@@ -25,7 +25,7 @@ ProgramNode(0...331)(
                     "  y"
                   )]
                ),
-               EMBEXPR_END(24...25)("}")
+               (24...25)
              ),
              StringNode(25...26)(
                nil,
@@ -55,7 +55,7 @@ ProgramNode(0...331)(
                "  x\n"
              ),
              StringInterpolatedNode(46...52)(
-               EMBEXPR_BEGIN(46...48)("\#{"),
+               (46...48),
                StatementsNode(48...51)(
                  [CallNode(48...51)(
                     nil,
@@ -68,7 +68,7 @@ ProgramNode(0...331)(
                     "foo"
                   )]
                ),
-               EMBEXPR_END(51...52)("}")
+               (51...52)
              ),
              StringNode(52...53)(
                nil,
@@ -353,7 +353,7 @@ ProgramNode(0...331)(
                "  x\n"
              ),
              StringInterpolatedNode(322...328)(
-               EMBEXPR_BEGIN(322...324)("\#{"),
+               (322...324),
                StatementsNode(324...327)(
                  [CallNode(324...327)(
                     nil,
@@ -366,7 +366,7 @@ ProgramNode(0...331)(
                     "foo"
                   )]
                ),
-               EMBEXPR_END(327...328)("}")
+               (327...328)
              ),
              StringNode(328...329)(
                nil,

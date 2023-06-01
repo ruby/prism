@@ -252,11 +252,11 @@ ProgramNode(0...278)(
                       "instance "
                     ),
                     StringInterpolatedNode(209...213)(
-                      EMBEXPR_BEGIN(209...211)("\#{"),
+                      (209...211),
                       StatementsNode(211...212)(
                         [LocalVariableReadNode(211...212)(0)]
                       ),
-                      EMBEXPR_END(212...213)("}")
+                      (212...213)
                     )],
                    (213...214)
                  )
@@ -311,11 +311,11 @@ ProgramNode(0...278)(
                       "class "
                     ),
                     StringInterpolatedNode(273...277)(
-                      EMBEXPR_BEGIN(273...275)("\#{"),
+                      (273...275),
                       StatementsNode(275...276)(
                         [LocalVariableReadNode(275...276)(0)]
                       ),
-                      EMBEXPR_END(276...277)("}")
+                      (276...277)
                     )],
                    (277...278)
                  )

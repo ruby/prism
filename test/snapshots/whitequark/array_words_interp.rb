@@ -6,7 +6,7 @@ ProgramNode(0...38)(
         InterpolatedStringNode(0...13)(
           nil,
           [StringInterpolatedNode(7...13)(
-             EMBEXPR_BEGIN(7...9)("\#{"),
+             (7...9),
              StatementsNode(9...12)(
                [CallNode(9...12)(
                   nil,
@@ -19,7 +19,7 @@ ProgramNode(0...38)(
                   "bar"
                 )]
              ),
-             EMBEXPR_END(12...13)("}")
+             (12...13)
            )],
           nil
         )],
@@ -31,7 +31,7 @@ ProgramNode(0...38)(
         InterpolatedStringNode(0...37)(
           nil,
           [StringInterpolatedNode(23...29)(
-             EMBEXPR_BEGIN(23...25)("\#{"),
+             (23...25),
              StatementsNode(25...28)(
                [CallNode(25...28)(
                   nil,
@@ -44,7 +44,7 @@ ProgramNode(0...38)(
                   "bar"
                 )]
              ),
-             EMBEXPR_END(28...29)("}")
+             (28...29)
            ),
            StringNode(29...32)(
              nil,

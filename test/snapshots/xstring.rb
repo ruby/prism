@@ -6,7 +6,7 @@ ProgramNode(0...40)(
        (9...10),
        [StringNode(10...14)(nil, STRING_CONTENT(10...14)("foo "), nil, "foo "),
         StringInterpolatedNode(14...20)(
-          EMBEXPR_BEGIN(14...16)("\#{"),
+          (14...16),
           StatementsNode(16...19)(
             [CallNode(16...19)(
                nil,
@@ -19,7 +19,7 @@ ProgramNode(0...40)(
                "bar"
              )]
           ),
-          EMBEXPR_END(19...20)("}")
+          (19...20)
         ),
         StringNode(20...24)(
           nil,

@@ -628,11 +628,7 @@ ProgramNode(0...719)(
             nil,
             "  "
           ),
-          StringInterpolatedNode(579...582)(
-            EMBEXPR_BEGIN(579...581)("\#{"),
-            nil,
-            EMBEXPR_END(581...582)("}")
-          ),
+          StringInterpolatedNode(579...582)((579...581), nil, (581...582)),
           StringNode(582...583)(
             nil,
             STRING_CONTENT(582...583)("\n"),
@@ -658,11 +654,7 @@ ProgramNode(0...719)(
                nil,
                "  "
              ),
-             StringInterpolatedNode(608...611)(
-               EMBEXPR_BEGIN(608...610)("\#{"),
-               nil,
-               EMBEXPR_END(610...611)("}")
-             ),
+             StringInterpolatedNode(608...611)((608...610), nil, (610...611)),
              StringNode(611...612)(
                nil,
                STRING_CONTENT(611...612)("\n"),
@@ -690,11 +682,7 @@ ProgramNode(0...719)(
                nil,
                "  "
              ),
-             StringInterpolatedNode(639...642)(
-               EMBEXPR_BEGIN(639...641)("\#{"),
-               nil,
-               EMBEXPR_END(641...642)("}")
-             ),
+             StringInterpolatedNode(639...642)((639...641), nil, (641...642)),
              StringNode(642...643)(
                nil,
                STRING_CONTENT(642...643)("\n"),
@@ -724,9 +712,9 @@ ProgramNode(0...719)(
                  "  "
                ),
                StringInterpolatedNode(675...678)(
-                 EMBEXPR_BEGIN(675...677)("\#{"),
+                 (675...677),
                  nil,
-                 EMBEXPR_END(677...678)("}")
+                 (677...678)
                ),
                StringNode(678...679)(
                  nil,
@@ -763,11 +751,7 @@ ProgramNode(0...719)(
             nil,
             "  "
           ),
-          StringInterpolatedNode(707...710)(
-            EMBEXPR_BEGIN(707...709)("\#{"),
-            nil,
-            EMBEXPR_END(709...710)("}")
-          ),
+          StringInterpolatedNode(707...710)((707...709), nil, (709...710)),
           StringNode(710...711)(
             nil,
             STRING_CONTENT(710...711)("\n"),

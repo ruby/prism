@@ -10,7 +10,7 @@ ProgramNode(0...27)(
          [InterpolatedStringNode(4...19)(
             (4...5),
             [StringInterpolatedNode(5...18)(
-               EMBEXPR_BEGIN(5...7)("\#{"),
+               (5...7),
                StatementsNode(7...17)(
                  [CallNode(7...17)(
                     ParenthesesNode(7...12)(
@@ -38,7 +38,7 @@ ProgramNode(0...27)(
                     "to_i"
                   )]
                ),
-               EMBEXPR_END(17...18)("}")
+               (17...18)
              )],
             (18...19)
           )]

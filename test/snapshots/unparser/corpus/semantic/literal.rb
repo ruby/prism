@@ -37,9 +37,9 @@ ProgramNode(0...131)(
      InterpolatedRegularExpressionNode(71...85)(
        (71...74),
        [StringInterpolatedNode(74...81)(
-          EMBEXPR_BEGIN(74...76)("\#{"),
+          (74...76),
           StatementsNode(76...80)([InstanceVariableReadNode(76...80)()]),
-          EMBEXPR_END(80...81)("}")
+          (80...81)
         ),
         StringNode(81...84)(nil, STRING_CONTENT(81...84)("baz"), nil, "baz")],
        (84...85),

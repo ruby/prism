@@ -1593,13 +1593,13 @@ nodes:
           ^^^^^^^^^^^
   - name: StringInterpolatedNode
     child_nodes:
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
-      - name: closing
-        type: token
+      - name: closing_loc
+        type: location
     comment: |
       Represents an interpolated set of statements within a string.
 

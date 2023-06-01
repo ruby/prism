@@ -973,11 +973,7 @@ ProgramNode(0...913)(
                nil,
                "    "
              ),
-             StringInterpolatedNode(879...882)(
-               EMBEXPR_BEGIN(879...881)("\#{"),
-               nil,
-               EMBEXPR_END(881...882)("}")
-             ),
+             StringInterpolatedNode(879...882)((879...881), nil, (881...882)),
              StringNode(882...883)(
                nil,
                STRING_CONTENT(882...883)("\n"),

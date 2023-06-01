@@ -10,9 +10,9 @@ ProgramNode(0...9)(
          [InterpolatedStringNode(2...9)(
             (2...3),
             [StringInterpolatedNode(3...8)(
-               EMBEXPR_BEGIN(3...5)("\#{"),
+               (3...5),
                StatementsNode(5...7)([ArrayNode(5...7)([], (5...6), (6...7))]),
-               EMBEXPR_END(7...8)("}")
+               (7...8)
              )],
             (8...9)
           )]

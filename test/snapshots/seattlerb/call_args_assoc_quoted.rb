@@ -12,7 +12,7 @@ ProgramNode(0...31)(
                InterpolatedSymbolNode(2...9)(
                  STRING_BEGIN(2...3)("\""),
                  [StringInterpolatedNode(3...7)(
-                    EMBEXPR_BEGIN(3...5)("\#{"),
+                    (3...5),
                     StatementsNode(5...6)(
                       [CallNode(5...6)(
                          nil,
@@ -25,7 +25,7 @@ ProgramNode(0...31)(
                          "k"
                        )]
                     ),
-                    EMBEXPR_END(6...7)("}")
+                    (6...7)
                   )],
                  LABEL_END(7...9)("\":")
                ),

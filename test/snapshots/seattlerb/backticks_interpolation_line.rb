@@ -10,7 +10,7 @@ ProgramNode(0...8)(
          [InterpolatedXStringNode(2...8)(
             (2...3),
             [StringInterpolatedNode(3...7)(
-               EMBEXPR_BEGIN(3...5)("\#{"),
+               (3...5),
                StatementsNode(5...6)(
                  [CallNode(5...6)(
                     nil,
@@ -23,7 +23,7 @@ ProgramNode(0...8)(
                     "y"
                   )]
                ),
-               EMBEXPR_END(6...7)("}")
+               (6...7)
              )],
             (7...8)
           )]

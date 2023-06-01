@@ -3031,9 +3031,9 @@ yp_string_interpolated_node_create(yp_parser_t *parser, const yp_token_t *openin
         .end = closing->end
       }
     },
-    .opening = *opening,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
     .statements = statements,
-    .closing = *closing
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;

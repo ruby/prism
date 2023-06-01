@@ -5,9 +5,9 @@ ProgramNode(0...28)(
        InterpolatedRegularExpressionNode(0...19)(
          (0...1),
          [StringInterpolatedNode(1...5)(
-            EMBEXPR_BEGIN(1...3)("\#{"),
+            (1...3),
             StatementsNode(3...4)([IntegerNode(3...4)()]),
-            EMBEXPR_END(4...5)("}")
+            (4...5)
           ),
           StringNode(5...18)(
             nil,

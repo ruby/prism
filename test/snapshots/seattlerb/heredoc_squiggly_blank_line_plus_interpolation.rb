@@ -19,7 +19,7 @@ ProgramNode(0...20)(
                    "\n"
                  ),
                  StringInterpolatedNode(26...32)(
-                   EMBEXPR_BEGIN(26...28)("\#{"),
+                   (26...28),
                    StatementsNode(28...31)(
                      [CallNode(28...31)(
                         nil,
@@ -32,7 +32,7 @@ ProgramNode(0...20)(
                         "bar"
                       )]
                    ),
-                   EMBEXPR_END(31...32)("}")
+                   (31...32)
                  ),
                  StringNode(32...36)(
                    nil,

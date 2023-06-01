@@ -10,7 +10,7 @@ ProgramNode(0...345)(
      InterpolatedSymbolNode(8...17)(
        SYMBOL_BEGIN(8...10)(":\""),
        [StringInterpolatedNode(10...16)(
-          EMBEXPR_BEGIN(10...12)("\#{"),
+          (10...12),
           StatementsNode(12...15)(
             [CallNode(12...15)(
                nil,
@@ -23,7 +23,7 @@ ProgramNode(0...345)(
                "var"
              )]
           ),
-          EMBEXPR_END(15...16)("}")
+          (15...16)
         )],
        STRING_END(16...17)("\"")
      ),
@@ -31,9 +31,9 @@ ProgramNode(0...345)(
        SYMBOL_BEGIN(19...21)(":\""),
        [StringNode(21...24)(nil, STRING_CONTENT(21...24)("abc"), nil, "abc"),
         StringInterpolatedNode(24...28)(
-          EMBEXPR_BEGIN(24...26)("\#{"),
+          (24...26),
           StatementsNode(26...27)([IntegerNode(26...27)()]),
-          EMBEXPR_END(27...28)("}")
+          (27...28)
         )],
        STRING_END(28...29)("\"")
      ),
@@ -186,18 +186,18 @@ ProgramNode(0...345)(
              "b"
            ),
            StringInterpolatedNode(166...170)(
-             EMBEXPR_BEGIN(166...168)("\#{"),
+             (166...168),
              StatementsNode(168...169)([IntegerNode(168...169)()]),
-             EMBEXPR_END(169...170)("}")
+             (169...170)
            )],
           nil
         ),
         InterpolatedSymbolNode(0...176)(
           nil,
           [StringInterpolatedNode(171...175)(
-             EMBEXPR_BEGIN(171...173)("\#{"),
+             (171...173),
              StatementsNode(173...174)([IntegerNode(173...174)()]),
-             EMBEXPR_END(174...175)("}")
+             (174...175)
            ),
            StringNode(175...176)(
              nil,
@@ -216,9 +216,9 @@ ProgramNode(0...345)(
              "d"
            ),
            StringInterpolatedNode(178...182)(
-             EMBEXPR_BEGIN(178...180)("\#{"),
+             (178...180),
              StatementsNode(180...181)([IntegerNode(180...181)()]),
-             EMBEXPR_END(181...182)("}")
+             (181...182)
            ),
            StringNode(182...183)(
              nil,

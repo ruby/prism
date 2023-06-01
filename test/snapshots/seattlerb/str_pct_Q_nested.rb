@@ -10,7 +10,7 @@ ProgramNode(0...26)(
           "before ["
         ),
         StringInterpolatedNode(11...18)(
-          EMBEXPR_BEGIN(11...13)("\#{"),
+          (11...13),
           StatementsNode(13...17)(
             [CallNode(13...17)(
                nil,
@@ -23,7 +23,7 @@ ProgramNode(0...26)(
                "nest"
              )]
           ),
-          EMBEXPR_END(17...18)("}")
+          (17...18)
         ),
         StringNode(18...25)(
           nil,

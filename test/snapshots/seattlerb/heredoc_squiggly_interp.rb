@@ -12,9 +12,9 @@ ProgramNode(0...42)(
             "    w\n" + "x"
           ),
           StringInterpolatedNode(22...27)(
-            EMBEXPR_BEGIN(22...24)("\#{"),
+            (22...24),
             StatementsNode(24...26)([IntegerNode(24...26)()]),
-            EMBEXPR_END(26...27)("}")
+            (26...27)
           ),
           StringNode(27...36)(
             nil,

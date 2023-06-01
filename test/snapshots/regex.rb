@@ -26,7 +26,7 @@ ProgramNode(0...278)(
        (41...42),
        [StringNode(42...46)(nil, STRING_CONTENT(42...46)("aaa "), nil, "aaa "),
         StringInterpolatedNode(46...52)(
-          EMBEXPR_BEGIN(46...48)("\#{"),
+          (46...48),
           StatementsNode(48...51)(
             [CallNode(48...51)(
                nil,
@@ -39,7 +39,7 @@ ProgramNode(0...278)(
                "bbb"
              )]
           ),
-          EMBEXPR_END(51...52)("}")
+          (51...52)
         ),
         StringNode(52...56)(
           nil,

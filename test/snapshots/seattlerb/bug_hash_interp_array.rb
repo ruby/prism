@@ -6,11 +6,7 @@ ProgramNode(0...13)(
        [AssocNode(2...11)(
           InterpolatedSymbolNode(2...8)(
             STRING_BEGIN(2...3)("\""),
-            [StringInterpolatedNode(3...6)(
-               EMBEXPR_BEGIN(3...5)("\#{"),
-               nil,
-               EMBEXPR_END(5...6)("}")
-             )],
+            [StringInterpolatedNode(3...6)((3...5), nil, (5...6))],
             LABEL_END(6...8)("\":")
           ),
           ArrayNode(9...11)([], (9...10), (10...11)),

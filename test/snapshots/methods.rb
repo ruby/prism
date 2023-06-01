@@ -1034,7 +1034,7 @@ ProgramNode(0...1194)(
                "foo"
              ),
              StringInterpolatedNode(921...930)(
-               EMBEXPR_BEGIN(921...923)("\#{"),
+               (921...923),
                StatementsNode(923...929)(
                  [CallNode(923...929)(
                     nil,
@@ -1049,7 +1049,7 @@ ProgramNode(0...1194)(
                     "b"
                   )]
                ),
-               EMBEXPR_END(929...930)("}")
+               (929...930)
              )],
             (930...931)
           )]

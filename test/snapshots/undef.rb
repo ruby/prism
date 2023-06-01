@@ -72,9 +72,9 @@ ProgramNode(0...116)(
              "abc"
            ),
            StringInterpolatedNode(95...99)(
-             EMBEXPR_BEGIN(95...97)("\#{"),
+             (95...97),
              StatementsNode(97...98)([IntegerNode(97...98)()]),
-             EMBEXPR_END(98...99)("}")
+             (98...99)
            )],
           STRING_END(99...100)("\"")
         )],

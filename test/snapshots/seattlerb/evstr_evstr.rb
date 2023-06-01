@@ -4,7 +4,7 @@ ProgramNode(0...10)(
     [InterpolatedStringNode(0...10)(
        (0...1),
        [StringInterpolatedNode(1...5)(
-          EMBEXPR_BEGIN(1...3)("\#{"),
+          (1...3),
           StatementsNode(3...4)(
             [CallNode(3...4)(
                nil,
@@ -17,10 +17,10 @@ ProgramNode(0...10)(
                "a"
              )]
           ),
-          EMBEXPR_END(4...5)("}")
+          (4...5)
         ),
         StringInterpolatedNode(5...9)(
-          EMBEXPR_BEGIN(5...7)("\#{"),
+          (5...7),
           StatementsNode(7...8)(
             [CallNode(7...8)(
                nil,
@@ -33,7 +33,7 @@ ProgramNode(0...10)(
                "b"
              )]
           ),
-          EMBEXPR_END(8...9)("}")
+          (8...9)
         )],
        (9...10)
      )]

@@ -1427,7 +1427,7 @@ ProgramNode(0...1187)(
          [InterpolatedStringNode(846...871)(
             (846...847),
             [StringInterpolatedNode(847...870)(
-               EMBEXPR_BEGIN(847...849)("\#{"),
+               (847...849),
                StatementsNode(849...869)(
                  [CallNode(849...869)(
                     CallNode(849...852)(
@@ -1462,7 +1462,7 @@ ProgramNode(0...1187)(
                     "map"
                   )]
                ),
-               EMBEXPR_END(869...870)("}")
+               (869...870)
              )],
             (870...871)
           )]
