@@ -2,7 +2,7 @@ ProgramNode(6...93)(
   [],
   StatementsNode(6...93)(
     [IfNode(6...33)(
-       QUESTION_MARK(6...7)("?"),
+       (6...7),
        FalseNode(0...5)(),
        StatementsNode(8...20)(
          [CallNode(8...20)(
@@ -35,7 +35,7 @@ ProgramNode(6...93)(
        nil
      ),
      IfNode(41...60)(
-       QUESTION_MARK(41...42)("?"),
+       (41...42),
        FalseNode(35...40)(),
        StatementsNode(43...51)(
          [CallNode(43...51)(
@@ -68,7 +68,7 @@ ProgramNode(6...93)(
        nil
      ),
      IfNode(67...93)(
-       QUESTION_MARK(67...68)("?"),
+       (67...68),
        TrueNode(62...66)(),
        StatementsNode(69...89)(
          [CallNode(69...89)(

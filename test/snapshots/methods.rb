@@ -677,7 +677,7 @@ ProgramNode(0...1194)(
        nil,
        StatementsNode(598...621)(
          [IfNode(598...616)(
-            KEYWORD_IF_MODIFIER(609...611)("if"),
+            (609...611),
             TrueNode(612...616)(),
             StatementsNode(598...608)(
               [ReturnNode(598...608)(

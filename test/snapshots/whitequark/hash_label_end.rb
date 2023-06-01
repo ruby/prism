@@ -8,7 +8,7 @@ ProgramNode(0...50)(
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(4...11)(
          [IfNode(4...11)(
-            QUESTION_MARK(4...5)("?"),
+            (4...5),
             CallNode(2...3)(
               nil,
               nil,

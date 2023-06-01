@@ -339,7 +339,7 @@ ProgramNode(0...991)(
      ),
      CallNode(304...318)(
        IfNode(304...314)(
-         KEYWORD_IF(304...306)("if"),
+         (304...306),
          CallNode(307...310)(
            nil,
            nil,
@@ -352,7 +352,7 @@ ProgramNode(0...991)(
          ),
          nil,
          nil,
-         KEYWORD_END(311...314)("end")
+         (311...314)
        ),
        DOT(314...315)("."),
        IDENTIFIER(315...318)("baz"),

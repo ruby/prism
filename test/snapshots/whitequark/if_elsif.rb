@@ -1,8 +1,8 @@
-ProgramNode(0...11)(
+ProgramNode(0...38)(
   [],
-  StatementsNode(0...11)(
-    [IfNode(0...11)(
-       KEYWORD_IF(0...2)("if"),
+  StatementsNode(0...38)(
+    [IfNode(0...38)(
+       (0...2),
        CallNode(3...6)(
          nil,
          nil,
@@ -26,7 +26,7 @@ ProgramNode(0...11)(
           )]
        ),
        IfNode(13...25)(
-         KEYWORD_ELSIF(13...18)("elsif"),
+         (13...18),
          CallNode(19...22)(
            nil,
            nil,
@@ -45,7 +45,7 @@ ProgramNode(0...11)(
          ),
          nil
        ),
-       KEYWORD_END(35...38)("end")
+       (35...38)
      )]
   )
 )

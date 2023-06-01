@@ -2,7 +2,7 @@ ProgramNode(2...20)(
   [],
   StatementsNode(2...20)(
     [IfNode(2...9)(
-       QUESTION_MARK(2...3)("?"),
+       (2...3),
        CallNode(0...1)(
          nil,
          nil,
@@ -40,7 +40,7 @@ ProgramNode(2...20)(
        nil
      ),
      IfNode(13...20)(
-       QUESTION_MARK(13...14)("?"),
+       (13...14),
        CallNode(11...12)(
          nil,
          nil,

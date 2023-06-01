@@ -40,7 +40,7 @@ ProgramNode(0...31)(
        "!"
      ),
      IfNode(14...31)(
-       KEYWORD_IF(14...16)("if"),
+       (14...16),
        RangeNode(17...26)(
          CallNode(17...20)(
            nil,
@@ -66,7 +66,7 @@ ProgramNode(0...31)(
        ),
        nil,
        nil,
-       KEYWORD_END(28...31)("end")
+       (28...31)
      )]
   )
 )

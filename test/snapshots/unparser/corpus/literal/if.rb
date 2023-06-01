@@ -2,7 +2,7 @@ ProgramNode(0...246)(
   [IDENTIFIER(184...187)("foo"), IDENTIFIER(225...229)("pair")],
   StatementsNode(0...246)(
     [IfNode(0...18)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        RegularExpressionNode(3...8)(
          REGEXP_BEGIN(3...4)("/"),
          STRING_CONTENT(4...7)("foo"),
@@ -23,17 +23,17 @@ ProgramNode(0...246)(
           )]
        ),
        nil,
-       KEYWORD_END(15...18)("end")
+       (15...18)
      ),
      IfNode(19...31)(
-       KEYWORD_IF(19...21)("if"),
+       (19...21),
        IntegerNode(22...23)(),
        StatementsNode(26...27)([IntegerNode(26...27)()]),
        nil,
-       KEYWORD_END(28...31)("end")
+       (28...31)
      ),
-     IfNode(32...40)(
-       KEYWORD_IF(32...34)("if"),
+     IfNode(32...53)(
+       (32...34),
        IntegerNode(35...36)(),
        StatementsNode(39...40)([IntegerNode(39...40)()]),
        ElseNode(41...53)(
@@ -41,7 +41,7 @@ ProgramNode(0...246)(
          StatementsNode(48...49)([IntegerNode(48...49)()]),
          (50...53)
        ),
-       KEYWORD_END(50...53)("end")
+       (50...53)
      ),
      UnlessNode(54...72)(
        KEYWORD_UNLESS(54...60)("unless"),
@@ -58,7 +58,7 @@ ProgramNode(0...246)(
        KEYWORD_END(86...89)("end")
      ),
      IfNode(90...100)(
-       KEYWORD_IF(90...92)("if"),
+       (90...92),
        CallNode(93...96)(
          nil,
          nil,
@@ -71,7 +71,7 @@ ProgramNode(0...246)(
        ),
        nil,
        nil,
-       KEYWORD_END(97...100)("end")
+       (97...100)
      ),
      ModuleNode(102...133)(
        [IDENTIFIER(113...116)("foo")],
@@ -79,7 +79,7 @@ ProgramNode(0...246)(
        ConstantReadNode(109...110)(),
        StatementsNode(113...129)(
          [IfNode(113...129)(
-            KEYWORD_IF_MODIFIER(123...125)("if"),
+            (123...125),
             LocalVariableReadNode(126...129)(0),
             StatementsNode(113...122)(
               [LocalVariableWriteNode(113...122)(
@@ -168,7 +168,7 @@ ProgramNode(0...246)(
        KEYWORD_END(194...197)("end")
      ),
      IfNode(198...246)(
-       KEYWORD_IF(198...200)("if"),
+       (198...200),
        CallNode(201...222)(
          nil,
          nil,
@@ -213,7 +213,7 @@ ProgramNode(0...246)(
           LocalVariableReadNode(239...242)(0)]
        ),
        nil,
-       KEYWORD_END(243...246)("end")
+       (243...246)
      )]
   )
 )

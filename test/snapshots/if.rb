@@ -2,14 +2,14 @@ ProgramNode(0...293)(
   [],
   StatementsNode(0...293)(
     [IfNode(0...15)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        TrueNode(3...7)(),
        StatementsNode(9...10)([IntegerNode(9...10)()]),
        nil,
-       KEYWORD_END(12...15)("end")
+       (12...15)
      ),
-     IfNode(17...26)(
-       KEYWORD_IF(17...19)("if"),
+     IfNode(17...37)(
+       (17...19),
        TrueNode(20...24)(),
        StatementsNode(25...26)([IntegerNode(25...26)()]),
        ElseNode(27...37)(
@@ -17,18 +17,18 @@ ProgramNode(0...293)(
          StatementsNode(32...33)([IntegerNode(32...33)()]),
          (34...37)
        ),
-       KEYWORD_END(34...37)("end")
+       (34...37)
      ),
-     IfNode(39...56)(
-       KEYWORD_IF(39...41)("if"),
+     IfNode(39...112)(
+       (39...41),
        TrueNode(42...46)(),
        StatementsNode(52...56)([TrueNode(52...56)()]),
        IfNode(57...79)(
-         KEYWORD_ELSIF(57...62)("elsif"),
+         (57...62),
          FalseNode(63...68)(),
          StatementsNode(74...79)([FalseNode(74...79)()]),
          IfNode(80...98)(
-           KEYWORD_ELSIF(80...85)("elsif"),
+           (80...85),
            NilNode(86...89)(),
            StatementsNode(95...98)([NilNode(95...98)()]),
            ElseNode(99...112)(
@@ -40,31 +40,31 @@ ProgramNode(0...293)(
          ),
          nil
        ),
-       KEYWORD_END(109...112)("end")
+       (109...112)
      ),
      IfNode(114...123)(
-       KEYWORD_IF_MODIFIER(116...118)("if"),
+       (116...118),
        TrueNode(119...123)(),
        StatementsNode(114...115)([IntegerNode(114...115)()]),
        nil,
        nil
      ),
      IfNode(125...138)(
-       KEYWORD_IF_MODIFIER(131...133)("if"),
+       (131...133),
        TrueNode(134...138)(),
        StatementsNode(125...130)([BreakNode(125...130)(nil, (125...130))]),
        nil,
        nil
      ),
      IfNode(140...152)(
-       KEYWORD_IF_MODIFIER(145...147)("if"),
+       (145...147),
        TrueNode(148...152)(),
        StatementsNode(140...144)([NextNode(140...144)(nil, (140...144))]),
        nil,
        nil
      ),
      IfNode(154...168)(
-       KEYWORD_IF_MODIFIER(161...163)("if"),
+       (161...163),
        TrueNode(164...168)(),
        StatementsNode(154...160)(
          [ReturnNode(154...160)(KEYWORD_RETURN(154...160)("return"), nil)]
@@ -73,7 +73,7 @@ ProgramNode(0...293)(
        nil
      ),
      IfNode(170...200)(
-       KEYWORD_IF(170...172)("if"),
+       (170...172),
        CallNode(173...182)(
          nil,
          nil,
@@ -91,10 +91,10 @@ ProgramNode(0...293)(
           )]
        ),
        nil,
-       KEYWORD_END(197...200)("end")
+       (197...200)
      ),
      IfNode(202...221)(
-       KEYWORD_IF(202...204)("if"),
+       (202...204),
        CallNode(205...208)(
          nil,
          nil,
@@ -118,10 +118,10 @@ ProgramNode(0...293)(
           )]
        ),
        nil,
-       KEYWORD_END(218...221)("end")
+       (218...221)
      ),
      IfNode(223...234)(
-       KEYWORD_IF_MODIFIER(230...232)("if"),
+       (230...232),
        CallNode(233...234)(
          nil,
          nil,
@@ -134,7 +134,7 @@ ProgramNode(0...293)(
        ),
        StatementsNode(223...229)(
          [IfNode(223...229)(
-            KEYWORD_IF_MODIFIER(225...227)("if"),
+            (225...227),
             CallNode(228...229)(
               nil,
               nil,
@@ -164,8 +164,8 @@ ProgramNode(0...293)(
        nil,
        nil
      ),
-     IfNode(236...250)(
-       KEYWORD_IF(236...238)("if"),
+     IfNode(236...259)(
+       (236...238),
        TrueNode(239...243)(),
        StatementsNode(246...250)(
          [CallNode(246...250)(
@@ -197,10 +197,10 @@ ProgramNode(0...293)(
          StatementsNode(0...0)([]),
          (256...259)
        ),
-       KEYWORD_END(256...259)("end")
+       (256...259)
      ),
      IfNode(261...293)(
-       KEYWORD_IF(261...263)("if"),
+       (261...263),
        MatchPredicateNode(264...273)(
          CallNode(264...268)(
            nil,
@@ -217,7 +217,7 @@ ProgramNode(0...293)(
        ),
        nil,
        IfNode(274...289)(
-         KEYWORD_ELSIF(274...279)("elsif"),
+         (274...279),
          MatchPredicateNode(280...289)(
            CallNode(280...284)(
              nil,
@@ -236,7 +236,7 @@ ProgramNode(0...293)(
          nil,
          nil
        ),
-       KEYWORD_END(290...293)("end")
+       (290...293)
      )]
   )
 )

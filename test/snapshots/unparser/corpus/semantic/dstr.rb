@@ -214,7 +214,7 @@ ProgramNode(0...608)(
        HEREDOC_END(310...314)("DOC\n")
      ),
      IfNode(315...349)(
-       KEYWORD_IF(315...317)("if"),
+       (315...317),
        TrueNode(318...322)(),
        StatementsNode(325...346)(
          [InterpolatedStringNode(325...346)(
@@ -240,10 +240,10 @@ ProgramNode(0...608)(
           )]
        ),
        nil,
-       KEYWORD_END(346...349)("end")
+       (346...349)
      ),
      IfNode(351...386)(
-       KEYWORD_IF(351...353)("if"),
+       (351...353),
        TrueNode(354...358)(),
        StatementsNode(361...383)(
          [InterpolatedStringNode(361...383)(
@@ -269,10 +269,10 @@ ProgramNode(0...608)(
           )]
        ),
        nil,
-       KEYWORD_END(383...386)("end")
+       (383...386)
      ),
      IfNode(388...423)(
-       KEYWORD_IF(388...390)("if"),
+       (388...390),
        TrueNode(391...395)(),
        StatementsNode(398...420)(
          [InterpolatedStringNode(398...420)(
@@ -298,10 +298,10 @@ ProgramNode(0...608)(
           )]
        ),
        nil,
-       KEYWORD_END(420...423)("end")
+       (420...423)
      ),
      IfNode(425...464)(
-       KEYWORD_IF(425...427)("if"),
+       (425...427),
        TrueNode(428...432)(),
        StatementsNode(435...461)(
          [InterpolatedStringNode(435...461)(
@@ -316,7 +316,7 @@ ProgramNode(0...608)(
           )]
        ),
        nil,
-       KEYWORD_END(461...464)("end")
+       (461...464)
      ),
      InterpolatedStringNode(466...472)(
        STRING_BEGIN(466...467)("\""),

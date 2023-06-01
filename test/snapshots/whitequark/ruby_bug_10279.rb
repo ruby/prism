@@ -11,11 +11,11 @@ ProgramNode(0...24)(
             "a"
           ),
           IfNode(4...23)(
-            KEYWORD_IF(4...6)("if"),
+            (4...6),
             TrueNode(7...11)(),
             StatementsNode(17...19)([IntegerNode(17...19)()]),
             nil,
-            KEYWORD_END(20...23)("end")
+            (20...23)
           ),
           nil
         )],

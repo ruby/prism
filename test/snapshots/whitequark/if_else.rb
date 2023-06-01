@@ -1,8 +1,8 @@
-ProgramNode(0...43)(
+ProgramNode(0...58)(
   [],
-  StatementsNode(0...43)(
-    [IfNode(0...15)(
-       KEYWORD_IF(0...2)("if"),
+  StatementsNode(0...58)(
+    [IfNode(0...30)(
+       (0...2),
        CallNode(3...6)(
          nil,
          nil,
@@ -41,10 +41,10 @@ ProgramNode(0...43)(
          ),
          (27...30)
        ),
-       KEYWORD_END(27...30)("end")
+       (27...30)
      ),
-     IfNode(32...43)(
-       KEYWORD_IF(32...34)("if"),
+     IfNode(32...58)(
+       (32...34),
        CallNode(35...38)(
          nil,
          nil,
@@ -83,7 +83,7 @@ ProgramNode(0...43)(
          ),
          (55...58)
        ),
-       KEYWORD_END(55...58)("end")
+       (55...58)
      )]
   )
 )

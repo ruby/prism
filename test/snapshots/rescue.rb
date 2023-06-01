@@ -75,7 +75,7 @@ ProgramNode(0...316)(
        ),
        KEYWORD_RESCUE_MODIFIER(111...117)("rescue"),
        IfNode(122...129)(
-         QUESTION_MARK(122...123)("?"),
+         (122...123),
          NilNode(118...121)(),
          StatementsNode(124...125)([IntegerNode(124...125)()]),
          ElseNode(126...129)(
@@ -207,7 +207,7 @@ ProgramNode(0...316)(
        "foo"
      ),
      IfNode(214...245)(
-       KEYWORD_IF(214...216)("if"),
+       (214...216),
        LocalVariableWriteNode(217...235)(
          (217...218),
          RescueModifierNode(221...235)(
@@ -240,7 +240,7 @@ ProgramNode(0...316)(
           )]
        ),
        nil,
-       KEYWORD_END(242...245)("end")
+       (242...245)
      ),
      DefNode(247...291)(
        IDENTIFIER(251...262)("some_method"),

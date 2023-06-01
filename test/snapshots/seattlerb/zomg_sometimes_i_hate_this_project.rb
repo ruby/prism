@@ -22,7 +22,7 @@ ProgramNode(6...66)(
               nil,
               StatementsNode(30...39)(
                 [IfNode(30...39)(
-                   QUESTION_MARK(30...31)("?"),
+                   (30...31),
                    CallNode(28...29)(
                      nil,
                      nil,

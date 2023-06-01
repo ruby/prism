@@ -1,8 +1,8 @@
-ProgramNode(0...26)(
+ProgramNode(0...41)(
   [],
-  StatementsNode(0...26)(
-    [IfNode(0...26)(
-       KEYWORD_IF(0...2)("if"),
+  StatementsNode(0...41)(
+    [IfNode(0...41)(
+       (0...2),
        CallNode(3...15)(
          CallNode(7...15)(
            CallNode(7...10)(
@@ -51,7 +51,7 @@ ProgramNode(0...26)(
          ),
          (38...41)
        ),
-       KEYWORD_END(38...41)("end")
+       (38...41)
      )]
   )
 )

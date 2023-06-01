@@ -7,7 +7,7 @@ ProgramNode(6...77)(
        nil,
        StatementsNode(23...67)(
          [IfNode(23...67)(
-            KEYWORD_IF(23...25)("if"),
+            (23...25),
             TrueNode(26...30)(),
             StatementsNode(46...55)(
               [ReturnNode(46...55)(
@@ -16,7 +16,7 @@ ProgramNode(6...77)(
                )]
             ),
             nil,
-            KEYWORD_END(64...67)("end")
+            (64...67)
           )]
        ),
        [],

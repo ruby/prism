@@ -2,7 +2,7 @@ ProgramNode(2...20)(
   [],
   StatementsNode(2...20)(
     [IfNode(2...13)(
-       QUESTION_MARK(2...3)("?"),
+       (2...3),
        IntegerNode(0...1)(),
        StatementsNode(4...9)(
          [CallNode(4...9)(

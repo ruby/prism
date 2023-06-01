@@ -96,7 +96,7 @@ ProgramNode(0...408)(
         ),
         InNode(102...120)(
           IfNode(105...115)(
-            KEYWORD_IF_MODIFIER(108...110)("if"),
+            (108...110),
             TrueNode(111...115)(),
             StatementsNode(105...107)(
               [HashPatternNode(105...107)(

@@ -2,7 +2,7 @@ ProgramNode(0...68)(
   [],
   StatementsNode(0...68)(
     [IfNode(0...33)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        ParenthesesNode(3...23)(
          StatementsNode(4...22)(
            [RangeNode(4...22)(
@@ -75,10 +75,10 @@ ProgramNode(0...68)(
           )]
        ),
        nil,
-       KEYWORD_END(30...33)("end")
+       (30...33)
      ),
      IfNode(34...68)(
-       KEYWORD_IF(34...36)("if"),
+       (34...36),
        ParenthesesNode(37...58)(
          StatementsNode(38...57)(
            [RangeNode(38...57)(
@@ -151,7 +151,7 @@ ProgramNode(0...68)(
           )]
        ),
        nil,
-       KEYWORD_END(65...68)("end")
+       (65...68)
      )]
   )
 )

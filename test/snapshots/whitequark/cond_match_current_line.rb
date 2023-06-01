@@ -18,7 +18,7 @@ ProgramNode(0...21)(
        "!"
      ),
      IfNode(8...21)(
-       KEYWORD_IF(8...10)("if"),
+       (8...10),
        RegularExpressionNode(11...16)(
          REGEXP_BEGIN(11...12)("/"),
          STRING_CONTENT(12...15)("wat"),
@@ -28,7 +28,7 @@ ProgramNode(0...21)(
        ),
        nil,
        nil,
-       KEYWORD_END(18...21)("end")
+       (18...21)
      )]
   )
 )

@@ -4,7 +4,7 @@ ProgramNode(0...17)(
     [LocalVariableWriteNode(0...17)(
        (0...1),
        IfNode(4...17)(
-         QUESTION_MARK(4...5)("?"),
+         (4...5),
          CallNode(2...3)(
            nil,
            nil,

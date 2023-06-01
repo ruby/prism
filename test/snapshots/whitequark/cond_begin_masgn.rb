@@ -2,7 +2,7 @@ ProgramNode(0...25)(
   [IDENTIFIER(9...10)("a"), IDENTIFIER(12...13)("b")],
   StatementsNode(0...25)(
     [IfNode(0...25)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        ParenthesesNode(3...20)(
          StatementsNode(4...19)(
            [CallNode(4...7)(
@@ -38,7 +38,7 @@ ProgramNode(0...25)(
        ),
        nil,
        nil,
-       KEYWORD_END(22...25)("end")
+       (22...25)
      )]
   )
 )

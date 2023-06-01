@@ -1650,11 +1650,11 @@ yp_if_node_create(yp_parser_t *parser,
         .end = end
       },
     },
-    .if_keyword = *if_keyword,
+    .if_keyword_loc = YP_LOCATION_TOKEN_VALUE(if_keyword),
     .predicate = predicate,
     .statements = statements,
     .consequent = consequent,
-    .end_keyword = *end_keyword
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(end_keyword)
   };
 
   return node;
@@ -1676,11 +1676,11 @@ yp_if_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_t
         .end = predicate->location.end
       },
     },
-    .if_keyword = *if_keyword,
+    .if_keyword_loc = YP_LOCATION_TOKEN_VALUE(if_keyword),
     .predicate = predicate,
     .statements = statements,
     .consequent = NULL,
-    .end_keyword = not_provided(parser)
+    .end_keyword_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
   };
 
   return node;
@@ -1699,6 +1699,12 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, const yp_to
   yp_else_node_t *else_node = yp_else_node_create(parser, colon, else_statements, &end_keyword);
 
   return yp_if_node_create(parser, question_mark, predicate, if_statements, (yp_node_t *)else_node, &end_keyword);
+}
+
+static inline void
+yp_if_node_end_keyword_loc_set(yp_if_node_t *node, const yp_token_t *keyword) {
+  node->base.location.end = keyword->end;
+  node->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword);
 }
 
 // Allocate and initialize a new IntegerNode node.
@@ -8254,7 +8260,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     switch (context) {
       case YP_CONTEXT_IF:
         ((yp_if_node_t *) current)->consequent = (yp_node_t *) else_node;
-        ((yp_if_node_t *) parent)->end_keyword = parser->previous;
+        yp_if_node_end_keyword_loc_set((yp_if_node_t *) parent, &parser->previous);
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->consequent = else_node;
@@ -8269,8 +8275,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 
     switch (context) {
       case YP_CONTEXT_IF:
-        ((yp_if_node_t *) parent)->end_keyword = parser->previous;
-        parent->location.end = parser->previous.end;
+        yp_if_node_end_keyword_loc_set((yp_if_node_t *) parent, &parser->previous);
         break;
       case YP_CONTEXT_UNLESS:
         ((yp_unless_node_t *) parent)->end_keyword = parser->previous;

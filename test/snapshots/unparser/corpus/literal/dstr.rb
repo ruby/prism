@@ -2,7 +2,7 @@ ProgramNode(0...299)(
   [],
   StatementsNode(0...299)(
     [IfNode(0...20)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        TrueNode(3...7)(),
        StatementsNode(10...16)(
          [InterpolatedStringNode(10...16)(
@@ -17,10 +17,10 @@ ProgramNode(0...299)(
           )]
        ),
        nil,
-       KEYWORD_END(17...20)("end")
+       (17...20)
      ),
      IfNode(21...68)(
-       KEYWORD_IF(21...23)("if"),
+       (21...23),
        TrueNode(24...28)(),
        StatementsNode(31...64)(
          [InterpolatedStringNode(31...61)(
@@ -56,7 +56,7 @@ ProgramNode(0...299)(
           )]
        ),
        nil,
-       KEYWORD_END(65...68)("end")
+       (65...68)
      ),
      InterpolatedStringNode(69...109)(
        HEREDOC_START(69...79)("<<-HEREDOC"),
@@ -135,7 +135,7 @@ ProgramNode(0...299)(
        STRING_END(172...173)("\"")
      ),
      IfNode(174...225)(
-       KEYWORD_IF(174...176)("if"),
+       (174...176),
        TrueNode(177...181)(),
        StatementsNode(184...222)(
          [ReturnNode(184...222)(
@@ -166,7 +166,7 @@ ProgramNode(0...299)(
           )]
        ),
        nil,
-       KEYWORD_END(222...225)("end")
+       (222...225)
      ),
      CallNode(226...241)(
        nil,

@@ -564,7 +564,7 @@ ProgramNode(0...1187)(
        "b"
      ),
      IfNode(228...261)(
-       KEYWORD_IF_MODIFIER(239...241)("if"),
+       (239...241),
        AndNode(242...261)(
          OrNode(242...253)(
            CallNode(242...246)(
@@ -1605,7 +1605,7 @@ ProgramNode(0...1187)(
             "a"
           ),
           IfNode(999...1040)(
-            KEYWORD_IF(999...1001)("if"),
+            (999...1001),
             CallNode(1002...1003)(
               nil,
               nil,
@@ -1650,7 +1650,7 @@ ProgramNode(0...1187)(
                )]
             ),
             nil,
-            KEYWORD_END(1037...1040)("end")
+            (1037...1040)
           )]
        ),
        nil,

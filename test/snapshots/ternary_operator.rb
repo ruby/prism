@@ -2,7 +2,7 @@ ProgramNode(2...117)(
   [],
   StatementsNode(2...117)(
     [IfNode(2...9)(
-       QUESTION_MARK(2...3)("?"),
+       (2...3),
        CallNode(0...1)(
          nil,
          nil,
@@ -44,7 +44,7 @@ ProgramNode(2...117)(
        nil
      ),
      IfNode(13...38)(
-       QUESTION_MARK(13...14)("?"),
+       (13...14),
        CallNode(11...12)(
          nil,
          nil,
@@ -96,7 +96,7 @@ ProgramNode(2...117)(
        nil
      ),
      IfNode(46...55)(
-       QUESTION_MARK(46...47)("?"),
+       (46...47),
        CallNode(40...46)(
          nil,
          nil,
@@ -116,7 +116,7 @@ ProgramNode(2...117)(
        nil
      ),
      IfNode(63...73)(
-       QUESTION_MARK(63...64)("?"),
+       (63...64),
        CallNode(57...63)(
          nil,
          nil,
@@ -136,7 +136,7 @@ ProgramNode(2...117)(
        nil
      ),
      IfNode(81...89)(
-       QUESTION_MARK(81...82)("?"),
+       (81...82),
        CallNode(75...81)(
          nil,
          nil,
@@ -156,7 +156,7 @@ ProgramNode(2...117)(
        nil
      ),
      IfNode(93...101)(
-       QUESTION_MARK(93...94)("?"),
+       (93...94),
        CallNode(91...93)(
          nil,
          nil,
@@ -176,7 +176,7 @@ ProgramNode(2...117)(
        nil
      ),
      IfNode(105...117)(
-       QUESTION_MARK(105...106)("?"),
+       (105...106),
        CallNode(103...104)(
          nil,
          nil,

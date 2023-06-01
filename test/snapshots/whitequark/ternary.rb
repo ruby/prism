@@ -2,7 +2,7 @@ ProgramNode(4...11)(
   [],
   StatementsNode(4...11)(
     [IfNode(4...11)(
-       QUESTION_MARK(4...5)("?"),
+       (4...5),
        CallNode(0...3)(
          nil,
          nil,

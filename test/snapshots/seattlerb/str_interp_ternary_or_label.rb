@@ -7,7 +7,7 @@ ProgramNode(0...23)(
           EMBEXPR_BEGIN(1...3)("\#{"),
           StatementsNode(8...21)(
             [IfNode(8...21)(
-               QUESTION_MARK(8...9)("?"),
+               (8...9),
                CallNode(3...7)(
                  CallNode(3...4)(
                    nil,
