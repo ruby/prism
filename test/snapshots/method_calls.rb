@@ -1716,7 +1716,7 @@ ProgramNode(0...1187)(
             )
           ),
           UntilNode(1100...1132)(
-            KEYWORD_UNTIL(1100...1105)("until"),
+            (1100...1105),
             CallNode(1106...1107)(
               nil,
               nil,

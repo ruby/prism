@@ -2,7 +2,7 @@ ProgramNode(0...188)(
   [IDENTIFIER(36...39)("foo"), IDENTIFIER(83...84)("a")],
   StatementsNode(0...188)(
     [UntilNode(0...13)(
-       KEYWORD_UNTIL_MODIFIER(2...7)("until"),
+       (2...7),
        CallNode(8...13)(
          nil,
          nil,
@@ -27,7 +27,7 @@ ProgramNode(0...188)(
        )
      ),
      UntilNode(15...34)(
-       KEYWORD_UNTIL(15...20)("until"),
+       (15...20),
        CallNode(21...26)(
          nil,
          nil,
@@ -73,7 +73,7 @@ ProgramNode(0...188)(
        )
      ),
      UntilNode(57...75)(
-       KEYWORD_UNTIL_MODIFIER(59...64)("until"),
+       (59...64),
        AndNode(65...75)(
          CallNode(65...66)(
            nil,
@@ -130,7 +130,7 @@ ProgramNode(0...188)(
        StatementsNode(91...92)([LocalVariableReadNode(91...92)(0)])
      ),
      UntilNode(98...130)(
-       KEYWORD_UNTIL_MODIFIER(100...105)("until"),
+       (100...105),
        CallNode(106...130)(
          nil,
          nil,

@@ -3284,7 +3284,7 @@ yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
         .end = end,
       },
     },
-    .keyword = *keyword,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
     .predicate = predicate,
     .statements = statements
   };

@@ -274,7 +274,7 @@ ProgramNode(0...991)(
      ),
      CallNode(255...272)(
        UntilNode(255...268)(
-         KEYWORD_UNTIL(255...260)("until"),
+         (255...260),
          CallNode(261...264)(
            nil,
            nil,

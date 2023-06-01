@@ -150,7 +150,7 @@ ProgramNode(0...620)(
        ConstantReadNode(155...156)(),
        StatementsNode(159...178)(
          [UntilNode(159...178)(
-            KEYWORD_UNTIL_MODIFIER(169...174)("until"),
+            (169...174),
             LocalVariableReadNode(175...178)(0),
             StatementsNode(159...168)(
               [LocalVariableWriteNode(159...168)(
@@ -418,7 +418,7 @@ ProgramNode(0...620)(
        )
      ),
      UntilNode(429...460)(
-       KEYWORD_UNTIL_MODIFIER(451...456)("until"),
+       (451...456),
        CallNode(457...460)(
          nil,
          nil,
@@ -542,18 +542,14 @@ ProgramNode(0...620)(
           )]
        )
      ),
-     UntilNode(557...572)(
-       KEYWORD_UNTIL(557...562)("until"),
-       FalseNode(563...568)(),
-       nil
-     ),
+     UntilNode(557...572)((557...562), FalseNode(563...568)(), nil),
      UntilNode(573...592)(
-       KEYWORD_UNTIL(573...578)("until"),
+       (573...578),
        FalseNode(579...584)(),
        StatementsNode(587...588)([IntegerNode(587...588)()])
      ),
      UntilNode(593...620)(
-       KEYWORD_UNTIL(593...598)("until"),
+       (593...598),
        ParenthesesNode(599...608)(
          StatementsNode(600...607)(
            [CallNode(600...607)(

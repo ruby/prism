@@ -1708,8 +1708,8 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^^^^
   - name: UntilNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: predicate
         type: node
       - name: statements

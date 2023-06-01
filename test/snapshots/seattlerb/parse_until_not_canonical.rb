@@ -2,7 +2,7 @@ ProgramNode(0...30)(
   [],
   StatementsNode(0...30)(
     [UntilNode(0...30)(
-       KEYWORD_UNTIL(0...5)("until"),
+       (0...5),
        CallNode(6...18)(
          CallNode(10...18)(
            CallNode(10...13)(

@@ -2,34 +2,34 @@ ProgramNode(0...109)(
   [],
   StatementsNode(0...109)(
     [UntilNode(0...18)(
-       KEYWORD_UNTIL(0...5)("until"),
+       (0...5),
        TrueNode(6...10)(),
        StatementsNode(12...13)([IntegerNode(12...13)()])
      ),
      UntilNode(20...32)(
-       KEYWORD_UNTIL_MODIFIER(22...27)("until"),
+       (22...27),
        TrueNode(28...32)(),
        StatementsNode(20...21)([IntegerNode(20...21)()])
      ),
      UntilNode(34...50)(
-       KEYWORD_UNTIL_MODIFIER(40...45)("until"),
+       (40...45),
        TrueNode(46...50)(),
        StatementsNode(34...39)([BreakNode(34...39)(nil, (34...39))])
      ),
      UntilNode(52...67)(
-       KEYWORD_UNTIL_MODIFIER(57...62)("until"),
+       (57...62),
        TrueNode(63...67)(),
        StatementsNode(52...56)([NextNode(52...56)(nil, (52...56))])
      ),
      UntilNode(69...86)(
-       KEYWORD_UNTIL_MODIFIER(76...81)("until"),
+       (76...81),
        TrueNode(82...86)(),
        StatementsNode(69...75)(
          [ReturnNode(69...75)(KEYWORD_RETURN(69...75)("return"), nil)]
        )
      ),
      UntilNode(88...109)(
-       KEYWORD_UNTIL_MODIFIER(99...104)("until"),
+       (99...104),
        CallNode(105...109)(
          nil,
          nil,
