@@ -24,9 +24,7 @@ ProgramNode(0...314)(
      WhileNode(69...86)(
        KEYWORD_WHILE_MODIFIER(76...81)("while"),
        TrueNode(82...86)(),
-       StatementsNode(69...75)(
-         [ReturnNode(69...75)(KEYWORD_RETURN(69...75)("return"), nil)]
-       )
+       StatementsNode(69...75)([ReturnNode(69...75)((69...75), nil)])
      ),
      WhileNode(88...109)(
        KEYWORD_WHILE_MODIFIER(99...104)("while"),

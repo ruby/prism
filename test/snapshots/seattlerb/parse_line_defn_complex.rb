@@ -30,7 +30,7 @@ ProgramNode(0...40)(
             IntegerNode(23...24)()
           ),
           ReturnNode(27...35)(
-            KEYWORD_RETURN(27...33)("return"),
+            (27...33),
             ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(0)])
           )]
        ),

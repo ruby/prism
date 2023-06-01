@@ -139,7 +139,7 @@ ProgramNode(0...299)(
        TrueNode(177...181)(),
        StatementsNode(184...222)(
          [ReturnNode(184...222)(
-            KEYWORD_RETURN(184...190)("return"),
+            (184...190),
             ArgumentsNode(191...222)(
               [InterpolatedStringNode(191...222)(
                  (191...201),

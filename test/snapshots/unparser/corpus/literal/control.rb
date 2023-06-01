@@ -2,20 +2,20 @@ ProgramNode(0...144)(
   [],
   StatementsNode(0...144)(
     [NextNode(0...4)(nil, (0...4)),
-     ReturnNode(5...11)(KEYWORD_RETURN(5...11)("return"), nil),
+     ReturnNode(5...11)((5...11), nil),
      BreakNode(12...17)(nil, (12...17)),
      RetryNode(18...23)(),
      RedoNode(24...28)(),
      ReturnNode(29...37)(
-       KEYWORD_RETURN(29...35)("return"),
+       (29...35),
        ArgumentsNode(36...37)([IntegerNode(36...37)()])
      ),
      ReturnNode(38...49)(
-       KEYWORD_RETURN(38...44)("return"),
+       (38...44),
        ArgumentsNode(45...49)([IntegerNode(45...46)(), IntegerNode(48...49)()])
      ),
      ReturnNode(50...69)(
-       KEYWORD_RETURN(50...56)("return"),
+       (50...56),
        ArgumentsNode(62...69)(
          [IfNode(62...69)(
             (62...63),
@@ -63,7 +63,7 @@ ProgramNode(0...144)(
        (89...93)
      ),
      ReturnNode(107...144)(
-       KEYWORD_RETURN(107...113)("return"),
+       (107...113),
        ArgumentsNode(114...144)(
          [TrueNode(114...118)(),
           IfNode(120...144)(

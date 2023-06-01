@@ -13,9 +13,7 @@ ProgramNode(0...33)(
          nil,
          nil
        ),
-       StatementsNode(9...15)(
-         [ReturnNode(9...15)(KEYWORD_RETURN(9...15)("return"), nil)]
-       ),
+       StatementsNode(9...15)([ReturnNode(9...15)((9...15), nil)]),
        [LABEL(6...7)("b")],
        (0...3),
        nil,

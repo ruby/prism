@@ -917,7 +917,7 @@ class ErrorsTest < Test::Unit::TestCase
       ConstantReadNode(),
       nil,
       nil,
-      StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
+      StatementsNode([ReturnNode(Location(), nil)]),
       Location()
     )
 
@@ -929,7 +929,7 @@ class ErrorsTest < Test::Unit::TestCase
       [],
       Location(),
       ConstantReadNode(),
-      StatementsNode([ReturnNode(KEYWORD_RETURN("return"), nil)]),
+      StatementsNode([ReturnNode(Location(), nil)]),
       Location()
     )
 

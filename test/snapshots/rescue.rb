@@ -40,7 +40,7 @@ ProgramNode(0...316)(
        NilNode(62...65)()
      ),
      RescueModifierNode(67...84)(
-       ReturnNode(67...73)(KEYWORD_RETURN(67...73)("return"), nil),
+       ReturnNode(67...73)((67...73), nil),
        (74...80),
        NilNode(81...84)()
      ),

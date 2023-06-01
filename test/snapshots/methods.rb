@@ -675,7 +675,7 @@ ProgramNode(0...1194)(
             TrueNode(612...616)(),
             StatementsNode(598...608)(
               [ReturnNode(598...608)(
-                 KEYWORD_RETURN(598...604)("return"),
+                 (598...604),
                  ArgumentsNode(605...608)(
                    [SymbolNode(605...608)(
                       SYMBOL_BEGIN(605...606)(":"),

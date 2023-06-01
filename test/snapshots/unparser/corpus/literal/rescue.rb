@@ -37,7 +37,7 @@ ProgramNode(0...64)(
        ),
        (19...25),
        ReturnNode(26...36)(
-         KEYWORD_RETURN(26...32)("return"),
+         (26...32),
          ArgumentsNode(33...36)(
            [CallNode(33...36)(
               nil,
@@ -69,7 +69,7 @@ ProgramNode(0...64)(
               ),
               (46...52),
               ReturnNode(53...63)(
-                KEYWORD_RETURN(53...59)("return"),
+                (53...59),
                 ArgumentsNode(60...63)(
                   [CallNode(60...63)(
                      nil,

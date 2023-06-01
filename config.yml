@@ -1503,8 +1503,8 @@ nodes:
           ^^^^^
   - name: ReturnNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode

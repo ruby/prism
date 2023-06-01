@@ -2861,7 +2861,7 @@ yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argumen
         .end = (arguments == NULL ? keyword->end : arguments->base.location.end)
       }
     },
-    .keyword = *keyword,
+    .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
     .arguments = arguments
   };
 

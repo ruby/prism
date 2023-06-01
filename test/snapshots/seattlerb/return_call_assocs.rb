@@ -2,7 +2,7 @@ ProgramNode(0...106)(
   [],
   StatementsNode(0...106)(
     [ReturnNode(0...17)(
-       KEYWORD_RETURN(0...6)("return"),
+       (0...6),
        ArgumentsNode(7...17)(
          [IntegerNode(7...8)(),
           KeywordHashNode(10...17)(
@@ -20,7 +20,7 @@ ProgramNode(0...106)(
        )
      ),
      ReturnNode(19...45)(
-       KEYWORD_RETURN(19...25)("return"),
+       (19...25),
        ArgumentsNode(26...45)(
          [IntegerNode(26...27)(),
           KeywordHashNode(29...45)(
@@ -48,7 +48,7 @@ ProgramNode(0...106)(
        )
      ),
      ReturnNode(47...61)(
-       KEYWORD_RETURN(47...53)("return"),
+       (47...53),
        ArgumentsNode(54...61)(
          [CallNode(54...61)(
             nil,
@@ -76,7 +76,7 @@ ProgramNode(0...106)(
        )
      ),
      ReturnNode(63...75)(
-       KEYWORD_RETURN(63...69)("return"),
+       (63...69),
        ArgumentsNode(70...75)(
          [CallNode(70...75)(
             nil,
@@ -104,7 +104,7 @@ ProgramNode(0...106)(
        )
      ),
      ReturnNode(77...90)(
-       KEYWORD_RETURN(77...83)("return"),
+       (77...83),
        ArgumentsNode(84...90)(
          [CallNode(84...90)(
             nil,
@@ -132,7 +132,7 @@ ProgramNode(0...106)(
        )
      ),
      ReturnNode(92...106)(
-       KEYWORD_RETURN(92...98)("return"),
+       (92...98),
        ArgumentsNode(99...106)(
          [CallNode(99...106)(
             nil,

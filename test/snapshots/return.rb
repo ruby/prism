@@ -1,9 +1,9 @@
 ProgramNode(0...139)(
   [],
   StatementsNode(0...139)(
-    [ReturnNode(0...6)(KEYWORD_RETURN(0...6)("return"), nil),
+    [ReturnNode(0...6)((0...6), nil),
      ReturnNode(8...28)(
-       KEYWORD_RETURN(8...14)("return"),
+       (8...14),
        ArgumentsNode(15...28)(
          [ParenthesesNode(15...18)(
             StatementsNode(16...17)([IntegerNode(16...17)()]),
@@ -23,17 +23,17 @@ ProgramNode(0...139)(
        )
      ),
      ReturnNode(30...39)(
-       KEYWORD_RETURN(30...36)("return"),
+       (30...36),
        ArgumentsNode(37...39)(
          [SplatNode(37...39)(USTAR(37...38)("*"), IntegerNode(38...39)())]
        )
      ),
      ReturnNode(41...49)(
-       KEYWORD_RETURN(41...47)("return"),
+       (41...47),
        ArgumentsNode(48...49)([IntegerNode(48...49)()])
      ),
      ReturnNode(51...65)(
-       KEYWORD_RETURN(51...57)("return"),
+       (51...57),
        ArgumentsNode(58...65)(
          [IntegerNode(58...59)(),
           IntegerNode(61...62)(),
@@ -41,7 +41,7 @@ ProgramNode(0...139)(
        )
      ),
      ReturnNode(67...81)(
-       KEYWORD_RETURN(67...73)("return"),
+       (67...73),
        ArgumentsNode(74...81)(
          [IntegerNode(74...75)(),
           IntegerNode(77...78)(),
@@ -49,7 +49,7 @@ ProgramNode(0...139)(
        )
      ),
      ReturnNode(83...99)(
-       KEYWORD_RETURN(83...89)("return"),
+       (83...89),
        ArgumentsNode(90...99)(
          [ArrayNode(90...99)(
             [IntegerNode(91...92)(),
@@ -61,7 +61,7 @@ ProgramNode(0...139)(
        )
      ),
      ReturnNode(101...118)(
-       KEYWORD_RETURN(101...107)("return"),
+       (101...107),
        ArgumentsNode(107...118)(
          [ParenthesesNode(107...118)(
             StatementsNode(111...116)(
@@ -73,13 +73,13 @@ ProgramNode(0...139)(
        )
      ),
      ReturnNode(120...128)(
-       KEYWORD_RETURN(120...126)("return"),
+       (120...126),
        ArgumentsNode(126...128)(
          [ParenthesesNode(126...128)(nil, (126...127), (127...128))]
        )
      ),
      ReturnNode(130...139)(
-       KEYWORD_RETURN(130...136)("return"),
+       (130...136),
        ArgumentsNode(136...139)(
          [ParenthesesNode(136...139)(
             StatementsNode(137...138)([IntegerNode(137...138)()]),

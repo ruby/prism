@@ -1,9 +1,9 @@
 ProgramNode(0...41)(
   [],
   StatementsNode(0...41)(
-    [ReturnNode(0...6)(KEYWORD_RETURN(0...6)("return"), nil),
+    [ReturnNode(0...6)((0...6), nil),
      ReturnNode(8...18)(
-       KEYWORD_RETURN(8...14)("return"),
+       (8...14),
        ArgumentsNode(15...18)(
          [CallNode(15...18)(
             nil,
@@ -18,13 +18,13 @@ ProgramNode(0...41)(
        )
      ),
      ReturnNode(20...28)(
-       KEYWORD_RETURN(20...26)("return"),
+       (20...26),
        ArgumentsNode(26...28)(
          [ParenthesesNode(26...28)(nil, (26...27), (27...28))]
        )
      ),
      ReturnNode(30...41)(
-       KEYWORD_RETURN(30...36)("return"),
+       (30...36),
        ArgumentsNode(36...41)(
          [ParenthesesNode(36...41)(
             StatementsNode(37...40)(

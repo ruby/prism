@@ -11,7 +11,7 @@ ProgramNode(6...77)(
             TrueNode(26...30)(),
             StatementsNode(46...55)(
               [ReturnNode(46...55)(
-                 KEYWORD_RETURN(46...52)("return"),
+                 (46...52),
                  ArgumentsNode(53...55)([IntegerNode(53...55)()])
                )]
             ),

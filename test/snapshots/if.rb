@@ -66,9 +66,7 @@ ProgramNode(0...293)(
      IfNode(154...168)(
        (161...163),
        TrueNode(164...168)(),
-       StatementsNode(154...160)(
-         [ReturnNode(154...160)(KEYWORD_RETURN(154...160)("return"), nil)]
-       ),
+       StatementsNode(154...160)([ReturnNode(154...160)((154...160), nil)]),
        nil,
        nil
      ),

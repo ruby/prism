@@ -43,9 +43,7 @@ ProgramNode(0...141)(
      UnlessNode(99...117)(
        (106...112),
        TrueNode(113...117)(),
-       StatementsNode(99...105)(
-         [ReturnNode(99...105)(KEYWORD_RETURN(99...105)("return"), nil)]
-       ),
+       StatementsNode(99...105)([ReturnNode(99...105)((99...105), nil)]),
        nil,
        nil
      ),

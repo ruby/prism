@@ -24,9 +24,7 @@ ProgramNode(0...109)(
      UntilNode(69...86)(
        (76...81),
        TrueNode(82...86)(),
-       StatementsNode(69...75)(
-         [ReturnNode(69...75)(KEYWORD_RETURN(69...75)("return"), nil)]
-       )
+       StatementsNode(69...75)([ReturnNode(69...75)((69...75), nil)])
      ),
      UntilNode(88...109)(
        (99...104),
