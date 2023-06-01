@@ -3,9 +3,9 @@ ProgramNode(0...31)(
   StatementsNode(0...31)(
     [CallNode(0...24)(
        RegularExpressionNode(0...15)(
-         REGEXP_BEGIN(0...1)("/"),
-         STRING_CONTENT(1...14)("(?<match>bar)"),
-         REGEXP_END(14...15)("/"),
+         (0...1),
+         (1...14),
+         (14...15),
          "(?<match>bar)",
          0
        ),

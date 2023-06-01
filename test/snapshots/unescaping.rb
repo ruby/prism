@@ -12,9 +12,9 @@ ProgramNode(0...55)(
        (9...10)
      ),
      RegularExpressionNode(12...20)(
-       REGEXP_BEGIN(12...13)("/"),
-       STRING_CONTENT(13...19)("\\c\#{1}"),
-       REGEXP_END(19...20)("/"),
+       (12...13),
+       (13...19),
+       (19...20),
        "\u0003{1}",
        0
      ),

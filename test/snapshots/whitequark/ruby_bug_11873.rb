@@ -89,9 +89,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(32...35)(
-            REGEXP_BEGIN(32...33)("/"),
-            STRING_CONTENT(33...34)("x"),
-            REGEXP_END(34...35)("/"),
+            (32...33),
+            (33...34),
+            (34...35),
             "x",
             0
           )]
@@ -139,9 +139,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(54...58)(
-            REGEXP_BEGIN(54...55)("/"),
-            STRING_CONTENT(55...56)("x"),
-            REGEXP_END(56...58)("/m"),
+            (54...55),
+            (55...56),
+            (56...58),
             "x",
             2
           )]
@@ -238,9 +238,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(101...104)(
-            REGEXP_BEGIN(101...102)("/"),
-            STRING_CONTENT(102...103)("x"),
-            REGEXP_END(103...104)("/"),
+            (101...102),
+            (102...103),
+            (103...104),
             "x",
             0
           )]
@@ -288,9 +288,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(124...128)(
-            REGEXP_BEGIN(124...125)("/"),
-            STRING_CONTENT(125...126)("x"),
-            REGEXP_END(126...128)("/m"),
+            (124...125),
+            (125...126),
+            (126...128),
             "x",
             2
           )]
@@ -399,9 +399,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(169...172)(
-            REGEXP_BEGIN(169...170)("/"),
-            STRING_CONTENT(170...171)("x"),
-            REGEXP_END(171...172)("/"),
+            (169...170),
+            (170...171),
+            (171...172),
             "x",
             0
           )]
@@ -455,9 +455,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(191...195)(
-            REGEXP_BEGIN(191...192)("/"),
-            STRING_CONTENT(192...193)("x"),
-            REGEXP_END(193...195)("/m"),
+            (191...192),
+            (192...193),
+            (193...195),
             "x",
             2
           )]
@@ -566,9 +566,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(238...241)(
-            REGEXP_BEGIN(238...239)("/"),
-            STRING_CONTENT(239...240)("x"),
-            REGEXP_END(240...241)("/"),
+            (238...239),
+            (239...240),
+            (240...241),
             "x",
             0
           )]
@@ -622,9 +622,9 @@ ProgramNode(0...272)(
             "b"
           ),
           RegularExpressionNode(261...265)(
-            REGEXP_BEGIN(261...262)("/"),
-            STRING_CONTENT(262...263)("x"),
-            REGEXP_END(263...265)("/m"),
+            (261...262),
+            (262...263),
+            (263...265),
             "x",
             2
           )]

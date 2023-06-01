@@ -367,9 +367,9 @@ ProgramNode(0...991)(
          StatementsNode(320...333)(
            [CallNode(320...333)(
               RegularExpressionNode(320...325)(
-                REGEXP_BEGIN(320...321)("/"),
-                STRING_CONTENT(321...324)("bar"),
-                REGEXP_END(324...325)("/"),
+                (320...321),
+                (321...324),
+                (324...325),
                 "bar",
                 0
               ),
@@ -439,9 +439,9 @@ ProgramNode(0...991)(
               nil,
               ArgumentsNode(358...363)(
                 [RegularExpressionNode(358...363)(
-                   REGEXP_BEGIN(358...359)("/"),
-                   STRING_CONTENT(359...362)("bar"),
-                   REGEXP_END(362...363)("/"),
+                   (358...359),
+                   (359...362),
+                   (362...363),
                    "bar",
                    0
                  )]
@@ -464,9 +464,9 @@ ProgramNode(0...991)(
      ),
      CallNode(369...382)(
        RegularExpressionNode(369...374)(
-         REGEXP_BEGIN(369...370)("/"),
-         STRING_CONTENT(370...373)("bar"),
-         REGEXP_END(373...374)("/"),
+         (369...370),
+         (370...373),
+         (373...374),
          "bar",
          0
        ),
@@ -487,9 +487,9 @@ ProgramNode(0...991)(
      ),
      CallNode(383...395)(
        RegularExpressionNode(383...388)(
-         REGEXP_BEGIN(383...384)("/"),
-         STRING_CONTENT(384...387)("bar"),
-         REGEXP_END(387...388)("/"),
+         (383...384),
+         (384...387),
+         (387...388),
          "bar",
          0
        ),
@@ -666,9 +666,9 @@ ProgramNode(0...991)(
        nil,
        ArgumentsNode(458...463)(
          [RegularExpressionNode(458...463)(
-            REGEXP_BEGIN(458...459)("/"),
-            STRING_CONTENT(459...462)("bar"),
-            REGEXP_END(462...463)("/"),
+            (458...459),
+            (459...462),
+            (462...463),
             "bar",
             0
           )]
@@ -894,9 +894,9 @@ ProgramNode(0...991)(
             nil,
             ArgumentsNode(576...581)(
               [RegularExpressionNode(576...581)(
-                 REGEXP_BEGIN(576...577)("/"),
-                 STRING_CONTENT(577...580)("bar"),
-                 REGEXP_END(580...581)("/"),
+                 (576...577),
+                 (577...580),
+                 (580...581),
                  "bar",
                  0
                )]

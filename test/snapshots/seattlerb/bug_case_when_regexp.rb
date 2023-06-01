@@ -11,9 +11,9 @@ ProgramNode(0...26)(
        [WhenNode(9...17)(
           KEYWORD_WHEN(9...13)("when"),
           [RegularExpressionNode(14...17)(
-             REGEXP_BEGIN(14...15)("/"),
-             STRING_CONTENT(15...16)("x"),
-             REGEXP_END(16...17)("/"),
+             (14...15),
+             (15...16),
+             (16...17),
              "x",
              0
            )],

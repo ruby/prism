@@ -148,9 +148,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RegularExpressionNode(99...104)(
-         REGEXP_BEGIN(99...100)("/"),
-         STRING_CONTENT(100...103)("foo"),
-         REGEXP_END(103...104)("/"),
+         (99...100),
+         (100...103),
+         (103...104),
          "foo",
          0
        ),
@@ -637,16 +637,16 @@ ProgramNode(0...3725)(
        ),
        RangeNode(496...510)(
          RegularExpressionNode(496...501)(
-           REGEXP_BEGIN(496...497)("/"),
-           STRING_CONTENT(497...500)("foo"),
-           REGEXP_END(500...501)("/"),
+           (496...497),
+           (497...500),
+           (500...501),
            "foo",
            0
          ),
          RegularExpressionNode(505...510)(
-           REGEXP_BEGIN(505...506)("/"),
-           STRING_CONTENT(506...509)("foo"),
-           REGEXP_END(509...510)("/"),
+           (505...506),
+           (506...509),
+           (509...510),
            "foo",
            0
          ),
@@ -2103,9 +2103,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RegularExpressionNode(1729...1734)(
-         REGEXP_BEGIN(1729...1730)("/"),
-         STRING_CONTENT(1730...1733)("foo"),
-         REGEXP_END(1733...1734)("/"),
+         (1729...1730),
+         (1730...1733),
+         (1733...1734),
          "foo",
          0
        ),
@@ -2615,9 +2615,9 @@ ProgramNode(0...3725)(
        ),
        [InNode(2207...2220)(
           RegularExpressionNode(2210...2215)(
-            REGEXP_BEGIN(2210...2211)("/"),
-            STRING_CONTENT(2211...2214)("foo"),
-            REGEXP_END(2214...2215)("/"),
+            (2210...2211),
+            (2211...2214),
+            (2214...2215),
             "foo",
             0
           ),
@@ -3318,9 +3318,9 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3020...3023)(0),
             StatementsNode(3011...3016)(
               [RegularExpressionNode(3011...3016)(
-                 REGEXP_BEGIN(3011...3012)("/"),
-                 STRING_CONTENT(3012...3015)("foo"),
-                 REGEXP_END(3015...3016)("/"),
+                 (3011...3012),
+                 (3012...3015),
+                 (3015...3016),
                  "foo",
                  0
                )]

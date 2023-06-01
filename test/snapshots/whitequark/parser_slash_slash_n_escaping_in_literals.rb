@@ -50,9 +50,9 @@ ProgramNode(0...210)(
        "a\\\n" + "b"
      ),
      RegularExpressionNode(58...66)(
-       REGEXP_BEGIN(58...61)("%r{"),
-       STRING_CONTENT(61...65)("a\\\n" + "b"),
-       REGEXP_END(65...66)("}"),
+       (58...61),
+       (61...65),
+       (65...66),
        "a\n" + "b",
        0
      ),
@@ -91,9 +91,9 @@ ProgramNode(0...210)(
        "a\\\n" + "b"
      ),
      RegularExpressionNode(115...121)(
-       REGEXP_BEGIN(115...116)("/"),
-       STRING_CONTENT(116...120)("a\\\n" + "b"),
-       REGEXP_END(120...121)("/"),
+       (115...116),
+       (116...120),
+       (120...121),
        "a\n" + "b",
        0
      ),

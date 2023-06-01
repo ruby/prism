@@ -253,9 +253,9 @@ ProgramNode(0...747)(
        ),
        [InNode(264...275)(
           RegularExpressionNode(267...275)(
-            REGEXP_BEGIN(267...268)("/"),
-            STRING_CONTENT(268...274)("regexp"),
-            REGEXP_END(274...275)("/"),
+            (267...268),
+            (268...274),
+            (274...275),
             "regexp",
             0
           ),

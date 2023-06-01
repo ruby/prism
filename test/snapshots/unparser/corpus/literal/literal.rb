@@ -514,16 +514,16 @@ ProgramNode(0...916)(
        STRING_END(478...479)("\"")
      ),
      RegularExpressionNode(480...485)(
-       REGEXP_BEGIN(480...481)("/"),
-       STRING_CONTENT(481...484)("foo"),
-       REGEXP_END(484...485)("/"),
+       (480...481),
+       (481...484),
+       (484...485),
        "foo",
        0
      ),
      RegularExpressionNode(486...514)(
-       REGEXP_BEGIN(486...487)("/"),
-       STRING_CONTENT(487...513)("[^-+',.\\/:@[:alnum:]\\[\\]]+"),
-       REGEXP_END(513...514)("/"),
+       (486...487),
+       (487...513),
+       (513...514),
        "[^-+',./:@[:alnum:][]]+",
        0
      ),
@@ -577,30 +577,30 @@ ProgramNode(0...916)(
        0
      ),
      RegularExpressionNode(558...562)(
-       REGEXP_BEGIN(558...559)("/"),
-       STRING_CONTENT(559...561)("\\n"),
-       REGEXP_END(561...562)("/"),
+       (558...559),
+       (559...561),
+       (561...562),
        "\n",
        0
      ),
      RegularExpressionNode(563...567)(
-       REGEXP_BEGIN(563...564)("/"),
-       STRING_CONTENT(564...566)("\\n"),
-       REGEXP_END(566...567)("/"),
+       (563...564),
+       (564...566),
+       (566...567),
        "\n",
        0
      ),
      RegularExpressionNode(568...573)(
-       REGEXP_BEGIN(568...569)("/"),
-       STRING_CONTENT(569...571)("\\n"),
-       REGEXP_END(571...573)("/x"),
+       (568...569),
+       (569...571),
+       (571...573),
        "\n",
        4
      ),
      RegularExpressionNode(574...581)(
-       REGEXP_BEGIN(574...575)("/"),
-       STRING_CONTENT(575...579)("\\/\\/"),
-       REGEXP_END(579...581)("/x"),
+       (574...575),
+       (575...579),
+       (579...581),
        "//",
        4
      ),

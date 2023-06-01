@@ -2693,9 +2693,9 @@ yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening
         .end = closing->end
       }
     },
-    .opening = *opening,
-    .content = *content,
-    .closing = *closing,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .content_loc = YP_LOCATION_TOKEN_VALUE(content),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(closing),
     .flags = yp_regular_expression_flags_create(closing)
   };
 
@@ -11517,10 +11517,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         yp_string_list_t named_captures;
         yp_string_list_init(&named_captures);
 
-        yp_token_t *content = &((yp_regular_expression_node_t *) node)->content;
+        yp_location_t *content_loc = &((yp_regular_expression_node_t *) node)->content_loc;
 
         __attribute__((unused)) bool captured_group_names =
-        yp_regexp_named_capture_group_names(content->start, (size_t) (content->end - content->start), &named_captures);
+        yp_regexp_named_capture_group_names(content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures);
         // We assert that the the regex was successfully parsed
         assert(captured_group_names);
 

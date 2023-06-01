@@ -32,20 +32,8 @@ ProgramNode(0...131)(
        nil,
        "c"
      ),
-     RegularExpressionNode(58...63)(
-       REGEXP_BEGIN(58...61)("%r("),
-       STRING_CONTENT(61...62)("/"),
-       REGEXP_END(62...63)(")"),
-       "/",
-       0
-     ),
-     RegularExpressionNode(64...70)(
-       REGEXP_BEGIN(64...67)("%r("),
-       STRING_CONTENT(67...69)("\\)"),
-       REGEXP_END(69...70)(")"),
-       ")",
-       0
-     ),
+     RegularExpressionNode(58...63)((58...61), (61...62), (62...63), "/", 0),
+     RegularExpressionNode(64...70)((64...67), (67...69), (69...70), ")", 0),
      InterpolatedRegularExpressionNode(71...85)(
        (71...74),
        [StringInterpolatedNode(74...81)(

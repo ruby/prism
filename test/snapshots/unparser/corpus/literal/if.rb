@@ -3,13 +3,7 @@ ProgramNode(0...246)(
   StatementsNode(0...246)(
     [IfNode(0...18)(
        (0...2),
-       RegularExpressionNode(3...8)(
-         REGEXP_BEGIN(3...4)("/"),
-         STRING_CONTENT(4...7)("foo"),
-         REGEXP_END(7...8)("/"),
-         "foo",
-         0
-       ),
+       RegularExpressionNode(3...8)((3...4), (4...7), (7...8), "foo", 0),
        StatementsNode(11...14)(
          [CallNode(11...14)(
             nil,
