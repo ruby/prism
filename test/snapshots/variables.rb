@@ -197,7 +197,7 @@ ProgramNode(0...293)(
      ),
      ConstantPathWriteNode(272...282)(
        ConstantReadNode(272...275)(),
-       EQUAL(276...277)("="),
+       (276...277),
        ArrayNode(0...282)(
          [IntegerNode(278...279)(), IntegerNode(281...282)()],
          nil,

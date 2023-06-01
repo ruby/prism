@@ -14,7 +14,7 @@ ProgramNode(0...132)(
             StatementsNode(22...29)(
               [ConstantPathWriteNode(22...29)(
                  ConstantReadNode(22...23)(),
-                 EQUAL(24...25)("="),
+                 (24...25),
                  NilNode(26...29)()
                )]
             ),

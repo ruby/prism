@@ -1004,7 +1004,7 @@ ProgramNode(0...1194)(
      ),
      ConstantPathWriteNode(877...886)(
        ConstantReadNode(877...882)(),
-       EQUAL(883...884)("="),
+       (883...884),
        IntegerNode(885...886)()
      ),
      DefNode(888...903)(

@@ -1245,7 +1245,7 @@ yp_constant_path_write_node_create(yp_parser_t *parser, yp_node_t *target, const
       },
     },
     .target = target,
-    .operator = *operator,
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
     .value = value
   };
 

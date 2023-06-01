@@ -54,7 +54,7 @@ ProgramNode(0...40)(
          ConstantReadNode(27...28)(),
          (25...27)
        ),
-       EQUAL(29...30)("="),
+       (29...30),
        IntegerNode(31...32)()
      ),
      CallNode(34...40)(

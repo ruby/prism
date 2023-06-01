@@ -292,7 +292,7 @@ ProgramNode(0...719)(
          ConstantReadNode(290...293)(),
          (288...290)
        ),
-       EQUAL(294...295)("="),
+       (294...295),
        ConstantPathNode(296...301)(
          nil,
          ConstantReadNode(298...301)(),
@@ -311,7 +311,7 @@ ProgramNode(0...719)(
      ),
      ConstantPathWriteNode(317...326)(
        ConstantReadNode(317...322)(),
-       EQUAL(323...324)("="),
+       (323...324),
        IntegerNode(325...326)()
      ),
      ConstantPathWriteNode(327...350)(
@@ -324,7 +324,7 @@ ProgramNode(0...719)(
          ConstantReadNode(341...346)(),
          (339...341)
        ),
-       EQUAL(347...348)("="),
+       (347...348),
        IntegerNode(349...350)()
      ),
      LocalVariableWriteNode(351...367)(
