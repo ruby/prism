@@ -339,10 +339,7 @@ ProgramNode(0...690)(
             (269...273),
             IntegerNode(274...275)()
           )],
-         KeywordRestParameterNode(277...282)(
-           USTAR_STAR(277...279)("**"),
-           IDENTIFIER(279...282)("baz")
-         ),
+         KeywordRestParameterNode(277...282)((277...279), (279...282)),
          BlockParameterNode(284...286)((285...286), (284...285))
        ),
        nil,
@@ -366,10 +363,7 @@ ProgramNode(0...690)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(300...305)(
-           STAR_STAR(300...302)("**"),
-           IDENTIFIER(302...305)("baz")
-         ),
+         KeywordRestParameterNode(300...305)((300...302), (302...305)),
          BlockParameterNode(307...309)((308...309), (307...308))
        ),
        nil,
@@ -390,7 +384,7 @@ ProgramNode(0...690)(
          [],
          RestParameterNode(322...323)(STAR(322...323)("*"), nil),
          [],
-         KeywordRestParameterNode(325...327)(USTAR_STAR(325...327)("**"), nil),
+         KeywordRestParameterNode(325...327)((325...327), nil),
          nil
        ),
        nil,

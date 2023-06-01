@@ -726,10 +726,7 @@ class ErrorsTest < Test::Unit::TestCase
         [],
         nil,
         [KeywordParameterNode(Location(), nil)],
-        KeywordRestParameterNode(
-          USTAR_STAR("**"),
-          IDENTIFIER("rest")
-        ),
+        KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
@@ -771,10 +768,7 @@ class ErrorsTest < Test::Unit::TestCase
         [RequiredParameterNode()],
         nil,
         [KeywordParameterNode(Location(), nil)],
-        KeywordRestParameterNode(
-          USTAR_STAR("**"),
-          IDENTIFIER("args")
-        ),
+        KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
@@ -799,10 +793,7 @@ class ErrorsTest < Test::Unit::TestCase
         [RequiredParameterNode()],
         nil,
         [KeywordParameterNode(Location(), nil)],
-        KeywordRestParameterNode(
-          USTAR_STAR("**"),
-          IDENTIFIER("args")
-        ),
+        KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
@@ -829,10 +820,7 @@ class ErrorsTest < Test::Unit::TestCase
         [RequiredParameterNode()],
         nil,
         [KeywordParameterNode(Location(), nil)],
-        KeywordRestParameterNode(
-          USTAR_STAR("**"),
-          IDENTIFIER("args")
-        ),
+        KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
@@ -1024,7 +1012,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       IDENTIFIER("foo"),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], KeywordRestParameterNode(USTAR_STAR("**"), IDENTIFIER("a")), nil),
+      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], KeywordRestParameterNode(Location(), Location()), nil),
       nil,
       [IDENTIFIER("a"), IDENTIFIER("b")],
       Location(),

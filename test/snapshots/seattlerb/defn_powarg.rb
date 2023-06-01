@@ -10,10 +10,7 @@ ProgramNode(0...17)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(6...12)(
-           USTAR_STAR(6...8)("**"),
-           IDENTIFIER(8...12)("opts")
-         ),
+         KeywordRestParameterNode(6...12)((6...8), (8...12)),
          nil
        ),
        nil,

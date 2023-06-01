@@ -120,10 +120,7 @@ ProgramNode(0...434)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(110...113)(
-           STAR_STAR(110...112)("**"),
-           IDENTIFIER(112...113)("b")
-         ),
+         KeywordRestParameterNode(110...113)((110...112), (112...113)),
          nil
        ),
        nil,

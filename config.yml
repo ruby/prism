@@ -1060,10 +1060,10 @@ nodes:
           end
   - name: KeywordRestParameterNode
     child_nodes:
-      - name: operator
-        type: token
-      - name: name
-        type: token?
+      - name: operator_loc
+        type: location
+      - name: name_loc
+        type: location?
     comment: |
       Represents a keyword rest parameter to a method, block, or lambda definition.
 

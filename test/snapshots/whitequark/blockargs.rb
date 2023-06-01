@@ -72,10 +72,7 @@ ProgramNode(0...550)(
              [],
              nil,
              [],
-             KeywordRestParameterNode(32...37)(
-               USTAR_STAR(32...34)("**"),
-               IDENTIFIER(34...37)("baz")
-             ),
+             KeywordRestParameterNode(32...37)((32...34), (34...37)),
              BlockParameterNode(39...41)((40...41), (39...40))
            ),
            [],
@@ -866,10 +863,7 @@ ProgramNode(0...550)(
                 (430...434),
                 IntegerNode(435...436)()
               )],
-             KeywordRestParameterNode(438...443)(
-               USTAR_STAR(438...440)("**"),
-               IDENTIFIER(440...443)("baz")
-             ),
+             KeywordRestParameterNode(438...443)((438...440), (440...443)),
              BlockParameterNode(445...447)((446...447), (445...446))
            ),
            [],

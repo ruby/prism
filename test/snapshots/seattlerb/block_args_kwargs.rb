@@ -17,10 +17,7 @@ ProgramNode(0...23)(
              [],
              nil,
              [],
-             KeywordRestParameterNode(5...13)(
-               USTAR_STAR(5...7)("**"),
-               IDENTIFIER(7...13)("kwargs")
-             ),
+             KeywordRestParameterNode(5...13)((5...7), (7...13)),
              nil
            ),
            [],

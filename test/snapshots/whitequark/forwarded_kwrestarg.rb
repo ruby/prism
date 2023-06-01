@@ -10,7 +10,7 @@ ProgramNode(0...25)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(8...10)(USTAR_STAR(8...10)("**"), nil),
+         KeywordRestParameterNode(8...10)((8...10), nil),
          nil
        ),
        StatementsNode(13...20)(

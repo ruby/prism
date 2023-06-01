@@ -277,10 +277,7 @@ ProgramNode(0...1194)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(250...253)(
-           USTAR_STAR(250...252)("**"),
-           IDENTIFIER(252...253)("b")
-         ),
+         KeywordRestParameterNode(250...253)((250...252), (252...253)),
          nil
        ),
        nil,
@@ -301,7 +298,7 @@ ProgramNode(0...1194)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(266...268)(USTAR_STAR(266...268)("**"), nil),
+         KeywordRestParameterNode(266...268)((266...268), nil),
          nil
        ),
        nil,
