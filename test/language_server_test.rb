@@ -116,7 +116,7 @@ module YARP
     end
 
     def test_reading_file
-      Tempfile.open(%w[test- .rb]) do |file|
+      Tempfile.create(%w[test- .rb]) do |file|
         file.write("class Foo; end")
         file.rewind
 
