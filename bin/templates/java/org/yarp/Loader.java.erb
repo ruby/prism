@@ -84,17 +84,12 @@ public class Loader {
 
     private Nodes.Token loadToken() {
         int type = buffer.get() & 0xFF;
-        int startOffset = loadVarInt();
-        int length = loadVarInt();
-
         final Nodes.TokenType tokenType = Nodes.TOKEN_TYPES[type];
-        return new Nodes.Token(tokenType, startOffset, length);
+        return new Nodes.Token(tokenType, loadVarInt(), loadVarInt());
     }
 
     private Nodes.Location loadLocation() {
-        int startOffset = loadVarInt();
-        int length = loadVarInt();
-        return new Nodes.Location(startOffset, length);
+        return new Nodes.Location(loadVarInt(), loadVarInt());
     }
 
     private Nodes.Location loadOptionalLocation() {

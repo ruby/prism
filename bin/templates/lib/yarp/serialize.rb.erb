@@ -48,16 +48,14 @@ module YARP
       end
 
       def load_token
-        number = io.getbyte
-        start_offset, length = load_varint, load_varint
-
         type =
-          case number
+          case io.getbyte
           <%- tokens.each_with_index do |token, index| -%>
           when <%= index + 1 %> then :<%= token.name.inspect %>
           <%- end -%>
           end
 
+        start_offset, length = load_varint, load_varint
         range = source.byteslice(start_offset, length)
         Token.new(type, range, start_offset, length)
       end
@@ -77,13 +75,11 @@ module YARP
       end
 
       def load_string
-        length = load_varint
-        io.read(length).force_encoding(encoding)
+        io.read(load_varint).force_encoding(encoding)
       end
 
       def load_location
-        start_offset, length = load_varint, load_varint
-        Location.new(start_offset, length)
+        Location.new(load_varint, load_varint)
       end
 
       def load_optional_location
