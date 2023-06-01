@@ -18,11 +18,11 @@ typedef struct {
 } yp_buffer_t;
 
 // Allocate a new yp_buffer_t.
-__attribute__ ((__visibility__("default"))) extern yp_buffer_t *
+YP_EXPORTED_FUNCTION extern yp_buffer_t *
 yp_buffer_alloc(void);
 
 // Initialize a yp_buffer_t with its default values.
-__attribute__ ((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_buffer_init(yp_buffer_t *buffer);
 
 // Append a string to the buffer.
@@ -38,7 +38,7 @@ void
 yp_buffer_append_u32(yp_buffer_t *buffer, uint32_t value);
 
 // Free the memory associated with the buffer.
-__attribute__ ((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_buffer_free(yp_buffer_t *buffer);
 
 #endif

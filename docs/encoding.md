@@ -72,7 +72,7 @@ typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(yp_parser_t *parser, con
 // return NULL if it also doesn't understand the encoding or it should return a
 // pointer to a yp_encoding_t struct that contains the functions necessary to
 // parse identifiers.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback);
 ```
 
@@ -87,6 +87,6 @@ typedef void (*yp_encoding_changed_callback_t)(yp_parser_t *parser);
 
 // Register a callback that will be called whenever YARP changes the encoding it
 // is using to parse based on the magic comment.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_changed_callback_t callback);
 ```

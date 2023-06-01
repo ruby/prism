@@ -510,7 +510,7 @@ yp_regexp_parse_pattern(yp_regexp_parser_t *parser) {
 
 // Parse a regular expression and extract the names of all of the named capture
 // groups.
-__attribute__((__visibility__("default"))) extern bool
+YP_EXPORTED_FUNCTION extern bool
 yp_regexp_named_capture_group_names(const char *source, size_t size, yp_string_list_t *named_captures) {
   yp_regexp_parser_t parser;
   yp_regexp_parser_init(&parser, source, source + size, named_captures);

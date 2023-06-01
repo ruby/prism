@@ -11929,7 +11929,7 @@ parse_program(yp_parser_t *parser) {
 /******************************************************************************/
 
 // Initialize a parser with the given start and end pointers.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath) {
   // Set filepath to the file that was passed
   if (!filepath) filepath = "";
@@ -11990,7 +11990,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
 
 // Register a callback that will be called whenever YARP changes the encoding it
 // is using to parse based on the magic comment.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_changed_callback_t callback) {
   parser->encoding_changed_callback = callback;
 }
@@ -12000,7 +12000,7 @@ yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_ch
 // return NULL if it also doesn't understand the encoding or it should return a
 // pointer to a yp_encoding_t struct that contains the functions necessary to
 // parse identifiers.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback) {
   parser->encoding_decode_callback = callback;
 }
@@ -12019,7 +12019,7 @@ yp_comment_list_free(yp_list_t *list) {
 }
 
 // Free any memory associated with the given parser.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parser_free(yp_parser_t *parser) {
   yp_string_free(&parser->filepath_string);
   yp_diagnostic_list_free(&parser->error_list);
@@ -12028,12 +12028,12 @@ yp_parser_free(yp_parser_t *parser) {
 }
 
 // Parse the Ruby source associated with the given parser and return the tree.
-__attribute__((__visibility__("default"))) extern yp_node_t *
+YP_EXPORTED_FUNCTION extern yp_node_t *
 yp_parse(yp_parser_t *parser) {
   return parse_program(parser);
 }
 
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
   yp_buffer_append_str(buffer, "YARP", 4);
   yp_buffer_append_u8(buffer, YP_VERSION_MAJOR);
@@ -12046,7 +12046,7 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-__attribute__((__visibility__("default"))) extern void
+YP_EXPORTED_FUNCTION extern void
 yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
   yp_parser_t parser;
   yp_parser_init(&parser, source, size, NULL);

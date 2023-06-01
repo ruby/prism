@@ -9,4 +9,8 @@
 #define _XOPEN_SOURCE 700
 #endif
 
+#ifndef YP_EXPORTED_FUNCTION
+#define YP_EXPORTED_FUNCTION __attribute__((__visibility__("default")))
+#endif
+
 #endif
