@@ -86,17 +86,15 @@ public class Loader {
         int type = buffer.get() & 0xFF;
         int startOffset = loadVarInt();
         int length = loadVarInt();
-        int endOffset = startOffset + length;
 
         final Nodes.TokenType tokenType = Nodes.TOKEN_TYPES[type];
-        return new Nodes.Token(tokenType, startOffset, endOffset);
+        return new Nodes.Token(tokenType, startOffset, length);
     }
 
     private Nodes.Location loadLocation() {
         int startOffset = loadVarInt();
         int length = loadVarInt();
-        int endOffset = startOffset + length;
-        return new Nodes.Location(startOffset, endOffset);
+        return new Nodes.Location(startOffset, length);
     }
 
     private Nodes.Location loadOptionalLocation() {
@@ -129,7 +127,6 @@ public class Loader {
         int type = buffer.get() & 0xFF;
         int startOffset = loadVarInt();
         int length = loadVarInt();
-        int endOffset = startOffset + length;
 
         switch (type) {
             <%- nodes.each_with_index do |node, index| -%>
@@ -151,7 +148,7 @@ public class Loader {
               else raise
               end
             }
-            params.concat ["startOffset", "endOffset"]
+            params.concat ["startOffset", "length"]
             -%>
                 return new Nodes.<%= node.name %>(<%= params.join(", ") -%>);
             <%- end -%>

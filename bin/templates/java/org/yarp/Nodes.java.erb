@@ -22,38 +22,38 @@ public abstract class Nodes {
     public static final class Token {
         public final TokenType type;
         public final int startOffset;
-        public final int endOffset;
+        public final int length;
 
-        public Token(TokenType type, int startOffset, int endOffset) {
+        public Token(TokenType type, int startOffset, int length) {
             this.type = type;
             this.startOffset = startOffset;
-            this.endOffset = endOffset;
+            this.length = length;
         }
 
         public int length() {
-            return endOffset - startOffset;
+            return length;
         }
 
         public int endOffset() {
-            return endOffset;
+            return startOffset + length;
         }
     }
 
     public static final class Location {
         public final int startOffset;
-        public final int endOffset;
+        public final int length;
 
-        public Location(int startOffset, int endOffset) {
+        public Location(int startOffset, int length) {
             this.startOffset = startOffset;
-            this.endOffset = endOffset;
+            this.length = length;
         }
 
         public int length() {
-            return endOffset - startOffset;
+            return length;
         }
 
         public int endOffset() {
-            return endOffset;
+            return startOffset + length;
         }
     }
 
@@ -62,19 +62,19 @@ public abstract class Nodes {
         public static final Node[] EMPTY_ARRAY = {};
 
         public final int startOffset;
-        public final int endOffset;
+        public final int length;
 
-        public Node(int startOffset, int endOffset) {
+        public Node(int startOffset, int length) {
             this.startOffset = startOffset;
-            this.endOffset = endOffset;
+            this.length = length;
         }
 
         public int length() {
-            return endOffset - startOffset;
+            return length;
         }
 
         public int endOffset() {
-            return endOffset;
+            return startOffset + length;
         }
 
         public abstract <T> T accept(AbstractNodeVisitor<T> visitor);
@@ -112,10 +112,10 @@ public abstract class Nodes {
         <%-
           params = node.needs_serialized_length? ? ["int serializedLength"] : []
           params.concat node.params.map { "#{_1.java_type} #{_1.name}" }
-          params.concat ["int startOffset", "int endOffset"]
+          params.concat ["int startOffset", "int length"]
         -%>
         public <%=node.name -%>(<%= params.join(", ") %>) {
-            super(startOffset, endOffset);
+            super(startOffset, length);
         <%- if node.needs_serialized_length? -%>
             this.serializedLength = serializedLength;
         <%- end -%>
