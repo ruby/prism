@@ -981,7 +981,7 @@ ProgramNode(0...913)(
        nil,
        StatementsNode(864...893)(
          [InterpolatedStringNode(864...893)(
-            HEREDOC_START(864...874)("<<-HEREDOC"),
+            (864...874),
             [StringNode(875...879)(
                nil,
                STRING_CONTENT(875...879)("    "),
@@ -999,7 +999,7 @@ ProgramNode(0...913)(
                nil,
                "\n"
              )],
-            HEREDOC_END(883...893)("  HEREDOC\n")
+            (883...893)
           )]
        ),
        [],

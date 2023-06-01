@@ -2,7 +2,7 @@ ProgramNode(0...26)(
   [],
   StatementsNode(0...26)(
     [InterpolatedStringNode(0...26)(
-       STRING_BEGIN(0...3)("%Q["),
+       (0...3),
        [StringNode(3...11)(
           nil,
           STRING_CONTENT(3...11)("before ["),
@@ -31,7 +31,7 @@ ProgramNode(0...26)(
           nil,
           "] after"
         )],
-       STRING_END(25...26)("]")
+       (25...26)
      )]
   )
 )

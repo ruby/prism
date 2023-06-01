@@ -2,13 +2,13 @@ ProgramNode(0...16)(
   [],
   StatementsNode(0...16)(
     [InterpolatedStringNode(0...6)(
-       STRING_BEGIN(0...1)("\""),
+       (0...1),
        [StringInterpolatedNode(1...5)(
           EMBEXPR_BEGIN(1...3)("\#{"),
           StatementsNode(3...4)([IntegerNode(3...4)()]),
           EMBEXPR_END(4...5)("}")
         )],
-       STRING_END(5...6)("\"")
+       (5...6)
      ),
      ArrayNode(8...16)(
        [InterpolatedStringNode(0...15)(

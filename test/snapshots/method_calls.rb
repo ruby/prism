@@ -1425,7 +1425,7 @@ ProgramNode(0...1187)(
        nil,
        ArgumentsNode(846...871)(
          [InterpolatedStringNode(846...871)(
-            STRING_BEGIN(846...847)("\""),
+            (846...847),
             [StringInterpolatedNode(847...870)(
                EMBEXPR_BEGIN(847...849)("\#{"),
                StatementsNode(849...869)(
@@ -1464,7 +1464,7 @@ ProgramNode(0...1187)(
                ),
                EMBEXPR_END(869...870)("}")
              )],
-            STRING_END(870...871)("\"")
+            (870...871)
           )]
        ),
        nil,

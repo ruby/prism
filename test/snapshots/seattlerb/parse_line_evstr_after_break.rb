@@ -9,7 +9,7 @@ ProgramNode(0...11)(
          "a"
        ),
        InterpolatedStringNode(5...11)(
-         STRING_BEGIN(5...6)("\""),
+         (5...6),
          [StringInterpolatedNode(6...10)(
             EMBEXPR_BEGIN(6...8)("\#{"),
             StatementsNode(8...9)(
@@ -26,7 +26,7 @@ ProgramNode(0...11)(
             ),
             EMBEXPR_END(9...10)("}")
           )],
-         STRING_END(10...11)("\"")
+         (10...11)
        )
      )]
   )

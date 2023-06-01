@@ -16,7 +16,7 @@ ProgramNode(0...140)(
        KEYWORD_END(15...18)("end")
      ),
      InterpolatedStringNode(20...38)(
-       STRING_BEGIN(20...23)("%Q{"),
+       (20...23),
        [StringNode(23...27)(nil, STRING_CONTENT(23...27)("aaa "), nil, "aaa "),
         StringInterpolatedNode(27...33)(
           EMBEXPR_BEGIN(27...29)("\#{"),
@@ -40,7 +40,7 @@ ProgramNode(0...140)(
           nil,
           " ccc"
         )],
-       STRING_END(37...38)("}")
+       (37...38)
      ),
      ModuleNode(40...55)(
        [],

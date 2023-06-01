@@ -10,21 +10,21 @@ ProgramNode(0...30)(
          [CallNode(2...30)(
             CallNode(2...26)(
               InterpolatedStringNode(2...22)(
-                HEREDOC_START(2...8)("<<-END"),
+                (2...8),
                 [StringNode(12...16)(
                    nil,
                    STRING_CONTENT(12...16)("  a\n"),
                    nil,
                    "  a\n"
                  )],
-                HEREDOC_END(16...22)("  END\n")
+                (16...22)
               ),
               nil,
               PLUS(8...9)("+"),
               nil,
               ArgumentsNode(9...26)(
                 [InterpolatedStringNode(9...26)(
-                   STRING_BEGIN(9...10)("'"),
+                   (9...10),
                    [StringNode(10...12)(
                       nil,
                       STRING_CONTENT(10...12)("b\n"),
@@ -37,7 +37,7 @@ ProgramNode(0...30)(
                       nil,
                       "  c"
                     )],
-                   STRING_END(25...26)("'")
+                   (25...26)
                  )]
               ),
               nil,

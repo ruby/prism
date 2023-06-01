@@ -10,7 +10,7 @@ ProgramNode(0...93)(
        "  why would someone do this? \n" + "  blah\n"
      ),
      InterpolatedStringNode(42...93)(
-       HEREDOC_START(42...49)("<<-DESC"),
+       (42...49),
        [StringNode(50...88)(
           nil,
           STRING_CONTENT(50...88)(
@@ -19,7 +19,7 @@ ProgramNode(0...93)(
           nil,
           "  why would someone do this? \n" + "  blah\n"
         )],
-       HEREDOC_END(88...93)("DESC\n")
+       (88...93)
      )]
   )
 )

@@ -9,14 +9,14 @@ ProgramNode(0...12)(
        ArgumentsNode(2...12)(
          [StringConcatNode(2...12)(
             InterpolatedStringNode(2...19)(
-              HEREDOC_START(2...6)("<<~E"),
+              (2...6),
               [StringNode(13...17)(
                  nil,
                  STRING_CONTENT(13...17)("  x\n"),
                  nil,
                  "x\n"
                )],
-              HEREDOC_END(17...19)("E\n")
+              (17...19)
             ),
             StringNode(7...12)(
               STRING_BEGIN(7...8)("\""),

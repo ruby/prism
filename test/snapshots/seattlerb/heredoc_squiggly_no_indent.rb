@@ -2,9 +2,9 @@ ProgramNode(0...9)(
   [],
   StatementsNode(0...9)(
     [InterpolatedStringNode(0...9)(
-       HEREDOC_START(0...4)("<<~A"),
+       (0...4),
        [StringNode(5...7)(nil, STRING_CONTENT(5...7)("a\n"), nil, "a\n")],
-       HEREDOC_END(7...9)("A\n")
+       (7...9)
      )]
   )
 )

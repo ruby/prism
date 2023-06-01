@@ -1034,7 +1034,7 @@ ProgramNode(0...1194)(
        ),
        StatementsNode(917...931)(
          [InterpolatedStringNode(917...931)(
-            STRING_BEGIN(917...918)("\""),
+            (917...918),
             [StringNode(918...921)(
                nil,
                STRING_CONTENT(918...921)("foo"),
@@ -1059,7 +1059,7 @@ ProgramNode(0...1194)(
                ),
                EMBEXPR_END(929...930)("}")
              )],
-            STRING_END(930...931)("\"")
+            (930...931)
           )]
        ),
        [UDOT_DOT_DOT(911...914)("...")],

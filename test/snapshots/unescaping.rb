@@ -25,14 +25,14 @@ ProgramNode(0...55)(
        "\u0003{1}"
      ),
      InterpolatedStringNode(32...55)(
-       HEREDOC_START(32...39)("<<~HERE"),
+       (32...39),
        [StringNode(40...50)(
           nil,
           STRING_CONTENT(40...50)("   \\c\#{1}\n"),
           nil,
           "\u0003{1}\n"
         )],
-       HEREDOC_END(50...55)("HERE\n")
+       (50...55)
      )]
   )
 )

@@ -32,7 +32,7 @@ ProgramNode(0...48)(
            [KeywordParameterNode(19...29)(
               LABEL(19...21)("x:"),
               InterpolatedStringNode(22...29)(
-                STRING_BEGIN(22...23)("\""),
+                (22...23),
                 [StringNode(23...24)(
                    nil,
                    STRING_CONTENT(23...24)("b"),
@@ -55,7 +55,7 @@ ProgramNode(0...48)(
                    ),
                    EMBEXPR_END(27...28)("}")
                  )],
-                STRING_END(28...29)("\"")
+                (28...29)
               )
             )],
            nil,

@@ -4,7 +4,7 @@ ProgramNode(0...42)(
     [LocalVariableWriteNode(0...42)(
        (0...1),
        InterpolatedStringNode(4...42)(
-         HEREDOC_START(4...10)("<<~EOF"),
+         (4...10),
          [StringNode(11...22)(
             nil,
             STRING_CONTENT(11...22)("      w\n" + "  x"),
@@ -22,7 +22,7 @@ ProgramNode(0...42)(
             nil,
             " y\n" + "  z\n"
           )],
-         HEREDOC_END(36...42)("  EOF\n")
+         (36...42)
        ),
        (2...3),
        0

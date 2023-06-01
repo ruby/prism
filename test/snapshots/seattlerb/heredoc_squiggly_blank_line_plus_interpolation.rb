@@ -11,7 +11,7 @@ ProgramNode(0...20)(
          ArgumentsNode(8...19)(
            [CallNode(8...19)(
               InterpolatedStringNode(8...42)(
-                HEREDOC_START(8...14)("<<~EOF"),
+                (8...14),
                 [StringNode(21...26)(
                    nil,
                    STRING_CONTENT(21...26)("\n" + "    "),
@@ -40,7 +40,7 @@ ProgramNode(0...20)(
                    nil,
                    "baz\n"
                  )],
-                HEREDOC_END(36...42)("  EOF\n")
+                (36...42)
               ),
               DOT(14...15)("."),
               IDENTIFIER(15...19)("chop"),

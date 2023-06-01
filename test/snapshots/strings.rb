@@ -87,9 +87,9 @@ ProgramNode(0...497)(
        "abc"
      ),
      InterpolatedStringNode(122...130)(
-       STRING_BEGIN(122...123)("\""),
+       (122...123),
        [ClassVariableReadNode(124...129)()],
-       STRING_END(129...130)("\"")
+       (129...130)
      ),
      StringNode(132...138)(
        STRING_BEGIN(132...134)("%\\"),
@@ -98,7 +98,7 @@ ProgramNode(0...497)(
        "abc"
      ),
      InterpolatedStringNode(140...157)(
-       STRING_BEGIN(140...142)("%{"),
+       (140...142),
        [StringNode(142...146)(
           nil,
           STRING_CONTENT(142...146)("aaa "),
@@ -127,7 +127,7 @@ ProgramNode(0...497)(
           nil,
           " ccc"
         )],
-       STRING_END(156...157)("}")
+       (156...157)
      ),
      StringNode(159...167)(
        STRING_BEGIN(159...161)("%["),
@@ -194,7 +194,7 @@ ProgramNode(0...497)(
        "\#@---"
      ),
      InterpolatedStringNode(231...247)(
-       STRING_BEGIN(231...232)("\""),
+       (231...232),
        [StringNode(232...236)(
           nil,
           STRING_CONTENT(232...236)("aaa "),
@@ -223,7 +223,7 @@ ProgramNode(0...497)(
           nil,
           " ccc"
         )],
-       STRING_END(246...247)("\"")
+       (246...247)
      ),
      StringNode(249...254)(
        STRING_BEGIN(249...250)("'"),
@@ -357,14 +357,14 @@ ProgramNode(0...497)(
        "\\ foo \\ bar"
      ),
      InterpolatedStringNode(404...411)(
-       STRING_BEGIN(404...405)("\""),
+       (404...405),
        [GlobalVariableReadNode(406...410)(GLOBAL_VARIABLE(406...410)("$foo"))],
-       STRING_END(410...411)("\"")
+       (410...411)
      ),
      InterpolatedStringNode(413...420)(
-       STRING_BEGIN(413...414)("\""),
+       (413...414),
        [InstanceVariableReadNode(415...419)()],
-       STRING_END(419...420)("\"")
+       (419...420)
      ),
      StringNode(422...437)(
        STRING_BEGIN(422...423)("\""),

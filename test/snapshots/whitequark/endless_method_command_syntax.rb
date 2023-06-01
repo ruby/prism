@@ -244,7 +244,7 @@ ProgramNode(0...278)(
                  ),
                  KEYWORD_RESCUE_MODIFIER(192...198)("rescue"),
                  InterpolatedStringNode(199...214)(
-                   STRING_BEGIN(199...200)("\""),
+                   (199...200),
                    [StringNode(200...209)(
                       nil,
                       STRING_CONTENT(200...209)("instance "),
@@ -258,7 +258,7 @@ ProgramNode(0...278)(
                       ),
                       EMBEXPR_END(212...213)("}")
                     )],
-                   STRING_END(213...214)("\"")
+                   (213...214)
                  )
                )]
             ),
@@ -303,7 +303,7 @@ ProgramNode(0...278)(
                  ),
                  KEYWORD_RESCUE_MODIFIER(259...265)("rescue"),
                  InterpolatedStringNode(266...278)(
-                   STRING_BEGIN(266...267)("\""),
+                   (266...267),
                    [StringNode(267...273)(
                       nil,
                       STRING_CONTENT(267...273)("class "),
@@ -317,7 +317,7 @@ ProgramNode(0...278)(
                       ),
                       EMBEXPR_END(276...277)("}")
                     )],
-                   STRING_END(277...278)("\"")
+                   (277...278)
                  )
                )]
             ),

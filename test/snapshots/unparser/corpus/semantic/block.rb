@@ -100,14 +100,14 @@ ProgramNode(0...148)(
        PARENTHESIS_LEFT(85...86)("("),
        ArgumentsNode(86...109)(
          [InterpolatedStringNode(86...109)(
-            HEREDOC_START(86...92)("<<-DOC"),
+            (86...92),
             [StringNode(101...105)(
                nil,
                STRING_CONTENT(101...105)("  b\n"),
                nil,
                "  b\n"
              )],
-            HEREDOC_END(105...109)("DOC\n")
+            (105...109)
           )]
        ),
        PARENTHESIS_RIGHT(92...93)(")"),
@@ -140,14 +140,14 @@ ProgramNode(0...148)(
        PARENTHESIS_LEFT(121...122)("("),
        ArgumentsNode(122...141)(
          [InterpolatedStringNode(122...141)(
-            HEREDOC_START(122...128)("<<-DOC"),
+            (122...128),
             [StringNode(133...137)(
                nil,
                STRING_CONTENT(133...137)("  b\n"),
                nil,
                "  b\n"
              )],
-            HEREDOC_END(137...141)("DOC\n")
+            (137...141)
           )]
        ),
        PARENTHESIS_RIGHT(128...129)(")"),

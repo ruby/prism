@@ -8,7 +8,7 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(2...28)(
          [InterpolatedStringNode(2...28)(
-            HEREDOC_START(2...8)("<<~\"E\""),
+            (2...8),
             [StringNode(9...17)(
                nil,
                STRING_CONTENT(9...17)("    x\n" + "  "),
@@ -33,7 +33,7 @@ ProgramNode(0...331)(
                nil,
                "\n"
              )],
-            HEREDOC_END(26...28)("E\n")
+            (26...28)
           )]
        ),
        nil,
@@ -47,7 +47,7 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(31...55)(
          [InterpolatedStringNode(31...55)(
-            HEREDOC_START(31...37)("<<~\"E\""),
+            (31...37),
             [StringNode(38...46)(
                nil,
                STRING_CONTENT(38...46)("    x\n" + "  "),
@@ -76,7 +76,7 @@ ProgramNode(0...331)(
                nil,
                "\n"
              )],
-            HEREDOC_END(53...55)("E\n")
+            (53...55)
           )]
        ),
        nil,
@@ -90,14 +90,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(58...78)(
          [InterpolatedStringNode(58...78)(
-            HEREDOC_START(58...62)("<<~E"),
+            (58...62),
             [StringNode(63...76)(
                nil,
                STRING_CONTENT(63...76)("\tx\n" + "        y\n"),
                nil,
                "x\n" + "y\n"
              )],
-            HEREDOC_END(76...78)("E\n")
+            (76...78)
           )]
        ),
        nil,
@@ -111,14 +111,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(81...97)(
          [InterpolatedStringNode(81...97)(
-            HEREDOC_START(81...85)("<<~E"),
+            (81...85),
             [StringNode(86...95)(
                nil,
                STRING_CONTENT(86...95)("\tx\n" + "    y\n"),
                nil,
                "\tx\n" + "y\n"
              )],
-            HEREDOC_END(95...97)("E\n")
+            (95...97)
           )]
        ),
        nil,
@@ -132,14 +132,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(100...124)(
          [InterpolatedStringNode(100...124)(
-            HEREDOC_START(100...104)("<<~E"),
+            (100...104),
             [StringNode(105...122)(
                nil,
                STRING_CONTENT(105...122)("    \tx\n" + "        y\n"),
                nil,
                "x\n" + "y\n"
              )],
-            HEREDOC_END(122...124)("E\n")
+            (122...124)
           )]
        ),
        nil,
@@ -153,14 +153,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(127...148)(
          [InterpolatedStringNode(127...148)(
-            HEREDOC_START(127...131)("<<~E"),
+            (127...131),
             [StringNode(132...146)(
                nil,
                STRING_CONTENT(132...146)("        \tx\n" + "\ty\n"),
                nil,
                "\tx\n" + "y\n"
              )],
-            HEREDOC_END(146...148)("E\n")
+            (146...148)
           )]
        ),
        nil,
@@ -174,14 +174,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(151...170)(
          [InterpolatedStringNode(151...170)(
-            HEREDOC_START(151...155)("<<~E"),
+            (151...155),
             [StringNode(156...168)(
                nil,
                STRING_CONTENT(156...168)("    x\n" + "  \\\ty\n"),
                nil,
                "  x\n" + "\ty\n"
              )],
-            HEREDOC_END(168...170)("E\n")
+            (168...170)
           )]
        ),
        nil,
@@ -195,14 +195,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(173...193)(
          [InterpolatedStringNode(173...193)(
-            HEREDOC_START(173...177)("<<~E"),
+            (173...177),
             [StringNode(178...191)(
                nil,
                STRING_CONTENT(178...191)("    x\n" + "  \\  y\n"),
                nil,
                "  x\n" + "  y\n"
              )],
-            HEREDOC_END(191...193)("E\n")
+            (191...193)
           )]
        ),
        nil,
@@ -215,11 +215,7 @@ ProgramNode(0...331)(
        IDENTIFIER(194...195)("p"),
        nil,
        ArgumentsNode(196...205)(
-         [InterpolatedStringNode(196...205)(
-            HEREDOC_START(196...200)("<<~E"),
-            [],
-            HEREDOC_END(201...205)("  E\n")
-          )]
+         [InterpolatedStringNode(196...205)((196...200), [], (201...205))]
        ),
        nil,
        nil,
@@ -232,14 +228,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(208...222)(
          [InterpolatedStringNode(208...222)(
-            HEREDOC_START(208...212)("<<~E"),
+            (208...212),
             [StringNode(213...220)(
                nil,
                STRING_CONTENT(213...220)("  x\n" + "\n" + "y\n"),
                nil,
                "  x\n" + "\n" + "y\n"
              )],
-            HEREDOC_END(220...222)("E\n")
+            (220...222)
           )]
        ),
        nil,
@@ -253,14 +249,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(225...245)(
          [InterpolatedStringNode(225...245)(
-            HEREDOC_START(225...229)("<<~E"),
+            (225...229),
             [StringNode(230...243)(
                nil,
                STRING_CONTENT(230...243)("  x\n" + "    \n" + "  y\n"),
                nil,
                "x\n" + "  \n" + "y\n"
              )],
-            HEREDOC_END(243...245)("E\n")
+            (243...245)
           )]
        ),
        nil,
@@ -274,14 +270,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(248...265)(
          [InterpolatedStringNode(248...265)(
-            HEREDOC_START(248...252)("<<~E"),
+            (248...252),
             [StringNode(253...263)(
                nil,
                STRING_CONTENT(253...263)("  x\n" + "    y\n"),
                nil,
                "x\n" + "  y\n"
              )],
-            HEREDOC_END(263...265)("E\n")
+            (263...265)
           )]
        ),
        nil,
@@ -295,14 +291,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(268...279)(
          [InterpolatedStringNode(268...279)(
-            HEREDOC_START(268...272)("<<~E"),
+            (268...272),
             [StringNode(273...277)(
                nil,
                STRING_CONTENT(273...277)("  x\n"),
                nil,
                "x\n"
              )],
-            HEREDOC_END(277...279)("E\n")
+            (277...279)
           )]
        ),
        nil,
@@ -316,14 +312,14 @@ ProgramNode(0...331)(
        nil,
        ArgumentsNode(282...294)(
          [InterpolatedStringNode(282...294)(
-            HEREDOC_START(282...286)("<<~E"),
+            (282...286),
             [StringNode(287...292)(
                nil,
                STRING_CONTENT(287...292)("  ð\n"),
                nil,
                "ð\n"
              )],
-            HEREDOC_END(292...294)("E\n")
+            (292...294)
           )]
        ),
        nil,
@@ -336,11 +332,7 @@ ProgramNode(0...331)(
        IDENTIFIER(295...296)("p"),
        nil,
        ArgumentsNode(297...304)(
-         [InterpolatedStringNode(297...304)(
-            HEREDOC_START(297...301)("<<~E"),
-            [],
-            HEREDOC_END(302...304)("E\n")
-          )]
+         [InterpolatedStringNode(297...304)((297...301), [], (302...304))]
        ),
        nil,
        nil,

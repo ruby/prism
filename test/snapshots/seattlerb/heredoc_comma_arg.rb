@@ -13,14 +13,14 @@ ProgramNode(0...47)(
      ),
      ArrayNode(19...47)(
        [InterpolatedStringNode(20...46)(
-          HEREDOC_START(20...27)("<<-FILE"),
+          (20...27),
           [StringNode(29...41)(
              nil,
              STRING_CONTENT(29...41)("  some text\n"),
              nil,
              "  some text\n"
            )],
-          HEREDOC_END(41...46)("FILE\n")
+          (41...46)
         )],
        (19...20),
        (46...47)

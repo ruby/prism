@@ -621,7 +621,7 @@ ProgramNode(0...719)(
      LocalVariableWriteNode(562...591)(
        (562...563),
        InterpolatedStringNode(566...591)(
-         HEREDOC_START(566...576)("<<-HEREDOC"),
+         (566...576),
          [StringNode(577...579)(
             nil,
             STRING_CONTENT(577...579)("  "),
@@ -639,7 +639,7 @@ ProgramNode(0...719)(
             nil,
             "\n"
           )],
-         HEREDOC_END(583...591)("HEREDOC\n")
+         (583...591)
        ),
        (564...565),
        0
@@ -651,7 +651,7 @@ ProgramNode(0...719)(
        nil,
        ArgumentsNode(595...620)(
          [InterpolatedStringNode(595...620)(
-            HEREDOC_START(595...605)("<<-HEREDOC"),
+            (595...605),
             [StringNode(606...608)(
                nil,
                STRING_CONTENT(606...608)("  "),
@@ -669,7 +669,7 @@ ProgramNode(0...719)(
                nil,
                "\n"
              )],
-            HEREDOC_END(612...620)("HEREDOC\n")
+            (612...620)
           )]
        ),
        nil,
@@ -683,7 +683,7 @@ ProgramNode(0...719)(
        BRACKET_LEFT(621...622)("["),
        ArgumentsNode(626...651)(
          [InterpolatedStringNode(626...651)(
-            HEREDOC_START(626...636)("<<-HEREDOC"),
+            (626...636),
             [StringNode(637...639)(
                nil,
                STRING_CONTENT(637...639)("  "),
@@ -701,7 +701,7 @@ ProgramNode(0...719)(
                nil,
                "\n"
              )],
-            HEREDOC_END(643...651)("HEREDOC\n")
+            (643...651)
           )]
        ),
        BRACKET_RIGHT(622...623)("]"),
@@ -716,7 +716,7 @@ ProgramNode(0...719)(
          BRACKET_LEFT(652...653)("["),
          ArgumentsNode(653...687)(
            [InterpolatedStringNode(653...687)(
-              HEREDOC_START(653...663)("<<-HEREDOC"),
+              (653...663),
               [StringNode(673...675)(
                  nil,
                  STRING_CONTENT(673...675)("  "),
@@ -734,7 +734,7 @@ ProgramNode(0...719)(
                  nil,
                  "\n"
                )],
-              HEREDOC_END(679...687)("HEREDOC\n")
+              (679...687)
             )]
          ),
          BRACKET_RIGHT(663...664)("]"),
@@ -756,7 +756,7 @@ ProgramNode(0...719)(
      OperatorOrAssignmentNode(687...719)(
        InstanceVariableWriteNode(687...689)((687...689), nil, nil),
        InterpolatedStringNode(694...719)(
-         HEREDOC_START(694...704)("<<-HEREDOC"),
+         (694...704),
          [StringNode(705...707)(
             nil,
             STRING_CONTENT(705...707)("  "),
@@ -774,7 +774,7 @@ ProgramNode(0...719)(
             nil,
             "\n"
           )],
-         HEREDOC_END(711...719)("HEREDOC\n")
+         (711...719)
        ),
        (690...693)
      )]

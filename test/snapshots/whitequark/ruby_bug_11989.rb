@@ -8,14 +8,14 @@ ProgramNode(0...21)(
        nil,
        ArgumentsNode(2...21)(
          [InterpolatedStringNode(2...21)(
-            HEREDOC_START(2...8)("<<~\"E\""),
+            (2...8),
             [StringNode(9...19)(
                nil,
                STRING_CONTENT(9...19)("  x\\n   y\n"),
                nil,
                "x\n" + " y\n"
              )],
-            HEREDOC_END(19...21)("E\n")
+            (19...21)
           )]
        ),
        nil,

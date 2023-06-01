@@ -4,14 +4,14 @@ ProgramNode(6...74)(
     [LocalVariableWriteNode(6...57)(
        (6...12),
        InterpolatedStringNode(15...57)(
-         HEREDOC_START(15...22)("<<-\"^D\""),
+         (15...22),
          [StringNode(23...48)(
             nil,
             STRING_CONTENT(23...48)("        very long string\n"),
             nil,
             "        very long string\n"
           )],
-         HEREDOC_END(48...57)("      ^D\n")
+         (48...57)
        ),
        (13...14),
        0

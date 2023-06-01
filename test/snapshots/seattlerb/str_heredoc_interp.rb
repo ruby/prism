@@ -2,7 +2,7 @@ ProgramNode(0...17)(
   [],
   StatementsNode(0...17)(
     [InterpolatedStringNode(0...17)(
-       HEREDOC_START(0...4)("<<\"\""),
+       (0...4),
        [StringInterpolatedNode(5...9)(
           EMBEXPR_BEGIN(5...7)("\#{"),
           StatementsNode(7...8)(
@@ -25,7 +25,7 @@ ProgramNode(0...17)(
           nil,
           "\n" + "blah2\n"
         )],
-       HEREDOC_END(16...17)("\n")
+       (16...17)
      )]
   )
 )

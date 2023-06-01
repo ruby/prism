@@ -1915,8 +1915,8 @@ yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *openin
         .end = closing->end,
       },
     },
-    .opening = *opening,
-    .closing = *closing
+    .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
   };
 
   if (parts == NULL) {
@@ -1938,7 +1938,7 @@ yp_interpolated_string_node_append(yp_interpolated_string_node_t *node, yp_node_
 // Set the closing token of the given InterpolatedStringNode node.
 static void
 yp_interpolated_string_node_closing_set(yp_interpolated_string_node_t *node, const yp_token_t *closing) {
-  node->closing = *closing;
+  node->closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing);
   node->base.location.end = closing->end;
 }
 

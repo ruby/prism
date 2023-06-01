@@ -37,14 +37,14 @@ ProgramNode(0...108)(
        (36...37)
      ),
      InterpolatedStringNode(41...73)(
-       HEREDOC_START(41...45)("<<-E"),
+       (41...45),
        [StringNode(47...70)(
           nil,
           STRING_CONTENT(47...70)("    1 \\\r\n" + "    2\r\n" + "    3\r\n"),
           nil,
           "    1 \u0000\u0000    2\r\n" + "    3\r\n"
         )],
-       HEREDOC_END(70...73)("E\r\n")
+       (70...73)
      ),
      LocalVariableWriteNode(75...84)(
        (75...76),
@@ -67,14 +67,14 @@ ProgramNode(0...108)(
          ArgumentsNode(96...107)(
            [CallNode(96...107)(
               InterpolatedStringNode(96...128)(
-                HEREDOC_START(96...102)("<<~EOF"),
+                (96...102),
                 [StringNode(110...121)(
                    nil,
                    STRING_CONTENT(110...121)("\r\n" + "    baz\r\n"),
                    nil,
                    "\n" + "baz\r\n"
                  )],
-                HEREDOC_END(121...128)("  EOF\r\n")
+                (121...128)
               ),
               DOT(102...103)("."),
               IDENTIFIER(103...107)("chop"),

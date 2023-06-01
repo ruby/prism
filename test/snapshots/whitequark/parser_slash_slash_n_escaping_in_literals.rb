@@ -114,24 +114,24 @@ ProgramNode(0...210)(
        "a\n" + "b"
      ),
      InterpolatedStringNode(141...161)(
-       HEREDOC_START(141...150)("<<-\"HERE\""),
+       (141...150),
        [StringNode(151...156)(
           nil,
           STRING_CONTENT(151...156)("a\\\n" + "b\n"),
           nil,
           "a\n" + "b\n"
         )],
-       HEREDOC_END(156...161)("HERE\n")
+       (156...161)
      ),
      InterpolatedStringNode(162...182)(
-       HEREDOC_START(162...171)("<<-'HERE'"),
+       (162...171),
        [StringNode(172...177)(
           nil,
           STRING_CONTENT(172...177)("a\\\n" + "b\n"),
           nil,
           "a\\\n" + "b\n"
         )],
-       HEREDOC_END(177...182)("HERE\n")
+       (177...182)
      ),
      InterpolatedXStringNode(183...203)(
        HEREDOC_START(183...192)("<<-`HERE`"),

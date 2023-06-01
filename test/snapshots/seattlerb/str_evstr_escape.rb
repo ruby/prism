@@ -2,7 +2,7 @@ ProgramNode(0...16)(
   [],
   StatementsNode(0...16)(
     [InterpolatedStringNode(0...16)(
-       STRING_BEGIN(0...1)("\""),
+       (0...1),
        [StringNode(1...3)(nil, STRING_CONTENT(1...3)("a "), nil, "a "),
         StringInterpolatedNode(3...7)(
           EMBEXPR_BEGIN(3...5)("\#{"),
@@ -26,7 +26,7 @@ ProgramNode(0...16)(
           nil,
           "½"
         )],
-       STRING_END(15...16)("\"")
+       (15...16)
      )]
   )
 )

@@ -3,14 +3,14 @@ ProgramNode(0...22)(
   StatementsNode(0...22)(
     [CallNode(0...22)(
        InterpolatedStringNode(0...16)(
-         HEREDOC_START(0...5)("<<END"),
+         (0...5),
          [StringNode(7...12)(
             nil,
             STRING_CONTENT(7...12)("blah\n"),
             nil,
             "blah\n"
           )],
-         HEREDOC_END(12...16)("END\n")
+         (12...16)
        ),
        DOT(16...17)("."),
        IDENTIFIER(17...22)("strip"),

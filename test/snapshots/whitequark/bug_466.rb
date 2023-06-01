@@ -8,7 +8,7 @@ ProgramNode(0...27)(
        nil,
        ArgumentsNode(4...19)(
          [InterpolatedStringNode(4...19)(
-            STRING_BEGIN(4...5)("\""),
+            (4...5),
             [StringInterpolatedNode(5...18)(
                EMBEXPR_BEGIN(5...7)("\#{"),
                StatementsNode(7...17)(
@@ -40,7 +40,7 @@ ProgramNode(0...27)(
                ),
                EMBEXPR_END(17...18)("}")
              )],
-            STRING_END(18...19)("\"")
+            (18...19)
           )]
        ),
        nil,

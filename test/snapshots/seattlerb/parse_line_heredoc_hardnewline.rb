@@ -2,14 +2,14 @@ ProgramNode(0...48)(
   [],
   StatementsNode(0...48)(
     [InterpolatedStringNode(0...34)(
-       HEREDOC_START(0...8)("<<-EOFOO"),
+       (0...8),
        [StringNode(9...28)(
           nil,
           STRING_CONTENT(9...28)("\\n\\n\\n\\n\\n\\n\\n\\n\\n\n"),
           nil,
           "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
         )],
-       HEREDOC_END(28...34)("EOFOO\n")
+       (28...34)
      ),
      ClassNode(35...48)(
        [],

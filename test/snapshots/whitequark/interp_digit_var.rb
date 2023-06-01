@@ -238,44 +238,44 @@ ProgramNode(1...476)(
        "\#@@1"
      ),
      InterpolatedStringNode(354...373)(
-       HEREDOC_START(354...363)("<<-\"HERE\""),
+       (354...363),
        [StringNode(364...368)(
           nil,
           STRING_CONTENT(364...368)("\#@1\n"),
           nil,
           "\#@1\n"
         )],
-       HEREDOC_END(368...373)("HERE\n")
+       (368...373)
      ),
      InterpolatedStringNode(374...394)(
-       HEREDOC_START(374...383)("<<-\"HERE\""),
+       (374...383),
        [StringNode(384...389)(
           nil,
           STRING_CONTENT(384...389)("\#@@1\n"),
           nil,
           "\#@@1\n"
         )],
-       HEREDOC_END(389...394)("HERE\n")
+       (389...394)
      ),
      InterpolatedStringNode(395...414)(
-       HEREDOC_START(395...404)("<<-'HERE'"),
+       (395...404),
        [StringNode(405...409)(
           nil,
           STRING_CONTENT(405...409)("\#@1\n"),
           nil,
           "\#@1\n"
         )],
-       HEREDOC_END(409...414)("HERE\n")
+       (409...414)
      ),
      InterpolatedStringNode(415...435)(
-       HEREDOC_START(415...424)("<<-'HERE'"),
+       (415...424),
        [StringNode(425...430)(
           nil,
           STRING_CONTENT(425...430)("\#@@1\n"),
           nil,
           "\#@@1\n"
         )],
-       HEREDOC_END(430...435)("HERE\n")
+       (430...435)
      ),
      InterpolatedXStringNode(436...455)(
        HEREDOC_START(436...445)("<<-`HERE`"),
