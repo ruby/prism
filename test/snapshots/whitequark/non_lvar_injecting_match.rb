@@ -3,7 +3,7 @@ ProgramNode(0...28)(
   StatementsNode(0...28)(
     [CallNode(0...28)(
        InterpolatedRegularExpressionNode(0...19)(
-         REGEXP_BEGIN(0...1)("/"),
+         (0...1),
          [StringInterpolatedNode(1...5)(
             EMBEXPR_BEGIN(1...3)("\#{"),
             StatementsNode(3...4)([IntegerNode(3...4)()]),
@@ -15,7 +15,7 @@ ProgramNode(0...28)(
             nil,
             "(?<match>bar)"
           )],
-         REGEXP_END(18...19)("/"),
+         (18...19),
          0
        ),
        nil,

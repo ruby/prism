@@ -528,7 +528,7 @@ ProgramNode(0...916)(
        0
      ),
      InterpolatedRegularExpressionNode(515...527)(
-       REGEXP_BEGIN(515...516)("/"),
+       (515...516),
        [StringNode(516...519)(
           nil,
           STRING_CONTENT(516...519)("foo"),
@@ -540,11 +540,11 @@ ProgramNode(0...916)(
           StatementsNode(521...525)([InstanceVariableReadNode(521...525)()]),
           EMBEXPR_END(525...526)("}")
         )],
-       REGEXP_END(526...527)("/"),
+       (526...527),
        0
      ),
      InterpolatedRegularExpressionNode(528...543)(
-       REGEXP_BEGIN(528...529)("/"),
+       (528...529),
        [StringNode(529...532)(
           nil,
           STRING_CONTENT(529...532)("foo"),
@@ -556,11 +556,11 @@ ProgramNode(0...916)(
           StatementsNode(534...538)([InstanceVariableReadNode(534...538)()]),
           EMBEXPR_END(538...539)("}")
         )],
-       REGEXP_END(539...543)("/imx"),
+       (539...543),
        7
      ),
      InterpolatedRegularExpressionNode(544...557)(
-       REGEXP_BEGIN(544...545)("/"),
+       (544...545),
        [StringInterpolatedNode(545...556)(
           EMBEXPR_BEGIN(545...547)("\#{"),
           StatementsNode(547...555)(
@@ -573,7 +573,7 @@ ProgramNode(0...916)(
           ),
           EMBEXPR_END(555...556)("}")
         )],
-       REGEXP_END(556...557)("/"),
+       (556...557),
        0
      ),
      RegularExpressionNode(558...562)(

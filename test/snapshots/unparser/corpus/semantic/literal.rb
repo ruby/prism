@@ -47,14 +47,14 @@ ProgramNode(0...131)(
        0
      ),
      InterpolatedRegularExpressionNode(71...85)(
-       REGEXP_BEGIN(71...74)("%r("),
+       (71...74),
        [StringInterpolatedNode(74...81)(
           EMBEXPR_BEGIN(74...76)("\#{"),
           StatementsNode(76...80)([InstanceVariableReadNode(76...80)()]),
           EMBEXPR_END(80...81)("}")
         ),
         StringNode(81...84)(nil, STRING_CONTENT(81...84)("baz"), nil, "baz")],
-       REGEXP_END(84...85)(")"),
+       (84...85),
        0
      ),
      FloatNode(86...102)(),

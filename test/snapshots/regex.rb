@@ -34,14 +34,14 @@ ProgramNode(0...278)(
        0
      ),
      InterpolatedRegularExpressionNode(28...39)(
-       REGEXP_BEGIN(28...29)("/"),
+       (28...29),
        [StringNode(29...33)(nil, STRING_CONTENT(29...33)("aaa "), nil, "aaa "),
         GlobalVariableReadNode(34...38)(GLOBAL_VARIABLE(34...38)("$bbb"))],
-       REGEXP_END(38...39)("/"),
+       (38...39),
        0
      ),
      InterpolatedRegularExpressionNode(41...57)(
-       REGEXP_BEGIN(41...42)("/"),
+       (41...42),
        [StringNode(42...46)(nil, STRING_CONTENT(42...46)("aaa "), nil, "aaa "),
         StringInterpolatedNode(46...52)(
           EMBEXPR_BEGIN(46...48)("\#{"),
@@ -65,7 +65,7 @@ ProgramNode(0...278)(
           nil,
           " ccc"
         )],
-       REGEXP_END(56...57)("/"),
+       (56...57),
        0
      ),
      ArrayNode(59...86)(

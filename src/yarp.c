@@ -1880,8 +1880,8 @@ yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_tok
         .end = NULL,
       },
     },
-    .opening = *opening,
-    .closing = *opening,
+    .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+    .closing_loc = YP_LOCATION_TOKEN_VALUE(opening),
     .flags = 0
   };
 
@@ -1897,9 +1897,9 @@ yp_interpolated_regular_expression_node_append(yp_interpolated_regular_expressio
 
 static inline void
 yp_interpolated_regular_expression_node_closing_set(yp_interpolated_regular_expression_node_t *node, const yp_token_t *closing) {
-  node->closing = *closing;
-  node->flags = yp_regular_expression_flags_create(closing);
+  node->closing_loc = YP_LOCATION_TOKEN_VALUE(closing);
   node->base.location.end = closing->end;
+  node->flags = yp_regular_expression_flags_create(closing);
 }
 
 // Allocate and initialize a new InterpolatedStringNode node.
