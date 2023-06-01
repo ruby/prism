@@ -9,7 +9,7 @@ ProgramNode(0...9)(
              StatementsNode(5...6)([IntegerNode(5...6)()]),
              (6...7)
            ),
-           StringNode(7...8)(nil, STRING_CONTENT(7...8)("b"), nil, "b")],
+           StringNode(7...8)(nil, (7...8), nil, "b")],
           nil
         )],
        (0...3),

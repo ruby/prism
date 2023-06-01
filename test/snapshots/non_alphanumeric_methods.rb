@@ -105,12 +105,7 @@ ProgramNode(0...434)(
        nil,
        (91...94)
      ),
-     StringNode(96...102)(
-       STRING_BEGIN(96...98)("%|"),
-       STRING_CONTENT(98...101)("abc"),
-       STRING_END(101...102)("|"),
-       "abc"
-     ),
+     StringNode(96...102)((96...98), (98...101), (101...102), "abc"),
      DefNode(104...117)(
        PLUS(108...109)("+"),
        nil,

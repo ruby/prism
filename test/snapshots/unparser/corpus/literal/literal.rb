@@ -4,38 +4,18 @@ ProgramNode(0...916)(
     [HashNode(0...38)(
        (0...1),
        [AssocNode(2...53)(
-          StringNode(2...7)(
-            STRING_BEGIN(2...3)("\""),
-            STRING_CONTENT(3...6)("foo"),
-            STRING_END(6...7)("\""),
-            "foo"
-          ),
+          StringNode(2...7)((2...3), (3...6), (6...7), "foo"),
           InterpolatedStringNode(11...53)(
             (11...21),
-            [StringNode(39...41)(
-               nil,
-               STRING_CONTENT(39...41)("  "),
-               nil,
-               "  "
-             ),
+            [StringNode(39...41)(nil, (39...41), nil, "  "),
              StringInterpolatedNode(41...44)((41...43), nil, (43...44)),
-             StringNode(44...45)(
-               nil,
-               STRING_CONTENT(44...45)("\n"),
-               nil,
-               "\n"
-             )],
+             StringNode(44...45)(nil, (44...45), nil, "\n")],
             (45...53)
           ),
           (8...10)
         ),
         AssocNode(23...36)(
-          StringNode(23...28)(
-            STRING_BEGIN(23...24)("\""),
-            STRING_CONTENT(24...27)("bar"),
-            STRING_END(27...28)("\""),
-            "bar"
-          ),
+          StringNode(23...28)((23...24), (24...27), (27...28), "bar"),
           SymbolNode(32...36)(
             SYMBOL_BEGIN(32...33)(":"),
             IDENTIFIER(33...36)("baz"),
@@ -49,27 +29,12 @@ ProgramNode(0...916)(
      HashNode(53...84)(
        (53...54),
        [AssocNode(55...67)(
-          StringNode(55...60)(
-            STRING_BEGIN(55...56)("\""),
-            STRING_CONTENT(56...59)("foo"),
-            STRING_END(59...60)("\""),
-            "foo"
-          ),
-          StringNode(64...67)(
-            STRING_BEGIN(64...66)("%("),
-            STRING_CONTENT(66...66)(""),
-            STRING_END(66...67)(")"),
-            ""
-          ),
+          StringNode(55...60)((55...56), (56...59), (59...60), "foo"),
+          StringNode(64...67)((64...66), (66...66), (66...67), ""),
           (61...63)
         ),
         AssocNode(69...82)(
-          StringNode(69...74)(
-            STRING_BEGIN(69...70)("\""),
-            STRING_CONTENT(70...73)("bar"),
-            STRING_END(73...74)("\""),
-            "bar"
-          ),
+          StringNode(69...74)((69...70), (70...73), (73...74), "bar"),
           SymbolNode(78...82)(
             SYMBOL_BEGIN(78...79)(":"),
             IDENTIFIER(79...82)("baz"),
@@ -81,18 +46,8 @@ ProgramNode(0...916)(
        (83...84)
      ),
      ArrayNode(85...97)(
-       [StringNode(86...91)(
-          STRING_BEGIN(86...87)("\""),
-          STRING_CONTENT(87...90)("foo"),
-          STRING_END(90...91)("\""),
-          "foo"
-        ),
-        StringNode(93...96)(
-          STRING_BEGIN(93...95)("%("),
-          STRING_CONTENT(95...95)(""),
-          STRING_END(95...96)(")"),
-          ""
-        )],
+       [StringNode(86...91)((86...87), (87...90), (90...91), "foo"),
+        StringNode(93...96)((93...95), (95...95), (95...96), "")],
        (85...86),
        (96...97)
      ),
@@ -105,23 +60,13 @@ ProgramNode(0...916)(
          ArgumentsNode(100...128)(
            [InterpolatedStringNode(100...128)(
               (100...110),
-              [StringNode(114...116)(
-                 nil,
-                 STRING_CONTENT(114...116)("  "),
-                 nil,
-                 "  "
-               ),
+              [StringNode(114...116)(nil, (114...116), nil, "  "),
                StringInterpolatedNode(116...119)(
                  (116...118),
                  nil,
                  (118...119)
                ),
-               StringNode(119...120)(
-                 nil,
-                 STRING_CONTENT(119...120)("\n"),
-                 nil,
-                 "\n"
-               )],
+               StringNode(119...120)(nil, (119...120), nil, "\n")],
               (120...128)
             )]
          ),
@@ -144,12 +89,7 @@ ProgramNode(0...916)(
          IDENTIFIER(128...129)("a"),
          PARENTHESIS_LEFT(129...130)("("),
          ArgumentsNode(130...133)(
-           [StringNode(130...133)(
-              STRING_BEGIN(130...132)("%("),
-              STRING_CONTENT(132...132)(""),
-              STRING_END(132...133)(")"),
-              ""
-            )]
+           [StringNode(130...133)((130...132), (132...132), (132...133), "")]
          ),
          PARENTHESIS_RIGHT(133...134)(")"),
          nil,
@@ -166,27 +106,12 @@ ProgramNode(0...916)(
      HashNode(137...167)(
        (137...138),
        [AssocNode(139...182)(
-          StringNode(139...144)(
-            STRING_BEGIN(139...140)("\""),
-            STRING_CONTENT(140...143)("foo"),
-            STRING_END(143...144)("\""),
-            "foo"
-          ),
+          StringNode(139...144)((139...140), (140...143), (143...144), "foo"),
           InterpolatedStringNode(148...182)(
             (148...158),
-            [StringNode(168...170)(
-               nil,
-               STRING_CONTENT(168...170)("  "),
-               nil,
-               "  "
-             ),
+            [StringNode(168...170)(nil, (168...170), nil, "  "),
              StringInterpolatedNode(170...173)((170...172), nil, (172...173)),
-             StringNode(173...174)(
-               nil,
-               STRING_CONTENT(173...174)("\n"),
-               nil,
-               "\n"
-             )],
+             StringNode(173...174)(nil, (173...174), nil, "\n")],
             (174...182)
           ),
           (145...147)
@@ -209,18 +134,8 @@ ProgramNode(0...916)(
      HashNode(182...205)(
        (182...183),
        [AssocNode(184...196)(
-          StringNode(184...189)(
-            STRING_BEGIN(184...185)("\""),
-            STRING_CONTENT(185...188)("foo"),
-            STRING_END(188...189)("\""),
-            "foo"
-          ),
-          StringNode(193...196)(
-            STRING_BEGIN(193...195)("%("),
-            STRING_CONTENT(195...195)(""),
-            STRING_END(195...196)(")"),
-            ""
-          ),
+          StringNode(184...189)((184...185), (185...188), (188...189), "foo"),
+          StringNode(193...196)((193...195), (195...195), (195...196), ""),
           (190...192)
         ),
         AssocSplatNode(198...203)(
@@ -241,9 +156,9 @@ ProgramNode(0...916)(
      InterpolatedStringNode(206...220)(
        (206...207),
        [InstanceVariableReadNode(208...210)(),
-        StringNode(210...211)(nil, STRING_CONTENT(210...211)(" "), nil, " "),
+        StringNode(210...211)(nil, (210...211), nil, " "),
         ClassVariableReadNode(212...215)(),
-        StringNode(215...216)(nil, STRING_CONTENT(215...216)(" "), nil, " "),
+        StringNode(215...216)(nil, (215...216), nil, " "),
         GlobalVariableReadNode(217...219)(GLOBAL_VARIABLE(217...219)("$a"))],
        (219...220)
      ),
@@ -290,27 +205,12 @@ ProgramNode(0...916)(
        RationalNode(295...297)(IntegerNode(295...296)())
      ),
      StringConcatNode(299...310)(
-       StringNode(299...304)(
-         STRING_BEGIN(299...300)("\""),
-         STRING_CONTENT(300...303)("foo"),
-         STRING_END(303...304)("\""),
-         "foo"
-       ),
-       StringNode(305...310)(
-         STRING_BEGIN(305...306)("\""),
-         STRING_CONTENT(306...309)("bar"),
-         STRING_END(309...310)("\""),
-         "bar"
-       )
+       StringNode(299...304)((299...300), (300...303), (303...304), "foo"),
+       StringNode(305...310)((305...306), (306...309), (309...310), "bar")
      ),
      InterpolatedStringNode(311...326)(
        (311...312),
-       [StringNode(312...319)(
-          nil,
-          STRING_CONTENT(312...319)("foobar "),
-          nil,
-          "foobar "
-        ),
+       [StringNode(312...319)(nil, (312...319), nil, "foobar "),
         StringInterpolatedNode(319...325)(
           (319...321),
           StatementsNode(321...324)(
@@ -331,91 +231,51 @@ ProgramNode(0...916)(
      ),
      InterpolatedStringNode(327...339)(
        (327...328),
-       [StringNode(328...331)(
-          nil,
-          STRING_CONTENT(328...331)("foo"),
-          nil,
-          "foo"
-        ),
+       [StringNode(328...331)(nil, (328...331), nil, "foo"),
         StringInterpolatedNode(331...335)(
           (331...333),
           StatementsNode(333...334)([IntegerNode(333...334)()]),
           (334...335)
         ),
-        StringNode(335...338)(
-          nil,
-          STRING_CONTENT(335...338)("bar"),
-          nil,
-          "bar"
-        )],
+        StringNode(335...338)(nil, (335...338), nil, "bar")],
        (338...339)
      ),
      InterpolatedStringNode(340...349)(
        (340...341),
-       [StringNode(341...345)(
-          nil,
-          STRING_CONTENT(341...345)("\\\\\\\\"),
-          nil,
-          "\\\\"
-        ),
+       [StringNode(341...345)(nil, (341...345), nil, "\\\\"),
         StringInterpolatedNode(345...348)((345...347), nil, (347...348))],
        (348...349)
      ),
      InterpolatedStringNode(350...359)(
        (350...351),
        [StringInterpolatedNode(351...354)((351...353), nil, (353...354)),
-        StringNode(354...358)(
-          nil,
-          STRING_CONTENT(354...358)("\\\#{}"),
-          nil,
-          "\#{}"
-        )],
+        StringNode(354...358)(nil, (354...358), nil, "\#{}")],
        (358...359)
      ),
      InterpolatedStringNode(360...369)(
        (360...361),
-       [StringNode(361...365)(
-          nil,
-          STRING_CONTENT(361...365)("\\\#{}"),
-          nil,
-          "\#{}"
-        ),
+       [StringNode(361...365)(nil, (361...365), nil, "\#{}"),
         StringInterpolatedNode(365...368)((365...367), nil, (367...368))],
        (368...369)
      ),
      StringNode(370...385)(
-       STRING_BEGIN(370...371)("\""),
-       STRING_CONTENT(371...384)("foo\\\\\\\#{@bar}"),
-       STRING_END(384...385)("\""),
+       (370...371),
+       (371...384),
+       (384...385),
        "foo\\\#{@bar}"
      ),
-     StringNode(386...390)(
-       STRING_BEGIN(386...387)("\""),
-       STRING_CONTENT(387...389)("\\\""),
-       STRING_END(389...390)("\""),
-       "\""
-     ),
-     StringNode(391...400)(
-       STRING_BEGIN(391...392)("\""),
-       STRING_CONTENT(392...399)("foo bar"),
-       STRING_END(399...400)("\""),
-       "foo bar"
-     ),
+     StringNode(386...390)((386...387), (387...389), (389...390), "\""),
+     StringNode(391...400)((391...392), (392...399), (399...400), "foo bar"),
      StringNode(401...411)(
-       STRING_BEGIN(401...402)("\""),
-       STRING_CONTENT(402...410)("foo\\nbar"),
-       STRING_END(410...411)("\""),
+       (401...402),
+       (402...410),
+       (410...411),
        "foo\n" + "bar"
      ),
      XStringNode(412...417)((412...413), (413...416), (416...417), "foo"),
      InterpolatedXStringNode(418...430)(
        (418...419),
-       [StringNode(419...422)(
-          nil,
-          STRING_CONTENT(419...422)("foo"),
-          nil,
-          "foo"
-        ),
+       [StringNode(419...422)(nil, (419...422), nil, "foo"),
         StringInterpolatedNode(422...429)(
           (422...424),
           StatementsNode(424...428)([InstanceVariableReadNode(424...428)()]),
@@ -434,12 +294,7 @@ ProgramNode(0...916)(
      ),
      InterpolatedSymbolNode(449...455)(
        SYMBOL_BEGIN(449...451)(":\""),
-       [StringNode(451...454)(
-          nil,
-          STRING_CONTENT(451...454)("A B"),
-          nil,
-          "A B"
-        )],
+       [StringNode(451...454)(nil, (451...454), nil, "A B")],
        STRING_END(454...455)("\"")
      ),
      SymbolNode(456...460)(
@@ -450,22 +305,12 @@ ProgramNode(0...916)(
      ),
      InterpolatedSymbolNode(461...467)(
        SYMBOL_BEGIN(461...463)(":\""),
-       [StringNode(463...466)(
-          nil,
-          STRING_CONTENT(463...466)("A B"),
-          nil,
-          "A B"
-        )],
+       [StringNode(463...466)(nil, (463...466), nil, "A B")],
        STRING_END(466...467)("\"")
      ),
      InterpolatedSymbolNode(468...475)(
        SYMBOL_BEGIN(468...470)(":\""),
-       [StringNode(470...474)(
-          nil,
-          STRING_CONTENT(470...474)("A\\\"B"),
-          nil,
-          "A\"B"
-        )],
+       [StringNode(470...474)(nil, (470...474), nil, "A\"B")],
        STRING_END(474...475)("\"")
      ),
      InterpolatedSymbolNode(476...479)(
@@ -489,12 +334,7 @@ ProgramNode(0...916)(
      ),
      InterpolatedRegularExpressionNode(515...527)(
        (515...516),
-       [StringNode(516...519)(
-          nil,
-          STRING_CONTENT(516...519)("foo"),
-          nil,
-          "foo"
-        ),
+       [StringNode(516...519)(nil, (516...519), nil, "foo"),
         StringInterpolatedNode(519...526)(
           (519...521),
           StatementsNode(521...525)([InstanceVariableReadNode(521...525)()]),
@@ -505,12 +345,7 @@ ProgramNode(0...916)(
      ),
      InterpolatedRegularExpressionNode(528...543)(
        (528...529),
-       [StringNode(529...532)(
-          nil,
-          STRING_CONTENT(529...532)("foo"),
-          nil,
-          "foo"
-        ),
+       [StringNode(529...532)(nil, (529...532), nil, "foo"),
         StringInterpolatedNode(532...539)(
           (532...534),
           StatementsNode(534...538)([InstanceVariableReadNode(534...538)()]),
@@ -525,9 +360,9 @@ ProgramNode(0...916)(
           (545...547),
           StatementsNode(547...555)(
             [StringNode(547...555)(
-               STRING_BEGIN(547...548)("\""),
-               STRING_CONTENT(548...554)("\\u0000"),
-               STRING_END(554...555)("\""),
+               (547...548),
+               (548...554),
+               (554...555),
                "\u0000"
              )]
           ),
@@ -566,12 +401,7 @@ ProgramNode(0...916)(
      ),
      InterpolatedSymbolNode(582...597)(
        SYMBOL_BEGIN(582...584)(":\""),
-       [StringNode(584...587)(
-          nil,
-          STRING_CONTENT(584...587)("foo"),
-          nil,
-          "foo"
-        ),
+       [StringNode(584...587)(nil, (584...587), nil, "foo"),
         StringInterpolatedNode(587...593)(
           (587...589),
           StatementsNode(589...592)(
@@ -588,12 +418,7 @@ ProgramNode(0...916)(
           ),
           (592...593)
         ),
-        StringNode(593...596)(
-          nil,
-          STRING_CONTENT(593...596)("baz"),
-          nil,
-          "baz"
-        )],
+        StringNode(593...596)(nil, (593...596), nil, "baz")],
        STRING_END(596...597)("\"")
      ),
      InterpolatedSymbolNode(598...609)(
@@ -602,9 +427,9 @@ ProgramNode(0...916)(
           (600...602),
           StatementsNode(602...607)(
             [StringNode(602...607)(
-               STRING_BEGIN(602...603)("\""),
-               STRING_CONTENT(603...606)("foo"),
-               STRING_END(606...607)("\""),
+               (602...603),
+               (603...606),
+               (606...607),
                "foo"
              )]
           ),
@@ -864,12 +689,7 @@ ProgramNode(0...916)(
        [AssocNode(830...841)(
           InterpolatedSymbolNode(830...836)(
             SYMBOL_BEGIN(830...832)(":\""),
-            [StringNode(832...835)(
-               nil,
-               STRING_CONTENT(832...835)("a b"),
-               nil,
-               "a b"
-             )],
+            [StringNode(832...835)(nil, (832...835), nil, "a b")],
             STRING_END(835...836)("\"")
           ),
           IntegerNode(840...841)(),
@@ -894,14 +714,9 @@ ProgramNode(0...916)(
      InterpolatedStringNode(857...869)(
        (857...858),
        [StringInterpolatedNode(858...861)((858...860), nil, (860...861)),
-        StringNode(861...862)(nil, STRING_CONTENT(861...862)("\n"), nil, "\n"),
+        StringNode(861...862)(nil, (861...862), nil, "\n"),
         StringInterpolatedNode(862...865)((862...864), nil, (864...865)),
-        StringNode(865...868)(
-          nil,
-          STRING_CONTENT(865...868)("\\na"),
-          nil,
-          "\n" + "a"
-        )],
+        StringNode(865...868)(nil, (865...868), nil, "\n" + "a")],
        (868...869)
      ),
      CallNode(870...892)(
@@ -922,23 +737,13 @@ ProgramNode(0...916)(
                  nil,
                  (881...882)
                ),
-               StringNode(882...883)(
-                 nil,
-                 STRING_CONTENT(882...883)("\n"),
-                 nil,
-                 "\n"
-               ),
+               StringNode(882...883)(nil, (882...883), nil, "\n"),
                StringInterpolatedNode(883...886)(
                  (883...885),
                  nil,
                  (885...886)
                ),
-               StringNode(886...889)(
-                 nil,
-                 STRING_CONTENT(886...889)("\\na"),
-                 nil,
-                 "\n" + "a"
-               )],
+               StringNode(886...889)(nil, (886...889), nil, "\n" + "a")],
               (889...890)
             )]
          ),
@@ -949,22 +754,12 @@ ProgramNode(0...916)(
      ),
      InterpolatedSymbolNode(893...901)(
        SYMBOL_BEGIN(893...895)(":\""),
-       [StringNode(895...900)(
-          nil,
-          STRING_CONTENT(895...900)("a\\\\\n" + "b"),
-          nil,
-          "a\\\n" + "b"
-        )],
+       [StringNode(895...900)(nil, (895...900), nil, "a\\\n" + "b")],
        STRING_END(900...901)("\"")
      ),
      InterpolatedXStringNode(902...916)(
        (902...903),
-       [StringNode(903...907)(
-          nil,
-          STRING_CONTENT(903...907)("  x\n"),
-          nil,
-          "  x\n"
-        ),
+       [StringNode(903...907)(nil, (903...907), nil, "  x\n"),
         StringInterpolatedNode(907...913)(
           (907...909),
           StatementsNode(909...912)(
@@ -981,12 +776,7 @@ ProgramNode(0...916)(
           ),
           (912...913)
         ),
-        StringNode(913...915)(
-          nil,
-          STRING_CONTENT(913...915)("\n" + "#"),
-          nil,
-          "\n" + "#"
-        )],
+        StringNode(913...915)(nil, (913...915), nil, "\n" + "#")],
        (915...916)
      )]
   )

@@ -5,7 +5,7 @@ ProgramNode(0...48)(
        (0...8),
        [StringNode(9...28)(
           nil,
-          STRING_CONTENT(9...28)("\\n\\n\\n\\n\\n\\n\\n\\n\\n\n"),
+          (9...28),
           nil,
           "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n"
         )],

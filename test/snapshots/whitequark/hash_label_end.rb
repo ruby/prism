@@ -20,12 +20,7 @@ ProgramNode(0...50)(
               "a"
             ),
             StatementsNode(6...9)(
-              [StringNode(6...9)(
-                 STRING_BEGIN(6...7)("\""),
-                 STRING_CONTENT(7...8)("a"),
-                 STRING_END(8...9)("\""),
-                 "a"
-               )]
+              [StringNode(6...9)((6...7), (7...8), (8...9), "a")]
             ),
             ElseNode(9...11)(
               (9...10),

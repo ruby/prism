@@ -33,12 +33,7 @@ ProgramNode(0...48)(
               (19...21),
               InterpolatedStringNode(22...29)(
                 (22...23),
-                [StringNode(23...24)(
-                   nil,
-                   STRING_CONTENT(23...24)("b"),
-                   nil,
-                   "b"
-                 ),
+                [StringNode(23...24)(nil, (23...24), nil, "b"),
                  StringInterpolatedNode(24...28)(
                    (24...26),
                    StatementsNode(26...27)(

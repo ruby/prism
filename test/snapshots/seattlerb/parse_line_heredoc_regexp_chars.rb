@@ -7,7 +7,7 @@ ProgramNode(6...74)(
          (15...22),
          [StringNode(23...48)(
             nil,
-            STRING_CONTENT(23...48)("        very long string\n"),
+            (23...48),
             nil,
             "        very long string\n"
           )],

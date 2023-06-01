@@ -16,12 +16,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(4...7)("bar"),
        nil,
        ArgumentsNode(8...14)(
-         [StringNode(8...14)(
-            STRING_BEGIN(8...10)("%{"),
-            STRING_CONTENT(10...13)("baz"),
-            STRING_END(13...14)("}"),
-            "baz"
-          )]
+         [StringNode(8...14)((8...10), (10...13), (13...14), "baz")]
        ),
        nil,
        nil,
@@ -1450,9 +1445,9 @@ ProgramNode(0...1187)(
                       nil,
                       StatementsNode(860...865)(
                         [StringNode(860...865)(
-                           STRING_BEGIN(860...861)("\""),
-                           STRING_CONTENT(861...864)("baz"),
-                           STRING_END(864...865)("\""),
+                           (860...861),
+                           (861...864),
+                           (864...865),
                            "baz"
                          )]
                       ),

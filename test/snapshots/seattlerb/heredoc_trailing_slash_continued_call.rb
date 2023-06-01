@@ -4,12 +4,7 @@ ProgramNode(0...22)(
     [CallNode(0...22)(
        InterpolatedStringNode(0...16)(
          (0...5),
-         [StringNode(7...12)(
-            nil,
-            STRING_CONTENT(7...12)("blah\n"),
-            nil,
-            "blah\n"
-          )],
+         [StringNode(7...12)(nil, (7...12), nil, "blah\n")],
          (12...16)
        ),
        DOT(16...17)("."),

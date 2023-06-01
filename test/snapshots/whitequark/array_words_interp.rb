@@ -2,7 +2,7 @@ ProgramNode(0...38)(
   [],
   StatementsNode(0...38)(
     [ArrayNode(0...14)(
-       [StringNode(3...6)(nil, STRING_CONTENT(3...6)("foo"), nil, "foo"),
+       [StringNode(3...6)(nil, (3...6), nil, "foo"),
         InterpolatedStringNode(0...13)(
           nil,
           [StringInterpolatedNode(7...13)(
@@ -27,7 +27,7 @@ ProgramNode(0...38)(
        (13...14)
      ),
      ArrayNode(16...38)(
-       [StringNode(19...22)(nil, STRING_CONTENT(19...22)("foo"), nil, "foo"),
+       [StringNode(19...22)(nil, (19...22), nil, "foo"),
         InterpolatedStringNode(0...37)(
           nil,
           [StringInterpolatedNode(23...29)(
@@ -46,12 +46,7 @@ ProgramNode(0...38)(
              ),
              (28...29)
            ),
-           StringNode(29...32)(
-             nil,
-             STRING_CONTENT(29...32)("foo"),
-             nil,
-             "foo"
-           ),
+           StringNode(29...32)(nil, (29...32), nil, "foo"),
            InstanceVariableReadNode(33...37)()],
           nil
         )],

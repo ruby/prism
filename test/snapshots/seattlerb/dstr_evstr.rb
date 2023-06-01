@@ -6,12 +6,7 @@ ProgramNode(0...12)(
        [StringInterpolatedNode(1...7)(
           (1...3),
           StatementsNode(3...6)(
-            [StringNode(3...6)(
-               STRING_BEGIN(3...4)("'"),
-               STRING_CONTENT(4...5)("a"),
-               STRING_END(5...6)("'"),
-               "a"
-             )]
+            [StringNode(3...6)((3...4), (4...5), (5...6), "a")]
           ),
           (6...7)
         ),

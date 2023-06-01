@@ -17,14 +17,14 @@ ProgramNode(0...278)(
      RegularExpressionNode(21...26)((21...22), (22...25), (25...26), "a\b", 0),
      InterpolatedRegularExpressionNode(28...39)(
        (28...29),
-       [StringNode(29...33)(nil, STRING_CONTENT(29...33)("aaa "), nil, "aaa "),
+       [StringNode(29...33)(nil, (29...33), nil, "aaa "),
         GlobalVariableReadNode(34...38)(GLOBAL_VARIABLE(34...38)("$bbb"))],
        (38...39),
        0
      ),
      InterpolatedRegularExpressionNode(41...57)(
        (41...42),
-       [StringNode(42...46)(nil, STRING_CONTENT(42...46)("aaa "), nil, "aaa "),
+       [StringNode(42...46)(nil, (42...46), nil, "aaa "),
         StringInterpolatedNode(46...52)(
           (46...48),
           StatementsNode(48...51)(
@@ -41,12 +41,7 @@ ProgramNode(0...278)(
           ),
           (51...52)
         ),
-        StringNode(52...56)(
-          nil,
-          STRING_CONTENT(52...56)(" ccc"),
-          nil,
-          " ccc"
-        )],
+        StringNode(52...56)(nil, (52...56), nil, " ccc")],
        (56...57),
        0
      ),
@@ -123,12 +118,7 @@ ProgramNode(0...278)(
        EQUAL_TILDE(260...262)("=~"),
        nil,
        ArgumentsNode(263...267)(
-         [StringNode(263...267)(
-            STRING_BEGIN(263...264)("\""),
-            STRING_CONTENT(264...266)("hi"),
-            STRING_END(266...267)("\""),
-            "hi"
-          )]
+         [StringNode(263...267)((263...264), (264...266), (266...267), "hi")]
        ),
        nil,
        nil,

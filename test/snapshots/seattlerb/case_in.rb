@@ -70,8 +70,8 @@ ProgramNode(0...747)(
        ),
        [InNode(55...65)(
           ArrayNode(58...65)(
-            [StringNode(61...62)(nil, STRING_CONTENT(61...62)("a"), nil, "a"),
-             StringNode(63...64)(nil, STRING_CONTENT(63...64)("b"), nil, "b")],
+            [StringNode(61...62)(nil, (61...62), nil, "a"),
+             StringNode(63...64)(nil, (63...64), nil, "b")],
             (58...61),
             (64...65)
           ),
@@ -114,18 +114,8 @@ ProgramNode(0...747)(
        ),
        [InNode(103...113)(
           ArrayNode(106...113)(
-            [StringNode(109...110)(
-               nil,
-               STRING_CONTENT(109...110)("a"),
-               nil,
-               "a"
-             ),
-             StringNode(111...112)(
-               nil,
-               STRING_CONTENT(111...112)("b"),
-               nil,
-               "b"
-             )],
+            [StringNode(109...110)(nil, (109...110), nil, "a"),
+             StringNode(111...112)(nil, (111...112), nil, "b")],
             (106...109),
             (112...113)
           ),

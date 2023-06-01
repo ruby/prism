@@ -3,7 +3,7 @@ ProgramNode(0...15)(
   StatementsNode(0...15)(
     [InterpolatedSymbolNode(0...15)(
        SYMBOL_BEGIN(0...2)(":\""),
-       [StringNode(2...5)(nil, STRING_CONTENT(2...5)("foo"), nil, "foo"),
+       [StringNode(2...5)(nil, (2...5), nil, "foo"),
         StringInterpolatedNode(5...11)(
           (5...7),
           StatementsNode(7...10)(
@@ -20,7 +20,7 @@ ProgramNode(0...15)(
           ),
           (10...11)
         ),
-        StringNode(11...14)(nil, STRING_CONTENT(11...14)("baz"), nil, "baz")],
+        StringNode(11...14)(nil, (11...14), nil, "baz")],
        STRING_END(14...15)("\"")
      )]
   )

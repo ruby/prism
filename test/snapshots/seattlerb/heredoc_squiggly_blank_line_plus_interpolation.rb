@@ -12,12 +12,7 @@ ProgramNode(0...20)(
            [CallNode(8...19)(
               InterpolatedStringNode(8...42)(
                 (8...14),
-                [StringNode(21...26)(
-                   nil,
-                   STRING_CONTENT(21...26)("\n" + "    "),
-                   nil,
-                   "\n"
-                 ),
+                [StringNode(21...26)(nil, (21...26), nil, "\n"),
                  StringInterpolatedNode(26...32)(
                    (26...28),
                    StatementsNode(28...31)(
@@ -34,12 +29,7 @@ ProgramNode(0...20)(
                    ),
                    (31...32)
                  ),
-                 StringNode(32...36)(
-                   nil,
-                   STRING_CONTENT(32...36)("baz\n"),
-                   nil,
-                   "baz\n"
-                 )],
+                 StringNode(32...36)(nil, (32...36), nil, "baz\n")],
                 (36...42)
               ),
               DOT(14...15)("."),

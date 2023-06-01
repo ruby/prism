@@ -376,12 +376,7 @@ ProgramNode(0...578)(
        ),
        (319...322)
      ),
-     StringNode(324...330)(
-       STRING_BEGIN(324...326)("%!"),
-       STRING_CONTENT(326...329)("abc"),
-       STRING_END(329...330)("!"),
-       "abc"
-     ),
+     StringNode(324...330)((324...326), (326...329), (329...330), "abc"),
      BeginNode(332...352)(
        (332...337),
        StatementsNode(338...339)(

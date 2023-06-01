@@ -17,7 +17,7 @@ ProgramNode(0...140)(
      ),
      InterpolatedStringNode(20...38)(
        (20...23),
-       [StringNode(23...27)(nil, STRING_CONTENT(23...27)("aaa "), nil, "aaa "),
+       [StringNode(23...27)(nil, (23...27), nil, "aaa "),
         StringInterpolatedNode(27...33)(
           (27...29),
           StatementsNode(29...32)(
@@ -34,12 +34,7 @@ ProgramNode(0...140)(
           ),
           (32...33)
         ),
-        StringNode(33...37)(
-          nil,
-          STRING_CONTENT(33...37)(" ccc"),
-          nil,
-          " ccc"
-        )],
+        StringNode(33...37)(nil, (33...37), nil, " ccc")],
        (37...38)
      ),
      ModuleNode(40...55)(

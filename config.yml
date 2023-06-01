@@ -1607,12 +1607,12 @@ nodes:
                ^^^^^^
   - name: StringNode
     child_nodes:
-      - name: opening
-        type: token?
-      - name: content
-        type: token
-      - name: closing
-        type: token?
+      - name: opening_loc
+        type: location?
+      - name: content_loc
+        type: location
+      - name: closing_loc
+        type: location?
       - name: unescaped
         type: string
     comment: |

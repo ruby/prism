@@ -11,12 +11,7 @@ ProgramNode(0...27)(
         ),
         InterpolatedSymbolNode(17...27)(
           SYMBOL_BEGIN(17...19)(":\""),
-          [StringNode(19...22)(
-             nil,
-             STRING_CONTENT(19...22)("foo"),
-             nil,
-             "foo"
-           ),
+          [StringNode(19...22)(nil, (19...22), nil, "foo"),
            StringInterpolatedNode(22...26)(
              (22...24),
              StatementsNode(24...25)([IntegerNode(24...25)()]),

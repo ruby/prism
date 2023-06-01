@@ -5,7 +5,7 @@ ProgramNode(0...15)(
        [SymbolNode(3...4)(nil, STRING_CONTENT(3...4)("a"), nil, "a"),
         InterpolatedSymbolNode(0...12)(
           nil,
-          [StringNode(5...6)(nil, STRING_CONTENT(5...6)("b"), nil, "b"),
+          [StringNode(5...6)(nil, (5...6), nil, "b"),
            StringInterpolatedNode(6...12)(
              (6...8),
              StatementsNode(8...11)(

@@ -18,12 +18,7 @@ ProgramNode(0...43)(
                  LABEL_END(14...15)(":"),
                  "b"
                ),
-               StringNode(16...19)(
-                 STRING_BEGIN(16...17)("'"),
-                 STRING_CONTENT(17...18)("c"),
-                 STRING_END(18...19)("'"),
-                 "c"
-               ),
+               StringNode(16...19)((16...17), (17...18), (18...19), "c"),
                nil
              ),
              AssocNode(21...27)(
@@ -33,12 +28,7 @@ ProgramNode(0...43)(
                  LABEL_END(22...23)(":"),
                  "d"
                ),
-               StringNode(24...27)(
-                 STRING_BEGIN(24...25)("\""),
-                 STRING_CONTENT(25...26)("e"),
-                 STRING_END(26...27)("\""),
-                 "e"
-               ),
+               StringNode(24...27)((24...25), (25...26), (26...27), "e"),
                nil
              )],
             nil,

@@ -19,7 +19,7 @@ ProgramNode(0...8)(
           ),
           (4...5)
         ),
-        StringNode(5...7)(nil, STRING_CONTENT(5...7)(" b"), nil, " b")],
+        StringNode(5...7)(nil, (5...7), nil, " b")],
        (7...8)
      )]
   )

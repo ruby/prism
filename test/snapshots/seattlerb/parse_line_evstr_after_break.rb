@@ -2,12 +2,7 @@ ProgramNode(0...11)(
   [],
   StatementsNode(0...11)(
     [StringConcatNode(0...11)(
-       StringNode(0...3)(
-         STRING_BEGIN(0...1)("\""),
-         STRING_CONTENT(1...2)("a"),
-         STRING_END(2...3)("\""),
-         "a"
-       ),
+       StringNode(0...3)((0...1), (1...2), (2...3), "a"),
        InterpolatedStringNode(5...11)(
          (5...6),
          [StringInterpolatedNode(6...10)(

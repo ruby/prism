@@ -1183,9 +1183,9 @@ ProgramNode(0...991)(
           KeywordHashNode(710...722)(
             [AssocNode(710...722)(
                StringNode(710...715)(
-                 STRING_BEGIN(710...711)("\""),
-                 STRING_CONTENT(711...714)("baz"),
-                 STRING_END(714...715)("\""),
+                 (710...711),
+                 (711...714),
+                 (714...715),
                  "baz"
                ),
                CallNode(719...722)(

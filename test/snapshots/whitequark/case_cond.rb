@@ -16,12 +16,7 @@ ProgramNode(0...26)(
              "foo"
            )],
           StatementsNode(16...21)(
-            [StringNode(16...21)(
-               STRING_BEGIN(16...17)("'"),
-               STRING_CONTENT(17...20)("foo"),
-               STRING_END(20...21)("'"),
-               "foo"
-             )]
+            [StringNode(16...21)((16...17), (17...20), (20...21), "foo")]
           )
         )],
        nil,

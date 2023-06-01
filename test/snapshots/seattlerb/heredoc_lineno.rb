@@ -7,7 +7,7 @@ ProgramNode(0...41)(
          (4...11),
          [StringNode(12...30)(
             nil,
-            STRING_CONTENT(12...30)("line2\n" + "line3\n" + "line4\n"),
+            (12...30),
             nil,
             "line2\n" + "line3\n" + "line4\n"
           )],

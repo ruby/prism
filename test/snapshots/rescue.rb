@@ -184,9 +184,9 @@ ProgramNode(0...316)(
                      nil,
                      ArgumentsNode(203...208)(
                        [StringNode(203...208)(
-                          STRING_BEGIN(203...204)("\""),
-                          STRING_CONTENT(204...207)("baz"),
-                          STRING_END(207...208)("\""),
+                          (203...204),
+                          (204...207),
+                          (207...208),
                           "baz"
                         )]
                      ),

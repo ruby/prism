@@ -39,12 +39,7 @@ ProgramNode(0...272)(
             nil,
             "b"
           ),
-          StringNode(10...13)(
-            STRING_BEGIN(10...11)("\""),
-            STRING_CONTENT(11...12)("x"),
-            STRING_END(12...13)("\""),
-            "x"
-          )]
+          StringNode(10...13)((10...11), (11...12), (12...13), "x")]
        ),
        nil,
        BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
@@ -188,12 +183,7 @@ ProgramNode(0...272)(
             nil,
             "b"
           ),
-          StringNode(78...81)(
-            STRING_BEGIN(78...79)("\""),
-            STRING_CONTENT(79...80)("x"),
-            STRING_END(80...81)("\""),
-            "x"
-          )]
+          StringNode(78...81)((78...79), (79...80), (80...81), "x")]
        ),
        nil,
        BlockNode(82...88)([], nil, nil, (82...84), (85...88)),
@@ -343,12 +333,7 @@ ProgramNode(0...272)(
             ),
             "b"
           ),
-          StringNode(147...150)(
-            STRING_BEGIN(147...148)("\""),
-            STRING_CONTENT(148...149)("x"),
-            STRING_END(149...150)("\""),
-            "x"
-          )]
+          StringNode(147...150)((147...148), (148...149), (149...150), "x")]
        ),
        nil,
        BlockNode(151...157)([], nil, nil, (151...153), (154...157)),
@@ -510,12 +495,7 @@ ProgramNode(0...272)(
             ),
             "b"
           ),
-          StringNode(215...218)(
-            STRING_BEGIN(215...216)("\""),
-            STRING_CONTENT(216...217)("x"),
-            STRING_END(217...218)("\""),
-            "x"
-          )]
+          StringNode(215...218)((215...216), (216...217), (217...218), "x")]
        ),
        nil,
        BlockNode(219...225)([], nil, nil, (219...221), (222...225)),

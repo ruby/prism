@@ -525,12 +525,7 @@ ProgramNode(0...719)(
      ),
      LocalVariableWriteNode(507...514)(
        (507...508),
-       StringNode(511...514)(
-         STRING_BEGIN(511...513)("%("),
-         STRING_CONTENT(513...513)(""),
-         STRING_END(513...514)(")"),
-         ""
-       ),
+       StringNode(511...514)((511...513), (513...513), (513...514), ""),
        (509...510),
        0
      ),
@@ -540,12 +535,7 @@ ProgramNode(0...719)(
        IDENTIFIER(517...518)("x"),
        nil,
        ArgumentsNode(519...522)(
-         [StringNode(519...522)(
-            STRING_BEGIN(519...521)("%("),
-            STRING_CONTENT(521...521)(""),
-            STRING_END(521...522)(")"),
-            ""
-          )]
+         [StringNode(519...522)((519...521), (521...521), (521...522), "")]
        ),
        nil,
        nil,
@@ -557,12 +547,7 @@ ProgramNode(0...719)(
        BRACKET_LEFT_RIGHT_EQUAL(524...525)("["),
        BRACKET_LEFT(524...525)("["),
        ArgumentsNode(525...535)(
-         [StringNode(525...528)(
-            STRING_BEGIN(525...527)("%("),
-            STRING_CONTENT(527...527)(""),
-            STRING_END(527...528)(")"),
-            ""
-          ),
+         [StringNode(525...528)((525...527), (527...527), (527...528), ""),
           CallNode(532...535)(
             nil,
             nil,
@@ -585,12 +570,7 @@ ProgramNode(0...719)(
          BRACKET_LEFT_RIGHT_EQUAL(537...538)("["),
          BRACKET_LEFT(537...538)("["),
          ArgumentsNode(538...541)(
-           [StringNode(538...541)(
-              STRING_BEGIN(538...540)("%("),
-              STRING_CONTENT(540...540)(""),
-              STRING_END(540...541)(")"),
-              ""
-            )]
+           [StringNode(538...541)((538...540), (540...540), (540...541), "")]
          ),
          BRACKET_RIGHT(541...542)("]"),
          nil,
@@ -610,31 +590,16 @@ ProgramNode(0...719)(
      ),
      OperatorOrAssignmentNode(551...561)(
        InstanceVariableWriteNode(551...553)((551...553), nil, nil),
-       StringNode(558...561)(
-         STRING_BEGIN(558...560)("%("),
-         STRING_CONTENT(560...560)(""),
-         STRING_END(560...561)(")"),
-         ""
-       ),
+       StringNode(558...561)((558...560), (560...560), (560...561), ""),
        (554...557)
      ),
      LocalVariableWriteNode(562...591)(
        (562...563),
        InterpolatedStringNode(566...591)(
          (566...576),
-         [StringNode(577...579)(
-            nil,
-            STRING_CONTENT(577...579)("  "),
-            nil,
-            "  "
-          ),
+         [StringNode(577...579)(nil, (577...579), nil, "  "),
           StringInterpolatedNode(579...582)((579...581), nil, (581...582)),
-          StringNode(582...583)(
-            nil,
-            STRING_CONTENT(582...583)("\n"),
-            nil,
-            "\n"
-          )],
+          StringNode(582...583)(nil, (582...583), nil, "\n")],
          (583...591)
        ),
        (564...565),
@@ -648,19 +613,9 @@ ProgramNode(0...719)(
        ArgumentsNode(595...620)(
          [InterpolatedStringNode(595...620)(
             (595...605),
-            [StringNode(606...608)(
-               nil,
-               STRING_CONTENT(606...608)("  "),
-               nil,
-               "  "
-             ),
+            [StringNode(606...608)(nil, (606...608), nil, "  "),
              StringInterpolatedNode(608...611)((608...610), nil, (610...611)),
-             StringNode(611...612)(
-               nil,
-               STRING_CONTENT(611...612)("\n"),
-               nil,
-               "\n"
-             )],
+             StringNode(611...612)(nil, (611...612), nil, "\n")],
             (612...620)
           )]
        ),
@@ -676,19 +631,9 @@ ProgramNode(0...719)(
        ArgumentsNode(626...651)(
          [InterpolatedStringNode(626...651)(
             (626...636),
-            [StringNode(637...639)(
-               nil,
-               STRING_CONTENT(637...639)("  "),
-               nil,
-               "  "
-             ),
+            [StringNode(637...639)(nil, (637...639), nil, "  "),
              StringInterpolatedNode(639...642)((639...641), nil, (641...642)),
-             StringNode(642...643)(
-               nil,
-               STRING_CONTENT(642...643)("\n"),
-               nil,
-               "\n"
-             )],
+             StringNode(642...643)(nil, (642...643), nil, "\n")],
             (643...651)
           )]
        ),
@@ -705,23 +650,13 @@ ProgramNode(0...719)(
          ArgumentsNode(653...687)(
            [InterpolatedStringNode(653...687)(
               (653...663),
-              [StringNode(673...675)(
-                 nil,
-                 STRING_CONTENT(673...675)("  "),
-                 nil,
-                 "  "
-               ),
+              [StringNode(673...675)(nil, (673...675), nil, "  "),
                StringInterpolatedNode(675...678)(
                  (675...677),
                  nil,
                  (677...678)
                ),
-               StringNode(678...679)(
-                 nil,
-                 STRING_CONTENT(678...679)("\n"),
-                 nil,
-                 "\n"
-               )],
+               StringNode(678...679)(nil, (678...679), nil, "\n")],
               (679...687)
             )]
          ),
@@ -745,19 +680,9 @@ ProgramNode(0...719)(
        InstanceVariableWriteNode(687...689)((687...689), nil, nil),
        InterpolatedStringNode(694...719)(
          (694...704),
-         [StringNode(705...707)(
-            nil,
-            STRING_CONTENT(705...707)("  "),
-            nil,
-            "  "
-          ),
+         [StringNode(705...707)(nil, (705...707), nil, "  "),
           StringInterpolatedNode(707...710)((707...709), nil, (709...710)),
-          StringNode(710...711)(
-            nil,
-            STRING_CONTENT(710...711)("\n"),
-            nil,
-            "\n"
-          )],
+          StringNode(710...711)(nil, (710...711), nil, "\n")],
          (711...719)
        ),
        (690...693)

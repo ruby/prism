@@ -5,7 +5,7 @@ ProgramNode(0...48)(
        (0...8),
        [StringNode(9...44)(
           nil,
-          STRING_CONTENT(9...44)("    cd L:\\Work\\MG3710IQPro\\Develop\n"),
+          (9...44),
           nil,
           "    cd L:\\Work\\MG3710IQPro\\Develop\n"
         )],

@@ -19,12 +19,7 @@ ProgramNode(0...17)(
           ),
           (8...9)
         ),
-        StringNode(9...16)(
-          nil,
-          STRING_CONTENT(9...16)("\n" + "blah2\n"),
-          nil,
-          "\n" + "blah2\n"
-        )],
+        StringNode(9...16)(nil, (9...16), nil, "\n" + "blah2\n")],
        (16...17)
      )]
   )

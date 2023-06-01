@@ -564,24 +564,16 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   def test_do_not_allow_multiple_codepoints_in_a_single_character_literal
-    expected = StringNode(
-      STRING_BEGIN("?"),
-      STRING_CONTENT('\u{0001 0002}'),
-      nil,
-      "\u0001\u0002"
-    )
+    expected = StringNode(Location(), Location(), nil, "\u0001\u0002")
+
     assert_errors expected, '?\u{0001 0002}', [
       "Multiple codepoints at single character literal"
     ]
   end
 
   def test_do_not_allow_more_than_6_hexadecimal_digits_in_u_Unicode_character_notation
-    expected = StringNode(
-      STRING_BEGIN('"'),
-      STRING_CONTENT('\u{0000001}'),
-      STRING_END('"'),
-      "\u0001"
-    )
+    expected = StringNode(Location(), Location(), Location(), "\u0001")
+
     assert_errors expected, '"\u{0000001}"', [
       "invalid Unicode escape.",
       "invalid Unicode escape."
@@ -589,12 +581,8 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   def test_do_not_allow_characters_other_than_0_9_a_f_and_A_F_in_u_Unicode_character_notation
-    expected = StringNode(
-      STRING_BEGIN('"'),
-      STRING_CONTENT('\u{000z}'),
-      STRING_END('"'),
-      "\u0000z}"
-    )
+    expected = StringNode(Location(), Location(), Location(), "\u0000z}")
+
     assert_errors expected, '"\u{000z}"', [
       "unterminated Unicode escape",
       "unterminated Unicode escape"

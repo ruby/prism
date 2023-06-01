@@ -6,17 +6,7 @@ ProgramNode(0...106)(
        (15...23),
        [StringNode(25...100)(
           nil,
-          STRING_CONTENT(25...100)(
-            "  way over\n" +
-            "  <<HERE\n" +
-            "    not here\n" +
-            "  HERE\n" +
-            "\n" +
-            "  <<~BUT\\\n" +
-            "    but\n" +
-            "  BUT\n" +
-            "    there\n"
-          ),
+          (25...100),
           nil,
           "way over\n" +
           "<<HERE\n" +

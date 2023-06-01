@@ -9,12 +9,7 @@ ProgramNode(0...24)(
          IDENTIFIER(3...7)("test"),
          nil,
          ArgumentsNode(8...15)(
-           [StringNode(8...10)(
-              STRING_BEGIN(8...9)("?"),
-              STRING_CONTENT(9...10)("d"),
-              nil,
-              "d"
-            ),
+           [StringNode(8...10)((8...9), (9...10), nil, "d"),
             CallNode(12...15)(
               nil,
               nil,

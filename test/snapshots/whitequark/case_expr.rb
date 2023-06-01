@@ -14,12 +14,7 @@ ProgramNode(0...30)(
        ),
        [WhenNode(10...25)(
           KEYWORD_WHEN(10...14)("when"),
-          [StringNode(15...20)(
-             STRING_BEGIN(15...16)("'"),
-             STRING_CONTENT(16...19)("bar"),
-             STRING_END(19...20)("'"),
-             "bar"
-           )],
+          [StringNode(15...20)((15...16), (16...19), (19...20), "bar")],
           StatementsNode(22...25)(
             [CallNode(22...25)(
                nil,

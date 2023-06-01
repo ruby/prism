@@ -5,12 +5,7 @@ ProgramNode(0...21)(
        (0...1),
        InterpolatedStringNode(4...21)(
          (4...9),
-         [StringNode(10...17)(
-            nil,
-            STRING_CONTENT(10...17)("a\\xE9b\n"),
-            nil,
-            "a\xE9b\n"
-          )],
+         [StringNode(10...17)(nil, (10...17), nil, "a\xE9b\n")],
          (17...21)
        ),
        (2...3),

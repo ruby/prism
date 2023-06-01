@@ -49,12 +49,7 @@ ProgramNode(0...49)(
                  ConstantReadNode(39...40)(),
                  (37...39)
                ),
-               StringNode(42...44)(
-                 STRING_BEGIN(42...43)("'"),
-                 STRING_CONTENT(43...43)(""),
-                 STRING_END(43...44)("'"),
-                 ""
-               )]
+               StringNode(42...44)((42...43), (43...43), (43...44), "")]
             ),
             nil,
             nil,

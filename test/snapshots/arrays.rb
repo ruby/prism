@@ -700,24 +700,9 @@ ProgramNode(0...502)(
        (347...348)
      ),
      ArrayNode(350...367)(
-       [StringNode(353...356)(
-          nil,
-          STRING_CONTENT(353...356)("one"),
-          nil,
-          "one"
-        ),
-        StringNode(357...360)(
-          nil,
-          STRING_CONTENT(357...360)("two"),
-          nil,
-          "two"
-        ),
-        StringNode(361...366)(
-          nil,
-          STRING_CONTENT(361...366)("three"),
-          nil,
-          "three"
-        )],
+       [StringNode(353...356)(nil, (353...356), nil, "one"),
+        StringNode(357...360)(nil, (357...360), nil, "two"),
+        StringNode(361...366)(nil, (361...366), nil, "three")],
        (350...353),
        (366...367)
      ),
@@ -750,24 +735,9 @@ ProgramNode(0...502)(
        (405...406)
      ),
      ArrayNode(408...425)(
-       [StringNode(411...414)(
-          nil,
-          STRING_CONTENT(411...414)("one"),
-          nil,
-          "one"
-        ),
-        StringNode(415...418)(
-          nil,
-          STRING_CONTENT(415...418)("two"),
-          nil,
-          "two"
-        ),
-        StringNode(419...424)(
-          nil,
-          STRING_CONTENT(419...424)("three"),
-          nil,
-          "three"
-        )],
+       [StringNode(411...414)(nil, (411...414), nil, "one"),
+        StringNode(415...418)(nil, (415...418), nil, "two"),
+        StringNode(419...424)(nil, (419...424), nil, "three")],
        (408...411),
        (424...425)
      ),
@@ -800,24 +770,9 @@ ProgramNode(0...502)(
        (463...464)
      ),
      ArrayNode(466...483)(
-       [StringNode(469...472)(
-          nil,
-          STRING_CONTENT(469...472)("one"),
-          nil,
-          "one"
-        ),
-        StringNode(473...476)(
-          nil,
-          STRING_CONTENT(473...476)("two"),
-          nil,
-          "two"
-        ),
-        StringNode(477...482)(
-          nil,
-          STRING_CONTENT(477...482)("three"),
-          nil,
-          "three"
-        )],
+       [StringNode(469...472)(nil, (469...472), nil, "one"),
+        StringNode(473...476)(nil, (473...476), nil, "two"),
+        StringNode(477...482)(nil, (477...482), nil, "three")],
        (466...469),
        (482...483)
      ),

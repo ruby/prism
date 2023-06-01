@@ -7,7 +7,7 @@ ProgramNode(0...35)(
          (6...12),
          [StringNode(14...30)(
             nil,
-            STRING_CONTENT(14...30)("before\\\r\n" + "after\r\n"),
+            (14...30),
             nil,
             "before\u0000\u0000after\r\n"
           )],

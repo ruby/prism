@@ -3,12 +3,7 @@ ProgramNode(0...26)(
   StatementsNode(0...26)(
     [InterpolatedStringNode(0...26)(
        (0...3),
-       [StringNode(3...11)(
-          nil,
-          STRING_CONTENT(3...11)("before ["),
-          nil,
-          "before ["
-        ),
+       [StringNode(3...11)(nil, (3...11), nil, "before ["),
         StringInterpolatedNode(11...18)(
           (11...13),
           StatementsNode(13...17)(
@@ -25,12 +20,7 @@ ProgramNode(0...26)(
           ),
           (17...18)
         ),
-        StringNode(18...25)(
-          nil,
-          STRING_CONTENT(18...25)("] after"),
-          nil,
-          "] after"
-        )],
+        StringNode(18...25)(nil, (18...25), nil, "] after")],
        (25...26)
      )]
   )

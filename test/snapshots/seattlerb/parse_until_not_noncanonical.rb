@@ -32,12 +32,7 @@ ProgramNode(0...30)(
          "!"
        ),
        StatementsNode(21...26)(
-         [StringNode(21...26)(
-            STRING_BEGIN(21...22)("'"),
-            STRING_CONTENT(22...25)("foo"),
-            STRING_END(25...26)("'"),
-            "foo"
-          )]
+         [StringNode(21...26)((21...22), (22...25), (25...26), "foo")]
        )
      )]
   )

@@ -7,7 +7,7 @@ ProgramNode(0...49)(
          (4...12),
          [StringNode(13...43)(
             nil,
-            STRING_CONTENT(13...43)("        blah blah\n" + "\t blah blah\n"),
+            (13...43),
             nil,
             "blah blah\n" + " blah blah\n"
           )],

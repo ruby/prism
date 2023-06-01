@@ -3,7 +3,7 @@ ProgramNode(0...14)(
   StatementsNode(0...14)(
     [InterpolatedStringNode(0...14)(
        (0...1),
-       [StringNode(1...4)(nil, STRING_CONTENT(1...4)("foo"), nil, "foo"),
+       [StringNode(1...4)(nil, (1...4), nil, "foo"),
         StringInterpolatedNode(4...10)(
           (4...6),
           StatementsNode(6...9)(
@@ -20,7 +20,7 @@ ProgramNode(0...14)(
           ),
           (9...10)
         ),
-        StringNode(10...13)(nil, STRING_CONTENT(10...13)("baz"), nil, "baz")],
+        StringNode(10...13)(nil, (10...13), nil, "baz")],
        (13...14)
      )]
   )

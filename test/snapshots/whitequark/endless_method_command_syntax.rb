@@ -12,12 +12,7 @@ ProgramNode(0...278)(
             IDENTIFIER(10...14)("puts"),
             nil,
             ArgumentsNode(15...22)(
-              [StringNode(15...22)(
-                 STRING_BEGIN(15...16)("\""),
-                 STRING_CONTENT(16...21)("Hello"),
-                 STRING_END(21...22)("\""),
-                 "Hello"
-               )]
+              [StringNode(15...22)((15...16), (16...21), (21...22), "Hello")]
             ),
             nil,
             nil,
@@ -43,12 +38,7 @@ ProgramNode(0...278)(
             IDENTIFIER(36...40)("puts"),
             nil,
             ArgumentsNode(41...48)(
-              [StringNode(41...48)(
-                 STRING_BEGIN(41...42)("\""),
-                 STRING_CONTENT(42...47)("Hello"),
-                 STRING_END(47...48)("\""),
-                 "Hello"
-               )]
+              [StringNode(41...48)((41...42), (42...47), (47...48), "Hello")]
             ),
             nil,
             nil,
@@ -115,12 +105,7 @@ ProgramNode(0...278)(
             IDENTIFIER(85...89)("puts"),
             nil,
             ArgumentsNode(90...97)(
-              [StringNode(90...97)(
-                 STRING_BEGIN(90...91)("\""),
-                 STRING_CONTENT(91...96)("Hello"),
-                 STRING_END(96...97)("\""),
-                 "Hello"
-               )]
+              [StringNode(90...97)((90...91), (91...96), (96...97), "Hello")]
             ),
             nil,
             nil,
@@ -156,9 +141,9 @@ ProgramNode(0...278)(
             nil,
             ArgumentsNode(120...127)(
               [StringNode(120...127)(
-                 STRING_BEGIN(120...121)("\""),
-                 STRING_CONTENT(121...126)("Hello"),
-                 STRING_END(126...127)("\""),
+                 (120...121),
+                 (121...126),
+                 (126...127),
                  "Hello"
                )]
             ),
@@ -237,20 +222,15 @@ ProgramNode(0...278)(
             ArgumentsNode(177...214)(
               [RescueModifierNode(177...214)(
                  StringNode(177...191)(
-                   STRING_BEGIN(177...178)("\""),
-                   STRING_CONTENT(178...190)("to be caught"),
-                   STRING_END(190...191)("\""),
+                   (177...178),
+                   (178...190),
+                   (190...191),
                    "to be caught"
                  ),
                  (192...198),
                  InterpolatedStringNode(199...214)(
                    (199...200),
-                   [StringNode(200...209)(
-                      nil,
-                      STRING_CONTENT(200...209)("instance "),
-                      nil,
-                      "instance "
-                    ),
+                   [StringNode(200...209)(nil, (200...209), nil, "instance "),
                     StringInterpolatedNode(209...213)(
                       (209...211),
                       StatementsNode(211...212)(
@@ -296,20 +276,15 @@ ProgramNode(0...278)(
             ArgumentsNode(244...278)(
               [RescueModifierNode(244...278)(
                  StringNode(244...258)(
-                   STRING_BEGIN(244...245)("\""),
-                   STRING_CONTENT(245...257)("to be caught"),
-                   STRING_END(257...258)("\""),
+                   (244...245),
+                   (245...257),
+                   (257...258),
                    "to be caught"
                  ),
                  (259...265),
                  InterpolatedStringNode(266...278)(
                    (266...267),
-                   [StringNode(267...273)(
-                      nil,
-                      STRING_CONTENT(267...273)("class "),
-                      nil,
-                      "class "
-                    ),
+                   [StringNode(267...273)(nil, (267...273), nil, "class "),
                     StringInterpolatedNode(273...277)(
                       (273...275),
                       StatementsNode(275...276)(

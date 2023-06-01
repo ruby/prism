@@ -9,12 +9,7 @@ ProgramNode(0...21)(
        ArgumentsNode(2...21)(
          [InterpolatedStringNode(2...21)(
             (2...8),
-            [StringNode(9...19)(
-               nil,
-               STRING_CONTENT(9...19)("  x\\n   y\n"),
-               nil,
-               "x\n" + " y\n"
-             )],
+            [StringNode(9...19)(nil, (9...19), nil, "x\n" + " y\n")],
             (19...21)
           )]
        ),

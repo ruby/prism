@@ -1,12 +1,7 @@
 ProgramNode(0...210)(
   [],
   StatementsNode(0...210)(
-    [StringNode(0...6)(
-       STRING_BEGIN(0...1)("\""),
-       STRING_CONTENT(1...5)("a\\\n" + "b"),
-       STRING_END(5...6)("\""),
-       "a\n" + "b"
-     ),
+    [StringNode(0...6)((0...1), (1...5), (5...6), "a\n" + "b"),
      ArrayNode(8...16)(
        [SymbolNode(11...15)(
           nil,
@@ -17,19 +12,9 @@ ProgramNode(0...210)(
        (8...11),
        (15...16)
      ),
-     StringNode(18...26)(
-       STRING_BEGIN(18...21)("%Q{"),
-       STRING_CONTENT(21...25)("a\\\n" + "b"),
-       STRING_END(25...26)("}"),
-       "a\n" + "b"
-     ),
+     StringNode(18...26)((18...21), (21...25), (25...26), "a\n" + "b"),
      ArrayNode(28...36)(
-       [StringNode(31...35)(
-          nil,
-          STRING_CONTENT(31...35)("a\\\n" + "b"),
-          nil,
-          "a\n" + "b"
-        )],
+       [StringNode(31...35)(nil, (31...35), nil, "a\n" + "b")],
        (28...31),
        (35...36)
      ),
@@ -43,12 +28,7 @@ ProgramNode(0...210)(
        (38...41),
        (45...46)
      ),
-     StringNode(48...56)(
-       STRING_BEGIN(48...51)("%q{"),
-       STRING_CONTENT(51...55)("a\\\n" + "b"),
-       STRING_END(55...56)("}"),
-       "a\\\n" + "b"
-     ),
+     StringNode(48...56)((48...51), (51...55), (55...56), "a\\\n" + "b"),
      RegularExpressionNode(58...66)(
        (58...61),
        (61...65),
@@ -63,26 +43,16 @@ ProgramNode(0...210)(
        "a\n" + "b"
      ),
      ArrayNode(78...86)(
-       [StringNode(81...85)(
-          nil,
-          STRING_CONTENT(81...85)("a\\\n" + "b"),
-          nil,
-          "a\n" + "b"
-        )],
+       [StringNode(81...85)(nil, (81...85), nil, "a\n" + "b")],
        (78...81),
        (85...86)
      ),
      XStringNode(88...96)((88...91), (91...95), (95...96), "a\n" + "b"),
-     StringNode(98...105)(
-       STRING_BEGIN(98...100)("%{"),
-       STRING_CONTENT(100...104)("a\\\n" + "b"),
-       STRING_END(104...105)("}"),
-       "a\n" + "b"
-     ),
+     StringNode(98...105)((98...100), (100...104), (104...105), "a\n" + "b"),
      StringNode(107...113)(
-       STRING_BEGIN(107...108)("'"),
-       STRING_CONTENT(108...112)("a\\\n" + "b"),
-       STRING_END(112...113)("'"),
+       (107...108),
+       (108...112),
+       (112...113),
        "a\\\n" + "b"
      ),
      RegularExpressionNode(115...121)(
@@ -94,12 +64,7 @@ ProgramNode(0...210)(
      ),
      InterpolatedSymbolNode(123...130)(
        SYMBOL_BEGIN(123...125)(":\""),
-       [StringNode(125...129)(
-          nil,
-          STRING_CONTENT(125...129)("a\\\n" + "b"),
-          nil,
-          "a\n" + "b"
-        )],
+       [StringNode(125...129)(nil, (125...129), nil, "a\n" + "b")],
        STRING_END(129...130)("\"")
      ),
      SymbolNode(132...139)(
@@ -110,32 +75,17 @@ ProgramNode(0...210)(
      ),
      InterpolatedStringNode(141...161)(
        (141...150),
-       [StringNode(151...156)(
-          nil,
-          STRING_CONTENT(151...156)("a\\\n" + "b\n"),
-          nil,
-          "a\n" + "b\n"
-        )],
+       [StringNode(151...156)(nil, (151...156), nil, "a\n" + "b\n")],
        (156...161)
      ),
      InterpolatedStringNode(162...182)(
        (162...171),
-       [StringNode(172...177)(
-          nil,
-          STRING_CONTENT(172...177)("a\\\n" + "b\n"),
-          nil,
-          "a\\\n" + "b\n"
-        )],
+       [StringNode(172...177)(nil, (172...177), nil, "a\\\n" + "b\n")],
        (177...182)
      ),
      InterpolatedXStringNode(183...203)(
        (183...192),
-       [StringNode(193...198)(
-          nil,
-          STRING_CONTENT(193...198)("a\\\n" + "b\n"),
-          nil,
-          "a\n" + "b\n"
-        )],
+       [StringNode(193...198)(nil, (193...198), nil, "a\n" + "b\n")],
        (198...203)
      ),
      XStringNode(204...210)(

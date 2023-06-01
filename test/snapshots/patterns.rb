@@ -126,12 +126,7 @@ ProgramNode(0...3725)(
        ),
        InterpolatedSymbolNode(85...91)(
          SYMBOL_BEGIN(85...87)(":\""),
-         [StringNode(87...90)(
-            nil,
-            STRING_CONTENT(87...90)("foo"),
-            nil,
-            "foo"
-          )],
+         [StringNode(87...90)(nil, (87...90), nil, "foo")],
          STRING_END(90...91)("\"")
        ),
        (82...84)
@@ -242,12 +237,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(170...177)(
-         [StringNode(173...176)(
-            nil,
-            STRING_CONTENT(173...176)("foo"),
-            nil,
-            "foo"
-          )],
+         [StringNode(173...176)(nil, (173...176), nil, "foo")],
          (170...173),
          (176...177)
        ),
@@ -265,12 +255,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(185...192)(
-         [StringNode(188...191)(
-            nil,
-            STRING_CONTENT(188...191)("foo"),
-            nil,
-            "foo"
-          )],
+         [StringNode(188...191)(nil, (188...191), nil, "foo")],
          (185...188),
          (191...192)
        ),
@@ -287,12 +272,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       StringNode(200...207)(
-         STRING_BEGIN(200...203)("%q["),
-         STRING_CONTENT(203...206)("foo"),
-         STRING_END(206...207)("]"),
-         "foo"
-       ),
+       StringNode(200...207)((200...203), (203...206), (206...207), "foo"),
        (197...199)
      ),
      MatchRequiredNode(208...222)(
@@ -306,12 +286,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       StringNode(215...222)(
-         STRING_BEGIN(215...218)("%Q["),
-         STRING_CONTENT(218...221)("foo"),
-         STRING_END(221...222)("]"),
-         "foo"
-       ),
+       StringNode(215...222)((215...218), (218...221), (221...222), "foo"),
        (212...214)
      ),
      MatchRequiredNode(223...235)(
@@ -325,12 +300,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       StringNode(230...235)(
-         STRING_BEGIN(230...231)("\""),
-         STRING_CONTENT(231...234)("foo"),
-         STRING_END(234...235)("\""),
-         "foo"
-       ),
+       StringNode(230...235)((230...231), (231...234), (234...235), "foo"),
        (227...229)
      ),
      MatchRequiredNode(236...246)(
@@ -592,22 +562,12 @@ ProgramNode(0...3725)(
        RangeNode(472...488)(
          InterpolatedSymbolNode(472...478)(
            SYMBOL_BEGIN(472...474)(":\""),
-           [StringNode(474...477)(
-              nil,
-              STRING_CONTENT(474...477)("foo"),
-              nil,
-              "foo"
-            )],
+           [StringNode(474...477)(nil, (474...477), nil, "foo")],
            STRING_END(477...478)("\"")
          ),
          InterpolatedSymbolNode(482...488)(
            SYMBOL_BEGIN(482...484)(":\""),
-           [StringNode(484...487)(
-              nil,
-              STRING_CONTENT(484...487)("foo"),
-              nil,
-              "foo"
-            )],
+           [StringNode(484...487)(nil, (484...487), nil, "foo")],
            STRING_END(487...488)("\"")
          ),
          (479...481)
@@ -765,22 +725,12 @@ ProgramNode(0...3725)(
        ),
        RangeNode(618...636)(
          ArrayNode(618...625)(
-           [StringNode(621...624)(
-              nil,
-              STRING_CONTENT(621...624)("foo"),
-              nil,
-              "foo"
-            )],
+           [StringNode(621...624)(nil, (621...624), nil, "foo")],
            (618...621),
            (624...625)
          ),
          ArrayNode(629...636)(
-           [StringNode(632...635)(
-              nil,
-              STRING_CONTENT(632...635)("foo"),
-              nil,
-              "foo"
-            )],
+           [StringNode(632...635)(nil, (632...635), nil, "foo")],
            (629...632),
            (635...636)
          ),
@@ -801,22 +751,12 @@ ProgramNode(0...3725)(
        ),
        RangeNode(644...662)(
          ArrayNode(644...651)(
-           [StringNode(647...650)(
-              nil,
-              STRING_CONTENT(647...650)("foo"),
-              nil,
-              "foo"
-            )],
+           [StringNode(647...650)(nil, (647...650), nil, "foo")],
            (644...647),
            (650...651)
          ),
          ArrayNode(655...662)(
-           [StringNode(658...661)(
-              nil,
-              STRING_CONTENT(658...661)("foo"),
-              nil,
-              "foo"
-            )],
+           [StringNode(658...661)(nil, (658...661), nil, "foo")],
            (655...658),
            (661...662)
          ),
@@ -836,18 +776,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RangeNode(670...688)(
-         StringNode(670...677)(
-           STRING_BEGIN(670...673)("%q["),
-           STRING_CONTENT(673...676)("foo"),
-           STRING_END(676...677)("]"),
-           "foo"
-         ),
-         StringNode(681...688)(
-           STRING_BEGIN(681...684)("%q["),
-           STRING_CONTENT(684...687)("foo"),
-           STRING_END(687...688)("]"),
-           "foo"
-         ),
+         StringNode(670...677)((670...673), (673...676), (676...677), "foo"),
+         StringNode(681...688)((681...684), (684...687), (687...688), "foo"),
          (678...680)
        ),
        (667...669)
@@ -864,18 +794,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RangeNode(696...714)(
-         StringNode(696...703)(
-           STRING_BEGIN(696...699)("%Q["),
-           STRING_CONTENT(699...702)("foo"),
-           STRING_END(702...703)("]"),
-           "foo"
-         ),
-         StringNode(707...714)(
-           STRING_BEGIN(707...710)("%Q["),
-           STRING_CONTENT(710...713)("foo"),
-           STRING_END(713...714)("]"),
-           "foo"
-         ),
+         StringNode(696...703)((696...699), (699...702), (702...703), "foo"),
+         StringNode(707...714)((707...710), (710...713), (713...714), "foo"),
          (704...706)
        ),
        (693...695)
@@ -892,18 +812,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RangeNode(722...736)(
-         StringNode(722...727)(
-           STRING_BEGIN(722...723)("\""),
-           STRING_CONTENT(723...726)("foo"),
-           STRING_END(726...727)("\""),
-           "foo"
-         ),
-         StringNode(731...736)(
-           STRING_BEGIN(731...732)("\""),
-           STRING_CONTENT(732...735)("foo"),
-           STRING_END(735...736)("\""),
-           "foo"
-         ),
+         StringNode(722...727)((722...723), (723...726), (726...727), "foo"),
+         StringNode(731...736)((731...732), (732...735), (735...736), "foo"),
          (728...730)
        ),
        (719...721)
@@ -1182,9 +1092,9 @@ ProgramNode(0...3725)(
        PinnedExpressionNode(1028...1044)(
          CallNode(1030...1043)(
            StringNode(1030...1035)(
-             STRING_BEGIN(1030...1031)("\""),
-             STRING_CONTENT(1031...1034)("bar"),
-             STRING_END(1034...1035)("\""),
+             (1030...1031),
+             (1031...1034),
+             (1034...1035),
              "bar"
            ),
            nil,
@@ -1192,9 +1102,9 @@ ProgramNode(0...3725)(
            nil,
            ArgumentsNode(1038...1043)(
              [StringNode(1038...1043)(
-                STRING_BEGIN(1038...1039)("\""),
-                STRING_CONTENT(1039...1042)("baz"),
-                STRING_END(1042...1043)("\""),
+                (1038...1039),
+                (1039...1042),
+                (1042...1043),
                 "baz"
               )]
            ),
@@ -2051,12 +1961,7 @@ ProgramNode(0...3725)(
        ),
        InterpolatedSymbolNode(1715...1721)(
          SYMBOL_BEGIN(1715...1717)(":\""),
-         [StringNode(1717...1720)(
-            nil,
-            STRING_CONTENT(1717...1720)("foo"),
-            nil,
-            "foo"
-          )],
+         [StringNode(1717...1720)(nil, (1717...1720), nil, "foo")],
          STRING_END(1720...1721)("\"")
        ),
        (1712...1714)
@@ -2177,12 +2082,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(1800...1807)(
-         [StringNode(1803...1806)(
-            nil,
-            STRING_CONTENT(1803...1806)("foo"),
-            nil,
-            "foo"
-          )],
+         [StringNode(1803...1806)(nil, (1803...1806), nil, "foo")],
          (1800...1803),
          (1806...1807)
        ),
@@ -2200,12 +2100,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(1815...1822)(
-         [StringNode(1818...1821)(
-            nil,
-            STRING_CONTENT(1818...1821)("foo"),
-            nil,
-            "foo"
-          )],
+         [StringNode(1818...1821)(nil, (1818...1821), nil, "foo")],
          (1815...1818),
          (1821...1822)
        ),
@@ -2223,9 +2118,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        StringNode(1830...1837)(
-         STRING_BEGIN(1830...1833)("%q["),
-         STRING_CONTENT(1833...1836)("foo"),
-         STRING_END(1836...1837)("]"),
+         (1830...1833),
+         (1833...1836),
+         (1836...1837),
          "foo"
        ),
        (1827...1829)
@@ -2242,9 +2137,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        StringNode(1845...1852)(
-         STRING_BEGIN(1845...1848)("%Q["),
-         STRING_CONTENT(1848...1851)("foo"),
-         STRING_END(1851...1852)("]"),
+         (1845...1848),
+         (1848...1851),
+         (1851...1852),
          "foo"
        ),
        (1842...1844)
@@ -2261,9 +2156,9 @@ ProgramNode(0...3725)(
          "foo"
        ),
        StringNode(1860...1865)(
-         STRING_BEGIN(1860...1861)("\""),
-         STRING_CONTENT(1861...1864)("foo"),
-         STRING_END(1864...1865)("\""),
+         (1860...1861),
+         (1861...1864),
+         (1864...1865),
          "foo"
        ),
        (1857...1859)
@@ -2556,12 +2451,7 @@ ProgramNode(0...3725)(
        [InNode(2178...2192)(
           InterpolatedSymbolNode(2181...2187)(
             SYMBOL_BEGIN(2181...2183)(":\""),
-            [StringNode(2183...2186)(
-               nil,
-               STRING_CONTENT(2183...2186)("foo"),
-               nil,
-               "foo"
-             )],
+            [StringNode(2183...2186)(nil, (2183...2186), nil, "foo")],
             STRING_END(2186...2187)("\"")
           ),
           nil,
@@ -2724,12 +2614,7 @@ ProgramNode(0...3725)(
        ),
        [InNode(2353...2368)(
           ArrayNode(2356...2363)(
-            [StringNode(2359...2362)(
-               nil,
-               STRING_CONTENT(2359...2362)("foo"),
-               nil,
-               "foo"
-             )],
+            [StringNode(2359...2362)(nil, (2359...2362), nil, "foo")],
             (2356...2359),
             (2362...2363)
           ),
@@ -2754,12 +2639,7 @@ ProgramNode(0...3725)(
        ),
        [InNode(2383...2398)(
           ArrayNode(2386...2393)(
-            [StringNode(2389...2392)(
-               nil,
-               STRING_CONTENT(2389...2392)("foo"),
-               nil,
-               "foo"
-             )],
+            [StringNode(2389...2392)(nil, (2389...2392), nil, "foo")],
             (2386...2389),
             (2392...2393)
           ),
@@ -2784,9 +2664,9 @@ ProgramNode(0...3725)(
        ),
        [InNode(2413...2428)(
           StringNode(2416...2423)(
-            STRING_BEGIN(2416...2419)("%q["),
-            STRING_CONTENT(2419...2422)("foo"),
-            STRING_END(2422...2423)("]"),
+            (2416...2419),
+            (2419...2422),
+            (2422...2423),
             "foo"
           ),
           nil,
@@ -2810,9 +2690,9 @@ ProgramNode(0...3725)(
        ),
        [InNode(2443...2458)(
           StringNode(2446...2453)(
-            STRING_BEGIN(2446...2449)("%Q["),
-            STRING_CONTENT(2449...2452)("foo"),
-            STRING_END(2452...2453)("]"),
+            (2446...2449),
+            (2449...2452),
+            (2452...2453),
             "foo"
           ),
           nil,
@@ -2836,9 +2716,9 @@ ProgramNode(0...3725)(
        ),
        [InNode(2473...2486)(
           StringNode(2476...2481)(
-            STRING_BEGIN(2476...2477)("\""),
-            STRING_CONTENT(2477...2480)("foo"),
-            STRING_END(2480...2481)("\""),
+            (2476...2477),
+            (2477...2480),
+            (2480...2481),
             "foo"
           ),
           nil,
@@ -3251,12 +3131,7 @@ ProgramNode(0...3725)(
             StatementsNode(2975...2981)(
               [InterpolatedSymbolNode(2975...2981)(
                  SYMBOL_BEGIN(2975...2977)(":\""),
-                 [StringNode(2977...2980)(
-                    nil,
-                    STRING_CONTENT(2977...2980)("foo"),
-                    nil,
-                    "foo"
-                  )],
+                 [StringNode(2977...2980)(nil, (2977...2980), nil, "foo")],
                  STRING_END(2980...2981)("\"")
                )]
             ),
@@ -3467,12 +3342,7 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3203...3206)(0),
             StatementsNode(3192...3199)(
               [ArrayNode(3192...3199)(
-                 [StringNode(3195...3198)(
-                    nil,
-                    STRING_CONTENT(3195...3198)("foo"),
-                    nil,
-                    "foo"
-                  )],
+                 [StringNode(3195...3198)(nil, (3195...3198), nil, "foo")],
                  (3192...3195),
                  (3198...3199)
                )]
@@ -3505,12 +3375,7 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3240...3243)(0),
             StatementsNode(3229...3236)(
               [ArrayNode(3229...3236)(
-                 [StringNode(3232...3235)(
-                    nil,
-                    STRING_CONTENT(3232...3235)("foo"),
-                    nil,
-                    "foo"
-                  )],
+                 [StringNode(3232...3235)(nil, (3232...3235), nil, "foo")],
                  (3229...3232),
                  (3235...3236)
                )]
@@ -3543,9 +3408,9 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3277...3280)(0),
             StatementsNode(3266...3273)(
               [StringNode(3266...3273)(
-                 STRING_BEGIN(3266...3269)("%q["),
-                 STRING_CONTENT(3269...3272)("foo"),
-                 STRING_END(3272...3273)("]"),
+                 (3266...3269),
+                 (3269...3272),
+                 (3272...3273),
                  "foo"
                )]
             ),
@@ -3577,9 +3442,9 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3314...3317)(0),
             StatementsNode(3303...3310)(
               [StringNode(3303...3310)(
-                 STRING_BEGIN(3303...3306)("%Q["),
-                 STRING_CONTENT(3306...3309)("foo"),
-                 STRING_END(3309...3310)("]"),
+                 (3303...3306),
+                 (3306...3309),
+                 (3309...3310),
                  "foo"
                )]
             ),
@@ -3611,9 +3476,9 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3349...3352)(0),
             StatementsNode(3340...3345)(
               [StringNode(3340...3345)(
-                 STRING_BEGIN(3340...3341)("\""),
-                 STRING_CONTENT(3341...3344)("foo"),
-                 STRING_END(3344...3345)("\""),
+                 (3340...3341),
+                 (3341...3344),
+                 (3344...3345),
                  "foo"
                )]
             ),

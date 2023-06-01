@@ -38,24 +38,9 @@ ProgramNode(0...42)(
             (18...20)
           ),
           ArrayNode(27...42)(
-            [StringNode(28...31)(
-               STRING_BEGIN(28...29)("\""),
-               STRING_CONTENT(29...30)("a"),
-               STRING_END(30...31)("\""),
-               "a"
-             ),
-             StringNode(33...36)(
-               STRING_BEGIN(33...34)("\""),
-               STRING_CONTENT(34...35)("b"),
-               STRING_END(35...36)("\""),
-               "b"
-             ),
-             StringNode(38...41)(
-               STRING_BEGIN(38...39)("\""),
-               STRING_CONTENT(39...40)("c"),
-               STRING_END(40...41)("\""),
-               "c"
-             )],
+            [StringNode(28...31)((28...29), (29...30), (30...31), "a"),
+             StringNode(33...36)((33...34), (34...35), (35...36), "b"),
+             StringNode(38...41)((38...39), (39...40), (40...41), "c")],
             (27...28),
             (41...42)
           )]

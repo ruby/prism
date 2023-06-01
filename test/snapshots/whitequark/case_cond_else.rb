@@ -16,23 +16,13 @@ ProgramNode(0...38)(
              "foo"
            )],
           StatementsNode(16...21)(
-            [StringNode(16...21)(
-               STRING_BEGIN(16...17)("'"),
-               STRING_CONTENT(17...20)("foo"),
-               STRING_END(20...21)("'"),
-               "foo"
-             )]
+            [StringNode(16...21)((16...17), (17...20), (20...21), "foo")]
           )
         )],
        ElseNode(23...38)(
          (23...27),
          StatementsNode(28...33)(
-           [StringNode(28...33)(
-              STRING_BEGIN(28...29)("'"),
-              STRING_CONTENT(29...32)("bar"),
-              STRING_END(32...33)("'"),
-              "bar"
-            )]
+           [StringNode(28...33)((28...29), (29...32), (32...33), "bar")]
          ),
          (35...38)
        ),

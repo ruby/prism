@@ -20,12 +20,7 @@ ProgramNode(0...37)(
             nil,
             "foo"
           ),
-          StringNode(30...35)(
-            STRING_BEGIN(30...31)("\""),
-            STRING_CONTENT(31...34)("bar"),
-            STRING_END(34...35)("\""),
-            "bar"
-          ),
+          StringNode(30...35)((30...31), (31...34), (34...35), "bar"),
           (27...29)
         )],
        (36...37)

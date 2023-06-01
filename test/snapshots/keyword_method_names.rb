@@ -96,18 +96,8 @@ ProgramNode(0...185)(
        nil,
        (110...113)
      ),
-     StringNode(115...121)(
-       STRING_BEGIN(115...117)("%{"),
-       STRING_CONTENT(117...120)("abc"),
-       STRING_END(120...121)("}"),
-       "abc"
-     ),
-     StringNode(123...129)(
-       STRING_BEGIN(123...125)("%\""),
-       STRING_CONTENT(125...128)("abc"),
-       STRING_END(128...129)("\""),
-       "abc"
-     ),
+     StringNode(115...121)((115...117), (117...120), (120...121), "abc"),
+     StringNode(123...129)((123...125), (125...128), (128...129), "abc"),
      DefNode(131...149)(
        IDENTIFIER(144...145)("a"),
        SourceFileNode(135...143)("/fixtures/keyword_method_names.rb"),

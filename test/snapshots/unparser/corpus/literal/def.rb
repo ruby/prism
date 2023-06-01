@@ -942,9 +942,9 @@ ProgramNode(0...913)(
           KeywordParameterNode(837...849)(
             (837...841),
             StringNode(842...849)(
-              STRING_BEGIN(842...843)("\""),
-              STRING_CONTENT(843...848)("value"),
-              STRING_END(848...849)("\""),
+              (842...843),
+              (843...848),
+              (848...849),
               "value"
             )
           )],
@@ -967,19 +967,9 @@ ProgramNode(0...913)(
        StatementsNode(864...893)(
          [InterpolatedStringNode(864...893)(
             (864...874),
-            [StringNode(875...879)(
-               nil,
-               STRING_CONTENT(875...879)("    "),
-               nil,
-               "    "
-             ),
+            [StringNode(875...879)(nil, (875...879), nil, "    "),
              StringInterpolatedNode(879...882)((879...881), nil, (881...882)),
-             StringNode(882...883)(
-               nil,
-               STRING_CONTENT(882...883)("\n"),
-               nil,
-               "\n"
-             )],
+             StringNode(882...883)(nil, (882...883), nil, "\n")],
             (883...893)
           )]
        ),
@@ -996,12 +986,7 @@ ProgramNode(0...913)(
        nil,
        nil,
        StatementsNode(906...909)(
-         [StringNode(906...909)(
-            STRING_BEGIN(906...908)("%("),
-            STRING_CONTENT(908...908)(""),
-            STRING_END(908...909)(")"),
-            ""
-          )]
+         [StringNode(906...909)((906...908), (908...908), (908...909), "")]
        ),
        [],
        (898...901),

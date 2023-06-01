@@ -29,12 +29,7 @@ ProgramNode(2...15)(
             AMPERSAND(6...7)("&"),
             nil,
             ArgumentsNode(8...10)(
-              [StringNode(8...10)(
-                 STRING_BEGIN(8...9)("'"),
-                 STRING_CONTENT(9...9)(""),
-                 STRING_END(9...10)("'"),
-                 ""
-               )]
+              [StringNode(8...10)((8...9), (9...9), (9...10), "")]
             ),
             nil,
             nil,

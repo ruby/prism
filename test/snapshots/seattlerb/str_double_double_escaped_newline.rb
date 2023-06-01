@@ -7,12 +7,7 @@ ProgramNode(0...9)(
        IDENTIFIER(0...1)("a"),
        nil,
        ArgumentsNode(2...7)(
-         [StringNode(2...7)(
-            STRING_BEGIN(2...3)("\""),
-            STRING_CONTENT(3...6)("\\\\n"),
-            STRING_END(6...7)("\""),
-            "\\n"
-          )]
+         [StringNode(2...7)((2...3), (3...6), (6...7), "\\n")]
        ),
        nil,
        nil,

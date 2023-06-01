@@ -241,12 +241,7 @@ ProgramNode(0...1194)(
        nil,
        (216...219)
      ),
-     StringNode(221...227)(
-       STRING_BEGIN(221...223)("%,"),
-       STRING_CONTENT(223...226)("abc"),
-       STRING_END(226...227)(","),
-       "abc"
-     ),
+     StringNode(221...227)((221...223), (223...226), (226...227), "abc"),
      DefNode(229...242)(
        IDENTIFIER(233...234)("a"),
        nil,
@@ -442,12 +437,7 @@ ProgramNode(0...1194)(
        nil,
        (386...389)
      ),
-     StringNode(391...397)(
-       STRING_BEGIN(391...393)("%."),
-       STRING_CONTENT(393...396)("abc"),
-       STRING_END(396...397)("."),
-       "abc"
-     ),
+     StringNode(391...397)((391...393), (393...396), (396...397), "abc"),
      DefNode(399...421)(
        IDENTIFIER(403...404)("a"),
        nil,
@@ -1027,12 +1017,7 @@ ProgramNode(0...1194)(
        StatementsNode(917...931)(
          [InterpolatedStringNode(917...931)(
             (917...918),
-            [StringNode(918...921)(
-               nil,
-               STRING_CONTENT(918...921)("foo"),
-               nil,
-               "foo"
-             ),
+            [StringNode(918...921)(nil, (918...921), nil, "foo"),
              StringInterpolatedNode(921...930)(
                (921...923),
                StatementsNode(923...929)(

@@ -10,20 +10,10 @@ ProgramNode(0...12)(
          [StringConcatNode(2...12)(
             InterpolatedStringNode(2...19)(
               (2...6),
-              [StringNode(13...17)(
-                 nil,
-                 STRING_CONTENT(13...17)("  x\n"),
-                 nil,
-                 "x\n"
-               )],
+              [StringNode(13...17)(nil, (13...17), nil, "x\n")],
               (17...19)
             ),
-            StringNode(7...12)(
-              STRING_BEGIN(7...8)("\""),
-              STRING_CONTENT(8...11)("  y"),
-              STRING_END(11...12)("\""),
-              "  y"
-            )
+            StringNode(7...12)((7...8), (8...11), (11...12), "  y")
           )]
        ),
        nil,

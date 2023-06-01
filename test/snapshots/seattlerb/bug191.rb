@@ -14,12 +14,7 @@ ProgramNode(2...20)(
          "a"
        ),
        StatementsNode(4...6)(
-         [StringNode(4...6)(
-            STRING_BEGIN(4...5)("\""),
-            STRING_CONTENT(5...5)(""),
-            STRING_END(5...6)("\""),
-            ""
-          )]
+         [StringNode(4...6)((4...5), (5...5), (5...6), "")]
        ),
        ElseNode(6...9)(
          (6...7),
@@ -52,12 +47,7 @@ ProgramNode(2...20)(
          "a"
        ),
        StatementsNode(15...17)(
-         [StringNode(15...17)(
-            STRING_BEGIN(15...16)("'"),
-            STRING_CONTENT(16...16)(""),
-            STRING_END(16...17)("'"),
-            ""
-          )]
+         [StringNode(15...17)((15...16), (16...16), (16...17), "")]
        ),
        ElseNode(17...20)(
          (17...18),

@@ -11,12 +11,7 @@ ProgramNode(0...48)(
             IDENTIFIER(15...16)("p"),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...20)(
-              [StringNode(17...20)(
-                 STRING_BEGIN(17...18)("'"),
-                 STRING_CONTENT(18...19)("a"),
-                 STRING_END(19...20)("'"),
-                 "a"
-               )]
+              [StringNode(17...20)((17...18), (18...19), (19...20), "a")]
             ),
             PARENTHESIS_RIGHT(20...21)(")"),
             nil,

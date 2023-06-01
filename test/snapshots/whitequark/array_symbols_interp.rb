@@ -29,12 +29,7 @@ ProgramNode(0...29)(
      ArrayNode(16...29)(
        [InterpolatedSymbolNode(0...28)(
           nil,
-          [StringNode(19...22)(
-             nil,
-             STRING_CONTENT(19...22)("foo"),
-             nil,
-             "foo"
-           ),
+          [StringNode(19...22)(nil, (19...22), nil, "foo"),
            StringInterpolatedNode(22...28)(
              (22...24),
              StatementsNode(24...27)(

@@ -101,12 +101,7 @@ ProgramNode(0...148)(
        ArgumentsNode(86...109)(
          [InterpolatedStringNode(86...109)(
             (86...92),
-            [StringNode(101...105)(
-               nil,
-               STRING_CONTENT(101...105)("  b\n"),
-               nil,
-               "  b\n"
-             )],
+            [StringNode(101...105)(nil, (101...105), nil, "  b\n")],
             (105...109)
           )]
        ),
@@ -141,12 +136,7 @@ ProgramNode(0...148)(
        ArgumentsNode(122...141)(
          [InterpolatedStringNode(122...141)(
             (122...128),
-            [StringNode(133...137)(
-               nil,
-               STRING_CONTENT(133...137)("  b\n"),
-               nil,
-               "  b\n"
-             )],
+            [StringNode(133...137)(nil, (133...137), nil, "  b\n")],
             (137...141)
           )]
        ),

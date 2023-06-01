@@ -3052,9 +3052,9 @@ yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
         .end = (closing->type == YP_TOKEN_NOT_PROVIDED ? content->end : closing->end)
       }
     },
-    .opening = *opening,
-    .content = *content,
-    .closing = *closing
+    .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
+    .content_loc = YP_LOCATION_TOKEN_VALUE(content),
+    .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
   };
 
   return node;
@@ -3150,9 +3150,9 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
       .type = YP_NODE_STRING_NODE,
       .location = node->base.location
     },
-    .opening = node->opening,
-    .content = node->value,
-    .closing = node->closing,
+    .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(&node->opening),
+    .content_loc = YP_LOCATION_TOKEN_VALUE(&node->value),
+    .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(&node->closing),
     .unescaped = node->unescaped
   };
 
@@ -8628,25 +8628,25 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
     yp_node_t *node = nodes->nodes[index];
 
     if (node->type != YP_NODE_STRING_NODE) continue;
-    yp_token_t *content = &((yp_string_node_t *) node)->content;
+    yp_location_t *content_loc = &((yp_string_node_t *) node)->content_loc;
 
     // If the previous node wasn't a string node, we don't want to trim
     // whitespace. This could happen after an interpolated expression or
     // variable.
     if (index == 0 || nodes->nodes[index - 1]->type == YP_NODE_STRING_NODE) {
       int cur_whitespace;
-      const char *cur_char = content->start;
+      const char *cur_char = content_loc->start;
 
-      while (cur_char && cur_char < content->end) {
+      while (cur_char && cur_char < content_loc->end) {
         // Any empty newlines aren't included in the minimum whitespace calculation
-        while (cur_char < content->end && *cur_char == '\n') cur_char++;
-        while (cur_char + 1 < content->end && *cur_char == '\r' && cur_char[1] == '\n') cur_char += 2;
+        while (cur_char < content_loc->end && *cur_char == '\n') cur_char++;
+        while (cur_char + 1 < content_loc->end && *cur_char == '\r' && cur_char[1] == '\n') cur_char += 2;
 
-        if (cur_char == content->end) break;
+        if (cur_char == content_loc->end) break;
 
         cur_whitespace = 0;
 
-        while (yp_char_is_inline_whitespace(*cur_char) && cur_char < content->end) {
+        while (yp_char_is_inline_whitespace(*cur_char) && cur_char < content_loc->end) {
           if (cur_char[0] == '\t') {
             cur_whitespace = (cur_whitespace / YP_TAB_WHITESPACE_SIZE + 1) * YP_TAB_WHITESPACE_SIZE;
           } else {

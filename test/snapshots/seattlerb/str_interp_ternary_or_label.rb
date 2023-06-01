@@ -30,12 +30,7 @@ ProgramNode(0...23)(
                StatementsNode(10...17)(
                  [CallNode(10...17)(
                     CallNode(10...14)(
-                      StringNode(10...12)(
-                        STRING_BEGIN(10...11)("\""),
-                        STRING_CONTENT(11...11)(""),
-                        STRING_END(11...12)("\""),
-                        ""
-                      ),
+                      StringNode(10...12)((10...11), (11...11), (11...12), ""),
                       nil,
                       PLUS(12...13)("+"),
                       nil,
@@ -60,9 +55,9 @@ ProgramNode(0...23)(
                     nil,
                     ArgumentsNode(15...17)(
                       [StringNode(15...17)(
-                         STRING_BEGIN(15...16)("\""),
-                         STRING_CONTENT(16...16)(""),
-                         STRING_END(16...17)("\""),
+                         (15...16),
+                         (16...16),
+                         (16...17),
                          ""
                        )]
                     ),
@@ -74,12 +69,7 @@ ProgramNode(0...23)(
                ElseNode(17...21)(
                  (17...18),
                  StatementsNode(19...21)(
-                   [StringNode(19...21)(
-                      STRING_BEGIN(19...20)("\""),
-                      STRING_CONTENT(20...20)(""),
-                      STRING_END(20...21)("\""),
-                      ""
-                    )]
+                   [StringNode(19...21)((19...20), (20...20), (20...21), "")]
                  ),
                  nil
                ),
