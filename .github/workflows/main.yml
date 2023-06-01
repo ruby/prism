@@ -49,18 +49,6 @@ jobs:
     - name: Lex ruby/ruby
       run: bundle exec rake lex:ruby
 
-  lex-rails:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2
-        bundler-cache: true
-    - name: Lex rails/rails
-      run: bundle exec rake lex:rails
-
   lex-discourse:
     runs-on: ubuntu-latest
     steps:
