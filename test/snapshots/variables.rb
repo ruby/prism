@@ -13,7 +13,7 @@ ProgramNode(0...293)(
      MultiWriteNode(18...34)(
        [ClassVariableWriteNode(18...23)((18...23), nil, nil),
         ClassVariableWriteNode(25...30)((25...30), nil, nil)],
-       EQUAL(31...32)("="),
+       (31...32),
        IntegerNode(33...34)(),
        nil,
        nil
@@ -66,7 +66,7 @@ ProgramNode(0...293)(
           nil,
           nil
         )],
-       EQUAL(105...106)("="),
+       (105...106),
        IntegerNode(107...108)(),
        nil,
        nil
@@ -83,7 +83,7 @@ ProgramNode(0...293)(
      MultiWriteNode(123...137)(
        [InstanceVariableWriteNode(123...127)((123...127), nil, nil),
         InstanceVariableWriteNode(129...133)((129...133), nil, nil)],
-       EQUAL(134...135)("="),
+       (134...135),
        IntegerNode(136...137)(),
        nil,
        nil
@@ -126,7 +126,7 @@ ProgramNode(0...293)(
      MultiWriteNode(185...198)(
        [LocalVariableWriteNode(185...188)((185...188), nil, nil, 0),
         SplatNode(190...191)((190...191), nil)],
-       EQUAL(192...193)("="),
+       (192...193),
        ArrayNode(0...198)(
          [IntegerNode(194...195)(), IntegerNode(197...198)()],
          nil,
@@ -138,7 +138,7 @@ ProgramNode(0...293)(
      MultiWriteNode(200...211)(
        [LocalVariableWriteNode(200...203)((200...203), nil, nil, 0),
         SplatNode(203...204)((203...204), nil)],
-       EQUAL(205...206)("="),
+       (205...206),
        ArrayNode(0...211)(
          [IntegerNode(207...208)(), IntegerNode(210...211)()],
          nil,
@@ -153,7 +153,7 @@ ProgramNode(0...293)(
           (218...219),
           LocalVariableWriteNode(219...222)((219...222), nil, nil, 0)
         )],
-       EQUAL(223...224)("="),
+       (223...224),
        ArrayNode(0...229)(
          [IntegerNode(225...226)(), IntegerNode(228...229)()],
          nil,
@@ -172,7 +172,7 @@ ProgramNode(0...293)(
           (236...237),
           (245...246)
         )],
-       EQUAL(247...248)("="),
+       (247...248),
        ArrayNode(0...258)(
          [IntegerNode(249...250)(),
           ArrayNode(252...258)(

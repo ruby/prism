@@ -21,7 +21,7 @@ ProgramNode(0...14)(
           nil,
           nil
         )],
-       EQUAL(8...9)("="),
+       (8...9),
        ArrayNode(0...14)(
          [IntegerNode(10...11)(), IntegerNode(13...14)()],
          nil,

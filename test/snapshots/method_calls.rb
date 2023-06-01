@@ -462,7 +462,7 @@ ProgramNode(0...1187)(
           nil,
           "bar="
         )],
-       EQUAL(190...191)("="),
+       (190...191),
        ArrayNode(0...196)(
          [IntegerNode(192...193)(), IntegerNode(195...196)()],
          nil,

@@ -12,7 +12,7 @@ ProgramNode(0...15)(
           nil,
           nil
         )],
-       EQUAL(9...10)("="),
+       (9...10),
        ArrayNode(0...15)(
          [IntegerNode(11...12)(), IntegerNode(14...15)()],
          nil,

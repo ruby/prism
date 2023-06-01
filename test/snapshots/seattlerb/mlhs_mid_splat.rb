@@ -18,7 +18,7 @@ ProgramNode(0...24)(
         LocalVariableWriteNode(13...14)((13...14), nil, nil, 0),
         LocalVariableWriteNode(16...17)((16...17), nil, nil, 0),
         LocalVariableWriteNode(19...20)((19...20), nil, nil, 0)],
-       EQUAL(21...22)("="),
+       (21...22),
        CallNode(23...24)(
          nil,
          nil,

@@ -13,7 +13,7 @@ ProgramNode(0...63)(
           "A="
         ),
         LocalVariableWriteNode(8...11)((8...11), nil, nil, 0)],
-       EQUAL(12...13)("="),
+       (12...13),
        LocalVariableReadNode(14...17)(0),
        nil,
        nil
@@ -41,7 +41,7 @@ ProgramNode(0...63)(
           nil,
           "[]="
         )],
-       EQUAL(38...39)("="),
+       (38...39),
        LocalVariableReadNode(40...43)(0),
        nil,
        nil
@@ -58,7 +58,7 @@ ProgramNode(0...63)(
           "a="
         ),
         LocalVariableWriteNode(54...57)((54...57), nil, nil, 0)],
-       EQUAL(58...59)("="),
+       (58...59),
        LocalVariableReadNode(60...63)(0),
        nil,
        nil

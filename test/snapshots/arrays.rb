@@ -423,7 +423,7 @@ ProgramNode(0...502)(
           nil,
           "[]="
         )],
-       EQUAL(206...207)("="),
+       (206...207),
        ArrayNode(0...212)(
          [IntegerNode(208...209)(), IntegerNode(211...212)()],
          nil,

@@ -12,7 +12,7 @@ ProgramNode(0...15)(
           (9...10),
           LocalVariableWriteNode(10...11)((10...11), nil, nil, 0)
         )],
-       EQUAL(12...13)("="),
+       (12...13),
        CallNode(14...15)(
          nil,
          nil,

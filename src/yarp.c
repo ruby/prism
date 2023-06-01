@@ -2250,7 +2250,7 @@ yp_multi_write_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_n
       .type = YP_NODE_MULTI_WRITE_NODE,
       .location = { .start = NULL, .end = NULL },
     },
-    .operator = *operator,
+    .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
     .value = value,
     .lparen_loc = *lparen_loc,
     .rparen_loc = *rparen_loc
@@ -2272,6 +2272,11 @@ yp_multi_write_node_targets_append(yp_multi_write_node_t *node, yp_node_t *targe
   if (node->base.location.end == NULL || (node->base.location.end < target->location.end)) {
     node->base.location.end = target->location.end;
   }
+}
+
+static inline void
+yp_multi_write_node_operator_loc_set(yp_multi_write_node_t *node, const yp_token_t *operator) {
+  node->operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
 }
 
 // Allocate and initialize a new NextNode node.
@@ -7008,7 +7013,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
     }
     case YP_NODE_MULTI_WRITE_NODE: {
       yp_multi_write_node_t *multi_write = (yp_multi_write_node_t *) target;
-      multi_write->operator = *operator;
+      yp_multi_write_node_operator_loc_set(multi_write, operator);
 
       if (value != NULL) {
         multi_write->value = value;

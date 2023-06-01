@@ -1163,8 +1163,8 @@ nodes:
     child_nodes:
       - name: targets
         type: node[]
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: value
         type: node?
       - name: lparen_loc

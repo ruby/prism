@@ -15,7 +15,7 @@ ProgramNode(0...991)(
                 [MultiWriteNode(21...30)(
                    [LocalVariableWriteNode(21...22)((21...22), nil, nil, 0),
                     LocalVariableWriteNode(24...25)((24...25), nil, nil, 0)],
-                   EQUAL(27...28)("="),
+                   (27...28),
                    CallNode(29...30)(
                      nil,
                      nil,

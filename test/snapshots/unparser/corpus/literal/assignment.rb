@@ -21,7 +21,7 @@ ProgramNode(0...719)(
           nil,
           nil
         )],
-       EQUAL(16...17)("="),
+       (16...17),
        ArrayNode(18...24)(
          [IntegerNode(19...20)(), IntegerNode(22...23)()],
          (18...19),
@@ -40,7 +40,7 @@ ProgramNode(0...719)(
           (29...30)
         ),
         LocalVariableWriteNode(32...33)((32...33), nil, nil, 0)],
-       EQUAL(35...36)("="),
+       (35...36),
        IntegerNode(37...38)(),
        (25...26),
        (33...34)
@@ -50,7 +50,7 @@ ProgramNode(0...719)(
           (40...41),
           LocalVariableWriteNode(41...42)((41...42), nil, nil, 0)
         )],
-       EQUAL(44...45)("="),
+       (44...45),
        ArrayNode(46...48)([], (46...47), (47...48)),
        (39...40),
        (42...43)
@@ -60,7 +60,7 @@ ProgramNode(0...719)(
           (50...51),
           LocalVariableWriteNode(51...54)((51...54), nil, nil, 0)
         )],
-       EQUAL(56...57)("="),
+       (56...57),
        ArrayNode(58...64)(
          [IntegerNode(59...60)(), IntegerNode(62...63)()],
          (58...59),
@@ -72,7 +72,7 @@ ProgramNode(0...719)(
      MultiWriteNode(66...84)(
        [ClassVariableWriteNode(66...69)((66...69), nil, nil),
         ClassVariableWriteNode(71...74)((71...74), nil, nil)],
-       EQUAL(76...77)("="),
+       (76...77),
        ArrayNode(78...84)(
          [IntegerNode(79...80)(), IntegerNode(82...83)()],
          (78...79),
@@ -84,7 +84,7 @@ ProgramNode(0...719)(
      MultiWriteNode(86...102)(
        [InstanceVariableWriteNode(86...88)((86...88), nil, nil),
         InstanceVariableWriteNode(90...92)((90...92), nil, nil)],
-       EQUAL(94...95)("="),
+       (94...95),
        ArrayNode(96...102)(
          [IntegerNode(97...98)(), IntegerNode(100...101)()],
          (96...97),
@@ -103,7 +103,7 @@ ProgramNode(0...719)(
           (107...108),
           (112...113)
         )],
-       EQUAL(115...116)("="),
+       (115...116),
        ArrayNode(117...128)(
          [IntegerNode(118...119)(),
           ArrayNode(121...127)(
@@ -120,7 +120,7 @@ ProgramNode(0...719)(
      MultiWriteNode(130...144)(
        [LocalVariableWriteNode(130...131)((130...131), nil, nil, 0),
         SplatNode(133...134)((133...134), nil)],
-       EQUAL(136...137)("="),
+       (136...137),
        ArrayNode(138...144)(
          [IntegerNode(139...140)(), IntegerNode(142...143)()],
          (138...139),
@@ -135,7 +135,7 @@ ProgramNode(0...719)(
           (149...150),
           LocalVariableWriteNode(150...153)((150...153), nil, nil, 0)
         )],
-       EQUAL(155...156)("="),
+       (155...156),
        ArrayNode(157...163)(
          [IntegerNode(158...159)(), IntegerNode(161...162)()],
          (157...158),
@@ -147,7 +147,7 @@ ProgramNode(0...719)(
      MultiWriteNode(165...179)(
        [LocalVariableWriteNode(165...166)((165...166), nil, nil, 0),
         LocalVariableWriteNode(168...169)((168...169), nil, nil, 0)],
-       EQUAL(171...172)("="),
+       (171...172),
        ArrayNode(173...179)(
          [IntegerNode(174...175)(), IntegerNode(177...178)()],
          (173...174),
@@ -159,7 +159,7 @@ ProgramNode(0...719)(
      MultiWriteNode(181...192)(
        [LocalVariableWriteNode(181...182)((181...182), nil, nil, 0),
         LocalVariableWriteNode(184...185)((184...185), nil, nil, 0)],
-       EQUAL(187...188)("="),
+       (187...188),
        LocalVariableReadNode(189...192)(0),
        (180...181),
        (185...186)
@@ -167,7 +167,7 @@ ProgramNode(0...719)(
      MultiWriteNode(194...203)(
        [LocalVariableWriteNode(194...195)((194...195), nil, nil, 0),
         SplatNode(195...196)((195...196), nil)],
-       EQUAL(198...199)("="),
+       (198...199),
        LocalVariableReadNode(200...203)(0),
        (193...194),
        (196...197)
@@ -193,7 +193,7 @@ ProgramNode(0...719)(
           nil,
           "bar="
         )],
-       EQUAL(219...220)("="),
+       (219...220),
        ArrayNode(221...227)(
          [IntegerNode(222...223)(), IntegerNode(225...226)()],
          (221...222),
@@ -228,7 +228,7 @@ ProgramNode(0...719)(
           nil,
           "[]="
         )],
-       EQUAL(244...245)("="),
+       (244...245),
        ArrayNode(246...252)(
          [IntegerNode(247...248)(), IntegerNode(250...251)()],
          (246...247),
@@ -258,7 +258,7 @@ ProgramNode(0...719)(
           nil,
           "[]="
         )],
-       EQUAL(266...267)("="),
+       (266...267),
        ArrayNode(268...274)(
          [IntegerNode(269...270)(), IntegerNode(272...273)()],
          (268...269),
@@ -281,7 +281,7 @@ ProgramNode(0...719)(
             "foo="
           )
         )],
-       EQUAL(284...285)("="),
+       (284...285),
        IntegerNode(286...287)(),
        (275...276),
        (282...283)
@@ -334,7 +334,7 @@ ProgramNode(0...719)(
            [MultiWriteNode(357...366)(
               [LocalVariableWriteNode(357...358)((357...358), nil, nil, 0),
                LocalVariableWriteNode(360...361)((360...361), nil, nil, 0)],
-              EQUAL(363...364)("="),
+              (363...364),
               IntegerNode(365...366)(),
               (356...357),
               (361...362)

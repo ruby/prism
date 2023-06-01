@@ -20,7 +20,7 @@ ProgramNode(0...56)(
            [MultiWriteNode(40...54)(
               [LocalVariableWriteNode(40...41)((40...41), nil, nil, 0),
                LocalVariableWriteNode(43...44)((43...44), nil, nil, 0)],
-              EQUAL(46...47)("="),
+              (46...47),
               ArrayNode(48...54)(
                 [IntegerNode(49...50)(), IntegerNode(52...53)()],
                 (48...49),
