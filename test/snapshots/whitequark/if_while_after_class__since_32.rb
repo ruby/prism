@@ -3,14 +3,14 @@ ProgramNode(0...178)(
   StatementsNode(0...178)(
     [ClassNode(0...38)(
        [],
-       KEYWORD_CLASS(0...5)("class"),
+       (0...5),
        ConstantPathNode(6...33)(
          IfNode(6...25)(
-           KEYWORD_IF(6...8)("if"),
+           (6...8),
            TrueNode(9...13)(),
            StatementsNode(15...21)([ConstantReadNode(15...21)()]),
            nil,
-           KEYWORD_END(22...25)("end")
+           (22...25)
          ),
          ConstantReadNode(27...33)(),
          (25...27)
@@ -18,14 +18,14 @@ ProgramNode(0...178)(
        nil,
        nil,
        nil,
-       KEYWORD_END(35...38)("end")
+       (35...38)
      ),
      ClassNode(40...87)(
        [],
-       KEYWORD_CLASS(40...45)("class"),
+       (40...45),
        ConstantPathNode(46...82)(
          WhileNode(46...74)(
-           KEYWORD_WHILE(46...51)("while"),
+           (46...51),
            TrueNode(52...56)(),
            StatementsNode(58...70)(
              [BreakNode(58...70)(
@@ -40,31 +40,31 @@ ProgramNode(0...178)(
        nil,
        nil,
        nil,
-       KEYWORD_END(84...87)("end")
+       (84...87)
      ),
      ModuleNode(89...128)(
        [],
-       KEYWORD_MODULE(89...95)("module"),
+       (89...95),
        ConstantPathNode(96...123)(
          IfNode(96...115)(
-           KEYWORD_IF(96...98)("if"),
+           (96...98),
            TrueNode(99...103)(),
            StatementsNode(105...111)([ConstantReadNode(105...111)()]),
            nil,
-           KEYWORD_END(112...115)("end")
+           (112...115)
          ),
          ConstantReadNode(117...123)(),
          (115...117)
        ),
        nil,
-       KEYWORD_END(125...128)("end")
+       (125...128)
      ),
      ModuleNode(130...178)(
        [],
-       KEYWORD_MODULE(130...136)("module"),
+       (130...136),
        ConstantPathNode(137...173)(
          WhileNode(137...165)(
-           KEYWORD_WHILE(137...142)("while"),
+           (137...142),
            TrueNode(143...147)(),
            StatementsNode(149...161)(
              [BreakNode(149...161)(
@@ -77,7 +77,7 @@ ProgramNode(0...178)(
          (165...167)
        ),
        nil,
-       KEYWORD_END(175...178)("end")
+       (175...178)
      )]
   )
 )

@@ -2,14 +2,9 @@ ProgramNode(0...26)(
   [],
   StatementsNode(0...26)(
     [InterpolatedStringNode(0...26)(
-       HEREDOC_START(0...6)("<<-EOE"),
-       [StringNode(7...23)(
-          nil,
-          STRING_CONTENT(7...23)(" some\n" + " heredocs\n"),
-          nil,
-          " some\n" + " heredocs\n"
-        )],
-       HEREDOC_END(23...26)("EOE")
+       (0...6),
+       [StringNode(7...23)(nil, (7...23), nil, " some\n" + " heredocs\n")],
+       (23...26)
      )]
   )
 )

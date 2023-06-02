@@ -4,11 +4,11 @@ ProgramNode(0...28)(
     [CaseNode(0...28)(
        nil,
        [WhenNode(6...23)(
-          KEYWORD_WHEN(6...10)("when"),
+          (6...10),
           [RegularExpressionNode(11...23)(
-             REGEXP_BEGIN(11...14)("%r%"),
-             STRING_CONTENT(14...22)("blahblah"),
-             REGEXP_END(22...23)("%"),
+             (11...14),
+             (14...22),
+             (22...23),
              "blahblah",
              0
            )],

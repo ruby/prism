@@ -22,7 +22,7 @@ ProgramNode(0...11)(
           nil,
           "c="
         )],
-       EQUAL(8...9)("="),
+       (8...9),
        CallNode(10...11)(
          nil,
          nil,

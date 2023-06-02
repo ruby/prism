@@ -2,7 +2,7 @@ ProgramNode(0...25)(
   [],
   StatementsNode(0...25)(
     [DefNode(0...25)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        ParametersNode(8...10)(
          [],
@@ -10,7 +10,7 @@ ProgramNode(0...25)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(8...10)(USTAR_STAR(8...10)("**"), nil),
+         KeywordRestParameterNode(8...10)((8...10), nil),
          nil
        ),
        StatementsNode(13...20)(

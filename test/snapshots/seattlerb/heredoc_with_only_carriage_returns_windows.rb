@@ -2,14 +2,14 @@ ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
     [InterpolatedStringNode(0...23)(
-       HEREDOC_START(0...5)("<<EOS"),
+       (0...5),
        [StringNode(7...18)(
           nil,
-          STRING_CONTENT(7...18)("\r\r\n" + "\r\r\r\n" + "\\r\r\n"),
+          (7...18),
           nil,
           "\r\r\n" + "\r\r\r\n" + "\r\r\n"
         )],
-       HEREDOC_END(18...23)("EOS\r\n")
+       (18...23)
      )]
   )
 )

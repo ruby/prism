@@ -7,7 +7,7 @@ ProgramNode(0...13)(
          ConstantReadNode(5...8)(),
          (3...5)
        ),
-       EQUAL(9...10)("="),
+       (9...10),
        IntegerNode(11...13)()
      )]
   )

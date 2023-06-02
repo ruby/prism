@@ -14,15 +14,12 @@ ProgramNode(0...17)(
            ParametersNode(5...14)(
              [],
              [OptionalParameterNode(5...10)(
-                IDENTIFIER(5...6)("b"),
-                EQUAL(7...8)("="),
+                (5...6),
+                (7...8),
                 IntegerNode(9...10)()
               )],
              [],
-             RestParameterNode(12...14)(
-               USTAR(12...13)("*"),
-               IDENTIFIER(13...14)("c")
-             ),
+             RestParameterNode(12...14)((12...13), (13...14)),
              [],
              nil,
              nil

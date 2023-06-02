@@ -24,17 +24,10 @@ ProgramNode(0...148)(
          BeginNode(0...29)(
            nil,
            nil,
-           RescueNode(19...25)(
-             KEYWORD_RESCUE(19...25)("rescue"),
-             [],
-             nil,
-             nil,
-             nil,
-             nil
-           ),
+           RescueNode(19...25)((19...25), [], nil, nil, nil, nil),
            nil,
            nil,
-           KEYWORD_END(26...29)("end")
+           (26...29)
          ),
          (16...18),
          (26...29)
@@ -54,7 +47,7 @@ ProgramNode(0...148)(
          StatementsNode(40...60)(
            [RescueModifierNode(40...54)(
               NilNode(40...43)(),
-              KEYWORD_RESCUE_MODIFIER(44...50)("rescue"),
+              (44...50),
               NilNode(51...54)()
             ),
             NilNode(57...60)()]
@@ -100,14 +93,9 @@ ProgramNode(0...148)(
        PARENTHESIS_LEFT(85...86)("("),
        ArgumentsNode(86...109)(
          [InterpolatedStringNode(86...109)(
-            HEREDOC_START(86...92)("<<-DOC"),
-            [StringNode(101...105)(
-               nil,
-               STRING_CONTENT(101...105)("  b\n"),
-               nil,
-               "  b\n"
-             )],
-            HEREDOC_END(105...109)("DOC\n")
+            (86...92),
+            [StringNode(101...105)(nil, (101...105), nil, "  b\n")],
+            (105...109)
           )]
        ),
        PARENTHESIS_RIGHT(92...93)(")"),
@@ -140,14 +128,9 @@ ProgramNode(0...148)(
        PARENTHESIS_LEFT(121...122)("("),
        ArgumentsNode(122...141)(
          [InterpolatedStringNode(122...141)(
-            HEREDOC_START(122...128)("<<-DOC"),
-            [StringNode(133...137)(
-               nil,
-               STRING_CONTENT(133...137)("  b\n"),
-               nil,
-               "  b\n"
-             )],
-            HEREDOC_END(137...141)("DOC\n")
+            (122...128),
+            [StringNode(133...137)(nil, (133...137), nil, "  b\n")],
+            (137...141)
           )]
        ),
        PARENTHESIS_RIGHT(128...129)(")"),

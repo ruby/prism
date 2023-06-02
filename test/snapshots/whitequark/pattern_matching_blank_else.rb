@@ -9,11 +9,7 @@ ProgramNode(0...26)(
           (8...10),
           nil
         )],
-       ElseNode(17...26)(
-         KEYWORD_ELSE(17...21)("else"),
-         StatementsNode(0...0)([]),
-         KEYWORD_END(23...26)("end")
-       ),
+       ElseNode(17...26)((17...21), StatementsNode(0...0)([]), (23...26)),
        (0...4),
        (23...26)
      )]

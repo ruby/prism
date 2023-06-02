@@ -2,15 +2,10 @@ ProgramNode(0...26)(
   [],
   StatementsNode(0...26)(
     [InterpolatedStringNode(0...26)(
-       STRING_BEGIN(0...3)("%Q["),
-       [StringNode(3...11)(
-          nil,
-          STRING_CONTENT(3...11)("before ["),
-          nil,
-          "before ["
-        ),
+       (0...3),
+       [StringNode(3...11)(nil, (3...11), nil, "before ["),
         StringInterpolatedNode(11...18)(
-          EMBEXPR_BEGIN(11...13)("\#{"),
+          (11...13),
           StatementsNode(13...17)(
             [CallNode(13...17)(
                nil,
@@ -23,15 +18,10 @@ ProgramNode(0...26)(
                "nest"
              )]
           ),
-          EMBEXPR_END(17...18)("}")
+          (17...18)
         ),
-        StringNode(18...25)(
-          nil,
-          STRING_CONTENT(18...25)("] after"),
-          nil,
-          "] after"
-        )],
-       STRING_END(25...26)("]")
+        StringNode(18...25)(nil, (18...25), nil, "] after")],
+       (25...26)
      )]
   )
 )

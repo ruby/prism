@@ -11,16 +11,11 @@ ProgramNode(0...27)(
         ),
         InterpolatedSymbolNode(17...27)(
           SYMBOL_BEGIN(17...19)(":\""),
-          [StringNode(19...22)(
-             nil,
-             STRING_CONTENT(19...22)("foo"),
-             nil,
-             "foo"
-           ),
+          [StringNode(19...22)(nil, (19...22), nil, "foo"),
            StringInterpolatedNode(22...26)(
-             EMBEXPR_BEGIN(22...24)("\#{"),
+             (22...24),
              StatementsNode(24...25)([IntegerNode(24...25)()]),
-             EMBEXPR_END(25...26)("}")
+             (25...26)
            )],
           STRING_END(26...27)("\"")
         )],

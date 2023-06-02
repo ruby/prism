@@ -2,7 +2,7 @@ ProgramNode(0...188)(
   [IDENTIFIER(36...39)("foo"), IDENTIFIER(83...84)("a")],
   StatementsNode(0...188)(
     [UntilNode(0...13)(
-       KEYWORD_UNTIL_MODIFIER(2...7)("until"),
+       (2...7),
        CallNode(8...13)(
          nil,
          nil,
@@ -27,7 +27,7 @@ ProgramNode(0...188)(
        )
      ),
      UntilNode(15...34)(
-       KEYWORD_UNTIL(15...20)("until"),
+       (15...20),
        CallNode(21...26)(
          nil,
          nil,
@@ -52,7 +52,7 @@ ProgramNode(0...188)(
        )
      ),
      WhileNode(36...55)(
-       KEYWORD_WHILE_MODIFIER(46...51)("while"),
+       (46...51),
        LocalVariableReadNode(52...55)(0),
        StatementsNode(36...45)(
          [LocalVariableWriteNode(36...45)(
@@ -73,7 +73,7 @@ ProgramNode(0...188)(
        )
      ),
      UntilNode(57...75)(
-       KEYWORD_UNTIL_MODIFIER(59...64)("until"),
+       (59...64),
        AndNode(65...75)(
          CallNode(65...66)(
            nil,
@@ -95,7 +95,7 @@ ProgramNode(0...188)(
            BlockNode(72...75)([], nil, nil, (72...73), (74...75)),
            "a"
          ),
-         AMPERSAND_AMPERSAND(67...69)("&&")
+         (67...69)
        ),
        StatementsNode(57...58)(
          [CallNode(57...58)(
@@ -111,7 +111,7 @@ ProgramNode(0...188)(
        )
      ),
      WhileNode(77...96)(
-       KEYWORD_WHILE(77...82)("while"),
+       (77...82),
        LocalVariableWriteNode(83...88)(
          (83...84),
          CallNode(87...88)(
@@ -130,18 +130,14 @@ ProgramNode(0...188)(
        StatementsNode(91...92)([LocalVariableReadNode(91...92)(0)])
      ),
      UntilNode(98...130)(
-       KEYWORD_UNTIL_MODIFIER(100...105)("until"),
+       (100...105),
        CallNode(106...130)(
          nil,
          nil,
          IDENTIFIER(106...107)("b"),
          PARENTHESIS_LEFT(107...108)("("),
          ArgumentsNode(108...123)(
-           [InterpolatedStringNode(108...123)(
-              HEREDOC_START(108...114)("<<-FOO"),
-              [],
-              HEREDOC_END(119...123)("FOO\n")
-            )]
+           [InterpolatedStringNode(108...123)((108...114), [], (119...123))]
          ),
          PARENTHESIS_RIGHT(114...115)(")"),
          BlockNode(116...130)(
@@ -168,7 +164,7 @@ ProgramNode(0...188)(
      ),
      ModuleNode(132...188)(
        [IDENTIFIER(143...146)("foo")],
-       KEYWORD_MODULE(132...138)("module"),
+       (132...138),
        ConstantReadNode(139...140)(),
        StatementsNode(143...184)(
          [LocalVariableWriteNode(143...152)(
@@ -187,7 +183,7 @@ ProgramNode(0...188)(
             0
           ),
           WhileNode(155...184)(
-            KEYWORD_WHILE(155...160)("while"),
+            (155...160),
             LocalVariableReadNode(161...164)(0),
             StatementsNode(169...178)(
               [LocalVariableWriteNode(169...178)(
@@ -208,7 +204,7 @@ ProgramNode(0...188)(
             )
           )]
        ),
-       KEYWORD_END(185...188)("end")
+       (185...188)
      )]
   )
 )

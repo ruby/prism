@@ -253,8 +253,8 @@ ProgramNode(0...402)(
            ParametersNode(155...163)(
              [],
              [OptionalParameterNode(155...163)(
-                IDENTIFIER(155...156)("a"),
-                EQUAL(157...158)("="),
+                (155...156),
+                (157...158),
                 CallNode(159...163)(
                   CallNode(159...160)(
                     nil,
@@ -304,17 +304,10 @@ ProgramNode(0...402)(
          BeginNode(0...187)(
            nil,
            nil,
-           RescueNode(177...183)(
-             KEYWORD_RESCUE(177...183)("rescue"),
-             [],
-             nil,
-             nil,
-             nil,
-             nil
-           ),
+           RescueNode(177...183)((177...183), [], nil, nil, nil, nil),
            nil,
            nil,
-           KEYWORD_END(184...187)("end")
+           (184...187)
          ),
          (174...176),
          (184...187)
@@ -433,13 +426,13 @@ ProgramNode(0...402)(
            ParametersNode(260...272)(
              [RequiredParameterNode(260...261)()],
              [OptionalParameterNode(263...268)(
-                IDENTIFIER(263...264)("y"),
-                EQUAL(265...266)("="),
+                (263...264),
+                (265...266),
                 IntegerNode(267...268)()
               )],
              [],
              nil,
-             [KeywordParameterNode(270...272)(LABEL(270...272)("z:"), nil)],
+             [KeywordParameterNode(270...272)((270...272), nil)],
              nil,
              nil
            ),
@@ -588,11 +581,11 @@ ProgramNode(0...402)(
                   [],
                   nil,
                   [KeywordParameterNode(365...369)(
-                     LABEL(365...367)("a:"),
+                     (365...367),
                      IntegerNode(368...369)()
                    ),
                    KeywordParameterNode(373...377)(
-                     LABEL(373...375)("b:"),
+                     (373...375),
                      IntegerNode(376...377)()
                    )],
                   nil,
@@ -627,7 +620,7 @@ ProgramNode(0...402)(
              [RequiredParameterNode(393...396)()],
              [],
              [],
-             RestParameterNode(396...397)(COMMA(396...397)(","), nil),
+             RestParameterNode(396...397)((396...397), nil),
              [],
              nil,
              nil

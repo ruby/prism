@@ -16,12 +16,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(4...7)("bar"),
        nil,
        ArgumentsNode(8...14)(
-         [StringNode(8...14)(
-            STRING_BEGIN(8...10)("%{"),
-            STRING_CONTENT(10...13)("baz"),
-            STRING_END(13...14)("}"),
-            "baz"
-          )]
+         [StringNode(8...14)((8...10), (10...13), (13...14), "baz")]
        ),
        nil,
        nil,
@@ -340,7 +335,7 @@ ProgramNode(0...1187)(
        PARENTHESIS_LEFT(146...147)("("),
        ArgumentsNode(147...152)(
          [SplatNode(147...152)(
-            USTAR(147...148)("*"),
+            (147...148),
             CallNode(148...152)(
               nil,
               nil,
@@ -467,7 +462,7 @@ ProgramNode(0...1187)(
           nil,
           "bar="
         )],
-       EQUAL(190...191)("="),
+       (190...191),
        ArrayNode(0...196)(
          [IntegerNode(192...193)(), IntegerNode(195...196)()],
          nil,
@@ -564,7 +559,7 @@ ProgramNode(0...1187)(
        "b"
      ),
      IfNode(228...261)(
-       KEYWORD_IF_MODIFIER(239...241)("if"),
+       (239...241),
        AndNode(242...261)(
          OrNode(242...253)(
            CallNode(242...246)(
@@ -599,7 +594,7 @@ ProgramNode(0...1187)(
            nil,
            "qux"
          ),
-         KEYWORD_AND(254...257)("and")
+         (254...257)
        ),
        StatementsNode(228...238)(
          [CallNode(228...238)(
@@ -659,7 +654,7 @@ ProgramNode(0...1187)(
        PARENTHESIS_LEFT(283...284)("("),
        ArgumentsNode(284...289)(
          [SplatNode(284...289)(
-            USTAR(284...285)("*"),
+            (284...285),
             CallNode(285...289)(
               nil,
               nil,
@@ -709,10 +704,10 @@ ProgramNode(0...1187)(
                     nil,
                     "y"
                   )],
-                 BRACKET_LEFT_ARRAY(306...307)("["),
-                 BRACKET_RIGHT(313...314)("]")
+                 (306...307),
+                 (313...314)
                ),
-               EQUAL_GREATER(303...305)("=>")
+               (303...305)
              ),
              AssocNode(316...324)(
                SymbolNode(316...318)(
@@ -727,7 +722,7 @@ ProgramNode(0...1187)(
                  nil,
                  "b"
                ),
-               EQUAL_GREATER(319...321)("=>")
+               (319...321)
              )]
           ),
           BlockArgumentNode(326...331)(
@@ -752,7 +747,7 @@ ProgramNode(0...1187)(
        ArgumentsNode(337...383)(
          [IntegerNode(337...340)(),
           HashNode(342...383)(
-            BRACE_LEFT(342...343)("{"),
+            (342...343),
             [AssocNode(344...361)(
                SymbolNode(344...350)(
                  SYMBOL_BEGIN(344...345)(":"),
@@ -766,14 +761,10 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(351...353)("=>")
+               (351...353)
              ),
              AssocSplatNode(363...367)(
-               HashNode(365...367)(
-                 BRACE_LEFT(365...366)("{"),
-                 [],
-                 BRACE_RIGHT(366...367)("}")
-               ),
+               HashNode(365...367)((365...366), [], (366...367)),
                (363...365)
              ),
              AssocNode(369...381)(
@@ -791,7 +782,7 @@ ProgramNode(0...1187)(
                ),
                nil
              )],
-            BRACE_RIGHT(382...383)("}")
+            (382...383)
           )]
        ),
        nil,
@@ -906,14 +897,10 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(452...454)("=>")
+               (452...454)
              ),
              AssocSplatNode(464...468)(
-               HashNode(466...468)(
-                 BRACE_LEFT(466...467)("{"),
-                 [],
-                 BRACE_RIGHT(467...468)("}")
-               ),
+               HashNode(466...468)((466...467), [], (467...468)),
                (464...466)
              ),
              AssocNode(470...482)(
@@ -957,14 +944,10 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(494...496)("=>")
+               (494...496)
              ),
              AssocSplatNode(506...510)(
-               HashNode(508...510)(
-                 BRACE_LEFT(508...509)("{"),
-                 [],
-                 BRACE_RIGHT(509...510)("}")
-               ),
+               HashNode(508...510)((508...509), [], (509...510)),
                (506...508)
              ),
              AssocNode(512...524)(
@@ -995,7 +978,7 @@ ProgramNode(0...1187)(
        PARENTHESIS_LEFT(530...531)("("),
        ArgumentsNode(531...562)(
          [HashNode(531...553)(
-            BRACE_LEFT(531...532)("{"),
+            (531...532),
             [AssocNode(533...540)(
                SymbolNode(533...535)(
                  nil,
@@ -1016,7 +999,7 @@ ProgramNode(0...1187)(
                FalseNode(545...550)(),
                nil
              )],
-            BRACE_RIGHT(552...553)("}")
+            (552...553)
           ),
           BlockArgumentNode(555...562)(
             SymbolNode(556...562)(
@@ -1052,7 +1035,7 @@ ProgramNode(0...1187)(
                  nil,
                  "friend"
                ),
-               EQUAL_GREATER(575...577)("=>")
+               (575...577)
              )]
           )]
        ),
@@ -1349,7 +1332,7 @@ ProgramNode(0...1187)(
                  "bar"
                ),
                HashNode(795...814)(
-                 BRACE_LEFT(795...796)("{"),
+                 (795...796),
                  [AssocNode(797...812)(
                     SymbolNode(797...801)(
                       nil,
@@ -1375,7 +1358,7 @@ ProgramNode(0...1187)(
                     ),
                     nil
                   )],
-                 BRACE_RIGHT(813...814)("}")
+                 (813...814)
                ),
                nil
              )]
@@ -1400,7 +1383,7 @@ ProgramNode(0...1187)(
                  "bar"
                ),
                HashNode(825...840)(
-                 BRACE_LEFT(825...826)("{"),
+                 (825...826),
                  [AssocSplatNode(827...838)(
                     CallNode(829...838)(
                       nil,
@@ -1420,7 +1403,7 @@ ProgramNode(0...1187)(
                     ),
                     (827...829)
                   )],
-                 BRACE_RIGHT(839...840)("}")
+                 (839...840)
                ),
                nil
              )]
@@ -1437,9 +1420,9 @@ ProgramNode(0...1187)(
        nil,
        ArgumentsNode(846...871)(
          [InterpolatedStringNode(846...871)(
-            STRING_BEGIN(846...847)("\""),
+            (846...847),
             [StringInterpolatedNode(847...870)(
-               EMBEXPR_BEGIN(847...849)("\#{"),
+               (847...849),
                StatementsNode(849...869)(
                  [CallNode(849...869)(
                     CallNode(849...852)(
@@ -1462,9 +1445,9 @@ ProgramNode(0...1187)(
                       nil,
                       StatementsNode(860...865)(
                         [StringNode(860...865)(
-                           STRING_BEGIN(860...861)("\""),
-                           STRING_CONTENT(861...864)("baz"),
-                           STRING_END(864...865)("\""),
+                           (860...861),
+                           (861...864),
+                           (864...865),
                            "baz"
                          )]
                       ),
@@ -1474,9 +1457,9 @@ ProgramNode(0...1187)(
                     "map"
                   )]
                ),
-               EMBEXPR_END(869...870)("}")
+               (869...870)
              )],
-            STRING_END(870...871)("\"")
+            (870...871)
           )]
        ),
        nil,
@@ -1491,7 +1474,7 @@ ProgramNode(0...1187)(
        ArgumentsNode(884...908)(
          [ClassNode(884...908)(
             [],
-            KEYWORD_CLASS(884...889)("class"),
+            (884...889),
             ConstantReadNode(890...893)(),
             nil,
             nil,
@@ -1507,7 +1490,7 @@ ProgramNode(0...1187)(
                  "baz"
                )]
             ),
-            KEYWORD_END(905...908)("end")
+            (905...908)
           )]
        ),
        nil,
@@ -1522,7 +1505,7 @@ ProgramNode(0...1187)(
        ArgumentsNode(914...939)(
          [ModuleNode(914...939)(
             [],
-            KEYWORD_MODULE(914...920)("module"),
+            (914...920),
             ConstantReadNode(921...924)(),
             StatementsNode(925...935)(
               [CallNode(925...935)(
@@ -1536,7 +1519,7 @@ ProgramNode(0...1187)(
                  "baz"
                )]
             ),
-            KEYWORD_END(936...939)("end")
+            (936...939)
           )]
        ),
        nil,
@@ -1560,8 +1543,8 @@ ProgramNode(0...1187)(
                BlockNode(950...956)([], nil, nil, (950...952), (953...956)),
                "baz"
              )],
-            BRACKET_LEFT_ARRAY(945...946)("["),
-            BRACKET_RIGHT(956...957)("]")
+            (945...946),
+            (956...957)
           )]
        ),
        nil,
@@ -1575,7 +1558,7 @@ ProgramNode(0...1187)(
        nil,
        ArgumentsNode(961...987)(
          [BeginNode(961...987)(
-            KEYWORD_BEGIN(961...966)("begin"),
+            (961...966),
             StatementsNode(967...983)(
               [CallNode(967...983)(
                  IntegerNode(967...968)(),
@@ -1597,7 +1580,7 @@ ProgramNode(0...1187)(
             nil,
             nil,
             nil,
-            KEYWORD_END(984...987)("end")
+            (984...987)
           )]
        ),
        nil,
@@ -1617,7 +1600,7 @@ ProgramNode(0...1187)(
             "a"
           ),
           IfNode(999...1040)(
-            KEYWORD_IF(999...1001)("if"),
+            (999...1001),
             CallNode(1002...1003)(
               nil,
               nil,
@@ -1662,7 +1645,7 @@ ProgramNode(0...1187)(
                )]
             ),
             nil,
-            KEYWORD_END(1037...1040)("end")
+            (1037...1040)
           )]
        ),
        nil,
@@ -1682,7 +1665,7 @@ ProgramNode(0...1187)(
             "a"
           ),
           WhileNode(1052...1096)(
-            KEYWORD_WHILE(1052...1057)("while"),
+            (1052...1057),
             CallNode(1058...1059)(
               nil,
               nil,
@@ -1728,7 +1711,7 @@ ProgramNode(0...1187)(
             )
           ),
           UntilNode(1100...1132)(
-            KEYWORD_UNTIL(1100...1105)("until"),
+            (1100...1105),
             CallNode(1106...1107)(
               nil,
               nil,
@@ -1764,11 +1747,7 @@ ProgramNode(0...1187)(
        "foo"
      ),
      CallNode(1134...1143)(
-       HashNode(1134...1136)(
-         BRACE_LEFT(1134...1135)("{"),
-         [],
-         BRACE_RIGHT(1135...1136)("}")
-       ),
+       HashNode(1134...1136)((1134...1135), [], (1135...1136)),
        nil,
        PLUS(1137...1138)("+"),
        nil,
@@ -1789,11 +1768,7 @@ ProgramNode(0...1187)(
        "+"
      ),
      CallNode(1145...1161)(
-       HashNode(1145...1147)(
-         BRACE_LEFT(1145...1146)("{"),
-         [],
-         BRACE_RIGHT(1146...1147)("}")
-       ),
+       HashNode(1145...1147)((1145...1146), [], (1146...1147)),
        nil,
        PLUS(1148...1149)("+"),
        nil,

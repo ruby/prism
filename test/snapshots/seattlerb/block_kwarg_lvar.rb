@@ -17,7 +17,7 @@ ProgramNode(0...20)(
              [],
              nil,
              [KeywordParameterNode(6...14)(
-                LABEL(6...9)("kw:"),
+                (6...9),
                 SymbolNode(10...14)(
                   SYMBOL_BEGIN(10...11)(":"),
                   IDENTIFIER(11...14)("val"),

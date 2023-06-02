@@ -2,7 +2,7 @@ ProgramNode(0...8)(
   [],
   StatementsNode(0...8)(
     [YieldNode(0...8)(
-       KEYWORD_YIELD(0...5)("yield"),
+       (0...5),
        nil,
        ArgumentsNode(6...8)([IntegerNode(6...8)()]),
        nil

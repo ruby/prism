@@ -2,13 +2,13 @@ ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
     [DefNode(0...23)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        ParametersNode(8...9)(
          [],
          [],
          [],
-         RestParameterNode(8...9)(USTAR(8...9)("*"), nil),
+         RestParameterNode(8...9)((8...9), nil),
          [],
          nil,
          nil
@@ -19,9 +19,7 @@ ProgramNode(0...23)(
             nil,
             IDENTIFIER(12...15)("bar"),
             PARENTHESIS_LEFT(15...16)("("),
-            ArgumentsNode(16...17)(
-              [SplatNode(16...17)(USTAR(16...17)("*"), nil)]
-            ),
+            ArgumentsNode(16...17)([SplatNode(16...17)((16...17), nil)]),
             PARENTHESIS_RIGHT(17...18)(")"),
             nil,
             "bar"

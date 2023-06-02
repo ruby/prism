@@ -1,28 +1,28 @@
-ProgramNode(0...131)(
+ProgramNode(0...144)(
   [],
-  StatementsNode(0...131)(
+  StatementsNode(0...144)(
     [NextNode(0...4)(nil, (0...4)),
-     ReturnNode(5...11)(KEYWORD_RETURN(5...11)("return"), nil),
+     ReturnNode(5...11)((5...11), nil),
      BreakNode(12...17)(nil, (12...17)),
      RetryNode(18...23)(),
      RedoNode(24...28)(),
      ReturnNode(29...37)(
-       KEYWORD_RETURN(29...35)("return"),
+       (29...35),
        ArgumentsNode(36...37)([IntegerNode(36...37)()])
      ),
      ReturnNode(38...49)(
-       KEYWORD_RETURN(38...44)("return"),
+       (38...44),
        ArgumentsNode(45...49)([IntegerNode(45...46)(), IntegerNode(48...49)()])
      ),
      ReturnNode(50...69)(
-       KEYWORD_RETURN(50...56)("return"),
+       (50...56),
        ArgumentsNode(62...69)(
          [IfNode(62...69)(
-            QUESTION_MARK(62...63)("?"),
+            (62...63),
             TrueNode(57...61)(),
             StatementsNode(64...65)([IntegerNode(64...65)()]),
             ElseNode(66...69)(
-              COLON(66...67)(":"),
+              (66...67),
               StatementsNode(68...69)([IntegerNode(68...69)()]),
               nil
             ),
@@ -33,11 +33,11 @@ ProgramNode(0...131)(
      BreakNode(70...88)(
        ArgumentsNode(81...88)(
          [IfNode(81...88)(
-            QUESTION_MARK(81...82)("?"),
+            (81...82),
             TrueNode(76...80)(),
             StatementsNode(83...84)([IntegerNode(83...84)()]),
             ElseNode(85...88)(
-              COLON(85...86)(":"),
+              (85...86),
               StatementsNode(87...88)([IntegerNode(87...88)()]),
               nil
             ),
@@ -49,11 +49,11 @@ ProgramNode(0...131)(
      NextNode(89...106)(
        ArgumentsNode(99...106)(
          [IfNode(99...106)(
-            QUESTION_MARK(99...100)("?"),
+            (99...100),
             TrueNode(94...98)(),
             StatementsNode(101...102)([IntegerNode(101...102)()]),
             ElseNode(103...106)(
-              COLON(103...104)(":"),
+              (103...104),
               StatementsNode(105...106)([IntegerNode(105...106)()]),
               nil
             ),
@@ -62,20 +62,20 @@ ProgramNode(0...131)(
        ),
        (89...93)
      ),
-     ReturnNode(107...131)(
-       KEYWORD_RETURN(107...113)("return"),
-       ArgumentsNode(114...131)(
+     ReturnNode(107...144)(
+       (107...113),
+       ArgumentsNode(114...144)(
          [TrueNode(114...118)(),
-          IfNode(120...131)(
-            KEYWORD_IF(120...122)("if"),
+          IfNode(120...144)(
+            (120...122),
             TrueNode(123...127)(),
             StatementsNode(130...131)([IntegerNode(130...131)()]),
             ElseNode(132...144)(
-              KEYWORD_ELSE(132...136)("else"),
+              (132...136),
               StatementsNode(139...140)([IntegerNode(139...140)()]),
-              KEYWORD_END(141...144)("end")
+              (141...144)
             ),
-            KEYWORD_END(141...144)("end")
+            (141...144)
           )]
        )
      )]

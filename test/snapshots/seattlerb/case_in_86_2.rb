@@ -15,14 +15,14 @@ ProgramNode(0...43)(
             nil,
             "b"
           )],
-         BRACKET_LEFT_ARRAY(5...6)("["),
-         BRACKET_RIGHT(12...13)("]")
+         (5...6),
+         (12...13)
        ),
        [InNode(14...35)(
           ArrayPatternNode(17...30)(
             nil,
             [],
-            SplatNode(17...18)(USTAR(17...18)("*"), nil),
+            SplatNode(17...18)((17...18), nil),
             [ConstantPathNode(20...30)(
                nil,
                ConstantReadNode(22...30)(),

@@ -65,16 +65,11 @@ ProgramNode(0...116)(
      UndefNode(84...100)(
        [InterpolatedSymbolNode(90...100)(
           SYMBOL_BEGIN(90...92)(":\""),
-          [StringNode(92...95)(
-             nil,
-             STRING_CONTENT(92...95)("abc"),
-             nil,
-             "abc"
-           ),
+          [StringNode(92...95)(nil, (92...95), nil, "abc"),
            StringInterpolatedNode(95...99)(
-             EMBEXPR_BEGIN(95...97)("\#{"),
+             (95...97),
              StatementsNode(97...98)([IntegerNode(97...98)()]),
-             EMBEXPR_END(98...99)("}")
+             (98...99)
            )],
           STRING_END(99...100)("\"")
         )],

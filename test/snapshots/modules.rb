@@ -3,7 +3,7 @@ ProgramNode(0...140)(
   StatementsNode(0...140)(
     [ModuleNode(0...18)(
        [IDENTIFIER(9...10)("a")],
-       KEYWORD_MODULE(0...6)("module"),
+       (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(9...14)(
          [LocalVariableWriteNode(9...14)(
@@ -13,13 +13,13 @@ ProgramNode(0...140)(
             0
           )]
        ),
-       KEYWORD_END(15...18)("end")
+       (15...18)
      ),
      InterpolatedStringNode(20...38)(
-       STRING_BEGIN(20...23)("%Q{"),
-       [StringNode(23...27)(nil, STRING_CONTENT(23...27)("aaa "), nil, "aaa "),
+       (20...23),
+       [StringNode(23...27)(nil, (23...27), nil, "aaa "),
         StringInterpolatedNode(27...33)(
-          EMBEXPR_BEGIN(27...29)("\#{"),
+          (27...29),
           StatementsNode(29...32)(
             [CallNode(29...32)(
                nil,
@@ -32,19 +32,14 @@ ProgramNode(0...140)(
                "bbb"
              )]
           ),
-          EMBEXPR_END(32...33)("}")
+          (32...33)
         ),
-        StringNode(33...37)(
-          nil,
-          STRING_CONTENT(33...37)(" ccc"),
-          nil,
-          " ccc"
-        )],
-       STRING_END(37...38)("}")
+        StringNode(33...37)(nil, (33...37), nil, " ccc")],
+       (37...38)
      ),
      ModuleNode(40...55)(
        [],
-       KEYWORD_MODULE(40...46)("module"),
+       (40...46),
        ConstantPathNode(47...51)(
          CallNode(47...48)(
            nil,
@@ -60,11 +55,11 @@ ProgramNode(0...140)(
          (48...50)
        ),
        nil,
-       KEYWORD_END(52...55)("end")
+       (52...55)
      ),
      ModuleNode(57...85)(
        [IDENTIFIER(67...68)("x")],
-       KEYWORD_MODULE(57...63)("module"),
+       (57...63),
        ConstantReadNode(64...65)(),
        BeginNode(0...85)(
          nil,
@@ -76,30 +71,23 @@ ProgramNode(0...140)(
               0
             )]
          ),
-         RescueNode(74...80)(
-           KEYWORD_RESCUE(74...80)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(74...80)((74...80), [], nil, nil, nil, nil),
          nil,
          nil,
-         KEYWORD_END(82...85)("end")
+         (82...85)
        ),
-       KEYWORD_END(82...85)("end")
+       (82...85)
      ),
      ModuleNode(87...101)(
        [],
-       KEYWORD_MODULE(87...93)("module"),
+       (87...93),
        ConstantPathNode(94...97)(nil, ConstantReadNode(96...97)(), (94...96)),
        nil,
-       KEYWORD_END(98...101)("end")
+       (98...101)
      ),
      ModuleNode(103...120)(
        [],
-       KEYWORD_MODULE(103...109)("module"),
+       (103...109),
        ConstantPathNode(110...116)(
          CallNode(110...113)(
            ConstantReadNode(110...111)(),
@@ -115,11 +103,11 @@ ProgramNode(0...140)(
          (113...115)
        ),
        nil,
-       KEYWORD_END(117...120)("end")
+       (117...120)
      ),
      ModuleNode(122...140)(
        [],
-       KEYWORD_MODULE(122...128)("module"),
+       (122...128),
        ConstantPathNode(129...136)(
          CallNode(129...133)(
            ConstantReadNode(129...130)(),
@@ -135,7 +123,7 @@ ProgramNode(0...140)(
          (133...135)
        ),
        nil,
-       KEYWORD_END(137...140)("end")
+       (137...140)
      )]
   )
 )

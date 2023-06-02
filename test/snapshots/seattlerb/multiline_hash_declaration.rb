@@ -15,11 +15,7 @@ ProgramNode(0...43)(
                  LABEL_END(7...8)(":"),
                  "state"
                ),
-               HashNode(10...13)(
-                 BRACE_LEFT(10...11)("{"),
-                 [],
-                 BRACE_RIGHT(12...13)("}")
-               ),
+               HashNode(10...13)((10...11), [], (12...13)),
                nil
              )]
           )]
@@ -42,11 +38,7 @@ ProgramNode(0...43)(
                  LABEL_END(23...24)(":"),
                  "state"
                ),
-               HashNode(25...28)(
-                 BRACE_LEFT(25...26)("{"),
-                 [],
-                 BRACE_RIGHT(27...28)("}")
-               ),
+               HashNode(25...28)((25...26), [], (27...28)),
                nil
              )]
           )]
@@ -69,11 +61,7 @@ ProgramNode(0...43)(
                  LABEL_END(38...39)(":"),
                  "state"
                ),
-               HashNode(40...42)(
-                 BRACE_LEFT(40...41)("{"),
-                 [],
-                 BRACE_RIGHT(41...42)("}")
-               ),
+               HashNode(40...42)((40...41), [], (41...42)),
                nil
              )]
           )]

@@ -10,7 +10,7 @@ ProgramNode(0...52)(
        ),
        [InNode(8...25)(
           IfNode(11...20)(
-            KEYWORD_IF_MODIFIER(13...15)("if"),
+            (13...15),
             TrueNode(16...20)(),
             StatementsNode(11...12)([ConstantReadNode(11...12)()]),
             nil,
@@ -29,7 +29,7 @@ ProgramNode(0...52)(
         ),
         InNode(26...48)(
           UnlessNode(29...43)(
-            KEYWORD_UNLESS_MODIFIER(31...37)("unless"),
+            (31...37),
             FalseNode(38...43)(),
             StatementsNode(29...30)([ConstantReadNode(29...30)()]),
             nil,

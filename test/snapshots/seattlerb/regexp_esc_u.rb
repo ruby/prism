@@ -1,12 +1,6 @@
 ProgramNode(0...17)(
   [],
   StatementsNode(0...17)(
-    [RegularExpressionNode(0...17)(
-       REGEXP_BEGIN(0...1)("/"),
-       STRING_CONTENT(1...16)("[\\u0021-\\u0027]"),
-       REGEXP_END(16...17)("/"),
-       "[!-']",
-       0
-     )]
+    [RegularExpressionNode(0...17)((0...1), (1...16), (16...17), "[!-']", 0)]
   )
 )

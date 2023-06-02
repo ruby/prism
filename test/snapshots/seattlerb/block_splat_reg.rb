@@ -15,10 +15,7 @@ ProgramNode(0...13)(
              [],
              [],
              [RequiredParameterNode(9...10)()],
-             RestParameterNode(5...7)(
-               USTAR(5...6)("*"),
-               IDENTIFIER(6...7)("b")
-             ),
+             RestParameterNode(5...7)((5...6), (6...7)),
              [],
              nil,
              nil

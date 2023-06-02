@@ -4,13 +4,13 @@ ProgramNode(2...30)(
     [MultiWriteNode(2...13)(
        [MultiWriteNode(2...4)(
           [LocalVariableWriteNode(2...3)((2...3), nil, nil, 0),
-           SplatNode(3...4)(COMMA(3...4)(","), nil)],
+           SplatNode(3...4)((3...4), nil)],
           nil,
           nil,
           (1...2),
           (5...6)
         )],
-       EQUAL(8...9)("="),
+       (8...9),
        CallNode(10...13)(
          nil,
          nil,
@@ -34,7 +34,7 @@ ProgramNode(2...30)(
           (18...19),
           (23...24)
         )],
-       EQUAL(25...26)("="),
+       (25...26),
        CallNode(27...30)(
          nil,
          nil,

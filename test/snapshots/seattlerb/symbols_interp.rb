@@ -10,8 +10,8 @@ ProgramNode(0...15)(
           "b\#{1+1}"
         ),
         SymbolNode(13...14)(nil, STRING_CONTENT(13...14)("c"), nil, "c")],
-       PERCENT_LOWER_I(0...3)("%i("),
-       STRING_END(14...15)(")")
+       (0...3),
+       (14...15)
      )]
   )
 )

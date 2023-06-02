@@ -2,13 +2,13 @@ ProgramNode(0...21)(
   [],
   StatementsNode(0...21)(
     [DefNode(0...21)(
-       IDENTIFIER(4...5)("m"),
+       (4...5),
        nil,
        ParametersNode(6...17)(
          [],
          [OptionalParameterNode(6...17)(
-            IDENTIFIER(6...9)("arg"),
-            EQUAL(10...11)("="),
+            (6...9),
+            (10...11),
             FalseNode(12...17)()
           )],
          [],

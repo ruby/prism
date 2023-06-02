@@ -360,8 +360,8 @@ nodes:
         type: node
       - name: right
         type: node
-      - name: operator
-        type: token
+      - name: operator_loc
+        type: location
     comment: |
       Represents the use of the `&&` operator or the `and` keyword.
 
@@ -380,10 +380,10 @@ nodes:
     child_nodes:
       - name: elements
         type: node[]
-      - name: opening
-        type: token?
-      - name: closing
-        type: token?
+      - name: opening_loc
+        type: location?
+      - name: closing_loc
+        type: location?
     comment: |
       Represents an array literal. This can be a regular array using brackets or
       a special array using % like %w or %i.
@@ -427,8 +427,8 @@ nodes:
         type: node
       - name: value
         type: node?
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
     comment: |
       Represents a hash key/value pair.
 
@@ -447,8 +447,8 @@ nodes:
             ^^^^^
   - name: BeginNode
     child_nodes:
-      - name: begin_keyword
-        type: token?
+      - name: begin_keyword_loc
+        type: location?
       - name: statements
         type: node?
         kind: StatementsNode
@@ -461,8 +461,8 @@ nodes:
       - name: ensure_clause
         type: node?
         kind: EnsureNode
-      - name: end_keyword
-        type: token?
+      - name: end_keyword_loc
+        type: location?
     comment: |
       Represents a begin statement.
 
@@ -501,8 +501,8 @@ nodes:
                      ^^^^^^^^^^^^^^
   - name: BlockParameterNode
     child_nodes:
-      - name: name
-        type: token?
+      - name: name_loc
+        type: location?
       - name: operator_loc
         type: location
     comment: |
@@ -620,18 +620,18 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: class_keyword
-        type: token
+      - name: class_keyword_loc
+        type: location
       - name: constant_path
         type: node
-      - name: inheritance_operator
-        type: token?
+      - name: inheritance_operator_loc
+        type: location?
       - name: superclass
         type: node?
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents a class declaration involving the `class` keyword.
 
@@ -673,8 +673,8 @@ nodes:
     child_nodes:
       - name: target
         type: node
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: value
         type: node?
     comment: |
@@ -693,8 +693,8 @@ nodes:
           ^^^
   - name: DefNode
     child_nodes:
-      - name: name
-        type: token
+      - name: name_loc
+        type: location
       - name: receiver
         type: node?
       - name: parameters
@@ -724,12 +724,12 @@ nodes:
           ^^^^^^^^^^
   - name: DefinedNode
     child_nodes:
-      - name: lparen
-        type: token?
+      - name: lparen_loc
+        type: location?
       - name: value
         type: node
-      - name: rparen
-        type: token?
+      - name: rparen_loc
+        type: location?
       - name: keyword_loc
         type: location
     comment: |
@@ -739,13 +739,13 @@ nodes:
           ^^^^^^^^^^^
   - name: ElseNode
     child_nodes:
-      - name: else_keyword
-        type: token
+      - name: else_keyword_loc
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
-      - name: end_keyword
-        type: token?
+      - name: end_keyword_loc
+        type: location?
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
@@ -753,13 +753,13 @@ nodes:
                       ^^^^^^^^^^
   - name: EnsureNode
     child_nodes:
-      - name: ensure_keyword
-        type: token
+      - name: ensure_keyword_loc
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents an `ensure` clause in a `begin` statement.
 
@@ -866,8 +866,8 @@ nodes:
     child_nodes:
       - name: name
         type: token
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: value
         type: node?
     comment: |
@@ -877,12 +877,12 @@ nodes:
           ^^^^^^^^
   - name: HashNode
     child_nodes:
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: elements
         type: node[]
-      - name: closing
-        type: token
+      - name: closing_loc
+        type: location
     comment: |
       Represents a hash literal.
 
@@ -910,8 +910,8 @@ nodes:
                  ^^^^^^^^^^^^^^^^^^^
   - name: IfNode
     child_nodes:
-      - name: if_keyword
-        type: token
+      - name: if_keyword_loc
+        type: location
       - name: predicate
         type: node
       - name: statements
@@ -919,8 +919,8 @@ nodes:
         kind: StatementsNode
       - name: consequent
         type: node?
-      - name: end_keyword
-        type: token?
+      - name: end_keyword_loc
+        type: location?
     comment: |
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
@@ -981,12 +981,12 @@ nodes:
           ^
   - name: InterpolatedRegularExpressionNode
     child_nodes:
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: parts
         type: node[]
-      - name: closing
-        type: token
+      - name: closing_loc
+        type: location
       - name: flags
         type: uint32
     comment: |
@@ -996,12 +996,12 @@ nodes:
           ^^^^^^^^^^^^^^^^
   - name: InterpolatedStringNode
     child_nodes:
-      - name: opening
-        type: token?
+      - name: opening_loc
+        type: location?
       - name: parts
         type: node[]
-      - name: closing
-        type: token?
+      - name: closing_loc
+        type: location?
     comment: |
       Represents a string literal that contains interpolation.
 
@@ -1022,12 +1022,12 @@ nodes:
           ^^^^^^^^^^^^^^^^^
   - name: InterpolatedXStringNode
     child_nodes:
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: parts
         type: node[]
-      - name: closing
-        type: token
+      - name: closing_loc
+        type: location
     comment: |
       Represents an xstring literal that contains interpolation.
 
@@ -1044,8 +1044,8 @@ nodes:
               ^^^^
   - name: KeywordParameterNode
     child_nodes:
-      - name: name
-        type: token
+      - name: name_loc
+        type: location
       - name: value
         type: node?
     comment: |
@@ -1060,10 +1060,10 @@ nodes:
           end
   - name: KeywordRestParameterNode
     child_nodes:
-      - name: operator
-        type: token
-      - name: name
-        type: token?
+      - name: operator_loc
+        type: location
+      - name: name_loc
+        type: location?
     comment: |
       Represents a keyword rest parameter to a method, block, or lambda definition.
 
@@ -1074,8 +1074,8 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: parameters
         type: node?
         kind: BlockParametersNode
@@ -1146,14 +1146,14 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: module_keyword
-        type: token
+      - name: module_keyword_loc
+        type: location
       - name: constant_path
         type: node
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents a module declaration involving the `module` keyword.
 
@@ -1163,8 +1163,8 @@ nodes:
     child_nodes:
       - name: targets
         type: node[]
-      - name: operator
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: value
         type: node?
       - name: lparen_loc
@@ -1247,10 +1247,10 @@ nodes:
           ^^^^^^^^^^^^^^^^
   - name: OptionalParameterNode
     child_nodes:
-      - name: name
-        type: token
-      - name: equal_operator
-        type: token
+      - name: name_loc
+        type: location
+      - name: operator_loc
+        type: location
       - name: value
         type: node
     comment: |
@@ -1410,12 +1410,12 @@ nodes:
           ^^^^
   - name: RegularExpressionNode
     child_nodes:
-      - name: opening
-        type: token
-      - name: content
-        type: token
-      - name: closing
-        type: token
+      - name: opening_loc
+        type: location
+      - name: content_loc
+        type: location
+      - name: closing_loc
+        type: location
       - name: unescaped
         type: string
       - name: flags
@@ -1429,10 +1429,10 @@ nodes:
     child_nodes:
       - name: parameters
         type: node[]
-      - name: opening
-        type: token
-      - name: closing
-        type: token
+      - name: opening_loc
+        type: location
+      - name: closing_loc
+        type: location
     comment: |
       Represents a destructured required parameter node.
 
@@ -1450,8 +1450,8 @@ nodes:
     child_nodes:
       - name: expression
         type: node
-      - name: rescue_keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: rescue_expression
         type: node
     comment: |
@@ -1461,12 +1461,12 @@ nodes:
         ^^^^^^^^^^^^^^
   - name: RescueNode
     child_nodes:
-      - name: rescue_keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: exceptions
         type: node[]
-      - name: equal_greater
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: exception
         type: node?
       - name: statements
@@ -1485,10 +1485,10 @@ nodes:
           end
   - name: RestParameterNode
     child_nodes:
-      - name: operator
-        type: token
-      - name: name
-        type: token?
+      - name: operator_loc
+        type: location
+      - name: name_loc
+        type: location?
     comment: |
       Represents a rest parameter to a method, block, or lambda definition.
 
@@ -1503,8 +1503,8 @@ nodes:
           ^^^^^
   - name: ReturnNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: arguments
         type: node?
         kind: ArgumentsNode
@@ -1523,16 +1523,16 @@ nodes:
     child_nodes:
       - name: locals
         type: token[]
-      - name: class_keyword
-        type: token
-      - name: operator
-        type: token
+      - name: class_keyword_loc
+        type: location
+      - name: operator_loc
+        type: location
       - name: expression
         type: node
       - name: statements
         type: node?
-      - name: end_keyword
-        type: token
+      - name: end_keyword_loc
+        type: location
     comment: |
       Represents a singleton class declaration involving the `class` keyword.
 
@@ -1562,8 +1562,8 @@ nodes:
           ^^^^^^^^
   - name: SplatNode
     child_nodes:
-      - name: operator
-        type: token
+      - name: operator_loc
+        type: location
       - name: expression
         type: node?
     comment: |
@@ -1593,13 +1593,13 @@ nodes:
           ^^^^^^^^^^^
   - name: StringInterpolatedNode
     child_nodes:
-      - name: opening
-        type: token
+      - name: opening_loc
+        type: location
       - name: statements
         type: node?
         kind: StatementsNode
-      - name: closing
-        type: token
+      - name: closing_loc
+        type: location
     comment: |
       Represents an interpolated set of statements within a string.
 
@@ -1607,12 +1607,12 @@ nodes:
                ^^^^^^
   - name: StringNode
     child_nodes:
-      - name: opening
-        type: token?
-      - name: content
-        type: token
-      - name: closing
-        type: token?
+      - name: opening_loc
+        type: location?
+      - name: content_loc
+        type: location
+      - name: closing_loc
+        type: location?
       - name: unescaped
         type: string
     comment: |
@@ -1629,15 +1629,15 @@ nodes:
            ^^^^      ^^^^
   - name: SuperNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: lparen
-        type: token?
+      - name: keyword_loc
+        type: location
+      - name: lparen_loc
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
-      - name: rparen
-        type: token?
+      - name: rparen_loc
+        type: location?
       - name: block
         type: node?
         kind: BlockNode
@@ -1686,8 +1686,8 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^^^
   - name: UnlessNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: predicate
         type: node
       - name: statements
@@ -1696,8 +1696,8 @@ nodes:
       - name: consequent
         type: node?
         kind: ElseNode
-      - name: end_keyword
-        type: token?
+      - name: end_keyword_loc
+        type: location?
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 
@@ -1708,8 +1708,8 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^^^^
   - name: UntilNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: predicate
         type: node
       - name: statements
@@ -1725,8 +1725,8 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^
   - name: WhenNode
     child_nodes:
-      - name: when_keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: conditions
         type: node[]
       - name: statements
@@ -1739,8 +1739,8 @@ nodes:
       end
   - name: WhileNode
     child_nodes:
-      - name: keyword
-        type: token
+      - name: keyword_loc
+        type: location
       - name: predicate
         type: node
       - name: statements
@@ -1756,12 +1756,12 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^
   - name: XStringNode
     child_nodes:
-      - name: opening
-        type: token
-      - name: content
-        type: token
-      - name: closing
-        type: token
+      - name: opening_loc
+        type: location
+      - name: content_loc
+        type: location
+      - name: closing_loc
+        type: location
       - name: unescaped
         type: string
     comment: |
@@ -1771,15 +1771,15 @@ nodes:
           ^^^^^
   - name: YieldNode
     child_nodes:
-      - name: keyword
-        type: token
-      - name: lparen
-        type: token?
+      - name: keyword_loc
+        type: location
+      - name: lparen_loc
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
-      - name: rparen
-        type: token?
+      - name: rparen_loc
+        type: location?
     comment: |
       Represents the use of the `yield` keyword.
 

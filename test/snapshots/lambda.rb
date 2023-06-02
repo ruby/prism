@@ -3,7 +3,7 @@ ProgramNode(0...48)(
   StatementsNode(0...48)(
     [LambdaNode(0...11)(
        [IDENTIFIER(6...9)("foo")],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        BlockParametersNode(2...11)(
          ParametersNode(6...9)(
            [RequiredParameterNode(6...9)()],
@@ -22,7 +22,7 @@ ProgramNode(0...48)(
      ),
      LambdaNode(16...30)(
        [LABEL(19...20)("x")],
-       MINUS_GREATER(16...18)("->"),
+       (16...18),
        BlockParametersNode(18...30)(
          ParametersNode(19...29)(
            [],
@@ -30,17 +30,12 @@ ProgramNode(0...48)(
            [],
            nil,
            [KeywordParameterNode(19...29)(
-              LABEL(19...21)("x:"),
+              (19...21),
               InterpolatedStringNode(22...29)(
-                STRING_BEGIN(22...23)("\""),
-                [StringNode(23...24)(
-                   nil,
-                   STRING_CONTENT(23...24)("b"),
-                   nil,
-                   "b"
-                 ),
+                (22...23),
+                [StringNode(23...24)(nil, (23...24), nil, "b"),
                  StringInterpolatedNode(24...28)(
-                   EMBEXPR_BEGIN(24...26)("\#{"),
+                   (24...26),
                    StatementsNode(26...27)(
                      [CallNode(26...27)(
                         nil,
@@ -53,9 +48,9 @@ ProgramNode(0...48)(
                         "a"
                       )]
                    ),
-                   EMBEXPR_END(27...28)("}")
+                   (27...28)
                  )],
-                STRING_END(28...29)("\"")
+                (28...29)
               )
             )],
            nil,
@@ -69,7 +64,7 @@ ProgramNode(0...48)(
      ),
      LambdaNode(36...48)(
        [LABEL(39...40)("a")],
-       MINUS_GREATER(36...38)("->"),
+       (36...38),
        BlockParametersNode(38...48)(
          ParametersNode(39...47)(
            [],
@@ -77,7 +72,7 @@ ProgramNode(0...48)(
            [],
            nil,
            [KeywordParameterNode(39...47)(
-              LABEL(39...41)("a:"),
+              (39...41),
               CallNode(42...47)(
                 CallNode(42...43)(
                   nil,

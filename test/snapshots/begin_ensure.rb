@@ -2,7 +2,7 @@ ProgramNode(0...94)(
   [],
   StatementsNode(0...94)(
     [BeginNode(0...20)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(6...7)(
          [CallNode(6...7)(
             nil,
@@ -18,7 +18,7 @@ ProgramNode(0...94)(
        nil,
        nil,
        EnsureNode(8...20)(
-         KEYWORD_ENSURE(8...14)("ensure"),
+         (8...14),
          StatementsNode(15...16)(
            [CallNode(15...16)(
               nil,
@@ -31,12 +31,12 @@ ProgramNode(0...94)(
               "b"
             )]
          ),
-         KEYWORD_END(17...20)("end")
+         (17...20)
        ),
-       KEYWORD_END(17...20)("end")
+       (17...20)
      ),
      BeginNode(22...46)(
-       KEYWORD_BEGIN(22...27)("begin"),
+       (22...27),
        StatementsNode(29...30)(
          [CallNode(29...30)(
             nil,
@@ -52,7 +52,7 @@ ProgramNode(0...94)(
        nil,
        nil,
        EnsureNode(32...46)(
-         KEYWORD_ENSURE(32...38)("ensure"),
+         (32...38),
          StatementsNode(40...41)(
            [CallNode(40...41)(
               nil,
@@ -65,12 +65,12 @@ ProgramNode(0...94)(
               "b"
             )]
          ),
-         KEYWORD_END(43...46)("end")
+         (43...46)
        ),
-       KEYWORD_END(43...46)("end")
+       (43...46)
      ),
      BeginNode(48...70)(
-       KEYWORD_BEGIN(48...53)("begin"),
+       (48...53),
        StatementsNode(54...55)(
          [CallNode(54...55)(
             nil,
@@ -86,7 +86,7 @@ ProgramNode(0...94)(
        nil,
        nil,
        EnsureNode(57...70)(
-         KEYWORD_ENSURE(57...63)("ensure"),
+         (57...63),
          StatementsNode(64...65)(
            [CallNode(64...65)(
               nil,
@@ -99,12 +99,12 @@ ProgramNode(0...94)(
               "b"
             )]
          ),
-         KEYWORD_END(67...70)("end")
+         (67...70)
        ),
-       KEYWORD_END(67...70)("end")
+       (67...70)
      ),
      BeginNode(72...94)(
-       KEYWORD_BEGIN(72...77)("begin"),
+       (72...77),
        StatementsNode(78...79)(
          [CallNode(78...79)(
             nil,
@@ -120,7 +120,7 @@ ProgramNode(0...94)(
        nil,
        nil,
        EnsureNode(81...94)(
-         KEYWORD_ENSURE(81...87)("ensure"),
+         (81...87),
          StatementsNode(88...89)(
            [CallNode(88...89)(
               nil,
@@ -133,9 +133,9 @@ ProgramNode(0...94)(
               "b"
             )]
          ),
-         KEYWORD_END(91...94)("end")
+         (91...94)
        ),
-       KEYWORD_END(91...94)("end")
+       (91...94)
      )]
   )
 )

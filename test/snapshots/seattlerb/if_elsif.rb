@@ -2,17 +2,17 @@ ProgramNode(0...18)(
   [],
   StatementsNode(0...18)(
     [IfNode(0...18)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        IntegerNode(3...4)(),
        nil,
        IfNode(6...13)(
-         KEYWORD_ELSIF(6...11)("elsif"),
+         (6...11),
          IntegerNode(12...13)(),
          StatementsNode(0...0)([]),
          nil,
          nil
        ),
-       KEYWORD_END(15...18)("end")
+       (15...18)
      )]
   )
 )

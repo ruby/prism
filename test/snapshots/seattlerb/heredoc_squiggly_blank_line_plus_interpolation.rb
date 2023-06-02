@@ -11,15 +11,10 @@ ProgramNode(0...20)(
          ArgumentsNode(8...19)(
            [CallNode(8...19)(
               InterpolatedStringNode(8...42)(
-                HEREDOC_START(8...14)("<<~EOF"),
-                [StringNode(21...26)(
-                   nil,
-                   STRING_CONTENT(21...26)("\n" + "    "),
-                   nil,
-                   "\n"
-                 ),
+                (8...14),
+                [StringNode(21...26)(nil, (21...26), nil, "\n"),
                  StringInterpolatedNode(26...32)(
-                   EMBEXPR_BEGIN(26...28)("\#{"),
+                   (26...28),
                    StatementsNode(28...31)(
                      [CallNode(28...31)(
                         nil,
@@ -32,15 +27,10 @@ ProgramNode(0...20)(
                         "bar"
                       )]
                    ),
-                   EMBEXPR_END(31...32)("}")
+                   (31...32)
                  ),
-                 StringNode(32...36)(
-                   nil,
-                   STRING_CONTENT(32...36)("baz\n"),
-                   nil,
-                   "baz\n"
-                 )],
-                HEREDOC_END(36...42)("  EOF\n")
+                 StringNode(32...36)(nil, (32...36), nil, "baz\n")],
+                (36...42)
               ),
               DOT(14...15)("."),
               IDENTIFIER(15...19)("chop"),

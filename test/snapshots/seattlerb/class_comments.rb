@@ -3,13 +3,13 @@ ProgramNode(19...71)(
   StatementsNode(19...71)(
     [ClassNode(19...71)(
        [],
-       KEYWORD_CLASS(19...24)("class"),
+       (19...24),
        ConstantReadNode(25...26)(),
        nil,
        nil,
        StatementsNode(40...67)(
          [DefNode(40...67)(
-            IDENTIFIER(44...48)("blah"),
+            (44...48),
             nil,
             nil,
             nil,
@@ -22,7 +22,7 @@ ProgramNode(19...71)(
             (64...67)
           )]
        ),
-       KEYWORD_END(68...71)("end")
+       (68...71)
      )]
   )
 )

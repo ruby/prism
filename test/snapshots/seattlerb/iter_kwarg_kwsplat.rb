@@ -16,14 +16,8 @@ ProgramNode(0...17)(
              [],
              [],
              nil,
-             [KeywordParameterNode(5...9)(
-                LABEL(5...7)("b:"),
-                IntegerNode(8...9)()
-              )],
-             KeywordRestParameterNode(11...14)(
-               USTAR_STAR(11...13)("**"),
-               IDENTIFIER(13...14)("c")
-             ),
+             [KeywordParameterNode(5...9)((5...7), IntegerNode(8...9)())],
+             KeywordRestParameterNode(11...14)((11...13), (13...14)),
              nil
            ),
            [],

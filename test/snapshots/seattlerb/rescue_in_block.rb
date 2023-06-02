@@ -15,7 +15,7 @@ ProgramNode(0...26)(
            nil,
            nil,
            RescueNode(8...22)(
-             KEYWORD_RESCUE(8...14)("rescue"),
+             (8...14),
              [],
              nil,
              nil,
@@ -35,7 +35,7 @@ ProgramNode(0...26)(
            ),
            nil,
            nil,
-           KEYWORD_END(23...26)("end")
+           (23...26)
          ),
          (5...7),
          (23...26)

@@ -2,7 +2,7 @@ ProgramNode(0...90)(
   [],
   StatementsNode(0...90)(
     [DefNode(0...45)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        ParametersNode(8...20)(
          [RequiredParameterNode(8...16)()],
@@ -10,7 +10,7 @@ ProgramNode(0...90)(
          [],
          nil,
          [],
-         KeywordRestParameterNode(18...20)(USTAR_STAR(18...20)("**"), nil),
+         KeywordRestParameterNode(18...20)((18...20), nil),
          nil
        ),
        StatementsNode(24...41)(
@@ -39,13 +39,13 @@ ProgramNode(0...90)(
        (42...45)
      ),
      DefNode(47...90)(
-       IDENTIFIER(51...54)("foo"),
+       (51...54),
        nil,
        ParametersNode(55...66)(
          [RequiredParameterNode(55...63)()],
          [],
          [],
-         RestParameterNode(65...66)(USTAR(65...66)("*"), nil),
+         RestParameterNode(65...66)((65...66), nil),
          [],
          nil,
          nil
@@ -58,7 +58,7 @@ ProgramNode(0...90)(
             PARENTHESIS_LEFT(73...74)("("),
             ArgumentsNode(74...85)(
               [LocalVariableReadNode(74...82)(0),
-               SplatNode(84...85)(USTAR(84...85)("*"), nil)]
+               SplatNode(84...85)((84...85), nil)]
             ),
             PARENTHESIS_RIGHT(85...86)(")"),
             nil,

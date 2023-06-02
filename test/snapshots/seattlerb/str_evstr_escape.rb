@@ -2,10 +2,10 @@ ProgramNode(0...16)(
   [],
   StatementsNode(0...16)(
     [InterpolatedStringNode(0...16)(
-       STRING_BEGIN(0...1)("\""),
-       [StringNode(1...3)(nil, STRING_CONTENT(1...3)("a "), nil, "a "),
+       (0...1),
+       [StringNode(1...3)(nil, (1...3), nil, "a "),
         StringInterpolatedNode(3...7)(
-          EMBEXPR_BEGIN(3...5)("\#{"),
+          (3...5),
           StatementsNode(5...6)(
             [CallNode(5...6)(
                nil,
@@ -18,15 +18,10 @@ ProgramNode(0...16)(
                "b"
              )]
           ),
-          EMBEXPR_END(6...7)("}")
+          (6...7)
         ),
-        StringNode(7...15)(
-          nil,
-          STRING_CONTENT(7...15)("\\302\\275"),
-          nil,
-          "½"
-        )],
-       STRING_END(15...16)("\"")
+        StringNode(7...15)(nil, (7...15), nil, "½")],
+       (15...16)
      )]
   )
 )

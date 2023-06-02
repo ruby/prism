@@ -17,13 +17,10 @@ ProgramNode(0...17)(
              [],
              [],
              [RequiredParameterNode(9...10)()],
-             RestParameterNode(5...7)(
-               USTAR(5...6)("*"),
-               IDENTIFIER(6...7)("a")
-             ),
+             RestParameterNode(5...7)((5...6), (6...7)),
              [],
              nil,
-             BlockParameterNode(12...14)(IDENTIFIER(13...14)("c"), (12...13))
+             BlockParameterNode(12...14)((13...14), (12...13))
            ),
            [],
            (4...5),

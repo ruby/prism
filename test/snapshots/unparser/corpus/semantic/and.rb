@@ -97,10 +97,10 @@ ProgramNode(0...77)(
          ),
          (26...29)
        ),
-       KEYWORD_AND(21...24)("and")
+       (21...24)
      ),
      IfNode(32...53)(
-       KEYWORD_IF(32...34)("if"),
+       (32...34),
        OrNode(35...49)(
          RangeNode(35...40)(
            CallNode(35...36)(
@@ -152,10 +152,10 @@ ProgramNode(0...77)(
        ),
        nil,
        nil,
-       KEYWORD_END(50...53)("end")
+       (50...53)
      ),
      IfNode(55...77)(
-       KEYWORD_IF(55...57)("if"),
+       (55...57),
        AndNode(58...73)(
          RangeNode(58...63)(
            CallNode(58...59)(
@@ -203,11 +203,11 @@ ProgramNode(0...77)(
            ),
            (69...72)
          ),
-         KEYWORD_AND(64...67)("and")
+         (64...67)
        ),
        nil,
        nil,
-       KEYWORD_END(74...77)("end")
+       (74...77)
      )]
   )
 )

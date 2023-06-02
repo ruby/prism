@@ -8,7 +8,7 @@ ProgramNode(0...30)(
        nil,
        ArgumentsNode(2...30)(
          [DefNode(2...30)(
-            IDENTIFIER(11...12)("b"),
+            (11...12),
             SelfNode(6...10)(),
             nil,
             StatementsNode(14...25)(

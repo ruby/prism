@@ -1,11 +1,6 @@
 ProgramNode(0...12)(
   [],
   StatementsNode(0...12)(
-    [DefinedNode(0...12)(
-       PARENTHESIS_LEFT(8...9)("("),
-       IntegerNode(9...11)(),
-       PARENTHESIS_RIGHT(11...12)(")"),
-       (0...8)
-     )]
+    [DefinedNode(0...12)((8...9), IntegerNode(9...11)(), (11...12), (0...8))]
   )
 )

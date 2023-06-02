@@ -19,26 +19,21 @@ ProgramNode(0...76)(
               0
             ),
             BeginNode(17...72)(
-              KEYWORD_BEGIN(17...22)("begin"),
+              (17...22),
               StatementsNode(27...32)(
-                [YieldNode(27...32)(
-                   KEYWORD_YIELD(27...32)("yield"),
-                   nil,
-                   nil,
-                   nil
-                 )]
+                [YieldNode(27...32)((27...32), nil, nil, nil)]
               ),
               RescueNode(35...66)(
-                KEYWORD_RESCUE(35...41)("rescue"),
+                (35...41),
                 [ConstantReadNode(42...51)()],
-                EQUAL_GREATER(52...54)("=>"),
+                (52...54),
                 LocalVariableWriteNode(55...56)((55...56), nil, nil, 0),
                 StatementsNode(61...66)([BreakNode(61...66)(nil, (61...66))]),
                 nil
               ),
               nil,
               nil,
-              KEYWORD_END(69...72)("end")
+              (69...72)
             )]
          ),
          (2...4),

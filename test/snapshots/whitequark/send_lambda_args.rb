@@ -3,7 +3,7 @@ ProgramNode(0...17)(
   StatementsNode(0...17)(
     [LambdaNode(0...6)(
        [IDENTIFIER(4...5)("a")],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        BlockParametersNode(3...6)(
          ParametersNode(4...5)(
            [RequiredParameterNode(4...5)()],
@@ -22,7 +22,7 @@ ProgramNode(0...17)(
      ),
      LambdaNode(12...17)(
        [IDENTIFIER(15...16)("a")],
-       MINUS_GREATER(12...14)("->"),
+       (12...14),
        BlockParametersNode(14...17)(
          ParametersNode(15...16)(
            [RequiredParameterNode(15...16)()],

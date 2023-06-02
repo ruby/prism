@@ -1,19 +1,7 @@
 ProgramNode(0...25)(
   [],
   StatementsNode(0...25)(
-    [RegularExpressionNode(0...15)(
-       REGEXP_BEGIN(0...1)("/"),
-       STRING_CONTENT(1...14)("\\u{c0de babe}"),
-       REGEXP_END(14...15)("/"),
-       "샞몾",
-       0
-     ),
-     RegularExpressionNode(17...25)(
-       REGEXP_BEGIN(17...18)("/"),
-       STRING_CONTENT(18...24)("\\u{df}"),
-       REGEXP_END(24...25)("/"),
-       "ß",
-       0
-     )]
+    [RegularExpressionNode(0...15)((0...1), (1...14), (14...15), "샞몾", 0),
+     RegularExpressionNode(17...25)((17...18), (18...24), (24...25), "ß", 0)]
   )
 )

@@ -8,7 +8,7 @@ ProgramNode(0...28)(
        nil,
        ArgumentsNode(2...14)(
          [DefNode(2...14)(
-            IDENTIFIER(6...7)("x"),
+            (6...7),
             nil,
             nil,
             nil,

@@ -2,13 +2,13 @@ ProgramNode(0...13)(
   [],
   StatementsNode(0...13)(
     [DefNode(0...13)(
-       IDENTIFIER(4...5)("f"),
+       (4...5),
        nil,
        ParametersNode(6...7)(
          [],
          [],
          [],
-         RestParameterNode(6...7)(USTAR(6...7)("*"), nil),
+         RestParameterNode(6...7)((6...7), nil),
          [],
          nil,
          nil

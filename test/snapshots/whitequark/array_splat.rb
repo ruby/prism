@@ -2,8 +2,8 @@ ProgramNode(0...31)(
   [],
   StatementsNode(0...31)(
     [ArrayNode(0...6)(
-       [SplatNode(2...5)(
-          IDENTIFIER(2...5)("foo"),
+       [SplatNode(1...5)(
+          (1...2),
           CallNode(2...5)(
             nil,
             nil,
@@ -15,13 +15,13 @@ ProgramNode(0...31)(
             "foo"
           )
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(5...6)("]")
+       (0...1),
+       (5...6)
      ),
      ArrayNode(8...20)(
        [IntegerNode(9...10)(),
-        SplatNode(13...16)(
-          IDENTIFIER(13...16)("foo"),
+        SplatNode(12...16)(
+          (12...13),
           CallNode(13...16)(
             nil,
             nil,
@@ -34,13 +34,13 @@ ProgramNode(0...31)(
           )
         ),
         IntegerNode(18...19)()],
-       BRACKET_LEFT_ARRAY(8...9)("["),
-       BRACKET_RIGHT(19...20)("]")
+       (8...9),
+       (19...20)
      ),
      ArrayNode(22...31)(
        [IntegerNode(23...24)(),
-        SplatNode(27...30)(
-          IDENTIFIER(27...30)("foo"),
+        SplatNode(26...30)(
+          (26...27),
           CallNode(27...30)(
             nil,
             nil,
@@ -52,8 +52,8 @@ ProgramNode(0...31)(
             "foo"
           )
         )],
-       BRACKET_LEFT_ARRAY(22...23)("["),
-       BRACKET_RIGHT(30...31)("]")
+       (22...23),
+       (30...31)
      )]
   )
 )

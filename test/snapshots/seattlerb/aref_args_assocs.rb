@@ -6,11 +6,11 @@ ProgramNode(0...8)(
           [AssocNode(1...7)(
              IntegerNode(1...2)(),
              IntegerNode(6...7)(),
-             EQUAL_GREATER(3...5)("=>")
+             (3...5)
            )]
         )],
-       BRACKET_LEFT_ARRAY(0...1)("["),
-       BRACKET_RIGHT(7...8)("]")
+       (0...1),
+       (7...8)
      )]
   )
 )

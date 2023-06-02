@@ -4,14 +4,9 @@ ProgramNode(0...21)(
     [LocalVariableWriteNode(0...21)(
        (0...1),
        InterpolatedStringNode(4...21)(
-         HEREDOC_START(4...9)("<<eos"),
-         [StringNode(10...17)(
-            nil,
-            STRING_CONTENT(10...17)("a\\xE9b\n"),
-            nil,
-            "a\xE9b\n"
-          )],
-         HEREDOC_END(17...21)("eos\n")
+         (4...9),
+         [StringNode(10...17)(nil, (10...17), nil, "a\xE9b\n")],
+         (17...21)
        ),
        (2...3),
        0

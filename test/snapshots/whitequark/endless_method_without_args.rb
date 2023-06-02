@@ -2,7 +2,7 @@ ProgramNode(0...86)(
   [],
   StatementsNode(0...86)(
     [DefNode(0...12)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        nil,
        StatementsNode(10...12)([IntegerNode(10...12)()]),
@@ -15,13 +15,13 @@ ProgramNode(0...86)(
        nil
      ),
      DefNode(14...37)(
-       IDENTIFIER(18...21)("foo"),
+       (18...21),
        nil,
        nil,
        StatementsNode(24...37)(
          [RescueModifierNode(24...37)(
             IntegerNode(24...26)(),
-            KEYWORD_RESCUE_MODIFIER(27...33)("rescue"),
+            (27...33),
             NilNode(34...37)()
           )]
        ),
@@ -34,7 +34,7 @@ ProgramNode(0...86)(
        nil
      ),
      DefNode(39...56)(
-       IDENTIFIER(48...51)("foo"),
+       (48...51),
        SelfNode(43...47)(),
        nil,
        StatementsNode(54...56)([IntegerNode(54...56)()]),
@@ -47,13 +47,13 @@ ProgramNode(0...86)(
        nil
      ),
      DefNode(58...86)(
-       IDENTIFIER(67...70)("foo"),
+       (67...70),
        SelfNode(62...66)(),
        nil,
        StatementsNode(73...86)(
          [RescueModifierNode(73...86)(
             IntegerNode(73...75)(),
-            KEYWORD_RESCUE_MODIFIER(76...82)("rescue"),
+            (76...82),
             NilNode(83...86)()
           )]
        ),

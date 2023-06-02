@@ -2,14 +2,14 @@ ProgramNode(0...48)(
   [],
   StatementsNode(0...48)(
     [InterpolatedStringNode(0...48)(
-       HEREDOC_START(0...8)("<<-'EOS'"),
+       (0...8),
        [StringNode(9...44)(
           nil,
-          STRING_CONTENT(9...44)("    cd L:\\Work\\MG3710IQPro\\Develop\n"),
+          (9...44),
           nil,
           "    cd L:\\Work\\MG3710IQPro\\Develop\n"
         )],
-       HEREDOC_END(44...48)("EOS\n")
+       (44...48)
      )]
   )
 )

@@ -7,7 +7,7 @@ ProgramNode(0...13)(
            [MultiWriteNode(2...12)(
               [LocalVariableWriteNode(2...3)((2...3), nil, nil, 0),
                LocalVariableWriteNode(5...6)((5...6), nil, nil, 0)],
-              EQUAL(7...8)("="),
+              (7...8),
               CallNode(9...12)(
                 nil,
                 nil,

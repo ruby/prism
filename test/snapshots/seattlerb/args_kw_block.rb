@@ -2,19 +2,16 @@ ProgramNode(0...20)(
   [],
   StatementsNode(0...20)(
     [DefNode(0...20)(
-       IDENTIFIER(4...5)("f"),
+       (4...5),
        nil,
        ParametersNode(6...14)(
          [],
          [],
          [],
          nil,
-         [KeywordParameterNode(6...10)(
-            LABEL(6...8)("a:"),
-            IntegerNode(9...10)()
-          )],
+         [KeywordParameterNode(6...10)((6...8), IntegerNode(9...10)())],
          nil,
-         BlockParameterNode(12...14)(IDENTIFIER(13...14)("b"), (12...13))
+         BlockParameterNode(12...14)((13...14), (12...13))
        ),
        nil,
        [LABEL(6...7)("a"), IDENTIFIER(13...14)("b")],

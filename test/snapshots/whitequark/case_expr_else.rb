@@ -13,13 +13,8 @@ ProgramNode(0...40)(
          "foo"
        ),
        [WhenNode(10...25)(
-          KEYWORD_WHEN(10...14)("when"),
-          [StringNode(15...20)(
-             STRING_BEGIN(15...16)("'"),
-             STRING_CONTENT(16...19)("bar"),
-             STRING_END(19...20)("'"),
-             "bar"
-           )],
+          (10...14),
+          [StringNode(15...20)((15...16), (16...19), (19...20), "bar")],
           StatementsNode(22...25)(
             [CallNode(22...25)(
                nil,
@@ -34,7 +29,7 @@ ProgramNode(0...40)(
           )
         )],
        ElseNode(27...40)(
-         KEYWORD_ELSE(27...31)("else"),
+         (27...31),
          StatementsNode(32...35)(
            [CallNode(32...35)(
               nil,
@@ -47,7 +42,7 @@ ProgramNode(0...40)(
               "baz"
             )]
          ),
-         KEYWORD_END(37...40)("end")
+         (37...40)
        ),
        (0...4),
        (37...40)

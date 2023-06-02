@@ -2,7 +2,7 @@ ProgramNode(0...45)(
   [],
   StatementsNode(0...45)(
     [DefNode(0...45)(
-       IDENTIFIER(6...17)("some_method"),
+       (6...17),
        CallNode(4...5)(
          nil,
          nil,
@@ -23,7 +23,7 @@ ProgramNode(0...45)(
             ArgumentsNode(33...45)(
               [RescueModifierNode(33...45)(
                  IntegerNode(33...35)(),
-                 KEYWORD_RESCUE_MODIFIER(36...42)("rescue"),
+                 (36...42),
                  IntegerNode(43...45)()
                )]
             ),

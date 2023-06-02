@@ -16,13 +16,13 @@ ProgramNode(0...35)(
            ParametersNode(5...22)(
              [RequiredParameterNode(5...6)()],
              [OptionalParameterNode(8...14)(
-                IDENTIFIER(8...9)("b"),
-                EQUAL(10...11)("="),
+                (8...9),
+                (10...11),
                 IntegerNode(12...14)()
               ),
               OptionalParameterNode(16...22)(
-                IDENTIFIER(16...17)("c"),
-                EQUAL(18...19)("="),
+                (16...17),
+                (18...19),
                 IntegerNode(20...22)()
               )],
              [],
@@ -40,8 +40,8 @@ ProgramNode(0...35)(
               [LocalVariableReadNode(25...26)(0),
                LocalVariableReadNode(28...29)(0),
                LocalVariableReadNode(31...32)(0)],
-              BRACKET_LEFT_ARRAY(24...25)("["),
-              BRACKET_RIGHT(32...33)("]")
+              (24...25),
+              (32...33)
             )]
          ),
          (2...3),

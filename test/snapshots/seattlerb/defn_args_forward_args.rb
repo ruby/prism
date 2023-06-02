@@ -2,7 +2,7 @@ ProgramNode(0...41)(
   [],
   StatementsNode(0...41)(
     [DefNode(0...41)(
-       IDENTIFIER(4...5)("a"),
+       (4...5),
        nil,
        ParametersNode(6...18)(
          [RequiredParameterNode(6...7)(),

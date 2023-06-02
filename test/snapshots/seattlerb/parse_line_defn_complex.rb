@@ -2,7 +2,7 @@ ProgramNode(0...40)(
   [],
   StatementsNode(0...40)(
     [DefNode(0...40)(
-       IDENTIFIER(4...5)("x"),
+       (4...5),
        nil,
        ParametersNode(6...7)(
          [RequiredParameterNode(6...7)()],
@@ -30,7 +30,7 @@ ProgramNode(0...40)(
             IntegerNode(23...24)()
           ),
           ReturnNode(27...35)(
-            KEYWORD_RETURN(27...33)("return"),
+            (27...33),
             ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(0)])
           )]
        ),

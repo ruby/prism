@@ -32,12 +32,7 @@ ProgramNode(0...56)(
                  LABEL_END(31...32)(":"),
                  "d"
                ),
-               StringNode(33...36)(
-                 STRING_BEGIN(33...34)("\""),
-                 STRING_CONTENT(34...35)("e"),
-                 STRING_END(35...36)("\""),
-                 "e"
-               ),
+               StringNode(33...36)((33...34), (34...35), (35...36), "e"),
                nil
              ),
              AssocNode(38...40)(

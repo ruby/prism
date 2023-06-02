@@ -8,7 +8,7 @@ ProgramNode(0...28)(
        nil,
        ArgumentsNode(2...28)(
          [BeginNode(2...28)(
-            KEYWORD_BEGIN(2...7)("begin"),
+            (2...7),
             StatementsNode(8...24)(
               [CallNode(8...24)(
                  IntegerNode(8...9)(),
@@ -30,7 +30,7 @@ ProgramNode(0...28)(
             nil,
             nil,
             nil,
-            KEYWORD_END(25...28)("end")
+            (25...28)
           )]
        ),
        nil,

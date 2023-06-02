@@ -2,7 +2,7 @@ ProgramNode(0...13)(
   [],
   StatementsNode(0...13)(
     [DefNode(0...13)(
-       KEYWORD_NEXT(4...8)("next"),
+       (4...8),
        nil,
        nil,
        nil,

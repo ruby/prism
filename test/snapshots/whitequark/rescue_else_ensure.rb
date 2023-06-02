@@ -2,7 +2,7 @@ ProgramNode(0...51)(
   [],
   StatementsNode(0...51)(
     [BeginNode(0...51)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...11)(
          [CallNode(7...11)(
             nil,
@@ -16,7 +16,7 @@ ProgramNode(0...51)(
           )]
        ),
        RescueNode(13...24)(
-         KEYWORD_RESCUE(13...19)("rescue"),
+         (13...19),
          [],
          nil,
          nil,
@@ -35,7 +35,7 @@ ProgramNode(0...51)(
          nil
        ),
        ElseNode(26...42)(
-         KEYWORD_ELSE(26...30)("else"),
+         (26...30),
          StatementsNode(31...34)(
            [CallNode(31...34)(
               nil,
@@ -48,10 +48,10 @@ ProgramNode(0...51)(
               "foo"
             )]
          ),
-         KEYWORD_ENSURE(36...42)("ensure")
+         (36...42)
        ),
        EnsureNode(36...51)(
-         KEYWORD_ENSURE(36...42)("ensure"),
+         (36...42),
          StatementsNode(44...47)(
            [CallNode(44...47)(
               nil,
@@ -64,9 +64,9 @@ ProgramNode(0...51)(
               "bar"
             )]
          ),
-         KEYWORD_END(48...51)("end")
+         (48...51)
        ),
-       KEYWORD_END(48...51)("end")
+       (48...51)
      )]
   )
 )

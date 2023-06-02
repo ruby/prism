@@ -2,13 +2,7 @@ ProgramNode(0...21)(
   [],
   StatementsNode(0...21)(
     [CallNode(0...6)(
-       RegularExpressionNode(1...6)(
-         REGEXP_BEGIN(1...2)("/"),
-         STRING_CONTENT(2...5)("wat"),
-         REGEXP_END(5...6)("/"),
-         "wat",
-         0
-       ),
+       RegularExpressionNode(1...6)((1...2), (2...5), (5...6), "wat", 0),
        nil,
        BANG(0...1)("!"),
        nil,
@@ -18,17 +12,17 @@ ProgramNode(0...21)(
        "!"
      ),
      IfNode(8...21)(
-       KEYWORD_IF(8...10)("if"),
+       (8...10),
        RegularExpressionNode(11...16)(
-         REGEXP_BEGIN(11...12)("/"),
-         STRING_CONTENT(12...15)("wat"),
-         REGEXP_END(15...16)("/"),
+         (11...12),
+         (12...15),
+         (15...16),
          "wat",
          0
        ),
        nil,
        nil,
-       KEYWORD_END(18...21)("end")
+       (18...21)
      )]
   )
 )

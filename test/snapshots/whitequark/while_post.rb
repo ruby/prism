@@ -2,7 +2,7 @@ ProgramNode(0...24)(
   [],
   StatementsNode(0...24)(
     [WhileNode(0...24)(
-       KEYWORD_WHILE_MODIFIER(15...20)("while"),
+       (15...20),
        CallNode(21...24)(
          nil,
          nil,
@@ -15,7 +15,7 @@ ProgramNode(0...24)(
        ),
        StatementsNode(0...14)(
          [BeginNode(0...14)(
-            KEYWORD_BEGIN(0...5)("begin"),
+            (0...5),
             StatementsNode(6...10)(
               [CallNode(6...10)(
                  nil,
@@ -31,7 +31,7 @@ ProgramNode(0...24)(
             nil,
             nil,
             nil,
-            KEYWORD_END(11...14)("end")
+            (11...14)
           )]
        )
      )]

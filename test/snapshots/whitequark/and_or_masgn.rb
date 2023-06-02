@@ -17,7 +17,7 @@ ProgramNode(0...40)(
            [MultiWriteNode(8...18)(
               [LocalVariableWriteNode(8...9)((8...9), nil, nil, 0),
                LocalVariableWriteNode(11...12)((11...12), nil, nil, 0)],
-              EQUAL(13...14)("="),
+              (13...14),
               CallNode(15...18)(
                 nil,
                 nil,
@@ -35,7 +35,7 @@ ProgramNode(0...40)(
          (7...8),
          (18...19)
        ),
-       AMPERSAND_AMPERSAND(4...6)("&&")
+       (4...6)
      ),
      OrNode(21...40)(
        CallNode(21...24)(
@@ -53,7 +53,7 @@ ProgramNode(0...40)(
            [MultiWriteNode(29...39)(
               [LocalVariableWriteNode(29...30)((29...30), nil, nil, 0),
                LocalVariableWriteNode(32...33)((32...33), nil, nil, 0)],
-              EQUAL(34...35)("="),
+              (34...35),
               CallNode(36...39)(
                 nil,
                 nil,

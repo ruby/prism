@@ -2,7 +2,7 @@ ProgramNode(0...48)(
   [IDENTIFIER(24...25)("b"), IDENTIFIER(38...39)("c")],
   StatementsNode(0...48)(
     [IfNode(0...46)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        TrueNode(3...7)(),
        StatementsNode(15...42)(
          [CallNode(15...21)(
@@ -11,12 +11,7 @@ ProgramNode(0...48)(
             IDENTIFIER(15...16)("p"),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...20)(
-              [StringNode(17...20)(
-                 STRING_BEGIN(17...18)("'"),
-                 STRING_CONTENT(18...19)("a"),
-                 STRING_END(19...20)("'"),
-                 "a"
-               )]
+              [StringNode(17...20)((17...18), (18...19), (19...20), "a")]
             ),
             PARENTHESIS_RIGHT(20...21)(")"),
             nil,
@@ -46,7 +41,7 @@ ProgramNode(0...48)(
           )]
        ),
        nil,
-       KEYWORD_END(43...46)("end")
+       (43...46)
      ),
      CallNode(47...48)(
        nil,

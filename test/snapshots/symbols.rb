@@ -10,7 +10,7 @@ ProgramNode(0...345)(
      InterpolatedSymbolNode(8...17)(
        SYMBOL_BEGIN(8...10)(":\""),
        [StringInterpolatedNode(10...16)(
-          EMBEXPR_BEGIN(10...12)("\#{"),
+          (10...12),
           StatementsNode(12...15)(
             [CallNode(12...15)(
                nil,
@@ -23,17 +23,17 @@ ProgramNode(0...345)(
                "var"
              )]
           ),
-          EMBEXPR_END(15...16)("}")
+          (15...16)
         )],
        STRING_END(16...17)("\"")
      ),
      InterpolatedSymbolNode(19...29)(
        SYMBOL_BEGIN(19...21)(":\""),
-       [StringNode(21...24)(nil, STRING_CONTENT(21...24)("abc"), nil, "abc"),
+       [StringNode(21...24)(nil, (21...24), nil, "abc"),
         StringInterpolatedNode(24...28)(
-          EMBEXPR_BEGIN(24...26)("\#{"),
+          (24...26),
           StatementsNode(26...27)([IntegerNode(26...27)()]),
-          EMBEXPR_END(27...28)("}")
+          (27...28)
         )],
        STRING_END(28...29)("\"")
      ),
@@ -62,8 +62,8 @@ ProgramNode(0...345)(
           nil,
           "ρ"
         )],
-       BRACKET_LEFT_ARRAY(31...32)("["),
-       BRACKET_RIGHT(50...51)("]")
+       (31...32),
+       (50...51)
      ),
      SymbolNode(53...56)(
        SYMBOL_BEGIN(53...54)(":"),
@@ -130,8 +130,8 @@ ProgramNode(0...345)(
         FloatNode(101...104)(),
         RationalNode(106...108)(IntegerNode(106...107)()),
         ImaginaryNode(110...112)(IntegerNode(110...111)())],
-       BRACKET_LEFT_ARRAY(97...98)("["),
-       BRACKET_RIGHT(112...113)("]")
+       (97...98),
+       (112...113)
      ),
      SymbolNode(115...117)(
        SYMBOL_BEGIN(115...116)(":"),
@@ -149,8 +149,8 @@ ProgramNode(0...345)(
        [SymbolNode(126...127)(nil, STRING_CONTENT(126...127)("a"), nil, "a"),
         SymbolNode(128...129)(nil, STRING_CONTENT(128...129)("b"), nil, "b"),
         SymbolNode(130...131)(nil, STRING_CONTENT(130...131)("c"), nil, "c")],
-       PERCENT_LOWER_I(123...126)("%i["),
-       STRING_END(131...132)("]")
+       (123...126),
+       (131...132)
      ),
      ArrayNode(134...158)(
        [SymbolNode(137...138)(nil, STRING_CONTENT(137...138)("a"), nil, "a"),
@@ -172,64 +172,44 @@ ProgramNode(0...345)(
           nil,
           "d\#{3}f"
         )],
-       PERCENT_LOWER_I(134...137)("%i["),
-       STRING_END(157...158)("]")
+       (134...137),
+       (157...158)
      ),
      ArrayNode(160...184)(
        [SymbolNode(163...164)(nil, STRING_CONTENT(163...164)("a"), nil, "a"),
         InterpolatedSymbolNode(0...170)(
           nil,
-          [StringNode(165...166)(
-             nil,
-             STRING_CONTENT(165...166)("b"),
-             nil,
-             "b"
-           ),
+          [StringNode(165...166)(nil, (165...166), nil, "b"),
            StringInterpolatedNode(166...170)(
-             EMBEXPR_BEGIN(166...168)("\#{"),
+             (166...168),
              StatementsNode(168...169)([IntegerNode(168...169)()]),
-             EMBEXPR_END(169...170)("}")
+             (169...170)
            )],
           nil
         ),
         InterpolatedSymbolNode(0...176)(
           nil,
           [StringInterpolatedNode(171...175)(
-             EMBEXPR_BEGIN(171...173)("\#{"),
+             (171...173),
              StatementsNode(173...174)([IntegerNode(173...174)()]),
-             EMBEXPR_END(174...175)("}")
+             (174...175)
            ),
-           StringNode(175...176)(
-             nil,
-             STRING_CONTENT(175...176)("c"),
-             nil,
-             "c"
-           )],
+           StringNode(175...176)(nil, (175...176), nil, "c")],
           nil
         ),
         InterpolatedSymbolNode(0...183)(
           nil,
-          [StringNode(177...178)(
-             nil,
-             STRING_CONTENT(177...178)("d"),
-             nil,
-             "d"
-           ),
+          [StringNode(177...178)(nil, (177...178), nil, "d"),
            StringInterpolatedNode(178...182)(
-             EMBEXPR_BEGIN(178...180)("\#{"),
+             (178...180),
              StatementsNode(180...181)([IntegerNode(180...181)()]),
-             EMBEXPR_END(181...182)("}")
+             (181...182)
            ),
-           StringNode(182...183)(
-             nil,
-             STRING_CONTENT(182...183)("f"),
-             nil,
-             "f"
-           )],
+           StringNode(182...183)(nil, (182...183), nil, "f")],
           nil
         )],
-       PERCENT_UPPER_I(160...163)("%I["),
-       STRING_END(183...184)("]")
+       (160...163),
+       (183...184)
      ),
      SymbolNode(186...190)(
        SYMBOL_BEGIN(186...187)(":"),
@@ -250,8 +230,8 @@ ProgramNode(0...345)(
           nil,
           "a\b"
         )],
-       PERCENT_LOWER_I(199...202)("%i["),
-       STRING_END(205...206)("]")
+       (199...202),
+       (205...206)
      ),
      SymbolNode(208...211)(
        SYMBOL_BEGIN(208...209)(":"),

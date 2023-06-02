@@ -12,7 +12,7 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(4...10)("rescue"),
+       (4...10),
        NilNode(11...14)()
      ),
      RescueModifierNode(16...30)(
@@ -26,22 +26,22 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(20...26)("rescue"),
+       (20...26),
        NilNode(27...30)()
      ),
      RescueModifierNode(32...48)(
        BreakNode(32...37)(nil, (32...37)),
-       KEYWORD_RESCUE_MODIFIER(38...44)("rescue"),
+       (38...44),
        NilNode(45...48)()
      ),
      RescueModifierNode(50...65)(
        NextNode(50...54)(nil, (50...54)),
-       KEYWORD_RESCUE_MODIFIER(55...61)("rescue"),
+       (55...61),
        NilNode(62...65)()
      ),
      RescueModifierNode(67...84)(
-       ReturnNode(67...73)(KEYWORD_RETURN(67...73)("return"), nil),
-       KEYWORD_RESCUE_MODIFIER(74...80)("rescue"),
+       ReturnNode(67...73)((67...73), nil),
+       (74...80),
        NilNode(81...84)()
      ),
      RescueModifierNode(86...105)(
@@ -55,7 +55,7 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(90...96)("rescue"),
+       (90...96),
        OrNode(97...105)(
          NilNode(97...100)(),
          IntegerNode(104...105)(),
@@ -73,13 +73,13 @@ ProgramNode(0...316)(
          nil,
          "foo"
        ),
-       KEYWORD_RESCUE_MODIFIER(111...117)("rescue"),
+       (111...117),
        IfNode(122...129)(
-         QUESTION_MARK(122...123)("?"),
+         (122...123),
          NilNode(118...121)(),
          StatementsNode(124...125)([IntegerNode(124...125)()]),
          ElseNode(126...129)(
-           COLON(126...127)(":"),
+           (126...127),
            StatementsNode(128...129)([IntegerNode(128...129)()]),
            nil
          ),
@@ -87,7 +87,7 @@ ProgramNode(0...316)(
        )
      ),
      BeginNode(131...155)(
-       KEYWORD_BEGIN(131...136)("begin"),
+       (131...136),
        StatementsNode(138...139)(
          [CallNode(138...139)(
             nil,
@@ -101,9 +101,9 @@ ProgramNode(0...316)(
           )]
        ),
        RescueNode(141...150)(
-         KEYWORD_RESCUE(141...147)("rescue"),
+         (141...147),
          [SplatNode(148...150)(
-            USTAR(148...149)("*"),
+            (148...149),
             CallNode(149...150)(
               nil,
               nil,
@@ -122,7 +122,7 @@ ProgramNode(0...316)(
        ),
        nil,
        nil,
-       KEYWORD_END(152...155)("end")
+       (152...155)
      ),
      CallNode(157...212)(
        nil,
@@ -170,7 +170,7 @@ ProgramNode(0...316)(
                 nil,
                 "bar"
               ),
-              KEYWORD_RESCUE_MODIFIER(177...183)("rescue"),
+              (177...183),
               CallNode(184...208)(
                 nil,
                 nil,
@@ -184,9 +184,9 @@ ProgramNode(0...316)(
                      nil,
                      ArgumentsNode(203...208)(
                        [StringNode(203...208)(
-                          STRING_BEGIN(203...204)("\""),
-                          STRING_CONTENT(204...207)("baz"),
-                          STRING_END(207...208)("\""),
+                          (203...204),
+                          (204...207),
+                          (207...208),
                           "baz"
                         )]
                      ),
@@ -207,7 +207,7 @@ ProgramNode(0...316)(
        "foo"
      ),
      IfNode(214...245)(
-       KEYWORD_IF(214...216)("if"),
+       (214...216),
        LocalVariableWriteNode(217...235)(
          (217...218),
          RescueModifierNode(221...235)(
@@ -221,7 +221,7 @@ ProgramNode(0...316)(
              nil,
              "foo"
            ),
-           KEYWORD_RESCUE_MODIFIER(225...231)("rescue"),
+           (225...231),
            NilNode(232...235)()
          ),
          (219...220),
@@ -240,10 +240,10 @@ ProgramNode(0...316)(
           )]
        ),
        nil,
-       KEYWORD_END(242...245)("end")
+       (242...245)
      ),
      DefNode(247...291)(
-       IDENTIFIER(251...262)("some_method"),
+       (251...262),
        nil,
        nil,
        StatementsNode(265...291)(
@@ -255,7 +255,7 @@ ProgramNode(0...316)(
             ArgumentsNode(278...291)(
               [RescueModifierNode(278...291)(
                  IntegerNode(278...280)(),
-                 KEYWORD_RESCUE_MODIFIER(281...287)("rescue"),
+                 (281...287),
                  NilNode(288...291)()
                )]
             ),
@@ -273,7 +273,7 @@ ProgramNode(0...316)(
        nil
      ),
      DefNode(293...316)(
-       IDENTIFIER(297...298)("a"),
+       (297...298),
        nil,
        nil,
        BeginNode(0...316)(
@@ -303,17 +303,10 @@ ProgramNode(0...316)(
               "a"
             )]
          ),
-         RescueNode(306...312)(
-           KEYWORD_RESCUE(306...312)("rescue"),
-           [],
-           nil,
-           nil,
-           nil,
-           nil
-         ),
+         RescueNode(306...312)((306...312), [], nil, nil, nil, nil),
          nil,
          nil,
-         KEYWORD_END(313...316)("end")
+         (313...316)
        ),
        [],
        (293...296),

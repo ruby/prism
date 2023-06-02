@@ -8,11 +8,9 @@ ProgramNode(0...40)(
        nil,
        ArgumentsNode(5...33)(
          [StringNode(5...33)(
-            STRING_BEGIN(5...6)("\""),
-            STRING_CONTENT(6...32)(
-              "hello\\\n" + " my\\\n" + " dear\\\n" + " friend"
-            ),
-            STRING_END(32...33)("\""),
+            (5...6),
+            (6...32),
+            (32...33),
             "hello\n" + " my\n" + " dear\n" + " friend"
           )]
        ),

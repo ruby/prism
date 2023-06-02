@@ -50,8 +50,8 @@ ProgramNode(0...747)(
           ArrayNode(34...41)(
             [SymbolNode(37...38)(nil, STRING_CONTENT(37...38)("a"), nil, "a"),
              SymbolNode(39...40)(nil, STRING_CONTENT(39...40)("b"), nil, "b")],
-            PERCENT_UPPER_I(34...37)("%I["),
-            STRING_END(40...41)("]")
+            (34...37),
+            (40...41)
           ),
           nil,
           (31...33),
@@ -70,10 +70,10 @@ ProgramNode(0...747)(
        ),
        [InNode(55...65)(
           ArrayNode(58...65)(
-            [StringNode(61...62)(nil, STRING_CONTENT(61...62)("a"), nil, "a"),
-             StringNode(63...64)(nil, STRING_CONTENT(63...64)("b"), nil, "b")],
-            PERCENT_UPPER_W(58...61)("%W["),
-            STRING_END(64...65)("]")
+            [StringNode(61...62)(nil, (61...62), nil, "a"),
+             StringNode(63...64)(nil, (63...64), nil, "b")],
+            (58...61),
+            (64...65)
           ),
           nil,
           (55...57),
@@ -94,8 +94,8 @@ ProgramNode(0...747)(
           ArrayNode(82...89)(
             [SymbolNode(85...86)(nil, STRING_CONTENT(85...86)("a"), nil, "a"),
              SymbolNode(87...88)(nil, STRING_CONTENT(87...88)("b"), nil, "b")],
-            PERCENT_LOWER_I(82...85)("%i["),
-            STRING_END(88...89)("]")
+            (82...85),
+            (88...89)
           ),
           nil,
           (79...81),
@@ -114,20 +114,10 @@ ProgramNode(0...747)(
        ),
        [InNode(103...113)(
           ArrayNode(106...113)(
-            [StringNode(109...110)(
-               nil,
-               STRING_CONTENT(109...110)("a"),
-               nil,
-               "a"
-             ),
-             StringNode(111...112)(
-               nil,
-               STRING_CONTENT(111...112)("b"),
-               nil,
-               "b"
-             )],
-            PERCENT_LOWER_W(106...109)("%w["),
-            STRING_END(112...113)("]")
+            [StringNode(109...110)(nil, (109...110), nil, "a"),
+             StringNode(111...112)(nil, (111...112), nil, "b")],
+            (106...109),
+            (112...113)
           ),
           nil,
           (103...105),
@@ -253,9 +243,9 @@ ProgramNode(0...747)(
        ),
        [InNode(264...275)(
           RegularExpressionNode(267...275)(
-            REGEXP_BEGIN(267...268)("/"),
-            STRING_CONTENT(268...274)("regexp"),
-            REGEXP_END(274...275)("/"),
+            (267...268),
+            (268...274),
+            (274...275),
             "regexp",
             0
           ),
@@ -284,7 +274,7 @@ ProgramNode(0...747)(
                "b"
              )],
             SplatNode(296...298)(
-              USTAR(296...297)("*"),
+              (296...297),
               LocalVariableWriteNode(297...298)((297...298), nil, nil, 0)
             ),
             [SymbolNode(300...302)(
@@ -381,12 +371,12 @@ ProgramNode(0...747)(
           FindPatternNode(369...390)(
             ConstantReadNode(369...375)(),
             SplatNode(376...380)(
-              USTAR(376...377)("*"),
+              (376...377),
               LocalVariableWriteNode(377...380)((377...380), nil, nil, 0)
             ),
             [LocalVariableWriteNode(382...383)((382...383), nil, nil, 0)],
             SplatNode(385...389)(
-              USTAR(385...386)("*"),
+              (385...386),
               LocalVariableWriteNode(386...389)((386...389), nil, nil, 0)
             ),
             (375...376),
@@ -411,12 +401,12 @@ ProgramNode(0...747)(
           FindPatternNode(407...428)(
             ConstantReadNode(407...413)(),
             SplatNode(414...418)(
-              USTAR(414...415)("*"),
+              (414...415),
               LocalVariableWriteNode(415...418)((415...418), nil, nil, 0)
             ),
             [LocalVariableWriteNode(420...421)((420...421), nil, nil, 0)],
             SplatNode(423...427)(
-              USTAR(423...424)("*"),
+              (423...424),
               LocalVariableWriteNode(424...427)((424...427), nil, nil, 0)
             ),
             (413...414),
@@ -442,7 +432,7 @@ ProgramNode(0...747)(
             nil,
             [LambdaNode(446...458)(
                [IDENTIFIER(449...450)("b")],
-               MINUS_GREATER(446...448)("->"),
+               (446...448),
                BlockParametersNode(448...451)(
                  ParametersNode(449...450)(
                    [RequiredParameterNode(449...450)()],
@@ -500,7 +490,7 @@ ProgramNode(0...747)(
                   "d"
                 )],
                SplatNode(497...499)(
-                 USTAR(497...498)("*"),
+                 (497...498),
                  LocalVariableWriteNode(498...499)((498...499), nil, nil, 0)
                ),
                [NilNode(501...504)()],
@@ -531,7 +521,7 @@ ProgramNode(0...747)(
           ArrayPatternNode(523...532)(
             nil,
             [ConstantReadNode(524...525)()],
-            SplatNode(527...528)(USTAR(527...528)("*"), nil),
+            SplatNode(527...528)((527...528), nil),
             [ConstantReadNode(530...531)()],
             (523...524),
             (531...532)
@@ -706,9 +696,9 @@ ProgramNode(0...747)(
        ),
        [InNode(657...669)(
           XStringNode(660...669)(
-            BACKTICK(660...661)("`"),
-            STRING_CONTENT(661...668)("echo hi"),
-            STRING_END(668...669)("`"),
+            (660...661),
+            (661...668),
+            (668...669),
             "echo hi"
           ),
           nil,

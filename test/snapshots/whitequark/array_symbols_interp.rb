@@ -6,7 +6,7 @@ ProgramNode(0...29)(
         InterpolatedSymbolNode(0...13)(
           nil,
           [StringInterpolatedNode(7...13)(
-             EMBEXPR_BEGIN(7...9)("\#{"),
+             (7...9),
              StatementsNode(9...12)(
                [CallNode(9...12)(
                   nil,
@@ -19,24 +19,19 @@ ProgramNode(0...29)(
                   "bar"
                 )]
              ),
-             EMBEXPR_END(12...13)("}")
+             (12...13)
            )],
           nil
         )],
-       PERCENT_UPPER_I(0...3)("%I["),
-       STRING_END(13...14)("]")
+       (0...3),
+       (13...14)
      ),
      ArrayNode(16...29)(
        [InterpolatedSymbolNode(0...28)(
           nil,
-          [StringNode(19...22)(
-             nil,
-             STRING_CONTENT(19...22)("foo"),
-             nil,
-             "foo"
-           ),
+          [StringNode(19...22)(nil, (19...22), nil, "foo"),
            StringInterpolatedNode(22...28)(
-             EMBEXPR_BEGIN(22...24)("\#{"),
+             (22...24),
              StatementsNode(24...27)(
                [CallNode(24...27)(
                   nil,
@@ -49,12 +44,12 @@ ProgramNode(0...29)(
                   "bar"
                 )]
              ),
-             EMBEXPR_END(27...28)("}")
+             (27...28)
            )],
           nil
         )],
-       PERCENT_UPPER_I(16...19)("%I["),
-       STRING_END(28...29)("]")
+       (16...19),
+       (28...29)
      )]
   )
 )

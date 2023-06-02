@@ -3,14 +3,14 @@ ProgramNode(0...8)(
   StatementsNode(0...8)(
     [MultiWriteNode(0...8)(
        [MultiWriteNode(0...1)(
-          [SplatNode(0...1)(USTAR(0...1)("*"), nil)],
+          [SplatNode(0...1)((0...1), nil)],
           nil,
           nil,
           nil,
           nil
         ),
         LocalVariableWriteNode(3...4)((3...4), nil, nil, 0)],
-       EQUAL(5...6)("="),
+       (5...6),
        CallNode(7...8)(
          nil,
          nil,

@@ -40,7 +40,7 @@ ProgramNode(0...125)(
          nil,
          "!"
        ),
-       KEYWORD_AND(8...11)("and")
+       (8...11)
      ),
      CallNode(21...37)(
        AndNode(25...36)(
@@ -64,7 +64,7 @@ ProgramNode(0...125)(
            nil,
            "bar"
          ),
-         KEYWORD_AND(29...32)("and")
+         (29...32)
        ),
        nil,
        KEYWORD_NOT(21...24)("not"),
@@ -132,7 +132,7 @@ ProgramNode(0...125)(
          nil,
          "!"
        ),
-       KEYWORD_AND(56...59)("and")
+       (56...59)
      ),
      AndNode(72...97)(
        CallNode(72...79)(
@@ -173,7 +173,7 @@ ProgramNode(0...125)(
          nil,
          "!"
        ),
-       KEYWORD_AND(80...83)("and")
+       (80...83)
      ),
      AndNode(100...125)(
        CallNode(100...107)(
@@ -214,7 +214,7 @@ ProgramNode(0...125)(
          nil,
          "!"
        ),
-       KEYWORD_AND(108...111)("and")
+       (108...111)
      )]
   )
 )

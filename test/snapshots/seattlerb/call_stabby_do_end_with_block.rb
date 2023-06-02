@@ -9,7 +9,7 @@ ProgramNode(0...22)(
        ArgumentsNode(2...9)(
          [LambdaNode(2...9)(
             [],
-            MINUS_GREATER(2...4)("->"),
+            (2...4),
             nil,
             StatementsNode(8...9)([IntegerNode(8...9)()])
           )]

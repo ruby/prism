@@ -2,7 +2,7 @@ ProgramNode(0...130)(
   [],
   StatementsNode(0...130)(
     [DefNode(0...44)(
-       IDENTIFIER(4...8)("exec"),
+       (4...8),
        nil,
        ParametersNode(9...12)(
          [RequiredParameterNode(9...12)()],
@@ -28,7 +28,7 @@ ProgramNode(0...130)(
             )]
          ),
          RescueNode(28...40)(
-           KEYWORD_RESCUE(28...34)("rescue"),
+           (28...34),
            [],
            nil,
            nil,
@@ -37,7 +37,7 @@ ProgramNode(0...130)(
          ),
          nil,
          nil,
-         KEYWORD_END(41...44)("end")
+         (41...44)
        ),
        [IDENTIFIER(9...12)("cmd")],
        (0...3),
@@ -48,7 +48,7 @@ ProgramNode(0...130)(
        (41...44)
      ),
      DefNode(47...89)(
-       IDENTIFIER(51...55)("exec"),
+       (51...55),
        nil,
        ParametersNode(56...59)(
          [RequiredParameterNode(56...59)()],
@@ -71,7 +71,7 @@ ProgramNode(0...130)(
               nil,
               "system"
             ),
-            KEYWORD_RESCUE_MODIFIER(75...81)("rescue"),
+            (75...81),
             NilNode(82...85)()
           )]
        ),
@@ -84,7 +84,7 @@ ProgramNode(0...130)(
        (86...89)
      ),
      DefNode(92...130)(
-       IDENTIFIER(96...100)("exec"),
+       (96...100),
        nil,
        ParametersNode(101...104)(
          [RequiredParameterNode(101...104)()],
@@ -107,7 +107,7 @@ ProgramNode(0...130)(
               nil,
               "system"
             ),
-            KEYWORD_RESCUE_MODIFIER(120...126)("rescue"),
+            (120...126),
             NilNode(127...130)()
           )]
        ),

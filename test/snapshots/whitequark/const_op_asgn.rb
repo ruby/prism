@@ -29,7 +29,7 @@ ProgramNode(0...77)(
        IntegerNode(26...27)()
      ),
      DefNode(29...50)(
-       IDENTIFIER(33...34)("x"),
+       (33...34),
        nil,
        nil,
        StatementsNode(36...45)(
@@ -56,7 +56,7 @@ ProgramNode(0...77)(
        (47...50)
      ),
      DefNode(52...77)(
-       IDENTIFIER(56...57)("x"),
+       (56...57),
        nil,
        nil,
        StatementsNode(59...72)(

@@ -3,21 +3,21 @@ ProgramNode(0...39)(
   StatementsNode(0...39)(
     [ModuleNode(0...17)(
        [],
-       KEYWORD_MODULE(0...6)("module"),
+       (0...6),
        ConstantPathNode(7...12)(nil, ConstantReadNode(9...12)(), (7...9)),
        nil,
-       KEYWORD_END(14...17)("end")
+       (14...17)
      ),
      ModuleNode(19...39)(
        [],
-       KEYWORD_MODULE(19...25)("module"),
+       (19...25),
        ConstantPathNode(26...34)(
          ConstantReadNode(26...29)(),
          ConstantReadNode(31...34)(),
          (29...31)
        ),
        nil,
-       KEYWORD_END(36...39)("end")
+       (36...39)
      )]
   )
 )

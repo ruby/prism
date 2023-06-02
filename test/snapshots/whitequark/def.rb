@@ -2,7 +2,7 @@ ProgramNode(0...93)(
   [],
   StatementsNode(0...93)(
     [DefNode(0...14)(
-       KEYWORD_BEGIN_UPCASE(4...9)("BEGIN"),
+       (4...9),
        nil,
        nil,
        nil,
@@ -15,7 +15,7 @@ ProgramNode(0...93)(
        (11...14)
      ),
      DefNode(16...28)(
-       KEYWORD_END_UPCASE(20...23)("END"),
+       (20...23),
        nil,
        nil,
        nil,
@@ -28,7 +28,7 @@ ProgramNode(0...93)(
        (25...28)
      ),
      DefNode(30...45)(
-       CONSTANT(34...40)("String"),
+       (34...40),
        nil,
        nil,
        nil,
@@ -41,7 +41,7 @@ ProgramNode(0...93)(
        (42...45)
      ),
      DefNode(47...63)(
-       IDENTIFIER(51...58)("String="),
+       (51...58),
        nil,
        nil,
        nil,
@@ -54,7 +54,7 @@ ProgramNode(0...93)(
        (60...63)
      ),
      DefNode(65...77)(
-       IDENTIFIER(69...72)("foo"),
+       (69...72),
        nil,
        nil,
        nil,
@@ -67,7 +67,7 @@ ProgramNode(0...93)(
        (74...77)
      ),
      DefNode(79...93)(
-       KEYWORD_UNTIL(83...88)("until"),
+       (83...88),
        nil,
        nil,
        nil,

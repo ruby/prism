@@ -25,7 +25,7 @@ ProgramNode(0...32)(
                  nil,
                  "m2"
                ),
-               EQUAL_GREATER(6...8)("=>")
+               (6...8)
              )]
           )]
        ),

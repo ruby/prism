@@ -3,31 +3,21 @@ ProgramNode(0...28)(
   StatementsNode(0...28)(
     [CallNode(0...28)(
        InterpolatedRegularExpressionNode(0...19)(
-         REGEXP_BEGIN(0...1)("/"),
+         (0...1),
          [StringInterpolatedNode(1...5)(
-            EMBEXPR_BEGIN(1...3)("\#{"),
+            (1...3),
             StatementsNode(3...4)([IntegerNode(3...4)()]),
-            EMBEXPR_END(4...5)("}")
+            (4...5)
           ),
-          StringNode(5...18)(
-            nil,
-            STRING_CONTENT(5...18)("(?<match>bar)"),
-            nil,
-            "(?<match>bar)"
-          )],
-         REGEXP_END(18...19)("/"),
+          StringNode(5...18)(nil, (5...18), nil, "(?<match>bar)")],
+         (18...19),
          0
        ),
        nil,
        EQUAL_TILDE(20...22)("=~"),
        nil,
        ArgumentsNode(23...28)(
-         [StringNode(23...28)(
-            STRING_BEGIN(23...24)("'"),
-            STRING_CONTENT(24...27)("bar"),
-            STRING_END(27...28)("'"),
-            "bar"
-          )]
+         [StringNode(23...28)((23...24), (24...27), (27...28), "bar")]
        ),
        nil,
        nil,

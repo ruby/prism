@@ -2,7 +2,7 @@ ProgramNode(0...39)(
   [],
   StatementsNode(0...39)(
     [BeginNode(0...39)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...11)(
          [CallNode(7...11)(
             nil,
@@ -16,7 +16,7 @@ ProgramNode(0...39)(
           )]
        ),
        RescueNode(13...34)(
-         KEYWORD_RESCUE(13...19)("rescue"),
+         (13...19),
          [ConstantReadNode(20...29)()],
          nil,
          nil,
@@ -36,7 +36,7 @@ ProgramNode(0...39)(
        ),
        nil,
        nil,
-       KEYWORD_END(36...39)("end")
+       (36...39)
      )]
   )
 )

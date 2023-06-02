@@ -2,7 +2,7 @@ ProgramNode(0...104)(
   [],
   StatementsNode(0...104)(
     [IfNode(0...104)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        TrueNode(3...7)(),
        StatementsNode(10...100)(
          [CallNode(10...13)(
@@ -187,7 +187,7 @@ ProgramNode(0...104)(
           )]
        ),
        nil,
-       KEYWORD_END(101...104)("end")
+       (101...104)
      )]
   )
 )

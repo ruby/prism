@@ -2,20 +2,16 @@ ProgramNode(0...37)(
   [],
   StatementsNode(0...37)(
     [HashNode(0...10)(
-       BRACE_LEFT(0...1)("{"),
-       [AssocNode(2...8)(
-          IntegerNode(2...3)(),
-          IntegerNode(7...8)(),
-          EQUAL_GREATER(4...6)("=>")
-        )],
-       BRACE_RIGHT(9...10)("}")
+       (0...1),
+       [AssocNode(2...8)(IntegerNode(2...3)(), IntegerNode(7...8)(), (4...6))],
+       (9...10)
      ),
      HashNode(12...37)(
-       BRACE_LEFT(12...13)("{"),
+       (12...13),
        [AssocNode(14...20)(
           IntegerNode(14...15)(),
           IntegerNode(19...20)(),
-          EQUAL_GREATER(16...18)("=>")
+          (16...18)
         ),
         AssocNode(22...35)(
           SymbolNode(22...26)(
@@ -24,15 +20,10 @@ ProgramNode(0...37)(
             nil,
             "foo"
           ),
-          StringNode(30...35)(
-            STRING_BEGIN(30...31)("\""),
-            STRING_CONTENT(31...34)("bar"),
-            STRING_END(34...35)("\""),
-            "bar"
-          ),
-          EQUAL_GREATER(27...29)("=>")
+          StringNode(30...35)((30...31), (31...34), (34...35), "bar"),
+          (27...29)
         )],
-       BRACE_RIGHT(36...37)("}")
+       (36...37)
      )]
   )
 )

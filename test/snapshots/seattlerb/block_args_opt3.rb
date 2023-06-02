@@ -17,20 +17,20 @@ ProgramNode(0...42)(
            ParametersNode(5...26)(
              [RequiredParameterNode(5...6)()],
              [OptionalParameterNode(8...14)(
-                IDENTIFIER(8...9)("b"),
-                EQUAL(10...11)("="),
+                (8...9),
+                (10...11),
                 IntegerNode(12...14)()
               ),
               OptionalParameterNode(16...22)(
-                IDENTIFIER(16...17)("c"),
-                EQUAL(18...19)("="),
+                (16...17),
+                (18...19),
                 IntegerNode(20...22)()
               )],
              [],
              nil,
              [],
              nil,
-             BlockParameterNode(24...26)(IDENTIFIER(25...26)("d"), (24...25))
+             BlockParameterNode(24...26)((25...26), (24...25))
            ),
            [],
            (4...5),
@@ -42,8 +42,8 @@ ProgramNode(0...42)(
                LocalVariableReadNode(32...33)(0),
                LocalVariableReadNode(35...36)(0),
                LocalVariableReadNode(38...39)(0)],
-              BRACKET_LEFT_ARRAY(28...29)("["),
-              BRACKET_RIGHT(39...40)("]")
+              (28...29),
+              (39...40)
             )]
          ),
          (2...3),

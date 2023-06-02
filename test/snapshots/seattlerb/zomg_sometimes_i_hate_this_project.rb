@@ -2,7 +2,7 @@ ProgramNode(6...66)(
   [],
   StatementsNode(6...66)(
     [HashNode(6...66)(
-       BRACE_LEFT(6...7)("{"),
+       (6...7),
        [AssocNode(16...41)(
           SymbolNode(16...18)(
             nil,
@@ -22,7 +22,7 @@ ProgramNode(6...66)(
               nil,
               StatementsNode(30...39)(
                 [IfNode(30...39)(
-                   QUESTION_MARK(30...31)("?"),
+                   (30...31),
                    CallNode(28...29)(
                      nil,
                      nil,
@@ -46,7 +46,7 @@ ProgramNode(6...66)(
                       )]
                    ),
                    ElseNode(36...39)(
-                     COLON(36...37)(":"),
+                     (36...37),
                      StatementsNode(38...39)(
                        [CallNode(38...39)(
                           nil,
@@ -81,7 +81,7 @@ ProgramNode(6...66)(
           NilNode(54...57)(),
           nil
         )],
-       BRACE_RIGHT(65...66)("}")
+       (65...66)
      )]
   )
 )

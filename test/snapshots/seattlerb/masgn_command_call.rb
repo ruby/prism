@@ -3,8 +3,8 @@ ProgramNode(0...10)(
   StatementsNode(0...10)(
     [MultiWriteNode(0...10)(
        [LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
-        SplatNode(1...2)(COMMA(1...2)(","), nil)],
-       EQUAL(3...4)("="),
+        SplatNode(1...2)((1...2), nil)],
+       (3...4),
        CallNode(5...10)(
          CallNode(5...6)(
            nil,

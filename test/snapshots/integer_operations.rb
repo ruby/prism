@@ -253,12 +253,12 @@ ProgramNode(0...247)(
      AndNode(173...179)(
        IntegerNode(173...174)(),
        IntegerNode(178...179)(),
-       AMPERSAND_AMPERSAND(175...177)("&&")
+       (175...177)
      ),
      AndNode(181...188)(
        IntegerNode(181...182)(),
        IntegerNode(187...188)(),
-       KEYWORD_AND(183...186)("and")
+       (183...186)
      ),
      CallNode(190...200)(
        IntegerNode(190...191)(),

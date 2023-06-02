@@ -2,7 +2,7 @@ ProgramNode(0...73)(
   [IDENTIFIER(61...63)("ex")],
   StatementsNode(0...73)(
     [BeginNode(0...36)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...11)(
          [CallNode(7...11)(
             nil,
@@ -16,9 +16,9 @@ ProgramNode(0...73)(
           )]
        ),
        RescueNode(13...31)(
-         KEYWORD_RESCUE(13...19)("rescue"),
+         (13...19),
          [],
-         EQUAL_GREATER(20...22)("=>"),
+         (20...22),
          InstanceVariableWriteNode(23...26)((23...26), nil, nil),
          StatementsNode(28...31)(
            [CallNode(28...31)(
@@ -36,10 +36,10 @@ ProgramNode(0...73)(
        ),
        nil,
        nil,
-       KEYWORD_END(33...36)("end")
+       (33...36)
      ),
      BeginNode(38...73)(
-       KEYWORD_BEGIN(38...43)("begin"),
+       (38...43),
        StatementsNode(45...49)(
          [CallNode(45...49)(
             nil,
@@ -53,9 +53,9 @@ ProgramNode(0...73)(
           )]
        ),
        RescueNode(51...68)(
-         KEYWORD_RESCUE(51...57)("rescue"),
+         (51...57),
          [],
-         EQUAL_GREATER(58...60)("=>"),
+         (58...60),
          LocalVariableWriteNode(61...63)((61...63), nil, nil, 0),
          StatementsNode(65...68)(
            [CallNode(65...68)(
@@ -73,7 +73,7 @@ ProgramNode(0...73)(
        ),
        nil,
        nil,
-       KEYWORD_END(70...73)("end")
+       (70...73)
      )]
   )
 )

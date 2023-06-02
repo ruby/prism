@@ -27,12 +27,12 @@ ProgramNode(0...29)(
             "k"
           ),
           BeginNode(5...29)(
-            KEYWORD_BEGIN(5...10)("begin"),
+            (5...10),
             StatementsNode(18...20)([IntegerNode(18...20)()]),
             nil,
             nil,
             nil,
-            KEYWORD_END(26...29)("end")
+            (26...29)
           )]
        ),
        BRACKET_RIGHT(3...4)("]"),

@@ -1,10 +1,4 @@
 ProgramNode(0...5)(
   [],
-  StatementsNode(0...5)(
-    [ArrayNode(0...5)(
-       [],
-       PERCENT_UPPER_I(0...3)("%I("),
-       STRING_END(4...5)(")")
-     )]
-  )
+  StatementsNode(0...5)([ArrayNode(0...5)([], (0...3), (4...5))])
 )

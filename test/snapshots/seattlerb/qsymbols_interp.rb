@@ -5,9 +5,9 @@ ProgramNode(0...15)(
        [SymbolNode(3...4)(nil, STRING_CONTENT(3...4)("a"), nil, "a"),
         InterpolatedSymbolNode(0...12)(
           nil,
-          [StringNode(5...6)(nil, STRING_CONTENT(5...6)("b"), nil, "b"),
+          [StringNode(5...6)(nil, (5...6), nil, "b"),
            StringInterpolatedNode(6...12)(
-             EMBEXPR_BEGIN(6...8)("\#{"),
+             (6...8),
              StatementsNode(8...11)(
                [CallNode(8...11)(
                   IntegerNode(8...9)(),
@@ -20,13 +20,13 @@ ProgramNode(0...15)(
                   "+"
                 )]
              ),
-             EMBEXPR_END(11...12)("}")
+             (11...12)
            )],
           nil
         ),
         SymbolNode(13...14)(nil, STRING_CONTENT(13...14)("c"), nil, "c")],
-       PERCENT_UPPER_I(0...3)("%I("),
-       STRING_END(14...15)(")")
+       (0...3),
+       (14...15)
      )]
   )
 )

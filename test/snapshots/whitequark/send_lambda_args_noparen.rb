@@ -3,17 +3,14 @@ ProgramNode(0...18)(
   StatementsNode(0...18)(
     [LambdaNode(0...7)(
        [LABEL(3...4)("a")],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        BlockParametersNode(3...7)(
          ParametersNode(3...7)(
            [],
            [],
            [],
            nil,
-           [KeywordParameterNode(3...7)(
-              LABEL(3...5)("a:"),
-              IntegerNode(6...7)()
-            )],
+           [KeywordParameterNode(3...7)((3...5), IntegerNode(6...7)())],
            nil,
            nil
          ),
@@ -25,14 +22,14 @@ ProgramNode(0...18)(
      ),
      LambdaNode(13...18)(
        [LABEL(16...17)("a")],
-       MINUS_GREATER(13...15)("->"),
+       (13...15),
        BlockParametersNode(16...18)(
          ParametersNode(16...18)(
            [],
            [],
            [],
            nil,
-           [KeywordParameterNode(16...18)(LABEL(16...18)("a:"), nil)],
+           [KeywordParameterNode(16...18)((16...18), nil)],
            nil,
            nil
          ),

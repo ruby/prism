@@ -9,7 +9,7 @@ ProgramNode(0...272)(
          "hi"
        ),
        [WhenNode(9...17)(
-          KEYWORD_WHEN(9...13)("when"),
+          (9...13),
           [SymbolNode(14...17)(
              SYMBOL_BEGIN(14...15)(":"),
              IDENTIFIER(15...17)("hi"),
@@ -25,7 +25,7 @@ ProgramNode(0...272)(
      CaseNode(23...81)(
        TrueNode(28...32)(),
        [WhenNode(34...53)(
-          KEYWORD_WHEN(34...38)("when"),
+          (34...38),
           [TrueNode(39...43)()],
           StatementsNode(45...53)(
             [CallNode(45...53)(
@@ -48,7 +48,7 @@ ProgramNode(0...272)(
           )
         ),
         WhenNode(55...76)(
-          KEYWORD_WHEN(55...59)("when"),
+          (55...59),
           [FalseNode(60...65)()],
           StatementsNode(67...76)(
             [CallNode(67...76)(
@@ -77,9 +77,9 @@ ProgramNode(0...272)(
      CaseNode(83...103)(
        nil,
        [WhenNode(89...98)(
-          KEYWORD_WHEN(89...93)("when"),
+          (89...93),
           [SplatNode(94...98)(
-             USTAR(94...95)("*"),
+             (94...95),
              CallNode(95...98)(
                nil,
                nil,
@@ -105,7 +105,7 @@ ProgramNode(0...272)(
          "hi"
        ),
        [WhenNode(114...122)(
-          KEYWORD_WHEN(114...118)("when"),
+          (114...118),
           [SymbolNode(119...122)(
              SYMBOL_BEGIN(119...120)(":"),
              IDENTIFIER(120...122)("hi"),
@@ -115,7 +115,7 @@ ProgramNode(0...272)(
           nil
         )],
        ElseNode(123...134)(
-         KEYWORD_ELSE(123...127)("else"),
+         (123...127),
          StatementsNode(128...130)(
            [SymbolNode(128...130)(
               SYMBOL_BEGIN(128...129)(":"),
@@ -124,7 +124,7 @@ ProgramNode(0...272)(
               "b"
             )]
          ),
-         KEYWORD_END(131...134)("end")
+         (131...134)
        ),
        (105...109),
        (131...134)
@@ -141,7 +141,7 @@ ProgramNode(0...272)(
          "this"
        ),
        [WhenNode(147...167)(
-          KEYWORD_WHEN(147...151)("when"),
+          (147...151),
           [ConstantReadNode(152...158)(), ConstantReadNode(160...167)()],
           nil
         )],
@@ -152,7 +152,7 @@ ProgramNode(0...272)(
      CaseNode(174...198)(
        nil,
        [WhenNode(179...194)(
-          KEYWORD_WHEN(179...183)("when"),
+          (179...183),
           [CallNode(184...194)(
              CallNode(184...187)(
                nil,
@@ -192,7 +192,7 @@ ProgramNode(0...272)(
      CaseNode(200...230)(
        nil,
        [WhenNode(205...211)(
-          KEYWORD_WHEN(205...209)("when"),
+          (205...209),
           [CallNode(210...211)(
              nil,
              nil,
@@ -205,11 +205,7 @@ ProgramNode(0...272)(
            )],
           nil
         )],
-       ElseNode(212...230)(
-         KEYWORD_ELSE(212...216)("else"),
-         nil,
-         KEYWORD_END(227...230)("end")
-       ),
+       ElseNode(212...230)((212...216), nil, (227...230)),
        (200...204),
        (227...230)
      ),
@@ -225,7 +221,7 @@ ProgramNode(0...272)(
          "type"
        ),
        [WhenNode(246...253)(
-          KEYWORD_WHEN(246...250)("when"),
+          (246...250),
           [SymbolNode(251...253)(
              SYMBOL_BEGIN(251...252)(":"),
              IDENTIFIER(252...253)("b"),
@@ -235,9 +231,9 @@ ProgramNode(0...272)(
           StatementsNode(0...0)([])
         )],
        ElseNode(260...272)(
-         KEYWORD_ELSE(260...264)("else"),
+         (260...264),
          StatementsNode(0...0)([]),
-         KEYWORD_END(269...272)("end")
+         (269...272)
        ),
        (232...236),
        (269...272)

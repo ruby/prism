@@ -1,10 +1,10 @@
 ProgramNode(0...120)(
   [],
   StatementsNode(0...120)(
-    [HashNode(0...2)(BRACE_LEFT(0...1)("{"), [], BRACE_RIGHT(1...2)("}")),
-     HashNode(4...7)(BRACE_LEFT(4...5)("{"), [], BRACE_RIGHT(6...7)("}")),
+    [HashNode(0...2)((0...1), [], (1...2)),
+     HashNode(4...7)((4...5), [], (6...7)),
      HashNode(9...27)(
-       BRACE_LEFT(9...10)("{"),
+       (9...10),
        [AssocNode(11...17)(
           CallNode(11...12)(
             nil,
@@ -26,7 +26,7 @@ ProgramNode(0...120)(
             nil,
             "b"
           ),
-          EQUAL_GREATER(13...15)("=>")
+          (13...15)
         ),
         AssocNode(19...25)(
           CallNode(19...20)(
@@ -49,12 +49,12 @@ ProgramNode(0...120)(
             nil,
             "d"
           ),
-          EQUAL_GREATER(21...23)("=>")
+          (21...23)
         )],
-       BRACE_RIGHT(26...27)("}")
+       (26...27)
      ),
      HashNode(29...44)(
-       BRACE_LEFT(29...30)("{"),
+       (29...30),
        [AssocNode(31...37)(
           CallNode(31...32)(
             nil,
@@ -76,7 +76,7 @@ ProgramNode(0...120)(
             nil,
             "b"
           ),
-          EQUAL_GREATER(33...35)("=>")
+          (33...35)
         ),
         AssocSplatNode(39...42)(
           CallNode(41...42)(
@@ -91,10 +91,10 @@ ProgramNode(0...120)(
           ),
           (39...41)
         )],
-       BRACE_RIGHT(43...44)("}")
+       (43...44)
      ),
      HashNode(46...79)(
-       BRACE_LEFT(46...47)("{"),
+       (46...47),
        [AssocNode(54...58)(
           SymbolNode(54...56)(
             nil,
@@ -133,10 +133,10 @@ ProgramNode(0...120)(
           ),
           nil
         )],
-       BRACE_RIGHT(78...79)("}")
+       (78...79)
      ),
      HashNode(81...106)(
-       BRACE_LEFT(81...82)("{"),
+       (81...82),
        [AssocNode(83...87)(
           SymbolNode(83...85)(
             nil,
@@ -207,10 +207,10 @@ ProgramNode(0...120)(
           ),
           nil
         )],
-       BRACE_RIGHT(105...106)("}")
+       (105...106)
      ),
      HashNode(108...120)(
-       BRACE_LEFT(108...109)("{"),
+       (108...109),
        [AssocNode(110...118)(
           SymbolNode(110...114)(
             STRING_BEGIN(110...111)("\""),
@@ -239,7 +239,7 @@ ProgramNode(0...120)(
           ),
           nil
         )],
-       BRACE_RIGHT(119...120)("}")
+       (119...120)
      )]
   )
 )

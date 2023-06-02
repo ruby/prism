@@ -2,7 +2,7 @@ ProgramNode(0...26)(
   [],
   StatementsNode(0...26)(
     [DefNode(0...26)(
-       IDENTIFIER(4...7)("fun"),
+       (4...7),
        nil,
        ParametersNode(8...16)(
          [],
@@ -10,7 +10,7 @@ ProgramNode(0...26)(
          [],
          nil,
          [KeywordParameterNode(8...16)(
-            LABEL(8...11)("kw:"),
+            (8...11),
             SymbolNode(12...16)(
               SYMBOL_BEGIN(12...13)(":"),
               IDENTIFIER(13...16)("val"),

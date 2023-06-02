@@ -3,13 +3,13 @@ ProgramNode(0...28)(
   StatementsNode(0...28)(
     [ClassNode(0...28)(
        [],
-       KEYWORD_CLASS(0...5)("class"),
+       (0...5),
        ConstantReadNode(6...7)(),
        nil,
        nil,
        StatementsNode(10...24)(
          [DefNode(10...24)(
-            EQUAL_EQUAL(14...16)("=="),
+            (14...16),
             nil,
             ParametersNode(17...18)(
               [RequiredParameterNode(17...18)()],
@@ -30,7 +30,7 @@ ProgramNode(0...28)(
             nil
           )]
        ),
-       KEYWORD_END(25...28)("end")
+       (25...28)
      )]
   )
 )

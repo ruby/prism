@@ -2,13 +2,13 @@ ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
     [DefNode(0...23)(
-       IDENTIFIER(4...5)("f"),
+       (4...5),
        nil,
        ParametersNode(6...18)(
          [RequiredParameterNode(6...7)()],
          [OptionalParameterNode(9...15)(
-            IDENTIFIER(9...10)("b"),
-            EQUAL(11...12)("="),
+            (9...10),
+            (11...12),
             SymbolNode(13...15)(
               SYMBOL_BEGIN(13...14)(":"),
               IDENTIFIER(14...15)("c"),

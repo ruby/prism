@@ -2,19 +2,14 @@ ProgramNode(0...24)(
   [],
   StatementsNode(0...24)(
     [IfNode(0...24)(
-       KEYWORD_IF(0...2)("if"),
+       (0...2),
        CallNode(3...15)(
          nil,
          nil,
          IDENTIFIER(3...7)("test"),
          nil,
          ArgumentsNode(8...15)(
-           [StringNode(8...10)(
-              STRING_BEGIN(8...9)("?"),
-              STRING_CONTENT(9...10)("d"),
-              nil,
-              "d"
-            ),
+           [StringNode(8...10)((8...9), (9...10), nil, "d"),
             CallNode(12...15)(
               nil,
               nil,
@@ -32,7 +27,7 @@ ProgramNode(0...24)(
        ),
        nil,
        nil,
-       KEYWORD_END(21...24)("end")
+       (21...24)
      )]
   )
 )

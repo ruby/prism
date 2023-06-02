@@ -2,7 +2,7 @@ ProgramNode(2...15)(
   [],
   StatementsNode(2...15)(
     [IfNode(2...15)(
-       QUESTION_MARK(2...3)("?"),
+       (2...3),
        CallNode(0...1)(
          nil,
          nil,
@@ -29,12 +29,7 @@ ProgramNode(2...15)(
             AMPERSAND(6...7)("&"),
             nil,
             ArgumentsNode(8...10)(
-              [StringNode(8...10)(
-                 STRING_BEGIN(8...9)("'"),
-                 STRING_CONTENT(9...9)(""),
-                 STRING_END(9...10)("'"),
-                 ""
-               )]
+              [StringNode(8...10)((8...9), (9...9), (9...10), "")]
             ),
             nil,
             nil,
@@ -42,7 +37,7 @@ ProgramNode(2...15)(
           )]
        ),
        ElseNode(10...15)(
-         COLON(10...11)(":"),
+         (10...11),
          StatementsNode(12...15)([NilNode(12...15)()]),
          nil
        ),

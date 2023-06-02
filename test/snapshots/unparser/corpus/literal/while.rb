@@ -3,7 +3,7 @@ ProgramNode(0...620)(
   StatementsNode(0...620)(
     [ModuleNode(0...68)(
        [],
-       KEYWORD_MODULE(0...6)("module"),
+       (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(11...64)(
          [CallNode(11...64)(
@@ -31,7 +31,7 @@ ProgramNode(0...620)(
               ),
               StatementsNode(27...60)(
                 [WhileNode(27...60)(
-                   KEYWORD_WHILE(27...32)("while"),
+                   (27...32),
                    CallNode(33...36)(
                      nil,
                      nil,
@@ -58,15 +58,15 @@ ProgramNode(0...620)(
             "foo"
           )]
        ),
-       KEYWORD_END(65...68)("end")
+       (65...68)
      ),
      DefNode(70...110)(
-       IDENTIFIER(74...77)("foo"),
+       (74...77),
        nil,
        nil,
        StatementsNode(80...106)(
          [WhileNode(80...106)(
-            KEYWORD_WHILE_MODIFIER(90...95)("while"),
+            (90...95),
             CallNode(96...106)(
               LocalVariableReadNode(96...99)(0),
               nil,
@@ -117,11 +117,11 @@ ProgramNode(0...620)(
      ),
      ModuleNode(112...146)(
        [IDENTIFIER(123...126)("foo")],
-       KEYWORD_MODULE(112...118)("module"),
+       (112...118),
        ConstantReadNode(119...120)(),
        StatementsNode(123...142)(
          [WhileNode(123...142)(
-            KEYWORD_WHILE_MODIFIER(133...138)("while"),
+            (133...138),
             LocalVariableReadNode(139...142)(0),
             StatementsNode(123...132)(
               [LocalVariableWriteNode(123...132)(
@@ -142,15 +142,15 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       KEYWORD_END(143...146)("end")
+       (143...146)
      ),
      ModuleNode(148...182)(
        [IDENTIFIER(159...162)("foo")],
-       KEYWORD_MODULE(148...154)("module"),
+       (148...154),
        ConstantReadNode(155...156)(),
        StatementsNode(159...178)(
          [UntilNode(159...178)(
-            KEYWORD_UNTIL_MODIFIER(169...174)("until"),
+            (169...174),
             LocalVariableReadNode(175...178)(0),
             StatementsNode(159...168)(
               [LocalVariableWriteNode(159...168)(
@@ -171,15 +171,15 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       KEYWORD_END(179...182)("end")
+       (179...182)
      ),
      ModuleNode(184...228)(
        [IDENTIFIER(209...212)("foo")],
-       KEYWORD_MODULE(184...190)("module"),
+       (184...190),
        ConstantReadNode(191...192)(),
        StatementsNode(195...224)(
          [WhileNode(195...224)(
-            KEYWORD_WHILE(195...200)("while"),
+            (195...200),
             CallNode(201...204)(
               nil,
               nil,
@@ -209,11 +209,11 @@ ProgramNode(0...620)(
             )
           )]
        ),
-       KEYWORD_END(225...228)("end")
+       (225...228)
      ),
      ModuleNode(230...299)(
        [],
-       KEYWORD_MODULE(230...236)("module"),
+       (230...236),
        ConstantReadNode(237...238)(),
        StatementsNode(241...295)(
          [CallNode(241...295)(
@@ -241,7 +241,7 @@ ProgramNode(0...620)(
               ),
               StatementsNode(258...291)(
                 [WhileNode(258...291)(
-                   KEYWORD_WHILE(258...263)("while"),
+                   (258...263),
                    CallNode(264...267)(
                      nil,
                      nil,
@@ -277,11 +277,11 @@ ProgramNode(0...620)(
             "each"
           )]
        ),
-       KEYWORD_END(296...299)("end")
+       (296...299)
      ),
      ModuleNode(301...370)(
        [],
-       KEYWORD_MODULE(301...307)("module"),
+       (301...307),
        ConstantReadNode(308...309)(),
        StatementsNode(312...366)(
          [CallNode(312...366)(
@@ -309,7 +309,7 @@ ProgramNode(0...620)(
               ),
               StatementsNode(329...362)(
                 [WhileNode(329...362)(
-                   KEYWORD_WHILE(329...334)("while"),
+                   (329...334),
                    LocalVariableReadNode(335...338)(0),
                    StatementsNode(345...354)(
                      [LocalVariableWriteNode(345...354)(
@@ -336,14 +336,14 @@ ProgramNode(0...620)(
             "each"
           )]
        ),
-       KEYWORD_END(367...370)("end")
+       (367...370)
      ),
      LocalVariableWriteNode(371...402)(
        (371...372),
        ParenthesesNode(375...402)(
          StatementsNode(376...401)(
            [WhileNode(376...401)(
-              KEYWORD_WHILE_MODIFIER(392...397)("while"),
+              (392...397),
               CallNode(398...401)(
                 nil,
                 nil,
@@ -356,7 +356,7 @@ ProgramNode(0...620)(
               ),
               StatementsNode(376...391)(
                 [BeginNode(376...391)(
-                   KEYWORD_BEGIN(376...381)("begin"),
+                   (376...381),
                    StatementsNode(384...387)(
                      [CallNode(384...387)(
                         nil,
@@ -372,7 +372,7 @@ ProgramNode(0...620)(
                    nil,
                    nil,
                    nil,
-                   KEYWORD_END(388...391)("end")
+                   (388...391)
                  )]
               )
             )]
@@ -384,7 +384,7 @@ ProgramNode(0...620)(
        0
      ),
      WhileNode(403...428)(
-       KEYWORD_WHILE_MODIFIER(419...424)("while"),
+       (419...424),
        CallNode(425...428)(
          nil,
          nil,
@@ -397,7 +397,7 @@ ProgramNode(0...620)(
        ),
        StatementsNode(403...418)(
          [BeginNode(403...418)(
-            KEYWORD_BEGIN(403...408)("begin"),
+            (403...408),
             StatementsNode(411...414)(
               [CallNode(411...414)(
                  nil,
@@ -413,12 +413,12 @@ ProgramNode(0...620)(
             nil,
             nil,
             nil,
-            KEYWORD_END(415...418)("end")
+            (415...418)
           )]
        )
      ),
      UntilNode(429...460)(
-       KEYWORD_UNTIL_MODIFIER(451...456)("until"),
+       (451...456),
        CallNode(457...460)(
          nil,
          nil,
@@ -431,7 +431,7 @@ ProgramNode(0...620)(
        ),
        StatementsNode(429...450)(
          [BeginNode(429...450)(
-            KEYWORD_BEGIN(429...434)("begin"),
+            (429...434),
             StatementsNode(437...446)(
               [CallNode(437...440)(
                  nil,
@@ -457,12 +457,12 @@ ProgramNode(0...620)(
             nil,
             nil,
             nil,
-            KEYWORD_END(447...450)("end")
+            (447...450)
           )]
        )
      ),
      WhileNode(461...492)(
-       KEYWORD_WHILE_MODIFIER(483...488)("while"),
+       (483...488),
        CallNode(489...492)(
          nil,
          nil,
@@ -475,7 +475,7 @@ ProgramNode(0...620)(
        ),
        StatementsNode(461...482)(
          [BeginNode(461...482)(
-            KEYWORD_BEGIN(461...466)("begin"),
+            (461...466),
             StatementsNode(469...478)(
               [CallNode(469...472)(
                  nil,
@@ -501,22 +501,18 @@ ProgramNode(0...620)(
             nil,
             nil,
             nil,
-            KEYWORD_END(479...482)("end")
+            (479...482)
           )]
        )
      ),
-     WhileNode(493...508)(
-       KEYWORD_WHILE(493...498)("while"),
-       FalseNode(499...504)(),
-       nil
-     ),
+     WhileNode(493...508)((493...498), FalseNode(499...504)(), nil),
      WhileNode(509...528)(
-       KEYWORD_WHILE(509...514)("while"),
+       (509...514),
        FalseNode(515...520)(),
        StatementsNode(523...524)([IntegerNode(523...524)()])
      ),
      WhileNode(529...556)(
-       KEYWORD_WHILE(529...534)("while"),
+       (529...534),
        ParenthesesNode(535...544)(
          StatementsNode(536...543)(
            [CallNode(536...543)(
@@ -542,18 +538,14 @@ ProgramNode(0...620)(
           )]
        )
      ),
-     UntilNode(557...572)(
-       KEYWORD_UNTIL(557...562)("until"),
-       FalseNode(563...568)(),
-       nil
-     ),
+     UntilNode(557...572)((557...562), FalseNode(563...568)(), nil),
      UntilNode(573...592)(
-       KEYWORD_UNTIL(573...578)("until"),
+       (573...578),
        FalseNode(579...584)(),
        StatementsNode(587...588)([IntegerNode(587...588)()])
      ),
      UntilNode(593...620)(
-       KEYWORD_UNTIL(593...598)("until"),
+       (593...598),
        ParenthesesNode(599...608)(
          StatementsNode(600...607)(
            [CallNode(600...607)(

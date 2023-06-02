@@ -2,7 +2,7 @@ ProgramNode(0...21)(
   [],
   StatementsNode(0...21)(
     [ReturnNode(0...21)(
-       KEYWORD_RETURN(0...6)("return"),
+       (0...6),
        ArgumentsNode(7...21)(
          [CallNode(7...21)(
             nil,

@@ -2,7 +2,7 @@ ProgramNode(0...55)(
   [],
   StatementsNode(0...55)(
     [DefNode(0...21)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        nil,
        StatementsNode(10...17)(
@@ -52,7 +52,7 @@ ProgramNode(0...55)(
        (18...21)
      ),
      DefNode(23...55)(
-       IDENTIFIER(27...30)("foo"),
+       (27...30),
        nil,
        nil,
        StatementsNode(33...51)(
@@ -67,7 +67,7 @@ ProgramNode(0...55)(
               nil,
               "a"
             ),
-            KEYWORD_RESCUE_MODIFIER(35...41)("rescue"),
+            (35...41),
             ConstantReadNode(42...51)()
           )]
        ),

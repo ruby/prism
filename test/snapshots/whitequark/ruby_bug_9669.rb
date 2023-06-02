@@ -2,20 +2,18 @@ ProgramNode(0...33)(
   [IDENTIFIER(21...22)("o")],
   StatementsNode(0...33)(
     [DefNode(0...19)(
-       IDENTIFIER(4...5)("a"),
+       (4...5),
        nil,
        ParametersNode(6...8)(
          [],
          [],
          [],
          nil,
-         [KeywordParameterNode(6...8)(LABEL(6...8)("b:"), nil)],
+         [KeywordParameterNode(6...8)((6...8), nil)],
          nil,
          nil
        ),
-       StatementsNode(9...15)(
-         [ReturnNode(9...15)(KEYWORD_RETURN(9...15)("return"), nil)]
-       ),
+       StatementsNode(9...15)([ReturnNode(9...15)((9...15), nil)]),
        [LABEL(6...7)("b")],
        (0...3),
        nil,
@@ -27,7 +25,7 @@ ProgramNode(0...33)(
      LocalVariableWriteNode(21...33)(
        (21...22),
        HashNode(25...33)(
-         BRACE_LEFT(25...26)("{"),
+         (25...26),
          [AssocNode(27...31)(
             SymbolNode(27...29)(
               nil,
@@ -38,7 +36,7 @@ ProgramNode(0...33)(
             IntegerNode(30...31)(),
             nil
           )],
-         BRACE_RIGHT(32...33)("}")
+         (32...33)
        ),
        (23...24),
        0

@@ -4,7 +4,7 @@ ProgramNode(0...292)(
     [ParenthesesNode(0...28)(
        StatementsNode(1...27)(
          [DefNode(1...27)(
-            IDENTIFIER(5...8)("foo"),
+            (5...8),
             nil,
             ParametersNode(9...12)(
               [],
@@ -42,7 +42,7 @@ ProgramNode(0...292)(
      ParenthesesNode(30...58)(
        StatementsNode(31...57)(
          [DefNode(31...57)(
-            IDENTIFIER(35...38)("foo"),
+            (35...38),
             nil,
             ParametersNode(39...42)(
               [],
@@ -78,7 +78,7 @@ ProgramNode(0...292)(
        (57...58)
      ),
      DefNode(60...75)(
-       IDENTIFIER(64...67)("foo"),
+       (64...67),
        nil,
        ParametersNode(68...71)(
          [],
@@ -99,7 +99,7 @@ ProgramNode(0...292)(
        (72...75)
      ),
      DefNode(77...103)(
-       IDENTIFIER(81...84)("foo"),
+       (81...84),
        nil,
        ParametersNode(85...88)(
          [],
@@ -131,7 +131,7 @@ ProgramNode(0...292)(
        (100...103)
      ),
      DefNode(105...134)(
-       IDENTIFIER(109...112)("foo"),
+       (109...112),
        nil,
        ParametersNode(113...119)(
          [RequiredParameterNode(113...114)()],
@@ -163,7 +163,7 @@ ProgramNode(0...292)(
        (131...134)
      ),
      DefNode(136...165)(
-       IDENTIFIER(140...143)("foo"),
+       (140...143),
        nil,
        ParametersNode(144...150)(
          [RequiredParameterNode(144...145)()],
@@ -195,13 +195,13 @@ ProgramNode(0...292)(
        (162...165)
      ),
      DefNode(167...192)(
-       IDENTIFIER(171...174)("foo"),
+       (171...174),
        nil,
        ParametersNode(175...188)(
          [RequiredParameterNode(175...176)()],
          [OptionalParameterNode(178...183)(
-            IDENTIFIER(178...179)("b"),
-            EQUAL(180...181)("="),
+            (178...179),
+            (180...181),
             IntegerNode(182...183)()
           )],
          [],
@@ -222,13 +222,13 @@ ProgramNode(0...292)(
        (189...192)
      ),
      DefNode(194...227)(
-       IDENTIFIER(198...201)("foo"),
+       (198...201),
        nil,
        ParametersNode(202...212)(
          [],
          [OptionalParameterNode(202...207)(
-            IDENTIFIER(202...203)("b"),
-            EQUAL(204...205)("="),
+            (202...203),
+            (204...205),
             IntegerNode(206...207)()
           )],
          [],
@@ -258,13 +258,13 @@ ProgramNode(0...292)(
        (224...227)
      ),
      DefNode(229...262)(
-       IDENTIFIER(233...236)("foo"),
+       (233...236),
        nil,
        ParametersNode(237...247)(
          [],
          [OptionalParameterNode(237...242)(
-            IDENTIFIER(237...238)("b"),
-            EQUAL(239...240)("="),
+            (237...238),
+            (239...240),
             IntegerNode(241...242)()
           )],
          [],
@@ -294,7 +294,7 @@ ProgramNode(0...292)(
        (259...262)
      ),
      DefNode(264...292)(
-       IDENTIFIER(268...271)("foo"),
+       (268...271),
        nil,
        ParametersNode(272...278)(
          [RequiredParameterNode(272...273)()],

@@ -4,7 +4,7 @@ ProgramNode(0...16)(
     [MultiWriteNode(0...16)(
        [LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),
         LocalVariableWriteNode(5...8)((5...8), nil, nil, 0)],
-       EQUAL(9...10)("="),
+       (9...10),
        CallNode(11...16)(
          nil,
          nil,

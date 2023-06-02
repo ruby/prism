@@ -23,11 +23,11 @@ ProgramNode(0...16)(
                     "c"
                   ),
                   IntegerNode(13...14)(),
-                  EQUAL_GREATER(10...12)("=>")
+                  (10...12)
                 )]
              )],
-            BRACKET_LEFT_ARRAY(2...3)("["),
-            BRACKET_RIGHT(14...15)("]")
+            (2...3),
+            (14...15)
           )]
        ),
        PARENTHESIS_RIGHT(15...16)(")"),

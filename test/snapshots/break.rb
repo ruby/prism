@@ -48,8 +48,8 @@ ProgramNode(0...168)(
             [IntegerNode(74...75)(),
              IntegerNode(77...78)(),
              IntegerNode(80...81)()],
-            BRACKET_LEFT_ARRAY(73...74)("["),
-            BRACKET_RIGHT(81...82)("]")
+            (73...74),
+            (81...82)
           )]
        ),
        (67...72)

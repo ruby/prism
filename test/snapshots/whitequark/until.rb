@@ -2,7 +2,7 @@ ProgramNode(0...42)(
   [],
   StatementsNode(0...42)(
     [UntilNode(0...21)(
-       KEYWORD_UNTIL(0...5)("until"),
+       (0...5),
        CallNode(6...9)(
          nil,
          nil,
@@ -27,7 +27,7 @@ ProgramNode(0...42)(
        )
      ),
      UntilNode(23...42)(
-       KEYWORD_UNTIL(23...28)("until"),
+       (23...28),
        CallNode(29...32)(
          nil,
          nil,

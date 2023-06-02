@@ -19,8 +19,8 @@ ProgramNode(0...19)(
                BlockNode(11...17)([], nil, nil, (11...13), (14...17)),
                "b"
              )],
-            BRACKET_LEFT_ARRAY(2...3)("["),
-            BRACKET_RIGHT(18...19)("]")
+            (2...3),
+            (18...19)
           )]
        ),
        nil,

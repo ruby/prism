@@ -2,7 +2,7 @@ ProgramNode(0...32)(
   [],
   StatementsNode(0...32)(
     [DefNode(0...32)(
-       IDENTIFIER(9...13)("exec"),
+       (9...13),
        SelfNode(4...8)(),
        ParametersNode(14...17)(
          [RequiredParameterNode(14...17)()],

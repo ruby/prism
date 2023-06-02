@@ -2,7 +2,7 @@ ProgramNode(0...185)(
   [],
   StatementsNode(0...185)(
     [DefNode(0...11)(
-       KEYWORD_DEF(4...7)("def"),
+       (4...7),
        nil,
        nil,
        nil,
@@ -15,7 +15,7 @@ ProgramNode(0...185)(
        (8...11)
      ),
      DefNode(13...32)(
-       KEYWORD_ENSURE(22...28)("ensure"),
+       (22...28),
        SelfNode(17...21)(),
        nil,
        nil,
@@ -34,7 +34,7 @@ ProgramNode(0...185)(
        nil,
        ArgumentsNode(42...68)(
          [DefNode(42...68)(
-            IDENTIFIER(46...49)("foo"),
+            (46...49),
             nil,
             nil,
             StatementsNode(52...64)(
@@ -63,7 +63,7 @@ ProgramNode(0...185)(
        "private"
      ),
      DefNode(70...89)(
-       IDENTIFIER(74...75)("m"),
+       (74...75),
        nil,
        ParametersNode(76...84)(
          [RequiredParameterNode(76...77)()],
@@ -84,7 +84,7 @@ ProgramNode(0...185)(
        (86...89)
      ),
      DefNode(91...113)(
-       IDENTIFIER(108...109)("a"),
+       (108...109),
        SourceEncodingNode(95...107)(),
        nil,
        nil,
@@ -96,20 +96,10 @@ ProgramNode(0...185)(
        nil,
        (110...113)
      ),
-     StringNode(115...121)(
-       STRING_BEGIN(115...117)("%{"),
-       STRING_CONTENT(117...120)("abc"),
-       STRING_END(120...121)("}"),
-       "abc"
-     ),
-     StringNode(123...129)(
-       STRING_BEGIN(123...125)("%\""),
-       STRING_CONTENT(125...128)("abc"),
-       STRING_END(128...129)("\""),
-       "abc"
-     ),
+     StringNode(115...121)((115...117), (117...120), (120...121), "abc"),
+     StringNode(123...129)((123...125), (125...128), (128...129), "abc"),
      DefNode(131...149)(
-       IDENTIFIER(144...145)("a"),
+       (144...145),
        SourceFileNode(135...143)("/fixtures/keyword_method_names.rb"),
        nil,
        nil,
@@ -122,7 +112,7 @@ ProgramNode(0...185)(
        (146...149)
      ),
      DefNode(151...169)(
-       IDENTIFIER(164...165)("a"),
+       (164...165),
        SourceLineNode(155...163)(),
        nil,
        nil,
@@ -135,7 +125,7 @@ ProgramNode(0...185)(
        (166...169)
      ),
      DefNode(171...185)(
-       IDENTIFIER(180...181)("a"),
+       (180...181),
        NilNode(175...178)(),
        nil,
        nil,

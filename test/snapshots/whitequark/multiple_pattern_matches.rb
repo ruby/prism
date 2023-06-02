@@ -3,7 +3,7 @@ ProgramNode(0...52)(
   StatementsNode(0...52)(
     [MatchRequiredNode(0...12)(
        HashNode(0...6)(
-         BRACE_LEFT(0...1)("{"),
+         (0...1),
          [AssocNode(1...5)(
             SymbolNode(1...3)(
               nil,
@@ -14,7 +14,7 @@ ProgramNode(0...52)(
             IntegerNode(4...5)(),
             nil
           )],
-         BRACE_RIGHT(5...6)("}")
+         (5...6)
        ),
        HashPatternNode(10...12)(
          nil,
@@ -36,7 +36,7 @@ ProgramNode(0...52)(
      ),
      MatchRequiredNode(13...25)(
        HashNode(13...19)(
-         BRACE_LEFT(13...14)("{"),
+         (13...14),
          [AssocNode(14...18)(
             SymbolNode(14...16)(
               nil,
@@ -47,7 +47,7 @@ ProgramNode(0...52)(
             IntegerNode(17...18)(),
             nil
           )],
-         BRACE_RIGHT(18...19)("}")
+         (18...19)
        ),
        HashPatternNode(23...25)(
          nil,
@@ -69,7 +69,7 @@ ProgramNode(0...52)(
      ),
      MatchPredicateNode(27...39)(
        HashNode(27...33)(
-         BRACE_LEFT(27...28)("{"),
+         (27...28),
          [AssocNode(28...32)(
             SymbolNode(28...30)(
               nil,
@@ -80,7 +80,7 @@ ProgramNode(0...52)(
             IntegerNode(31...32)(),
             nil
           )],
-         BRACE_RIGHT(32...33)("}")
+         (32...33)
        ),
        HashPatternNode(37...39)(
          nil,
@@ -102,7 +102,7 @@ ProgramNode(0...52)(
      ),
      MatchPredicateNode(40...52)(
        HashNode(40...46)(
-         BRACE_LEFT(40...41)("{"),
+         (40...41),
          [AssocNode(41...45)(
             SymbolNode(41...43)(
               nil,
@@ -113,7 +113,7 @@ ProgramNode(0...52)(
             IntegerNode(44...45)(),
             nil
           )],
-         BRACE_RIGHT(45...46)("}")
+         (45...46)
        ),
        HashPatternNode(50...52)(
          nil,

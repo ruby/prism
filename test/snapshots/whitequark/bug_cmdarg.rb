@@ -61,7 +61,7 @@ ProgramNode(0...52)(
                ),
                LambdaNode(35...52)(
                  [],
-                 MINUS_GREATER(35...37)("->"),
+                 (35...37),
                  nil,
                  StatementsNode(41...52)(
                    [CallNode(41...52)(

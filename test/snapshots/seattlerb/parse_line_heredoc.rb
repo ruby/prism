@@ -5,14 +5,14 @@ ProgramNode(6...88)(
        (6...12),
        CallNode(15...31)(
          InterpolatedStringNode(15...71)(
-           HEREDOC_START(15...25)("<<-HEREDOC"),
+           (15...25),
            [StringNode(32...57)(
               nil,
-              STRING_CONTENT(32...57)("        very long string\n"),
+              (32...57),
               nil,
               "        very long string\n"
             )],
-           HEREDOC_END(57...71)("      HEREDOC\n")
+           (57...71)
          ),
          DOT(25...26)("."),
          IDENTIFIER(26...31)("strip"),

@@ -1,11 +1,6 @@
 ProgramNode(0...7)(
   [],
   StatementsNode(0...7)(
-    [StringNode(0...7)(
-       STRING_BEGIN(0...3)("%q("),
-       STRING_CONTENT(3...6)("\u0001\\'"),
-       STRING_END(6...7)(")"),
-       "\u0001'"
-     )]
+    [StringNode(0...7)((0...3), (3...6), (6...7), "\u0001'")]
   )
 )

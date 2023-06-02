@@ -19,7 +19,7 @@ ProgramNode(0...408)(
             ConstantReadNode(12...13)(),
             [IntegerNode(14...15)(), IntegerNode(17...18)()],
             SplatNode(20...22)(
-              USTAR(20...21)("*"),
+              (20...21),
               LocalVariableWriteNode(21...22)((21...22), nil, nil, 0)
             ),
             [IntegerNode(24...25)()],
@@ -96,7 +96,7 @@ ProgramNode(0...408)(
         ),
         InNode(102...120)(
           IfNode(105...115)(
-            KEYWORD_IF_MODIFIER(108...110)("if"),
+            (108...110),
             TrueNode(111...115)(),
             StatementsNode(105...107)(
               [HashPatternNode(105...107)(
@@ -119,7 +119,7 @@ ProgramNode(0...408)(
             nil,
             [LocalVariableWriteNode(132...133)((132...133), nil, nil, 0),
              LocalVariableWriteNode(135...136)((135...136), nil, nil, 0)],
-            SplatNode(138...139)(USTAR(138...139)("*"), nil),
+            SplatNode(138...139)((138...139), nil),
             [],
             (131...132),
             (139...140)
@@ -239,9 +239,9 @@ ProgramNode(0...408)(
           (318...322)
         )],
        ElseNode(330...345)(
-         KEYWORD_ELSE(330...334)("else"),
+         (330...334),
          StatementsNode(337...341)([TrueNode(337...341)()]),
-         KEYWORD_END(342...345)("end")
+         (342...345)
        ),
        (0...4),
        (342...345)
@@ -262,7 +262,7 @@ ProgramNode(0...408)(
             ConstantReadNode(358...359)(),
             [IntegerNode(360...361)(), IntegerNode(363...364)()],
             SplatNode(366...368)(
-              USTAR(366...367)("*"),
+              (366...367),
               LocalVariableWriteNode(367...368)((367...368), nil, nil, 0)
             ),
             [IntegerNode(370...371)()],
@@ -294,11 +294,7 @@ ProgramNode(0...408)(
           (386...388),
           nil
         )],
-       ElseNode(391...399)(
-         KEYWORD_ELSE(391...395)("else"),
-         nil,
-         KEYWORD_END(396...399)("end")
-       ),
+       ElseNode(391...399)((391...395), nil, (396...399)),
        (377...381),
        (396...399)
      ),

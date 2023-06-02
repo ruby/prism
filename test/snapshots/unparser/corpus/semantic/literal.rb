@@ -26,35 +26,18 @@ ProgramNode(0...131)(
        nil,
        "-@"
      ),
-     StringNode(55...57)(
-       STRING_BEGIN(55...56)("?"),
-       STRING_CONTENT(56...57)("c"),
-       nil,
-       "c"
-     ),
-     RegularExpressionNode(58...63)(
-       REGEXP_BEGIN(58...61)("%r("),
-       STRING_CONTENT(61...62)("/"),
-       REGEXP_END(62...63)(")"),
-       "/",
-       0
-     ),
-     RegularExpressionNode(64...70)(
-       REGEXP_BEGIN(64...67)("%r("),
-       STRING_CONTENT(67...69)("\\)"),
-       REGEXP_END(69...70)(")"),
-       ")",
-       0
-     ),
+     StringNode(55...57)((55...56), (56...57), nil, "c"),
+     RegularExpressionNode(58...63)((58...61), (61...62), (62...63), "/", 0),
+     RegularExpressionNode(64...70)((64...67), (67...69), (69...70), ")", 0),
      InterpolatedRegularExpressionNode(71...85)(
-       REGEXP_BEGIN(71...74)("%r("),
+       (71...74),
        [StringInterpolatedNode(74...81)(
-          EMBEXPR_BEGIN(74...76)("\#{"),
+          (74...76),
           StatementsNode(76...80)([InstanceVariableReadNode(76...80)()]),
-          EMBEXPR_END(80...81)("}")
+          (80...81)
         ),
-        StringNode(81...84)(nil, STRING_CONTENT(81...84)("baz"), nil, "baz")],
-       REGEXP_END(84...85)(")"),
+        StringNode(81...84)(nil, (81...84), nil, "baz")],
+       (84...85),
        0
      ),
      FloatNode(86...102)(),

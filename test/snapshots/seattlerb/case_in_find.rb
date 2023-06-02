@@ -12,7 +12,7 @@ ProgramNode(0...27)(
           FindPatternNode(13...23)(
             nil,
             SplatNode(13...15)(
-              USTAR(13...14)("*"),
+              (13...14),
               LocalVariableWriteNode(14...15)((14...15), nil, nil, 0)
             ),
             [SymbolNode(17...19)(
@@ -22,7 +22,7 @@ ProgramNode(0...27)(
                "+"
              )],
             SplatNode(21...23)(
-              USTAR(21...22)("*"),
+              (21...22),
               LocalVariableWriteNode(22...23)((22...23), nil, nil, 0)
             ),
             nil,

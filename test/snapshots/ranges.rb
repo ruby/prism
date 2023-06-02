@@ -42,7 +42,7 @@ ProgramNode(0...85)(
        "[]"
      ),
      HashNode(33...48)(
-       BRACE_LEFT(33...34)("{"),
+       (33...34),
        [AssocNode(35...46)(
           SymbolNode(35...39)(
             nil,
@@ -66,7 +66,7 @@ ProgramNode(0...85)(
           ),
           nil
         )],
-       BRACE_RIGHT(47...48)("}")
+       (47...48)
      ),
      ParenthesesNode(50...56)(
        StatementsNode(51...55)(
@@ -81,7 +81,7 @@ ProgramNode(0...85)(
        (59...61)
      ),
      HashNode(64...78)(
-       BRACE_LEFT(64...65)("{"),
+       (64...65),
        [AssocNode(66...76)(
           SymbolNode(66...70)(
             nil,
@@ -105,7 +105,7 @@ ProgramNode(0...85)(
           ),
           nil
         )],
-       BRACE_RIGHT(77...78)("}")
+       (77...78)
      ),
      ParenthesesNode(80...85)(
        StatementsNode(81...84)(

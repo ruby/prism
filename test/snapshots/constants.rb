@@ -35,12 +35,12 @@ ProgramNode(0...709)(
          ConstantReadNode(24...25)(),
          (22...24)
        ),
-       EQUAL(26...27)("="),
+       (26...27),
        IntegerNode(28...29)()
      ),
      ConstantPathWriteNode(31...36)(
        ConstantReadNode(31...32)(),
-       EQUAL(33...34)("="),
+       (33...34),
        IntegerNode(35...36)()
      ),
      ConstantReadNode(38...41)(),
@@ -66,7 +66,7 @@ ProgramNode(0...709)(
      ),
      ConstantPathWriteNode(60...67)(
        ConstantPathNode(60...63)(nil, ConstantReadNode(62...63)(), (60...62)),
-       EQUAL(64...65)("="),
+       (64...65),
        IntegerNode(66...67)()
      ),
      ConstantPathWriteNode(69...79)(
@@ -79,7 +79,7 @@ ProgramNode(0...709)(
          ConstantReadNode(74...75)(),
          (72...74)
        ),
-       EQUAL(76...77)("="),
+       (76...77),
        IntegerNode(78...79)()
      ),
      ConstantPathNode(81...87)(

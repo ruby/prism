@@ -18,11 +18,11 @@ ProgramNode(0...18)(
               RequiredDestructuredParameterNode(8...15)(
                 [RequiredParameterNode(9...10)(),
                  SplatNode(12...14)(
-                   USTAR(12...13)("*"),
+                   (12...13),
                    RequiredParameterNode(13...14)()
                  )],
-                PARENTHESIS_LEFT(8...9)("("),
-                PARENTHESIS_RIGHT(14...15)(")")
+                (8...9),
+                (14...15)
               )],
              [],
              [],

@@ -7,7 +7,7 @@ ProgramNode(0...719)(
   StatementsNode(0...719)(
     [GlobalVariableWriteNode(0...6)(
        GLOBAL_VARIABLE(0...2)("$a"),
-       EQUAL(3...4)("="),
+       (3...4),
        IntegerNode(5...6)()
      ),
      MultiWriteNode(8...24)(
@@ -21,11 +21,11 @@ ProgramNode(0...719)(
           nil,
           nil
         )],
-       EQUAL(16...17)("="),
+       (16...17),
        ArrayNode(18...24)(
          [IntegerNode(19...20)(), IntegerNode(22...23)()],
-         BRACKET_LEFT_ARRAY(18...19)("["),
-         BRACKET_RIGHT(23...24)("]")
+         (18...19),
+         (23...24)
        ),
        (7...8),
        (14...15)
@@ -33,42 +33,38 @@ ProgramNode(0...719)(
      MultiWriteNode(27...38)(
        [MultiWriteNode(27...29)(
           [LocalVariableWriteNode(27...28)((27...28), nil, nil, 0),
-           SplatNode(28...29)(COMMA(28...29)(","), nil)],
+           SplatNode(28...29)((28...29), nil)],
           nil,
           nil,
           (26...27),
           (29...30)
         ),
         LocalVariableWriteNode(32...33)((32...33), nil, nil, 0)],
-       EQUAL(35...36)("="),
+       (35...36),
        IntegerNode(37...38)(),
        (25...26),
        (33...34)
      ),
      MultiWriteNode(40...48)(
        [SplatNode(40...42)(
-          USTAR(40...41)("*"),
+          (40...41),
           LocalVariableWriteNode(41...42)((41...42), nil, nil, 0)
         )],
-       EQUAL(44...45)("="),
-       ArrayNode(46...48)(
-         [],
-         BRACKET_LEFT_ARRAY(46...47)("["),
-         BRACKET_RIGHT(47...48)("]")
-       ),
+       (44...45),
+       ArrayNode(46...48)([], (46...47), (47...48)),
        (39...40),
        (42...43)
      ),
      MultiWriteNode(50...64)(
        [SplatNode(50...54)(
-          USTAR(50...51)("*"),
+          (50...51),
           LocalVariableWriteNode(51...54)((51...54), nil, nil, 0)
         )],
-       EQUAL(56...57)("="),
+       (56...57),
        ArrayNode(58...64)(
          [IntegerNode(59...60)(), IntegerNode(62...63)()],
-         BRACKET_LEFT_ARRAY(58...59)("["),
-         BRACKET_RIGHT(63...64)("]")
+         (58...59),
+         (63...64)
        ),
        (49...50),
        (54...55)
@@ -76,11 +72,11 @@ ProgramNode(0...719)(
      MultiWriteNode(66...84)(
        [ClassVariableWriteNode(66...69)((66...69), nil, nil),
         ClassVariableWriteNode(71...74)((71...74), nil, nil)],
-       EQUAL(76...77)("="),
+       (76...77),
        ArrayNode(78...84)(
          [IntegerNode(79...80)(), IntegerNode(82...83)()],
-         BRACKET_LEFT_ARRAY(78...79)("["),
-         BRACKET_RIGHT(83...84)("]")
+         (78...79),
+         (83...84)
        ),
        (65...66),
        (74...75)
@@ -88,11 +84,11 @@ ProgramNode(0...719)(
      MultiWriteNode(86...102)(
        [InstanceVariableWriteNode(86...88)((86...88), nil, nil),
         InstanceVariableWriteNode(90...92)((90...92), nil, nil)],
-       EQUAL(94...95)("="),
+       (94...95),
        ArrayNode(96...102)(
          [IntegerNode(97...98)(), IntegerNode(100...101)()],
-         BRACKET_LEFT_ARRAY(96...97)("["),
-         BRACKET_RIGHT(101...102)("]")
+         (96...97),
+         (101...102)
        ),
        (85...86),
        (92...93)
@@ -107,28 +103,28 @@ ProgramNode(0...719)(
           (107...108),
           (112...113)
         )],
-       EQUAL(115...116)("="),
+       (115...116),
        ArrayNode(117...128)(
          [IntegerNode(118...119)(),
           ArrayNode(121...127)(
             [IntegerNode(122...123)(), IntegerNode(125...126)()],
-            BRACKET_LEFT_ARRAY(121...122)("["),
-            BRACKET_RIGHT(126...127)("]")
+            (121...122),
+            (126...127)
           )],
-         BRACKET_LEFT_ARRAY(117...118)("["),
-         BRACKET_RIGHT(127...128)("]")
+         (117...118),
+         (127...128)
        ),
        (103...104),
        (113...114)
      ),
      MultiWriteNode(130...144)(
        [LocalVariableWriteNode(130...131)((130...131), nil, nil, 0),
-        SplatNode(133...134)(USTAR(133...134)("*"), nil)],
-       EQUAL(136...137)("="),
+        SplatNode(133...134)((133...134), nil)],
+       (136...137),
        ArrayNode(138...144)(
          [IntegerNode(139...140)(), IntegerNode(142...143)()],
-         BRACKET_LEFT_ARRAY(138...139)("["),
-         BRACKET_RIGHT(143...144)("]")
+         (138...139),
+         (143...144)
        ),
        (129...130),
        (134...135)
@@ -136,14 +132,14 @@ ProgramNode(0...719)(
      MultiWriteNode(146...163)(
        [LocalVariableWriteNode(146...147)((146...147), nil, nil, 0),
         SplatNode(149...153)(
-          USTAR(149...150)("*"),
+          (149...150),
           LocalVariableWriteNode(150...153)((150...153), nil, nil, 0)
         )],
-       EQUAL(155...156)("="),
+       (155...156),
        ArrayNode(157...163)(
          [IntegerNode(158...159)(), IntegerNode(161...162)()],
-         BRACKET_LEFT_ARRAY(157...158)("["),
-         BRACKET_RIGHT(162...163)("]")
+         (157...158),
+         (162...163)
        ),
        (145...146),
        (153...154)
@@ -151,11 +147,11 @@ ProgramNode(0...719)(
      MultiWriteNode(165...179)(
        [LocalVariableWriteNode(165...166)((165...166), nil, nil, 0),
         LocalVariableWriteNode(168...169)((168...169), nil, nil, 0)],
-       EQUAL(171...172)("="),
+       (171...172),
        ArrayNode(173...179)(
          [IntegerNode(174...175)(), IntegerNode(177...178)()],
-         BRACKET_LEFT_ARRAY(173...174)("["),
-         BRACKET_RIGHT(178...179)("]")
+         (173...174),
+         (178...179)
        ),
        (164...165),
        (169...170)
@@ -163,15 +159,15 @@ ProgramNode(0...719)(
      MultiWriteNode(181...192)(
        [LocalVariableWriteNode(181...182)((181...182), nil, nil, 0),
         LocalVariableWriteNode(184...185)((184...185), nil, nil, 0)],
-       EQUAL(187...188)("="),
+       (187...188),
        LocalVariableReadNode(189...192)(0),
        (180...181),
        (185...186)
      ),
      MultiWriteNode(194...203)(
        [LocalVariableWriteNode(194...195)((194...195), nil, nil, 0),
-        SplatNode(195...196)(COMMA(195...196)(","), nil)],
-       EQUAL(198...199)("="),
+        SplatNode(195...196)((195...196), nil)],
+       (198...199),
        LocalVariableReadNode(200...203)(0),
        (193...194),
        (196...197)
@@ -197,11 +193,11 @@ ProgramNode(0...719)(
           nil,
           "bar="
         )],
-       EQUAL(219...220)("="),
+       (219...220),
        ArrayNode(221...227)(
          [IntegerNode(222...223)(), IntegerNode(225...226)()],
-         BRACKET_LEFT_ARRAY(221...222)("["),
-         BRACKET_RIGHT(226...227)("]")
+         (221...222),
+         (226...227)
        ),
        (204...205),
        (217...218)
@@ -214,7 +210,7 @@ ProgramNode(0...719)(
           BRACKET_LEFT(230...231)("["),
           ArgumentsNode(231...235)(
             [SplatNode(231...235)(
-               USTAR(231...232)("*"),
+               (231...232),
                LocalVariableReadNode(232...235)(0)
              )]
           ),
@@ -232,11 +228,11 @@ ProgramNode(0...719)(
           nil,
           "[]="
         )],
-       EQUAL(244...245)("="),
+       (244...245),
        ArrayNode(246...252)(
          [IntegerNode(247...248)(), IntegerNode(250...251)()],
-         BRACKET_LEFT_ARRAY(246...247)("["),
-         BRACKET_RIGHT(251...252)("]")
+         (246...247),
+         (251...252)
        ),
        (228...229),
        (242...243)
@@ -262,18 +258,18 @@ ProgramNode(0...719)(
           nil,
           "[]="
         )],
-       EQUAL(266...267)("="),
+       (266...267),
        ArrayNode(268...274)(
          [IntegerNode(269...270)(), IntegerNode(272...273)()],
-         BRACKET_LEFT_ARRAY(268...269)("["),
-         BRACKET_RIGHT(273...274)("]")
+         (268...269),
+         (273...274)
        ),
        (253...254),
        (264...265)
      ),
      MultiWriteNode(276...287)(
        [SplatNode(276...282)(
-          USTAR(276...277)("*"),
+          (276...277),
           CallNode(277...282)(
             LocalVariableReadNode(277...278)(0),
             DOT(278...279)("."),
@@ -285,7 +281,7 @@ ProgramNode(0...719)(
             "foo="
           )
         )],
-       EQUAL(284...285)("="),
+       (284...285),
        IntegerNode(286...287)(),
        (275...276),
        (282...283)
@@ -296,7 +292,7 @@ ProgramNode(0...719)(
          ConstantReadNode(290...293)(),
          (288...290)
        ),
-       EQUAL(294...295)("="),
+       (294...295),
        ConstantPathNode(296...301)(
          nil,
          ConstantReadNode(298...301)(),
@@ -315,7 +311,7 @@ ProgramNode(0...719)(
      ),
      ConstantPathWriteNode(317...326)(
        ConstantReadNode(317...322)(),
-       EQUAL(323...324)("="),
+       (323...324),
        IntegerNode(325...326)()
      ),
      ConstantPathWriteNode(327...350)(
@@ -328,7 +324,7 @@ ProgramNode(0...719)(
          ConstantReadNode(341...346)(),
          (339...341)
        ),
-       EQUAL(347...348)("="),
+       (347...348),
        IntegerNode(349...350)()
      ),
      LocalVariableWriteNode(351...367)(
@@ -338,7 +334,7 @@ ProgramNode(0...719)(
            [MultiWriteNode(357...366)(
               [LocalVariableWriteNode(357...358)((357...358), nil, nil, 0),
                LocalVariableWriteNode(360...361)((360...361), nil, nil, 0)],
-              EQUAL(363...364)("="),
+              (363...364),
               IntegerNode(365...366)(),
               (356...357),
               (361...362)
@@ -410,7 +406,7 @@ ProgramNode(0...719)(
        BRACKET_LEFT(425...426)("["),
        ArgumentsNode(426...441)(
          [SplatNode(426...432)(
-            USTAR(426...427)("*"),
+            (426...427),
             CallNode(427...432)(
               nil,
               nil,
@@ -529,12 +525,7 @@ ProgramNode(0...719)(
      ),
      LocalVariableWriteNode(507...514)(
        (507...508),
-       StringNode(511...514)(
-         STRING_BEGIN(511...513)("%("),
-         STRING_CONTENT(513...513)(""),
-         STRING_END(513...514)(")"),
-         ""
-       ),
+       StringNode(511...514)((511...513), (513...513), (513...514), ""),
        (509...510),
        0
      ),
@@ -544,12 +535,7 @@ ProgramNode(0...719)(
        IDENTIFIER(517...518)("x"),
        nil,
        ArgumentsNode(519...522)(
-         [StringNode(519...522)(
-            STRING_BEGIN(519...521)("%("),
-            STRING_CONTENT(521...521)(""),
-            STRING_END(521...522)(")"),
-            ""
-          )]
+         [StringNode(519...522)((519...521), (521...521), (521...522), "")]
        ),
        nil,
        nil,
@@ -561,12 +547,7 @@ ProgramNode(0...719)(
        BRACKET_LEFT_RIGHT_EQUAL(524...525)("["),
        BRACKET_LEFT(524...525)("["),
        ArgumentsNode(525...535)(
-         [StringNode(525...528)(
-            STRING_BEGIN(525...527)("%("),
-            STRING_CONTENT(527...527)(""),
-            STRING_END(527...528)(")"),
-            ""
-          ),
+         [StringNode(525...528)((525...527), (527...527), (527...528), ""),
           CallNode(532...535)(
             nil,
             nil,
@@ -589,12 +570,7 @@ ProgramNode(0...719)(
          BRACKET_LEFT_RIGHT_EQUAL(537...538)("["),
          BRACKET_LEFT(537...538)("["),
          ArgumentsNode(538...541)(
-           [StringNode(538...541)(
-              STRING_BEGIN(538...540)("%("),
-              STRING_CONTENT(540...540)(""),
-              STRING_END(540...541)(")"),
-              ""
-            )]
+           [StringNode(538...541)((538...540), (540...540), (540...541), "")]
          ),
          BRACKET_RIGHT(541...542)("]"),
          nil,
@@ -614,36 +590,17 @@ ProgramNode(0...719)(
      ),
      OperatorOrAssignmentNode(551...561)(
        InstanceVariableWriteNode(551...553)((551...553), nil, nil),
-       StringNode(558...561)(
-         STRING_BEGIN(558...560)("%("),
-         STRING_CONTENT(560...560)(""),
-         STRING_END(560...561)(")"),
-         ""
-       ),
+       StringNode(558...561)((558...560), (560...560), (560...561), ""),
        (554...557)
      ),
      LocalVariableWriteNode(562...591)(
        (562...563),
        InterpolatedStringNode(566...591)(
-         HEREDOC_START(566...576)("<<-HEREDOC"),
-         [StringNode(577...579)(
-            nil,
-            STRING_CONTENT(577...579)("  "),
-            nil,
-            "  "
-          ),
-          StringInterpolatedNode(579...582)(
-            EMBEXPR_BEGIN(579...581)("\#{"),
-            nil,
-            EMBEXPR_END(581...582)("}")
-          ),
-          StringNode(582...583)(
-            nil,
-            STRING_CONTENT(582...583)("\n"),
-            nil,
-            "\n"
-          )],
-         HEREDOC_END(583...591)("HEREDOC\n")
+         (566...576),
+         [StringNode(577...579)(nil, (577...579), nil, "  "),
+          StringInterpolatedNode(579...582)((579...581), nil, (581...582)),
+          StringNode(582...583)(nil, (582...583), nil, "\n")],
+         (583...591)
        ),
        (564...565),
        0
@@ -655,25 +612,11 @@ ProgramNode(0...719)(
        nil,
        ArgumentsNode(595...620)(
          [InterpolatedStringNode(595...620)(
-            HEREDOC_START(595...605)("<<-HEREDOC"),
-            [StringNode(606...608)(
-               nil,
-               STRING_CONTENT(606...608)("  "),
-               nil,
-               "  "
-             ),
-             StringInterpolatedNode(608...611)(
-               EMBEXPR_BEGIN(608...610)("\#{"),
-               nil,
-               EMBEXPR_END(610...611)("}")
-             ),
-             StringNode(611...612)(
-               nil,
-               STRING_CONTENT(611...612)("\n"),
-               nil,
-               "\n"
-             )],
-            HEREDOC_END(612...620)("HEREDOC\n")
+            (595...605),
+            [StringNode(606...608)(nil, (606...608), nil, "  "),
+             StringInterpolatedNode(608...611)((608...610), nil, (610...611)),
+             StringNode(611...612)(nil, (611...612), nil, "\n")],
+            (612...620)
           )]
        ),
        nil,
@@ -687,25 +630,11 @@ ProgramNode(0...719)(
        BRACKET_LEFT(621...622)("["),
        ArgumentsNode(626...651)(
          [InterpolatedStringNode(626...651)(
-            HEREDOC_START(626...636)("<<-HEREDOC"),
-            [StringNode(637...639)(
-               nil,
-               STRING_CONTENT(637...639)("  "),
-               nil,
-               "  "
-             ),
-             StringInterpolatedNode(639...642)(
-               EMBEXPR_BEGIN(639...641)("\#{"),
-               nil,
-               EMBEXPR_END(641...642)("}")
-             ),
-             StringNode(642...643)(
-               nil,
-               STRING_CONTENT(642...643)("\n"),
-               nil,
-               "\n"
-             )],
-            HEREDOC_END(643...651)("HEREDOC\n")
+            (626...636),
+            [StringNode(637...639)(nil, (637...639), nil, "  "),
+             StringInterpolatedNode(639...642)((639...641), nil, (641...642)),
+             StringNode(642...643)(nil, (642...643), nil, "\n")],
+            (643...651)
           )]
        ),
        BRACKET_RIGHT(622...623)("]"),
@@ -720,25 +649,15 @@ ProgramNode(0...719)(
          BRACKET_LEFT(652...653)("["),
          ArgumentsNode(653...687)(
            [InterpolatedStringNode(653...687)(
-              HEREDOC_START(653...663)("<<-HEREDOC"),
-              [StringNode(673...675)(
-                 nil,
-                 STRING_CONTENT(673...675)("  "),
-                 nil,
-                 "  "
-               ),
+              (653...663),
+              [StringNode(673...675)(nil, (673...675), nil, "  "),
                StringInterpolatedNode(675...678)(
-                 EMBEXPR_BEGIN(675...677)("\#{"),
+                 (675...677),
                  nil,
-                 EMBEXPR_END(677...678)("}")
+                 (677...678)
                ),
-               StringNode(678...679)(
-                 nil,
-                 STRING_CONTENT(678...679)("\n"),
-                 nil,
-                 "\n"
-               )],
-              HEREDOC_END(679...687)("HEREDOC\n")
+               StringNode(678...679)(nil, (678...679), nil, "\n")],
+              (679...687)
             )]
          ),
          BRACKET_RIGHT(663...664)("]"),
@@ -760,25 +679,11 @@ ProgramNode(0...719)(
      OperatorOrAssignmentNode(687...719)(
        InstanceVariableWriteNode(687...689)((687...689), nil, nil),
        InterpolatedStringNode(694...719)(
-         HEREDOC_START(694...704)("<<-HEREDOC"),
-         [StringNode(705...707)(
-            nil,
-            STRING_CONTENT(705...707)("  "),
-            nil,
-            "  "
-          ),
-          StringInterpolatedNode(707...710)(
-            EMBEXPR_BEGIN(707...709)("\#{"),
-            nil,
-            EMBEXPR_END(709...710)("}")
-          ),
-          StringNode(710...711)(
-            nil,
-            STRING_CONTENT(710...711)("\n"),
-            nil,
-            "\n"
-          )],
-         HEREDOC_END(711...719)("HEREDOC\n")
+         (694...704),
+         [StringNode(705...707)(nil, (705...707), nil, "  "),
+          StringInterpolatedNode(707...710)((707...709), nil, (709...710)),
+          StringNode(710...711)(nil, (710...711), nil, "\n")],
+         (711...719)
        ),
        (690...693)
      )]

@@ -4,11 +4,11 @@ ProgramNode(0...12)(
     [MultiWriteNode(0...12)(
        [LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
         SplatNode(3...5)(
-          USTAR(3...4)("*"),
+          (3...4),
           LocalVariableWriteNode(4...5)((4...5), nil, nil, 0)
         ),
         LocalVariableWriteNode(7...8)((7...8), nil, nil, 0)],
-       EQUAL(9...10)("="),
+       (9...10),
        CallNode(11...12)(
          nil,
          nil,

@@ -17,7 +17,7 @@ ProgramNode(0...38)(
           nil
         )],
        ElseNode(25...38)(
-         KEYWORD_ELSE(25...29)("else"),
+         (25...29),
          StatementsNode(32...34)(
            [SymbolNode(32...34)(
               SYMBOL_BEGIN(32...33)(":"),
@@ -26,7 +26,7 @@ ProgramNode(0...38)(
               "c"
             )]
          ),
-         KEYWORD_END(35...38)("end")
+         (35...38)
        ),
        (0...4),
        (35...38)

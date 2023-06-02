@@ -2,27 +2,12 @@ ProgramNode(0...32)(
   [],
   StatementsNode(0...32)(
     [BeginNode(0...32)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        nil,
-       RescueNode(7...13)(
-         KEYWORD_RESCUE(7...13)("rescue"),
-         [],
-         nil,
-         nil,
-         nil,
-         nil
-       ),
-       ElseNode(15...27)(
-         KEYWORD_ELSE(15...19)("else"),
-         nil,
-         KEYWORD_ENSURE(21...27)("ensure")
-       ),
-       EnsureNode(21...32)(
-         KEYWORD_ENSURE(21...27)("ensure"),
-         nil,
-         KEYWORD_END(29...32)("end")
-       ),
-       KEYWORD_END(29...32)("end")
+       RescueNode(7...13)((7...13), [], nil, nil, nil, nil),
+       ElseNode(15...27)((15...19), nil, (21...27)),
+       EnsureNode(21...32)((21...27), nil, (29...32)),
+       (29...32)
      )]
   )
 )

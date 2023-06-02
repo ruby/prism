@@ -8,7 +8,7 @@ ProgramNode(0...50)(
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(4...11)(
          [IfNode(4...11)(
-            QUESTION_MARK(4...5)("?"),
+            (4...5),
             CallNode(2...3)(
               nil,
               nil,
@@ -20,15 +20,10 @@ ProgramNode(0...50)(
               "a"
             ),
             StatementsNode(6...9)(
-              [StringNode(6...9)(
-                 STRING_BEGIN(6...7)("\""),
-                 STRING_CONTENT(7...8)("a"),
-                 STRING_END(8...9)("\""),
-                 "a"
-               )]
+              [StringNode(6...9)((6...7), (7...8), (8...9), "a")]
             ),
             ElseNode(9...11)(
-              COLON(9...10)(":"),
+              (9...10),
               StatementsNode(10...11)([IntegerNode(10...11)()]),
               nil
             ),
@@ -40,7 +35,7 @@ ProgramNode(0...50)(
        "f"
      ),
      HashNode(14...26)(
-       BRACE_LEFT(14...15)("{"),
+       (14...15),
        [AssocNode(16...24)(
           SymbolNode(16...22)(
             STRING_BEGIN(16...17)("'"),
@@ -51,10 +46,10 @@ ProgramNode(0...50)(
           IntegerNode(23...24)(),
           nil
         )],
-       BRACE_RIGHT(25...26)("}")
+       (25...26)
      ),
      HashNode(28...50)(
-       BRACE_LEFT(28...29)("{"),
+       (28...29),
        [AssocNode(30...38)(
           SymbolNode(30...36)(
             STRING_BEGIN(30...31)("'"),
@@ -72,14 +67,10 @@ ProgramNode(0...50)(
             LABEL_END(44...46)("':"),
             "bar"
           ),
-          HashNode(47...49)(
-            BRACE_LEFT(47...48)("{"),
-            [],
-            BRACE_RIGHT(48...49)("}")
-          ),
+          HashNode(47...49)((47...48), [], (48...49)),
           nil
         )],
-       BRACE_RIGHT(49...50)("}")
+       (49...50)
      )]
   )
 )

@@ -16,7 +16,7 @@ ProgramNode(0...114)(
                  "foo"
                ),
                IntegerNode(12...13)(),
-               EQUAL_GREATER(9...11)("=>")
+               (9...11)
              )]
           )]
        ),
@@ -39,7 +39,7 @@ ProgramNode(0...114)(
                  "foo"
                ),
                IntegerNode(28...29)(),
-               EQUAL_GREATER(25...27)("=>")
+               (25...27)
              )]
           ),
           BlockArgumentNode(31...35)(
@@ -85,7 +85,7 @@ ProgramNode(0...114)(
                  "a"
                ),
                IntegerNode(58...59)(),
-               EQUAL_GREATER(55...57)("=>")
+               (55...57)
              )]
           )]
        ),
@@ -108,7 +108,7 @@ ProgramNode(0...114)(
                  "bar"
                ),
                IntegerNode(74...75)(),
-               EQUAL_GREATER(71...73)("=>")
+               (71...73)
              )]
           )]
        ),
@@ -117,8 +117,8 @@ ProgramNode(0...114)(
        "[]"
      ),
      SuperNode(78...95)(
-       KEYWORD_SUPER(78...83)("super"),
-       PARENTHESIS_LEFT(83...84)("("),
+       (78...83),
+       (83...84),
        ArgumentsNode(84...94)(
          [KeywordHashNode(84...94)(
             [AssocNode(84...94)(
@@ -129,16 +129,16 @@ ProgramNode(0...114)(
                  "foo"
                ),
                IntegerNode(92...94)(),
-               EQUAL_GREATER(89...91)("=>")
+               (89...91)
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(94...95)(")"),
+       (94...95),
        nil
      ),
      YieldNode(97...114)(
-       KEYWORD_YIELD(97...102)("yield"),
-       PARENTHESIS_LEFT(102...103)("("),
+       (97...102),
+       (102...103),
        ArgumentsNode(103...113)(
          [KeywordHashNode(103...113)(
             [AssocNode(103...113)(
@@ -149,11 +149,11 @@ ProgramNode(0...114)(
                  "foo"
                ),
                IntegerNode(111...113)(),
-               EQUAL_GREATER(108...110)("=>")
+               (108...110)
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(113...114)(")")
+       (113...114)
      )]
   )
 )

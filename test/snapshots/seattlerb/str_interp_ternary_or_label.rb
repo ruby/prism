@@ -2,12 +2,12 @@ ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
     [InterpolatedStringNode(0...23)(
-       STRING_BEGIN(0...1)("\""),
+       (0...1),
        [StringInterpolatedNode(1...22)(
-          EMBEXPR_BEGIN(1...3)("\#{"),
+          (1...3),
           StatementsNode(8...21)(
             [IfNode(8...21)(
-               QUESTION_MARK(8...9)("?"),
+               (8...9),
                CallNode(3...7)(
                  CallNode(3...4)(
                    nil,
@@ -30,12 +30,7 @@ ProgramNode(0...23)(
                StatementsNode(10...17)(
                  [CallNode(10...17)(
                     CallNode(10...14)(
-                      StringNode(10...12)(
-                        STRING_BEGIN(10...11)("\""),
-                        STRING_CONTENT(11...11)(""),
-                        STRING_END(11...12)("\""),
-                        ""
-                      ),
+                      StringNode(10...12)((10...11), (11...11), (11...12), ""),
                       nil,
                       PLUS(12...13)("+"),
                       nil,
@@ -60,9 +55,9 @@ ProgramNode(0...23)(
                     nil,
                     ArgumentsNode(15...17)(
                       [StringNode(15...17)(
-                         STRING_BEGIN(15...16)("\""),
-                         STRING_CONTENT(16...16)(""),
-                         STRING_END(16...17)("\""),
+                         (15...16),
+                         (16...16),
+                         (16...17),
                          ""
                        )]
                     ),
@@ -72,23 +67,18 @@ ProgramNode(0...23)(
                   )]
                ),
                ElseNode(17...21)(
-                 COLON(17...18)(":"),
+                 (17...18),
                  StatementsNode(19...21)(
-                   [StringNode(19...21)(
-                      STRING_BEGIN(19...20)("\""),
-                      STRING_CONTENT(20...20)(""),
-                      STRING_END(20...21)("\""),
-                      ""
-                    )]
+                   [StringNode(19...21)((19...20), (20...20), (20...21), "")]
                  ),
                  nil
                ),
                nil
              )]
           ),
-          EMBEXPR_END(21...22)("}")
+          (21...22)
         )],
-       STRING_END(22...23)("\"")
+       (22...23)
      )]
   )
 )

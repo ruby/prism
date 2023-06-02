@@ -2,23 +2,23 @@ ProgramNode(0...132)(
   [],
   StatementsNode(0...132)(
     [DefNode(0...39)(
-       IDENTIFIER(4...5)("m"),
+       (4...5),
        nil,
        nil,
        StatementsNode(7...34)(
          [SingletonClassNode(7...34)(
             [],
-            KEYWORD_CLASS(7...12)("class"),
-            LESS_LESS(13...15)("<<"),
+            (7...12),
+            (13...15),
             SelfNode(16...20)(),
             StatementsNode(22...29)(
               [ConstantPathWriteNode(22...29)(
                  ConstantReadNode(22...23)(),
-                 EQUAL(24...25)("="),
+                 (24...25),
                  NilNode(26...29)()
                )]
             ),
-            KEYWORD_END(31...34)("end")
+            (31...34)
           )]
        ),
        [],
@@ -30,27 +30,27 @@ ProgramNode(0...132)(
        (36...39)
      ),
      DefNode(41...85)(
-       IDENTIFIER(45...46)("m"),
+       (45...46),
        nil,
        nil,
        StatementsNode(48...80)(
          [SingletonClassNode(48...80)(
             [],
-            KEYWORD_CLASS(48...53)("class"),
-            LESS_LESS(54...56)("<<"),
+            (48...53),
+            (54...56),
             SelfNode(57...61)(),
             StatementsNode(63...75)(
               [ClassNode(63...75)(
                  [],
-                 KEYWORD_CLASS(63...68)("class"),
+                 (63...68),
                  ConstantReadNode(69...70)(),
                  nil,
                  nil,
                  nil,
-                 KEYWORD_END(72...75)("end")
+                 (72...75)
                )]
             ),
-            KEYWORD_END(77...80)("end")
+            (77...80)
           )]
        ),
        [],
@@ -62,25 +62,25 @@ ProgramNode(0...132)(
        (82...85)
      ),
      DefNode(87...132)(
-       IDENTIFIER(91...92)("m"),
+       (91...92),
        nil,
        nil,
        StatementsNode(94...127)(
          [SingletonClassNode(94...127)(
             [],
-            KEYWORD_CLASS(94...99)("class"),
-            LESS_LESS(100...102)("<<"),
+            (94...99),
+            (100...102),
             SelfNode(103...107)(),
             StatementsNode(109...122)(
               [ModuleNode(109...122)(
                  [],
-                 KEYWORD_MODULE(109...115)("module"),
+                 (109...115),
                  ConstantReadNode(116...117)(),
                  nil,
-                 KEYWORD_END(119...122)("end")
+                 (119...122)
                )]
             ),
-            KEYWORD_END(124...127)("end")
+            (124...127)
           )]
        ),
        [],

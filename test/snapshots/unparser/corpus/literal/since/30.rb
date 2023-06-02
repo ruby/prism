@@ -18,7 +18,7 @@ ProgramNode(0...51)(
        ArrayPatternNode(14...17)(
          nil,
          [],
-         SplatNode(15...16)(USTAR(15...16)("*"), nil),
+         SplatNode(15...16)((15...16), nil),
          [],
          (14...15),
          (16...17)
@@ -29,9 +29,9 @@ ProgramNode(0...51)(
        IntegerNode(18...19)(),
        FindPatternNode(23...33)(
          nil,
-         SplatNode(24...25)(USTAR(24...25)("*"), nil),
+         SplatNode(24...25)((24...25), nil),
          [IntegerNode(27...29)()],
-         SplatNode(31...32)(USTAR(31...32)("*"), nil),
+         SplatNode(31...32)((31...32), nil),
          (23...24),
          (32...33)
        ),
@@ -41,10 +41,10 @@ ProgramNode(0...51)(
        IntegerNode(34...35)(),
        FindPatternNode(39...51)(
          nil,
-         SplatNode(40...41)(USTAR(40...41)("*"), nil),
+         SplatNode(40...41)((40...41), nil),
          [LocalVariableWriteNode(43...44)((43...44), nil, nil, 0)],
          SplatNode(46...50)(
-           USTAR(46...47)("*"),
+           (46...47),
            LocalVariableWriteNode(47...50)((47...50), nil, nil, 0)
          ),
          (39...40),

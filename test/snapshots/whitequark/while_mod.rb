@@ -2,7 +2,7 @@ ProgramNode(0...14)(
   [],
   StatementsNode(0...14)(
     [WhileNode(0...14)(
-       KEYWORD_WHILE_MODIFIER(5...10)("while"),
+       (5...10),
        CallNode(11...14)(
          nil,
          nil,

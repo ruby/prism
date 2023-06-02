@@ -20,8 +20,8 @@ ProgramNode(0...13)(
                nil,
                "c"
              )],
-            BRACKET_LEFT_ARRAY(5...6)("["),
-            BRACKET_RIGHT(12...13)("]")
+            (5...6),
+            (12...13)
           )]
        ),
        nil,

@@ -2,7 +2,7 @@ ProgramNode(0...24)(
   [],
   StatementsNode(0...24)(
     [HashNode(0...24)(
-       BRACE_LEFT(0...1)("{"),
+       (0...1),
        [AssocNode(1...23)(
           SymbolNode(1...3)(
             nil,
@@ -11,15 +11,15 @@ ProgramNode(0...24)(
             "a"
           ),
           IfNode(4...23)(
-            KEYWORD_IF(4...6)("if"),
+            (4...6),
             TrueNode(7...11)(),
             StatementsNode(17...19)([IntegerNode(17...19)()]),
             nil,
-            KEYWORD_END(20...23)("end")
+            (20...23)
           ),
           nil
         )],
-       BRACE_RIGHT(23...24)("}")
+       (23...24)
      )]
   )
 )

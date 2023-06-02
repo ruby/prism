@@ -2,7 +2,7 @@ ProgramNode(2...20)(
   [],
   StatementsNode(2...20)(
     [IfNode(2...13)(
-       QUESTION_MARK(2...3)("?"),
+       (2...3),
        IntegerNode(0...1)(),
        StatementsNode(4...9)(
          [CallNode(4...9)(
@@ -11,12 +11,7 @@ ProgramNode(2...20)(
             IDENTIFIER(4...5)("b"),
             PARENTHESIS_LEFT(5...6)("("),
             ArgumentsNode(6...8)(
-              [StringNode(6...8)(
-                 STRING_BEGIN(6...7)("'"),
-                 STRING_CONTENT(7...7)(""),
-                 STRING_END(7...8)("'"),
-                 ""
-               )]
+              [StringNode(6...8)((6...7), (7...7), (7...8), "")]
             ),
             PARENTHESIS_RIGHT(8...9)(")"),
             nil,
@@ -24,7 +19,7 @@ ProgramNode(2...20)(
           )]
        ),
        ElseNode(10...13)(
-         COLON(10...11)(":"),
+         (10...11),
          StatementsNode(12...13)([IntegerNode(12...13)()]),
          nil
        ),

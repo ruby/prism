@@ -2,7 +2,7 @@ ProgramNode(0...29)(
   [],
   StatementsNode(0...29)(
     [BeginNode(0...29)(
-       KEYWORD_BEGIN(0...5)("begin"),
+       (0...5),
        StatementsNode(7...11)(
          [CallNode(7...11)(
             nil,
@@ -18,7 +18,7 @@ ProgramNode(0...29)(
        nil,
        nil,
        EnsureNode(13...29)(
-         KEYWORD_ENSURE(13...19)("ensure"),
+         (13...19),
          StatementsNode(21...24)(
            [CallNode(21...24)(
               nil,
@@ -31,9 +31,9 @@ ProgramNode(0...29)(
               "bar"
             )]
          ),
-         KEYWORD_END(26...29)("end")
+         (26...29)
        ),
-       KEYWORD_END(26...29)("end")
+       (26...29)
      )]
   )
 )

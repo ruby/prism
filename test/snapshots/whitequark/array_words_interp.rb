@@ -2,11 +2,11 @@ ProgramNode(0...38)(
   [],
   StatementsNode(0...38)(
     [ArrayNode(0...14)(
-       [StringNode(3...6)(nil, STRING_CONTENT(3...6)("foo"), nil, "foo"),
+       [StringNode(3...6)(nil, (3...6), nil, "foo"),
         InterpolatedStringNode(0...13)(
           nil,
           [StringInterpolatedNode(7...13)(
-             EMBEXPR_BEGIN(7...9)("\#{"),
+             (7...9),
              StatementsNode(9...12)(
                [CallNode(9...12)(
                   nil,
@@ -19,19 +19,19 @@ ProgramNode(0...38)(
                   "bar"
                 )]
              ),
-             EMBEXPR_END(12...13)("}")
+             (12...13)
            )],
           nil
         )],
-       PERCENT_UPPER_W(0...3)("%W["),
-       STRING_END(13...14)("]")
+       (0...3),
+       (13...14)
      ),
      ArrayNode(16...38)(
-       [StringNode(19...22)(nil, STRING_CONTENT(19...22)("foo"), nil, "foo"),
+       [StringNode(19...22)(nil, (19...22), nil, "foo"),
         InterpolatedStringNode(0...37)(
           nil,
           [StringInterpolatedNode(23...29)(
-             EMBEXPR_BEGIN(23...25)("\#{"),
+             (23...25),
              StatementsNode(25...28)(
                [CallNode(25...28)(
                   nil,
@@ -44,19 +44,14 @@ ProgramNode(0...38)(
                   "bar"
                 )]
              ),
-             EMBEXPR_END(28...29)("}")
+             (28...29)
            ),
-           StringNode(29...32)(
-             nil,
-             STRING_CONTENT(29...32)("foo"),
-             nil,
-             "foo"
-           ),
+           StringNode(29...32)(nil, (29...32), nil, "foo"),
            InstanceVariableReadNode(33...37)()],
           nil
         )],
-       PERCENT_UPPER_W(16...19)("%W["),
-       STRING_END(37...38)("]")
+       (16...19),
+       (37...38)
      )]
   )
 )

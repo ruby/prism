@@ -22,7 +22,7 @@ ProgramNode(0...67)(
                      nil,
                      StatementsNode(20...38)(
                        [DefNode(20...38)(
-                          IDENTIFIER(24...34)("initialize"),
+                          (24...34),
                           nil,
                           nil,
                           nil,
@@ -61,12 +61,12 @@ ProgramNode(0...67)(
                  "at"
                ),
                StringNode(57...67)(
-                 STRING_BEGIN(57...58)("'"),
-                 STRING_CONTENT(58...66)("endpoint"),
-                 STRING_END(66...67)("'"),
+                 (57...58),
+                 (58...66),
+                 (66...67),
                  "endpoint"
                ),
-               EQUAL_GREATER(54...56)("=>")
+               (54...56)
              )]
           )]
        ),

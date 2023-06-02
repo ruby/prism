@@ -17,18 +17,15 @@ ProgramNode(0...22)(
            ParametersNode(5...19)(
              [],
              [OptionalParameterNode(5...8)(
-                IDENTIFIER(5...6)("b"),
-                EQUAL(6...7)("="),
+                (5...6),
+                (6...7),
                 IntegerNode(7...8)()
               )],
              [RequiredParameterNode(14...15)()],
-             RestParameterNode(10...12)(
-               USTAR(10...11)("*"),
-               IDENTIFIER(11...12)("c")
-             ),
+             RestParameterNode(10...12)((10...11), (11...12)),
              [],
              nil,
-             BlockParameterNode(17...19)(IDENTIFIER(18...19)("e"), (17...18))
+             BlockParameterNode(17...19)((18...19), (17...18))
            ),
            [],
            (4...5),

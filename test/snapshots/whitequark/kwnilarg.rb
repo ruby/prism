@@ -3,7 +3,7 @@ ProgramNode(0...46)(
   StatementsNode(0...46)(
     [LambdaNode(0...9)(
        [],
-       MINUS_GREATER(0...2)("->"),
+       (0...2),
        BlockParametersNode(2...9)(
          ParametersNode(3...8)(
            [],
@@ -21,7 +21,7 @@ ProgramNode(0...46)(
        nil
      ),
      DefNode(14...31)(
-       IDENTIFIER(18...19)("f"),
+       (18...19),
        nil,
        ParametersNode(20...25)(
          [],

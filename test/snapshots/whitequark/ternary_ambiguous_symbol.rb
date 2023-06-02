@@ -3,7 +3,7 @@ ProgramNode(0...13)(
   StatementsNode(0...13)(
     [LocalVariableWriteNode(0...3)((0...1), IntegerNode(2...3)(), (1...2), 0),
      IfNode(9...13)(
-       QUESTION_MARK(9...10)("?"),
+       (9...10),
        ParenthesesNode(4...9)(
          StatementsNode(5...8)(
            [CallNode(5...8)(
@@ -22,7 +22,7 @@ ProgramNode(0...13)(
        ),
        StatementsNode(10...11)([LocalVariableReadNode(10...11)(0)]),
        ElseNode(11...13)(
-         COLON(11...12)(":"),
+         (11...12),
          StatementsNode(12...13)([ConstantReadNode(12...13)()]),
          nil
        ),

@@ -9,7 +9,7 @@ ProgramNode(0...20)(
        ArgumentsNode(2...20)(
          [LambdaNode(2...20)(
             [],
-            MINUS_GREATER(2...4)("->"),
+            (2...4),
             BlockParametersNode(4...6)(nil, [], (4...5), (5...6)),
             StatementsNode(10...20)(
               [CallNode(10...20)(
