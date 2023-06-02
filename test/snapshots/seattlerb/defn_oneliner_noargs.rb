@@ -2,7 +2,7 @@ ProgramNode(0...17)(
   [],
   StatementsNode(0...17)(
     [DefNode(0...17)(
-       IDENTIFIER(4...8)("exec"),
+       (4...8),
        nil,
        nil,
        StatementsNode(11...17)(

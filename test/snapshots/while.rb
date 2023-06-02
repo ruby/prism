@@ -67,7 +67,7 @@ ProgramNode(0...314)(
      WhileNode(111...161)(
        (111...116),
        DefNode(117...149)(
-         IDENTIFIER(126...129)("foo"),
+         (126...129),
          SelfNode(121...125)(),
          ParametersNode(130...144)(
            [],

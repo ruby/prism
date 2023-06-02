@@ -61,7 +61,7 @@ ProgramNode(0...620)(
        (65...68)
      ),
      DefNode(70...110)(
-       IDENTIFIER(74...77)("foo"),
+       (74...77),
        nil,
        nil,
        StatementsNode(80...106)(

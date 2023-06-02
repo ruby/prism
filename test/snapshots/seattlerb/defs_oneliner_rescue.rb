@@ -2,7 +2,7 @@ ProgramNode(0...145)(
   [],
   StatementsNode(0...145)(
     [DefNode(0...49)(
-       IDENTIFIER(9...13)("exec"),
+       (9...13),
        SelfNode(4...8)(),
        ParametersNode(14...17)(
          [RequiredParameterNode(14...17)()],
@@ -48,7 +48,7 @@ ProgramNode(0...145)(
        (46...49)
      ),
      DefNode(52...99)(
-       IDENTIFIER(61...65)("exec"),
+       (61...65),
        SelfNode(56...60)(),
        ParametersNode(66...69)(
          [RequiredParameterNode(66...69)()],
@@ -84,7 +84,7 @@ ProgramNode(0...145)(
        (96...99)
      ),
      DefNode(102...145)(
-       IDENTIFIER(111...115)("exec"),
+       (111...115),
        SelfNode(106...110)(),
        ParametersNode(116...119)(
          [RequiredParameterNode(116...119)()],

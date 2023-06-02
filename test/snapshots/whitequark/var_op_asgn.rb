@@ -17,7 +17,7 @@ ProgramNode(0...53)(
        IntegerNode(27...28)()
      ),
      DefNode(30...53)(
-       IDENTIFIER(34...35)("a"),
+       (34...35),
        nil,
        nil,
        StatementsNode(37...48)(

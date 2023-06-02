@@ -2,7 +2,7 @@ ProgramNode(19...31)(
   [],
   StatementsNode(19...31)(
     [DefNode(19...31)(
-       IDENTIFIER(23...27)("blah"),
+       (23...27),
        nil,
        nil,
        nil,

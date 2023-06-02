@@ -243,7 +243,7 @@ ProgramNode(0...316)(
        (242...245)
      ),
      DefNode(247...291)(
-       IDENTIFIER(251...262)("some_method"),
+       (251...262),
        nil,
        nil,
        StatementsNode(265...291)(
@@ -273,7 +273,7 @@ ProgramNode(0...316)(
        nil
      ),
      DefNode(293...316)(
-       IDENTIFIER(297...298)("a"),
+       (297...298),
        nil,
        nil,
        BeginNode(0...316)(

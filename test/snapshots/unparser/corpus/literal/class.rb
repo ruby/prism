@@ -153,7 +153,7 @@ ProgramNode(0...213)(
             "include"
           ),
           DefNode(172...194)(
-            IDENTIFIER(176...179)("foo"),
+            (176...179),
             nil,
             nil,
             StatementsNode(184...188)(

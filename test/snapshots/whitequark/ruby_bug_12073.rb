@@ -26,7 +26,7 @@ ProgramNode(0...49)(
        "a"
      ),
      DefNode(15...49)(
-       IDENTIFIER(19...22)("foo"),
+       (19...22),
        nil,
        ParametersNode(23...28)(
          [RequiredParameterNode(23...28)()],

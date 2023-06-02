@@ -2,7 +2,7 @@ ProgramNode(0...179)(
   [],
   StatementsNode(0...179)(
     [DefNode(0...28)(
-       BANG_EQUAL(4...6)("!="),
+       (4...6),
        nil,
        ParametersNode(7...12)(
          [RequiredParameterNode(7...12)()],
@@ -34,7 +34,7 @@ ProgramNode(0...179)(
        nil
      ),
      DefNode(30...58)(
-       BANG_EQUAL(34...36)("!="),
+       (34...36),
        nil,
        ParametersNode(37...42)(
          [RequiredParameterNode(37...42)()],
@@ -66,7 +66,7 @@ ProgramNode(0...179)(
        nil
      ),
      DefNode(60...88)(
-       LESS_EQUAL(64...66)("<="),
+       (64...66),
        nil,
        ParametersNode(67...72)(
          [RequiredParameterNode(67...72)()],
@@ -98,7 +98,7 @@ ProgramNode(0...179)(
        nil
      ),
      DefNode(90...118)(
-       EQUAL_EQUAL(94...96)("=="),
+       (94...96),
        nil,
        ParametersNode(97...102)(
          [RequiredParameterNode(97...102)()],
@@ -130,7 +130,7 @@ ProgramNode(0...179)(
        nil
      ),
      DefNode(120...149)(
-       EQUAL_EQUAL_EQUAL(124...127)("==="),
+       (124...127),
        nil,
        ParametersNode(128...133)(
          [RequiredParameterNode(128...133)()],
@@ -162,7 +162,7 @@ ProgramNode(0...179)(
        nil
      ),
      DefNode(151...179)(
-       GREATER_EQUAL(155...157)(">="),
+       (155...157),
        nil,
        ParametersNode(158...163)(
          [RequiredParameterNode(158...163)()],

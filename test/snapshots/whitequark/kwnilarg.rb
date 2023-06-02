@@ -21,7 +21,7 @@ ProgramNode(0...46)(
        nil
      ),
      DefNode(14...31)(
-       IDENTIFIER(18...19)("f"),
+       (18...19),
        nil,
        ParametersNode(20...25)(
          [],

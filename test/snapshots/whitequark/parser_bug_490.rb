@@ -2,7 +2,7 @@ ProgramNode(0...132)(
   [],
   StatementsNode(0...132)(
     [DefNode(0...39)(
-       IDENTIFIER(4...5)("m"),
+       (4...5),
        nil,
        nil,
        StatementsNode(7...34)(
@@ -30,7 +30,7 @@ ProgramNode(0...132)(
        (36...39)
      ),
      DefNode(41...85)(
-       IDENTIFIER(45...46)("m"),
+       (45...46),
        nil,
        nil,
        StatementsNode(48...80)(
@@ -62,7 +62,7 @@ ProgramNode(0...132)(
        (82...85)
      ),
      DefNode(87...132)(
-       IDENTIFIER(91...92)("m"),
+       (91...92),
        nil,
        nil,
        StatementsNode(94...127)(

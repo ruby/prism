@@ -60,7 +60,7 @@ ProgramNode(0...83)(
        (40...43)
      ),
      DefNode(45...64)(
-       IDENTIFIER(54...55)("m"),
+       (54...55),
        SelfNode(49...53)(),
        nil,
        StatementsNode(57...59)(

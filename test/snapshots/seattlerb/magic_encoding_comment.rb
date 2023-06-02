@@ -9,7 +9,7 @@ ProgramNode(18...90)(
        nil,
        StatementsNode(54...86)(
          [DefNode(54...86)(
-            IDENTIFIER(63...65)("è"),
+            (63...65),
             SelfNode(58...62)(),
             nil,
             StatementsNode(67...81)(

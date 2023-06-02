@@ -118,7 +118,7 @@ ProgramNode(0...991)(
          ParenthesesNode(133...152)(
            StatementsNode(134...151)(
              [DefNode(134...145)(
-                IDENTIFIER(138...141)("foo"),
+                (138...141),
                 nil,
                 nil,
                 nil,
@@ -223,7 +223,7 @@ ProgramNode(0...991)(
      ),
      CallNode(218...238)(
        DefNode(218...234)(
-         IDENTIFIER(227...230)("foo"),
+         (227...230),
          SelfNode(222...226)(),
          nil,
          nil,
@@ -245,7 +245,7 @@ ProgramNode(0...991)(
      ),
      CallNode(239...254)(
        DefNode(239...250)(
-         IDENTIFIER(243...246)("foo"),
+         (243...246),
          nil,
          nil,
          nil,

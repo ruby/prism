@@ -2,7 +2,7 @@ ProgramNode(0...78)(
   [],
   StatementsNode(0...78)(
     [DefNode(0...14)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        nil,
        StatementsNode(12...14)([IntegerNode(12...14)()]),
@@ -15,7 +15,7 @@ ProgramNode(0...78)(
        nil
      ),
      DefNode(16...34)(
-       IDENTIFIER(20...23)("inc"),
+       (20...23),
        nil,
        ParametersNode(24...25)(
          [RequiredParameterNode(24...25)()],
@@ -47,7 +47,7 @@ ProgramNode(0...78)(
        nil
      ),
      DefNode(36...54)(
-       IDENTIFIER(44...47)("foo"),
+       (44...47),
        CallNode(40...43)(
          nil,
          nil,
@@ -69,7 +69,7 @@ ProgramNode(0...78)(
        nil
      ),
      DefNode(56...78)(
-       IDENTIFIER(64...67)("inc"),
+       (64...67),
        CallNode(60...63)(
          nil,
          nil,

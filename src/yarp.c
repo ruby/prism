@@ -1292,7 +1292,7 @@ yp_def_node_create(
       .type = YP_NODE_DEF_NODE,
       .location = { .start = def_keyword->start, .end = end },
     },
-    .name = *name,
+    .name_loc = YP_LOCATION_TOKEN_VALUE(name),
     .receiver = receiver,
     .parameters = parameters,
     .statements = statements,

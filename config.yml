@@ -693,8 +693,8 @@ nodes:
           ^^^
   - name: DefNode
     child_nodes:
-      - name: name
-        type: token
+      - name: name_loc
+        type: location
       - name: receiver
         type: node?
       - name: parameters

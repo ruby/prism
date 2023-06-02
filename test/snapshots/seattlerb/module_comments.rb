@@ -7,7 +7,7 @@ ProgramNode(24...77)(
        ConstantReadNode(31...32)(),
        StatementsNode(46...73)(
          [DefNode(46...73)(
-            IDENTIFIER(50...54)("blah"),
+            (50...54),
             nil,
             nil,
             nil,

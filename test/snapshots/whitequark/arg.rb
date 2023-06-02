@@ -2,7 +2,7 @@ ProgramNode(0...37)(
   [],
   StatementsNode(0...37)(
     [DefNode(0...15)(
-       IDENTIFIER(4...5)("f"),
+       (4...5),
        nil,
        ParametersNode(6...9)(
          [RequiredParameterNode(6...9)()],
@@ -23,7 +23,7 @@ ProgramNode(0...37)(
        (12...15)
      ),
      DefNode(17...37)(
-       IDENTIFIER(21...22)("f"),
+       (21...22),
        nil,
        ParametersNode(23...31)(
          [RequiredParameterNode(23...26)(), RequiredParameterNode(28...31)()],

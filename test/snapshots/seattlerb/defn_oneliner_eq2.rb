@@ -9,7 +9,7 @@ ProgramNode(0...28)(
        nil,
        StatementsNode(10...24)(
          [DefNode(10...24)(
-            EQUAL_EQUAL(14...16)("=="),
+            (14...16),
             nil,
             ParametersNode(17...18)(
               [RequiredParameterNode(17...18)()],

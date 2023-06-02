@@ -55,7 +55,7 @@ ProgramNode(0...106)(
             "include"
           ),
           DefNode(80...102)(
-            IDENTIFIER(84...87)("foo"),
+            (84...87),
             nil,
             nil,
             StatementsNode(92...96)(

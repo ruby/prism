@@ -2,7 +2,7 @@ ProgramNode(6...94)(
   [],
   StatementsNode(6...94)(
     [DefNode(6...39)(
-       IDENTIFIER(10...11)("f"),
+       (10...11),
        nil,
        nil,
        StatementsNode(20...29)(
@@ -33,7 +33,7 @@ ProgramNode(6...94)(
        (36...39)
      ),
      DefNode(48...82)(
-       IDENTIFIER(52...53)("f"),
+       (52...53),
        nil,
        nil,
        StatementsNode(64...72)(

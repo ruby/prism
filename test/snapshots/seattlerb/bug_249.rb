@@ -22,7 +22,7 @@ ProgramNode(0...67)(
                      nil,
                      StatementsNode(20...38)(
                        [DefNode(20...38)(
-                          IDENTIFIER(24...34)("initialize"),
+                          (24...34),
                           nil,
                           nil,
                           nil,

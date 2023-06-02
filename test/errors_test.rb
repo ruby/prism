@@ -331,7 +331,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_module_definition_in_method_body
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       nil,
       StatementsNode([ModuleNode([], Location(), ConstantReadNode(), nil, Location())]),
@@ -349,7 +349,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_module_definition_in_method_body_within_block
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       nil,
       StatementsNode(
@@ -390,7 +390,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_class_definition_in_method_body
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       nil,
       StatementsNode(
@@ -418,7 +418,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_bad_arguments
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([], [], [], nil, [], nil, nil),
       nil,
@@ -520,7 +520,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_do_not_allow_trailing_commas_in_method_parameters
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()],
@@ -591,7 +591,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_method_parameters_after_block
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -616,7 +616,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_method_with_arguments_after_anonamous_block
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([], [], [RequiredParameterNode()], nil, [], nil, BlockParameterNode(nil, Location())),
       nil,
@@ -634,7 +634,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_method_parameters_after_arguments_forwarding
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -659,7 +659,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_keywords_parameters_before_required_parameters
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -684,7 +684,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_rest_keywords_parameters_before_required_parameters
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -709,7 +709,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_double_arguments_forwarding
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil),
       nil,
@@ -721,12 +721,13 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(..., ...)\nend", ["Unexpected parameter order"]
   end
 
   def test_multiple_error_in_parameters_order
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -746,12 +747,13 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
   def test_switching_to_optional_arguments_twice
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -773,12 +775,13 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location(),
     )
+
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
   def test_switching_to_named_arguments_twice
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [],
@@ -800,12 +803,13 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location(),
     )
+
     assert_errors expected, "def foo(**args, a, b:)\nend", ["Unexpected parameter order", "Unexpected parameter order"]
   end
 
   def test_returning_to_optional_parameters_multiple_times
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode(
         [RequiredParameterNode()],
@@ -833,6 +837,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location(),
     )
+
     assert_errors expected, "def foo(a, b = 1, c, d = 2, e)\nend", ["Unexpected parameter order"]
   end
 
@@ -850,7 +855,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_setter_method_cannot_be_defined_in_an_endless_method_definition
     expected = DefNode(
-      IDENTIFIER("a="),
+      Location(),
       nil,
       nil,
       StatementsNode([IntegerNode()]),
@@ -942,7 +947,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_duplicated_parameter_names
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
       nil,
@@ -954,10 +959,11 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(a,b,a);end", ["Duplicated argument name."]
 
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], RestParameterNode(Location(), Location()), [], nil, nil),
       nil,
@@ -969,10 +975,11 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(a,b,*a);end", ["Duplicated argument name."]
 
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], KeywordRestParameterNode(Location(), Location()), nil),
       nil,
@@ -984,10 +991,11 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(a,b,**a);end", ["Duplicated argument name."]
 
     expected = DefNode(
-      IDENTIFIER("foo"),
+      Location(),
       nil,
       ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, BlockParameterNode(Location(), Location())),
       nil,
@@ -999,6 +1007,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location()
     )
+
     assert_errors expected, "def foo(a,b,&a);end", ["Duplicated argument name."]
   end
 

@@ -2,7 +2,7 @@ ProgramNode(0...913)(
   [],
   StatementsNode(0...913)(
     [DefNode(0...46)(
-       IDENTIFIER(4...7)("foo"),
+       (4...7),
        nil,
        nil,
        BeginNode(0...46)(
@@ -81,7 +81,7 @@ ProgramNode(0...913)(
        (43...46)
      ),
      DefNode(48...103)(
-       IDENTIFIER(52...55)("foo"),
+       (52...55),
        nil,
        nil,
        BeginNode(0...103)(
@@ -173,7 +173,7 @@ ProgramNode(0...913)(
        (100...103)
      ),
      DefNode(105...128)(
-       IDENTIFIER(109...112)("foo"),
+       (109...112),
        nil,
        ParametersNode(113...123)(
          [],
@@ -195,7 +195,7 @@ ProgramNode(0...913)(
        (125...128)
      ),
      DefNode(130...141)(
-       IDENTIFIER(134...137)("foo"),
+       (134...137),
        nil,
        nil,
        nil,
@@ -208,7 +208,7 @@ ProgramNode(0...913)(
        (138...141)
      ),
      DefNode(143...160)(
-       IDENTIFIER(147...150)("foo"),
+       (147...150),
        nil,
        nil,
        StatementsNode(153...156)(
@@ -232,7 +232,7 @@ ProgramNode(0...913)(
        (157...160)
      ),
      DefNode(162...205)(
-       IDENTIFIER(166...169)("foo"),
+       (166...169),
        nil,
        nil,
        BeginNode(0...205)(
@@ -296,7 +296,7 @@ ProgramNode(0...913)(
        (202...205)
      ),
      DefNode(207...237)(
-       IDENTIFIER(211...214)("foo"),
+       (211...214),
        nil,
        nil,
        BeginNode(0...237)(
@@ -342,7 +342,7 @@ ProgramNode(0...913)(
        (234...237)
      ),
      DefNode(239...269)(
-       IDENTIFIER(243...246)("foo"),
+       (243...246),
        nil,
        nil,
        BeginNode(0...269)(
@@ -391,7 +391,7 @@ ProgramNode(0...913)(
        (266...269)
      ),
      DefNode(271...293)(
-       IDENTIFIER(275...278)("foo"),
+       (275...278),
        nil,
        ParametersNode(279...282)(
          [RequiredParameterNode(279...282)()],
@@ -412,7 +412,7 @@ ProgramNode(0...913)(
        (290...293)
      ),
      DefNode(295...322)(
-       IDENTIFIER(299...302)("foo"),
+       (299...302),
        nil,
        ParametersNode(303...311)(
          [RequiredParameterNode(303...306)(),
@@ -434,7 +434,7 @@ ProgramNode(0...913)(
        (319...322)
      ),
      DefNode(324...351)(
-       IDENTIFIER(328...331)("foo"),
+       (328...331),
        nil,
        ParametersNode(332...340)(
          [],
@@ -459,7 +459,7 @@ ProgramNode(0...913)(
        (348...351)
      ),
      DefNode(353...382)(
-       IDENTIFIER(357...360)("foo"),
+       (357...360),
        nil,
        ParametersNode(361...377)(
          [],
@@ -500,7 +500,7 @@ ProgramNode(0...913)(
        (379...382)
      ),
      DefNode(384...413)(
-       IDENTIFIER(388...391)("foo"),
+       (388...391),
        nil,
        ParametersNode(392...402)(
          [],
@@ -525,7 +525,7 @@ ProgramNode(0...913)(
        (410...413)
      ),
      DefNode(415...449)(
-       IDENTIFIER(419...422)("foo"),
+       (419...422),
        nil,
        ParametersNode(423...438)(
          [RequiredParameterNode(423...426)()],
@@ -550,7 +550,7 @@ ProgramNode(0...913)(
        (446...449)
      ),
      DefNode(451...470)(
-       IDENTIFIER(455...458)("foo"),
+       (455...458),
        nil,
        ParametersNode(459...465)(
          [],
@@ -574,7 +574,7 @@ ProgramNode(0...913)(
        (467...470)
      ),
      DefNode(472...493)(
-       IDENTIFIER(476...479)("foo"),
+       (476...479),
        nil,
        ParametersNode(480...488)(
          [],
@@ -607,7 +607,7 @@ ProgramNode(0...913)(
        (490...493)
      ),
      DefNode(495...518)(
-       IDENTIFIER(499...502)("foo"),
+       (499...502),
        nil,
        ParametersNode(503...513)(
          [],
@@ -640,7 +640,7 @@ ProgramNode(0...913)(
        (515...518)
      ),
      DefNode(520...540)(
-       IDENTIFIER(524...527)("foo"),
+       (524...527),
        nil,
        ParametersNode(528...529)(
          [],
@@ -672,7 +672,7 @@ ProgramNode(0...913)(
        (537...540)
      ),
      DefNode(542...565)(
-       IDENTIFIER(546...549)("foo"),
+       (546...549),
        nil,
        ParametersNode(550...554)(
          [],
@@ -693,7 +693,7 @@ ProgramNode(0...913)(
        (562...565)
      ),
      DefNode(567...595)(
-       IDENTIFIER(571...574)("foo"),
+       (571...574),
        nil,
        ParametersNode(575...584)(
          [RequiredParameterNode(575...578)()],
@@ -714,7 +714,7 @@ ProgramNode(0...913)(
        (592...595)
      ),
      DefNode(597...632)(
-       IDENTIFIER(601...604)("foo"),
+       (601...604),
        nil,
        ParametersNode(605...621)(
          [],
@@ -750,7 +750,7 @@ ProgramNode(0...913)(
        (629...632)
      ),
      DefNode(634...677)(
-       IDENTIFIER(638...641)("foo"),
+       (638...641),
        nil,
        ParametersNode(642...666)(
          [],
@@ -788,7 +788,7 @@ ProgramNode(0...913)(
        (674...677)
      ),
      DefNode(679...719)(
-       IDENTIFIER(683...686)("foo"),
+       (683...686),
        nil,
        ParametersNode(687...708)(
          [RequiredParameterNode(687...690)()],
@@ -815,7 +815,7 @@ ProgramNode(0...913)(
        (716...719)
      ),
      DefNode(721...746)(
-       IDENTIFIER(725...728)("foo"),
+       (725...728),
        nil,
        ParametersNode(729...735)(
          [],
@@ -847,7 +847,7 @@ ProgramNode(0...913)(
        (743...746)
      ),
      DefNode(748...778)(
-       IDENTIFIER(752...755)("foo"),
+       (752...755),
        nil,
        ParametersNode(756...767)(
          [RequiredParameterNode(756...759)()],
@@ -868,7 +868,7 @@ ProgramNode(0...913)(
        (775...778)
      ),
      DefNode(780...803)(
-       IDENTIFIER(784...787)("foo"),
+       (784...787),
        nil,
        nil,
        StatementsNode(790...799)(
@@ -902,7 +902,7 @@ ProgramNode(0...913)(
        (800...803)
      ),
      DefNode(805...821)(
-       IDENTIFIER(809...810)("f"),
+       (809...810),
        nil,
        ParametersNode(811...816)(
          [RequiredDestructuredParameterNode(811...816)(
@@ -931,7 +931,7 @@ ProgramNode(0...913)(
        (818...821)
      ),
      DefNode(823...854)(
-       IDENTIFIER(827...830)("foo"),
+       (827...830),
        nil,
        ParametersNode(831...849)(
          [],
@@ -961,7 +961,7 @@ ProgramNode(0...913)(
        (851...854)
      ),
      DefNode(856...896)(
-       IDENTIFIER(860...861)("f"),
+       (860...861),
        nil,
        nil,
        StatementsNode(864...893)(
@@ -982,7 +982,7 @@ ProgramNode(0...913)(
        (893...896)
      ),
      DefNode(898...913)(
-       IDENTIFIER(902...903)("f"),
+       (902...903),
        nil,
        nil,
        StatementsNode(906...909)(

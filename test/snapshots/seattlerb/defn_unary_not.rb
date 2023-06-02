@@ -2,7 +2,7 @@ ProgramNode(0...17)(
   [],
   StatementsNode(0...17)(
     [DefNode(0...17)(
-       BANG(4...6)("!@"),
+       (4...6),
        nil,
        nil,
        StatementsNode(8...12)([TrueNode(8...12)()]),

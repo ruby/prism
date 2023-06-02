@@ -4,7 +4,7 @@ ProgramNode(0...190)(
     [WhileNode(0...45)(
        (0...5),
        DefNode(6...33)(
-         IDENTIFIER(10...13)("foo"),
+         (10...13),
          nil,
          ParametersNode(14...28)(
            [],
@@ -42,7 +42,7 @@ ProgramNode(0...190)(
      WhileNode(47...89)(
        (47...52),
        DefNode(53...77)(
-         IDENTIFIER(57...60)("foo"),
+         (57...60),
          nil,
          nil,
          StatementsNode(62...72)(
@@ -70,7 +70,7 @@ ProgramNode(0...190)(
      WhileNode(91...141)(
        (91...96),
        DefNode(97...129)(
-         IDENTIFIER(106...109)("foo"),
+         (106...109),
          SelfNode(101...105)(),
          ParametersNode(110...124)(
            [],
@@ -108,7 +108,7 @@ ProgramNode(0...190)(
      WhileNode(143...190)(
        (143...148),
        DefNode(149...178)(
-         IDENTIFIER(158...161)("foo"),
+         (158...161),
          SelfNode(153...157)(),
          nil,
          StatementsNode(163...173)(

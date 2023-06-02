@@ -2,7 +2,7 @@ ProgramNode(0...100)(
   [],
   StatementsNode(0...100)(
     [DefNode(0...18)(
-       IDENTIFIER(10...13)("foo"),
+       (10...13),
        ParenthesesNode(4...9)(
          CallNode(5...8)(
            nil,
@@ -28,7 +28,7 @@ ProgramNode(0...100)(
        (15...18)
      ),
      DefNode(20...39)(
-       IDENTIFIER(31...34)("foo"),
+       (31...34),
        ConstantReadNode(24...30)(),
        nil,
        nil,
@@ -41,7 +41,7 @@ ProgramNode(0...100)(
        (36...39)
      ),
      DefNode(41...61)(
-       IDENTIFIER(53...56)("foo"),
+       (53...56),
        ConstantReadNode(45...51)(),
        nil,
        nil,
@@ -54,7 +54,7 @@ ProgramNode(0...100)(
        (58...61)
      ),
      DefNode(63...80)(
-       IDENTIFIER(72...75)("foo"),
+       (72...75),
        SelfNode(67...71)(),
        nil,
        nil,
@@ -67,7 +67,7 @@ ProgramNode(0...100)(
        (77...80)
      ),
      DefNode(82...100)(
-       IDENTIFIER(92...95)("foo"),
+       (92...95),
        SelfNode(86...90)(),
        nil,
        nil,
