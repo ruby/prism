@@ -15,8 +15,8 @@
 
 // The type of unescape we are performing.
 typedef enum {
-    // When we're creating a string inside of a list literal like %w, we shouldn't
-    // escape anything.
+    // When we're creating a string inside of a list literal like %w, we
+    // shouldn't escape anything.
     YP_UNESCAPE_NONE,
 
     // When we're unescaping a single-quoted string, we only need to unescape
