@@ -7,6 +7,7 @@
 
 #include "yarp/ast.h"
 #include "yarp/enc/yp_encoding.h"
+#include "yarp/util/yp_constant_pool.h"
 #include "yarp/util/yp_list.h"
 #include "yarp/util/yp_state_stack.h"
 
