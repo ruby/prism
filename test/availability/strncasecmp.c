@@ -2,5 +2,5 @@
 #include <strings.h>
 
 int main() {
-  strncasecmp("", "", 0);
+    strncasecmp("", "", 0);
 }

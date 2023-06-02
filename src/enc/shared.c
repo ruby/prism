@@ -5,5 +5,5 @@
 // their width.
 size_t
 yp_encoding_single_char_width(__attribute__((unused)) const char *c) {
-  return 1;
+    return 1;
 }

@@ -39,14 +39,14 @@
 
 // This represents a node in the linked list.
 typedef struct yp_list_node {
-  struct yp_list_node *next;
+    struct yp_list_node *next;
 } yp_list_node_t;
 
 // This represents the overall linked list. It keeps a pointer to the head and
 // tail so that iteration is easy and pushing new nodes is easy.
 typedef struct {
-  yp_list_node_t *head;
-  yp_list_node_t *tail;
+    yp_list_node_t *head;
+    yp_list_node_t *tail;
 } yp_list_t;
 
 // Allocate a new list.

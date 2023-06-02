@@ -9,9 +9,9 @@
 #include "yarp/util/yp_string.h"
 
 typedef struct {
-  yp_string_t *strings;
-  size_t length;
-  size_t capacity;
+    yp_string_t *strings;
+    size_t length;
+    size_t capacity;
 } yp_string_list_t;
 
 // Allocate a new yp_string_list_t.

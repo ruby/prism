@@ -15,17 +15,17 @@
 
 // The type of unescape we are performing.
 typedef enum {
-  // When we're creating a string inside of a list literal like %w, we shouldn't
-  // escape anything.
-  YP_UNESCAPE_NONE,
+    // When we're creating a string inside of a list literal like %w, we shouldn't
+    // escape anything.
+    YP_UNESCAPE_NONE,
 
-  // When we're unescaping a single-quoted string, we only need to unescape
-  // single quotes and backslashes.
-  YP_UNESCAPE_MINIMAL,
+    // When we're unescaping a single-quoted string, we only need to unescape
+    // single quotes and backslashes.
+    YP_UNESCAPE_MINIMAL,
 
-  // When we're unescaping a double-quoted string, we need to unescape all
-  // escapes.
-  YP_UNESCAPE_ALL
+    // When we're unescaping a double-quoted string, we need to unescape all
+    // escapes.
+    YP_UNESCAPE_ALL
 } yp_unescape_type_t;
 
 // Unescape the contents of the given token into the given string using the

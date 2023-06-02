@@ -62,8 +62,8 @@ YP_EXPORTED_FUNCTION extern void yp_node_destroy(yp_parser_t *parser, struct yp_
 // It contains both the memory footprint and additionally metadata about the
 // shape of the tree.
 typedef struct {
-  size_t memsize;
-  size_t node_count;
+    size_t memsize;
+    size_t node_count;
 } yp_memsize_t;
 
 // Calculates the memory footprint of a given node.
