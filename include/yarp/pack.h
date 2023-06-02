@@ -137,7 +137,6 @@ yp_pack_parse(
 
 // YARP abstracts sizes away from the native system - this converts an abstract
 // size to a native size.
-YP_EXPORTED_FUNCTION extern size_t
-yp_size_to_native(yp_pack_size size);
+YP_EXPORTED_FUNCTION extern size_t yp_size_to_native(yp_pack_size size);
 
 #endif

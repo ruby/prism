@@ -10,19 +10,15 @@
 typedef uint32_t yp_state_stack_t;
 
 // Initializes the state stack to an empty stack.
-void
-yp_state_stack_init(yp_state_stack_t *stack);
+void yp_state_stack_init(yp_state_stack_t *stack);
 
 // Pushes a value onto the stack.
-void
-yp_state_stack_push(yp_state_stack_t *stack, bool value);
+void yp_state_stack_push(yp_state_stack_t *stack, bool value);
 
 // Pops a value off the stack.
-void
-yp_state_stack_pop(yp_state_stack_t *stack);
+void yp_state_stack_pop(yp_state_stack_t *stack);
 
 // Returns the value at the top of the stack.
-bool
-yp_state_stack_p(yp_state_stack_t *stack);
+bool yp_state_stack_p(yp_state_stack_t *stack);
 
 #endif
