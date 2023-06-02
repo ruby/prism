@@ -6,7 +6,8 @@ ProgramNode(0...21)(
          REGEXP_BEGIN(1...2)("/"),
          STRING_CONTENT(2...5)("wat"),
          REGEXP_END(5...6)("/"),
-         "wat"
+         "wat",
+         0
        ),
        nil,
        BANG(0...1)("!"),
@@ -22,7 +23,8 @@ ProgramNode(0...21)(
          REGEXP_BEGIN(11...12)("/"),
          STRING_CONTENT(12...15)("wat"),
          REGEXP_END(15...16)("/"),
-         "wat"
+         "wat",
+         0
        ),
        nil,
        nil,

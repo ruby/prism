@@ -53,7 +53,8 @@ ProgramNode(0...210)(
        REGEXP_BEGIN(58...61)("%r{"),
        STRING_CONTENT(61...65)("a\\\n" + "b"),
        REGEXP_END(65...66)("}"),
-       "a\n" + "b"
+       "a\n" + "b",
+       0
      ),
      SymbolNode(68...76)(
        SYMBOL_BEGIN(68...71)("%s{"),
@@ -93,7 +94,8 @@ ProgramNode(0...210)(
        REGEXP_BEGIN(115...116)("/"),
        STRING_CONTENT(116...120)("a\\\n" + "b"),
        REGEXP_END(120...121)("/"),
-       "a\n" + "b"
+       "a\n" + "b",
+       0
      ),
      InterpolatedSymbolNode(123...130)(
        SYMBOL_BEGIN(123...125)(":\""),

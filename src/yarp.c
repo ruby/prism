@@ -337,6 +337,30 @@ yp_alloc(__attribute__((unused)) yp_parser_t *parser, size_t size) {
 /* Node creation functions                                                    */
 /******************************************************************************/
 
+// Parse out the options for a regular expression.
+static inline uint32_t
+yp_regular_expression_flags_create(const yp_token_t *closing) {
+  uint32_t flags = 0;
+
+  if (closing->type == YP_TOKEN_REGEXP_END) {
+    for (const char *flag = closing->start + 1; flag < closing->end; flag++) {
+      switch (*flag) {
+        case 'i': flags |= YP_REGULAR_EXPRESSION_FLAGS_IGNORECASE; break;
+        case 'm': flags |= YP_REGULAR_EXPRESSION_FLAGS_MULTILINE; break;
+        case 'x': flags |= YP_REGULAR_EXPRESSION_FLAGS_EXTEND; break;
+        case 'e': flags |= YP_REGULAR_EXPRESSION_FLAGS_EUCJP; break;
+        case 'n': flags |= YP_REGULAR_EXPRESSION_FLAGS_ASCII8BIT; break;
+        case 's': flags |= YP_REGULAR_EXPRESSION_FLAGS_WINDOWS31J; break;
+        case 'u': flags |= YP_REGULAR_EXPRESSION_FLAGS_UTF8; break;
+        case 'o': flags |= YP_REGULAR_EXPRESSION_FLAGS_ONCE; break;
+        default: assert(false && "unreachable");
+      }
+    }
+  }
+
+  return flags;
+}
+
 // Allocate and initialize a new StatementsNode node.
 static yp_statements_node_t *
 yp_statements_node_create(yp_parser_t *parser);
@@ -1837,7 +1861,7 @@ yp_instance_variable_write_node_create(yp_parser_t *parser, yp_instance_variable
 
 // Allocate a new InterpolatedRegularExpressionNode node.
 static yp_interpolated_regular_expression_node_t *
-yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
+yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening) {
   yp_interpolated_regular_expression_node_t *node = yp_alloc(parser, sizeof(yp_interpolated_regular_expression_node_t));
 
   *node = (yp_interpolated_regular_expression_node_t) {
@@ -1845,11 +1869,12 @@ yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_tok
       .type = YP_NODE_INTERPOLATED_REGULAR_EXPRESSION_NODE,
       .location = {
         .start = opening->start,
-        .end = closing->end
+        .end = NULL,
       },
     },
     .opening = *opening,
-    .closing = *closing
+    .closing = *opening,
+    .flags = 0
   };
 
   yp_node_list_init(&node->parts);
@@ -1865,6 +1890,7 @@ yp_interpolated_regular_expression_node_append(yp_interpolated_regular_expressio
 static inline void
 yp_interpolated_regular_expression_node_closing_set(yp_interpolated_regular_expression_node_t *node, const yp_token_t *closing) {
   node->closing = *closing;
+  node->flags = yp_regular_expression_flags_create(closing);
   node->base.location.end = closing->end;
 }
 
@@ -2661,7 +2687,8 @@ yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening
     },
     .opening = *opening,
     .content = *content,
-    .closing = *closing
+    .closing = *closing,
+    .flags = yp_regular_expression_flags_create(closing)
   };
 
   return node;
@@ -10917,7 +10944,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
         // If we get here, then we have interpolation so we'll need to create
         // a regular expression node with interpolation.
-        node = yp_interpolated_regular_expression_node_create(parser, &opening, &opening);
+        node = yp_interpolated_regular_expression_node_create(parser, &opening);
 
         yp_token_t opening = not_provided(parser);
         yp_token_t closing = not_provided(parser);
@@ -10927,7 +10954,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         // If the first part of the body of the regular expression is not a
         // string content, then we have interpolation and we need to create an
         // interpolated regular expression node.
-        node = yp_interpolated_regular_expression_node_create(parser, &opening, &opening);
+        node = yp_interpolated_regular_expression_node_create(parser, &opening);
       }
 
       // Now that we're here and we have interpolation, we'll parse all of the

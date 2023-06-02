@@ -517,13 +517,15 @@ ProgramNode(0...916)(
        REGEXP_BEGIN(480...481)("/"),
        STRING_CONTENT(481...484)("foo"),
        REGEXP_END(484...485)("/"),
-       "foo"
+       "foo",
+       0
      ),
      RegularExpressionNode(486...514)(
        REGEXP_BEGIN(486...487)("/"),
        STRING_CONTENT(487...513)("[^-+',.\\/:@[:alnum:]\\[\\]]+"),
        REGEXP_END(513...514)("/"),
-       "[^-+',./:@[:alnum:][]]+"
+       "[^-+',./:@[:alnum:][]]+",
+       0
      ),
      InterpolatedRegularExpressionNode(515...527)(
        REGEXP_BEGIN(515...516)("/"),
@@ -538,7 +540,8 @@ ProgramNode(0...916)(
           StatementsNode(521...525)([InstanceVariableReadNode(521...525)()]),
           EMBEXPR_END(525...526)("}")
         )],
-       REGEXP_END(526...527)("/")
+       REGEXP_END(526...527)("/"),
+       0
      ),
      InterpolatedRegularExpressionNode(528...543)(
        REGEXP_BEGIN(528...529)("/"),
@@ -553,7 +556,8 @@ ProgramNode(0...916)(
           StatementsNode(534...538)([InstanceVariableReadNode(534...538)()]),
           EMBEXPR_END(538...539)("}")
         )],
-       REGEXP_END(539...543)("/imx")
+       REGEXP_END(539...543)("/imx"),
+       7
      ),
      InterpolatedRegularExpressionNode(544...557)(
        REGEXP_BEGIN(544...545)("/"),
@@ -569,31 +573,36 @@ ProgramNode(0...916)(
           ),
           EMBEXPR_END(555...556)("}")
         )],
-       REGEXP_END(556...557)("/")
+       REGEXP_END(556...557)("/"),
+       0
      ),
      RegularExpressionNode(558...562)(
        REGEXP_BEGIN(558...559)("/"),
        STRING_CONTENT(559...561)("\\n"),
        REGEXP_END(561...562)("/"),
-       "\n"
+       "\n",
+       0
      ),
      RegularExpressionNode(563...567)(
        REGEXP_BEGIN(563...564)("/"),
        STRING_CONTENT(564...566)("\\n"),
        REGEXP_END(566...567)("/"),
-       "\n"
+       "\n",
+       0
      ),
      RegularExpressionNode(568...573)(
        REGEXP_BEGIN(568...569)("/"),
        STRING_CONTENT(569...571)("\\n"),
        REGEXP_END(571...573)("/x"),
-       "\n"
+       "\n",
+       4
      ),
      RegularExpressionNode(574...581)(
        REGEXP_BEGIN(574...575)("/"),
        STRING_CONTENT(575...579)("\\/\\/"),
        REGEXP_END(579...581)("/x"),
-       "//"
+       "//",
+       4
      ),
      InterpolatedSymbolNode(582...597)(
        SYMBOL_BEGIN(582...584)(":\""),

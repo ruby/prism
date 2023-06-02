@@ -151,7 +151,8 @@ ProgramNode(0...3725)(
          REGEXP_BEGIN(99...100)("/"),
          STRING_CONTENT(100...103)("foo"),
          REGEXP_END(103...104)("/"),
-         "foo"
+         "foo",
+         0
        ),
        (96...98)
      ),
@@ -639,13 +640,15 @@ ProgramNode(0...3725)(
            REGEXP_BEGIN(496...497)("/"),
            STRING_CONTENT(497...500)("foo"),
            REGEXP_END(500...501)("/"),
-           "foo"
+           "foo",
+           0
          ),
          RegularExpressionNode(505...510)(
            REGEXP_BEGIN(505...506)("/"),
            STRING_CONTENT(506...509)("foo"),
            REGEXP_END(509...510)("/"),
-           "foo"
+           "foo",
+           0
          ),
          (502...504)
        ),
@@ -2103,7 +2106,8 @@ ProgramNode(0...3725)(
          REGEXP_BEGIN(1729...1730)("/"),
          STRING_CONTENT(1730...1733)("foo"),
          REGEXP_END(1733...1734)("/"),
-         "foo"
+         "foo",
+         0
        ),
        (1726...1728)
      ),
@@ -2614,7 +2618,8 @@ ProgramNode(0...3725)(
             REGEXP_BEGIN(2210...2211)("/"),
             STRING_CONTENT(2211...2214)("foo"),
             REGEXP_END(2214...2215)("/"),
-            "foo"
+            "foo",
+            0
           ),
           nil,
           (2207...2209),
@@ -3316,7 +3321,8 @@ ProgramNode(0...3725)(
                  REGEXP_BEGIN(3011...3012)("/"),
                  STRING_CONTENT(3012...3015)("foo"),
                  REGEXP_END(3015...3016)("/"),
-                 "foo"
+                 "foo",
+                 0
                )]
             ),
             nil,

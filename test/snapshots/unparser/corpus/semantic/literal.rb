@@ -36,13 +36,15 @@ ProgramNode(0...131)(
        REGEXP_BEGIN(58...61)("%r("),
        STRING_CONTENT(61...62)("/"),
        REGEXP_END(62...63)(")"),
-       "/"
+       "/",
+       0
      ),
      RegularExpressionNode(64...70)(
        REGEXP_BEGIN(64...67)("%r("),
        STRING_CONTENT(67...69)("\\)"),
        REGEXP_END(69...70)(")"),
-       ")"
+       ")",
+       0
      ),
      InterpolatedRegularExpressionNode(71...85)(
        REGEXP_BEGIN(71...74)("%r("),
@@ -52,7 +54,8 @@ ProgramNode(0...131)(
           EMBEXPR_END(80...81)("}")
         ),
         StringNode(81...84)(nil, STRING_CONTENT(81...84)("baz"), nil, "baz")],
-       REGEXP_END(84...85)(")")
+       REGEXP_END(84...85)(")"),
+       0
      ),
      FloatNode(86...102)(),
      CallNode(103...120)(

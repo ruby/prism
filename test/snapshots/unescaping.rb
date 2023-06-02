@@ -15,7 +15,8 @@ ProgramNode(0...55)(
        REGEXP_BEGIN(12...13)("/"),
        STRING_CONTENT(13...19)("\\c\#{1}"),
        REGEXP_END(19...20)("/"),
-       "\u0003{1}"
+       "\u0003{1}",
+       0
      ),
      StringNode(22...30)(
        STRING_BEGIN(22...23)("\""),

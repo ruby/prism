@@ -7,7 +7,8 @@ ProgramNode(0...246)(
          REGEXP_BEGIN(3...4)("/"),
          STRING_CONTENT(4...7)("foo"),
          REGEXP_END(7...8)("/"),
-         "foo"
+         "foo",
+         0
        ),
        StatementsNode(11...14)(
          [CallNode(11...14)(

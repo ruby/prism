@@ -370,7 +370,8 @@ ProgramNode(0...991)(
                 REGEXP_BEGIN(320...321)("/"),
                 STRING_CONTENT(321...324)("bar"),
                 REGEXP_END(324...325)("/"),
-                "bar"
+                "bar",
+                0
               ),
               nil,
               EQUAL_TILDE(326...328)("=~"),
@@ -441,7 +442,8 @@ ProgramNode(0...991)(
                    REGEXP_BEGIN(358...359)("/"),
                    STRING_CONTENT(359...362)("bar"),
                    REGEXP_END(362...363)("/"),
-                   "bar"
+                   "bar",
+                   0
                  )]
               ),
               nil,
@@ -465,7 +467,8 @@ ProgramNode(0...991)(
          REGEXP_BEGIN(369...370)("/"),
          STRING_CONTENT(370...373)("bar"),
          REGEXP_END(373...374)("/"),
-         "bar"
+         "bar",
+         0
        ),
        nil,
        EQUAL_TILDE(375...377)("=~"),
@@ -487,7 +490,8 @@ ProgramNode(0...991)(
          REGEXP_BEGIN(383...384)("/"),
          STRING_CONTENT(384...387)("bar"),
          REGEXP_END(387...388)("/"),
-         "bar"
+         "bar",
+         0
        ),
        nil,
        EQUAL_TILDE(389...391)("=~"),
@@ -665,7 +669,8 @@ ProgramNode(0...991)(
             REGEXP_BEGIN(458...459)("/"),
             STRING_CONTENT(459...462)("bar"),
             REGEXP_END(462...463)("/"),
-            "bar"
+            "bar",
+            0
           )]
        ),
        nil,
@@ -892,7 +897,8 @@ ProgramNode(0...991)(
                  REGEXP_BEGIN(576...577)("/"),
                  STRING_CONTENT(577...580)("bar"),
                  REGEXP_END(580...581)("/"),
-                 "bar"
+                 "bar",
+                 0
                )]
             ),
             nil,

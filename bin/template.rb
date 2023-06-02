@@ -32,7 +32,6 @@ module KindTypes
   end
 end
 
-
 # This represents a parameter to a node that is itself a node. We pass them as
 # references and store them as references.
 class NodeParam < Param
@@ -162,6 +161,17 @@ class Token
   end
 end
 
+# Represents a set of flags that should be internally represented with an enum.
+class Flags
+  attr_reader :name, :human, :values
+
+  def initialize(config)
+    @name = config.fetch("name")
+    @human = @name.gsub(/(?<=.)[A-Z]/, "_\\0").downcase
+    @values = config.fetch("values")
+  end
+end
+
 # This templates out a file using ERB with the given locals. The locals are
 # derived from the config.yml file.
 def template(name, locals)
@@ -205,9 +215,11 @@ end
 
 def locals
   config = YAML.load_file(File.expand_path("../config.yml", __dir__))
+
   {
     nodes: config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name),
-    tokens: config.fetch("tokens").map { |token| Token.new(token) }
+    tokens: config.fetch("tokens").map { |token| Token.new(token) },
+    flags: config.fetch("flags").map { |flags| Flags.new(flags) }
   }
 end
 

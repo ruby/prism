@@ -5,7 +5,8 @@ ProgramNode(0...10)(
        REGEXP_BEGIN(0...1)("/"),
        STRING_CONTENT(1...7)("source"),
        REGEXP_END(7...10)("/im"),
-       "source"
+       "source",
+       3
      )]
   )
 )

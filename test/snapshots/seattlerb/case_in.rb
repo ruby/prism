@@ -256,7 +256,8 @@ ProgramNode(0...747)(
             REGEXP_BEGIN(267...268)("/"),
             STRING_CONTENT(268...274)("regexp"),
             REGEXP_END(274...275)("/"),
-            "regexp"
+            "regexp",
+            0
           ),
           nil,
           (264...266),

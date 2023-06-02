@@ -6,7 +6,6 @@ module YARP
     attr_reader :<%= param.name %>
 
     <%- end -%>
-
     # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["start_offset: Integer", "length: Integer"]).join(", ") %>) -> void
     def initialize(<%= (node.params.map(&:name) + ["start_offset", "length"]).join(", ") %>)
       <%- node.params.each do |param| -%>
@@ -38,6 +37,14 @@ module YARP
     def deconstruct_keys(keys)
       { <%= (node.params.map { |param| "#{param.name}: #{param.name}" } + ["location: location"]).join(", ") %> }
     end
+  end
+
+  <%- end -%>
+  <%- flags.each do |flag| -%>
+  module <%= flag.name %>
+    <%- flag.values.each_with_index do |value, index| -%>
+    <%= value %> = 1 << <%= index %>
+    <%- end -%>
   end
 
   <%- end -%>
