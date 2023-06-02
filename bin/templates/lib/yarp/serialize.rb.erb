@@ -48,19 +48,16 @@ module YARP
       end
 
       def load_token
-        number = io.getbyte
-        start_offset, length = load_varint, load_varint
-        end_offset = start_offset + length
-
         type =
-          case number
+          case io.getbyte
           <%- tokens.each_with_index do |token, index| -%>
           when <%= index + 1 %> then :<%= token.name.inspect %>
           <%- end -%>
           end
 
+        start_offset, length = load_varint, load_varint
         range = source.byteslice(start_offset, length)
-        Token.new(type, range, start_offset, end_offset)
+        Token.new(type, range, start_offset, length)
       end
 
       def load_optional_node
@@ -78,14 +75,11 @@ module YARP
       end
 
       def load_string
-        length = load_varint
-        io.read(length).force_encoding(encoding)
+        io.read(load_varint).force_encoding(encoding)
       end
 
       def load_location
-        start_offset, length = load_varint, load_varint
-        end_offset = start_offset + length
-        Location.new(start_offset, end_offset)
+        Location.new(load_varint, load_varint)
       end
 
       def load_optional_location
@@ -95,7 +89,6 @@ module YARP
       def load_node
         type = io.getbyte
         start_offset, length = load_varint, load_varint
-        end_offset = start_offset + length
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
@@ -117,7 +110,7 @@ module YARP
           when UInt32Param then 'load_varint'
           else raise
           end
-        } + ["start_offset", "end_offset"]).join(", ") -%>)
+        } + ["start_offset", "length"]).join(", ") -%>)
         <%- end -%>
         end
       end

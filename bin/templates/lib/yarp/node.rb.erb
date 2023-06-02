@@ -7,13 +7,13 @@ module YARP
 
     <%- end -%>
 
-    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["start_offset: Integer", "end_offset: Integer"]).join(", ") %>) -> void
-    def initialize(<%= (node.params.map(&:name) + ["start_offset", "end_offset"]).join(", ") %>)
+    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["start_offset: Integer", "length: Integer"]).join(", ") %>) -> void
+    def initialize(<%= (node.params.map(&:name) + ["start_offset", "length"]).join(", ") %>)
       <%- node.params.each do |param| -%>
       @<%= param.name %> = <%= param.name %>
       <%- end -%>
       @start_offset = start_offset
-      @end_offset = end_offset
+      @length = length
     end
 
     # def accept: (visitor: Visitor) -> void
@@ -53,8 +53,8 @@ module YARP
     private
 
     # Create a new Location object
-    def Location(start_offset = 0, end_offset = 0)
-      Location.new(start_offset, end_offset)
+    def Location(start_offset = 0, length = 0)
+      Location.new(start_offset, length)
     end
     <%- nodes.each do |node| -%>
 
@@ -67,7 +67,7 @@ module YARP
 
     # Create a new <%= token.name %> token
     def <%= token.name %>(value, location = Location.null)
-      Token.new(:<%= token.name %>, value, location.start_offset, location.end_offset)
+      Token.new(:<%= token.name %>, value, location.start_offset, location.length)
     end
     <%- end -%>
   end

@@ -3,15 +3,15 @@
 module YARP
   # This represents a location in the source corresponding to a node or token.
   class Location
-    attr_reader :start_offset, :end_offset
+    attr_reader :start_offset, :length
 
-    def initialize(start_offset, end_offset)
+    def initialize(start_offset, length)
       @start_offset = start_offset
-      @end_offset = end_offset
+      @length = length
     end
 
-    def length
-      @end_offset - @start_offset
+    def end_offset
+      @start_offset + @length
     end
 
     def deconstruct_keys(keys)
@@ -101,17 +101,21 @@ module YARP
 
   # This represents a token from the Ruby source.
   class Token
-    attr_reader :type, :value, :start_offset, :end_offset
+    attr_reader :type, :value, :start_offset, :length
 
-    def initialize(type, value, start_offset, end_offset)
+    def initialize(type, value, start_offset, length)
       @type = type
       @value = value
       @start_offset = start_offset
-      @end_offset = end_offset
+      @length = length
+    end
+
+    def end_offset
+      @start_offset + @length
     end
 
     def location
-      Location.new(@start_offset, @end_offset)
+      Location.new(@start_offset, @length)
     end
 
     def deconstruct_keys(keys)
@@ -139,10 +143,14 @@ module YARP
 
   # This represents a node in the tree.
   class Node
-    attr_reader :start_offset, :end_offset
+    attr_reader :start_offset, :length
+
+    def end_offset
+      @start_offset + @length
+    end
 
     def location
-      Location.new(@start_offset, @end_offset)
+      Location.new(@start_offset, @length)
     end
 
     def pretty_print(q)
