@@ -78,23 +78,23 @@ typedef struct yp_lex_mode {
         // expression of a string.
         YP_LEX_EMBEXPR,
 
-        // This state is used when we're lexing a variable that is embedded directly
-        // inside of a string with the # shorthand.
+        // This state is used when we're lexing a variable that is embedded
+        // directly inside of a string with the # shorthand.
         YP_LEX_EMBVAR,
 
         // This state is used when you are inside the content of a heredoc.
         YP_LEX_HEREDOC,
 
-        // This state is used when we are lexing a list of tokens, as in a %w word
-        // list literal or a %i symbol list literal.
+        // This state is used when we are lexing a list of tokens, as in a %w
+        // word list literal or a %i symbol list literal.
         YP_LEX_LIST,
 
-        // This state is used when a regular expression has been begun and we are
-        // looking for the terminator.
+        // This state is used when a regular expression has been begun and we
+        // are looking for the terminator.
         YP_LEX_REGEXP,
 
-        // This state is used when we are lexing a string or a string-like token, as
-        // in string content with either quote or an xstring.
+        // This state is used when we are lexing a string or a string-like
+        // token, as in string content with either quote or an xstring.
         YP_LEX_STRING,
 
         // you lexed a number with extra information attached
@@ -103,8 +103,8 @@ typedef struct yp_lex_mode {
 
     union {
         struct {
-            // When lexing a list, it takes into account balancing the terminator if
-            // the terminator is one of (), [], {}, or <>.
+            // When lexing a list, it takes into account balancing the
+            // terminator if the terminator is one of (), [], {}, or <>.
             char incrementor;
 
             // This is the terminator of the list literal.
@@ -118,8 +118,8 @@ typedef struct yp_lex_mode {
         } list;
 
         struct {
-            // When lexing a regular expression, it takes into account balancing the
-            // terminator if the terminator is one of (), [], {}, or <>.
+            // When lexing a regular expression, it takes into account balancing
+            // the terminator if the terminator is one of (), [], {}, or <>.
             char incrementor;
 
             // This is the terminator of the regular expression.
@@ -130,12 +130,12 @@ typedef struct yp_lex_mode {
         } regexp;
 
         struct {
-            // When lexing a string, it takes into account balancing the terminator if
-            // the terminator is one of (), [], {}, or <>.
+            // When lexing a string, it takes into account balancing the
+            // terminator if the terminator is one of (), [], {}, or <>.
             char incrementor;
 
-            // This is the terminator of the string. It is typically either a single
-            // or double quote.
+            // This is the terminator of the string. It is typically either a
+            // single or double quote.
             char terminator;
 
             // This keeps track of the nesting level of the string.
@@ -144,8 +144,9 @@ typedef struct yp_lex_mode {
             // Whether or not interpolation is allowed in this string.
             bool interpolation;
 
-            // Whether or not at the end of the string we should allow a :, which
-            // would indicate this was a dynamic symbol instead of a string.
+            // Whether or not at the end of the string we should allow a :,
+            // which would indicate this was a dynamic symbol instead of a
+            // string.
             bool label_allowed;
         } string;
 
@@ -164,8 +165,8 @@ typedef struct yp_lex_mode {
             yp_heredoc_quote_t quote;
             yp_heredoc_indent_t indent;
 
-            // This is the pointer to the character where lexing should resume once
-            // the heredoc has been completely processed.
+            // This is the pointer to the character where lexing should resume
+            // once the heredoc has been completely processed.
             const char *next_start;
         } heredoc;
     } as;
@@ -268,13 +269,13 @@ typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(yp_parser_t *parser, con
 // struct to be attached to the parser that calls back out to a user-provided
 // callback when each token is lexed.
 typedef struct {
-    // This opaque pointer is used to provide whatever information the user deemed
-    // necessary to the callback. In our case we use it to pass the array that the
-    // tokens get appended into.
+    // This opaque pointer is used to provide whatever information the user
+    // deemed necessary to the callback. In our case we use it to pass the array
+    // that the tokens get appended into.
     void *data;
 
-    // This is the callback that is called when a token is lexed. It is passed the
-    // opaque data pointer, the parser, and the token that was lexed.
+    // This is the callback that is called when a token is lexed. It is passed
+    // the opaque data pointer, the parser, and the token that was lexed.
     void (*callback)(void *data, yp_parser_t *parser, yp_token_t *token);
 } yp_lex_callback_t;
 
@@ -284,8 +285,8 @@ typedef struct yp_scope {
     // Locals in the given scope.
     yp_token_list_t locals;
 
-    // A boolean indicating whether or not this scope can see into its parent. If
-    // top is true, then the scope cannot see into its parent.
+    // A boolean indicating whether or not this scope can see into its parent.
+    // If top is true, then the scope cannot see into its parent.
     bool top;
 
     // A pointer to the previous scope in the linked list.
@@ -301,12 +302,12 @@ struct yp_parser {
     bool command_start;       // whether or not we're at the beginning of a command
     int enclosure_nesting;    // tracks the current nesting of (), [], and {}
 
-    // Used to temporarily track the nesting of enclosures to determine if a { is
-    // the beginning of a lambda following the parameters of a lambda.
+    // Used to temporarily track the nesting of enclosures to determine if a {
+    // is the beginning of a lambda following the parameters of a lambda.
     int lambda_enclosure_nesting;
 
-    // Used to track the nesting of braces to ensure we get the correct value when
-    // we are interpolating blocks with braces.
+    // Used to track the nesting of braces to ensure we get the correct value
+    // when we are interpolating blocks with braces.
     int brace_nesting;
 
     // the stack used to determine if a do keyword belongs to the predicate of a
@@ -329,14 +330,14 @@ struct yp_parser {
     yp_token_t current;  // the current token we're considering
 
     // This is a special field set on the parser when we need the parser to jump
-    // to a specific location when lexing the next token, as opposed to just using
-    // the end of the previous token. Normally this is NULL.
+    // to a specific location when lexing the next token, as opposed to just
+    // using the end of the previous token. Normally this is NULL.
     const char *next_start;
 
-    // This field indicates the end of a heredoc whose identifier was found on the
-    // current line. If another heredoc is found on the same line, then this will
-    // be moved forward to the end of that heredoc. If no heredocs are found on a
-    // line then this is NULL.
+    // This field indicates the end of a heredoc whose identifier was found on
+    // the current line. If another heredoc is found on the same line, then this
+    // will be moved forward to the end of that heredoc. If no heredocs are
+    // found on a line then this is NULL.
     const char *heredoc_end;
 
     yp_list_t comment_list;             // the list of comments that have been found while parsing
@@ -356,13 +357,13 @@ struct yp_parser {
     yp_encoding_changed_callback_t encoding_changed_callback;
 
     // When an encoding is encountered that isn't understood by YARP, we provide
-    // the ability here to call out to a user-defined function to get an encoding
-    // struct. If the function returns something that isn't NULL, we set that to
-    // our encoding and use it to parse identifiers.
+    // the ability here to call out to a user-defined function to get an
+    // encoding struct. If the function returns something that isn't NULL, we
+    // set that to our encoding and use it to parse identifiers.
     yp_encoding_decode_callback_t encoding_decode_callback;
 
-    // This pointer indicates where a comment must start if it is to be considered
-    // an encoding comment.
+    // This pointer indicates where a comment must start if it is to be
+    // considered an encoding comment.
     const char *encoding_comment_start;
 
     // This is an optional callback that can be attached to the parser that will
