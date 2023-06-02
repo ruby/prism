@@ -18,7 +18,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
     - name: Lint config.yml
       run: bundle exec rake lint
@@ -32,7 +32,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
     - name: Run Ruby tests
       run: bundle exec rake compile_no_debug
@@ -44,7 +44,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
     - name: Lex ruby/ruby
       run: bundle exec rake lex:ruby
@@ -56,7 +56,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
     - name: Lex discourse/discourse
       run: bundle exec rake lex:discourse
@@ -68,7 +68,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
     - name: Lex Top 100 Gems
       run: bundle exec rake lex:topgems
@@ -81,9 +81,9 @@ jobs:
     - name: Install valgrind from source
       run: |
         sudo apt-get install -y libc6-dbg
-        wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2
-        tar xvf valgrind-3.20.0.tar.bz2
-        cd valgrind-3.20.0
+        wget https://sourceware.org/pub/valgrind/valgrind-head0.0.tar.bz2
+        tar xvf valgrind-head0.0.tar.bz2
+        cd valgrind-head0.0
         ./configure
         make
         sudo make install
@@ -91,7 +91,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
