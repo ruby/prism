@@ -9,24 +9,24 @@
 
 // This struct represents a string value.
 typedef struct {
-  enum { YP_STRING_SHARED, YP_STRING_OWNED, YP_STRING_CONSTANT } type;
+    enum { YP_STRING_SHARED, YP_STRING_OWNED, YP_STRING_CONSTANT } type;
 
-  union {
-    struct {
-      const char *start;
-      const char *end;
-    } shared;
+    union {
+        struct {
+            const char *start;
+            const char *end;
+        } shared;
 
-    struct {
-      char *source;
-      size_t length;
-    } owned;
+        struct {
+            char *source;
+            size_t length;
+        } owned;
 
-    struct {
-      const char *source;
-      size_t length;
-    } constant;
-  } as;
+        struct {
+            const char *source;
+            size_t length;
+        } constant;
+    } as;
 } yp_string_t;
 
 // Allocate a new yp_string_t.

@@ -14,17 +14,17 @@
 // skip past them.
 const char *
 yp_strpbrk(const char *source, const char *charset, long length) {
-  if (length < 0) return NULL;
+    if (length < 0) return NULL;
 
-  size_t index = 0;
-  size_t maximum = (size_t) length;
+    size_t index = 0;
+    size_t maximum = (size_t) length;
 
-  while (index < maximum) {
-    if (strchr(charset, source[index]) != NULL) {
-      return &source[index];
+    while (index < maximum) {
+        if (strchr(charset, source[index]) != NULL) {
+            return &source[index];
+        }
+        index++;
     }
-    index++;
-  }
 
-  return NULL;
+    return NULL;
 }

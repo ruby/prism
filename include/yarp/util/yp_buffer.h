@@ -12,9 +12,9 @@
 // block of memory. It is used to store the serialized representation of a
 // YARP tree.
 typedef struct {
-  char *value;
-  size_t length;
-  size_t capacity;
+    char *value;
+    size_t length;
+    size_t capacity;
 } yp_buffer_t;
 
 // Allocate a new yp_buffer_t.

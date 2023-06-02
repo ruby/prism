@@ -2,5 +2,5 @@
 #include <string.h>
 
 int main() {
-  strnstr("", "", 0);
+    strnstr("", "", 0);
 }

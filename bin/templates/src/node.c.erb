@@ -2,55 +2,55 @@
 
 // Clear the node but preserves the location.
 void yp_node_clear(yp_node_t *node) {
-  yp_location_t location = node->location;
-  memset(node, 0, sizeof(yp_node_t));
-  node->location = location;
+    yp_location_t location = node->location;
+    memset(node, 0, sizeof(yp_node_t));
+    node->location = location;
 }
 
 // Initialize a yp_token_list_t with its default values.
 void
 yp_token_list_init(yp_token_list_t *token_list) {
-  *token_list = (yp_token_list_t) YP_EMPTY_TOKEN_LIST;
+    *token_list = (yp_token_list_t) YP_EMPTY_TOKEN_LIST;
 }
 
 // Calculate the size of the token list in bytes.
 static size_t
 yp_token_list_memsize(yp_token_list_t *token_list) {
-  return sizeof(yp_token_list_t) + (token_list->capacity * sizeof(yp_token_t));
+    return sizeof(yp_token_list_t) + (token_list->capacity * sizeof(yp_token_t));
 }
 
 // Append a token to the given list.
 void
 yp_token_list_append(yp_token_list_t *token_list, const yp_token_t *token) {
-  if (token_list->size == token_list->capacity) {
-    token_list->capacity = token_list->capacity == 0 ? 1 : token_list->capacity * 2;
-    token_list->tokens = realloc(token_list->tokens, sizeof(yp_token_t) * token_list->capacity);
-  }
-  token_list->tokens[token_list->size++] = *token;
+    if (token_list->size == token_list->capacity) {
+        token_list->capacity = token_list->capacity == 0 ? 1 : token_list->capacity * 2;
+        token_list->tokens = realloc(token_list->tokens, sizeof(yp_token_t) * token_list->capacity);
+    }
+    token_list->tokens[token_list->size++] = *token;
 }
 
 // Checks if the current token list includes the given token.
 bool
 yp_token_list_includes(yp_token_list_t *token_list, const yp_token_t *token) {
-  size_t length = (size_t) (token->end - token->start);
+    size_t length = (size_t) (token->end - token->start);
 
-  for (size_t index = 0; index < token_list->size; index++) {
-    yp_token_t current_token = token_list->tokens[index];
-    size_t token_length = (size_t) (current_token.end - current_token.start);
+    for (size_t index = 0; index < token_list->size; index++) {
+        yp_token_t current_token = token_list->tokens[index];
+        size_t token_length = (size_t) (current_token.end - current_token.start);
 
-    if ((token_length == length) && (memcmp(current_token.start, token->start, length) == 0)) {
-      return true;
+        if ((token_length == length) && (memcmp(current_token.start, token->start, length) == 0)) {
+            return true;
+        }
     }
-  }
-  return false;
+    return false;
 }
 
 // Free the memory associated with the token list.
 static void
 yp_token_list_free(yp_token_list_t *token_list) {
-  if (token_list->tokens != NULL) {
-    free(token_list->tokens);
-  }
+    if (token_list->tokens != NULL) {
+        free(token_list->tokens);
+    }
 }
 
 static void
@@ -59,27 +59,27 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize);
 // Initiailize a list of nodes.
 void
 yp_node_list_init(yp_node_list_t *node_list) {
-  *node_list = (yp_node_list_t) YP_EMPTY_NODE_LIST;
+    *node_list = (yp_node_list_t) YP_EMPTY_NODE_LIST;
 }
 
 // Calculate the size of the node list in bytes.
 static size_t
 yp_node_list_memsize(yp_node_list_t *node_list, yp_memsize_t *memsize) {
-  size_t size = sizeof(yp_node_list_t) + (node_list->capacity * sizeof(yp_node_t *));
-  for (size_t index = 0; index < node_list->size; index++) {
-    yp_node_memsize_node(node_list->nodes[index], memsize);
-  }
-  return size;
+    size_t size = sizeof(yp_node_list_t) + (node_list->capacity * sizeof(yp_node_t *));
+    for (size_t index = 0; index < node_list->size; index++) {
+        yp_node_memsize_node(node_list->nodes[index], memsize);
+    }
+    return size;
 }
 
 // Append a new node onto the end of the node list.
 void
 yp_node_list_append(yp_node_list_t *list, yp_node_t *node) {
-  if (list->size == list->capacity) {
-    list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
-    list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t *));
-  }
-  list->nodes[list->size++] = node;
+    if (list->size == list->capacity) {
+        list->capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+        list->nodes = realloc(list->nodes, list->capacity * sizeof(yp_node_t *));
+    }
+    list->nodes[list->size++] = node;
 }
 
 YP_EXPORTED_FUNCTION void
@@ -89,12 +89,12 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node);
 // used, but is here for the future possibility of pre-allocating memory pools.
 static void
 yp_node_list_free(yp_parser_t *parser, yp_node_list_t *list) {
-  if (list->capacity > 0) {
-    for (size_t index = 0; index < list->size; index++) {
-      yp_node_destroy(parser, list->nodes[index]);
+    if (list->capacity > 0) {
+        for (size_t index = 0; index < list->size; index++) {
+            yp_node_destroy(parser, list->nodes[index]);
+        }
+        free(list->nodes);
     }
-    free(list->nodes);
-  }
 }
 
 // Deallocate the space for a yp_node_t. Similarly to yp_node_alloc, we're not
@@ -102,77 +102,77 @@ yp_node_list_free(yp_parser_t *parser, yp_node_list_t *list) {
 // of pre-allocating larger memory pools.
 YP_EXPORTED_FUNCTION void
 yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
-  switch (node->type) {
-    <%- nodes.each do |node| -%>
-    case <%= node.type %>:
-      <%- node.params.each do |param| -%>
-      <%- case param -%>
-      <%- when TokenParam, OptionalTokenParam, LocationParam, OptionalLocationParam, UInt32Param -%>
-      <%- when NodeParam -%>
-      yp_node_destroy(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      <%- when OptionalNodeParam -%>
-      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
-        yp_node_destroy(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      }
-      <%- when StringParam -%>
-      yp_string_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      <%- when NodeListParam -%>
-      yp_node_list_free(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      <%- when TokenListParam -%>
-      yp_token_list_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      <%- else -%>
-      <%- raise -%>
-      <%- end -%>
-      <%- end -%>
-      break;
-    <%- end -%>
-    default:
-      assert(false && "unreachable");
-      break;
-  }
-  free(node);
+    switch (node->type) {
+        <%- nodes.each do |node| -%>
+        case <%= node.type %>:
+            <%- node.params.each do |param| -%>
+            <%- case param -%>
+            <%- when TokenParam, OptionalTokenParam, LocationParam, OptionalLocationParam, UInt32Param -%>
+            <%- when NodeParam -%>
+            yp_node_destroy(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            <%- when OptionalNodeParam -%>
+            if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
+                yp_node_destroy(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            }
+            <%- when StringParam -%>
+            yp_string_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            <%- when NodeListParam -%>
+            yp_node_list_free(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            <%- when TokenListParam -%>
+            yp_token_list_free(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            <%- else -%>
+            <%- raise -%>
+            <%- end -%>
+            <%- end -%>
+            break;
+        <%- end -%>
+        default:
+            assert(false && "unreachable");
+            break;
+    }
+    free(node);
 }
 
 static void
 yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
-  memsize->node_count++;
+    memsize->node_count++;
 
-  switch (node->type) {
-    <%- nodes.each do |node| -%>
-    case <%= node.type %>: {
-      memsize->memsize += sizeof(yp_node_t);
-      <%- node.params.each do |param| -%>
-      <%- case param -%>
-      <%- when TokenParam, OptionalTokenParam -%>
-      <%- when NodeParam -%>
-      yp_node_memsize_node((yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
-      <%- when OptionalNodeParam -%>
-      if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
-        yp_node_memsize_node((yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
-      }
-      <%- when StringParam -%>
-      memsize->memsize += yp_string_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      <%- when NodeListParam -%>
-      yp_node_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
-      <%- when TokenListParam -%>
-      memsize->memsize += yp_token_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-      <%- when LocationParam, OptionalLocationParam -%>
-      memsize->memsize += sizeof(yp_location_t);
-      <%- when UInt32Param -%>
-      memsize->memsize += sizeof(uint32_t);
-      <%- else -%>
-      <%- raise -%>
-      <%- end -%>
-      <%- end -%>
-      break;
+    switch (node->type) {
+        <%- nodes.each do |node| -%>
+        case <%= node.type %>: {
+            memsize->memsize += sizeof(yp_node_t);
+            <%- node.params.each do |param| -%>
+            <%- case param -%>
+            <%- when TokenParam, OptionalTokenParam -%>
+            <%- when NodeParam -%>
+            yp_node_memsize_node((yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+            <%- when OptionalNodeParam -%>
+            if (((yp_<%= node.human %>_t *)node)-><%= param.name %> != NULL) {
+                yp_node_memsize_node((yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+            }
+            <%- when StringParam -%>
+            memsize->memsize += yp_string_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            <%- when NodeListParam -%>
+            yp_node_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>, memsize);
+            <%- when TokenListParam -%>
+            memsize->memsize += yp_token_list_memsize(&((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            <%- when LocationParam, OptionalLocationParam -%>
+            memsize->memsize += sizeof(yp_location_t);
+            <%- when UInt32Param -%>
+            memsize->memsize += sizeof(uint32_t);
+            <%- else -%>
+            <%- raise -%>
+            <%- end -%>
+            <%- end -%>
+            break;
+        }
+        <%- end -%>
     }
-    <%- end -%>
-  }
 }
 
 // Calculates the memory footprint of a given node.
 YP_EXPORTED_FUNCTION extern void
 yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize) {
-  *memsize = (yp_memsize_t) { .memsize = 0, .node_count = 0 };
-  yp_node_memsize_node(node, memsize);
+    *memsize = (yp_memsize_t) { .memsize = 0, .node_count = 0 };
+    yp_node_memsize_node(node, memsize);
 }
