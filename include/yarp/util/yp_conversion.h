@@ -9,10 +9,8 @@
 #include <assert.h>
 #include <stdint.h>
 
-uint32_t
-yp_long_to_u32(long value);
+uint32_t yp_long_to_u32(long value);
 
-uint32_t
-yp_ulong_to_u32(unsigned long value);
+uint32_t yp_ulong_to_u32(unsigned long value);
 
 #endif
