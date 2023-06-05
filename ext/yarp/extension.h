@@ -3,7 +3,7 @@
 
 #include <ruby.h>
 #include <ruby/encoding.h>
-#include <yarp.h>
+#include "yarp.h"
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -19,5 +19,7 @@ VALUE yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding);
 VALUE yp_compile(yp_node_t *node);
 
 void Init_yarp_pack(void);
+
+YP_EXPORTED_FUNCTION void Init_yarp(void);
 
 #endif // YARP_EXT_NODE_H
