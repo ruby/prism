@@ -7,7 +7,7 @@ module YARP
     filepath = File.expand_path("fixtures/tilde_heredocs.rb", __dir__)
 
     File.read(filepath).split(/(?=\n)\n(?=<)/).each_with_index do |heredoc, index|
-      define_method "test_heredoc_#{index}_#{heredoc}" do
+      define_method "test_heredoc_#{index}" do
         parts = YARP.parse(heredoc).value.statements.body.first.parts
         actual = parts.map { |part| part.is_a?(StringNode) ? part.unescaped : "1" }.join
 
