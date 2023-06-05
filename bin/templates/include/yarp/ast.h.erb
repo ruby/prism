@@ -86,7 +86,7 @@ typedef struct yp_<%= node.human %> {
 // <%= flag.name %>
 typedef enum {
     <%- flag.values.each_with_index do |value, index| -%>
-    YP_<%= flag.human.upcase %>_<%= value %> = 1 << <%= index %>,
+    YP_<%= flag.human.upcase %>_<%= value.upcase %> = 1 << <%= index %>,
     <%- end -%>
 } yp_<%= flag.human %>_t;
 <%- end -%>

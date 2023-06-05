@@ -319,14 +319,14 @@ tokens:
 flags:
   - name: RegularExpressionFlags
     values:
-      - IGNORECASE # i - ignores the case of characters when matching
-      - MULTILINE  # m - allows $ to match the end of lines within strings
-      - EXTEND     # x - ignores whitespace and allows comments in regular expressions
+      - IgnoreCase # i - ignores the case of characters when matching
+      - MultiLine  # m - allows $ to match the end of lines within strings
+      - Extend     # x - ignores whitespace and allows comments in regular expressions
       - EUCJP      # e - forces the EUC-JP encoding
       - ASCII8BIT  # n - forces the ASCII-8BIT encoding
       - WINDOWS31J # s - forces the Windows-31J encoding
       - UTF8       # u - forces the UTF-8 encoding
-      - ONCE       # o - only interpolates values into the regular expression once
+      - Once       # o - only interpolates values into the regular expression once
 nodes:
   - name: AliasNode
     child_nodes:

@@ -18,13 +18,54 @@ public abstract class Nodes {
     }
 
     static final TokenType[] TOKEN_TYPES = TokenType.values();
-<%- flags.each do |flag| -%>
 
-    <%- flag.values.each_with_index do |value, index| -%>
-    static final int <%= flag.human.upcase %>_<%= value.upcase %> = 1 << <%= index %>;
-    <%- end -%>
+<%- flags.each do |group| -%>
+    public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
+
+        <%- group.values.each_with_index do |value, index| -%>
+        public static final int <%= value.upcase %> = 1 << <%= index %>;
+        <%- end -%>
+
+        <%- group.values.each do |value| -%>
+        public static boolean is<%= value %>(int flags) {
+            return (flags & <%= value.upcase %>) != 0;
+        }
+
+        <%- end -%>
+        private final int flags;
+
+        public <%= group.name %>(int flags) {
+            this.flags = flags;
+        }
+
+        @Override
+        public int hashCode() {
+            return flags;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof <%= group.name %>)) {
+                return false;
+            }
+
+            return flags == ((<%= group.name %>) other).flags;
+        }
+
+        @Override
+        public int compareTo(<%= group.name %> other) {
+            return flags - other.flags;
+        }
+
+        <%- group.values.each do |value| -%>
+        public boolean is<%= value %>() {
+            return (flags & <%= value.upcase %>) != 0;
+        }
+
+        <%- end -%>
+    }
+
 <%- end -%>
-
     public static final class Token {
         public final TokenType type;
         public final int startOffset;
