@@ -16,7 +16,7 @@ test.rb
 test-native/run-one
 *.dSYM
 
-/ext/yarp/node.c
+/ext/yarp/api_node.c
 /include/yarp/ast.h
 /java/org/yarp/AbstractNodeVisitor.java
 /java/org/yarp/Loader.java
