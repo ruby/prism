@@ -1,10 +1,10 @@
 ProgramNode(0...747)(
-  [IDENTIFIER(297...298)("_"),
+  [STRING_CONTENT(13...14)("b"),
+   IDENTIFIER(297...298)("_"),
    IDENTIFIER(377...380)("lhs"),
    IDENTIFIER(382...383)("x"),
    IDENTIFIER(386...389)("rhs"),
    IDENTIFIER(462...463)("c"),
-   IDENTIFIER(486...487)("b"),
    IDENTIFIER(498...499)("e")],
   StatementsNode(0...747)(
     [CaseNode(0...21)(

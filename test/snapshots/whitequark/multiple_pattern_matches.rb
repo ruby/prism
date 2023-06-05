@@ -1,5 +1,5 @@
 ProgramNode(0...52)(
-  [],
+  [LABEL(10...11)("a")],
   StatementsNode(0...52)(
     [MatchRequiredNode(0...12)(
        HashNode(0...6)(

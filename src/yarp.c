@@ -3546,9 +3546,9 @@ char_is_global_name_punctuation(const char c) {
 static inline bool
 token_is_numbered_parameter(yp_token_t *token) {
     return
-        (token->type == YP_TOKEN_IDENTIFIER) &&
         (token->end - token->start == 2) &&
         (token->start[0] == '_') &&
+        (token->start[1] != '0') &&
         (yp_char_is_decimal_digit(token->start[1]));
 }
 
@@ -6008,17 +6008,20 @@ parser_lex(yp_parser_t *parser) {
                     LEX(lex_at_variable(parser));
 
                 default: {
-                    size_t width = char_is_identifier_start(parser, parser->current.start);
+                    if (*parser->current.start != '_') {
+                        size_t width = char_is_identifier_start(parser, parser->current.start);
 
-                    // If this isn't the beginning of an identifier, then it's an invalid
-                    // token as we've exhausted all of the other options. We'll skip past
-                    // it and return the next token.
-                    if (!width) {
-                        yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid token.");
-                        goto lex_next_token;
+                        // If this isn't the beginning of an identifier, then it's an invalid
+                        // token as we've exhausted all of the other options. We'll skip past
+                        // it and return the next token.
+                        if (!width) {
+                            yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid token.");
+                            goto lex_next_token;
+                        }
+
+                        parser->current.end = parser->current.start + width;
                     }
 
-                    parser->current.end = parser->current.start + width;
                     yp_token_type_t type = lex_identifier(parser, previous_command_start);
 
                     // If we've hit a __END__ and it was at the start of the line or the
@@ -6059,7 +6062,8 @@ parser_lex(yp_parser_t *parser) {
                     if (
                         !(last_state & (YP_LEX_STATE_DOT | YP_LEX_STATE_FNAME)) &&
                         (type == YP_TOKEN_IDENTIFIER) &&
-                        (yp_parser_local_depth(parser, &parser->current) != -1)
+                        ((yp_parser_local_depth(parser, &parser->current) != -1) ||
+                         token_is_numbered_parameter(&parser->current))
                     ) {
                         lex_state_set(parser, YP_LEX_STATE_END | YP_LEX_STATE_LABEL);
                     }
@@ -7061,7 +7065,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                     yp_location_t name_loc = { .start = name.start, .end = name.end };
                     target = (yp_node_t *) yp_local_variable_write_node_create(parser, &name_loc, value, operator, 0);
 
-                    if (token_is_numbered_parameter(&name)) {
+                    if (name.type == YP_TOKEN_IDENTIFIER && token_is_numbered_parameter(&name)) {
                         yp_diagnostic_list_append(&parser->error_list, name.start, name.end, "reserved for numbered parameter");
                     }
 
@@ -8925,15 +8929,21 @@ parse_pattern_keyword_rest(yp_parser_t *parser) {
 // Parse a hash pattern.
 static yp_hash_pattern_node_t *
 parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
-    if (!match_any_type_p(parser, 7, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
-        // Here we have a value for the first assoc in the list, so we will parse it
-        // now and update the first assoc.
-        yp_node_t *value = parse_pattern(parser, false, "Expected a pattern expression after the key.");
+    if (first_assoc->type == YP_NODE_ASSOC_NODE) {
+        if (!match_any_type_p(parser, 7, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
+            // Here we have a value for the first assoc in the list, so we will parse it
+            // now and update the first assoc.
+            yp_node_t *value = parse_pattern(parser, false, "Expected a pattern expression after the key.");
 
-        assert(first_assoc->type == YP_NODE_ASSOC_NODE);
-        yp_assoc_node_t *assoc = (yp_assoc_node_t *) first_assoc;
-        assoc->base.location.end = value->location.end;
-        assoc->value = value;
+            yp_assoc_node_t *assoc = (yp_assoc_node_t *) first_assoc;
+            assoc->base.location.end = value->location.end;
+            assoc->value = value;
+        } else {
+            yp_node_t *key = ((yp_assoc_node_t *)first_assoc)->key;
+            if (key->type == YP_NODE_SYMBOL_NODE) {
+                yp_parser_local_add(parser, &((yp_symbol_node_t *)key)->value);
+            }
+        }
     }
 
     yp_node_list_t assocs;
@@ -8958,6 +8968,8 @@ parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
 
             if (!match_any_type_p(parser, 7, YP_TOKEN_COMMA, YP_TOKEN_KEYWORD_THEN, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_PARENTHESIS_RIGHT, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON)) {
                 value = parse_pattern(parser, false, "Expected a pattern expression after the key.");
+            } else {
+                yp_parser_local_add(parser, &((yp_symbol_node_t *)key)->value);
             }
 
             yp_token_t operator = not_provided(parser);
