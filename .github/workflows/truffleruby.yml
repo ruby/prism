@@ -17,7 +17,7 @@ jobs:
     - name: Setup system Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: head
         bundler-cache: true
         working-directory: yarp
 
