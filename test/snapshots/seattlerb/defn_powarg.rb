@@ -14,7 +14,7 @@ ProgramNode(0...17)(
          nil
        ),
        nil,
-       [IDENTIFIER(8...12)("opts")],
+       [:opts],
        (0...3),
        nil,
        (5...6),

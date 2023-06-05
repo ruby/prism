@@ -5,8 +5,9 @@ ProgramNode(0...23)(
        (4...5),
        nil,
        ParametersNode(6...18)(
-         [RequiredParameterNode(6...7)()],
+         [RequiredParameterNode(6...7)(:a)],
          [OptionalParameterNode(9...15)(
+            :b,
             (9...10),
             (11...12),
             SymbolNode(13...15)(
@@ -16,16 +17,14 @@ ProgramNode(0...23)(
               "c"
             )
           )],
-         [RequiredParameterNode(17...18)()],
+         [RequiredParameterNode(17...18)(:d)],
          nil,
          [],
          nil,
          nil
        ),
        nil,
-       [IDENTIFIER(6...7)("a"),
-        IDENTIFIER(9...10)("b"),
-        IDENTIFIER(17...18)("d")],
+       [:a, :b, :d],
        (0...3),
        nil,
        (5...6),

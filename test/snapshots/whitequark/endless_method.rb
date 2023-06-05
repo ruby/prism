@@ -18,7 +18,7 @@ ProgramNode(0...78)(
        (20...23),
        nil,
        ParametersNode(24...25)(
-         [RequiredParameterNode(24...25)()],
+         [RequiredParameterNode(24...25)(:x)],
          [],
          [],
          nil,
@@ -28,7 +28,7 @@ ProgramNode(0...78)(
        ),
        StatementsNode(29...34)(
          [CallNode(29...34)(
-            LocalVariableReadNode(29...30)(0),
+            LocalVariableReadNode(29...30)(:x, 0),
             nil,
             PLUS(31...32)("+"),
             nil,
@@ -38,7 +38,7 @@ ProgramNode(0...78)(
             "+"
           )]
        ),
-       [IDENTIFIER(24...25)("x")],
+       [:x],
        (16...19),
        nil,
        (23...24),
@@ -81,7 +81,7 @@ ProgramNode(0...78)(
          "obj"
        ),
        ParametersNode(68...69)(
-         [RequiredParameterNode(68...69)()],
+         [RequiredParameterNode(68...69)(:x)],
          [],
          [],
          nil,
@@ -91,7 +91,7 @@ ProgramNode(0...78)(
        ),
        StatementsNode(73...78)(
          [CallNode(73...78)(
-            LocalVariableReadNode(73...74)(0),
+            LocalVariableReadNode(73...74)(:x, 0),
             nil,
             PLUS(75...76)("+"),
             nil,
@@ -101,7 +101,7 @@ ProgramNode(0...78)(
             "+"
           )]
        ),
-       [IDENTIFIER(68...69)("x")],
+       [:x],
        (56...59),
        (63...64),
        (67...68),

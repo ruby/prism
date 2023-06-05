@@ -1,5 +1,5 @@
 ProgramNode(0...33)(
-  [IDENTIFIER(21...22)("o")],
+  [:o],
   StatementsNode(0...33)(
     [DefNode(0...19)(
        (4...5),
@@ -14,7 +14,7 @@ ProgramNode(0...33)(
          nil
        ),
        StatementsNode(9...15)([ReturnNode(9...15)((9...15), nil)]),
-       [LABEL(6...7)("b")],
+       [:b],
        (0...3),
        nil,
        nil,
@@ -23,7 +23,8 @@ ProgramNode(0...33)(
        (16...19)
      ),
      LocalVariableWriteNode(21...33)(
-       (21...22),
+       :o,
+       0,
        HashNode(25...33)(
          (25...26),
          [AssocNode(27...31)(
@@ -38,8 +39,8 @@ ProgramNode(0...33)(
           )],
          (32...33)
        ),
-       (23...24),
-       0
+       (21...22),
+       (23...24)
      )]
   )
 )

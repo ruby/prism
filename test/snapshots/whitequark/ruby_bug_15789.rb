@@ -8,12 +8,13 @@ ProgramNode(0...40)(
        nil,
        ArgumentsNode(2...19)(
          [LambdaNode(2...19)(
-            [IDENTIFIER(5...6)("a")],
+            [:a],
             (2...4),
             BlockParametersNode(4...16)(
               ParametersNode(5...14)(
                 [],
                 [OptionalParameterNode(5...14)(
+                   :a,
                    (5...6),
                    (7...8),
                    LambdaNode(9...14)(
@@ -44,7 +45,7 @@ ProgramNode(0...40)(
               (4...5),
               (15...16)
             ),
-            StatementsNode(18...19)([LocalVariableReadNode(18...19)(0)])
+            StatementsNode(18...19)([LocalVariableReadNode(18...19)(:a, 0)])
           )]
        ),
        nil,
@@ -58,7 +59,7 @@ ProgramNode(0...40)(
        nil,
        ArgumentsNode(24...40)(
          [LambdaNode(24...40)(
-            [LABEL(27...28)("a")],
+            [:a],
             (24...26),
             BlockParametersNode(26...37)(
               ParametersNode(27...35)(
@@ -93,7 +94,7 @@ ProgramNode(0...40)(
               (26...27),
               (36...37)
             ),
-            StatementsNode(39...40)([LocalVariableReadNode(39...40)(0)])
+            StatementsNode(39...40)([LocalVariableReadNode(39...40)(:a, 0)])
           )]
        ),
        nil,

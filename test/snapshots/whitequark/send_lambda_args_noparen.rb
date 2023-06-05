@@ -2,7 +2,7 @@ ProgramNode(0...18)(
   [],
   StatementsNode(0...18)(
     [LambdaNode(0...7)(
-       [LABEL(3...4)("a")],
+       [:a],
        (0...2),
        BlockParametersNode(3...7)(
          ParametersNode(3...7)(
@@ -21,7 +21,7 @@ ProgramNode(0...18)(
        nil
      ),
      LambdaNode(13...18)(
-       [LABEL(16...17)("a")],
+       [:a],
        (13...15),
        BlockParametersNode(16...18)(
          ParametersNode(16...18)(

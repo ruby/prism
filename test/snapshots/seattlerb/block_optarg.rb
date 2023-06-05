@@ -9,11 +9,12 @@ ProgramNode(0...14)(
        nil,
        nil,
        BlockNode(2...14)(
-         [IDENTIFIER(5...6)("b")],
+         [:b],
          BlockParametersNode(4...12)(
            ParametersNode(5...11)(
              [],
              [OptionalParameterNode(5...11)(
+                :b,
                 (5...6),
                 (7...8),
                 SymbolNode(9...11)(

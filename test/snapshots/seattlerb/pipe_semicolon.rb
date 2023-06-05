@@ -18,7 +18,7 @@ ProgramNode(0...18)(
        nil,
        nil,
        BlockNode(4...18)(
-         [IDENTIFIER(11...12)("c")],
+         [:c],
          BlockParametersNode(7...14)(
            nil,
            [IDENTIFIER(11...12)("c")],

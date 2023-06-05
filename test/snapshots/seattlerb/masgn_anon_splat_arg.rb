@@ -1,5 +1,5 @@
 ProgramNode(0...8)(
-  [IDENTIFIER(3...4)("a")],
+  [:a],
   StatementsNode(0...8)(
     [MultiWriteNode(0...8)(
        [MultiWriteNode(0...1)(
@@ -9,7 +9,7 @@ ProgramNode(0...8)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(3...4)((3...4), nil, nil, 0)],
+        LocalVariableWriteNode(3...4)(:a, 0, nil, (3...4), nil)],
        (5...6),
        CallNode(7...8)(
          nil,

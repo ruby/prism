@@ -57,7 +57,7 @@ ProgramNode(0...278)(
        (54...57),
        nil,
        ParametersNode(58...59)(
-         [RequiredParameterNode(58...59)()],
+         [RequiredParameterNode(58...59)(:x)],
          [],
          [],
          nil,
@@ -71,13 +71,13 @@ ProgramNode(0...278)(
             nil,
             IDENTIFIER(63...67)("puts"),
             nil,
-            ArgumentsNode(68...69)([LocalVariableReadNode(68...69)(0)]),
+            ArgumentsNode(68...69)([LocalVariableReadNode(68...69)(:x, 0)]),
             nil,
             nil,
             "puts"
           )]
        ),
-       [IDENTIFIER(58...59)("x")],
+       [:x],
        (50...53),
        nil,
        (57...58),
@@ -173,7 +173,7 @@ ProgramNode(0...278)(
          "obj"
        ),
        ParametersNode(141...142)(
-         [RequiredParameterNode(141...142)()],
+         [RequiredParameterNode(141...142)(:x)],
          [],
          [],
          nil,
@@ -187,13 +187,15 @@ ProgramNode(0...278)(
             nil,
             IDENTIFIER(146...150)("puts"),
             nil,
-            ArgumentsNode(151...152)([LocalVariableReadNode(151...152)(0)]),
+            ArgumentsNode(151...152)(
+              [LocalVariableReadNode(151...152)(:x, 0)]
+            ),
             nil,
             nil,
             "puts"
           )]
        ),
-       [IDENTIFIER(141...142)("x")],
+       [:x],
        (129...132),
        (136...137),
        (140...141),
@@ -205,7 +207,7 @@ ProgramNode(0...278)(
        (158...165),
        nil,
        ParametersNode(166...167)(
-         [RequiredParameterNode(166...167)()],
+         [RequiredParameterNode(166...167)(:x)],
          [],
          [],
          nil,
@@ -234,7 +236,7 @@ ProgramNode(0...278)(
                     StringInterpolatedNode(209...213)(
                       (209...211),
                       StatementsNode(211...212)(
-                        [LocalVariableReadNode(211...212)(0)]
+                        [LocalVariableReadNode(211...212)(:x, 0)]
                       ),
                       (212...213)
                     )],
@@ -247,7 +249,7 @@ ProgramNode(0...278)(
             "raise"
           )]
        ),
-       [IDENTIFIER(166...167)("x")],
+       [:x],
        (154...157),
        nil,
        (165...166),
@@ -259,7 +261,7 @@ ProgramNode(0...278)(
        (225...232),
        SelfNode(220...224)(),
        ParametersNode(233...234)(
-         [RequiredParameterNode(233...234)()],
+         [RequiredParameterNode(233...234)(:x)],
          [],
          [],
          nil,
@@ -288,7 +290,7 @@ ProgramNode(0...278)(
                     StringInterpolatedNode(273...277)(
                       (273...275),
                       StatementsNode(275...276)(
-                        [LocalVariableReadNode(275...276)(0)]
+                        [LocalVariableReadNode(275...276)(:x, 0)]
                       ),
                       (276...277)
                     )],
@@ -301,7 +303,7 @@ ProgramNode(0...278)(
             "raise"
           )]
        ),
-       [IDENTIFIER(233...234)("x")],
+       [:x],
        (216...219),
        (224...225),
        (232...233),

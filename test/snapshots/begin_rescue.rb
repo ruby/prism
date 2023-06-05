@@ -1,5 +1,5 @@
 ProgramNode(0...578)(
-  [IDENTIFIER(207...209)("ex")],
+  [:ex],
   StatementsNode(0...578)(
     [BeginNode(0...33)(
        (0...5),
@@ -287,7 +287,7 @@ ProgramNode(0...578)(
          (187...193),
          [ConstantReadNode(194...203)()],
          (204...206),
-         LocalVariableWriteNode(207...209)((207...209), nil, nil, 0),
+         LocalVariableWriteNode(207...209)(:ex, 0, nil, (207...209), nil),
          StatementsNode(212...213)(
            [CallNode(212...213)(
               nil,
@@ -304,7 +304,7 @@ ProgramNode(0...578)(
            (214...220),
            [ConstantReadNode(221...237)(), ConstantReadNode(239...255)()],
            (256...258),
-           LocalVariableWriteNode(259...261)((259...261), nil, nil, 0),
+           LocalVariableWriteNode(259...261)(:ex, 0, nil, (259...261), nil),
            StatementsNode(264...265)(
              [CallNode(264...265)(
                 nil,
@@ -342,7 +342,7 @@ ProgramNode(0...578)(
          (281...287),
          [ConstantReadNode(288...297)()],
          (298...300),
-         LocalVariableWriteNode(301...303)((301...303), nil, nil, 0),
+         LocalVariableWriteNode(301...303)(:ex, 0, nil, (301...303), nil),
          StatementsNode(306...307)(
            [CallNode(306...307)(
               nil,
@@ -580,7 +580,7 @@ ProgramNode(0...578)(
          (489...495),
          [ConstantReadNode(496...505)(), ConstantReadNode(507...522)()],
          (523...525),
-         LocalVariableWriteNode(526...528)((526...528), nil, nil, 0),
+         LocalVariableWriteNode(526...528)(:ex, 0, nil, (526...528), nil),
          StatementsNode(531...532)(
            [CallNode(531...532)(
               nil,
@@ -617,7 +617,7 @@ ProgramNode(0...578)(
          (548...554),
          [ConstantReadNode(555...564)()],
          (565...567),
-         LocalVariableWriteNode(568...570)((568...570), nil, nil, 0),
+         LocalVariableWriteNode(568...570)(:ex, 0, nil, (568...570), nil),
          StatementsNode(573...574)(
            [CallNode(573...574)(
               nil,

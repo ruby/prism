@@ -9,10 +9,10 @@ ProgramNode(0...13)(
        nil,
        nil,
        BlockNode(2...13)(
-         [IDENTIFIER(5...6)("a"), IDENTIFIER(9...10)("b")],
+         [:a, :b],
          BlockParametersNode(4...11)(
            ParametersNode(5...10)(
-             [RequiredParameterNode(5...6)()],
+             [RequiredParameterNode(5...6)(:a)],
              [],
              [],
              nil,

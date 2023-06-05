@@ -1,5 +1,5 @@
 ProgramNode(0...35)(
-  [IDENTIFIER(14...15)("c"), IDENTIFIER(19...23)("rest")],
+  [:c, :rest],
   StatementsNode(0...35)(
     [CaseNode(0...35)(
        SymbolNode(5...7)(
@@ -18,11 +18,11 @@ ProgramNode(0...35)(
                  LABEL_END(12...13)(":"),
                  "b"
                ),
-               LocalVariableWriteNode(14...15)((14...15), nil, nil, 0),
+               LocalVariableWriteNode(14...15)(:c, 0, nil, (14...15), nil),
                nil
              ),
              AssocSplatNode(17...23)(
-               LocalVariableWriteNode(19...23)((19...23), nil, nil, 0),
+               LocalVariableWriteNode(19...23)(:rest, 0, nil, (19...23), nil),
                (17...19)
              )],
             nil,

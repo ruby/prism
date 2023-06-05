@@ -1,5 +1,5 @@
 ProgramNode(0...39)(
-  [IDENTIFIER(27...29)("ex")],
+  [:ex],
   StatementsNode(0...39)(
     [BeginNode(0...39)(
        (0...5),
@@ -28,7 +28,7 @@ ProgramNode(0...39)(
             "foo"
           )],
          (24...26),
-         LocalVariableWriteNode(27...29)((27...29), nil, nil, 0),
+         LocalVariableWriteNode(27...29)(:ex, 0, nil, (27...29), nil),
          StatementsNode(31...34)(
            [CallNode(31...34)(
               nil,

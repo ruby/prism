@@ -22,7 +22,7 @@ ProgramNode(0...45)(
             ArgumentsNode(31...40)(
               [KeywordHashNode(31...40)(
                  [AssocSplatNode(31...40)(
-                    LocalVariableReadNode(33...40)(0),
+                    LocalVariableReadNode(33...40)(:testing, 0),
                     (31...33)
                   )]
                )]
@@ -32,7 +32,7 @@ ProgramNode(0...45)(
             "test_splat"
           )]
        ),
-       [IDENTIFIER(11...18)("testing")],
+       [:testing],
        (0...3),
        nil,
        (8...9),

@@ -1,7 +1,13 @@
 ProgramNode(0...13)(
-  [IDENTIFIER(0...3)("var")],
+  [:var],
   StatementsNode(0...13)(
-    [LocalVariableWriteNode(0...8)((0...3), IntegerNode(6...8)(), (4...5), 0),
-     LocalVariableReadNode(10...13)(0)]
+    [LocalVariableWriteNode(0...8)(
+       :var,
+       0,
+       IntegerNode(6...8)(),
+       (0...3),
+       (4...5)
+     ),
+     LocalVariableReadNode(10...13)(:var, 0)]
   )
 )

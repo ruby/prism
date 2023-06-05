@@ -1,5 +1,5 @@
 ProgramNode(0...31)(
-  [IDENTIFIER(4...9)("match")],
+  [:match],
   StatementsNode(0...31)(
     [CallNode(0...24)(
        RegularExpressionNode(0...15)(
@@ -19,6 +19,6 @@ ProgramNode(0...31)(
        nil,
        "=~"
      ),
-     LocalVariableReadNode(26...31)(0)]
+     LocalVariableReadNode(26...31)(:match, 0)]
   )
 )

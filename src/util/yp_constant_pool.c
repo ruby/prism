@@ -1,5 +1,50 @@
 #include "yarp/util/yp_constant_pool.h"
 
+// Initialize a list of constant ids.
+void
+yp_constant_id_list_init(yp_constant_id_list_t *list) {
+    list->ids = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+// Append a constant id to a list of constant ids. Returns false if any
+// potential reallocations fail.
+bool
+yp_constant_id_list_append(yp_constant_id_list_t *list, yp_constant_id_t id) {
+    if (list->size >= list->capacity) {
+        list->capacity = list->capacity == 0 ? 1 : list->capacity * 2;
+        list->ids = realloc(list->ids, sizeof(yp_constant_id_list_t) * list->capacity);
+        if (list->ids == NULL) return false;
+    }
+
+    list->ids[list->size++] = id;
+    return true;
+}
+
+// Checks if the current constant id list includes the given constant id.
+bool
+yp_constant_id_list_includes(yp_constant_id_list_t *list, yp_constant_id_t id) {
+    for (size_t index = 0; index < list->size; index++) {
+        if (list->ids[index] == id) return true;
+    }
+    return false;
+}
+
+// Get the memory size of a list of constant ids.
+size_t
+yp_constant_id_list_memsize(yp_constant_id_list_t *list) {
+    return sizeof(yp_constant_id_list_t) + (list->capacity * sizeof(yp_constant_id_t));
+}
+
+// Free the memory associated with a list of constant ids.
+void
+yp_constant_id_list_free(yp_constant_id_list_t *list) {
+    if (list->ids != NULL) {
+        free(list->ids);
+    }
+}
+
 // A relatively simple hash function (djb2) that is used to hash strings. We are
 // optimizing here for simplicity and speed.
 static inline size_t
@@ -16,15 +61,15 @@ yp_constant_pool_hash(const char *start, size_t length) {
 
 // Resize a constant pool to a given capacity.
 static inline bool
-yp_constant_pool_resize(yp_constant_pool_t *constant_pool) {
-    size_t next_capacity = constant_pool->capacity * 2;
+yp_constant_pool_resize(yp_constant_pool_t *pool) {
+    size_t next_capacity = pool->capacity * 2;
     yp_constant_t *next_constants = calloc(next_capacity, sizeof(yp_constant_t));
     if (next_constants == NULL) return false;
 
     // For each constant in the current constant pool, rehash the content, find
     // the index in the next constant pool, and insert it.
-    for (size_t index = 0; index < constant_pool->capacity; index++) {
-        yp_constant_t *constant = &constant_pool->constants[index];
+    for (size_t index = 0; index < pool->capacity; index++) {
+        yp_constant_t *constant = &pool->constants[index];
 
         // If an id is set on this constant, then we know we have content here.
         // In this case we need to insert it into the next constant pool.
@@ -44,48 +89,48 @@ yp_constant_pool_resize(yp_constant_pool_t *constant_pool) {
         }
     }
 
-    free(constant_pool->constants);
-    constant_pool->constants = next_constants;
-    constant_pool->capacity = next_capacity;
+    free(pool->constants);
+    pool->constants = next_constants;
+    pool->capacity = next_capacity;
     return true;
 }
 
 // Initialize a new constant pool with a given capacity.
 bool
-yp_constant_pool_init(yp_constant_pool_t *constant_pool, size_t capacity) {
-    constant_pool->constants = calloc(capacity, sizeof(yp_constant_t));
-    if (constant_pool->constants == NULL) return false;
+yp_constant_pool_init(yp_constant_pool_t *pool, size_t capacity) {
+    pool->constants = calloc(capacity, sizeof(yp_constant_t));
+    if (pool->constants == NULL) return false;
 
-    constant_pool->size = 0;
-    constant_pool->capacity = capacity;
+    pool->size = 0;
+    pool->capacity = capacity;
     return true;
 }
 
 // Insert a constant into a constant pool. Returns the id of the constant, or 0
 // if any potential calls to resize fail.
 yp_constant_id_t
-yp_constant_pool_insert(yp_constant_pool_t *constant_pool, const char *start, size_t length) {
-    if (constant_pool->size >= constant_pool->capacity * 0.75) {
-        if (!yp_constant_pool_resize(constant_pool)) return 0;
+yp_constant_pool_insert(yp_constant_pool_t *pool, const char *start, size_t length) {
+    if (pool->size >= pool->capacity * 0.75) {
+        if (!yp_constant_pool_resize(pool)) return 0;
     }
 
     size_t hash = yp_constant_pool_hash(start, length);
-    size_t index = hash % constant_pool->capacity;
+    size_t index = hash % pool->capacity;
     yp_constant_t *constant;
 
-    while (constant = &constant_pool->constants[index], constant->id != 0) {
+    while (constant = &pool->constants[index], constant->id != 0) {
         // If there is a collision, then we need to check if the content is the
         // same as the content we are trying to insert. If it is, then we can
         // return the id of the existing constant.
         if ((constant->length == length) && strncmp(constant->start, start, length) == 0) {
-            return constant_pool->constants[index].id;
+            return pool->constants[index].id;
         }
 
-        index = (index + 1) % constant_pool->capacity;
+        index = (index + 1) % pool->capacity;
     }
 
-    yp_constant_id_t id = ++constant_pool->size;
-    constant_pool->constants[index] = (yp_constant_t) {
+    yp_constant_id_t id = ++pool->size;
+    pool->constants[index] = (yp_constant_t) {
         .id = id,
         .start = start,
         .length = length,
@@ -97,6 +142,6 @@ yp_constant_pool_insert(yp_constant_pool_t *constant_pool, const char *start, si
 
 // Free the memory associated with a constant pool.
 void
-yp_constant_pool_free(yp_constant_pool_t *constant_pool) {
-    free(constant_pool->constants);
+yp_constant_pool_free(yp_constant_pool_t *pool) {
+    free(pool->constants);
 }

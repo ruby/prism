@@ -14,7 +14,7 @@ ProgramNode(0...13)(
          nil
        ),
        nil,
-       [LABEL(6...7)("k")],
+       [:k],
        (0...3),
        nil,
        nil,

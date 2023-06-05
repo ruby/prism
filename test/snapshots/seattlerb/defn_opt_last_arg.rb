@@ -7,6 +7,7 @@ ProgramNode(0...21)(
        ParametersNode(6...17)(
          [],
          [OptionalParameterNode(6...17)(
+            :arg,
             (6...9),
             (10...11),
             FalseNode(12...17)()
@@ -18,7 +19,7 @@ ProgramNode(0...21)(
          nil
        ),
        nil,
-       [IDENTIFIER(6...9)("arg")],
+       [:arg],
        (0...3),
        nil,
        nil,

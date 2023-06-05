@@ -484,7 +484,7 @@ nodes:
   - name: BlockNode
     child_nodes:
       - name: locals
-        type: token[]
+        type: constant[]
       - name: parameters
         type: node?
         kind: BlockParametersNode
@@ -619,7 +619,7 @@ nodes:
   - name: ClassNode
     child_nodes:
       - name: locals
-        type: token[]
+        type: constant[]
       - name: class_keyword_loc
         type: location
       - name: constant_path
@@ -703,7 +703,7 @@ nodes:
       - name: statements
         type: node?
       - name: locals
-        type: token[]
+        type: constant[]
       - name: def_keyword_loc
         type: location
       - name: operator_loc
@@ -1073,7 +1073,7 @@ nodes:
   - name: LambdaNode
     child_nodes:
       - name: locals
-        type: token[]
+        type: constant[]
       - name: opening_loc
         type: location
       - name: parameters
@@ -1088,6 +1088,8 @@ nodes:
           ^^^^^^^^^^^^^^^^^^^^^^^
   - name: LocalVariableReadNode
     child_nodes:
+      - name: constant_id
+        type: constant
       - name: depth
         type: uint32
     comment: |
@@ -1099,14 +1101,16 @@ nodes:
           ^^^
   - name: LocalVariableWriteNode
     child_nodes:
-      - name: name_loc
-        type: location
-      - name: value
-        type: node?
-      - name: operator_loc
-        type: location?
+      - name: constant_id
+        type: constant
       - name: depth
         type: uint32
+      - name: value
+        type: node?
+      - name: name_loc
+        type: location
+      - name: operator_loc
+        type: location?
     comment: |
       Represents writing to a local variable.
 
@@ -1145,7 +1149,7 @@ nodes:
   - name: ModuleNode
     child_nodes:
       - name: locals
-        type: token[]
+        type: constant[]
       - name: module_keyword_loc
         type: location
       - name: constant_path
@@ -1247,6 +1251,8 @@ nodes:
           ^^^^^^^^^^^^^^^^
   - name: OptionalParameterNode
     child_nodes:
+      - name: constant_id
+        type: constant
       - name: name_loc
         type: location
       - name: operator_loc
@@ -1372,7 +1378,7 @@ nodes:
   - name: ProgramNode
     child_nodes:
       - name: locals
-        type: token[]
+        type: constant[]
       - name: statements
         type: node
         kind: StatementsNode
@@ -1440,6 +1446,9 @@ nodes:
                   ^^^^^^^^^^
           end
   - name: RequiredParameterNode
+    child_nodes:
+      - name: constant_id
+        type: constant
     comment: |
       Represents a required parameter to a method, block, or lambda definition.
 
@@ -1522,7 +1531,7 @@ nodes:
   - name: SingletonClassNode
     child_nodes:
       - name: locals
-        type: token[]
+        type: constant[]
       - name: class_keyword_loc
         type: location
       - name: operator_loc

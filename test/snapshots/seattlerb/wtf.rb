@@ -2,12 +2,13 @@ ProgramNode(0...23)(
   [],
   StatementsNode(0...23)(
     [LambdaNode(0...23)(
-       [IDENTIFIER(3...4)("a"), IDENTIFIER(6...7)("b")],
+       [:a, :b],
        (0...2),
        BlockParametersNode(2...12)(
          ParametersNode(3...11)(
-           [RequiredParameterNode(3...4)()],
+           [RequiredParameterNode(3...4)(:a)],
            [OptionalParameterNode(6...11)(
+              :b,
               (6...7),
               (7...8),
               NilNode(8...11)()
@@ -30,8 +31,8 @@ ProgramNode(0...23)(
             nil,
             ArgumentsNode(17...23)(
               [ArrayNode(17...23)(
-                 [LocalVariableReadNode(18...19)(0),
-                  LocalVariableReadNode(21...22)(0)],
+                 [LocalVariableReadNode(18...19)(:a, 0),
+                  LocalVariableReadNode(21...22)(:b, 0)],
                  (17...18),
                  (22...23)
                )]

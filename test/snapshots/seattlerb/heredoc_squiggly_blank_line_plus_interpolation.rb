@@ -1,8 +1,9 @@
 ProgramNode(0...20)(
-  [IDENTIFIER(0...1)("a")],
+  [:a],
   StatementsNode(0...20)(
     [LocalVariableWriteNode(0...20)(
-       (0...1),
+       :a,
+       0,
        CallNode(4...20)(
          nil,
          nil,
@@ -45,8 +46,8 @@ ProgramNode(0...20)(
          nil,
          "foo"
        ),
-       (2...3),
-       0
+       (0...1),
+       (2...3)
      )]
   )
 )

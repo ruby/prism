@@ -16,9 +16,9 @@ yp_buffer_init(yp_buffer_t *buffer) {
     buffer->capacity = YP_BUFFER_INITIAL_SIZE;
 }
 
-// Append a generic pointer to memory to the buffer.
+// Append the given amount of space to the buffer.
 static inline void
-yp_buffer_append(yp_buffer_t *buffer, const void *source, size_t length) {
+yp_buffer_append_length(yp_buffer_t *buffer, size_t length) {
     size_t next_length = buffer->length + length;
 
     if (next_length > buffer->capacity) {
@@ -29,8 +29,21 @@ yp_buffer_append(yp_buffer_t *buffer, const void *source, size_t length) {
         buffer->value = realloc(buffer->value, buffer->capacity);
     }
 
-    memcpy(buffer->value + buffer->length, source, length);
-    buffer->length += length;
+    buffer->length = next_length;
+}
+
+// Append a generic pointer to memory to the buffer.
+static inline void
+yp_buffer_append(yp_buffer_t *buffer, const void *source, size_t length) {
+    yp_buffer_append_length(buffer, length);
+    memcpy(buffer->value + (buffer->length - length), source, length);
+}
+
+// Append the given amount of space as zeroes to the buffer.
+void
+yp_buffer_append_zeroes(yp_buffer_t *buffer, size_t length) {
+    yp_buffer_append_length(buffer, length);
+    memset(buffer->value + (buffer->length - length), 0, length);
 }
 
 // Append a string to the buffer.

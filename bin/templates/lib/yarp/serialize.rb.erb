@@ -5,6 +5,7 @@ module YARP
     def self.load(source, serialized)
       io = StringIO.new(serialized)
       io.set_encoding(Encoding::BINARY)
+
       Loader.new(source, io).load
     end
 
@@ -22,7 +23,23 @@ module YARP
       def load
         io.read(4) => "YARP"
         io.read(3).unpack("C3") => [0, 4, 0]
-        load_node
+
+        constant_pool_offset = io.read(4).unpack1("L")
+        load_varint # we are not going to use the constant pool length
+
+        constant_pool =
+          Hash.new do |hash, index|
+            previous_pos = io.pos
+            io.seek(constant_pool_offset + (index * 8))
+
+            offset, length = io.read(8).unpack("LL")
+            constant = source.byteslice(offset, length).to_sym
+
+            io.seek(previous_pos)
+            hash[index] = constant
+          end
+
+        load_node(constant_pool)
       end
 
       private
@@ -60,10 +77,10 @@ module YARP
         Token.new(type, range, start_offset, length)
       end
 
-      def load_optional_node
+      def load_optional_node(constant_pool)
         if io.getbyte != 0
           io.pos -= 1
-          load_node
+          load_node(constant_pool)
         end
       end
 
@@ -86,32 +103,38 @@ module YARP
         load_location if io.getbyte != 0
       end
 
-      def load_node
+      def load_constant(constant_pool)
+        constant_pool[load_varint - 1]
+      end
+
+      def load_node(constant_pool)
         type = io.getbyte
         start_offset, length = load_varint, load_varint
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
         when <%= index + 1 %> then
-        <%- if node.needs_serialized_length? -%>
+          <%- if node.needs_serialized_length? -%>
           load_serialized_length
-        <%- end -%>
-        <%= node.name %>.new(<%= (node.params.map { |param|
-          case param
-          when NodeParam then "load_node"
-          when OptionalNodeParam then "load_optional_node"
-          when StringParam then "load_string"
-          when NodeListParam then "Array.new(load_varint) { load_node }"
-          when TokenParam then "load_token"
-          when TokenListParam then "Array.new(load_varint) { load_token }"
-          when OptionalTokenParam then "load_optional_token"
-          when LocationParam then "load_location"
-          when OptionalLocationParam then "load_optional_location"
-          when UInt32Param then 'load_varint'
-          else raise
-          end
-        } + ["start_offset", "length"]).join(", ") -%>)
-        <%- end -%>
+          <%- end -%>
+          <%= node.name %>.new(<%= (node.params.map { |param|
+            case param
+            when NodeParam then "load_node(constant_pool)"
+            when OptionalNodeParam then "load_optional_node(constant_pool)"
+            when StringParam then "load_string"
+            when NodeListParam then "Array.new(load_varint) { load_node(constant_pool) }"
+            when TokenParam then "load_token"
+            when TokenListParam then "Array.new(load_varint) { load_token }"
+            when ConstantParam then "load_constant(constant_pool)"
+            when ConstantListParam then "Array.new(load_varint) { load_constant(constant_pool) }"
+            when OptionalTokenParam then "load_optional_token"
+            when LocationParam then "load_location"
+            when OptionalLocationParam then "load_optional_location"
+            when UInt32Param then "load_varint"
+            else raise
+            end
+          } + ["start_offset", "length"]).join(", ") -%>)
+          <%- end -%>
         end
       end
     end

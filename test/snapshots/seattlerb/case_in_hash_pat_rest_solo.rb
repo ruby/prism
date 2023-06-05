@@ -1,5 +1,5 @@
 ProgramNode(0...29)(
-  [IDENTIFIER(13...17)("rest")],
+  [:rest],
   StatementsNode(0...29)(
     [CaseNode(0...29)(
        SymbolNode(5...7)(
@@ -12,7 +12,7 @@ ProgramNode(0...29)(
           HashPatternNode(11...17)(
             nil,
             [AssocSplatNode(11...17)(
-               LocalVariableWriteNode(13...17)((13...17), nil, nil, 0),
+               LocalVariableWriteNode(13...17)(:rest, 0, nil, (13...17), nil),
                (11...13)
              )],
             nil,

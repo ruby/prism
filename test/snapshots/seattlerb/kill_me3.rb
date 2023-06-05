@@ -9,14 +9,12 @@ ProgramNode(0...17)(
        nil,
        nil,
        BlockNode(2...17)(
-         [IDENTIFIER(6...7)("a"),
-          IDENTIFIER(9...10)("b"),
-          IDENTIFIER(13...14)("c")],
+         [:a, :b, :c],
          BlockParametersNode(4...15)(
            ParametersNode(5...14)(
              [],
              [],
-             [RequiredParameterNode(9...10)()],
+             [RequiredParameterNode(9...10)(:b)],
              RestParameterNode(5...7)((5...6), (6...7)),
              [],
              nil,

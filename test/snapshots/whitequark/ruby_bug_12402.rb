@@ -1,8 +1,8 @@
 ProgramNode(0...437)(
-  [IDENTIFIER(0...3)("foo")],
+  [:foo],
   StatementsNode(0...437)(
     [OperatorAssignmentNode(0...27)(
-       LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),
+       LocalVariableWriteNode(0...3)(:foo, 0, nil, (0...3), nil),
        PLUS_EQUAL(4...6)("+="),
        CallNode(7...27)(
          nil,
@@ -31,7 +31,7 @@ ProgramNode(0...437)(
        )
      ),
      OperatorAssignmentNode(29...57)(
-       LocalVariableWriteNode(29...32)((29...32), nil, nil, 0),
+       LocalVariableWriteNode(29...32)(:foo, 0, nil, (29...32), nil),
        PLUS_EQUAL(33...35)("+="),
        RescueModifierNode(36...57)(
          CallNode(36...46)(
@@ -60,7 +60,8 @@ ProgramNode(0...437)(
        )
      ),
      LocalVariableWriteNode(59...85)(
-       (59...62),
+       :foo,
+       0,
        CallNode(65...85)(
          nil,
          nil,
@@ -86,11 +87,12 @@ ProgramNode(0...437)(
          nil,
          "raise"
        ),
-       (63...64),
-       0
+       (59...62),
+       (63...64)
      ),
      LocalVariableWriteNode(87...114)(
-       (87...90),
+       :foo,
+       0,
        RescueModifierNode(93...114)(
          CallNode(93...103)(
            nil,
@@ -116,12 +118,12 @@ ProgramNode(0...437)(
          (104...110),
          NilNode(111...114)()
        ),
-       (91...92),
-       0
+       (87...90),
+       (91...92)
      ),
      OperatorAssignmentNode(116...145)(
        CallNode(116...121)(
-         LocalVariableReadNode(116...119)(0),
+         LocalVariableReadNode(116...119)(:foo, 0),
          DOT(119...120)("."),
          CONSTANT(120...121)("C"),
          nil,
@@ -159,7 +161,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(147...177)(
        CallNode(147...152)(
-         LocalVariableReadNode(147...150)(0),
+         LocalVariableReadNode(147...150)(:foo, 0),
          DOT(150...151)("."),
          CONSTANT(151...152)("C"),
          nil,
@@ -197,7 +199,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(179...208)(
        CallNode(179...184)(
-         LocalVariableReadNode(179...182)(0),
+         LocalVariableReadNode(179...182)(:foo, 0),
          DOT(182...183)("."),
          IDENTIFIER(183...184)("m"),
          nil,
@@ -235,7 +237,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(210...240)(
        CallNode(210...215)(
-         LocalVariableReadNode(210...213)(0),
+         LocalVariableReadNode(210...213)(:foo, 0),
          DOT(213...214)("."),
          IDENTIFIER(214...215)("m"),
          nil,
@@ -274,7 +276,7 @@ ProgramNode(0...437)(
      OperatorOrAssignmentNode(242...273)(
        ConstantPathWriteNode(242...248)(
          ConstantPathNode(242...248)(
-           LocalVariableReadNode(242...245)(0),
+           LocalVariableReadNode(242...245)(:foo, 0),
            ConstantReadNode(247...248)(),
            (245...247)
          ),
@@ -311,7 +313,7 @@ ProgramNode(0...437)(
      OperatorOrAssignmentNode(275...307)(
        ConstantPathWriteNode(275...281)(
          ConstantPathNode(275...281)(
-           LocalVariableReadNode(275...278)(0),
+           LocalVariableReadNode(275...278)(:foo, 0),
            ConstantReadNode(280...281)(),
            (278...280)
          ),
@@ -347,7 +349,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(309...339)(
        CallNode(309...315)(
-         LocalVariableReadNode(309...312)(0),
+         LocalVariableReadNode(309...312)(:foo, 0),
          COLON_COLON(312...314)("::"),
          IDENTIFIER(314...315)("m"),
          nil,
@@ -385,7 +387,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(341...372)(
        CallNode(341...347)(
-         LocalVariableReadNode(341...344)(0),
+         LocalVariableReadNode(341...344)(:foo, 0),
          COLON_COLON(344...346)("::"),
          IDENTIFIER(346...347)("m"),
          nil,
@@ -423,7 +425,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(374...404)(
        CallNode(374...380)(
-         LocalVariableReadNode(374...377)(0),
+         LocalVariableReadNode(374...377)(:foo, 0),
          nil,
          BRACKET_LEFT_RIGHT_EQUAL(377...378)("["),
          BRACKET_LEFT(377...378)("["),
@@ -461,7 +463,7 @@ ProgramNode(0...437)(
      ),
      OperatorAssignmentNode(406...437)(
        CallNode(406...412)(
-         LocalVariableReadNode(406...409)(0),
+         LocalVariableReadNode(406...409)(:foo, 0),
          nil,
          BRACKET_LEFT_RIGHT_EQUAL(409...410)("["),
          BRACKET_LEFT(409...410)("["),

@@ -5,9 +5,9 @@ ProgramNode(0...41)(
        (4...5),
        nil,
        ParametersNode(6...18)(
-         [RequiredParameterNode(6...7)(),
-          RequiredParameterNode(9...10)(),
-          RequiredParameterNode(12...13)()],
+         [RequiredParameterNode(6...7)(:x),
+          RequiredParameterNode(9...10)(:y),
+          RequiredParameterNode(12...13)(:z)],
          [],
          [],
          nil,
@@ -28,7 +28,7 @@ ProgramNode(0...41)(
                  nil,
                  "get"
                ),
-               LocalVariableReadNode(29...30)(0),
+               LocalVariableReadNode(29...30)(:z, 0),
                ForwardingArgumentsNode(32...35)()]
             ),
             PARENTHESIS_RIGHT(35...36)(")"),
@@ -36,10 +36,7 @@ ProgramNode(0...41)(
             "b"
           )]
        ),
-       [IDENTIFIER(6...7)("x"),
-        IDENTIFIER(9...10)("y"),
-        IDENTIFIER(12...13)("z"),
-        UDOT_DOT_DOT(15...18)("...")],
+       [:x, :y, :z, :"..."],
        (0...3),
        nil,
        (5...6),

@@ -14,18 +14,19 @@ ProgramNode(18...90)(
             nil,
             StatementsNode(67...81)(
               [LocalVariableWriteNode(67...81)(
-                 (67...72),
+                 :così,
+                 0,
                  SymbolNode(75...81)(
                    SYMBOL_BEGIN(75...76)(":"),
                    IDENTIFIER(76...81)("però"),
                    nil,
                    "però"
                  ),
-                 (73...74),
-                 0
+                 (67...72),
+                 (73...74)
                )]
             ),
-            [IDENTIFIER(67...72)("così")],
+            [:così],
             (54...57),
             (62...63),
             nil,

@@ -7,6 +7,7 @@ ProgramNode(0...44)(
        ParametersNode(6...13)(
          [],
          [OptionalParameterNode(6...13)(
+            :foo,
             (6...9),
             (10...11),
             IntegerNode(12...13)()
@@ -18,7 +19,7 @@ ProgramNode(0...44)(
          nil
        ),
        nil,
-       [IDENTIFIER(6...9)("foo")],
+       [:foo],
        (0...3),
        nil,
        nil,
@@ -32,11 +33,13 @@ ProgramNode(0...44)(
        ParametersNode(26...38)(
          [],
          [OptionalParameterNode(26...31)(
+            :foo,
             (26...29),
             (29...30),
             IntegerNode(30...31)()
           ),
           OptionalParameterNode(33...38)(
+            :bar,
             (33...36),
             (36...37),
             IntegerNode(37...38)()
@@ -48,7 +51,7 @@ ProgramNode(0...44)(
          nil
        ),
        nil,
-       [IDENTIFIER(26...29)("foo"), IDENTIFIER(33...36)("bar")],
+       [:foo, :bar],
        (20...23),
        nil,
        (25...26),

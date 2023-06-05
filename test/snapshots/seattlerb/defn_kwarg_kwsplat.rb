@@ -14,7 +14,7 @@ ProgramNode(0...20)(
          nil
        ),
        nil,
-       [LABEL(6...7)("b"), IDENTIFIER(14...15)("c")],
+       [:b, :c],
        (0...3),
        nil,
        (5...6),

@@ -7,20 +7,19 @@ ProgramNode(0...24)(
        ParametersNode(7...19)(
          [],
          [OptionalParameterNode(7...12)(
+            :a,
             (7...8),
             (9...10),
             IntegerNode(11...12)()
           )],
-         [RequiredParameterNode(18...19)()],
+         [RequiredParameterNode(18...19)(:c)],
          RestParameterNode(14...16)((14...15), (15...16)),
          [],
          nil,
          nil
        ),
        nil,
-       [IDENTIFIER(7...8)("a"),
-        IDENTIFIER(15...16)("b"),
-        IDENTIFIER(18...19)("c")],
+       [:a, :b, :c],
        (0...3),
        nil,
        (6...7),

@@ -1,5 +1,5 @@
 ProgramNode(0...56)(
-  [IDENTIFIER(27...28)("x"), LABEL(38...39)("f")],
+  [:x, :f],
   StatementsNode(0...56)(
     [CaseNode(0...56)(
        SymbolNode(5...7)(
@@ -20,7 +20,7 @@ ProgramNode(0...56)(
                ),
                CapturePatternNode(16...28)(
                  ConstantReadNode(16...23)(),
-                 LocalVariableWriteNode(27...28)((27...28), nil, nil, 0),
+                 LocalVariableWriteNode(27...28)(:x, 0, nil, (27...28), nil),
                  (24...26)
                ),
                nil

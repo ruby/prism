@@ -442,68 +442,18 @@ class ErrorsTest < Test::Unit::TestCase
   def test_cannot_assign_to_a_reserved_numbered_parameter
     expected = BeginNode(
       Location(),
-      StatementsNode(
-        [LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         ),
-         LocalVariableWriteNode(
-           Location(),
-           SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
-           Location(),
-           0
-         )]
-      ),
+      StatementsNode([
+        LocalVariableWriteNode(:_1, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_2, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_3, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_4, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_5, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_6, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_7, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_8, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_9, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_10, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location())
+      ]),
       nil,
       nil,
       nil,
@@ -523,7 +473,7 @@ class ErrorsTest < Test::Unit::TestCase
       Location(),
       nil,
       ParametersNode(
-        [RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()],
+        [RequiredParameterNode(:a), RequiredParameterNode(:b), RequiredParameterNode(:c)],
         [],
         [],
         nil,
@@ -532,7 +482,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      [IDENTIFIER("a"), IDENTIFIER("b"), IDENTIFIER("c")],
+      [:a, :b, :c],
       Location(),
       nil,
       Location(),
@@ -548,10 +498,10 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_do_not_allow_trailing_commas_in_lambda_parameters
     expected = LambdaNode(
-      [IDENTIFIER("a"), IDENTIFIER("b")],
+      [:a, :b],
       Location(),
       BlockParametersNode(
-        ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
+        ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], [], nil, [], nil, nil),
         [],
         Location(),
         Location()
@@ -596,14 +546,14 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         nil,
         [],
         nil,
         BlockParameterNode(Location(), Location())
       ),
       nil,
-      [IDENTIFIER("block"), IDENTIFIER("a")],
+      [:block, :a],
       Location(),
       nil,
       Location(),
@@ -614,13 +564,13 @@ class ErrorsTest < Test::Unit::TestCase
     assert_errors expected, "def foo(&block, a)\nend", ["Unexpected parameter order"]
   end
 
-  def test_method_with_arguments_after_anonamous_block
+  def test_method_with_arguments_after_anonymous_block
     expected = DefNode(
       Location(),
       nil,
-      ParametersNode([], [], [RequiredParameterNode()], nil, [], nil, BlockParameterNode(nil, Location())),
+      ParametersNode([], [], [RequiredParameterNode(:a)], nil, [], nil, BlockParameterNode(nil, Location())),
       nil,
-      [AMPERSAND("&"), IDENTIFIER("a")],
+      [:&, :a],
       Location(),
       nil,
       Location(),
@@ -639,14 +589,14 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         nil,
         [],
         ForwardingParameterNode(),
         nil
       ),
       nil,
-      [UDOT_DOT_DOT("..."), IDENTIFIER("a")],
+      [:"...", :a],
       Location(),
       nil,
       Location(),
@@ -664,14 +614,14 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         nil,
         [KeywordParameterNode(Location(), nil)],
         nil,
         nil
       ),
       nil,
-      [LABEL("b"), IDENTIFIER("a")],
+      [:b, :a],
       Location(),
       nil,
       Location(),
@@ -696,7 +646,7 @@ class ErrorsTest < Test::Unit::TestCase
         nil
       ),
       nil,
-      [IDENTIFIER("rest"), LABEL("b")],
+      [:rest, :b],
       Location(),
       nil,
       Location(),
@@ -713,7 +663,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil),
       nil,
-      [UDOT_DOT_DOT("...")],
+      [:"..."],
       Location(),
       nil,
       Location(),
@@ -732,14 +682,14 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         nil,
         [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
-      [IDENTIFIER("args"), IDENTIFIER("a"), LABEL("b")],
+      [:args, :a, :b],
       Location(),
       nil,
       Location(),
@@ -758,16 +708,14 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         nil,
         [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
-      [IDENTIFIER("args"),
-        IDENTIFIER("a"),
-        LABEL("b")],
+      [:args, :a, :b],
       Location(),
       nil,
       Location(),
@@ -786,16 +734,14 @@ class ErrorsTest < Test::Unit::TestCase
       ParametersNode(
         [],
         [],
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         nil,
         [KeywordParameterNode(Location(), nil)],
         KeywordRestParameterNode(Location(), Location()),
         nil
       ),
       nil,
-      [IDENTIFIER("args"),
-        IDENTIFIER("a"),
-        LABEL("b")],
+      [:args, :a, :b],
       Location(),
       nil,
       Location(),
@@ -812,24 +758,19 @@ class ErrorsTest < Test::Unit::TestCase
       Location(),
       nil,
       ParametersNode(
-        [RequiredParameterNode()],
+        [RequiredParameterNode(:a)],
         [
-          OptionalParameterNode(Location(), Location(), IntegerNode()),
-          OptionalParameterNode(Location(), Location(), IntegerNode())
+          OptionalParameterNode(:b, Location(), Location(), IntegerNode()),
+          OptionalParameterNode(:d, Location(), Location(), IntegerNode())
         ],
-        [RequiredParameterNode(),
-         RequiredParameterNode()],
+        [RequiredParameterNode(:c), RequiredParameterNode(:e)],
         nil,
         [],
         nil,
         nil
       ),
       nil,
-      [IDENTIFIER("a"),
-        IDENTIFIER("b"),
-        IDENTIFIER("c"),
-        IDENTIFIER("d"),
-        IDENTIFIER("e")],
+      [:a, :b, :c, :d, :e],
       Location(),
       nil,
       Location(),
@@ -873,7 +814,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_do_not_allow_forward_arguments_in_lambda_literals
     expected = LambdaNode(
-      [UDOT_DOT_DOT("...")],
+      [:"..."],
       Location(),
       BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
       nil
@@ -891,7 +832,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       BlockNode(
-        [UDOT_DOT_DOT("...")],
+        [:"..."],
         BlockParametersNode(ParametersNode([], [], [], nil, [], ForwardingParameterNode(), nil), [], Location(), Location()),
         nil,
         Location(),
@@ -949,9 +890,9 @@ class ErrorsTest < Test::Unit::TestCase
     expected = DefNode(
       Location(),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, nil),
+      ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b), RequiredParameterNode(:a)], [], [], nil, [], nil, nil),
       nil,
-      [IDENTIFIER("a"), IDENTIFIER("b")],
+      [:a, :b],
       Location(),
       nil,
       Location(),
@@ -960,14 +901,14 @@ class ErrorsTest < Test::Unit::TestCase
       Location()
     )
 
-    assert_errors expected, "def foo(a,b,a);end", ["Duplicated argument name."]
+    assert_errors expected, "def foo(a,b,a);end", ["Duplicated parameter name."]
 
     expected = DefNode(
       Location(),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], RestParameterNode(Location(), Location()), [], nil, nil),
+      ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], [], RestParameterNode(Location(), Location()), [], nil, nil),
       nil,
-      [IDENTIFIER("a"), IDENTIFIER("b")],
+      [:a, :b],
       Location(),
       nil,
       Location(),
@@ -976,14 +917,14 @@ class ErrorsTest < Test::Unit::TestCase
       Location()
     )
 
-    assert_errors expected, "def foo(a,b,*a);end", ["Duplicated argument name."]
+    assert_errors expected, "def foo(a,b,*a);end", ["Duplicated parameter name."]
 
     expected = DefNode(
       Location(),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], KeywordRestParameterNode(Location(), Location()), nil),
+      ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], [], nil, [], KeywordRestParameterNode(Location(), Location()), nil),
       nil,
-      [IDENTIFIER("a"), IDENTIFIER("b")],
+      [:a, :b],
       Location(),
       nil,
       Location(),
@@ -992,14 +933,14 @@ class ErrorsTest < Test::Unit::TestCase
       Location()
     )
 
-    assert_errors expected, "def foo(a,b,**a);end", ["Duplicated argument name."]
+    assert_errors expected, "def foo(a,b,**a);end", ["Duplicated parameter name."]
 
     expected = DefNode(
       Location(),
       nil,
-      ParametersNode([RequiredParameterNode(), RequiredParameterNode()], [], [], nil, [], nil, BlockParameterNode(Location(), Location())),
+      ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b)], [], [], nil, [], nil, BlockParameterNode(Location(), Location())),
       nil,
-      [IDENTIFIER("a"), IDENTIFIER("b")],
+      [:a, :b],
       Location(),
       nil,
       Location(),
@@ -1008,7 +949,7 @@ class ErrorsTest < Test::Unit::TestCase
       Location()
     )
 
-    assert_errors expected, "def foo(a,b,&a);end", ["Duplicated argument name."]
+    assert_errors expected, "def foo(a,b,&a);end", ["Duplicated parameter name."]
   end
 
   private

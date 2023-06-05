@@ -9,7 +9,7 @@ ProgramNode(0...10)(
        nil,
        nil,
        BlockNode(2...10)(
-         [IDENTIFIER(6...7)("b")],
+         [:b],
          BlockParametersNode(4...8)(
            nil,
            [IDENTIFIER(6...7)("b")],

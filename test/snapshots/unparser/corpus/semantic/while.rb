@@ -1,5 +1,5 @@
 ProgramNode(0...188)(
-  [IDENTIFIER(36...39)("foo"), IDENTIFIER(83...84)("a")],
+  [:foo, :a],
   StatementsNode(0...188)(
     [UntilNode(0...13)(
        (2...7),
@@ -53,10 +53,11 @@ ProgramNode(0...188)(
      ),
      WhileNode(36...55)(
        (46...51),
-       LocalVariableReadNode(52...55)(0),
+       LocalVariableReadNode(52...55)(:foo, 0),
        StatementsNode(36...45)(
          [LocalVariableWriteNode(36...45)(
-            (36...39),
+            :foo,
+            0,
             CallNode(42...45)(
               nil,
               nil,
@@ -67,8 +68,8 @@ ProgramNode(0...188)(
               nil,
               "bar"
             ),
-            (40...41),
-            0
+            (36...39),
+            (40...41)
           )]
        )
      ),
@@ -113,7 +114,8 @@ ProgramNode(0...188)(
      WhileNode(77...96)(
        (77...82),
        LocalVariableWriteNode(83...88)(
-         (83...84),
+         :a,
+         0,
          CallNode(87...88)(
            nil,
            nil,
@@ -124,10 +126,10 @@ ProgramNode(0...188)(
            nil,
            "b"
          ),
-         (85...86),
-         0
+         (83...84),
+         (85...86)
        ),
-       StatementsNode(91...92)([LocalVariableReadNode(91...92)(0)])
+       StatementsNode(91...92)([LocalVariableReadNode(91...92)(:a, 0)])
      ),
      UntilNode(98...130)(
        (100...105),
@@ -160,15 +162,16 @@ ProgramNode(0...188)(
          ),
          "b"
        ),
-       StatementsNode(98...99)([LocalVariableReadNode(98...99)(0)])
+       StatementsNode(98...99)([LocalVariableReadNode(98...99)(:a, 0)])
      ),
      ModuleNode(132...188)(
-       [IDENTIFIER(143...146)("foo")],
+       [:foo],
        (132...138),
        ConstantReadNode(139...140)(),
        StatementsNode(143...184)(
          [LocalVariableWriteNode(143...152)(
-            (143...146),
+            :foo,
+            0,
             CallNode(149...152)(
               nil,
               nil,
@@ -179,15 +182,16 @@ ProgramNode(0...188)(
               nil,
               "exp"
             ),
-            (147...148),
-            0
+            (143...146),
+            (147...148)
           ),
           WhileNode(155...184)(
             (155...160),
-            LocalVariableReadNode(161...164)(0),
+            LocalVariableReadNode(161...164)(:foo, 0),
             StatementsNode(169...178)(
               [LocalVariableWriteNode(169...178)(
-                 (169...172),
+                 :foo,
+                 0,
                  CallNode(175...178)(
                    nil,
                    nil,
@@ -198,8 +202,8 @@ ProgramNode(0...188)(
                    nil,
                    "bar"
                  ),
-                 (173...174),
-                 0
+                 (169...172),
+                 (173...174)
                )]
             )
           )]

@@ -7,14 +7,14 @@ ProgramNode(0...15)(
        ParametersNode(6...10)(
          [],
          [],
-         [RequiredParameterNode(9...10)()],
+         [RequiredParameterNode(9...10)(:a)],
          RestParameterNode(6...7)((6...7), nil),
          [],
          nil,
          nil
        ),
        nil,
-       [USTAR(6...7)("*"), IDENTIFIER(9...10)("a")],
+       [:*, :a],
        (0...3),
        nil,
        (5...6),

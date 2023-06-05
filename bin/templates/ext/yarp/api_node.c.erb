@@ -28,41 +28,51 @@ yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding) {
 }
 
 VALUE
-yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
+yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *constants) {
     switch (node->type) {
         <%- nodes.each do |node| -%>
         case <%= node.type %>: {
+            <%- if node.params.any? -%>
+            yp_<%= node.human %>_t *cast = (yp_<%= node.human %>_t *) node;
+            <%- end -%>
             VALUE argv[<%= node.params.length + 2 %>];
             <%- node.params.each_with_index do |param, index| -%>
 
             // <%= param.name %>
             <%- case param -%>
             <%- when NodeParam -%>
-            argv[<%= index %>] = yp_node_new(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+            argv[<%= index %>] = yp_node_new(parser, (yp_node_t *) cast-><%= param.name %>, encoding, constants);
             <%- when OptionalNodeParam -%>
-            argv[<%= index %>] = ((yp_<%= node.human %>_t *)node)-><%= param.name %> == NULL ? Qnil : yp_node_new(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+            argv[<%= index %>] = cast-><%= param.name %> == NULL ? Qnil : yp_node_new(parser, (yp_node_t *) cast-><%= param.name %>, encoding, constants);
             <%- when NodeListParam -%>
             argv[<%= index %>] = rb_ary_new();
-            for (size_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
-                rb_ary_push(argv[<%= index %>], yp_node_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], encoding));
+            for (size_t index = 0; index < cast-><%= param.name %>.size; index++) {
+                rb_ary_push(argv[<%= index %>], yp_node_new(parser, cast-><%= param.name %>.nodes[index], encoding, constants));
             }
             <%- when StringParam -%>
-            argv[<%= index %>] = yp_string_new(&((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+            argv[<%= index %>] = yp_string_new(&cast-><%= param.name %>, encoding);
             <%- when TokenParam -%>
-            argv[<%= index %>] = yp_token_new(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+            argv[<%= index %>] = yp_token_new(parser, &cast-><%= param.name %>, encoding);
             <%- when OptionalTokenParam -%>
-            argv[<%= index %>] = ((yp_<%= node.human %>_t *)node)-><%= param.name %>.type == YP_TOKEN_NOT_PROVIDED ? Qnil : yp_token_new(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, encoding);
+            argv[<%= index %>] = cast-><%= param.name %>.type == YP_TOKEN_NOT_PROVIDED ? Qnil : yp_token_new(parser, &cast-><%= param.name %>, encoding);
             <%- when TokenListParam -%>
             argv[<%= index %>] = rb_ary_new();
-            for (size_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
-                rb_ary_push(argv[<%= index %>], yp_token_new(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.tokens[index], encoding));
+            for (size_t index = 0; index < cast-><%= param.name %>.size; index++) {
+                rb_ary_push(argv[<%= index %>], yp_token_new(parser, &cast-><%= param.name %>.tokens[index], encoding));
+            }
+            <%- when ConstantParam -%>
+            argv[<%= index %>] = rb_id2sym(constants[cast-><%= param.name %> - 1]);
+            <%- when ConstantListParam -%>
+            argv[<%= index %>] = rb_ary_new();
+            for (size_t index = 0; index < cast-><%= param.name %>.size; index++) {
+                rb_ary_push(argv[<%= index %>], rb_id2sym(constants[cast-><%= param.name %>.ids[index] - 1]));
             }
             <%- when LocationParam -%>
-            argv[<%= index %>] = location_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.start, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.end);
+            argv[<%= index %>] = location_new(parser, cast-><%= param.name %>.start, cast-><%= param.name %>.end);
             <%- when OptionalLocationParam -%>
-            argv[<%= index %>] = ((yp_<%= node.human %>_t *)node)-><%= param.name %>.start == NULL ? Qnil : location_new(parser, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.start, ((yp_<%= node.human %>_t *)node)-><%= param.name %>.end);
+            argv[<%= index %>] = cast-><%= param.name %>.start == NULL ? Qnil : location_new(parser, cast-><%= param.name %>.start, cast-><%= param.name %>.end);
             <%- when UInt32Param -%>
-            argv[<%= index %>] = ULONG2NUM(((yp_<%= node.human %>_t *)node)-><%= param.name %>);
+            argv[<%= index %>] = ULONG2NUM(cast-><%= param.name %>);
             <%- else -%>
             <%- raise -%>
             <%- end -%>
@@ -78,4 +88,18 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
         default:
             rb_raise(rb_eRuntimeError, "unknown node type: %d", node->type);
     }
+}
+
+VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
+    ID constants[parser->constant_pool.size];
+
+    for (size_t index = 0; index < parser->constant_pool.capacity; index++) {
+        yp_constant_t constant = parser->constant_pool.constants[index];
+
+        if (constant.id != 0) {
+            constants[constant.id - 1] = rb_intern3(constant.start, constant.length, encoding);
+        }
+    }
+
+    return yp_node_new(parser, node, encoding, constants);
 }

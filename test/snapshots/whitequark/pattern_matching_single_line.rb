@@ -1,11 +1,11 @@
 ProgramNode(0...24)(
-  [IDENTIFIER(6...7)("a")],
+  [:a],
   StatementsNode(0...24)(
     [MatchRequiredNode(0...8)(
        IntegerNode(0...1)(),
        ArrayPatternNode(5...8)(
          nil,
-         [LocalVariableWriteNode(6...7)((6...7), nil, nil, 0)],
+         [LocalVariableWriteNode(6...7)(:a, 0, nil, (6...7), nil)],
          nil,
          [],
          (5...6),
@@ -13,12 +13,12 @@ ProgramNode(0...24)(
        ),
        (2...4)
      ),
-     LocalVariableReadNode(10...11)(0),
+     LocalVariableReadNode(10...11)(:a, 0),
      MatchPredicateNode(13...21)(
        IntegerNode(13...14)(),
        ArrayPatternNode(18...21)(
          nil,
-         [LocalVariableWriteNode(19...20)((19...20), nil, nil, 0)],
+         [LocalVariableWriteNode(19...20)(:a, 0, nil, (19...20), nil)],
          nil,
          [],
          (18...19),
@@ -26,6 +26,6 @@ ProgramNode(0...24)(
        ),
        (15...17)
      ),
-     LocalVariableReadNode(23...24)(0)]
+     LocalVariableReadNode(23...24)(:a, 0)]
   )
 )

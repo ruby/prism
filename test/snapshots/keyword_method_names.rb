@@ -66,7 +66,7 @@ ProgramNode(0...185)(
        (74...75),
        nil,
        ParametersNode(76...84)(
-         [RequiredParameterNode(76...77)()],
+         [RequiredParameterNode(76...77)(:a)],
          [],
          [],
          nil,
@@ -75,7 +75,7 @@ ProgramNode(0...185)(
          nil
        ),
        nil,
-       [IDENTIFIER(76...77)("a")],
+       [:a],
        (70...73),
        nil,
        (75...76),

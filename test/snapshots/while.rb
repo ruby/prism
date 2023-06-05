@@ -72,6 +72,7 @@ ProgramNode(0...314)(
          ParametersNode(130...144)(
            [],
            [OptionalParameterNode(130...144)(
+              :a,
               (130...131),
               (132...133),
               CallNode(134...144)(
@@ -92,7 +93,7 @@ ProgramNode(0...314)(
            nil
          ),
          nil,
-         [IDENTIFIER(130...131)("a")],
+         [:a],
          (117...120),
          (125...126),
          nil,
@@ -105,14 +106,15 @@ ProgramNode(0...314)(
      WhileNode(163...210)(
        (163...168),
        ClassNode(169...198)(
-         [IDENTIFIER(179...180)("a")],
+         [:a],
          (169...174),
          ConstantReadNode(175...178)(),
          nil,
          nil,
          StatementsNode(179...193)(
            [LocalVariableWriteNode(179...193)(
-              (179...180),
+              :a,
+              0,
               CallNode(183...193)(
                 nil,
                 nil,
@@ -123,8 +125,8 @@ ProgramNode(0...314)(
                 BlockNode(187...193)([], nil, nil, (187...189), (190...193)),
                 "tap"
               ),
-              (181...182),
-              0
+              (179...180),
+              (181...182)
             )]
          ),
          (195...198)
@@ -157,13 +159,14 @@ ProgramNode(0...314)(
      WhileNode(262...314)(
        (262...267),
        SingletonClassNode(268...302)(
-         [IDENTIFIER(283...284)("a")],
+         [:a],
          (268...273),
          (274...276),
          SelfNode(277...281)(),
          StatementsNode(283...297)(
            [LocalVariableWriteNode(283...297)(
-              (283...284),
+              :a,
+              0,
               CallNode(287...297)(
                 nil,
                 nil,
@@ -174,8 +177,8 @@ ProgramNode(0...314)(
                 BlockNode(291...297)([], nil, nil, (291...293), (294...297)),
                 "tap"
               ),
-              (285...286),
-              0
+              (283...284),
+              (285...286)
             )]
          ),
          (299...302)

@@ -2,11 +2,11 @@ ProgramNode(0...48)(
   [],
   StatementsNode(0...48)(
     [LambdaNode(0...11)(
-       [IDENTIFIER(6...9)("foo")],
+       [:foo],
        (0...2),
        BlockParametersNode(2...11)(
          ParametersNode(6...9)(
-           [RequiredParameterNode(6...9)()],
+           [RequiredParameterNode(6...9)(:foo)],
            [],
            [],
            nil,
@@ -21,7 +21,7 @@ ProgramNode(0...48)(
        nil
      ),
      LambdaNode(16...30)(
-       [LABEL(19...20)("x")],
+       [:x],
        (16...18),
        BlockParametersNode(18...30)(
          ParametersNode(19...29)(
@@ -63,7 +63,7 @@ ProgramNode(0...48)(
        nil
      ),
      LambdaNode(36...48)(
-       [LABEL(39...40)("a")],
+       [:a],
        (36...38),
        BlockParametersNode(38...48)(
          ParametersNode(39...47)(

@@ -1,5 +1,5 @@
 ProgramNode(0...34)(
-  [IDENTIFIER(5...8)("foo")],
+  [:foo],
   StatementsNode(0...34)(
     [MultiWriteNode(0...14)(
        [ConstantPathWriteNode(0...3)(
@@ -7,9 +7,9 @@ ProgramNode(0...34)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(5...8)((5...8), nil, nil, 0)],
+        LocalVariableWriteNode(5...8)(:foo, 0, nil, (5...8), nil)],
        (9...10),
-       LocalVariableReadNode(11...14)(0),
+       LocalVariableReadNode(11...14)(:foo, 0),
        nil,
        nil
      ),
@@ -23,9 +23,9 @@ ProgramNode(0...34)(
           nil,
           nil
         ),
-        LocalVariableWriteNode(25...28)((25...28), nil, nil, 0)],
+        LocalVariableWriteNode(25...28)(:foo, 0, nil, (25...28), nil)],
        (29...30),
-       LocalVariableReadNode(31...34)(0),
+       LocalVariableReadNode(31...34)(:foo, 0),
        nil,
        nil
      )]

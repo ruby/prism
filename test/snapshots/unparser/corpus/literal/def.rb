@@ -186,7 +186,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [LABEL(113...116)("bar"), LABEL(119...122)("baz")],
+       [:bar, :baz],
        (105...108),
        nil,
        (112...113),
@@ -394,7 +394,7 @@ ProgramNode(0...913)(
        (275...278),
        nil,
        ParametersNode(279...282)(
-         [RequiredParameterNode(279...282)()],
+         [RequiredParameterNode(279...282)(:bar)],
          [],
          [],
          nil,
@@ -402,8 +402,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(286...289)([LocalVariableReadNode(286...289)(0)]),
-       [IDENTIFIER(279...282)("bar")],
+       StatementsNode(286...289)([LocalVariableReadNode(286...289)(:bar, 0)]),
+       [:bar],
        (271...274),
        nil,
        (278...279),
@@ -415,8 +415,8 @@ ProgramNode(0...913)(
        (299...302),
        nil,
        ParametersNode(303...311)(
-         [RequiredParameterNode(303...306)(),
-          RequiredParameterNode(308...311)()],
+         [RequiredParameterNode(303...306)(:bar),
+          RequiredParameterNode(308...311)(:baz)],
          [],
          [],
          nil,
@@ -424,8 +424,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(315...318)([LocalVariableReadNode(315...318)(0)]),
-       [IDENTIFIER(303...306)("bar"), IDENTIFIER(308...311)("baz")],
+       StatementsNode(315...318)([LocalVariableReadNode(315...318)(:bar, 0)]),
+       [:bar, :baz],
        (295...298),
        nil,
        (302...303),
@@ -439,6 +439,7 @@ ProgramNode(0...913)(
        ParametersNode(332...340)(
          [],
          [OptionalParameterNode(332...340)(
+            :bar,
             (332...335),
             (336...337),
             ParenthesesNode(338...340)(nil, (338...339), (339...340))
@@ -449,8 +450,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(344...347)([LocalVariableReadNode(344...347)(0)]),
-       [IDENTIFIER(332...335)("bar")],
+       StatementsNode(344...347)([LocalVariableReadNode(344...347)(:bar, 0)]),
+       [:bar],
        (324...327),
        nil,
        (331...332),
@@ -464,6 +465,7 @@ ProgramNode(0...913)(
        ParametersNode(361...377)(
          [],
          [OptionalParameterNode(361...377)(
+            :bar,
             (361...364),
             (365...366),
             ParenthesesNode(367...377)(
@@ -491,7 +493,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [IDENTIFIER(361...364)("bar")],
+       [:bar],
        (353...356),
        nil,
        (360...361),
@@ -505,6 +507,7 @@ ProgramNode(0...913)(
        ParametersNode(392...402)(
          [],
          [OptionalParameterNode(392...402)(
+            :bar,
             (392...395),
             (396...397),
             TrueNode(398...402)()
@@ -515,8 +518,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(406...409)([LocalVariableReadNode(406...409)(0)]),
-       [IDENTIFIER(392...395)("bar")],
+       StatementsNode(406...409)([LocalVariableReadNode(406...409)(:bar, 0)]),
+       [:bar],
        (384...387),
        nil,
        (391...392),
@@ -528,8 +531,9 @@ ProgramNode(0...913)(
        (419...422),
        nil,
        ParametersNode(423...438)(
-         [RequiredParameterNode(423...426)()],
+         [RequiredParameterNode(423...426)(:bar)],
          [OptionalParameterNode(428...438)(
+            :baz,
             (428...431),
             (432...433),
             TrueNode(434...438)()
@@ -540,8 +544,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(442...445)([LocalVariableReadNode(442...445)(0)]),
-       [IDENTIFIER(423...426)("bar"), IDENTIFIER(428...431)("baz")],
+       StatementsNode(442...445)([LocalVariableReadNode(442...445)(:bar, 0)]),
+       [:bar, :baz],
        (415...418),
        nil,
        (422...423),
@@ -565,7 +569,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [LABEL(459...462)("bar")],
+       [:bar],
        (451...454),
        nil,
        (458...459),
@@ -598,7 +602,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [LABEL(480...483)("bar")],
+       [:bar],
        (472...475),
        nil,
        (479...480),
@@ -631,7 +635,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [LABEL(503...506)("bar")],
+       [:bar],
        (495...498),
        nil,
        (502...503),
@@ -663,7 +667,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       [USTAR(528...529)("*")],
+       [:*],
        (520...523),
        nil,
        (527...528),
@@ -683,8 +687,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(558...561)([LocalVariableReadNode(558...561)(0)]),
-       [IDENTIFIER(551...554)("bar")],
+       StatementsNode(558...561)([LocalVariableReadNode(558...561)(:bar, 0)]),
+       [:bar],
        (542...545),
        nil,
        (549...550),
@@ -696,7 +700,7 @@ ProgramNode(0...913)(
        (571...574),
        nil,
        ParametersNode(575...584)(
-         [RequiredParameterNode(575...578)()],
+         [RequiredParameterNode(575...578)(:bar)],
          [],
          [],
          RestParameterNode(580...584)((580...581), (581...584)),
@@ -704,8 +708,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(588...591)([LocalVariableReadNode(588...591)(0)]),
-       [IDENTIFIER(575...578)("bar"), IDENTIFIER(581...584)("baz")],
+       StatementsNode(588...591)([LocalVariableReadNode(588...591)(:bar, 0)]),
+       [:bar, :baz],
        (567...570),
        nil,
        (574...575),
@@ -719,6 +723,7 @@ ProgramNode(0...913)(
        ParametersNode(605...621)(
          [],
          [OptionalParameterNode(605...615)(
+            :baz,
             (605...608),
             (609...610),
             TrueNode(611...615)()
@@ -741,7 +746,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       [IDENTIFIER(605...608)("baz"), IDENTIFIER(618...621)("bor")],
+       [:baz, :bor],
        (597...600),
        nil,
        (604...605),
@@ -755,6 +760,7 @@ ProgramNode(0...913)(
        ParametersNode(642...666)(
          [],
          [OptionalParameterNode(642...652)(
+            :baz,
             (642...645),
             (646...647),
             TrueNode(648...652)()
@@ -777,9 +783,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       [IDENTIFIER(642...645)("baz"),
-        IDENTIFIER(655...658)("bor"),
-        IDENTIFIER(661...666)("block")],
+       [:baz, :bor, :block],
        (634...637),
        nil,
        (641...642),
@@ -791,8 +795,9 @@ ProgramNode(0...913)(
        (683...686),
        nil,
        ParametersNode(687...708)(
-         [RequiredParameterNode(687...690)()],
+         [RequiredParameterNode(687...690)(:bar)],
          [OptionalParameterNode(692...702)(
+            :baz,
             (692...695),
             (696...697),
             TrueNode(698...702)()
@@ -803,10 +808,8 @@ ProgramNode(0...913)(
          nil,
          nil
        ),
-       StatementsNode(712...715)([LocalVariableReadNode(712...715)(0)]),
-       [IDENTIFIER(687...690)("bar"),
-        IDENTIFIER(692...695)("baz"),
-        IDENTIFIER(705...708)("bor")],
+       StatementsNode(712...715)([LocalVariableReadNode(712...715)(:bar, 0)]),
+       [:bar, :baz, :bor],
        (679...682),
        nil,
        (686...687),
@@ -838,7 +841,7 @@ ProgramNode(0...913)(
             "bar"
           )]
        ),
-       [IDENTIFIER(730...735)("block")],
+       [:block],
        (721...724),
        nil,
        (728...729),
@@ -850,7 +853,7 @@ ProgramNode(0...913)(
        (752...755),
        nil,
        ParametersNode(756...767)(
-         [RequiredParameterNode(756...759)()],
+         [RequiredParameterNode(756...759)(:bar)],
          [],
          [],
          nil,
@@ -858,8 +861,8 @@ ProgramNode(0...913)(
          nil,
          BlockParameterNode(761...767)((762...767), (761...762))
        ),
-       StatementsNode(771...774)([LocalVariableReadNode(771...774)(0)]),
-       [IDENTIFIER(756...759)("bar"), IDENTIFIER(762...767)("block")],
+       StatementsNode(771...774)([LocalVariableReadNode(771...774)(:bar, 0)]),
+       [:bar, :block],
        (748...751),
        nil,
        (755...756),
@@ -907,7 +910,7 @@ ProgramNode(0...913)(
        ParametersNode(811...816)(
          [RequiredDestructuredParameterNode(811...816)(
             [RequiredDestructuredParameterNode(812...815)(
-               [RequiredParameterNode(813...814)()],
+               [RequiredParameterNode(813...814)(:a)],
                (812...813),
                (814...815)
              )],
@@ -922,7 +925,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [IDENTIFIER(813...814)("a")],
+       [:a],
        (805...808),
        nil,
        (810...811),
@@ -952,7 +955,7 @@ ProgramNode(0...913)(
          nil
        ),
        nil,
-       [LABEL(831...834)("bar"), LABEL(837...840)("baz")],
+       [:bar, :baz],
        (823...826),
        nil,
        (830...831),

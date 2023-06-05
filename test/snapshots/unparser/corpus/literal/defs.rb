@@ -107,10 +107,10 @@ ProgramNode(0...266)(
            nil,
            nil,
            BlockNode(104...113)(
-             [IDENTIFIER(107...110)("bar")],
+             [:bar],
              BlockParametersNode(106...111)(
                ParametersNode(107...110)(
-                 [RequiredParameterNode(107...110)()],
+                 [RequiredParameterNode(107...110)(:bar)],
                  [],
                  [],
                  nil,

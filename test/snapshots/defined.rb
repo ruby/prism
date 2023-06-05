@@ -1,5 +1,5 @@
 ProgramNode(0...78)(
-  [IDENTIFIER(36...37)("x")],
+  [:x],
   StatementsNode(0...78)(
     [AndNode(0...25)(
        DefinedNode(0...10)(nil, IntegerNode(9...10)(), nil, (0...8)),
@@ -9,7 +9,7 @@ ProgramNode(0...78)(
      DefinedNode(27...43)(
        (35...36),
        OperatorAssignmentNode(36...42)(
-         LocalVariableWriteNode(36...37)((36...37), nil, nil, 0),
+         LocalVariableWriteNode(36...37)(:x, 0, nil, (36...37), nil),
          PERCENT_EQUAL(38...40)("%="),
          IntegerNode(41...42)()
        ),

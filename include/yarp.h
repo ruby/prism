@@ -28,7 +28,7 @@
 #define YP_VERSION_MINOR 4
 #define YP_VERSION_PATCH 0
 
-void yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
+void yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 void yp_print_node(yp_parser_t *parser, yp_node_t *node);
 

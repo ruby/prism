@@ -1,10 +1,11 @@
 ProgramNode(0...12)(
-  [IDENTIFIER(0...1)("m")],
+  [:m],
   StatementsNode(0...12)(
     [LocalVariableWriteNode(0...12)(
-       (0...1),
+       :m,
+       0,
        LambdaNode(4...12)(
-         [IDENTIFIER(8...12)("args")],
+         [:args],
          (4...6),
          BlockParametersNode(7...12)(
            ParametersNode(7...12)(
@@ -22,8 +23,8 @@ ProgramNode(0...12)(
          ),
          nil
        ),
-       (2...3),
-       0
+       (0...1),
+       (2...3)
      )]
   )
 )

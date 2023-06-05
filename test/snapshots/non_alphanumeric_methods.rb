@@ -119,7 +119,7 @@ ProgramNode(0...434)(
          nil
        ),
        nil,
-       [IDENTIFIER(112...113)("b")],
+       [:b],
        (104...107),
        nil,
        nil,
@@ -144,7 +144,7 @@ ProgramNode(0...434)(
        (136...137),
        nil,
        ParametersNode(138...139)(
-         [RequiredParameterNode(138...139)()],
+         [RequiredParameterNode(138...139)(:b)],
          [],
          [],
          nil,
@@ -153,7 +153,7 @@ ProgramNode(0...434)(
          nil
        ),
        nil,
-       [IDENTIFIER(138...139)("b")],
+       [:b],
        (132...135),
        nil,
        nil,

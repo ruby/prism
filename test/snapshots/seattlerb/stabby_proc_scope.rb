@@ -2,11 +2,11 @@ ProgramNode(0...8)(
   [],
   StatementsNode(0...8)(
     [LambdaNode(0...8)(
-       [IDENTIFIER(3...4)("a"), IDENTIFIER(6...7)("b")],
+       [:a, :b],
        (0...2),
        BlockParametersNode(2...8)(
          ParametersNode(3...4)(
-           [RequiredParameterNode(3...4)()],
+           [RequiredParameterNode(3...4)(:a)],
            [],
            [],
            nil,

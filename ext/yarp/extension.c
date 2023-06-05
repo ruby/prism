@@ -279,7 +279,7 @@ parse_source(source_t *source, char *filepath) {
     rb_encoding *encoding = rb_enc_find(parser.encoding.name);
 
     VALUE result_argv[] = {
-        yp_node_new(&parser, node, encoding),
+        yp_ast_new(&parser, node, encoding),
         parser_comments(&parser),
         parser_errors(&parser, encoding),
         parser_warnings(&parser, encoding)

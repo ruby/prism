@@ -173,10 +173,10 @@ ProgramNode(0...299)(
        ),
        PARENTHESIS_RIGHT(273...274)(")"),
        BlockNode(275...299)(
-         [IDENTIFIER(278...279)("x")],
+         [:x],
          BlockParametersNode(277...280)(
            ParametersNode(278...279)(
-             [RequiredParameterNode(278...279)()],
+             [RequiredParameterNode(278...279)(:x)],
              [],
              [],
              nil,

@@ -1,9 +1,9 @@
 ProgramNode(0...29)(
-  [IDENTIFIER(0...3)("foo"), IDENTIFIER(5...8)("bar")],
+  [:foo, :bar],
   StatementsNode(0...29)(
     [MultiWriteNode(0...29)(
-       [LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),
-        LocalVariableWriteNode(5...8)((5...8), nil, nil, 0)],
+       [LocalVariableWriteNode(0...3)(:foo, 0, nil, (0...3), nil),
+        LocalVariableWriteNode(5...8)(:bar, 0, nil, (5...8), nil)],
        (9...10),
        RescueModifierNode(11...29)(
          CallNode(11...15)(

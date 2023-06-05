@@ -1,23 +1,20 @@
 ProgramNode(0...15)(
-  [IDENTIFIER(1...2)("s"),
-   IDENTIFIER(4...5)("x"),
-   IDENTIFIER(7...8)("y"),
-   IDENTIFIER(10...11)("z")],
+  [:s, :x, :y, :z],
   StatementsNode(0...15)(
     [MultiWriteNode(0...15)(
        [MultiWriteNode(0...2)(
           [SplatNode(0...2)(
              (0...1),
-             LocalVariableWriteNode(1...2)((1...2), nil, nil, 0)
+             LocalVariableWriteNode(1...2)(:s, 0, nil, (1...2), nil)
            )],
           nil,
           nil,
           nil,
           nil
         ),
-        LocalVariableWriteNode(4...5)((4...5), nil, nil, 0),
-        LocalVariableWriteNode(7...8)((7...8), nil, nil, 0),
-        LocalVariableWriteNode(10...11)((10...11), nil, nil, 0)],
+        LocalVariableWriteNode(4...5)(:x, 0, nil, (4...5), nil),
+        LocalVariableWriteNode(7...8)(:y, 0, nil, (7...8), nil),
+        LocalVariableWriteNode(10...11)(:z, 0, nil, (10...11), nil)],
        (12...13),
        CallNode(14...15)(
          nil,

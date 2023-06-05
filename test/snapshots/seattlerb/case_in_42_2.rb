@@ -1,5 +1,5 @@
 ProgramNode(0...32)(
-  [IDENTIFIER(14...18)("list")],
+  [:list],
   StatementsNode(0...32)(
     [CaseNode(0...32)(
        SymbolNode(5...7)(
@@ -14,7 +14,7 @@ ProgramNode(0...32)(
             [],
             SplatNode(13...18)(
               (13...14),
-              LocalVariableWriteNode(14...18)((14...18), nil, nil, 0)
+              LocalVariableWriteNode(14...18)(:list, 0, nil, (14...18), nil)
             ),
             [],
             (12...13),

@@ -9,14 +9,15 @@ ProgramNode(0...76)(
        nil,
        nil,
        BlockNode(2...76)(
-         [IDENTIFIER(7...8)("v")],
+         [:v],
          nil,
          StatementsNode(7...72)(
            [LocalVariableWriteNode(7...14)(
-              (7...8),
+              :v,
+              0,
               NilNode(11...14)(),
-              (9...10),
-              0
+              (7...8),
+              (9...10)
             ),
             BeginNode(17...72)(
               (17...22),
@@ -27,7 +28,7 @@ ProgramNode(0...76)(
                 (35...41),
                 [ConstantReadNode(42...51)()],
                 (52...54),
-                LocalVariableWriteNode(55...56)((55...56), nil, nil, 0),
+                LocalVariableWriteNode(55...56)(:v, 0, nil, (55...56), nil),
                 StatementsNode(61...66)([BreakNode(61...66)(nil, (61...66))]),
                 nil
               ),

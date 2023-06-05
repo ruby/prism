@@ -2,15 +2,16 @@ ProgramNode(0...140)(
   [],
   StatementsNode(0...140)(
     [ModuleNode(0...18)(
-       [IDENTIFIER(9...10)("a")],
+       [:a],
        (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(9...14)(
          [LocalVariableWriteNode(9...14)(
-            (9...10),
+            :a,
+            0,
             IntegerNode(13...14)(),
-            (11...12),
-            0
+            (9...10),
+            (11...12)
           )]
        ),
        (15...18)
@@ -58,17 +59,18 @@ ProgramNode(0...140)(
        (52...55)
      ),
      ModuleNode(57...85)(
-       [IDENTIFIER(67...68)("x")],
+       [:x],
        (57...63),
        ConstantReadNode(64...65)(),
        BeginNode(0...85)(
          nil,
          StatementsNode(67...72)(
            [LocalVariableWriteNode(67...72)(
-              (67...68),
+              :x,
+              0,
               IntegerNode(71...72)(),
-              (69...70),
-              0
+              (67...68),
+              (69...70)
             )]
          ),
          RescueNode(74...80)((74...80), [], nil, nil, nil, nil),

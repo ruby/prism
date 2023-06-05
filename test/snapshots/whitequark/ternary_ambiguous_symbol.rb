@@ -1,7 +1,13 @@
 ProgramNode(0...13)(
-  [IDENTIFIER(0...1)("t")],
+  [:t],
   StatementsNode(0...13)(
-    [LocalVariableWriteNode(0...3)((0...1), IntegerNode(2...3)(), (1...2), 0),
+    [LocalVariableWriteNode(0...3)(
+       :t,
+       0,
+       IntegerNode(2...3)(),
+       (0...1),
+       (1...2)
+     ),
      IfNode(9...13)(
        (9...10),
        ParenthesesNode(4...9)(
@@ -20,7 +26,7 @@ ProgramNode(0...13)(
          (4...5),
          (8...9)
        ),
-       StatementsNode(10...11)([LocalVariableReadNode(10...11)(0)]),
+       StatementsNode(10...11)([LocalVariableReadNode(10...11)(:t, 0)]),
        ElseNode(11...13)(
          (11...12),
          StatementsNode(12...13)([ConstantReadNode(12...13)()]),

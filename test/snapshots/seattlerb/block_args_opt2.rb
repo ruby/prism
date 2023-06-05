@@ -9,16 +9,18 @@ ProgramNode(0...18)(
        nil,
        nil,
        BlockNode(2...18)(
-         [IDENTIFIER(6...7)("b"), IDENTIFIER(11...12)("c")],
+         [:b, :c],
          BlockParametersNode(4...16)(
            ParametersNode(6...14)(
              [],
              [OptionalParameterNode(6...9)(
+                :b,
                 (6...7),
                 (7...8),
                 IntegerNode(8...9)()
               ),
               OptionalParameterNode(11...14)(
+                :c,
                 (11...12),
                 (12...13),
                 IntegerNode(13...14)()
