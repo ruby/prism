@@ -2,3 +2,8 @@ bin/templates/**/*.c.erb linguist-language=C
 bin/templates/**/*.h.erb linguist-language=C
 bin/templates/**/*.java.erb linguist-language=Java
 bin/templates/**/*.rb.erb linguist-language=Ruby
+
+test/fixtures/seattlerb/**/*.rb linguist-vendored
+test/fixtures/unparser/**/*.rb linguist-vendored
+test/fixtures/whitequark/**/*.rb linguist-vendored
+test/snapshots/**/*.rb linguist-generated
