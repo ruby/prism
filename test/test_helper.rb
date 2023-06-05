@@ -3,7 +3,7 @@
 require "yarp"
 require "ripper"
 require "pp"
-require "test-unit"
+require "test/unit"
 require "tempfile"
 
 module YARP
