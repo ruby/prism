@@ -348,7 +348,7 @@ yp_regular_expression_flags_create(const yp_token_t *closing) {
             switch (*flag) {
                 case 'i': flags |= YP_REGULAR_EXPRESSION_FLAGS_IGNORECASE; break;
                 case 'm': flags |= YP_REGULAR_EXPRESSION_FLAGS_MULTILINE; break;
-                case 'x': flags |= YP_REGULAR_EXPRESSION_FLAGS_EXTEND; break;
+                case 'x': flags |= YP_REGULAR_EXPRESSION_FLAGS_EXTENDED; break;
                 case 'e': flags |= YP_REGULAR_EXPRESSION_FLAGS_EUCJP; break;
                 case 'n': flags |= YP_REGULAR_EXPRESSION_FLAGS_ASCII8BIT; break;
                 case 's': flags |= YP_REGULAR_EXPRESSION_FLAGS_WINDOWS31J; break;

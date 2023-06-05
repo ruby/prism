@@ -321,7 +321,7 @@ flags:
     values:
       - IgnoreCase # i - ignores the case of characters when matching
       - MultiLine  # m - allows $ to match the end of lines within strings
-      - Extend     # x - ignores whitespace and allows comments in regular expressions
+      - Extended   # x - ignores whitespace and allows comments in regular expressions
       - EUCJP      # e - forces the EUC-JP encoding
       - ASCII8BIT  # n - forces the ASCII-8BIT encoding
       - WINDOWS31J # s - forces the Windows-31J encoding
