@@ -9,10 +9,10 @@ ProgramNode(0...15)(
        ArgumentsNode(2...4)([InstanceVariableReadNode(2...4)()]),
        nil,
        BlockNode(5...15)(
-         [IDENTIFIER(9...10)("c")],
+         [:c],
          BlockParametersNode(8...11)(
            ParametersNode(9...10)(
-             [RequiredParameterNode(9...10)()],
+             [RequiredParameterNode(9...10)(:c)],
              [],
              [],
              nil,

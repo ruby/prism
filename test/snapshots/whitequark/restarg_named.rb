@@ -14,7 +14,7 @@ ProgramNode(0...16)(
          nil
        ),
        nil,
-       [IDENTIFIER(7...10)("foo")],
+       [:foo],
        (0...3),
        nil,
        (5...6),

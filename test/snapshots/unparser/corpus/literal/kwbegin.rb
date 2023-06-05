@@ -1,7 +1,5 @@
 ProgramNode(0...530)(
-  [IDENTIFIER(145...148)("foo"),
-   IDENTIFIER(361...364)("bar"),
-   IDENTIFIER(468...477)("exception")],
+  [:foo, :bar, :exception],
   StatementsNode(0...530)(
     [BeginNode(0...16)(
        (0...5),
@@ -144,7 +142,7 @@ ProgramNode(0...530)(
          (133...139),
          [ConstantReadNode(140...141)()],
          (142...144),
-         LocalVariableWriteNode(145...148)((145...148), nil, nil, 0),
+         LocalVariableWriteNode(145...148)(:foo, 0, nil, (145...148), nil),
          nil,
          nil
        ),
@@ -228,7 +226,7 @@ ProgramNode(0...530)(
          [BeginNode(214...250)(
             (214...219),
             StatementsNode(224...235)(
-              [LocalVariableReadNode(224...227)(0),
+              [LocalVariableReadNode(224...227)(:foo, 0),
                CallNode(232...235)(
                  nil,
                  nil,
@@ -295,7 +293,8 @@ ProgramNode(0...530)(
             ),
             (300...306),
             LocalVariableWriteNode(307...316)(
-              (307...310),
+              :foo,
+              0,
               CallNode(313...316)(
                 nil,
                 nil,
@@ -306,8 +305,8 @@ ProgramNode(0...530)(
                 nil,
                 "bar"
               ),
-              (311...312),
-              0
+              (307...310),
+              (311...312)
             )
           )]
        ),
@@ -325,13 +324,15 @@ ProgramNode(0...530)(
      ),
      BeginNode(339...374)(
        (339...344),
-       StatementsNode(347...350)([LocalVariableReadNode(347...350)(0)]),
+       StatementsNode(347...350)([LocalVariableReadNode(347...350)(:foo, 0)]),
        RescueNode(351...370)(
          (351...357),
          [],
          (358...360),
-         LocalVariableWriteNode(361...364)((361...364), nil, nil, 0),
-         StatementsNode(367...370)([LocalVariableReadNode(367...370)(0)]),
+         LocalVariableWriteNode(361...364)(:bar, 0, nil, (361...364), nil),
+         StatementsNode(367...370)(
+           [LocalVariableReadNode(367...370)(:bar, 0)]
+         ),
          nil
        ),
        nil,
@@ -340,13 +341,15 @@ ProgramNode(0...530)(
      ),
      BeginNode(376...428)(
        (376...381),
-       StatementsNode(384...387)([LocalVariableReadNode(384...387)(0)]),
+       StatementsNode(384...387)([LocalVariableReadNode(384...387)(:foo, 0)]),
        RescueNode(388...424)(
          (388...394),
          [ConstantReadNode(395...404)(), ConstantReadNode(406...411)()],
          (412...414),
-         LocalVariableWriteNode(415...418)((415...418), nil, nil, 0),
-         StatementsNode(421...424)([LocalVariableReadNode(421...424)(0)]),
+         LocalVariableWriteNode(415...418)(:bar, 0, nil, (415...418), nil),
+         StatementsNode(421...424)(
+           [LocalVariableReadNode(421...424)(:bar, 0)]
+         ),
          nil
        ),
        nil,
@@ -355,16 +358,22 @@ ProgramNode(0...530)(
      ),
      BeginNode(430...487)(
        (430...435),
-       StatementsNode(438...441)([LocalVariableReadNode(438...441)(0)]),
+       StatementsNode(438...441)([LocalVariableReadNode(438...441)(:bar, 0)]),
        RescueNode(442...483)(
          (442...448),
          [ConstantReadNode(449...458)(),
           SplatNode(460...464)(
             (460...461),
-            LocalVariableReadNode(461...464)(0)
+            LocalVariableReadNode(461...464)(:bar, 0)
           )],
          (465...467),
-         LocalVariableWriteNode(468...477)((468...477), nil, nil, 0),
+         LocalVariableWriteNode(468...477)(
+           :exception,
+           0,
+           nil,
+           (468...477),
+           nil
+         ),
          StatementsNode(480...483)(
            [CallNode(480...483)(
               nil,

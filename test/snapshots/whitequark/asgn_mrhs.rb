@@ -1,8 +1,9 @@
 ProgramNode(0...41)(
-  [IDENTIFIER(0...3)("foo")],
+  [:foo],
   StatementsNode(0...41)(
     [LocalVariableWriteNode(0...10)(
-       (0...3),
+       :foo,
+       0,
        SplatNode(6...10)(
          (6...7),
          CallNode(7...10)(
@@ -16,11 +17,12 @@ ProgramNode(0...41)(
            "bar"
          )
        ),
-       (4...5),
-       0
+       (0...3),
+       (4...5)
      ),
      LocalVariableWriteNode(12...24)(
-       (12...15),
+       :foo,
+       0,
        ArrayNode(0...24)(
          [CallNode(18...21)(
             nil,
@@ -36,11 +38,12 @@ ProgramNode(0...41)(
          nil,
          nil
        ),
-       (16...17),
-       0
+       (12...15),
+       (16...17)
      ),
      LocalVariableWriteNode(26...41)(
-       (26...29),
+       :foo,
+       0,
        ArrayNode(0...41)(
          [CallNode(32...35)(
             nil,
@@ -68,8 +71,8 @@ ProgramNode(0...41)(
          nil,
          nil
        ),
-       (30...31),
-       0
+       (26...29),
+       (30...31)
      )]
   )
 )

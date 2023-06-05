@@ -1,5 +1,5 @@
 ProgramNode(0...56)(
-  [IDENTIFIER(40...41)("a"), IDENTIFIER(43...44)("b")],
+  [:a, :b],
   StatementsNode(0...56)(
     [DefinedNode(0...14)(
        (8...9),
@@ -18,8 +18,8 @@ ProgramNode(0...56)(
        ParenthesesNode(38...55)(
          StatementsNode(40...54)(
            [MultiWriteNode(40...54)(
-              [LocalVariableWriteNode(40...41)((40...41), nil, nil, 0),
-               LocalVariableWriteNode(43...44)((43...44), nil, nil, 0)],
+              [LocalVariableWriteNode(40...41)(:a, 0, nil, (40...41), nil),
+               LocalVariableWriteNode(43...44)(:b, 0, nil, (43...44), nil)],
               (46...47),
               ArrayNode(48...54)(
                 [IntegerNode(49...50)(), IntegerNode(52...53)()],

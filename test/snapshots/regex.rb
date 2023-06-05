@@ -1,5 +1,5 @@
 ProgramNode(0...278)(
-  [IDENTIFIER(64...67)("foo")],
+  [:foo],
   StatementsNode(0...278)(
     [CallNode(0...9)(
        nil,
@@ -73,7 +73,7 @@ ProgramNode(0...278)(
           nil,
           "=~"
         ),
-        LocalVariableReadNode(82...85)(0)],
+        LocalVariableReadNode(82...85)(:foo, 0)],
        (59...60),
        (85...86)
      ),

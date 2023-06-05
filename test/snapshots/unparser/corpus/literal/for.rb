@@ -1,5 +1,5 @@
 ProgramNode(0...119)(
-  [IDENTIFIER(8...9)("a"), IDENTIFIER(66...67)("b")],
+  [:a, :b],
   StatementsNode(0...119)(
     [CallNode(0...30)(
        nil,
@@ -9,7 +9,7 @@ ProgramNode(0...119)(
        ArgumentsNode(4...29)(
          [ForNode(4...29)(
             MultiWriteNode(8...9)(
-              [LocalVariableWriteNode(8...9)((8...9), nil, nil, 0)],
+              [LocalVariableWriteNode(8...9)(:a, 0, nil, (8...9), nil)],
               nil,
               nil,
               nil,
@@ -49,7 +49,7 @@ ProgramNode(0...119)(
      ),
      ForNode(31...56)(
        MultiWriteNode(35...36)(
-         [LocalVariableWriteNode(35...36)((35...36), nil, nil, 0)],
+         [LocalVariableWriteNode(35...36)(:a, 0, nil, (35...36), nil)],
          nil,
          nil,
          nil,
@@ -84,10 +84,10 @@ ProgramNode(0...119)(
      ),
      ForNode(57...88)(
        MultiWriteNode(61...68)(
-         [LocalVariableWriteNode(62...63)((62...63), nil, nil, 0),
+         [LocalVariableWriteNode(62...63)(:a, 0, nil, (62...63), nil),
           SplatNode(65...67)(
             (65...66),
-            LocalVariableWriteNode(66...67)((66...67), nil, nil, 0)
+            LocalVariableWriteNode(66...67)(:b, 0, nil, (66...67), nil)
           )],
          nil,
          nil,
@@ -123,8 +123,8 @@ ProgramNode(0...119)(
      ),
      ForNode(89...119)(
        MultiWriteNode(93...99)(
-         [LocalVariableWriteNode(94...95)((94...95), nil, nil, 0),
-          LocalVariableWriteNode(97...98)((97...98), nil, nil, 0)],
+         [LocalVariableWriteNode(94...95)(:a, 0, nil, (94...95), nil),
+          LocalVariableWriteNode(97...98)(:b, 0, nil, (97...98), nil)],
          nil,
          nil,
          (93...94),

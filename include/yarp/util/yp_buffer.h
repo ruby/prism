@@ -23,6 +23,9 @@ YP_EXPORTED_FUNCTION extern yp_buffer_t * yp_buffer_alloc(void);
 // Initialize a yp_buffer_t with its default values.
 YP_EXPORTED_FUNCTION extern void yp_buffer_init(yp_buffer_t *buffer);
 
+// Append the given amount of space as zeroes to the buffer.
+void yp_buffer_append_zeroes(yp_buffer_t *buffer, size_t length);
+
 // Append a string to the buffer.
 void yp_buffer_append_str(yp_buffer_t *buffer, const char *value, size_t length);
 

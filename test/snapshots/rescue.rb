@@ -1,5 +1,5 @@
 ProgramNode(0...316)(
-  [IDENTIFIER(217...218)("a")],
+  [:a],
   StatementsNode(0...316)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
@@ -132,10 +132,10 @@ ProgramNode(0...316)(
        nil,
        nil,
        BlockNode(161...212)(
-         [IDENTIFIER(165...166)("x")],
+         [:x],
          BlockParametersNode(164...167)(
            ParametersNode(165...166)(
-             [RequiredParameterNode(165...166)()],
+             [RequiredParameterNode(165...166)(:x)],
              [],
              [],
              nil,
@@ -209,7 +209,8 @@ ProgramNode(0...316)(
      IfNode(214...245)(
        (214...216),
        LocalVariableWriteNode(217...235)(
-         (217...218),
+         :a,
+         0,
          RescueModifierNode(221...235)(
            CallNode(221...224)(
              nil,
@@ -224,8 +225,8 @@ ProgramNode(0...316)(
            (225...231),
            NilNode(232...235)()
          ),
-         (219...220),
-         0
+         (217...218),
+         (219...220)
        ),
        StatementsNode(238...241)(
          [CallNode(238...241)(

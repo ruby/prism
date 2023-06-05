@@ -2,11 +2,11 @@ ProgramNode(0...19)(
   [],
   StatementsNode(0...19)(
     [LambdaNode(0...9)(
-       [IDENTIFIER(3...8)("scope")],
+       [:scope],
        (0...2),
        BlockParametersNode(2...9)(
          ParametersNode(3...8)(
-           [RequiredParameterNode(3...8)()],
+           [RequiredParameterNode(3...8)(:scope)],
            [],
            [],
            nil,

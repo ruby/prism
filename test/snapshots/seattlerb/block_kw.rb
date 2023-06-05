@@ -9,7 +9,7 @@ ProgramNode(0...15)(
        nil,
        nil,
        BlockNode(5...15)(
-         [LABEL(8...9)("k")],
+         [:k],
          BlockParametersNode(7...13)(
            ParametersNode(8...12)(
              [],

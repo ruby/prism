@@ -5,7 +5,7 @@ ProgramNode(0...45)(
        (4...7),
        nil,
        ParametersNode(8...20)(
-         [RequiredParameterNode(8...16)()],
+         [RequiredParameterNode(8...16)(:argument)],
          [],
          [],
          nil,
@@ -20,7 +20,7 @@ ProgramNode(0...45)(
             IDENTIFIER(23...26)("bar"),
             PARENTHESIS_LEFT(26...27)("("),
             ArgumentsNode(27...39)(
-              [LocalVariableReadNode(27...35)(0),
+              [LocalVariableReadNode(27...35)(:argument, 0),
                KeywordHashNode(37...39)(
                  [AssocSplatNode(37...39)(nil, (37...39))]
                )]
@@ -30,7 +30,7 @@ ProgramNode(0...45)(
             "bar"
           )]
        ),
-       [IDENTIFIER(8...16)("argument"), USTAR_STAR(18...20)("**")],
+       [:argument, :**],
        (0...3),
        nil,
        (7...8),

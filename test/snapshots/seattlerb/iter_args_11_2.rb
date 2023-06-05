@@ -9,20 +9,17 @@ ProgramNode(0...28)(
        nil,
        nil,
        BlockNode(2...28)(
-         [IDENTIFIER(5...6)("a"),
-          IDENTIFIER(8...9)("b"),
-          IDENTIFIER(17...18)("c"),
-          IDENTIFIER(20...21)("d"),
-          IDENTIFIER(24...25)("e")],
+         [:a, :b, :c, :d, :e],
          BlockParametersNode(4...26)(
            ParametersNode(5...25)(
-             [RequiredParameterNode(5...6)()],
+             [RequiredParameterNode(5...6)(:a)],
              [OptionalParameterNode(8...14)(
+                :b,
                 (8...9),
                 (10...11),
                 IntegerNode(12...14)()
               )],
-             [RequiredParameterNode(20...21)()],
+             [RequiredParameterNode(20...21)(:d)],
              RestParameterNode(16...18)((16...17), (17...18)),
              [],
              nil,

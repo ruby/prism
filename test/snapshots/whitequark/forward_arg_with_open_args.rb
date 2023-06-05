@@ -27,7 +27,7 @@ ProgramNode(0...292)(
                  "bar"
                )]
             ),
-            [UDOT_DOT_DOT(9...12)("...")],
+            [:"..."],
             (1...4),
             nil,
             nil,
@@ -65,7 +65,7 @@ ProgramNode(0...292)(
                  "bar"
                )]
             ),
-            [UDOT_DOT_DOT(39...42)("...")],
+            [:"..."],
             (31...34),
             nil,
             nil,
@@ -90,7 +90,7 @@ ProgramNode(0...292)(
          nil
        ),
        nil,
-       [UDOT_DOT_DOT(68...71)("...")],
+       [:"..."],
        (60...63),
        nil,
        nil,
@@ -122,7 +122,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       [UDOT_DOT_DOT(85...88)("...")],
+       [:"..."],
        (77...80),
        nil,
        nil,
@@ -134,7 +134,7 @@ ProgramNode(0...292)(
        (109...112),
        nil,
        ParametersNode(113...119)(
-         [RequiredParameterNode(113...114)()],
+         [RequiredParameterNode(113...114)(:a)],
          [],
          [],
          nil,
@@ -154,7 +154,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       [IDENTIFIER(113...114)("a"), UDOT_DOT_DOT(116...119)("...")],
+       [:a, :"..."],
        (105...108),
        nil,
        nil,
@@ -166,7 +166,7 @@ ProgramNode(0...292)(
        (140...143),
        nil,
        ParametersNode(144...150)(
-         [RequiredParameterNode(144...145)()],
+         [RequiredParameterNode(144...145)(:a)],
          [],
          [],
          nil,
@@ -186,7 +186,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       [IDENTIFIER(144...145)("a"), UDOT_DOT_DOT(147...150)("...")],
+       [:a, :"..."],
        (136...139),
        nil,
        nil,
@@ -198,8 +198,9 @@ ProgramNode(0...292)(
        (171...174),
        nil,
        ParametersNode(175...188)(
-         [RequiredParameterNode(175...176)()],
+         [RequiredParameterNode(175...176)(:a)],
          [OptionalParameterNode(178...183)(
+            :b,
             (178...179),
             (180...181),
             IntegerNode(182...183)()
@@ -211,9 +212,7 @@ ProgramNode(0...292)(
          nil
        ),
        nil,
-       [IDENTIFIER(175...176)("a"),
-        IDENTIFIER(178...179)("b"),
-        UDOT_DOT_DOT(185...188)("...")],
+       [:a, :b, :"..."],
        (167...170),
        nil,
        nil,
@@ -227,6 +226,7 @@ ProgramNode(0...292)(
        ParametersNode(202...212)(
          [],
          [OptionalParameterNode(202...207)(
+            :b,
             (202...203),
             (204...205),
             IntegerNode(206...207)()
@@ -249,7 +249,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       [IDENTIFIER(202...203)("b"), UDOT_DOT_DOT(209...212)("...")],
+       [:b, :"..."],
        (194...197),
        nil,
        nil,
@@ -263,6 +263,7 @@ ProgramNode(0...292)(
        ParametersNode(237...247)(
          [],
          [OptionalParameterNode(237...242)(
+            :b,
             (237...238),
             (239...240),
             IntegerNode(241...242)()
@@ -285,7 +286,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       [IDENTIFIER(237...238)("b"), UDOT_DOT_DOT(244...247)("...")],
+       [:b, :"..."],
        (229...232),
        nil,
        nil,
@@ -297,7 +298,7 @@ ProgramNode(0...292)(
        (268...271),
        nil,
        ParametersNode(272...278)(
-         [RequiredParameterNode(272...273)()],
+         [RequiredParameterNode(272...273)(:a)],
          [],
          [],
          nil,
@@ -317,7 +318,7 @@ ProgramNode(0...292)(
             "bar"
           )]
        ),
-       [IDENTIFIER(272...273)("a"), UDOT_DOT_DOT(275...278)("...")],
+       [:a, :"..."],
        (264...267),
        nil,
        (271...272),

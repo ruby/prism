@@ -1,7 +1,13 @@
 ProgramNode(0...49)(
-  [IDENTIFIER(0...1)("a")],
+  [:a],
   StatementsNode(0...49)(
-    [LocalVariableWriteNode(0...5)((0...1), IntegerNode(4...5)(), (2...3), 0),
+    [LocalVariableWriteNode(0...5)(
+       :a,
+       0,
+       IntegerNode(4...5)(),
+       (0...1),
+       (2...3)
+     ),
      CallNode(7...13)(
        nil,
        nil,
@@ -29,7 +35,7 @@ ProgramNode(0...49)(
        (19...22),
        nil,
        ParametersNode(23...28)(
-         [RequiredParameterNode(23...28)()],
+         [RequiredParameterNode(23...28)(:raise)],
          [],
          [],
          nil,
@@ -56,7 +62,7 @@ ProgramNode(0...49)(
             "raise"
           )]
        ),
-       [IDENTIFIER(23...28)("raise")],
+       [:raise],
        (15...18),
        nil,
        nil,

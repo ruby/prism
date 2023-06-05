@@ -1,15 +1,16 @@
 ProgramNode(0...14)(
-  [IDENTIFIER(0...1)("a")],
+  [:a],
   StatementsNode(0...14)(
     [LocalVariableWriteNode(0...14)(
-       (0...1),
+       :a,
+       0,
        RescueModifierNode(4...14)(
          IntegerNode(4...5)(),
          (6...12),
          IntegerNode(13...14)()
        ),
-       (2...3),
-       0
+       (0...1),
+       (2...3)
      )]
   )
 )

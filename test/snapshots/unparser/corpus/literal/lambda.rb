@@ -19,11 +19,11 @@ ProgramNode(0...76)(
        nil,
        nil,
        BlockNode(18...32)(
-         [IDENTIFIER(21...22)("a"), IDENTIFIER(24...25)("b")],
+         [:a, :b],
          BlockParametersNode(20...26)(
            ParametersNode(21...25)(
-             [RequiredParameterNode(21...22)(),
-              RequiredParameterNode(24...25)()],
+             [RequiredParameterNode(21...22)(:a),
+              RequiredParameterNode(24...25)(:b)],
              [],
              [],
              nil,
@@ -35,7 +35,7 @@ ProgramNode(0...76)(
            (20...21),
            (25...26)
          ),
-         StatementsNode(29...30)([LocalVariableReadNode(29...30)(0)]),
+         StatementsNode(29...30)([LocalVariableReadNode(29...30)(:a, 0)]),
          (18...19),
          (31...32)
        ),
@@ -48,11 +48,11 @@ ProgramNode(0...76)(
        nil
      ),
      LambdaNode(42...47)(
-       [IDENTIFIER(45...46)("a")],
+       [:a],
        (42...44),
        BlockParametersNode(44...47)(
          ParametersNode(45...46)(
-           [RequiredParameterNode(45...46)()],
+           [RequiredParameterNode(45...46)(:a)],
            [],
            [],
            nil,
@@ -67,12 +67,12 @@ ProgramNode(0...76)(
        nil
      ),
      LambdaNode(52...60)(
-       [IDENTIFIER(55...56)("a"), IDENTIFIER(58...59)("b")],
+       [:a, :b],
        (52...54),
        BlockParametersNode(54...60)(
          ParametersNode(55...59)(
-           [RequiredParameterNode(55...56)(),
-            RequiredParameterNode(58...59)()],
+           [RequiredParameterNode(55...56)(:a),
+            RequiredParameterNode(58...59)(:b)],
            [],
            [],
            nil,
@@ -87,14 +87,12 @@ ProgramNode(0...76)(
        nil
      ),
      LambdaNode(65...76)(
-       [IDENTIFIER(68...69)("a"),
-        IDENTIFIER(71...72)("b"),
-        IDENTIFIER(74...75)("c")],
+       [:a, :b, :c],
        (65...67),
        BlockParametersNode(67...76)(
          ParametersNode(68...72)(
-           [RequiredParameterNode(68...69)(),
-            RequiredParameterNode(71...72)()],
+           [RequiredParameterNode(68...69)(:a),
+            RequiredParameterNode(71...72)(:b)],
            [],
            [],
            nil,

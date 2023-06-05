@@ -1,11 +1,12 @@
 ProgramNode(0...7)(
-  [IDENTIFIER(0...1)("x")],
+  [:x],
   StatementsNode(0...7)(
     [LocalVariableWriteNode(0...7)(
-       (0...1),
+       :x,
+       0,
        StringNode(4...7)((4...6), (6...6), (6...7), ""),
-       (2...3),
-       0
+       (0...1),
+       (2...3)
      )]
   )
 )

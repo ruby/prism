@@ -20,11 +20,11 @@ ProgramNode(0...26)(
        ),
        PARENTHESIS_RIGHT(3...4)(")"),
        BlockNode(5...26)(
-         [IDENTIFIER(9...10)("x"), IDENTIFIER(12...13)("y")],
+         [:x, :y],
          BlockParametersNode(8...14)(
            ParametersNode(9...13)(
-             [RequiredParameterNode(9...10)(),
-              RequiredParameterNode(12...13)()],
+             [RequiredParameterNode(9...10)(:x),
+              RequiredParameterNode(12...13)(:y)],
              [],
              [],
              nil,
@@ -38,11 +38,11 @@ ProgramNode(0...26)(
          ),
          StatementsNode(17...22)(
            [CallNode(17...22)(
-              LocalVariableReadNode(17...18)(0),
+              LocalVariableReadNode(17...18)(:x, 0),
               nil,
               PLUS(19...20)("+"),
               nil,
-              ArgumentsNode(21...22)([LocalVariableReadNode(21...22)(0)]),
+              ArgumentsNode(21...22)([LocalVariableReadNode(21...22)(:y, 0)]),
               nil,
               nil,
               "+"

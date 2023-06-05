@@ -5,7 +5,7 @@ ProgramNode(0...40)(
        (4...5),
        nil,
        ParametersNode(6...7)(
-         [RequiredParameterNode(6...7)()],
+         [RequiredParameterNode(6...7)(:y)],
          [],
          [],
          nil,
@@ -19,22 +19,22 @@ ProgramNode(0...40)(
             nil,
             IDENTIFIER(11...12)("p"),
             PARENTHESIS_LEFT(12...13)("("),
-            ArgumentsNode(13...14)([LocalVariableReadNode(13...14)(0)]),
+            ArgumentsNode(13...14)([LocalVariableReadNode(13...14)(:y, 0)]),
             PARENTHESIS_RIGHT(14...15)(")"),
             nil,
             "p"
           ),
           OperatorAssignmentNode(18...24)(
-            LocalVariableWriteNode(18...19)((18...19), nil, nil, 0),
+            LocalVariableWriteNode(18...19)(:y, 0, nil, (18...19), nil),
             STAR_EQUAL(20...22)("*="),
             IntegerNode(23...24)()
           ),
           ReturnNode(27...35)(
             (27...33),
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(0)])
+            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:y, 0)])
           )]
        ),
-       [IDENTIFIER(6...7)("y")],
+       [:y],
        (0...3),
        nil,
        (5...6),

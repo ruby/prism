@@ -1,13 +1,19 @@
 ProgramNode(0...10)(
-  [IDENTIFIER(0...1)("a")],
+  [:a],
   StatementsNode(0...10)(
-    [LocalVariableWriteNode(0...6)((0...1), IntegerNode(4...6)(), (2...3), 0),
+    [LocalVariableWriteNode(0...6)(
+       :a,
+       0,
+       IntegerNode(4...6)(),
+       (0...1),
+       (2...3)
+     ),
      CallNode(7...10)(
        nil,
        nil,
        IDENTIFIER(7...8)("p"),
        nil,
-       ArgumentsNode(9...10)([LocalVariableReadNode(9...10)(0)]),
+       ArgumentsNode(9...10)([LocalVariableReadNode(9...10)(:a, 0)]),
        nil,
        nil,
        "p"

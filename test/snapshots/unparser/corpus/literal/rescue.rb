@@ -1,5 +1,5 @@
 ProgramNode(0...64)(
-  [IDENTIFIER(37...38)("x")],
+  [:x],
   StatementsNode(0...64)(
     [RescueModifierNode(0...14)(
        CallNode(0...3)(
@@ -53,7 +53,8 @@ ProgramNode(0...64)(
        )
      ),
      LocalVariableWriteNode(37...64)(
-       (37...38),
+       :x,
+       0,
        ParenthesesNode(41...64)(
          StatementsNode(42...63)(
            [RescueModifierNode(42...63)(
@@ -88,8 +89,8 @@ ProgramNode(0...64)(
          (41...42),
          (63...64)
        ),
-       (39...40),
-       0
+       (37...38),
+       (39...40)
      )]
   )
 )

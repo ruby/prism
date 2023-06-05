@@ -27,7 +27,7 @@ ProgramNode(0...51)(
             "bar"
           )]
        ),
-       [AMPERSAND(8...9)("&")],
+       [:&],
        (0...3),
        nil,
        (7...8),
@@ -39,7 +39,7 @@ ProgramNode(0...51)(
        (29...32),
        nil,
        ParametersNode(33...37)(
-         [RequiredParameterNode(33...34)()],
+         [RequiredParameterNode(33...34)(:a)],
          [],
          [],
          nil,
@@ -61,7 +61,7 @@ ProgramNode(0...51)(
             "bar"
           )]
        ),
-       [IDENTIFIER(33...34)("a"), AMPERSAND(36...37)("&")],
+       [:a, :&],
        (25...28),
        nil,
        (32...33),

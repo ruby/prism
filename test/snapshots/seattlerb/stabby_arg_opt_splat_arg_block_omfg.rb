@@ -2,21 +2,18 @@ ProgramNode(0...21)(
   [],
   StatementsNode(0...21)(
     [LambdaNode(0...21)(
-       [IDENTIFIER(3...4)("b"),
-        IDENTIFIER(6...7)("c"),
-        IDENTIFIER(12...13)("d"),
-        IDENTIFIER(15...16)("e"),
-        IDENTIFIER(19...20)("f")],
+       [:b, :c, :d, :e, :f],
        (0...2),
        BlockParametersNode(2...21)(
          ParametersNode(3...20)(
-           [RequiredParameterNode(3...4)()],
+           [RequiredParameterNode(3...4)(:b)],
            [OptionalParameterNode(6...9)(
+              :c,
               (6...7),
               (7...8),
               IntegerNode(8...9)()
             )],
-           [RequiredParameterNode(15...16)()],
+           [RequiredParameterNode(15...16)(:e)],
            RestParameterNode(11...13)((11...12), (12...13)),
            [],
            nil,

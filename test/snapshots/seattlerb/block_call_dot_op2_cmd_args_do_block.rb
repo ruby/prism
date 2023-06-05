@@ -66,10 +66,10 @@ ProgramNode(0...33)(
        ),
        nil,
        BlockNode(21...33)(
-         [IDENTIFIER(25...26)("g")],
+         [:g],
          BlockParametersNode(24...27)(
            ParametersNode(25...26)(
-             [RequiredParameterNode(25...26)()],
+             [RequiredParameterNode(25...26)(:g)],
              [],
              [],
              nil,

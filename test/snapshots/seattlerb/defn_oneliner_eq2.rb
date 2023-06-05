@@ -12,7 +12,7 @@ ProgramNode(0...28)(
             (14...16),
             nil,
             ParametersNode(17...18)(
-              [RequiredParameterNode(17...18)()],
+              [RequiredParameterNode(17...18)(:o)],
               [],
               [],
               nil,
@@ -21,7 +21,7 @@ ProgramNode(0...28)(
               nil
             ),
             StatementsNode(22...24)([IntegerNode(22...24)()]),
-            [IDENTIFIER(17...18)("o")],
+            [:o],
             (10...13),
             nil,
             (16...17),

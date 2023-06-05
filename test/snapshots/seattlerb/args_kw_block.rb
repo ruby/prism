@@ -14,7 +14,7 @@ ProgramNode(0...20)(
          BlockParameterNode(12...14)((13...14), (12...13))
        ),
        nil,
-       [LABEL(6...7)("a"), IDENTIFIER(13...14)("b")],
+       [:a, :b],
        (0...3),
        nil,
        (5...6),

@@ -1,8 +1,9 @@
 ProgramNode(6...74)(
-  [IDENTIFIER(6...12)("string")],
+  [:string],
   StatementsNode(6...74)(
     [LocalVariableWriteNode(6...57)(
-       (6...12),
+       :string,
+       0,
        InterpolatedStringNode(15...57)(
          (15...22),
          [StringNode(23...48)(
@@ -13,15 +14,15 @@ ProgramNode(6...74)(
           )],
          (48...57)
        ),
-       (13...14),
-       0
+       (6...12),
+       (13...14)
      ),
      CallNode(63...74)(
        nil,
        nil,
        IDENTIFIER(63...67)("puts"),
        nil,
-       ArgumentsNode(68...74)([LocalVariableReadNode(68...74)(0)]),
+       ArgumentsNode(68...74)([LocalVariableReadNode(68...74)(:string, 0)]),
        nil,
        nil,
        "puts"

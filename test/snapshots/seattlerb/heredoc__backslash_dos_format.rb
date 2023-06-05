@@ -1,8 +1,9 @@
 ProgramNode(0...35)(
-  [IDENTIFIER(0...3)("str")],
+  [:str],
   StatementsNode(0...35)(
     [LocalVariableWriteNode(0...35)(
-       (0...3),
+       :str,
+       0,
        InterpolatedStringNode(6...35)(
          (6...12),
          [StringNode(14...30)(
@@ -13,8 +14,8 @@ ProgramNode(0...35)(
           )],
          (30...35)
        ),
-       (4...5),
-       0
+       (0...3),
+       (4...5)
      )]
   )
 )

@@ -1,8 +1,8 @@
 ProgramNode(0...22)(
-  [IDENTIFIER(0...3)("foo")],
+  [:foo],
   StatementsNode(0...22)(
     [OperatorAssignmentNode(0...22)(
-       LocalVariableWriteNode(0...3)((0...3), nil, nil, 0),
+       LocalVariableWriteNode(0...3)(:foo, 0, nil, (0...3), nil),
        PLUS_EQUAL(4...6)("+="),
        RescueModifierNode(7...22)(
          CallNode(7...11)(

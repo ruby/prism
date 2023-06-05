@@ -1,5 +1,5 @@
 ProgramNode(0...108)(
-  [IDENTIFIER(75...76)("x"), IDENTIFIER(88...89)("a")],
+  [:x, :a],
   StatementsNode(0...108)(
     [CallNode(0...24)(
        nil,
@@ -37,13 +37,15 @@ ProgramNode(0...108)(
        (70...73)
      ),
      LocalVariableWriteNode(75...84)(
-       (75...76),
+       :x,
+       0,
        StringNode(79...84)((79...82), (82...82), (82...84), ""),
-       (77...78),
-       0
+       (75...76),
+       (77...78)
      ),
      LocalVariableWriteNode(88...108)(
-       (88...89),
+       :a,
+       0,
        CallNode(92...108)(
          nil,
          nil,
@@ -74,8 +76,8 @@ ProgramNode(0...108)(
          nil,
          "foo"
        ),
-       (90...91),
-       0
+       (88...89),
+       (90...91)
      )]
   )
 )

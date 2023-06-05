@@ -1,40 +1,43 @@
 ProgramNode(0...30)(
-  [IDENTIFIER(0...3)("foo"), IDENTIFIER(6...9)("bar")],
+  [:foo, :bar],
   StatementsNode(0...30)(
     [LocalVariableWriteNode(0...17)(
-       (0...3),
+       :foo,
+       0,
        LocalVariableWriteNode(6...17)(
-         (6...9),
+         :bar,
+         0,
          CallNode(12...17)(
            nil,
            nil,
            IDENTIFIER(12...13)("m"),
            nil,
-           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(0)]),
+           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(:foo, 0)]),
            nil,
            nil,
            "m"
          ),
-         (10...11),
-         0
+         (6...9),
+         (10...11)
        ),
-       (4...5),
-       0
+       (0...3),
+       (4...5)
      ),
      LocalVariableWriteNode(19...30)(
-       (19...22),
+       :foo,
+       0,
        CallNode(25...30)(
          nil,
          nil,
          IDENTIFIER(25...26)("m"),
          nil,
-         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(0)]),
+         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(:foo, 0)]),
          nil,
          nil,
          "m"
        ),
-       (23...24),
-       0
+       (19...22),
+       (23...24)
      )]
   )
 )

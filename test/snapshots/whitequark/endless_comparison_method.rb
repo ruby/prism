@@ -5,7 +5,7 @@ ProgramNode(0...179)(
        (4...6),
        nil,
        ParametersNode(7...12)(
-         [RequiredParameterNode(7...12)()],
+         [RequiredParameterNode(7...12)(:other)],
          [],
          [],
          nil,
@@ -25,7 +25,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       [IDENTIFIER(7...12)("other")],
+       [:other],
        (0...3),
        nil,
        (6...7),
@@ -37,7 +37,7 @@ ProgramNode(0...179)(
        (34...36),
        nil,
        ParametersNode(37...42)(
-         [RequiredParameterNode(37...42)()],
+         [RequiredParameterNode(37...42)(:other)],
          [],
          [],
          nil,
@@ -57,7 +57,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       [IDENTIFIER(37...42)("other")],
+       [:other],
        (30...33),
        nil,
        (36...37),
@@ -69,7 +69,7 @@ ProgramNode(0...179)(
        (64...66),
        nil,
        ParametersNode(67...72)(
-         [RequiredParameterNode(67...72)()],
+         [RequiredParameterNode(67...72)(:other)],
          [],
          [],
          nil,
@@ -89,7 +89,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       [IDENTIFIER(67...72)("other")],
+       [:other],
        (60...63),
        nil,
        (66...67),
@@ -101,7 +101,7 @@ ProgramNode(0...179)(
        (94...96),
        nil,
        ParametersNode(97...102)(
-         [RequiredParameterNode(97...102)()],
+         [RequiredParameterNode(97...102)(:other)],
          [],
          [],
          nil,
@@ -121,7 +121,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       [IDENTIFIER(97...102)("other")],
+       [:other],
        (90...93),
        nil,
        (96...97),
@@ -133,7 +133,7 @@ ProgramNode(0...179)(
        (124...127),
        nil,
        ParametersNode(128...133)(
-         [RequiredParameterNode(128...133)()],
+         [RequiredParameterNode(128...133)(:other)],
          [],
          [],
          nil,
@@ -153,7 +153,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       [IDENTIFIER(128...133)("other")],
+       [:other],
        (120...123),
        nil,
        (127...128),
@@ -165,7 +165,7 @@ ProgramNode(0...179)(
        (155...157),
        nil,
        ParametersNode(158...163)(
-         [RequiredParameterNode(158...163)()],
+         [RequiredParameterNode(158...163)(:other)],
          [],
          [],
          nil,
@@ -185,7 +185,7 @@ ProgramNode(0...179)(
             "do_something"
           )]
        ),
-       [IDENTIFIER(158...163)("other")],
+       [:other],
        (151...154),
        nil,
        (157...158),

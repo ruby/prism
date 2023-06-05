@@ -121,10 +121,10 @@ ProgramNode(0...168)(
          nil,
          nil,
          BlockNode(149...162)(
-           [IDENTIFIER(152...153)("a")],
+           [:a],
            BlockParametersNode(151...154)(
              ParametersNode(152...153)(
-               [RequiredParameterNode(152...153)()],
+               [RequiredParameterNode(152...153)(:a)],
                [],
                [],
                nil,

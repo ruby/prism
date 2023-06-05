@@ -79,10 +79,10 @@ ProgramNode(6...93)(
             nil,
             nil,
             BlockNode(75...89)(
-              [IDENTIFIER(79...80)("n")],
+              [:n],
               BlockParametersNode(78...81)(
                 ParametersNode(79...80)(
-                  [RequiredParameterNode(79...80)()],
+                  [RequiredParameterNode(79...80)(:n)],
                   [],
                   [],
                   nil,
@@ -100,7 +100,9 @@ ProgramNode(6...93)(
                    nil,
                    IDENTIFIER(82...83)("p"),
                    nil,
-                   ArgumentsNode(84...85)([LocalVariableReadNode(84...85)(0)]),
+                   ArgumentsNode(84...85)(
+                     [LocalVariableReadNode(84...85)(:n, 0)]
+                   ),
                    nil,
                    nil,
                    "p"

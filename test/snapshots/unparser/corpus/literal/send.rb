@@ -2,19 +2,29 @@ ProgramNode(0...991)(
   [],
   StatementsNode(0...991)(
     [ModuleNode(0...35)(
-       [IDENTIFIER(11...14)("foo"),
-        IDENTIFIER(21...22)("a"),
-        IDENTIFIER(24...25)("_")],
+       [:foo, :a, :_],
        (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(11...31)(
          [OperatorOrAssignmentNode(11...31)(
-            LocalVariableWriteNode(11...14)((11...14), nil, nil, 0),
+            LocalVariableWriteNode(11...14)(:foo, 0, nil, (11...14), nil),
             ParenthesesNode(19...31)(
               StatementsNode(21...30)(
                 [MultiWriteNode(21...30)(
-                   [LocalVariableWriteNode(21...22)((21...22), nil, nil, 0),
-                    LocalVariableWriteNode(24...25)((24...25), nil, nil, 0)],
+                   [LocalVariableWriteNode(21...22)(
+                      :a,
+                      0,
+                      nil,
+                      (21...22),
+                      nil
+                    ),
+                    LocalVariableWriteNode(24...25)(
+                      :_,
+                      0,
+                      nil,
+                      (24...25),
+                      nil
+                    )],
                    (27...28),
                    CallNode(29...30)(
                      nil,
@@ -39,18 +49,19 @@ ProgramNode(0...991)(
        (32...35)
      ),
      ModuleNode(37...73)(
-       [IDENTIFIER(48...53)("local")],
+       [:local],
        (37...43),
        ConstantReadNode(44...45)(),
        StatementsNode(48...69)(
          [LocalVariableWriteNode(48...57)(
-            (48...53),
+            :local,
+            0,
             IntegerNode(56...57)(),
-            (54...55),
-            0
+            (48...53),
+            (54...55)
           ),
           CallNode(60...69)(
-            LocalVariableReadNode(60...65)(0),
+            LocalVariableReadNode(60...65)(:local, 0),
             DOT(65...66)("."),
             IDENTIFIER(66...69)("bar"),
             nil,

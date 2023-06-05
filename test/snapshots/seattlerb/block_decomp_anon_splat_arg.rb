@@ -9,12 +9,12 @@ ProgramNode(0...14)(
        nil,
        nil,
        BlockNode(2...14)(
-         [IDENTIFIER(9...10)("a")],
+         [:a],
          BlockParametersNode(4...12)(
            ParametersNode(5...11)(
              [RequiredDestructuredParameterNode(5...11)(
                 [SplatNode(6...7)((6...7), nil),
-                 RequiredParameterNode(9...10)()],
+                 RequiredParameterNode(9...10)(:a)],
                 (5...6),
                 (10...11)
               )],

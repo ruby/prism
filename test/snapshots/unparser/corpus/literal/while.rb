@@ -1,5 +1,5 @@
 ProgramNode(0...620)(
-  [IDENTIFIER(371...372)("x")],
+  [:x],
   StatementsNode(0...620)(
     [ModuleNode(0...68)(
        [],
@@ -14,10 +14,10 @@ ProgramNode(0...620)(
             nil,
             nil,
             BlockNode(15...64)(
-              [IDENTIFIER(18...21)("bar"), IDENTIFIER(43...46)("foo")],
+              [:bar, :foo],
               BlockParametersNode(17...22)(
                 ParametersNode(18...21)(
-                  [RequiredParameterNode(18...21)()],
+                  [RequiredParameterNode(18...21)(:bar)],
                   [],
                   [],
                   nil,
@@ -44,10 +44,11 @@ ProgramNode(0...620)(
                    ),
                    StatementsNode(43...52)(
                      [LocalVariableWriteNode(43...52)(
+                        :foo,
+                        0,
+                        LocalVariableReadNode(49...52)(:bar, 0),
                         (43...46),
-                        LocalVariableReadNode(49...52)(0),
-                        (47...48),
-                        0
+                        (47...48)
                       )]
                    )
                  )]
@@ -68,7 +69,7 @@ ProgramNode(0...620)(
          [WhileNode(80...106)(
             (90...95),
             CallNode(96...106)(
-              LocalVariableReadNode(96...99)(0),
+              LocalVariableReadNode(96...99)(:foo, 0),
               nil,
               BANG_EQUAL(100...102)("!="),
               nil,
@@ -90,7 +91,8 @@ ProgramNode(0...620)(
             ),
             StatementsNode(80...89)(
               [LocalVariableWriteNode(80...89)(
-                 (80...83),
+                 :foo,
+                 0,
                  CallNode(86...89)(
                    nil,
                    nil,
@@ -101,13 +103,13 @@ ProgramNode(0...620)(
                    nil,
                    "bar"
                  ),
-                 (84...85),
-                 0
+                 (80...83),
+                 (84...85)
                )]
             )
           )]
        ),
-       [IDENTIFIER(80...83)("foo")],
+       [:foo],
        (70...73),
        nil,
        nil,
@@ -116,16 +118,17 @@ ProgramNode(0...620)(
        (107...110)
      ),
      ModuleNode(112...146)(
-       [IDENTIFIER(123...126)("foo")],
+       [:foo],
        (112...118),
        ConstantReadNode(119...120)(),
        StatementsNode(123...142)(
          [WhileNode(123...142)(
             (133...138),
-            LocalVariableReadNode(139...142)(0),
+            LocalVariableReadNode(139...142)(:foo, 0),
             StatementsNode(123...132)(
               [LocalVariableWriteNode(123...132)(
-                 (123...126),
+                 :foo,
+                 0,
                  CallNode(129...132)(
                    nil,
                    nil,
@@ -136,8 +139,8 @@ ProgramNode(0...620)(
                    nil,
                    "bar"
                  ),
-                 (127...128),
-                 0
+                 (123...126),
+                 (127...128)
                )]
             )
           )]
@@ -145,16 +148,17 @@ ProgramNode(0...620)(
        (143...146)
      ),
      ModuleNode(148...182)(
-       [IDENTIFIER(159...162)("foo")],
+       [:foo],
        (148...154),
        ConstantReadNode(155...156)(),
        StatementsNode(159...178)(
          [UntilNode(159...178)(
             (169...174),
-            LocalVariableReadNode(175...178)(0),
+            LocalVariableReadNode(175...178)(:foo, 0),
             StatementsNode(159...168)(
               [LocalVariableWriteNode(159...168)(
-                 (159...162),
+                 :foo,
+                 0,
                  CallNode(165...168)(
                    nil,
                    nil,
@@ -165,8 +169,8 @@ ProgramNode(0...620)(
                    nil,
                    "bar"
                  ),
-                 (163...164),
-                 0
+                 (159...162),
+                 (163...164)
                )]
             )
           )]
@@ -174,7 +178,7 @@ ProgramNode(0...620)(
        (179...182)
      ),
      ModuleNode(184...228)(
-       [IDENTIFIER(209...212)("foo")],
+       [:foo],
        (184...190),
        ConstantReadNode(191...192)(),
        StatementsNode(195...224)(
@@ -192,7 +196,8 @@ ProgramNode(0...620)(
             ),
             StatementsNode(209...218)(
               [LocalVariableWriteNode(209...218)(
-                 (209...212),
+                 :foo,
+                 0,
                  CallNode(215...218)(
                    nil,
                    nil,
@@ -203,8 +208,8 @@ ProgramNode(0...620)(
                    nil,
                    "bar"
                  ),
-                 (213...214),
-                 0
+                 (209...212),
+                 (213...214)
                )]
             )
           )]
@@ -224,10 +229,10 @@ ProgramNode(0...620)(
             nil,
             nil,
             BlockNode(246...295)(
-              [IDENTIFIER(249...252)("baz"), IDENTIFIER(274...277)("foo")],
+              [:baz, :foo],
               BlockParametersNode(248...253)(
                 ParametersNode(249...252)(
-                  [RequiredParameterNode(249...252)()],
+                  [RequiredParameterNode(249...252)(:baz)],
                   [],
                   [],
                   nil,
@@ -254,7 +259,8 @@ ProgramNode(0...620)(
                    ),
                    StatementsNode(274...283)(
                      [LocalVariableWriteNode(274...283)(
-                        (274...277),
+                        :foo,
+                        0,
                         CallNode(280...283)(
                           nil,
                           nil,
@@ -265,8 +271,8 @@ ProgramNode(0...620)(
                           nil,
                           "bar"
                         ),
-                        (278...279),
-                        0
+                        (274...277),
+                        (278...279)
                       )]
                    )
                  )]
@@ -292,10 +298,10 @@ ProgramNode(0...620)(
             nil,
             nil,
             BlockNode(317...366)(
-              [IDENTIFIER(320...323)("foo")],
+              [:foo],
               BlockParametersNode(319...324)(
                 ParametersNode(320...323)(
-                  [RequiredParameterNode(320...323)()],
+                  [RequiredParameterNode(320...323)(:foo)],
                   [],
                   [],
                   nil,
@@ -310,10 +316,11 @@ ProgramNode(0...620)(
               StatementsNode(329...362)(
                 [WhileNode(329...362)(
                    (329...334),
-                   LocalVariableReadNode(335...338)(0),
+                   LocalVariableReadNode(335...338)(:foo, 0),
                    StatementsNode(345...354)(
                      [LocalVariableWriteNode(345...354)(
-                        (345...348),
+                        :foo,
+                        0,
                         CallNode(351...354)(
                           nil,
                           nil,
@@ -324,8 +331,8 @@ ProgramNode(0...620)(
                           nil,
                           "bar"
                         ),
-                        (349...350),
-                        0
+                        (345...348),
+                        (349...350)
                       )]
                    )
                  )]
@@ -339,7 +346,8 @@ ProgramNode(0...620)(
        (367...370)
      ),
      LocalVariableWriteNode(371...402)(
-       (371...372),
+       :x,
+       0,
        ParenthesesNode(375...402)(
          StatementsNode(376...401)(
            [WhileNode(376...401)(
@@ -380,8 +388,8 @@ ProgramNode(0...620)(
          (375...376),
          (401...402)
        ),
-       (373...374),
-       0
+       (371...372),
+       (373...374)
      ),
      WhileNode(403...428)(
        (419...424),

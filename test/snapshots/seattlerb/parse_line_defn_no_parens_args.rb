@@ -5,7 +5,7 @@ ProgramNode(0...11)(
        (4...5),
        nil,
        ParametersNode(6...7)(
-         [RequiredParameterNode(6...7)()],
+         [RequiredParameterNode(6...7)(:a)],
          [],
          [],
          nil,
@@ -14,7 +14,7 @@ ProgramNode(0...11)(
          nil
        ),
        nil,
-       [IDENTIFIER(6...7)("a")],
+       [:a],
        (0...3),
        nil,
        nil,

@@ -1,8 +1,8 @@
 ProgramNode(0...24)(
-  [IDENTIFIER(0...1)("a")],
+  [:a],
   StatementsNode(0...24)(
     [OperatorAndAssignmentNode(0...7)(
-       LocalVariableWriteNode(0...1)((0...1), nil, nil, 0),
+       LocalVariableWriteNode(0...1)(:a, 0, nil, (0...1), nil),
        CallNode(6...7)(
          nil,
          nil,
@@ -16,7 +16,7 @@ ProgramNode(0...24)(
        (2...5)
      ),
      OperatorAssignmentNode(9...15)(
-       LocalVariableWriteNode(9...10)((9...10), nil, nil, 0),
+       LocalVariableWriteNode(9...10)(:a, 0, nil, (9...10), nil),
        PLUS_EQUAL(11...13)("+="),
        CallNode(14...15)(
          nil,
@@ -30,7 +30,7 @@ ProgramNode(0...24)(
        )
      ),
      OperatorOrAssignmentNode(17...24)(
-       LocalVariableWriteNode(17...18)((17...18), nil, nil, 0),
+       LocalVariableWriteNode(17...18)(:a, 0, nil, (17...18), nil),
        CallNode(23...24)(
          nil,
          nil,

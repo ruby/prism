@@ -1,5 +1,5 @@
 ProgramNode(0...48)(
-  [IDENTIFIER(24...25)("b"), IDENTIFIER(38...39)("c")],
+  [:b, :c],
   StatementsNode(0...48)(
     [IfNode(0...46)(
        (0...2),
@@ -18,26 +18,28 @@ ProgramNode(0...48)(
             "p"
           ),
           LocalVariableWriteNode(24...29)(
-            (24...25),
+            :b,
+            0,
             IntegerNode(28...29)(),
-            (26...27),
-            0
+            (24...25),
+            (26...27)
           ),
           CallNode(32...35)(
             nil,
             nil,
             IDENTIFIER(32...33)("p"),
             nil,
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(0)]),
+            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:b, 0)]),
             nil,
             nil,
             "p"
           ),
           LocalVariableWriteNode(38...42)(
-            (38...39),
+            :c,
+            0,
             IntegerNode(41...42)(),
-            (40...41),
-            0
+            (38...39),
+            (40...41)
           )]
        ),
        nil,

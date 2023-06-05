@@ -1,5 +1,5 @@
 ProgramNode(0...27)(
-  [IDENTIFIER(16...17)("d")],
+  [:d],
   StatementsNode(0...27)(
     [CaseNode(0...27)(
        SymbolNode(5...7)(
@@ -15,7 +15,7 @@ ProgramNode(0...27)(
               ConstantReadNode(14...15)(),
               (12...14)
             ),
-            [LocalVariableWriteNode(16...17)((16...17), nil, nil, 0)],
+            [LocalVariableWriteNode(16...17)(:d, 0, nil, (16...17), nil)],
             nil,
             [],
             (15...16),

@@ -283,12 +283,12 @@ typedef struct {
 // This struct represents a node in a linked list of scopes. Some scopes can see
 // into their parent scopes, while others cannot.
 typedef struct yp_scope {
-    // Locals in the given scope.
-    yp_token_list_t locals;
+    // The IDs of the locals in the given scope.
+    yp_constant_id_list_t locals;
 
     // A boolean indicating whether or not this scope can see into its parent.
-    // If top is true, then the scope cannot see into its parent.
-    bool top;
+    // If closed is true, then the scope cannot see into its parent.
+    bool closed;
 
     // A pointer to the previous scope in the linked list.
     struct yp_scope *previous;
@@ -381,6 +381,10 @@ struct yp_parser {
     // This is the path of the file being parsed
     // We use the filepath when constructing SourceFileNodes
     yp_string_t filepath_string;
+
+    // This constant pool keeps all of the constants defined throughout the file
+    // so that we can reference them later.
+    yp_constant_pool_t constant_pool;
 };
 
 #endif // YARP_PARSER_H

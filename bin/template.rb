@@ -76,6 +76,20 @@ class TokenListParam < Param
   def java_type = "Token[]"
 end
 
+# This represents a parameter to a node that is the ID of a string interned
+# through the parser's constant pool.
+class ConstantParam < Param
+  def rbs_class = "Symbol"
+  def java_type = "byte[]"
+end
+
+# This represents a parameter to a node that is a list of IDs that are
+# associated with strings interned through the parser's constant pool.
+class ConstantListParam < Param
+  def rbs_class = "Array[Symbol]"
+  def java_type = "byte[][]"
+end
+
 # This represents a parameter to a node that is a string.
 class StringParam < Param
   def rbs_class = "String"
@@ -108,6 +122,8 @@ PARAM_TYPES = {
   "token" => TokenParam,
   "token?" => OptionalTokenParam,
   "token[]" => TokenListParam,
+  "constant" => ConstantParam,
+  "constant[]" => ConstantListParam,
   "location" => LocationParam,
   "location?" => OptionalLocationParam,
   "uint32" => UInt32Param,

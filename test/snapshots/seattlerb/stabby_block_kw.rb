@@ -2,7 +2,7 @@ ProgramNode(0...9)(
   [],
   StatementsNode(0...9)(
     [LambdaNode(0...9)(
-       [LABEL(4...5)("k")],
+       [:k],
        (0...2),
        BlockParametersNode(3...9)(
          ParametersNode(4...8)(

@@ -2,14 +2,11 @@ ProgramNode(0...262)(
   [],
   StatementsNode(0...262)(
     [LambdaNode(0...19)(
-       [IDENTIFIER(4...5)("a"),
-        IDENTIFIER(7...8)("b"),
-        IDENTIFIER(10...11)("c"),
-        IDENTIFIER(13...14)("d")],
+       [:a, :b, :c, :d],
        (0...2),
        BlockParametersNode(3...15)(
          ParametersNode(4...5)(
-           [RequiredParameterNode(4...5)()],
+           [RequiredParameterNode(4...5)(:a)],
            [],
            [],
            nil,
@@ -23,7 +20,7 @@ ProgramNode(0...262)(
          (3...4),
          (14...15)
        ),
-       StatementsNode(18...19)([LocalVariableReadNode(18...19)(0)])
+       StatementsNode(18...19)([LocalVariableReadNode(18...19)(:b, 0)])
      ),
      LambdaNode(23...39)(
        [],
@@ -86,16 +83,13 @@ ProgramNode(0...262)(
        )
      ),
      LambdaNode(100...127)(
-       [IDENTIFIER(103...104)("a"),
-        IDENTIFIER(106...107)("b"),
-        LABEL(113...114)("c"),
-        LABEL(117...118)("d"),
-        IDENTIFIER(122...123)("e")],
+       [:a, :b, :c, :d, :e],
        (100...102),
        BlockParametersNode(103...123)(
          ParametersNode(103...123)(
-           [RequiredParameterNode(103...104)()],
+           [RequiredParameterNode(103...104)(:a)],
            [OptionalParameterNode(106...111)(
+              :b,
               (106...107),
               (108...109),
               IntegerNode(110...111)()
@@ -111,21 +105,16 @@ ProgramNode(0...262)(
          nil,
          nil
        ),
-       StatementsNode(126...127)([LocalVariableReadNode(126...127)(0)])
+       StatementsNode(126...127)([LocalVariableReadNode(126...127)(:a, 0)])
      ),
      LambdaNode(131...169)(
-       [IDENTIFIER(135...136)("a"),
-        IDENTIFIER(138...139)("b"),
-        IDENTIFIER(146...147)("c"),
-        LABEL(149...150)("d"),
-        LABEL(153...154)("e"),
-        IDENTIFIER(159...160)("f"),
-        IDENTIFIER(163...164)("g")],
+       [:a, :b, :c, :d, :e, :f, :g],
        (131...133),
        BlockParametersNode(134...165)(
          ParametersNode(135...164)(
-           [RequiredParameterNode(135...136)()],
+           [RequiredParameterNode(135...136)(:a)],
            [OptionalParameterNode(138...143)(
+              :b,
               (138...139),
               (140...141),
               IntegerNode(142...143)()
@@ -141,21 +130,16 @@ ProgramNode(0...262)(
          (134...135),
          (164...165)
        ),
-       StatementsNode(168...169)([LocalVariableReadNode(168...169)(0)])
+       StatementsNode(168...169)([LocalVariableReadNode(168...169)(:a, 0)])
      ),
      LambdaNode(173...214)(
-       [IDENTIFIER(177...178)("a"),
-        IDENTIFIER(180...181)("b"),
-        IDENTIFIER(188...189)("c"),
-        LABEL(191...192)("d"),
-        LABEL(195...196)("e"),
-        IDENTIFIER(201...202)("f"),
-        IDENTIFIER(205...206)("g")],
+       [:a, :b, :c, :d, :e, :f, :g],
        (173...175),
        BlockParametersNode(176...207)(
          ParametersNode(177...206)(
-           [RequiredParameterNode(177...178)()],
+           [RequiredParameterNode(177...178)(:a)],
            [OptionalParameterNode(180...185)(
+              :b,
               (180...181),
               (182...183),
               IntegerNode(184...185)()
@@ -171,14 +155,14 @@ ProgramNode(0...262)(
          (176...177),
          (206...207)
        ),
-       StatementsNode(213...214)([LocalVariableReadNode(213...214)(0)])
+       StatementsNode(213...214)([LocalVariableReadNode(213...214)(:a, 0)])
      ),
      LambdaNode(220...241)(
-       [IDENTIFIER(224...225)("a")],
+       [:a],
        (220...222),
        BlockParametersNode(223...226)(
          ParametersNode(224...225)(
-           [RequiredParameterNode(224...225)()],
+           [RequiredParameterNode(224...225)(:a)],
            [],
            [],
            nil,
@@ -192,11 +176,11 @@ ProgramNode(0...262)(
        ),
        StatementsNode(229...241)(
          [LambdaNode(229...241)(
-            [IDENTIFIER(232...233)("b")],
+            [:b],
             (229...231),
             BlockParametersNode(232...233)(
               ParametersNode(232...233)(
-                [RequiredParameterNode(232...233)()],
+                [RequiredParameterNode(232...233)(:b)],
                 [],
                 [],
                 nil,
@@ -210,12 +194,12 @@ ProgramNode(0...262)(
             ),
             StatementsNode(236...241)(
               [CallNode(236...241)(
-                 LocalVariableReadNode(236...237)(1),
+                 LocalVariableReadNode(236...237)(:a, 1),
                  nil,
                  STAR(238...239)("*"),
                  nil,
                  ArgumentsNode(240...241)(
-                   [LocalVariableReadNode(240...241)(0)]
+                   [LocalVariableReadNode(240...241)(:b, 0)]
                  ),
                  nil,
                  nil,
@@ -226,15 +210,13 @@ ProgramNode(0...262)(
        )
      ),
      LambdaNode(247...262)(
-       [IDENTIFIER(252...253)("a"),
-        IDENTIFIER(255...256)("b"),
-        IDENTIFIER(260...261)("c")],
+       [:a, :b, :c],
        (247...249),
        BlockParametersNode(250...262)(
          ParametersNode(251...261)(
            [RequiredDestructuredParameterNode(251...257)(
-              [RequiredParameterNode(252...253)(),
-               RequiredParameterNode(255...256)()],
+              [RequiredParameterNode(252...253)(:a),
+               RequiredParameterNode(255...256)(:b)],
               (251...252),
               (256...257)
             )],

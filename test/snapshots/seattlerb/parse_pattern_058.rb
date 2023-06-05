@@ -1,5 +1,5 @@
 ProgramNode(0...43)(
-  [LABEL(16...17)("a"), IDENTIFIER(22...26)("rest")],
+  [:a, :rest],
   StatementsNode(0...43)(
     [CaseNode(0...43)(
        HashNode(5...11)(
@@ -30,7 +30,7 @@ ProgramNode(0...43)(
                nil
              ),
              AssocSplatNode(20...26)(
-               LocalVariableWriteNode(22...26)((22...26), nil, nil, 0),
+               LocalVariableWriteNode(22...26)(:rest, 0, nil, (22...26), nil),
                (20...22)
              )],
             nil,
@@ -39,8 +39,8 @@ ProgramNode(0...43)(
           ),
           StatementsNode(30...39)(
             [ArrayNode(30...39)(
-               [LocalVariableReadNode(31...32)(0),
-                LocalVariableReadNode(34...38)(0)],
+               [LocalVariableReadNode(31...32)(:a, 0),
+                LocalVariableReadNode(34...38)(:rest, 0)],
                (30...31),
                (38...39)
              )]

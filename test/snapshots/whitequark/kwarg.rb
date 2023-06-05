@@ -14,7 +14,7 @@ ProgramNode(0...16)(
          nil
        ),
        nil,
-       [LABEL(6...9)("foo")],
+       [:foo],
        (0...3),
        nil,
        (5...6),

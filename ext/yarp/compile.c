@@ -16,7 +16,7 @@ typedef struct yp_iseq_compiler {
     struct yp_iseq_compiler *parent;
 
     // This is the list of local variables that are defined on this scope.
-    yp_token_list_t *locals;
+    yp_constant_id_list_t *locals;
 
     // This is the instruction sequence that we are compiling. It's actually just
     // a Ruby array that maps to the output of RubyVM::InstructionSequence#to_a.
@@ -55,7 +55,7 @@ typedef struct yp_iseq_compiler {
 } yp_iseq_compiler_t;
 
 static void
-yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_iseq_compiler_t *parent, yp_token_list_t *locals, const char *name, yp_iseq_type_t type) {
+yp_iseq_compiler_init(yp_iseq_compiler_t *compiler, yp_iseq_compiler_t *parent, yp_constant_id_list_t *locals, const char *name, yp_iseq_type_t type) {
     *compiler = (yp_iseq_compiler_t) {
         .parent = parent,
         .locals = locals,
@@ -83,7 +83,7 @@ sizet2int(size_t value) {
 }
 
 static int
-local_index(yp_iseq_compiler_t *compiler, int depth, const char *start, const char *end) {
+local_index(yp_iseq_compiler_t *compiler, yp_constant_id_t constant_id, int depth) {
     int compiler_index;
     yp_iseq_compiler_t *local_compiler = compiler;
 
@@ -93,12 +93,8 @@ local_index(yp_iseq_compiler_t *compiler, int depth, const char *start, const ch
     }
 
     size_t index;
-    long local_size = end - start;
-
     for (index = 0; index < local_compiler->locals->size; index++) {
-        yp_token_t *local = &local_compiler->locals->tokens[index];
-
-        if ((local->end - local->start == local_size) && strncmp(local->start, start, local_size) == 0) {
+        if (local_compiler->locals->ids[index] == constant_id) {
             return sizet2int(local_compiler->locals->size - index + 2);
         }
     }
@@ -678,12 +674,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         }
         case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
             yp_local_variable_read_node_t *node = (yp_local_variable_read_node_t *) base_node;
-            int index = local_index(
-                compiler,
-                node->depth,
-                node->base.location.start,
-                node->base.location.end
-            );
+            int index = local_index(compiler, node->constant_id, node->depth);
 
             push_getlocal(compiler, INT2FIX(index), INT2FIX(node->depth));
             return;
@@ -695,12 +686,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
                 rb_raise(rb_eNotImpError, "local variable write without value not implemented");
             }
 
-            int index = local_index(
-                compiler,
-                node->depth,
-                node->name_loc.start,
-                node->name_loc.end
-            );
+            int index = local_index(compiler, node->constant_id, node->depth);
 
             yp_compile_node(compiler, node->value);
             push_dup(compiler);
@@ -820,7 +806,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         case YP_NODE_OPTIONAL_PARAMETER_NODE: {
             yp_optional_parameter_node_t *node = (yp_optional_parameter_node_t *) base_node;
             int depth = 0;
-            int index = local_index(compiler, depth, node->name_loc.start, node->name_loc.end);
+            int index = local_index(compiler, node->constant_id, depth);
             yp_compile_node(compiler, node->value);
             push_setlocal(compiler, INT2FIX(index), INT2FIX(depth));
             break;

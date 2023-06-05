@@ -21,8 +21,8 @@ ProgramNode(0...26)(
          nil,
          nil
        ),
-       StatementsNode(19...21)([LocalVariableReadNode(19...21)(0)]),
-       [LABEL(8...10)("kw")],
+       StatementsNode(19...21)([LocalVariableReadNode(19...21)(:kw, 0)]),
+       [:kw],
        (0...3),
        nil,
        (7...8),

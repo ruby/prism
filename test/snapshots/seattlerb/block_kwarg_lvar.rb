@@ -9,7 +9,7 @@ ProgramNode(0...20)(
        nil,
        nil,
        BlockNode(3...20)(
-         [LABEL(6...8)("kw")],
+         [:kw],
          BlockParametersNode(5...15)(
            ParametersNode(6...14)(
              [],
@@ -32,7 +32,7 @@ ProgramNode(0...20)(
            (5...6),
            (14...15)
          ),
-         StatementsNode(16...18)([LocalVariableReadNode(16...18)(0)]),
+         StatementsNode(16...18)([LocalVariableReadNode(16...18)(:kw, 0)]),
          (3...4),
          (19...20)
        ),

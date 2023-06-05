@@ -9,14 +9,14 @@ ProgramNode(0...13)(
        nil,
        nil,
        BlockNode(6...13)(
-         [IDENTIFIER(9...10)("a")],
+         [:a],
          BlockParametersNode(7...11)(
            nil,
            [IDENTIFIER(9...10)("a")],
            (7...8),
            (10...11)
          ),
-         StatementsNode(11...12)([LocalVariableReadNode(11...12)(0)]),
+         StatementsNode(11...12)([LocalVariableReadNode(11...12)(:a, 0)]),
          (6...7),
          (12...13)
        ),

@@ -9,18 +9,18 @@ ProgramNode(0...35)(
        nil,
        nil,
        BlockNode(2...35)(
-         [IDENTIFIER(5...6)("a"),
-          IDENTIFIER(8...9)("b"),
-          IDENTIFIER(16...17)("c")],
+         [:a, :b, :c],
          BlockParametersNode(4...23)(
            ParametersNode(5...22)(
-             [RequiredParameterNode(5...6)()],
+             [RequiredParameterNode(5...6)(:a)],
              [OptionalParameterNode(8...14)(
+                :b,
                 (8...9),
                 (10...11),
                 IntegerNode(12...14)()
               ),
               OptionalParameterNode(16...22)(
+                :c,
                 (16...17),
                 (18...19),
                 IntegerNode(20...22)()
@@ -37,9 +37,9 @@ ProgramNode(0...35)(
          ),
          StatementsNode(24...33)(
            [ArrayNode(24...33)(
-              [LocalVariableReadNode(25...26)(0),
-               LocalVariableReadNode(28...29)(0),
-               LocalVariableReadNode(31...32)(0)],
+              [LocalVariableReadNode(25...26)(:a, 0),
+               LocalVariableReadNode(28...29)(:b, 0),
+               LocalVariableReadNode(31...32)(:c, 0)],
               (24...25),
               (32...33)
             )]

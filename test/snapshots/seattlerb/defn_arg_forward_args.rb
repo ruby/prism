@@ -5,7 +5,7 @@ ProgramNode(0...29)(
        (4...5),
        nil,
        ParametersNode(6...12)(
-         [RequiredParameterNode(6...7)()],
+         [RequiredParameterNode(6...7)(:x)],
          [],
          [],
          nil,
@@ -20,7 +20,7 @@ ProgramNode(0...29)(
             IDENTIFIER(15...16)("b"),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...23)(
-              [LocalVariableReadNode(17...18)(0),
+              [LocalVariableReadNode(17...18)(:x, 0),
                ForwardingArgumentsNode(20...23)()]
             ),
             PARENTHESIS_RIGHT(23...24)(")"),
@@ -28,7 +28,7 @@ ProgramNode(0...29)(
             "b"
           )]
        ),
-       [IDENTIFIER(6...7)("x"), UDOT_DOT_DOT(9...12)("...")],
+       [:x, :"..."],
        (0...3),
        nil,
        (5...6),
