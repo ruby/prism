@@ -12,6 +12,7 @@
 
 /build/
 /lib/yarp/yarp.*
+/lib/yarp.bundle
 test.rb
 test-native/run-one
 *.dSYM

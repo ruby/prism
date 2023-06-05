@@ -23,4 +23,4 @@ else
   end
 end
 
-create_makefile("yarp/yarp")
+create_makefile("yarp")
