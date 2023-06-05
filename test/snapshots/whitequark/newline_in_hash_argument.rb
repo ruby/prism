@@ -1,5 +1,5 @@
 ProgramNode(0...74)(
-  [],
+  [LABEL(12...13)("a"), STRING_CONTENT(26...27)("b")],
   StatementsNode(0...74)(
     [CaseNode(0...40)(
        CallNode(5...8)(

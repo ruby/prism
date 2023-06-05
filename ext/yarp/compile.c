@@ -188,7 +188,7 @@ yp_iseq_new(yp_iseq_compiler_t *compiler) {
     VALUE iseq = rb_ary_new_capa(13);
     rb_ary_push(iseq, rb_str_new_cstr("YARVInstructionSequence/SimpleDataFormat"));
     rb_ary_push(iseq, INT2FIX(3));
-    rb_ary_push(iseq, INT2FIX(2));
+    rb_ary_push(iseq, INT2FIX(3));
     rb_ary_push(iseq, INT2FIX(1));
     rb_ary_push(iseq, data);
     rb_ary_push(iseq, rb_str_new_cstr(compiler->name));

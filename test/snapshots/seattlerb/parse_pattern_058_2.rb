@@ -1,5 +1,5 @@
 ProgramNode(0...33)(
-  [],
+  [LABEL(16...17)("a")],
   StatementsNode(0...33)(
     [CaseNode(0...33)(
        HashNode(5...11)(
@@ -36,16 +36,7 @@ ProgramNode(0...33)(
           ),
           StatementsNode(26...29)(
             [ArrayNode(26...29)(
-               [CallNode(27...28)(
-                  nil,
-                  nil,
-                  IDENTIFIER(27...28)("a"),
-                  nil,
-                  nil,
-                  nil,
-                  nil,
-                  "a"
-                )],
+               [LocalVariableReadNode(27...28)(0)],
                (26...27),
                (28...29)
              )]
