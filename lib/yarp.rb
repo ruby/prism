@@ -208,6 +208,13 @@ module YARP
           results << token
           previous = token
         end
+      when :on_words_sep
+        if previous[1] == :on_words_sep
+          previous[2] << token[2]
+        else
+          results << token
+          previous = token
+        end
       else
         results << token
         previous = token
