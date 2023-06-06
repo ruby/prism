@@ -27,11 +27,12 @@ public class Loader {
             int index = oneBasedIndex - 1;
             byte[] constant = cache[index];
             if (constant == null) {
-                int offset = buffer.getInt(bufferOffset + index * 8);
-                int length = buffer.getInt(bufferOffset + index * 8 + 4);
+                int offset = bufferOffset + index * 8;
+                int start = buffer.getInt(offset);
+                int length = buffer.getInt(offset + 4);
 
                 constant = new byte[length];
-                System.arraycopy(source, offset, constant, 0, length);
+                System.arraycopy(source, start, constant, 0, length);
                 cache[index] = constant;
             }
             return constant;
