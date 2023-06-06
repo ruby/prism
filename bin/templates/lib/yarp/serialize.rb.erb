@@ -10,7 +10,8 @@ module YARP
     end
 
     class Loader
-      attr_reader :source, :io, :encoding
+      attr_reader :encoding, :source, :serialized, :io
+      attr_reader :constant_pool_offset, :constant_pool
 
       def initialize(source, serialized, io)
         # TODO: This is wrong, we should be dumping and loading the encoding.
@@ -26,8 +27,7 @@ module YARP
         io.read(3).unpack("C3") => [0, 4, 0]
 
         @constant_pool_offset = io.read(4).unpack1("L")
-        constant_pool_length = load_varint
-        @constant_pool = Array.new(constant_pool_length, nil)
+        @constant_pool = Array.new(load_varint, nil)
 
         load_node
       end
@@ -95,14 +95,18 @@ module YARP
 
       def load_constant
         index = load_varint - 1
-        constant = @constant_pool[index]
+        constant = constant_pool[index]
+
         unless constant
-          offset = @constant_pool_offset + index * 8
-          start = @serialized[offset, 4].unpack1('L')
-          length = @serialized[offset + 4, 4].unpack1('L')
+          offset = constant_pool_offset + index * 8
+
+          start = serialized.unpack1("L", offset: offset)
+          length = serialized.unpack1("L", offset: offset + 4)
+
           constant = source.byteslice(start, length).to_sym
-          @constant_pool[index] = constant
+          constant_pool[index] = constant
         end
+
         constant
       end
 
