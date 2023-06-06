@@ -6,17 +6,18 @@ module YARP
       io = StringIO.new(serialized)
       io.set_encoding(Encoding::BINARY)
 
-      Loader.new(source, io).load
+      Loader.new(source, serialized, io).load
     end
 
     class Loader
       attr_reader :source, :io, :encoding
 
-      def initialize(source, io)
+      def initialize(source, serialized, io)
         # TODO: This is wrong, we should be dumping and loading the encoding.
         # For now, we assume that the source is UTF-8.
         @encoding = Encoding::UTF_8
         @source = source.dup.force_encoding(@encoding).freeze
+        @serialized = serialized
         @io = io
       end
 
@@ -96,13 +97,10 @@ module YARP
         index = load_varint - 1
         constant = @constant_pool[index]
         unless constant
-          previous_pos = io.pos
-          io.seek(@constant_pool_offset + (index * 8))
-
-          offset, length = io.read(8).unpack("LL")
-          constant = source.byteslice(offset, length).to_sym
-
-          io.seek(previous_pos)
+          offset = @constant_pool_offset + index * 8
+          start = @serialized[offset, 4].unpack1('L')
+          length = @serialized[offset + 4, 4].unpack1('L')
+          constant = source.byteslice(start, length).to_sym
           @constant_pool[index] = constant
         end
         constant
