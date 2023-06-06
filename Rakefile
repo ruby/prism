@@ -57,9 +57,8 @@ end
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
 
-dylib_extension = RbConfig::CONFIG["DLEXT"].match?(/darwin/) ? "dylib" : "so"
-CLOBBER << "build/librubyparser.#{dylib_extension}"
-CLOBBER << "lib/yarp.#{dylib_extension}"
+CLOBBER << "build/librubyparser.#{RbConfig::CONFIG["SOEXT"]}"
+CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"
