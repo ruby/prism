@@ -24,20 +24,9 @@ module YARP
         io.read(4) => "YARP"
         io.read(3).unpack("C3") => [0, 4, 0]
 
-        constant_pool_offset = io.read(4).unpack1("L")
-        load_varint # we are not going to use the constant pool length
-
-        @constant_pool =
-          Hash.new do |hash, index|
-            previous_pos = io.pos
-            io.seek(constant_pool_offset + (index * 8))
-
-            offset, length = io.read(8).unpack("LL")
-            constant = source.byteslice(offset, length).to_sym
-
-            io.seek(previous_pos)
-            hash[index] = constant
-          end
+        @constant_pool_offset = io.read(4).unpack1("L")
+        constant_pool_length = load_varint
+        @constant_pool = Array.new(constant_pool_length, nil)
 
         load_node
       end
@@ -104,7 +93,19 @@ module YARP
       end
 
       def load_constant
-        @constant_pool[load_varint - 1]
+        index = load_varint - 1
+        constant = @constant_pool[index]
+        unless constant
+          previous_pos = io.pos
+          io.seek(@constant_pool_offset + (index * 8))
+
+          offset, length = io.read(8).unpack("LL")
+          constant = source.byteslice(offset, length).to_sym
+
+          io.seek(previous_pos)
+          @constant_pool[index] = constant
+        end
+        constant
       end
 
       def load_node
