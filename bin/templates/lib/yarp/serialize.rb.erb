@@ -27,7 +27,7 @@ module YARP
         constant_pool_offset = io.read(4).unpack1("L")
         load_varint # we are not going to use the constant pool length
 
-        constant_pool =
+        @constant_pool =
           Hash.new do |hash, index|
             previous_pos = io.pos
             io.seek(constant_pool_offset + (index * 8))
@@ -39,7 +39,7 @@ module YARP
             hash[index] = constant
           end
 
-        load_node(constant_pool)
+        load_node
       end
 
       private
@@ -77,10 +77,10 @@ module YARP
         Token.new(type, range, start_offset, length)
       end
 
-      def load_optional_node(constant_pool)
+      def load_optional_node
         if io.getbyte != 0
           io.pos -= 1
-          load_node(constant_pool)
+          load_node
         end
       end
 
@@ -103,11 +103,11 @@ module YARP
         load_location if io.getbyte != 0
       end
 
-      def load_constant(constant_pool)
-        constant_pool[load_varint - 1]
+      def load_constant
+        @constant_pool[load_varint - 1]
       end
 
-      def load_node(constant_pool)
+      def load_node
         type = io.getbyte
         start_offset, length = load_varint, load_varint
 
@@ -119,14 +119,14 @@ module YARP
           <%- end -%>
           <%= node.name %>.new(<%= (node.params.map { |param|
             case param
-            when NodeParam then "load_node(constant_pool)"
-            when OptionalNodeParam then "load_optional_node(constant_pool)"
+            when NodeParam then "load_node"
+            when OptionalNodeParam then "load_optional_node"
             when StringParam then "load_string"
-            when NodeListParam then "Array.new(load_varint) { load_node(constant_pool) }"
+            when NodeListParam then "Array.new(load_varint) { load_node }"
             when TokenParam then "load_token"
             when TokenListParam then "Array.new(load_varint) { load_token }"
-            when ConstantParam then "load_constant(constant_pool)"
-            when ConstantListParam then "Array.new(load_varint) { load_constant(constant_pool) }"
+            when ConstantParam then "load_constant"
+            when ConstantListParam then "Array.new(load_varint) { load_constant }"
             when OptionalTokenParam then "load_optional_token"
             when LocationParam then "load_location"
             when OptionalLocationParam then "load_optional_location"
