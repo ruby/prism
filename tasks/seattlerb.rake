@@ -37,7 +37,7 @@ namespace :seattlerb do
       def assert_parse(source, _)
         entry = caller.find { _1.include?("test_ruby_parser.rb") }
         name = entry[/\d+:in `(?:block in )?(?:assert_|test_)?(.+)'/, 1]
-    
+
         COLLECTED[name] << source
         super
       end
@@ -46,7 +46,7 @@ namespace :seattlerb do
     RubyParserTestCase.prepend(Hook)
     Minitest.after_run do
       Hook::COLLECTED.each do |(name, codes)|
-        filepath = "test/fixtures/seattlerb/#{name}.rb"
+        filepath = "test/fixtures/seattlerb/#{name.delete!('?')}.rb"
         File.write(filepath, "#{codes.uniq.sort.join("\n\n")}\n")
       end
 
