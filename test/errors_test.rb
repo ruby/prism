@@ -3,7 +3,7 @@
 require "test_helper"
 
 class ErrorsTest < Test::Unit::TestCase
-  include YARP::DSL
+  include ::YARP::DSL
 
   def test_constant_path_with_invalid_token_after
     assert_error_messages "A::$b", [
