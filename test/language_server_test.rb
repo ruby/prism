@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "test_helper"
+require_relative "yarp_test_helper"
 require "yarp/language_server"
 
 module YARP

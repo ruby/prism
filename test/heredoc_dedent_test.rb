@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require "yarp_test_helper"
 
 module YARP
   class HeredocDedentTest < Test::Unit::TestCase

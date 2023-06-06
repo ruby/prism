@@ -290,7 +290,7 @@ end
 desc "Parse the top 100 rubygems"
 task "parse:topgems": ["download:topgems", :compile] do
   require "yarp"
-  require_relative "../test/test_helper"
+  require_relative "../test/yarp_test_helper"
 
   class ParseTop100GemsTest < Test::Unit::TestCase
     Dir["#{TOP_100_GEMS_DIR}/**/*.rb"].each do |filepath|

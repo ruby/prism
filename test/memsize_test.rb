@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require "yarp_test_helper"
 
 class MemsizeTest < Test::Unit::TestCase
   def test_memsize
