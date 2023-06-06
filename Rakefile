@@ -15,7 +15,7 @@ task compile_no_debug: :make_no_debug
 Rake::ExtensionTask.new(:compile) do |ext|
   ext.name = "yarp"
   ext.ext_dir = "ext/yarp"
-  ext.lib_dir = "lib/yarp"
+  ext.lib_dir = "lib"
   ext.gem_spec = Gem::Specification.load("yarp.gemspec")
 end
 
@@ -57,7 +57,7 @@ end
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
 
-dylib_extension = RbConfig::CONFIG["host_os"].match?(/darwin/) ? "dylib" : "so"
+dylib_extension = RbConfig::CONFIG["DLEXT"].match?(/darwin/) ? "dylib" : "so"
 CLOBBER << "build/librubyparser.#{dylib_extension}"
 CLOBBER << "lib/yarp.#{dylib_extension}"
 

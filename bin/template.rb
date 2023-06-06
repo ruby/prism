@@ -6,7 +6,7 @@ require "yaml"
 
 class Param
   attr_reader :name, :options
-  
+
   def initialize(name:, type:, **options)
     @name, @type, @options = name, type, options
   end
@@ -36,7 +36,7 @@ end
 # references and store them as references.
 class NodeParam < Param
   include KindTypes
-  
+
   def rbs_class = "Node"
 end
 
@@ -44,7 +44,7 @@ end
 # optionally null. We pass them as references and store them as references.
 class OptionalNodeParam < Param
   include KindTypes
-  
+
   def rbs_class = "Node?"
 end
 
@@ -224,7 +224,7 @@ def locals
 end
 
 TEMPLATES = [
-  "ext/yarp/node.c",
+  "ext/yarp/api_node.c",
   "include/yarp/ast.h",
   "java/org/yarp/Loader.java",
   "java/org/yarp/Nodes.java",

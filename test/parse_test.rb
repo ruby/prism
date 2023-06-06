@@ -4,7 +4,7 @@ require "test_helper"
 
 class ParseTest < Test::Unit::TestCase
   def test_Ruby_3_2_plus
-    assert_operator Gem::Version.new(RUBY_VERSION), :>=, Gem::Version.new("3.2.0"), "ParseTest requires Ruby 3.2+"
+    assert_operator RUBY_VERSION, :>=, "3.2.0", "ParseTest requires Ruby 3.2+"
   end
 
   def test_empty_string
