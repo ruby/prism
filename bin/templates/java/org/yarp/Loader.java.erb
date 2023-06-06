@@ -11,7 +11,8 @@ public class Loader {
         return new Loader(serialized).load(source);
     }
 
-    private class ConstantPool {
+    private static final class ConstantPool {
+
         private final byte[] source;
         private final int bufferOffset;
         private final byte[][] cache;
@@ -22,20 +23,24 @@ public class Loader {
             cache = new byte[length][];
         }
 
-        byte[] get(ByteBuffer buffer, int index) {
-            if (cache[index] == null) {
-                int offset = buffer.getInt(bufferOffset + ((index - 1) * 8));
-                int length = buffer.getInt(bufferOffset + ((index - 1) * 8) + 4);
+        byte[] get(ByteBuffer buffer, int oneBasedIndex) {
+            int index = oneBasedIndex - 1;
+            byte[] constant = cache[index];
+            if (constant == null) {
+                int offset = buffer.getInt(bufferOffset + index * 8);
+                int length = buffer.getInt(bufferOffset + index * 8 + 4);
 
-                cache[index] = new byte[length];
-                System.arraycopy(source, offset, cache[index - 1], 0, length);
+                constant = new byte[length];
+                System.arraycopy(source, offset, constant, 0, length);
+                cache[index] = constant;
             }
-
-            return cache[index];
+            return constant;
         }
+
     }
 
     private final ByteBuffer buffer;
+    private ConstantPool constantPool;
 
     private Loader(byte[] serialized) {
         buffer = ByteBuffer.wrap(serialized).order(ByteOrder.nativeOrder());
@@ -53,8 +58,9 @@ public class Loader {
 
         int constantPoolBufferOffset = buffer.getInt();
         int constantPoolLength = loadVarInt();
+        this.constantPool = new ConstantPool(source, constantPoolBufferOffset, constantPoolLength);
 
-        Nodes.Node node = loadNode(new ConstantPool(source, constantPoolBufferOffset, constantPoolLength));
+        Nodes.Node node = loadNode();
         int left = constantPoolBufferOffset - buffer.position();
 
         if (left != 0) {
@@ -80,9 +86,9 @@ public class Loader {
         }
     }
 
-    private Nodes.Node loadOptionalNode(ConstantPool constantPool) {
+    private Nodes.Node loadOptionalNode() {
         if (buffer.get(buffer.position()) != 0) {
-            return loadNode(constantPool);
+            return loadNode();
         } else {
             buffer.position(buffer.position() + 1); // continue after the 0 byte
             return null;
@@ -98,11 +104,11 @@ public class Loader {
         return tokens;
     }
 
-    private byte[] loadConstant(ConstantPool constantPool) {
+    private byte[] loadConstant() {
         return constantPool.get(buffer, loadVarInt());
     }
 
-    private byte[][] loadConstants(ConstantPool constantPool) {
+    private byte[][] loadConstants() {
         int length = loadVarInt();
         byte[][] constants = new byte[length][];
         for (int i = 0; i < length; i++) {
@@ -111,11 +117,11 @@ public class Loader {
         return constants;
     }
 
-    private Nodes.Node[] loadNodes(ConstantPool constantPool) {
+    private Nodes.Node[] loadNodes() {
         int length = loadVarInt();
         Nodes.Node[] nodes = new Nodes.Node[length];
         for (int i = 0; i < length; i++) {
-            nodes[i] = loadNode(constantPool);
+            nodes[i] = loadNode();
         }
         return nodes;
     }
@@ -156,7 +162,7 @@ public class Loader {
         return x;
     }
 
-    private Nodes.Node loadNode(ConstantPool constantPool) {
+    private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         int startOffset = loadVarInt();
         int length = loadVarInt();
@@ -168,14 +174,14 @@ public class Loader {
             params = node.needs_serialized_length? ? ["buffer.getInt()"] : []
             params.concat node.params.map { |param|
               case param
-              when NodeParam then "#{param.java_cast} loadNode(constantPool)"
-              when OptionalNodeParam then "#{param.java_cast} loadOptionalNode(constantPool)"
+              when NodeParam then "#{param.java_cast}loadNode()"
+              when OptionalNodeParam then "#{param.java_cast}loadOptionalNode()"
               when StringParam then "loadString()"
-              when NodeListParam then "loadNodes(constantPool)"
+              when NodeListParam then "loadNodes()"
               when TokenParam then "loadToken()"
               when TokenListParam then "loadTokens()"
-              when ConstantParam then "loadConstant(constantPool)"
-              when ConstantListParam then "loadConstants(constantPool)"
+              when ConstantParam then "loadConstant()"
+              when ConstantListParam then "loadConstants()"
               when OptionalTokenParam then "loadOptionalToken()"
               when LocationParam then "loadLocation()"
               when OptionalLocationParam then "loadOptionalLocation()"
