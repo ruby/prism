@@ -12,11 +12,11 @@ module YARP
 
     def assert_equal_nodes(expected, actual, compare_location: true, parent: nil)
       assert_equal expected.class, actual.class
-  
+
       case expected
       when Array
         assert_equal expected.size, actual.size
-  
+
         expected.zip(actual).each do |(expected_element, actual_element)|
           assert_equal_nodes(
             expected_element,
@@ -40,7 +40,7 @@ module YARP
         deconstructed_expected = expected.deconstruct_keys(nil)
         deconstructed_actual = actual.deconstruct_keys(nil)
         assert_equal deconstructed_expected.keys, deconstructed_actual.keys
-  
+
         deconstructed_expected.each_key do |key|
           assert_equal_nodes(
             deconstructed_expected[key],

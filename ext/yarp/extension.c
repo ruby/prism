@@ -20,7 +20,7 @@ typedef struct {
 
 // Read the file indicated by the filepath parameter into source and load its
 // contents and size into the given source_t.
-int
+static int
 source_file_load(source_t *source, VALUE filepath) {
     // Open the file for reading
     int fd = open(StringValueCStr(filepath), O_RDONLY);
@@ -51,7 +51,7 @@ source_file_load(source_t *source, VALUE filepath) {
 }
 
 // Load the contents and size of the given string into the given source_t.
-void
+static void
 source_string_load(source_t *source, VALUE string) {
     *source = (source_t) {
         .type = SOURCE_STRING,
@@ -61,7 +61,7 @@ source_string_load(source_t *source, VALUE string) {
 }
 
 // Free any resources associated with the given source_t.
-void
+static void
 source_file_unload(source_t *source) {
     munmap((void *) source->source, source->size);
 }

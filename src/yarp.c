@@ -7701,7 +7701,7 @@ typedef enum {
 } yp_parameters_order_t;
 
 // This matches parameters tokens with parameters state.
-yp_parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
+static yp_parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
     [0] = YP_PARAMETERS_NO_CHANGE,
     [YP_TOKEN_AMPERSAND] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
     [YP_TOKEN_UDOT_DOT_DOT] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
