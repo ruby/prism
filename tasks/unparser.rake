@@ -2,7 +2,7 @@
 
 # These files are not valid Ruby
 known_failures = %w(
-  test/fixtures/unparser/corpus/literal/binary.rb
+  test/fixtures/unparser/corpus/literal/binary.txt
 )
 
 namespace :unparser do
@@ -21,9 +21,13 @@ namespace :unparser do
     cp "tmp/unparser/LICENSE", "test/fixtures/unparser/LICENSE"
     cp_r "tmp/unparser/test/corpus/", "test/fixtures/unparser"
 
+    Dir["test/fixtures/unparser/**/*.rb"].each do |f|
+      File.rename(f, f.sub(/\.rb$/, ".txt"))
+    end
+
     # There's an issue with one of the test files in unparser. We'll correct it
     # until https://github.com/mbj/unparser/issues/340 is closed.
-    filepath = "test/fixtures/unparser/corpus/literal/pattern.rb"
+    filepath = "test/fixtures/unparser/corpus/literal/pattern.txt"
     File.write(filepath, File.read(filepath).gsub("\"\#{\"a\"}\"", "\"a\""))
 
     # Remove all invalid Ruby files

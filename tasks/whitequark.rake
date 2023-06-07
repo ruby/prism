@@ -13,9 +13,9 @@
 
 # These files are not valid Ruby
 known_failures = %w(
-  test/fixtures/whitequark/range_endless.rb
-  test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.rb
-  test/fixtures/whitequark/pattern_match.rb
+  test/fixtures/whitequark/range_endless.txt
+  test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
+  test/fixtures/whitequark/pattern_match.txt
 )
 
 namespace :whitequark do
@@ -31,7 +31,7 @@ namespace :whitequark do
 
   desc "Import the whitequark/parser tests"
   task import: ["tmp/whitequark", "test/fixtures/whitequark"] do
-    cp "tmp/whitequark/LICENSE.txt", "test/fixtures/whitequark/LICENSE.txt"
+    cp "tmp/whitequark/LICENSE.txt", "test/fixtures/whitequark/LICENSE"
 
     mkdir_p "tmp/whitequark/scratch"
     touch "tmp/whitequark/scratch/helper.rb"
@@ -51,27 +51,27 @@ namespace :whitequark do
 
       def assert_context(*)
       end
-    
+
       def assert_diagnoses(*)
       end
-    
+
       def assert_diagnoses_many(*)
       end
-    
+
       def refute_diagnoses(*)
       end
-    
+
       def with_versions(*)
       end
-    
+
       def assert_parses(_ast, code, _source_maps = "", versions = ALL_VERSIONS)
         # We're going to skip any examples that are for older Ruby versions
         # that we do not support.
         return if (versions & %w[3.1 3.2]).empty?
-    
+
         entry = caller.find { _1.include?("test_parser.rb") }
         _, name = *entry.match(/\d+:in `(?:block in )?(?:test_|assert_parses_)?(.+)'/)
-    
+
         COLLECTED[name] << code
       end
     end
@@ -82,7 +82,7 @@ namespace :whitequark do
 
     Minitest.after_run do
       ParseHelper::COLLECTED.each do |(name, codes)|
-        File.write("test/fixtures/whitequark/#{name}.rb", "#{codes.sort.join("\n\n")}\n")
+        File.write("test/fixtures/whitequark/#{name}.txt", "#{codes.sort.join("\n\n")}\n")
       end
 
       # Remove all invalid Ruby files

@@ -12,8 +12,8 @@ class ParseTest < Test::Unit::TestCase
   end
 
   known_failures = %w[
-    seattlerb/heredoc_nested.rb
-    seattlerb/pct_w_heredoc_interp_nested.rb
+    seattlerb/heredoc_nested.txt
+    seattlerb/pct_w_heredoc_interp_nested.txt
   ]
 
   # Because the filepath in SourceFileNodes is different from one maching to the
@@ -30,7 +30,7 @@ class ParseTest < Test::Unit::TestCase
       .gsub(__dir__, "")
   end
 
-  Dir[File.expand_path("fixtures/**/*.rb", __dir__)].each do |filepath|
+  Dir[File.expand_path("fixtures/**/*.txt", __dir__)].each do |filepath|
     relative = filepath.delete_prefix("#{File.expand_path("fixtures", __dir__)}/")
     next if known_failures.include?(relative)
 

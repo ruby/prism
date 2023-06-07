@@ -4,7 +4,7 @@ require "yarp_test_helper"
 
 module YARP
   class HeredocDedentTest < Test::Unit::TestCase
-    filepath = File.expand_path("fixtures/tilde_heredocs.rb", __dir__)
+    filepath = File.expand_path("fixtures/tilde_heredocs.txt", __dir__)
 
     File.read(filepath).split(/(?=\n)\n(?=<)/).each_with_index do |heredoc, index|
       define_method "test_heredoc_#{index}" do
