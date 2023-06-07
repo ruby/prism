@@ -28,7 +28,7 @@ static unsigned char yp_encoding_unicode_table[256] = {
 };
 
 #define UNICODE_ALPHA_CODEPOINTS_LENGTH 1450
-unicode_codepoint_t unicode_alpha_codepoints[UNICODE_ALPHA_CODEPOINTS_LENGTH] = {
+static unicode_codepoint_t unicode_alpha_codepoints[UNICODE_ALPHA_CODEPOINTS_LENGTH] = {
     0x100, 0x2C1,
     0x2C6, 0x2D1,
     0x2E0, 0x2E4,
@@ -757,7 +757,7 @@ unicode_codepoint_t unicode_alpha_codepoints[UNICODE_ALPHA_CODEPOINTS_LENGTH] = 
 };
 
 #define UNICODE_ALNUM_CODEPOINTS_LENGTH 1528
-unicode_codepoint_t unicode_alnum_codepoints[UNICODE_ALNUM_CODEPOINTS_LENGTH] = {
+static unicode_codepoint_t unicode_alnum_codepoints[UNICODE_ALNUM_CODEPOINTS_LENGTH] = {
     0x100, 0x2C1,
     0x2C6, 0x2D1,
     0x2E0, 0x2E4,
@@ -1525,7 +1525,7 @@ unicode_codepoint_t unicode_alnum_codepoints[UNICODE_ALNUM_CODEPOINTS_LENGTH] = 
 };
 
 #define UNICODE_ISUPPER_CODEPOINTS_LENGTH 1296
-unicode_codepoint_t unicode_isupper_codepoints[UNICODE_ISUPPER_CODEPOINTS_LENGTH] = {
+static unicode_codepoint_t unicode_isupper_codepoints[UNICODE_ISUPPER_CODEPOINTS_LENGTH] = {
     0x100, 0x100,
     0x102, 0x102,
     0x104, 0x104,

@@ -1,6 +1,6 @@
 module YARP
   <%- nodes.each do |node| -%>
-  <%= "#{node.comment.split("\n").map { |line| "# #{line}" }.join("\n  ")}\n  " if node.comment %>class <%= node.name -%> < Node
+  <%= "#{node.comment.split("\n").map { |line| line.empty? ? "#" : "# #{line}" }.join("\n  ")}\n  " if node.comment %>class <%= node.name -%> < Node
     <%- node.params.each do |param| -%>
     # attr_reader <%= param.name %>: <%= param.rbs_class %>
     attr_reader :<%= param.name %>

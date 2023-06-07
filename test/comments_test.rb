@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require "yarp_test_helper"
 
 class CommentsTest < Test::Unit::TestCase
-  include YARP::DSL
+  include ::YARP::DSL
 
   def test_comment_inline
     assert_comment "# comment", :inline

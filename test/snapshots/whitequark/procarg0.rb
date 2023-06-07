@@ -1,6 +1,6 @@
-ProgramNode(0...32)(
+ProgramNode(0...31)(
   [],
-  StatementsNode(0...32)(
+  StatementsNode(0...31)(
     [CallNode(0...18)(
        nil,
        nil,
@@ -35,18 +35,18 @@ ProgramNode(0...32)(
        ),
        "m"
      ),
-     CallNode(21...32)(
+     CallNode(20...31)(
        nil,
        nil,
-       IDENTIFIER(21...22)("m"),
+       IDENTIFIER(20...21)("m"),
        nil,
        nil,
        nil,
-       BlockNode(23...32)(
+       BlockNode(22...31)(
          [:foo],
-         BlockParametersNode(25...30)(
-           ParametersNode(26...29)(
-             [RequiredParameterNode(26...29)(:foo)],
+         BlockParametersNode(24...29)(
+           ParametersNode(25...28)(
+             [RequiredParameterNode(25...28)(:foo)],
              [],
              [],
              nil,
@@ -55,12 +55,12 @@ ProgramNode(0...32)(
              nil
            ),
            [],
-           (25...26),
-           (29...30)
+           (24...25),
+           (28...29)
          ),
          nil,
-         (23...24),
-         (31...32)
+         (22...23),
+         (30...31)
        ),
        "m"
      )]

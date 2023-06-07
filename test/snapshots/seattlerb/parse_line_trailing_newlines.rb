@@ -1,6 +1,6 @@
-ProgramNode(0...4)(
+ProgramNode(0...3)(
   [],
-  StatementsNode(0...4)(
+  StatementsNode(0...3)(
     [CallNode(0...1)(
        nil,
        nil,
@@ -11,10 +11,10 @@ ProgramNode(0...4)(
        nil,
        "a"
      ),
-     CallNode(3...4)(
+     CallNode(2...3)(
        nil,
        nil,
-       IDENTIFIER(3...4)("b"),
+       IDENTIFIER(2...3)("b"),
        nil,
        nil,
        nil,

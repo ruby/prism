@@ -6,9 +6,12 @@
 #include "yarp.h"
 
 #include <fcntl.h>
+
+#ifndef _WIN32
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 
 #define EXPECTED_YARP_VERSION "0.4.0"
 
