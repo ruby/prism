@@ -2,13 +2,13 @@
 
 # These files are not valid Ruby
 known_failures = %w(
-  test/fixtures/seattlerb/begin_else_return_value.rb
-  test/fixtures/seattlerb/block_yield.rb
-  test/fixtures/seattlerb/bug_begin_else.rb
-  test/fixtures/seattlerb/bug170.rb
-  test/fixtures/seattlerb/call_block_arg_unnamed.rb
-  test/fixtures/seattlerb/iter_array_curly.rb
-  test/fixtures/seattlerb/magic_encoding_comment__bad.rb
+  test/fixtures/seattlerb/begin_else_return_value.txt
+  test/fixtures/seattlerb/block_yield.txt
+  test/fixtures/seattlerb/bug_begin_else.txt
+  test/fixtures/seattlerb/bug170.txt
+  test/fixtures/seattlerb/call_block_arg_unnamed.txt
+  test/fixtures/seattlerb/iter_array_curly.txt
+  test/fixtures/seattlerb/magic_encoding_comment__bad.txt
 )
 
 namespace :seattlerb do
@@ -46,7 +46,7 @@ namespace :seattlerb do
     RubyParserTestCase.prepend(Hook)
     Minitest.after_run do
       Hook::COLLECTED.each do |(name, codes)|
-        filepath = "test/fixtures/seattlerb/#{name.delete!('?')}.rb"
+        filepath = "test/fixtures/seattlerb/#{name.delete!('?')}.txt"
         File.write(filepath, "#{codes.uniq.sort.join("\n\n")}\n")
       end
 
