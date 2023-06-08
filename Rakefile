@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "bundler/gem_tasks"
 require "rake/extensiontask"
 require "rake/testtask"
 require "rake/clean"
@@ -14,9 +15,8 @@ task compile_no_debug: :make_no_debug
 
 Rake::ExtensionTask.new(:compile) do |ext|
   ext.name = "yarp"
-  ext.ext_dir = "ext/yarp"
   ext.lib_dir = "lib"
-  ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+  ext.ext_dir = "ext/yarp"
 end
 
 test_config = lambda do |t|
