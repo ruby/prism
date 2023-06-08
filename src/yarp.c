@@ -2458,7 +2458,7 @@ yp_parameters_node_create(yp_parser_t *parser) {
     *node = (yp_parameters_node_t) {
         {
             .type = YP_NODE_PARAMETERS_NODE,
-            .location = { .start = NULL, .end = NULL },
+            .location = { .start = parser->current.start, .end = parser->current.start },
         },
         .rest = NULL,
         .keyword_rest = NULL,
