@@ -9,6 +9,7 @@
 #include "yarp/enc/yp_encoding.h"
 #include "yarp/util/yp_constant_pool.h"
 #include "yarp/util/yp_list.h"
+#include "yarp/util/yp_newline_list.h"
 #include "yarp/util/yp_state_stack.h"
 
 // This enum provides various bits that represent different kinds of states that
@@ -390,6 +391,9 @@ struct yp_parser {
     // This constant pool keeps all of the constants defined throughout the file
     // so that we can reference them later.
     yp_constant_pool_t constant_pool;
+
+    // This is the list of newline offsets in the source file.
+    yp_newline_list_t newline_list;
 };
 
 #endif // YARP_PARSER_H

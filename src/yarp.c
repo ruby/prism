@@ -4830,7 +4830,14 @@ static yp_token_type_t
 lex_embdoc(yp_parser_t *parser) {
     // First, lex out the EMBDOC_BEGIN token.
     const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
-    parser->current.end = newline == NULL ? parser->end : newline + 1;
+
+    if (newline == NULL) {
+        parser->current.end = parser->end;
+    } else {
+        yp_newline_list_append(&parser->newline_list, newline);
+        parser->current.end = newline + 1;
+    }
+
     parser->current.type = YP_TOKEN_EMBDOC_BEGIN;
     parser_lex_callback(parser);
 
@@ -4847,7 +4854,14 @@ lex_embdoc(yp_parser_t *parser) {
         if (strncmp(parser->current.end, "=end", 4) == 0 &&
                 (parser->current.end + 4 == parser->end || yp_char_is_whitespace(parser->current.end[4]))) {
             const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
-            parser->current.end = newline == NULL ? parser->end : newline + 1;
+
+            if (newline == NULL) {
+                parser->current.end = parser->end;
+            } else {
+                yp_newline_list_append(&parser->newline_list, newline);
+                parser->current.end = newline + 1;
+            }
+
             parser->current.type = YP_TOKEN_EMBDOC_END;
             parser_lex_callback(parser);
 
@@ -4860,7 +4874,14 @@ lex_embdoc(yp_parser_t *parser) {
         // Otherwise, we'll parse until the end of the line and return a line of
         // embedded documentation.
         const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
-        parser->current.end = newline == NULL ? parser->end : newline + 1;
+
+        if (newline == NULL) {
+            parser->current.end = parser->end;
+        } else {
+            yp_newline_list_append(&parser->newline_list, newline);
+            parser->current.end = newline + 1;
+        }
+
         parser->current.type = YP_TOKEN_EMBDOC_LINE;
         parser_lex_callback(parser);
     }
@@ -4961,9 +4982,11 @@ parser_lex(yp_parser_t *parser) {
                         break;
                     case '\\':
                         if (peek_at(parser, 1) == '\n') {
+                            yp_newline_list_append(&parser->newline_list, parser->current.end + 1);
                             parser->current.end += 2;
                             space_seen = true;
                         } else if (parser->current.end + 2 < parser->end && peek_at(parser, 1) == '\r' && peek_at(parser, 2) == '\n') {
+                            yp_newline_list_append(&parser->newline_list, parser->current.end + 2);
                             parser->current.end += 3;
                             space_seen = true;
                         } else if (yp_char_is_inline_whitespace(*parser->current.end)) {
@@ -5029,7 +5052,9 @@ parser_lex(yp_parser_t *parser) {
                 }
                 /* fallthrough */
                 case '\n': {
-                    if (parser->heredoc_end != NULL) {
+                    if (parser->heredoc_end == NULL) {
+                        yp_newline_list_append(&parser->newline_list, parser->current.end - 1);
+                    } else {
                         parser_flush_heredoc_end(parser);
                     }
 
@@ -5422,6 +5447,7 @@ parser_lex(yp_parser_t *parser) {
                                     } else {
                                         // Otherwise, we want to indicate that the body of the
                                         // heredoc starts on the character after the next newline.
+                                        yp_newline_list_append(&parser->newline_list, body_start);
                                         body_start++;
                                     }
 
@@ -5867,6 +5893,10 @@ parser_lex(yp_parser_t *parser) {
                                 parser->current.end++;
                             }
 
+                            if (*parser->current.end == '\n') {
+                                yp_newline_list_append(&parser->newline_list, parser->current.end);
+                            }
+
                             parser->current.end++;
                             LEX(YP_TOKEN_STRING_BEGIN);
                         }
@@ -6121,7 +6151,7 @@ parser_lex(yp_parser_t *parser) {
             // If there's any whitespace at the start of the list, then we're going to
             // trim it off the beginning and create a new token.
             size_t whitespace;
-            if ((whitespace = yp_strspn_whitespace(parser->current.end, parser->end - parser->current.end)) > 0) {
+            if ((whitespace = yp_strspn_whitespace_newlines(parser->current.end, parser->end - parser->current.end, &parser->newline_list)) > 0) {
                 parser->current.end += whitespace;
                 LEX(YP_TOKEN_WORDS_SEP);
             }
@@ -6163,6 +6193,13 @@ parser_lex(yp_parser_t *parser) {
                         // literally. In this case we'll skip past the next character and
                         // find the next breakpoint.
                         size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, false, &parser->error_list);
+
+                        // If the result is an escaped newline, then we need to
+                        // track that newline.
+                        if (breakpoint[difference - 1] == '\n') {
+                            yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                        }
+
                         breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         break;
                     }
@@ -6247,11 +6284,11 @@ parser_lex(yp_parser_t *parser) {
             // These are the places where we need to split up the content of the
             // regular expression. We'll use strpbrk to find the first of these
             // characters.
-            char breakpoints[] = "\\#\0\0";
+            char breakpoints[] = "\n\\#\0\0";
 
-            breakpoints[2] = parser->lex_modes.current->as.regexp.terminator;
+            breakpoints[3] = parser->lex_modes.current->as.regexp.terminator;
             if (parser->lex_modes.current->as.regexp.incrementor != '\0') {
-                breakpoints[3] = parser->lex_modes.current->as.regexp.incrementor;
+                breakpoints[4] = parser->lex_modes.current->as.regexp.incrementor;
             }
 
             const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
@@ -6267,6 +6304,13 @@ parser_lex(yp_parser_t *parser) {
                         // literally. In this case we'll skip past the next character and
                         // find the next breakpoint.
                         size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, YP_UNESCAPE_ALL, false, &parser->error_list);
+
+                        // If the result is an escaped newline, then we need to
+                        // track that newline.
+                        if (breakpoint[difference - 1] == '\n') {
+                            yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                        }
+
                         breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         break;
                     }
@@ -6295,6 +6339,22 @@ parser_lex(yp_parser_t *parser) {
                             breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                             parser->lex_modes.current->as.regexp.nesting++;
                             break;
+                        }
+
+                        if (*breakpoint == '\n') {
+                            // If we've hit a newline, then we need to track
+                            // that in the list of newlines.
+                            yp_newline_list_append(&parser->newline_list, breakpoint);
+
+                            if (parser->lex_modes.current->as.regexp.terminator != '\n') {
+                                // If the terminator is not a newline, then we
+                                // can set the next breakpoint and continue.
+                                breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                                break;
+                            }
+
+                            // Otherwise, the newline character is the
+                            // terminator so we need to continue on.
                         }
 
                         assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
@@ -6402,7 +6462,12 @@ parser_lex(yp_parser_t *parser) {
                     // return the end of the string.
                     if (*parser->current.end == '\r' && parser->current.end + 1 < parser->end && parser->current.end[1] == '\n') {
                         parser->current.end = breakpoint + 2;
+                        yp_newline_list_append(&parser->newline_list, breakpoint + 1);
                     } else {
+                        if (*parser->current.end == '\n') {
+                            yp_newline_list_append(&parser->newline_list, parser->current.end);
+                        }
+
                         parser->current.end = breakpoint + 1;
                     }
 
@@ -6427,6 +6492,7 @@ parser_lex(yp_parser_t *parser) {
                 // terminator is a newline character.
                 if (*breakpoint == '\n') {
                     if (parser->heredoc_end == NULL) {
+                        yp_newline_list_append(&parser->newline_list, breakpoint);
                         breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         continue;
                     } else {
@@ -6447,6 +6513,13 @@ parser_lex(yp_parser_t *parser) {
                         // find the next breakpoint.
                         yp_unescape_type_t unescape_type = parser->lex_modes.current->as.string.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
                         size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, false, &parser->error_list);
+
+                        // If the result is an escaped newline, then we need to
+                        // track that newline.
+                        if (breakpoint[difference - 1] == '\n') {
+                            yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                        }
+
                         breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         break;
                     }
@@ -6508,8 +6581,10 @@ parser_lex(yp_parser_t *parser) {
 
                     if ((start + ident_length < parser->end) && (start[ident_length] == '\n')) {
                         parser->current.end = start + ident_length + 1;
+                        yp_newline_list_append(&parser->newline_list, start + ident_length);
                     } else if ((start + ident_length + 1 < parser->end) && (start[ident_length] == '\r') && (start[ident_length + 1] == '\n')) {
                         parser->current.end = start + ident_length + 2;
+                        yp_newline_list_append(&parser->newline_list, start + ident_length + 1);
                     } else if (parser->end == (start + ident_length)) {
                         parser->current.end = start + ident_length;
                         at_end = true;
@@ -6552,6 +6627,8 @@ parser_lex(yp_parser_t *parser) {
                         breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\n': {
+                        yp_newline_list_append(&parser->newline_list, breakpoint);
+
                         if (parser->heredoc_end != NULL && (parser->heredoc_end > breakpoint)) {
                             parser_flush_heredoc_end(parser);
                             parser->current.end = breakpoint + 1;
@@ -6604,6 +6681,11 @@ parser_lex(yp_parser_t *parser) {
                         } else {
                             yp_unescape_type_t unescape_type = (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL;
                             size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, false, &parser->error_list);
+
+                            if (breakpoint[difference - 1] == '\n') {
+                                yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                            }
+
                             breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         }
                         break;
@@ -12093,6 +12175,12 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
     size_t constant_size = size / 95;
     yp_constant_pool_init(&parser->constant_pool, constant_size < 4 ? 4 : constant_size);
 
+    // Initialize the newline list. Similar to the constant pool, we're going to
+    // guess at the number of newlines that we'll need based on the size of the
+    // input.
+    size_t newline_size = size / 22;
+    yp_newline_list_init(&parser->newline_list, source, newline_size < 4 ? 4 : newline_size);
+
     if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
         // If the first three bytes of the source are the UTF-8 BOM, then we'll skip
         // over them.
@@ -12145,6 +12233,7 @@ yp_parser_free(yp_parser_t *parser) {
     yp_diagnostic_list_free(&parser->warning_list);
     yp_comment_list_free(&parser->comment_list);
     yp_constant_pool_free(&parser->constant_pool);
+    yp_newline_list_free(&parser->newline_list);
 }
 
 // Parse the Ruby source associated with the given parser and return the tree.
