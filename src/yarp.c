@@ -12066,10 +12066,20 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
     yp_list_init(&parser->comment_list);
 
     // Initialize the constant pool. We're going to completely guess as to the
-    // number of constants that we'll need based on the size of the input. We
-    // should revisit this at some point and get some better metrics based on a
-    // wider variety of input.
-    size_t constant_size = size / 128;
+    // number of constants that we'll need based on the size of the input. The
+    // ratio we chose here is actually less arbitrary than you might think.
+    //
+    // We took ~50K Ruby files and measured the size of the file versus the
+    // number of constants that were found in those files. Then we found the
+    // average and standard deviation of the ratios of constants/bytesize. Then
+    // we added 1.34 standard deviations to the average to get a ratio that
+    // would fit 75% of the files (for a two-tailed distribution). This works
+    // because there was about a 0.77 correlation and the distribution was
+    // roughly normal.
+    //
+    // This ratio will need to change if we add more constants to the constant
+    // pool for another node type.
+    size_t constant_size = size / 95;
     yp_constant_pool_init(&parser->constant_pool, constant_size < 4 ? 4 : constant_size);
 
     if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
