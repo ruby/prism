@@ -22,6 +22,9 @@ all: build/librubyparser.$(SOEXT)
 build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h
 	$(CC) $(OPTFLAGS) $(DEBUG_FLAGS) $(CFLAGS) -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
 
+build/profile: $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h bin/profile.c
+	$(CC) $(CFLAGS) -O3 -std=c99 -Iinclude -o $@ $(shell find src -name '*.c') bin/profile.c
+
 build:
 	mkdir -p build
 
