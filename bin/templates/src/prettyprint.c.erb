@@ -14,7 +14,7 @@ prettyprint_token(yp_buffer_t *buffer, yp_token_t *token) {
 static void
 prettyprint_location(yp_buffer_t *buffer, yp_parser_t *parser, yp_location_t *location) {
     char printed[] = "[0000-0000]";
-    sprintf(printed, "[%04ld-%04ld]", location->start - parser->start, location->end - parser->start);
+    sprintf(printed, "[%04ld-%04ld]", (long int)(location->start - parser->start), (long int)(location->end - parser->start));
     yp_buffer_append_str(buffer, printed, strlen(printed));
 }
 

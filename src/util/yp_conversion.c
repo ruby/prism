@@ -2,7 +2,7 @@
 
 uint32_t
 yp_long_to_u32(long value) {
-    assert(value >= 0 && value < UINT32_MAX);
+    assert(value >= 0 && (unsigned long)value < UINT32_MAX);
     return (uint32_t) value;
 }
 
