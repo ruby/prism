@@ -14,44 +14,44 @@ bool yp_char_is_hexadecimal_digit(const char c);
 
 // Returns the number of characters at the start of the string that are
 // whitespace. Disallows searching past the given maximum number of characters.
-size_t yp_strspn_whitespace(const char *string, long length);
+size_t yp_strspn_whitespace(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are inline
 // whitespace. Disallows searching past the given maximum number of characters.
-size_t yp_strspn_inline_whitespace(const char *string, long length);
+size_t yp_strspn_inline_whitespace(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are decimal
 // digits. Disallows searching past the given maximum number of characters.
-size_t yp_strspn_decimal_digit(const char *string, long length);
+size_t yp_strspn_decimal_digit(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are
 // hexadecimal digits. Disallows searching past the given maximum number of
 // characters.
-size_t yp_strspn_hexadecimal_digit(const char *string, long length);
+size_t yp_strspn_hexadecimal_digit(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are octal
 // digits or underscores.  Disallows searching past the given maximum number of
 // characters.
-size_t yp_strspn_octal_number(const char *string, long length);
+size_t yp_strspn_octal_number(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are decimal
 // digits or underscores. Disallows searching past the given maximum number of
 // characters.
-size_t yp_strspn_decimal_number(const char *string, long length);
+size_t yp_strspn_decimal_number(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are
 // hexadecimal digits or underscores. Disallows searching past the given maximum
 // number of characters.
-size_t yp_strspn_hexadecimal_number(const char *string, long length);
+size_t yp_strspn_hexadecimal_number(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are regexp
 // options. Disallows searching past the given maximum number of characters.
-size_t yp_strspn_regexp_option(const char *string, long length);
+size_t yp_strspn_regexp_option(const char *string, ptrdiff_t length);
 
 // Returns the number of characters at the start of the string that are binary
 // digits or underscores. Disallows searching past the given maximum number of
 // characters.
-size_t yp_strspn_binary_number(const char *string, long length);
+size_t yp_strspn_binary_number(const char *string, ptrdiff_t length);
 
 // Returns true if the given character is a whitespace character.
 bool yp_char_is_whitespace(const char c);

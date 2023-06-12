@@ -13,7 +13,7 @@
 // within strings, comments, regular expressions, etc. So we need to be able to
 // skip past them.
 const char *
-yp_strpbrk(const char *source, const char *charset, long length) {
+yp_strpbrk(const char *source, const char *charset, ptrdiff_t length) {
     if (length < 0) return NULL;
 
     size_t index = 0;

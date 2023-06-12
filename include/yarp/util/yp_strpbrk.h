@@ -18,6 +18,6 @@
 // also don't want it to stop on null bytes. Ruby actually allows null bytes
 // within strings, comments, regular expressions, etc. So we need to be able to
 // skip past them.
-const char * yp_strpbrk(const char *source, const char *charset, long length);
+const char * yp_strpbrk(const char *source, const char *charset, ptrdiff_t length);
 
 #endif
