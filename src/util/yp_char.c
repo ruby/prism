@@ -54,7 +54,7 @@ static const unsigned char yp_number_table[256] = {
 };
 
 static inline size_t
-yp_strspn_char_kind(const char *string, long length, unsigned char kind) {
+yp_strspn_char_kind(const char *string, ptrdiff_t length, unsigned char kind) {
     if (length <= 0) return 0;
 
     size_t size = 0;
@@ -67,21 +67,21 @@ yp_strspn_char_kind(const char *string, long length, unsigned char kind) {
 // Returns the number of characters at the start of the string that are
 // whitespace. Disallows searching past the given maximum number of characters.
 size_t
-yp_strspn_whitespace(const char *string, long length) {
+yp_strspn_whitespace(const char *string, ptrdiff_t length) {
     return yp_strspn_char_kind(string, length, YP_CHAR_BIT_WHITESPACE);
 }
 
 // Returns the number of characters at the start of the string that are inline
 // whitespace. Disallows searching past the given maximum number of characters.
 size_t
-yp_strspn_inline_whitespace(const char *string, long length) {
+yp_strspn_inline_whitespace(const char *string, ptrdiff_t length) {
     return yp_strspn_char_kind(string, length, YP_CHAR_BIT_INLINE_WHITESPACE);
 }
 
 // Returns the number of characters at the start of the string that are regexp
 // options. Disallows searching past the given maximum number of characters.
 size_t
-yp_strspn_regexp_option(const char *string, long length) {
+yp_strspn_regexp_option(const char *string, ptrdiff_t length) {
     return yp_strspn_char_kind(string, length, YP_CHAR_BIT_REGEXP_OPTION);
 }
 
@@ -103,7 +103,7 @@ yp_char_is_inline_whitespace(const char c) {
 }
 
 static inline size_t
-yp_strspn_number_kind(const char *string, long length, unsigned char kind) {
+yp_strspn_number_kind(const char *string, ptrdiff_t length, unsigned char kind) {
     if (length <= 0) return 0;
 
     size_t size = 0;
@@ -117,7 +117,7 @@ yp_strspn_number_kind(const char *string, long length, unsigned char kind) {
 // digits or underscores. Disallows searching past the given maximum number of
 // characters.
 size_t
-yp_strspn_binary_number(const char *string, long length) {
+yp_strspn_binary_number(const char *string, ptrdiff_t length) {
     return yp_strspn_number_kind(string, length, YP_NUMBER_BIT_BINARY_NUMBER);
 }
 
@@ -125,14 +125,14 @@ yp_strspn_binary_number(const char *string, long length) {
 // digits or underscores.  Disallows searching past the given maximum number of
 // characters.
 size_t
-yp_strspn_octal_number(const char *string, long length) {
+yp_strspn_octal_number(const char *string, ptrdiff_t length) {
     return yp_strspn_number_kind(string, length, YP_NUMBER_BIT_OCTAL_NUMBER);
 }
 
 // Returns the number of characters at the start of the string that are decimal
 // digits. Disallows searching past the given maximum number of characters.
 size_t
-yp_strspn_decimal_digit(const char *string, long length) {
+yp_strspn_decimal_digit(const char *string, ptrdiff_t length) {
     return yp_strspn_number_kind(string, length, YP_NUMBER_BIT_DECIMAL_DIGIT);
 }
 
@@ -140,7 +140,7 @@ yp_strspn_decimal_digit(const char *string, long length) {
 // digits or underscores. Disallows searching past the given maximum number of
 // characters.
 size_t
-yp_strspn_decimal_number(const char *string, long length) {
+yp_strspn_decimal_number(const char *string, ptrdiff_t length) {
     return yp_strspn_number_kind(string, length, YP_NUMBER_BIT_DECIMAL_NUMBER);
 }
 
@@ -148,7 +148,7 @@ yp_strspn_decimal_number(const char *string, long length) {
 // hexadecimal digits. Disallows searching past the given maximum number of
 // characters.
 size_t
-yp_strspn_hexadecimal_digit(const char *string, long length) {
+yp_strspn_hexadecimal_digit(const char *string, ptrdiff_t length) {
     return yp_strspn_number_kind(string, length, YP_NUMBER_BIT_HEXADECIMAL_DIGIT);
 }
 
@@ -156,7 +156,7 @@ yp_strspn_hexadecimal_digit(const char *string, long length) {
 // hexadecimal digits or underscores. Disallows searching past the given maximum
 // number of characters.
 size_t
-yp_strspn_hexadecimal_number(const char *string, long length) {
+yp_strspn_hexadecimal_number(const char *string, ptrdiff_t length) {
     return yp_strspn_number_kind(string, length, YP_NUMBER_BIT_HEXADECIMAL_NUMBER);
 }
 
