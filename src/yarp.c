@@ -21,7 +21,7 @@ yp_version(void) {
 /* Debugging                                                                  */
 /******************************************************************************/
 
-__attribute__((unused)) static const char *
+YP_ATTRIBUTE_UNUSED static const char *
 debug_context(yp_context_t context) {
     switch (context) {
         case YP_CONTEXT_BEGIN: return "BEGIN";
@@ -57,7 +57,7 @@ debug_context(yp_context_t context) {
     return NULL;
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_contexts(yp_parser_t *parser) {
     yp_context_node_t *context_node = parser->current_context;
     fprintf(stderr, "CONTEXTS: ");
@@ -77,7 +77,7 @@ debug_contexts(yp_parser_t *parser) {
     fprintf(stderr, "\n");
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
     yp_buffer_t buffer;
     yp_buffer_init(&buffer);
@@ -87,7 +87,7 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
     yp_buffer_free(&buffer);
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_lex_mode(yp_parser_t *parser) {
     yp_lex_mode_t *lex_mode = parser->lex_modes.current;
     bool first = true;
@@ -116,7 +116,7 @@ debug_lex_mode(yp_parser_t *parser) {
     fprintf(stderr, "\n");
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_state(yp_parser_t *parser) {
     fprintf(stderr, "STATE: ");
     bool first = true;
@@ -152,12 +152,12 @@ debug_state(yp_parser_t *parser) {
     fprintf(stderr, "\n");
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_token(yp_token_t * token) {
     fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_scope(yp_parser_t *parser) {
     fprintf(stderr, "SCOPE:\n");
 
@@ -336,7 +336,7 @@ yp_arguments(yp_parser_t *parser) {
 }
 
 static inline void *
-yp_alloc(__attribute__((unused)) yp_parser_t *parser, size_t size) {
+yp_alloc(YP_ATTRIBUTE_UNUSED yp_parser_t *parser, size_t size) {
     return malloc(size);
 }
 
@@ -11595,7 +11595,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
                 yp_location_t *content_loc = &((yp_regular_expression_node_t *) node)->content_loc;
 
-                __attribute__((unused)) bool captured_group_names =
+                YP_ATTRIBUTE_UNUSED bool captured_group_names =
                 yp_regexp_named_capture_group_names(content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures);
                 // We assert that the the regex was successfully parsed
                 assert(captured_group_names);
