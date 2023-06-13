@@ -3527,32 +3527,40 @@ yp_parser_scope_pop(yp_parser_t *parser) {
 /* Basic character checks                                                     */
 /******************************************************************************/
 
+// This function is used extremely frequently to lex all of the identifiers in a
+// source file, so it's important that it be as fast as possible. For this
+// reason we have the encoding_changed boolean to check if we need to go through
+// the function pointer or can just directly use the UTF-8 functions.
 static inline size_t
 char_is_identifier_start(yp_parser_t *parser, const char *c) {
-    if (*c == '_') {
-        return 1;
-    } else if (((unsigned char) *c) > 127) {
-        return 1;
-    } else {
-        return parser->encoding.alpha_char(c);
-    }
+    const unsigned char uc = (unsigned char) *c;
+
+    return (
+        (parser->encoding_changed
+            ? parser->encoding.alpha_char(c)
+            : (uc < 0x80 ? (yp_encoding_unicode_table[uc] & YP_ENCODING_ALPHABETIC_BIT ? 1 : 0) : yp_encoding_utf_8_alpha_char(c))
+        ) || (uc == '_') || (uc >= 0x80)
+    );
 }
 
+// Like the above, this function is also used extremely frequently to lex all of
+// the identifiers in a source file once the first character has been found. So
+// it's important that it be as fast as possible.
 static inline size_t
 char_is_identifier(yp_parser_t *parser, const char *c) {
-    size_t width;
+    const unsigned char uc = (unsigned char) *c;
 
-    if ((width = parser->encoding.alnum_char(c))) {
-        return width;
-    } else if (*c == '_') {
-        return 1;
-    } else if (((unsigned char) *c) > 127) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return (
+        (parser->encoding_changed
+            ? parser->encoding.alnum_char(c)
+            : (uc < 0x80 ? (yp_encoding_unicode_table[uc] & YP_ENCODING_ALPHANUMERIC_BIT ? 1 : 0) : yp_encoding_utf_8_alnum_char(c))
+        ) || (uc == '_') || (uc >= 0x80)
+    );
 }
 
+// Here we're defining a perfect hash for the characters that are allowed in
+// global names. This is used to quickly check the next character after a $ to
+// see if it's a valid character for a global name.
 #define BIT(c, idx) (((c) / 32 - 1 == idx) ? (1U << ((c) % 32)) : 0)
 #define PUNCT(idx) ( \
                 BIT('~', idx) | BIT('*', idx) | BIT('$', idx) | BIT('?', idx) | \
@@ -3946,6 +3954,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
 #define ENCODING(value, prebuilt) \
     if (width == sizeof(value) - 1 && strncasecmp(encoding_start, value, sizeof(value) - 1) == 0) { \
         parser->encoding = prebuilt; \
+        parser->encoding_changed |= true; \
         if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
         return; \
     }
@@ -3956,6 +3965,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
 #define ENCODING_EXTENDABLE(value, prebuilt) \
     if (strncasecmp(encoding_start, value, sizeof(value) - 1) == 0) { \
         parser->encoding = prebuilt; \
+        parser->encoding_changed |= true; \
         if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
         return; \
     }
@@ -12048,6 +12058,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
         .current_context = NULL,
         .recovering = false,
         .encoding = yp_encoding_utf_8,
+        .encoding_changed = false,
         .encoding_changed_callback = NULL,
         .encoding_decode_callback = NULL,
         .encoding_comment_start = source,

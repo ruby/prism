@@ -10,8 +10,8 @@ typedef uint32_t unicode_codepoint_t;
 // this table is different from other encodings where we used a lookup table
 // because the indices of those tables are the byte representations, not the
 // codepoints themselves.
-static unsigned char yp_encoding_unicode_table[256] = {
-  //0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+unsigned char yp_encoding_unicode_table[256] = {
+//  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1x
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2x
