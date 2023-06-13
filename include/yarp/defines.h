@@ -20,4 +20,11 @@
 #       endif
 #   endif
 #endif
+
+#if defined(_WIN32)
+# define YP_ATTRIBUTE_UNUSED
+#else
+# define YP_ATTRIBUTE_UNUSED __attribute__((unused))
+#endif
+
 #endif
