@@ -353,6 +353,11 @@ struct yp_parser {
     // it's parsing so that it can change with a magic comment.
     yp_encoding_t encoding;
 
+    // Whether or not the encoding has been changed by a magic comment. We use
+    // this to provide a fast path for the lexer instead of going through the
+    // function pointer.
+    bool encoding_changed;
+
     // When the encoding that is being used to parse the source is changed by
     // YARP, we provide the ability here to call out to a user-defined function.
     yp_encoding_changed_callback_t encoding_changed_callback;

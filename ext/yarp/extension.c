@@ -436,6 +436,20 @@ compile(VALUE self, VALUE string) {
     return result;
 }
 
+static VALUE
+profile_file(VALUE self, VALUE filepath) {
+    source_t source;
+    if (source_file_load(&source, filepath) != 0) return Qnil;
+
+    yp_parser_t parser;
+    yp_parser_init(&parser, source.source, source.size, StringValueCStr(filepath));
+
+    yp_node_t *node = yp_parse(&parser);
+    yp_node_destroy(&parser, node);
+
+    return Qnil;
+}
+
 RUBY_FUNC_EXPORTED void
 Init_yarp(void) {
     if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
@@ -475,6 +489,8 @@ Init_yarp(void) {
     rb_define_singleton_method(rb_cYARP, "memsize", memsize, 1);
 
     rb_define_singleton_method(rb_cYARP, "compile", compile, 1);
+
+    rb_define_singleton_method(rb_cYARP, "profile_file", profile_file, 1);
 
     Init_yarp_pack();
 }
