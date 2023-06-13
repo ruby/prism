@@ -1,5 +1,5 @@
 #include "yarp/defines.h"
-#include <strings.h>
+#include <string.h>
 
 int main() {
     strncasecmp("", "", 0);
