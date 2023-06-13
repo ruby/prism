@@ -13,8 +13,8 @@ yp_constant_id_list_init(yp_constant_id_list_t *list) {
 bool
 yp_constant_id_list_append(yp_constant_id_list_t *list, yp_constant_id_t id) {
     if (list->size >= list->capacity) {
-        list->capacity = list->capacity == 0 ? 1 : list->capacity * 2;
-        list->ids = realloc(list->ids, sizeof(yp_constant_id_list_t) * list->capacity);
+        list->capacity = list->capacity == 0 ? 8 : list->capacity * 2;
+        list->ids = (yp_constant_id_t *) realloc(list->ids, sizeof(yp_constant_id_t) * list->capacity);
         if (list->ids == NULL) return false;
     }
 
