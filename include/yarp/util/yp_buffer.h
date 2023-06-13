@@ -18,10 +18,10 @@ typedef struct {
 } yp_buffer_t;
 
 // Allocate a new yp_buffer_t.
-YP_EXPORTED_FUNCTION extern yp_buffer_t * yp_buffer_alloc(void);
+YP_EXPORTED_FUNCTION yp_buffer_t * yp_buffer_alloc(void);
 
 // Initialize a yp_buffer_t with its default values.
-YP_EXPORTED_FUNCTION extern void yp_buffer_init(yp_buffer_t *buffer);
+YP_EXPORTED_FUNCTION void yp_buffer_init(yp_buffer_t *buffer);
 
 // Append the given amount of space as zeroes to the buffer.
 void yp_buffer_append_zeroes(yp_buffer_t *buffer, size_t length);
@@ -36,6 +36,6 @@ void yp_buffer_append_u8(yp_buffer_t *buffer, uint8_t value);
 void yp_buffer_append_u32(yp_buffer_t *buffer, uint32_t value);
 
 // Free the memory associated with the buffer.
-YP_EXPORTED_FUNCTION extern void yp_buffer_free(yp_buffer_t *buffer);
+YP_EXPORTED_FUNCTION void yp_buffer_free(yp_buffer_t *buffer);
 
 #endif
