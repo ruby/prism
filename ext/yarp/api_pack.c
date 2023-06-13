@@ -156,10 +156,7 @@ pack_encoding_to_ruby(yp_pack_encoding encoding) {
 
 static VALUE
 pack_parse(VALUE self, VALUE version_symbol, VALUE variant_symbol, VALUE format_string) {
-    yp_pack_version version;
-    if (version_symbol == v3_2_0_symbol) {
-        version = YP_PACK_VERSION_3_2_0;
-    } else {
+    if (version_symbol != v3_2_0_symbol) {
         rb_raise(rb_eArgError, "invalid version");
     }
 
@@ -190,7 +187,7 @@ pack_parse(VALUE self, VALUE version_symbol, VALUE variant_symbol, VALUE format_
 
         const char *directive_start = format;
 
-        yp_pack_result parse_result = yp_pack_parse(version, variant, &format, format_end, &type, &signed_type, &endian,
+        yp_pack_result parse_result = yp_pack_parse(variant, &format, format_end, &type, &signed_type, &endian,
                                                                                                 &size, &length_type, &length, &encoding);
 
         const char *directive_end = format;
