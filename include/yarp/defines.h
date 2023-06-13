@@ -9,8 +9,15 @@
 #define _XOPEN_SOURCE 700
 #endif
 
-#ifndef YP_EXPORTED_FUNCTION
-#define YP_EXPORTED_FUNCTION __attribute__((__visibility__("default")))
+#if defined(_WIN32)
+#   define YP_EXPORTED_FUNCTION __declspec(dllexport) extern
+#else
+#   ifndef YP_EXPORTED_FUNCTION
+#       ifndef RUBY_FUNC_EXPORTED
+#           define YP_EXPORTED_FUNCTION __attribute__((__visibility__("default"))) extern
+#       else
+#           define YP_EXPORTED_FUNCTION RUBY_FUNC_EXPORTED
+#       endif
+#   endif
 #endif
-
 #endif
