@@ -1,3 +1,4 @@
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
 #include "yarp/node.h"
 
 // Clear the node but preserves the location.
@@ -104,6 +105,7 @@ YP_EXPORTED_FUNCTION void
 yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
     switch (node->type) {
         <%- nodes.each do |node| -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
         case <%= node.type %>:
             <%- node.params.each do |param| -%>
             <%- case param -%>
@@ -128,6 +130,7 @@ yp_node_destroy(yp_parser_t *parser, yp_node_t *node) {
             <%- end -%>
             break;
         <%- end -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
         default:
             assert(false && "unreachable");
             break;
@@ -141,6 +144,7 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
 
     switch (node->type) {
         <%- nodes.each do |node| -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
         case <%= node.type %>: {
             memsize->memsize += sizeof(yp_<%= node.human %>_t);
             <%- node.params.each do |param| -%>
@@ -167,6 +171,7 @@ yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize) {
             break;
         }
         <%- end -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
     }
 }
 
