@@ -57,7 +57,7 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake
       env:
-        YARP_DEBUG: "1"
+        YARP_DEBUG_MODE_BUILD: "1"
 
   lex-ruby:
     runs-on: ubuntu-latest

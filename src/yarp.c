@@ -11,11 +11,11 @@ yp_version(void) {
     return YP_VERSION_MACRO;
 }
 
-#ifndef YP_DEBUG
-#define YP_DEBUG 0
+#ifndef YP_DEBUG_LOGGING
+#define YP_DEBUG_LOGGING 0
 #endif
 
-#if YP_DEBUG
+#if YP_DEBUG_LOGGING
 
 /******************************************************************************/
 /* Debugging                                                                  */
@@ -267,7 +267,7 @@ lex_state_set(yp_parser_t *parser, yp_lex_state_t state) {
     parser->lex_state = state;
 }
 
-#if YP_DEBUG
+#if YP_DEBUG_LOGGING
 static inline void
 debug_lex_state_set(yp_parser_t *parser, yp_lex_state_t state, char const * caller_name, int line_number) {
     fprintf(stderr, "Caller: %s:%d\nPrevious: ", caller_name, line_number);

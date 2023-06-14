@@ -297,13 +297,13 @@ static VALUE
 parse(VALUE self, VALUE string) {
     source_t source;
     source_string_load(&source, string);
-#ifdef YARP_DEBUG
+#ifdef YARP_DEBUG_MODE_BUILD
     char* dup = malloc(source.size);
     memcpy(dup, source.source, source.size);
     source.source = dup;
 #endif
     VALUE value = parse_source(&source, NULL);
-#ifdef YARP_DEBUG
+#ifdef YARP_DEBUG_MODE_BUILD
     free(dup);
 #endif
     return value;

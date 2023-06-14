@@ -2,8 +2,8 @@
 
 require "mkmf"
 
-if ENV["YARP_DEBUG"]
-  $CFLAGS << " -DYARP_DEBUG"
+if ENV["YARP_DEBUG_MODE_BUILD"]
+  $CFLAGS << " -DYARP_DEBUG_MODE_BUILD"
 end
 
 if ENV["BUNDLE"]
