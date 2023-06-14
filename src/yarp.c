@@ -1972,7 +1972,7 @@ yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *openin
                 .end = closing->end,
             },
         },
-        .opening = *opening,
+        .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
         .closing = *closing,
         .parts = parts == NULL ? YP_EMPTY_NODE_LIST : *parts
     };

@@ -10,7 +10,7 @@ ProgramNode(0...31)(
          [KeywordHashNode(2...11)(
             [AssocNode(2...11)(
                InterpolatedSymbolNode(2...9)(
-                 STRING_BEGIN(2...3)("\""),
+                 (2...3),
                  [StringInterpolatedNode(3...7)(
                     (3...5),
                     StatementsNode(5...6)(

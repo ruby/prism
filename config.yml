@@ -1009,8 +1009,8 @@ nodes:
           ^^^^^^^^^^^^^^^^
   - name: InterpolatedSymbolNode
     child_nodes:
-      - name: opening
-        type: token?
+      - name: opening_loc
+        type: location?
       - name: parts
         type: node[]
       - name: closing

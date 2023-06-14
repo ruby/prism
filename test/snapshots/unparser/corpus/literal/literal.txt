@@ -293,7 +293,7 @@ ProgramNode(0...916)(
        "foo"
      ),
      InterpolatedSymbolNode(449...455)(
-       SYMBOL_BEGIN(449...451)(":\""),
+       (449...451),
        [StringNode(451...454)(nil, (451...454), nil, "A B")],
        STRING_END(454...455)("\"")
      ),
@@ -304,17 +304,17 @@ ProgramNode(0...916)(
        "foo"
      ),
      InterpolatedSymbolNode(461...467)(
-       SYMBOL_BEGIN(461...463)(":\""),
+       (461...463),
        [StringNode(463...466)(nil, (463...466), nil, "A B")],
        STRING_END(466...467)("\"")
      ),
      InterpolatedSymbolNode(468...475)(
-       SYMBOL_BEGIN(468...470)(":\""),
+       (468...470),
        [StringNode(470...474)(nil, (470...474), nil, "A\"B")],
        STRING_END(474...475)("\"")
      ),
      InterpolatedSymbolNode(476...479)(
-       SYMBOL_BEGIN(476...478)(":\""),
+       (476...478),
        [],
        STRING_END(478...479)("\"")
      ),
@@ -400,7 +400,7 @@ ProgramNode(0...916)(
        4
      ),
      InterpolatedSymbolNode(582...597)(
-       SYMBOL_BEGIN(582...584)(":\""),
+       (582...584),
        [StringNode(584...587)(nil, (584...587), nil, "foo"),
         StringInterpolatedNode(587...593)(
           (587...589),
@@ -422,7 +422,7 @@ ProgramNode(0...916)(
        STRING_END(596...597)("\"")
      ),
      InterpolatedSymbolNode(598...609)(
-       SYMBOL_BEGIN(598...600)(":\""),
+       (598...600),
        [StringInterpolatedNode(600...608)(
           (600...602),
           StatementsNode(602...607)(
@@ -688,7 +688,7 @@ ProgramNode(0...916)(
        (828...829),
        [AssocNode(830...841)(
           InterpolatedSymbolNode(830...836)(
-            SYMBOL_BEGIN(830...832)(":\""),
+            (830...832),
             [StringNode(832...835)(nil, (832...835), nil, "a b")],
             STRING_END(835...836)("\"")
           ),
@@ -753,7 +753,7 @@ ProgramNode(0...916)(
        "foo"
      ),
      InterpolatedSymbolNode(893...901)(
-       SYMBOL_BEGIN(893...895)(":\""),
+       (893...895),
        [StringNode(895...900)(nil, (895...900), nil, "a\\\n" + "b")],
        STRING_END(900...901)("\"")
      ),

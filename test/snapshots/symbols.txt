@@ -8,7 +8,7 @@ ProgramNode(0...345)(
        "abc"
      ),
      InterpolatedSymbolNode(8...17)(
-       SYMBOL_BEGIN(8...10)(":\""),
+       (8...10),
        [StringInterpolatedNode(10...16)(
           (10...12),
           StatementsNode(12...15)(
@@ -28,7 +28,7 @@ ProgramNode(0...345)(
        STRING_END(16...17)("\"")
      ),
      InterpolatedSymbolNode(19...29)(
-       SYMBOL_BEGIN(19...21)(":\""),
+       (19...21),
        [StringNode(21...24)(nil, (21...24), nil, "abc"),
         StringInterpolatedNode(24...28)(
           (24...26),

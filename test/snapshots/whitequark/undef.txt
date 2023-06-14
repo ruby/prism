@@ -10,7 +10,7 @@ ProgramNode(0...27)(
           "bar"
         ),
         InterpolatedSymbolNode(17...27)(
-          SYMBOL_BEGIN(17...19)(":\""),
+          (17...19),
           [StringNode(19...22)(nil, (19...22), nil, "foo"),
            StringInterpolatedNode(22...26)(
              (22...24),

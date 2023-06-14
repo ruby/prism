@@ -114,12 +114,12 @@ ProgramNode(1...444)(
        0
      ),
      InterpolatedSymbolNode(268...274)(
-       SYMBOL_BEGIN(268...270)(":\""),
+       (268...270),
        [StringNode(270...273)(nil, (270...273), nil, "\#@1")],
        STRING_END(273...274)("\"")
      ),
      InterpolatedSymbolNode(277...284)(
-       SYMBOL_BEGIN(277...279)(":\""),
+       (277...279),
        [StringNode(279...283)(nil, (279...283), nil, "\#@@1")],
        STRING_END(283...284)("\"")
      ),

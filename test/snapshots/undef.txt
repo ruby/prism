@@ -64,7 +64,7 @@ ProgramNode(0...116)(
      ),
      UndefNode(84...100)(
        [InterpolatedSymbolNode(90...100)(
-          SYMBOL_BEGIN(90...92)(":\""),
+          (90...92),
           [StringNode(92...95)(nil, (92...95), nil, "abc"),
            StringInterpolatedNode(95...99)(
              (95...97),
