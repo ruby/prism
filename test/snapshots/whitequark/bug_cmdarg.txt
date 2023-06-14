@@ -9,7 +9,7 @@ ProgramNode(0...52)(
        ArgumentsNode(7...15)(
          [KeywordHashNode(7...15)(
             [AssocNode(7...15)(
-               SymbolNode(7...10)(nil, (7...9), LABEL_END(9...10)(":"), "do"),
+               SymbolNode(7...10)(nil, (7...9), (9...10), "do"),
                TrueNode(11...15)(),
                nil
              )]
@@ -48,12 +48,7 @@ ProgramNode(0...52)(
        ArgumentsNode(32...52)(
          [KeywordHashNode(32...52)(
             [AssocNode(32...52)(
-               SymbolNode(32...34)(
-                 nil,
-                 (32...33),
-                 LABEL_END(33...34)(":"),
-                 "x"
-               ),
+               SymbolNode(32...34)(nil, (32...33), (33...34), "x"),
                LambdaNode(35...52)(
                  [],
                  (35...37),

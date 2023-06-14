@@ -7,12 +7,7 @@ ProgramNode(0...35)(
           HashPatternNode(11...23)(
             nil,
             [AssocNode(11...15)(
-               SymbolNode(11...13)(
-                 nil,
-                 (11...12),
-                 LABEL_END(12...13)(":"),
-                 "b"
-               ),
+               SymbolNode(11...13)(nil, (11...12), (12...13), "b"),
                LocalVariableWriteNode(14...15)(:c, 0, nil, (14...15), nil),
                nil
              ),

@@ -9,7 +9,7 @@ ProgramNode(0...24)(
        ArgumentsNode(2...23)(
          [KeywordHashNode(2...23)(
             [AssocNode(2...23)(
-               SymbolNode(2...4)(nil, (2...3), LABEL_END(3...4)(":"), "b"),
+               SymbolNode(2...4)(nil, (2...3), (3...4), "b"),
                IfNode(5...23)(
                  (5...7),
                  SymbolNode(8...10)((8...9), (9...10), nil, "c"),

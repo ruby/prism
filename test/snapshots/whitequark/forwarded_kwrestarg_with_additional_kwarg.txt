@@ -23,12 +23,7 @@ ProgramNode(0...41)(
               [KeywordHashNode(17...35)(
                  [AssocSplatNode(17...19)(nil, (17...19)),
                   AssocNode(21...35)(
-                    SymbolNode(21...30)(
-                      nil,
-                      (21...29),
-                      LABEL_END(29...30)(":"),
-                      "from_foo"
-                    ),
+                    SymbolNode(21...30)(nil, (21...29), (29...30), "from_foo"),
                     TrueNode(31...35)(),
                     nil
                   )]

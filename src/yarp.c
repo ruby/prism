@@ -3150,7 +3150,7 @@ yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
         .value_loc = YP_LOCATION_TOKEN_VALUE(value),
-        .closing = *closing
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
     };
 
     return node;
@@ -3173,14 +3173,20 @@ yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
 // Check if the given node is a label in a hash.
 static bool
 yp_symbol_node_label_p(yp_node_t *node) {
-    return (
-        (node->type == YP_NODE_SYMBOL_NODE && ((yp_symbol_node_t *) node)->closing.type == YP_TOKEN_LABEL_END) ||
-        (
-            node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE &&
-            ((yp_interpolated_symbol_node_t *) node)->closing_loc.end != NULL &&
-            ((yp_interpolated_symbol_node_t *) node)->closing_loc.end[-1] == ':'
-        )
-    );
+    const char *end = NULL;
+
+    switch (node->type) {
+        case YP_NODE_SYMBOL_NODE:
+            end = ((yp_symbol_node_t *) node)->closing_loc.end;
+            break;
+        case YP_NODE_INTERPOLATED_SYMBOL_NODE:
+            end = ((yp_interpolated_symbol_node_t *) node)->closing_loc.end;
+            break;
+        default:
+            return false;
+    }
+
+    return (end != NULL) && (end[-1] == ':');
 }
 
 // Convert the given SymbolNode node to a StringNode node.
@@ -3195,7 +3201,7 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
         },
         .opening_loc = node->opening_loc,
         .content_loc = node->value_loc,
-        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(&node->closing),
+        .closing_loc = node->closing_loc,
         .unescaped = node->unescaped
     };
 

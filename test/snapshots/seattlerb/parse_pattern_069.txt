@@ -7,12 +7,7 @@ ProgramNode(0...31)(
           HashPatternNode(11...23)(
             ConstantReadNode(11...17)(),
             [AssocNode(18...22)(
-               SymbolNode(18...20)(
-                 nil,
-                 (18...19),
-                 LABEL_END(19...20)(":"),
-                 "b"
-               ),
+               SymbolNode(18...20)(nil, (18...19), (19...20), "b"),
                IntegerNode(21...22)(),
                nil
              )],

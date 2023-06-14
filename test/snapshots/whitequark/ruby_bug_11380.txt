@@ -17,12 +17,7 @@ ProgramNode(0...28)(
           ),
           KeywordHashNode(17...21)(
             [AssocNode(17...21)(
-               SymbolNode(17...19)(
-                 nil,
-                 (17...18),
-                 LABEL_END(18...19)(":"),
-                 "a"
-               ),
+               SymbolNode(17...19)(nil, (17...18), (18...19), "a"),
                IntegerNode(20...21)(),
                nil
              )]

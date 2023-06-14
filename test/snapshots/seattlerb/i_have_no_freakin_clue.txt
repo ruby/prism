@@ -33,12 +33,7 @@ ProgramNode(0...20)(
        ArgumentsNode(16...20)(
          [KeywordHashNode(16...20)(
             [AssocNode(16...20)(
-               SymbolNode(16...18)(
-                 nil,
-                 (16...17),
-                 LABEL_END(17...18)(":"),
-                 "d"
-               ),
+               SymbolNode(16...18)(nil, (16...17), (17...18), "d"),
                IntegerNode(19...20)(),
                nil
              )]

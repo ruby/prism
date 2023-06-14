@@ -10,12 +10,7 @@ ProgramNode(0...19)(
          [SymbolNode(4...8)((4...5), (5...8), nil, "bar"),
           KeywordHashNode(10...18)(
             [AssocNode(10...18)(
-               SymbolNode(10...14)(
-                 nil,
-                 (10...13),
-                 LABEL_END(13...14)(":"),
-                 "baz"
-               ),
+               SymbolNode(10...14)(nil, (10...13), (13...14), "baz"),
                NilNode(15...18)(),
                nil
              )]

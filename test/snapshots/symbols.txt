@@ -1,7 +1,7 @@
 ProgramNode(0...345)(
   [],
   StatementsNode(0...345)(
-    [SymbolNode(0...6)((0...2), (2...5), STRING_END(5...6)("'"), "abc"),
+    [SymbolNode(0...6)((0...2), (2...5), (5...6), "abc"),
      InterpolatedSymbolNode(8...17)(
        (8...10),
        [StringInterpolatedNode(10...16)(

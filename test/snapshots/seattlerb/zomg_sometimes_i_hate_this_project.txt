@@ -4,7 +4,7 @@ ProgramNode(6...66)(
     [HashNode(6...66)(
        (6...7),
        [AssocNode(16...41)(
-          SymbolNode(16...18)(nil, (16...17), LABEL_END(17...18)(":"), "a"),
+          SymbolNode(16...18)(nil, (16...17), (17...18), "a"),
           CallNode(19...41)(
             nil,
             nil,
@@ -67,7 +67,7 @@ ProgramNode(6...66)(
           nil
         ),
         AssocNode(51...57)(
-          SymbolNode(51...53)(nil, (51...52), LABEL_END(52...53)(":"), "e"),
+          SymbolNode(51...53)(nil, (51...52), (52...53), "e"),
           NilNode(54...57)(),
           nil
         )],

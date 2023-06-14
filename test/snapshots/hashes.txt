@@ -96,7 +96,7 @@ ProgramNode(0...120)(
      HashNode(46...79)(
        (46...47),
        [AssocNode(54...58)(
-          SymbolNode(54...56)(nil, (54...55), LABEL_END(55...56)(":"), "a"),
+          SymbolNode(54...56)(nil, (54...55), (55...56), "a"),
           CallNode(57...58)(
             nil,
             nil,
@@ -110,7 +110,7 @@ ProgramNode(0...120)(
           nil
         ),
         AssocNode(66...70)(
-          SymbolNode(66...68)(nil, (66...67), LABEL_END(67...68)(":"), "c"),
+          SymbolNode(66...68)(nil, (66...67), (67...68), "c"),
           CallNode(69...70)(
             nil,
             nil,
@@ -128,7 +128,7 @@ ProgramNode(0...120)(
      HashNode(81...106)(
        (81...82),
        [AssocNode(83...87)(
-          SymbolNode(83...85)(nil, (83...84), LABEL_END(84...85)(":"), "a"),
+          SymbolNode(83...85)(nil, (83...84), (84...85), "a"),
           CallNode(86...87)(
             nil,
             nil,
@@ -142,7 +142,7 @@ ProgramNode(0...120)(
           nil
         ),
         AssocNode(89...93)(
-          SymbolNode(89...91)(nil, (89...90), LABEL_END(90...91)(":"), "c"),
+          SymbolNode(89...91)(nil, (89...90), (90...91), "c"),
           CallNode(92...93)(
             nil,
             nil,
@@ -169,12 +169,7 @@ ProgramNode(0...120)(
           (95...97)
         ),
         AssocNode(100...104)(
-          SymbolNode(100...102)(
-            nil,
-            (100...101),
-            LABEL_END(101...102)(":"),
-            "f"
-          ),
+          SymbolNode(100...102)(nil, (100...101), (101...102), "f"),
           CallNode(103...104)(
             nil,
             nil,
@@ -192,12 +187,7 @@ ProgramNode(0...120)(
      HashNode(108...120)(
        (108...109),
        [AssocNode(110...118)(
-          SymbolNode(110...114)(
-            (110...111),
-            (111...112),
-            LABEL_END(112...114)("\":"),
-            "a"
-          ),
+          SymbolNode(110...114)((110...111), (111...112), (112...114), "a"),
           CallNode(115...118)(
             CallNode(116...118)(
               nil,

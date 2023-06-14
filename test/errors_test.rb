@@ -311,7 +311,7 @@ class ErrorsTest < Test::Unit::TestCase
       ArgumentsNode(
         [KeywordHashNode(
            [AssocNode(
-              SymbolNode(nil, Location(), LABEL_END(":"), "foo"),
+              SymbolNode(nil, Location(), Location(), "foo"),
               CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
               nil
             )]

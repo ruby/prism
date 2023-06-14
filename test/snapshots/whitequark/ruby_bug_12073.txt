@@ -16,7 +16,7 @@ ProgramNode(0...49)(
        ArgumentsNode(9...13)(
          [KeywordHashNode(9...13)(
             [AssocNode(9...13)(
-               SymbolNode(9...11)(nil, (9...10), LABEL_END(10...11)(":"), "b"),
+               SymbolNode(9...11)(nil, (9...10), (10...11), "b"),
                IntegerNode(12...13)(),
                nil
              )]

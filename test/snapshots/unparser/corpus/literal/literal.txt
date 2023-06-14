@@ -577,12 +577,7 @@ ProgramNode(0...916)(
      HashNode(775...802)(
        (775...776),
        [AssocNode(777...794)(
-          SymbolNode(777...779)(
-            nil,
-            (777...778),
-            LABEL_END(778...779)(":"),
-            "a"
-          ),
+          SymbolNode(777...779)(nil, (777...778), (778...779), "a"),
           ParenthesesNode(780...794)(
             StatementsNode(781...793)(
               [RescueModifierNode(781...793)(
@@ -606,12 +601,7 @@ ProgramNode(0...916)(
           nil
         ),
         AssocNode(796...800)(
-          SymbolNode(796...798)(
-            nil,
-            (796...797),
-            LABEL_END(797...798)(":"),
-            "b"
-          ),
+          SymbolNode(796...798)(nil, (796...797), (797...798), "b"),
           IntegerNode(799...800)(),
           nil
         )],
@@ -620,22 +610,12 @@ ProgramNode(0...916)(
      HashNode(803...817)(
        (803...804),
        [AssocNode(805...809)(
-          SymbolNode(805...807)(
-            nil,
-            (805...806),
-            LABEL_END(806...807)(":"),
-            "a"
-          ),
+          SymbolNode(805...807)(nil, (805...806), (806...807), "a"),
           IntegerNode(808...809)(),
           nil
         ),
         AssocNode(811...815)(
-          SymbolNode(811...813)(
-            nil,
-            (811...812),
-            LABEL_END(812...813)(":"),
-            "b"
-          ),
+          SymbolNode(811...813)(nil, (811...812), (812...813), "b"),
           IntegerNode(814...815)(),
           nil
         )],
@@ -644,12 +624,7 @@ ProgramNode(0...916)(
      HashNode(818...827)(
        (818...819),
        [AssocNode(820...825)(
-          SymbolNode(820...822)(
-            nil,
-            (820...821),
-            LABEL_END(821...822)(":"),
-            "a"
-          ),
+          SymbolNode(820...822)(nil, (820...821), (821...822), "a"),
           SymbolNode(823...825)((823...824), (824...825), nil, "a"),
           nil
         )],

@@ -174,12 +174,7 @@ ProgramNode(0...293)(
             ArgumentsNode(248...250)(
               [KeywordHashNode(248...250)(
                  [AssocNode(248...250)(
-                    SymbolNode(248...250)(
-                      nil,
-                      (248...249),
-                      LABEL_END(249...250)(":"),
-                      "b"
-                    ),
+                    SymbolNode(248...250)(nil, (248...249), (249...250), "b"),
                     nil,
                     nil
                   )]

@@ -68,7 +68,7 @@ ProgramNode(0...502)(
      ArrayNode(31...44)(
        [KeywordHashNode(32...43)(
           [AssocNode(32...43)(
-             SymbolNode(32...34)(nil, (32...33), LABEL_END(33...34)(":"), "a"),
+             SymbolNode(32...34)(nil, (32...33), (33...34), "a"),
              ArrayNode(35...43)(
                [SymbolNode(36...38)((36...37), (37...38), nil, "b"),
                 SymbolNode(40...42)((40...41), (41...42), nil, "c")],
