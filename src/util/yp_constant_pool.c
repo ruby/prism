@@ -129,7 +129,7 @@ yp_constant_pool_insert(yp_constant_pool_t *pool, const char *start, size_t leng
         index = (index + 1) % pool->capacity;
     }
 
-    yp_constant_id_t id = ++pool->size;
+    yp_constant_id_t id = (yp_constant_id_t)++pool->size;
     pool->constants[index] = (yp_constant_t) {
         .id = id,
         .start = start,
