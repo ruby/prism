@@ -35,12 +35,6 @@ yp_location_list_free(yp_location_list_t *list) {
 static void
 yp_node_memsize_node(yp_node_t *node, yp_memsize_t *memsize);
 
-// Initiailize a list of nodes.
-void
-yp_node_list_init(yp_node_list_t *node_list) {
-    *node_list = (yp_node_list_t) YP_EMPTY_NODE_LIST;
-}
-
 // Calculate the size of the node list in bytes.
 static size_t
 yp_node_list_memsize(yp_node_list_t *node_list, yp_memsize_t *memsize) {

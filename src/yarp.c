@@ -492,10 +492,10 @@ yp_array_node_create(yp_parser_t *parser, const yp_token_t *opening) {
             },
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening)
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
+        .elements = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->elements);
     return node;
 }
 
@@ -538,14 +538,13 @@ yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *node
             },
         },
         .constant = NULL,
-        .rest = NULL
+        .rest = NULL,
+        .requireds = YP_EMPTY_NODE_LIST,
+        .posts = YP_EMPTY_NODE_LIST
     };
 
     // For now we're going to just copy over each pointer manually. This could be
     // much more efficient, as we could instead resize the node list.
-    yp_node_list_init(&node->requireds);
-    yp_node_list_init(&node->posts);
-
     bool found_rest = false;
     for (size_t index = 0; index < nodes->size; index++) {
         yp_node_t *child = nodes->nodes[index];
@@ -574,11 +573,10 @@ yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
             .location = rest->location,
         },
         .constant = NULL,
-        .rest = rest
+        .rest = rest,
+        .requireds = YP_EMPTY_NODE_LIST,
+        .posts = YP_EMPTY_NODE_LIST
     };
-
-    yp_node_list_init(&node->requireds);
-    yp_node_list_init(&node->posts);
 
     return node;
 }
@@ -600,11 +598,10 @@ yp_array_pattern_node_constant_create(yp_parser_t *parser, yp_node_t *constant, 
         .constant = constant,
         .rest = NULL,
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing),
+        .requireds = YP_EMPTY_NODE_LIST,
+        .posts = YP_EMPTY_NODE_LIST
     };
-
-    yp_node_list_init(&node->requireds);
-    yp_node_list_init(&node->posts);
 
     return node;
 }
@@ -626,11 +623,10 @@ yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *openin
         .constant = NULL,
         .rest = NULL,
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing),
+        .requireds = YP_EMPTY_NODE_LIST,
+        .posts = YP_EMPTY_NODE_LIST
     };
-
-    yp_node_list_init(&node->requireds);
-    yp_node_list_init(&node->posts);
 
     return node;
 }
@@ -1138,10 +1134,10 @@ yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node
         .predicate = predicate,
         .consequent = consequent,
         .case_keyword_loc = YP_LOCATION_TOKEN_VALUE(case_keyword),
-        .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword)
+        .end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword),
+        .conditions = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->conditions);
     return node;
 }
 
@@ -1413,13 +1409,13 @@ yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
         },
         .constant = NULL,
         .left = nodes->nodes[0],
-        .right = nodes->nodes[nodes->size - 1]
+        .right = nodes->nodes[nodes->size - 1],
+        .requireds = YP_EMPTY_NODE_LIST
     };
 
     // For now we're going to just copy over each pointer manually. This could be
     // much more efficient, as we could instead resize the node list to only point
     // to 1...-1.
-    yp_node_list_init(&node->requireds);
     for (size_t index = 1; index < nodes->size - 1; index++) {
         yp_node_list_append(&node->requireds, nodes->nodes[index]);
     }
@@ -1525,10 +1521,9 @@ yp_hash_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening
         .constant = NULL,
         .kwrest = NULL,
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing),
+        .assocs = YP_EMPTY_NODE_LIST
     };
-
-    yp_node_list_init(&node->assocs);
 
     return node;
 }
@@ -1547,10 +1542,9 @@ yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assoc
             },
         },
         .constant = NULL,
-        .kwrest = NULL
+        .kwrest = NULL,
+        .assocs = YP_EMPTY_NODE_LIST
     };
-
-    yp_node_list_init(&node->assocs);
 
     for (size_t index = 0; index < assocs->size; index++) {
         yp_node_t *assoc = assocs->nodes[index];
@@ -1612,10 +1606,10 @@ yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening) {
             },
         },
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_LOCATION_NULL_VALUE(parser)
+        .closing_loc = YP_LOCATION_NULL_VALUE(parser),
+        .elements = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->elements);
     return node;
 }
 
@@ -1910,10 +1904,10 @@ yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_tok
         },
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
         .closing_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .flags = 0
+        .flags = 0,
+        .parts = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->parts);
     return node;
 }
 
@@ -1944,14 +1938,9 @@ yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *openin
             },
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing),
+        .parts = parts == NULL ? YP_EMPTY_NODE_LIST : *parts
     };
-
-    if (parts == NULL) {
-        yp_node_list_init(&node->parts);
-    } else {
-        node->parts = *parts;
-    }
 
     return node;
 }
@@ -1984,14 +1973,9 @@ yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *openin
             },
         },
         .opening = *opening,
-        .closing = *closing
+        .closing = *closing,
+        .parts = parts == NULL ? YP_EMPTY_NODE_LIST : *parts
     };
-
-    if (parts == NULL) {
-        yp_node_list_init(&node->parts);
-    } else {
-        node->parts = *parts;
-    }
 
     return node;
 }
@@ -2022,10 +2006,10 @@ yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *openi
             },
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing),
+        .parts = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->parts);
     return node;
 }
 
@@ -2053,10 +2037,10 @@ yp_keyword_hash_node_create(yp_parser_t *parser) {
                 .start = NULL,
                 .end = NULL
             },
-        }
+        },
+        .elements = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->elements);
     return node;
 }
 
@@ -2285,10 +2269,10 @@ yp_multi_write_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_n
         .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
         .value = value,
         .lparen_loc = *lparen_loc,
-        .rparen_loc = *rparen_loc
+        .rparen_loc = *rparen_loc,
+        .targets = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->targets);
     return node;
 }
 
@@ -2484,13 +2468,12 @@ yp_parameters_node_create(yp_parser_t *parser) {
         },
         .rest = NULL,
         .keyword_rest = NULL,
-        .block = NULL
+        .block = NULL,
+        .requireds = YP_EMPTY_NODE_LIST,
+        .optionals = YP_EMPTY_NODE_LIST,
+        .posts = YP_EMPTY_NODE_LIST,
+        .keywords = YP_EMPTY_NODE_LIST
     };
-
-    yp_node_list_init(&node->requireds);
-    yp_node_list_init(&node->optionals);
-    yp_node_list_init(&node->posts);
-    yp_node_list_init(&node->keywords);
 
     return node;
 }
@@ -2751,10 +2734,10 @@ yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_tok
             .location = YP_LOCATION_TOKEN_VALUE(opening)
         },
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = { .start = NULL, .end = NULL }
+        .closing_loc = { .start = NULL, .end = NULL },
+        .parameters = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->parameters);
     return node;
 }
 
@@ -2826,10 +2809,10 @@ yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
         .operator_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
         .exception = NULL,
         .statements = NULL,
-        .consequent = NULL
+        .consequent = NULL,
+        .exceptions = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->exceptions);
     return node;
 }
 
@@ -3231,10 +3214,10 @@ yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
             .type = YP_NODE_UNDEF_NODE,
             .location = YP_LOCATION_TOKEN_VALUE(token),
         },
-        .keyword_loc = YP_LOCATION_TOKEN_VALUE(token)
+        .keyword_loc = YP_LOCATION_TOKEN_VALUE(token),
+        .names = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->names);
     return node;
 }
 
@@ -3357,10 +3340,10 @@ yp_when_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
             }
         },
         .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
-        .statements = NULL
+        .statements = NULL,
+        .conditions = YP_EMPTY_NODE_LIST
     };
 
-    yp_node_list_init(&node->conditions);
     return node;
 }
 
@@ -9123,8 +9106,7 @@ parse_pattern_hash(yp_parser_t *parser, yp_node_t *first_assoc) {
         }
     }
 
-    yp_node_list_t assocs;
-    yp_node_list_init(&assocs);
+    yp_node_list_t assocs = YP_EMPTY_NODE_LIST;
     yp_node_list_append(&assocs, first_assoc);
 
     // If there are any other assocs, then we'll parse them now.
@@ -9514,8 +9496,7 @@ parse_pattern(yp_parser_t *parser, bool top_pattern, const char *message) {
         // If we have a comma, then we are now parsing either an array pattern or a
         // find pattern. We need to parse all of the patterns, put them into a big
         // list, and then determine which type of node we have.
-        yp_node_list_t nodes;
-        yp_node_list_init(&nodes);
+        yp_node_list_t nodes = YP_EMPTY_NODE_LIST;
         yp_node_list_append(&nodes, node);
 
         // Gather up all of the patterns into the list.
@@ -11411,8 +11392,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 // In that case we need to switch to an interpolated string to be able
                 // to contain all of the parts.
                 if (match_type_p(parser, YP_TOKEN_STRING_CONTENT)) {
-                    yp_node_list_t parts;
-                    yp_node_list_init(&parts);
+                    yp_node_list_t parts = YP_EMPTY_NODE_LIST;
 
                     yp_token_t delimiters = not_provided(parser);
                     yp_node_t *part = (yp_node_t *) yp_string_node_create_and_unescape(parser, &delimiters, &content, &delimiters, YP_UNESCAPE_MINIMAL);
@@ -11448,9 +11428,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 } else {
                     // If we get here, then we have interpolation so we'll need to create
                     // a string or symbol node with interpolation.
-                    yp_node_list_t parts;
-                    yp_node_list_init(&parts);
-
+                    yp_node_list_t parts = YP_EMPTY_NODE_LIST;
                     yp_token_t string_opening = not_provided(parser);
                     yp_token_t string_closing = not_provided(parser);
                     yp_node_t *part = (yp_node_t *) yp_string_node_create_and_unescape(parser, &string_opening, &parser->previous, &string_closing, YP_UNESCAPE_ALL);
@@ -11472,8 +11450,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 // If we get here, then the first part of the string is not plain string
                 // content, in which case we need to parse the string as an interpolated
                 // string.
-                yp_node_list_t parts;
-                yp_node_list_init(&parts);
+                yp_node_list_t parts = YP_EMPTY_NODE_LIST;
 
                 while (!match_any_type_p(parser, 3, YP_TOKEN_STRING_END, YP_TOKEN_LABEL_END, YP_TOKEN_EOF)) {
                     yp_node_t *part = parse_string_part(parser);
