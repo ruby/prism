@@ -2,6 +2,10 @@
 
 require "mkmf"
 
+if ENV["YARP_DEBUG"]
+  $CFLAGS << " -DYARP_DEBUG"
+end
+
 if ENV["BUNDLE"]
   # In this version we want to bundle all of the C source files together into
   # the gem so that it can all be compiled together.

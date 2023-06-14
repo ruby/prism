@@ -11,5 +11,5 @@ require "yarp"
 if ARGV[0] == "-e"
   pp YARP.parse(ARGV[1])
 else
-  pp YARP.parse_file_dup(ARGV[0])
+  pp YARP.parse_file(ARGV[0])
 end

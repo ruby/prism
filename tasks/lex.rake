@@ -295,7 +295,7 @@ task "parse:topgems": ["download:topgems", :compile] do
   class ParseTop100GemsTest < Test::Unit::TestCase
     Dir["#{TOP_100_GEMS_DIR}/**/*.rb"].each do |filepath|
       test filepath do
-        result = YARP.parse_file_dup(filepath)
+        result = YARP.parse_file(filepath)
 
         if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
           assert_false result.success?

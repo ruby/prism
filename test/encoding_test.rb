@@ -34,20 +34,20 @@ class EncodingTest < Test::Unit::TestCase
     CP1252
   ].each do |encoding|
     define_method "test_encoding_#{encoding}" do
-      result = YARP.parse_dup("# encoding: #{encoding}\nident")
+      result = YARP.parse("# encoding: #{encoding}\nident")
       actual = result.value.statements.body.first.message.value.encoding
       assert_equal Encoding.find(encoding), actual
     end
   end
 
   def test_coding
-    result = YARP.parse_dup("# coding: utf-8\nident")
+    result = YARP.parse("# coding: utf-8\nident")
     actual = result.value.statements.body.first.message.value.encoding
     assert_equal Encoding.find("utf-8"), actual
   end
 
   def test_emacs_style
-    result = YARP.parse_dup("# -*- coding: utf-8 -*-\nident")
+    result = YARP.parse("# -*- coding: utf-8 -*-\nident")
     actual = result.value.statements.body.first.message.value.encoding
     assert_equal Encoding.find("utf-8"), actual
   end
@@ -59,7 +59,7 @@ class EncodingTest < Test::Unit::TestCase
       utf-8-mac
       utf-8-*
     ].each do |encoding|
-      result = YARP.parse_dup("# coding: #{encoding}\nident")
+      result = YARP.parse("# coding: #{encoding}\nident")
       actual = result.value.statements.body.first.message.value.encoding
       assert_equal Encoding.find("utf-8"), actual
     end
