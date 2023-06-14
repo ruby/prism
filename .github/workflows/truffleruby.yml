@@ -35,7 +35,7 @@ jobs:
       run: echo "$PWD/truffleruby-ws/truffleruby/bin" >> $GITHUB_PATH
 
     - name: Restore ~/.mx/cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.mx/cache
         key: mx-cache-${{ runner.os }}
