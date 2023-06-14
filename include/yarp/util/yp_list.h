@@ -15,13 +15,13 @@
 //       int value;
 //     } yp_int_node_t;
 //
-//     yp_list_t *list = yp_list_alloc();
-//     yp_list_init(list);
+//     yp_list_t list;
+//     yp_list_init(&list);
 //
 //     yp_int_node_t *node = malloc(sizeof(yp_int_node_t));
 //     node->value = 5;
 //
-//     yp_list_append(list, &node->node);
+//     yp_list_append(&list, &node->node);
 //
 // The yp_list_t struct is used to represent the overall linked list. It
 // contains a pointer to the head and tail of the list. This allows for easy
@@ -48,9 +48,6 @@ typedef struct {
     yp_list_node_t *head;
     yp_list_node_t *tail;
 } yp_list_t;
-
-// Allocate a new list.
-yp_list_t * yp_list_alloc(void);
 
 // Initializes a new list.
 YP_EXPORTED_FUNCTION void yp_list_init(yp_list_t *list);

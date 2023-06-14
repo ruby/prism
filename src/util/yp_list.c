@@ -1,11 +1,5 @@
 #include "yarp/util/yp_list.h"
 
-// Allocate a new list.
-yp_list_t *
-yp_list_alloc(void) {
-    return malloc(sizeof(yp_list_t));
-}
-
 // Initializes a new list.
 YP_EXPORTED_FUNCTION void
 yp_list_init(yp_list_t *list) {

@@ -131,9 +131,10 @@ dump_source(source_t *source, const char *filepath) {
     yp_parser_init(&parser, source->source, source->size, filepath);
 
     yp_node_t *node = yp_parse(&parser);
-    yp_buffer_t buffer;
 
-    yp_buffer_init(&buffer);
+    yp_buffer_t buffer;
+    if (!yp_buffer_init(&buffer)) rb_raise(rb_eNoMemError, "failed to allocate memory");
+
     yp_serialize(&parser, node, &buffer);
     VALUE dumped = rb_str_new(buffer.value, buffer.length);
 

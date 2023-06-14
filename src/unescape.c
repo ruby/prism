@@ -453,7 +453,13 @@ yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *str
 
     // Here we have found an escape character, so we need to handle all escapes
     // within the string.
-    yp_string_owned_init(string, malloc(length), length);
+    char *allocated = malloc(length);
+    if (allocated == NULL) {
+        yp_diagnostic_list_append(error_list, value, value + length, "Failed to allocate memory for unescaping.");
+        return;
+    }
+
+    yp_string_owned_init(string, allocated, length);
 
     // This is the memory address where we're putting the unescaped string.
     char *dest = string->as.owned.source;

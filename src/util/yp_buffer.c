@@ -2,18 +2,14 @@
 
 #define YP_BUFFER_INITIAL_SIZE 1024
 
-// Allocate a new yp_buffer_t.
-yp_buffer_t *
-yp_buffer_alloc(void) {
-    return (yp_buffer_t *) malloc(sizeof(yp_buffer_t));
-}
-
 // Initialize a yp_buffer_t with its default values.
-void
+bool
 yp_buffer_init(yp_buffer_t *buffer) {
-    buffer->value = (char *) malloc(YP_BUFFER_INITIAL_SIZE);
     buffer->length = 0;
     buffer->capacity = YP_BUFFER_INITIAL_SIZE;
+
+    buffer->value = (char *) malloc(YP_BUFFER_INITIAL_SIZE);
+    return buffer->value != NULL;
 }
 
 // Append the given amount of space to the buffer.

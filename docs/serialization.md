@@ -68,7 +68,7 @@ typedef struct {
 } yp_buffer_t;
 
 // Initialize a yp_buffer_t with its default values.
-void yp_buffer_init(yp_buffer_t *);
+bool yp_buffer_init(yp_buffer_t *);
 
 // Free the memory associated with the buffer.
 void yp_buffer_free(yp_buffer_t *);
@@ -84,9 +84,9 @@ Typically you would use a stack-allocated `yp_buffer_t` and call `yp_parse_seria
 void
 serialize(const char *source, size_t length) {
   yp_buffer_t buffer;
-  yp_buffer_init(&buffer);
-  yp_parse_serialize(source, length, &buffer);
+  if (!yp_buffer_init(&buffer)) return;
 
+  yp_parse_serialize(source, length, &buffer);
   // Do something with the serialized string.
 
   yp_buffer_free(&buffer);

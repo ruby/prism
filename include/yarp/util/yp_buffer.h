@@ -4,6 +4,7 @@
 #include "yarp/defines.h"
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,11 +18,8 @@ typedef struct {
     size_t capacity;
 } yp_buffer_t;
 
-// Allocate a new yp_buffer_t.
-YP_EXPORTED_FUNCTION yp_buffer_t * yp_buffer_alloc(void);
-
 // Initialize a yp_buffer_t with its default values.
-YP_EXPORTED_FUNCTION void yp_buffer_init(yp_buffer_t *buffer);
+YP_EXPORTED_FUNCTION bool yp_buffer_init(yp_buffer_t *buffer);
 
 // Append the given amount of space as zeroes to the buffer.
 void yp_buffer_append_zeroes(yp_buffer_t *buffer, size_t length);
