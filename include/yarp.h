@@ -10,7 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN32
 #include <strings.h>
+#endif
 
 #include "yarp/missing.h"
 #include "yarp/ast.h"
@@ -33,30 +35,30 @@ void yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buf
 void yp_print_node(yp_parser_t *parser, yp_node_t *node);
 
 // Returns the YARP version and notably the serialization format
-YP_EXPORTED_FUNCTION extern const char * yp_version(void);
+YP_EXPORTED_FUNCTION const char * yp_version(void);
 
 // Initialize a parser with the given start and end pointers.
-YP_EXPORTED_FUNCTION extern void yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath);
+YP_EXPORTED_FUNCTION void yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath);
 
 // Register a callback that will be called whenever YARP changes the encoding it
 // is using to parse based on the magic comment.
-YP_EXPORTED_FUNCTION extern void yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_changed_callback_t callback);
+YP_EXPORTED_FUNCTION void yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_changed_callback_t callback);
 
 // Register a callback that will be called when YARP encounters a magic comment
 // with an encoding referenced that it doesn't understand. The callback should
 // return NULL if it also doesn't understand the encoding or it should return a
 // pointer to a yp_encoding_t struct that contains the functions necessary to
 // parse identifiers.
-YP_EXPORTED_FUNCTION extern void yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback);
+YP_EXPORTED_FUNCTION void yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback);
 
 // Free any memory associated with the given parser.
-YP_EXPORTED_FUNCTION extern void yp_parser_free(yp_parser_t *parser);
+YP_EXPORTED_FUNCTION void yp_parser_free(yp_parser_t *parser);
 
 // Parse the Ruby source associated with the given parser and return the tree.
-YP_EXPORTED_FUNCTION extern yp_node_t * yp_parse(yp_parser_t *parser);
+YP_EXPORTED_FUNCTION yp_node_t * yp_parse(yp_parser_t *parser);
 
 // Deallocate a node and all of its children.
-YP_EXPORTED_FUNCTION extern void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
+YP_EXPORTED_FUNCTION void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
 // This struct stores the information gathered by the yp_node_memsize function.
 // It contains both the memory footprint and additionally metadata about the
@@ -67,19 +69,19 @@ typedef struct {
 } yp_memsize_t;
 
 // Calculates the memory footprint of a given node.
-YP_EXPORTED_FUNCTION extern void yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize);
+YP_EXPORTED_FUNCTION void yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize);
 
 // Pretty-prints the AST represented by the given node to the given buffer.
-YP_EXPORTED_FUNCTION extern void yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
+YP_EXPORTED_FUNCTION void yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 // Serialize the AST represented by the given node to the given buffer.
-YP_EXPORTED_FUNCTION extern void yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
+YP_EXPORTED_FUNCTION void yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-YP_EXPORTED_FUNCTION extern void yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer);
+YP_EXPORTED_FUNCTION void yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer);
 
 // Returns a string representation of the given token type.
-YP_EXPORTED_FUNCTION extern const char * yp_token_type_to_str(yp_token_type_t token_type);
+YP_EXPORTED_FUNCTION const char * yp_token_type_to_str(yp_token_type_t token_type);
 
 #endif

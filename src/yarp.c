@@ -21,7 +21,7 @@ yp_version(void) {
 /* Debugging                                                                  */
 /******************************************************************************/
 
-__attribute__((unused)) static const char *
+YP_ATTRIBUTE_UNUSED static const char *
 debug_context(yp_context_t context) {
     switch (context) {
         case YP_CONTEXT_BEGIN: return "BEGIN";
@@ -57,7 +57,7 @@ debug_context(yp_context_t context) {
     return NULL;
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_contexts(yp_parser_t *parser) {
     yp_context_node_t *context_node = parser->current_context;
     fprintf(stderr, "CONTEXTS: ");
@@ -77,7 +77,7 @@ debug_contexts(yp_parser_t *parser) {
     fprintf(stderr, "\n");
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
     yp_buffer_t buffer;
     yp_buffer_init(&buffer);
@@ -87,7 +87,7 @@ debug_node(const char *message, yp_parser_t *parser, yp_node_t *node) {
     yp_buffer_free(&buffer);
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_lex_mode(yp_parser_t *parser) {
     yp_lex_mode_t *lex_mode = parser->lex_modes.current;
     bool first = true;
@@ -116,7 +116,7 @@ debug_lex_mode(yp_parser_t *parser) {
     fprintf(stderr, "\n");
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_state(yp_parser_t *parser) {
     fprintf(stderr, "STATE: ");
     bool first = true;
@@ -152,12 +152,12 @@ debug_state(yp_parser_t *parser) {
     fprintf(stderr, "\n");
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_token(yp_token_t * token) {
     fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
 }
 
-__attribute__((unused)) static void
+YP_ATTRIBUTE_UNUSED static void
 debug_scope(yp_parser_t *parser) {
     fprintf(stderr, "SCOPE:\n");
 
@@ -336,7 +336,7 @@ yp_arguments(yp_parser_t *parser) {
 }
 
 static inline void *
-yp_alloc(__attribute__((unused)) yp_parser_t *parser, size_t size) {
+yp_alloc(YP_ATTRIBUTE_UNUSED yp_parser_t *parser, size_t size) {
     return malloc(size);
 }
 
@@ -11595,7 +11595,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
                 yp_location_t *content_loc = &((yp_regular_expression_node_t *) node)->content_loc;
 
-                __attribute__((unused)) bool captured_group_names =
+                YP_ATTRIBUTE_UNUSED bool captured_group_names =
                 yp_regexp_named_capture_group_names(content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures);
                 // We assert that the the regex was successfully parsed
                 assert(captured_group_names);
@@ -12030,7 +12030,7 @@ parse_program(yp_parser_t *parser) {
 /******************************************************************************/
 
 // Initialize a parser with the given start and end pointers.
-YP_EXPORTED_FUNCTION extern void
+YP_EXPORTED_FUNCTION void
 yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath) {
     // Set filepath to the file that was passed
     if (!filepath) filepath = "";
@@ -12109,7 +12109,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
 
 // Register a callback that will be called whenever YARP changes the encoding it
 // is using to parse based on the magic comment.
-YP_EXPORTED_FUNCTION extern void
+YP_EXPORTED_FUNCTION void
 yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_changed_callback_t callback) {
     parser->encoding_changed_callback = callback;
 }
@@ -12119,7 +12119,7 @@ yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_ch
 // return NULL if it also doesn't understand the encoding or it should return a
 // pointer to a yp_encoding_t struct that contains the functions necessary to
 // parse identifiers.
-YP_EXPORTED_FUNCTION extern void
+YP_EXPORTED_FUNCTION void
 yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback) {
     parser->encoding_decode_callback = callback;
 }
@@ -12138,7 +12138,7 @@ yp_comment_list_free(yp_list_t *list) {
 }
 
 // Free any memory associated with the given parser.
-YP_EXPORTED_FUNCTION extern void
+YP_EXPORTED_FUNCTION void
 yp_parser_free(yp_parser_t *parser) {
     yp_string_free(&parser->filepath_string);
     yp_diagnostic_list_free(&parser->error_list);
@@ -12148,12 +12148,12 @@ yp_parser_free(yp_parser_t *parser) {
 }
 
 // Parse the Ruby source associated with the given parser and return the tree.
-YP_EXPORTED_FUNCTION extern yp_node_t *
+YP_EXPORTED_FUNCTION yp_node_t *
 yp_parse(yp_parser_t *parser) {
     return parse_program(parser);
 }
 
-YP_EXPORTED_FUNCTION extern void
+YP_EXPORTED_FUNCTION void
 yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     yp_buffer_append_str(buffer, "YARP", 4);
     yp_buffer_append_u8(buffer, YP_VERSION_MAJOR);
@@ -12166,7 +12166,7 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-YP_EXPORTED_FUNCTION extern void
+YP_EXPORTED_FUNCTION void
 yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
     yp_parser_t parser;
     yp_parser_init(&parser, source, size, NULL);

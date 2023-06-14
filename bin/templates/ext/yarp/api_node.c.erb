@@ -1,3 +1,4 @@
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
 #include "extension.h"
 
 extern VALUE rb_cYARP;
@@ -31,6 +32,7 @@ VALUE
 yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *constants) {
     switch (node->type) {
         <%- nodes.each do |node| -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
         case <%= node.type %>: {
             <%- if node.params.any? -%>
             yp_<%= node.human %>_t *cast = (yp_<%= node.human %>_t *) node;
@@ -90,8 +92,9 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
     }
 }
 
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
 VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
-    ID constants[parser->constant_pool.size];
+    ID * constants = calloc(parser->constant_pool.size, sizeof(ID));
 
     for (size_t index = 0; index < parser->constant_pool.capacity; index++) {
         yp_constant_t constant = parser->constant_pool.constants[index];
@@ -101,5 +104,7 @@ VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
         }
     }
 
-    return yp_node_new(parser, node, encoding, constants);
+    VALUE res_node = yp_node_new(parser, node, encoding, constants);
+    free(constants);
+    return res_node;
 }
