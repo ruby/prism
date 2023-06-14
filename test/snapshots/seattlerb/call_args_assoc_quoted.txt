@@ -47,8 +47,8 @@ ProgramNode(0...31)(
          [KeywordHashNode(15...21)(
             [AssocNode(15...21)(
                SymbolNode(15...19)(
-                 STRING_BEGIN(15...16)("\""),
-                 STRING_CONTENT(16...17)("k"),
+                 (15...16),
+                 (16...17),
                  LABEL_END(17...19)("\":"),
                  "k"
                ),
@@ -70,8 +70,8 @@ ProgramNode(0...31)(
          [KeywordHashNode(25...31)(
             [AssocNode(25...31)(
                SymbolNode(25...29)(
-                 STRING_BEGIN(25...26)("'"),
-                 STRING_CONTENT(26...27)("k"),
+                 (25...26),
+                 (26...27),
                  LABEL_END(27...29)("':"),
                  "k"
                ),

@@ -25,7 +25,7 @@ ProgramNode(0...41)(
                   AssocNode(21...35)(
                     SymbolNode(21...30)(
                       nil,
-                      LABEL(21...29)("from_foo"),
+                      (21...29),
                       LABEL_END(29...30)(":"),
                       "from_foo"
                     ),

@@ -19,12 +19,7 @@ ProgramNode(0...46)(
           ),
           KeywordHashNode(9...18)(
             [AssocNode(9...18)(
-               SymbolNode(9...13)(
-                 SYMBOL_BEGIN(9...10)(":"),
-                 IDENTIFIER(10...13)("foo"),
-                 nil,
-                 "foo"
-               ),
+               SymbolNode(9...13)((9...10), (10...13), nil, "foo"),
                IntegerNode(17...18)(),
                (14...16)
              )]
@@ -52,12 +47,7 @@ ProgramNode(0...46)(
           ),
           KeywordHashNode(30...39)(
             [AssocNode(30...39)(
-               SymbolNode(30...34)(
-                 SYMBOL_BEGIN(30...31)(":"),
-                 IDENTIFIER(31...34)("foo"),
-                 nil,
-                 "foo"
-               ),
+               SymbolNode(30...34)((30...31), (31...34), nil, "foo"),
                IntegerNode(38...39)(),
                (35...37)
              )]

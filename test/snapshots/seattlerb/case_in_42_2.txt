@@ -2,12 +2,7 @@ ProgramNode(0...32)(
   [:list],
   StatementsNode(0...32)(
     [CaseNode(0...32)(
-       SymbolNode(5...7)(
-         SYMBOL_BEGIN(5...6)(":"),
-         IDENTIFIER(6...7)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
        [InNode(8...24)(
           ArrayPatternNode(11...19)(
             ConstantReadNode(11...12)(),

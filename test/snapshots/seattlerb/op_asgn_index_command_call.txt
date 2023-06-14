@@ -16,14 +16,7 @@ ProgramNode(0...16)(
          nil,
          BRACKET_LEFT_RIGHT_EQUAL(1...2)("["),
          BRACKET_LEFT(1...2)("["),
-         ArgumentsNode(2...4)(
-           [SymbolNode(2...4)(
-              SYMBOL_BEGIN(2...3)(":"),
-              IDENTIFIER(3...4)("b"),
-              nil,
-              "b"
-            )]
-         ),
+         ArgumentsNode(2...4)([SymbolNode(2...4)((2...3), (3...4), nil, "b")]),
          BRACKET_RIGHT(4...5)("]"),
          nil,
          "[]="

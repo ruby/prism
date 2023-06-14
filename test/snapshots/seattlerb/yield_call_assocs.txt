@@ -8,12 +8,7 @@ ProgramNode(0...100)(
          [IntegerNode(6...7)(),
           KeywordHashNode(9...16)(
             [AssocNode(9...16)(
-               SymbolNode(9...11)(
-                 SYMBOL_BEGIN(9...10)(":"),
-                 IDENTIFIER(10...11)("z"),
-                 nil,
-                 "z"
-               ),
+               SymbolNode(9...11)((9...10), (10...11), nil, "z"),
                IntegerNode(15...16)(),
                (12...14)
              )]
@@ -28,22 +23,12 @@ ProgramNode(0...100)(
          [IntegerNode(24...25)(),
           KeywordHashNode(27...43)(
             [AssocNode(27...34)(
-               SymbolNode(27...29)(
-                 SYMBOL_BEGIN(27...28)(":"),
-                 IDENTIFIER(28...29)("z"),
-                 nil,
-                 "z"
-               ),
+               SymbolNode(27...29)((27...28), (28...29), nil, "z"),
                IntegerNode(33...34)(),
                (30...32)
              ),
              AssocNode(36...43)(
-               SymbolNode(36...38)(
-                 SYMBOL_BEGIN(36...37)(":"),
-                 IDENTIFIER(37...38)("w"),
-                 nil,
-                 "w"
-               ),
+               SymbolNode(36...38)((36...37), (37...38), nil, "w"),
                IntegerNode(42...43)(),
                (39...41)
              )]
@@ -63,12 +48,7 @@ ProgramNode(0...100)(
             ArgumentsNode(53...58)(
               [KeywordHashNode(53...58)(
                  [AssocNode(53...58)(
-                    SymbolNode(53...55)(
-                      SYMBOL_BEGIN(53...54)(":"),
-                      IDENTIFIER(54...55)("z"),
-                      nil,
-                      "z"
-                    ),
+                    SymbolNode(53...55)((53...54), (54...55), nil, "z"),
                     IntegerNode(57...58)(),
                     (55...57)
                   )]
@@ -95,7 +75,7 @@ ProgramNode(0...100)(
                  [AssocNode(68...71)(
                     SymbolNode(68...70)(
                       nil,
-                      LABEL(68...69)("z"),
+                      (68...69),
                       LABEL_END(69...70)(":"),
                       "z"
                     ),
@@ -125,7 +105,7 @@ ProgramNode(0...100)(
                  [AssocNode(81...84)(
                     SymbolNode(81...83)(
                       nil,
-                      LABEL(81...82)("z"),
+                      (81...82),
                       LABEL_END(82...83)(":"),
                       "z"
                     ),

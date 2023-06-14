@@ -2,13 +2,8 @@ ProgramNode(0...14)(
   [],
   StatementsNode(0...14)(
     [AliasNode(0...14)(
-       SymbolNode(6...10)(
-         SYMBOL_BEGIN(6...7)(":"),
-         IDENTIFIER(7...10)("foo"),
-         nil,
-         "foo"
-       ),
-       SymbolNode(11...14)(nil, IDENTIFIER(11...14)("bar"), nil, "bar"),
+       SymbolNode(6...10)((6...7), (7...10), nil, "foo"),
+       SymbolNode(11...14)(nil, (11...14), nil, "bar"),
        (0...5)
      )]
   )

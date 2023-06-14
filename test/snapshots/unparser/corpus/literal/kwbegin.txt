@@ -400,12 +400,7 @@ ProgramNode(0...530)(
        StatementsNode(505...526)(
          [RescueModifierNode(505...526)(
             UndefNode(505...515)(
-              [SymbolNode(511...515)(
-                 SYMBOL_BEGIN(511...512)(":"),
-                 IDENTIFIER(512...515)("bar"),
-                 nil,
-                 "bar"
-               )],
+              [SymbolNode(511...515)((511...512), (512...515), nil, "bar")],
               (505...510)
             ),
             (516...522),

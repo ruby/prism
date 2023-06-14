@@ -18,21 +18,11 @@ ProgramNode(0...33)(
              nil,
              [KeywordParameterNode(6...14)(
                 (6...9),
-                SymbolNode(10...14)(
-                  SYMBOL_BEGIN(10...11)(":"),
-                  IDENTIFIER(11...14)("val"),
-                  nil,
-                  "val"
-                )
+                SymbolNode(10...14)((10...11), (11...14), nil, "val")
               ),
               KeywordParameterNode(16...26)(
                 (16...20),
-                SymbolNode(21...26)(
-                  SYMBOL_BEGIN(21...22)(":"),
-                  IDENTIFIER(22...26)("val2"),
-                  nil,
-                  "val2"
-                )
+                SymbolNode(21...26)((21...22), (22...26), nil, "val2")
               )],
              nil,
              nil

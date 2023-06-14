@@ -2,19 +2,14 @@ ProgramNode(0...746)(
   [:b, :_, :lhs, :x, :rhs, :c, :e],
   StatementsNode(0...746)(
     [CaseNode(0...20)(
-       SymbolNode(5...7)(
-         SYMBOL_BEGIN(5...6)(":"),
-         IDENTIFIER(6...7)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
        [InNode(8...16)(
           HashPatternNode(12...16)(
             nil,
             [AssocNode(12...16)(
                SymbolNode(12...16)(
-                 STRING_BEGIN(12...13)("\""),
-                 STRING_CONTENT(13...14)("b"),
+                 (12...13),
+                 (13...14),
                  LABEL_END(14...16)("\":"),
                  "b"
                ),
@@ -34,16 +29,11 @@ ProgramNode(0...746)(
        (17...20)
      ),
      CaseNode(22...44)(
-       SymbolNode(27...29)(
-         SYMBOL_BEGIN(27...28)(":"),
-         IDENTIFIER(28...29)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(27...29)((27...28), (28...29), nil, "a"),
        [InNode(30...40)(
           ArrayNode(33...40)(
-            [SymbolNode(36...37)(nil, STRING_CONTENT(36...37)("a"), nil, "a"),
-             SymbolNode(38...39)(nil, STRING_CONTENT(38...39)("b"), nil, "b")],
+            [SymbolNode(36...37)(nil, (36...37), nil, "a"),
+             SymbolNode(38...39)(nil, (38...39), nil, "b")],
             (33...36),
             (39...40)
           ),
@@ -56,12 +46,7 @@ ProgramNode(0...746)(
        (41...44)
      ),
      CaseNode(46...68)(
-       SymbolNode(51...53)(
-         SYMBOL_BEGIN(51...52)(":"),
-         IDENTIFIER(52...53)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(51...53)((51...52), (52...53), nil, "a"),
        [InNode(54...64)(
           ArrayNode(57...64)(
             [StringNode(60...61)(nil, (60...61), nil, "a"),
@@ -78,16 +63,11 @@ ProgramNode(0...746)(
        (65...68)
      ),
      CaseNode(70...92)(
-       SymbolNode(75...77)(
-         SYMBOL_BEGIN(75...76)(":"),
-         IDENTIFIER(76...77)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(75...77)((75...76), (76...77), nil, "a"),
        [InNode(78...88)(
           ArrayNode(81...88)(
-            [SymbolNode(84...85)(nil, STRING_CONTENT(84...85)("a"), nil, "a"),
-             SymbolNode(86...87)(nil, STRING_CONTENT(86...87)("b"), nil, "b")],
+            [SymbolNode(84...85)(nil, (84...85), nil, "a"),
+             SymbolNode(86...87)(nil, (86...87), nil, "b")],
             (81...84),
             (87...88)
           ),
@@ -100,12 +80,7 @@ ProgramNode(0...746)(
        (89...92)
      ),
      CaseNode(94...116)(
-       SymbolNode(99...101)(
-         SYMBOL_BEGIN(99...100)(":"),
-         IDENTIFIER(100...101)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(99...101)((99...100), (100...101), nil, "a"),
        [InNode(102...112)(
           ArrayNode(105...112)(
             [StringNode(108...109)(nil, (108...109), nil, "a"),
@@ -122,12 +97,7 @@ ProgramNode(0...746)(
        (113...116)
      ),
      CaseNode(118...140)(
-       SymbolNode(123...125)(
-         SYMBOL_BEGIN(123...124)(":"),
-         IDENTIFIER(124...125)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(123...125)((123...124), (124...125), nil, "a"),
        [InNode(126...135)(
           RangeNode(130...135)(nil, IntegerNode(133...135)(), (130...133)),
           nil,
@@ -139,12 +109,7 @@ ProgramNode(0...746)(
        (137...140)
      ),
      CaseNode(142...163)(
-       SymbolNode(147...149)(
-         SYMBOL_BEGIN(147...148)(":"),
-         IDENTIFIER(148...149)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(147...149)((147...148), (148...149), nil, "a"),
        [InNode(150...158)(
           RangeNode(154...158)(nil, IntegerNode(156...158)(), (154...156)),
           nil,
@@ -156,12 +121,7 @@ ProgramNode(0...746)(
        (160...163)
      ),
      CaseNode(165...186)(
-       SymbolNode(170...172)(
-         SYMBOL_BEGIN(170...171)(":"),
-         IDENTIFIER(171...172)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(170...172)((170...171), (171...172), nil, "a"),
        [InNode(173...181)(
           RangeNode(177...181)(IntegerNode(177...178)(), nil, (178...181)),
           nil,
@@ -173,12 +133,7 @@ ProgramNode(0...746)(
        (183...186)
      ),
      CaseNode(188...210)(
-       SymbolNode(193...195)(
-         SYMBOL_BEGIN(193...194)(":"),
-         IDENTIFIER(194...195)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(193...195)((193...194), (194...195), nil, "a"),
        [InNode(196...205)(
           RangeNode(200...205)(
             IntegerNode(200...201)(),
@@ -194,24 +149,14 @@ ProgramNode(0...746)(
        (207...210)
      ),
      CaseNode(212...231)(
-       SymbolNode(217...219)(
-         SYMBOL_BEGIN(217...218)(":"),
-         IDENTIFIER(218...219)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(217...219)((217...218), (218...219), nil, "a"),
        [InNode(220...226)(IntegerNode(224...226)(), nil, (220...222), nil)],
        nil,
        (212...216),
        (228...231)
      ),
      CaseNode(233...253)(
-       SymbolNode(238...240)(
-         SYMBOL_BEGIN(238...239)(":"),
-         IDENTIFIER(239...240)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(238...240)((238...239), (239...240), nil, "a"),
        [InNode(241...249)(
           HashPatternNode(244...249)(
             nil,
@@ -229,12 +174,7 @@ ProgramNode(0...746)(
        (250...253)
      ),
      CaseNode(255...278)(
-       SymbolNode(260...262)(
-         SYMBOL_BEGIN(260...261)(":"),
-         IDENTIFIER(261...262)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(260...262)((260...261), (261...262), nil, "a"),
        [InNode(263...274)(
           RegularExpressionNode(266...274)(
             (266...267),
@@ -252,31 +192,16 @@ ProgramNode(0...746)(
        (275...278)
      ),
      CaseNode(280...305)(
-       SymbolNode(285...287)(
-         SYMBOL_BEGIN(285...286)(":"),
-         IDENTIFIER(286...287)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(285...287)((285...286), (286...287), nil, "a"),
        [InNode(288...301)(
           ArrayPatternNode(291...301)(
             nil,
-            [SymbolNode(291...293)(
-               SYMBOL_BEGIN(291...292)(":"),
-               IDENTIFIER(292...293)("b"),
-               nil,
-               "b"
-             )],
+            [SymbolNode(291...293)((291...292), (292...293), nil, "b")],
             SplatNode(295...297)(
               (295...296),
               LocalVariableWriteNode(296...297)(:_, 0, nil, (296...297), nil)
             ),
-            [SymbolNode(299...301)(
-               SYMBOL_BEGIN(299...300)(":"),
-               IDENTIFIER(300...301)("c"),
-               nil,
-               "c"
-             )],
+            [SymbolNode(299...301)((299...300), (300...301), nil, "c")],
             nil,
             nil
           ),
@@ -289,29 +214,14 @@ ProgramNode(0...746)(
        (302...305)
      ),
      CaseNode(307...330)(
-       SymbolNode(312...314)(
-         SYMBOL_BEGIN(312...313)(":"),
-         IDENTIFIER(313...314)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(312...314)((312...313), (313...314), nil, "a"),
        [InNode(315...326)(
           ArrayPatternNode(318...326)(
             nil,
-            [SymbolNode(318...320)(
-               SYMBOL_BEGIN(318...319)(":"),
-               IDENTIFIER(319...320)("b"),
-               nil,
-               "b"
-             ),
+            [SymbolNode(318...320)((318...319), (319...320), nil, "b"),
              ArrayPatternNode(322...326)(
                nil,
-               [SymbolNode(323...325)(
-                  SYMBOL_BEGIN(323...324)(":"),
-                  IDENTIFIER(324...325)("c"),
-                  nil,
-                  "c"
-                )],
+               [SymbolNode(323...325)((323...324), (324...325), nil, "c")],
                nil,
                [],
                (322...323),
@@ -331,12 +241,7 @@ ProgramNode(0...746)(
        (327...330)
      ),
      CaseNode(332...355)(
-       SymbolNode(337...339)(
-         SYMBOL_BEGIN(337...338)(":"),
-         IDENTIFIER(338...339)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(337...339)((337...338), (338...339), nil, "a"),
        [InNode(340...351)(
           ArrayPatternNode(343...351)(
             ConstantReadNode(343...349)(),
@@ -355,12 +260,7 @@ ProgramNode(0...746)(
        (352...355)
      ),
      CaseNode(357...393)(
-       SymbolNode(362...364)(
-         SYMBOL_BEGIN(362...363)(":"),
-         IDENTIFIER(363...364)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(362...364)((362...363), (363...364), nil, "a"),
        [InNode(365...389)(
           FindPatternNode(368...389)(
             ConstantReadNode(368...374)(),
@@ -385,12 +285,7 @@ ProgramNode(0...746)(
        (390...393)
      ),
      CaseNode(395...431)(
-       SymbolNode(400...402)(
-         SYMBOL_BEGIN(400...401)(":"),
-         IDENTIFIER(401...402)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(400...402)((400...401), (401...402), nil, "a"),
        [InNode(403...427)(
           FindPatternNode(406...427)(
             ConstantReadNode(406...412)(),
@@ -415,12 +310,7 @@ ProgramNode(0...746)(
        (428...431)
      ),
      CaseNode(433...467)(
-       SymbolNode(438...440)(
-         SYMBOL_BEGIN(438...439)(":"),
-         IDENTIFIER(439...440)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(438...440)((438...439), (439...440), nil, "a"),
        [InNode(441...463)(
           ArrayPatternNode(444...463)(
             nil,
@@ -458,31 +348,16 @@ ProgramNode(0...746)(
        (464...467)
      ),
      CaseNode(469...509)(
-       SymbolNode(474...476)(
-         SYMBOL_BEGIN(474...475)(":"),
-         IDENTIFIER(475...476)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(474...476)((474...475), (475...476), nil, "a"),
        [InNode(477...505)(
           ArrayPatternNode(480...505)(
             nil,
-            [SymbolNode(481...483)(
-               SYMBOL_BEGIN(481...482)(":"),
-               IDENTIFIER(482...483)("a"),
-               nil,
-               "a"
-             ),
+            [SymbolNode(481...483)((481...482), (482...483), nil, "a"),
              LocalVariableWriteNode(485...486)(:b, 0, nil, (485...486), nil),
              LocalVariableWriteNode(488...489)(:c, 0, nil, (488...489), nil),
              ArrayPatternNode(491...504)(
                nil,
-               [SymbolNode(492...494)(
-                  SYMBOL_BEGIN(492...493)(":"),
-                  IDENTIFIER(493...494)("d"),
-                  nil,
-                  "d"
-                )],
+               [SymbolNode(492...494)((492...493), (493...494), nil, "d")],
                SplatNode(496...498)(
                  (496...497),
                  LocalVariableWriteNode(497...498)(
@@ -511,12 +386,7 @@ ProgramNode(0...746)(
        (506...509)
      ),
      CaseNode(511...535)(
-       SymbolNode(516...518)(
-         SYMBOL_BEGIN(516...517)(":"),
-         IDENTIFIER(517...518)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(516...518)((516...517), (517...518), nil, "a"),
        [InNode(519...531)(
           ArrayPatternNode(522...531)(
             nil,
@@ -535,23 +405,13 @@ ProgramNode(0...746)(
        (532...535)
      ),
      CaseNode(537...571)(
-       SymbolNode(542...544)(
-         SYMBOL_BEGIN(542...543)(":"),
-         IDENTIFIER(543...544)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(542...544)((542...543), (543...544), nil, "a"),
        [InNode(545...567)(
           ArrayPatternNode(548...567)(
             nil,
             [ArrayPatternNode(549...556)(
                nil,
-               [SymbolNode(550...552)(
-                  SYMBOL_BEGIN(550...551)(":"),
-                  IDENTIFIER(551...552)("b"),
-                  nil,
-                  "b"
-                ),
+               [SymbolNode(550...552)((550...551), (551...552), nil, "b"),
                 LocalVariableWriteNode(554...555)(
                   :c,
                   0,
@@ -566,12 +426,7 @@ ProgramNode(0...746)(
              ),
              ArrayPatternNode(558...566)(
                nil,
-               [SymbolNode(559...561)(
-                  SYMBOL_BEGIN(559...560)(":"),
-                  IDENTIFIER(560...561)("d"),
-                  nil,
-                  "d"
-                ),
+               [SymbolNode(559...561)((559...560), (560...561), nil, "d"),
                 PinnedVariableNode(563...565)(
                   LocalVariableReadNode(564...565)(:e, 0),
                   (563...564)
@@ -595,12 +450,7 @@ ProgramNode(0...746)(
        (568...571)
      ),
      CaseNode(573...590)(
-       SymbolNode(578...580)(
-         SYMBOL_BEGIN(578...579)(":"),
-         IDENTIFIER(579...580)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(578...580)((578...579), (579...580), nil, "a"),
        [InNode(581...586)(
           ArrayPatternNode(584...586)(
             nil,
@@ -619,12 +469,7 @@ ProgramNode(0...746)(
        (587...590)
      ),
      CaseNode(592...613)(
-       SymbolNode(597...599)(
-         SYMBOL_BEGIN(597...598)(":"),
-         IDENTIFIER(598...599)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(597...599)((597...598), (598...599), nil, "a"),
        [InNode(600...609)(
           ArrayPatternNode(603...609)(
             nil,
@@ -657,12 +502,7 @@ ProgramNode(0...746)(
        (610...613)
      ),
      CaseNode(615...646)(
-       SymbolNode(620...622)(
-         SYMBOL_BEGIN(620...621)(":"),
-         IDENTIFIER(621...622)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(620...622)((620...621), (621...622), nil, "a"),
        [InNode(623...642)(
           ArrayPatternNode(626...642)(
             nil,
@@ -694,12 +534,7 @@ ProgramNode(0...746)(
        (643...646)
      ),
      CaseNode(648...672)(
-       SymbolNode(653...655)(
-         SYMBOL_BEGIN(653...654)(":"),
-         IDENTIFIER(654...655)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(653...655)((653...654), (654...655), nil, "a"),
        [InNode(656...668)(
           XStringNode(659...668)(
             (659...660),
@@ -716,12 +551,7 @@ ProgramNode(0...746)(
        (669...672)
      ),
      CaseNode(674...702)(
-       SymbolNode(679...681)(
-         SYMBOL_BEGIN(679...680)(":"),
-         IDENTIFIER(680...681)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(679...681)((679...680), (680...681), nil, "a"),
        [InNode(682...698)(
           ArrayPatternNode(685...698)(
             nil,
@@ -740,19 +570,14 @@ ProgramNode(0...746)(
        (699...702)
      ),
      CaseNode(704...727)(
-       SymbolNode(709...711)(
-         SYMBOL_BEGIN(709...710)(":"),
-         IDENTIFIER(710...711)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(709...711)((709...710), (710...711), nil, "a"),
        [InNode(712...723)(
           HashPatternNode(715...723)(
             nil,
             [AssocNode(717...721)(
                SymbolNode(717...721)(
-                 STRING_BEGIN(717...718)("\""),
-                 STRING_CONTENT(718...719)("b"),
+                 (717...718),
+                 (718...719),
                  LABEL_END(719...721)("\":"),
                  "b"
                ),
@@ -772,12 +597,7 @@ ProgramNode(0...746)(
        (724...727)
      ),
      CaseNode(729...746)(
-       SymbolNode(734...736)(
-         SYMBOL_BEGIN(734...735)(":"),
-         IDENTIFIER(735...736)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(734...736)((734...735), (735...736), nil, "a"),
        [InNode(737...742)(
           HashPatternNode(740...742)(nil, [], nil, (740...741), (741...742)),
           nil,

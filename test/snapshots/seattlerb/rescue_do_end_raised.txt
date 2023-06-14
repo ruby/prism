@@ -30,12 +30,7 @@ ProgramNode(0...35)(
            EnsureNode(15...35)(
              (15...21),
              StatementsNode(24...31)(
-               [SymbolNode(24...31)(
-                  SYMBOL_BEGIN(24...25)(":"),
-                  KEYWORD_ENSURE(25...31)("ensure"),
-                  nil,
-                  "ensure"
-                )]
+               [SymbolNode(24...31)((24...25), (25...31), nil, "ensure")]
              ),
              (32...35)
            ),

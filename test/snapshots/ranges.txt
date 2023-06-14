@@ -44,12 +44,7 @@ ProgramNode(0...85)(
      HashNode(33...48)(
        (33...34),
        [AssocNode(35...46)(
-          SymbolNode(35...39)(
-            nil,
-            LABEL(35...38)("foo"),
-            LABEL_END(38...39)(":"),
-            "foo"
-          ),
+          SymbolNode(35...39)(nil, (35...38), LABEL_END(38...39)(":"), "foo"),
           RangeNode(40...46)(
             nil,
             CallNode(43...46)(
@@ -83,12 +78,7 @@ ProgramNode(0...85)(
      HashNode(64...78)(
        (64...65),
        [AssocNode(66...76)(
-          SymbolNode(66...70)(
-            nil,
-            LABEL(66...69)("foo"),
-            LABEL_END(69...70)(":"),
-            "foo"
-          ),
+          SymbolNode(66...70)(nil, (66...69), LABEL_END(69...70)(":"), "foo"),
           RangeNode(71...76)(
             nil,
             CallNode(73...76)(

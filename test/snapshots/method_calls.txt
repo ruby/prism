@@ -603,18 +603,8 @@ ProgramNode(0...1187)(
             IDENTIFIER(228...231)("foo"),
             nil,
             ArgumentsNode(232...238)(
-              [SymbolNode(232...234)(
-                 SYMBOL_BEGIN(232...233)(":"),
-                 IDENTIFIER(233...234)("a"),
-                 nil,
-                 "a"
-               ),
-               SymbolNode(236...238)(
-                 SYMBOL_BEGIN(236...237)(":"),
-                 IDENTIFIER(237...238)("b"),
-                 nil,
-                 "b"
-               )]
+              [SymbolNode(232...234)((232...233), (233...234), nil, "a"),
+               SymbolNode(236...238)((236...237), (237...238), nil, "b")]
             ),
             nil,
             nil,
@@ -630,18 +620,8 @@ ProgramNode(0...1187)(
        IDENTIFIER(263...266)("foo"),
        PARENTHESIS_LEFT(266...267)("("),
        ArgumentsNode(267...276)(
-         [SymbolNode(267...269)(
-            SYMBOL_BEGIN(267...268)(":"),
-            IDENTIFIER(268...269)("a"),
-            nil,
-            "a"
-          ),
-          SymbolNode(274...276)(
-            SYMBOL_BEGIN(274...275)(":"),
-            IDENTIFIER(275...276)("b"),
-            nil,
-            "b"
-          )]
+         [SymbolNode(267...269)((267...268), (268...269), nil, "a"),
+          SymbolNode(274...276)((274...275), (275...276), nil, "b")]
        ),
        PARENTHESIS_RIGHT(277...278)(")"),
        nil,
@@ -677,61 +657,26 @@ ProgramNode(0...1187)(
        IDENTIFIER(292...295)("foo"),
        PARENTHESIS_LEFT(295...296)("("),
        ArgumentsNode(296...331)(
-         [SymbolNode(296...298)(
-            SYMBOL_BEGIN(296...297)(":"),
-            IDENTIFIER(297...298)("a"),
-            nil,
-            "a"
-          ),
+         [SymbolNode(296...298)((296...297), (297...298), nil, "a"),
           KeywordHashNode(300...324)(
             [AssocNode(300...314)(
-               SymbolNode(300...302)(
-                 SYMBOL_BEGIN(300...301)(":"),
-                 IDENTIFIER(301...302)("h"),
-                 nil,
-                 "h"
-               ),
+               SymbolNode(300...302)((300...301), (301...302), nil, "h"),
                ArrayNode(306...314)(
-                 [SymbolNode(307...309)(
-                    SYMBOL_BEGIN(307...308)(":"),
-                    IDENTIFIER(308...309)("x"),
-                    nil,
-                    "x"
-                  ),
-                  SymbolNode(311...313)(
-                    SYMBOL_BEGIN(311...312)(":"),
-                    IDENTIFIER(312...313)("y"),
-                    nil,
-                    "y"
-                  )],
+                 [SymbolNode(307...309)((307...308), (308...309), nil, "x"),
+                  SymbolNode(311...313)((311...312), (312...313), nil, "y")],
                  (306...307),
                  (313...314)
                ),
                (303...305)
              ),
              AssocNode(316...324)(
-               SymbolNode(316...318)(
-                 SYMBOL_BEGIN(316...317)(":"),
-                 IDENTIFIER(317...318)("a"),
-                 nil,
-                 "a"
-               ),
-               SymbolNode(322...324)(
-                 SYMBOL_BEGIN(322...323)(":"),
-                 IDENTIFIER(323...324)("b"),
-                 nil,
-                 "b"
-               ),
+               SymbolNode(316...318)((316...317), (317...318), nil, "a"),
+               SymbolNode(322...324)((322...323), (323...324), nil, "b"),
                (319...321)
              )]
           ),
           BlockArgumentNode(326...331)(
-            SymbolNode(327...331)(
-              SYMBOL_BEGIN(327...328)(":"),
-              IDENTIFIER(328...331)("bar"),
-              nil,
-              "bar"
-            ),
+            SymbolNode(327...331)((327...328), (328...331), nil, "bar"),
             (326...327)
           )]
        ),
@@ -749,18 +694,8 @@ ProgramNode(0...1187)(
           HashNode(342...383)(
             (342...343),
             [AssocNode(344...361)(
-               SymbolNode(344...350)(
-                 SYMBOL_BEGIN(344...345)(":"),
-                 IDENTIFIER(345...350)("there"),
-                 nil,
-                 "there"
-               ),
-               SymbolNode(354...361)(
-                 SYMBOL_BEGIN(354...355)(":"),
-                 IDENTIFIER(355...361)("friend"),
-                 nil,
-                 "friend"
-               ),
+               SymbolNode(344...350)((344...345), (345...350), nil, "there"),
+               SymbolNode(354...361)((354...355), (355...361), nil, "friend"),
                (351...353)
              ),
              AssocSplatNode(363...367)(
@@ -770,16 +705,11 @@ ProgramNode(0...1187)(
              AssocNode(369...381)(
                SymbolNode(369...376)(
                  nil,
-                 LABEL(369...375)("whatup"),
+                 (369...375),
                  LABEL_END(375...376)(":"),
                  "whatup"
                ),
-               SymbolNode(377...381)(
-                 SYMBOL_BEGIN(377...378)(":"),
-                 IDENTIFIER(378...381)("dog"),
-                 nil,
-                 "dog"
-               ),
+               SymbolNode(377...381)((377...378), (378...381), nil, "dog"),
                nil
              )],
             (382...383)
@@ -795,17 +725,12 @@ ProgramNode(0...1187)(
        IDENTIFIER(385...388)("foo"),
        nil,
        ArgumentsNode(389...400)(
-         [SymbolNode(389...391)(
-            SYMBOL_BEGIN(389...390)(":"),
-            IDENTIFIER(390...391)("a"),
-            nil,
-            "a"
-          ),
+         [SymbolNode(389...391)((389...390), (390...391), nil, "a"),
           KeywordHashNode(393...400)(
             [AssocNode(393...400)(
                SymbolNode(393...395)(
                  nil,
-                 LABEL(393...394)("b"),
+                 (393...394),
                  LABEL_END(394...395)(":"),
                  "b"
                ),
@@ -861,16 +786,11 @@ ProgramNode(0...1187)(
             [AssocNode(426...440)(
                SymbolNode(426...432)(
                  nil,
-                 LABEL(426...431)("there"),
+                 (426...431),
                  LABEL_END(431...432)(":"),
                  "there"
                ),
-               SymbolNode(433...440)(
-                 SYMBOL_BEGIN(433...434)(":"),
-                 IDENTIFIER(434...440)("friend"),
-                 nil,
-                 "friend"
-               ),
+               SymbolNode(433...440)((433...434), (434...440), nil, "friend"),
                nil
              )]
           )]
@@ -887,18 +807,8 @@ ProgramNode(0...1187)(
        ArgumentsNode(445...482)(
          [KeywordHashNode(445...482)(
             [AssocNode(445...462)(
-               SymbolNode(445...451)(
-                 SYMBOL_BEGIN(445...446)(":"),
-                 IDENTIFIER(446...451)("there"),
-                 nil,
-                 "there"
-               ),
-               SymbolNode(455...462)(
-                 SYMBOL_BEGIN(455...456)(":"),
-                 IDENTIFIER(456...462)("friend"),
-                 nil,
-                 "friend"
-               ),
+               SymbolNode(445...451)((445...446), (446...451), nil, "there"),
+               SymbolNode(455...462)((455...456), (456...462), nil, "friend"),
                (452...454)
              ),
              AssocSplatNode(464...468)(
@@ -908,16 +818,11 @@ ProgramNode(0...1187)(
              AssocNode(470...482)(
                SymbolNode(470...477)(
                  nil,
-                 LABEL(470...476)("whatup"),
+                 (470...476),
                  LABEL_END(476...477)(":"),
                  "whatup"
                ),
-               SymbolNode(478...482)(
-                 SYMBOL_BEGIN(478...479)(":"),
-                 IDENTIFIER(479...482)("dog"),
-                 nil,
-                 "dog"
-               ),
+               SymbolNode(478...482)((478...479), (479...482), nil, "dog"),
                nil
              )]
           )]
@@ -934,18 +839,8 @@ ProgramNode(0...1187)(
        ArgumentsNode(487...524)(
          [KeywordHashNode(487...524)(
             [AssocNode(487...504)(
-               SymbolNode(487...493)(
-                 SYMBOL_BEGIN(487...488)(":"),
-                 IDENTIFIER(488...493)("there"),
-                 nil,
-                 "there"
-               ),
-               SymbolNode(497...504)(
-                 SYMBOL_BEGIN(497...498)(":"),
-                 IDENTIFIER(498...504)("friend"),
-                 nil,
-                 "friend"
-               ),
+               SymbolNode(487...493)((487...488), (488...493), nil, "there"),
+               SymbolNode(497...504)((497...498), (498...504), nil, "friend"),
                (494...496)
              ),
              AssocSplatNode(506...510)(
@@ -955,16 +850,11 @@ ProgramNode(0...1187)(
              AssocNode(512...524)(
                SymbolNode(512...519)(
                  nil,
-                 LABEL(512...518)("whatup"),
+                 (512...518),
                  LABEL_END(518...519)(":"),
                  "whatup"
                ),
-               SymbolNode(520...524)(
-                 SYMBOL_BEGIN(520...521)(":"),
-                 IDENTIFIER(521...524)("dog"),
-                 nil,
-                 "dog"
-               ),
+               SymbolNode(520...524)((520...521), (521...524), nil, "dog"),
                nil
              )]
           )]
@@ -984,7 +874,7 @@ ProgramNode(0...1187)(
             [AssocNode(533...540)(
                SymbolNode(533...535)(
                  nil,
-                 LABEL(533...534)("a"),
+                 (533...534),
                  LABEL_END(534...535)(":"),
                  "a"
                ),
@@ -994,7 +884,7 @@ ProgramNode(0...1187)(
              AssocNode(542...550)(
                SymbolNode(542...544)(
                  nil,
-                 LABEL(542...543)("b"),
+                 (542...543),
                  LABEL_END(543...544)(":"),
                  "b"
                ),
@@ -1004,12 +894,7 @@ ProgramNode(0...1187)(
             (552...553)
           ),
           BlockArgumentNode(555...562)(
-            SymbolNode(556...562)(
-              SYMBOL_BEGIN(556...557)(":"),
-              IDENTIFIER(557...562)("block"),
-              nil,
-              "block"
-            ),
+            SymbolNode(556...562)((556...557), (557...562), nil, "block"),
             (555...556)
           )]
        ),
@@ -1025,18 +910,8 @@ ProgramNode(0...1187)(
        ArgumentsNode(568...585)(
          [KeywordHashNode(568...585)(
             [AssocNode(568...585)(
-               SymbolNode(568...574)(
-                 SYMBOL_BEGIN(568...569)(":"),
-                 IDENTIFIER(569...574)("there"),
-                 nil,
-                 "there"
-               ),
-               SymbolNode(578...585)(
-                 SYMBOL_BEGIN(578...579)(":"),
-                 IDENTIFIER(579...585)("friend"),
-                 nil,
-                 "friend"
-               ),
+               SymbolNode(568...574)((568...569), (569...574), nil, "there"),
+               SymbolNode(578...585)((578...579), (579...585), nil, "friend"),
                (575...577)
              )]
           )]
@@ -1051,18 +926,8 @@ ProgramNode(0...1187)(
        IDENTIFIER(587...590)("foo"),
        PARENTHESIS_LEFT(590...591)("("),
        ArgumentsNode(591...597)(
-         [SymbolNode(591...593)(
-            SYMBOL_BEGIN(591...592)(":"),
-            IDENTIFIER(592...593)("a"),
-            nil,
-            "a"
-          ),
-          SymbolNode(595...597)(
-            SYMBOL_BEGIN(595...596)(":"),
-            IDENTIFIER(596...597)("b"),
-            nil,
-            "b"
-          )]
+         [SymbolNode(591...593)((591...592), (592...593), nil, "a"),
+          SymbolNode(595...597)((595...596), (596...597), nil, "b")]
        ),
        PARENTHESIS_RIGHT(599...600)(")"),
        nil,
@@ -1074,26 +939,16 @@ ProgramNode(0...1187)(
        IDENTIFIER(602...605)("foo"),
        PARENTHESIS_LEFT(605...606)("("),
        ArgumentsNode(607...616)(
-         [SymbolNode(607...609)(
-            SYMBOL_BEGIN(607...608)(":"),
-            IDENTIFIER(608...609)("a"),
-            nil,
-            "a"
-          ),
+         [SymbolNode(607...609)((607...608), (608...609), nil, "a"),
           KeywordHashNode(611...616)(
             [AssocNode(611...616)(
                SymbolNode(611...613)(
                  nil,
-                 LABEL(611...612)("b"),
+                 (611...612),
                  LABEL_END(612...613)(":"),
                  "b"
                ),
-               SymbolNode(614...616)(
-                 SYMBOL_BEGIN(614...615)(":"),
-                 IDENTIFIER(615...616)("c"),
-                 nil,
-                 "c"
-               ),
+               SymbolNode(614...616)((614...615), (615...616), nil, "c"),
                nil
              )]
           )]
@@ -1112,7 +967,7 @@ ProgramNode(0...1187)(
             [AssocNode(625...632)(
                SymbolNode(625...627)(
                  nil,
-                 LABEL(625...626)("a"),
+                 (625...626),
                  LABEL_END(626...627)(":"),
                  "a"
                ),
@@ -1122,7 +977,7 @@ ProgramNode(0...1187)(
              AssocNode(634...642)(
                SymbolNode(634...636)(
                  nil,
-                 LABEL(634...635)("b"),
+                 (634...635),
                  LABEL_END(635...636)(":"),
                  "b"
                ),
@@ -1131,12 +986,7 @@ ProgramNode(0...1187)(
              )]
           ),
           BlockArgumentNode(644...651)(
-            SymbolNode(645...651)(
-              SYMBOL_BEGIN(645...646)(":"),
-              IDENTIFIER(646...651)("block"),
-              nil,
-              "block"
-            ),
+            SymbolNode(645...651)((645...646), (646...651), nil, "block"),
             (644...645)
           )]
        ),
@@ -1155,7 +1005,7 @@ ProgramNode(0...1187)(
             [AssocNode(666...674)(
                SymbolNode(666...672)(
                  nil,
-                 LABEL(666...671)("kwarg"),
+                 (666...671),
                  LABEL_END(671...672)(":"),
                  "kwarg"
                ),
@@ -1234,12 +1084,7 @@ ProgramNode(0...1187)(
        CONSTANT(730...731)("C"),
        nil,
        ArgumentsNode(732...736)(
-         [SymbolNode(732...736)(
-            SYMBOL_BEGIN(732...733)(":"),
-            IDENTIFIER(733...736)("foo"),
-            nil,
-            "foo"
-          )]
+         [SymbolNode(732...736)((732...733), (733...736), nil, "foo")]
        ),
        nil,
        nil,
@@ -1255,12 +1100,7 @@ ProgramNode(0...1187)(
        CONSTANT(744...745)("C"),
        PARENTHESIS_LEFT(745...746)("("),
        ArgumentsNode(746...750)(
-         [SymbolNode(746...750)(
-            SYMBOL_BEGIN(746...747)(":"),
-            IDENTIFIER(747...750)("foo"),
-            nil,
-            "foo"
-          )]
+         [SymbolNode(746...750)((746...747), (747...750), nil, "foo")]
        ),
        PARENTHESIS_RIGHT(750...751)(")"),
        nil,
@@ -1276,12 +1116,7 @@ ProgramNode(0...1187)(
        CONSTANT(759...760)("C"),
        PARENTHESIS_LEFT(760...761)("("),
        ArgumentsNode(761...765)(
-         [SymbolNode(761...765)(
-            SYMBOL_BEGIN(761...762)(":"),
-            IDENTIFIER(762...765)("foo"),
-            nil,
-            "foo"
-          )]
+         [SymbolNode(761...765)((761...762), (762...765), nil, "foo")]
        ),
        PARENTHESIS_RIGHT(765...766)(")"),
        BlockNode(767...770)([], nil, nil, (767...768), (769...770)),
@@ -1296,8 +1131,8 @@ ProgramNode(0...1187)(
          [KeywordHashNode(776...783)(
             [AssocNode(776...783)(
                SymbolNode(776...780)(
-                 STRING_BEGIN(776...777)("\""),
-                 STRING_CONTENT(777...778)("a"),
+                 (776...777),
+                 (777...778),
                  LABEL_END(778...780)("\":"),
                  "a"
                ),
@@ -1329,7 +1164,7 @@ ProgramNode(0...1187)(
             [AssocNode(790...814)(
                SymbolNode(790...794)(
                  nil,
-                 LABEL(790...793)("bar"),
+                 (790...793),
                  LABEL_END(793...794)(":"),
                  "bar"
                ),
@@ -1338,7 +1173,7 @@ ProgramNode(0...1187)(
                  [AssocNode(797...812)(
                     SymbolNode(797...801)(
                       nil,
-                      LABEL(797...800)("baz"),
+                      (797...800),
                       LABEL_END(800...801)(":"),
                       "baz"
                     ),
@@ -1380,7 +1215,7 @@ ProgramNode(0...1187)(
             [AssocNode(820...840)(
                SymbolNode(820...824)(
                  nil,
-                 LABEL(820...823)("bar"),
+                 (820...823),
                  LABEL_END(823...824)(":"),
                  "bar"
                ),
@@ -1595,12 +1430,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(989...992)("foo"),
        nil,
        ArgumentsNode(993...1040)(
-         [SymbolNode(993...995)(
-            SYMBOL_BEGIN(993...994)(":"),
-            IDENTIFIER(994...995)("a"),
-            nil,
-            "a"
-          ),
+         [SymbolNode(993...995)((993...994), (994...995), nil, "a"),
           IfNode(999...1040)(
             (999...1001),
             CallNode(1002...1003)(
@@ -1660,12 +1490,7 @@ ProgramNode(0...1187)(
        IDENTIFIER(1042...1045)("foo"),
        nil,
        ArgumentsNode(1046...1132)(
-         [SymbolNode(1046...1048)(
-            SYMBOL_BEGIN(1046...1047)(":"),
-            IDENTIFIER(1047...1048)("a"),
-            nil,
-            "a"
-          ),
+         [SymbolNode(1046...1048)((1046...1047), (1047...1048), nil, "a"),
           WhileNode(1052...1096)(
             (1052...1057),
             CallNode(1058...1059)(

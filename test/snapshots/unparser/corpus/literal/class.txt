@@ -157,12 +157,7 @@ ProgramNode(0...213)(
             nil,
             nil,
             StatementsNode(184...188)(
-              [SymbolNode(184...188)(
-                 SYMBOL_BEGIN(184...185)(":"),
-                 IDENTIFIER(185...188)("bar"),
-                 nil,
-                 "bar"
-               )]
+              [SymbolNode(184...188)((184...185), (185...188), nil, "bar")]
             ),
             [],
             (172...175),

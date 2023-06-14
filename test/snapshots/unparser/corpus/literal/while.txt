@@ -538,12 +538,7 @@ ProgramNode(0...620)(
          (543...544)
        ),
        StatementsNode(547...552)(
-         [SymbolNode(547...552)(
-            SYMBOL_BEGIN(547...548)(":"),
-            IDENTIFIER(548...552)("body"),
-            nil,
-            "body"
-          )]
+         [SymbolNode(547...552)((547...548), (548...552), nil, "body")]
        )
      ),
      UntilNode(557...572)((557...562), FalseNode(563...568)(), nil),
@@ -571,12 +566,7 @@ ProgramNode(0...620)(
          (607...608)
        ),
        StatementsNode(611...616)(
-         [SymbolNode(611...616)(
-            SYMBOL_BEGIN(611...612)(":"),
-            IDENTIFIER(612...616)("body"),
-            nil,
-            "body"
-          )]
+         [SymbolNode(611...616)((611...612), (612...616), nil, "body")]
        )
      )]
   )

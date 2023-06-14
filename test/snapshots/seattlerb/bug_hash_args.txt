@@ -7,17 +7,12 @@ ProgramNode(0...19)(
        IDENTIFIER(0...3)("foo"),
        PARENTHESIS_LEFT(3...4)("("),
        ArgumentsNode(4...18)(
-         [SymbolNode(4...8)(
-            SYMBOL_BEGIN(4...5)(":"),
-            IDENTIFIER(5...8)("bar"),
-            nil,
-            "bar"
-          ),
+         [SymbolNode(4...8)((4...5), (5...8), nil, "bar"),
           KeywordHashNode(10...18)(
             [AssocNode(10...18)(
                SymbolNode(10...14)(
                  nil,
-                 LABEL(10...13)("baz"),
+                 (10...13),
                  LABEL_END(13...14)(":"),
                  "baz"
                ),

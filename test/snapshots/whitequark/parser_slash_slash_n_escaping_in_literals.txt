@@ -3,12 +3,7 @@ ProgramNode(0...210)(
   StatementsNode(0...210)(
     [StringNode(0...6)((0...1), (1...5), (5...6), "a\n" + "b"),
      ArrayNode(8...16)(
-       [SymbolNode(11...15)(
-          nil,
-          STRING_CONTENT(11...15)("a\\\n" + "b"),
-          nil,
-          "a\n" + "b"
-        )],
+       [SymbolNode(11...15)(nil, (11...15), nil, "a\n" + "b")],
        (8...11),
        (15...16)
      ),
@@ -19,12 +14,7 @@ ProgramNode(0...210)(
        (35...36)
      ),
      ArrayNode(38...46)(
-       [SymbolNode(41...45)(
-          nil,
-          STRING_CONTENT(41...45)("a\\\n" + "b"),
-          nil,
-          "a\\\n" + "b"
-        )],
+       [SymbolNode(41...45)(nil, (41...45), nil, "a\\\n" + "b")],
        (38...41),
        (45...46)
      ),
@@ -37,8 +27,8 @@ ProgramNode(0...210)(
        0
      ),
      SymbolNode(68...76)(
-       SYMBOL_BEGIN(68...71)("%s{"),
-       STRING_CONTENT(71...75)("a\\\n" + "b"),
+       (68...71),
+       (71...75),
        STRING_END(75...76)("}"),
        "a\n" + "b"
      ),
@@ -68,8 +58,8 @@ ProgramNode(0...210)(
        STRING_END(129...130)("\"")
      ),
      SymbolNode(132...139)(
-       SYMBOL_BEGIN(132...134)(":'"),
-       STRING_CONTENT(134...138)("a\\\n" + "b"),
+       (132...134),
+       (134...138),
        STRING_END(138...139)("'"),
        "a\n" + "b"
      ),

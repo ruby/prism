@@ -176,7 +176,7 @@ ProgramNode(0...293)(
                  [AssocNode(248...250)(
                     SymbolNode(248...250)(
                       nil,
-                      LABEL(248...249)("b"),
+                      (248...249),
                       LABEL_END(249...250)(":"),
                       "b"
                     ),

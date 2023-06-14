@@ -22,12 +22,7 @@ ProgramNode(0...41)(
             IDENTIFIER(21...22)("b"),
             PARENTHESIS_LEFT(22...23)("("),
             ArgumentsNode(23...35)(
-              [SymbolNode(23...27)(
-                 SYMBOL_BEGIN(23...24)(":"),
-                 IDENTIFIER(24...27)("get"),
-                 nil,
-                 "get"
-               ),
+              [SymbolNode(23...27)((23...24), (24...27), nil, "get"),
                LocalVariableReadNode(29...30)(:z, 0),
                ForwardingArgumentsNode(32...35)()]
             ),

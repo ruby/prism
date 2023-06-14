@@ -15,24 +15,14 @@ ProgramNode(0...42)(
            BeginNode(0...37)(
              nil,
              StatementsNode(10...16)(
-               [SymbolNode(10...16)(
-                  SYMBOL_BEGIN(10...11)(":"),
-                  KEYWORD_BEGIN(11...16)("begin"),
-                  nil,
-                  "begin"
-                )]
+               [SymbolNode(10...16)((10...11), (11...16), nil, "begin")]
              ),
              nil,
              nil,
              EnsureNode(17...37)(
                (17...23),
                StatementsNode(26...33)(
-                 [SymbolNode(26...33)(
-                    SYMBOL_BEGIN(26...27)(":"),
-                    KEYWORD_ENSURE(27...33)("ensure"),
-                    nil,
-                    "ensure"
-                  )]
+                 [SymbolNode(26...33)((26...27), (27...33), nil, "ensure")]
                ),
                (34...37)
              ),

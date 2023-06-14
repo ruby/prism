@@ -15,18 +15,8 @@ ProgramNode(0...32)(
        (0...5)
      ),
      AliasNode(19...32)(
-       SymbolNode(25...28)(
-         SYMBOL_BEGIN(25...26)(":"),
-         LESS_LESS(26...28)("<<"),
-         nil,
-         "<<"
-       ),
-       SymbolNode(29...32)(
-         SYMBOL_BEGIN(29...30)(":"),
-         GREATER_GREATER(30...32)(">>"),
-         nil,
-         ">>"
-       ),
+       SymbolNode(25...28)((25...26), (26...28), nil, "<<"),
+       SymbolNode(29...32)((29...30), (30...32), nil, ">>"),
        (19...24)
      )]
   )

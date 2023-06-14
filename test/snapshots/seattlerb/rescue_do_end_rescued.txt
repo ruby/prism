@@ -31,36 +31,21 @@ ProgramNode(0...65)(
              nil,
              nil,
              StatementsNode(24...31)(
-               [SymbolNode(24...31)(
-                  SYMBOL_BEGIN(24...25)(":"),
-                  KEYWORD_RESCUE(25...31)("rescue"),
-                  nil,
-                  "rescue"
-                )]
+               [SymbolNode(24...31)((24...25), (25...31), nil, "rescue")]
              ),
              nil
            ),
            ElseNode(32...51)(
              (32...36),
              StatementsNode(39...44)(
-               [SymbolNode(39...44)(
-                  SYMBOL_BEGIN(39...40)(":"),
-                  KEYWORD_ELSE(40...44)("else"),
-                  nil,
-                  "else"
-                )]
+               [SymbolNode(39...44)((39...40), (40...44), nil, "else")]
              ),
              (45...51)
            ),
            EnsureNode(45...65)(
              (45...51),
              StatementsNode(54...61)(
-               [SymbolNode(54...61)(
-                  SYMBOL_BEGIN(54...55)(":"),
-                  KEYWORD_ENSURE(55...61)("ensure"),
-                  nil,
-                  "ensure"
-                )]
+               [SymbolNode(54...61)((54...55), (55...61), nil, "ensure")]
              ),
              (62...65)
            ),

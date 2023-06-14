@@ -68,25 +68,10 @@ ProgramNode(0...502)(
      ArrayNode(31...44)(
        [KeywordHashNode(32...43)(
           [AssocNode(32...43)(
-             SymbolNode(32...34)(
-               nil,
-               LABEL(32...33)("a"),
-               LABEL_END(33...34)(":"),
-               "a"
-             ),
+             SymbolNode(32...34)(nil, (32...33), LABEL_END(33...34)(":"), "a"),
              ArrayNode(35...43)(
-               [SymbolNode(36...38)(
-                  SYMBOL_BEGIN(36...37)(":"),
-                  IDENTIFIER(37...38)("b"),
-                  nil,
-                  "b"
-                ),
-                SymbolNode(40...42)(
-                  SYMBOL_BEGIN(40...41)(":"),
-                  IDENTIFIER(41...42)("c"),
-                  nil,
-                  "c"
-                )],
+               [SymbolNode(36...38)((36...37), (37...38), nil, "b"),
+                SymbolNode(40...42)((40...41), (41...42), nil, "c")],
                (35...36),
                (42...43)
              ),
@@ -97,60 +82,20 @@ ProgramNode(0...502)(
        (43...44)
      ),
      ArrayNode(48...71)(
-       [SymbolNode(49...51)(
-          SYMBOL_BEGIN(49...50)(":"),
-          IDENTIFIER(50...51)("a"),
-          nil,
-          "a"
-        ),
-        SymbolNode(53...55)(
-          SYMBOL_BEGIN(53...54)(":"),
-          IDENTIFIER(54...55)("b"),
-          nil,
-          "b"
-        ),
-        SymbolNode(57...59)(
-          SYMBOL_BEGIN(57...58)(":"),
-          IDENTIFIER(58...59)("c"),
-          nil,
-          "c"
-        ),
+       [SymbolNode(49...51)((49...50), (50...51), nil, "a"),
+        SymbolNode(53...55)((53...54), (54...55), nil, "b"),
+        SymbolNode(57...59)((57...58), (58...59), nil, "c"),
         IntegerNode(60...61)(),
-        SymbolNode(66...68)(
-          SYMBOL_BEGIN(66...67)(":"),
-          IDENTIFIER(67...68)("d"),
-          nil,
-          "d"
-        )],
+        SymbolNode(66...68)((66...67), (67...68), nil, "d")],
        (48...49),
        (70...71)
      ),
      ArrayNode(74...98)(
-       [SymbolNode(75...77)(
-          SYMBOL_BEGIN(75...76)(":"),
-          IDENTIFIER(76...77)("a"),
-          nil,
-          "a"
-        ),
-        SymbolNode(79...81)(
-          SYMBOL_BEGIN(79...80)(":"),
-          IDENTIFIER(80...81)("b"),
-          nil,
-          "b"
-        ),
-        SymbolNode(83...85)(
-          SYMBOL_BEGIN(83...84)(":"),
-          IDENTIFIER(84...85)("c"),
-          nil,
-          "c"
-        ),
+       [SymbolNode(75...77)((75...76), (76...77), nil, "a"),
+        SymbolNode(79...81)((79...80), (80...81), nil, "b"),
+        SymbolNode(83...85)((83...84), (84...85), nil, "c"),
         IntegerNode(86...87)(),
-        SymbolNode(92...94)(
-          SYMBOL_BEGIN(92...93)(":"),
-          IDENTIFIER(93...94)("d"),
-          nil,
-          "d"
-        )],
+        SymbolNode(92...94)((92...93), (93...94), nil, "d")],
        (74...75),
        (97...98)
      ),
@@ -678,24 +623,9 @@ ProgramNode(0...502)(
        (327...328)
      ),
      ArrayNode(331...348)(
-       [SymbolNode(334...337)(
-          nil,
-          STRING_CONTENT(334...337)("one"),
-          nil,
-          "one"
-        ),
-        SymbolNode(338...341)(
-          nil,
-          STRING_CONTENT(338...341)("two"),
-          nil,
-          "two"
-        ),
-        SymbolNode(342...347)(
-          nil,
-          STRING_CONTENT(342...347)("three"),
-          nil,
-          "three"
-        )],
+       [SymbolNode(334...337)(nil, (334...337), nil, "one"),
+        SymbolNode(338...341)(nil, (338...341), nil, "two"),
+        SymbolNode(342...347)(nil, (342...347), nil, "three")],
        (331...334),
        (347...348)
      ),
@@ -713,24 +643,9 @@ ProgramNode(0...502)(
        "one two three"
      ),
      ArrayNode(389...406)(
-       [SymbolNode(392...395)(
-          nil,
-          STRING_CONTENT(392...395)("one"),
-          nil,
-          "one"
-        ),
-        SymbolNode(396...399)(
-          nil,
-          STRING_CONTENT(396...399)("two"),
-          nil,
-          "two"
-        ),
-        SymbolNode(400...405)(
-          nil,
-          STRING_CONTENT(400...405)("three"),
-          nil,
-          "three"
-        )],
+       [SymbolNode(392...395)(nil, (392...395), nil, "one"),
+        SymbolNode(396...399)(nil, (396...399), nil, "two"),
+        SymbolNode(400...405)(nil, (400...405), nil, "three")],
        (389...392),
        (405...406)
      ),
@@ -748,24 +663,9 @@ ProgramNode(0...502)(
        "one two three"
      ),
      ArrayNode(447...464)(
-       [SymbolNode(450...453)(
-          nil,
-          STRING_CONTENT(450...453)("one"),
-          nil,
-          "one"
-        ),
-        SymbolNode(454...457)(
-          nil,
-          STRING_CONTENT(454...457)("two"),
-          nil,
-          "two"
-        ),
-        SymbolNode(458...463)(
-          nil,
-          STRING_CONTENT(458...463)("three"),
-          nil,
-          "three"
-        )],
+       [SymbolNode(450...453)(nil, (450...453), nil, "one"),
+        SymbolNode(454...457)(nil, (454...457), nil, "two"),
+        SymbolNode(458...463)(nil, (458...463), nil, "three")],
        (447...450),
        (463...464)
      ),

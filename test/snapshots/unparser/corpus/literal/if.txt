@@ -201,12 +201,7 @@ ProgramNode(0...246)(
          [LocalVariableWriteNode(225...236)(
             :pair,
             0,
-            SymbolNode(232...236)(
-              SYMBOL_BEGIN(232...233)(":"),
-              IDENTIFIER(233...236)("foo"),
-              nil,
-              "foo"
-            ),
+            SymbolNode(232...236)((232...233), (233...236), nil, "foo"),
             (225...229),
             (230...231)
           ),

@@ -18,7 +18,7 @@ ProgramNode(0...74)(
             [AssocNode(12...14)(
                SymbolNode(12...14)(
                  nil,
-                 LABEL(12...13)("a"),
+                 (12...13),
                  LABEL_END(13...14)(":"),
                  "a"
                ),
@@ -40,8 +40,8 @@ ProgramNode(0...74)(
             nil,
             [AssocNode(25...29)(
                SymbolNode(25...29)(
-                 STRING_BEGIN(25...26)("\""),
-                 STRING_CONTENT(26...27)("b"),
+                 (25...26),
+                 (26...27),
                  LABEL_END(27...29)("\":"),
                  "b"
                ),
@@ -80,8 +80,8 @@ ProgramNode(0...74)(
          [KeywordHashNode(50...58)(
             [AssocNode(50...58)(
                SymbolNode(50...56)(
-                 STRING_BEGIN(50...51)("\""),
-                 STRING_CONTENT(51...54)("foo"),
+                 (50...51),
+                 (51...54),
                  LABEL_END(54...56)("\":"),
                  "foo"
                ),
@@ -113,7 +113,7 @@ ProgramNode(0...74)(
             [AssocNode(68...74)(
                SymbolNode(68...72)(
                  nil,
-                 LABEL(68...71)("foo"),
+                 (68...71),
                  LABEL_END(71...72)(":"),
                  "foo"
                ),

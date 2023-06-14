@@ -9,12 +9,7 @@ ProgramNode(0...22)(
        ArgumentsNode(4...8)(
          [ParenthesesNode(4...8)(
             StatementsNode(5...7)(
-              [SymbolNode(5...7)(
-                 SYMBOL_BEGIN(5...6)(":"),
-                 IDENTIFIER(6...7)("a"),
-                 nil,
-                 "a"
-               )]
+              [SymbolNode(5...7)((5...6), (6...7), nil, "a")]
             ),
             (4...5),
             (7...8)

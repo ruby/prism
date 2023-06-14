@@ -66,18 +66,8 @@ ProgramNode(0...141)(
             IDENTIFIER(119...122)("foo"),
             nil,
             ArgumentsNode(123...129)(
-              [SymbolNode(123...125)(
-                 SYMBOL_BEGIN(123...124)(":"),
-                 IDENTIFIER(124...125)("a"),
-                 nil,
-                 "a"
-               ),
-               SymbolNode(127...129)(
-                 SYMBOL_BEGIN(127...128)(":"),
-                 IDENTIFIER(128...129)("b"),
-                 nil,
-                 "b"
-               )]
+              [SymbolNode(123...125)((123...124), (124...125), nil, "a"),
+               SymbolNode(127...129)((127...128), (128...129), nil, "b")]
             ),
             nil,
             nil,

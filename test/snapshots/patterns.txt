@@ -82,12 +82,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       SymbolNode(58...62)(
-         SYMBOL_BEGIN(58...59)(":"),
-         IDENTIFIER(59...62)("foo"),
-         nil,
-         "foo"
-       ),
+       SymbolNode(58...62)((58...59), (59...62), nil, "foo"),
        (55...57)
      ),
      MatchRequiredNode(63...77)(
@@ -102,8 +97,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        SymbolNode(70...77)(
-         SYMBOL_BEGIN(70...73)("%s["),
-         STRING_CONTENT(73...76)("foo"),
+         (70...73),
+         (73...76),
          STRING_END(76...77)("]"),
          "foo"
        ),
@@ -187,12 +182,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(140...147)(
-         [SymbolNode(143...146)(
-            nil,
-            STRING_CONTENT(143...146)("foo"),
-            nil,
-            "foo"
-          )],
+         [SymbolNode(143...146)(nil, (143...146), nil, "foo")],
          (140...143),
          (146...147)
        ),
@@ -210,12 +200,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(155...162)(
-         [SymbolNode(158...161)(
-            nil,
-            STRING_CONTENT(158...161)("foo"),
-            nil,
-            "foo"
-          )],
+         [SymbolNode(158...161)(nil, (158...161), nil, "foo")],
          (155...158),
          (161...162)
        ),
@@ -500,18 +485,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        RangeNode(426...438)(
-         SymbolNode(426...430)(
-           SYMBOL_BEGIN(426...427)(":"),
-           IDENTIFIER(427...430)("foo"),
-           nil,
-           "foo"
-         ),
-         SymbolNode(434...438)(
-           SYMBOL_BEGIN(434...435)(":"),
-           IDENTIFIER(435...438)("foo"),
-           nil,
-           "foo"
-         ),
+         SymbolNode(426...430)((426...427), (427...430), nil, "foo"),
+         SymbolNode(434...438)((434...435), (435...438), nil, "foo"),
          (431...433)
        ),
        (423...425)
@@ -529,14 +504,14 @@ ProgramNode(0...3725)(
        ),
        RangeNode(446...464)(
          SymbolNode(446...453)(
-           SYMBOL_BEGIN(446...449)("%s["),
-           STRING_CONTENT(449...452)("foo"),
+           (446...449),
+           (449...452),
            STRING_END(452...453)("]"),
            "foo"
          ),
          SymbolNode(457...464)(
-           SYMBOL_BEGIN(457...460)("%s["),
-           STRING_CONTENT(460...463)("foo"),
+           (457...460),
+           (460...463),
            STRING_END(463...464)("]"),
            "foo"
          ),
@@ -649,22 +624,12 @@ ProgramNode(0...3725)(
        ),
        RangeNode(566...584)(
          ArrayNode(566...573)(
-           [SymbolNode(569...572)(
-              nil,
-              STRING_CONTENT(569...572)("foo"),
-              nil,
-              "foo"
-            )],
+           [SymbolNode(569...572)(nil, (569...572), nil, "foo")],
            (566...569),
            (572...573)
          ),
          ArrayNode(577...584)(
-           [SymbolNode(580...583)(
-              nil,
-              STRING_CONTENT(580...583)("foo"),
-              nil,
-              "foo"
-            )],
+           [SymbolNode(580...583)(nil, (580...583), nil, "foo")],
            (577...580),
            (583...584)
          ),
@@ -685,22 +650,12 @@ ProgramNode(0...3725)(
        ),
        RangeNode(592...610)(
          ArrayNode(592...599)(
-           [SymbolNode(595...598)(
-              nil,
-              STRING_CONTENT(595...598)("foo"),
-              nil,
-              "foo"
-            )],
+           [SymbolNode(595...598)(nil, (595...598), nil, "foo")],
            (592...595),
            (598...599)
          ),
          ArrayNode(603...610)(
-           [SymbolNode(606...609)(
-              nil,
-              STRING_CONTENT(606...609)("foo"),
-              nil,
-              "foo"
-            )],
+           [SymbolNode(606...609)(nil, (606...609), nil, "foo")],
            (603...606),
            (609...610)
          ),
@@ -2173,12 +2128,7 @@ ProgramNode(0...3725)(
          nil,
          "foo"
        ),
-       SymbolNode(1688...1692)(
-         SYMBOL_BEGIN(1688...1689)(":"),
-         IDENTIFIER(1689...1692)("foo"),
-         nil,
-         "foo"
-       ),
+       SymbolNode(1688...1692)((1688...1689), (1689...1692), nil, "foo"),
        (1685...1687)
      ),
      MatchPredicateNode(1693...1707)(
@@ -2193,8 +2143,8 @@ ProgramNode(0...3725)(
          "foo"
        ),
        SymbolNode(1700...1707)(
-         SYMBOL_BEGIN(1700...1703)("%s["),
-         STRING_CONTENT(1703...1706)("foo"),
+         (1700...1703),
+         (1703...1706),
          STRING_END(1706...1707)("]"),
          "foo"
        ),
@@ -2288,12 +2238,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(1770...1777)(
-         [SymbolNode(1773...1776)(
-            nil,
-            STRING_CONTENT(1773...1776)("foo"),
-            nil,
-            "foo"
-          )],
+         [SymbolNode(1773...1776)(nil, (1773...1776), nil, "foo")],
          (1770...1773),
          (1776...1777)
        ),
@@ -2311,12 +2256,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        ArrayNode(1785...1792)(
-         [SymbolNode(1788...1791)(
-            nil,
-            STRING_CONTENT(1788...1791)("foo"),
-            nil,
-            "foo"
-          )],
+         [SymbolNode(1788...1791)(nil, (1788...1791), nil, "foo")],
          (1785...1788),
          (1791...1792)
        ),
@@ -2657,12 +2597,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        [InNode(2121...2133)(
-          SymbolNode(2124...2128)(
-            SYMBOL_BEGIN(2124...2125)(":"),
-            IDENTIFIER(2125...2128)("foo"),
-            nil,
-            "foo"
-          ),
+          SymbolNode(2124...2128)((2124...2125), (2125...2128), nil, "foo"),
           nil,
           (2121...2123),
           (2129...2133)
@@ -2684,8 +2619,8 @@ ProgramNode(0...3725)(
        ),
        [InNode(2148...2163)(
           SymbolNode(2151...2158)(
-            SYMBOL_BEGIN(2151...2154)("%s["),
-            STRING_CONTENT(2154...2157)("foo"),
+            (2151...2154),
+            (2154...2157),
             STRING_END(2157...2158)("]"),
             "foo"
           ),
@@ -2814,12 +2749,7 @@ ProgramNode(0...3725)(
        ),
        [InNode(2293...2308)(
           ArrayNode(2296...2303)(
-            [SymbolNode(2299...2302)(
-               nil,
-               STRING_CONTENT(2299...2302)("foo"),
-               nil,
-               "foo"
-             )],
+            [SymbolNode(2299...2302)(nil, (2299...2302), nil, "foo")],
             (2296...2299),
             (2302...2303)
           ),
@@ -2844,12 +2774,7 @@ ProgramNode(0...3725)(
        ),
        [InNode(2323...2338)(
           ArrayNode(2326...2333)(
-            [SymbolNode(2329...2332)(
-               nil,
-               STRING_CONTENT(2329...2332)("foo"),
-               nil,
-               "foo"
-             )],
+            [SymbolNode(2329...2332)(nil, (2329...2332), nil, "foo")],
             (2326...2329),
             (2332...2333)
           ),
@@ -3328,8 +3253,8 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(2912...2915)(:baz, 0),
             StatementsNode(2904...2908)(
               [SymbolNode(2904...2908)(
-                 SYMBOL_BEGIN(2904...2905)(":"),
-                 IDENTIFIER(2905...2908)("foo"),
+                 (2904...2905),
+                 (2905...2908),
                  nil,
                  "foo"
                )]
@@ -3362,8 +3287,8 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(2949...2952)(:baz, 0),
             StatementsNode(2938...2945)(
               [SymbolNode(2938...2945)(
-                 SYMBOL_BEGIN(2938...2941)("%s["),
-                 STRING_CONTENT(2941...2944)("foo"),
+                 (2938...2941),
+                 (2941...2944),
                  STRING_END(2944...2945)("]"),
                  "foo"
                )]
@@ -3532,12 +3457,7 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3129...3132)(:baz, 0),
             StatementsNode(3118...3125)(
               [ArrayNode(3118...3125)(
-                 [SymbolNode(3121...3124)(
-                    nil,
-                    STRING_CONTENT(3121...3124)("foo"),
-                    nil,
-                    "foo"
-                  )],
+                 [SymbolNode(3121...3124)(nil, (3121...3124), nil, "foo")],
                  (3118...3121),
                  (3124...3125)
                )]
@@ -3570,12 +3490,7 @@ ProgramNode(0...3725)(
             LocalVariableReadNode(3166...3169)(:baz, 0),
             StatementsNode(3155...3162)(
               [ArrayNode(3155...3162)(
-                 [SymbolNode(3158...3161)(
-                    nil,
-                    STRING_CONTENT(3158...3161)("foo"),
-                    nil,
-                    "foo"
-                  )],
+                 [SymbolNode(3158...3161)(nil, (3158...3161), nil, "foo")],
                  (3155...3158),
                  (3161...3162)
                )]
@@ -4050,7 +3965,7 @@ ProgramNode(0...3725)(
          [AssocNode(3699...3723)(
             SymbolNode(3699...3703)(
               nil,
-              LABEL(3699...3702)("bar"),
+              (3699...3702),
               LABEL_END(3702...3703)(":"),
               "bar"
             ),
@@ -4059,7 +3974,7 @@ ProgramNode(0...3725)(
               [AssocNode(3711...3719)(
                  SymbolNode(3711...3717)(
                    nil,
-                   LABEL(3711...3716)("value"),
+                   (3711...3716),
                    LABEL_END(3716...3717)(":"),
                    "value"
                  ),

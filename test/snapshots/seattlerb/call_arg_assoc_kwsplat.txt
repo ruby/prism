@@ -10,12 +10,7 @@ ProgramNode(0...16)(
          [IntegerNode(2...3)(),
           KeywordHashNode(5...15)(
             [AssocNode(5...10)(
-               SymbolNode(5...8)(
-                 nil,
-                 LABEL(5...7)("kw"),
-                 LABEL_END(7...8)(":"),
-                 "kw"
-               ),
+               SymbolNode(5...8)(nil, (5...7), LABEL_END(7...8)(":"), "kw"),
                IntegerNode(9...10)(),
                nil
              ),

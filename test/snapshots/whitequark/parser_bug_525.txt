@@ -9,12 +9,7 @@ ProgramNode(0...32)(
        ArgumentsNode(3...11)(
          [KeywordHashNode(3...11)(
             [AssocNode(3...11)(
-               SymbolNode(3...5)(
-                 SYMBOL_BEGIN(3...4)(":"),
-                 IDENTIFIER(4...5)("k"),
-                 nil,
-                 "k"
-               ),
+               SymbolNode(3...5)((3...4), (4...5), nil, "k"),
                CallNode(9...11)(
                  nil,
                  nil,

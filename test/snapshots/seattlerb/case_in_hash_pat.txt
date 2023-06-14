@@ -2,19 +2,14 @@ ProgramNode(0...43)(
   [],
   StatementsNode(0...43)(
     [CaseNode(0...43)(
-       SymbolNode(5...7)(
-         SYMBOL_BEGIN(5...6)(":"),
-         IDENTIFIER(6...7)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
        [InNode(8...34)(
           HashPatternNode(11...29)(
             nil,
             [AssocNode(13...19)(
                SymbolNode(13...15)(
                  nil,
-                 LABEL(13...14)("b"),
+                 (13...14),
                  LABEL_END(14...15)(":"),
                  "b"
                ),
@@ -24,7 +19,7 @@ ProgramNode(0...43)(
              AssocNode(21...27)(
                SymbolNode(21...23)(
                  nil,
-                 LABEL(21...22)("d"),
+                 (21...22),
                  LABEL_END(22...23)(":"),
                  "d"
                ),
@@ -36,12 +31,7 @@ ProgramNode(0...43)(
             (28...29)
           ),
           StatementsNode(37...39)(
-            [SymbolNode(37...39)(
-               SYMBOL_BEGIN(37...38)(":"),
-               IDENTIFIER(38...39)("f"),
-               nil,
-               "f"
-             )]
+            [SymbolNode(37...39)((37...38), (38...39), nil, "f")]
           ),
           (8...10),
           (30...34)

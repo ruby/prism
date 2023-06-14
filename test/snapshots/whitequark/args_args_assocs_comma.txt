@@ -28,12 +28,7 @@ ProgramNode(0...20)(
           ),
           KeywordHashNode(9...18)(
             [AssocNode(9...18)(
-               SymbolNode(9...13)(
-                 SYMBOL_BEGIN(9...10)(":"),
-                 IDENTIFIER(10...13)("baz"),
-                 nil,
-                 "baz"
-               ),
+               SymbolNode(9...13)((9...10), (10...13), nil, "baz"),
                IntegerNode(17...18)(),
                (14...16)
              )]

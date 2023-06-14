@@ -215,12 +215,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          SymbolNode(98...100)(
-            SYMBOL_BEGIN(98...99)(":"),
-            IDENTIFIER(99...100)("e"),
-            nil,
-            "e"
-          )]
+          SymbolNode(98...100)((98...99), (99...100), nil, "e")]
        ),
        nil,
        BlockNode(101...107)([], nil, nil, (101...103), (104...107)),
@@ -440,12 +435,7 @@ ProgramNode(0...444)(
             nil,
             "b"
           ),
-          SymbolNode(212...214)(
-            SYMBOL_BEGIN(212...213)(":"),
-            IDENTIFIER(213...214)("e"),
-            nil,
-            "e"
-          )]
+          SymbolNode(212...214)((212...213), (213...214), nil, "e")]
        ),
        nil,
        BlockNode(215...221)([], nil, nil, (215...217), (218...221)),
@@ -695,12 +685,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          SymbolNode(321...323)(
-            SYMBOL_BEGIN(321...322)(":"),
-            IDENTIFIER(322...323)("e"),
-            nil,
-            "e"
-          )]
+          SymbolNode(321...323)((321...322), (322...323), nil, "e")]
        ),
        nil,
        BlockNode(324...330)([], nil, nil, (324...326), (327...330)),
@@ -950,12 +935,7 @@ ProgramNode(0...444)(
             ),
             "b"
           ),
-          SymbolNode(435...437)(
-            SYMBOL_BEGIN(435...436)(":"),
-            IDENTIFIER(436...437)("e"),
-            nil,
-            "e"
-          )]
+          SymbolNode(435...437)((435...436), (436...437), nil, "e")]
        ),
        nil,
        BlockNode(438...444)([], nil, nil, (438...440), (441...444)),

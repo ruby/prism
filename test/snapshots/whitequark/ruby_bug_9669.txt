@@ -28,12 +28,7 @@ ProgramNode(0...33)(
        HashNode(25...33)(
          (25...26),
          [AssocNode(27...31)(
-            SymbolNode(27...29)(
-              nil,
-              LABEL(27...28)("a"),
-              LABEL_END(28...29)(":"),
-              "a"
-            ),
+            SymbolNode(27...29)(nil, (27...28), LABEL_END(28...29)(":"), "a"),
             IntegerNode(30...31)(),
             nil
           )],

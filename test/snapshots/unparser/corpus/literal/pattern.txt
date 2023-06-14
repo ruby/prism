@@ -58,7 +58,7 @@ ProgramNode(0...408)(
             [AssocNode(65...67)(
                SymbolNode(65...67)(
                  nil,
-                 LABEL(65...66)("x"),
+                 (65...66),
                  LABEL_END(66...67)(":"),
                  "x"
                ),
@@ -132,7 +132,7 @@ ProgramNode(0...408)(
             [AssocNode(157...161)(
                SymbolNode(157...159)(
                  nil,
-                 LABEL(157...158)("a"),
+                 (157...158),
                  LABEL_END(158...159)(":"),
                  "a"
                ),
@@ -142,7 +142,7 @@ ProgramNode(0...408)(
              AssocNode(163...168)(
                SymbolNode(163...166)(
                  nil,
-                 LABEL(163...165)("aa"),
+                 (163...165),
                  LABEL_END(165...166)(":"),
                  "aa"
                ),
@@ -184,8 +184,8 @@ ProgramNode(0...408)(
             nil,
             [AssocNode(227...233)(
                SymbolNode(227...231)(
-                 STRING_BEGIN(227...228)("\""),
-                 STRING_CONTENT(228...229)("a"),
+                 (227...228),
+                 (228...229),
                  LABEL_END(229...231)("\":"),
                  "a"
                ),

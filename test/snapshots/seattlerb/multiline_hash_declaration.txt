@@ -9,12 +9,7 @@ ProgramNode(0...43)(
        ArgumentsNode(2...13)(
          [KeywordHashNode(2...13)(
             [AssocNode(2...13)(
-               SymbolNode(2...8)(
-                 nil,
-                 LABEL(2...7)("state"),
-                 LABEL_END(7...8)(":"),
-                 "state"
-               ),
+               SymbolNode(2...8)(nil, (2...7), LABEL_END(7...8)(":"), "state"),
                HashNode(10...13)((10...11), [], (12...13)),
                nil
              )]
@@ -34,7 +29,7 @@ ProgramNode(0...43)(
             [AssocNode(18...28)(
                SymbolNode(18...24)(
                  nil,
-                 LABEL(18...23)("state"),
+                 (18...23),
                  LABEL_END(23...24)(":"),
                  "state"
                ),
@@ -57,7 +52,7 @@ ProgramNode(0...43)(
             [AssocNode(33...42)(
                SymbolNode(33...39)(
                  nil,
-                 LABEL(33...38)("state"),
+                 (33...38),
                  LABEL_END(38...39)(":"),
                  "state"
                ),

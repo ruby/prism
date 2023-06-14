@@ -1660,10 +1660,10 @@ nodes:
           ^^^^^^^^^^^^^^
   - name: SymbolNode
     child_nodes:
-      - name: opening
-        type: token?
-      - name: value
-        type: token
+      - name: opening_loc
+        type: location?
+      - name: value_loc
+        type: location
       - name: closing
         type: token?
       - name: unescaped

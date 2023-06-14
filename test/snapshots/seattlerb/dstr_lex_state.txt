@@ -12,12 +12,7 @@ ProgramNode(0...8)(
                IDENTIFIER(3...4)("p"),
                nil,
                ArgumentsNode(4...6)(
-                 [SymbolNode(4...6)(
-                    SYMBOL_BEGIN(4...5)(":"),
-                    IDENTIFIER(5...6)("a"),
-                    nil,
-                    "a"
-                  )]
+                 [SymbolNode(4...6)((4...5), (5...6), nil, "a")]
                ),
                nil,
                nil,

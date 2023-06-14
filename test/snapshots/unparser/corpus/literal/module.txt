@@ -59,12 +59,7 @@ ProgramNode(0...106)(
             nil,
             nil,
             StatementsNode(92...96)(
-              [SymbolNode(92...96)(
-                 SYMBOL_BEGIN(92...93)(":"),
-                 IDENTIFIER(93...96)("bar"),
-                 nil,
-                 "bar"
-               )]
+              [SymbolNode(92...96)((92...93), (93...96), nil, "bar")]
             ),
             [],
             (80...83),

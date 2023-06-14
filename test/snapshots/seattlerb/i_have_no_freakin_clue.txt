@@ -35,7 +35,7 @@ ProgramNode(0...20)(
             [AssocNode(16...20)(
                SymbolNode(16...18)(
                  nil,
-                 LABEL(16...17)("d"),
+                 (16...17),
                  LABEL_END(17...18)(":"),
                  "d"
                ),

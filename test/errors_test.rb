@@ -311,7 +311,7 @@ class ErrorsTest < Test::Unit::TestCase
       ArgumentsNode(
         [KeywordHashNode(
            [AssocNode(
-              SymbolNode(nil, LABEL("foo"), LABEL_END(":"), "foo"),
+              SymbolNode(nil, Location(), LABEL_END(":"), "foo"),
               CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
               nil
             )]
@@ -443,16 +443,16 @@ class ErrorsTest < Test::Unit::TestCase
     expected = BeginNode(
       Location(),
       StatementsNode([
-        LocalVariableWriteNode(:_1, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_2, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_3, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_4, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_5, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_6, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_7, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_8, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_9, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_10, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location())
+        LocalVariableWriteNode(:_1, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_2, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_3, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_4, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_5, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_6, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_7, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_8, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_9, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_10, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location())
       ]),
       nil,
       nil,
@@ -784,7 +784,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_case_without_when_clauses_errors_on_else_clause
     expected = CaseNode(
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+      SymbolNode(Location(), Location(), nil, "a"),
       [],
       ElseNode(Location(), nil, Location()),
       Location(),

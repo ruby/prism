@@ -7,14 +7,7 @@ ProgramNode(0...16)(
          nil,
          IDENTIFIER(0...1)("a"),
          nil,
-         ArgumentsNode(2...4)(
-           [SymbolNode(2...4)(
-              SYMBOL_BEGIN(2...3)(":"),
-              IDENTIFIER(3...4)("b"),
-              nil,
-              "b"
-            )]
-         ),
+         ArgumentsNode(2...4)([SymbolNode(2...4)((2...3), (3...4), nil, "b")]),
          nil,
          BlockNode(5...11)([], nil, nil, (5...7), (8...11)),
          "a"
@@ -23,12 +16,7 @@ ProgramNode(0...16)(
        IDENTIFIER(12...13)("c"),
        nil,
        ArgumentsNode(14...16)(
-         [SymbolNode(14...16)(
-            SYMBOL_BEGIN(14...15)(":"),
-            IDENTIFIER(15...16)("d"),
-            nil,
-            "d"
-          )]
+         [SymbolNode(14...16)((14...15), (15...16), nil, "d")]
        ),
        nil,
        nil,

@@ -660,24 +660,14 @@ ProgramNode(0...1194)(
               [ReturnNode(598...608)(
                  (598...604),
                  ArgumentsNode(605...608)(
-                   [SymbolNode(605...608)(
-                      SYMBOL_BEGIN(605...606)(":"),
-                      IDENTIFIER(606...608)("hi"),
-                      nil,
-                      "hi"
-                    )]
+                   [SymbolNode(605...608)((605...606), (606...608), nil, "hi")]
                  )
                )]
             ),
             nil,
             nil
           ),
-          SymbolNode(617...621)(
-            SYMBOL_BEGIN(617...618)(":"),
-            IDENTIFIER(618...621)("bye"),
-            nil,
-            "bye"
-          )]
+          SymbolNode(617...621)((617...618), (618...621), nil, "bye")]
        ),
        [],
        (591...594),
