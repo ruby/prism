@@ -22,6 +22,36 @@ typedef struct {
 // contents and size into the given source_t.
 static int
 source_file_load(source_t *source, VALUE filepath) {
+#ifdef _WIN32
+    HANDLE file = CreateFile(
+        StringValueCStr(filepath),
+        GENERIC_READ,
+        0,
+        NULL,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL
+    );
+    if (file == INVALID_HANDLE_VALUE) {
+        perror("Invalid handle for file");
+        return 1;
+    }
+
+    DWORD file_size = GetFileSize(file, NULL);
+    source->source = malloc(file_size);
+
+    DWORD bytes_read;
+    BOOL success = ReadFile(file, source->source, file_size, &bytes_read, NULL);
+    CloseHandle(file);
+
+    if (!success) {
+        perror("ReadFile failed");
+        return 1;
+    }
+
+    source->size = (size_t) file_size;
+    return 0;
+#else
     // Open the file for reading
     int fd = open(StringValueCStr(filepath), O_RDONLY);
     if (fd == -1) {
@@ -39,15 +69,35 @@ source_file_load(source_t *source, VALUE filepath) {
 
     // mmap the file descriptor to virtually get the contents
     source->size = sb.st_size;
-    source->source = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
 
-    close(fd);
-    if (source == MAP_FAILED) {
-        perror("mmap");
-        return 1;
+#ifdef HAVE_MMAP
+    if (!source->size) {
+        source->source = "";
+        return 0;
     }
 
+    char * res = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (res == MAP_FAILED) {
+        perror("Map failed");
+        return 1;
+    } else {
+        source->source = res;
+    }
+#else
+    source->source = malloc(source->size);
+    if (source->source == NULL) return 1;
+
+    ssize_t read_size = read(fd, (void *)source->source, source->size);
+    if (read_size < 0 || (size_t)read_size != source->size) {
+        perror("Read size is incorrect");
+        free((void *)source->source);
+        return 1;
+    }
+#endif
+
+    close(fd);
     return 0;
+#endif
 }
 
 // Load the contents and size of the given string into the given source_t.
@@ -63,7 +113,15 @@ source_string_load(source_t *source, VALUE string) {
 // Free any resources associated with the given source_t.
 static void
 source_file_unload(source_t *source) {
-    munmap((void *) source->source, source->size);
+#ifdef _WIN32
+    free((void *)source->source);
+#else
+#ifdef HAVE_MMAP
+    munmap((void *)source->source, source->size);
+#else
+    free((void *)source->source);
+#endif
+#endif
 }
 
 // Dump the AST corresponding to the given source to a string.
