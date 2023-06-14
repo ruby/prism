@@ -474,7 +474,7 @@ module YARP
     private
 
     def assert_location(kind, source, expected = 0...source.length)
-      YARP.parse_dup(source) => ParseResult[comments: [], errors: [], value: node]
+      YARP.parse(source) => ParseResult[comments: [], errors: [], value: node]
 
       node => ProgramNode[statements: [*, node]]
       node = yield node if block_given?

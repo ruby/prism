@@ -46,7 +46,7 @@ class ParseTest < Test::Unit::TestCase
       refute_nil Ripper.sexp_raw(source)
 
       # Next, parse the source and print the value.
-      result = YARP.parse_file_dup(filepath)
+      result = YARP.parse_file(filepath)
       value = result.value
       printed = normalize_printed(PP.pp(value, +"", 79))
 

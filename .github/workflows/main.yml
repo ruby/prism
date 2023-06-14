@@ -41,6 +41,24 @@ jobs:
     - name: Run Ruby tests
       run: bundle exec rake compile_no_debug
 
+  build-debug-mode:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - name: Run Ruby tests
+      run: bundle exec rake
+      env:
+        YARP_DEBUG_MODE_BUILD: "1"
+
   lex-ruby:
     runs-on: ubuntu-latest
     steps:
