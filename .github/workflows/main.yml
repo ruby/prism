@@ -180,3 +180,16 @@ jobs:
         rm -rf lib ext # ensure we don't use the local files
         rake test
       shell: bash
+
+  gcc-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - name: Run build with gcc-analyzer enabled
+      run: |
+        CFLAGS='-fanalyzer' bundle exec rake compile
