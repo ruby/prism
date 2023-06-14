@@ -96,13 +96,13 @@ public class Loader {
         }
     }
 
-    private Nodes.Token[] loadTokens() {
+    private Nodes.Location[] loadLocations() {
         int length = loadVarInt();
-        Nodes.Token[] tokens = new Nodes.Token[length];
+        Nodes.Location[] locations = new Nodes.Location[length];
         for (int i = 0; i < length; i++) {
-            tokens[i] = loadToken();
+            locations[i] = loadLocation();
         }
-        return tokens;
+        return locations;
     }
 
     private byte[] loadConstant() {
@@ -180,7 +180,7 @@ public class Loader {
               when StringParam then "loadString()"
               when NodeListParam then "loadNodes()"
               when TokenParam then "loadToken()"
-              when TokenListParam then "loadTokens()"
+              when LocationListParam then "loadLocations()"
               when ConstantParam then "loadConstant()"
               when ConstantListParam then "loadConstants()"
               when OptionalTokenParam then "loadOptionalToken()"

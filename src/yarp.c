@@ -158,18 +158,6 @@ debug_token(yp_token_t * token) {
     fprintf(stderr, "%s: \"%.*s\"\n", yp_token_type_to_str(token->type), (int) (token->end - token->start), token->start);
 }
 
-YP_ATTRIBUTE_UNUSED static void
-debug_scope(yp_parser_t *parser) {
-    fprintf(stderr, "SCOPE:\n");
-
-    yp_token_list_t token_list = parser->current_scope->node->locals;
-    for (size_t index = 0; index < token_list.size; index++) {
-        debug_token(&token_list.tokens[index]);
-    }
-
-    fprintf(stderr, "\n");
-}
-
 #endif
 
 /******************************************************************************/
@@ -852,10 +840,10 @@ yp_block_parameters_node_create(yp_parser_t *parser, yp_parameters_node_t *param
         },
         .parameters = parameters,
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .closing_loc = { .start = NULL, .end = NULL }
+        .closing_loc = { .start = NULL, .end = NULL },
+        .locals = YP_EMPTY_LOCATION_LIST
     };
 
-    yp_token_list_init(&node->locals);
     return node;
 }
 
@@ -873,7 +861,7 @@ static void
 yp_block_parameters_node_append_local(yp_block_parameters_node_t *node, const yp_token_t *local) {
     assert(local->type == YP_TOKEN_IDENTIFIER);
 
-    yp_token_list_append(&node->locals, local);
+    yp_location_list_append(&node->locals, local);
     if (node->base.location.start == NULL) node->base.location.start = local->start;
     node->base.location.end = local->end;
 }

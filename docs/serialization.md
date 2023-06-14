@@ -33,11 +33,11 @@ Each node's child is then appended to the serialized string. The child node type
 * `string` - A child node that is a string. For example, this is used as the name of the method in a call node, since it cannot directly reference the source string (as in `@-` or `foo=`). This is structured as a variable-length integer byte length, followed by the string itself (_without_ a trailing null byte).
 * `token` - A child node that is a token. This is structured as a single byte type, followed by two variable-length integers that represent offsets into the source string.
 * `token?` - A child node that is a token that is optionally present. If the token is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just like the `token` child node.
-* `token[]` - A child node that is an array of tokens. This is structured as a variable-length integer length, followed by the child tokens themselves.
 * `constant` - A variable-length integer that represents an index in the constant pool.
 * `constant[]` - A child node that is an array of constants. This is structured as a variable-length integer length, followed by the child constants themselves.
 * `location` - A child node that is a location. This is structured as a variable-length integer start followed by a variable-length integer length.
 * `location?` - A child node that is a location that is optionally present. If the location is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just like the `location` child node.
+* `location[]` - A child node that is an array of locations. This is structured as a `4` byte length, followed by the locations themselves.
 * `uint32` - A child node that is a 32-bit unsigned integer. This is structured as a variable-length integer.
 
 After the syntax tree, the content pool is serialized. This is a list of constants that were referenced from within the tree. The content pool begins at the offset specified in the header. Each constant is structured as:

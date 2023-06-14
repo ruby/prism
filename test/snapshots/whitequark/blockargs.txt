@@ -241,7 +241,7 @@ ProgramNode(0...550)(
          [:a],
          BlockParametersNode(117...123)(
            nil,
-           [IDENTIFIER(120...121)("a")],
+           [(120...121)],
            (117...118),
            (122...123)
          ),
@@ -262,7 +262,7 @@ ProgramNode(0...550)(
          [:a],
          BlockParametersNode(130...134)(
            nil,
-           [IDENTIFIER(132...133)("a")],
+           [(132...133)],
            (130...131),
            (133...134)
          ),

@@ -517,7 +517,7 @@ nodes:
         type: node?
         kind: ParametersNode
       - name: locals
-        type: token[]
+        type: location[]
       - name: opening_loc
         type: location?
       - name: closing_loc
