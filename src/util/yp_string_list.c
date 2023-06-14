@@ -19,7 +19,7 @@ void
 yp_string_list_append(yp_string_list_t *string_list, yp_string_t *string) {
     if (string_list->length + 1 > string_list->capacity) {
         string_list->capacity *= 2;
-        string_list->strings = realloc(string_list->strings, string_list->capacity * sizeof(yp_string_t));
+        string_list->strings = (yp_string_t *) realloc(string_list->strings, string_list->capacity * sizeof(yp_string_t));
     }
 
     string_list->strings[string_list->length++] = *string;

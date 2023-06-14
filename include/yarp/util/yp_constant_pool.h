@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef unsigned long yp_constant_id_t;
+typedef uint32_t yp_constant_id_t;
 
 typedef struct {
     yp_constant_id_t *ids;
