@@ -5,12 +5,12 @@ ProgramNode(0...32)(
        InterpolatedSymbolNode(6...11)(
          (6...8),
          [StringNode(8...10)(nil, (8...10), nil, "<<")],
-         STRING_END(10...11)("\"")
+         (10...11)
        ),
        InterpolatedSymbolNode(12...17)(
          (12...14),
          [StringNode(14...16)(nil, (14...16), nil, ">>")],
-         STRING_END(16...17)("\"")
+         (16...17)
        ),
        (0...5)
      ),

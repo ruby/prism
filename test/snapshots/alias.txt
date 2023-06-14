@@ -45,7 +45,7 @@ ProgramNode(0...199)(
             StatementsNode(74...75)([IntegerNode(74...75)()]),
             (75...76)
           )],
-         STRING_END(76...77)("\"")
+         (76...77)
        ),
        SymbolNode(78...84)(
          (78...80),

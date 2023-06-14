@@ -1979,7 +1979,7 @@ yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *openin
             },
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
-        .closing = *closing,
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing),
         .parts = parts == NULL ? YP_EMPTY_NODE_LIST : *parts
     };
 
@@ -1994,7 +1994,7 @@ yp_interpolated_symbol_node_append(yp_interpolated_symbol_node_t *node, yp_node_
 
 static inline void
 yp_interpolated_symbol_node_closing_set(yp_interpolated_symbol_node_t *node, const yp_token_t *closing) {
-    node->closing = *closing;
+    node->closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing);
     node->base.location.end = closing->end;
 }
 
@@ -3175,7 +3175,11 @@ static bool
 yp_symbol_node_label_p(yp_node_t *node) {
     return (
         (node->type == YP_NODE_SYMBOL_NODE && ((yp_symbol_node_t *) node)->closing.type == YP_TOKEN_LABEL_END) ||
-        (node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE && ((yp_interpolated_symbol_node_t *)node)->closing.type == YP_TOKEN_LABEL_END)
+        (
+            node->type == YP_NODE_INTERPOLATED_SYMBOL_NODE &&
+            ((yp_interpolated_symbol_node_t *) node)->closing_loc.end != NULL &&
+            ((yp_interpolated_symbol_node_t *) node)->closing_loc.end[-1] == ':'
+        )
     );
 }
 

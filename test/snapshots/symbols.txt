@@ -20,7 +20,7 @@ ProgramNode(0...345)(
           ),
           (15...16)
         )],
-       STRING_END(16...17)("\"")
+       (16...17)
      ),
      InterpolatedSymbolNode(19...29)(
        (19...21),
@@ -30,7 +30,7 @@ ProgramNode(0...345)(
           StatementsNode(26...27)([IntegerNode(26...27)()]),
           (27...28)
         )],
-       STRING_END(28...29)("\"")
+       (28...29)
      ),
      ArrayNode(31...51)(
        [SymbolNode(32...35)((32...33), (33...35), nil, "Υ"),

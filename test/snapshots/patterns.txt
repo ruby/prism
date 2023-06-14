@@ -118,7 +118,7 @@ ProgramNode(0...3725)(
        InterpolatedSymbolNode(85...91)(
          (85...87),
          [StringNode(87...90)(nil, (87...90), nil, "foo")],
-         STRING_END(90...91)("\"")
+         (90...91)
        ),
        (82...84)
      ),
@@ -534,12 +534,12 @@ ProgramNode(0...3725)(
          InterpolatedSymbolNode(472...478)(
            (472...474),
            [StringNode(474...477)(nil, (474...477), nil, "foo")],
-           STRING_END(477...478)("\"")
+           (477...478)
          ),
          InterpolatedSymbolNode(482...488)(
            (482...484),
            [StringNode(484...487)(nil, (484...487), nil, "foo")],
-           STRING_END(487...488)("\"")
+           (487...488)
          ),
          (479...481)
        ),
@@ -2164,7 +2164,7 @@ ProgramNode(0...3725)(
        InterpolatedSymbolNode(1715...1721)(
          (1715...1717),
          [StringNode(1717...1720)(nil, (1717...1720), nil, "foo")],
-         STRING_END(1720...1721)("\"")
+         (1720...1721)
        ),
        (1712...1714)
      ),
@@ -2647,7 +2647,7 @@ ProgramNode(0...3725)(
           InterpolatedSymbolNode(2181...2187)(
             (2181...2183),
             [StringNode(2183...2186)(nil, (2183...2186), nil, "foo")],
-            STRING_END(2186...2187)("\"")
+            (2186...2187)
           ),
           nil,
           (2178...2180),
@@ -3323,7 +3323,7 @@ ProgramNode(0...3725)(
               [InterpolatedSymbolNode(2975...2981)(
                  (2975...2977),
                  [StringNode(2977...2980)(nil, (2977...2980), nil, "foo")],
-                 STRING_END(2980...2981)("\"")
+                 (2980...2981)
                )]
             ),
             nil,

@@ -280,24 +280,20 @@ ProgramNode(0...916)(
      InterpolatedSymbolNode(449...455)(
        (449...451),
        [StringNode(451...454)(nil, (451...454), nil, "A B")],
-       STRING_END(454...455)("\"")
+       (454...455)
      ),
      SymbolNode(456...460)((456...457), (457...460), nil, "foo"),
      InterpolatedSymbolNode(461...467)(
        (461...463),
        [StringNode(463...466)(nil, (463...466), nil, "A B")],
-       STRING_END(466...467)("\"")
+       (466...467)
      ),
      InterpolatedSymbolNode(468...475)(
        (468...470),
        [StringNode(470...474)(nil, (470...474), nil, "A\"B")],
-       STRING_END(474...475)("\"")
+       (474...475)
      ),
-     InterpolatedSymbolNode(476...479)(
-       (476...478),
-       [],
-       STRING_END(478...479)("\"")
-     ),
+     InterpolatedSymbolNode(476...479)((476...478), [], (478...479)),
      RegularExpressionNode(480...485)(
        (480...481),
        (481...484),
@@ -399,7 +395,7 @@ ProgramNode(0...916)(
           (592...593)
         ),
         StringNode(593...596)(nil, (593...596), nil, "baz")],
-       STRING_END(596...597)("\"")
+       (596...597)
      ),
      InterpolatedSymbolNode(598...609)(
        (598...600),
@@ -415,7 +411,7 @@ ProgramNode(0...916)(
           ),
           (607...608)
         )],
-       STRING_END(608...609)("\"")
+       (608...609)
      ),
      RangeNode(610...624)(
        ParenthesesNode(610...621)(
@@ -665,7 +661,7 @@ ProgramNode(0...916)(
           InterpolatedSymbolNode(830...836)(
             (830...832),
             [StringNode(832...835)(nil, (832...835), nil, "a b")],
-            STRING_END(835...836)("\"")
+            (835...836)
           ),
           IntegerNode(840...841)(),
           (837...839)
@@ -725,7 +721,7 @@ ProgramNode(0...916)(
      InterpolatedSymbolNode(893...901)(
        (893...895),
        [StringNode(895...900)(nil, (895...900), nil, "a\\\n" + "b")],
-       STRING_END(900...901)("\"")
+       (900...901)
      ),
      InterpolatedXStringNode(902...916)(
        (902...903),

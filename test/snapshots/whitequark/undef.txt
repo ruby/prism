@@ -12,7 +12,7 @@ ProgramNode(0...27)(
              StatementsNode(24...25)([IntegerNode(24...25)()]),
              (25...26)
            )],
-          STRING_END(26...27)("\"")
+          (26...27)
         )],
        (0...5)
      )]

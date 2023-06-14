@@ -27,7 +27,7 @@ ProgramNode(0...31)(
                     ),
                     (6...7)
                   )],
-                 LABEL_END(7...9)("\":")
+                 (7...9)
                ),
                IntegerNode(9...11)(),
                nil

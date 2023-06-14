@@ -55,7 +55,7 @@ ProgramNode(0...210)(
      InterpolatedSymbolNode(123...130)(
        (123...125),
        [StringNode(125...129)(nil, (125...129), nil, "a\n" + "b")],
-       STRING_END(129...130)("\"")
+       (129...130)
      ),
      SymbolNode(132...139)(
        (132...134),
