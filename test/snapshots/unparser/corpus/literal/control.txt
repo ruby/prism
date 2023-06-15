@@ -16,9 +16,9 @@ ProgramNode(0...144)(
      ),
      ReturnNode(50...69)(
        (50...56),
-       ArgumentsNode(62...69)(
-         [IfNode(62...69)(
-            (62...63),
+       ArgumentsNode(57...69)(
+         [IfNode(57...69)(
+            nil,
             TrueNode(57...61)(),
             StatementsNode(64...65)([IntegerNode(64...65)()]),
             ElseNode(66...69)(
@@ -31,9 +31,9 @@ ProgramNode(0...144)(
        )
      ),
      BreakNode(70...88)(
-       ArgumentsNode(81...88)(
-         [IfNode(81...88)(
-            (81...82),
+       ArgumentsNode(76...88)(
+         [IfNode(76...88)(
+            nil,
             TrueNode(76...80)(),
             StatementsNode(83...84)([IntegerNode(83...84)()]),
             ElseNode(85...88)(
@@ -47,9 +47,9 @@ ProgramNode(0...144)(
        (70...75)
      ),
      NextNode(89...106)(
-       ArgumentsNode(99...106)(
-         [IfNode(99...106)(
-            (99...100),
+       ArgumentsNode(94...106)(
+         [IfNode(94...106)(
+            nil,
             TrueNode(94...98)(),
             StatementsNode(101...102)([IntegerNode(101...102)()]),
             ElseNode(103...106)(

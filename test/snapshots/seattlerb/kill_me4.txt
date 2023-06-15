@@ -4,8 +4,8 @@ ProgramNode(0...17)(
     [LocalVariableWriteNode(0...17)(
        :a,
        0,
-       IfNode(4...17)(
-         (4...5),
+       IfNode(2...17)(
+         nil,
          CallNode(2...3)(
            nil,
            nil,

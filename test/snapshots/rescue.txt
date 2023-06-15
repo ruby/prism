@@ -74,8 +74,8 @@ ProgramNode(0...316)(
          "foo"
        ),
        (111...117),
-       IfNode(122...129)(
-         (122...123),
+       IfNode(118...129)(
+         nil,
          NilNode(118...121)(),
          StatementsNode(124...125)([IntegerNode(124...125)()]),
          ElseNode(126...129)(

@@ -1,8 +1,8 @@
-ProgramNode(2...20)(
+ProgramNode(0...20)(
   [],
-  StatementsNode(2...20)(
-    [IfNode(2...9)(
-       (2...3),
+  StatementsNode(0...20)(
+    [IfNode(0...9)(
+       nil,
        CallNode(0...1)(
          nil,
          nil,
@@ -34,8 +34,8 @@ ProgramNode(2...20)(
        ),
        nil
      ),
-     IfNode(13...20)(
-       (13...14),
+     IfNode(11...20)(
+       nil,
        CallNode(11...12)(
          nil,
          nil,
