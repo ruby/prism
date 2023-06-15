@@ -530,7 +530,7 @@ ProgramNode(0...1194)(
        (473...474),
        nil,
        nil,
-       BeginNode(0...501)(
+       BeginNode(476...501)(
          nil,
          nil,
          RescueNode(476...482)((476...482), [], nil, nil, nil, nil),

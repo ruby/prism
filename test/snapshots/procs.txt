@@ -39,7 +39,7 @@ ProgramNode(0...262)(
        [],
        (41...43),
        nil,
-       BeginNode(0...69)(
+       BeginNode(47...69)(
          nil,
          nil,
          RescueNode(47...53)((47...53), [], nil, nil, nil, nil),

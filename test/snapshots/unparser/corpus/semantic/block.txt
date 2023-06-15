@@ -21,7 +21,7 @@ ProgramNode(0...148)(
        BlockNode(16...29)(
          [],
          nil,
-         BeginNode(0...29)(
+         BeginNode(19...29)(
            nil,
            nil,
            RescueNode(19...25)((19...25), [], nil, nil, nil, nil),

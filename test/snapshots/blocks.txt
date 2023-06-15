@@ -302,7 +302,7 @@ ProgramNode(0...402)(
        BlockNode(174...187)(
          [],
          nil,
-         BeginNode(0...187)(
+         BeginNode(177...187)(
            nil,
            nil,
            RescueNode(177...183)((177...183), [], nil, nil, nil, nil),

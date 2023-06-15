@@ -55,8 +55,8 @@ module YARP
       assert_location(BeginNode, "begin foo; rescue bar\nelse baz end")
       assert_location(BeginNode, "begin foo; rescue bar\nelse baz\nensure qux end")
 
-      assert_location(BeginNode, "class Foo\nrescue then end", &:statements)
-      assert_location(BeginNode, "module Foo\nrescue then end", &:statements)
+      assert_location(BeginNode, "class Foo\nrescue then end", 10..25, &:statements)
+      assert_location(BeginNode, "module Foo\nrescue then end", 11..26, &:statements)
     end
 
     def test_BlockArgumentNode

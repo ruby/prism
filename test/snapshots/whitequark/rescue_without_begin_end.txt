@@ -11,7 +11,7 @@ ProgramNode(0...30)(
        BlockNode(5...30)(
          [],
          nil,
-         BeginNode(0...30)(
+         BeginNode(14...30)(
            nil,
            StatementsNode(9...12)(
              [CallNode(9...12)(

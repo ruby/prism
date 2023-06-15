@@ -277,7 +277,7 @@ ProgramNode(0...316)(
        (297...298),
        nil,
        nil,
-       BeginNode(0...316)(
+       BeginNode(306...316)(
          nil,
          StatementsNode(301...305)(
            [CallNode(301...305)(

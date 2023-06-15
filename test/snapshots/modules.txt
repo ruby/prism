@@ -62,7 +62,7 @@ ProgramNode(0...140)(
        [:x],
        (57...63),
        ConstantReadNode(64...65)(),
-       BeginNode(0...85)(
+       BeginNode(74...85)(
          nil,
          StatementsNode(67...72)(
            [LocalVariableWriteNode(67...72)(

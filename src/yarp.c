@@ -715,9 +715,13 @@ yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_st
     return node;
 }
 
-// Set the rescue clause and end location of a begin node.
+// Set the rescue clause, optionally start, and end location of a begin node.
 static void
 yp_begin_node_rescue_clause_set(yp_begin_node_t *node, yp_rescue_node_t *rescue_clause) {
+    // If the begin keyword doesn't exist, we set the start on the begin_node
+    if (!node->begin_keyword_loc.start) {
+        node->base.location.start = rescue_clause->base.location.start;
+    }
     node->base.location.end = rescue_clause->base.location.end;
     node->rescue_clause = rescue_clause;
 }
