@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
+
+Dir[ARGV.first].each do |filepath|
+  # First, find the offset of every newline in the file using String#scan.
+  expected = [0]
+  File.binread(filepath).scan("\n") { expected << $~.offset(0)[0] }
+
+  # Next, find the offset of every newline in the file using YARP.
+  actual = YARP.newlines(File.read(filepath))
+
+  # If the files don't match, then we're going to print out some debug
+  # information to help us figure out what's going on.
+  if expected != actual
+    if ENV["VERBOSE"]
+      puts "expected:"
+      p expected
+
+      puts "\nactual:"
+      p actual
+
+      expected.zip(actual).each_with_index do |(expected_index, actual_index), index|
+        if expected_index != actual_index
+          puts "\ndifference on line #{index} (expected #{expected_index}, actual #{actual_index})"
+          break
+        end
+      end
+    end
+
+    puts filepath
+  end
+end

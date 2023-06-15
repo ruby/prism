@@ -91,6 +91,11 @@ class ParseTest < Test::Unit::TestCase
       # changing the shape of the tree.
       assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
 
+      # Next, assert that the newlines are in the expected places.
+      expected_newlines = [0]
+      source.b.scan("\n") { expected_newlines << $~.offset(0)[0] }
+      assert_equal expected_newlines, YARP.newlines(source)
+
       # Finally, assert that we can lex the source and get the same tokens as
       # Ripper.
       YARP.lex_compat(source) => { errors: [], value: tokens }

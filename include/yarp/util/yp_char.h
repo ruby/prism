@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "yarp/util/yp_newline_list.h"
+
 bool yp_char_is_binary_digit(const char c);
 
 bool yp_char_is_octal_digit(const char c);
@@ -15,6 +17,12 @@ bool yp_char_is_hexadecimal_digit(const char c);
 // Returns the number of characters at the start of the string that are
 // whitespace. Disallows searching past the given maximum number of characters.
 size_t yp_strspn_whitespace(const char *string, ptrdiff_t length);
+
+// Returns the number of characters at the start of the string that are
+// whitespace while also tracking the location of each newline. Disallows
+// searching past the given maximum number of characters.
+size_t
+yp_strspn_whitespace_newlines(const char *string, long length, yp_newline_list_t *newline_list);
 
 // Returns the number of characters at the start of the string that are inline
 // whitespace. Disallows searching past the given maximum number of characters.
