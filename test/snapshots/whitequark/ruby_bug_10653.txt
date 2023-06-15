@@ -1,8 +1,8 @@
-ProgramNode(6...93)(
+ProgramNode(0...93)(
   [],
-  StatementsNode(6...93)(
-    [IfNode(6...33)(
-       (6...7),
+  StatementsNode(0...93)(
+    [IfNode(0...33)(
+       nil,
        FalseNode(0...5)(),
        StatementsNode(8...20)(
          [CallNode(8...20)(
@@ -34,8 +34,8 @@ ProgramNode(6...93)(
        ),
        nil
      ),
-     IfNode(41...60)(
-       (41...42),
+     IfNode(35...60)(
+       nil,
        FalseNode(35...40)(),
        StatementsNode(43...51)(
          [CallNode(43...51)(
@@ -67,8 +67,8 @@ ProgramNode(6...93)(
        ),
        nil
      ),
-     IfNode(67...93)(
-       (67...68),
+     IfNode(62...93)(
+       nil,
        TrueNode(62...66)(),
        StatementsNode(69...89)(
          [CallNode(69...89)(

@@ -8,8 +8,8 @@ ProgramNode(0...13)(
        (0...1),
        (1...2)
      ),
-     IfNode(9...13)(
-       (9...10),
+     IfNode(4...13)(
+       nil,
        ParenthesesNode(4...9)(
          StatementsNode(5...8)(
            [CallNode(5...8)(

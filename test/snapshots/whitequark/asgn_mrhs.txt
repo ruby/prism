@@ -23,7 +23,7 @@ ProgramNode(0...41)(
      LocalVariableWriteNode(12...24)(
        :foo,
        0,
-       ArrayNode(0...24)(
+       ArrayNode(18...24)(
          [CallNode(18...21)(
             nil,
             nil,
@@ -44,7 +44,7 @@ ProgramNode(0...41)(
      LocalVariableWriteNode(26...41)(
        :foo,
        0,
-       ArrayNode(0...41)(
+       ArrayNode(32...41)(
          [CallNode(32...35)(
             nil,
             nil,

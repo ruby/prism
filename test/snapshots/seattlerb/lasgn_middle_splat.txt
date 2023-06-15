@@ -4,7 +4,7 @@ ProgramNode(0...12)(
     [LocalVariableWriteNode(0...12)(
        :a,
        0,
-       ArrayNode(0...12)(
+       ArrayNode(4...12)(
          [CallNode(4...5)(
             nil,
             nil,

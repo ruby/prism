@@ -911,7 +911,7 @@ nodes:
   - name: IfNode
     child_nodes:
       - name: if_keyword_loc
-        type: location
+        type: location?
       - name: predicate
         type: node
       - name: statements

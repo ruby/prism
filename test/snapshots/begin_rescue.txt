@@ -210,7 +210,7 @@ ProgramNode(0...578)(
             "a"
           )]
        ),
-       RescueNode(145...162)(
+       RescueNode(145...171)(
          (145...151),
          [],
          nil,

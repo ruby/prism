@@ -186,7 +186,7 @@ ProgramNode(0...139)(
        [LocalVariableWriteNode(123...124)(:a, 0, nil, (123...124), nil),
         LocalVariableWriteNode(126...127)(:b, 0, nil, (126...127), nil)],
        (128...129),
-       ArrayNode(0...139)(
+       ArrayNode(130...139)(
          [SplatNode(130...134)(
             (130...131),
             CallNode(131...134)(

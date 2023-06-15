@@ -699,7 +699,7 @@ ProgramNode(0...737)(
        BlockNode(362...390)(
          [:e],
          nil,
-         BeginNode(0...390)(
+         BeginNode(365...390)(
            nil,
            nil,
            RescueNode(365...386)(
@@ -729,7 +729,7 @@ ProgramNode(0...737)(
        BlockNode(393...435)(
          [:bar],
          nil,
-         BeginNode(0...435)(
+         BeginNode(402...435)(
            nil,
            StatementsNode(398...401)(
              [CallNode(398...401)(
@@ -772,7 +772,7 @@ ProgramNode(0...737)(
        BlockNode(438...479)(
          [],
          nil,
-         BeginNode(0...479)(
+         BeginNode(447...479)(
            nil,
            StatementsNode(443...446)(
              [CallNode(443...446)(
@@ -837,7 +837,7 @@ ProgramNode(0...737)(
        BlockNode(482...536)(
          [:exception],
          nil,
-         BeginNode(0...536)(
+         BeginNode(491...536)(
            nil,
            StatementsNode(487...490)(
              [CallNode(487...490)(
@@ -908,7 +908,7 @@ ProgramNode(0...737)(
        BlockNode(539...569)(
          [],
          nil,
-         BeginNode(0...569)(
+         BeginNode(548...569)(
            nil,
            StatementsNode(544...547)(
              [CallNode(544...547)(
@@ -972,7 +972,7 @@ ProgramNode(0...737)(
        BlockNode(572...601)(
          [],
          nil,
-         BeginNode(0...601)(
+         BeginNode(581...601)(
            nil,
            StatementsNode(577...580)(
              [CallNode(577...580)(
@@ -1013,7 +1013,7 @@ ProgramNode(0...737)(
        BlockNode(604...634)(
          [],
          nil,
-         BeginNode(0...634)(
+         BeginNode(613...634)(
            nil,
            StatementsNode(609...612)(
              [CallNode(609...612)(
@@ -1062,7 +1062,7 @@ ProgramNode(0...737)(
        BlockNode(637...680)(
          [:exception],
          nil,
-         BeginNode(0...680)(
+         BeginNode(646...680)(
            nil,
            StatementsNode(642...645)(
              [CallNode(642...645)(
@@ -1155,7 +1155,7 @@ ProgramNode(0...737)(
        BlockNode(699...719)(
          [],
          nil,
-         BeginNode(0...719)(
+         BeginNode(702...719)(
            nil,
            nil,
            RescueNode(702...708)((702...708), [], nil, nil, nil, nil),

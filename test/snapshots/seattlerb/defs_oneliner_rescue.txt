@@ -13,7 +13,7 @@ ProgramNode(0...145)(
          nil,
          nil
        ),
-       BeginNode(0...49)(
+       BeginNode(33...49)(
          nil,
          StatementsNode(21...32)(
            [CallNode(21...32)(

@@ -53,7 +53,7 @@ ProgramNode(0...502)(
             nil,
             "baz"
           ),
-          ArrayNode(0...29)(
+          ArrayNode(22...29)(
             [IntegerNode(22...23)(),
              IntegerNode(25...26)(),
              IntegerNode(28...29)()],
@@ -424,7 +424,7 @@ ProgramNode(0...502)(
           "[]="
         )],
        (206...207),
-       ArrayNode(0...212)(
+       ArrayNode(208...212)(
          [IntegerNode(208...209)(), IntegerNode(211...212)()],
          nil,
          nil

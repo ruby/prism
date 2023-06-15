@@ -20,9 +20,9 @@ ProgramNode(6...66)(
             BlockNode(26...41)(
               [],
               nil,
-              StatementsNode(30...39)(
-                [IfNode(30...39)(
-                   (30...31),
+              StatementsNode(28...39)(
+                [IfNode(28...39)(
+                   nil,
                    CallNode(28...29)(
                      nil,
                      nil,

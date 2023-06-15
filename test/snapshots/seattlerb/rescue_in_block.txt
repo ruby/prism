@@ -11,7 +11,7 @@ ProgramNode(0...26)(
        BlockNode(5...26)(
          [],
          nil,
-         BeginNode(0...26)(
+         BeginNode(8...26)(
            nil,
            nil,
            RescueNode(8...22)(
