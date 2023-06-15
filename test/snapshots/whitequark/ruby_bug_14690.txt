@@ -30,13 +30,7 @@ ProgramNode(0...23)(
                  )]
               ),
               PARENTHESIS_RIGHT(12...13)(")"),
-              BlockNode(14...21)(
-                [],
-                nil,
-                StatementsNode(0...0)([]),
-                (14...16),
-                (18...21)
-              ),
+              BlockNode(14...21)([], nil, nil, (14...16), (18...21)),
               "m"
             )]
          ),
