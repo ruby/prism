@@ -1,29 +1,20 @@
 ifeq ($(shell uname), Darwin)
-SOEXT := dylib
+	SOEXT := dylib
 else
-SOEXT := so
+	SOEXT := so
 endif
 
-OPTFLAGS :=
-CFLAGS :=
-
-# Check for the presence of strncasecmp
-ifeq ($(shell $(CC) -Iinclude -o /dev/null test/availability/strncasecmp.c 2>/dev/null && echo 1), 1)
-CFLAGS := $(CFLAGS) -DHAVE_STRNCASECMP
-endif
-
-# Check for the presence of strnstr
-ifeq ($(shell $(CC) -Iinclude -o /dev/null test/availability/strnstr.c 2>/dev/null && echo 1), 1)
-CFLAGS := $(CFLAGS) -DHAVE_STRNSTR
-endif
+CFLAGS := @CFLAGS@ -std=c99
+DEFS := @DEFS@
+CC := @CC@
 
 all: build/librubyparser.$(SOEXT)
 
 build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h
-	$(CC) $(OPTFLAGS) $(DEBUG_FLAGS) $(CFLAGS) -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
+	$(CC) $(DEBUG_FLAGS) $(CFLAGS) $(DEFS) -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
 
 build/profile: $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h bin/profile.c
-	$(CC) $(CFLAGS) -O3 -std=c99 -Iinclude -o $@ $(shell find src -name '*.c') bin/profile.c
+	$(CC) $(CFLAGS) $(DEFS) -O3 -Iinclude -o $@ $(shell find src -name '*.c') bin/profile.c
 
 build:
 	mkdir -p build

@@ -38,11 +38,19 @@ require_relative "bin/template"
 desc "Generate all ERB template based files"
 task templates: TEMPLATES
 
-task make: :templates do
+file "configure" do
+  sh "autoconf"
+end
+
+file "Makefile" => "configure" do
+  sh "./configure"
+end
+
+task make: [:templates, "Makefile"] do
   sh "make"
 end
 
-task make_no_debug: :templates do
+task make_no_debug: [:templates, "Makefile"] do
   sh "make all-no-debug"
 end
 
@@ -56,6 +64,7 @@ end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
+CLOBBER.concat(["configure", "Makefile"])
 
 CLOBBER << "build/librubyparser.#{RbConfig::CONFIG["SOEXT"]}"
 CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"

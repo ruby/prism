@@ -5,10 +5,6 @@
 #define YARP_DEFINES_H
 
 // For strnlen(), strncasecmp()
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 700
-#endif
-
 #if defined(_WIN32)
 #   define YP_EXPORTED_FUNCTION __declspec(dllexport) extern
 #else
