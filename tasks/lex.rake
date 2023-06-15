@@ -58,12 +58,23 @@ module YARP
   end
 end
 
-# For each of the targets in targets.yml, we're going to define a task that will
-# clone the repo into tmp/targets/TARGET at the specified SHA.
-require "yaml"
-YAML.safe_load_file("targets.yml").each do |name, target|
-  repo = target.fetch("repo")
-  dirpath = File.join("tmp", "targets", name)
+TARGETS = {
+  ruby: {
+    repo: "https://github.com/ruby/ruby",
+    sha: "c1c926219de5489c321d53577ff2eb8c041e166f",
+    excludes: ["spec/ruby/command_line/fixtures/bad_syntax.rb"]
+  },
+  discourse: {
+    repo: "https://github.com/discourse/discourse",
+    sha: "4b22e67c8bc1814133f58bc32f84e42372654abc"
+  }
+}
+
+# For each of the targets, we're going to define a task that will clone the repo
+# into tmp/targets/TARGET at the specified SHA.
+TARGETS.each do |name, target|
+  repo = target.fetch(:repo)
+  dirpath = File.join("tmp", "targets", name.name)
 
   desc "Clone #{repo} into #{dirpath}"
   file dirpath do
@@ -71,7 +82,7 @@ YAML.safe_load_file("targets.yml").each do |name, target|
     chdir dirpath do
       sh "git init"
       sh "git remote add origin #{repo}"
-      sh "git fetch --depth=1 origin #{target.fetch("sha")}"
+      sh "git fetch --depth=1 origin #{target.fetch(:sha)}"
       sh "git reset --hard FETCH_HEAD"
     end
   end
@@ -85,10 +96,10 @@ YAML.safe_load_file("targets.yml").each do |name, target|
     plain_text = ENV.fetch("CI", false)
     warn_failing = ENV.fetch("VERBOSE", false)
 
-    lex_task = YARP::LexTask.new(target.fetch("todos", []).map { |todo| File.join(dirpath, todo) })
+    lex_task = YARP::LexTask.new(target.fetch(:todos, []).map { |todo| File.join(dirpath, todo) })
     filepaths = Dir[File.join(dirpath, "**", "*.rb")]
 
-    if excludes = target["excludes"]
+    if excludes = target[:excludes]
       filepaths -= excludes.map { |exclude| File.join(dirpath, exclude) }
     end
 
@@ -119,10 +130,10 @@ YAML.safe_load_file("targets.yml").each do |name, target|
       puts("Some files listed as todo are now passing:")
       puts("    - #{previous_minus_current.join("\n    - ")}")
 
-      puts("This is the new list which can be copied into targets.yml:")
+      puts("This is the new list which can be copied into lex.rake:")
       puts("    - #{current_todos.join("\n    - ")}")
     else
-      puts("The todos list in targets.yml is up to date")
+      puts("The todos list in lex.rake is up to date")
     end
 
     puts(lex_task.summary)

@@ -1,55 +1,75 @@
 # Yet Another Ruby Parser
 
-This is an early work-in-progress project geared at replacing the existing CRuby parser. Its aims are threefold:
-
-* Portability - we want the ability to use this parser in other projects, implementations, and tools.
-* Error tolerance - we want this parser to be able to recover from as many syntax errors as possible.
-* Maintainability - we want this to be a long-standing project with good hygiene. This means tutorials, examples, documentation, clean code, good test coverage, etc.
-
-## Background
-
-[This link](https://docs.google.com/document/d/1x74L_paTxS_h8_OtQjDoLVgxZP6Y96WOJ1LdLNb4BKM/edit#heading=h.6eyajfy04xhw) is where you can find the design document for the project. It is also a work-in-progress, but should give you a good sense of the overall goals and motivations.
-
-There are many parsers that have been built before in various stages of upkeep. Below is a list of the ones I have read through and found useful:
-
-* [jruby/jruby](https://github.com/jruby/jruby)
-* [lib-ruby-parser/lib-ruby-parser](https://github.com/lib-ruby-parser/lib-ruby-parser)
-* [natalie-lang/natalie_parser](https://github.com/natalie-lang/natalie_parser)
-* [oracle/truffleruby](https://github.com/oracle/truffleruby)
-* [ruby/ruby](https://github.com/ruby/ruby)
-* [seattlerb/ruby_parser](https://github.com/seattlerb/ruby_parser)
-* [sisshiki1969/ruruby](https://github.com/sisshiki1969/ruruby)
-* [sorbet/sorbet](https://github.com/sorbet/sorbet)
-* [whitequark/parser](https://github.com/whitequark/parser)
-
-There are also a couple of tools that define node shapes for every kind of node in the Ruby syntax tree. I've taken inspiration from those tools as well. They include most of the parsers above, as well as:
-
-* [ruby-syntax-tree/syntax_tree](https://github.com/ruby-syntax-tree/syntax_tree)
-* [ruby/ruby/node.h](https://github.com/ruby/ruby/blob/master/node.h) (`RubyVM::AST`)
+This is a parser for the Ruby programming language. It is designed to be portable, error tolerant, and maintainable. It is written in C99 and has no dependencies. It is currently being integrated into [CRuby](https://github.com/ruby/ruby), [JRuby](https://github.com/jruby/jruby), [TruffleRuby](https://github.com/oracle/truffleruby), [Sorbet](https://github.com/sorbet/sorbet), and [Syntax Tree](https://github.com/ruby-syntax-tree/syntax_tree).
 
 ## Overview
 
-The repository contains the infrastructure for both a shared library (librubyparser) and a native Ruby extension. The shared library has no bindings to Ruby itself, and so can be used by other C libraries. The native Ruby extension links against `ruby.h`, and so is suitable in the context of Ruby.
+The repository contains the infrastructure for both a shared library (librubyparser) and a native Ruby extension. The shared library has no bindings to Ruby itself, and so can be used by other project. The native Ruby extension links against `ruby.h`, and so is suitable in the context of Ruby.
 
 ```
 .
-├── Makefile              configuration to compile the shared library and native tests
+├── Makefile.in           configuration to compile the shared library and native tests
 ├── Rakefile              configuration to compile the native extension and run the Ruby tests
 ├── bin
-│   ├── template          generates code from the nodes and tokens configured by config.yml
-│   └── templates         directory containing all of the various templates
+│   ├── lex               runs the lexer on a file or string, prints the tokens, and compares to ripper
+│   └── parse             runs the parser on a file or string and prints the syntax tree
 ├── config.yml            specification for tokens and nodes in the tree
+├── configure.ac          configuration to generate the Makefile
+├── docs                  documentation about the project
+├── exe
+│   └── yarp-lsp          language server protocol executable
 ├── ext
 │   └── yarp
+│       ├── extconf.rb    configuration to generate the Makefile for the native extension
 │       └── extension.c   the native extension that interacts with librubyparser
-├── lib
-│   ├── yarp              support files for the Ruby library
-│   └── yarp.rb           main entrypoint into the Ruby library
-├── src
-│   ├── yarp.c            main entrypoint into the shared library
+├── include
+│   ├── yarp              header files for the shared library
 │   └── yarp.h            main header file for the shared library
-└── test                  Ruby tests for the Ruby library
+├── java                  Java bindings for the shared library
+├── lib
+│   ├── yarp              Ruby library files
+│   └── yarp.rb           main entrypoint for the Ruby library
+├── src
+│   ├── enc               various encoding files
+│   ├── util              various utility files
+│   └── yarp.c            main entrypoint for the shared library
+├── tasks                 various Rake tasks for the project
+├── templates             contains ERB templates generated by templates/template.rb
+│   └── template.rb       generates code from the nodes and tokens configured by config.yml
+├── test
+│   ├── fixtures          Ruby code used for testing
+│   └── snapshots         snapshots of generated syntax trees corresponding to fixtures
+└── vscode                VSCode extension
 ```
+
+## Getting started
+
+To compile the shared library, you will need:
+
+* A C99 compiler
+* autotools (autoconf, automake, libtool)
+* make
+* Ruby 3.3.0-preview1 or later
+
+Once you have these dependencies, run:
+
+```
+bundle install
+```
+
+to fetch the Ruby dependencies. Finally, run:
+
+```
+rake compile
+```
+
+to compile the shared library. It will be built in the `build` directory. To test that everything is working, run:
+
+```
+bin/parse -e "1 + 2"
+```
+
+to see the syntax tree for the expression `1 + 2`.
 
 ## Contributing
 
@@ -62,7 +82,8 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Mapping](docs/mapping.md)
 * [Ripper](docs/ripper.md)
 * [Serialization](docs/serialization.md)
+* [Testing](docs/testing.md)
 
-## VSCode Extension
+## VSCode plugin
 
 See the [vscode/README.md](vscode/README.md) file for more information and installation instructions.

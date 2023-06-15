@@ -8393,7 +8393,7 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     case YP_TOKEN_PERCENT_UPPER_I: case YP_TOKEN_PERCENT_UPPER_W: case YP_TOKEN_STRING_BEGIN: case YP_TOKEN_KEYWORD_NIL: \
     case YP_TOKEN_KEYWORD_SELF: case YP_TOKEN_KEYWORD_TRUE: case YP_TOKEN_KEYWORD_FALSE: case YP_TOKEN_KEYWORD___FILE__: \
     case YP_TOKEN_KEYWORD___LINE__: case YP_TOKEN_KEYWORD___ENCODING__: case YP_TOKEN_MINUS_GREATER: \
-    case YP_TOKEN_HEREDOC_START: case YP_TOKEN_UMINUS_NUM
+    case YP_TOKEN_HEREDOC_START: case YP_TOKEN_UMINUS_NUM: case YP_TOKEN_CHARACTER_LITERAL
 
 // This macro allows you to define a case statement for all of the token types
 // that could begin a parameter.
