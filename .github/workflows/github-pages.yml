@@ -35,6 +35,8 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
+      - name: Template source files
+        run: bundle exec rake templates
       - name: Build with RDoc
         run: bundle exec rake rdoc
       - name: Upload artifact
