@@ -15,6 +15,7 @@ ProgramNode(0...30)(
            ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(:foo, 0)]),
            nil,
            nil,
+           0,
            "m"
          ),
          (6...9),
@@ -34,6 +35,7 @@ ProgramNode(0...30)(
          ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(:foo, 0)]),
          nil,
          nil,
+         0,
          "m"
        ),
        (19...22),

@@ -22,6 +22,7 @@ ProgramNode(0...35)(
                 nil,
                 nil,
                 nil,
+                0,
                 "raise"
               )]
            ),
@@ -39,6 +40,7 @@ ProgramNode(0...35)(
          (4...6),
          (32...35)
        ),
+       0,
        "tap"
      )]
   )

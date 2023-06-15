@@ -25,6 +25,7 @@ ProgramNode(6...74)(
        ArgumentsNode(68...74)([LocalVariableReadNode(68...74)(:string, 0)]),
        nil,
        nil,
+       0,
        "puts"
      )]
   )

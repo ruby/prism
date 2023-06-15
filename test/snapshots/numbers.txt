@@ -30,6 +30,7 @@ ProgramNode(0...161)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      ImaginaryNode(99...102)(RationalNode(99...101)(IntegerNode(99...100)())),
@@ -44,6 +45,7 @@ ProgramNode(0...161)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      CallNode(117...123)(
@@ -56,6 +58,7 @@ ProgramNode(0...161)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      RationalNode(125...129)(IntegerNode(125...128)()),

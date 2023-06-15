@@ -13,14 +13,16 @@ ProgramNode(0...8)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
-         AMPERSAND_DOT(5...7)("&."),
+         (5...7),
          IDENTIFIER(7...8)("b"),
          nil,
          nil,
          nil,
          nil,
+         1,
          "b"
        ),
        (0...1),

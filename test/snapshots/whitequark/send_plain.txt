@@ -10,14 +10,16 @@ ProgramNode(0...29)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(3...4)("."),
+       (3...4),
        IDENTIFIER(4...7)("fun"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "fun"
      ),
      CallNode(9...19)(
@@ -29,14 +31,16 @@ ProgramNode(0...29)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       COLON_COLON(12...14)("::"),
+       (12...14),
        CONSTANT(14...17)("Fun"),
        PARENTHESIS_LEFT(17...18)("("),
        nil,
        PARENTHESIS_RIGHT(18...19)(")"),
        nil,
+       0,
        "Fun"
      ),
      CallNode(21...29)(
@@ -48,14 +52,16 @@ ProgramNode(0...29)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       COLON_COLON(24...26)("::"),
+       (24...26),
        IDENTIFIER(26...29)("fun"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "fun"
      )]
   )

@@ -10,6 +10,7 @@ ProgramNode(0...12)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      IntegerNode(10...12)()]

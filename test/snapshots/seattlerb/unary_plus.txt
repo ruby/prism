@@ -10,6 +10,7 @@ ProgramNode(0...2)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        nil,
@@ -18,6 +19,7 @@ ProgramNode(0...2)(
        nil,
        nil,
        nil,
+       0,
        "+@"
      )]
   )

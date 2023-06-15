@@ -10,6 +10,7 @@ ProgramNode(0...20)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -24,6 +25,7 @@ ProgramNode(0...20)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           ),
           KeywordHashNode(9...18)(
@@ -36,6 +38,7 @@ ProgramNode(0...20)(
        ),
        BRACKET_RIGHT(19...20)("]"),
        nil,
+       0,
        "[]"
      )]
   )

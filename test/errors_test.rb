@@ -78,6 +78,7 @@ class ErrorsTest < Test::Unit::TestCase
           ArgumentsNode([MissingNode()]),
           nil,
           nil,
+          0,
           "+"
         )
       ]),
@@ -258,6 +259,7 @@ class ErrorsTest < Test::Unit::TestCase
                 nil,
                 nil,
                 nil,
+                0,
                 "kwargs"
               ),
               Location()
@@ -265,11 +267,12 @@ class ErrorsTest < Test::Unit::TestCase
          ),
          SplatNode(
            Location(),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, 0, "args")
          )]
       ),
       PARENTHESIS_RIGHT(")"),
       nil,
+      0,
       "a"
     )
 
@@ -288,6 +291,7 @@ class ErrorsTest < Test::Unit::TestCase
       ]),
       PARENTHESIS_RIGHT(")"),
       nil,
+      0,
       "a"
     )
 
@@ -312,17 +316,18 @@ class ErrorsTest < Test::Unit::TestCase
         [KeywordHashNode(
            [AssocNode(
               SymbolNode(nil, Location(), Location(), "foo"),
-              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, 0, "bar"),
               nil
             )]
          ),
          SplatNode(
            Location(),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, 0, "args")
          )]
       ),
       PARENTHESIS_RIGHT(")"),
       nil,
+      0,
       "a"
     )
 
@@ -367,6 +372,7 @@ class ErrorsTest < Test::Unit::TestCase
              Location(),
              Location()
            ),
+           0,
            "bar"
          )]
       ),
@@ -838,6 +844,7 @@ class ErrorsTest < Test::Unit::TestCase
         Location(),
         Location()
       ),
+      0,
       "a"
     )
 

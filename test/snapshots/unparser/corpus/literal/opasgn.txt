@@ -36,6 +36,7 @@ ProgramNode(0...233)(
          nil,
          nil,
          nil,
+         0,
          "b"
        ),
        (38...41)
@@ -57,12 +58,13 @@ ProgramNode(0...233)(
          (52...53),
          (60...61)
        ),
-       DOT(61...62)("."),
+       (61...62),
        IDENTIFIER(62...65)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(66...83)(
@@ -89,6 +91,7 @@ ProgramNode(0...233)(
             nil,
             nil,
             nil,
+            0,
             "k"
           ),
           CallNode(82...83)(
@@ -99,22 +102,25 @@ ProgramNode(0...233)(
             nil,
             nil,
             nil,
+            0,
             "v"
           )]
        ),
        BRACKET_RIGHT(78...79)("]"),
        nil,
+       0,
        "[]="
      ),
      OperatorAssignmentNode(84...92)(
        CallNode(84...87)(
          LocalVariableReadNode(84...85)(:a, 0),
-         DOT(85...86)("."),
+         (85...86),
          IDENTIFIER(86...87)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        PLUS_EQUAL(88...90)("+="),
@@ -123,12 +129,13 @@ ProgramNode(0...233)(
      OperatorAssignmentNode(93...101)(
        CallNode(93...96)(
          LocalVariableReadNode(93...94)(:a, 0),
-         DOT(94...95)("."),
+         (94...95),
          IDENTIFIER(95...96)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        MINUS_EQUAL(97...99)("-="),
@@ -137,12 +144,13 @@ ProgramNode(0...233)(
      OperatorAssignmentNode(102...111)(
        CallNode(102...105)(
          LocalVariableReadNode(102...103)(:a, 0),
-         DOT(103...104)("."),
+         (103...104),
          IDENTIFIER(104...105)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        STAR_STAR_EQUAL(106...109)("**="),
@@ -151,12 +159,13 @@ ProgramNode(0...233)(
      OperatorAssignmentNode(112...120)(
        CallNode(112...115)(
          LocalVariableReadNode(112...113)(:a, 0),
-         DOT(113...114)("."),
+         (113...114),
          IDENTIFIER(114...115)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        STAR_EQUAL(116...118)("*="),
@@ -165,12 +174,13 @@ ProgramNode(0...233)(
      OperatorAssignmentNode(121...129)(
        CallNode(121...124)(
          LocalVariableReadNode(121...122)(:a, 0),
-         DOT(122...123)("."),
+         (122...123),
          IDENTIFIER(123...124)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        SLASH_EQUAL(125...127)("/="),
@@ -179,12 +189,13 @@ ProgramNode(0...233)(
      OperatorAndAssignmentNode(130...139)(
        CallNode(130...133)(
          LocalVariableReadNode(130...131)(:a, 0),
-         DOT(131...132)("."),
+         (131...132),
          IDENTIFIER(132...133)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        CallNode(138...139)(
@@ -195,6 +206,7 @@ ProgramNode(0...233)(
          nil,
          nil,
          nil,
+         0,
          "b"
        ),
        (134...137)
@@ -202,12 +214,13 @@ ProgramNode(0...233)(
      OperatorOrAssignmentNode(140...149)(
        CallNode(140...143)(
          LocalVariableReadNode(140...141)(:a, 0),
-         DOT(141...142)("."),
+         (141...142),
          IDENTIFIER(142...143)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        IntegerNode(148...149)(),
@@ -228,11 +241,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(153...154)("]"),
          nil,
+         0,
          "[]="
        ),
        PLUS_EQUAL(155...157)("+="),
@@ -253,11 +268,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(163...164)("]"),
          nil,
+         0,
          "[]="
        ),
        MINUS_EQUAL(165...167)("-="),
@@ -278,11 +295,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(173...174)("]"),
          nil,
+         0,
          "[]="
        ),
        STAR_STAR_EQUAL(175...178)("**="),
@@ -303,11 +322,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(184...185)("]"),
          nil,
+         0,
          "[]="
        ),
        STAR_EQUAL(186...188)("*="),
@@ -328,11 +349,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(194...195)("]"),
          nil,
+         0,
          "[]="
        ),
        SLASH_EQUAL(196...198)("/="),
@@ -353,11 +376,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(204...205)("]"),
          nil,
+         0,
          "[]="
        ),
        CallNode(210...211)(
@@ -368,6 +393,7 @@ ProgramNode(0...233)(
          nil,
          nil,
          nil,
+         0,
          "b"
        ),
        (206...209)
@@ -387,11 +413,13 @@ ProgramNode(0...233)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
          BRACKET_RIGHT(215...216)("]"),
          nil,
+         0,
          "[]="
        ),
        IntegerNode(221...222)(),
@@ -407,14 +435,16 @@ ProgramNode(0...233)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
-         DOT(226...227)("."),
+         (226...227),
          CONSTANT(227...228)("A"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "A="
        ),
        PLUS_EQUAL(229...231)("+="),

@@ -10,6 +10,7 @@ ProgramNode(0...74)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [InNode(9...21)(
@@ -61,9 +62,10 @@ ProgramNode(0...74)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
-       DOT(45...46)("."),
+       (45...46),
        IDENTIFIER(46...49)("set"),
        nil,
        ArgumentsNode(50...58)(
@@ -77,6 +79,7 @@ ProgramNode(0...74)(
        ),
        nil,
        nil,
+       0,
        "set"
      ),
      CallNode(60...74)(
@@ -88,9 +91,10 @@ ProgramNode(0...74)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
-       DOT(63...64)("."),
+       (63...64),
        IDENTIFIER(64...67)("set"),
        nil,
        ArgumentsNode(68...74)(
@@ -104,6 +108,7 @@ ProgramNode(0...74)(
        ),
        nil,
        nil,
+       0,
        "set"
      )]
   )

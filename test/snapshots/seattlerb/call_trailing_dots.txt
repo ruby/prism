@@ -11,22 +11,25 @@ ProgramNode(0...7)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
-         DOT(1...2)("."),
+         (1...2),
          IDENTIFIER(3...4)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b"
        ),
-       DOT(4...5)("."),
+       (4...5),
        IDENTIFIER(6...7)("c"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "c"
      )]
   )

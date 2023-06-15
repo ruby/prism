@@ -12,6 +12,7 @@ ProgramNode(0...33)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        ),
@@ -35,6 +36,7 @@ ProgramNode(0...33)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "foo"
                )]
             ),

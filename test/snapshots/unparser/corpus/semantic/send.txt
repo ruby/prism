@@ -9,6 +9,7 @@ ProgramNode(0...44)(
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(4...10)(
@@ -19,6 +20,7 @@ ProgramNode(0...44)(
        ArgumentsNode(8...9)([IntegerNode(8...9)()]),
        PARENTHESIS_RIGHT(9...10)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(12...27)(
@@ -32,9 +34,10 @@ ProgramNode(0...44)(
              nil,
              nil,
              nil,
+             0,
              "a"
            ),
-           DOT(13...14)("."),
+           (13...14),
            EQUAL_EQUAL_EQUAL(14...17)("==="),
            PARENTHESIS_LEFT(17...18)("("),
            ArgumentsNode(18...19)(
@@ -46,19 +49,22 @@ ProgramNode(0...44)(
                 nil,
                 nil,
                 nil,
+                0,
                 "b"
               )]
            ),
            PARENTHESIS_RIGHT(19...20)(")"),
            nil,
+           0,
            "==="
          ),
-         DOT(20...21)("."),
+         (20...21),
          IDENTIFIER(21...22)("c"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "c"
        ),
        nil,
@@ -73,11 +79,13 @@ ProgramNode(0...44)(
             nil,
             nil,
             nil,
+            0,
             "d"
           )]
        ),
        nil,
        nil,
+       0,
        "=="
      ),
      CallNode(29...44)(
@@ -89,6 +97,7 @@ ProgramNode(0...44)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        nil,
@@ -105,17 +114,19 @@ ProgramNode(0...44)(
                 nil,
                 nil,
                 nil,
+                0,
                 "d"
               ),
-              DOT(35...36)("."),
+              (35...36),
               IDENTIFIER(36...37)("c"),
               nil,
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(37...38)("."),
+            (37...38),
             EQUAL_EQUAL_EQUAL(38...41)("==="),
             PARENTHESIS_LEFT(41...42)("("),
             ArgumentsNode(42...43)(
@@ -127,16 +138,19 @@ ProgramNode(0...44)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(43...44)(")"),
             nil,
+            0,
             "==="
           )]
        ),
        nil,
        nil,
+       0,
        "=="
      )]
   )

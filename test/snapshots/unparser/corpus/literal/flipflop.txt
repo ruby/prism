@@ -17,6 +17,7 @@ ProgramNode(0...68)(
                        nil,
                        nil,
                        nil,
+                       0,
                        "i"
                      ),
                      nil,
@@ -25,6 +26,7 @@ ProgramNode(0...68)(
                      ArgumentsNode(10...11)([IntegerNode(10...11)()]),
                      nil,
                      nil,
+                     0,
                      "=="
                    )]
                 ),
@@ -42,6 +44,7 @@ ProgramNode(0...68)(
                        nil,
                        nil,
                        nil,
+                       0,
                        "i"
                      ),
                      nil,
@@ -50,6 +53,7 @@ ProgramNode(0...68)(
                      ArgumentsNode(20...21)([IntegerNode(20...21)()]),
                      nil,
                      nil,
+                     0,
                      "=="
                    )]
                 ),
@@ -71,6 +75,7 @@ ProgramNode(0...68)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        ),
@@ -93,6 +98,7 @@ ProgramNode(0...68)(
                        nil,
                        nil,
                        nil,
+                       0,
                        "i"
                      ),
                      nil,
@@ -101,6 +107,7 @@ ProgramNode(0...68)(
                      ArgumentsNode(44...45)([IntegerNode(44...45)()]),
                      nil,
                      nil,
+                     0,
                      "=="
                    )]
                 ),
@@ -118,6 +125,7 @@ ProgramNode(0...68)(
                        nil,
                        nil,
                        nil,
+                       0,
                        "i"
                      ),
                      nil,
@@ -126,6 +134,7 @@ ProgramNode(0...68)(
                      ArgumentsNode(55...56)([IntegerNode(55...56)()]),
                      nil,
                      nil,
+                     0,
                      "=="
                    )]
                 ),
@@ -147,6 +156,7 @@ ProgramNode(0...68)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        ),

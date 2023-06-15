@@ -9,6 +9,7 @@ ProgramNode(0...32)(
        ArgumentsNode(8...10)([IntegerNode(8...10)()]),
        nil,
        nil,
+       0,
        "**"
      ),
      CallNode(12...20)(
@@ -20,6 +21,7 @@ ProgramNode(0...32)(
          ArgumentsNode(18...20)([IntegerNode(18...20)()]),
          nil,
          nil,
+         0,
          "**"
        ),
        nil,
@@ -28,6 +30,7 @@ ProgramNode(0...32)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      CallNode(22...32)(
@@ -39,6 +42,7 @@ ProgramNode(0...32)(
          ArgumentsNode(30...32)([IntegerNode(30...32)()]),
          nil,
          nil,
+         0,
          "**"
        ),
        nil,
@@ -47,6 +51,7 @@ ProgramNode(0...32)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      )]
   )

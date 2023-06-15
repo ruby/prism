@@ -21,6 +21,7 @@ ProgramNode(6...94)(
             ),
             nil,
             nil,
+            0,
             "g"
           )]
        ),
@@ -52,6 +53,7 @@ ProgramNode(6...94)(
             ),
             nil,
             nil,
+            0,
             "g"
           )]
        ),
@@ -78,6 +80,7 @@ ProgramNode(6...94)(
        ),
        nil,
        nil,
+       0,
        "g"
      )]
   )

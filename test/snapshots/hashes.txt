@@ -14,6 +14,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "a"
           ),
           CallNode(16...17)(
@@ -24,6 +25,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           (13...15)
@@ -37,6 +39,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "c"
           ),
           CallNode(24...25)(
@@ -47,6 +50,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "d"
           ),
           (21...23)
@@ -64,6 +68,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "a"
           ),
           CallNode(36...37)(
@@ -74,6 +79,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           (33...35)
@@ -87,6 +93,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "c"
           ),
           (39...41)
@@ -105,6 +112,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           nil
@@ -119,6 +127,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "d"
           ),
           nil
@@ -137,6 +146,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           nil
@@ -151,6 +161,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "d"
           ),
           nil
@@ -164,6 +175,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "e"
           ),
           (95...97)
@@ -178,6 +190,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "g"
           ),
           nil
@@ -197,6 +210,7 @@ ProgramNode(0...120)(
               nil,
               nil,
               nil,
+              0,
               "b?"
             ),
             nil,
@@ -205,6 +219,7 @@ ProgramNode(0...120)(
             nil,
             nil,
             nil,
+            0,
             "!"
           ),
           nil

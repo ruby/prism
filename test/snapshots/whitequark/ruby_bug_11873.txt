@@ -27,22 +27,26 @@ ProgramNode(0...272)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  nil,
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(7...8)(")"),
             nil,
+            0,
             "b"
           ),
           StringNode(10...13)((10...11), (11...12), (12...13), "x")]
        ),
        nil,
        BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
+       0,
        "a"
      ),
      CallNode(22...42)(
@@ -71,16 +75,19 @@ ProgramNode(0...272)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  nil,
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(29...30)(")"),
             nil,
+            0,
             "b"
           ),
           RegularExpressionNode(32...35)(
@@ -93,6 +100,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(36...42)([], nil, nil, (36...38), (39...42)),
+       0,
        "a"
      ),
      CallNode(44...65)(
@@ -121,16 +129,19 @@ ProgramNode(0...272)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  nil,
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(51...52)(")"),
             nil,
+            0,
             "b"
           ),
           RegularExpressionNode(54...58)(
@@ -143,6 +154,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(59...65)([], nil, nil, (59...61), (62...65)),
+       0,
        "a"
      ),
      CallNode(67...88)(
@@ -171,22 +183,26 @@ ProgramNode(0...272)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  PARENTHESIS_RIGHT(74...75)(")"),
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(75...76)(")"),
             nil,
+            0,
             "b"
           ),
           StringNode(78...81)((78...79), (79...80), (80...81), "x")]
        ),
        nil,
        BlockNode(82...88)([], nil, nil, (82...84), (85...88)),
+       0,
        "a"
      ),
      CallNode(90...111)(
@@ -215,16 +231,19 @@ ProgramNode(0...272)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  PARENTHESIS_RIGHT(97...98)(")"),
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(98...99)(")"),
             nil,
+            0,
             "b"
           ),
           RegularExpressionNode(101...104)(
@@ -237,6 +256,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(105...111)([], nil, nil, (105...107), (108...111)),
+       0,
        "a"
      ),
      CallNode(113...135)(
@@ -265,16 +285,19 @@ ProgramNode(0...272)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  PARENTHESIS_RIGHT(120...121)(")"),
                  nil,
+                 0,
                  "c"
                )]
             ),
             PARENTHESIS_RIGHT(121...122)(")"),
             nil,
+            0,
             "b"
           ),
           RegularExpressionNode(124...128)(
@@ -287,6 +310,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(129...135)([], nil, nil, (129...131), (132...135)),
+       0,
        "a"
      ),
      CallNode(137...157)(
@@ -320,23 +344,27 @@ ProgramNode(0...272)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "d"
                       )]
                    ),
                    nil,
                    nil,
+                   0,
                    "c"
                  )]
               ),
               (140...141),
               (144...145)
             ),
+            0,
             "b"
           ),
           StringNode(147...150)((147...148), (148...149), (149...150), "x")]
        ),
        nil,
        BlockNode(151...157)([], nil, nil, (151...153), (154...157)),
+       0,
        "a"
      ),
      CallNode(159...179)(
@@ -370,17 +398,20 @@ ProgramNode(0...272)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "d"
                       )]
                    ),
                    nil,
                    nil,
+                   0,
                    "c"
                  )]
               ),
               (162...163),
               (166...167)
             ),
+            0,
             "b"
           ),
           RegularExpressionNode(169...172)(
@@ -393,6 +424,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(173...179)([], nil, nil, (173...175), (176...179)),
+       0,
        "a"
      ),
      CallNode(181...202)(
@@ -426,17 +458,20 @@ ProgramNode(0...272)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "d"
                       )]
                    ),
                    nil,
                    nil,
+                   0,
                    "c"
                  )]
               ),
               (184...185),
               (188...189)
             ),
+            0,
             "b"
           ),
           RegularExpressionNode(191...195)(
@@ -449,6 +484,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(196...202)([], nil, nil, (196...198), (199...202)),
+       0,
        "a"
      ),
      CallNode(204...225)(
@@ -482,23 +518,27 @@ ProgramNode(0...272)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "d"
                       )]
                    ),
                    PARENTHESIS_RIGHT(211...212)(")"),
                    nil,
+                   0,
                    "c"
                  )]
               ),
               (207...208),
               (212...213)
             ),
+            0,
             "b"
           ),
           StringNode(215...218)((215...216), (216...217), (217...218), "x")]
        ),
        nil,
        BlockNode(219...225)([], nil, nil, (219...221), (222...225)),
+       0,
        "a"
      ),
      CallNode(227...248)(
@@ -532,17 +572,20 @@ ProgramNode(0...272)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "d"
                       )]
                    ),
                    PARENTHESIS_RIGHT(234...235)(")"),
                    nil,
+                   0,
                    "c"
                  )]
               ),
               (230...231),
               (235...236)
             ),
+            0,
             "b"
           ),
           RegularExpressionNode(238...241)(
@@ -555,6 +598,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(242...248)([], nil, nil, (242...244), (245...248)),
+       0,
        "a"
      ),
      CallNode(250...272)(
@@ -588,17 +632,20 @@ ProgramNode(0...272)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "d"
                       )]
                    ),
                    PARENTHESIS_RIGHT(257...258)(")"),
                    nil,
+                   0,
                    "c"
                  )]
               ),
               (253...254),
               (258...259)
             ),
+            0,
             "b"
           ),
           RegularExpressionNode(261...265)(
@@ -611,6 +658,7 @@ ProgramNode(0...272)(
        ),
        nil,
        BlockNode(266...272)([], nil, nil, (266...268), (269...272)),
+       0,
        "a"
      )]
   )

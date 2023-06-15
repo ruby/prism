@@ -17,6 +17,7 @@ ProgramNode(0...114)(
        ),
        PARENTHESIS_RIGHT(13...14)(")"),
        nil,
+       0,
        "fun"
      ),
      CallNode(16...36)(
@@ -41,6 +42,7 @@ ProgramNode(0...114)(
               nil,
               nil,
               nil,
+              0,
               "baz"
             ),
             (31...32)
@@ -48,11 +50,12 @@ ProgramNode(0...114)(
        ),
        PARENTHESIS_RIGHT(35...36)(")"),
        nil,
+       0,
        "fun"
      ),
      CallNode(38...59)(
        SelfNode(38...42)(),
-       DOT(42...43)("."),
+       (42...43),
        BRACKET_LEFT_RIGHT_EQUAL(43...46)("[]="),
        nil,
        ArgumentsNode(47...59)(
@@ -64,6 +67,7 @@ ProgramNode(0...114)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           KeywordHashNode(52...59)(
@@ -76,6 +80,7 @@ ProgramNode(0...114)(
        ),
        nil,
        nil,
+       0,
        "[]="
      ),
      CallNode(61...76)(
@@ -94,6 +99,7 @@ ProgramNode(0...114)(
        ),
        BRACKET_RIGHT(75...76)("]"),
        nil,
+       0,
        "[]"
      ),
      SuperNode(78...95)(

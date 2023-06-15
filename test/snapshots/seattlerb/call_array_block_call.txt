@@ -17,6 +17,7 @@ ProgramNode(0...19)(
                nil,
                nil,
                BlockNode(11...17)([], nil, nil, (11...13), (14...17)),
+               0,
                "b"
              )],
             (2...3),
@@ -25,6 +26,7 @@ ProgramNode(0...19)(
        ),
        nil,
        nil,
+       0,
        "a"
      )]
   )

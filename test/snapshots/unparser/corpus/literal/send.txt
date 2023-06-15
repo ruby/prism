@@ -34,6 +34,7 @@ ProgramNode(0...991)(
                      nil,
                      nil,
                      nil,
+                     0,
                      "b"
                    ),
                    (20...21),
@@ -62,12 +63,13 @@ ProgramNode(0...991)(
           ),
           CallNode(60...69)(
             LocalVariableReadNode(60...65)(:local, 0),
-            DOT(65...66)("."),
+            (65...66),
             IDENTIFIER(66...69)("bar"),
             nil,
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
@@ -83,12 +85,13 @@ ProgramNode(0...991)(
          nil,
          (82...85)
        ),
-       DOT(85...86)("."),
+       (85...86),
        IDENTIFIER(86...89)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(90...106)(
@@ -99,12 +102,13 @@ ProgramNode(0...991)(
          nil,
          (99...102)
        ),
-       DOT(102...103)("."),
+       (102...103),
        IDENTIFIER(103...106)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(107...127)(
@@ -116,12 +120,13 @@ ProgramNode(0...991)(
          nil,
          (120...123)
        ),
-       DOT(123...124)("."),
+       (123...124),
        IDENTIFIER(124...127)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(128...169)(
@@ -156,6 +161,7 @@ ProgramNode(0...991)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )],
             nil
@@ -164,12 +170,13 @@ ProgramNode(0...991)(
          (128...132),
          (162...165)
        ),
-       DOT(165...166)("."),
+       (165...166),
        IDENTIFIER(166...169)("baz"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "baz"
      ),
      CallNode(170...195)(
@@ -182,6 +189,7 @@ ProgramNode(0...991)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          [WhenNode(179...187)(
@@ -194,6 +202,7 @@ ProgramNode(0...991)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )],
             nil
@@ -202,12 +211,13 @@ ProgramNode(0...991)(
          (170...174),
          (188...191)
        ),
-       DOT(191...192)("."),
+       (191...192),
        IDENTIFIER(192...195)("baz"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "baz"
      ),
      CallNode(196...217)(
@@ -219,12 +229,13 @@ ProgramNode(0...991)(
          nil,
          (210...213)
        ),
-       DOT(213...214)("."),
+       (213...214),
        IDENTIFIER(214...217)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(218...238)(
@@ -241,12 +252,13 @@ ProgramNode(0...991)(
          nil,
          (231...234)
        ),
-       DOT(234...235)("."),
+       (234...235),
        IDENTIFIER(235...238)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(239...254)(
@@ -263,12 +275,13 @@ ProgramNode(0...991)(
          nil,
          (247...250)
        ),
-       DOT(250...251)("."),
+       (250...251),
        IDENTIFIER(251...254)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(255...272)(
@@ -282,16 +295,18 @@ ProgramNode(0...991)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          nil
        ),
-       DOT(268...269)("."),
+       (268...269),
        IDENTIFIER(269...272)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(273...290)(
@@ -305,16 +320,18 @@ ProgramNode(0...991)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          nil
        ),
-       DOT(286...287)("."),
+       (286...287),
        IDENTIFIER(287...290)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(291...303)(
@@ -326,14 +343,16 @@ ProgramNode(0...991)(
          nil,
          nil,
          BlockNode(296...299)([], nil, nil, (296...297), (298...299)),
+         0,
          "loop"
        ),
-       DOT(299...300)("."),
+       (299...300),
        IDENTIFIER(300...303)("bar"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "bar"
      ),
      CallNode(304...318)(
@@ -347,18 +366,20 @@ ProgramNode(0...991)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          nil,
          nil,
          (311...314)
        ),
-       DOT(314...315)("."),
+       (314...315),
        IDENTIFIER(315...318)("baz"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "baz"
      ),
      CallNode(319...338)(
@@ -380,18 +401,20 @@ ProgramNode(0...991)(
               ),
               nil,
               nil,
+              0,
               "=~"
             )]
          ),
          (319...320),
          (333...334)
        ),
-       DOT(334...335)("."),
+       (334...335),
        IDENTIFIER(335...338)("foo"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(339...349)(
@@ -406,12 +429,13 @@ ProgramNode(0...991)(
          (339...340),
          (344...345)
        ),
-       DOT(345...346)("."),
+       (345...346),
        IDENTIFIER(346...349)("max"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "max"
      ),
      CallNode(350...368)(
@@ -426,6 +450,7 @@ ProgramNode(0...991)(
                 nil,
                 nil,
                 nil,
+                0,
                 "foo"
               ),
               nil,
@@ -442,18 +467,20 @@ ProgramNode(0...991)(
               ),
               nil,
               nil,
+              0,
               "=~"
             )]
          ),
          (350...351),
          (363...364)
        ),
-       DOT(364...365)("."),
+       (364...365),
        IDENTIFIER(365...368)("foo"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(369...382)(
@@ -472,6 +499,7 @@ ProgramNode(0...991)(
        ),
        nil,
        nil,
+       0,
        "=~"
      ),
      CallNode(383...395)(
@@ -494,35 +522,39 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        ),
        nil,
        nil,
+       0,
        "=~"
      ),
      RangeNode(396...404)(
        IntegerNode(396...397)(),
        CallNode(399...404)(
          IntegerNode(399...400)(),
-         DOT(400...401)("."),
+         (400...401),
          IDENTIFIER(401...404)("max"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "max"
        ),
        (397...399)
      ),
      CallNode(405...410)(
        ConstantReadNode(405...406)(),
-       DOT(406...407)("."),
+       (406...407),
        IDENTIFIER(407...410)("foo"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(411...416)(
@@ -533,6 +565,7 @@ ProgramNode(0...991)(
        nil,
        PARENTHESIS_RIGHT(415...416)(")"),
        nil,
+       0,
        "FOO"
      ),
      CallNode(417...421)(
@@ -544,14 +577,16 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
-       AMPERSAND_DOT(418...420)("&."),
+       (418...420),
        IDENTIFIER(420...421)("b"),
        nil,
        nil,
        nil,
        nil,
+       1,
        "b"
      ),
      CallNode(422...427)(
@@ -563,14 +598,16 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
-       DOT(423...424)("."),
+       (423...424),
        IDENTIFIER(424...427)("foo"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(428...431)(
@@ -581,6 +618,7 @@ ProgramNode(0...991)(
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(432...450)(
@@ -592,6 +630,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -609,6 +648,7 @@ ProgramNode(0...991)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "bar"
                  ),
                  nil,
@@ -623,11 +663,13 @@ ProgramNode(0...991)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "baz"
                     )]
                  ),
                  nil,
                  nil,
+                 0,
                  "*"
                )]
             ),
@@ -637,6 +679,7 @@ ProgramNode(0...991)(
        ),
        nil,
        nil,
+       0,
        "<<"
      ),
      CallNode(451...463)(
@@ -648,6 +691,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -664,6 +708,7 @@ ProgramNode(0...991)(
        ),
        nil,
        nil,
+       0,
        "=~"
      ),
      CallNode(464...482)(
@@ -684,6 +729,7 @@ ProgramNode(0...991)(
                      nil,
                      nil,
                      nil,
+                     0,
                      "foo"
                    ),
                    CallNode(477...480)(
@@ -694,6 +740,7 @@ ProgramNode(0...991)(
                      nil,
                      nil,
                      nil,
+                     0,
                      "bar"
                    ),
                    (474...476)
@@ -707,6 +754,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(481...482)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(483...494)(
@@ -724,6 +772,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "block"
             ),
             (487...488)
@@ -731,6 +780,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(493...494)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(495...513)(
@@ -749,6 +799,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "args"
             )
           ),
@@ -761,6 +812,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "block"
             ),
             (506...507)
@@ -768,6 +820,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(512...513)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(514...529)(
@@ -786,12 +839,14 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "arguments"
             )
           )]
        ),
        PARENTHESIS_RIGHT(528...529)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(530...539)(
@@ -804,6 +859,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(538...539)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(540...548)(
@@ -820,11 +876,13 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        PARENTHESIS_RIGHT(547...548)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(549...564)(
@@ -841,6 +899,7 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           ),
           SplatNode(558...563)(
@@ -853,12 +912,14 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "args"
             )
           )]
        ),
        PARENTHESIS_RIGHT(563...564)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(565...582)(
@@ -876,6 +937,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             ),
             nil,
@@ -892,11 +954,13 @@ ProgramNode(0...991)(
             ),
             nil,
             nil,
+            0,
             "=~"
           )]
        ),
        PARENTHESIS_RIGHT(581...582)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(583...596)(
@@ -908,9 +972,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(586...587)("."),
+       (586...587),
        IDENTIFIER(587...590)("bar"),
        PARENTHESIS_LEFT(590...591)("("),
        ArgumentsNode(591...595)(
@@ -923,6 +988,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "baz"
             ),
             (591...592)
@@ -930,6 +996,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(595...596)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(597...623)(
@@ -941,9 +1008,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(600...601)("."),
+       (600...601),
        IDENTIFIER(601...604)("bar"),
        PARENTHESIS_LEFT(604...605)("("),
        ArgumentsNode(605...622)(
@@ -957,6 +1025,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "arga"
             )
           ),
@@ -968,6 +1037,7 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           SplatNode(617...622)(
@@ -980,12 +1050,14 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "argb"
             )
           )]
        ),
        PARENTHESIS_RIGHT(622...623)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(624...638)(
@@ -997,9 +1069,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(627...628)("."),
+       (627...628),
        IDENTIFIER(628...631)("bar"),
        PARENTHESIS_LEFT(631...632)("("),
        ArgumentsNode(632...637)(
@@ -1013,12 +1086,14 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "args"
             )
           )]
        ),
        PARENTHESIS_RIGHT(637...638)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(639...658)(
@@ -1030,9 +1105,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(642...643)("."),
+       (642...643),
        IDENTIFIER(643...646)("bar"),
        PARENTHESIS_LEFT(646...647)("("),
        ArgumentsNode(647...657)(
@@ -1046,6 +1122,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "args"
             )
           ),
@@ -1057,11 +1134,13 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        ),
        PARENTHESIS_RIGHT(657...658)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(659...678)(
@@ -1073,9 +1152,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(662...663)("."),
+       (662...663),
        IDENTIFIER(663...666)("bar"),
        PARENTHESIS_LEFT(666...667)("("),
        ArgumentsNode(667...677)(
@@ -1089,6 +1169,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "baz"
             ),
             (673...674)
@@ -1096,6 +1177,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(677...678)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(679...696)(
@@ -1107,9 +1189,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(682...683)("."),
+       (682...683),
        IDENTIFIER(683...686)("bar"),
        PARENTHESIS_LEFT(686...687)("("),
        ArgumentsNode(687...695)(
@@ -1124,6 +1207,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "boz"
                ),
                nil
@@ -1132,6 +1216,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(695...696)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(697...723)(
@@ -1143,9 +1228,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(700...701)("."),
+       (700...701),
        IDENTIFIER(701...704)("bar"),
        PARENTHESIS_LEFT(704...705)("("),
        ArgumentsNode(705...722)(
@@ -1157,6 +1243,7 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           KeywordHashNode(710...722)(
@@ -1175,6 +1262,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "boz"
                ),
                (716...718)
@@ -1183,6 +1271,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(722...723)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(724...743)(
@@ -1194,9 +1283,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(727...728)("."),
+       (727...728),
        IDENTIFIER(728...731)("bar"),
        PARENTHESIS_LEFT(731...732)("("),
        ArgumentsNode(732...742)(
@@ -1208,6 +1298,7 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           SplatNode(737...742)(
@@ -1220,12 +1311,14 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "args"
             )
           )]
        ),
        PARENTHESIS_RIGHT(742...743)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(744...771)(
@@ -1237,9 +1330,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(747...748)("."),
+       (747...748),
        IDENTIFIER(748...751)("bar"),
        PARENTHESIS_LEFT(751...752)("("),
        ArgumentsNode(752...770)(
@@ -1251,6 +1345,7 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           SplatNode(757...762)(
@@ -1263,6 +1358,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "args"
             )
           ),
@@ -1275,6 +1371,7 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "block"
             ),
             (764...765)
@@ -1282,6 +1379,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(770...771)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(772...788)(
@@ -1293,9 +1391,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(775...776)("."),
+       (775...776),
        IDENTIFIER(776...779)("bar"),
        PARENTHESIS_LEFT(779...780)("("),
        ArgumentsNode(780...787)(
@@ -1307,12 +1406,14 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           HashNode(785...787)((785...786), [], (786...787))]
        ),
        PARENTHESIS_RIGHT(787...788)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(789...815)(
@@ -1324,9 +1425,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(792...793)("."),
+       (792...793),
        IDENTIFIER(793...796)("bar"),
        PARENTHESIS_LEFT(796...797)("("),
        ArgumentsNode(797...814)(
@@ -1342,6 +1444,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "boz"
                ),
                nil
@@ -1356,11 +1459,13 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "boz"
           )]
        ),
        PARENTHESIS_RIGHT(814...815)(")"),
        nil,
+       0,
        "bar"
      ),
      CallNode(816...823)(
@@ -1372,9 +1477,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(819...820)("."),
+       (819...820),
        IDENTIFIER(820...823)("bar"),
        nil,
        ArgumentsNode(824...828)(
@@ -1382,6 +1488,7 @@ ProgramNode(0...991)(
        ),
        nil,
        nil,
+       0,
        "bar="
      ),
      CallNode(829...838)(
@@ -1401,6 +1508,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "b"
                ),
                nil
@@ -1409,6 +1517,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(837...838)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(839...850)(
@@ -1420,9 +1529,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(842...843)("."),
+       (842...843),
        AMPERSAND(843...844)("&"),
        PARENTHESIS_LEFT(844...845)("("),
        ArgumentsNode(845...849)(
@@ -1437,6 +1547,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "b"
                ),
                nil
@@ -1445,6 +1556,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(849...850)(")"),
        nil,
+       0,
        "&"
      ),
      CallNode(851...861)(
@@ -1456,9 +1568,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(854...855)("."),
+       (854...855),
        AMPERSAND(855...856)("&"),
        PARENTHESIS_LEFT(856...857)("("),
        ArgumentsNode(857...860)(
@@ -1472,6 +1585,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "a"
                ),
                (857...859)
@@ -1480,6 +1594,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(860...861)(")"),
        nil,
+       0,
        "&"
      ),
      CallNode(862...871)(
@@ -1491,6 +1606,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -1507,12 +1623,14 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "baz"
             )
           )]
        ),
        BRACKET_RIGHT(870...871)("]"),
        nil,
+       0,
        "[]"
      ),
      CallNode(872...881)(
@@ -1524,6 +1642,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -1534,6 +1653,7 @@ ProgramNode(0...991)(
        ),
        BRACKET_RIGHT(880...881)("]"),
        nil,
+       0,
        "[]"
      ),
      CallNode(882...887)(
@@ -1545,6 +1665,7 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -1553,21 +1674,23 @@ ProgramNode(0...991)(
        nil,
        BRACKET_RIGHT(886...887)("]"),
        nil,
+       0,
        "[]"
      ),
      CallNode(888...896)(
        SelfNode(888...892)(),
-       DOT(892...893)("."),
+       (892...893),
        IDENTIFIER(893...896)("foo"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(897...905)(
        SelfNode(897...901)(),
-       DOT(901...902)("."),
+       (901...902),
        IDENTIFIER(902...905)("foo"),
        nil,
        ArgumentsNode(906...910)(
@@ -1575,6 +1698,7 @@ ProgramNode(0...991)(
        ),
        nil,
        nil,
+       0,
        "foo="
      ),
      CallNode(911...928)(
@@ -1589,6 +1713,7 @@ ProgramNode(0...991)(
                 nil,
                 nil,
                 nil,
+                0,
                 "a"
               ),
               nil,
@@ -1603,11 +1728,13 @@ ProgramNode(0...991)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "b"
                  )]
               ),
               nil,
               nil,
+              0,
               "+"
             )]
          ),
@@ -1629,6 +1756,7 @@ ProgramNode(0...991)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "c"
                  ),
                  nil,
@@ -1643,11 +1771,13 @@ ProgramNode(0...991)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "d"
                     )]
                  ),
                  nil,
                  nil,
+                 0,
                  "-"
                )]
             ),
@@ -1657,6 +1787,7 @@ ProgramNode(0...991)(
        ),
        nil,
        nil,
+       0,
        "/"
      ),
      CallNode(929...948)(
@@ -1671,6 +1802,7 @@ ProgramNode(0...991)(
                 nil,
                 nil,
                 nil,
+                0,
                 "a"
               ),
               nil,
@@ -1685,11 +1817,13 @@ ProgramNode(0...991)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "b"
                  )]
               ),
               nil,
               nil,
+              0,
               "+"
             )]
          ),
@@ -1709,9 +1843,10 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(940...941)("."),
+            (940...941),
             MINUS(941...942)("-"),
             PARENTHESIS_LEFT(942...943)("("),
             ArgumentsNode(943...947)(
@@ -1723,6 +1858,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "e"
                ),
                CallNode(946...947)(
@@ -1733,16 +1869,19 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "f"
                )]
             ),
             PARENTHESIS_RIGHT(947...948)(")"),
             nil,
+            0,
             "-"
           )]
        ),
        nil,
        nil,
+       0,
        "/"
      ),
      CallNode(949...966)(
@@ -1757,6 +1896,7 @@ ProgramNode(0...991)(
                 nil,
                 nil,
                 nil,
+                0,
                 "a"
               ),
               nil,
@@ -1771,11 +1911,13 @@ ProgramNode(0...991)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "b"
                  )]
               ),
               nil,
               nil,
+              0,
               "+"
             )]
          ),
@@ -1795,9 +1937,10 @@ ProgramNode(0...991)(
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(960...961)("."),
+            (960...961),
             MINUS(961...962)("-"),
             PARENTHESIS_LEFT(962...963)("("),
             ArgumentsNode(963...965)(
@@ -1811,17 +1954,20 @@ ProgramNode(0...991)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "f"
                  )
                )]
             ),
             PARENTHESIS_RIGHT(965...966)(")"),
             nil,
+            0,
             "-"
           )]
        ),
        nil,
        nil,
+       0,
        "/"
      ),
      CallNode(967...975)(
@@ -1840,6 +1986,7 @@ ProgramNode(0...991)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "foo"
                ),
                (969...971)
@@ -1848,6 +1995,7 @@ ProgramNode(0...991)(
        ),
        PARENTHESIS_RIGHT(974...975)(")"),
        nil,
+       0,
        "x"
      ),
      CallNode(976...982)(
@@ -1859,14 +2007,16 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       AMPERSAND_DOT(979...981)("&."),
+       (979...981),
        BANG(981...982)("!"),
        nil,
        nil,
        nil,
        nil,
+       1,
        "!"
      ),
      CallNode(983...991)(
@@ -1878,9 +2028,10 @@ ProgramNode(0...991)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(986...987)("."),
+       (986...987),
        TILDE(987...988)("~"),
        PARENTHESIS_LEFT(988...989)("("),
        ArgumentsNode(989...990)(
@@ -1892,11 +2043,13 @@ ProgramNode(0...991)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
        PARENTHESIS_RIGHT(990...991)(")"),
        nil,
+       0,
        "~"
      )]
   )

@@ -10,9 +10,10 @@ ProgramNode(0...39)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(3...4)("."),
+       (3...4),
        IDENTIFIER(4...7)("fun"),
        nil,
        ArgumentsNode(8...11)(
@@ -24,11 +25,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        nil,
        nil,
+       0,
        "fun"
      ),
      CallNode(13...25)(
@@ -40,9 +43,10 @@ ProgramNode(0...39)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       COLON_COLON(16...18)("::"),
+       (16...18),
        CONSTANT(18...21)("Fun"),
        nil,
        ArgumentsNode(22...25)(
@@ -54,11 +58,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        nil,
        nil,
+       0,
        "Fun"
      ),
      CallNode(27...39)(
@@ -70,9 +76,10 @@ ProgramNode(0...39)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       COLON_COLON(30...32)("::"),
+       (30...32),
        IDENTIFIER(36...39)("bar"),
        nil,
        ArgumentsNode(36...39)(
@@ -84,11 +91,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        nil,
        nil,
+       0,
        "bar"
      )]
   )

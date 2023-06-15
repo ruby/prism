@@ -11,6 +11,7 @@ ProgramNode(0...278)(
        ),
        nil,
        nil,
+       0,
        "foo"
      ),
      RegularExpressionNode(11...19)((11...14), (14...17), (17...19), "abc", 1),
@@ -36,6 +37,7 @@ ProgramNode(0...278)(
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -66,11 +68,13 @@ ProgramNode(0...278)(
                nil,
                nil,
                nil,
+               0,
                "baz"
              )]
           ),
           nil,
           nil,
+          0,
           "=~"
         ),
         LocalVariableReadNode(82...85)(:foo, 0)],
@@ -122,6 +126,7 @@ ProgramNode(0...278)(
        ),
        nil,
        nil,
+       0,
        "=~"
      ),
      RegularExpressionNode(269...278)(

@@ -19,14 +19,16 @@ ProgramNode(0...22)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "b"
                  ),
-                 DOT(9...10)("."),
+                 (9...10),
                  IDENTIFIER(10...11)("c"),
                  nil,
                  nil,
                  nil,
                  BlockNode(12...18)([], nil, nil, (12...14), (15...18)),
+                 0,
                  "c"
                )]
             ),
@@ -38,6 +40,7 @@ ProgramNode(0...22)(
        ),
        nil,
        nil,
+       0,
        "a"
      )]
   )

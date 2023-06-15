@@ -10,9 +10,10 @@ ProgramNode(0...17)(
          ArgumentsNode(2...4)([SymbolNode(2...4)((2...3), (3...4), nil, "b")]),
          nil,
          BlockNode(5...11)([], nil, nil, (5...7), (8...11)),
+         0,
          "a"
        ),
-       COLON_COLON(11...13)("::"),
+       (11...13),
        IDENTIFIER(16...17)("d"),
        nil,
        ArgumentsNode(15...17)(
@@ -20,6 +21,7 @@ ProgramNode(0...17)(
        ),
        nil,
        nil,
+       0,
        "d"
      )]
   )

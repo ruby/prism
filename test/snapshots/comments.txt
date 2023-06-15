@@ -9,6 +9,7 @@ ProgramNode(0...118)(
        nil,
        nil,
        nil,
+       0,
        "a"
      ),
      CallNode(13...14)(
@@ -19,6 +20,7 @@ ProgramNode(0...118)(
        nil,
        nil,
        nil,
+       0,
        "b"
      ),
      CallNode(16...17)(
@@ -29,6 +31,7 @@ ProgramNode(0...118)(
        nil,
        nil,
        nil,
+       0,
        "c"
      ),
      CallNode(28...29)(
@@ -39,6 +42,7 @@ ProgramNode(0...118)(
        nil,
        nil,
        nil,
+       0,
        "d"
      ),
      CallNode(31...47)(
@@ -50,14 +54,16 @@ ProgramNode(0...118)(
          nil,
          nil,
          nil,
+         0,
          "e"
        ),
-       DOT(45...46)("."),
+       (45...46),
        IDENTIFIER(46...47)("f"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "f"
      ),
      CallNode(49...64)(
@@ -69,14 +75,16 @@ ProgramNode(0...118)(
          nil,
          nil,
          nil,
+         0,
          "g"
        ),
-       DOT(62...63)("."),
+       (62...63),
        IDENTIFIER(63...64)("h"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "h"
      ),
      CallNode(66...80)(
@@ -88,14 +96,16 @@ ProgramNode(0...118)(
          nil,
          nil,
          nil,
+         0,
          "i"
        ),
-       DOT(78...79)("."),
+       (78...79),
        IDENTIFIER(79...80)("j"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "j"
      ),
      CallNode(82...98)(
@@ -107,14 +117,16 @@ ProgramNode(0...118)(
          nil,
          nil,
          nil,
+         0,
          "k"
        ),
-       DOT(96...97)("."),
+       (96...97),
        IDENTIFIER(97...98)("l"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "l"
      ),
      CallNode(100...118)(
@@ -126,14 +138,16 @@ ProgramNode(0...118)(
          nil,
          nil,
          nil,
+         0,
          "m"
        ),
-       AMPERSAND_DOT(115...117)("&."),
+       (115...117),
        IDENTIFIER(117...118)("n"),
        nil,
        nil,
        nil,
        nil,
+       1,
        "n"
      )]
   )

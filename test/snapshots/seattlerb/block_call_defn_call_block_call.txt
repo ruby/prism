@@ -28,6 +28,7 @@ ProgramNode(0...30)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "d"
                )]
             ),
@@ -42,6 +43,7 @@ ProgramNode(0...30)(
        ),
        nil,
        nil,
+       0,
        "a"
      ),
      CallNode(20...30)(
@@ -53,14 +55,16 @@ ProgramNode(0...30)(
          nil,
          nil,
          nil,
+         0,
          "e"
        ),
-       DOT(21...22)("."),
+       (21...22),
        IDENTIFIER(22...23)("f"),
        nil,
        nil,
        nil,
        BlockNode(24...30)([], nil, nil, (24...26), (27...30)),
+       0,
        "f"
      )]
   )

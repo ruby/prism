@@ -9,6 +9,7 @@ ProgramNode(0...247)(
        nil,
        nil,
        nil,
+       0,
        "!"
      ),
      CallNode(4...6)(
@@ -19,6 +20,7 @@ ProgramNode(0...247)(
        nil,
        nil,
        nil,
+       0,
        "~"
      ),
      CallNode(8...14)(
@@ -29,6 +31,7 @@ ProgramNode(0...247)(
        ArgumentsNode(13...14)([IntegerNode(13...14)()]),
        nil,
        nil,
+       0,
        "!="
      ),
      CallNode(16...22)(
@@ -39,6 +42,7 @@ ProgramNode(0...247)(
        ArgumentsNode(21...22)([IntegerNode(21...22)()]),
        nil,
        nil,
+       0,
        "!~"
      ),
      CallNode(24...29)(
@@ -49,6 +53,7 @@ ProgramNode(0...247)(
        ArgumentsNode(28...29)([IntegerNode(28...29)()]),
        nil,
        nil,
+       0,
        "%"
      ),
      CallNode(31...36)(
@@ -59,6 +64,7 @@ ProgramNode(0...247)(
        ArgumentsNode(35...36)([IntegerNode(35...36)()]),
        nil,
        nil,
+       0,
        "&"
      ),
      CallNode(38...43)(
@@ -69,6 +75,7 @@ ProgramNode(0...247)(
        ArgumentsNode(42...43)([IntegerNode(42...43)()]),
        nil,
        nil,
+       0,
        "*"
      ),
      CallNode(45...49)(
@@ -79,6 +86,7 @@ ProgramNode(0...247)(
        ArgumentsNode(48...49)([IntegerNode(48...49)()]),
        nil,
        nil,
+       0,
        "**"
      ),
      CallNode(51...56)(
@@ -89,6 +97,7 @@ ProgramNode(0...247)(
        ArgumentsNode(55...56)([IntegerNode(55...56)()]),
        nil,
        nil,
+       0,
        "+"
      ),
      CallNode(58...63)(
@@ -99,6 +108,7 @@ ProgramNode(0...247)(
        ArgumentsNode(62...63)([IntegerNode(62...63)()]),
        nil,
        nil,
+       0,
        "-"
      ),
      CallNode(65...70)(
@@ -109,6 +119,7 @@ ProgramNode(0...247)(
        ArgumentsNode(69...70)([IntegerNode(69...70)()]),
        nil,
        nil,
+       0,
        "/"
      ),
      CallNode(72...77)(
@@ -120,6 +131,7 @@ ProgramNode(0...247)(
          ArgumentsNode(74...75)([IntegerNode(74...75)()]),
          nil,
          nil,
+         0,
          "/"
        ),
        nil,
@@ -128,6 +140,7 @@ ProgramNode(0...247)(
        ArgumentsNode(76...77)([IntegerNode(76...77)()]),
        nil,
        nil,
+       0,
        "/"
      ),
      CallNode(79...84)(
@@ -138,6 +151,7 @@ ProgramNode(0...247)(
        ArgumentsNode(83...84)([IntegerNode(83...84)()]),
        nil,
        nil,
+       0,
        "<"
      ),
      CallNode(86...92)(
@@ -148,6 +162,7 @@ ProgramNode(0...247)(
        ArgumentsNode(91...92)([IntegerNode(91...92)()]),
        nil,
        nil,
+       0,
        "<<"
      ),
      CallNode(94...100)(
@@ -158,6 +173,7 @@ ProgramNode(0...247)(
        ArgumentsNode(99...100)([IntegerNode(99...100)()]),
        nil,
        nil,
+       0,
        "<="
      ),
      CallNode(102...109)(
@@ -168,6 +184,7 @@ ProgramNode(0...247)(
        ArgumentsNode(108...109)([IntegerNode(108...109)()]),
        nil,
        nil,
+       0,
        "<=>"
      ),
      CallNode(111...117)(
@@ -178,6 +195,7 @@ ProgramNode(0...247)(
        ArgumentsNode(116...117)([IntegerNode(116...117)()]),
        nil,
        nil,
+       0,
        "=="
      ),
      CallNode(119...126)(
@@ -188,6 +206,7 @@ ProgramNode(0...247)(
        ArgumentsNode(125...126)([IntegerNode(125...126)()]),
        nil,
        nil,
+       0,
        "==="
      ),
      CallNode(128...134)(
@@ -198,6 +217,7 @@ ProgramNode(0...247)(
        ArgumentsNode(133...134)([IntegerNode(133...134)()]),
        nil,
        nil,
+       0,
        "=~"
      ),
      CallNode(136...141)(
@@ -208,6 +228,7 @@ ProgramNode(0...247)(
        ArgumentsNode(140...141)([IntegerNode(140...141)()]),
        nil,
        nil,
+       0,
        ">"
      ),
      CallNode(143...149)(
@@ -218,6 +239,7 @@ ProgramNode(0...247)(
        ArgumentsNode(148...149)([IntegerNode(148...149)()]),
        nil,
        nil,
+       0,
        ">="
      ),
      CallNode(151...157)(
@@ -228,6 +250,7 @@ ProgramNode(0...247)(
        ArgumentsNode(156...157)([IntegerNode(156...157)()]),
        nil,
        nil,
+       0,
        ">>"
      ),
      CallNode(159...164)(
@@ -238,6 +261,7 @@ ProgramNode(0...247)(
        ArgumentsNode(163...164)([IntegerNode(163...164)()]),
        nil,
        nil,
+       0,
        "^"
      ),
      CallNode(166...171)(
@@ -248,6 +272,7 @@ ProgramNode(0...247)(
        ArgumentsNode(170...171)([IntegerNode(170...171)()]),
        nil,
        nil,
+       0,
        "|"
      ),
      AndNode(173...179)(
@@ -274,11 +299,13 @@ ProgramNode(0...247)(
             ArgumentsNode(199...200)([IntegerNode(199...200)()]),
             nil,
             nil,
+            0,
             "**"
           )]
        ),
        nil,
        nil,
+       0,
        "*"
      ),
      CallNode(202...211)(
@@ -290,6 +317,7 @@ ProgramNode(0...247)(
          ArgumentsNode(206...207)([IntegerNode(206...207)()]),
          nil,
          nil,
+         0,
          "*"
        ),
        nil,
@@ -298,6 +326,7 @@ ProgramNode(0...247)(
        ArgumentsNode(210...211)([IntegerNode(210...211)()]),
        nil,
        nil,
+       0,
        "+"
      ),
      OrNode(213...219)(
@@ -324,11 +353,13 @@ ProgramNode(0...247)(
             ArgumentsNode(237...238)([IntegerNode(237...238)()]),
             nil,
             nil,
+            0,
             "*"
           )]
        ),
        nil,
        nil,
+       0,
        "+"
      ),
      ParenthesesNode(240...247)(
@@ -341,6 +372,7 @@ ProgramNode(0...247)(
             ArgumentsNode(245...246)([IntegerNode(245...246)()]),
             nil,
             nil,
+            0,
             "+"
           )]
        ),

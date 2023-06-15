@@ -17,6 +17,7 @@ ProgramNode(0...50)(
               nil,
               nil,
               nil,
+              0,
               "a"
             ),
             StatementsNode(6...9)(
@@ -32,6 +33,7 @@ ProgramNode(0...50)(
        ),
        PARENTHESIS_RIGHT(11...12)(")"),
        nil,
+       0,
        "f"
      ),
      HashNode(14...26)(

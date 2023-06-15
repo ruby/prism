@@ -26,6 +26,7 @@ ProgramNode(6...66)(
                      nil,
                      nil,
                      nil,
+                     0,
                      "b"
                    ),
                    StatementsNode(32...35)(
@@ -37,6 +38,7 @@ ProgramNode(6...66)(
                         nil,
                         PARENTHESIS_RIGHT(34...35)(")"),
                         nil,
+                        0,
                         "c"
                       )]
                    ),
@@ -51,6 +53,7 @@ ProgramNode(6...66)(
                           nil,
                           nil,
                           nil,
+                          0,
                           "d"
                         )]
                      ),
@@ -62,6 +65,7 @@ ProgramNode(6...66)(
               (26...27),
               (40...41)
             ),
+            0,
             "lambda"
           ),
           nil

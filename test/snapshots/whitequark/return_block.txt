@@ -18,11 +18,13 @@ ProgramNode(0...21)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "foo"
                )]
             ),
             nil,
             BlockNode(15...21)([], nil, nil, (15...17), (18...21)),
+            0,
             "fun"
           )]
        )

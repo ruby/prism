@@ -9,6 +9,7 @@ ProgramNode(0...5)(
        ArgumentsNode(2...3)([IntegerNode(2...3)()]),
        PARENTHESIS_RIGHT(4...5)(")"),
        nil,
+       0,
        "f"
      )]
   )

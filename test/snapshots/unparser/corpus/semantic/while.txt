@@ -11,6 +11,7 @@ ProgramNode(0...188)(
          nil,
          nil,
          BlockNode(11...13)([], nil, nil, (11...12), (12...13)),
+         0,
          "b?"
        ),
        StatementsNode(0...1)(
@@ -22,6 +23,7 @@ ProgramNode(0...188)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        )
@@ -36,6 +38,7 @@ ProgramNode(0...188)(
          nil,
          nil,
          BlockNode(24...26)([], nil, nil, (24...25), (25...26)),
+         0,
          "b?"
        ),
        StatementsNode(29...30)(
@@ -47,6 +50,7 @@ ProgramNode(0...188)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        )
@@ -66,6 +70,7 @@ ProgramNode(0...188)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (36...39),
@@ -84,6 +89,7 @@ ProgramNode(0...188)(
            nil,
            nil,
            nil,
+           0,
            "b"
          ),
          CallNode(70...75)(
@@ -94,6 +100,7 @@ ProgramNode(0...188)(
            nil,
            nil,
            BlockNode(72...75)([], nil, nil, (72...73), (74...75)),
+           0,
            "a"
          ),
          (67...69)
@@ -107,6 +114,7 @@ ProgramNode(0...188)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        )
@@ -124,6 +132,7 @@ ProgramNode(0...188)(
            nil,
            nil,
            nil,
+           0,
            "b"
          ),
          (83...84),
@@ -154,12 +163,14 @@ ProgramNode(0...188)(
                 nil,
                 nil,
                 nil,
+                0,
                 "c"
               )]
            ),
            (116...118),
            (127...130)
          ),
+         0,
          "b"
        ),
        StatementsNode(98...99)([LocalVariableReadNode(98...99)(:a, 0)])
@@ -180,6 +191,7 @@ ProgramNode(0...188)(
               nil,
               nil,
               nil,
+              0,
               "exp"
             ),
             (143...146),
@@ -200,6 +212,7 @@ ProgramNode(0...188)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "bar"
                  ),
                  (169...172),

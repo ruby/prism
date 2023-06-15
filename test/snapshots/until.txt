@@ -36,6 +36,7 @@ ProgramNode(0...109)(
          nil,
          nil,
          nil,
+         0,
          "bar?"
        ),
        StatementsNode(88...98)(
@@ -50,6 +51,7 @@ ProgramNode(0...109)(
             ),
             nil,
             nil,
+            0,
             "foo"
           )]
        )

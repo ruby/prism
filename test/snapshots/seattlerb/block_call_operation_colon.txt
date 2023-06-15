@@ -11,9 +11,10 @@ ProgramNode(0...15)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
-         DOT(1...2)("."),
+         (1...2),
          IDENTIFIER(2...3)("b"),
          nil,
          ArgumentsNode(4...5)(
@@ -25,19 +26,22 @@ ProgramNode(0...15)(
               nil,
               nil,
               nil,
+              0,
               "c"
             )]
          ),
          nil,
          BlockNode(6...12)([], nil, nil, (6...8), (9...12)),
+         0,
          "b"
        ),
-       COLON_COLON(12...14)("::"),
+       (12...14),
        IDENTIFIER(14...15)("d"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "d"
      )]
   )

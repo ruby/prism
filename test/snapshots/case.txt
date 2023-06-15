@@ -28,6 +28,7 @@ ProgramNode(0...272)(
                ),
                nil,
                nil,
+               0,
                "puts"
              )]
           )
@@ -46,6 +47,7 @@ ProgramNode(0...272)(
                ),
                nil,
                nil,
+               0,
                "puts"
              )]
           )
@@ -68,6 +70,7 @@ ProgramNode(0...272)(
                nil,
                nil,
                nil,
+               0,
                "foo"
              )
            )],
@@ -103,6 +106,7 @@ ProgramNode(0...272)(
          nil,
          nil,
          nil,
+         0,
          "this"
        ),
        [WhenNode(147...167)(
@@ -127,6 +131,7 @@ ProgramNode(0...272)(
                nil,
                nil,
                nil,
+               0,
                "foo"
              ),
              nil,
@@ -141,11 +146,13 @@ ProgramNode(0...272)(
                   nil,
                   nil,
                   nil,
+                  0,
                   "bar"
                 )]
              ),
              nil,
              nil,
+             0,
              "=="
            )],
           nil
@@ -166,6 +173,7 @@ ProgramNode(0...272)(
              nil,
              nil,
              nil,
+             0,
              "a"
            )],
           nil
@@ -183,6 +191,7 @@ ProgramNode(0...272)(
          nil,
          nil,
          nil,
+         0,
          "type"
        ),
        [WhenNode(246...253)(

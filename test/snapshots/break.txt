@@ -102,6 +102,7 @@ ProgramNode(0...168)(
            (125...126),
            (136...137)
          ),
+         0,
          "foo"
        ),
        nil,
@@ -110,6 +111,7 @@ ProgramNode(0...168)(
        ArgumentsNode(141...143)([IntegerNode(141...143)()]),
        nil,
        nil,
+       0,
        "=="
      ),
      CallNode(145...168)(
@@ -140,6 +142,7 @@ ProgramNode(0...168)(
            (149...150),
            (161...162)
          ),
+         0,
          "foo"
        ),
        nil,
@@ -148,6 +151,7 @@ ProgramNode(0...168)(
        ArgumentsNode(166...168)([IntegerNode(166...168)()]),
        nil,
        nil,
+       0,
        "=="
      )]
   )

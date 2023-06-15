@@ -12,6 +12,7 @@ ProgramNode(0...94)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -28,6 +29,7 @@ ProgramNode(0...94)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
@@ -46,6 +48,7 @@ ProgramNode(0...94)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -62,6 +65,7 @@ ProgramNode(0...94)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
@@ -80,6 +84,7 @@ ProgramNode(0...94)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -96,6 +101,7 @@ ProgramNode(0...94)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),
@@ -114,6 +120,7 @@ ProgramNode(0...94)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -130,6 +137,7 @@ ProgramNode(0...94)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )]
          ),

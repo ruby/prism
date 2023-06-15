@@ -12,6 +12,7 @@ ProgramNode(0...73)(
             nil,
             nil,
             nil,
+            0,
             "meth"
           )]
        ),
@@ -29,6 +30,7 @@ ProgramNode(0...73)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             )]
          ),
@@ -49,6 +51,7 @@ ProgramNode(0...73)(
             nil,
             nil,
             nil,
+            0,
             "meth"
           )]
        ),
@@ -66,6 +69,7 @@ ProgramNode(0...73)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             )]
          ),

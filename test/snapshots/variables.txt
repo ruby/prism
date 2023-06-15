@@ -44,6 +44,7 @@ ProgramNode(0...293)(
        nil,
        nil,
        nil,
+       0,
        "a"
      ),
      LocalVariableWriteNode(85...92)(
@@ -216,6 +217,7 @@ ProgramNode(0...293)(
             nil,
             nil,
             nil,
+            0,
             "a"
           ),
           CallNode(288...289)(
@@ -226,6 +228,7 @@ ProgramNode(0...293)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           CallNode(291...292)(
@@ -236,6 +239,7 @@ ProgramNode(0...293)(
             nil,
             nil,
             nil,
+            0,
             "c"
           )]
        ),

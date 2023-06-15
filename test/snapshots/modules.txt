@@ -30,6 +30,7 @@ ProgramNode(0...140)(
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -50,6 +51,7 @@ ProgramNode(0...140)(
            nil,
            nil,
            nil,
+           0,
            "m"
          ),
          ConstantReadNode(50...51)(),
@@ -99,6 +101,7 @@ ProgramNode(0...140)(
            nil,
            BRACKET_RIGHT(112...113)("]"),
            nil,
+           0,
            "[]"
          ),
          ConstantReadNode(115...116)(),
@@ -119,6 +122,7 @@ ProgramNode(0...140)(
            ArgumentsNode(131...132)([IntegerNode(131...132)()]),
            BRACKET_RIGHT(132...133)("]"),
            nil,
+           0,
            "[]"
          ),
          ConstantReadNode(135...136)(),

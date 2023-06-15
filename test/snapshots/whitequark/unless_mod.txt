@@ -11,6 +11,7 @@ ProgramNode(0...14)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(0...3)(
@@ -22,6 +23,7 @@ ProgramNode(0...14)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),

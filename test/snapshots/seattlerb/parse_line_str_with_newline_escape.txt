@@ -12,6 +12,7 @@ ProgramNode(0...13)(
        ),
        PARENTHESIS_RIGHT(12...13)(")"),
        nil,
+       0,
        "a"
      )]
   )

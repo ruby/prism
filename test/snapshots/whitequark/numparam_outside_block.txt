@@ -9,6 +9,7 @@ ProgramNode(0...83)(
        nil,
        nil,
        nil,
+       0,
        "_1"
      ),
      SingletonClassNode(4...25)(
@@ -23,6 +24,7 @@ ProgramNode(0...83)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(18...20)(
@@ -34,6 +36,7 @@ ProgramNode(0...83)(
             nil,
             nil,
             nil,
+            0,
             "_1"
           )]
        ),
@@ -54,6 +57,7 @@ ProgramNode(0...83)(
             nil,
             nil,
             nil,
+            0,
             "_1"
           )]
        ),
@@ -72,6 +76,7 @@ ProgramNode(0...83)(
             nil,
             nil,
             nil,
+            0,
             "_1"
           )]
        ),
@@ -96,6 +101,7 @@ ProgramNode(0...83)(
             nil,
             nil,
             nil,
+            0,
             "_1"
           )]
        ),

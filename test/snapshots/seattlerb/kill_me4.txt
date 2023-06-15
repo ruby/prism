@@ -14,6 +14,7 @@ ProgramNode(0...17)(
            nil,
            nil,
            nil,
+           0,
            "b"
          ),
          StatementsNode(6...10)([TrueNode(6...10)()]),

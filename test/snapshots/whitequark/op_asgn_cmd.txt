@@ -11,14 +11,16 @@ ProgramNode(0...64)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
-         DOT(3...4)("."),
+         (3...4),
          CONSTANT(4...5)("A"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "A="
        ),
        PLUS_EQUAL(6...8)("+="),
@@ -36,11 +38,13 @@ ProgramNode(0...64)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      ),
@@ -54,14 +58,16 @@ ProgramNode(0...64)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
-         DOT(19...20)("."),
+         (19...20),
          IDENTIFIER(20...21)("a"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "a="
        ),
        PLUS_EQUAL(22...24)("+="),
@@ -79,11 +85,13 @@ ProgramNode(0...64)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      ),
@@ -98,6 +106,7 @@ ProgramNode(0...64)(
              nil,
              nil,
              nil,
+             0,
              "foo"
            ),
            ConstantReadNode(37...38)(),
@@ -121,11 +130,13 @@ ProgramNode(0...64)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      ),
@@ -139,14 +150,16 @@ ProgramNode(0...64)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
-         COLON_COLON(52...54)("::"),
+         (52...54),
          IDENTIFIER(54...55)("a"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "a="
        ),
        PLUS_EQUAL(56...58)("+="),
@@ -164,11 +177,13 @@ ProgramNode(0...64)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      )]

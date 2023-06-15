@@ -10,6 +10,7 @@ ProgramNode(0...408)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [InNode(9...31)(
@@ -46,6 +47,7 @@ ProgramNode(0...408)(
                nil,
                nil,
                nil,
+               0,
                "y"
              )]
           ),
@@ -238,6 +240,7 @@ ProgramNode(0...408)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [InNode(355...372)(
@@ -269,6 +272,7 @@ ProgramNode(0...408)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [InNode(386...390)(

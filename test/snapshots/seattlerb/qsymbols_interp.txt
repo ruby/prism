@@ -17,6 +17,7 @@ ProgramNode(0...15)(
                   ArgumentsNode(10...11)([IntegerNode(10...11)()]),
                   nil,
                   nil,
+                  0,
                   "+"
                 )]
              ),

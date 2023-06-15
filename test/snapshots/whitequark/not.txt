@@ -10,6 +10,7 @@ ProgramNode(0...24)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -18,6 +19,7 @@ ProgramNode(0...24)(
        nil,
        nil,
        nil,
+       0,
        "!"
      ),
      CallNode(9...14)(
@@ -28,6 +30,7 @@ ProgramNode(0...24)(
        nil,
        PARENTHESIS_RIGHT(13...14)(")"),
        nil,
+       0,
        "!"
      ),
      CallNode(16...24)(
@@ -39,6 +42,7 @@ ProgramNode(0...24)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -47,6 +51,7 @@ ProgramNode(0...24)(
        nil,
        PARENTHESIS_RIGHT(23...24)(")"),
        nil,
+       0,
        "!"
      )]
   )

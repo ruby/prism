@@ -22,6 +22,7 @@ ProgramNode(0...32)(
             ArgumentsNode(28...31)([LocalVariableReadNode(28...31)(:cmd, 0)]),
             PARENTHESIS_RIGHT(31...32)(")"),
             nil,
+            0,
             "system"
           )]
        ),

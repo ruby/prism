@@ -20,6 +20,7 @@ ProgramNode(0...43)(
             ),
             nil,
             nil,
+            0,
             "other_method"
           )]
        ),

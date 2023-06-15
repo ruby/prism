@@ -16,6 +16,7 @@ ProgramNode(0...35)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           CallNode(25...28)(
@@ -26,6 +27,7 @@ ProgramNode(0...35)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),

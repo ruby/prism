@@ -17,6 +17,7 @@ ProgramNode(0...48)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(16...19)(
@@ -28,6 +29,7 @@ ProgramNode(0...48)(
             ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:a, 0)]),
             nil,
             nil,
+            0,
             "p"
           )]
        ),
@@ -52,6 +54,7 @@ ProgramNode(0...48)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(40...43)(
@@ -63,6 +66,7 @@ ProgramNode(0...48)(
             ArgumentsNode(42...43)([LocalVariableReadNode(42...43)(:a, 0)]),
             nil,
             nil,
+            0,
             "p"
           )]
        ),

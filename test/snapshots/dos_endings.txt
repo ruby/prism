@@ -14,6 +14,7 @@ ProgramNode(0...108)(
        ),
        nil,
        nil,
+       0,
        "puts"
      ),
      ArrayNode(28...37)(
@@ -58,17 +59,19 @@ ProgramNode(0...108)(
                  )],
                 (121...128)
               ),
-              DOT(102...103)("."),
+              (102...103),
               IDENTIFIER(103...107)("chop"),
               nil,
               nil,
               nil,
               nil,
+              0,
               "chop"
             )]
          ),
          PARENTHESIS_RIGHT(107...108)(")"),
          nil,
+         0,
          "foo"
        ),
        (88...89),

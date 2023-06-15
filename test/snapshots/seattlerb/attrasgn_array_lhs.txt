@@ -23,6 +23,7 @@ ProgramNode(0...42)(
               nil,
               nil,
               nil,
+              0,
               "from"
             ),
             CallNode(21...23)(
@@ -33,6 +34,7 @@ ProgramNode(0...42)(
               nil,
               nil,
               nil,
+              0,
               "to"
             ),
             (18...20)
@@ -47,6 +49,7 @@ ProgramNode(0...42)(
        ),
        BRACKET_RIGHT(23...24)("]"),
        nil,
+       0,
        "[]="
      )]
   )

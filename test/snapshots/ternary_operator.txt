@@ -11,6 +11,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        StatementsNode(4...5)(
@@ -22,6 +23,7 @@ ProgramNode(0...117)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
@@ -36,6 +38,7 @@ ProgramNode(0...117)(
               nil,
               nil,
               nil,
+              0,
               "c"
             )]
          ),
@@ -53,6 +56,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        StatementsNode(15...25)(
@@ -66,6 +70,7 @@ ProgramNode(0...117)(
               nil,
               nil,
               nil,
+              0,
               "b"
             ),
             nil,
@@ -85,6 +90,7 @@ ProgramNode(0...117)(
                 nil,
                 nil,
                 nil,
+                0,
                 "c"
               ),
               nil,
@@ -105,6 +111,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "empty?"
        ),
        StatementsNode(47...51)([TrueNode(47...51)()]),
@@ -125,6 +132,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "empty?"
        ),
        StatementsNode(64...69)([FalseNode(64...69)()]),
@@ -145,6 +153,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "empty?"
        ),
        StatementsNode(82...85)([NilNode(82...85)()]),
@@ -165,6 +174,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "a?"
        ),
        StatementsNode(94...97)([NilNode(94...97)()]),
@@ -185,6 +195,7 @@ ProgramNode(0...117)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        StatementsNode(106...110)(
@@ -196,6 +207,7 @@ ProgramNode(0...117)(
             nil,
             nil,
             nil,
+            0,
             "var1"
           )]
        ),
@@ -210,6 +222,7 @@ ProgramNode(0...117)(
               nil,
               nil,
               nil,
+              0,
               "var2"
             )]
          ),

@@ -15,6 +15,7 @@ ProgramNode(0...65)(
               nil,
               nil,
               nil,
+              0,
               "_1"
             ),
             nil,
@@ -29,11 +30,13 @@ ProgramNode(0...65)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "_9"
                )]
             ),
             nil,
             nil,
+            0,
             "+"
           )]
        )
@@ -52,6 +55,7 @@ ProgramNode(0...65)(
               nil,
               nil,
               nil,
+              0,
               "_1"
             ),
             nil,
@@ -66,11 +70,13 @@ ProgramNode(0...65)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "_9"
                )]
             ),
             nil,
             nil,
+            0,
             "+"
           )]
        )
@@ -95,6 +101,7 @@ ProgramNode(0...65)(
                 nil,
                 nil,
                 nil,
+                0,
                 "_1"
               ),
               nil,
@@ -109,17 +116,20 @@ ProgramNode(0...65)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "_9"
                  )]
               ),
               nil,
               nil,
+              0,
               "+"
             )]
          ),
          (36...38),
          (47...50)
        ),
+       0,
        "m"
      ),
      CallNode(52...65)(
@@ -142,6 +152,7 @@ ProgramNode(0...65)(
                 nil,
                 nil,
                 nil,
+                0,
                 "_1"
               ),
               nil,
@@ -156,17 +167,20 @@ ProgramNode(0...65)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "_9"
                  )]
               ),
               nil,
               nil,
+              0,
               "+"
             )]
          ),
          (54...55),
          (64...65)
        ),
+       0,
        "m"
      )]
   )

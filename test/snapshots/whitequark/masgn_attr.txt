@@ -4,12 +4,13 @@ ProgramNode(0...63)(
     [MultiWriteNode(0...17)(
        [CallNode(0...6)(
           SelfNode(0...4)(),
-          DOT(4...5)("."),
+          (4...5),
           CONSTANT(5...6)("A"),
           nil,
           nil,
           nil,
           nil,
+          0,
           "A="
         ),
         LocalVariableWriteNode(8...11)(:foo, 0, nil, (8...11), nil)],
@@ -21,12 +22,13 @@ ProgramNode(0...63)(
      MultiWriteNode(19...43)(
        [CallNode(19...25)(
           SelfNode(19...23)(),
-          DOT(23...24)("."),
+          (23...24),
           IDENTIFIER(24...25)("a"),
           nil,
           nil,
           nil,
           nil,
+          0,
           "a="
         ),
         CallNode(27...37)(
@@ -39,6 +41,7 @@ ProgramNode(0...63)(
           ),
           BRACKET_RIGHT(36...37)("]"),
           nil,
+          0,
           "[]="
         )],
        (38...39),
@@ -49,12 +52,13 @@ ProgramNode(0...63)(
      MultiWriteNode(45...63)(
        [CallNode(45...52)(
           SelfNode(45...49)(),
-          COLON_COLON(49...51)("::"),
+          (49...51),
           IDENTIFIER(51...52)("a"),
           nil,
           nil,
           nil,
           nil,
+          0,
           "a="
         ),
         LocalVariableWriteNode(54...57)(:foo, 0, nil, (54...57), nil)],

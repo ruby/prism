@@ -17,6 +17,7 @@ ProgramNode(0...52)(
        ),
        nil,
        nil,
+       0,
        "assert"
      ),
      CallNode(17...28)(
@@ -33,11 +34,13 @@ ProgramNode(0...52)(
             nil,
             nil,
             nil,
+            0,
             "dogs"
           )]
        ),
        nil,
        nil,
+       0,
        "assert"
      ),
      CallNode(30...52)(
@@ -62,6 +65,7 @@ ProgramNode(0...52)(
                       nil,
                       nil,
                       BlockNode(46...52)([], nil, nil, (46...48), (49...52)),
+                      0,
                       "meth"
                     )]
                  )
@@ -72,6 +76,7 @@ ProgramNode(0...52)(
        ),
        nil,
        nil,
+       0,
        "f"
      )]
   )

@@ -31,14 +31,16 @@ ProgramNode(0...42)(
            (5...7),
            (34...37)
          ),
+         0,
          "proc"
        ),
-       DOT(37...38)("."),
+       (37...38),
        IDENTIFIER(38...42)("call"),
        nil,
        nil,
        nil,
        nil,
+       0,
        "call"
      )]
   )

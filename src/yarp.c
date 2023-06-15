@@ -902,12 +902,13 @@ yp_call_node_create(yp_parser_t *parser) {
             .location = YP_LOCATION_NULL_VALUE(parser),
         },
         .receiver = NULL,
-        .call_operator = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
+        .operator_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
         .message = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
         .opening = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
         .arguments = NULL,
         .closing = YP_TOKEN_NOT_PROVIDED_VALUE(parser),
-        .block = NULL
+        .block = NULL,
+        .flags = 0
     };
 
     return node;
@@ -978,12 +979,16 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
     }
 
     node->receiver = receiver;
-    node->call_operator = *operator;
+    node->operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
     node->message = *message;
     node->opening = arguments->opening;
     node->arguments = arguments->arguments;
     node->closing = arguments->closing;
     node->block = arguments->block;
+
+    if (operator->type == YP_TOKEN_AMPERSAND_DOT) {
+        node->flags |= YP_CALL_NODE_FLAGS_SAFENAVIGATION;
+    }
 
     yp_string_shared_init(&node->name, message->start, message->end);
     return node;
@@ -1051,11 +1056,15 @@ yp_call_node_shorthand_create(yp_parser_t *parser, yp_node_t *receiver, yp_token
     }
 
     node->receiver = receiver;
-    node->call_operator = *operator;
+    node->operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
     node->opening = arguments->opening;
     node->arguments = arguments->arguments;
     node->closing = arguments->closing;
     node->block = arguments->block;
+
+    if (operator->type == YP_TOKEN_AMPERSAND_DOT) {
+        node->flags |= YP_CALL_NODE_FLAGS_SAFENAVIGATION;
+    }
 
     yp_string_constant_init(&node->name, "call", 4);
     return node;
@@ -7276,7 +7285,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
             // an aref expression, and we can transform it into an aset
             // expression.
             if (
-                (call->call_operator.type == YP_TOKEN_NOT_PROVIDED) &&
+                (call->operator_loc.start == NULL) &&
                 (call->message.type == YP_TOKEN_BRACKET_LEFT_RIGHT) &&
                 (call->block == NULL)
             ) {

@@ -20,6 +20,7 @@ ProgramNode(0...190)(
                 nil,
                 nil,
                 BlockNode(22...28)([], nil, nil, (22...24), (25...28)),
+                0,
                 "tap"
               )
             )],
@@ -55,6 +56,7 @@ ProgramNode(0...190)(
               nil,
               nil,
               BlockNode(66...72)([], nil, nil, (66...68), (69...72)),
+              0,
               "tap"
             )]
          ),
@@ -87,6 +89,7 @@ ProgramNode(0...190)(
                 nil,
                 nil,
                 BlockNode(118...124)([], nil, nil, (118...120), (121...124)),
+                0,
                 "tap"
               )
             )],
@@ -122,6 +125,7 @@ ProgramNode(0...190)(
               nil,
               nil,
               BlockNode(167...173)([], nil, nil, (167...169), (170...173)),
+              0,
               "tap"
             )]
          ),

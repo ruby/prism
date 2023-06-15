@@ -16,6 +16,7 @@ ProgramNode(0...9)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (4...5)
@@ -23,6 +24,7 @@ ProgramNode(0...9)(
        ),
        PARENTHESIS_RIGHT(8...9)(")"),
        nil,
+       0,
        "fun"
      )]
   )

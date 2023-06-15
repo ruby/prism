@@ -27,6 +27,7 @@ ProgramNode(0...40)(
             ),
             PARENTHESIS_RIGHT(34...35)(")"),
             nil,
+            0,
             "bar"
           )]
        ),

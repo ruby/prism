@@ -12,14 +12,16 @@ ProgramNode(0...10)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
-          DOT(4...5)("."),
+          (4...5),
           CONSTANT(5...6)("C"),
           nil,
           nil,
           nil,
           nil,
+          0,
           "C="
         )],
        (7...8),
@@ -31,6 +33,7 @@ ProgramNode(0...10)(
          nil,
          nil,
          nil,
+         0,
          "d"
        ),
        nil,

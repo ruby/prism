@@ -10,6 +10,7 @@ ProgramNode(0...40)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        ParenthesesNode(7...19)(
@@ -26,6 +27,7 @@ ProgramNode(0...40)(
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               nil,
@@ -46,6 +48,7 @@ ProgramNode(0...40)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        ParenthesesNode(28...40)(
@@ -62,6 +65,7 @@ ProgramNode(0...40)(
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               nil,

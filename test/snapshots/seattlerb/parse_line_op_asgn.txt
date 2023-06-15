@@ -12,6 +12,7 @@ ProgramNode(6...34)(
          nil,
          nil,
          nil,
+         0,
          "bar"
        )
      ),
@@ -23,6 +24,7 @@ ProgramNode(6...34)(
        nil,
        nil,
        nil,
+       0,
        "baz"
      )]
   )

@@ -10,6 +10,7 @@ ProgramNode(0...43)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(10...27)(
@@ -25,6 +26,7 @@ ProgramNode(0...43)(
                nil,
                nil,
                nil,
+               0,
                "baz"
              )
            )],
@@ -37,6 +39,7 @@ ProgramNode(0...43)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )]
           )
@@ -53,6 +56,7 @@ ProgramNode(0...43)(
                nil,
                nil,
                nil,
+               0,
                "foo"
              )
            )],

@@ -15,6 +15,7 @@ ProgramNode(0...9)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           KeywordHashNode(5...8)(
@@ -23,6 +24,7 @@ ProgramNode(0...9)(
        ),
        PARENTHESIS_RIGHT(8...9)(")"),
        nil,
+       0,
        "a"
      )]
   )

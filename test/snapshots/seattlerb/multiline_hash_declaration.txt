@@ -17,6 +17,7 @@ ProgramNode(0...43)(
        ),
        PARENTHESIS_RIGHT(13...14)(")"),
        nil,
+       0,
        "f"
      ),
      CallNode(16...29)(
@@ -35,6 +36,7 @@ ProgramNode(0...43)(
        ),
        PARENTHESIS_RIGHT(28...29)(")"),
        nil,
+       0,
        "f"
      ),
      CallNode(31...43)(
@@ -53,6 +55,7 @@ ProgramNode(0...43)(
        ),
        PARENTHESIS_RIGHT(42...43)(")"),
        nil,
+       0,
        "f"
      )]
   )

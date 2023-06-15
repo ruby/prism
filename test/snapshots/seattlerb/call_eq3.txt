@@ -9,6 +9,7 @@ ProgramNode(0...7)(
        ArgumentsNode(6...7)([IntegerNode(6...7)()]),
        nil,
        nil,
+       0,
        "==="
      )]
   )

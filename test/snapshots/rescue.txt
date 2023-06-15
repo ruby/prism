@@ -10,6 +10,7 @@ ProgramNode(0...316)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        (4...10),
@@ -24,6 +25,7 @@ ProgramNode(0...316)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        (20...26),
@@ -53,6 +55,7 @@ ProgramNode(0...316)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        (90...96),
@@ -71,6 +74,7 @@ ProgramNode(0...316)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        (111...117),
@@ -97,6 +101,7 @@ ProgramNode(0...316)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -112,6 +117,7 @@ ProgramNode(0...316)(
               nil,
               nil,
               nil,
+              0,
               "b"
             )
           )],
@@ -163,11 +169,13 @@ ProgramNode(0...316)(
                      nil,
                      nil,
                      nil,
+                     0,
                      "y"
                    )]
                 ),
                 PARENTHESIS_RIGHT(175...176)(")"),
                 nil,
+                0,
                 "bar"
               ),
               (177...183),
@@ -192,11 +200,13 @@ ProgramNode(0...316)(
                      ),
                      nil,
                      nil,
+                     0,
                      "fail"
                    )]
                 ),
                 nil,
                 nil,
+                0,
                 "ArgumentError"
               )
             )]
@@ -204,6 +214,7 @@ ProgramNode(0...316)(
          (161...163),
          (209...212)
        ),
+       0,
        "foo"
      ),
      IfNode(214...245)(
@@ -220,6 +231,7 @@ ProgramNode(0...316)(
              nil,
              nil,
              nil,
+             0,
              "foo"
            ),
            (225...231),
@@ -237,6 +249,7 @@ ProgramNode(0...316)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
@@ -262,6 +275,7 @@ ProgramNode(0...316)(
             ),
             nil,
             nil,
+            0,
             "other_method"
           )]
        ),
@@ -301,6 +315,7 @@ ProgramNode(0...316)(
               ),
               nil,
               nil,
+              0,
               "a"
             )]
          ),

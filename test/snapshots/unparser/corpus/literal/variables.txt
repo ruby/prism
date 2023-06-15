@@ -9,6 +9,7 @@ ProgramNode(0...66)(
        nil,
        nil,
        nil,
+       0,
        "a"
      ),
      InstanceVariableReadNode(2...4)(),

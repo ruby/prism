@@ -22,6 +22,7 @@ ProgramNode(0...31)(
                          nil,
                          nil,
                          nil,
+                         0,
                          "k"
                        )]
                     ),
@@ -36,6 +37,7 @@ ProgramNode(0...31)(
        ),
        nil,
        nil,
+       0,
        "x"
      ),
      CallNode(13...21)(
@@ -54,6 +56,7 @@ ProgramNode(0...31)(
        ),
        nil,
        nil,
+       0,
        "x"
      ),
      CallNode(23...31)(
@@ -72,6 +75,7 @@ ProgramNode(0...31)(
        ),
        nil,
        nil,
+       0,
        "x"
      )]
   )

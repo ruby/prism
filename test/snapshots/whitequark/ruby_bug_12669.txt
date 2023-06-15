@@ -17,6 +17,7 @@ ProgramNode(0...74)(
            ),
            nil,
            nil,
+           0,
            "raise"
          )
        )
@@ -37,6 +38,7 @@ ProgramNode(0...74)(
            ),
            nil,
            nil,
+           0,
            "raise"
          ),
          (25...26),
@@ -59,6 +61,7 @@ ProgramNode(0...74)(
            ),
            nil,
            nil,
+           0,
            "raise"
          )
        ),
@@ -81,6 +84,7 @@ ProgramNode(0...74)(
            ),
            nil,
            nil,
+           0,
            "raise"
          ),
          (62...63),

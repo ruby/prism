@@ -22,6 +22,7 @@ ProgramNode(0...40)(
             ArgumentsNode(13...14)([LocalVariableReadNode(13...14)(:y, 0)]),
             PARENTHESIS_RIGHT(14...15)(")"),
             nil,
+            0,
             "p"
           ),
           OperatorAssignmentNode(18...24)(

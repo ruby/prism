@@ -9,6 +9,7 @@ ProgramNode(0...76)(
        nil,
        nil,
        BlockNode(7...10)([], nil, nil, (7...8), (9...10)),
+       0,
        "lambda"
      ),
      CallNode(11...32)(
@@ -39,6 +40,7 @@ ProgramNode(0...76)(
          (18...19),
          (31...32)
        ),
+       0,
        "lambda"
      ),
      LambdaNode(33...37)(

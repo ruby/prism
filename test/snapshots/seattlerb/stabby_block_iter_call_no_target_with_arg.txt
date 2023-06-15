@@ -20,6 +20,7 @@ ProgramNode(0...22)(
                  ArgumentsNode(13...14)([IntegerNode(13...14)()]),
                  PARENTHESIS_RIGHT(14...15)(")"),
                  BlockNode(16...22)([], nil, nil, (16...18), (19...22)),
+                 0,
                  "a"
                )]
             )
@@ -27,6 +28,7 @@ ProgramNode(0...22)(
        ),
        nil,
        nil,
+       0,
        "x"
      )]
   )

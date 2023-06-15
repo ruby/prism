@@ -11,6 +11,7 @@ ProgramNode(0...11)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(6...7)([IntegerNode(6...7)()]),

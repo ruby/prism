@@ -36,6 +36,7 @@ ProgramNode(0...497)(
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -55,6 +56,7 @@ ProgramNode(0...497)(
        ),
        nil,
        nil,
+       0,
        "+"
      ),
      StringNode(185...192)((185...188), (188...191), (191...192), "abc"),
@@ -77,6 +79,7 @@ ProgramNode(0...497)(
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -128,6 +131,7 @@ ProgramNode(0...497)(
                   nil,
                   nil,
                   nil,
+                  0,
                   "c"
                 )]
              ),

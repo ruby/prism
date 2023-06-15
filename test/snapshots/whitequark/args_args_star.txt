@@ -15,6 +15,7 @@ ProgramNode(0...36)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           SplatNode(9...13)(
@@ -27,12 +28,14 @@ ProgramNode(0...36)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             )
           )]
        ),
        PARENTHESIS_RIGHT(13...14)(")"),
        nil,
+       0,
        "fun"
      ),
      CallNode(16...36)(
@@ -49,6 +52,7 @@ ProgramNode(0...36)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           SplatNode(25...29)(
@@ -61,6 +65,7 @@ ProgramNode(0...36)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             )
           ),
@@ -73,6 +78,7 @@ ProgramNode(0...36)(
               nil,
               nil,
               nil,
+              0,
               "baz"
             ),
             (31...32)
@@ -80,6 +86,7 @@ ProgramNode(0...36)(
        ),
        PARENTHESIS_RIGHT(35...36)(")"),
        nil,
+       0,
        "fun"
      )]
   )

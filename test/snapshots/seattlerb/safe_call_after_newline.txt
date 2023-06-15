@@ -10,14 +10,16 @@ ProgramNode(0...5)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
-       AMPERSAND_DOT(2...4)("&."),
+       (2...4),
        IDENTIFIER(4...5)("b"),
        nil,
        nil,
        nil,
        nil,
+       1,
        "b"
      )]
   )

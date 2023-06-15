@@ -11,14 +11,16 @@ ProgramNode(0...11)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
-         DOT(1...2)("."),
+         (1...2),
          IDENTIFIER(2...3)("b"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "b="
        ),
        CallNode(8...11)(
@@ -29,6 +31,7 @@ ProgramNode(0...11)(
          ArgumentsNode(10...11)([IntegerNode(10...11)()]),
          nil,
          nil,
+         0,
          "c"
        ),
        (4...7)

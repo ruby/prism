@@ -10,6 +10,7 @@ ProgramNode(0...7)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        nil,
@@ -24,11 +25,13 @@ ProgramNode(0...7)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
        BRACKET_RIGHT(2...3)("]"),
        nil,
+       0,
        "[]="
      )]
   )

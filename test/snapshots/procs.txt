@@ -59,6 +59,7 @@ ProgramNode(0...262)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        )
@@ -76,6 +77,7 @@ ProgramNode(0...262)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           )]
        )
@@ -201,6 +203,7 @@ ProgramNode(0...262)(
                  ),
                  nil,
                  nil,
+                 0,
                  "*"
                )]
             )

@@ -16,6 +16,7 @@ ProgramNode(0...7)(
               nil,
               nil,
               nil,
+              0,
               "blk"
             ),
             (2...3)
@@ -23,6 +24,7 @@ ProgramNode(0...7)(
        ),
        PARENTHESIS_RIGHT(6...7)(")"),
        nil,
+       0,
        "x"
      )]
   )

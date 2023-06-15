@@ -10,6 +10,7 @@ ProgramNode(0...31)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
        [InNode(9...27)(

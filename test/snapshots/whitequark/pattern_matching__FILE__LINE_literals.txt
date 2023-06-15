@@ -12,6 +12,7 @@ ProgramNode(8...111)(
             ArgumentsNode(35...36)([IntegerNode(35...36)()]),
             nil,
             nil,
+            0,
             "+"
           ),
           SourceEncodingNode(38...50)()],

@@ -16,6 +16,7 @@ ProgramNode(0...40)(
        ),
        nil,
        nil,
+       0,
        "puts"
      ),
      CallNode(35...40)(
@@ -27,6 +28,7 @@ ProgramNode(0...40)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        nil,
@@ -41,11 +43,13 @@ ProgramNode(0...40)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
        nil,
        nil,
+       0,
        "+"
      )]
   )

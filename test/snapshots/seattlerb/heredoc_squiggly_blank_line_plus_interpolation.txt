@@ -25,6 +25,7 @@ ProgramNode(0...20)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "bar"
                       )]
                    ),
@@ -33,17 +34,19 @@ ProgramNode(0...20)(
                  StringNode(32...36)(nil, (32...36), nil, "baz\n")],
                 (36...42)
               ),
-              DOT(14...15)("."),
+              (14...15),
               IDENTIFIER(15...19)("chop"),
               nil,
               nil,
               nil,
               nil,
+              0,
               "chop"
             )]
          ),
          PARENTHESIS_RIGHT(19...20)(")"),
          nil,
+         0,
          "foo"
        ),
        (0...1),

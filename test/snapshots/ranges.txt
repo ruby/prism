@@ -29,6 +29,7 @@ ProgramNode(0...85)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -39,6 +40,7 @@ ProgramNode(0...85)(
        ),
        BRACKET_RIGHT(30...31)("]"),
        nil,
+       0,
        "[]"
      ),
      HashNode(33...48)(
@@ -55,6 +57,7 @@ ProgramNode(0...85)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (40...43)
@@ -89,6 +92,7 @@ ProgramNode(0...85)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (71...73)

@@ -9,6 +9,7 @@ ProgramNode(0...7)(
        ArgumentsNode(5...6)([IntegerNode(5...6)()]),
        BRACKET_RIGHT(6...7)("]"),
        nil,
+       0,
        "[]"
      )]
   )

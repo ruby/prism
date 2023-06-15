@@ -80,6 +80,7 @@ ProgramNode(0...293)(
          nil,
          nil,
          nil,
+         0,
          "exit_loop"
        ),
        StatementsNode(188...196)(
@@ -101,6 +102,7 @@ ProgramNode(0...293)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(214...217)(
@@ -112,6 +114,7 @@ ProgramNode(0...293)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
@@ -128,6 +131,7 @@ ProgramNode(0...293)(
          nil,
          nil,
          nil,
+         0,
          "c"
        ),
        StatementsNode(223...229)(
@@ -141,6 +145,7 @@ ProgramNode(0...293)(
               nil,
               nil,
               nil,
+              0,
               "b"
             ),
             StatementsNode(223...224)(
@@ -152,6 +157,7 @@ ProgramNode(0...293)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "a"
                )]
             ),
@@ -182,6 +188,7 @@ ProgramNode(0...293)(
             ),
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -199,6 +206,7 @@ ProgramNode(0...293)(
            nil,
            nil,
            nil,
+           0,
            "type"
          ),
          IntegerNode(272...273)(),
@@ -216,6 +224,7 @@ ProgramNode(0...293)(
              nil,
              nil,
              nil,
+             0,
              "type"
            ),
            ConstantReadNode(288...289)(),

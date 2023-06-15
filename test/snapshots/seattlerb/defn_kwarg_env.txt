@@ -29,6 +29,7 @@ ProgramNode(0...45)(
             ),
             PARENTHESIS_RIGHT(40...41)(")"),
             nil,
+            0,
             "test_splat"
           )]
        ),

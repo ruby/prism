@@ -45,6 +45,7 @@ ProgramNode(0...48)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "a"
                       )]
                    ),
@@ -82,6 +83,7 @@ ProgramNode(0...48)(
                   nil,
                   nil,
                   nil,
+                  0,
                   "b"
                 ),
                 nil,
@@ -90,6 +92,7 @@ ProgramNode(0...48)(
                 ArgumentsNode(46...47)([IntegerNode(46...47)()]),
                 nil,
                 nil,
+                0,
                 "*"
               )
             )],

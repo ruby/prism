@@ -11,14 +11,16 @@ ProgramNode(0...7)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
-         DOT(3...4)("."),
+         (3...4),
          IDENTIFIER(4...5)("b"),
          nil,
          ArgumentsNode(6...7)([IntegerNode(6...7)()]),
          nil,
          nil,
+         0,
          "b"
        ),
        nil,
@@ -27,6 +29,7 @@ ProgramNode(0...7)(
        nil,
        nil,
        nil,
+       0,
        "!"
      )]
   )

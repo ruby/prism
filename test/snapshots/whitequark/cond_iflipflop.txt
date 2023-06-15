@@ -13,6 +13,7 @@ ProgramNode(0...29)(
                 nil,
                 nil,
                 nil,
+                0,
                 "foo"
               ),
               CallNode(7...10)(
@@ -23,6 +24,7 @@ ProgramNode(0...29)(
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (5...7)
@@ -37,6 +39,7 @@ ProgramNode(0...29)(
        nil,
        nil,
        nil,
+       0,
        "!"
      ),
      IfNode(13...29)(
@@ -50,6 +53,7 @@ ProgramNode(0...29)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          CallNode(21...24)(
@@ -60,6 +64,7 @@ ProgramNode(0...29)(
            nil,
            nil,
            nil,
+           0,
            "bar"
          ),
          (19...21)

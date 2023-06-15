@@ -10,14 +10,16 @@ ProgramNode(0...15)(
          nil,
          nil,
          nil,
+         0,
          "f"
        ),
-       DOT(1...2)("."),
+       (1...2),
        nil,
        PARENTHESIS_LEFT(2...3)("("),
        ArgumentsNode(3...5)([IntegerNode(3...5)()]),
        PARENTHESIS_RIGHT(5...6)(")"),
        nil,
+       0,
        "call"
      ),
      CallNode(8...15)(
@@ -29,14 +31,16 @@ ProgramNode(0...15)(
          nil,
          nil,
          nil,
+         0,
          "f"
        ),
-       COLON_COLON(9...11)("::"),
+       (9...11),
        nil,
        PARENTHESIS_LEFT(11...12)("("),
        ArgumentsNode(12...14)([IntegerNode(12...14)()]),
        PARENTHESIS_RIGHT(14...15)(")"),
        nil,
+       0,
        "call"
      )]
   )

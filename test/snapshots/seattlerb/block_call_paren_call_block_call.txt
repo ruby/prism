@@ -17,6 +17,7 @@ ProgramNode(0...16)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "b"
                )]
             ),
@@ -26,6 +27,7 @@ ProgramNode(0...16)(
        ),
        nil,
        nil,
+       0,
        "a"
      ),
      CallNode(6...16)(
@@ -37,14 +39,16 @@ ProgramNode(0...16)(
          nil,
          nil,
          nil,
+         0,
          "c"
        ),
-       DOT(7...8)("."),
+       (7...8),
        IDENTIFIER(8...9)("d"),
        nil,
        nil,
        nil,
        BlockNode(10...16)([], nil, nil, (10...12), (13...16)),
+       0,
        "d"
      )]
   )

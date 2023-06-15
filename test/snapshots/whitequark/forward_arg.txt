@@ -22,6 +22,7 @@ ProgramNode(0...27)(
             ArgumentsNode(18...21)([ForwardingArgumentsNode(18...21)()]),
             PARENTHESIS_RIGHT(21...22)(")"),
             nil,
+            0,
             "bar"
           )]
        ),

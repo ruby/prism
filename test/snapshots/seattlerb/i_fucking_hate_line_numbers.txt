@@ -13,6 +13,7 @@ ProgramNode(0...104)(
             ArgumentsNode(12...13)([IntegerNode(12...13)()]),
             nil,
             nil,
+            0,
             "p"
           ),
           CallNode(16...21)(
@@ -24,14 +25,16 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "a"
             ),
-            DOT(17...18)("."),
+            (17...18),
             IDENTIFIER(18...19)("b"),
             nil,
             ArgumentsNode(20...21)([IntegerNode(20...21)()]),
             nil,
             nil,
+            0,
             "b"
           ),
           CallNode(24...32)(
@@ -43,9 +46,10 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(25...26)("."),
+            (25...26),
             IDENTIFIER(26...27)("d"),
             nil,
             ArgumentsNode(28...32)(
@@ -53,6 +57,7 @@ ProgramNode(0...104)(
             ),
             nil,
             nil,
+            0,
             "d"
           ),
           CallNode(35...40)(
@@ -64,14 +69,16 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "e"
             ),
-            DOT(36...37)("."),
+            (36...37),
             IDENTIFIER(37...38)("f"),
             nil,
             ArgumentsNode(39...40)([IntegerNode(39...40)()]),
             nil,
             nil,
+            0,
             "f"
           ),
           CallNode(43...51)(
@@ -83,9 +90,10 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "g"
             ),
-            DOT(44...45)("."),
+            (44...45),
             IDENTIFIER(45...46)("h"),
             nil,
             ArgumentsNode(47...51)(
@@ -93,6 +101,7 @@ ProgramNode(0...104)(
             ),
             nil,
             nil,
+            0,
             "h"
           ),
           CallNode(54...58)(
@@ -103,6 +112,7 @@ ProgramNode(0...104)(
             ArgumentsNode(56...57)([IntegerNode(56...57)()]),
             PARENTHESIS_RIGHT(57...58)(")"),
             nil,
+            0,
             "p"
           ),
           CallNode(61...67)(
@@ -114,14 +124,16 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "a"
             ),
-            DOT(62...63)("."),
+            (62...63),
             IDENTIFIER(63...64)("b"),
             PARENTHESIS_LEFT(64...65)("("),
             ArgumentsNode(65...66)([IntegerNode(65...66)()]),
             PARENTHESIS_RIGHT(66...67)(")"),
             nil,
+            0,
             "b"
           ),
           CallNode(70...79)(
@@ -133,9 +145,10 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(71...72)("."),
+            (71...72),
             IDENTIFIER(72...73)("d"),
             PARENTHESIS_LEFT(73...74)("("),
             ArgumentsNode(74...78)(
@@ -143,6 +156,7 @@ ProgramNode(0...104)(
             ),
             PARENTHESIS_RIGHT(78...79)(")"),
             nil,
+            0,
             "d"
           ),
           CallNode(82...88)(
@@ -154,14 +168,16 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "e"
             ),
-            DOT(83...84)("."),
+            (83...84),
             IDENTIFIER(84...85)("f"),
             PARENTHESIS_LEFT(85...86)("("),
             ArgumentsNode(86...87)([IntegerNode(86...87)()]),
             PARENTHESIS_RIGHT(87...88)(")"),
             nil,
+            0,
             "f"
           ),
           CallNode(91...100)(
@@ -173,9 +189,10 @@ ProgramNode(0...104)(
               nil,
               nil,
               nil,
+              0,
               "g"
             ),
-            DOT(92...93)("."),
+            (92...93),
             IDENTIFIER(93...94)("h"),
             PARENTHESIS_LEFT(94...95)("("),
             ArgumentsNode(95...99)(
@@ -183,6 +200,7 @@ ProgramNode(0...104)(
             ),
             PARENTHESIS_RIGHT(99...100)(")"),
             nil,
+            0,
             "h"
           )]
        ),

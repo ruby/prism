@@ -12,7 +12,7 @@ ProgramNode(0...67)(
               StatementsNode(7...43)(
                 [CallNode(7...43)(
                    ConstantReadNode(7...12)(),
-                   DOT(12...13)("."),
+                   (12...13),
                    IDENTIFIER(13...16)("new"),
                    nil,
                    nil,
@@ -38,18 +38,20 @@ ProgramNode(0...67)(
                      (17...19),
                      (40...43)
                    ),
+                   0,
                    "new"
                  )]
               ),
               (6...7),
               (43...44)
             ),
-            DOT(44...45)("."),
+            (44...45),
             IDENTIFIER(45...48)("new"),
             nil,
             nil,
             nil,
             nil,
+            0,
             "new"
           ),
           KeywordHashNode(50...67)(
@@ -67,6 +69,7 @@ ProgramNode(0...67)(
        ),
        nil,
        nil,
+       0,
        "mount"
      )]
   )

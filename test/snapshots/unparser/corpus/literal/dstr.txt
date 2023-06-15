@@ -34,6 +34,7 @@ ProgramNode(0...299)(
             nil,
             nil,
             nil,
+            0,
             "x"
           )]
        ),
@@ -129,6 +130,7 @@ ProgramNode(0...299)(
                     nil,
                     nil,
                     nil,
+                    0,
                     "bar"
                   )]
                ),
@@ -140,6 +142,7 @@ ProgramNode(0...299)(
        ),
        PARENTHESIS_RIGHT(240...241)(")"),
        nil,
+       0,
        "foo"
      ),
      CallNode(259...299)(
@@ -162,6 +165,7 @@ ProgramNode(0...299)(
                     nil,
                     nil,
                     nil,
+                    0,
                     "bar"
                   )]
                ),
@@ -192,6 +196,7 @@ ProgramNode(0...299)(
          (275...276),
          (298...299)
        ),
+       0,
        "foo"
      )]
   )

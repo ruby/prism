@@ -16,6 +16,7 @@ ProgramNode(0...39)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             nil,
@@ -24,11 +25,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "!"
           )]
        ),
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(10...18)(
@@ -41,6 +44,7 @@ ProgramNode(0...39)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          nil,
@@ -49,6 +53,7 @@ ProgramNode(0...39)(
          nil,
          nil,
          nil,
+         0,
          "-@"
        ),
        nil,
@@ -63,11 +68,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        nil,
        nil,
+       0,
        "*"
      ),
      CallNode(20...29)(
@@ -80,6 +87,7 @@ ProgramNode(0...39)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          nil,
@@ -88,6 +96,7 @@ ProgramNode(0...39)(
          nil,
          nil,
          nil,
+         0,
          "+@"
        ),
        nil,
@@ -102,11 +111,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        nil,
        nil,
+       0,
        "**"
      ),
      CallNode(31...39)(
@@ -124,6 +135,7 @@ ProgramNode(0...39)(
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             nil,
@@ -132,11 +144,13 @@ ProgramNode(0...39)(
             nil,
             nil,
             nil,
+            0,
             "~"
           )]
        ),
        nil,
        nil,
+       0,
        "foo"
      )]
   )

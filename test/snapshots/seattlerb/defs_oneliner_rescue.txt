@@ -26,6 +26,7 @@ ProgramNode(0...145)(
               ),
               PARENTHESIS_RIGHT(31...32)(")"),
               nil,
+              0,
               "system"
             )]
          ),
@@ -73,6 +74,7 @@ ProgramNode(0...145)(
               ),
               PARENTHESIS_RIGHT(83...84)(")"),
               nil,
+              0,
               "system"
             ),
             (85...91),
@@ -111,6 +113,7 @@ ProgramNode(0...145)(
               ),
               PARENTHESIS_RIGHT(133...134)(")"),
               nil,
+              0,
               "system"
             ),
             (135...141),

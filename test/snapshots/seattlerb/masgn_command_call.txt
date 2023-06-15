@@ -14,14 +14,16 @@ ProgramNode(0...10)(
            nil,
            nil,
            nil,
+           0,
            "b"
          ),
-         DOT(6...7)("."),
+         (6...7),
          IDENTIFIER(7...8)("c"),
          nil,
          ArgumentsNode(9...10)([IntegerNode(9...10)()]),
          nil,
          nil,
+         0,
          "c"
        ),
        nil,

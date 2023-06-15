@@ -18,23 +18,26 @@ ProgramNode(0...31)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "-@"
                  )]
               ),
               (4...5),
               (9...10)
             ),
-            DOT(10...11)("."),
+            (10...11),
             IDENTIFIER(11...14)("abs"),
             nil,
             nil,
             nil,
             nil,
+            0,
             "abs"
           )]
        ),
        nil,
        nil,
+       0,
        "foo"
      ),
      CallNode(16...31)(
@@ -54,23 +57,26 @@ ProgramNode(0...31)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "-@"
                  )]
               ),
               (21...22),
               (26...27)
             ),
-            DOT(27...28)("."),
+            (27...28),
             IDENTIFIER(28...31)("abs"),
             nil,
             nil,
             nil,
             nil,
+            0,
             "abs"
           )]
        ),
        nil,
        nil,
+       0,
        "meth"
      )]
   )

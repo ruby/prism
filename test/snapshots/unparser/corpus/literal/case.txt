@@ -13,6 +13,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "bar"
            )],
           StatementsNode(16...19)(
@@ -24,6 +25,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "baz"
              )]
           )
@@ -38,6 +40,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "baz"
            )],
           StatementsNode(31...34)(
@@ -49,6 +52,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )]
           )
@@ -66,6 +70,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(48...56)(
@@ -78,6 +83,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "bar"
            )],
           nil
@@ -92,6 +98,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "baz"
            )],
           StatementsNode(68...71)(
@@ -103,6 +110,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )]
           )
@@ -120,6 +128,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(85...99)(
@@ -132,6 +141,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "bar"
            )],
           StatementsNode(96...99)(
@@ -143,6 +153,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "baz"
              )]
           )
@@ -157,6 +168,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "baz"
            )],
           StatementsNode(111...114)(
@@ -168,6 +180,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )]
           )
@@ -185,6 +198,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(128...150)(
@@ -197,6 +211,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "bar"
            ),
            CallNode(138...141)(
@@ -207,6 +222,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "baz"
            )],
           StatementsNode(144...150)(
@@ -226,6 +242,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(164...182)(
@@ -240,6 +257,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "bar"
              )
            )],
@@ -260,6 +278,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(196...210)(
@@ -272,6 +291,7 @@ ProgramNode(0...284)(
              nil,
              nil,
              nil,
+             0,
              "bar"
            )],
           StatementsNode(207...210)(
@@ -283,6 +303,7 @@ ProgramNode(0...284)(
                nil,
                nil,
                nil,
+               0,
                "baz"
              )]
           )
@@ -306,6 +327,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(236...251)(
@@ -321,6 +343,7 @@ ProgramNode(0...284)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "bar"
                ),
                nil,
@@ -335,11 +358,13 @@ ProgramNode(0...284)(
                     nil,
                     nil,
                     nil,
+                    0,
                     "baz"
                   )]
                ),
                nil,
                nil,
+               0,
                "|"
              )
            )],
@@ -358,6 +383,7 @@ ProgramNode(0...284)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        [WhenNode(265...278)(
@@ -373,14 +399,16 @@ ProgramNode(0...284)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "bar"
                ),
-               DOT(274...275)("."),
+               (274...275),
                IDENTIFIER(275...278)("baz"),
                nil,
                ArgumentsNode(279...280)([IntegerNode(279...280)()]),
                nil,
                nil,
+               0,
                "baz="
              )
            )],

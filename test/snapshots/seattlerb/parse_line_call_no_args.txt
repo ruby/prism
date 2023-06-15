@@ -34,12 +34,14 @@ ProgramNode(0...23)(
               ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:y, 0)]),
               nil,
               nil,
+              0,
               "+"
             )]
          ),
          (2...4),
          (20...23)
        ),
+       0,
        "f"
      )]
   )

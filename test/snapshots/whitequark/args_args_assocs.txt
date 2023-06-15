@@ -15,6 +15,7 @@ ProgramNode(0...46)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           KeywordHashNode(9...18)(
@@ -27,6 +28,7 @@ ProgramNode(0...46)(
        ),
        PARENTHESIS_RIGHT(18...19)(")"),
        nil,
+       0,
        "fun"
      ),
      CallNode(21...46)(
@@ -43,6 +45,7 @@ ProgramNode(0...46)(
             nil,
             nil,
             nil,
+            0,
             "foo"
           ),
           KeywordHashNode(30...39)(
@@ -61,6 +64,7 @@ ProgramNode(0...46)(
               nil,
               nil,
               nil,
+              0,
               "baz"
             ),
             (41...42)
@@ -68,6 +72,7 @@ ProgramNode(0...46)(
        ),
        PARENTHESIS_RIGHT(45...46)(")"),
        nil,
+       0,
        "fun"
      )]
   )

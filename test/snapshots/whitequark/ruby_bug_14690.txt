@@ -26,17 +26,20 @@ ProgramNode(0...23)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "a"
                  )]
               ),
               PARENTHESIS_RIGHT(12...13)(")"),
               BlockNode(14...21)([], nil, nil, (14...16), (18...21)),
+              0,
               "m"
             )]
          ),
          (7...8),
          (22...23)
        ),
+       0,
        "let"
      )]
   )

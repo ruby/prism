@@ -18,11 +18,13 @@ ProgramNode(0...24)(
               nil,
               nil,
               nil,
+              0,
               "dir"
             )]
          ),
          nil,
          nil,
+         0,
          "test"
        ),
        nil,

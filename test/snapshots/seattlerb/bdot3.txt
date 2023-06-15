@@ -12,6 +12,7 @@ ProgramNode(0...16)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        (8...11)
@@ -24,6 +25,7 @@ ProgramNode(0...16)(
        nil,
        nil,
        nil,
+       0,
        "c"
      )]
   )

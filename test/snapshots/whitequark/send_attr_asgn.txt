@@ -10,14 +10,16 @@ ProgramNode(0...40)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(3...4)("."),
+       (3...4),
        CONSTANT(4...5)("A"),
        nil,
        ArgumentsNode(8...9)([IntegerNode(8...9)()]),
        nil,
        nil,
+       0,
        "A="
      ),
      CallNode(11...16)(
@@ -29,14 +31,16 @@ ProgramNode(0...40)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       DOT(14...15)("."),
+       (14...15),
        IDENTIFIER(15...16)("a"),
        nil,
        ArgumentsNode(19...20)([IntegerNode(19...20)()]),
        nil,
        nil,
+       0,
        "a="
      ),
      ConstantPathWriteNode(22...32)(
@@ -49,6 +53,7 @@ ProgramNode(0...40)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          ConstantReadNode(27...28)(),
@@ -66,14 +71,16 @@ ProgramNode(0...40)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       COLON_COLON(37...39)("::"),
+       (37...39),
        IDENTIFIER(39...40)("a"),
        nil,
        ArgumentsNode(43...44)([IntegerNode(43...44)()]),
        nil,
        nil,
+       0,
        "a="
      )]
   )

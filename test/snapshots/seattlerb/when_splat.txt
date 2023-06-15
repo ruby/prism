@@ -10,6 +10,7 @@ ProgramNode(0...25)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        [WhenNode(8...15)(
@@ -24,6 +25,7 @@ ProgramNode(0...25)(
                nil,
                nil,
                nil,
+               0,
                "b"
              )
            )],

@@ -11,9 +11,10 @@ ProgramNode(0...33)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
-         DOT(1...2)("."),
+         (1...2),
          IDENTIFIER(2...3)("b"),
          nil,
          ArgumentsNode(4...7)(
@@ -25,6 +26,7 @@ ProgramNode(0...33)(
               nil,
               PARENTHESIS_RIGHT(6...7)(")"),
               nil,
+              0,
               "c"
             )]
          ),
@@ -41,15 +43,17 @@ ProgramNode(0...33)(
                 nil,
                 nil,
                 nil,
+                0,
                 "d"
               )]
            ),
            (8...10),
            (13...16)
          ),
+         0,
          "b"
        ),
-       DOT(16...17)("."),
+       (16...17),
        IDENTIFIER(17...18)("e"),
        nil,
        ArgumentsNode(19...20)(
@@ -61,6 +65,7 @@ ProgramNode(0...33)(
             nil,
             nil,
             nil,
+            0,
             "f"
           )]
        ),
@@ -90,12 +95,14 @@ ProgramNode(0...33)(
               nil,
               nil,
               nil,
+              0,
               "h"
             )]
          ),
          (21...23),
          (30...33)
        ),
+       0,
        "e"
      )]
   )

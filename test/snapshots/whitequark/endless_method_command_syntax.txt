@@ -16,6 +16,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "puts"
           )]
        ),
@@ -42,6 +43,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "puts"
           )]
        ),
@@ -74,6 +76,7 @@ ProgramNode(0...278)(
             ArgumentsNode(68...69)([LocalVariableReadNode(68...69)(:x, 0)]),
             nil,
             nil,
+            0,
             "puts"
           )]
        ),
@@ -95,6 +98,7 @@ ProgramNode(0...278)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
        nil,
@@ -109,6 +113,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "puts"
           )]
        ),
@@ -130,6 +135,7 @@ ProgramNode(0...278)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
        nil,
@@ -149,6 +155,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "puts"
           )]
        ),
@@ -170,6 +177,7 @@ ProgramNode(0...278)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
        ParametersNode(141...142)(
@@ -192,6 +200,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "puts"
           )]
        ),
@@ -246,6 +255,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "raise"
           )]
        ),
@@ -300,6 +310,7 @@ ProgramNode(0...278)(
             ),
             nil,
             nil,
+            0,
             "raise"
           )]
        ),

@@ -327,6 +327,9 @@ flags:
       - WINDOWS31J # s - forces the Windows-31J encoding
       - UTF8       # u - forces the UTF-8 encoding
       - Once       # o - only interpolates values into the regular expression once
+  - name: CallNodeFlags
+    values:
+      - SafeNavigation # &. operator
 nodes:
   - name: AliasNode
     child_nodes:
@@ -547,8 +550,8 @@ nodes:
     child_nodes:
       - name: receiver
         type: node?
-      - name: call_operator
-        type: token?
+      - name: operator_loc
+        type: location?
       - name: message
         type: token?
       - name: opening
@@ -561,6 +564,8 @@ nodes:
       - name: block
         type: node?
         kind: BlockNode
+      - name: flags
+        type: uint32
       - name: name
         type: string
     comment: |

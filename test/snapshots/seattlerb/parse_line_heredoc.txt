@@ -15,12 +15,13 @@ ProgramNode(6...88)(
             )],
            (57...71)
          ),
-         DOT(25...26)("."),
+         (25...26),
          IDENTIFIER(26...31)("strip"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "strip"
        ),
        (6...12),
@@ -34,6 +35,7 @@ ProgramNode(6...88)(
        ArgumentsNode(82...88)([LocalVariableReadNode(82...88)(:string, 0)]),
        nil,
        nil,
+       0,
        "puts"
      )]
   )

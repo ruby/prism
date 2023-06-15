@@ -27,6 +27,7 @@ ProgramNode(0...30)(
               ),
               nil,
               nil,
+              0,
               "+"
             ),
             nil,
@@ -37,11 +38,13 @@ ProgramNode(0...30)(
             ),
             nil,
             nil,
+            0,
             "+"
           )]
        ),
        nil,
        nil,
+       0,
        "p"
      )]
   )

@@ -24,6 +24,7 @@ ProgramNode(0...223)(
        ),
        nil,
        nil,
+       0,
        "+"
      ),
      InterpolatedXStringNode(59...81)(
@@ -40,6 +41,7 @@ ProgramNode(0...223)(
                nil,
                nil,
                nil,
+               0,
                "b"
              )]
           ),
@@ -72,6 +74,7 @@ ProgramNode(0...223)(
                nil,
                nil,
                nil,
+               0,
                "b"
              )]
           ),
@@ -94,6 +97,7 @@ ProgramNode(0...223)(
                nil,
                nil,
                nil,
+               0,
                "b"
              )]
           ),

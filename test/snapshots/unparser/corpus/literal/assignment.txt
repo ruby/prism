@@ -171,22 +171,24 @@ ProgramNode(0...719)(
      MultiWriteNode(205...227)(
        [CallNode(205...210)(
           LocalVariableReadNode(205...206)(:a, 0),
-          DOT(206...207)("."),
+          (206...207),
           IDENTIFIER(207...210)("foo"),
           nil,
           nil,
           nil,
           nil,
+          0,
           "foo="
         ),
         CallNode(212...217)(
           LocalVariableReadNode(212...213)(:a, 0),
-          DOT(213...214)("."),
+          (213...214),
           IDENTIFIER(214...217)("bar"),
           nil,
           nil,
           nil,
           nil,
+          0,
           "bar="
         )],
        (219...220),
@@ -212,6 +214,7 @@ ProgramNode(0...719)(
           ),
           BRACKET_RIGHT(235...236)("]"),
           nil,
+          0,
           "[]="
         ),
         CallNode(238...242)(
@@ -222,6 +225,7 @@ ProgramNode(0...719)(
           ArgumentsNode(240...241)([IntegerNode(240...241)()]),
           BRACKET_RIGHT(241...242)("]"),
           nil,
+          0,
           "[]="
         )],
        (244...245),
@@ -242,6 +246,7 @@ ProgramNode(0...719)(
           ArgumentsNode(256...257)([IntegerNode(256...257)()]),
           BRACKET_RIGHT(257...258)("]"),
           nil,
+          0,
           "[]="
         ),
         CallNode(260...264)(
@@ -252,6 +257,7 @@ ProgramNode(0...719)(
           ArgumentsNode(262...263)([IntegerNode(262...263)()]),
           BRACKET_RIGHT(263...264)("]"),
           nil,
+          0,
           "[]="
         )],
        (266...267),
@@ -268,12 +274,13 @@ ProgramNode(0...719)(
           (276...277),
           CallNode(277...282)(
             LocalVariableReadNode(277...278)(:c, 0),
-            DOT(278...279)("."),
+            (278...279),
             IDENTIFIER(279...282)("foo"),
             nil,
             nil,
             nil,
             nil,
+            0,
             "foo="
           )
         )],
@@ -367,6 +374,7 @@ ProgramNode(0...719)(
          nil,
          PARENTHESIS_RIGHT(384...385)(")"),
          nil,
+         0,
          "foo"
        ),
        (374...377),
@@ -374,17 +382,18 @@ ProgramNode(0...719)(
      ),
      CallNode(386...395)(
        LocalVariableReadNode(386...389)(:foo, 0),
-       DOT(389...390)("."),
+       (389...390),
        BRACKET_LEFT_RIGHT_EQUAL(390...393)("[]="),
        PARENTHESIS_LEFT(393...394)("("),
        nil,
        PARENTHESIS_RIGHT(394...395)(")"),
        nil,
+       0,
        "[]="
      ),
      CallNode(396...409)(
        LocalVariableReadNode(396...399)(:foo, 0),
-       DOT(399...400)("."),
+       (399...400),
        BRACKET_LEFT_RIGHT_EQUAL(400...403)("[]="),
        PARENTHESIS_LEFT(403...404)("("),
        ArgumentsNode(404...408)(
@@ -392,16 +401,18 @@ ProgramNode(0...719)(
        ),
        PARENTHESIS_RIGHT(408...409)(")"),
        nil,
+       0,
        "[]="
      ),
      CallNode(410...421)(
        LocalVariableReadNode(410...413)(:foo, 0),
-       DOT(413...414)("."),
+       (413...414),
        BRACKET_LEFT_RIGHT_EQUAL(414...417)("[]="),
        nil,
        ArgumentsNode(417...421)([TrueNode(417...421)()]),
        nil,
        nil,
+       0,
        "[]="
      ),
      CallNode(422...441)(
@@ -420,6 +431,7 @@ ProgramNode(0...719)(
               nil,
               nil,
               nil,
+              0,
               "index"
             )
           ),
@@ -431,11 +443,13 @@ ProgramNode(0...719)(
             nil,
             nil,
             nil,
+            0,
             "value"
           )]
        ),
        BRACKET_RIGHT(432...433)("]"),
        nil,
+       0,
        "[]="
      ),
      CallNode(442...459)(
@@ -457,11 +471,13 @@ ProgramNode(0...719)(
             nil,
             nil,
             nil,
+            0,
             "value"
           )]
        ),
        BRACKET_RIGHT(450...451)("]"),
        nil,
+       0,
        "[]="
      ),
      CallNode(460...469)(
@@ -472,6 +488,7 @@ ProgramNode(0...719)(
        ArgumentsNode(468...469)([IntegerNode(468...469)()]),
        BRACKET_RIGHT(464...465)("]"),
        nil,
+       0,
        "[]="
      ),
      CallNode(470...487)(
@@ -490,11 +507,13 @@ ProgramNode(0...719)(
             nil,
             nil,
             nil,
+            0,
             "value"
           )]
        ),
        BRACKET_RIGHT(478...479)("]"),
        nil,
+       0,
        "[]="
      ),
      CallNode(488...506)(
@@ -511,6 +530,7 @@ ProgramNode(0...719)(
             nil,
             nil,
             nil,
+            0,
             "index"
           ),
           CallNode(501...506)(
@@ -521,11 +541,13 @@ ProgramNode(0...719)(
             nil,
             nil,
             nil,
+            0,
             "value"
           )]
        ),
        BRACKET_RIGHT(497...498)("]"),
        nil,
+       0,
        "[]="
      ),
      LocalVariableWriteNode(507...514)(
@@ -537,7 +559,7 @@ ProgramNode(0...719)(
      ),
      CallNode(515...518)(
        LocalVariableReadNode(515...516)(:x, 0),
-       DOT(516...517)("."),
+       (516...517),
        IDENTIFIER(517...518)("x"),
        nil,
        ArgumentsNode(519...522)(
@@ -545,6 +567,7 @@ ProgramNode(0...719)(
        ),
        nil,
        nil,
+       0,
        "x="
      ),
      CallNode(523...535)(
@@ -562,11 +585,13 @@ ProgramNode(0...719)(
             nil,
             nil,
             nil,
+            0,
             "bar"
           )]
        ),
        BRACKET_RIGHT(528...529)("]"),
        nil,
+       0,
        "[]="
      ),
      OperatorOrAssignmentNode(536...550)(
@@ -580,6 +605,7 @@ ProgramNode(0...719)(
          ),
          BRACKET_RIGHT(541...542)("]"),
          nil,
+         0,
          "[]="
        ),
        CallNode(547...550)(
@@ -590,6 +616,7 @@ ProgramNode(0...719)(
          nil,
          nil,
          nil,
+         0,
          "bar"
        ),
        (543...546)
@@ -614,7 +641,7 @@ ProgramNode(0...719)(
      ),
      CallNode(591...594)(
        LocalVariableReadNode(591...592)(:x, 0),
-       DOT(592...593)("."),
+       (592...593),
        IDENTIFIER(593...594)("x"),
        nil,
        ArgumentsNode(595...620)(
@@ -628,6 +655,7 @@ ProgramNode(0...719)(
        ),
        nil,
        nil,
+       0,
        "x="
      ),
      CallNode(620...651)(
@@ -646,6 +674,7 @@ ProgramNode(0...719)(
        ),
        BRACKET_RIGHT(622...623)("]"),
        nil,
+       0,
        "[]="
      ),
      OperatorOrAssignmentNode(651...672)(
@@ -669,6 +698,7 @@ ProgramNode(0...719)(
          ),
          BRACKET_RIGHT(663...664)("]"),
          nil,
+         0,
          "[]="
        ),
        CallNode(669...672)(
@@ -679,6 +709,7 @@ ProgramNode(0...719)(
          nil,
          nil,
          nil,
+         0,
          "bar"
        ),
        (665...668)

@@ -32,11 +32,13 @@ ProgramNode(0...25)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "p"
                       )]
                    ),
                    PARENTHESIS_RIGHT(7...8)(")"),
                    nil,
+                   0,
                    "p"
                  ),
                  CallNode(9...12)(
@@ -53,17 +55,20 @@ ProgramNode(0...25)(
                         nil,
                         nil,
                         nil,
+                        0,
                         "p"
                       )]
                    ),
                    nil,
                    nil,
+                   0,
                    "p"
                  )]
               ),
               (3...4),
               (12...13)
             ),
+            0,
             "p"
           ),
           CallNode(15...18)(
@@ -74,11 +79,13 @@ ProgramNode(0...25)(
             nil,
             nil,
             nil,
+            0,
             "tap"
           )]
        ),
        nil,
        BlockNode(19...25)([], nil, nil, (19...21), (22...25)),
+       0,
        "p"
      )]
   )

@@ -13,6 +13,7 @@ ProgramNode(0...93)(
             nil,
             nil,
             BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
+            0,
             "raise"
           )]
        ),
@@ -27,6 +28,7 @@ ProgramNode(0...93)(
               nil,
               nil,
               BlockNode(27...33)([], nil, nil, (27...29), (30...33)),
+              0,
               "tap"
             )]
          ),
@@ -46,6 +48,7 @@ ProgramNode(0...93)(
             nil,
             nil,
             BlockNode(49...51)([], nil, nil, (49...50), (50...51)),
+            0,
             "raise"
           )]
        ),
@@ -60,6 +63,7 @@ ProgramNode(0...93)(
               nil,
               nil,
               BlockNode(58...60)([], nil, nil, (58...59), (59...60)),
+              0,
               "tap"
             )]
          ),
@@ -73,7 +77,7 @@ ProgramNode(0...93)(
        StatementsNode(69...89)(
          [CallNode(69...89)(
             IntegerNode(69...70)(),
-            DOT(70...71)("."),
+            (70...71),
             IDENTIFIER(71...74)("tap"),
             nil,
             nil,
@@ -105,12 +109,14 @@ ProgramNode(0...93)(
                    ),
                    nil,
                    nil,
+                   0,
                    "p"
                  )]
               ),
               (75...77),
               (86...89)
             ),
+            0,
             "tap"
           )]
        ),

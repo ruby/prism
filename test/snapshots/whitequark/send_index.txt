@@ -10,6 +10,7 @@ ProgramNode(0...9)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        nil,
@@ -18,6 +19,7 @@ ProgramNode(0...9)(
        ArgumentsNode(4...8)([IntegerNode(4...5)(), IntegerNode(7...8)()]),
        BRACKET_RIGHT(8...9)("]"),
        nil,
+       0,
        "[]"
      )]
   )

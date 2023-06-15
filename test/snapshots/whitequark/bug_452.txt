@@ -13,17 +13,19 @@ ProgramNode(0...37)(
               (3...4),
               (9...10)
             ),
-            DOT(10...11)("."),
+            (10...11),
             IDENTIFIER(11...19)("toString"),
             PARENTHESIS_LEFT(19...20)("("),
             nil,
             PARENTHESIS_RIGHT(20...21)(")"),
             nil,
+            0,
             "toString"
           )]
        ),
        nil,
        nil,
+       0,
        "td"
      ),
      CallNode(23...37)(
@@ -35,14 +37,16 @@ ProgramNode(0...37)(
          nil,
          nil,
          nil,
+         0,
          "td"
        ),
-       DOT(25...26)("."),
+       (25...26),
        IDENTIFIER(26...29)("num"),
        nil,
        nil,
        nil,
        BlockNode(30...37)([], nil, nil, (30...32), (34...37)),
+       0,
        "num"
      )]
   )

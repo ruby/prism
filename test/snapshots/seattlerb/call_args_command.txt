@@ -10,9 +10,10 @@ ProgramNode(0...9)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
-       DOT(1...2)("."),
+       (1...2),
        IDENTIFIER(2...3)("b"),
        nil,
        ArgumentsNode(4...9)(
@@ -25,19 +26,22 @@ ProgramNode(0...9)(
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(5...6)("."),
+            (5...6),
             IDENTIFIER(6...7)("d"),
             nil,
             ArgumentsNode(8...9)([IntegerNode(8...9)()]),
             nil,
             nil,
+            0,
             "d"
           )]
        ),
        nil,
        nil,
+       0,
        "b"
      )]
   )

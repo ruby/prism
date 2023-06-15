@@ -19,6 +19,7 @@ ProgramNode(2...9)(
          nil,
          nil,
          nil,
+         0,
          "c"
        ),
        (0...1),

@@ -12,6 +12,7 @@ ProgramNode(0...12)(
          ArgumentsNode(9...12)([LocalVariableReadNode(9...12)(:foo, 0)]),
          nil,
          nil,
+         0,
          "m"
        )
      )]

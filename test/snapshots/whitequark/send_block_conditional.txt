@@ -10,14 +10,16 @@ ProgramNode(0...11)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
-       AMPERSAND_DOT(3...5)("&."),
+       (3...5),
        IDENTIFIER(5...8)("bar"),
        nil,
        nil,
        nil,
        BlockNode(9...11)([], nil, nil, (9...10), (10...11)),
+       1,
        "bar"
      )]
   )

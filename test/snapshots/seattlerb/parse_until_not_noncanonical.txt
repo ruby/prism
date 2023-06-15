@@ -13,14 +13,16 @@ ProgramNode(0...30)(
              nil,
              nil,
              nil,
+             0,
              "var"
            ),
-           DOT(13...14)("."),
+           (13...14),
            IDENTIFIER(14...18)("nil?"),
            nil,
            nil,
            nil,
            nil,
+           0,
            "nil?"
          ),
          nil,
@@ -29,6 +31,7 @@ ProgramNode(0...30)(
          nil,
          nil,
          nil,
+         0,
          "!"
        ),
        StatementsNode(21...26)(

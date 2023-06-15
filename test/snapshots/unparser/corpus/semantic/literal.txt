@@ -10,6 +10,7 @@ ProgramNode(0...131)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      IntegerNode(9...12)(),
@@ -24,6 +25,7 @@ ProgramNode(0...131)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      StringNode(55...57)((55...56), (56...57), nil, "c"),
@@ -49,6 +51,7 @@ ProgramNode(0...131)(
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      CallNode(121...131)(
@@ -71,16 +74,19 @@ ProgramNode(0...131)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "bar"
                )]
             ),
             nil,
             nil,
+            0,
             "foo"
           )]
        ),
        PARENTHESIS_RIGHT(130...131)(")"),
        nil,
+       0,
        "w"
      )]
   )

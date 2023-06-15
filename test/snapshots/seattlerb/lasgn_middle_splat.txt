@@ -13,6 +13,7 @@ ProgramNode(0...12)(
             nil,
             nil,
             nil,
+            0,
             "b"
           ),
           SplatNode(7...9)(
@@ -25,6 +26,7 @@ ProgramNode(0...12)(
               nil,
               nil,
               nil,
+              0,
               "c"
             )
           ),
@@ -36,6 +38,7 @@ ProgramNode(0...12)(
             nil,
             nil,
             nil,
+            0,
             "d"
           )],
          nil,

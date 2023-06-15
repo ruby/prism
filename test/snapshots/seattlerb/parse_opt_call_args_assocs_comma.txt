@@ -17,6 +17,7 @@ ProgramNode(0...8)(
        ),
        BRACKET_RIGHT(7...8)("]"),
        nil,
+       0,
        "[]"
      )]
   )

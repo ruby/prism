@@ -22,6 +22,7 @@ ProgramNode(0...213)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        nil,
@@ -39,6 +40,7 @@ ProgramNode(0...213)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        StatementsNode(42...43)(
@@ -50,6 +52,7 @@ ProgramNode(0...213)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
@@ -139,17 +142,19 @@ ProgramNode(0...213)(
             ArgumentsNode(162...167)(
               [CallNode(162...167)(
                  ConstantReadNode(162...163)(),
-                 DOT(163...164)("."),
+                 (163...164),
                  IDENTIFIER(164...167)("new"),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "new"
                )]
             ),
             PARENTHESIS_RIGHT(167...168)(")"),
             nil,
+            0,
             "include"
           ),
           DefNode(172...194)(

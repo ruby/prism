@@ -51,6 +51,7 @@ ProgramNode(0...106)(
             ),
             nil,
             nil,
+            0,
             "y"
           )]
        )
@@ -74,6 +75,7 @@ ProgramNode(0...106)(
             ),
             nil,
             nil,
+            0,
             "y"
           )]
        )
@@ -97,6 +99,7 @@ ProgramNode(0...106)(
             ),
             PARENTHESIS_RIGHT(89...90)(")"),
             nil,
+            0,
             "y"
           )]
        )
@@ -120,6 +123,7 @@ ProgramNode(0...106)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "z"
                     ),
                     IntegerNode(104...105)(),
@@ -129,6 +133,7 @@ ProgramNode(0...106)(
             ),
             PARENTHESIS_RIGHT(105...106)(")"),
             nil,
+            0,
             "y"
           )]
        )

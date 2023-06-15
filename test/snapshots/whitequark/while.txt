@@ -11,6 +11,7 @@ ProgramNode(0...42)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(13...17)(
@@ -22,6 +23,7 @@ ProgramNode(0...42)(
             nil,
             nil,
             nil,
+            0,
             "meth"
           )]
        )
@@ -36,6 +38,7 @@ ProgramNode(0...42)(
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(34...38)(
@@ -47,6 +50,7 @@ ProgramNode(0...42)(
             nil,
             nil,
             nil,
+            0,
             "meth"
           )]
        )

@@ -15,6 +15,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -33,6 +34,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "a"
           ),
           CallNode(32...33)(
@@ -43,6 +45,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
@@ -62,6 +65,7 @@ ProgramNode(0...159)(
               nil,
               nil,
               nil,
+              0,
               "block"
             ),
             (41...42)
@@ -82,6 +86,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "a"
           ),
           BlockArgumentNode(58...64)(
@@ -93,6 +98,7 @@ ProgramNode(0...159)(
               nil,
               nil,
               nil,
+              0,
               "block"
             ),
             (58...59)
@@ -124,12 +130,14 @@ ProgramNode(0...159)(
                    nil,
                    nil,
                    nil,
+                   0,
                    "foo"
                  )]
               ),
               (74...75),
               (82...83)
             ),
+            0,
             "a"
           )]
        ),
@@ -149,6 +157,7 @@ ProgramNode(0...159)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
@@ -168,6 +177,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "a"
           )]
        ),
@@ -184,6 +194,7 @@ ProgramNode(0...159)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
@@ -208,6 +219,7 @@ ProgramNode(0...159)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
@@ -227,6 +239,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "a"
           ),
           CallNode(147...148)(
@@ -237,6 +250,7 @@ ProgramNode(0...159)(
             nil,
             nil,
             nil,
+            0,
             "b"
           )]
        ),
@@ -253,6 +267,7 @@ ProgramNode(0...159)(
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),

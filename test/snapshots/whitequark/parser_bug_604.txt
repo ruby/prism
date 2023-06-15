@@ -16,6 +16,7 @@ ProgramNode(0...14)(
               nil,
               nil,
               nil,
+              0,
               "a"
             ),
             nil,
@@ -30,16 +31,19 @@ ProgramNode(0...14)(
                  nil,
                  nil,
                  nil,
+                 0,
                  "b"
                )]
             ),
             nil,
             nil,
+            0,
             "+"
           )]
        ),
        nil,
        BlockNode(8...14)([], nil, nil, (8...10), (11...14)),
+       0,
        "m"
      )]
   )

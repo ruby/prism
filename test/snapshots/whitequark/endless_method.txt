@@ -35,6 +35,7 @@ ProgramNode(0...78)(
             ArgumentsNode(33...34)([IntegerNode(33...34)()]),
             nil,
             nil,
+            0,
             "+"
           )]
        ),
@@ -56,6 +57,7 @@ ProgramNode(0...78)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
        nil,
@@ -78,6 +80,7 @@ ProgramNode(0...78)(
          nil,
          nil,
          nil,
+         0,
          "obj"
        ),
        ParametersNode(68...69)(
@@ -98,6 +101,7 @@ ProgramNode(0...78)(
             ArgumentsNode(77...78)([IntegerNode(77...78)()]),
             nil,
             nil,
+            0,
             "+"
           )]
        ),

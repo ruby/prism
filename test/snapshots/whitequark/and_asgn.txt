@@ -11,14 +11,16 @@ ProgramNode(0...28)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
-         DOT(3...4)("."),
+         (3...4),
          IDENTIFIER(4...5)("a"),
          nil,
          nil,
          nil,
          nil,
+         0,
          "a="
        ),
        IntegerNode(10...11)(),
@@ -34,6 +36,7 @@ ProgramNode(0...28)(
            nil,
            nil,
            nil,
+           0,
            "foo"
          ),
          nil,
@@ -44,6 +47,7 @@ ProgramNode(0...28)(
          ),
          BRACKET_RIGHT(21...22)("]"),
          nil,
+         0,
          "[]="
        ),
        IntegerNode(27...28)(),

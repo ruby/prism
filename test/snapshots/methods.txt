@@ -94,6 +94,7 @@ ProgramNode(0...1194)(
            nil,
            nil,
            nil,
+           0,
            "b"
          ),
          (101...102),
@@ -120,6 +121,7 @@ ProgramNode(0...1194)(
            nil,
            nil,
            nil,
+           0,
            "a"
          ),
          (116...117),
@@ -192,6 +194,7 @@ ProgramNode(0...1194)(
          nil,
          nil,
          nil,
+         0,
          "a"
        ),
        nil,
@@ -758,6 +761,7 @@ ProgramNode(0...1194)(
             ArgumentsNode(699...700)([SplatNode(699...700)((699...700), nil)]),
             PARENTHESIS_RIGHT(700...701)(")"),
             nil,
+            0,
             "b"
           )]
        ),
@@ -790,6 +794,7 @@ ProgramNode(0...1194)(
             ArgumentsNode(722...725)([ForwardingArgumentsNode(722...725)()]),
             PARENTHESIS_RIGHT(725...726)(")"),
             nil,
+            0,
             "b"
           )]
        ),
@@ -826,6 +831,7 @@ ProgramNode(0...1194)(
             ),
             PARENTHESIS_RIGHT(756...757)(")"),
             nil,
+            0,
             "b"
           )]
        ),
@@ -851,6 +857,7 @@ ProgramNode(0...1194)(
              nil,
              nil,
              nil,
+             0,
              "b"
            ),
            (769...770),
@@ -938,6 +945,7 @@ ProgramNode(0...1194)(
              nil,
              nil,
              nil,
+             0,
              "b"
            ),
            (833...834),
@@ -1016,6 +1024,7 @@ ProgramNode(0...1194)(
                     ),
                     PARENTHESIS_RIGHT(928...929)(")"),
                     nil,
+                    0,
                     "b"
                   )]
                ),
@@ -1039,7 +1048,7 @@ ProgramNode(0...1194)(
        StatementsNode(948...976)(
          [CallNode(948...976)(
             HashNode(948...950)((948...949), [], (949...950)),
-            DOT(950...951)("."),
+            (950...951),
             IDENTIFIER(951...956)("merge"),
             nil,
             ArgumentsNode(957...976)(
@@ -1053,6 +1062,7 @@ ProgramNode(0...1194)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "bar"
                     ),
                     (957...959)
@@ -1066,6 +1076,7 @@ ProgramNode(0...1194)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "baz"
                     ),
                     (964...966)
@@ -1079,6 +1090,7 @@ ProgramNode(0...1194)(
                       nil,
                       nil,
                       nil,
+                      0,
                       "qux"
                     ),
                     (971...973)
@@ -1087,6 +1099,7 @@ ProgramNode(0...1194)(
             ),
             nil,
             nil,
+            0,
             "merge"
           )]
        ),
@@ -1330,6 +1343,7 @@ ProgramNode(0...1194)(
               nil,
               nil,
               nil,
+              0,
               "item"
             ),
             nil,
@@ -1350,11 +1364,13 @@ ProgramNode(0...1194)(
                    (1161...1162),
                    (1162...1163)
                  ),
+                 0,
                  "a"
                )]
             ),
             nil,
             nil,
+            0,
             ">>"
           )]
        ),
