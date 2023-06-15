@@ -9,7 +9,7 @@ ProgramNode(0...11)(
             [CallNode(4...9)(
                nil,
                nil,
-               IDENTIFIER(4...9)("field"),
+               (4...9),
                nil,
                nil,
                nil,

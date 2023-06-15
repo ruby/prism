@@ -2,19 +2,9 @@ ProgramNode(0...55)(
   [],
   StatementsNode(0...55)(
     [CallNode(0...13)(
-       CallNode(0...1)(
-         nil,
-         nil,
-         IDENTIFIER(0...1)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
        (8...10),
-       IDENTIFIER(10...13)("foo"),
+       (10...13),
        nil,
        nil,
        nil,
@@ -23,19 +13,9 @@ ProgramNode(0...55)(
        "foo"
      ),
      CallNode(16...28)(
-       CallNode(16...17)(
-         nil,
-         nil,
-         IDENTIFIER(16...17)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(16...17)(nil, nil, (16...17), nil, nil, nil, nil, 0, "a"),
        (24...25),
-       IDENTIFIER(25...28)("foo"),
+       (25...28),
        nil,
        nil,
        nil,
@@ -44,19 +24,9 @@ ProgramNode(0...55)(
        "foo"
      ),
      CallNode(31...42)(
-       CallNode(31...32)(
-         nil,
-         nil,
-         IDENTIFIER(31...32)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(31...32)(nil, nil, (31...32), nil, nil, nil, nil, 0, "a"),
        (37...39),
-       IDENTIFIER(39...42)("foo"),
+       (39...42),
        nil,
        nil,
        nil,
@@ -65,19 +35,9 @@ ProgramNode(0...55)(
        "foo"
      ),
      CallNode(45...55)(
-       CallNode(45...46)(
-         nil,
-         nil,
-         IDENTIFIER(45...46)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(45...46)(nil, nil, (45...46), nil, nil, nil, nil, 0, "a"),
        (51...52),
-       IDENTIFIER(52...55)("foo"),
+       (52...55),
        nil,
        nil,
        nil,

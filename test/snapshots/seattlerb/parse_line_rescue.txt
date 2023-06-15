@@ -4,17 +4,7 @@ ProgramNode(0...35)(
     [BeginNode(0...35)(
        (0...5),
        StatementsNode(8...9)(
-         [CallNode(8...9)(
-            nil,
-            nil,
-            IDENTIFIER(8...9)("a"),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "a"
-          )]
+         [CallNode(8...9)(nil, nil, (8...9), nil, nil, nil, nil, 0, "a")]
        ),
        RescueNode(10...31)(
          (10...16),
@@ -22,17 +12,7 @@ ProgramNode(0...35)(
          nil,
          nil,
          StatementsNode(19...20)(
-           [CallNode(19...20)(
-              nil,
-              nil,
-              IDENTIFIER(19...20)("b"),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "b"
-            )]
+           [CallNode(19...20)(nil, nil, (19...20), nil, nil, nil, nil, 0, "b")]
          ),
          RescueNode(21...31)(
            (21...27),
@@ -43,7 +23,7 @@ ProgramNode(0...35)(
              [CallNode(30...31)(
                 nil,
                 nil,
-                IDENTIFIER(30...31)("c"),
+                (30...31),
                 nil,
                 nil,
                 nil,

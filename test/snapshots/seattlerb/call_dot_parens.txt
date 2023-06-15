@@ -4,7 +4,7 @@ ProgramNode(0...4)(
     [CallNode(0...4)(
        IntegerNode(0...1)(),
        (1...2),
-       nil,
+       (0...0),
        PARENTHESIS_LEFT(2...3)("("),
        nil,
        PARENTHESIS_RIGHT(3...4)(")"),

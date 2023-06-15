@@ -9,7 +9,7 @@ ProgramNode(0...43)(
          [CallNode(18...43)(
             nil,
             nil,
-            IDENTIFIER(18...30)("other_method"),
+            (18...30),
             nil,
             ArgumentsNode(31...43)(
               [RescueModifierNode(31...43)(

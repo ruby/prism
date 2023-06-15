@@ -4,7 +4,7 @@ ProgramNode(0...43)(
     [CallNode(0...14)(
        nil,
        nil,
-       IDENTIFIER(0...1)("f"),
+       (0...1),
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...13)(
          [KeywordHashNode(2...13)(
@@ -23,7 +23,7 @@ ProgramNode(0...43)(
      CallNode(16...29)(
        nil,
        nil,
-       IDENTIFIER(16...17)("f"),
+       (16...17),
        PARENTHESIS_LEFT(17...18)("("),
        ArgumentsNode(18...28)(
          [KeywordHashNode(18...28)(
@@ -42,7 +42,7 @@ ProgramNode(0...43)(
      CallNode(31...43)(
        nil,
        nil,
-       IDENTIFIER(31...32)("f"),
+       (31...32),
        PARENTHESIS_LEFT(32...33)("("),
        ArgumentsNode(33...42)(
          [KeywordHashNode(33...42)(

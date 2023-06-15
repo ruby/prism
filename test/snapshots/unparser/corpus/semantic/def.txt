@@ -12,7 +12,7 @@ ProgramNode(0...55)(
                  CallNode(11...12)(
                    nil,
                    nil,
-                   IDENTIFIER(11...12)("a"),
+                   (11...12),
                    nil,
                    nil,
                    nil,
@@ -21,13 +21,13 @@ ProgramNode(0...55)(
                    "a"
                  ),
                  nil,
-                 MINUS(13...14)("-"),
+                 (13...14),
                  nil,
                  ArgumentsNode(15...16)(
                    [CallNode(15...16)(
                       nil,
                       nil,
-                      IDENTIFIER(15...16)("b"),
+                      (15...16),
                       nil,
                       nil,
                       nil,
@@ -60,17 +60,7 @@ ProgramNode(0...55)(
        nil,
        StatementsNode(33...51)(
          [RescueModifierNode(33...51)(
-            CallNode(33...34)(
-              nil,
-              nil,
-              IDENTIFIER(33...34)("a"),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "a"
-            ),
+            CallNode(33...34)(nil, nil, (33...34), nil, nil, nil, nil, 0, "a"),
             (35...41),
             ConstantReadNode(42...51)()
           )]

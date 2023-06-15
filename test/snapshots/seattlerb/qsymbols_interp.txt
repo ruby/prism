@@ -12,7 +12,7 @@ ProgramNode(0...15)(
                [CallNode(8...11)(
                   IntegerNode(8...9)(),
                   nil,
-                  PLUS(9...10)("+"),
+                  (9...10),
                   nil,
                   ArgumentsNode(10...11)([IntegerNode(10...11)()]),
                   nil,

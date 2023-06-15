@@ -5,33 +5,13 @@ ProgramNode(0...18)(
        (0...2),
        ParenthesesNode(3...8)(
          StatementsNode(4...7)(
-           [CallNode(4...7)(
-              nil,
-              nil,
-              IDENTIFIER(4...7)("bar"),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "bar"
-            )]
+           [CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 0, "bar")]
          ),
          (3...4),
          (7...8)
        ),
        StatementsNode(10...13)(
-         [CallNode(10...13)(
-            nil,
-            nil,
-            IDENTIFIER(10...13)("foo"),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "foo"
-          )]
+         [CallNode(10...13)(nil, nil, (10...13), nil, nil, nil, nil, 0, "foo")]
        ),
        nil,
        (15...18)

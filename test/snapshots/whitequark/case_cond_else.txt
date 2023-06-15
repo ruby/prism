@@ -8,7 +8,7 @@ ProgramNode(0...38)(
           [CallNode(11...14)(
              nil,
              nil,
-             IDENTIFIER(11...14)("foo"),
+             (11...14),
              nil,
              nil,
              nil,

@@ -6,7 +6,7 @@ ProgramNode(0...10)(
        CallNode(3...5)(
          IntegerNode(4...5)(),
          nil,
-         UMINUS_NUM(3...4)("-"),
+         (3...4),
          nil,
          nil,
          nil,

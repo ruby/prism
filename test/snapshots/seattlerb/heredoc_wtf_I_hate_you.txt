@@ -4,7 +4,7 @@ ProgramNode(0...30)(
     [CallNode(0...30)(
        nil,
        nil,
-       IDENTIFIER(0...1)("p"),
+       (0...1),
        nil,
        ArgumentsNode(2...30)(
          [CallNode(2...30)(
@@ -15,7 +15,7 @@ ProgramNode(0...30)(
                 (16...22)
               ),
               nil,
-              PLUS(8...9)("+"),
+              (8...9),
               nil,
               ArgumentsNode(9...26)(
                 [InterpolatedStringNode(9...26)(
@@ -31,7 +31,7 @@ ProgramNode(0...30)(
               "+"
             ),
             nil,
-            PLUS(26...27)("+"),
+            (26...27),
             nil,
             ArgumentsNode(27...30)(
               [StringNode(27...30)((27...28), (28...29), (29...30), "d")]

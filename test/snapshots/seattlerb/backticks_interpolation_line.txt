@@ -4,7 +4,7 @@ ProgramNode(0...8)(
     [CallNode(0...8)(
        nil,
        nil,
-       IDENTIFIER(0...1)("x"),
+       (0...1),
        nil,
        ArgumentsNode(2...8)(
          [InterpolatedXStringNode(2...8)(
@@ -15,7 +15,7 @@ ProgramNode(0...8)(
                  [CallNode(5...6)(
                     nil,
                     nil,
-                    IDENTIFIER(5...6)("y"),
+                    (5...6),
                     nil,
                     nil,
                     nil,

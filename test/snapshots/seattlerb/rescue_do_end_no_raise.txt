@@ -4,7 +4,7 @@ ProgramNode(0...66)(
     [CallNode(0...66)(
        nil,
        nil,
-       IDENTIFIER(0...3)("tap"),
+       (0...3),
        nil,
        nil,
        nil,

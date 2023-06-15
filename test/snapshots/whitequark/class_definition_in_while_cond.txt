@@ -15,7 +15,7 @@ ProgramNode(0...197)(
               CallNode(25...35)(
                 nil,
                 nil,
-                IDENTIFIER(25...28)("tap"),
+                (25...28),
                 nil,
                 nil,
                 nil,
@@ -42,7 +42,7 @@ ProgramNode(0...197)(
            [CallNode(75...85)(
               nil,
               nil,
-              IDENTIFIER(75...78)("tap"),
+              (75...78),
               nil,
               nil,
               nil,
@@ -70,7 +70,7 @@ ProgramNode(0...197)(
               CallNode(124...134)(
                 nil,
                 nil,
-                IDENTIFIER(124...127)("tap"),
+                (124...127),
                 nil,
                 nil,
                 nil,
@@ -98,7 +98,7 @@ ProgramNode(0...197)(
            [CallNode(170...180)(
               nil,
               nil,
-              IDENTIFIER(170...173)("tap"),
+              (170...173),
               nil,
               nil,
               nil,

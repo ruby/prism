@@ -4,7 +4,7 @@ ProgramNode(0...225)(
     [CallNode(0...42)(
        nil,
        nil,
-       IDENTIFIER(0...1)("p"),
+       (0...1),
        nil,
        ArgumentsNode(2...42)(
          [SymbolNode(2...6)((2...3), (3...6), nil, "foo"),
@@ -15,7 +15,7 @@ ProgramNode(0...225)(
                CallNode(14...25)(
                  nil,
                  nil,
-                 IDENTIFIER(14...18)("proc"),
+                 (14...18),
                  nil,
                  nil,
                  nil,
@@ -30,7 +30,7 @@ ProgramNode(0...225)(
                CallNode(30...41)(
                  nil,
                  nil,
-                 IDENTIFIER(30...34)("proc"),
+                 (30...34),
                  nil,
                  nil,
                  nil,
@@ -51,7 +51,7 @@ ProgramNode(0...225)(
      CallNode(44...84)(
        nil,
        nil,
-       IDENTIFIER(44...45)("p"),
+       (44...45),
        nil,
        ArgumentsNode(46...84)(
          [SymbolNode(46...50)((46...47), (47...50), nil, "foo"),
@@ -61,7 +61,7 @@ ProgramNode(0...225)(
                CallNode(56...67)(
                  nil,
                  nil,
-                 IDENTIFIER(56...60)("proc"),
+                 (56...60),
                  nil,
                  nil,
                  nil,
@@ -76,7 +76,7 @@ ProgramNode(0...225)(
                CallNode(72...83)(
                  nil,
                  nil,
-                 IDENTIFIER(72...76)("proc"),
+                 (72...76),
                  nil,
                  nil,
                  nil,
@@ -97,7 +97,7 @@ ProgramNode(0...225)(
      CallNode(86...129)(
        nil,
        nil,
-       IDENTIFIER(86...87)("p"),
+       (86...87),
        nil,
        ArgumentsNode(88...129)(
          [SymbolNode(88...92)((88...89), (89...92), nil, "foo"),
@@ -108,7 +108,7 @@ ProgramNode(0...225)(
                CallNode(101...112)(
                  nil,
                  nil,
-                 IDENTIFIER(101...105)("proc"),
+                 (101...105),
                  nil,
                  nil,
                  nil,
@@ -123,7 +123,7 @@ ProgramNode(0...225)(
                CallNode(117...128)(
                  nil,
                  nil,
-                 IDENTIFIER(117...121)("proc"),
+                 (117...121),
                  nil,
                  nil,
                  nil,
@@ -144,7 +144,7 @@ ProgramNode(0...225)(
      CallNode(131...171)(
        nil,
        nil,
-       IDENTIFIER(131...132)("p"),
+       (131...132),
        nil,
        ArgumentsNode(133...171)(
          [SymbolNode(133...137)((133...134), (134...137), nil, "foo"),
@@ -155,7 +155,7 @@ ProgramNode(0...225)(
                CallNode(143...154)(
                  nil,
                  nil,
-                 IDENTIFIER(143...147)("proc"),
+                 (143...147),
                  nil,
                  nil,
                  nil,
@@ -170,7 +170,7 @@ ProgramNode(0...225)(
                CallNode(159...170)(
                  nil,
                  nil,
-                 IDENTIFIER(159...163)("proc"),
+                 (159...163),
                  nil,
                  nil,
                  nil,
@@ -191,7 +191,7 @@ ProgramNode(0...225)(
      CallNode(173...225)(
        nil,
        nil,
-       IDENTIFIER(173...174)("p"),
+       (173...174),
        nil,
        ArgumentsNode(175...225)(
          [SymbolNode(175...179)((175...176), (176...179), nil, "foo"),
@@ -201,7 +201,7 @@ ProgramNode(0...225)(
                CallNode(182...193)(
                  nil,
                  nil,
-                 IDENTIFIER(182...186)("proc"),
+                 (182...186),
                  nil,
                  nil,
                  nil,
@@ -212,7 +212,7 @@ ProgramNode(0...225)(
                CallNode(197...208)(
                  nil,
                  nil,
-                 IDENTIFIER(197...201)("proc"),
+                 (197...201),
                  nil,
                  nil,
                  nil,
@@ -227,7 +227,7 @@ ProgramNode(0...225)(
                CallNode(213...224)(
                  nil,
                  nil,
-                 IDENTIFIER(213...217)("proc"),
+                 (213...217),
                  nil,
                  nil,
                  nil,

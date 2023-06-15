@@ -4,7 +4,7 @@ ProgramNode(0...54)(
     [CallNode(0...2)(
        IntegerNode(1...2)(),
        nil,
-       BANG(0...1)("!"),
+       (0...1),
        nil,
        nil,
        nil,
@@ -18,7 +18,7 @@ ProgramNode(0...54)(
            [CallNode(5...7)(
               IntegerNode(6...7)(),
               nil,
-              BANG(5...6)("!"),
+              (5...6),
               nil,
               nil,
               nil,
@@ -31,7 +31,7 @@ ProgramNode(0...54)(
          (7...8)
        ),
        nil,
-       BANG(3...4)("!"),
+       (3...4),
        nil,
        nil,
        nil,
@@ -49,7 +49,7 @@ ProgramNode(0...54)(
                      CallNode(13...16)(
                        nil,
                        nil,
-                       IDENTIFIER(13...16)("foo"),
+                       (13...16),
                        nil,
                        nil,
                        nil,
@@ -60,7 +60,7 @@ ProgramNode(0...54)(
                      CallNode(20...23)(
                        nil,
                        nil,
-                       IDENTIFIER(20...23)("bar"),
+                       (20...23),
                        nil,
                        nil,
                        nil,
@@ -75,7 +75,7 @@ ProgramNode(0...54)(
                 (23...24)
               ),
               nil,
-              BANG(11...12)("!"),
+              (11...12),
               nil,
               nil,
               nil,
@@ -88,7 +88,7 @@ ProgramNode(0...54)(
          (24...25)
        ),
        nil,
-       BANG(9...10)("!"),
+       (9...10),
        nil,
        nil,
        nil,
@@ -103,7 +103,7 @@ ProgramNode(0...54)(
              [CallNode(28...30)(
                 IntegerNode(29...30)(),
                 nil,
-                BANG(28...29)("!"),
+                (28...29),
                 nil,
                 nil,
                 nil,
@@ -116,7 +116,7 @@ ProgramNode(0...54)(
            (30...31)
          ),
          (31...32),
-         IDENTIFIER(32...35)("baz"),
+         (32...35),
          nil,
          nil,
          nil,
@@ -125,7 +125,7 @@ ProgramNode(0...54)(
          "baz"
        ),
        nil,
-       BANG(26...27)("!"),
+       (26...27),
        nil,
        nil,
        nil,
@@ -134,19 +134,9 @@ ProgramNode(0...54)(
        "!"
      ),
      CallNode(36...38)(
-       CallNode(37...38)(
-         nil,
-         nil,
-         IDENTIFIER(37...38)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(37...38)(nil, nil, (37...38), nil, nil, nil, nil, 0, "a"),
        nil,
-       TILDE(36...37)("~"),
+       (36...37),
        nil,
        nil,
        nil,
@@ -155,19 +145,9 @@ ProgramNode(0...54)(
        "~"
      ),
      CallNode(39...41)(
-       CallNode(40...41)(
-         nil,
-         nil,
-         IDENTIFIER(40...41)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(40...41)(nil, nil, (40...41), nil, nil, nil, nil, 0, "a"),
        nil,
-       UMINUS(39...40)("-"),
+       (39...40),
        nil,
        nil,
        nil,
@@ -176,19 +156,9 @@ ProgramNode(0...54)(
        "-@"
      ),
      CallNode(42...44)(
-       CallNode(43...44)(
-         nil,
-         nil,
-         IDENTIFIER(43...44)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(43...44)(nil, nil, (43...44), nil, nil, nil, nil, 0, "a"),
        nil,
-       UPLUS(42...43)("+"),
+       (42...43),
        nil,
        nil,
        nil,
@@ -204,7 +174,7 @@ ProgramNode(0...54)(
                 CallNode(48...49)(
                   nil,
                   nil,
-                  IDENTIFIER(48...49)("a"),
+                  (48...49),
                   nil,
                   nil,
                   nil,
@@ -213,7 +183,7 @@ ProgramNode(0...54)(
                   "a"
                 ),
                 nil,
-                UMINUS(47...48)("-"),
+                (47...48),
                 nil,
                 nil,
                 nil,
@@ -226,7 +196,7 @@ ProgramNode(0...54)(
            (49...50)
          ),
          (50...51),
-         IDENTIFIER(51...54)("foo"),
+         (51...54),
          nil,
          nil,
          nil,
@@ -235,7 +205,7 @@ ProgramNode(0...54)(
          "foo"
        ),
        nil,
-       UMINUS(45...46)("-"),
+       (45...46),
        nil,
        nil,
        nil,

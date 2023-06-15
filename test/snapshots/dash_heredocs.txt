@@ -13,7 +13,7 @@ ProgramNode(0...223)(
          (41...47)
        ),
        nil,
-       PLUS(25...26)("+"),
+       (25...26),
        nil,
        ArgumentsNode(27...58)(
          [InterpolatedStringNode(27...58)(
@@ -36,7 +36,7 @@ ProgramNode(0...223)(
             [CallNode(74...75)(
                nil,
                nil,
-               IDENTIFIER(74...75)("b"),
+               (74...75),
                nil,
                nil,
                nil,
@@ -69,7 +69,7 @@ ProgramNode(0...223)(
             [CallNode(144...145)(
                nil,
                nil,
-               IDENTIFIER(144...145)("b"),
+               (144...145),
                nil,
                nil,
                nil,
@@ -92,7 +92,7 @@ ProgramNode(0...223)(
             [CallNode(165...166)(
                nil,
                nil,
-               IDENTIFIER(165...166)("b"),
+               (165...166),
                nil,
                nil,
                nil,

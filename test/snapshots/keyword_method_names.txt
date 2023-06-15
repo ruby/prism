@@ -30,7 +30,7 @@ ProgramNode(0...185)(
      CallNode(34...68)(
        nil,
        nil,
-       IDENTIFIER(34...41)("private"),
+       (34...41),
        nil,
        ArgumentsNode(42...68)(
          [DefNode(42...68)(
@@ -41,7 +41,7 @@ ProgramNode(0...185)(
               [CallNode(52...64)(
                  nil,
                  nil,
-                 IDENTIFIER(52...55)("bar"),
+                 (52...55),
                  nil,
                  nil,
                  nil,

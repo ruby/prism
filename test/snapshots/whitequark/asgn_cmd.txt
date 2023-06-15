@@ -10,7 +10,7 @@ ProgramNode(0...30)(
          CallNode(12...17)(
            nil,
            nil,
-           IDENTIFIER(12...13)("m"),
+           (12...13),
            nil,
            ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(:foo, 0)]),
            nil,
@@ -30,7 +30,7 @@ ProgramNode(0...30)(
        CallNode(25...30)(
          nil,
          nil,
-         IDENTIFIER(25...26)("m"),
+         (25...26),
          nil,
          ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(:foo, 0)]),
          nil,

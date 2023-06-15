@@ -8,7 +8,7 @@ ProgramNode(0...17)(
          CallNode(4...8)(
            nil,
            nil,
-           IDENTIFIER(4...5)("b"),
+           (4...5),
            PARENTHESIS_LEFT(5...6)("("),
            ArgumentsNode(6...7)([IntegerNode(6...7)()]),
            PARENTHESIS_RIGHT(7...8)(")"),

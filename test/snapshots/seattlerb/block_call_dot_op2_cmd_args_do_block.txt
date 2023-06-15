@@ -3,25 +3,15 @@ ProgramNode(0...33)(
   StatementsNode(0...33)(
     [CallNode(0...33)(
        CallNode(0...16)(
-         CallNode(0...1)(
-           nil,
-           nil,
-           IDENTIFIER(0...1)("a"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "a"
-         ),
+         CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
          (1...2),
-         IDENTIFIER(2...3)("b"),
+         (2...3),
          nil,
          ArgumentsNode(4...7)(
            [CallNode(4...7)(
               nil,
               nil,
-              IDENTIFIER(4...5)("c"),
+              (4...5),
               PARENTHESIS_LEFT(5...6)("("),
               nil,
               PARENTHESIS_RIGHT(6...7)(")"),
@@ -38,7 +28,7 @@ ProgramNode(0...33)(
              [CallNode(11...12)(
                 nil,
                 nil,
-                IDENTIFIER(11...12)("d"),
+                (11...12),
                 nil,
                 nil,
                 nil,
@@ -54,20 +44,10 @@ ProgramNode(0...33)(
          "b"
        ),
        (16...17),
-       IDENTIFIER(17...18)("e"),
+       (17...18),
        nil,
        ArgumentsNode(19...20)(
-         [CallNode(19...20)(
-            nil,
-            nil,
-            IDENTIFIER(19...20)("f"),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "f"
-          )]
+         [CallNode(19...20)(nil, nil, (19...20), nil, nil, nil, nil, 0, "f")]
        ),
        nil,
        BlockNode(21...33)(
@@ -87,17 +67,7 @@ ProgramNode(0...33)(
            (26...27)
          ),
          StatementsNode(28...29)(
-           [CallNode(28...29)(
-              nil,
-              nil,
-              IDENTIFIER(28...29)("h"),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "h"
-            )]
+           [CallNode(28...29)(nil, nil, (28...29), nil, nil, nil, nil, 0, "h")]
          ),
          (21...23),
          (30...33)

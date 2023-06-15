@@ -6,13 +6,13 @@ ProgramNode(0...26)(
          [CallNode(6...26)(
             nil,
             nil,
-            IDENTIFIER(6...9)("foo"),
+            (6...9),
             nil,
             ArgumentsNode(10...13)(
               [CallNode(10...13)(
                  nil,
                  nil,
-                 IDENTIFIER(10...13)("arg"),
+                 (10...13),
                  nil,
                  nil,
                  nil,

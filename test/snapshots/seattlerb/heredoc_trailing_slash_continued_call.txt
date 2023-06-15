@@ -8,7 +8,7 @@ ProgramNode(0...22)(
          (12...16)
        ),
        (16...17),
-       IDENTIFIER(17...22)("strip"),
+       (17...22),
        nil,
        nil,
        nil,

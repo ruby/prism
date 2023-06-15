@@ -9,7 +9,7 @@ ProgramNode(6...94)(
          [CallNode(20...29)(
             nil,
             nil,
-            IDENTIFIER(20...21)("g"),
+            (20...21),
             nil,
             ArgumentsNode(22...29)(
               [ParenthesesNode(22...26)(
@@ -41,7 +41,7 @@ ProgramNode(6...94)(
          [CallNode(64...72)(
             nil,
             nil,
-            IDENTIFIER(64...65)("g"),
+            (64...65),
             nil,
             ArgumentsNode(66...72)(
               [ParenthesesNode(66...69)(
@@ -68,7 +68,7 @@ ProgramNode(6...94)(
      CallNode(85...94)(
        nil,
        nil,
-       IDENTIFIER(85...86)("g"),
+       (85...86),
        nil,
        ArgumentsNode(87...94)(
          [ParenthesesNode(87...91)(

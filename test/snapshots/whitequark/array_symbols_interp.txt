@@ -11,7 +11,7 @@ ProgramNode(0...29)(
                [CallNode(9...12)(
                   nil,
                   nil,
-                  IDENTIFIER(9...12)("bar"),
+                  (9...12),
                   nil,
                   nil,
                   nil,
@@ -37,7 +37,7 @@ ProgramNode(0...29)(
                [CallNode(24...27)(
                   nil,
                   nil,
-                  IDENTIFIER(24...27)("bar"),
+                  (24...27),
                   nil,
                   nil,
                   nil,

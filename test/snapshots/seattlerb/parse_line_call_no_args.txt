@@ -4,7 +4,7 @@ ProgramNode(0...23)(
     [CallNode(0...23)(
        nil,
        nil,
-       IDENTIFIER(0...1)("f"),
+       (0...1),
        nil,
        nil,
        nil,
@@ -29,7 +29,7 @@ ProgramNode(0...23)(
            [CallNode(14...19)(
               LocalVariableReadNode(14...15)(:x, 0),
               nil,
-              PLUS(16...17)("+"),
+              (16...17),
               nil,
               ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:y, 0)]),
               nil,

@@ -8,7 +8,7 @@ ProgramNode(6...66)(
           CallNode(19...41)(
             nil,
             nil,
-            IDENTIFIER(19...25)("lambda"),
+            (19...25),
             nil,
             nil,
             nil,
@@ -21,7 +21,7 @@ ProgramNode(6...66)(
                    CallNode(28...29)(
                      nil,
                      nil,
-                     IDENTIFIER(28...29)("b"),
+                     (28...29),
                      nil,
                      nil,
                      nil,
@@ -33,7 +33,7 @@ ProgramNode(6...66)(
                      [CallNode(32...35)(
                         nil,
                         nil,
-                        IDENTIFIER(32...33)("c"),
+                        (32...33),
                         PARENTHESIS_LEFT(33...34)("("),
                         nil,
                         PARENTHESIS_RIGHT(34...35)(")"),
@@ -48,7 +48,7 @@ ProgramNode(6...66)(
                        [CallNode(38...39)(
                           nil,
                           nil,
-                          IDENTIFIER(38...39)("d"),
+                          (38...39),
                           nil,
                           nil,
                           nil,

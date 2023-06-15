@@ -36,17 +36,7 @@ ProgramNode(0...293)(
        IntegerNode(79...80)(),
        (77...78)
      ),
-     CallNode(82...83)(
-       nil,
-       nil,
-       IDENTIFIER(82...83)("a"),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "a"
-     ),
+     CallNode(82...83)(nil, nil, (82...83), nil, nil, nil, nil, 0, "a"),
      LocalVariableWriteNode(85...92)(
        :abc,
        0,
@@ -212,7 +202,7 @@ ProgramNode(0...293)(
          [CallNode(285...286)(
             nil,
             nil,
-            IDENTIFIER(285...286)("a"),
+            (285...286),
             nil,
             nil,
             nil,
@@ -223,7 +213,7 @@ ProgramNode(0...293)(
           CallNode(288...289)(
             nil,
             nil,
-            IDENTIFIER(288...289)("b"),
+            (288...289),
             nil,
             nil,
             nil,
@@ -234,7 +224,7 @@ ProgramNode(0...293)(
           CallNode(291...292)(
             nil,
             nil,
-            IDENTIFIER(291...292)("c"),
+            (291...292),
             nil,
             nil,
             nil,

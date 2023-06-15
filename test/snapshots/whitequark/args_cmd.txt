@@ -4,19 +4,19 @@ ProgramNode(0...10)(
     [CallNode(0...10)(
        nil,
        nil,
-       IDENTIFIER(0...3)("fun"),
+       (0...3),
        PARENTHESIS_LEFT(3...4)("("),
        ArgumentsNode(4...9)(
          [CallNode(4...9)(
             nil,
             nil,
-            IDENTIFIER(4...5)("f"),
+            (4...5),
             nil,
             ArgumentsNode(6...9)(
               [CallNode(6...9)(
                  nil,
                  nil,
-                 IDENTIFIER(6...9)("bar"),
+                 (6...9),
                  nil,
                  nil,
                  nil,

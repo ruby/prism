@@ -36,13 +36,13 @@ ProgramNode(0...106)(
          [CallNode(62...76)(
             nil,
             nil,
-            IDENTIFIER(62...69)("include"),
+            (62...69),
             PARENTHESIS_LEFT(69...70)("("),
             ArgumentsNode(70...75)(
               [CallNode(70...75)(
                  ConstantReadNode(70...71)(),
                  (71...72),
-                 IDENTIFIER(72...75)("new"),
+                 (72...75),
                  nil,
                  nil,
                  nil,

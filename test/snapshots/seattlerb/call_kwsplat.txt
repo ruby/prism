@@ -4,7 +4,7 @@ ProgramNode(0...6)(
     [CallNode(0...6)(
        nil,
        nil,
-       IDENTIFIER(0...1)("a"),
+       (0...1),
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...5)(
          [KeywordHashNode(2...5)(

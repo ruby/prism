@@ -5,7 +5,7 @@ ProgramNode(0...42)(
        CallNode(0...37)(
          nil,
          nil,
-         IDENTIFIER(0...4)("proc"),
+         (0...4),
          nil,
          nil,
          nil,
@@ -35,7 +35,7 @@ ProgramNode(0...42)(
          "proc"
        ),
        (37...38),
-       IDENTIFIER(38...42)("call"),
+       (38...42),
        nil,
        nil,
        nil,

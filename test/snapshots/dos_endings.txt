@@ -4,7 +4,7 @@ ProgramNode(0...108)(
     [CallNode(0...24)(
        nil,
        nil,
-       IDENTIFIER(0...4)("puts"),
+       (0...4),
        nil,
        ArgumentsNode(5...24)(
          [StringConcatNode(5...24)(
@@ -45,7 +45,7 @@ ProgramNode(0...108)(
        CallNode(92...108)(
          nil,
          nil,
-         IDENTIFIER(92...95)("foo"),
+         (92...95),
          PARENTHESIS_LEFT(95...96)("("),
          ArgumentsNode(96...107)(
            [CallNode(96...107)(
@@ -60,7 +60,7 @@ ProgramNode(0...108)(
                 (121...128)
               ),
               (102...103),
-              IDENTIFIER(103...107)("chop"),
+              (103...107),
               nil,
               nil,
               nil,

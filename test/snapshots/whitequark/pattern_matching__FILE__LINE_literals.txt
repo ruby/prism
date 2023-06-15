@@ -7,7 +7,7 @@ ProgramNode(8...111)(
           CallNode(24...36)(
             SourceLineNode(24...32)(),
             nil,
-            PLUS(33...34)("+"),
+            (33...34),
             nil,
             ArgumentsNode(35...36)([IntegerNode(35...36)()]),
             nil,

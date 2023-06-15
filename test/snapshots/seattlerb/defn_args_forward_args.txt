@@ -19,7 +19,7 @@ ProgramNode(0...41)(
          [CallNode(21...36)(
             nil,
             nil,
-            IDENTIFIER(21...22)("b"),
+            (21...22),
             PARENTHESIS_LEFT(22...23)("("),
             ArgumentsNode(23...35)(
               [SymbolNode(23...27)((23...24), (24...27), nil, "get"),

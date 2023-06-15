@@ -73,7 +73,7 @@ class ErrorsTest < Test::Unit::TestCase
         CallNode(
           expression("1"),
           nil,
-          PLUS("+"),
+          Location(),
           nil,
           ArgumentsNode([MissingNode()]),
           nil,
@@ -246,7 +246,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
+      Location(),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
         [KeywordHashNode(
@@ -254,7 +254,7 @@ class ErrorsTest < Test::Unit::TestCase
               CallNode(
                 nil,
                 nil,
-                IDENTIFIER("kwargs"),
+                Location(),
                 nil,
                 nil,
                 nil,
@@ -267,7 +267,7 @@ class ErrorsTest < Test::Unit::TestCase
          ),
          SplatNode(
            Location(),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, 0, "args")
+           CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "args")
          )]
       ),
       PARENTHESIS_RIGHT(")"),
@@ -283,7 +283,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
+      Location(),
       PARENTHESIS_LEFT("("),
       ArgumentsNode([
         BlockArgumentNode(expression("block"), Location()),
@@ -310,19 +310,19 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
+      Location(),
       PARENTHESIS_LEFT("("),
       ArgumentsNode(
         [KeywordHashNode(
            [AssocNode(
               SymbolNode(nil, Location(), Location(), "foo"),
-              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, 0, "bar"),
+              CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "bar"),
               nil
             )]
          ),
          SplatNode(
            Location(),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, 0, "args")
+           CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "args")
          )]
       ),
       PARENTHESIS_RIGHT(")"),
@@ -361,7 +361,7 @@ class ErrorsTest < Test::Unit::TestCase
         [CallNode(
            nil,
            nil,
-           IDENTIFIER("bar"),
+           Location(),
            nil,
            nil,
            nil,
@@ -833,7 +833,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
+      Location(),
       nil,
       nil,
       nil,

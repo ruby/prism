@@ -9,22 +9,12 @@ ProgramNode(0...48)(
          nil,
          nil
        ),
-       CallNode(9...12)(
-         nil,
-         nil,
-         IDENTIFIER(9...12)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(9...12)(nil, nil, (9...12), nil, nil, nil, nil, 0, "foo"),
        StatementsNode(16...19)(
          [CallNode(16...19)(
             nil,
             nil,
-            IDENTIFIER(16...17)("p"),
+            (16...17),
             nil,
             ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:a, 0)]),
             nil,
@@ -46,22 +36,12 @@ ProgramNode(0...48)(
          nil,
          nil
        ),
-       CallNode(35...38)(
-         nil,
-         nil,
-         IDENTIFIER(35...38)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(35...38)(nil, nil, (35...38), nil, nil, nil, nil, 0, "foo"),
        StatementsNode(40...43)(
          [CallNode(40...43)(
             nil,
             nil,
-            IDENTIFIER(40...41)("p"),
+            (40...41),
             nil,
             ArgumentsNode(42...43)([LocalVariableReadNode(42...43)(:a, 0)]),
             nil,

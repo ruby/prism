@@ -4,7 +4,7 @@ ProgramNode(0...12)(
     [CallNode(0...12)(
        nil,
        nil,
-       IDENTIFIER(0...4)("puts"),
+       (0...4),
        nil,
        ArgumentsNode(5...12)(
          [KeywordHashNode(5...12)(

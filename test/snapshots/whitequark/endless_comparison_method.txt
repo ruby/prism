@@ -17,7 +17,7 @@ ProgramNode(0...179)(
          [CallNode(16...28)(
             nil,
             nil,
-            IDENTIFIER(16...28)("do_something"),
+            (16...28),
             nil,
             nil,
             nil,
@@ -50,7 +50,7 @@ ProgramNode(0...179)(
          [CallNode(46...58)(
             nil,
             nil,
-            IDENTIFIER(46...58)("do_something"),
+            (46...58),
             nil,
             nil,
             nil,
@@ -83,7 +83,7 @@ ProgramNode(0...179)(
          [CallNode(76...88)(
             nil,
             nil,
-            IDENTIFIER(76...88)("do_something"),
+            (76...88),
             nil,
             nil,
             nil,
@@ -116,7 +116,7 @@ ProgramNode(0...179)(
          [CallNode(106...118)(
             nil,
             nil,
-            IDENTIFIER(106...118)("do_something"),
+            (106...118),
             nil,
             nil,
             nil,
@@ -149,7 +149,7 @@ ProgramNode(0...179)(
          [CallNode(137...149)(
             nil,
             nil,
-            IDENTIFIER(137...149)("do_something"),
+            (137...149),
             nil,
             nil,
             nil,
@@ -182,7 +182,7 @@ ProgramNode(0...179)(
          [CallNode(167...179)(
             nil,
             nil,
-            IDENTIFIER(167...179)("do_something"),
+            (167...179),
             nil,
             nil,
             nil,

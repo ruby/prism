@@ -17,7 +17,7 @@ ProgramNode(0...29)(
          [CallNode(15...24)(
             nil,
             nil,
-            IDENTIFIER(15...16)("b"),
+            (15...16),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...23)(
               [LocalVariableReadNode(17...18)(:x, 0),

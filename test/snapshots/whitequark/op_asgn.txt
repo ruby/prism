@@ -3,19 +3,9 @@ ProgramNode(0...35)(
   StatementsNode(0...35)(
     [OperatorAssignmentNode(0...10)(
        CallNode(0...5)(
-         CallNode(0...3)(
-           nil,
-           nil,
-           IDENTIFIER(0...3)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
+         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
          (3...4),
-         CONSTANT(4...5)("A"),
+         (4...5),
          nil,
          nil,
          nil,
@@ -28,19 +18,9 @@ ProgramNode(0...35)(
      ),
      OperatorAssignmentNode(12...22)(
        CallNode(12...17)(
-         CallNode(12...15)(
-           nil,
-           nil,
-           IDENTIFIER(12...15)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
+         CallNode(12...15)(nil, nil, (12...15), nil, nil, nil, nil, 0, "foo"),
          (15...16),
-         IDENTIFIER(16...17)("a"),
+         (16...17),
          nil,
          nil,
          nil,
@@ -53,19 +33,9 @@ ProgramNode(0...35)(
      ),
      OperatorAssignmentNode(24...35)(
        CallNode(24...30)(
-         CallNode(24...27)(
-           nil,
-           nil,
-           IDENTIFIER(24...27)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
+         CallNode(24...27)(nil, nil, (24...27), nil, nil, nil, nil, 0, "foo"),
          (27...29),
-         IDENTIFIER(29...30)("a"),
+         (29...30),
          nil,
          nil,
          nil,

@@ -75,7 +75,7 @@ ProgramNode(0...370)(
          CallNode(113...116)(
            nil,
            nil,
-           IDENTIFIER(113...116)("foo"),
+           (113...116),
            nil,
            nil,
            nil,
@@ -84,7 +84,7 @@ ProgramNode(0...370)(
            "foo"
          ),
          nil,
-         KEYWORD_NOT(109...112)("not"),
+         (109...112),
          nil,
          nil,
          nil,
@@ -153,7 +153,7 @@ ProgramNode(0...370)(
          CallNode(229...232)(
            nil,
            nil,
-           IDENTIFIER(229...232)("foo"),
+           (229...232),
            nil,
            nil,
            nil,
@@ -162,7 +162,7 @@ ProgramNode(0...370)(
            "foo"
          ),
          (232...233),
-         IDENTIFIER(233...236)("bar"),
+         (233...236),
          nil,
          nil,
          nil,
@@ -181,7 +181,7 @@ ProgramNode(0...370)(
          CallNode(251...254)(
            nil,
            nil,
-           IDENTIFIER(251...254)("foo"),
+           (251...254),
            nil,
            nil,
            nil,
@@ -190,7 +190,7 @@ ProgramNode(0...370)(
            "foo"
          ),
          (254...255),
-         IDENTIFIER(255...258)("bar"),
+         (255...258),
          nil,
          nil,
          nil,
@@ -226,7 +226,7 @@ ProgramNode(0...370)(
          [CallNode(316...321)(
             IntegerNode(316...317)(),
             nil,
-            PLUS(318...319)("+"),
+            (318...319),
             nil,
             ArgumentsNode(320...321)([IntegerNode(320...321)()]),
             nil,
@@ -246,7 +246,7 @@ ProgramNode(0...370)(
          [CallNode(341...346)(
             IntegerNode(341...342)(),
             nil,
-            PLUS(343...344)("+"),
+            (343...344),
             nil,
             ArgumentsNode(345...346)([IntegerNode(345...346)()]),
             nil,
@@ -265,7 +265,7 @@ ProgramNode(0...370)(
        CallNode(362...366)(
          ConstantReadNode(362...363)(),
          nil,
-         BRACKET_LEFT_RIGHT(363...364)("["),
+         (363...366),
          BRACKET_LEFT(363...364)("["),
          ArgumentsNode(364...365)([IntegerNode(364...365)()]),
          BRACKET_RIGHT(365...366)("]"),

@@ -4,7 +4,7 @@ ProgramNode(0...67)(
     [CallNode(0...67)(
        nil,
        nil,
-       IDENTIFIER(0...5)("mount"),
+       (0...5),
        nil,
        ArgumentsNode(6...67)(
          [CallNode(6...48)(
@@ -13,7 +13,7 @@ ProgramNode(0...67)(
                 [CallNode(7...43)(
                    ConstantReadNode(7...12)(),
                    (12...13),
-                   IDENTIFIER(13...16)("new"),
+                   (13...16),
                    nil,
                    nil,
                    nil,
@@ -46,7 +46,7 @@ ProgramNode(0...67)(
               (43...44)
             ),
             (44...45),
-            IDENTIFIER(45...48)("new"),
+            (45...48),
             nil,
             nil,
             nil,

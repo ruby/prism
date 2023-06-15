@@ -4,22 +4,12 @@ ProgramNode(0...50)(
     [CallNode(0...12)(
        nil,
        nil,
-       IDENTIFIER(0...1)("f"),
+       (0...1),
        PARENTHESIS_LEFT(1...2)("("),
        ArgumentsNode(2...11)(
          [IfNode(2...11)(
             nil,
-            CallNode(2...3)(
-              nil,
-              nil,
-              IDENTIFIER(2...3)("a"),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "a"
-            ),
+            CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 0, "a"),
             StatementsNode(6...9)(
               [StringNode(6...9)((6...7), (7...8), (8...9), "a")]
             ),

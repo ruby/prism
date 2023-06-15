@@ -2,19 +2,9 @@ ProgramNode(0...43)(
   [],
   StatementsNode(0...43)(
     [CallNode(0...14)(
-       CallNode(0...3)(
-         nil,
-         nil,
-         IDENTIFIER(0...3)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
        (3...4),
-       IDENTIFIER(4...7)("fun"),
+       (4...7),
        nil,
        ArgumentsNode(8...11)(
          [ParenthesesNode(8...11)(
@@ -29,19 +19,9 @@ ProgramNode(0...43)(
        "fun"
      ),
      CallNode(16...31)(
-       CallNode(16...19)(
-         nil,
-         nil,
-         IDENTIFIER(16...19)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "foo"),
        (19...21),
-       BRACE_RIGHT(30...31)("}"),
+       (30...31),
        nil,
        ArgumentsNode(25...28)(
          [ParenthesesNode(25...28)(
@@ -58,7 +38,7 @@ ProgramNode(0...43)(
      CallNode(33...43)(
        nil,
        nil,
-       IDENTIFIER(33...36)("fun"),
+       (33...36),
        nil,
        ArgumentsNode(37...40)(
          [ParenthesesNode(37...40)(

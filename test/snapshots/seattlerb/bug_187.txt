@@ -4,7 +4,7 @@ ProgramNode(0...28)(
     [CallNode(0...28)(
        nil,
        nil,
-       IDENTIFIER(0...7)("private"),
+       (0...7),
        nil,
        ArgumentsNode(8...28)(
          [DefNode(8...28)(
@@ -16,7 +16,7 @@ ProgramNode(0...28)(
                  CallNode(14...15)(
                    nil,
                    nil,
-                   IDENTIFIER(14...15)("a"),
+                   (14...15),
                    nil,
                    nil,
                    nil,
@@ -25,7 +25,7 @@ ProgramNode(0...28)(
                    "a"
                  ),
                  (15...16),
-                 IDENTIFIER(16...17)("b"),
+                 (16...17),
                  nil,
                  nil,
                  nil,

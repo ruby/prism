@@ -4,21 +4,11 @@ ProgramNode(0...20)(
     [BeginNode(0...20)(
        (0...5),
        StatementsNode(6...16)(
-         [CallNode(6...10)(
-            nil,
-            nil,
-            IDENTIFIER(6...10)("foo!"),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "foo!"
-          ),
+         [CallNode(6...10)(nil, nil, (6...10), nil, nil, nil, nil, 0, "foo!"),
           CallNode(12...16)(
             nil,
             nil,
-            IDENTIFIER(12...16)("bar!"),
+            (12...16),
             nil,
             nil,
             nil,

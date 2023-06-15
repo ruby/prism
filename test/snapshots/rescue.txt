@@ -2,32 +2,12 @@ ProgramNode(0...316)(
   [:a],
   StatementsNode(0...316)(
     [RescueModifierNode(0...14)(
-       CallNode(0...3)(
-         nil,
-         nil,
-         IDENTIFIER(0...3)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
        (4...10),
        NilNode(11...14)()
      ),
      RescueModifierNode(16...30)(
-       CallNode(16...19)(
-         nil,
-         nil,
-         IDENTIFIER(16...19)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "foo"),
        (20...26),
        NilNode(27...30)()
      ),
@@ -47,17 +27,7 @@ ProgramNode(0...316)(
        NilNode(81...84)()
      ),
      RescueModifierNode(86...105)(
-       CallNode(86...89)(
-         nil,
-         nil,
-         IDENTIFIER(86...89)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(86...89)(nil, nil, (86...89), nil, nil, nil, nil, 0, "foo"),
        (90...96),
        OrNode(97...105)(
          NilNode(97...100)(),
@@ -69,7 +39,7 @@ ProgramNode(0...316)(
        CallNode(107...110)(
          nil,
          nil,
-         IDENTIFIER(107...110)("foo"),
+         (107...110),
          nil,
          nil,
          nil,
@@ -96,7 +66,7 @@ ProgramNode(0...316)(
          [CallNode(138...139)(
             nil,
             nil,
-            IDENTIFIER(138...139)("a"),
+            (138...139),
             nil,
             nil,
             nil,
@@ -112,7 +82,7 @@ ProgramNode(0...316)(
             CallNode(149...150)(
               nil,
               nil,
-              IDENTIFIER(149...150)("b"),
+              (149...150),
               nil,
               nil,
               nil,
@@ -133,7 +103,7 @@ ProgramNode(0...316)(
      CallNode(157...212)(
        nil,
        nil,
-       IDENTIFIER(157...160)("foo"),
+       (157...160),
        nil,
        nil,
        nil,
@@ -158,13 +128,13 @@ ProgramNode(0...316)(
               CallNode(170...176)(
                 nil,
                 nil,
-                IDENTIFIER(170...173)("bar"),
+                (170...173),
                 PARENTHESIS_LEFT(173...174)("("),
                 ArgumentsNode(174...175)(
                   [CallNode(174...175)(
                      nil,
                      nil,
-                     IDENTIFIER(174...175)("y"),
+                     (174...175),
                      nil,
                      nil,
                      nil,
@@ -182,13 +152,13 @@ ProgramNode(0...316)(
               CallNode(184...208)(
                 nil,
                 nil,
-                CONSTANT(184...197)("ArgumentError"),
+                (184...197),
                 nil,
                 ArgumentsNode(198...208)(
                   [CallNode(198...208)(
                      nil,
                      nil,
-                     IDENTIFIER(198...202)("fail"),
+                     (198...202),
                      nil,
                      ArgumentsNode(203...208)(
                        [StringNode(203...208)(
@@ -226,7 +196,7 @@ ProgramNode(0...316)(
            CallNode(221...224)(
              nil,
              nil,
-             IDENTIFIER(221...224)("foo"),
+             (221...224),
              nil,
              nil,
              nil,
@@ -244,7 +214,7 @@ ProgramNode(0...316)(
          [CallNode(238...241)(
             nil,
             nil,
-            IDENTIFIER(238...241)("bar"),
+            (238...241),
             nil,
             nil,
             nil,
@@ -264,7 +234,7 @@ ProgramNode(0...316)(
          [CallNode(265...291)(
             nil,
             nil,
-            IDENTIFIER(265...277)("other_method"),
+            (265...277),
             nil,
             ArgumentsNode(278...291)(
               [RescueModifierNode(278...291)(
@@ -297,7 +267,7 @@ ProgramNode(0...316)(
            [CallNode(301...305)(
               nil,
               nil,
-              IDENTIFIER(301...302)("a"),
+              (301...302),
               nil,
               ArgumentsNode(303...305)(
                 [KeywordHashNode(303...305)(

@@ -25,7 +25,7 @@ ProgramNode(0...161)(
      CallNode(95...97)(
        IntegerNode(96...97)(),
        nil,
-       UMINUS_NUM(95...96)("-"),
+       (95...96),
        nil,
        nil,
        nil,
@@ -40,7 +40,7 @@ ProgramNode(0...161)(
          RationalNode(112...114)(IntegerNode(112...113)())
        ),
        nil,
-       UMINUS_NUM(111...112)("-"),
+       (111...112),
        nil,
        nil,
        nil,
@@ -53,7 +53,7 @@ ProgramNode(0...161)(
          RationalNode(118...122)(FloatNode(118...121)())
        ),
        nil,
-       UMINUS_NUM(117...118)("-"),
+       (117...118),
        nil,
        nil,
        nil,

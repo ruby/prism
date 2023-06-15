@@ -5,7 +5,7 @@ ProgramNode(0...11)(
        CallNode(0...3)(
          ConstantReadNode(0...1)(),
          (1...2),
-         CONSTANT(2...3)("B"),
+         (2...3),
          nil,
          nil,
          nil,
@@ -16,7 +16,7 @@ ProgramNode(0...11)(
        CallNode(8...11)(
          nil,
          nil,
-         IDENTIFIER(8...9)("c"),
+         (8...9),
          nil,
          ArgumentsNode(10...11)([IntegerNode(10...11)()]),
          nil,

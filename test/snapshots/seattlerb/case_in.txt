@@ -472,7 +472,7 @@ ProgramNode(0...746)(
                CallNode(606...607)(
                  nil,
                  nil,
-                 IDENTIFIER(606...607)("a"),
+                 (606...607),
                  nil,
                  nil,
                  nil,

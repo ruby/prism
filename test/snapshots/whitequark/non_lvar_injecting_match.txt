@@ -14,7 +14,7 @@ ProgramNode(0...28)(
          0
        ),
        nil,
-       EQUAL_TILDE(20...22)("=~"),
+       (20...22),
        nil,
        ArgumentsNode(23...28)(
          [StringNode(23...28)((23...24), (24...27), (27...28), "bar")]

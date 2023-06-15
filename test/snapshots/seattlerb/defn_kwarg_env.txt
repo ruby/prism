@@ -17,7 +17,7 @@ ProgramNode(0...45)(
          [CallNode(20...41)(
             nil,
             nil,
-            IDENTIFIER(20...30)("test_splat"),
+            (20...30),
             PARENTHESIS_LEFT(30...31)("("),
             ArgumentsNode(31...40)(
               [KeywordHashNode(31...40)(

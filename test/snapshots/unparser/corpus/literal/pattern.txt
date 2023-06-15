@@ -2,17 +2,7 @@ ProgramNode(0...408)(
   [:a, :x, :y],
   StatementsNode(0...408)(
     [CaseNode(0...345)(
-       CallNode(5...8)(
-         nil,
-         nil,
-         IDENTIFIER(5...8)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 0, "foo"),
        [InNode(9...31)(
           ArrayPatternNode(12...26)(
             ConstantReadNode(12...13)(),
@@ -42,7 +32,7 @@ ProgramNode(0...408)(
             [CallNode(58...59)(
                nil,
                nil,
-               IDENTIFIER(58...59)("y"),
+               (58...59),
                nil,
                nil,
                nil,
@@ -235,7 +225,7 @@ ProgramNode(0...408)(
        CallNode(351...354)(
          nil,
          nil,
-         IDENTIFIER(351...354)("foo"),
+         (351...354),
          nil,
          nil,
          nil,
@@ -267,7 +257,7 @@ ProgramNode(0...408)(
        CallNode(382...385)(
          nil,
          nil,
-         IDENTIFIER(382...385)("foo"),
+         (382...385),
          nil,
          nil,
          nil,

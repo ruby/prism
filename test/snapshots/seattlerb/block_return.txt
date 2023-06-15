@@ -7,13 +7,13 @@ ProgramNode(0...27)(
          [CallNode(7...27)(
             nil,
             nil,
-            IDENTIFIER(7...10)("foo"),
+            (7...10),
             nil,
             ArgumentsNode(11...14)(
               [CallNode(11...14)(
                  nil,
                  nil,
-                 IDENTIFIER(11...14)("arg"),
+                 (11...14),
                  nil,
                  nil,
                  nil,

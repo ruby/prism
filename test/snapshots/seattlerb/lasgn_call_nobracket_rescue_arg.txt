@@ -7,7 +7,7 @@ ProgramNode(0...16)(
        CallNode(4...16)(
          nil,
          nil,
-         IDENTIFIER(4...5)("b"),
+         (4...5),
          nil,
          ArgumentsNode(6...16)(
            [RescueModifierNode(6...16)(

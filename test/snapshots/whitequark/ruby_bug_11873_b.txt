@@ -4,13 +4,13 @@ ProgramNode(0...25)(
     [CallNode(0...25)(
        nil,
        nil,
-       IDENTIFIER(0...1)("p"),
+       (0...1),
        nil,
        ArgumentsNode(2...18)(
          [CallNode(2...13)(
             nil,
             nil,
-            IDENTIFIER(2...3)("p"),
+            (2...3),
             nil,
             nil,
             nil,
@@ -21,13 +21,13 @@ ProgramNode(0...25)(
                 [CallNode(4...8)(
                    nil,
                    nil,
-                   IDENTIFIER(4...5)("p"),
+                   (4...5),
                    PARENTHESIS_LEFT(5...6)("("),
                    ArgumentsNode(6...7)(
                      [CallNode(6...7)(
                         nil,
                         nil,
-                        IDENTIFIER(6...7)("p"),
+                        (6...7),
                         nil,
                         nil,
                         nil,
@@ -44,13 +44,13 @@ ProgramNode(0...25)(
                  CallNode(9...12)(
                    nil,
                    nil,
-                   IDENTIFIER(9...10)("p"),
+                   (9...10),
                    nil,
                    ArgumentsNode(11...12)(
                      [CallNode(11...12)(
                         nil,
                         nil,
-                        IDENTIFIER(11...12)("p"),
+                        (11...12),
                         nil,
                         nil,
                         nil,
@@ -71,17 +71,7 @@ ProgramNode(0...25)(
             0,
             "p"
           ),
-          CallNode(15...18)(
-            nil,
-            nil,
-            IDENTIFIER(15...18)("tap"),
-            nil,
-            nil,
-            nil,
-            nil,
-            0,
-            "tap"
-          )]
+          CallNode(15...18)(nil, nil, (15...18), nil, nil, nil, nil, 0, "tap")]
        ),
        nil,
        BlockNode(19...25)([], nil, nil, (19...21), (22...25)),

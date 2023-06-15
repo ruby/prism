@@ -20,7 +20,7 @@ ProgramNode(6...74)(
      CallNode(63...74)(
        nil,
        nil,
-       IDENTIFIER(63...67)("puts"),
+       (63...67),
        nil,
        ArgumentsNode(68...74)([LocalVariableReadNode(68...74)(:string, 0)]),
        nil,

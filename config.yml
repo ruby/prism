@@ -552,8 +552,8 @@ nodes:
         type: node?
       - name: operator_loc
         type: location?
-      - name: message
-        type: token?
+      - name: message_loc
+        type: location?
       - name: opening
         type: token?
       - name: arguments

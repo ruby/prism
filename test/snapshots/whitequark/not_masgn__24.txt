@@ -11,7 +11,7 @@ ProgramNode(0...13)(
               CallNode(9...12)(
                 nil,
                 nil,
-                IDENTIFIER(9...12)("foo"),
+                (9...12),
                 nil,
                 nil,
                 nil,
@@ -27,7 +27,7 @@ ProgramNode(0...13)(
          (12...13)
        ),
        nil,
-       BANG(0...1)("!"),
+       (0...1),
        nil,
        nil,
        nil,

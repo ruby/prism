@@ -9,7 +9,7 @@ ProgramNode(0...620)(
          [CallNode(11...64)(
             nil,
             nil,
-            IDENTIFIER(11...14)("foo"),
+            (11...14),
             nil,
             nil,
             nil,
@@ -35,7 +35,7 @@ ProgramNode(0...620)(
                    CallNode(33...36)(
                      nil,
                      nil,
-                     IDENTIFIER(33...36)("foo"),
+                     (33...36),
                      nil,
                      nil,
                      nil,
@@ -73,13 +73,13 @@ ProgramNode(0...620)(
             CallNode(96...106)(
               LocalVariableReadNode(96...99)(:foo, 0),
               nil,
-              BANG_EQUAL(100...102)("!="),
+              (100...102),
               nil,
               ArgumentsNode(103...106)(
                 [CallNode(103...106)(
                    nil,
                    nil,
-                   IDENTIFIER(103...106)("baz"),
+                   (103...106),
                    nil,
                    nil,
                    nil,
@@ -100,7 +100,7 @@ ProgramNode(0...620)(
                  CallNode(86...89)(
                    nil,
                    nil,
-                   IDENTIFIER(86...89)("bar"),
+                   (86...89),
                    nil,
                    nil,
                    nil,
@@ -137,7 +137,7 @@ ProgramNode(0...620)(
                  CallNode(129...132)(
                    nil,
                    nil,
-                   IDENTIFIER(129...132)("bar"),
+                   (129...132),
                    nil,
                    nil,
                    nil,
@@ -168,7 +168,7 @@ ProgramNode(0...620)(
                  CallNode(165...168)(
                    nil,
                    nil,
-                   IDENTIFIER(165...168)("bar"),
+                   (165...168),
                    nil,
                    nil,
                    nil,
@@ -194,7 +194,7 @@ ProgramNode(0...620)(
             CallNode(201...204)(
               nil,
               nil,
-              IDENTIFIER(201...204)("foo"),
+              (201...204),
               nil,
               nil,
               nil,
@@ -209,7 +209,7 @@ ProgramNode(0...620)(
                  CallNode(215...218)(
                    nil,
                    nil,
-                   IDENTIFIER(215...218)("bar"),
+                   (215...218),
                    nil,
                    nil,
                    nil,
@@ -233,7 +233,7 @@ ProgramNode(0...620)(
          [CallNode(241...295)(
             nil,
             nil,
-            IDENTIFIER(241...245)("each"),
+            (241...245),
             nil,
             nil,
             nil,
@@ -259,7 +259,7 @@ ProgramNode(0...620)(
                    CallNode(264...267)(
                      nil,
                      nil,
-                     IDENTIFIER(264...267)("foo"),
+                     (264...267),
                      nil,
                      nil,
                      nil,
@@ -274,7 +274,7 @@ ProgramNode(0...620)(
                         CallNode(280...283)(
                           nil,
                           nil,
-                          IDENTIFIER(280...283)("bar"),
+                          (280...283),
                           nil,
                           nil,
                           nil,
@@ -305,7 +305,7 @@ ProgramNode(0...620)(
          [CallNode(312...366)(
             nil,
             nil,
-            IDENTIFIER(312...316)("each"),
+            (312...316),
             nil,
             nil,
             nil,
@@ -336,7 +336,7 @@ ProgramNode(0...620)(
                         CallNode(351...354)(
                           nil,
                           nil,
-                          IDENTIFIER(351...354)("bar"),
+                          (351...354),
                           nil,
                           nil,
                           nil,
@@ -369,7 +369,7 @@ ProgramNode(0...620)(
               CallNode(398...401)(
                 nil,
                 nil,
-                IDENTIFIER(398...401)("baz"),
+                (398...401),
                 nil,
                 nil,
                 nil,
@@ -384,7 +384,7 @@ ProgramNode(0...620)(
                      [CallNode(384...387)(
                         nil,
                         nil,
-                        IDENTIFIER(384...387)("foo"),
+                        (384...387),
                         nil,
                         nil,
                         nil,
@@ -412,7 +412,7 @@ ProgramNode(0...620)(
        CallNode(425...428)(
          nil,
          nil,
-         IDENTIFIER(425...428)("baz"),
+         (425...428),
          nil,
          nil,
          nil,
@@ -427,7 +427,7 @@ ProgramNode(0...620)(
               [CallNode(411...414)(
                  nil,
                  nil,
-                 IDENTIFIER(411...414)("foo"),
+                 (411...414),
                  nil,
                  nil,
                  nil,
@@ -448,7 +448,7 @@ ProgramNode(0...620)(
        CallNode(457...460)(
          nil,
          nil,
-         IDENTIFIER(457...460)("baz"),
+         (457...460),
          nil,
          nil,
          nil,
@@ -463,7 +463,7 @@ ProgramNode(0...620)(
               [CallNode(437...440)(
                  nil,
                  nil,
-                 IDENTIFIER(437...440)("foo"),
+                 (437...440),
                  nil,
                  nil,
                  nil,
@@ -474,7 +474,7 @@ ProgramNode(0...620)(
                CallNode(443...446)(
                  nil,
                  nil,
-                 IDENTIFIER(443...446)("bar"),
+                 (443...446),
                  nil,
                  nil,
                  nil,
@@ -495,7 +495,7 @@ ProgramNode(0...620)(
        CallNode(489...492)(
          nil,
          nil,
-         IDENTIFIER(489...492)("baz"),
+         (489...492),
          nil,
          nil,
          nil,
@@ -510,7 +510,7 @@ ProgramNode(0...620)(
               [CallNode(469...472)(
                  nil,
                  nil,
-                 IDENTIFIER(469...472)("foo"),
+                 (469...472),
                  nil,
                  nil,
                  nil,
@@ -521,7 +521,7 @@ ProgramNode(0...620)(
                CallNode(475...478)(
                  nil,
                  nil,
-                 IDENTIFIER(475...478)("bar"),
+                 (475...478),
                  nil,
                  nil,
                  nil,
@@ -550,7 +550,7 @@ ProgramNode(0...620)(
            [CallNode(536...543)(
               nil,
               nil,
-              IDENTIFIER(536...539)("foo"),
+              (536...539),
               nil,
               nil,
               nil,
@@ -579,7 +579,7 @@ ProgramNode(0...620)(
            [CallNode(600...607)(
               nil,
               nil,
-              IDENTIFIER(600...603)("foo"),
+              (600...603),
               nil,
               nil,
               nil,

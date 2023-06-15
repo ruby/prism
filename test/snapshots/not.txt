@@ -3,19 +3,9 @@ ProgramNode(0...125)(
   StatementsNode(0...125)(
     [AndNode(0...19)(
        CallNode(0...7)(
-         CallNode(4...7)(
-           nil,
-           nil,
-           IDENTIFIER(4...7)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
+         CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 0, "foo"),
          nil,
-         KEYWORD_NOT(0...3)("not"),
+         (0...3),
          nil,
          nil,
          nil,
@@ -24,19 +14,9 @@ ProgramNode(0...125)(
          "!"
        ),
        CallNode(12...19)(
-         CallNode(16...19)(
-           nil,
-           nil,
-           IDENTIFIER(16...19)("bar"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "bar"
-         ),
+         CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "bar"),
          nil,
-         KEYWORD_NOT(12...15)("not"),
+         (12...15),
          nil,
          nil,
          nil,
@@ -48,32 +28,12 @@ ProgramNode(0...125)(
      ),
      CallNode(21...37)(
        AndNode(25...36)(
-         CallNode(25...28)(
-           nil,
-           nil,
-           IDENTIFIER(25...28)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
-         CallNode(33...36)(
-           nil,
-           nil,
-           IDENTIFIER(33...36)("bar"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "bar"
-         ),
+         CallNode(25...28)(nil, nil, (25...28), nil, nil, nil, nil, 0, "foo"),
+         CallNode(33...36)(nil, nil, (33...36), nil, nil, nil, nil, 0, "bar"),
          (29...32)
        ),
        nil,
-       KEYWORD_NOT(21...24)("not"),
+       (21...24),
        PARENTHESIS_LEFT(24...25)("("),
        nil,
        PARENTHESIS_RIGHT(36...37)(")"),
@@ -82,19 +42,9 @@ ProgramNode(0...125)(
        "!"
      ),
      CallNode(39...46)(
-       CallNode(43...46)(
-         nil,
-         nil,
-         IDENTIFIER(43...46)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(43...46)(nil, nil, (43...46), nil, nil, nil, nil, 0, "foo"),
        nil,
-       KEYWORD_NOT(39...42)("not"),
+       (39...42),
        nil,
        nil,
        nil,
@@ -104,19 +54,9 @@ ProgramNode(0...125)(
      ),
      AndNode(48...69)(
        CallNode(48...55)(
-         CallNode(52...55)(
-           nil,
-           nil,
-           IDENTIFIER(52...55)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
+         CallNode(52...55)(nil, nil, (52...55), nil, nil, nil, nil, 0, "foo"),
          nil,
-         KEYWORD_NOT(48...51)("not"),
+         (48...51),
          nil,
          nil,
          nil,
@@ -125,19 +65,9 @@ ProgramNode(0...125)(
          "!"
        ),
        CallNode(60...69)(
-         CallNode(66...69)(
-           nil,
-           nil,
-           IDENTIFIER(66...69)("bar"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "bar"
-         ),
+         CallNode(66...69)(nil, nil, (66...69), nil, nil, nil, nil, 0, "bar"),
          nil,
-         KEYWORD_NOT(60...63)("not"),
+         (60...63),
          nil,
          nil,
          nil,
@@ -149,19 +79,9 @@ ProgramNode(0...125)(
      ),
      AndNode(72...97)(
        CallNode(72...79)(
-         CallNode(76...79)(
-           nil,
-           nil,
-           IDENTIFIER(76...79)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "foo"
-         ),
+         CallNode(76...79)(nil, nil, (76...79), nil, nil, nil, nil, 0, "foo"),
          nil,
-         KEYWORD_NOT(72...75)("not"),
+         (72...75),
          nil,
          nil,
          nil,
@@ -170,19 +90,9 @@ ProgramNode(0...125)(
          "!"
        ),
        CallNode(88...97)(
-         CallNode(94...97)(
-           nil,
-           nil,
-           IDENTIFIER(94...97)("bar"),
-           nil,
-           nil,
-           nil,
-           nil,
-           0,
-           "bar"
-         ),
+         CallNode(94...97)(nil, nil, (94...97), nil, nil, nil, nil, 0, "bar"),
          nil,
-         KEYWORD_NOT(88...91)("not"),
+         (88...91),
          nil,
          nil,
          nil,
@@ -197,7 +107,7 @@ ProgramNode(0...125)(
          CallNode(104...107)(
            nil,
            nil,
-           IDENTIFIER(104...107)("foo"),
+           (104...107),
            nil,
            nil,
            nil,
@@ -206,7 +116,7 @@ ProgramNode(0...125)(
            "foo"
          ),
          nil,
-         KEYWORD_NOT(100...103)("not"),
+         (100...103),
          nil,
          nil,
          nil,
@@ -218,7 +128,7 @@ ProgramNode(0...125)(
          CallNode(122...125)(
            nil,
            nil,
-           IDENTIFIER(122...125)("bar"),
+           (122...125),
            nil,
            nil,
            nil,
@@ -227,7 +137,7 @@ ProgramNode(0...125)(
            "bar"
          ),
          nil,
-         KEYWORD_NOT(114...117)("not"),
+         (114...117),
          nil,
          nil,
          nil,

@@ -31,7 +31,7 @@ ProgramNode(0...109)(
        CallNode(105...109)(
          nil,
          nil,
-         IDENTIFIER(105...109)("bar?"),
+         (105...109),
          nil,
          nil,
          nil,
@@ -43,7 +43,7 @@ ProgramNode(0...109)(
          [CallNode(88...98)(
             nil,
             nil,
-            IDENTIFIER(88...91)("foo"),
+            (88...91),
             nil,
             ArgumentsNode(92...98)(
               [SymbolNode(92...94)((92...93), (93...94), nil, "a"),

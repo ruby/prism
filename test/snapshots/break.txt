@@ -86,7 +86,7 @@ ProgramNode(0...168)(
        CallNode(121...137)(
          nil,
          nil,
-         IDENTIFIER(121...124)("foo"),
+         (121...124),
          nil,
          nil,
          nil,
@@ -106,7 +106,7 @@ ProgramNode(0...168)(
          "foo"
        ),
        nil,
-       EQUAL_EQUAL(138...140)("=="),
+       (138...140),
        nil,
        ArgumentsNode(141...143)([IntegerNode(141...143)()]),
        nil,
@@ -118,7 +118,7 @@ ProgramNode(0...168)(
        CallNode(145...162)(
          nil,
          nil,
-         IDENTIFIER(145...148)("foo"),
+         (145...148),
          nil,
          nil,
          nil,
@@ -146,7 +146,7 @@ ProgramNode(0...168)(
          "foo"
        ),
        nil,
-       EQUAL_EQUAL(163...165)("=="),
+       (163...165),
        nil,
        ArgumentsNode(166...168)([IntegerNode(166...168)()]),
        nil,

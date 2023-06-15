@@ -7,7 +7,7 @@ ProgramNode(0...27)(
          CallNode(9...18)(
            FalseNode(13...18)(),
            nil,
-           KEYWORD_NOT(9...12)("not"),
+           (9...12),
            nil,
            nil,
            nil,

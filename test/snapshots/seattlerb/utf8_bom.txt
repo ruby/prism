@@ -4,7 +4,7 @@ ProgramNode(26...29)(
     [CallNode(26...29)(
        nil,
        nil,
-       IDENTIFIER(26...27)("p"),
+       (26...27),
        nil,
        ArgumentsNode(28...29)([IntegerNode(28...29)()]),
        nil,

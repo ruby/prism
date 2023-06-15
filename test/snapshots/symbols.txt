@@ -10,7 +10,7 @@ ProgramNode(0...345)(
             [CallNode(12...15)(
                nil,
                nil,
-               IDENTIFIER(12...15)("var"),
+               (12...15),
                nil,
                nil,
                nil,

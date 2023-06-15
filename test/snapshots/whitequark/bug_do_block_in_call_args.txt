@@ -4,7 +4,7 @@ ProgramNode(0...33)(
     [CallNode(0...33)(
        nil,
        nil,
-       IDENTIFIER(0...3)("bar"),
+       (0...3),
        nil,
        ArgumentsNode(4...33)(
          [DefNode(4...33)(
@@ -15,7 +15,7 @@ ProgramNode(0...33)(
               [CallNode(13...29)(
                  SelfNode(13...17)(),
                  (17...18),
-                 IDENTIFIER(18...22)("each"),
+                 (18...22),
                  nil,
                  nil,
                  nil,

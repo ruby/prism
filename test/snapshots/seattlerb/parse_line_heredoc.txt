@@ -16,7 +16,7 @@ ProgramNode(6...88)(
            (57...71)
          ),
          (25...26),
-         IDENTIFIER(26...31)("strip"),
+         (26...31),
          nil,
          nil,
          nil,
@@ -30,7 +30,7 @@ ProgramNode(6...88)(
      CallNode(77...88)(
        nil,
        nil,
-       IDENTIFIER(77...81)("puts"),
+       (77...81),
        nil,
        ArgumentsNode(82...88)([LocalVariableReadNode(82...88)(:string, 0)]),
        nil,

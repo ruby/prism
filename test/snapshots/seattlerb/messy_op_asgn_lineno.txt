@@ -4,7 +4,7 @@ ProgramNode(0...15)(
     [CallNode(0...15)(
        nil,
        nil,
-       IDENTIFIER(0...1)("a"),
+       (0...1),
        nil,
        ArgumentsNode(2...15)(
          [ParenthesesNode(2...15)(
@@ -23,13 +23,13 @@ ProgramNode(0...15)(
                  CallNode(11...14)(
                    nil,
                    nil,
-                   IDENTIFIER(11...12)("d"),
+                   (11...12),
                    nil,
                    ArgumentsNode(13...14)(
                      [CallNode(13...14)(
                         nil,
                         nil,
-                        IDENTIFIER(13...14)("e"),
+                        (13...14),
                         nil,
                         nil,
                         nil,

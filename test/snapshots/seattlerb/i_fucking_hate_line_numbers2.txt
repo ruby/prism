@@ -8,7 +8,7 @@ ProgramNode(0...48)(
          [CallNode(15...21)(
             nil,
             nil,
-            IDENTIFIER(15...16)("p"),
+            (15...16),
             PARENTHESIS_LEFT(16...17)("("),
             ArgumentsNode(17...20)(
               [StringNode(17...20)((17...18), (18...19), (19...20), "a")]
@@ -28,7 +28,7 @@ ProgramNode(0...48)(
           CallNode(32...35)(
             nil,
             nil,
-            IDENTIFIER(32...33)("p"),
+            (32...33),
             nil,
             ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:b, 0)]),
             nil,
@@ -47,16 +47,6 @@ ProgramNode(0...48)(
        nil,
        (43...46)
      ),
-     CallNode(47...48)(
-       nil,
-       nil,
-       IDENTIFIER(47...48)("a"),
-       nil,
-       nil,
-       nil,
-       nil,
-       0,
-       "a"
-     )]
+     CallNode(47...48)(nil, nil, (47...48), nil, nil, nil, nil, 0, "a")]
   )
 )

@@ -4,7 +4,7 @@ ProgramNode(0...6)(
     [CallNode(0...6)(
        IntegerNode(4...6)(),
        nil,
-       KEYWORD_NOT(0...3)("not"),
+       (0...3),
        nil,
        nil,
        nil,

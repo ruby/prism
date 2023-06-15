@@ -8,7 +8,7 @@ ProgramNode(0...16)(
        CallNode(11...16)(
          nil,
          nil,
-         IDENTIFIER(11...12)("m"),
+         (11...12),
          nil,
          ArgumentsNode(13...16)([LocalVariableReadNode(13...16)(:foo, 0)]),
          nil,

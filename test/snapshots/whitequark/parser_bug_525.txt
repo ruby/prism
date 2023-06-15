@@ -4,7 +4,7 @@ ProgramNode(0...32)(
     [CallNode(0...32)(
        nil,
        nil,
-       IDENTIFIER(0...2)("m1"),
+       (0...2),
        nil,
        ArgumentsNode(3...11)(
          [KeywordHashNode(3...11)(
@@ -13,7 +13,7 @@ ProgramNode(0...32)(
                CallNode(9...11)(
                  nil,
                  nil,
-                 IDENTIFIER(9...11)("m2"),
+                 (9...11),
                  nil,
                  nil,
                  nil,
@@ -33,7 +33,7 @@ ProgramNode(0...32)(
            [CallNode(16...27)(
               nil,
               nil,
-              IDENTIFIER(16...18)("m3"),
+              (16...18),
               PARENTHESIS_LEFT(18...19)("("),
               nil,
               PARENTHESIS_RIGHT(19...20)(")"),

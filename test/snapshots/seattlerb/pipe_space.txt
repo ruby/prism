@@ -2,19 +2,9 @@ ProgramNode(0...14)(
   [],
   StatementsNode(0...14)(
     [CallNode(0...14)(
-       CallNode(0...1)(
-         nil,
-         nil,
-         IDENTIFIER(0...1)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "a"
-       ),
+       CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
        (1...2),
-       IDENTIFIER(2...3)("b"),
+       (2...3),
        nil,
        nil,
        nil,

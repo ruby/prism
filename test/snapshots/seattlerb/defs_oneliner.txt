@@ -17,7 +17,7 @@ ProgramNode(0...32)(
          [CallNode(21...32)(
             nil,
             nil,
-            IDENTIFIER(21...27)("system"),
+            (21...27),
             PARENTHESIS_LEFT(27...28)("("),
             ArgumentsNode(28...31)([LocalVariableReadNode(28...31)(:cmd, 0)]),
             PARENTHESIS_RIGHT(31...32)(")"),

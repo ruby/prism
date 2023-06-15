@@ -44,7 +44,7 @@ ProgramNode(0...46)(
      CallNode(33...46)(
        nil,
        nil,
-       IDENTIFIER(33...34)("m"),
+       (33...34),
        nil,
        nil,
        nil,

@@ -5,7 +5,7 @@ ProgramNode(0...63)(
        [CallNode(0...6)(
           SelfNode(0...4)(),
           (4...5),
-          CONSTANT(5...6)("A"),
+          (5...6),
           nil,
           nil,
           nil,
@@ -23,7 +23,7 @@ ProgramNode(0...63)(
        [CallNode(19...25)(
           SelfNode(19...23)(),
           (23...24),
-          IDENTIFIER(24...25)("a"),
+          (24...25),
           nil,
           nil,
           nil,
@@ -34,7 +34,7 @@ ProgramNode(0...63)(
         CallNode(27...37)(
           SelfNode(27...31)(),
           nil,
-          BRACKET_LEFT_RIGHT_EQUAL(31...32)("["),
+          (31...37),
           BRACKET_LEFT(31...32)("["),
           ArgumentsNode(32...36)(
             [IntegerNode(32...33)(), IntegerNode(35...36)()]
@@ -53,7 +53,7 @@ ProgramNode(0...63)(
        [CallNode(45...52)(
           SelfNode(45...49)(),
           (49...51),
-          IDENTIFIER(51...52)("a"),
+          (51...52),
           nil,
           nil,
           nil,

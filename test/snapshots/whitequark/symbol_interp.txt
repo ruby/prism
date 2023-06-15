@@ -10,7 +10,7 @@ ProgramNode(0...15)(
             [CallNode(7...10)(
                nil,
                nil,
-               IDENTIFIER(7...10)("bar"),
+               (7...10),
                nil,
                nil,
                nil,

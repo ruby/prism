@@ -5,19 +5,9 @@ ProgramNode(0...41)(
        (0...2),
        CallNode(3...15)(
          CallNode(7...15)(
-           CallNode(7...10)(
-             nil,
-             nil,
-             IDENTIFIER(7...10)("var"),
-             nil,
-             nil,
-             nil,
-             nil,
-             0,
-             "var"
-           ),
+           CallNode(7...10)(nil, nil, (7...10), nil, nil, nil, nil, 0, "var"),
            (10...11),
-           IDENTIFIER(11...15)("nil?"),
+           (11...15),
            nil,
            nil,
            nil,
@@ -26,7 +16,7 @@ ProgramNode(0...41)(
            "nil?"
          ),
          nil,
-         KEYWORD_NOT(3...6)("not"),
+         (3...6),
          nil,
          nil,
          nil,

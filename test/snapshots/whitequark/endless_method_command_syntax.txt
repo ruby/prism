@@ -9,7 +9,7 @@ ProgramNode(0...278)(
          [CallNode(10...22)(
             nil,
             nil,
-            IDENTIFIER(10...14)("puts"),
+            (10...14),
             nil,
             ArgumentsNode(15...22)(
               [StringNode(15...22)((15...16), (16...21), (21...22), "Hello")]
@@ -36,7 +36,7 @@ ProgramNode(0...278)(
          [CallNode(36...48)(
             nil,
             nil,
-            IDENTIFIER(36...40)("puts"),
+            (36...40),
             nil,
             ArgumentsNode(41...48)(
               [StringNode(41...48)((41...42), (42...47), (47...48), "Hello")]
@@ -71,7 +71,7 @@ ProgramNode(0...278)(
          [CallNode(63...69)(
             nil,
             nil,
-            IDENTIFIER(63...67)("puts"),
+            (63...67),
             nil,
             ArgumentsNode(68...69)([LocalVariableReadNode(68...69)(:x, 0)]),
             nil,
@@ -90,23 +90,13 @@ ProgramNode(0...278)(
      ),
      DefNode(71...97)(
        (79...82),
-       CallNode(75...78)(
-         nil,
-         nil,
-         IDENTIFIER(75...78)("obj"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "obj"
-       ),
+       CallNode(75...78)(nil, nil, (75...78), nil, nil, nil, nil, 0, "obj"),
        nil,
        StatementsNode(85...97)(
          [CallNode(85...97)(
             nil,
             nil,
-            IDENTIFIER(85...89)("puts"),
+            (85...89),
             nil,
             ArgumentsNode(90...97)(
               [StringNode(90...97)((90...91), (91...96), (96...97), "Hello")]
@@ -130,7 +120,7 @@ ProgramNode(0...278)(
        CallNode(103...106)(
          nil,
          nil,
-         IDENTIFIER(103...106)("obj"),
+         (103...106),
          nil,
          nil,
          nil,
@@ -143,7 +133,7 @@ ProgramNode(0...278)(
          [CallNode(115...127)(
             nil,
             nil,
-            IDENTIFIER(115...119)("puts"),
+            (115...119),
             nil,
             ArgumentsNode(120...127)(
               [StringNode(120...127)(
@@ -172,7 +162,7 @@ ProgramNode(0...278)(
        CallNode(133...136)(
          nil,
          nil,
-         IDENTIFIER(133...136)("obj"),
+         (133...136),
          nil,
          nil,
          nil,
@@ -193,7 +183,7 @@ ProgramNode(0...278)(
          [CallNode(146...152)(
             nil,
             nil,
-            IDENTIFIER(146...150)("puts"),
+            (146...150),
             nil,
             ArgumentsNode(151...152)(
               [LocalVariableReadNode(151...152)(:x, 0)]
@@ -228,7 +218,7 @@ ProgramNode(0...278)(
          [CallNode(171...214)(
             nil,
             nil,
-            IDENTIFIER(171...176)("raise"),
+            (171...176),
             nil,
             ArgumentsNode(177...214)(
               [RescueModifierNode(177...214)(
@@ -283,7 +273,7 @@ ProgramNode(0...278)(
          [CallNode(238...278)(
             nil,
             nil,
-            IDENTIFIER(238...243)("raise"),
+            (238...243),
             nil,
             ArgumentsNode(244...278)(
               [RescueModifierNode(244...278)(

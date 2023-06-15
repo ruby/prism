@@ -15,20 +15,10 @@ ProgramNode(0...11)(
        CallNode(8...11)(
          nil,
          nil,
-         IDENTIFIER(8...9)("c"),
+         (8...9),
          nil,
          ArgumentsNode(10...11)(
-           [CallNode(10...11)(
-              nil,
-              nil,
-              IDENTIFIER(10...11)("d"),
-              nil,
-              nil,
-              nil,
-              nil,
-              0,
-              "d"
-            )]
+           [CallNode(10...11)(nil, nil, (10...11), nil, nil, nil, nil, 0, "d")]
          ),
          nil,
          nil,

@@ -4,7 +4,7 @@ ProgramNode(0...26)(
     [CallNode(0...26)(
        nil,
        nil,
-       IDENTIFIER(0...4)("blah"),
+       (0...4),
        nil,
        nil,
        nil,
@@ -23,7 +23,7 @@ ProgramNode(0...26)(
                [CallNode(17...22)(
                   nil,
                   nil,
-                  IDENTIFIER(17...22)("stuff"),
+                  (17...22),
                   nil,
                   nil,
                   nil,

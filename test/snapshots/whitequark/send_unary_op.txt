@@ -2,19 +2,9 @@ ProgramNode(0...16)(
   [],
   StatementsNode(0...16)(
     [CallNode(0...4)(
-       CallNode(1...4)(
-         nil,
-         nil,
-         IDENTIFIER(1...4)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(1...4)(nil, nil, (1...4), nil, nil, nil, nil, 0, "foo"),
        nil,
-       UPLUS(0...1)("+"),
+       (0...1),
        nil,
        nil,
        nil,
@@ -23,19 +13,9 @@ ProgramNode(0...16)(
        "+@"
      ),
      CallNode(6...10)(
-       CallNode(7...10)(
-         nil,
-         nil,
-         IDENTIFIER(7...10)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(7...10)(nil, nil, (7...10), nil, nil, nil, nil, 0, "foo"),
        nil,
-       UMINUS(6...7)("-"),
+       (6...7),
        nil,
        nil,
        nil,
@@ -44,19 +24,9 @@ ProgramNode(0...16)(
        "-@"
      ),
      CallNode(12...16)(
-       CallNode(13...16)(
-         nil,
-         nil,
-         IDENTIFIER(13...16)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         0,
-         "foo"
-       ),
+       CallNode(13...16)(nil, nil, (13...16), nil, nil, nil, nil, 0, "foo"),
        nil,
-       TILDE(12...13)("~"),
+       (12...13),
        nil,
        nil,
        nil,

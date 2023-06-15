@@ -4,7 +4,7 @@ ProgramNode(0...8)(
     [CallNode(0...8)(
        nil,
        nil,
-       IDENTIFIER(0...3)("fun"),
+       (0...3),
        nil,
        ArgumentsNode(4...8)(
          [ParenthesesNode(4...8)(

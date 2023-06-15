@@ -7,7 +7,7 @@ ProgramNode(0...20)(
        CallNode(4...20)(
          nil,
          nil,
-         IDENTIFIER(4...7)("foo"),
+         (4...7),
          PARENTHESIS_LEFT(7...8)("("),
          ArgumentsNode(8...19)(
            [CallNode(8...19)(
@@ -20,7 +20,7 @@ ProgramNode(0...20)(
                      [CallNode(28...31)(
                         nil,
                         nil,
-                        IDENTIFIER(28...31)("bar"),
+                        (28...31),
                         nil,
                         nil,
                         nil,
@@ -35,7 +35,7 @@ ProgramNode(0...20)(
                 (36...42)
               ),
               (14...15),
-              IDENTIFIER(15...19)("chop"),
+              (15...19),
               nil,
               nil,
               nil,

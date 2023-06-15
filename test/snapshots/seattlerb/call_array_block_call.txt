@@ -4,7 +4,7 @@ ProgramNode(0...19)(
     [CallNode(0...19)(
        nil,
        nil,
-       IDENTIFIER(0...1)("a"),
+       (0...1),
        nil,
        ArgumentsNode(2...19)(
          [ArrayNode(2...19)(
@@ -12,7 +12,7 @@ ProgramNode(0...19)(
              CallNode(9...17)(
                nil,
                nil,
-               IDENTIFIER(9...10)("b"),
+               (9...10),
                nil,
                nil,
                nil,

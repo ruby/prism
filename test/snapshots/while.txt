@@ -31,7 +31,7 @@ ProgramNode(0...314)(
        CallNode(105...109)(
          nil,
          nil,
-         IDENTIFIER(105...109)("bar?"),
+         (105...109),
          nil,
          nil,
          nil,
@@ -43,7 +43,7 @@ ProgramNode(0...314)(
          [CallNode(88...98)(
             nil,
             nil,
-            IDENTIFIER(88...91)("foo"),
+            (88...91),
             nil,
             ArgumentsNode(92...98)(
               [SymbolNode(92...94)((92...93), (93...94), nil, "a"),
@@ -70,7 +70,7 @@ ProgramNode(0...314)(
               CallNode(134...144)(
                 nil,
                 nil,
-                IDENTIFIER(134...137)("tap"),
+                (134...137),
                 nil,
                 nil,
                 nil,
@@ -111,7 +111,7 @@ ProgramNode(0...314)(
               CallNode(183...193)(
                 nil,
                 nil,
-                IDENTIFIER(183...186)("tap"),
+                (183...186),
                 nil,
                 nil,
                 nil,
@@ -138,7 +138,7 @@ ProgramNode(0...314)(
            [CallNode(233...243)(
               nil,
               nil,
-              IDENTIFIER(233...236)("tap"),
+              (233...236),
               nil,
               nil,
               nil,
@@ -165,7 +165,7 @@ ProgramNode(0...314)(
               CallNode(287...297)(
                 nil,
                 nil,
-                IDENTIFIER(287...290)("tap"),
+                (287...290),
                 nil,
                 nil,
                 nil,

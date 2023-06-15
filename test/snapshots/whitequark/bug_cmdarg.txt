@@ -4,7 +4,7 @@ ProgramNode(0...52)(
     [CallNode(0...15)(
        nil,
        nil,
-       IDENTIFIER(0...6)("assert"),
+       (0...6),
        nil,
        ArgumentsNode(7...15)(
          [KeywordHashNode(7...15)(
@@ -23,13 +23,13 @@ ProgramNode(0...52)(
      CallNode(17...28)(
        nil,
        nil,
-       IDENTIFIER(17...23)("assert"),
+       (17...23),
        nil,
        ArgumentsNode(24...28)(
          [CallNode(24...28)(
             nil,
             nil,
-            IDENTIFIER(24...28)("dogs"),
+            (24...28),
             nil,
             nil,
             nil,
@@ -46,7 +46,7 @@ ProgramNode(0...52)(
      CallNode(30...52)(
        nil,
        nil,
-       IDENTIFIER(30...31)("f"),
+       (30...31),
        nil,
        ArgumentsNode(32...52)(
          [KeywordHashNode(32...52)(
@@ -60,7 +60,7 @@ ProgramNode(0...52)(
                    [CallNode(41...52)(
                       nil,
                       nil,
-                      IDENTIFIER(41...45)("meth"),
+                      (41...45),
                       nil,
                       nil,
                       nil,
