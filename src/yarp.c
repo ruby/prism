@@ -8185,6 +8185,18 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
         current = rescue;
     }
 
+    // The end node locations on rescue nodes will not be set correctly
+    // since we won't know the end until we've found all consequent
+    // clauses. This sets the end location on all rescues once we know it
+    if (current) {
+        const char *end_to_set = current->base.location.end;
+        current = parent_node->rescue_clause;
+        while (current) {
+            current->base.location.end = end_to_set;
+            current = current->consequent;
+        }
+    }
+
     if (accept(parser, YP_TOKEN_KEYWORD_ELSE)) {
         yp_token_t else_keyword = parser->previous;
         accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
