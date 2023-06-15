@@ -106,13 +106,13 @@ ProgramNode(0...497)(
        (283...284)
      ),
      ArrayNode(286...304)(
-       [StringNode(289...297)(nil, (289...297), nil, "foo bar"),
-        StringNode(298...303)(nil, (298...303), nil, "\#{1}")],
+       [StringNode(289...297)(nil, (289...297), nil, "foo\\ bar"),
+        StringNode(298...303)(nil, (298...303), nil, "\\\#{1}")],
        (286...289),
        (303...304)
      ),
      ArrayNode(306...322)(
-       [StringNode(309...317)(nil, (309...317), nil, "foo bar"),
+       [StringNode(309...317)(nil, (309...317), nil, "foo\\ bar"),
         StringNode(318...321)(nil, (318...321), nil, "baz")],
        (306...309),
        (321...322)

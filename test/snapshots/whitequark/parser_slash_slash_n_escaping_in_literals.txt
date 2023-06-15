@@ -23,7 +23,7 @@ ProgramNode(0...210)(
           nil,
           STRING_CONTENT(41...45)("a\\\n" + "b"),
           nil,
-          "a\n" + "b"
+          "a\\\n" + "b"
         )],
        (38...41),
        (45...46)
@@ -43,7 +43,7 @@ ProgramNode(0...210)(
        "a\n" + "b"
      ),
      ArrayNode(78...86)(
-       [StringNode(81...85)(nil, (81...85), nil, "a\n" + "b")],
+       [StringNode(81...85)(nil, (81...85), nil, "a\\\n" + "b")],
        (78...81),
        (85...86)
      ),
