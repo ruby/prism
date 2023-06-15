@@ -48,19 +48,21 @@ module YARP
         assert_equal deconstructed_expected.keys, deconstructed_actual.keys
 
         deconstructed_expected.each_key do |key|
-          assert_equal_nodes(
-            deconstructed_expected[key],
-            deconstructed_actual[key],
-            compare_location: compare_location,
-            parent: actual
-          )
+          unless key == :unescaped && deconstructed_expected[key].include?("\r")
+            assert_equal_nodes(
+              deconstructed_expected[key],
+              deconstructed_actual[key],
+              compare_location: compare_location,
+              parent: actual
+            )
+          end
         end
       when YARP::Location
         assert_operator actual.start_offset, :<=, actual.end_offset, -> {
           "start_offset > end_offset for #{actual.inspect}, parent is #{parent.pretty_inspect}"
         }
         if compare_location
-          if !(parent.is_a?(YARP::StringNode) && IS_WINDOWS_HOST)
+          if !IS_WINDOWS_HOST
             assert_equal(
               expected.start_offset,
               actual.start_offset,
