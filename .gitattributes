@@ -1,7 +1,7 @@
-bin/templates/**/*.c.erb linguist-language=C
-bin/templates/**/*.h.erb linguist-language=C
-bin/templates/**/*.java.erb linguist-language=Java
-bin/templates/**/*.rb.erb linguist-language=Ruby
+templates/**/*.c.erb linguist-language=C
+templates/**/*.h.erb linguist-language=C
+templates/**/*.java.erb linguist-language=Java
+templates/**/*.rb.erb linguist-language=Ruby
 
 test/fixtures/seattlerb/**/*.txt linguist-vendored
 test/fixtures/unparser/**/*.txt linguist-vendored

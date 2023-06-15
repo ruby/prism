@@ -109,9 +109,9 @@ The following table shows how the various CRuby nodes are mapped to YARP nodes.
 | `NODE_DSYM` | `YP_NODE_INTERPOLATED_SYMBOL_NODE` |
 | `NODE_ATTRASGN` | `YP_NODE_CALL_NODE` (with a message that ends with =) |
 | `NODE_LAMBDA` | `YP_NODE_LAMBDA_NODE` |
-| `NODE_ARYPTN` | |
-| `NODE_HSHPTN` | |
-| `NODE_FNDPTN` | |
+| `NODE_ARYPTN` | `YP_NODE_ARRAY_PATTERN_NODE` |
+| `NODE_HSHPTN` | `YP_NODE_HASH_PATTERN_NODE` |
+| `NODE_FNDPTN` | `YP_NODE_FIND_PATTERN_NODE` |
 | `NODE_ERROR` | `YP_NODE_MISSING_NODE` |
 | `NODE_LAST` | |
 ```

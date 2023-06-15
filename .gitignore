@@ -14,7 +14,6 @@
 /lib/yarp/yarp.*
 /lib/yarp.bundle
 test.rb
-test-native/run-one
 *.dSYM
 
 /ext/yarp/api_node.c
@@ -32,7 +31,10 @@ test-native/run-one
 compile_commands.json
 .cache/
 
+autom4te.cache
 configure
+config.log
+config.status
 Makefile
 
 tags

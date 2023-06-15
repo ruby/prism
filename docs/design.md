@@ -10,7 +10,7 @@ The design of the parser is based around these main goals.
 
 ## Structure
 
-The first piece to understand about the parser is the design of its syntax tree. This is documented in `config.yml`. Every token and node is defined in that file, along with comments about where they are found in what kinds of syntax. This file is used to template out a lot of different files, all found in the `bin/templates` directory. The `bin/template` script performs the templating and outputs all files matching the directory structure found in the templates directory.
+The first piece to understand about the parser is the design of its syntax tree. This is documented in `config.yml`. Every token and node is defined in that file, along with comments about where they are found in what kinds of syntax. This file is used to template out a lot of different files, all found in the `templates` directory. The `templates/template.rb` script performs the templating and outputs all files matching the directory structure found in the templates directory.
 
 The templated files contain all of the code required to allocate and initialize nodes, pretty print nodes, and serialize nodes. This means for the most part, you will only need to then hook up the parser to call the templated functions to create the nodes in the correct position. That means editing the parser itself, which is housed in `yarp.c`.
 
@@ -50,3 +50,4 @@ Currently, there are a couple of mechanisms for error tolerance that are in plac
 
 * If the parser expects a token in a particular position (for example the `in` keyword in a for loop or the `{` after `BEGIN` or `END`) then it will insert a missing token if one can't be found and continue parsing.
 * If the parser expects an expression in a particular position but encounters a token that can't be used as that expression, it checks up the stack to see if that token would close out a parent node. If so, it will close out all of its parent nodes using missing nodes wherever necessary and continue parsing.
+* If the parser cannot understand a token in any capacity, it will skip past the token.

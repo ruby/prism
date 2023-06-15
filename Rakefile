@@ -33,7 +33,7 @@ end
 
 task default: :test
 
-require_relative "bin/template"
+require_relative "templates/template"
 
 desc "Generate all ERB template based files"
 task templates: TEMPLATES
@@ -71,7 +71,7 @@ CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"
-  file filepath => ["bin/templates/#{filepath}.erb", "bin/template.rb", "config.yml"] do |t|
+  file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
     template(t.name, locals)
   end
 end
