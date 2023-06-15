@@ -4,7 +4,7 @@ This is a parser for the Ruby programming language. It is designed to be portabl
 
 ## Overview
 
-The repository contains the infrastructure for both a shared library (librubyparser) and a native Ruby extension. The shared library has no bindings to Ruby itself, and so can be used by other project. The native Ruby extension links against `ruby.h`, and so is suitable in the context of Ruby.
+The repository contains the infrastructure for both a shared library (librubyparser) and a native CRuby extension. The shared library has no bindings to CRuby itself, and so can be used by other projects. The native CRuby extension links against `ruby.h`, and so is suitable in the context of CRuby.
 
 ```
 .
