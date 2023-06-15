@@ -511,6 +511,9 @@ yp_array_node_size(yp_array_node_t *node) {
 // Append an argument to an array node.
 static inline void
 yp_array_node_elements_append(yp_array_node_t *node, yp_node_t *element) {
+    if (!node->elements.size && !node->opening_loc.start) {
+        node->base.location.start = element->location.start;
+    }
     yp_node_list_append(&node->elements, element);
     node->base.location.end = element->location.end;
 }

@@ -13,7 +13,7 @@ ProgramNode(0...15)(
           nil
         )],
        (9...10),
-       ArrayNode(0...15)(
+       ArrayNode(11...15)(
          [IntegerNode(11...12)(), IntegerNode(14...15)()],
          nil,
          nil

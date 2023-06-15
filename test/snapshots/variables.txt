@@ -17,7 +17,7 @@ ProgramNode(0...293)(
      ),
      ClassVariableWriteNode(36...48)(
        (36...41),
-       ArrayNode(0...48)(
+       ArrayNode(44...48)(
          [IntegerNode(44...45)(), IntegerNode(47...48)()],
          nil,
          nil
@@ -72,7 +72,7 @@ ProgramNode(0...293)(
      GlobalVariableWriteNode(110...121)(
        GLOBAL_VARIABLE(110...114)("$foo"),
        (115...116),
-       ArrayNode(0...121)(
+       ArrayNode(117...121)(
          [IntegerNode(117...118)(), IntegerNode(120...121)()],
          nil,
          nil
@@ -88,7 +88,7 @@ ProgramNode(0...293)(
      ),
      InstanceVariableWriteNode(139...150)(
        (139...143),
-       ArrayNode(0...150)(
+       ArrayNode(146...150)(
          [IntegerNode(146...147)(), IntegerNode(149...150)()],
          nil,
          nil
@@ -105,7 +105,7 @@ ProgramNode(0...293)(
      LocalVariableWriteNode(161...171)(
        :foo,
        0,
-       ArrayNode(0...171)(
+       ArrayNode(167...171)(
          [IntegerNode(167...168)(), IntegerNode(170...171)()],
          nil,
          nil
@@ -116,7 +116,7 @@ ProgramNode(0...293)(
      LocalVariableWriteNode(173...183)(
        :foo,
        0,
-       ArrayNode(0...183)(
+       ArrayNode(179...183)(
          [IntegerNode(179...180)(), IntegerNode(182...183)()],
          nil,
          nil
@@ -128,7 +128,7 @@ ProgramNode(0...293)(
        [LocalVariableWriteNode(185...188)(:foo, 0, nil, (185...188), nil),
         SplatNode(190...191)((190...191), nil)],
        (192...193),
-       ArrayNode(0...198)(
+       ArrayNode(194...198)(
          [IntegerNode(194...195)(), IntegerNode(197...198)()],
          nil,
          nil
@@ -140,7 +140,7 @@ ProgramNode(0...293)(
        [LocalVariableWriteNode(200...203)(:foo, 0, nil, (200...203), nil),
         SplatNode(203...204)((203...204), nil)],
        (205...206),
-       ArrayNode(0...211)(
+       ArrayNode(207...211)(
          [IntegerNode(207...208)(), IntegerNode(210...211)()],
          nil,
          nil
@@ -155,7 +155,7 @@ ProgramNode(0...293)(
           LocalVariableWriteNode(219...222)(:bar, 0, nil, (219...222), nil)
         )],
        (223...224),
-       ArrayNode(0...229)(
+       ArrayNode(225...229)(
          [IntegerNode(225...226)(), IntegerNode(228...229)()],
          nil,
          nil
@@ -174,7 +174,7 @@ ProgramNode(0...293)(
           (245...246)
         )],
        (247...248),
-       ArrayNode(0...258)(
+       ArrayNode(249...258)(
          [IntegerNode(249...250)(),
           ArrayNode(252...258)(
             [IntegerNode(253...254)(), IntegerNode(256...257)()],
@@ -200,7 +200,7 @@ ProgramNode(0...293)(
      ConstantPathWriteNode(272...282)(
        ConstantReadNode(272...275)(),
        (276...277),
-       ArrayNode(0...282)(
+       ArrayNode(278...282)(
          [IntegerNode(278...279)(), IntegerNode(281...282)()],
          nil,
          nil
