@@ -228,7 +228,7 @@ ProgramNode(0...345)(
           nil,
           STRING_CONTENT(202...205)("a\\b"),
           nil,
-          "a\b"
+          "a\\b"
         )],
        (199...202),
        (205...206)
