@@ -1,9 +1,20 @@
 #include "yarp/ast.h"
 #include "yarp/parser.h"
 #include "yarp/util/yp_buffer.h"
-#include "yarp/util/yp_conversion.h"
 
 #include <stdio.h>
+
+static inline uint32_t
+yp_long_to_u32(long value) {
+    assert(value >= 0 && value < UINT32_MAX);
+    return (uint32_t) value;
+}
+
+static inline uint32_t
+yp_ulong_to_u32(unsigned long value) {
+    assert(value < UINT32_MAX);
+    return (uint32_t) value;
+}
 
 static void
 serialize_token(yp_parser_t *parser, yp_token_t *token, yp_buffer_t *buffer) {

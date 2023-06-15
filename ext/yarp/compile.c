@@ -110,14 +110,11 @@ static VALUE
 parse_number(const char *start, const char *end) {
     size_t length = end - start;
 
-    char *buffer = malloc(length + 1);
+    char *buffer = alloca(length + 1);
     memcpy(buffer, start, length);
 
     buffer[length] = '\0';
-    VALUE number = rb_cstr_to_inum(buffer, -10, Qfalse);
-
-    free(buffer);
-    return number;
+    return rb_cstr_to_inum(buffer, -10, Qfalse);
 }
 
 static inline VALUE
