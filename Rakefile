@@ -71,7 +71,7 @@ CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"
-  file filepath => ["bin/templates/#{filepath}.erb", "bin/template.rb", "config.yml"] do |t|
+  file filepath => ["templates/#{filepath}.erb", "bin/template.rb", "config.yml"] do |t|
     template(t.name, locals)
   end
 end

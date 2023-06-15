@@ -16,7 +16,7 @@ build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -na
 build:
 	mkdir -p build
 
-include/yarp/ast.h: bin/templates/include/yarp/ast.h.erb
+include/yarp/ast.h: templates/include/yarp/ast.h.erb
 	rake $@
 
 clean:

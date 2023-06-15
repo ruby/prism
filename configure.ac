@@ -1,5 +1,4 @@
 AC_INIT
-# Check that we have a C compiler
 AC_PROG_CC
 AC_DEFINE(_XOPEN_SOURCE, 700)
 AC_CHECK_FUNCS(mmap)
