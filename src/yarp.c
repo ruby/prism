@@ -12181,6 +12181,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
     size_t newline_size = size / 22;
     yp_newline_list_init(&parser->newline_list, source, newline_size < 4 ? 4 : newline_size);
 
+    assert(source != NULL);
     if (size >= 3 && (unsigned char) source[0] == 0xef && (unsigned char) source[1] == 0xbb && (unsigned char) source[2] == 0xbf) {
         // If the first three bytes of the source are the UTF-8 BOM, then we'll skip
         // over them.

@@ -15,7 +15,11 @@ module YARP
 
       case expected
       when Array
-        assert_equal expected.size, actual.size
+        assert_equal(
+          expected.size,
+          actual.size,
+          -> { "Arrays were different sizes. Parent: #{parent.pretty_inspect}" }
+        )
 
         expected.zip(actual).each do |(expected_element, actual_element)|
           assert_equal_nodes(
@@ -54,8 +58,18 @@ module YARP
           "start_offset > end_offset for #{actual.inspect}, parent is #{parent.pretty_inspect}"
         }
         if compare_location
-          assert_equal expected.start_offset, actual.start_offset
-          assert_equal expected.end_offset, actual.end_offset
+          assert_equal(
+            expected.start_offset,
+            actual.start_offset,
+            -> { "Start locations were different. Parent: #{parent.pretty_inspect}" }
+          )
+
+          assert_equal(
+            expected.end_offset,
+            actual.end_offset,
+            -> { "End locations were different. Parent: #{parent.pretty_inspect}" }
+          )
+
         end
       else
         assert_equal expected, actual
