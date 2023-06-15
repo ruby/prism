@@ -190,11 +190,7 @@ ProgramNode(0...293)(
             "a"
           )]
        ),
-       ElseNode(251...259)(
-         (251...255),
-         StatementsNode(0...0)([]),
-         (256...259)
-       ),
+       ElseNode(251...259)((251...255), nil, (256...259)),
        (256...259)
      ),
      IfNode(261...293)(
@@ -230,7 +226,7 @@ ProgramNode(0...293)(
            ConstantReadNode(288...289)(),
            (285...287)
          ),
-         StatementsNode(0...0)([]),
+         nil,
          nil,
          nil
        ),

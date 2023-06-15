@@ -625,7 +625,7 @@ ProgramNode(0...690)(
          nil,
          nil
        ),
-       StatementsNode(0...0)([]),
+       nil,
        [:foo],
        (559...562),
        nil,
@@ -658,7 +658,7 @@ ProgramNode(0...690)(
          nil,
          nil
        ),
-       StatementsNode(0...0)([]),
+       nil,
        [:foo],
        (577...580),
        nil,

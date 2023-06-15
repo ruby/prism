@@ -28,13 +28,7 @@ ProgramNode(0...30)(
                  nil,
                  nil,
                  nil,
-                 BlockNode(18...25)(
-                   [],
-                   nil,
-                   StatementsNode(0...0)([]),
-                   (18...20),
-                   (22...25)
-                 ),
+                 BlockNode(18...25)([], nil, nil, (18...20), (22...25)),
                  "y"
                )]
             ),

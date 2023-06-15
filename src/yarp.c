@@ -3031,7 +3031,7 @@ yp_statements_node_create(yp_parser_t *parser) {
 // Get the length of the given StatementsNode node's body.
 static size_t
 yp_statements_node_body_length(yp_statements_node_t *node) {
-    return node->body.size;
+    return node && node->body.size;
 }
 
 // Set the location of the given StatementsNode.
@@ -7427,17 +7427,14 @@ parse_targets(yp_parser_t *parser, yp_node_t *first_target, yp_binding_power_t b
 // Parse a list of statements separated by newlines or semicolons.
 static yp_statements_node_t *
 parse_statements(yp_parser_t *parser, yp_context_t context) {
-    yp_statements_node_t *statements = yp_statements_node_create(parser);
-
     // First, skip past any optional terminators that might be at the beginning of
     // the statements.
     while (accept_any(parser, 2, YP_TOKEN_SEMICOLON, YP_TOKEN_NEWLINE));
 
-    // Now, if we have a terminator, then we can just return the empty statements
-    // node. We should come back in here and make it so that the callers of this
-    // function can expect a NULL, in which case we wouldn't have to allocate the
-    // statements at all.
-    if (context_terminator(context, &parser->current)) return statements;
+    // If we have a terminator, then we can just return NULL.
+    if (context_terminator(context, &parser->current)) return NULL;
+
+    yp_statements_node_t *statements = yp_statements_node_create(parser);
 
     // At this point we know we have at least one statement, and that it
     // immediately follows the current token.
@@ -8176,7 +8173,10 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
         }
 
         if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_KEYWORD_END)) {
-            yp_rescue_node_statements_set(rescue, parse_statements(parser, YP_CONTEXT_RESCUE));
+            yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_RESCUE);
+            if (statements) {
+                yp_rescue_node_statements_set(rescue, statements);
+            }
             accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         }
 
@@ -10057,7 +10057,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     }
 
                     if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_WHEN, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_END)) {
-                        yp_when_node_statements_set(when_node, parse_statements(parser, YP_CONTEXT_CASE_WHEN));
+                        yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_CASE_WHEN);
+                        if (statements != NULL) {
+                            yp_when_node_statements_set(when_node, statements);
+                        }
                     }
 
                     yp_case_node_condition_append(case_node, (yp_node_t *) when_node);
@@ -12131,6 +12134,9 @@ parse_program(yp_parser_t *parser) {
     parser_lex(parser);
 
     yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_MAIN);
+    if (!statements) {
+        statements = yp_statements_node_create(parser);
+    }
     yp_constant_id_list_t locals = parser->current_scope->locals;
     yp_parser_scope_pop(parser);
 
