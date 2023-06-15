@@ -5,11 +5,11 @@
 #include <ruby/encoding.h>
 #include "yarp.h"
 
-#include <fcntl.h>
-
+// The following headers are necessary to read files using demand paging.
 #ifdef _WIN32
 #include <windows.h>
 #else
+#include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -26,7 +26,5 @@ VALUE yp_compile(yp_node_t *node);
 void Init_yarp_pack(void);
 
 YP_EXPORTED_FUNCTION void Init_yarp(void);
-
-#define DISCARD_CONST_QUAL(t, v) ((t)(uintptr_t)(v))
 
 #endif // YARP_EXT_NODE_H

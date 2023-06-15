@@ -13,114 +13,152 @@ VALUE rb_cYARPParseResult;
 // string. If it's a file, it's going to mmap the contents of the file. If it's
 // a string it's going to just point to the contents of the string.
 typedef struct {
-    enum { SOURCE_FILE, SOURCE_STRING } type;
     const char *source;
     size_t size;
 } source_t;
 
 // Read the file indicated by the filepath parameter into source and load its
 // contents and size into the given source_t.
+//
+// We want to use demand paging as much as possible in order to avoid having to
+// read the entire file into memory (which could be detrimental to performance
+// for large files). This means that if we're on windows we'll use
+// `MapViewOfFileEx`, on POSIX systems that have access to `mmap` we'll use
+// `mmap`, and on other POSIX systems we'll use `read`.
 static int
-source_file_load(source_t *source, VALUE filepath) {
+source_file_load(source_t *source, VALUE ruby_filepath) {
+    const char *filepath = StringValueCStr(ruby_filepath);
+
 #ifdef _WIN32
-    HANDLE file = CreateFile(
-        StringValueCStr(filepath),
-        GENERIC_READ,
-        0,
-        NULL,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        NULL
-    );
+    // Open the file for reading.
+    HANDLE file = CreateFile(filepath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (file == INVALID_HANDLE_VALUE) {
-        perror("Invalid handle for file");
+        perror("CreateFile failed");
         return 1;
     }
 
+    // Get the file size.
     DWORD file_size = GetFileSize(file, NULL);
-    source->source = malloc(file_size);
+    if (file_size == INVALID_FILE_SIZE) {
+        CloseHandle(file);
+        perror("GetFileSize failed");
+        return 1;
+    }
 
-    DWORD bytes_read;
-    BOOL success = ReadFile(file, DISCARD_CONST_QUAL(void *, source->source), file_size, &bytes_read, NULL);
+    // If the file is empty, then we don't need to do anything else, we'll set
+    // the source to a constant empty string and return.
+    if (!file_size) {
+        CloseHandle(file);
+        source->size = 0;
+        source->source = "";
+        return 0;
+    }
+
+    // Create a mapping of the file.
+    HANDLE mapping = CreateFileMapping(file, NULL, PAGE_READONLY, 0, 0, NULL);
+    if (mapping == NULL) {
+        CloseHandle(file);
+        perror("CreateFileMapping failed");
+        return 1;
+    }
+
+    // Map the file into memory.
+    source->source = (const char *) MapViewOfFile(mapping, FILE_MAP_READ, 0, 0, 0);
+    CloseHandle(mapping);
     CloseHandle(file);
 
-    if (!success) {
-        perror("ReadFile failed");
+    if (source->source == NULL) {
+        perror("MapViewOfFileEx failed");
         return 1;
     }
 
+    // Set the size of the source.
     source->size = (size_t) file_size;
-    return 0;
 #else
-    // Open the file for reading
-    int fd = open(StringValueCStr(filepath), O_RDONLY);
+    // Open the file for reading.
+    int fd = open(filepath, O_RDONLY);
     if (fd == -1) {
-        perror("open");
+        perror("open failed");
         return 1;
     }
 
-    // Stat the file to get the file size
+    // Get the file size.
     struct stat sb;
     if (fstat(fd, &sb) == -1) {
         close(fd);
-        perror("fstat");
+        perror("fstat failed");
         return 1;
     }
 
-    // mmap the file descriptor to virtually get the contents
+    // If the file is empty, then we don't need to do anything else, we'll set
+    // the source to a constant empty string and return.
     source->size = sb.st_size;
-
-#ifdef HAVE_MMAP
     if (!source->size) {
         source->source = "";
         return 0;
     }
 
-    char * res = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (res == MAP_FAILED) {
-        perror("Map failed");
-        return 1;
-    } else {
-        source->source = res;
-    }
-#else
-    source->source = malloc(source->size);
-    if (source->source == NULL) return 1;
-
-    ssize_t read_size = read(fd, (void *)source->source, source->size);
-    if (read_size < 0 || (size_t)read_size != source->size) {
-        perror("Read size is incorrect");
-        free((void *)source->source);
+#ifdef HAVE_MMAP
+    // Map the file into memory.
+    void *memory = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (memory == MAP_FAILED) {
+        perror("mmap failed");
         return 1;
     }
-#endif
 
+    // Close the file now that we've mapped it into memory.
+    source->source = memory;
     close(fd);
-    return 0;
+#else
+    // Allocate a buffer to read the file into.
+    void *memory = malloc(source->size);
+    if (memory == NULL) {
+        close(fd);
+        return 1;
+    }
+
+    // Read the file into the buffer.
+    ssize_t read_size = read(fd, memory, source->size);
+    close(fd);
+
+    // If the read failed or we didn't read the entire file, then we need to
+    // free the buffer and return an error.
+    if (read_size < 0 || (size_t) read_size != source->size) {
+        perror("read failed");
+        free(memory);
+        return 1;
+    }
+
+    source->source = memory;
 #endif
+#endif
+
+    // Return success.
+    return 0;
 }
 
 // Load the contents and size of the given string into the given source_t.
 static void
 source_string_load(source_t *source, VALUE string) {
     *source = (source_t) {
-        .type = SOURCE_STRING,
         .source = RSTRING_PTR(string),
         .size = RSTRING_LEN(string),
     };
 }
 
-// Free any resources associated with the given source_t.
+// Free any resources associated with the given source_t. This is the corollary
+// function to source_file_load. It will unmap the file if it was mapped, or
+// free the memory if it was allocated.
 static void
 source_file_unload(source_t *source) {
-#ifdef _WIN32
-    free((void *)source->source);
+    void *memory = (void *) source->source;
+
+#if defined(_WIN32)
+    UnmapViewOfFile(memory);
+#elif defined(HAVE_MMAP)
+    if (source->size) munmap(memory, source->size);
 #else
-#ifdef HAVE_MMAP
-    munmap((void *)source->source, source->size);
-#else
-    free((void *)source->source);
-#endif
+    if (source->size) free(memory);
 #endif
 }
 
@@ -352,19 +390,30 @@ parse_source(source_t *source, char *filepath) {
     return result;
 }
 
+// Parse the source given by the string parameter and return the Ruby object
+// associated with the parse result.
+//
+// If YARP_DEBUG_MODE_BUILD is defined, then the entire input source string is
+// going to be duplicated and used instead of the original string. This is to
+// make it easier to debug reading off the end of the string since the boundary
+// is more consistently defined.
 static VALUE
 parse(VALUE self, VALUE string, VALUE filepath) {
     source_t source;
     source_string_load(&source, string);
+
 #ifdef YARP_DEBUG_MODE_BUILD
     char* dup = malloc(source.size);
     memcpy(dup, source.source, source.size);
     source.source = dup;
 #endif
+
     VALUE value = parse_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+
 #ifdef YARP_DEBUG_MODE_BUILD
     free(dup);
 #endif
+
     return value;
 }
 
