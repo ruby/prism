@@ -50,3 +50,4 @@ Currently, there are a couple of mechanisms for error tolerance that are in plac
 
 * If the parser expects a token in a particular position (for example the `in` keyword in a for loop or the `{` after `BEGIN` or `END`) then it will insert a missing token if one can't be found and continue parsing.
 * If the parser expects an expression in a particular position but encounters a token that can't be used as that expression, it checks up the stack to see if that token would close out a parent node. If so, it will close out all of its parent nodes using missing nodes wherever necessary and continue parsing.
+* If the parser cannot understand a token in any capacity, it will skip past the token.
