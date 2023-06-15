@@ -228,6 +228,10 @@ module YARP
   def self.load(source, serialized)
     Serialize.load(source, serialized)
   end
+
+  def self.parse(source, filepath=nil)
+    _parse(source, filepath)
+  end
 end
 
 require_relative "yarp/lex_compat"
@@ -236,3 +240,9 @@ require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
 require "yarp.so"
+
+module YARP
+  class << self
+    private :_parse
+  end
+end

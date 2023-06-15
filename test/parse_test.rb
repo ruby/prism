@@ -30,6 +30,24 @@ class ParseTest < Test::Unit::TestCase
       .gsub(__dir__, "")
   end
 
+  def find_source_file_node(node)
+    if node.is_a?(YARP::SourceFileNode)
+      node
+    else
+      node && node.child_nodes.each do |child_node|
+        source_file_node = find_source_file_node(child_node)
+        return source_file_node if source_file_node
+      end
+    end
+  end
+
+  def test_parse_takes_file_path
+    filepath = "filepath.rb"
+    parsed_result = YARP.parse("def foo; __FILE__; end", filepath)
+
+    assert_equal filepath, find_source_file_node(parsed_result.value).filepath
+  end
+
   Dir[File.expand_path("fixtures/**/*.txt", __dir__)].each do |filepath|
     relative = filepath.delete_prefix("#{File.expand_path("fixtures", __dir__)}/")
     next if known_failures.include?(relative)
