@@ -6,8 +6,6 @@ require "pp"
 require "test/unit"
 require "tempfile"
 
-IS_WINDOWS_HOST = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw32|windows/)
-
 module YARP
   module Assertions
     private
@@ -62,19 +60,17 @@ module YARP
           "start_offset > end_offset for #{actual.inspect}, parent is #{parent.pretty_inspect}"
         }
         if compare_location
-          if !IS_WINDOWS_HOST
-            assert_equal(
-              expected.start_offset,
-              actual.start_offset,
-              -> { "Start locations were different. Parent: #{parent.pretty_inspect}" }
-            )
+          assert_equal(
+            expected.start_offset,
+            actual.start_offset,
+            -> { "Start locations were different. Parent: #{parent.pretty_inspect}" }
+          )
 
-            assert_equal(
-              expected.end_offset,
-              actual.end_offset,
-              -> { "End locations were different. Parent: #{parent.pretty_inspect}" }
-            )
-          end
+          assert_equal(
+            expected.end_offset,
+            actual.end_offset,
+            -> { "End locations were different. Parent: #{parent.pretty_inspect}" }
+          )
         end
       else
         assert_equal expected, actual

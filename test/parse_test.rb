@@ -2,6 +2,8 @@
 
 require "yarp_test_helper"
 
+IS_WINDOWS_HOST = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw32|windows/)
+
 class ParseTest < Test::Unit::TestCase
   def test_Ruby_3_2_plus
     assert_operator RUBY_VERSION, :>=, "3.2.0", "ParseTest requires Ruby 3.2+"
@@ -87,9 +89,11 @@ class ParseTest < Test::Unit::TestCase
         warn("Created snapshot at #{snapshot}.")
       end
 
-      # Next, assert that the value can be serialized and deserialized without
-      # changing the shape of the tree.
-      assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
+      unless IS_WINDOWS_HOST
+        # Next, assert that the value can be serialized and deserialized without
+        # changing the shape of the tree.
+        assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
+      end
 
       # Next, assert that the newlines are in the expected places.
       expected_newlines = [0]
