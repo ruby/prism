@@ -78,7 +78,7 @@ ProgramNode(0...345)(
      ),
      ArrayNode(160...184)(
        [SymbolNode(163...164)(nil, (163...164), nil, "a"),
-        InterpolatedSymbolNode(0...170)(
+        InterpolatedSymbolNode(165...170)(
           nil,
           [StringNode(165...166)(nil, (165...166), nil, "b"),
            StringInterpolatedNode(166...170)(
@@ -88,7 +88,7 @@ ProgramNode(0...345)(
            )],
           nil
         ),
-        InterpolatedSymbolNode(0...176)(
+        InterpolatedSymbolNode(171...176)(
           nil,
           [StringInterpolatedNode(171...175)(
              (171...173),
@@ -98,7 +98,7 @@ ProgramNode(0...345)(
            StringNode(175...176)(nil, (175...176), nil, "c")],
           nil
         ),
-        InterpolatedSymbolNode(0...183)(
+        InterpolatedSymbolNode(177...183)(
           nil,
           [StringNode(177...178)(nil, (177...178), nil, "d"),
            StringInterpolatedNode(178...182)(
