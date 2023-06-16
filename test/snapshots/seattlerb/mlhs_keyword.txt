@@ -5,9 +5,9 @@ ProgramNode(0...16)(
        CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
        (1...2),
        (2...4),
-       PARENTHESIS_LEFT(4...5)("("),
+       (4...5),
        ArgumentsNode(5...15)([TrueNode(5...9)(), TrueNode(11...15)()]),
-       PARENTHESIS_RIGHT(15...16)(")"),
+       (15...16),
        nil,
        0,
        "!="

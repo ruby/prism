@@ -5,11 +5,11 @@ ProgramNode(0...402)(
        CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
        nil,
        (3...8),
-       BRACKET_LEFT(3...4)("["),
+       (3...4),
        ArgumentsNode(4...7)(
          [CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 0, "bar")]
        ),
-       BRACKET_RIGHT(7...8)("]"),
+       (7...8),
        BlockNode(9...16)(
          [],
          nil,
@@ -36,11 +36,11 @@ ProgramNode(0...402)(
        CallNode(18...21)(nil, nil, (18...21), nil, nil, nil, nil, 0, "foo"),
        nil,
        (21...26),
-       BRACKET_LEFT(21...22)("["),
+       (21...22),
        ArgumentsNode(22...25)(
          [CallNode(22...25)(nil, nil, (22...25), nil, nil, nil, nil, 0, "bar")]
        ),
-       BRACKET_RIGHT(25...26)("]"),
+       (25...26),
        BlockNode(27...37)(
          [],
          nil,
@@ -67,9 +67,9 @@ ProgramNode(0...402)(
        CallNode(39...40)(nil, nil, (39...40), nil, nil, nil, nil, 0, "x"),
        (40...41),
        (41...47),
-       PARENTHESIS_LEFT(47...48)("("),
+       (47...48),
        ArgumentsNode(48...49)([IntegerNode(48...49)()]),
-       PARENTHESIS_RIGHT(49...50)(")"),
+       (49...50),
        BlockNode(51...74)(
          [:x, :memo],
          BlockParametersNode(53...62)(
@@ -229,9 +229,9 @@ ProgramNode(0...402)(
                   ),
                   nil,
                   (160...163),
-                  BRACKET_LEFT(160...161)("["),
+                  (160...161),
                   ArgumentsNode(161...162)([IntegerNode(161...162)()]),
-                  BRACKET_RIGHT(162...163)("]"),
+                  (162...163),
                   nil,
                   0,
                   "[]"
@@ -345,7 +345,7 @@ ProgramNode(0...402)(
        ),
        nil,
        (238...243),
-       BRACKET_LEFT(238...239)("["),
+       (238...239),
        ArgumentsNode(239...242)(
          [CallNode(239...242)(
             nil,
@@ -359,7 +359,7 @@ ProgramNode(0...402)(
             "bar"
           )]
        ),
-       BRACKET_RIGHT(242...243)("]"),
+       (242...243),
        BlockNode(244...251)(
          [],
          nil,

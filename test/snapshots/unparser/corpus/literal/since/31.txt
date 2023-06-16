@@ -18,11 +18,11 @@ ProgramNode(0...51)(
             nil,
             nil,
             (13...16),
-            PARENTHESIS_LEFT(16...17)("("),
+            (16...17),
             ArgumentsNode(17...18)(
               [BlockArgumentNode(17...18)(nil, (17...18))]
             ),
-            PARENTHESIS_RIGHT(18...19)(")"),
+            (18...19),
             nil,
             0,
             "bar"
@@ -53,11 +53,11 @@ ProgramNode(0...51)(
             nil,
             nil,
             (41...44),
-            PARENTHESIS_LEFT(44...45)("("),
+            (44...45),
             ArgumentsNode(45...46)(
               [BlockArgumentNode(45...46)(nil, (45...46))]
             ),
-            PARENTHESIS_RIGHT(46...47)(")"),
+            (46...47),
             nil,
             0,
             "bar"

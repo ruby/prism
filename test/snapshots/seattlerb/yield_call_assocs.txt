@@ -96,7 +96,7 @@ ProgramNode(0...100)(
             nil,
             nil,
             (79...80),
-            PARENTHESIS_LEFT(80...81)("("),
+            (80...81),
             ArgumentsNode(81...84)(
               [KeywordHashNode(81...84)(
                  [AssocNode(81...84)(
@@ -106,7 +106,7 @@ ProgramNode(0...100)(
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(84...85)(")"),
+            (84...85),
             nil,
             0,
             "y"
@@ -122,7 +122,7 @@ ProgramNode(0...100)(
             nil,
             nil,
             (93...94),
-            PARENTHESIS_LEFT(94...95)("("),
+            (94...95),
             ArgumentsNode(95...99)(
               [KeywordHashNode(95...99)(
                  [AssocNode(95...99)(
@@ -142,7 +142,7 @@ ProgramNode(0...100)(
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(99...100)(")"),
+            (99...100),
             nil,
             0,
             "y"

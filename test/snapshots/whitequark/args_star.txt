@@ -5,14 +5,14 @@ ProgramNode(0...26)(
        nil,
        nil,
        (0...3),
-       PARENTHESIS_LEFT(3...4)("("),
+       (3...4),
        ArgumentsNode(4...8)(
          [SplatNode(4...8)(
             (4...5),
             CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 0, "bar")
           )]
        ),
-       PARENTHESIS_RIGHT(8...9)(")"),
+       (8...9),
        nil,
        0,
        "fun"
@@ -21,7 +21,7 @@ ProgramNode(0...26)(
        nil,
        nil,
        (11...14),
-       PARENTHESIS_LEFT(14...15)("("),
+       (14...15),
        ArgumentsNode(15...25)(
          [SplatNode(15...19)(
             (15...16),
@@ -52,7 +52,7 @@ ProgramNode(0...26)(
             (21...22)
           )]
        ),
-       PARENTHESIS_RIGHT(25...26)(")"),
+       (25...26),
        nil,
        0,
        "fun"

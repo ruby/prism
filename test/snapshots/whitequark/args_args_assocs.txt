@@ -5,7 +5,7 @@ ProgramNode(0...46)(
        nil,
        nil,
        (0...3),
-       PARENTHESIS_LEFT(3...4)("("),
+       (3...4),
        ArgumentsNode(4...18)(
          [CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 0, "foo"),
           KeywordHashNode(9...18)(
@@ -16,7 +16,7 @@ ProgramNode(0...46)(
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(18...19)(")"),
+       (18...19),
        nil,
        0,
        "fun"
@@ -25,7 +25,7 @@ ProgramNode(0...46)(
        nil,
        nil,
        (21...24),
-       PARENTHESIS_LEFT(24...25)("("),
+       (24...25),
        ArgumentsNode(25...45)(
          [CallNode(25...28)(nil, nil, (25...28), nil, nil, nil, nil, 0, "foo"),
           KeywordHashNode(30...39)(
@@ -50,7 +50,7 @@ ProgramNode(0...46)(
             (41...42)
           )]
        ),
-       PARENTHESIS_RIGHT(45...46)(")"),
+       (45...46),
        nil,
        0,
        "fun"

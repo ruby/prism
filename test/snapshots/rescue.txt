@@ -129,7 +129,7 @@ ProgramNode(0...316)(
                 nil,
                 nil,
                 (170...173),
-                PARENTHESIS_LEFT(173...174)("("),
+                (173...174),
                 ArgumentsNode(174...175)(
                   [CallNode(174...175)(
                      nil,
@@ -143,7 +143,7 @@ ProgramNode(0...316)(
                      "y"
                    )]
                 ),
-                PARENTHESIS_RIGHT(175...176)(")"),
+                (175...176),
                 nil,
                 0,
                 "bar"

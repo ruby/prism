@@ -16,9 +16,9 @@ ProgramNode(0...29)(
        CallNode(9...12)(nil, nil, (9...12), nil, nil, nil, nil, 0, "foo"),
        (12...14),
        (14...17),
-       PARENTHESIS_LEFT(17...18)("("),
+       (17...18),
        nil,
-       PARENTHESIS_RIGHT(18...19)(")"),
+       (18...19),
        nil,
        0,
        "Fun"

@@ -82,11 +82,11 @@ ProgramNode(0...173)(
        ),
        (88...89),
        (89...92),
-       PARENTHESIS_LEFT(92...93)("("),
+       (92...93),
        ArgumentsNode(93...96)(
          [CallNode(93...96)(nil, nil, (93...96), nil, nil, nil, nil, 0, "bar")]
        ),
-       PARENTHESIS_RIGHT(96...97)(")"),
+       (96...97),
        nil,
        0,
        "fun"
@@ -105,7 +105,7 @@ ProgramNode(0...173)(
        ),
        (112...113),
        (113...116),
-       PARENTHESIS_LEFT(116...117)("("),
+       (116...117),
        ArgumentsNode(117...120)(
          [CallNode(117...120)(
             nil,
@@ -119,7 +119,7 @@ ProgramNode(0...173)(
             "bar"
           )]
        ),
-       PARENTHESIS_RIGHT(120...121)(")"),
+       (120...121),
        BlockNode(122...124)([], nil, nil, (122...123), (123...124)),
        0,
        "fun"
@@ -171,7 +171,7 @@ ProgramNode(0...173)(
        ),
        (163...165),
        (172...173),
-       PARENTHESIS_LEFT(168...169)("("),
+       (168...169),
        ArgumentsNode(169...172)(
          [CallNode(169...172)(
             nil,
@@ -185,7 +185,7 @@ ProgramNode(0...173)(
             "bar"
           )]
        ),
-       PARENTHESIS_RIGHT(172...173)(")"),
+       (172...173),
        nil,
        0,
        ")"

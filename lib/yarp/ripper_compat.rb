@@ -84,7 +84,7 @@ module YARP
     end
 
     def visit_call_node(node)
-      if !node.opening && node.arguments.arguments.length == 1
+      if !node.opening_loc && node.arguments.arguments.length == 1
         bounds(node.receiver.location)
         left = visit(node.receiver)
 

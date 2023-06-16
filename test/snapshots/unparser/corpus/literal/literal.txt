@@ -46,7 +46,7 @@ ProgramNode(0...916)(
          nil,
          nil,
          (98...99),
-         PARENTHESIS_LEFT(99...100)("("),
+         (99...100),
          ArgumentsNode(100...128)(
            [InterpolatedStringNode(100...128)(
               (100...110),
@@ -60,7 +60,7 @@ ProgramNode(0...916)(
               (120...128)
             )]
          ),
-         PARENTHESIS_RIGHT(110...111)(")"),
+         (110...111),
          nil,
          0,
          "a"
@@ -79,11 +79,11 @@ ProgramNode(0...916)(
          nil,
          nil,
          (128...129),
-         PARENTHESIS_LEFT(129...130)("("),
+         (129...130),
          ArgumentsNode(130...133)(
            [StringNode(130...133)((130...132), (132...132), (132...133), "")]
          ),
-         PARENTHESIS_RIGHT(133...134)(")"),
+         (133...134),
          nil,
          0,
          "a"

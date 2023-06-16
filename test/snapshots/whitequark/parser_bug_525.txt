@@ -34,9 +34,9 @@ ProgramNode(0...32)(
               nil,
               nil,
               (16...18),
-              PARENTHESIS_LEFT(18...19)("("),
+              (18...19),
               nil,
-              PARENTHESIS_RIGHT(19...20)(")"),
+              (19...20),
               BlockNode(21...27)([], nil, nil, (21...23), (24...27)),
               0,
               "m3"

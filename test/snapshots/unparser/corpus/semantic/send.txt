@@ -6,9 +6,9 @@ ProgramNode(0...44)(
        nil,
        nil,
        (4...7),
-       PARENTHESIS_LEFT(7...8)("("),
+       (7...8),
        ArgumentsNode(8...9)([IntegerNode(8...9)()]),
-       PARENTHESIS_RIGHT(9...10)(")"),
+       (9...10),
        nil,
        0,
        "foo"
@@ -19,7 +19,7 @@ ProgramNode(0...44)(
            CallNode(12...13)(nil, nil, (12...13), nil, nil, nil, nil, 0, "a"),
            (13...14),
            (14...17),
-           PARENTHESIS_LEFT(17...18)("("),
+           (17...18),
            ArgumentsNode(18...19)(
              [CallNode(18...19)(
                 nil,
@@ -33,7 +33,7 @@ ProgramNode(0...44)(
                 "b"
               )]
            ),
-           PARENTHESIS_RIGHT(19...20)(")"),
+           (19...20),
            nil,
            0,
            "==="
@@ -88,7 +88,7 @@ ProgramNode(0...44)(
             ),
             (37...38),
             (38...41),
-            PARENTHESIS_LEFT(41...42)("("),
+            (41...42),
             ArgumentsNode(42...43)(
               [CallNode(42...43)(
                  nil,
@@ -102,7 +102,7 @@ ProgramNode(0...44)(
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(43...44)(")"),
+            (43...44),
             nil,
             0,
             "==="

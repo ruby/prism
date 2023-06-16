@@ -747,9 +747,9 @@ ProgramNode(0...1194)(
             nil,
             nil,
             (697...698),
-            PARENTHESIS_LEFT(698...699)("("),
+            (698...699),
             ArgumentsNode(699...700)([SplatNode(699...700)((699...700), nil)]),
-            PARENTHESIS_RIGHT(700...701)(")"),
+            (700...701),
             nil,
             0,
             "b"
@@ -780,9 +780,9 @@ ProgramNode(0...1194)(
             nil,
             nil,
             (720...721),
-            PARENTHESIS_LEFT(721...722)("("),
+            (721...722),
             ArgumentsNode(722...725)([ForwardingArgumentsNode(722...725)()]),
-            PARENTHESIS_RIGHT(725...726)(")"),
+            (725...726),
             nil,
             0,
             "b"
@@ -813,13 +813,13 @@ ProgramNode(0...1194)(
             nil,
             nil,
             (745...746),
-            PARENTHESIS_LEFT(746...747)("("),
+            (746...747),
             ArgumentsNode(747...756)(
               [IntegerNode(747...748)(),
                IntegerNode(750...751)(),
                ForwardingArgumentsNode(753...756)()]
             ),
-            PARENTHESIS_RIGHT(756...757)(")"),
+            (756...757),
             nil,
             0,
             "b"
@@ -1008,11 +1008,11 @@ ProgramNode(0...1194)(
                     nil,
                     nil,
                     (923...924),
-                    PARENTHESIS_LEFT(924...925)("("),
+                    (924...925),
                     ArgumentsNode(925...928)(
                       [ForwardingArgumentsNode(925...928)()]
                     ),
-                    PARENTHESIS_RIGHT(928...929)(")"),
+                    (928...929),
                     nil,
                     0,
                     "b"

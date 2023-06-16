@@ -58,7 +58,7 @@ ProgramNode(0...131)(
        nil,
        nil,
        (121...122),
-       PARENTHESIS_LEFT(122...123)("("),
+       (122...123),
        ArgumentsNode(123...130)(
          [CallNode(123...130)(
             nil,
@@ -84,7 +84,7 @@ ProgramNode(0...131)(
             "foo"
           )]
        ),
-       PARENTHESIS_RIGHT(130...131)(")"),
+       (130...131),
        nil,
        0,
        "w"

@@ -5,9 +5,9 @@ ProgramNode(0...5)(
        IntegerNode(0...1)(),
        (1...3),
        (0...0),
-       PARENTHESIS_LEFT(3...4)("("),
+       (3...4),
        nil,
-       PARENTHESIS_RIGHT(4...5)(")"),
+       (4...5),
        nil,
        0,
        "call"

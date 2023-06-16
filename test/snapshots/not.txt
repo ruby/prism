@@ -34,9 +34,9 @@ ProgramNode(0...125)(
        ),
        nil,
        (21...24),
-       PARENTHESIS_LEFT(24...25)("("),
+       (24...25),
        nil,
-       PARENTHESIS_RIGHT(36...37)(")"),
+       (36...37),
        nil,
        0,
        "!"

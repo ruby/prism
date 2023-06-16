@@ -18,7 +18,7 @@ ProgramNode(0...41)(
             nil,
             nil,
             (13...16),
-            PARENTHESIS_LEFT(16...17)("("),
+            (16...17),
             ArgumentsNode(17...35)(
               [KeywordHashNode(17...35)(
                  [AssocSplatNode(17...19)(nil, (17...19)),
@@ -29,7 +29,7 @@ ProgramNode(0...41)(
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(35...36)(")"),
+            (35...36),
             nil,
             0,
             "bar"

@@ -247,7 +247,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       Location(),
-      PARENTHESIS_LEFT("("),
+      Location(),
       ArgumentsNode(
         [KeywordHashNode(
            [AssocSplatNode(
@@ -270,7 +270,7 @@ class ErrorsTest < Test::Unit::TestCase
            CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "args")
          )]
       ),
-      PARENTHESIS_RIGHT(")"),
+      Location(),
       nil,
       0,
       "a"
@@ -284,12 +284,12 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       Location(),
-      PARENTHESIS_LEFT("("),
+      Location(),
       ArgumentsNode([
         BlockArgumentNode(expression("block"), Location()),
         expression("foo")
       ]),
-      PARENTHESIS_RIGHT(")"),
+      Location(),
       nil,
       0,
       "a"
@@ -311,7 +311,7 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       nil,
       Location(),
-      PARENTHESIS_LEFT("("),
+      Location(),
       ArgumentsNode(
         [KeywordHashNode(
            [AssocNode(
@@ -325,7 +325,7 @@ class ErrorsTest < Test::Unit::TestCase
            CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "args")
          )]
       ),
-      PARENTHESIS_RIGHT(")"),
+      Location(),
       nil,
       0,
       "a"

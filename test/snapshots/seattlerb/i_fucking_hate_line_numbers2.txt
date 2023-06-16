@@ -9,11 +9,11 @@ ProgramNode(0...48)(
             nil,
             nil,
             (15...16),
-            PARENTHESIS_LEFT(16...17)("("),
+            (16...17),
             ArgumentsNode(17...20)(
               [StringNode(17...20)((17...18), (18...19), (19...20), "a")]
             ),
-            PARENTHESIS_RIGHT(20...21)(")"),
+            (20...21),
             nil,
             0,
             "p"

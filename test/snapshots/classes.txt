@@ -266,9 +266,9 @@ ProgramNode(0...370)(
          ConstantReadNode(362...363)(),
          nil,
          (363...366),
-         BRACKET_LEFT(363...364)("["),
+         (363...364),
          ArgumentsNode(364...365)([IntegerNode(364...365)()]),
-         BRACKET_RIGHT(365...366)("]"),
+         (365...366),
          nil,
          0,
          "[]"

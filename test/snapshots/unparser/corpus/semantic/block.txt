@@ -94,7 +94,7 @@ ProgramNode(0...148)(
        nil,
        nil,
        (82...85),
-       PARENTHESIS_LEFT(85...86)("("),
+       (85...86),
        ArgumentsNode(86...109)(
          [InterpolatedStringNode(86...109)(
             (86...92),
@@ -102,7 +102,7 @@ ProgramNode(0...148)(
             (105...109)
           )]
        ),
-       PARENTHESIS_RIGHT(92...93)(")"),
+       (92...93),
        BlockNode(94...116)(
          [:a],
          BlockParametersNode(97...100)(
@@ -130,7 +130,7 @@ ProgramNode(0...148)(
        nil,
        nil,
        (118...121),
-       PARENTHESIS_LEFT(121...122)("("),
+       (121...122),
        ArgumentsNode(122...141)(
          [InterpolatedStringNode(122...141)(
             (122...128),
@@ -138,7 +138,7 @@ ProgramNode(0...148)(
             (137...141)
           )]
        ),
-       PARENTHESIS_RIGHT(128...129)(")"),
+       (128...129),
        BlockNode(130...148)(
          [],
          nil,

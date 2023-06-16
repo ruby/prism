@@ -71,12 +71,12 @@ ProgramNode(0...233)(
        ),
        nil,
        (76...79),
-       BRACKET_LEFT(76...77)("["),
+       (76...77),
        ArgumentsNode(77...83)(
          [CallNode(77...78)(nil, nil, (77...78), nil, nil, nil, nil, 0, "k"),
           CallNode(82...83)(nil, nil, (82...83), nil, nil, nil, nil, 0, "v")]
        ),
-       BRACKET_RIGHT(78...79)("]"),
+       (78...79),
        nil,
        0,
        "[]="
@@ -191,7 +191,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(150...151)(:a, 0),
          nil,
          (151...154),
-         BRACKET_LEFT(151...152)("["),
+         (151...152),
          ArgumentsNode(152...153)(
            [CallNode(152...153)(
               nil,
@@ -205,7 +205,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(153...154)("]"),
+         (153...154),
          nil,
          0,
          "[]="
@@ -218,7 +218,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(160...161)(:a, 0),
          nil,
          (161...164),
-         BRACKET_LEFT(161...162)("["),
+         (161...162),
          ArgumentsNode(162...163)(
            [CallNode(162...163)(
               nil,
@@ -232,7 +232,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(163...164)("]"),
+         (163...164),
          nil,
          0,
          "[]="
@@ -245,7 +245,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(170...171)(:a, 0),
          nil,
          (171...174),
-         BRACKET_LEFT(171...172)("["),
+         (171...172),
          ArgumentsNode(172...173)(
            [CallNode(172...173)(
               nil,
@@ -259,7 +259,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(173...174)("]"),
+         (173...174),
          nil,
          0,
          "[]="
@@ -272,7 +272,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(181...182)(:a, 0),
          nil,
          (182...185),
-         BRACKET_LEFT(182...183)("["),
+         (182...183),
          ArgumentsNode(183...184)(
            [CallNode(183...184)(
               nil,
@@ -286,7 +286,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(184...185)("]"),
+         (184...185),
          nil,
          0,
          "[]="
@@ -299,7 +299,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(191...192)(:a, 0),
          nil,
          (192...195),
-         BRACKET_LEFT(192...193)("["),
+         (192...193),
          ArgumentsNode(193...194)(
            [CallNode(193...194)(
               nil,
@@ -313,7 +313,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(194...195)("]"),
+         (194...195),
          nil,
          0,
          "[]="
@@ -326,7 +326,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(201...202)(:a, 0),
          nil,
          (202...205),
-         BRACKET_LEFT(202...203)("["),
+         (202...203),
          ArgumentsNode(203...204)(
            [CallNode(203...204)(
               nil,
@@ -340,7 +340,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(204...205)("]"),
+         (204...205),
          nil,
          0,
          "[]="
@@ -353,7 +353,7 @@ ProgramNode(0...233)(
          LocalVariableReadNode(212...213)(:a, 0),
          nil,
          (213...216),
-         BRACKET_LEFT(213...214)("["),
+         (213...214),
          ArgumentsNode(214...215)(
            [CallNode(214...215)(
               nil,
@@ -367,7 +367,7 @@ ProgramNode(0...233)(
               "b"
             )]
          ),
-         BRACKET_RIGHT(215...216)("]"),
+         (215...216),
          nil,
          0,
          "[]="

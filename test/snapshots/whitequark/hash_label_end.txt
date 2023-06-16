@@ -5,7 +5,7 @@ ProgramNode(0...50)(
        nil,
        nil,
        (0...1),
-       PARENTHESIS_LEFT(1...2)("("),
+       (1...2),
        ArgumentsNode(2...11)(
          [IfNode(2...11)(
             nil,
@@ -21,7 +21,7 @@ ProgramNode(0...50)(
             nil
           )]
        ),
-       PARENTHESIS_RIGHT(11...12)(")"),
+       (11...12),
        nil,
        0,
        "f"

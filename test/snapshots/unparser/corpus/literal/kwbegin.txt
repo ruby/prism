@@ -248,9 +248,9 @@ ProgramNode(0...530)(
               nil,
               nil,
               (283...288),
-              PARENTHESIS_LEFT(288...289)("("),
+              (288...289),
               ArgumentsNode(289...298)([ConstantReadNode(289...298)()]),
-              PARENTHESIS_RIGHT(298...299)(")"),
+              (298...299),
               nil,
               0,
               "raise"

@@ -12,7 +12,7 @@ ProgramNode(0...42)(
        ),
        nil,
        (12...24),
-       BRACKET_LEFT(12...13)("["),
+       (12...13),
        ArgumentsNode(13...42)(
          [RangeNode(13...23)(
             CallNode(13...17)(
@@ -47,7 +47,7 @@ ProgramNode(0...42)(
             (41...42)
           )]
        ),
-       BRACKET_RIGHT(23...24)("]"),
+       (23...24),
        nil,
        0,
        "[]="

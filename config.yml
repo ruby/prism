@@ -554,13 +554,13 @@ nodes:
         type: location?
       - name: message_loc
         type: location?
-      - name: opening
-        type: token?
+      - name: opening_loc
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
-      - name: closing
-        type: token?
+      - name: closing_loc
+        type: location?
       - name: block
         type: node?
         kind: BlockNode

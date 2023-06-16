@@ -5,14 +5,14 @@ ProgramNode(0...7)(
        nil,
        nil,
        (0...1),
-       PARENTHESIS_LEFT(1...2)("("),
+       (1...2),
        ArgumentsNode(2...6)(
          [BlockArgumentNode(2...6)(
             CallNode(3...6)(nil, nil, (3...6), nil, nil, nil, nil, 0, "blk"),
             (2...3)
           )]
        ),
-       PARENTHESIS_RIGHT(6...7)(")"),
+       (6...7),
        nil,
        0,
        "x"

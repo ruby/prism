@@ -35,11 +35,11 @@ ProgramNode(0...63)(
           SelfNode(27...31)(),
           nil,
           (31...37),
-          BRACKET_LEFT(31...32)("["),
+          (31...32),
           ArgumentsNode(32...36)(
             [IntegerNode(32...33)(), IntegerNode(35...36)()]
           ),
-          BRACKET_RIGHT(36...37)("]"),
+          (36...37),
           nil,
           0,
           "[]="

@@ -16,9 +16,9 @@ ProgramNode(0...22)(
                  nil,
                  nil,
                  (11...12),
-                 PARENTHESIS_LEFT(12...13)("("),
+                 (12...13),
                  ArgumentsNode(13...14)([IntegerNode(13...14)()]),
-                 PARENTHESIS_RIGHT(14...15)(")"),
+                 (14...15),
                  BlockNode(16...22)([], nil, nil, (16...18), (19...22)),
                  0,
                  "a"

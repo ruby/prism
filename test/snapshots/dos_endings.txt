@@ -46,7 +46,7 @@ ProgramNode(0...108)(
          nil,
          nil,
          (92...95),
-         PARENTHESIS_LEFT(95...96)("("),
+         (95...96),
          ArgumentsNode(96...107)(
            [CallNode(96...107)(
               InterpolatedStringNode(96...128)(
@@ -69,7 +69,7 @@ ProgramNode(0...108)(
               "chop"
             )]
          ),
-         PARENTHESIS_RIGHT(107...108)(")"),
+         (107...108),
          nil,
          0,
          "foo"

@@ -205,14 +205,14 @@ ProgramNode(0...719)(
           LocalVariableReadNode(229...230)(:a, 0),
           nil,
           (230...236),
-          BRACKET_LEFT(230...231)("["),
+          (230...231),
           ArgumentsNode(231...235)(
             [SplatNode(231...235)(
                (231...232),
                LocalVariableReadNode(232...235)(:foo, 0)
              )]
           ),
-          BRACKET_RIGHT(235...236)("]"),
+          (235...236),
           nil,
           0,
           "[]="
@@ -221,9 +221,9 @@ ProgramNode(0...719)(
           LocalVariableReadNode(238...239)(:a, 0),
           nil,
           (239...242),
-          BRACKET_LEFT(239...240)("["),
+          (239...240),
           ArgumentsNode(240...241)([IntegerNode(240...241)()]),
-          BRACKET_RIGHT(241...242)("]"),
+          (241...242),
           nil,
           0,
           "[]="
@@ -242,9 +242,9 @@ ProgramNode(0...719)(
           LocalVariableReadNode(254...255)(:a, 0),
           nil,
           (255...258),
-          BRACKET_LEFT(255...256)("["),
+          (255...256),
           ArgumentsNode(256...257)([IntegerNode(256...257)()]),
-          BRACKET_RIGHT(257...258)("]"),
+          (257...258),
           nil,
           0,
           "[]="
@@ -253,9 +253,9 @@ ProgramNode(0...719)(
           LocalVariableReadNode(260...261)(:a, 0),
           nil,
           (261...264),
-          BRACKET_LEFT(261...262)("["),
+          (261...262),
           ArgumentsNode(262...263)([IntegerNode(262...263)()]),
-          BRACKET_RIGHT(263...264)("]"),
+          (263...264),
           nil,
           0,
           "[]="
@@ -370,9 +370,9 @@ ProgramNode(0...719)(
          nil,
          nil,
          (380...383),
-         PARENTHESIS_LEFT(383...384)("("),
+         (383...384),
          nil,
-         PARENTHESIS_RIGHT(384...385)(")"),
+         (384...385),
          nil,
          0,
          "foo"
@@ -384,9 +384,9 @@ ProgramNode(0...719)(
        LocalVariableReadNode(386...389)(:foo, 0),
        (389...390),
        (390...393),
-       PARENTHESIS_LEFT(393...394)("("),
+       (393...394),
        nil,
-       PARENTHESIS_RIGHT(394...395)(")"),
+       (394...395),
        nil,
        0,
        "[]="
@@ -395,11 +395,11 @@ ProgramNode(0...719)(
        LocalVariableReadNode(396...399)(:foo, 0),
        (399...400),
        (400...403),
-       PARENTHESIS_LEFT(403...404)("("),
+       (403...404),
        ArgumentsNode(404...408)(
          [IntegerNode(404...405)(), IntegerNode(407...408)()]
        ),
-       PARENTHESIS_RIGHT(408...409)(")"),
+       (408...409),
        nil,
        0,
        "[]="
@@ -419,7 +419,7 @@ ProgramNode(0...719)(
        LocalVariableReadNode(422...425)(:foo, 0),
        nil,
        (425...433),
-       BRACKET_LEFT(425...426)("["),
+       (425...426),
        ArgumentsNode(426...441)(
          [SplatNode(426...432)(
             (426...427),
@@ -447,7 +447,7 @@ ProgramNode(0...719)(
             "value"
           )]
        ),
-       BRACKET_RIGHT(432...433)("]"),
+       (432...433),
        nil,
        0,
        "[]="
@@ -456,7 +456,7 @@ ProgramNode(0...719)(
        LocalVariableReadNode(442...445)(:foo, 0),
        nil,
        (445...451),
-       BRACKET_LEFT(445...446)("["),
+       (445...446),
        ArgumentsNode(446...459)(
          [RangeNode(446...450)(
             IntegerNode(446...447)(),
@@ -475,7 +475,7 @@ ProgramNode(0...719)(
             "value"
           )]
        ),
-       BRACKET_RIGHT(450...451)("]"),
+       (450...451),
        nil,
        0,
        "[]="
@@ -484,9 +484,9 @@ ProgramNode(0...719)(
        LocalVariableReadNode(460...463)(:foo, 0),
        nil,
        (463...465),
-       BRACKET_LEFT(463...464)("["),
+       (463...464),
        ArgumentsNode(468...469)([IntegerNode(468...469)()]),
-       BRACKET_RIGHT(464...465)("]"),
+       (464...465),
        nil,
        0,
        "[]="
@@ -495,7 +495,7 @@ ProgramNode(0...719)(
        LocalVariableReadNode(470...473)(:foo, 0),
        nil,
        (473...479),
-       BRACKET_LEFT(473...474)("["),
+       (473...474),
        ArgumentsNode(474...487)(
          [LocalVariableReadNode(474...475)(:a, 0),
           LocalVariableReadNode(477...478)(:b, 0),
@@ -511,7 +511,7 @@ ProgramNode(0...719)(
             "value"
           )]
        ),
-       BRACKET_RIGHT(478...479)("]"),
+       (478...479),
        nil,
        0,
        "[]="
@@ -520,7 +520,7 @@ ProgramNode(0...719)(
        LocalVariableReadNode(488...491)(:foo, 0),
        nil,
        (491...498),
-       BRACKET_LEFT(491...492)("["),
+       (491...492),
        ArgumentsNode(492...506)(
          [CallNode(492...497)(
             nil,
@@ -545,7 +545,7 @@ ProgramNode(0...719)(
             "value"
           )]
        ),
-       BRACKET_RIGHT(497...498)("]"),
+       (497...498),
        nil,
        0,
        "[]="
@@ -574,7 +574,7 @@ ProgramNode(0...719)(
        LocalVariableReadNode(523...524)(:x, 0),
        nil,
        (524...529),
-       BRACKET_LEFT(524...525)("["),
+       (524...525),
        ArgumentsNode(525...535)(
          [StringNode(525...528)((525...527), (527...527), (527...528), ""),
           CallNode(532...535)(
@@ -589,7 +589,7 @@ ProgramNode(0...719)(
             "bar"
           )]
        ),
-       BRACKET_RIGHT(528...529)("]"),
+       (528...529),
        nil,
        0,
        "[]="
@@ -599,11 +599,11 @@ ProgramNode(0...719)(
          LocalVariableReadNode(536...537)(:a, 0),
          nil,
          (537...542),
-         BRACKET_LEFT(537...538)("["),
+         (537...538),
          ArgumentsNode(538...541)(
            [StringNode(538...541)((538...540), (540...540), (540...541), "")]
          ),
-         BRACKET_RIGHT(541...542)("]"),
+         (541...542),
          nil,
          0,
          "[]="
@@ -662,7 +662,7 @@ ProgramNode(0...719)(
        LocalVariableReadNode(620...621)(:x, 0),
        nil,
        (621...623),
-       BRACKET_LEFT(621...622)("["),
+       (621...622),
        ArgumentsNode(626...651)(
          [InterpolatedStringNode(626...651)(
             (626...636),
@@ -672,7 +672,7 @@ ProgramNode(0...719)(
             (643...651)
           )]
        ),
-       BRACKET_RIGHT(622...623)("]"),
+       (622...623),
        nil,
        0,
        "[]="
@@ -682,7 +682,7 @@ ProgramNode(0...719)(
          LocalVariableReadNode(651...652)(:a, 0),
          nil,
          (652...664),
-         BRACKET_LEFT(652...653)("["),
+         (652...653),
          ArgumentsNode(653...687)(
            [InterpolatedStringNode(653...687)(
               (653...663),
@@ -696,7 +696,7 @@ ProgramNode(0...719)(
               (679...687)
             )]
          ),
-         BRACKET_RIGHT(663...664)("]"),
+         (663...664),
          nil,
          0,
          "[]="

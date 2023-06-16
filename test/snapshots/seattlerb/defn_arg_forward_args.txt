@@ -18,12 +18,12 @@ ProgramNode(0...29)(
             nil,
             nil,
             (15...16),
-            PARENTHESIS_LEFT(16...17)("("),
+            (16...17),
             ArgumentsNode(17...23)(
               [LocalVariableReadNode(17...18)(:x, 0),
                ForwardingArgumentsNode(20...23)()]
             ),
-            PARENTHESIS_RIGHT(23...24)(")"),
+            (23...24),
             nil,
             0,
             "b"

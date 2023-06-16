@@ -18,9 +18,9 @@ ProgramNode(0...23)(
             nil,
             nil,
             (12...13),
-            PARENTHESIS_LEFT(13...14)("("),
+            (13...14),
             ArgumentsNode(14...17)([ForwardingArgumentsNode(14...17)()]),
-            PARENTHESIS_RIGHT(17...18)(")"),
+            (17...18),
             nil,
             0,
             "b"

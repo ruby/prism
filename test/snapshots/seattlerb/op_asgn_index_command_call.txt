@@ -6,9 +6,9 @@ ProgramNode(0...16)(
          CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
          nil,
          (1...5),
-         BRACKET_LEFT(1...2)("["),
+         (1...2),
          ArgumentsNode(2...4)([SymbolNode(2...4)((2...3), (3...4), nil, "b")]),
-         BRACKET_RIGHT(4...5)("]"),
+         (4...5),
          nil,
          0,
          "[]="

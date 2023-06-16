@@ -633,9 +633,9 @@ ProgramNode(0...913)(
               nil,
               nil,
               (508...511),
-              PARENTHESIS_LEFT(511...512)("("),
+              (511...512),
               nil,
-              PARENTHESIS_RIGHT(512...513)(")"),
+              (512...513),
               nil,
               0,
               "bar"

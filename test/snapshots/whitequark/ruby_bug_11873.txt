@@ -11,7 +11,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             (2...3),
-            PARENTHESIS_LEFT(3...4)("("),
+            (3...4),
             ArgumentsNode(4...7)(
               [CallNode(4...7)(
                  nil,
@@ -37,7 +37,7 @@ ProgramNode(0...272)(
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(7...8)(")"),
+            (7...8),
             nil,
             0,
             "b"
@@ -59,7 +59,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             (24...25),
-            PARENTHESIS_LEFT(25...26)("("),
+            (25...26),
             ArgumentsNode(26...29)(
               [CallNode(26...29)(
                  nil,
@@ -85,7 +85,7 @@ ProgramNode(0...272)(
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(29...30)(")"),
+            (29...30),
             nil,
             0,
             "b"
@@ -113,7 +113,7 @@ ProgramNode(0...272)(
             nil,
             nil,
             (46...47),
-            PARENTHESIS_LEFT(47...48)("("),
+            (47...48),
             ArgumentsNode(48...51)(
               [CallNode(48...51)(
                  nil,
@@ -139,7 +139,7 @@ ProgramNode(0...272)(
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(51...52)(")"),
+            (51...52),
             nil,
             0,
             "b"
@@ -167,13 +167,13 @@ ProgramNode(0...272)(
             nil,
             nil,
             (69...70),
-            PARENTHESIS_LEFT(70...71)("("),
+            (70...71),
             ArgumentsNode(71...75)(
               [CallNode(71...75)(
                  nil,
                  nil,
                  (71...72),
-                 PARENTHESIS_LEFT(72...73)("("),
+                 (72...73),
                  ArgumentsNode(73...74)(
                    [CallNode(73...74)(
                       nil,
@@ -187,13 +187,13 @@ ProgramNode(0...272)(
                       "d"
                     )]
                  ),
-                 PARENTHESIS_RIGHT(74...75)(")"),
+                 (74...75),
                  nil,
                  0,
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(75...76)(")"),
+            (75...76),
             nil,
             0,
             "b"
@@ -215,13 +215,13 @@ ProgramNode(0...272)(
             nil,
             nil,
             (92...93),
-            PARENTHESIS_LEFT(93...94)("("),
+            (93...94),
             ArgumentsNode(94...98)(
               [CallNode(94...98)(
                  nil,
                  nil,
                  (94...95),
-                 PARENTHESIS_LEFT(95...96)("("),
+                 (95...96),
                  ArgumentsNode(96...97)(
                    [CallNode(96...97)(
                       nil,
@@ -235,13 +235,13 @@ ProgramNode(0...272)(
                       "d"
                     )]
                  ),
-                 PARENTHESIS_RIGHT(97...98)(")"),
+                 (97...98),
                  nil,
                  0,
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(98...99)(")"),
+            (98...99),
             nil,
             0,
             "b"
@@ -269,13 +269,13 @@ ProgramNode(0...272)(
             nil,
             nil,
             (115...116),
-            PARENTHESIS_LEFT(116...117)("("),
+            (116...117),
             ArgumentsNode(117...121)(
               [CallNode(117...121)(
                  nil,
                  nil,
                  (117...118),
-                 PARENTHESIS_LEFT(118...119)("("),
+                 (118...119),
                  ArgumentsNode(119...120)(
                    [CallNode(119...120)(
                       nil,
@@ -289,13 +289,13 @@ ProgramNode(0...272)(
                       "d"
                     )]
                  ),
-                 PARENTHESIS_RIGHT(120...121)(")"),
+                 (120...121),
                  nil,
                  0,
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(121...122)(")"),
+            (121...122),
             nil,
             0,
             "b"
@@ -508,7 +508,7 @@ ProgramNode(0...272)(
                    nil,
                    nil,
                    (208...209),
-                   PARENTHESIS_LEFT(209...210)("("),
+                   (209...210),
                    ArgumentsNode(210...211)(
                      [CallNode(210...211)(
                         nil,
@@ -522,7 +522,7 @@ ProgramNode(0...272)(
                         "d"
                       )]
                    ),
-                   PARENTHESIS_RIGHT(211...212)(")"),
+                   (211...212),
                    nil,
                    0,
                    "c"
@@ -562,7 +562,7 @@ ProgramNode(0...272)(
                    nil,
                    nil,
                    (231...232),
-                   PARENTHESIS_LEFT(232...233)("("),
+                   (232...233),
                    ArgumentsNode(233...234)(
                      [CallNode(233...234)(
                         nil,
@@ -576,7 +576,7 @@ ProgramNode(0...272)(
                         "d"
                       )]
                    ),
-                   PARENTHESIS_RIGHT(234...235)(")"),
+                   (234...235),
                    nil,
                    0,
                    "c"
@@ -622,7 +622,7 @@ ProgramNode(0...272)(
                    nil,
                    nil,
                    (254...255),
-                   PARENTHESIS_LEFT(255...256)("("),
+                   (255...256),
                    ArgumentsNode(256...257)(
                      [CallNode(256...257)(
                         nil,
@@ -636,7 +636,7 @@ ProgramNode(0...272)(
                         "d"
                       )]
                    ),
-                   PARENTHESIS_RIGHT(257...258)(")"),
+                   (257...258),
                    nil,
                    0,
                    "c"

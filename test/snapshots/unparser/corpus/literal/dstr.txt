@@ -104,7 +104,7 @@ ProgramNode(0...299)(
        nil,
        nil,
        (226...229),
-       PARENTHESIS_LEFT(229...230)("("),
+       (229...230),
        ArgumentsNode(230...259)(
          [InterpolatedStringNode(230...259)(
             (230...240),
@@ -130,7 +130,7 @@ ProgramNode(0...299)(
             (251...259)
           )]
        ),
-       PARENTHESIS_RIGHT(240...241)(")"),
+       (240...241),
        nil,
        0,
        "foo"
@@ -139,7 +139,7 @@ ProgramNode(0...299)(
        nil,
        nil,
        (259...262),
-       PARENTHESIS_LEFT(262...263)("("),
+       (262...263),
        ArgumentsNode(263...298)(
          [InterpolatedStringNode(263...298)(
             (263...273),
@@ -165,7 +165,7 @@ ProgramNode(0...299)(
             (290...298)
           )]
        ),
-       PARENTHESIS_RIGHT(273...274)(")"),
+       (273...274),
        BlockNode(275...299)(
          [:x],
          BlockParametersNode(277...280)(

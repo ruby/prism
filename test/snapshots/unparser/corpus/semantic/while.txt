@@ -96,11 +96,11 @@ ProgramNode(0...188)(
          nil,
          nil,
          (106...107),
-         PARENTHESIS_LEFT(107...108)("("),
+         (107...108),
          ArgumentsNode(108...123)(
            [InterpolatedStringNode(108...123)((108...114), [], (119...123))]
          ),
-         PARENTHESIS_RIGHT(114...115)(")"),
+         (114...115),
          BlockNode(116...130)(
            [],
            nil,

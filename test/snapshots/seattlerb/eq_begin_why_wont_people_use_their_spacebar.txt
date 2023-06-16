@@ -5,7 +5,7 @@ ProgramNode(0...29)(
        CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "h"),
        nil,
        (1...4),
-       BRACKET_LEFT(1...2)("["),
+       (1...2),
        ArgumentsNode(2...29)(
          [CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 0, "k"),
           BeginNode(5...29)(
@@ -17,7 +17,7 @@ ProgramNode(0...29)(
             (26...29)
           )]
        ),
-       BRACKET_RIGHT(3...4)("]"),
+       (3...4),
        nil,
        0,
        "[]="

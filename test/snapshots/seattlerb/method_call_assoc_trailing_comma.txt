@@ -5,7 +5,7 @@ ProgramNode(0...10)(
        CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
        (1...2),
        (2...3),
-       PARENTHESIS_LEFT(3...4)("("),
+       (3...4),
        ArgumentsNode(4...8)(
          [KeywordHashNode(4...8)(
             [AssocNode(4...8)(
@@ -15,7 +15,7 @@ ProgramNode(0...10)(
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(9...10)(")"),
+       (9...10),
        nil,
        0,
        "f"

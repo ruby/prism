@@ -15,9 +15,9 @@ ProgramNode(0...10)(
        ),
        (4...6),
        (6...7),
-       PARENTHESIS_LEFT(7...8)("("),
+       (7...8),
        ArgumentsNode(8...9)([IntegerNode(8...9)()]),
-       PARENTHESIS_RIGHT(9...10)(")"),
+       (9...10),
        nil,
        1,
        "c"

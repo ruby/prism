@@ -15,9 +15,9 @@ ProgramNode(0...37)(
             ),
             (10...11),
             (11...19),
-            PARENTHESIS_LEFT(19...20)("("),
+            (19...20),
             nil,
-            PARENTHESIS_RIGHT(20...21)(")"),
+            (20...21),
             nil,
             0,
             "toString"

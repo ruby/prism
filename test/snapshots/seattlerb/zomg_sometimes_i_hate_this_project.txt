@@ -34,9 +34,9 @@ ProgramNode(6...66)(
                         nil,
                         nil,
                         (32...33),
-                        PARENTHESIS_LEFT(33...34)("("),
+                        (33...34),
                         nil,
-                        PARENTHESIS_RIGHT(34...35)(")"),
+                        (34...35),
                         nil,
                         0,
                         "c"

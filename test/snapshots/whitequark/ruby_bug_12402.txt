@@ -40,7 +40,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (36...41),
-           PARENTHESIS_LEFT(41...42)("("),
+           (41...42),
            ArgumentsNode(42...45)(
              [CallNode(42...45)(
                 nil,
@@ -54,7 +54,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(45...46)(")"),
+           (45...46),
            nil,
            0,
            "raise"
@@ -104,7 +104,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (93...98),
-           PARENTHESIS_LEFT(98...99)("("),
+           (98...99),
            ArgumentsNode(99...102)(
              [CallNode(99...102)(
                 nil,
@@ -118,7 +118,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(102...103)(")"),
+           (102...103),
            nil,
            0,
            "raise"
@@ -188,7 +188,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (156...161),
-           PARENTHESIS_LEFT(161...162)("("),
+           (161...162),
            ArgumentsNode(162...165)(
              [CallNode(162...165)(
                 nil,
@@ -202,7 +202,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(165...166)(")"),
+           (165...166),
            nil,
            0,
            "raise"
@@ -270,7 +270,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (219...224),
-           PARENTHESIS_LEFT(224...225)("("),
+           (224...225),
            ArgumentsNode(225...228)(
              [CallNode(225...228)(
                 nil,
@@ -284,7 +284,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(228...229)(")"),
+           (228...229),
            nil,
            0,
            "raise"
@@ -347,7 +347,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (286...291),
-           PARENTHESIS_LEFT(291...292)("("),
+           (291...292),
            ArgumentsNode(292...295)(
              [CallNode(292...295)(
                 nil,
@@ -361,7 +361,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(295...296)(")"),
+           (295...296),
            nil,
            0,
            "raise"
@@ -430,7 +430,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (351...356),
-           PARENTHESIS_LEFT(356...357)("("),
+           (356...357),
            ArgumentsNode(357...360)(
              [CallNode(357...360)(
                 nil,
@@ -444,7 +444,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(360...361)(")"),
+           (360...361),
            nil,
            0,
            "raise"
@@ -458,9 +458,9 @@ ProgramNode(0...437)(
          LocalVariableReadNode(374...377)(:foo, 0),
          nil,
          (377...380),
-         BRACKET_LEFT(377...378)("["),
+         (377...378),
          ArgumentsNode(378...379)([IntegerNode(378...379)()]),
-         BRACKET_RIGHT(379...380)("]"),
+         (379...380),
          nil,
          0,
          "[]="
@@ -499,9 +499,9 @@ ProgramNode(0...437)(
          LocalVariableReadNode(406...409)(:foo, 0),
          nil,
          (409...412),
-         BRACKET_LEFT(409...410)("["),
+         (409...410),
          ArgumentsNode(410...411)([IntegerNode(410...411)()]),
-         BRACKET_RIGHT(411...412)("]"),
+         (411...412),
          nil,
          0,
          "[]="
@@ -512,7 +512,7 @@ ProgramNode(0...437)(
            nil,
            nil,
            (416...421),
-           PARENTHESIS_LEFT(421...422)("("),
+           (421...422),
            ArgumentsNode(422...425)(
              [CallNode(422...425)(
                 nil,
@@ -526,7 +526,7 @@ ProgramNode(0...437)(
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(425...426)(")"),
+           (425...426),
            nil,
            0,
            "raise"

@@ -5,7 +5,7 @@ ProgramNode(0...16)(
        nil,
        nil,
        (0...1),
-       PARENTHESIS_LEFT(1...2)("("),
+       (1...2),
        ArgumentsNode(2...15)(
          [IntegerNode(2...3)(),
           KeywordHashNode(5...15)(
@@ -17,7 +17,7 @@ ProgramNode(0...16)(
              AssocSplatNode(12...15)(IntegerNode(14...15)(), (12...14))]
           )]
        ),
-       PARENTHESIS_RIGHT(15...16)(")"),
+       (15...16),
        nil,
        0,
        "f"

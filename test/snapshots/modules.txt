@@ -87,9 +87,9 @@ ProgramNode(0...140)(
            ConstantReadNode(110...111)(),
            nil,
            (111...113),
-           BRACKET_LEFT(111...112)("["),
+           (111...112),
            nil,
-           BRACKET_RIGHT(112...113)("]"),
+           (112...113),
            nil,
            0,
            "[]"
@@ -108,9 +108,9 @@ ProgramNode(0...140)(
            ConstantReadNode(129...130)(),
            nil,
            (130...133),
-           BRACKET_LEFT(130...131)("["),
+           (130...131),
            ArgumentsNode(131...132)([IntegerNode(131...132)()]),
-           BRACKET_RIGHT(132...133)("]"),
+           (132...133),
            nil,
            0,
            "[]"

@@ -18,7 +18,7 @@ ProgramNode(0...45)(
             nil,
             nil,
             (20...30),
-            PARENTHESIS_LEFT(30...31)("("),
+            (30...31),
             ArgumentsNode(31...40)(
               [KeywordHashNode(31...40)(
                  [AssocSplatNode(31...40)(
@@ -27,7 +27,7 @@ ProgramNode(0...45)(
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(40...41)(")"),
+            (40...41),
             nil,
             0,
             "test_splat"

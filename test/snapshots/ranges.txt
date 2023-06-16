@@ -24,11 +24,11 @@ ProgramNode(0...85)(
        CallNode(22...25)(nil, nil, (22...25), nil, nil, nil, nil, 0, "foo"),
        nil,
        (25...31),
-       BRACKET_LEFT(25...26)("["),
+       (25...26),
        ArgumentsNode(26...30)(
          [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29))]
        ),
-       BRACKET_RIGHT(30...31)("]"),
+       (30...31),
        nil,
        0,
        "[]"

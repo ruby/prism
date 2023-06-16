@@ -18,14 +18,14 @@ ProgramNode(0...45)(
             nil,
             nil,
             (23...26),
-            PARENTHESIS_LEFT(26...27)("("),
+            (26...27),
             ArgumentsNode(27...39)(
               [LocalVariableReadNode(27...35)(:argument, 0),
                KeywordHashNode(37...39)(
                  [AssocSplatNode(37...39)(nil, (37...39))]
                )]
             ),
-            PARENTHESIS_RIGHT(39...40)(")"),
+            (39...40),
             nil,
             0,
             "bar"

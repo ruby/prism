@@ -108,7 +108,7 @@ ProgramNode(0...213)(
             nil,
             nil,
             (154...161),
-            PARENTHESIS_LEFT(161...162)("("),
+            (161...162),
             ArgumentsNode(162...167)(
               [CallNode(162...167)(
                  ConstantReadNode(162...163)(),
@@ -122,7 +122,7 @@ ProgramNode(0...213)(
                  "new"
                )]
             ),
-            PARENTHESIS_RIGHT(167...168)(")"),
+            (167...168),
             nil,
             0,
             "include"

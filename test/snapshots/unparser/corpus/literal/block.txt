@@ -137,9 +137,9 @@ ProgramNode(0...737)(
        nil,
        nil,
        (64...67),
-       PARENTHESIS_LEFT(67...68)("("),
+       (67...68),
        ArgumentsNode(68...69)([IntegerNode(68...69)()]),
-       PARENTHESIS_RIGHT(69...70)(")"),
+       (69...70),
        BlockNode(71...80)(
          [],
          nil,

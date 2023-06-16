@@ -16,7 +16,7 @@ ProgramNode(0...23)(
               nil,
               nil,
               (9...10),
-              PARENTHESIS_LEFT(10...11)("("),
+              (10...11),
               ArgumentsNode(11...12)(
                 [CallNode(11...12)(
                    nil,
@@ -30,7 +30,7 @@ ProgramNode(0...23)(
                    "a"
                  )]
               ),
-              PARENTHESIS_RIGHT(12...13)(")"),
+              (12...13),
               BlockNode(14...21)([], nil, nil, (14...16), (18...21)),
               0,
               "m"
