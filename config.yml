@@ -230,8 +230,8 @@ tokens:
     comment: "->"
   - name: NEWLINE
     comment: "a newline character outside of other tokens"
-  - name: NTH_REFERENCE
-    comment: "an nth global variable reference"
+  - name: NUMBERED_REFERENCE
+    comment: "a numbered reference to a capture group in the previous regular expression match"
   - name: PARENTHESIS_LEFT
     comment: "("
   - name: PARENTHESIS_LEFT_PARENTHESES
@@ -448,6 +448,12 @@ nodes:
 
           { **foo }
             ^^^^^
+  - name: BackReferenceReadNode
+    comment: |
+      Represents reading a reference to a field in the previous match.
+
+          $'
+          ^^
   - name: BeginNode
     child_nodes:
       - name: begin_keyword_loc
@@ -859,9 +865,6 @@ nodes:
           super
           ^^^^^
   - name: GlobalVariableReadNode
-    child_nodes:
-      - name: name
-        type: token
     comment: |
       Represents referencing a global variable.
 
@@ -869,8 +872,8 @@ nodes:
           ^^^^
   - name: GlobalVariableWriteNode
     child_nodes:
-      - name: name
-        type: token
+      - name: name_loc
+        type: location
       - name: operator_loc
         type: location?
       - name: value
@@ -1215,6 +1218,12 @@ nodes:
           def a(**nil)
                 ^^^^^
           end
+  - name: NumberedReferenceReadNode
+    comment: |
+      Represents reading a numbered reference to a capture in the previous match.
+
+          $1
+          ^^
   - name: OperatorAndAssignmentNode
     child_nodes:
       - name: target

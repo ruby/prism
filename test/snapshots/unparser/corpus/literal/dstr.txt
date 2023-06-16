@@ -55,13 +55,13 @@ ProgramNode(0...299)(
      InterpolatedStringNode(145...151)(
        (145...146),
        [StringNode(146...147)(nil, (146...147), nil, "a"),
-        GlobalVariableReadNode(148...150)(NTH_REFERENCE(148...150)("$1"))],
+        NumberedReferenceReadNode(148...150)()],
        (150...151)
      ),
      InterpolatedStringNode(152...158)(
        (152...153),
        [StringNode(153...154)(nil, (153...154), nil, "a"),
-        GlobalVariableReadNode(155...157)(GLOBAL_VARIABLE(155...157)("$a"))],
+        GlobalVariableReadNode(155...157)()],
        (157...158)
      ),
      InterpolatedStringNode(159...165)(

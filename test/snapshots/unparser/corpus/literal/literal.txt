@@ -155,7 +155,7 @@ ProgramNode(0...916)(
         StringNode(210...211)(nil, (210...211), nil, " "),
         ClassVariableReadNode(212...215)(),
         StringNode(215...216)(nil, (215...216), nil, " "),
-        GlobalVariableReadNode(217...219)(GLOBAL_VARIABLE(217...219)("$a"))],
+        GlobalVariableReadNode(217...219)()],
        (219...220)
      ),
      IntegerNode(221...222)(),

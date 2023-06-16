@@ -133,11 +133,6 @@ parse_location_symbol(yp_location_t *location) {
 }
 
 static inline ID
-parse_token_symbol(yp_token_t *token) {
-    return parse_symbol(token->start, token->end);
-}
-
-static inline ID
 parse_node_symbol(yp_node_t *node) {
     return parse_symbol(node->location.start, node->location.end);
 }
@@ -588,11 +583,9 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         case YP_NODE_FALSE_NODE:
             push_putobject(compiler, Qfalse);
             return;
-        case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
-            yp_global_variable_read_node_t *node = (yp_global_variable_read_node_t *) base_node;
-            push_getglobal(compiler, ID2SYM(parse_token_symbol(&node->name)));
+        case YP_NODE_GLOBAL_VARIABLE_READ_NODE:
+            push_getglobal(compiler, ID2SYM(parse_location_symbol(&base_node->location)));
             return;
-        }
         case YP_NODE_GLOBAL_VARIABLE_WRITE_NODE: {
             yp_global_variable_write_node_t *node = (yp_global_variable_write_node_t *) base_node;
 
@@ -602,7 +595,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
 
             yp_compile_node(compiler, node->value);
             push_dup(compiler);
-            push_setglobal(compiler, ID2SYM(parse_token_symbol(&node->name)));
+            push_setglobal(compiler, ID2SYM(parse_location_symbol(&node->name_loc)));
             return;
         }
         case YP_NODE_HASH_NODE: {

@@ -881,8 +881,8 @@ class ErrorsTest < Test::Unit::TestCase
     expected = BeginNode(
       Location(),
       StatementsNode([
-        GlobalVariableWriteNode(BACK_REFERENCE("$+"), Location(), NilNode()),
-        GlobalVariableWriteNode(NTH_REFERENCE("$1466"), Location(), NilNode())
+        GlobalVariableWriteNode(Location(), Location(), NilNode()),
+        GlobalVariableWriteNode(Location(), Location(), NilNode())
       ]),
       nil,
       nil,

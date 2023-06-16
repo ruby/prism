@@ -127,7 +127,7 @@ module YARP
       MINUS_EQUAL: :on_op,
       MINUS_GREATER: :on_tlambda,
       NEWLINE: :on_nl,
-      NTH_REFERENCE: :on_backref,
+      NUMBERED_REFERENCE: :on_backref,
       PARENTHESIS_LEFT: :on_lparen,
       PARENTHESIS_LEFT_PARENTHESES: :on_lparen,
       PARENTHESIS_RIGHT: :on_rparen,
