@@ -16,12 +16,7 @@ ProgramNode(18...90)(
               [LocalVariableWriteNode(67...81)(
                  :così,
                  0,
-                 SymbolNode(75...81)(
-                   SYMBOL_BEGIN(75...76)(":"),
-                   IDENTIFIER(76...81)("però"),
-                   nil,
-                   "però"
-                 ),
+                 SymbolNode(75...81)((75...76), (76...81), nil, "però"),
                  (67...72),
                  (73...74)
                )]

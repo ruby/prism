@@ -5,11 +5,12 @@ ProgramNode(0...131)(
      CallNode(5...8)(
        RationalNode(6...8)(IntegerNode(6...7)()),
        nil,
-       UMINUS_NUM(5...6)("-"),
+       (5...6),
        nil,
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      IntegerNode(9...12)(),
@@ -19,11 +20,12 @@ ProgramNode(0...131)(
      CallNode(39...54)(
        FloatNode(40...54)(),
        nil,
-       UMINUS_NUM(39...40)("-"),
+       (39...40),
        nil,
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      StringNode(55...57)((55...56), (56...57), nil, "c"),
@@ -44,43 +46,47 @@ ProgramNode(0...131)(
      CallNode(103...120)(
        FloatNode(104...120)(),
        nil,
-       UMINUS_NUM(103...104)("-"),
+       (103...104),
        nil,
        nil,
        nil,
        nil,
+       0,
        "-@"
      ),
      CallNode(121...131)(
        nil,
        nil,
-       IDENTIFIER(121...122)("w"),
-       PARENTHESIS_LEFT(122...123)("("),
+       (121...122),
+       (122...123),
        ArgumentsNode(123...130)(
          [CallNode(123...130)(
             nil,
             nil,
-            IDENTIFIER(123...126)("foo"),
+            (123...126),
             nil,
             ArgumentsNode(127...130)(
               [CallNode(127...130)(
                  nil,
                  nil,
-                 IDENTIFIER(127...130)("bar"),
+                 (127...130),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "bar"
                )]
             ),
             nil,
             nil,
+            0,
             "foo"
           )]
        ),
-       PARENTHESIS_RIGHT(130...131)(")"),
+       (130...131),
        nil,
+       0,
        "w"
      )]
   )

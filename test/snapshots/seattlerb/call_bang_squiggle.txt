@@ -4,11 +4,12 @@ ProgramNode(0...6)(
     [CallNode(0...6)(
        IntegerNode(0...1)(),
        nil,
-       BANG_TILDE(2...4)("!~"),
+       (2...4),
        nil,
        ArgumentsNode(5...6)([IntegerNode(5...6)()]),
        nil,
        nil,
+       0,
        "!~"
      )]
   )

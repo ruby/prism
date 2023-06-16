@@ -12,19 +12,21 @@ ProgramNode(0...23)(
                  CallNode(3...4)(
                    nil,
                    nil,
-                   IDENTIFIER(3...4)("a"),
+                   (3...4),
                    nil,
                    nil,
                    nil,
                    nil,
+                   0,
                    "a"
                  ),
-                 DOT(4...5)("."),
-                 IDENTIFIER(5...7)("b?"),
+                 (4...5),
+                 (5...7),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "b?"
                ),
                StatementsNode(10...17)(
@@ -32,26 +34,28 @@ ProgramNode(0...23)(
                     CallNode(10...14)(
                       StringNode(10...12)((10...11), (11...11), (11...12), ""),
                       nil,
-                      PLUS(12...13)("+"),
+                      (12...13),
                       nil,
                       ArgumentsNode(13...14)(
                         [CallNode(13...14)(
                            nil,
                            nil,
-                           IDENTIFIER(13...14)("a"),
+                           (13...14),
                            nil,
                            nil,
                            nil,
                            nil,
+                           0,
                            "a"
                          )]
                       ),
                       nil,
                       nil,
+                      0,
                       "+"
                     ),
                     nil,
-                    PLUS(14...15)("+"),
+                    (14...15),
                     nil,
                     ArgumentsNode(15...17)(
                       [StringNode(15...17)(
@@ -63,6 +67,7 @@ ProgramNode(0...23)(
                     ),
                     nil,
                     nil,
+                    0,
                     "+"
                   )]
                ),

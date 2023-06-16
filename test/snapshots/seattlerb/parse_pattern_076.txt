@@ -5,12 +5,7 @@ ProgramNode(0...39)(
        HashNode(5...11)(
          (5...6),
          [AssocNode(6...10)(
-            SymbolNode(6...8)(
-              nil,
-              LABEL(6...7)("a"),
-              LABEL_END(7...8)(":"),
-              "a"
-            ),
+            SymbolNode(6...8)(nil, (6...7), (7...8), "a"),
             IntegerNode(9...10)(),
             nil
           )],
@@ -20,12 +15,7 @@ ProgramNode(0...39)(
           HashPatternNode(15...28)(
             nil,
             [AssocNode(16...20)(
-               SymbolNode(16...18)(
-                 nil,
-                 LABEL(16...17)("a"),
-                 LABEL_END(17...18)(":"),
-                 "a"
-               ),
+               SymbolNode(16...18)(nil, (16...17), (17...18), "a"),
                IntegerNode(19...20)(),
                nil
              ),

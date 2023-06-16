@@ -14,7 +14,7 @@ ProgramNode(0...15)(
            nil,
            nil
          ),
-         [IDENTIFIER(6...9)("foo"), IDENTIFIER(11...14)("bar")],
+         [(6...9), (11...14)],
          (2...3),
          (14...15)
        ),

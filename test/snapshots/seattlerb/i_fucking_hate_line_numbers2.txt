@@ -8,13 +8,14 @@ ProgramNode(0...48)(
          [CallNode(15...21)(
             nil,
             nil,
-            IDENTIFIER(15...16)("p"),
-            PARENTHESIS_LEFT(16...17)("("),
+            (15...16),
+            (16...17),
             ArgumentsNode(17...20)(
               [StringNode(17...20)((17...18), (18...19), (19...20), "a")]
             ),
-            PARENTHESIS_RIGHT(20...21)(")"),
+            (20...21),
             nil,
+            0,
             "p"
           ),
           LocalVariableWriteNode(24...29)(
@@ -27,11 +28,12 @@ ProgramNode(0...48)(
           CallNode(32...35)(
             nil,
             nil,
-            IDENTIFIER(32...33)("p"),
+            (32...33),
             nil,
             ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:b, 0)]),
             nil,
             nil,
+            0,
             "p"
           ),
           LocalVariableWriteNode(38...42)(
@@ -45,15 +47,6 @@ ProgramNode(0...48)(
        nil,
        (43...46)
      ),
-     CallNode(47...48)(
-       nil,
-       nil,
-       IDENTIFIER(47...48)("a"),
-       nil,
-       nil,
-       nil,
-       nil,
-       "a"
-     )]
+     CallNode(47...48)(nil, nil, (47...48), nil, nil, nil, nil, 0, "a")]
   )
 )

@@ -8,11 +8,12 @@ ProgramNode(0...26)(
             CallNode(10...12)(
               IntegerNode(11...12)(),
               nil,
-              UMINUS_NUM(10...11)("-"),
+              (10...11),
               nil,
               nil,
               nil,
               nil,
+              0,
               "-@"
             ),
             IntegerNode(14...15)(),

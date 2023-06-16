@@ -5,16 +5,7 @@ ProgramNode(0...246)(
        (0...2),
        RegularExpressionNode(3...8)((3...4), (4...7), (7...8), "foo", 0),
        StatementsNode(11...14)(
-         [CallNode(11...14)(
-            nil,
-            nil,
-            IDENTIFIER(11...14)("bar"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "bar"
-          )]
+         [CallNode(11...14)(nil, nil, (11...14), nil, nil, nil, nil, 0, "bar")]
        ),
        nil,
        (15...18)
@@ -53,16 +44,7 @@ ProgramNode(0...246)(
      ),
      IfNode(90...100)(
        (90...92),
-       CallNode(93...96)(
-         nil,
-         nil,
-         IDENTIFIER(93...96)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
+       CallNode(93...96)(nil, nil, (93...96), nil, nil, nil, nil, 0, "foo"),
        nil,
        nil,
        (97...100)
@@ -82,11 +64,12 @@ ProgramNode(0...246)(
                  CallNode(119...122)(
                    nil,
                    nil,
-                   IDENTIFIER(119...122)("bar"),
+                   (119...122),
                    nil,
                    nil,
                    nil,
                    nil,
+                   0,
                    "bar"
                  ),
                  (113...116),
@@ -114,11 +97,12 @@ ProgramNode(0...246)(
                  CallNode(152...155)(
                    nil,
                    nil,
-                   IDENTIFIER(152...155)("bar"),
+                   (152...155),
                    nil,
                    nil,
                    nil,
                    nil,
+                   0,
                    "bar"
                  ),
                  (146...149),
@@ -136,11 +120,12 @@ ProgramNode(0...246)(
        CallNode(178...181)(
          nil,
          nil,
-         IDENTIFIER(178...181)("foo"),
+         (178...181),
          nil,
          nil,
          nil,
          nil,
+         0,
          "foo"
        ),
        StatementsNode(184...193)(
@@ -150,11 +135,12 @@ ProgramNode(0...246)(
             CallNode(190...193)(
               nil,
               nil,
-              IDENTIFIER(190...193)("bar"),
+              (190...193),
               nil,
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (184...187),
@@ -169,7 +155,7 @@ ProgramNode(0...246)(
        CallNode(201...222)(
          nil,
          nil,
-         IDENTIFIER(201...204)("foo"),
+         (201...204),
          nil,
          nil,
          nil,
@@ -195,18 +181,14 @@ ProgramNode(0...246)(
            (205...206),
            (221...222)
          ),
+         0,
          "foo"
        ),
        StatementsNode(225...242)(
          [LocalVariableWriteNode(225...236)(
             :pair,
             0,
-            SymbolNode(232...236)(
-              SYMBOL_BEGIN(232...233)(":"),
-              IDENTIFIER(233...236)("foo"),
-              nil,
-              "foo"
-            ),
+            SymbolNode(232...236)((232...233), (233...236), nil, "foo"),
             (225...229),
             (230...231)
           ),

@@ -2,16 +2,7 @@ ProgramNode(0...43)(
   [],
   StatementsNode(0...43)(
     [CaseNode(0...43)(
-       CallNode(5...8)(
-         nil,
-         nil,
-         IDENTIFIER(5...8)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
+       CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 0, "foo"),
        [WhenNode(10...27)(
           (10...14),
           [IntegerNode(15...16)(),
@@ -20,11 +11,12 @@ ProgramNode(0...43)(
              CallNode(19...22)(
                nil,
                nil,
-               IDENTIFIER(19...22)("baz"),
+               (19...22),
                nil,
                nil,
                nil,
                nil,
+               0,
                "baz"
              )
            )],
@@ -32,11 +24,12 @@ ProgramNode(0...43)(
             [CallNode(24...27)(
                nil,
                nil,
-               IDENTIFIER(24...27)("bar"),
+               (24...27),
                nil,
                nil,
                nil,
                nil,
+               0,
                "bar"
              )]
           )
@@ -48,11 +41,12 @@ ProgramNode(0...43)(
              CallNode(35...38)(
                nil,
                nil,
-               IDENTIFIER(35...38)("foo"),
+               (35...38),
                nil,
                nil,
                nil,
                nil,
+               0,
                "foo"
              )
            )],

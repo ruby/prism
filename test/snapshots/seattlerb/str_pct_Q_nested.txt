@@ -10,11 +10,12 @@ ProgramNode(0...26)(
             [CallNode(13...17)(
                nil,
                nil,
-               IDENTIFIER(13...17)("nest"),
+               (13...17),
                nil,
                nil,
                nil,
                nil,
+               0,
                "nest"
              )]
           ),

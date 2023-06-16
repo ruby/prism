@@ -6,16 +6,7 @@ ProgramNode(0...41)(
        0,
        SplatNode(6...10)(
          (6...7),
-         CallNode(7...10)(
-           nil,
-           nil,
-           IDENTIFIER(7...10)("bar"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "bar"
-         )
+         CallNode(7...10)(nil, nil, (7...10), nil, nil, nil, nil, 0, "bar")
        ),
        (0...3),
        (4...5)
@@ -24,16 +15,7 @@ ProgramNode(0...41)(
        :foo,
        0,
        ArrayNode(18...24)(
-         [CallNode(18...21)(
-            nil,
-            nil,
-            IDENTIFIER(18...21)("bar"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "bar"
-          ),
+         [CallNode(18...21)(nil, nil, (18...21), nil, nil, nil, nil, 0, "bar"),
           IntegerNode(23...24)()],
          nil,
          nil
@@ -45,26 +27,18 @@ ProgramNode(0...41)(
        :foo,
        0,
        ArrayNode(32...41)(
-         [CallNode(32...35)(
-            nil,
-            nil,
-            IDENTIFIER(32...35)("baz"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "baz"
-          ),
+         [CallNode(32...35)(nil, nil, (32...35), nil, nil, nil, nil, 0, "baz"),
           SplatNode(37...41)(
             (37...38),
             CallNode(38...41)(
               nil,
               nil,
-              IDENTIFIER(38...41)("bar"),
+              (38...41),
               nil,
               nil,
               nil,
               nil,
+              0,
               "bar"
             )
           )],

@@ -4,34 +4,25 @@ ProgramNode(0...11)(
     [CallNode(0...11)(
        nil,
        nil,
-       IDENTIFIER(0...3)("foo"),
-       PARENTHESIS_LEFT(3...4)("("),
+       (0...3),
+       (3...4),
        ArgumentsNode(4...10)(
          [KeywordHashNode(4...10)(
             [AssocNode(4...6)(
-               SymbolNode(4...6)(
-                 nil,
-                 LABEL(4...5)("a"),
-                 LABEL_END(5...6)(":"),
-                 "a"
-               ),
+               SymbolNode(4...6)(nil, (4...5), (5...6), "a"),
                nil,
                nil
              ),
              AssocNode(8...10)(
-               SymbolNode(8...10)(
-                 nil,
-                 LABEL(8...9)("b"),
-                 LABEL_END(9...10)(":"),
-                 "b"
-               ),
+               SymbolNode(8...10)(nil, (8...9), (9...10), "b"),
                nil,
                nil
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(10...11)(")"),
+       (10...11),
        nil,
+       0,
        "foo"
      )]
   )

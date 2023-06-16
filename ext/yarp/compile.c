@@ -508,7 +508,7 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         case YP_NODE_CALL_NODE: {
             yp_call_node_t *node = (yp_call_node_t *) base_node;
 
-            ID mid = parse_token_symbol(&node->message);
+            ID mid = parse_location_symbol(&node->message_loc);
             int flags = 0;
             size_t orig_argc;
 

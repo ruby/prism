@@ -4,17 +4,12 @@ ProgramNode(0...52)(
     [CallNode(0...15)(
        nil,
        nil,
-       IDENTIFIER(0...6)("assert"),
+       (0...6),
        nil,
        ArgumentsNode(7...15)(
          [KeywordHashNode(7...15)(
             [AssocNode(7...15)(
-               SymbolNode(7...10)(
-                 nil,
-                 LABEL(7...9)("do"),
-                 LABEL_END(9...10)(":"),
-                 "do"
-               ),
+               SymbolNode(7...10)(nil, (7...9), (9...10), "do"),
                TrueNode(11...15)(),
                nil
              )]
@@ -22,43 +17,41 @@ ProgramNode(0...52)(
        ),
        nil,
        nil,
+       0,
        "assert"
      ),
      CallNode(17...28)(
        nil,
        nil,
-       IDENTIFIER(17...23)("assert"),
+       (17...23),
        nil,
        ArgumentsNode(24...28)(
          [CallNode(24...28)(
             nil,
             nil,
-            IDENTIFIER(24...28)("dogs"),
+            (24...28),
             nil,
             nil,
             nil,
             nil,
+            0,
             "dogs"
           )]
        ),
        nil,
        nil,
+       0,
        "assert"
      ),
      CallNode(30...52)(
        nil,
        nil,
-       IDENTIFIER(30...31)("f"),
+       (30...31),
        nil,
        ArgumentsNode(32...52)(
          [KeywordHashNode(32...52)(
             [AssocNode(32...52)(
-               SymbolNode(32...34)(
-                 nil,
-                 LABEL(32...33)("x"),
-                 LABEL_END(33...34)(":"),
-                 "x"
-               ),
+               SymbolNode(32...34)(nil, (32...33), (33...34), "x"),
                LambdaNode(35...52)(
                  [],
                  (35...37),
@@ -67,11 +60,12 @@ ProgramNode(0...52)(
                    [CallNode(41...52)(
                       nil,
                       nil,
-                      IDENTIFIER(41...45)("meth"),
+                      (41...45),
                       nil,
                       nil,
                       nil,
                       BlockNode(46...52)([], nil, nil, (46...48), (49...52)),
+                      0,
                       "meth"
                     )]
                  )
@@ -82,6 +76,7 @@ ProgramNode(0...52)(
        ),
        nil,
        nil,
+       0,
        "f"
      )]
   )

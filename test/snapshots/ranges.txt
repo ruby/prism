@@ -21,45 +21,33 @@ ProgramNode(0...85)(
        (16...19)
      ),
      CallNode(22...31)(
-       CallNode(22...25)(
-         nil,
-         nil,
-         IDENTIFIER(22...25)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
+       CallNode(22...25)(nil, nil, (22...25), nil, nil, nil, nil, 0, "foo"),
        nil,
-       BRACKET_LEFT_RIGHT(25...26)("["),
-       BRACKET_LEFT(25...26)("["),
+       (25...31),
+       (25...26),
        ArgumentsNode(26...30)(
          [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29))]
        ),
-       BRACKET_RIGHT(30...31)("]"),
+       (30...31),
        nil,
+       0,
        "[]"
      ),
      HashNode(33...48)(
        (33...34),
        [AssocNode(35...46)(
-          SymbolNode(35...39)(
-            nil,
-            LABEL(35...38)("foo"),
-            LABEL_END(38...39)(":"),
-            "foo"
-          ),
+          SymbolNode(35...39)(nil, (35...38), (38...39), "foo"),
           RangeNode(40...46)(
             nil,
             CallNode(43...46)(
               nil,
               nil,
-              IDENTIFIER(43...46)("bar"),
+              (43...46),
               nil,
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (40...43)
@@ -83,22 +71,18 @@ ProgramNode(0...85)(
      HashNode(64...78)(
        (64...65),
        [AssocNode(66...76)(
-          SymbolNode(66...70)(
-            nil,
-            LABEL(66...69)("foo"),
-            LABEL_END(69...70)(":"),
-            "foo"
-          ),
+          SymbolNode(66...70)(nil, (66...69), (69...70), "foo"),
           RangeNode(71...76)(
             nil,
             CallNode(73...76)(
               nil,
               nil,
-              IDENTIFIER(73...76)("bar"),
+              (73...76),
               nil,
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             (71...73)

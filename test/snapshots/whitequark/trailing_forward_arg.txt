@@ -18,15 +18,16 @@ ProgramNode(0...40)(
          [CallNode(20...35)(
             nil,
             nil,
-            IDENTIFIER(20...23)("bar"),
-            PARENTHESIS_LEFT(23...24)("("),
+            (20...23),
+            (23...24),
             ArgumentsNode(24...34)(
               [LocalVariableReadNode(24...25)(:a, 0),
                IntegerNode(27...29)(),
                ForwardingArgumentsNode(31...34)()]
             ),
-            PARENTHESIS_RIGHT(34...35)(")"),
+            (34...35),
             nil,
+            0,
             "bar"
           )]
        ),

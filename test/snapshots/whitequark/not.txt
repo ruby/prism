@@ -2,51 +2,36 @@ ProgramNode(0...24)(
   [],
   StatementsNode(0...24)(
     [CallNode(0...7)(
-       CallNode(4...7)(
-         nil,
-         nil,
-         IDENTIFIER(4...7)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
+       CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 0, "foo"),
        nil,
-       KEYWORD_NOT(0...3)("not"),
+       (0...3),
        nil,
        nil,
        nil,
        nil,
+       0,
        "!"
      ),
      CallNode(9...14)(
        nil,
        nil,
-       KEYWORD_NOT(9...12)("not"),
-       PARENTHESIS_LEFT(12...13)("("),
+       (9...12),
+       (12...13),
        nil,
-       PARENTHESIS_RIGHT(13...14)(")"),
+       (13...14),
        nil,
+       0,
        "!"
      ),
      CallNode(16...24)(
-       CallNode(20...23)(
-         nil,
-         nil,
-         IDENTIFIER(20...23)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
+       CallNode(20...23)(nil, nil, (20...23), nil, nil, nil, nil, 0, "foo"),
        nil,
-       KEYWORD_NOT(16...19)("not"),
-       PARENTHESIS_LEFT(19...20)("("),
+       (16...19),
+       (19...20),
        nil,
-       PARENTHESIS_RIGHT(23...24)(")"),
+       (23...24),
        nil,
+       0,
        "!"
      )]
   )

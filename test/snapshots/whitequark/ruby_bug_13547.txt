@@ -2,22 +2,14 @@ ProgramNode(0...9)(
   [],
   StatementsNode(0...9)(
     [CallNode(0...9)(
-       CallNode(0...4)(
-         nil,
-         nil,
-         IDENTIFIER(0...4)("meth"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "meth"
-       ),
+       CallNode(0...4)(nil, nil, (0...4), nil, nil, nil, nil, 0, "meth"),
        nil,
-       BRACKET_LEFT_RIGHT(4...5)("["),
-       BRACKET_LEFT(4...5)("["),
+       (4...6),
+       (4...5),
        nil,
-       BRACKET_RIGHT(5...6)("]"),
+       (5...6),
        BlockNode(7...9)([], nil, nil, (7...8), (8...9)),
+       0,
        "[]"
      )]
   )

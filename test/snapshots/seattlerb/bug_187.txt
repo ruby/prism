@@ -4,7 +4,7 @@ ProgramNode(0...28)(
     [CallNode(0...28)(
        nil,
        nil,
-       IDENTIFIER(0...7)("private"),
+       (0...7),
        nil,
        ArgumentsNode(8...28)(
          [DefNode(8...28)(
@@ -16,19 +16,21 @@ ProgramNode(0...28)(
                  CallNode(14...15)(
                    nil,
                    nil,
-                   IDENTIFIER(14...15)("a"),
+                   (14...15),
                    nil,
                    nil,
                    nil,
                    nil,
+                   0,
                    "a"
                  ),
-                 DOT(15...16)("."),
-                 IDENTIFIER(16...17)("b"),
+                 (15...16),
+                 (16...17),
                  nil,
                  nil,
                  nil,
                  BlockNode(18...24)([], nil, nil, (18...20), (21...24)),
+                 0,
                  "b"
                )]
             ),
@@ -43,6 +45,7 @@ ProgramNode(0...28)(
        ),
        nil,
        nil,
+       0,
        "private"
      )]
   )

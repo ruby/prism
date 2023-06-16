@@ -40,11 +40,12 @@ ProgramNode(0...48)(
                      [CallNode(26...27)(
                         nil,
                         nil,
-                        IDENTIFIER(26...27)("a"),
+                        (26...27),
                         nil,
                         nil,
                         nil,
                         nil,
+                        0,
                         "a"
                       )]
                    ),
@@ -77,19 +78,21 @@ ProgramNode(0...48)(
                 CallNode(42...43)(
                   nil,
                   nil,
-                  IDENTIFIER(42...43)("b"),
+                  (42...43),
                   nil,
                   nil,
                   nil,
                   nil,
+                  0,
                   "b"
                 ),
                 nil,
-                STAR(44...45)("*"),
+                (44...45),
                 nil,
                 ArgumentsNode(46...47)([IntegerNode(46...47)()]),
                 nil,
                 nil,
+                0,
                 "*"
               )
             )],

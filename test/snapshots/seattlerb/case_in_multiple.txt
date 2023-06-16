@@ -2,12 +2,7 @@ ProgramNode(0...37)(
   [],
   StatementsNode(0...37)(
     [CaseNode(0...37)(
-       SymbolNode(5...7)(
-         SYMBOL_BEGIN(5...6)(":"),
-         IDENTIFIER(6...7)("a"),
-         nil,
-         "a"
-       ),
+       SymbolNode(5...7)((5...6), (6...7), nil, "a"),
        [InNode(8...20)(
           ConstantPathNode(11...15)(
             ConstantReadNode(11...12)(),
@@ -15,12 +10,7 @@ ProgramNode(0...37)(
             (12...14)
           ),
           StatementsNode(18...20)(
-            [SymbolNode(18...20)(
-               SYMBOL_BEGIN(18...19)(":"),
-               CONSTANT(19...20)("C"),
-               nil,
-               "C"
-             )]
+            [SymbolNode(18...20)((18...19), (19...20), nil, "C")]
           ),
           (8...10),
           nil
@@ -32,12 +22,7 @@ ProgramNode(0...37)(
             (25...27)
           ),
           StatementsNode(31...33)(
-            [SymbolNode(31...33)(
-               SYMBOL_BEGIN(31...32)(":"),
-               CONSTANT(32...33)("F"),
-               nil,
-               "F"
-             )]
+            [SymbolNode(31...33)((31...32), (32...33), nil, "F")]
           ),
           (21...23),
           nil

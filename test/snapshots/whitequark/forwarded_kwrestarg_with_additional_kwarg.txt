@@ -17,25 +17,21 @@ ProgramNode(0...41)(
          [CallNode(13...36)(
             nil,
             nil,
-            IDENTIFIER(13...16)("bar"),
-            PARENTHESIS_LEFT(16...17)("("),
+            (13...16),
+            (16...17),
             ArgumentsNode(17...35)(
               [KeywordHashNode(17...35)(
                  [AssocSplatNode(17...19)(nil, (17...19)),
                   AssocNode(21...35)(
-                    SymbolNode(21...30)(
-                      nil,
-                      LABEL(21...29)("from_foo"),
-                      LABEL_END(29...30)(":"),
-                      "from_foo"
-                    ),
+                    SymbolNode(21...30)(nil, (21...29), (29...30), "from_foo"),
                     TrueNode(31...35)(),
                     nil
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(35...36)(")"),
+            (35...36),
             nil,
+            0,
             "bar"
           )]
        ),

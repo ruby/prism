@@ -4,11 +4,12 @@ ProgramNode(0...4)(
     [CallNode(0...4)(
        FloatNode(1...4)(),
        nil,
-       UMINUS_NUM(0...1)("-"),
+       (0...1),
        nil,
        nil,
        nil,
        nil,
+       0,
        "-@"
      )]
   )

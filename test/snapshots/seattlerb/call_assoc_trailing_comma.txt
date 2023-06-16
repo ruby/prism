@@ -4,8 +4,8 @@ ProgramNode(0...8)(
     [CallNode(0...8)(
        nil,
        nil,
-       IDENTIFIER(0...1)("f"),
-       PARENTHESIS_LEFT(1...2)("("),
+       (0...1),
+       (1...2),
        ArgumentsNode(2...6)(
          [KeywordHashNode(2...6)(
             [AssocNode(2...6)(
@@ -15,8 +15,9 @@ ProgramNode(0...8)(
              )]
           )]
        ),
-       PARENTHESIS_RIGHT(7...8)(")"),
+       (7...8),
        nil,
+       0,
        "f"
      )]
   )

@@ -11,28 +11,30 @@ ProgramNode(0...42)(
          (11...12)
        ),
        nil,
-       BRACKET_LEFT_RIGHT_EQUAL(12...13)("["),
-       BRACKET_LEFT(12...13)("["),
+       (12...24),
+       (12...13),
        ArgumentsNode(13...42)(
          [RangeNode(13...23)(
             CallNode(13...17)(
               nil,
               nil,
-              IDENTIFIER(13...17)("from"),
+              (13...17),
               nil,
               nil,
               nil,
               nil,
+              0,
               "from"
             ),
             CallNode(21...23)(
               nil,
               nil,
-              IDENTIFIER(21...23)("to"),
+              (21...23),
               nil,
               nil,
               nil,
               nil,
+              0,
               "to"
             ),
             (18...20)
@@ -45,8 +47,9 @@ ProgramNode(0...42)(
             (41...42)
           )]
        ),
-       BRACKET_RIGHT(23...24)("]"),
+       (23...24),
        nil,
+       0,
        "[]="
      )]
   )

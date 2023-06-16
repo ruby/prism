@@ -5,24 +5,16 @@ ProgramNode(0...29)(
        ParenthesesNode(1...11)(
          StatementsNode(2...10)(
            [RangeNode(2...10)(
-              CallNode(2...5)(
-                nil,
-                nil,
-                IDENTIFIER(2...5)("foo"),
-                nil,
-                nil,
-                nil,
-                nil,
-                "foo"
-              ),
+              CallNode(2...5)(nil, nil, (2...5), nil, nil, nil, nil, 0, "foo"),
               CallNode(7...10)(
                 nil,
                 nil,
-                IDENTIFIER(7...10)("bar"),
+                (7...10),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (5...7)
@@ -32,36 +24,19 @@ ProgramNode(0...29)(
          (10...11)
        ),
        nil,
-       BANG(0...1)("!"),
+       (0...1),
        nil,
        nil,
        nil,
        nil,
+       0,
        "!"
      ),
      IfNode(13...29)(
        (13...15),
        RangeNode(16...24)(
-         CallNode(16...19)(
-           nil,
-           nil,
-           IDENTIFIER(16...19)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "foo"
-         ),
-         CallNode(21...24)(
-           nil,
-           nil,
-           IDENTIFIER(21...24)("bar"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "bar"
-         ),
+         CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "foo"),
+         CallNode(21...24)(nil, nil, (21...24), nil, nil, nil, nil, 0, "bar"),
          (19...21)
        ),
        nil,

@@ -17,13 +17,14 @@ ProgramNode(0...23)(
          [CallNode(12...18)(
             nil,
             nil,
-            IDENTIFIER(12...15)("bar"),
-            PARENTHESIS_LEFT(15...16)("("),
+            (12...15),
+            (15...16),
             ArgumentsNode(16...17)(
               [BlockArgumentNode(16...17)(nil, (16...17))]
             ),
-            PARENTHESIS_RIGHT(17...18)(")"),
+            (17...18),
             nil,
+            0,
             "bar"
           )]
        ),

@@ -7,12 +7,13 @@ ProgramNode(0...22)(
          [StringNode(7...12)(nil, (7...12), nil, "blah\n")],
          (12...16)
        ),
-       DOT(16...17)("."),
-       IDENTIFIER(17...22)("strip"),
+       (16...17),
+       (17...22),
        nil,
        nil,
        nil,
        nil,
+       0,
        "strip"
      )]
   )

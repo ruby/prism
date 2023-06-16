@@ -14,9 +14,7 @@ ProgramNode(0...262)(
            nil,
            nil
          ),
-         [IDENTIFIER(7...8)("b"),
-          IDENTIFIER(10...11)("c"),
-          IDENTIFIER(13...14)("d")],
+         [(7...8), (10...11), (13...14)],
          (3...4),
          (14...15)
        ),
@@ -53,16 +51,7 @@ ProgramNode(0...262)(
        (71...73),
        nil,
        StatementsNode(76...79)(
-         [CallNode(76...79)(
-            nil,
-            nil,
-            IDENTIFIER(76...79)("foo"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "foo"
-          )]
+         [CallNode(76...79)(nil, nil, (76...79), nil, nil, nil, nil, 0, "foo")]
        )
      ),
      LambdaNode(83...93)(
@@ -70,16 +59,7 @@ ProgramNode(0...262)(
        (83...85),
        nil,
        StatementsNode(90...93)(
-         [CallNode(90...93)(
-            nil,
-            nil,
-            IDENTIFIER(90...93)("foo"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "foo"
-          )]
+         [CallNode(90...93)(nil, nil, (90...93), nil, nil, nil, nil, 0, "foo")]
        )
      ),
      LambdaNode(100...127)(
@@ -196,13 +176,14 @@ ProgramNode(0...262)(
               [CallNode(236...241)(
                  LocalVariableReadNode(236...237)(:a, 1),
                  nil,
-                 STAR(238...239)("*"),
+                 (238...239),
                  nil,
                  ArgumentsNode(240...241)(
                    [LocalVariableReadNode(240...241)(:b, 0)]
                  ),
                  nil,
                  nil,
+                 0,
                  "*"
                )]
             )

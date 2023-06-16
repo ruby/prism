@@ -4,7 +4,7 @@ ProgramNode(0...12)(
     [CallNode(0...12)(
        nil,
        nil,
-       IDENTIFIER(0...3)("fun"),
+       (0...3),
        nil,
        ArgumentsNode(4...12)(
          [CallNode(4...12)(
@@ -13,17 +13,19 @@ ProgramNode(0...12)(
               (4...5),
               (6...7)
             ),
-            DOT(7...8)("."),
-            IDENTIFIER(8...12)("to_i"),
+            (7...8),
+            (8...12),
             nil,
             nil,
             nil,
             nil,
+            0,
             "to_i"
           )]
        ),
        nil,
        nil,
+       0,
        "fun"
      )]
   )

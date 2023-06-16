@@ -647,11 +647,12 @@ ProgramNode(0...690)(
             CallNode(588...590)(
               IntegerNode(589...590)(),
               nil,
-              UMINUS_NUM(588...589)("-"),
+              (588...589),
               nil,
               nil,
               nil,
               nil,
+              0,
               "-@"
             )
           )],

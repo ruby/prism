@@ -4,7 +4,7 @@ ProgramNode(0...9)(
     [CallNode(0...9)(
        nil,
        nil,
-       IDENTIFIER(0...1)("m"),
+       (0...1),
        nil,
        ArgumentsNode(2...9)(
          [InterpolatedStringNode(2...9)(
@@ -19,6 +19,7 @@ ProgramNode(0...9)(
        ),
        nil,
        nil,
+       0,
        "m"
      )]
   )

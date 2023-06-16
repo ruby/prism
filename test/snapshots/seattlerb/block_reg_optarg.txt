@@ -4,7 +4,7 @@ ProgramNode(0...17)(
     [CallNode(0...17)(
        nil,
        nil,
-       IDENTIFIER(0...1)("a"),
+       (0...1),
        nil,
        nil,
        nil,
@@ -17,12 +17,7 @@ ProgramNode(0...17)(
                 :c,
                 (8...9),
                 (10...11),
-                SymbolNode(12...14)(
-                  SYMBOL_BEGIN(12...13)(":"),
-                  IDENTIFIER(13...14)("d"),
-                  nil,
-                  "d"
-                )
+                SymbolNode(12...14)((12...13), (13...14), nil, "d")
               )],
              [],
              nil,
@@ -38,6 +33,7 @@ ProgramNode(0...17)(
          (2...3),
          (16...17)
        ),
+       0,
        "a"
      )]
   )

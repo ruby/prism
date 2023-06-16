@@ -36,22 +36,24 @@ ProgramNode(0...106)(
          [CallNode(62...76)(
             nil,
             nil,
-            IDENTIFIER(62...69)("include"),
-            PARENTHESIS_LEFT(69...70)("("),
+            (62...69),
+            (69...70),
             ArgumentsNode(70...75)(
               [CallNode(70...75)(
                  ConstantReadNode(70...71)(),
-                 DOT(71...72)("."),
-                 IDENTIFIER(72...75)("new"),
+                 (71...72),
+                 (72...75),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "new"
                )]
             ),
-            PARENTHESIS_RIGHT(75...76)(")"),
+            (75...76),
             nil,
+            0,
             "include"
           ),
           DefNode(80...102)(
@@ -59,12 +61,7 @@ ProgramNode(0...106)(
             nil,
             nil,
             StatementsNode(92...96)(
-              [SymbolNode(92...96)(
-                 SYMBOL_BEGIN(92...93)(":"),
-                 IDENTIFIER(93...96)("bar"),
-                 nil,
-                 "bar"
-               )]
+              [SymbolNode(92...96)((92...93), (93...96), nil, "bar")]
             ),
             [],
             (80...83),

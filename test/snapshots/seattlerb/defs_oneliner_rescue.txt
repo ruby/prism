@@ -19,13 +19,14 @@ ProgramNode(0...145)(
            [CallNode(21...32)(
               nil,
               nil,
-              IDENTIFIER(21...27)("system"),
-              PARENTHESIS_LEFT(27...28)("("),
+              (21...27),
+              (27...28),
               ArgumentsNode(28...31)(
                 [LocalVariableReadNode(28...31)(:cmd, 0)]
               ),
-              PARENTHESIS_RIGHT(31...32)(")"),
+              (31...32),
               nil,
+              0,
               "system"
             )]
          ),
@@ -66,13 +67,14 @@ ProgramNode(0...145)(
             CallNode(73...84)(
               nil,
               nil,
-              IDENTIFIER(73...79)("system"),
-              PARENTHESIS_LEFT(79...80)("("),
+              (73...79),
+              (79...80),
               ArgumentsNode(80...83)(
                 [LocalVariableReadNode(80...83)(:cmd, 0)]
               ),
-              PARENTHESIS_RIGHT(83...84)(")"),
+              (83...84),
               nil,
+              0,
               "system"
             ),
             (85...91),
@@ -104,13 +106,14 @@ ProgramNode(0...145)(
             CallNode(123...134)(
               nil,
               nil,
-              IDENTIFIER(123...129)("system"),
-              PARENTHESIS_LEFT(129...130)("("),
+              (123...129),
+              (129...130),
               ArgumentsNode(130...133)(
                 [LocalVariableReadNode(130...133)(:cmd, 0)]
               ),
-              PARENTHESIS_RIGHT(133...134)(")"),
+              (133...134),
               nil,
+              0,
               "system"
             ),
             (135...141),

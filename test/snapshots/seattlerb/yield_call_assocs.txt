@@ -8,12 +8,7 @@ ProgramNode(0...100)(
          [IntegerNode(6...7)(),
           KeywordHashNode(9...16)(
             [AssocNode(9...16)(
-               SymbolNode(9...11)(
-                 SYMBOL_BEGIN(9...10)(":"),
-                 IDENTIFIER(10...11)("z"),
-                 nil,
-                 "z"
-               ),
+               SymbolNode(9...11)((9...10), (10...11), nil, "z"),
                IntegerNode(15...16)(),
                (12...14)
              )]
@@ -28,22 +23,12 @@ ProgramNode(0...100)(
          [IntegerNode(24...25)(),
           KeywordHashNode(27...43)(
             [AssocNode(27...34)(
-               SymbolNode(27...29)(
-                 SYMBOL_BEGIN(27...28)(":"),
-                 IDENTIFIER(28...29)("z"),
-                 nil,
-                 "z"
-               ),
+               SymbolNode(27...29)((27...28), (28...29), nil, "z"),
                IntegerNode(33...34)(),
                (30...32)
              ),
              AssocNode(36...43)(
-               SymbolNode(36...38)(
-                 SYMBOL_BEGIN(36...37)(":"),
-                 IDENTIFIER(37...38)("w"),
-                 nil,
-                 "w"
-               ),
+               SymbolNode(36...38)((36...37), (37...38), nil, "w"),
                IntegerNode(42...43)(),
                (39...41)
              )]
@@ -58,17 +43,12 @@ ProgramNode(0...100)(
          [CallNode(51...58)(
             nil,
             nil,
-            IDENTIFIER(51...52)("y"),
+            (51...52),
             nil,
             ArgumentsNode(53...58)(
               [KeywordHashNode(53...58)(
                  [AssocNode(53...58)(
-                    SymbolNode(53...55)(
-                      SYMBOL_BEGIN(53...54)(":"),
-                      IDENTIFIER(54...55)("z"),
-                      nil,
-                      "z"
-                    ),
+                    SymbolNode(53...55)((53...54), (54...55), nil, "z"),
                     IntegerNode(57...58)(),
                     (55...57)
                   )]
@@ -76,6 +56,7 @@ ProgramNode(0...100)(
             ),
             nil,
             nil,
+            0,
             "y"
           )]
        ),
@@ -88,17 +69,12 @@ ProgramNode(0...100)(
          [CallNode(66...71)(
             nil,
             nil,
-            IDENTIFIER(66...67)("y"),
+            (66...67),
             nil,
             ArgumentsNode(68...71)(
               [KeywordHashNode(68...71)(
                  [AssocNode(68...71)(
-                    SymbolNode(68...70)(
-                      nil,
-                      LABEL(68...69)("z"),
-                      LABEL_END(69...70)(":"),
-                      "z"
-                    ),
+                    SymbolNode(68...70)(nil, (68...69), (69...70), "z"),
                     IntegerNode(70...71)(),
                     nil
                   )]
@@ -106,6 +82,7 @@ ProgramNode(0...100)(
             ),
             nil,
             nil,
+            0,
             "y"
           )]
        ),
@@ -118,24 +95,20 @@ ProgramNode(0...100)(
          [CallNode(79...85)(
             nil,
             nil,
-            IDENTIFIER(79...80)("y"),
-            PARENTHESIS_LEFT(80...81)("("),
+            (79...80),
+            (80...81),
             ArgumentsNode(81...84)(
               [KeywordHashNode(81...84)(
                  [AssocNode(81...84)(
-                    SymbolNode(81...83)(
-                      nil,
-                      LABEL(81...82)("z"),
-                      LABEL_END(82...83)(":"),
-                      "z"
-                    ),
+                    SymbolNode(81...83)(nil, (81...82), (82...83), "z"),
                     IntegerNode(83...84)(),
                     nil
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(84...85)(")"),
+            (84...85),
             nil,
+            0,
             "y"
           )]
        ),
@@ -148,19 +121,20 @@ ProgramNode(0...100)(
          [CallNode(93...100)(
             nil,
             nil,
-            IDENTIFIER(93...94)("y"),
-            PARENTHESIS_LEFT(94...95)("("),
+            (93...94),
+            (94...95),
             ArgumentsNode(95...99)(
               [KeywordHashNode(95...99)(
                  [AssocNode(95...99)(
                     CallNode(95...96)(
                       nil,
                       nil,
-                      IDENTIFIER(95...96)("z"),
+                      (95...96),
                       nil,
                       nil,
                       nil,
                       nil,
+                      0,
                       "z"
                     ),
                     IntegerNode(98...99)(),
@@ -168,8 +142,9 @@ ProgramNode(0...100)(
                   )]
                )]
             ),
-            PARENTHESIS_RIGHT(99...100)(")"),
+            (99...100),
             nil,
+            0,
             "y"
           )]
        ),

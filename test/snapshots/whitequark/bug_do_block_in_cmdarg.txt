@@ -4,7 +4,7 @@ ProgramNode(0...17)(
     [CallNode(0...17)(
        nil,
        nil,
-       IDENTIFIER(0...3)("tap"),
+       (0...3),
        nil,
        ArgumentsNode(4...17)(
          [ParenthesesNode(4...17)(
@@ -12,11 +12,12 @@ ProgramNode(0...17)(
               [CallNode(5...16)(
                  nil,
                  nil,
-                 IDENTIFIER(5...9)("proc"),
+                 (5...9),
                  nil,
                  nil,
                  nil,
                  BlockNode(10...16)([], nil, nil, (10...12), (13...16)),
+                 0,
                  "proc"
                )]
             ),
@@ -26,6 +27,7 @@ ProgramNode(0...17)(
        ),
        nil,
        nil,
+       0,
        "tap"
      )]
   )

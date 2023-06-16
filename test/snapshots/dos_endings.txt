@@ -4,7 +4,7 @@ ProgramNode(0...108)(
     [CallNode(0...24)(
        nil,
        nil,
-       IDENTIFIER(0...4)("puts"),
+       (0...4),
        nil,
        ArgumentsNode(5...24)(
          [StringConcatNode(5...24)(
@@ -14,15 +14,11 @@ ProgramNode(0...108)(
        ),
        nil,
        nil,
+       0,
        "puts"
      ),
      ArrayNode(28...37)(
-       [SymbolNode(31...36)(
-          nil,
-          STRING_CONTENT(31...36)("a\\\r\n" + "b"),
-          nil,
-          "a\u0000\u0000b"
-        )],
+       [SymbolNode(31...36)(nil, (31...36), nil, "a\u0000\u0000b")],
        (28...31),
        (36...37)
      ),
@@ -49,8 +45,8 @@ ProgramNode(0...108)(
        CallNode(92...108)(
          nil,
          nil,
-         IDENTIFIER(92...95)("foo"),
-         PARENTHESIS_LEFT(95...96)("("),
+         (92...95),
+         (95...96),
          ArgumentsNode(96...107)(
            [CallNode(96...107)(
               InterpolatedStringNode(96...128)(
@@ -63,17 +59,19 @@ ProgramNode(0...108)(
                  )],
                 (121...128)
               ),
-              DOT(102...103)("."),
-              IDENTIFIER(103...107)("chop"),
+              (102...103),
+              (103...107),
               nil,
               nil,
               nil,
               nil,
+              0,
               "chop"
             )]
          ),
-         PARENTHESIS_RIGHT(107...108)(")"),
+         (107...108),
          nil,
+         0,
          "foo"
        ),
        (88...89),

@@ -4,7 +4,7 @@ ProgramNode(0...15)(
     [CallNode(0...15)(
        nil,
        nil,
-       IDENTIFIER(0...1)("a"),
+       (0...1),
        nil,
        ArgumentsNode(2...4)([InstanceVariableReadNode(2...4)()]),
        nil,
@@ -28,6 +28,7 @@ ProgramNode(0...15)(
          (5...7),
          (12...15)
        ),
+       0,
        "a"
      )]
   )

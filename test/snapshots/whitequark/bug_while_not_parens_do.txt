@@ -10,11 +10,12 @@ ProgramNode(0...23)(
            (15...16)
          ),
          nil,
-         KEYWORD_NOT(6...9)("not"),
+         (6...9),
          nil,
          nil,
          nil,
          nil,
+         0,
          "!"
        ),
        nil

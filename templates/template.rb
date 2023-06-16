@@ -70,10 +70,10 @@ class OptionalTokenParam < Param
   def java_type = "Token"
 end
 
-# This represents a parameter to a node that is a list of tokens.
-class TokenListParam < Param
-  def rbs_class = "Array[Token]"
-  def java_type = "Token[]"
+# This represents a parameter to a node that is a list of locations.
+class LocationListParam < Param
+  def rbs_class = "Array[Location]"
+  def java_type = "Location[]"
 end
 
 # This represents a parameter to a node that is the ID of a string interned
@@ -121,7 +121,7 @@ PARAM_TYPES = {
   "string" => StringParam,
   "token" => TokenParam,
   "token?" => OptionalTokenParam,
-  "token[]" => TokenListParam,
+  "location[]" => LocationListParam,
   "constant" => ConstantParam,
   "constant[]" => ConstantListParam,
   "location" => LocationParam,

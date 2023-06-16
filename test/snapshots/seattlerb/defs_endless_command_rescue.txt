@@ -3,22 +3,13 @@ ProgramNode(0...45)(
   StatementsNode(0...45)(
     [DefNode(0...45)(
        (6...17),
-       CallNode(4...5)(
-         nil,
-         nil,
-         IDENTIFIER(4...5)("x"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "x"
-       ),
+       CallNode(4...5)(nil, nil, (4...5), nil, nil, nil, nil, 0, "x"),
        nil,
        StatementsNode(20...45)(
          [CallNode(20...45)(
             nil,
             nil,
-            IDENTIFIER(20...32)("other_method"),
+            (20...32),
             nil,
             ArgumentsNode(33...45)(
               [RescueModifierNode(33...45)(
@@ -29,6 +20,7 @@ ProgramNode(0...45)(
             ),
             nil,
             nil,
+            0,
             "other_method"
           )]
        ),

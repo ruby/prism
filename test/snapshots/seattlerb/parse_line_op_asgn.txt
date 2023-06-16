@@ -4,26 +4,8 @@ ProgramNode(6...34)(
     [OperatorAssignmentNode(6...24)(
        LocalVariableWriteNode(6...9)(:foo, 0, nil, (6...9), nil),
        PLUS_EQUAL(10...12)("+="),
-       CallNode(21...24)(
-         nil,
-         nil,
-         IDENTIFIER(21...24)("bar"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "bar"
-       )
+       CallNode(21...24)(nil, nil, (21...24), nil, nil, nil, nil, 0, "bar")
      ),
-     CallNode(31...34)(
-       nil,
-       nil,
-       IDENTIFIER(31...34)("baz"),
-       nil,
-       nil,
-       nil,
-       nil,
-       "baz"
-     )]
+     CallNode(31...34)(nil, nil, (31...34), nil, nil, nil, nil, 0, "baz")]
   )
 )

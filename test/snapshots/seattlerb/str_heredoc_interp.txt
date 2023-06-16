@@ -6,16 +6,7 @@ ProgramNode(0...17)(
        [StringInterpolatedNode(5...9)(
           (5...7),
           StatementsNode(7...8)(
-            [CallNode(7...8)(
-               nil,
-               nil,
-               IDENTIFIER(7...8)("x"),
-               nil,
-               nil,
-               nil,
-               nil,
-               "x"
-             )]
+            [CallNode(7...8)(nil, nil, (7...8), nil, nil, nil, nil, 0, "x")]
           ),
           (8...9)
         ),

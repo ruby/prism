@@ -12,11 +12,12 @@ ProgramNode(0...20)(
               CallNode(11...14)(
                 nil,
                 nil,
-                IDENTIFIER(11...14)("foo"),
+                (11...14),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "foo"
               ),
               nil,

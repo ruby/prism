@@ -9,11 +9,12 @@ ProgramNode(0...17)(
          [CallNode(11...17)(
             nil,
             nil,
-            IDENTIFIER(11...17)("system"),
+            (11...17),
             nil,
             nil,
             nil,
             nil,
+            0,
             "system"
           )]
        ),

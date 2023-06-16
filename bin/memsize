@@ -16,7 +16,7 @@ results =
           8
         when "location", "location?"
           16
-        when "node[]", "string", "token", "token?", "token[]"
+        when "node[]", "string", "token", "token?", "location[]"
           24
         else
           raise "Unknown type: #{child_node["type"]}"

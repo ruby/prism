@@ -7,18 +7,19 @@ ProgramNode(0...437)(
        CallNode(7...27)(
          nil,
          nil,
-         IDENTIFIER(7...12)("raise"),
+         (7...12),
          nil,
          ArgumentsNode(13...27)(
            [RescueModifierNode(13...27)(
               CallNode(13...16)(
                 nil,
                 nil,
-                IDENTIFIER(13...16)("bar"),
+                (13...16),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (17...23),
@@ -27,6 +28,7 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        )
      ),
@@ -37,22 +39,24 @@ ProgramNode(0...437)(
          CallNode(36...46)(
            nil,
            nil,
-           IDENTIFIER(36...41)("raise"),
-           PARENTHESIS_LEFT(41...42)("("),
+           (36...41),
+           (41...42),
            ArgumentsNode(42...45)(
              [CallNode(42...45)(
                 nil,
                 nil,
-                IDENTIFIER(42...45)("bar"),
+                (42...45),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(45...46)(")"),
+           (45...46),
            nil,
+           0,
            "raise"
          ),
          (47...53),
@@ -65,18 +69,19 @@ ProgramNode(0...437)(
        CallNode(65...85)(
          nil,
          nil,
-         IDENTIFIER(65...70)("raise"),
+         (65...70),
          nil,
          ArgumentsNode(71...85)(
            [RescueModifierNode(71...85)(
               CallNode(71...74)(
                 nil,
                 nil,
-                IDENTIFIER(71...74)("bar"),
+                (71...74),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (75...81),
@@ -85,6 +90,7 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        ),
        (59...62),
@@ -97,22 +103,24 @@ ProgramNode(0...437)(
          CallNode(93...103)(
            nil,
            nil,
-           IDENTIFIER(93...98)("raise"),
-           PARENTHESIS_LEFT(98...99)("("),
+           (93...98),
+           (98...99),
            ArgumentsNode(99...102)(
              [CallNode(99...102)(
                 nil,
                 nil,
-                IDENTIFIER(99...102)("bar"),
+                (99...102),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(102...103)(")"),
+           (102...103),
            nil,
+           0,
            "raise"
          ),
          (104...110),
@@ -124,30 +132,32 @@ ProgramNode(0...437)(
      OperatorAssignmentNode(116...145)(
        CallNode(116...121)(
          LocalVariableReadNode(116...119)(:foo, 0),
-         DOT(119...120)("."),
-         CONSTANT(120...121)("C"),
+         (119...120),
+         (120...121),
          nil,
          nil,
          nil,
          nil,
+         0,
          "C="
        ),
        PLUS_EQUAL(122...124)("+="),
        CallNode(125...145)(
          nil,
          nil,
-         IDENTIFIER(125...130)("raise"),
+         (125...130),
          nil,
          ArgumentsNode(131...145)(
            [RescueModifierNode(131...145)(
               CallNode(131...134)(
                 nil,
                 nil,
-                IDENTIFIER(131...134)("bar"),
+                (131...134),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (135...141),
@@ -156,18 +166,20 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        )
      ),
      OperatorAssignmentNode(147...177)(
        CallNode(147...152)(
          LocalVariableReadNode(147...150)(:foo, 0),
-         DOT(150...151)("."),
-         CONSTANT(151...152)("C"),
+         (150...151),
+         (151...152),
          nil,
          nil,
          nil,
          nil,
+         0,
          "C="
        ),
        PLUS_EQUAL(153...155)("+="),
@@ -175,22 +187,24 @@ ProgramNode(0...437)(
          CallNode(156...166)(
            nil,
            nil,
-           IDENTIFIER(156...161)("raise"),
-           PARENTHESIS_LEFT(161...162)("("),
+           (156...161),
+           (161...162),
            ArgumentsNode(162...165)(
              [CallNode(162...165)(
                 nil,
                 nil,
-                IDENTIFIER(162...165)("bar"),
+                (162...165),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(165...166)(")"),
+           (165...166),
            nil,
+           0,
            "raise"
          ),
          (167...173),
@@ -200,30 +214,32 @@ ProgramNode(0...437)(
      OperatorAssignmentNode(179...208)(
        CallNode(179...184)(
          LocalVariableReadNode(179...182)(:foo, 0),
-         DOT(182...183)("."),
-         IDENTIFIER(183...184)("m"),
+         (182...183),
+         (183...184),
          nil,
          nil,
          nil,
          nil,
+         0,
          "m="
        ),
        PLUS_EQUAL(185...187)("+="),
        CallNode(188...208)(
          nil,
          nil,
-         IDENTIFIER(188...193)("raise"),
+         (188...193),
          nil,
          ArgumentsNode(194...208)(
            [RescueModifierNode(194...208)(
               CallNode(194...197)(
                 nil,
                 nil,
-                IDENTIFIER(194...197)("bar"),
+                (194...197),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (198...204),
@@ -232,18 +248,20 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        )
      ),
      OperatorAssignmentNode(210...240)(
        CallNode(210...215)(
          LocalVariableReadNode(210...213)(:foo, 0),
-         DOT(213...214)("."),
-         IDENTIFIER(214...215)("m"),
+         (213...214),
+         (214...215),
          nil,
          nil,
          nil,
          nil,
+         0,
          "m="
        ),
        PLUS_EQUAL(216...218)("+="),
@@ -251,22 +269,24 @@ ProgramNode(0...437)(
          CallNode(219...229)(
            nil,
            nil,
-           IDENTIFIER(219...224)("raise"),
-           PARENTHESIS_LEFT(224...225)("("),
+           (219...224),
+           (224...225),
            ArgumentsNode(225...228)(
              [CallNode(225...228)(
                 nil,
                 nil,
-                IDENTIFIER(225...228)("bar"),
+                (225...228),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(228...229)(")"),
+           (228...229),
            nil,
+           0,
            "raise"
          ),
          (230...236),
@@ -286,18 +306,19 @@ ProgramNode(0...437)(
        CallNode(253...273)(
          nil,
          nil,
-         IDENTIFIER(253...258)("raise"),
+         (253...258),
          nil,
          ArgumentsNode(259...273)(
            [RescueModifierNode(259...273)(
               CallNode(259...262)(
                 nil,
                 nil,
-                IDENTIFIER(259...262)("bar"),
+                (259...262),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (263...269),
@@ -306,6 +327,7 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        ),
        (249...252)
@@ -324,22 +346,24 @@ ProgramNode(0...437)(
          CallNode(286...296)(
            nil,
            nil,
-           IDENTIFIER(286...291)("raise"),
-           PARENTHESIS_LEFT(291...292)("("),
+           (286...291),
+           (291...292),
            ArgumentsNode(292...295)(
              [CallNode(292...295)(
                 nil,
                 nil,
-                IDENTIFIER(292...295)("bar"),
+                (292...295),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(295...296)(")"),
+           (295...296),
            nil,
+           0,
            "raise"
          ),
          (297...303),
@@ -350,30 +374,32 @@ ProgramNode(0...437)(
      OperatorAssignmentNode(309...339)(
        CallNode(309...315)(
          LocalVariableReadNode(309...312)(:foo, 0),
-         COLON_COLON(312...314)("::"),
-         IDENTIFIER(314...315)("m"),
+         (312...314),
+         (314...315),
          nil,
          nil,
          nil,
          nil,
+         0,
          "m="
        ),
        PLUS_EQUAL(316...318)("+="),
        CallNode(319...339)(
          nil,
          nil,
-         IDENTIFIER(319...324)("raise"),
+         (319...324),
          nil,
          ArgumentsNode(325...339)(
            [RescueModifierNode(325...339)(
               CallNode(325...328)(
                 nil,
                 nil,
-                IDENTIFIER(325...328)("bar"),
+                (325...328),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (329...335),
@@ -382,18 +408,20 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        )
      ),
      OperatorAssignmentNode(341...372)(
        CallNode(341...347)(
          LocalVariableReadNode(341...344)(:foo, 0),
-         COLON_COLON(344...346)("::"),
-         IDENTIFIER(346...347)("m"),
+         (344...346),
+         (346...347),
          nil,
          nil,
          nil,
          nil,
+         0,
          "m="
        ),
        PLUS_EQUAL(348...350)("+="),
@@ -401,22 +429,24 @@ ProgramNode(0...437)(
          CallNode(351...361)(
            nil,
            nil,
-           IDENTIFIER(351...356)("raise"),
-           PARENTHESIS_LEFT(356...357)("("),
+           (351...356),
+           (356...357),
            ArgumentsNode(357...360)(
              [CallNode(357...360)(
                 nil,
                 nil,
-                IDENTIFIER(357...360)("bar"),
+                (357...360),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(360...361)(")"),
+           (360...361),
            nil,
+           0,
            "raise"
          ),
          (362...368),
@@ -427,29 +457,31 @@ ProgramNode(0...437)(
        CallNode(374...380)(
          LocalVariableReadNode(374...377)(:foo, 0),
          nil,
-         BRACKET_LEFT_RIGHT_EQUAL(377...378)("["),
-         BRACKET_LEFT(377...378)("["),
+         (377...380),
+         (377...378),
          ArgumentsNode(378...379)([IntegerNode(378...379)()]),
-         BRACKET_RIGHT(379...380)("]"),
+         (379...380),
          nil,
+         0,
          "[]="
        ),
        PLUS_EQUAL(381...383)("+="),
        CallNode(384...404)(
          nil,
          nil,
-         IDENTIFIER(384...389)("raise"),
+         (384...389),
          nil,
          ArgumentsNode(390...404)(
            [RescueModifierNode(390...404)(
               CallNode(390...393)(
                 nil,
                 nil,
-                IDENTIFIER(390...393)("bar"),
+                (390...393),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               ),
               (394...400),
@@ -458,6 +490,7 @@ ProgramNode(0...437)(
          ),
          nil,
          nil,
+         0,
          "raise"
        )
      ),
@@ -465,11 +498,12 @@ ProgramNode(0...437)(
        CallNode(406...412)(
          LocalVariableReadNode(406...409)(:foo, 0),
          nil,
-         BRACKET_LEFT_RIGHT_EQUAL(409...410)("["),
-         BRACKET_LEFT(409...410)("["),
+         (409...412),
+         (409...410),
          ArgumentsNode(410...411)([IntegerNode(410...411)()]),
-         BRACKET_RIGHT(411...412)("]"),
+         (411...412),
          nil,
+         0,
          "[]="
        ),
        PLUS_EQUAL(413...415)("+="),
@@ -477,22 +511,24 @@ ProgramNode(0...437)(
          CallNode(416...426)(
            nil,
            nil,
-           IDENTIFIER(416...421)("raise"),
-           PARENTHESIS_LEFT(421...422)("("),
+           (416...421),
+           (421...422),
            ArgumentsNode(422...425)(
              [CallNode(422...425)(
                 nil,
                 nil,
-                IDENTIFIER(422...425)("bar"),
+                (422...425),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "bar"
               )]
            ),
-           PARENTHESIS_RIGHT(425...426)(")"),
+           (425...426),
            nil,
+           0,
            "raise"
          ),
          (427...433),

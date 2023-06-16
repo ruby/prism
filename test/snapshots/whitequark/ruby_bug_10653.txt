@@ -8,11 +8,12 @@ ProgramNode(0...93)(
          [CallNode(8...20)(
             nil,
             nil,
-            IDENTIFIER(8...13)("raise"),
+            (8...13),
             nil,
             nil,
             nil,
             BlockNode(14...20)([], nil, nil, (14...16), (17...20)),
+            0,
             "raise"
           )]
        ),
@@ -22,11 +23,12 @@ ProgramNode(0...93)(
            [CallNode(23...33)(
               nil,
               nil,
-              IDENTIFIER(23...26)("tap"),
+              (23...26),
               nil,
               nil,
               nil,
               BlockNode(27...33)([], nil, nil, (27...29), (30...33)),
+              0,
               "tap"
             )]
          ),
@@ -41,11 +43,12 @@ ProgramNode(0...93)(
          [CallNode(43...51)(
             nil,
             nil,
-            IDENTIFIER(43...48)("raise"),
+            (43...48),
             nil,
             nil,
             nil,
             BlockNode(49...51)([], nil, nil, (49...50), (50...51)),
+            0,
             "raise"
           )]
        ),
@@ -55,11 +58,12 @@ ProgramNode(0...93)(
            [CallNode(54...60)(
               nil,
               nil,
-              IDENTIFIER(54...57)("tap"),
+              (54...57),
               nil,
               nil,
               nil,
               BlockNode(58...60)([], nil, nil, (58...59), (59...60)),
+              0,
               "tap"
             )]
          ),
@@ -73,8 +77,8 @@ ProgramNode(0...93)(
        StatementsNode(69...89)(
          [CallNode(69...89)(
             IntegerNode(69...70)(),
-            DOT(70...71)("."),
-            IDENTIFIER(71...74)("tap"),
+            (70...71),
+            (71...74),
             nil,
             nil,
             nil,
@@ -98,19 +102,21 @@ ProgramNode(0...93)(
                 [CallNode(82...85)(
                    nil,
                    nil,
-                   IDENTIFIER(82...83)("p"),
+                   (82...83),
                    nil,
                    ArgumentsNode(84...85)(
                      [LocalVariableReadNode(84...85)(:n, 0)]
                    ),
                    nil,
                    nil,
+                   0,
                    "p"
                  )]
               ),
               (75...77),
               (86...89)
             ),
+            0,
             "tap"
           )]
        ),

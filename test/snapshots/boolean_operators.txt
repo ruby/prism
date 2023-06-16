@@ -3,44 +3,17 @@ ProgramNode(0...24)(
   StatementsNode(0...24)(
     [OperatorAndAssignmentNode(0...7)(
        LocalVariableWriteNode(0...1)(:a, 0, nil, (0...1), nil),
-       CallNode(6...7)(
-         nil,
-         nil,
-         IDENTIFIER(6...7)("b"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "b"
-       ),
+       CallNode(6...7)(nil, nil, (6...7), nil, nil, nil, nil, 0, "b"),
        (2...5)
      ),
      OperatorAssignmentNode(9...15)(
        LocalVariableWriteNode(9...10)(:a, 0, nil, (9...10), nil),
        PLUS_EQUAL(11...13)("+="),
-       CallNode(14...15)(
-         nil,
-         nil,
-         IDENTIFIER(14...15)("b"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "b"
-       )
+       CallNode(14...15)(nil, nil, (14...15), nil, nil, nil, nil, 0, "b")
      ),
      OperatorOrAssignmentNode(17...24)(
        LocalVariableWriteNode(17...18)(:a, 0, nil, (17...18), nil),
-       CallNode(23...24)(
-         nil,
-         nil,
-         IDENTIFIER(23...24)("b"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "b"
-       ),
+       CallNode(23...24)(nil, nil, (23...24), nil, nil, nil, nil, 0, "b"),
        (19...22)
      )]
   )

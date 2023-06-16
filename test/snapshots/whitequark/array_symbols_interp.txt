@@ -2,7 +2,7 @@ ProgramNode(0...29)(
   [],
   StatementsNode(0...29)(
     [ArrayNode(0...14)(
-       [SymbolNode(3...6)(nil, STRING_CONTENT(3...6)("foo"), nil, "foo"),
+       [SymbolNode(3...6)(nil, (3...6), nil, "foo"),
         InterpolatedSymbolNode(0...13)(
           nil,
           [StringInterpolatedNode(7...13)(
@@ -11,11 +11,12 @@ ProgramNode(0...29)(
                [CallNode(9...12)(
                   nil,
                   nil,
-                  IDENTIFIER(9...12)("bar"),
+                  (9...12),
                   nil,
                   nil,
                   nil,
                   nil,
+                  0,
                   "bar"
                 )]
              ),
@@ -36,11 +37,12 @@ ProgramNode(0...29)(
                [CallNode(24...27)(
                   nil,
                   nil,
-                  IDENTIFIER(24...27)("bar"),
+                  (24...27),
                   nil,
                   nil,
                   nil,
                   nil,
+                  0,
                   "bar"
                 )]
              ),

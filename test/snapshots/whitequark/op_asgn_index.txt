@@ -3,22 +3,14 @@ ProgramNode(0...14)(
   StatementsNode(0...14)(
     [OperatorAssignmentNode(0...14)(
        CallNode(0...9)(
-         CallNode(0...3)(
-           nil,
-           nil,
-           IDENTIFIER(0...3)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "foo"
-         ),
+         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
          nil,
-         BRACKET_LEFT_RIGHT_EQUAL(3...4)("["),
-         BRACKET_LEFT(3...4)("["),
+         (3...9),
+         (3...4),
          ArgumentsNode(4...8)([IntegerNode(4...5)(), IntegerNode(7...8)()]),
-         BRACKET_RIGHT(8...9)("]"),
+         (8...9),
          nil,
+         0,
          "[]="
        ),
        PLUS_EQUAL(10...12)("+="),

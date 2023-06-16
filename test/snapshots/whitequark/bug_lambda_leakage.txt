@@ -20,15 +20,6 @@ ProgramNode(0...19)(
        ),
        nil
      ),
-     CallNode(14...19)(
-       nil,
-       nil,
-       IDENTIFIER(14...19)("scope"),
-       nil,
-       nil,
-       nil,
-       nil,
-       "scope"
-     )]
+     CallNode(14...19)(nil, nil, (14...19), nil, nil, nil, nil, 0, "scope")]
   )
 )

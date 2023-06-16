@@ -10,18 +10,14 @@ ProgramNode(0...74)(
          CallNode(10...18)(
            nil,
            nil,
-           IDENTIFIER(10...15)("raise"),
+           (10...15),
            nil,
            ArgumentsNode(16...18)(
-             [SymbolNode(16...18)(
-                SYMBOL_BEGIN(16...17)(":"),
-                IDENTIFIER(17...18)("x"),
-                nil,
-                "x"
-              )]
+             [SymbolNode(16...18)((16...17), (17...18), nil, "x")]
            ),
            nil,
            nil,
+           0,
            "raise"
          )
        )
@@ -35,18 +31,14 @@ ProgramNode(0...74)(
          CallNode(29...37)(
            nil,
            nil,
-           IDENTIFIER(29...34)("raise"),
+           (29...34),
            nil,
            ArgumentsNode(35...37)(
-             [SymbolNode(35...37)(
-                SYMBOL_BEGIN(35...36)(":"),
-                IDENTIFIER(36...37)("x"),
-                nil,
-                "x"
-              )]
+             [SymbolNode(35...37)((35...36), (36...37), nil, "x")]
            ),
            nil,
            nil,
+           0,
            "raise"
          ),
          (25...26),
@@ -62,18 +54,14 @@ ProgramNode(0...74)(
          CallNode(48...56)(
            nil,
            nil,
-           IDENTIFIER(48...53)("raise"),
+           (48...53),
            nil,
            ArgumentsNode(54...56)(
-             [SymbolNode(54...56)(
-                SYMBOL_BEGIN(54...55)(":"),
-                IDENTIFIER(55...56)("x"),
-                nil,
-                "x"
-              )]
+             [SymbolNode(54...56)((54...55), (55...56), nil, "x")]
            ),
            nil,
            nil,
+           0,
            "raise"
          )
        ),
@@ -89,18 +77,14 @@ ProgramNode(0...74)(
          CallNode(66...74)(
            nil,
            nil,
-           IDENTIFIER(66...71)("raise"),
+           (66...71),
            nil,
            ArgumentsNode(72...74)(
-             [SymbolNode(72...74)(
-                SYMBOL_BEGIN(72...73)(":"),
-                IDENTIFIER(73...74)("x"),
-                nil,
-                "x"
-              )]
+             [SymbolNode(72...74)((72...73), (73...74), nil, "x")]
            ),
            nil,
            nil,
+           0,
            "raise"
          ),
          (62...63),

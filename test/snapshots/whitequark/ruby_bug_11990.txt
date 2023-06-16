@@ -4,7 +4,7 @@ ProgramNode(0...12)(
     [CallNode(0...12)(
        nil,
        nil,
-       IDENTIFIER(0...1)("p"),
+       (0...1),
        nil,
        ArgumentsNode(2...12)(
          [StringConcatNode(2...12)(
@@ -18,6 +18,7 @@ ProgramNode(0...12)(
        ),
        nil,
        nil,
+       0,
        "p"
      )]
   )

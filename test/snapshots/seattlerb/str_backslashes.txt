@@ -4,7 +4,7 @@ ProgramNode(0...204)(
     [CallNode(0...204)(
        nil,
        nil,
-       IDENTIFIER(0...1)("x"),
+       (0...1),
        nil,
        ArgumentsNode(2...204)(
          [StringNode(2...204)(
@@ -16,6 +16,7 @@ ProgramNode(0...204)(
        ),
        nil,
        nil,
+       0,
        "x"
      )]
   )

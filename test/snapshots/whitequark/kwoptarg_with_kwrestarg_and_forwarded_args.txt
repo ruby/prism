@@ -17,15 +17,16 @@ ProgramNode(0...28)(
          [CallNode(19...24)(
             nil,
             nil,
-            IDENTIFIER(19...20)("b"),
-            PARENTHESIS_LEFT(20...21)("("),
+            (19...20),
+            (20...21),
             ArgumentsNode(21...23)(
               [KeywordHashNode(21...23)(
                  [AssocSplatNode(21...23)(nil, (21...23))]
                )]
             ),
-            PARENTHESIS_RIGHT(23...24)(")"),
+            (23...24),
             nil,
+            0,
             "b"
           )]
        ),

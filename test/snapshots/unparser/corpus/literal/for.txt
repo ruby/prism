@@ -4,8 +4,8 @@ ProgramNode(0...119)(
     [CallNode(0...30)(
        nil,
        nil,
-       IDENTIFIER(0...3)("bar"),
-       PARENTHESIS_LEFT(3...4)("("),
+       (0...3),
+       (3...4),
        ArgumentsNode(4...29)(
          [ForNode(4...29)(
             MultiWriteNode(8...9)(
@@ -18,22 +18,24 @@ ProgramNode(0...119)(
             CallNode(13...16)(
               nil,
               nil,
-              IDENTIFIER(13...16)("bar"),
+              (13...16),
               nil,
               nil,
               nil,
               nil,
+              0,
               "bar"
             ),
             StatementsNode(22...25)(
               [CallNode(22...25)(
                  nil,
                  nil,
-                 IDENTIFIER(22...25)("baz"),
+                 (22...25),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "baz"
                )]
             ),
@@ -43,8 +45,9 @@ ProgramNode(0...119)(
             (26...29)
           )]
        ),
-       PARENTHESIS_RIGHT(29...30)(")"),
+       (29...30),
        nil,
+       0,
        "bar"
      ),
      ForNode(31...56)(
@@ -55,27 +58,9 @@ ProgramNode(0...119)(
          nil,
          nil
        ),
-       CallNode(40...43)(
-         nil,
-         nil,
-         IDENTIFIER(40...43)("bar"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "bar"
-       ),
+       CallNode(40...43)(nil, nil, (40...43), nil, nil, nil, nil, 0, "bar"),
        StatementsNode(49...52)(
-         [CallNode(49...52)(
-            nil,
-            nil,
-            IDENTIFIER(49...52)("baz"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "baz"
-          )]
+         [CallNode(49...52)(nil, nil, (49...52), nil, nil, nil, nil, 0, "baz")]
        ),
        (31...34),
        (37...39),
@@ -94,27 +79,9 @@ ProgramNode(0...119)(
          (61...62),
          (67...68)
        ),
-       CallNode(72...75)(
-         nil,
-         nil,
-         IDENTIFIER(72...75)("bar"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "bar"
-       ),
+       CallNode(72...75)(nil, nil, (72...75), nil, nil, nil, nil, 0, "bar"),
        StatementsNode(81...84)(
-         [CallNode(81...84)(
-            nil,
-            nil,
-            IDENTIFIER(81...84)("baz"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "baz"
-          )]
+         [CallNode(81...84)(nil, nil, (81...84), nil, nil, nil, nil, 0, "baz")]
        ),
        (57...60),
        (69...71),
@@ -133,22 +100,24 @@ ProgramNode(0...119)(
        CallNode(103...106)(
          nil,
          nil,
-         IDENTIFIER(103...106)("bar"),
+         (103...106),
          nil,
          nil,
          nil,
          nil,
+         0,
          "bar"
        ),
        StatementsNode(112...115)(
          [CallNode(112...115)(
             nil,
             nil,
-            IDENTIFIER(112...115)("baz"),
+            (112...115),
             nil,
             nil,
             nil,
             nil,
+            0,
             "baz"
           )]
        ),

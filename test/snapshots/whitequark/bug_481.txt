@@ -4,7 +4,7 @@ ProgramNode(0...28)(
     [CallNode(0...14)(
        nil,
        nil,
-       IDENTIFIER(0...1)("m"),
+       (0...1),
        nil,
        ArgumentsNode(2...14)(
          [DefNode(2...14)(
@@ -23,16 +23,18 @@ ProgramNode(0...28)(
        ),
        nil,
        nil,
+       0,
        "m"
      ),
      CallNode(16...28)(
        IntegerNode(16...17)(),
-       DOT(17...18)("."),
-       IDENTIFIER(18...21)("tap"),
+       (17...18),
+       (18...21),
        nil,
        nil,
        nil,
        BlockNode(22...28)([], nil, nil, (22...24), (25...28)),
+       0,
        "tap"
      )]
   )

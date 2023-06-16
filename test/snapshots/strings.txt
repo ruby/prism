@@ -31,11 +31,12 @@ ProgramNode(0...497)(
             [CallNode(148...151)(
                nil,
                nil,
-               IDENTIFIER(148...151)("bbb"),
+               (148...151),
                nil,
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -48,22 +49,18 @@ ProgramNode(0...497)(
      CallNode(169...183)(
        StringNode(169...174)((169...170), (170...173), (173...174), "foo"),
        nil,
-       PLUS(175...176)("+"),
+       (175...176),
        nil,
        ArgumentsNode(178...183)(
          [StringNode(178...183)((178...179), (179...182), (182...183), "bar")]
        ),
        nil,
        nil,
+       0,
        "+"
      ),
      StringNode(185...192)((185...188), (188...191), (191...192), "abc"),
-     SymbolNode(194...201)(
-       SYMBOL_BEGIN(194...197)("%s["),
-       STRING_CONTENT(197...200)("abc"),
-       STRING_END(200...201)("]"),
-       "abc"
-     ),
+     SymbolNode(194...201)((194...197), (197...200), (200...201), "abc"),
      StringNode(203...209)((203...205), (205...208), (208...209), "abc"),
      StringNode(211...213)((211...212), (212...212), (212...213), ""),
      StringNode(215...220)((215...216), (216...219), (219...220), "abc"),
@@ -77,11 +74,12 @@ ProgramNode(0...497)(
             [CallNode(238...241)(
                nil,
                nil,
-               IDENTIFIER(238...241)("bbb"),
+               (238...241),
                nil,
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -128,11 +126,12 @@ ProgramNode(0...497)(
                [CallNode(332...333)(
                   nil,
                   nil,
-                  IDENTIFIER(332...333)("c"),
+                  (332...333),
                   nil,
                   nil,
                   nil,
                   nil,
+                  0,
                   "c"
                 )]
              ),

@@ -6,17 +6,18 @@ ProgramNode(0...25)(
          [CallNode(5...25)(
             nil,
             nil,
-            IDENTIFIER(5...8)("foo"),
+            (5...8),
             nil,
             ArgumentsNode(9...12)(
               [CallNode(9...12)(
                  nil,
                  nil,
-                 IDENTIFIER(9...12)("arg"),
+                 (9...12),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "arg"
                )]
             ),
@@ -41,6 +42,7 @@ ProgramNode(0...25)(
               (13...15),
               (22...25)
             ),
+            0,
             "foo"
           )]
        ),

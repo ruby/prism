@@ -2,45 +2,23 @@ ProgramNode(0...20)(
   [],
   StatementsNode(0...20)(
     [CallNode(0...20)(
-       CallNode(0...3)(
-         nil,
-         nil,
-         IDENTIFIER(0...3)("foo"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "foo"
-       ),
+       CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
        nil,
-       BRACKET_LEFT_RIGHT(3...4)("["),
-       BRACKET_LEFT(3...4)("["),
+       (3...20),
+       (3...4),
        ArgumentsNode(4...18)(
-         [CallNode(4...7)(
-            nil,
-            nil,
-            IDENTIFIER(4...7)("bar"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "bar"
-          ),
+         [CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 0, "bar"),
           KeywordHashNode(9...18)(
             [AssocNode(9...18)(
-               SymbolNode(9...13)(
-                 SYMBOL_BEGIN(9...10)(":"),
-                 IDENTIFIER(10...13)("baz"),
-                 nil,
-                 "baz"
-               ),
+               SymbolNode(9...13)((9...10), (10...13), nil, "baz"),
                IntegerNode(17...18)(),
                (14...16)
              )]
           )]
        ),
-       BRACKET_RIGHT(19...20)("]"),
+       (19...20),
        nil,
+       0,
        "[]"
      )]
   )

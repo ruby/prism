@@ -84,36 +84,33 @@ module YARP
     end
 
     def visit_call_node(node)
-      if !node.opening && node.arguments.arguments.length == 1
-        bounds(node.message)
-        visit_token(node.message)
-
-        bounds(node.receiver)
+      if !node.opening_loc && node.arguments.arguments.length == 1
+        bounds(node.receiver.location)
         left = visit(node.receiver)
 
-        bounds(node.arguments.arguments.first)
+        bounds(node.arguments.arguments.first.location)
         right = visit(node.arguments.arguments.first)
 
-        on_binary(left, node.message.value.to_sym, right)
+        on_binary(left, source[node.message_loc.start_offset...node.message_loc.end_offset].to_sym, right)
       else
         raise NotImplementedError
       end
     end
 
     def visit_integer_node(node)
-      bounds(node)
+      bounds(node.location)
       on_int(source[node.location.start_offset...node.location.end_offset])
     end
 
     def visit_statements_node(node)
-      bounds(node)
+      bounds(node.location)
       node.body.inject(on_stmts_new) do |stmts, stmt|
         on_stmts_add(stmts, visit(stmt))
       end
     end
 
     def visit_token(node)
-      bounds(node)
+      bounds(node.location)
 
       case node.type
       when :MINUS
@@ -126,7 +123,7 @@ module YARP
     end
 
     def visit_program_node(node)
-      bounds(node)
+      bounds(node.location)
       on_program(visit(node.statements))
     end
 
@@ -151,8 +148,8 @@ module YARP
     #
     # This method could be drastically improved with some caching on the start
     # of every line, but for now it's good enough.
-    def bounds(node)
-      start_offset = node.location.start_offset
+    def bounds(location)
+      start_offset = location.start_offset
 
       @lineno = source[0..start_offset].count("\n") + 1
       @column = start_offset - (source.rindex("\n", start_offset) || 0)

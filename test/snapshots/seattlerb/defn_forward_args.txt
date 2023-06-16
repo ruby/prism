@@ -17,11 +17,12 @@ ProgramNode(0...23)(
          [CallNode(12...18)(
             nil,
             nil,
-            IDENTIFIER(12...13)("b"),
-            PARENTHESIS_LEFT(13...14)("("),
+            (12...13),
+            (13...14),
             ArgumentsNode(14...17)([ForwardingArgumentsNode(14...17)()]),
-            PARENTHESIS_RIGHT(17...18)(")"),
+            (17...18),
             nil,
+            0,
             "b"
           )]
        ),

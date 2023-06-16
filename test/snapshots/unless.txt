@@ -52,35 +52,27 @@ ProgramNode(0...141)(
        CallNode(137...141)(
          nil,
          nil,
-         IDENTIFIER(137...141)("bar?"),
+         (137...141),
          nil,
          nil,
          nil,
          nil,
+         0,
          "bar?"
        ),
        StatementsNode(119...129)(
          [CallNode(119...129)(
             nil,
             nil,
-            IDENTIFIER(119...122)("foo"),
+            (119...122),
             nil,
             ArgumentsNode(123...129)(
-              [SymbolNode(123...125)(
-                 SYMBOL_BEGIN(123...124)(":"),
-                 IDENTIFIER(124...125)("a"),
-                 nil,
-                 "a"
-               ),
-               SymbolNode(127...129)(
-                 SYMBOL_BEGIN(127...128)(":"),
-                 IDENTIFIER(128...129)("b"),
-                 nil,
-                 "b"
-               )]
+              [SymbolNode(123...125)((123...124), (124...125), nil, "a"),
+               SymbolNode(127...129)((127...128), (128...129), nil, "b")]
             ),
             nil,
             nil,
+            0,
             "foo"
           )]
        ),

@@ -3,87 +3,75 @@ ProgramNode(0...64)(
   StatementsNode(0...64)(
     [OperatorAssignmentNode(0...14)(
        CallNode(0...5)(
-         CallNode(0...3)(
-           nil,
-           nil,
-           IDENTIFIER(0...3)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "foo"
-         ),
-         DOT(3...4)("."),
-         CONSTANT(4...5)("A"),
+         CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
+         (3...4),
+         (4...5),
          nil,
          nil,
          nil,
          nil,
+         0,
          "A="
        ),
        PLUS_EQUAL(6...8)("+="),
        CallNode(9...14)(
          nil,
          nil,
-         IDENTIFIER(9...10)("m"),
+         (9...10),
          nil,
          ArgumentsNode(11...14)(
            [CallNode(11...14)(
               nil,
               nil,
-              IDENTIFIER(11...14)("foo"),
+              (11...14),
               nil,
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      ),
      OperatorAssignmentNode(16...30)(
        CallNode(16...21)(
-         CallNode(16...19)(
-           nil,
-           nil,
-           IDENTIFIER(16...19)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "foo"
-         ),
-         DOT(19...20)("."),
-         IDENTIFIER(20...21)("a"),
+         CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "foo"),
+         (19...20),
+         (20...21),
          nil,
          nil,
          nil,
          nil,
+         0,
          "a="
        ),
        PLUS_EQUAL(22...24)("+="),
        CallNode(25...30)(
          nil,
          nil,
-         IDENTIFIER(25...26)("m"),
+         (25...26),
          nil,
          ArgumentsNode(27...30)(
            [CallNode(27...30)(
               nil,
               nil,
-              IDENTIFIER(27...30)("foo"),
+              (27...30),
               nil,
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      ),
@@ -93,11 +81,12 @@ ProgramNode(0...64)(
            CallNode(32...35)(
              nil,
              nil,
-             IDENTIFIER(32...35)("foo"),
+             (32...35),
              nil,
              nil,
              nil,
              nil,
+             0,
              "foo"
            ),
            ConstantReadNode(37...38)(),
@@ -110,65 +99,61 @@ ProgramNode(0...64)(
        CallNode(42...47)(
          nil,
          nil,
-         IDENTIFIER(42...43)("m"),
+         (42...43),
          nil,
          ArgumentsNode(44...47)(
            [CallNode(44...47)(
               nil,
               nil,
-              IDENTIFIER(44...47)("foo"),
+              (44...47),
               nil,
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      ),
      OperatorAssignmentNode(49...64)(
        CallNode(49...55)(
-         CallNode(49...52)(
-           nil,
-           nil,
-           IDENTIFIER(49...52)("foo"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "foo"
-         ),
-         COLON_COLON(52...54)("::"),
-         IDENTIFIER(54...55)("a"),
+         CallNode(49...52)(nil, nil, (49...52), nil, nil, nil, nil, 0, "foo"),
+         (52...54),
+         (54...55),
          nil,
          nil,
          nil,
          nil,
+         0,
          "a="
        ),
        PLUS_EQUAL(56...58)("+="),
        CallNode(59...64)(
          nil,
          nil,
-         IDENTIFIER(59...60)("m"),
+         (59...60),
          nil,
          ArgumentsNode(61...64)(
            [CallNode(61...64)(
               nil,
               nil,
-              IDENTIFIER(61...64)("foo"),
+              (61...64),
               nil,
               nil,
               nil,
               nil,
+              0,
               "foo"
             )]
          ),
          nil,
          nil,
+         0,
          "m"
        )
      )]

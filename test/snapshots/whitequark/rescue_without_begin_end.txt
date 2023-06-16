@@ -4,7 +4,7 @@ ProgramNode(0...30)(
     [CallNode(0...30)(
        nil,
        nil,
-       IDENTIFIER(0...4)("meth"),
+       (0...4),
        nil,
        nil,
        nil,
@@ -17,11 +17,12 @@ ProgramNode(0...30)(
              [CallNode(9...12)(
                 nil,
                 nil,
-                IDENTIFIER(9...12)("foo"),
+                (9...12),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "foo"
               )]
            ),
@@ -34,11 +35,12 @@ ProgramNode(0...30)(
                [CallNode(22...25)(
                   nil,
                   nil,
-                  IDENTIFIER(22...25)("bar"),
+                  (22...25),
                   nil,
                   nil,
                   nil,
                   nil,
+                  0,
                   "bar"
                 )]
              ),
@@ -51,6 +53,7 @@ ProgramNode(0...30)(
          (5...7),
          (27...30)
        ),
+       0,
        "meth"
      )]
   )

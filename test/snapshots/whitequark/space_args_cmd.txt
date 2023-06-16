@@ -4,7 +4,7 @@ ProgramNode(0...11)(
     [CallNode(0...11)(
        nil,
        nil,
-       IDENTIFIER(0...3)("fun"),
+       (0...3),
        nil,
        ArgumentsNode(4...11)(
          [ParenthesesNode(4...11)(
@@ -12,22 +12,24 @@ ProgramNode(0...11)(
               [CallNode(5...10)(
                  nil,
                  nil,
-                 IDENTIFIER(5...6)("f"),
+                 (5...6),
                  nil,
                  ArgumentsNode(7...10)(
                    [CallNode(7...10)(
                       nil,
                       nil,
-                      IDENTIFIER(7...10)("bar"),
+                      (7...10),
                       nil,
                       nil,
                       nil,
                       nil,
+                      0,
                       "bar"
                     )]
                  ),
                  nil,
                  nil,
+                 0,
                  "f"
                )]
             ),
@@ -37,6 +39,7 @@ ProgramNode(0...11)(
        ),
        nil,
        nil,
+       0,
        "fun"
      )]
   )

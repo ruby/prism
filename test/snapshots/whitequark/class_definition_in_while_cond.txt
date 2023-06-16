@@ -15,11 +15,12 @@ ProgramNode(0...197)(
               CallNode(25...35)(
                 nil,
                 nil,
-                IDENTIFIER(25...28)("tap"),
+                (25...28),
                 nil,
                 nil,
                 nil,
                 BlockNode(29...35)([], nil, nil, (29...31), (32...35)),
+                0,
                 "tap"
               ),
               (21...22),
@@ -41,11 +42,12 @@ ProgramNode(0...197)(
            [CallNode(75...85)(
               nil,
               nil,
-              IDENTIFIER(75...78)("tap"),
+              (75...78),
               nil,
               nil,
               nil,
               BlockNode(79...85)([], nil, nil, (79...81), (82...85)),
+              0,
               "tap"
             )]
          ),
@@ -68,11 +70,12 @@ ProgramNode(0...197)(
               CallNode(124...134)(
                 nil,
                 nil,
-                IDENTIFIER(124...127)("tap"),
+                (124...127),
                 nil,
                 nil,
                 nil,
                 BlockNode(128...134)([], nil, nil, (128...130), (131...134)),
+                0,
                 "tap"
               ),
               (120...121),
@@ -95,11 +98,12 @@ ProgramNode(0...197)(
            [CallNode(170...180)(
               nil,
               nil,
-              IDENTIFIER(170...173)("tap"),
+              (170...173),
               nil,
               nil,
               nil,
               BlockNode(174...180)([], nil, nil, (174...176), (177...180)),
+              0,
               "tap"
             )]
          ),

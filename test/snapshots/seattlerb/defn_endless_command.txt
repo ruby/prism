@@ -9,11 +9,12 @@ ProgramNode(0...33)(
          [CallNode(18...33)(
             nil,
             nil,
-            IDENTIFIER(18...30)("other_method"),
+            (18...30),
             nil,
             ArgumentsNode(31...33)([IntegerNode(31...33)()]),
             nil,
             nil,
+            0,
             "other_method"
           )]
        ),

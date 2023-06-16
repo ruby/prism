@@ -4,16 +4,7 @@ ProgramNode(0...18)(
     [OperatorOrAssignmentNode(0...18)(
        LocalVariableWriteNode(0...1)(:a, 0, nil, (0...1), nil),
        RescueModifierNode(6...18)(
-         CallNode(6...7)(
-           nil,
-           nil,
-           IDENTIFIER(6...7)("b"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "b"
-         ),
+         CallNode(6...7)(nil, nil, (6...7), nil, nil, nil, nil, 0, "b"),
          (8...14),
          NilNode(15...18)()
        ),

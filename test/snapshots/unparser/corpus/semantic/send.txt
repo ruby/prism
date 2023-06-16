@@ -1,98 +1,67 @@
 ProgramNode(0...44)(
   [],
   StatementsNode(0...44)(
-    [CallNode(0...3)(
-       nil,
-       nil,
-       IDENTIFIER(0...3)("foo"),
-       nil,
-       nil,
-       nil,
-       nil,
-       "foo"
-     ),
+    [CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
      CallNode(4...10)(
        nil,
        nil,
-       IDENTIFIER(4...7)("foo"),
-       PARENTHESIS_LEFT(7...8)("("),
+       (4...7),
+       (7...8),
        ArgumentsNode(8...9)([IntegerNode(8...9)()]),
-       PARENTHESIS_RIGHT(9...10)(")"),
+       (9...10),
        nil,
+       0,
        "foo"
      ),
      CallNode(12...27)(
        CallNode(12...22)(
          CallNode(12...20)(
-           CallNode(12...13)(
-             nil,
-             nil,
-             IDENTIFIER(12...13)("a"),
-             nil,
-             nil,
-             nil,
-             nil,
-             "a"
-           ),
-           DOT(13...14)("."),
-           EQUAL_EQUAL_EQUAL(14...17)("==="),
-           PARENTHESIS_LEFT(17...18)("("),
+           CallNode(12...13)(nil, nil, (12...13), nil, nil, nil, nil, 0, "a"),
+           (13...14),
+           (14...17),
+           (17...18),
            ArgumentsNode(18...19)(
              [CallNode(18...19)(
                 nil,
                 nil,
-                IDENTIFIER(18...19)("b"),
+                (18...19),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "b"
               )]
            ),
-           PARENTHESIS_RIGHT(19...20)(")"),
+           (19...20),
            nil,
+           0,
            "==="
          ),
-         DOT(20...21)("."),
-         IDENTIFIER(21...22)("c"),
+         (20...21),
+         (21...22),
          nil,
          nil,
          nil,
          nil,
+         0,
          "c"
        ),
        nil,
-       EQUAL_EQUAL(23...25)("=="),
+       (23...25),
        nil,
        ArgumentsNode(26...27)(
-         [CallNode(26...27)(
-            nil,
-            nil,
-            IDENTIFIER(26...27)("d"),
-            nil,
-            nil,
-            nil,
-            nil,
-            "d"
-          )]
+         [CallNode(26...27)(nil, nil, (26...27), nil, nil, nil, nil, 0, "d")]
        ),
        nil,
        nil,
+       0,
        "=="
      ),
      CallNode(29...44)(
-       CallNode(29...30)(
-         nil,
-         nil,
-         IDENTIFIER(29...30)("a"),
-         nil,
-         nil,
-         nil,
-         nil,
-         "a"
-       ),
+       CallNode(29...30)(nil, nil, (29...30), nil, nil, nil, nil, 0, "a"),
        nil,
-       EQUAL_EQUAL(31...33)("=="),
+       (31...33),
        nil,
        ArgumentsNode(34...44)(
          [CallNode(34...44)(
@@ -100,43 +69,48 @@ ProgramNode(0...44)(
               CallNode(34...35)(
                 nil,
                 nil,
-                IDENTIFIER(34...35)("d"),
+                (34...35),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "d"
               ),
-              DOT(35...36)("."),
-              IDENTIFIER(36...37)("c"),
+              (35...36),
+              (36...37),
               nil,
               nil,
               nil,
               nil,
+              0,
               "c"
             ),
-            DOT(37...38)("."),
-            EQUAL_EQUAL_EQUAL(38...41)("==="),
-            PARENTHESIS_LEFT(41...42)("("),
+            (37...38),
+            (38...41),
+            (41...42),
             ArgumentsNode(42...43)(
               [CallNode(42...43)(
                  nil,
                  nil,
-                 IDENTIFIER(42...43)("c"),
+                 (42...43),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "c"
                )]
             ),
-            PARENTHESIS_RIGHT(43...44)(")"),
+            (43...44),
             nil,
+            0,
             "==="
           )]
        ),
        nil,
        nil,
+       0,
        "=="
      )]
   )

@@ -4,13 +4,14 @@ ProgramNode(0...278)(
     [CallNode(0...9)(
        nil,
        nil,
-       IDENTIFIER(0...3)("foo"),
+       (0...3),
        nil,
        ArgumentsNode(4...9)(
          [RegularExpressionNode(4...9)((4...5), (5...8), (8...9), "bar", 0)]
        ),
        nil,
        nil,
+       0,
        "foo"
      ),
      RegularExpressionNode(11...19)((11...14), (14...17), (17...19), "abc", 1),
@@ -31,11 +32,12 @@ ProgramNode(0...278)(
             [CallNode(48...51)(
                nil,
                nil,
-               IDENTIFIER(48...51)("bbb"),
+               (48...51),
                nil,
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -55,22 +57,24 @@ ProgramNode(0...278)(
             0
           ),
           nil,
-          EQUAL_TILDE(74...76)("=~"),
+          (74...76),
           nil,
           ArgumentsNode(77...80)(
             [CallNode(77...80)(
                nil,
                nil,
-               IDENTIFIER(77...80)("baz"),
+               (77...80),
                nil,
                nil,
                nil,
                nil,
+               0,
                "baz"
              )]
           ),
           nil,
           nil,
+          0,
           "=~"
         ),
         LocalVariableReadNode(82...85)(:foo, 0)],
@@ -115,13 +119,14 @@ ProgramNode(0...278)(
          0
        ),
        nil,
-       EQUAL_TILDE(260...262)("=~"),
+       (260...262),
        nil,
        ArgumentsNode(263...267)(
          [StringNode(263...267)((263...264), (264...266), (266...267), "hi")]
        ),
        nil,
        nil,
+       0,
        "=~"
      ),
      RegularExpressionNode(269...278)(

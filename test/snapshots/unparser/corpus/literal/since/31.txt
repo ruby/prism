@@ -17,13 +17,14 @@ ProgramNode(0...51)(
          [CallNode(13...19)(
             nil,
             nil,
-            IDENTIFIER(13...16)("bar"),
-            PARENTHESIS_LEFT(16...17)("("),
+            (13...16),
+            (16...17),
             ArgumentsNode(17...18)(
               [BlockArgumentNode(17...18)(nil, (17...18))]
             ),
-            PARENTHESIS_RIGHT(18...19)(")"),
+            (18...19),
             nil,
+            0,
             "bar"
           )]
        ),
@@ -51,13 +52,14 @@ ProgramNode(0...51)(
          [CallNode(41...47)(
             nil,
             nil,
-            IDENTIFIER(41...44)("bar"),
-            PARENTHESIS_LEFT(44...45)("("),
+            (41...44),
+            (44...45),
             ArgumentsNode(45...46)(
               [BlockArgumentNode(45...46)(nil, (45...46))]
             ),
-            PARENTHESIS_RIGHT(46...47)(")"),
+            (46...47),
             nil,
+            0,
             "bar"
           )]
        ),

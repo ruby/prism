@@ -4,16 +4,11 @@ ProgramNode(6...66)(
     [HashNode(6...66)(
        (6...7),
        [AssocNode(16...41)(
-          SymbolNode(16...18)(
-            nil,
-            LABEL(16...17)("a"),
-            LABEL_END(17...18)(":"),
-            "a"
-          ),
+          SymbolNode(16...18)(nil, (16...17), (17...18), "a"),
           CallNode(19...41)(
             nil,
             nil,
-            IDENTIFIER(19...25)("lambda"),
+            (19...25),
             nil,
             nil,
             nil,
@@ -26,22 +21,24 @@ ProgramNode(6...66)(
                    CallNode(28...29)(
                      nil,
                      nil,
-                     IDENTIFIER(28...29)("b"),
+                     (28...29),
                      nil,
                      nil,
                      nil,
                      nil,
+                     0,
                      "b"
                    ),
                    StatementsNode(32...35)(
                      [CallNode(32...35)(
                         nil,
                         nil,
-                        IDENTIFIER(32...33)("c"),
-                        PARENTHESIS_LEFT(33...34)("("),
+                        (32...33),
+                        (33...34),
                         nil,
-                        PARENTHESIS_RIGHT(34...35)(")"),
+                        (34...35),
                         nil,
+                        0,
                         "c"
                       )]
                    ),
@@ -51,11 +48,12 @@ ProgramNode(6...66)(
                        [CallNode(38...39)(
                           nil,
                           nil,
-                          IDENTIFIER(38...39)("d"),
+                          (38...39),
                           nil,
                           nil,
                           nil,
                           nil,
+                          0,
                           "d"
                         )]
                      ),
@@ -67,17 +65,13 @@ ProgramNode(6...66)(
               (26...27),
               (40...41)
             ),
+            0,
             "lambda"
           ),
           nil
         ),
         AssocNode(51...57)(
-          SymbolNode(51...53)(
-            nil,
-            LABEL(51...52)("e"),
-            LABEL_END(52...53)(":"),
-            "e"
-          ),
+          SymbolNode(51...53)(nil, (51...52), (52...53), "e"),
           NilNode(54...57)(),
           nil
         )],

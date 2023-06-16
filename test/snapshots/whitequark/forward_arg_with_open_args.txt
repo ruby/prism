@@ -19,11 +19,12 @@ ProgramNode(0...292)(
               [CallNode(15...23)(
                  nil,
                  nil,
-                 IDENTIFIER(15...18)("bar"),
-                 PARENTHESIS_LEFT(18...19)("("),
+                 (15...18),
+                 (18...19),
                  ArgumentsNode(19...22)([ForwardingArgumentsNode(19...22)()]),
-                 PARENTHESIS_RIGHT(22...23)(")"),
+                 (22...23),
                  nil,
+                 0,
                  "bar"
                )]
             ),
@@ -57,11 +58,12 @@ ProgramNode(0...292)(
               [CallNode(44...52)(
                  nil,
                  nil,
-                 IDENTIFIER(44...47)("bar"),
-                 PARENTHESIS_LEFT(47...48)("("),
+                 (44...47),
+                 (47...48),
                  ArgumentsNode(48...51)([ForwardingArgumentsNode(48...51)()]),
-                 PARENTHESIS_RIGHT(51...52)(")"),
+                 (51...52),
                  nil,
+                 0,
                  "bar"
                )]
             ),
@@ -114,11 +116,12 @@ ProgramNode(0...292)(
          [CallNode(90...98)(
             nil,
             nil,
-            IDENTIFIER(90...93)("bar"),
-            PARENTHESIS_LEFT(93...94)("("),
+            (90...93),
+            (93...94),
             ArgumentsNode(94...97)([ForwardingArgumentsNode(94...97)()]),
-            PARENTHESIS_RIGHT(97...98)(")"),
+            (97...98),
             nil,
+            0,
             "bar"
           )]
        ),
@@ -146,11 +149,12 @@ ProgramNode(0...292)(
          [CallNode(122...130)(
             nil,
             nil,
-            IDENTIFIER(122...125)("bar"),
-            PARENTHESIS_LEFT(125...126)("("),
+            (122...125),
+            (125...126),
             ArgumentsNode(126...129)([ForwardingArgumentsNode(126...129)()]),
-            PARENTHESIS_RIGHT(129...130)(")"),
+            (129...130),
             nil,
+            0,
             "bar"
           )]
        ),
@@ -178,11 +182,12 @@ ProgramNode(0...292)(
          [CallNode(152...160)(
             nil,
             nil,
-            IDENTIFIER(152...155)("bar"),
-            PARENTHESIS_LEFT(155...156)("("),
+            (152...155),
+            (155...156),
             ArgumentsNode(156...159)([ForwardingArgumentsNode(156...159)()]),
-            PARENTHESIS_RIGHT(159...160)(")"),
+            (159...160),
             nil,
+            0,
             "bar"
           )]
        ),
@@ -241,11 +246,12 @@ ProgramNode(0...292)(
          [CallNode(215...223)(
             nil,
             nil,
-            IDENTIFIER(215...218)("bar"),
-            PARENTHESIS_LEFT(218...219)("("),
+            (215...218),
+            (218...219),
             ArgumentsNode(219...222)([ForwardingArgumentsNode(219...222)()]),
-            PARENTHESIS_RIGHT(222...223)(")"),
+            (222...223),
             nil,
+            0,
             "bar"
           )]
        ),
@@ -278,11 +284,12 @@ ProgramNode(0...292)(
          [CallNode(249...257)(
             nil,
             nil,
-            IDENTIFIER(249...252)("bar"),
-            PARENTHESIS_LEFT(252...253)("("),
+            (249...252),
+            (252...253),
             ArgumentsNode(253...256)([ForwardingArgumentsNode(253...256)()]),
-            PARENTHESIS_RIGHT(256...257)(")"),
+            (256...257),
             nil,
+            0,
             "bar"
           )]
        ),
@@ -310,11 +317,12 @@ ProgramNode(0...292)(
          [CallNode(280...288)(
             nil,
             nil,
-            IDENTIFIER(280...283)("bar"),
-            PARENTHESIS_LEFT(283...284)("("),
+            (280...283),
+            (283...284),
             ArgumentsNode(284...287)([ForwardingArgumentsNode(284...287)()]),
-            PARENTHESIS_RIGHT(287...288)(")"),
+            (287...288),
             nil,
+            0,
             "bar"
           )]
        ),

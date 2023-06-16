@@ -3,41 +3,25 @@ ProgramNode(0...14)(
   StatementsNode(0...14)(
     [CallNode(0...14)(
        CallNode(0...12)(
-         CallNode(0...1)(
-           nil,
-           nil,
-           IDENTIFIER(0...1)("a"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "a"
-         ),
-         DOT(1...2)("."),
-         IDENTIFIER(2...3)("b"),
+         CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
+         (1...2),
+         (2...3),
          nil,
          ArgumentsNode(4...5)(
-           [CallNode(4...5)(
-              nil,
-              nil,
-              IDENTIFIER(4...5)("c"),
-              nil,
-              nil,
-              nil,
-              nil,
-              "c"
-            )]
+           [CallNode(4...5)(nil, nil, (4...5), nil, nil, nil, nil, 0, "c")]
          ),
          nil,
          BlockNode(6...12)([], nil, nil, (6...8), (9...12)),
+         0,
          "b"
        ),
-       DOT(12...13)("."),
-       IDENTIFIER(13...14)("d"),
+       (12...13),
+       (13...14),
        nil,
        nil,
        nil,
        nil,
+       0,
        "d"
      )]
   )

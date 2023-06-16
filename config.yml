@@ -327,6 +327,9 @@ flags:
       - WINDOWS31J # s - forces the Windows-31J encoding
       - UTF8       # u - forces the UTF-8 encoding
       - Once       # o - only interpolates values into the regular expression once
+  - name: CallNodeFlags
+    values:
+      - SafeNavigation # &. operator
 nodes:
   - name: AliasNode
     child_nodes:
@@ -517,7 +520,7 @@ nodes:
         type: node?
         kind: ParametersNode
       - name: locals
-        type: token[]
+        type: location[]
       - name: opening_loc
         type: location?
       - name: closing_loc
@@ -547,20 +550,22 @@ nodes:
     child_nodes:
       - name: receiver
         type: node?
-      - name: call_operator
-        type: token?
-      - name: message
-        type: token?
-      - name: opening
-        type: token?
+      - name: operator_loc
+        type: location?
+      - name: message_loc
+        type: location?
+      - name: opening_loc
+        type: location?
       - name: arguments
         type: node?
         kind: ArgumentsNode
-      - name: closing
-        type: token?
+      - name: closing_loc
+        type: location?
       - name: block
         type: node?
         kind: BlockNode
+      - name: flags
+        type: uint32
       - name: name
         type: string
     comment: |
@@ -1009,12 +1014,12 @@ nodes:
           ^^^^^^^^^^^^^^^^
   - name: InterpolatedSymbolNode
     child_nodes:
-      - name: opening
-        type: token?
+      - name: opening_loc
+        type: location?
       - name: parts
         type: node[]
-      - name: closing
-        type: token?
+      - name: closing_loc
+        type: location?
     comment: |
       Represents a symbol literal that contains interpolation.
 
@@ -1660,12 +1665,12 @@ nodes:
           ^^^^^^^^^^^^^^
   - name: SymbolNode
     child_nodes:
-      - name: opening
-        type: token?
-      - name: value
-        type: token
-      - name: closing
-        type: token?
+      - name: opening_loc
+        type: location?
+      - name: value_loc
+        type: location
+      - name: closing_loc
+        type: location?
       - name: unescaped
         type: string
     comment: |

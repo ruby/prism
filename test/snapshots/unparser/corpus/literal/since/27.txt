@@ -7,33 +7,26 @@ ProgramNode(0...22)(
        nil,
        StatementsNode(7...14)(
          [CallNode(7...14)(
-            CallNode(7...9)(
-              nil,
-              nil,
-              IDENTIFIER(7...9)("_1"),
-              nil,
-              nil,
-              nil,
-              nil,
-              "_1"
-            ),
+            CallNode(7...9)(nil, nil, (7...9), nil, nil, nil, nil, 0, "_1"),
             nil,
-            PLUS(10...11)("+"),
+            (10...11),
             nil,
             ArgumentsNode(12...14)(
               [CallNode(12...14)(
                  nil,
                  nil,
-                 IDENTIFIER(12...14)("_2"),
+                 (12...14),
                  nil,
                  nil,
                  nil,
                  nil,
+                 0,
                  "_2"
                )]
             ),
             nil,
             nil,
+            0,
             "+"
           )]
        )

@@ -73,11 +73,12 @@ class ErrorsTest < Test::Unit::TestCase
         CallNode(
           expression("1"),
           nil,
-          PLUS("+"),
+          Location(),
           nil,
           ArgumentsNode([MissingNode()]),
           nil,
           nil,
+          0,
           "+"
         )
       ]),
@@ -245,19 +246,20 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
-      PARENTHESIS_LEFT("("),
+      Location(),
+      Location(),
       ArgumentsNode(
         [KeywordHashNode(
            [AssocSplatNode(
               CallNode(
                 nil,
                 nil,
-                IDENTIFIER("kwargs"),
+                Location(),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "kwargs"
               ),
               Location()
@@ -265,11 +267,12 @@ class ErrorsTest < Test::Unit::TestCase
          ),
          SplatNode(
            Location(),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+           CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "args")
          )]
       ),
-      PARENTHESIS_RIGHT(")"),
+      Location(),
       nil,
+      0,
       "a"
     )
 
@@ -280,14 +283,15 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
-      PARENTHESIS_LEFT("("),
+      Location(),
+      Location(),
       ArgumentsNode([
         BlockArgumentNode(expression("block"), Location()),
         expression("foo")
       ]),
-      PARENTHESIS_RIGHT(")"),
+      Location(),
       nil,
+      0,
       "a"
     )
 
@@ -306,23 +310,24 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
-      PARENTHESIS_LEFT("("),
+      Location(),
+      Location(),
       ArgumentsNode(
         [KeywordHashNode(
            [AssocNode(
-              SymbolNode(nil, LABEL("foo"), LABEL_END(":"), "foo"),
-              CallNode(nil, nil, IDENTIFIER("bar"), nil, nil, nil, nil, "bar"),
+              SymbolNode(nil, Location(), Location(), "foo"),
+              CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "bar"),
               nil
             )]
          ),
          SplatNode(
            Location(),
-           CallNode(nil, nil, IDENTIFIER("args"), nil, nil, nil, nil, "args")
+           CallNode(nil, nil, Location(), nil, nil, nil, nil, 0, "args")
          )]
       ),
-      PARENTHESIS_RIGHT(")"),
+      Location(),
       nil,
+      0,
       "a"
     )
 
@@ -356,7 +361,7 @@ class ErrorsTest < Test::Unit::TestCase
         [CallNode(
            nil,
            nil,
-           IDENTIFIER("bar"),
+           Location(),
            nil,
            nil,
            nil,
@@ -367,6 +372,7 @@ class ErrorsTest < Test::Unit::TestCase
              Location(),
              Location()
            ),
+           0,
            "bar"
          )]
       ),
@@ -443,16 +449,16 @@ class ErrorsTest < Test::Unit::TestCase
     expected = BeginNode(
       Location(),
       StatementsNode([
-        LocalVariableWriteNode(:_1, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_2, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_3, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_4, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_5, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_6, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_7, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_8, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_9, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location()),
-        LocalVariableWriteNode(:_10, 0, SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"), Location(), Location())
+        LocalVariableWriteNode(:_1, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_2, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_3, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_4, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_5, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_6, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_7, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_8, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_9, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location()),
+        LocalVariableWriteNode(:_10, 0, SymbolNode(Location(), Location(), nil, "a"), Location(), Location())
       ]),
       nil,
       nil,
@@ -784,7 +790,7 @@ class ErrorsTest < Test::Unit::TestCase
 
   def test_case_without_when_clauses_errors_on_else_clause
     expected = CaseNode(
-      SymbolNode(SYMBOL_BEGIN(":"), IDENTIFIER("a"), nil, "a"),
+      SymbolNode(Location(), Location(), nil, "a"),
       [],
       ElseNode(Location(), nil, Location()),
       Location(),
@@ -827,7 +833,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = CallNode(
       nil,
       nil,
-      IDENTIFIER("a"),
+      Location(),
       nil,
       nil,
       nil,
@@ -838,6 +844,7 @@ class ErrorsTest < Test::Unit::TestCase
         Location(),
         Location()
       ),
+      0,
       "a"
     )
 

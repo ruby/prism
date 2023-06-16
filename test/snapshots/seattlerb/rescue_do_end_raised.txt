@@ -4,7 +4,7 @@ ProgramNode(0...35)(
     [CallNode(0...35)(
        nil,
        nil,
-       IDENTIFIER(0...3)("tap"),
+       (0...3),
        nil,
        nil,
        nil,
@@ -17,11 +17,12 @@ ProgramNode(0...35)(
              [CallNode(9...14)(
                 nil,
                 nil,
-                IDENTIFIER(9...14)("raise"),
+                (9...14),
                 nil,
                 nil,
                 nil,
                 nil,
+                0,
                 "raise"
               )]
            ),
@@ -30,12 +31,7 @@ ProgramNode(0...35)(
            EnsureNode(15...35)(
              (15...21),
              StatementsNode(24...31)(
-               [SymbolNode(24...31)(
-                  SYMBOL_BEGIN(24...25)(":"),
-                  KEYWORD_ENSURE(25...31)("ensure"),
-                  nil,
-                  "ensure"
-                )]
+               [SymbolNode(24...31)((24...25), (25...31), nil, "ensure")]
              ),
              (32...35)
            ),
@@ -44,6 +40,7 @@ ProgramNode(0...35)(
          (4...6),
          (32...35)
        ),
+       0,
        "tap"
      )]
   )

@@ -25,11 +25,12 @@ ProgramNode(0...140)(
             [CallNode(29...32)(
                nil,
                nil,
-               IDENTIFIER(29...32)("bbb"),
+               (29...32),
                nil,
                nil,
                nil,
                nil,
+               0,
                "bbb"
              )]
           ),
@@ -42,16 +43,7 @@ ProgramNode(0...140)(
        [],
        (40...46),
        ConstantPathNode(47...51)(
-         CallNode(47...48)(
-           nil,
-           nil,
-           IDENTIFIER(47...48)("m"),
-           nil,
-           nil,
-           nil,
-           nil,
-           "m"
-         ),
+         CallNode(47...48)(nil, nil, (47...48), nil, nil, nil, nil, 0, "m"),
          ConstantReadNode(50...51)(),
          (48...50)
        ),
@@ -94,11 +86,12 @@ ProgramNode(0...140)(
          CallNode(110...113)(
            ConstantReadNode(110...111)(),
            nil,
-           BRACKET_LEFT_RIGHT(111...112)("["),
-           BRACKET_LEFT(111...112)("["),
+           (111...113),
+           (111...112),
            nil,
-           BRACKET_RIGHT(112...113)("]"),
+           (112...113),
            nil,
+           0,
            "[]"
          ),
          ConstantReadNode(115...116)(),
@@ -114,11 +107,12 @@ ProgramNode(0...140)(
          CallNode(129...133)(
            ConstantReadNode(129...130)(),
            nil,
-           BRACKET_LEFT_RIGHT(130...131)("["),
-           BRACKET_LEFT(130...131)("["),
+           (130...133),
+           (130...131),
            ArgumentsNode(131...132)([IntegerNode(131...132)()]),
-           BRACKET_RIGHT(132...133)("]"),
+           (132...133),
            nil,
+           0,
            "[]"
          ),
          ConstantReadNode(135...136)(),

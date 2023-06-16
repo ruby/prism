@@ -4,17 +4,18 @@ ProgramNode(0...148)(
     [CallNode(0...10)(
        nil,
        nil,
-       IDENTIFIER(0...3)("foo"),
+       (0...3),
        nil,
        nil,
        nil,
        BlockNode(4...10)([], nil, nil, (4...6), (7...10)),
+       0,
        "foo"
      ),
      CallNode(12...29)(
        nil,
        nil,
-       IDENTIFIER(12...15)("foo"),
+       (12...15),
        nil,
        nil,
        nil,
@@ -32,12 +33,13 @@ ProgramNode(0...148)(
          (16...18),
          (26...29)
        ),
+       0,
        "foo"
      ),
      CallNode(31...64)(
        nil,
        nil,
-       IDENTIFIER(31...34)("foo"),
+       (31...34),
        nil,
        nil,
        nil,
@@ -55,12 +57,13 @@ ProgramNode(0...148)(
          (35...37),
          (61...64)
        ),
+       0,
        "foo"
      ),
      CallNode(66...80)(
        nil,
        nil,
-       IDENTIFIER(66...69)("foo"),
+       (66...69),
        nil,
        nil,
        nil,
@@ -84,13 +87,14 @@ ProgramNode(0...148)(
          (70...72),
          (77...80)
        ),
+       0,
        "foo"
      ),
      CallNode(82...116)(
        nil,
        nil,
-       IDENTIFIER(82...85)("foo"),
-       PARENTHESIS_LEFT(85...86)("("),
+       (82...85),
+       (85...86),
        ArgumentsNode(86...109)(
          [InterpolatedStringNode(86...109)(
             (86...92),
@@ -98,7 +102,7 @@ ProgramNode(0...148)(
             (105...109)
           )]
        ),
-       PARENTHESIS_RIGHT(92...93)(")"),
+       (92...93),
        BlockNode(94...116)(
          [:a],
          BlockParametersNode(97...100)(
@@ -119,13 +123,14 @@ ProgramNode(0...148)(
          (94...96),
          (113...116)
        ),
+       0,
        "foo"
      ),
      CallNode(118...148)(
        nil,
        nil,
-       IDENTIFIER(118...121)("foo"),
-       PARENTHESIS_LEFT(121...122)("("),
+       (118...121),
+       (121...122),
        ArgumentsNode(122...141)(
          [InterpolatedStringNode(122...141)(
             (122...128),
@@ -133,7 +138,7 @@ ProgramNode(0...148)(
             (137...141)
           )]
        ),
-       PARENTHESIS_RIGHT(128...129)(")"),
+       (128...129),
        BlockNode(130...148)(
          [],
          nil,
@@ -141,17 +146,19 @@ ProgramNode(0...148)(
            [CallNode(143...144)(
               nil,
               nil,
-              IDENTIFIER(143...144)("a"),
+              (143...144),
               nil,
               nil,
               nil,
               nil,
+              0,
               "a"
             )]
          ),
          (130...132),
          (145...148)
        ),
+       0,
        "foo"
      )]
   )
