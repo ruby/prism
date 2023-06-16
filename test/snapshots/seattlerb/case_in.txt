@@ -507,9 +507,7 @@ ProgramNode(0...746)(
                (627...628)
              ),
              PinnedVariableNode(632...635)(
-               GlobalVariableReadNode(633...635)(
-                 GLOBAL_VARIABLE(633...635)("$b")
-               ),
+               GlobalVariableReadNode(633...635)(),
                (632...633)
              ),
              PinnedVariableNode(637...641)(

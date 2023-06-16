@@ -909,9 +909,7 @@ ProgramNode(0...1187)(
        BlockNode(716...722)(
          [],
          nil,
-         StatementsNode(718...720)(
-           [GlobalVariableReadNode(718...720)(BACK_REFERENCE(718...720)("$&"))]
-         ),
+         StatementsNode(718...720)([BackReferenceReadNode(718...720)()]),
          (716...717),
          (721...722)
        ),

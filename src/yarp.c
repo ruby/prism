@@ -683,6 +683,22 @@ yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token
     return node;
 }
 
+// Allocate a new BackReferenceReadNode node.
+static yp_back_reference_read_node_t *
+yp_back_reference_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
+    assert(name->type == YP_TOKEN_BACK_REFERENCE);
+    yp_back_reference_read_node_t *node = YP_ALLOC_NODE(parser, yp_back_reference_read_node_t);
+
+    *node = (yp_back_reference_read_node_t) {
+        {
+            .type = YP_NODE_BACK_REFERENCE_READ_NODE,
+            .location = YP_LOCATION_TOKEN_VALUE(name),
+        }
+    };
+
+    return node;
+}
+
 // Allocate and initialize new a begin node.
 static yp_begin_node_t *
 yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_statements_node_t *statements) {
@@ -1565,8 +1581,7 @@ yp_global_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name)
         {
             .type = YP_NODE_GLOBAL_VARIABLE_READ_NODE,
             .location = YP_LOCATION_TOKEN_VALUE(name),
-        },
-        .name = *name
+        }
     };
 
     return node;
@@ -1574,18 +1589,18 @@ yp_global_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name)
 
 // Allocate a new GlobalVariableWriteNode node.
 static yp_global_variable_write_node_t *
-yp_global_variable_write_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator, yp_node_t *value) {
+yp_global_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, const yp_token_t *operator, yp_node_t *value) {
     yp_global_variable_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_write_node_t);
 
     *node = (yp_global_variable_write_node_t) {
         {
             .type = YP_NODE_GLOBAL_VARIABLE_WRITE_NODE,
             .location = {
-                .start = name->start,
-                .end = (value == NULL ? name->end : value->location.end)
+                .start = name_loc->start,
+                .end = (value == NULL ? name_loc->end : value->location.end)
             },
         },
-        .name = *name,
+        .name_loc = *name_loc,
         .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
         .value = value
     };
@@ -2345,6 +2360,22 @@ yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *oper
         },
         .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
         .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword)
+    };
+
+    return node;
+}
+
+// Allocate a new NthReferenceReadNode node.
+static yp_numbered_reference_read_node_t *
+yp_numbered_reference_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
+    assert(name->type == YP_TOKEN_NUMBERED_REFERENCE);
+    yp_numbered_reference_read_node_t *node = YP_ALLOC_NODE(parser, yp_numbered_reference_read_node_t);
+
+    *node = (yp_numbered_reference_read_node_t) {
+        {
+            .type = YP_NODE_NUMBERED_REFERENCE_READ_NODE,
+            .location = YP_LOCATION_TOKEN_VALUE(name),
+        }
     };
 
     return node;
@@ -4414,7 +4445,7 @@ lex_global_variable(yp_parser_t *parser) {
         case '8':
         case '9':
             parser->current.end += yp_strspn_decimal_digit(parser->current.end, parser->end - parser->current.end);
-            return lex_state_p(parser, YP_LEX_STATE_FNAME) ? YP_TOKEN_GLOBAL_VARIABLE : YP_TOKEN_NTH_REFERENCE;
+            return lex_state_p(parser, YP_LEX_STATE_FNAME) ? YP_TOKEN_GLOBAL_VARIABLE : YP_TOKEN_NUMBERED_REFERENCE;
 
         case '-':
             parser->current.end++;
@@ -7142,18 +7173,14 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
         case YP_NODE_CONSTANT_PATH_NODE:
         case YP_NODE_CONSTANT_READ_NODE:
             return (yp_node_t *) yp_constant_path_write_node_create(parser, target, operator, value);
+        case YP_NODE_BACK_REFERENCE_READ_NODE:
+        case YP_NODE_NUMBERED_REFERENCE_READ_NODE:
+            yp_diagnostic_list_append(&parser->error_list, target->location.start, target->location.end, "Can't set variable");
+            /* fallthrough */
         case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
-            yp_token_t name = ((yp_global_variable_read_node_t *) target)->name;
-            yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &name, operator, value);
-            if ((name.type == YP_TOKEN_BACK_REFERENCE) || (name.type == YP_TOKEN_NTH_REFERENCE)) {
-                yp_diagnostic_list_append(
-                    &parser->error_list,
-                    name.start,
-                    name.end,
-                    "Can't set variable"
-                );
-            }
+            yp_global_variable_write_node_t *result = yp_global_variable_write_node_create(parser, &target->location, operator, value);
             yp_node_destroy(parser, target);
+
             return (yp_node_t *) result;
         }
         case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
@@ -8529,7 +8556,8 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 // can be transformed into write targets.
 #define YP_CASE_WRITABLE YP_NODE_CLASS_VARIABLE_READ_NODE: case YP_NODE_CONSTANT_PATH_NODE: \
     case YP_NODE_CONSTANT_READ_NODE: case YP_NODE_GLOBAL_VARIABLE_READ_NODE: case YP_NODE_LOCAL_VARIABLE_READ_NODE: \
-    case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE
+    case YP_NODE_INSTANCE_VARIABLE_READ_NODE: case YP_NODE_MULTI_WRITE_NODE: case YP_NODE_BACK_REFERENCE_READ_NODE: \
+    case YP_NODE_NUMBERED_REFERENCE_READ_NODE
 
 // Parse a node that is part of a string. If the subsequent tokens cannot be
 // parsed as a string part, then NULL is returned.
@@ -8589,9 +8617,10 @@ parse_string_part(yp_parser_t *parser) {
 
             return (yp_node_t *) yp_string_interpolated_node_create(parser, &opening, statements, &closing);
         }
-        // Here the lexer has returned the beginning of an embedded variable. In
-        // that case we'll parse the variable and create an appropriate node for it
-        // and then return that node. These kinds of parts look like:
+
+        // Here the lexer has returned the beginning of an embedded variable.
+        // In that case we'll parse the variable and create an appropriate node
+        // for it and then return that node. These kinds of parts look like:
         //
         //     "aaa #{bbb} #@ccc ddd"
         //                 ^^^^^
@@ -8600,25 +8629,34 @@ parse_string_part(yp_parser_t *parser) {
             parser_lex(parser);
 
             switch (parser->current.type) {
-                // In this case a global variable is being interpolated. We'll create
-                // a global variable read node.
+                // In this case a back reference is being interpolated. We'll
+                // create a global variable read node.
                 case YP_TOKEN_BACK_REFERENCE:
+                    parser_lex(parser);
+                    return (yp_node_t *) yp_back_reference_read_node_create(parser, &parser->previous);
+                // In this case an nth reference is being interpolated. We'll
+                // create a global variable read node.
+                case YP_TOKEN_NUMBERED_REFERENCE:
+                    parser_lex(parser);
+                    return (yp_node_t *) yp_numbered_reference_read_node_create(parser, &parser->previous);
+                // In this case a global variable is being interpolated. We'll
+                // create a global variable read node.
                 case YP_TOKEN_GLOBAL_VARIABLE:
-                case YP_TOKEN_NTH_REFERENCE:
                     parser_lex(parser);
                     return (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
-                // In this case an instance variable is being interpolated. We'll
-                // create an instance variable read node.
+                // In this case an instance variable is being interpolated.
+                // We'll create an instance variable read node.
                 case YP_TOKEN_INSTANCE_VARIABLE:
                     parser_lex(parser);
                     return (yp_node_t *) yp_instance_variable_read_node_create(parser, &parser->previous);
-                // In this case a class variable is being interpolated. We'll create a
-                // class variable read node.
+                // In this case a class variable is being interpolated. We'll
+                // create a class variable read node.
                 case YP_TOKEN_CLASS_VARIABLE:
                     parser_lex(parser);
                     return (yp_node_t *) yp_class_variable_read_node_create(parser, &parser->previous);
-                // We can hit here if we got an invalid token. In that case we'll not
-                // attempt to lex this token and instead just return a missing node.
+                // We can hit here if we got an invalid token. In that case
+                // we'll not attempt to lex this token and instead just return a
+                // missing node.
                 default:
                     expect(parser, YP_TOKEN_IDENTIFIER, "Expected a valid embedded variable.");
                     return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
@@ -8647,7 +8685,7 @@ parse_symbol(yp_parser_t *parser, yp_lex_mode_t *lex_mode, yp_lex_state_t next_s
             case YP_TOKEN_INSTANCE_VARIABLE:
             case YP_TOKEN_CLASS_VARIABLE:
             case YP_TOKEN_GLOBAL_VARIABLE:
-            case YP_TOKEN_NTH_REFERENCE:
+            case YP_TOKEN_NUMBERED_REFERENCE:
             case YP_TOKEN_BACK_REFERENCE:
             case YP_CASE_KEYWORD:
                 parser_lex(parser);
@@ -8760,11 +8798,14 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
             return parse_symbol(parser, lex_mode, first ? YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM : YP_LEX_STATE_NONE);
         }
         case YP_TOKEN_BACK_REFERENCE:
-        case YP_TOKEN_NTH_REFERENCE:
-        case YP_TOKEN_GLOBAL_VARIABLE: {
+            parser_lex(parser);
+            return (yp_node_t *) yp_back_reference_read_node_create(parser, &parser->previous);
+        case YP_TOKEN_NUMBERED_REFERENCE:
+            parser_lex(parser);
+            return (yp_node_t *) yp_numbered_reference_read_node_create(parser, &parser->previous);
+        case YP_TOKEN_GLOBAL_VARIABLE:
             parser_lex(parser);
             return (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
-        }
         default:
             yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Expected a bare word, symbol or global variable argument.");
             return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
@@ -9344,12 +9385,23 @@ parse_pattern_primitive(yp_parser_t *parser, const char *message) {
 
                     return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
                 }
-                case YP_TOKEN_GLOBAL_VARIABLE:
-                case YP_TOKEN_NTH_REFERENCE:
+                case YP_TOKEN_GLOBAL_VARIABLE: {
+                    parser_lex(parser);
+                    yp_node_t *variable = (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
+
+                    return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
+                }
+                case YP_TOKEN_NUMBERED_REFERENCE: {
+                    parser_lex(parser);
+                    yp_node_t *variable = (yp_node_t *) yp_numbered_reference_read_node_create(parser, &parser->previous);
+
+                    return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
+                }
                 case YP_TOKEN_BACK_REFERENCE: {
                     parser_lex(parser);
-                    yp_global_variable_read_node_t *variable = yp_global_variable_read_node_create(parser, &parser->previous);
-                    return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, (yp_node_t *) variable);
+                    yp_node_t *variable = (yp_node_t *) yp_back_reference_read_node_create(parser, &parser->previous);
+
+                    return (yp_node_t *) yp_pinned_variable_node_create(parser, &operator, variable);
                 }
                 case YP_TOKEN_PARENTHESIS_LEFT: {
                     bool previous_pattern_matching_newlines = parser->pattern_matching_newlines;
@@ -9830,11 +9882,29 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         case YP_TOKEN_FLOAT:
             parser_lex(parser);
             return (yp_node_t *)yp_float_node_create(parser, &parser->previous);
-        case YP_TOKEN_NTH_REFERENCE:
-        case YP_TOKEN_GLOBAL_VARIABLE:
-        case YP_TOKEN_BACK_REFERENCE: {
+        case YP_TOKEN_NUMBERED_REFERENCE: {
+            parser_lex(parser);
+            yp_node_t *node = (yp_node_t *) yp_numbered_reference_read_node_create(parser, &parser->previous);
+
+            if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
+                node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
+            }
+
+            return node;
+        }
+        case YP_TOKEN_GLOBAL_VARIABLE: {
             parser_lex(parser);
             yp_node_t *node = (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
+
+            if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
+                node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
+            }
+
+            return node;
+        }
+        case YP_TOKEN_BACK_REFERENCE: {
+            parser_lex(parser);
+            yp_node_t *node = (yp_node_t *) yp_back_reference_read_node_create(parser, &parser->previous);
 
             if (binding_power == YP_BINDING_POWER_STATEMENT && match_type_p(parser, YP_TOKEN_COMMA)) {
                 node = parse_targets(parser, node, YP_BINDING_POWER_INDEX);
@@ -9977,26 +10047,26 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             parser_lex(parser);
             yp_token_t keyword = parser->previous;
 
-            yp_node_t *left = parse_alias_argument(parser, true);
-            yp_node_t *right = parse_alias_argument(parser, false);
+            yp_node_t *new_name = parse_alias_argument(parser, true);
+            yp_node_t *old_name = parse_alias_argument(parser, false);
 
-            switch (left->type) {
+            switch (new_name->type) {
                 case YP_NODE_SYMBOL_NODE:
                 case YP_NODE_INTERPOLATED_SYMBOL_NODE: {
-                    if (right->type != YP_NODE_SYMBOL_NODE && right->type != YP_NODE_INTERPOLATED_SYMBOL_NODE) {
-                        yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Expected a bare word or symbol argument.");
+                    if (old_name->type != YP_NODE_SYMBOL_NODE && old_name->type != YP_NODE_INTERPOLATED_SYMBOL_NODE) {
+                        yp_diagnostic_list_append(&parser->error_list, old_name->location.start, old_name->location.end, "Expected a bare word or symbol argument.");
                     }
                     break;
                 }
+                case YP_NODE_BACK_REFERENCE_READ_NODE:
+                case YP_NODE_NUMBERED_REFERENCE_READ_NODE:
                 case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
-                    if (right->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
-                        yp_token_t *name = &((yp_global_variable_read_node_t *) right)->name;
-
-                        if (name->type == YP_TOKEN_NTH_REFERENCE) {
-                            yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Can't make alias for number variables.");
+                    if (old_name->type == YP_NODE_BACK_REFERENCE_READ_NODE || old_name->type == YP_NODE_NUMBERED_REFERENCE_READ_NODE || old_name->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE) {
+                        if (old_name->type == YP_NODE_NUMBERED_REFERENCE_READ_NODE) {
+                            yp_diagnostic_list_append(&parser->error_list, old_name->location.start, old_name->location.end, "Can't make alias for number variables.");
                         }
                     } else {
-                        yp_diagnostic_list_append(&parser->error_list, right->location.start, right->location.end, "Expected a global variable.");
+                        yp_diagnostic_list_append(&parser->error_list, old_name->location.start, old_name->location.end, "Expected a global variable.");
                     }
                     break;
                 }
@@ -10004,7 +10074,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     break;
             }
 
-            return (yp_node_t *) yp_alias_node_create(parser, &keyword, left, right);
+            return (yp_node_t *) yp_alias_node_create(parser, &keyword, new_name, old_name);
         }
         case YP_TOKEN_KEYWORD_CASE: {
             parser_lex(parser);

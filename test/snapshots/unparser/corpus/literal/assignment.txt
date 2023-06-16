@@ -1,22 +1,10 @@
 ProgramNode(0...719)(
   [:a, :b, :foo, :c, :x],
   StatementsNode(0...719)(
-    [GlobalVariableWriteNode(0...6)(
-       GLOBAL_VARIABLE(0...2)("$a"),
-       (3...4),
-       IntegerNode(5...6)()
-     ),
+    [GlobalVariableWriteNode(0...6)((0...2), (3...4), IntegerNode(5...6)()),
      MultiWriteNode(8...24)(
-       [GlobalVariableWriteNode(8...10)(
-          GLOBAL_VARIABLE(8...10)("$a"),
-          nil,
-          nil
-        ),
-        GlobalVariableWriteNode(12...14)(
-          GLOBAL_VARIABLE(12...14)("$b"),
-          nil,
-          nil
-        )],
+       [GlobalVariableWriteNode(8...10)((8...10), nil, nil),
+        GlobalVariableWriteNode(12...14)((12...14), nil, nil)],
        (16...17),
        ArrayNode(18...24)(
          [IntegerNode(19...20)(), IntegerNode(22...23)()],

@@ -4,9 +4,9 @@ ProgramNode(0...66)(
     [CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
      InstanceVariableReadNode(2...4)(),
      ClassVariableReadNode(5...8)(),
-     GlobalVariableReadNode(9...11)(GLOBAL_VARIABLE(9...11)("$a")),
-     GlobalVariableReadNode(12...14)(NTH_REFERENCE(12...14)("$1")),
-     GlobalVariableReadNode(15...17)(BACK_REFERENCE(15...17)("$`")),
+     GlobalVariableReadNode(9...11)(),
+     NumberedReferenceReadNode(12...14)(),
+     BackReferenceReadNode(15...17)(),
      ConstantReadNode(18...23)(),
      ConstantPathNode(24...37)(
        ConstantReadNode(24...30)(),

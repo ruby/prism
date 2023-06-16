@@ -172,7 +172,7 @@ ProgramNode(0...497)(
      ),
      InterpolatedStringNode(404...411)(
        (404...405),
-       [GlobalVariableReadNode(406...410)(GLOBAL_VARIABLE(406...410)("$foo"))],
+       [GlobalVariableReadNode(406...410)()],
        (410...411)
      ),
      InterpolatedStringNode(413...420)(

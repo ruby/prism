@@ -63,8 +63,8 @@ The following table shows how the various CRuby nodes are mapped to YARP nodes.
 | `NODE_IVAR` | `YP_NODE_INSTANCE_VARIABLE_READ_NODE` |
 | `NODE_CONST` | `YP_NODE_CONSTANT_PATH_READ_NODE` |
 | `NODE_CVAR` | `YP_NODE_CLASS_VARIABLE_READ_NODE` |
-| `NODE_NTH_REF` | `YP_NODE_GLOBAL_VARIABLE_READ_NODE` |
-| `NODE_BACK_REF` | `YP_NODE_GLOBAL_VARIABLE_READ_NODE` |
+| `NODE_NTH_REF` | `YP_NODE_NUMBERED_REFERENCE_READ_NODE` |
+| `NODE_BACK_REF` | `YP_NODE_BACK_REFERENCE_READ_NODE` |
 | `NODE_MATCH` | |
 | `NODE_MATCH2` | `YP_NODE_CALL_NODE` (with regular expression as receiver) |
 | `NODE_MATCH3` | `YP_NODE_CALL_NODE` (with regular expression as only argument) |
