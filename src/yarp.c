@@ -1833,10 +1833,10 @@ yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_statements_node_t 
     yp_in_node_t *node = YP_ALLOC_NODE(parser, yp_in_node_t);
 
     const char *end;
-    if (then_keyword->type != YP_TOKEN_NOT_PROVIDED) {
-        end = then_keyword->end;
-    } else if (statements != NULL) {
+    if (statements != NULL) {
         end = statements->base.location.end;
+    } else if (then_keyword->type != YP_TOKEN_NOT_PROVIDED) {
+        end = then_keyword->end;
     } else {
         end = pattern->location.end;
     }

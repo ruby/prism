@@ -8,7 +8,7 @@ ProgramNode(0...43)(
          (5...6),
          (12...13)
        ),
-       [InNode(14...35)(
+       [InNode(14...39)(
           ArrayPatternNode(17...30)(
             nil,
             [],
