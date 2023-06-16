@@ -57,19 +57,6 @@ class NodeListParam < Param
   def java_type = "Node[]"
 end
 
-# This represents a parameter to a node that is a token. We pass them as
-# references and store them by copying.
-class TokenParam < Param
-  def rbs_class = "Token"
-  def java_type = "Token"
-end
-
-# This represents a parameter to a node that is a token that is optional.
-class OptionalTokenParam < Param
-  def rbs_class = "Token?"
-  def java_type = "Token"
-end
-
 # This represents a parameter to a node that is a list of locations.
 class LocationListParam < Param
   def rbs_class = "Array[Location]"
@@ -119,8 +106,6 @@ PARAM_TYPES = {
   "node?" => OptionalNodeParam,
   "node[]" => NodeListParam,
   "string" => StringParam,
-  "token" => TokenParam,
-  "token?" => OptionalTokenParam,
   "location[]" => LocationListParam,
   "constant" => ConstantParam,
   "constant[]" => ConstantListParam,

@@ -78,15 +78,6 @@ public class Loader {
         return string;
     }
 
-    private Nodes.Token loadOptionalToken() {
-        if (buffer.get(buffer.position()) != 0) {
-            return loadToken();
-        } else {
-            buffer.position(buffer.position() + 1); // continue after the 0 byte
-            return null;
-        }
-    }
-
     private Nodes.Node loadOptionalNode() {
         if (buffer.get(buffer.position()) != 0) {
             return loadNode();
@@ -125,12 +116,6 @@ public class Loader {
             nodes[i] = loadNode();
         }
         return nodes;
-    }
-
-    private Nodes.Token loadToken() {
-        int type = buffer.get() & 0xFF;
-        final Nodes.TokenType tokenType = Nodes.TOKEN_TYPES[type];
-        return new Nodes.Token(tokenType, loadVarInt(), loadVarInt());
     }
 
     private Nodes.Location loadLocation() {
@@ -179,11 +164,9 @@ public class Loader {
               when OptionalNodeParam then "#{param.java_cast}loadOptionalNode()"
               when StringParam then "loadString()"
               when NodeListParam then "loadNodes()"
-              when TokenParam then "loadToken()"
               when LocationListParam then "loadLocations()"
               when ConstantParam then "loadConstant()"
               when ConstantListParam then "loadConstants()"
-              when OptionalTokenParam then "loadOptionalToken()"
               when LocationParam then "loadLocation()"
               when OptionalLocationParam then "loadOptionalLocation()"
               when UInt32Param then "loadVarInt()"

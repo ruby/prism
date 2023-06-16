@@ -63,14 +63,6 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
             for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
                 yp_serialize_node(parser, (yp_node_t *) ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], buffer);
             }
-            <%- when TokenParam -%>
-            serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
-            <%- when OptionalTokenParam -%>
-            if (((yp_<%= node.human %>_t *)node)-><%= param.name %>.type == YP_TOKEN_NOT_PROVIDED) {
-                yp_buffer_append_u8(buffer, 0);
-            } else {
-                serialize_token(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
-            }
             <%- when LocationListParam -%>
             uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
             yp_buffer_append_u32(buffer, <%= param.name %>_size);

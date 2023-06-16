@@ -72,7 +72,6 @@ typedef struct yp_<%= node.human %> {
     <%= case param
     in NodeParam | OptionalNodeParam then "struct #{param.c_type} *#{param.name}"
     in NodeListParam then "struct yp_node_list #{param.name}"
-    in TokenParam | OptionalTokenParam then "yp_token_t #{param.name}"
     in LocationListParam then "yp_location_list_t #{param.name}"
     in ConstantParam then "yp_constant_id_t #{param.name}"
     in ConstantListParam then "yp_constant_id_list_t #{param.name}"

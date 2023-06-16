@@ -10,15 +10,6 @@ import java.util.Arrays;
 // @formatter:off
 public abstract class Nodes {
 
-    public enum TokenType {
-        OPTIONAL_TOKEN,
-        <%- tokens.each do |token| -%>
-        <%= token.name %>,
-        <%- end -%>
-    }
-
-    static final TokenType[] TOKEN_TYPES = TokenType.values();
-
 <%- flags.each do |group| -%>
     public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
 
@@ -66,25 +57,6 @@ public abstract class Nodes {
     }
 
 <%- end -%>
-    public static final class Token {
-        public final TokenType type;
-        public final int startOffset;
-        public final int length;
-
-        public Token(TokenType type, int startOffset, int length) {
-            this.type = type;
-            this.startOffset = startOffset;
-            this.length = length;
-        }
-
-        public int length() {
-            return length;
-        }
-
-        public int endOffset() {
-            return startOffset + length;
-        }
-    }
 
     public static final class Location {
         public final int startOffset;
