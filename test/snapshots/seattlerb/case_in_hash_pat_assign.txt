@@ -3,7 +3,7 @@ ProgramNode(0...56)(
   StatementsNode(0...56)(
     [CaseNode(0...56)(
        SymbolNode(5...7)((5...6), (6...7), nil, "a"),
-       [InNode(8...47)(
+       [InNode(8...52)(
           HashPatternNode(11...42)(
             nil,
             [AssocNode(13...28)(

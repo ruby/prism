@@ -3,7 +3,7 @@ ProgramNode(0...408)(
   StatementsNode(0...408)(
     [CaseNode(0...345)(
        CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 0, "foo"),
-       [InNode(9...31)(
+       [InNode(9...38)(
           ArrayPatternNode(12...26)(
             ConstantReadNode(12...13)(),
             [IntegerNode(14...15)(), IntegerNode(17...18)()],
@@ -19,7 +19,7 @@ ProgramNode(0...408)(
           (9...11),
           (27...31)
         ),
-        InNode(39...55)(
+        InNode(39...59)(
           ArrayPatternNode(42...50)(
             nil,
             [IntegerNode(43...44)(), IntegerNode(46...47)()],
@@ -44,7 +44,7 @@ ProgramNode(0...408)(
           (39...41),
           (51...55)
         ),
-        InNode(60...73)(
+        InNode(60...80)(
           HashPatternNode(63...68)(
             ConstantReadNode(63...64)(),
             [AssocNode(65...67)(
@@ -60,7 +60,7 @@ ProgramNode(0...408)(
           (60...62),
           (69...73)
         ),
-        InNode(81...94)(
+        InNode(81...101)(
           HashPatternNode(84...89)(
             nil,
             [AssocNode(85...88)(
@@ -79,7 +79,7 @@ ProgramNode(0...408)(
           (81...83),
           (90...94)
         ),
-        InNode(102...120)(
+        InNode(102...127)(
           IfNode(105...115)(
             (108...110),
             TrueNode(111...115)(),
@@ -99,7 +99,7 @@ ProgramNode(0...408)(
           (102...104),
           (116...120)
         ),
-        InNode(128...145)(
+        InNode(128...152)(
           ArrayPatternNode(131...140)(
             nil,
             [LocalVariableWriteNode(132...133)(:x, 0, nil, (132...133), nil),
@@ -113,7 +113,7 @@ ProgramNode(0...408)(
           (128...130),
           (141...145)
         ),
-        InNode(153...174)(
+        InNode(153...181)(
           HashPatternNode(156...169)(
             nil,
             [AssocNode(157...161)(
@@ -134,13 +134,13 @@ ProgramNode(0...408)(
           (153...155),
           (170...174)
         ),
-        InNode(182...192)(
+        InNode(182...199)(
           HashPatternNode(185...187)(nil, [], nil, (185...186), (186...187)),
           StatementsNode(195...199)([TrueNode(195...199)()]),
           (182...184),
           (188...192)
         ),
-        InNode(200...215)(
+        InNode(200...222)(
           HashPatternNode(203...210)(
             nil,
             [AssocNode(204...209)(
@@ -156,7 +156,7 @@ ProgramNode(0...408)(
           (200...202),
           (211...215)
         ),
-        InNode(223...239)(
+        InNode(223...246)(
           HashPatternNode(226...234)(
             nil,
             [AssocNode(227...233)(
@@ -177,7 +177,7 @@ ProgramNode(0...408)(
           (223...225),
           (235...239)
         ),
-        InNode(247...260)(
+        InNode(247...267)(
           AlternationPatternNode(250...255)(
             IntegerNode(250...251)(),
             IntegerNode(254...255)(),
@@ -187,7 +187,7 @@ ProgramNode(0...408)(
           (247...249),
           (256...260)
         ),
-        InNode(268...282)(
+        InNode(268...289)(
           CapturePatternNode(271...277)(
             IntegerNode(271...272)(),
             LocalVariableWriteNode(276...277)(:a, 0, nil, (276...277), nil),
@@ -197,7 +197,7 @@ ProgramNode(0...408)(
           (268...270),
           (278...282)
         ),
-        InNode(290...300)(
+        InNode(290...307)(
           PinnedVariableNode(293...295)(
             LocalVariableReadNode(294...295)(:x, 0),
             (293...294)
@@ -207,7 +207,7 @@ ProgramNode(0...408)(
           (296...300)
         ),
         InNode(308...312)(IntegerNode(311...312)(), nil, (308...310), nil),
-        InNode(313...322)(
+        InNode(313...329)(
           IntegerNode(316...317)(),
           StatementsNode(325...329)([TrueNode(325...329)()]),
           (313...315),
