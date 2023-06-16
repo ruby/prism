@@ -1985,6 +1985,9 @@ yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *openin
 static inline void
 yp_interpolated_symbol_node_append(yp_interpolated_symbol_node_t *node, yp_node_t *part) {
     yp_node_list_append(&node->parts, part);
+    if (!node->base.location.start) {
+        node->base.location.start = part->location.start;
+    }
     node->base.location.end = part->location.end;
 }
 
@@ -10891,6 +10894,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                         break;
                     }
                     case YP_TOKEN_EMBVAR: {
+                        bool start_location_set = false;
                         if (current == NULL) {
                             // If we hit an embedded variable and the current node is NULL,
                             // then this is the start of a new string. We'll set the current
@@ -10908,6 +10912,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
                             current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
                             yp_interpolated_symbol_node_append(interpolated, current);
+                            interpolated->base.location.start = current->location.start;
+                            start_location_set = true;
                             current = (yp_node_t *) interpolated;
                         } else {
                             // If we hit an embedded variable and the current node is an
@@ -10916,9 +10922,13 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
                         yp_node_t *part = parse_string_part(parser);
                         yp_interpolated_symbol_node_append((yp_interpolated_symbol_node_t *) current, part);
+                        if (!start_location_set) {
+                            current->location.start = part->location.start;
+                        }
                         break;
                     }
                     case YP_TOKEN_EMBEXPR_BEGIN: {
+                        bool start_location_set = false;
                         if (current == NULL) {
                             // If we hit an embedded expression and the current node is NULL,
                             // then this is the start of a new string. We'll set the current
@@ -10937,6 +10947,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
                             current = (yp_node_t *) yp_symbol_node_to_string_node(parser, (yp_symbol_node_t *) current);
                             yp_interpolated_symbol_node_append(interpolated, current);
+                            interpolated->base.location.start = current->location.start;
+                            start_location_set = true;
                             current = (yp_node_t *) interpolated;
                         } else if (current->type == YP_NODE_INTERPOLATED_SYMBOL_NODE) {
                             // If we hit an embedded expression and the current node is an
@@ -10947,6 +10959,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
                         yp_node_t *part = parse_string_part(parser);
                         yp_interpolated_symbol_node_append((yp_interpolated_symbol_node_t *) current, part);
+                        if (!start_location_set) {
+                            current->location.start = part->location.start;
+                        }
                         break;
                     }
                     default:
