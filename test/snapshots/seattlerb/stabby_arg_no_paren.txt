@@ -1,7 +1,7 @@
-ProgramNode(0...3)(
+ProgramNode(0...5)(
   [],
-  StatementsNode(0...3)(
-    [LambdaNode(0...3)(
+  StatementsNode(0...5)(
+    [LambdaNode(0...5)(
        [:a],
        (0...2),
        BlockParametersNode(2...3)(

@@ -49,6 +49,10 @@ module YARP
       assert_location(AssocSplatNode, "foo(**bar)", 4...9) { |node| node.arguments.arguments.first.elements.first }
     end
 
+    def test_BackReferenceReadNode
+      assert_location(BackReferenceReadNode, "$+")
+    end
+
     def test_BeginNode
       assert_location(BeginNode, "begin foo end")
       assert_location(BeginNode, "begin foo rescue bar end")
@@ -177,11 +181,22 @@ module YARP
       assert_location(CallOperatorOrWriteNode, "foo[foo] ||= bar")
     end
 
+    def test_CapturePatternNode
+      assert_location(CapturePatternNode, "case foo; in bar => baz; end", 13...23) do |node|
+        node.conditions.first.pattern
+      end
+    end
+
     def test_CaseNode
       assert_location(CaseNode, "case foo; when bar; end")
       assert_location(CaseNode, "case foo; when bar; else; end")
       assert_location(CaseNode, "case foo; when bar; when baz; end")
       assert_location(CaseNode, "case foo; when bar; when baz; else; end")
+    end
+
+    def test_ClassNode
+      assert_location(ClassNode, "class Foo end")
+      assert_location(ClassNode, "class Foo < Bar end")
     end
 
     def test_ClassVariableOperatorAndWriteNode
@@ -208,6 +223,12 @@ module YARP
       assert_location(ConstantPathNode, "Foo::Bar")
       assert_location(ConstantPathNode, "::Foo")
       assert_location(ConstantPathNode, "::Foo::Bar")
+    end
+
+    def test_ConstantPathWriteNode
+      assert_location(ConstantPathWriteNode, "Foo::Bar = baz")
+      assert_location(ConstantPathWriteNode, "::Foo = bar")
+      assert_location(ConstantPathWriteNode, "::Foo::Bar = baz")
     end
 
     def test_ConstantPathOperatorAndWriteNode
@@ -239,8 +260,35 @@ module YARP
       assert_location(ConstantReadNode, "Foo::Bar", 5...8, &:child)
     end
 
+    def test_DefNode
+      assert_location(DefNode, "def foo; bar; end")
+      assert_location(DefNode, "def foo = bar")
+      assert_location(DefNode, "def foo.bar; baz; end")
+      assert_location(DefNode, "def foo.bar = baz")
+    end
+
+    def test_DefinedNode
+      assert_location(DefinedNode, "defined? foo")
+      assert_location(DefinedNode, "defined?(foo)")
+    end
+
+    def test_ElseNode
+      assert_location(ElseNode, "if foo; bar; else; baz; end", 13...27, &:consequent)
+      assert_location(ElseNode, "foo ? bar : baz", 10...15, &:consequent)
+    end
+
+    def test_EnsureNode
+      assert_location(EnsureNode, "begin; foo; ensure; bar; end", 12...28, &:ensure_clause)
+    end
+
     def test_FalseNode
       assert_location(FalseNode, "false")
+    end
+
+    def test_FindPatternNode
+      assert_location(FindPatternNode, "case foo; in *, bar, *; end", 13...22) do |node|
+        node.conditions.first.pattern
+      end
     end
 
     def test_FloatNode
@@ -284,9 +332,23 @@ module YARP
       assert_location(GlobalVariableOperatorOrWriteNode, "$foo ||= bar")
     end
 
+    def test_GlobalVariableReadNode
+      assert_location(GlobalVariableReadNode, "$foo")
+    end
+
+    def test_GlobalVariableWriteNode
+      assert_location(GlobalVariableWriteNode, "$foo = bar")
+    end
+
     def test_HashNode
       assert_location(HashNode, "{ foo: 2 }")
       assert_location(HashNode, "{ \nfoo: 2, \nbar: 3 \n}")
+    end
+
+    def test_HashPatternNode
+      assert_location(HashPatternNode, "case foo; in bar: baz; end", 13...21) do |node|
+        node.conditions.first.pattern
+      end
     end
 
     def test_IfNode
@@ -296,6 +358,12 @@ module YARP
     def test_ImaginaryNode
       assert_location(ImaginaryNode, "1i")
       assert_location(ImaginaryNode, "1ri")
+    end
+
+    def test_InNode
+      assert_location(InNode, "case foo; in bar; end", 10...16) do |node|
+        node.conditions.first
+      end
     end
 
     def test_InstanceVariableOperatorAndWriteNode
@@ -346,6 +414,35 @@ module YARP
       assert_location(InterpolatedXStringNode, '`foo #{bar} baz`')
     end
 
+    def test_KeywordHashNode
+      assert_location(KeywordHashNode, "foo(a, b: 1)", 7...11) { |node| node.arguments.arguments[1] }
+    end
+
+    def test_KeywordParameterNode
+      assert_location(KeywordParameterNode, "def foo(bar:); end", 8...12) do |node|
+        node.parameters.keywords.first
+      end
+
+      assert_location(KeywordParameterNode, "def foo(bar: nil); end", 8...16) do |node|
+        node.parameters.keywords.first
+      end
+    end
+
+    def test_KeywordRestParameterNode
+      assert_location(KeywordRestParameterNode, "def foo(**); end", 8...10) do |node|
+        node.parameters.keyword_rest
+      end
+
+      assert_location(KeywordRestParameterNode, "def foo(**bar); end", 8...13) do |node|
+        node.parameters.keyword_rest
+      end
+    end
+
+    def test_LambdaNode
+      assert_location(LambdaNode, "-> { foo }")
+      assert_location(LambdaNode, "-> do foo end")
+    end
+
     def test_LocalVariableOperatorAndWriteNode
       assert_location(LocalVariableOperatorAndWriteNode, "foo &&= bar")
       assert_location(LocalVariableOperatorAndWriteNode, "foo = 1; foo &&= bar", 9...20)
@@ -361,8 +458,28 @@ module YARP
       assert_location(LocalVariableOperatorOrWriteNode, "foo = 1; foo ||= bar", 9...20)
     end
 
-    def test_KeywordHashNode
-      assert_location(KeywordHashNode, "foo(a, b: 1)", 7...11) { |node| node.arguments.arguments[1] }
+    def test_LocalVariableReadNode
+      assert_location(LocalVariableReadNode, "foo = 1; foo", 9...12)
+    end
+
+    def test_LocalVariableWriteNode
+      assert_location(LocalVariableWriteNode, "foo = bar")
+    end
+
+    def test_MatchPredicateNode
+      assert_location(MatchPredicateNode, "foo in bar")
+    end
+
+    def test_MatchRequiredNode
+      assert_location(MatchRequiredNode, "foo => bar")
+    end
+
+    def test_ModuleNode
+      assert_location(ModuleNode, "module Foo end")
+    end
+
+    def test_MultiWriteNode
+      assert_location(MultiWriteNode, "foo, bar = baz")
     end
 
     def test_NextNode
@@ -380,9 +497,23 @@ module YARP
       assert_location(NoKeywordsParameterNode, "def foo(**nil); end", 8...13) { |node| node.parameters.keyword_rest }
     end
 
+    def test_NumberedReferenceReadNode
+      assert_location(NumberedReferenceReadNode, "$1")
+    end
+
+    def test_OptionalParameterNode
+      assert_location(OptionalParameterNode, "def foo(bar = nil); end", 8...17) do |node|
+        node.parameters.optionals.first
+      end
+    end
+
     def test_OrNode
       assert_location(OrNode, "foo || bar")
       assert_location(OrNode, "foo or bar")
+    end
+
+    def test_ParametersNode
+      assert_location(ParametersNode, "def foo(bar, baz); end", 8...16, &:parameters)
     end
 
     def test_ParenthesesNode
@@ -390,6 +521,14 @@ module YARP
       assert_location(ParenthesesNode, "(foo)")
       assert_location(ParenthesesNode, "foo (bar), baz", 4...9) { |node| node.arguments.arguments.first }
       assert_location(ParenthesesNode, "def (foo).bar; end", 4...9, &:receiver)
+    end
+
+    def test_PinnedExpressionNode
+      assert_location(PinnedExpressionNode, "foo in ^(bar)", 7...13, &:pattern)
+    end
+
+    def test_PinnedVariableNode
+      assert_location(PinnedVariableNode, "foo in ^bar", 7...11, &:pattern)
     end
 
     def test_PostExecutionNode
@@ -420,6 +559,22 @@ module YARP
       assert_location(RedoNode, "redo")
     end
 
+    def test_RegularExpressionNode
+      assert_location(RegularExpressionNode, "/foo/")
+    end
+
+    def test_RequiredParameterNode
+      assert_location(RequiredParameterNode, "def foo(bar); end", 8...11) do |node|
+        node.parameters.requireds.first
+      end
+    end
+
+    def test_RequiredDestructuredParameterNode
+      assert_location(RequiredDestructuredParameterNode, "def foo((bar)); end", 8...13) do |node|
+        node.parameters.requireds.first
+      end
+    end
+
     def test_RescueNode
       code = <<~RUBY
       begin
@@ -432,12 +587,33 @@ module YARP
       assert_location(RescueNode, code, 30...50) { |node| node.rescue_clause.consequent }
     end
 
+    def test_RescueModifierNode
+      assert_location(RescueModifierNode, "foo rescue bar")
+    end
+
+    def test_RestParameterNode
+      assert_location(RestParameterNode, "def foo(*bar); end", 8...12) do |node|
+        node.parameters.rest
+      end
+    end
+
     def test_RetryNode
       assert_location(RetryNode, "retry")
     end
 
+    def test_ReturnNode
+      assert_location(ReturnNode, "return")
+      assert_location(ReturnNode, "return foo")
+      assert_location(ReturnNode, "return foo, bar")
+      assert_location(ReturnNode, "return(foo)")
+    end
+
     def test_SelfNode
       assert_location(SelfNode, "self")
+    end
+
+    def test_SingletonClassNode
+      assert_location(SingletonClassNode, "class << self; end")
     end
 
     def test_SourceEncodingNode
@@ -450,6 +626,10 @@ module YARP
 
     def test_SourceLineNode
       assert_location(SourceLineNode, "__LINE__")
+    end
+
+    def test_SplatNode
+      assert_location(SplatNode, "*foo = bar", 0...4) { |node| node.targets.first }
     end
 
     def test_StatementsNode
@@ -496,6 +676,19 @@ module YARP
       assert_location(StatementsNode, "\"\#{foo}\"", 3...6) { |node| node.parts.first.statements }
     end
 
+    def test_StringConcatNode
+      assert_location(StringConcatNode, '"foo" "bar"')
+    end
+
+    def test_StringInterpolatedNode
+      assert_location(StringInterpolatedNode, '"foo #{bar} baz"', 5...11) { |node| node.parts[1] }
+    end
+
+    def test_StringNode
+      assert_location(StringNode, '"foo"')
+      assert_location(StringNode, '%q[foo]')
+    end
+
     def test_SuperNode
       assert_location(SuperNode, "super foo")
       assert_location(SuperNode, "super foo, bar")
@@ -507,6 +700,10 @@ module YARP
       assert_location(SuperNode, "super() {}")
     end
 
+    def test_SymbolNode
+      assert_location(SymbolNode, ":foo")
+    end
+
     def test_TrueNode
       assert_location(TrueNode, "true")
     end
@@ -516,9 +713,18 @@ module YARP
       assert_location(UndefNode, "undef foo, bar")
     end
 
+    def test_UnlessNode
+      assert_location(UnlessNode, "foo unless bar")
+      assert_location(UnlessNode, "unless bar; foo; end")
+    end
+
     def test_UntilNode
       assert_location(UntilNode, "foo = bar until baz")
       assert_location(UntilNode, "until bar;baz;end")
+    end
+
+    def test_WhenNode
+      assert_location(WhenNode, "case foo; when bar; end", 10...18) { |node| node.conditions.first }
     end
 
     def test_WhileNode
@@ -529,6 +735,13 @@ module YARP
     def test_XStringNode
       assert_location(XStringNode, "`foo`")
       assert_location(XStringNode, "%x[foo]")
+    end
+
+    def test_YieldNode
+      assert_location(YieldNode, "yield")
+      assert_location(YieldNode, "yield foo")
+      assert_location(YieldNode, "yield foo, bar")
+      assert_location(YieldNode, "yield(foo)")
     end
 
     private

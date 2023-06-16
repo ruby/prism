@@ -1,13 +1,13 @@
-ProgramNode(0...22)(
+ProgramNode(0...26)(
   [],
-  StatementsNode(0...22)(
-    [CallNode(0...22)(
+  StatementsNode(0...26)(
+    [CallNode(0...26)(
        nil,
        nil,
        (0...1),
        nil,
-       ArgumentsNode(2...22)(
-         [LambdaNode(2...22)(
+       ArgumentsNode(2...26)(
+         [LambdaNode(2...26)(
             [],
             (2...4),
             BlockParametersNode(5...7)(nil, [], (5...6), (6...7)),

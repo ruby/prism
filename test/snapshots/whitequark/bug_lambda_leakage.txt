@@ -1,7 +1,7 @@
 ProgramNode(0...19)(
   [],
   StatementsNode(0...19)(
-    [LambdaNode(0...9)(
+    [LambdaNode(0...12)(
        [:scope],
        (0...2),
        BlockParametersNode(2...9)(
