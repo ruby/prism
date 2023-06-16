@@ -1115,6 +1115,72 @@ yp_call_node_vcall_p(yp_call_node_t *node) {
     );
 }
 
+// Allocate and initialize a new CallOperatorAndWriteNode node.
+static yp_call_operator_and_write_node_t *
+yp_call_operator_and_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_call_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_call_operator_and_write_node_t);
+
+    *node = (yp_call_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_CALL_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->base.location.start,
+                .end = value->location.end
+            }
+        },
+        .target = target,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate a new CallOperatorWriteNode node.
+static yp_call_operator_write_node_t *
+yp_call_operator_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    yp_call_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_call_operator_write_node_t);
+
+    *node = (yp_call_operator_write_node_t) {
+        {
+            .type = YP_NODE_CALL_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->base.location.start,
+                .end = value->location.end
+            }
+        },
+        .target = target,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .operator_id = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new CallOperatorOrWriteNode node.
+static yp_call_operator_or_write_node_t *
+yp_call_operator_or_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_call_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_call_operator_or_write_node_t);
+
+    *node = (yp_call_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_CALL_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->base.location.start,
+                .end = value->location.end
+            }
+        },
+        .target = target,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
 // Allocate and initialize a new CapturePatternNode node.
 static yp_capture_pattern_node_t *
 yp_capture_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
@@ -1204,6 +1270,74 @@ yp_class_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const y
     return node;
 }
 
+// Allocate and initialize a new ClassVariableOperatorAndWriteNode node.
+static yp_class_variable_operator_and_write_node_t *
+yp_class_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_class_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_operator_and_write_node_t);
+
+    *node = (yp_class_variable_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_CLASS_VARIABLE_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ClassVariableOperatorWriteNode node.
+static yp_class_variable_operator_write_node_t *
+yp_class_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    yp_class_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_operator_write_node_t);
+
+    *node = (yp_class_variable_operator_write_node_t) {
+        {
+            .type = YP_NODE_CLASS_VARIABLE_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .operator = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ClassVariableOperatorOrWriteNode node.
+static yp_class_variable_operator_or_write_node_t *
+yp_class_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_class_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_operator_or_write_node_t);
+
+    *node = (yp_class_variable_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_CLASS_VARIABLE_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
 // Allocate and initialize a new ClassVariableReadNode node.
 static yp_class_variable_read_node_t *
 yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -1228,6 +1362,72 @@ yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp
         },
         .name_loc = YP_LOCATION_NODE_VALUE((yp_node_t *)read_node),
         .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ConstantPathOperatorAndWriteNode node.
+static yp_constant_path_operator_and_write_node_t *
+yp_constant_path_operator_and_write_node_create(yp_parser_t *parser, yp_constant_path_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_constant_path_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_operator_and_write_node_t);
+
+    *node = (yp_constant_path_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_PATH_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->base.location.start,
+                .end = value->location.end
+            }
+        },
+        .target = target,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ConstantPathOperatorWriteNode node.
+static yp_constant_path_operator_write_node_t *
+yp_constant_path_operator_write_node_create(yp_parser_t *parser, yp_constant_path_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    yp_constant_path_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_operator_write_node_t);
+
+    *node = (yp_constant_path_operator_write_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_PATH_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->base.location.start,
+                .end = value->location.end
+            }
+        },
+        .target = target,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .operator = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ConstantPathOperatorOrWriteNode node.
+static yp_constant_path_operator_or_write_node_t *
+yp_constant_path_operator_or_write_node_create(yp_parser_t *parser, yp_constant_path_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_constant_path_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_operator_or_write_node_t);
+
+    *node = (yp_constant_path_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_PATH_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->base.location.start,
+                .end = value->location.end
+            }
+        },
+        .target = target,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
         .value = value
     };
 
@@ -1270,6 +1470,74 @@ yp_constant_path_write_node_create(yp_parser_t *parser, yp_node_t *target, const
         },
         .target = target,
         .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ConstantOperatorAndWriteNode node.
+static yp_constant_operator_and_write_node_t *
+yp_constant_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_CONSTANT_READ_NODE);
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_constant_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_operator_and_write_node_t);
+
+    *node = (yp_constant_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ConstantOperatorWriteNode node.
+static yp_constant_operator_write_node_t *
+yp_constant_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    yp_constant_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_operator_write_node_t);
+
+    *node = (yp_constant_operator_write_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .operator = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new ConstantOperatorOrWriteNode node.
+static yp_constant_operator_or_write_node_t *
+yp_constant_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_CONSTANT_READ_NODE);
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_constant_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_operator_or_write_node_t);
+
+    *node = (yp_constant_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
         .value = value
     };
 
@@ -1568,6 +1836,74 @@ yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assoc
         yp_node_t *assoc = assocs->nodes[index];
         yp_node_list_append(&node->assocs, assoc);
     }
+
+    return node;
+}
+
+// Allocate and initialize a new GlobalVariableOperatorAndWriteNode node.
+static yp_global_variable_operator_and_write_node_t *
+yp_global_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE);
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_global_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_and_write_node_t);
+
+    *node = (yp_global_variable_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_GLOBAL_VARIABLE_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new GlobalVariableOperatorWriteNode node.
+static yp_global_variable_operator_write_node_t *
+yp_global_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    yp_global_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_write_node_t);
+
+    *node = (yp_global_variable_operator_write_node_t) {
+        {
+            .type = YP_NODE_GLOBAL_VARIABLE_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .operator = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new GlobalVariableOperatorOrWriteNode node.
+static yp_global_variable_operator_or_write_node_t *
+yp_global_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE);
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_global_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_or_write_node_t);
+
+    *node = (yp_global_variable_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_GLOBAL_VARIABLE_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
 
     return node;
 }
@@ -1873,6 +2209,74 @@ yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_statements_node_t 
     return node;
 }
 
+// Allocate and initialize a new InstanceVariableOperatorAndWriteNode node.
+static yp_instance_variable_operator_and_write_node_t *
+yp_instance_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_instance_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_operator_and_write_node_t);
+
+    *node = (yp_instance_variable_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_INSTANCE_VARIABLE_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new InstanceVariableOperatorWriteNode node.
+static yp_instance_variable_operator_write_node_t *
+yp_instance_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    yp_instance_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_operator_write_node_t);
+
+    *node = (yp_instance_variable_operator_write_node_t) {
+        {
+            .type = YP_NODE_INSTANCE_VARIABLE_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .operator = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new InstanceVariableOperatorOrWriteNode node.
+static yp_instance_variable_operator_or_write_node_t *
+yp_instance_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
+    assert(target->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_instance_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_operator_or_write_node_t);
+
+    *node = (yp_instance_variable_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_INSTANCE_VARIABLE_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value
+    };
+
+    return node;
+}
+
 // Allocate and initialize a new InstanceVariableReadNode node.
 static yp_instance_variable_read_node_t *
 yp_instance_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -2151,6 +2555,77 @@ yp_lambda_node_create(
     return node;
 }
 
+// Allocate and initialize a new LocalVariableOperatorAndWriteNode node.
+static yp_local_variable_operator_and_write_node_t *
+yp_local_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value, yp_constant_id_t constant_id) {
+    assert(target->type == YP_NODE_LOCAL_VARIABLE_READ_NODE || target->type == YP_NODE_CALL_NODE);
+    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
+    yp_local_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_operator_and_write_node_t);
+
+    *node = (yp_local_variable_operator_and_write_node_t) {
+        {
+            .type = YP_NODE_LOCAL_VARIABLE_OPERATOR_AND_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .constant_id = constant_id
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new LocalVariableOperatorWriteNode node.
+static yp_local_variable_operator_write_node_t *
+yp_local_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value, yp_constant_id_t constant_id) {
+    yp_local_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_operator_write_node_t);
+
+    *node = (yp_local_variable_operator_write_node_t) {
+        {
+            .type = YP_NODE_LOCAL_VARIABLE_OPERATOR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .constant_id = constant_id,
+        .operator_id = yp_parser_constant_id_location(parser, operator->start, operator->end - 1)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new LocalVariableOperatorOrWriteNode node.
+static yp_local_variable_operator_or_write_node_t *
+yp_local_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value, yp_constant_id_t constant_id) {
+    assert(target->type == YP_NODE_LOCAL_VARIABLE_READ_NODE || target->type == YP_NODE_CALL_NODE);
+    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
+    yp_local_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_operator_or_write_node_t);
+
+    *node = (yp_local_variable_operator_or_write_node_t) {
+        {
+            .type = YP_NODE_LOCAL_VARIABLE_OPERATOR_OR_WRITE_NODE,
+            .location = {
+                .start = target->location.start,
+                .end = value->location.end
+            }
+        },
+        .name_loc = target->location,
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .value = value,
+        .constant_id = constant_id
+    };
+
+    return node;
+}
+
 // Allocate a new LocalVariableReadNode node.
 static yp_local_variable_read_node_t *
 yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, uint32_t depth) {
@@ -2379,71 +2854,6 @@ yp_numbered_reference_read_node_create(yp_parser_t *parser, const yp_token_t *na
             .type = YP_NODE_NUMBERED_REFERENCE_READ_NODE,
             .location = YP_LOCATION_TOKEN_VALUE(name),
         }
-    };
-
-    return node;
-}
-
-// Allocate and initialize a new OperatorAndAssignmentNode node.
-static yp_operator_and_assignment_node_t *
-yp_operator_and_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_operator_and_assignment_node_t *node = YP_ALLOC_NODE(parser, yp_operator_and_assignment_node_t);
-
-    *node = (yp_operator_and_assignment_node_t) {
-        {
-            .type = YP_NODE_OPERATOR_AND_ASSIGNMENT_NODE,
-            .location = {
-                .start = target->location.start,
-                .end = value->location.end
-            }
-        },
-        .target = target,
-        .value = value,
-        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
-    };
-
-    return node;
-}
-
-// Allocate a new OperatorAssignmentNode node.
-static yp_operator_assignment_node_t *
-yp_operator_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_operator_assignment_node_t *node = YP_ALLOC_NODE(parser, yp_operator_assignment_node_t);
-
-    *node = (yp_operator_assignment_node_t) {
-        {
-            .type = YP_NODE_OPERATOR_ASSIGNMENT_NODE,
-            .location = {
-                .start = target->location.start,
-                .end = value->location.end
-            }
-        },
-        .target = target,
-        .operator = *operator,
-        .value = value
-    };
-
-    return node;
-}
-
-// Allocate and initialize a new OperatorOrAssignmentNode node.
-static yp_operator_or_assignment_node_t *
-yp_operator_or_assignment_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_operator_or_assignment_node_t *node = YP_ALLOC_NODE(parser, yp_operator_or_assignment_node_t);
-
-    *node = (yp_operator_or_assignment_node_t) {
-        {
-            .type = YP_NODE_OPERATOR_OR_ASSIGNMENT_NODE,
-            .location = {
-                .start = target->location.start,
-                .end = value->location.end
-            }
-        },
-        .target = target,
-        .value = value,
-        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator)
     };
 
     return node;
@@ -11659,30 +12069,98 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         }
         case YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL: {
             switch (node->type) {
-                case YP_NODE_CALL_NODE: {
-                    // If we have no arguments to the call node and we need this to be a
-                    // target then this is either a method call or a local variable write.
-                    // This _must_ happen before the value is parsed because it could be
-                    // referenced in the value.
-                    yp_call_node_t *call_node = (yp_call_node_t *) node;
-                    if (yp_call_node_vcall_p(call_node)) {
-                        yp_parser_local_add_location(parser, call_node->message_loc.start, call_node->message_loc.end);
-                    }
-                }
+                case YP_NODE_BACK_REFERENCE_READ_NODE:
+                case YP_NODE_NUMBERED_REFERENCE_READ_NODE:
+                    yp_diagnostic_list_append(&parser->error_list, node->location.start, node->location.end, "Can't set variable");
                 /* fallthrough */
-                case YP_CASE_WRITABLE: {
-                    yp_token_t operator = parser->current;
+                case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
                     parser_lex(parser);
 
-                    yp_token_t target_operator = not_provided(parser);
-                    node = parse_target(parser, node, &target_operator, NULL);
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                    yp_node_t *result = (yp_node_t *) yp_global_variable_operator_and_write_node_create(parser, node, &token, value);
 
-                    if (node->type == YP_NODE_MULTI_WRITE_NODE) {
-                        yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Cannot use `&&=' on a multi-write.");
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_CALL_NODE: {
+                    yp_call_node_t *call_node = (yp_call_node_t *) node;
+
+                    // If we have a vcall (a method with no arguments and no
+                    // receiver that could have been a local variable) then we
+                    // will transform it into a local variable write.
+                    if (yp_call_node_vcall_p(call_node)) {
+                        yp_location_t message_loc = call_node->message_loc;
+                        yp_parser_local_add_location(parser, message_loc.start, message_loc.end);
+
+                        if (token_is_numbered_parameter(message_loc.start, message_loc.end)) {
+                            yp_diagnostic_list_append(&parser->error_list, message_loc.start, message_loc.end, "reserved for numbered parameter");
+                        }
+
+                        parser_lex(parser);
+
+                        yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                        yp_constant_id_t constant_id = yp_parser_constant_id_location(parser, message_loc.start, message_loc.end);
+                        yp_node_t *result = (yp_node_t *) yp_local_variable_operator_and_write_node_create(parser, node, &token, value, constant_id);
+
+                        yp_node_destroy(parser, node);
+                        return result;
                     }
 
+                    parser_lex(parser);
+
+                    yp_token_t operator = not_provided(parser);
+                    node = parse_target(parser, node, &operator, NULL);
+
                     yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
-                    return (yp_node_t *) yp_operator_and_assignment_node_create(parser, node, &token, value);
+                    return (yp_node_t *) yp_call_operator_and_write_node_create(parser, call_node, &token, value);
+                }
+                case YP_NODE_CLASS_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                    yp_node_t *result = (yp_node_t *) yp_class_variable_operator_and_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_CONSTANT_PATH_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                    return (yp_node_t *) yp_constant_path_operator_and_write_node_create(parser, (yp_constant_path_node_t *) node, &token, value);
+                }
+                case YP_NODE_CONSTANT_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                    yp_node_t *result = (yp_node_t *) yp_constant_operator_and_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                    yp_node_t *result = (yp_node_t *) yp_instance_variable_operator_and_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                    yp_constant_id_t constant_id = ((yp_local_variable_read_node_t *) node)->constant_id;
+                    yp_node_t *result = (yp_node_t *) yp_local_variable_operator_and_write_node_create(parser, node, &token, value, constant_id);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_MULTI_WRITE_NODE: {
+                    parser_lex(parser);
+                    yp_diagnostic_list_append(&parser->error_list, token.start, token.end, "Cannot use `&&=' on a multi-write.");
+                    return node;
                 }
                 default:
                     parser_lex(parser);
@@ -11690,36 +12168,104 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                     // In this case we have an &&= sign, but we don't know what it's for.
                     // We need to treat it as an error. For now, we'll mark it as an error
                     // and just skip right past it.
-                    yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected `&&='.");
+                    yp_diagnostic_list_append(&parser->error_list, token.start, token.end, "Unexpected `&&='.");
                     return node;
             }
         }
         case YP_TOKEN_PIPE_PIPE_EQUAL: {
             switch (node->type) {
-                case YP_NODE_CALL_NODE: {
-                    // If we have no arguments to the call node and we need this to be a
-                    // target then this is either a method call or a local variable write.
-                    // This _must_ happen before the value is parsed because it could be
-                    // referenced in the value.
-                    yp_call_node_t *call_node = (yp_call_node_t *) node;
-                    if (yp_call_node_vcall_p(call_node)) {
-                        yp_parser_local_add_location(parser, call_node->message_loc.start, call_node->message_loc.end);
-                    }
-                }
+                case YP_NODE_BACK_REFERENCE_READ_NODE:
+                case YP_NODE_NUMBERED_REFERENCE_READ_NODE:
+                    yp_diagnostic_list_append(&parser->error_list, node->location.start, node->location.end, "Can't set variable");
                 /* fallthrough */
-                case YP_CASE_WRITABLE: {
-                    yp_token_t operator = parser->current;
+                case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
                     parser_lex(parser);
 
-                    yp_token_t target_operator = not_provided(parser);
-                    node = parse_target(parser, node, &target_operator, NULL);
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                    yp_node_t *result = (yp_node_t *) yp_global_variable_operator_or_write_node_create(parser, node, &token, value);
 
-                    if (node->type == YP_NODE_MULTI_WRITE_NODE) {
-                        yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "Cannot use `||=' on a multi-write.");
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_CALL_NODE: {
+                    yp_call_node_t *call_node = (yp_call_node_t *) node;
+
+                    // If we have a vcall (a method with no arguments and no
+                    // receiver that could have been a local variable) then we
+                    // will transform it into a local variable write.
+                    if (yp_call_node_vcall_p(call_node)) {
+                        yp_location_t message_loc = call_node->message_loc;
+                        yp_parser_local_add_location(parser, message_loc.start, message_loc.end);
+
+                        if (token_is_numbered_parameter(message_loc.start, message_loc.end)) {
+                            yp_diagnostic_list_append(&parser->error_list, message_loc.start, message_loc.end, "reserved for numbered parameter");
+                        }
+
+                        parser_lex(parser);
+
+                        yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                        yp_constant_id_t constant_id = yp_parser_constant_id_location(parser, message_loc.start, message_loc.end);
+                        yp_node_t *result = (yp_node_t *) yp_local_variable_operator_or_write_node_create(parser, node, &token, value, constant_id);
+
+                        yp_node_destroy(parser, node);
+                        return result;
                     }
 
+                    parser_lex(parser);
+
+                    yp_token_t operator = not_provided(parser);
+                    node = parse_target(parser, node, &operator, NULL);
+
                     yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
-                    return (yp_node_t *) yp_operator_or_assignment_node_create(parser, node, &token, value);
+                    return (yp_node_t *) yp_call_operator_or_write_node_create(parser, call_node, &token, value);
+                }
+                case YP_NODE_CLASS_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                    yp_node_t *result = (yp_node_t *) yp_class_variable_operator_or_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_CONSTANT_PATH_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                    return (yp_node_t *) yp_constant_path_operator_or_write_node_create(parser, (yp_constant_path_node_t *) node, &token, value);
+                }
+                case YP_NODE_CONSTANT_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                    yp_node_t *result = (yp_node_t *) yp_constant_operator_or_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                    yp_node_t *result = (yp_node_t *) yp_instance_variable_operator_or_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after ||=");
+                    yp_constant_id_t constant_id = ((yp_local_variable_read_node_t *) node)->constant_id;
+                    yp_node_t *result = (yp_node_t *) yp_local_variable_operator_or_write_node_create(parser, node, &token, value, constant_id);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_MULTI_WRITE_NODE: {
+                    parser_lex(parser);
+                    yp_diagnostic_list_append(&parser->error_list, token.start, token.end, "Cannot use `||=' on a multi-write.");
+                    return node;
                 }
                 default:
                     parser_lex(parser);
@@ -11727,7 +12273,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                     // In this case we have an ||= sign, but we don't know what it's for.
                     // We need to treat it as an error. For now, we'll mark it as an error
                     // and just skip right past it.
-                    yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected `||='.");
+                    yp_diagnostic_list_append(&parser->error_list, token.start, token.end, "Unexpected `||='.");
                     return node;
             }
         }
@@ -11743,24 +12289,97 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         case YP_TOKEN_STAR_EQUAL:
         case YP_TOKEN_STAR_STAR_EQUAL: {
             switch (node->type) {
-                case YP_NODE_CALL_NODE: {
-                    // If we have no arguments to the call node and we need this to be a
-                    // target then this is either a method call or a local variable write.
-                    // This _must_ happen before the value is parsed because it could be
-                    // referenced in the value.
-                    yp_call_node_t *call_node = (yp_call_node_t *) node;
-                    if (yp_call_node_vcall_p(call_node)) {
-                        yp_parser_local_add_location(parser, call_node->message_loc.start, call_node->message_loc.end);
-                    }
-                }
+                case YP_NODE_BACK_REFERENCE_READ_NODE:
+                case YP_NODE_NUMBERED_REFERENCE_READ_NODE:
+                    yp_diagnostic_list_append(&parser->error_list, node->location.start, node->location.end, "Can't set variable");
                 /* fallthrough */
-                case YP_CASE_WRITABLE: {
+                case YP_NODE_GLOBAL_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator");
+                    yp_node_t *result = (yp_node_t *) yp_global_variable_operator_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_CALL_NODE: {
+                    yp_call_node_t *call_node = (yp_call_node_t *) node;
+
+                    // If we have a vcall (a method with no arguments and no
+                    // receiver that could have been a local variable) then we
+                    // will transform it into a local variable write.
+                    if (yp_call_node_vcall_p(call_node)) {
+                        yp_location_t message_loc = call_node->message_loc;
+                        yp_parser_local_add_location(parser, message_loc.start, message_loc.end);
+
+                        if (token_is_numbered_parameter(message_loc.start, message_loc.end)) {
+                            yp_diagnostic_list_append(&parser->error_list, message_loc.start, message_loc.end, "reserved for numbered parameter");
+                        }
+
+                        parser_lex(parser);
+
+                        yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after &&=");
+                        yp_constant_id_t constant_id = yp_parser_constant_id_location(parser, message_loc.start, message_loc.end);
+                        yp_node_t *result = (yp_node_t *) yp_local_variable_operator_write_node_create(parser, node, &token, value, constant_id);
+
+                        yp_node_destroy(parser, node);
+                        return result;
+                    }
+                
                     yp_token_t operator = not_provided(parser);
                     node = parse_target(parser, node, &operator, NULL);
 
                     parser_lex(parser);
                     yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
-                    return (yp_node_t *) yp_operator_assignment_node_create(parser, node, &token, value);
+                    return (yp_node_t *) yp_call_operator_write_node_create(parser, call_node, &token, value);
+                }
+                case YP_NODE_CLASS_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
+                    yp_node_t *result = (yp_node_t *) yp_class_variable_operator_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_CONSTANT_PATH_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
+                    return (yp_node_t *) yp_constant_path_operator_write_node_create(parser, (yp_constant_path_node_t *) node, &token, value);
+                }
+                case YP_NODE_CONSTANT_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
+                    yp_node_t *result = (yp_node_t *) yp_constant_operator_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_INSTANCE_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
+                    yp_node_t *result = (yp_node_t *) yp_instance_variable_operator_write_node_create(parser, node, &token, value);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_LOCAL_VARIABLE_READ_NODE: {
+                    parser_lex(parser);
+
+                    yp_node_t *value = parse_expression(parser, binding_power, "Expected a value after the operator.");
+                    yp_constant_id_t constant_id = ((yp_local_variable_read_node_t *) node)->constant_id;
+                    yp_node_t *result = (yp_node_t *) yp_local_variable_operator_write_node_create(parser, node, &token, value, constant_id);
+
+                    yp_node_destroy(parser, node);
+                    return result;
+                }
+                case YP_NODE_MULTI_WRITE_NODE: {
+                    parser_lex(parser);
+                    yp_diagnostic_list_append(&parser->error_list, token.start, token.end, "Unexpected operator.");
+                    return node;
                 }
                 default:
                     parser_lex(parser);

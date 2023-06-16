@@ -5,13 +5,6 @@
 #include "yarp/util/yp_buffer.h"
 
 static void
-prettyprint_token(yp_buffer_t *buffer, yp_token_t *token) {
-    yp_buffer_append_str(buffer, "\"", 1);
-    yp_buffer_append_str(buffer, token->start, (size_t) (token->end - token->start));
-    yp_buffer_append_str(buffer, "\"", 1);
-}
-
-static void
 prettyprint_location(yp_buffer_t *buffer, yp_parser_t *parser, yp_location_t *location) {
     char printed[] = "[0000-0000]";
     sprintf(printed, "[%04ld-%04ld]", location->start - parser->start, location->end - parser->start);
@@ -43,14 +36,6 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
             for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
                 if (index != 0) yp_buffer_append_str(buffer, ", ", 2);
                 prettyprint_node(buffer, parser, (yp_node_t *) ((yp_<%= node.human %>_t *) node)-><%= param.name %>.nodes[index]);
-            }
-            <%- when TokenParam -%>
-            prettyprint_token(buffer, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
-            <%- when OptionalTokenParam -%>
-            if (((yp_<%= node.human %>_t *)node)-><%= param.name %>.type == YP_TOKEN_NOT_PROVIDED) {
-                yp_buffer_append_str(buffer, "nil", 3);
-            } else {
-                prettyprint_token(buffer, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
             }
             <%- when LocationListParam -%>
             for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {

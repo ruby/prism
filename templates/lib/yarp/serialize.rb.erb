@@ -54,30 +54,10 @@ module YARP
         io.read(4).unpack1("L")
       end
 
-      def load_token
-        type =
-          case io.getbyte
-          <%- tokens.each_with_index do |token, index| -%>
-          when <%= index + 1 %> then :<%= token.name.inspect %>
-          <%- end -%>
-          end
-
-        start_offset, length = load_varint, load_varint
-        range = source.byteslice(start_offset, length)
-        Token.new(type, range, start_offset, length)
-      end
-
       def load_optional_node
         if io.getbyte != 0
           io.pos -= 1
           load_node
-        end
-      end
-
-      def load_optional_token
-        if io.getbyte != 0
-          io.pos -= 1
-          load_token
         end
       end
 
@@ -126,11 +106,9 @@ module YARP
             when OptionalNodeParam then "load_optional_node"
             when StringParam then "load_string"
             when NodeListParam then "Array.new(load_varint) { load_node }"
-            when TokenParam then "load_token"
             when LocationListParam then "Array.new(load_varint) { load_location }"
             when ConstantParam then "load_constant"
             when ConstantListParam then "Array.new(load_varint) { load_constant }"
-            when OptionalTokenParam then "load_optional_token"
             when LocationParam then "load_location"
             when OptionalLocationParam then "load_optional_location"
             when UInt32Param then "load_varint"

@@ -1,7 +1,7 @@
 ProgramNode(0...18)(
   [],
   StatementsNode(0...18)(
-    [OperatorAssignmentNode(0...18)(
+    [CallOperatorWriteNode(0...18)(
        CallNode(0...9)(
          CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
          nil,
@@ -13,7 +13,7 @@ ProgramNode(0...18)(
          0,
          "[]="
        ),
-       PLUS_EQUAL(10...12)("+="),
+       (10...12),
        CallNode(13...18)(
          nil,
          nil,
@@ -36,7 +36,8 @@ ProgramNode(0...18)(
          nil,
          0,
          "m"
-       )
+       ),
+       :+
      )]
   )
 )

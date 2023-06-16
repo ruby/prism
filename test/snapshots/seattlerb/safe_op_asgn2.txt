@@ -1,7 +1,7 @@
 ProgramNode(0...10)(
   [],
   StatementsNode(0...10)(
-    [OperatorOrAssignmentNode(0...10)(
+    [CallOperatorOrWriteNode(0...10)(
        CallNode(0...4)(
          CallNode(0...1)(nil, nil, (0...1), nil, nil, nil, nil, 0, "a"),
          (1...3),

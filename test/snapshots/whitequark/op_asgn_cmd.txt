@@ -1,7 +1,7 @@
 ProgramNode(0...64)(
   [],
   StatementsNode(0...64)(
-    [OperatorAssignmentNode(0...14)(
+    [CallOperatorWriteNode(0...14)(
        CallNode(0...5)(
          CallNode(0...3)(nil, nil, (0...3), nil, nil, nil, nil, 0, "foo"),
          (3...4),
@@ -13,7 +13,7 @@ ProgramNode(0...64)(
          0,
          "A="
        ),
-       PLUS_EQUAL(6...8)("+="),
+       (6...8),
        CallNode(9...14)(
          nil,
          nil,
@@ -36,9 +36,10 @@ ProgramNode(0...64)(
          nil,
          0,
          "m"
-       )
+       ),
+       :+
      ),
-     OperatorAssignmentNode(16...30)(
+     CallOperatorWriteNode(16...30)(
        CallNode(16...21)(
          CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "foo"),
          (19...20),
@@ -50,7 +51,7 @@ ProgramNode(0...64)(
          0,
          "a="
        ),
-       PLUS_EQUAL(22...24)("+="),
+       (22...24),
        CallNode(25...30)(
          nil,
          nil,
@@ -73,29 +74,16 @@ ProgramNode(0...64)(
          nil,
          0,
          "m"
-       )
-     ),
-     OperatorAssignmentNode(32...47)(
-       ConstantPathWriteNode(32...38)(
-         ConstantPathNode(32...38)(
-           CallNode(32...35)(
-             nil,
-             nil,
-             (32...35),
-             nil,
-             nil,
-             nil,
-             nil,
-             0,
-             "foo"
-           ),
-           ConstantReadNode(37...38)(),
-           (35...37)
-         ),
-         nil,
-         nil
        ),
-       PLUS_EQUAL(39...41)("+="),
+       :+
+     ),
+     ConstantPathOperatorWriteNode(32...47)(
+       ConstantPathNode(32...38)(
+         CallNode(32...35)(nil, nil, (32...35), nil, nil, nil, nil, 0, "foo"),
+         ConstantReadNode(37...38)(),
+         (35...37)
+       ),
+       (39...41),
        CallNode(42...47)(
          nil,
          nil,
@@ -118,9 +106,10 @@ ProgramNode(0...64)(
          nil,
          0,
          "m"
-       )
+       ),
+       :+
      ),
-     OperatorAssignmentNode(49...64)(
+     CallOperatorWriteNode(49...64)(
        CallNode(49...55)(
          CallNode(49...52)(nil, nil, (49...52), nil, nil, nil, nil, 0, "foo"),
          (52...54),
@@ -132,7 +121,7 @@ ProgramNode(0...64)(
          0,
          "a="
        ),
-       PLUS_EQUAL(56...58)("+="),
+       (56...58),
        CallNode(59...64)(
          nil,
          nil,
@@ -155,7 +144,8 @@ ProgramNode(0...64)(
          nil,
          0,
          "m"
-       )
+       ),
+       :+
      )]
   )
 )

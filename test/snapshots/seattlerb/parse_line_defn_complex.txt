@@ -25,10 +25,12 @@ ProgramNode(0...40)(
             0,
             "p"
           ),
-          OperatorAssignmentNode(18...24)(
-            LocalVariableWriteNode(18...19)(:y, 0, nil, (18...19), nil),
-            STAR_EQUAL(20...22)("*="),
-            IntegerNode(23...24)()
+          LocalVariableOperatorWriteNode(18...24)(
+            (18...19),
+            (20...22),
+            IntegerNode(23...24)(),
+            :y,
+            :*
           ),
           ReturnNode(27...35)(
             (27...33),

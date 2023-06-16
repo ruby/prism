@@ -582,7 +582,7 @@ ProgramNode(0...719)(
        0,
        "[]="
      ),
-     OperatorOrAssignmentNode(536...550)(
+     CallOperatorOrWriteNode(536...550)(
        CallNode(536...542)(
          LocalVariableReadNode(536...537)(:a, 0),
          nil,
@@ -609,10 +609,10 @@ ProgramNode(0...719)(
        ),
        (543...546)
      ),
-     OperatorOrAssignmentNode(551...561)(
-       InstanceVariableWriteNode(551...553)((551...553), nil, nil),
-       StringNode(558...561)((558...560), (560...560), (560...561), ""),
-       (554...557)
+     InstanceVariableOperatorOrWriteNode(551...561)(
+       (551...553),
+       (554...557),
+       StringNode(558...561)((558...560), (560...560), (560...561), "")
      ),
      LocalVariableWriteNode(562...591)(
        :x,
@@ -665,7 +665,7 @@ ProgramNode(0...719)(
        0,
        "[]="
      ),
-     OperatorOrAssignmentNode(651...672)(
+     CallOperatorOrWriteNode(651...672)(
        CallNode(651...664)(
          LocalVariableReadNode(651...652)(:a, 0),
          nil,
@@ -702,16 +702,16 @@ ProgramNode(0...719)(
        ),
        (665...668)
      ),
-     OperatorOrAssignmentNode(687...719)(
-       InstanceVariableWriteNode(687...689)((687...689), nil, nil),
+     InstanceVariableOperatorOrWriteNode(687...719)(
+       (687...689),
+       (690...693),
        InterpolatedStringNode(694...719)(
          (694...704),
          [StringNode(705...707)(nil, (705...707), nil, "  "),
           StringInterpolatedNode(707...710)((707...709), nil, (709...710)),
           StringNode(710...711)(nil, (710...711), nil, "\n")],
          (711...719)
-       ),
-       (690...693)
+       )
      )]
   )
 )

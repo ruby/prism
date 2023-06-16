@@ -70,12 +70,5 @@ module YARP
       <%= node.name %>.new(<%= (node.params.map(&:name) + ["0", "0"]).join(", ") %>)
     end
     <%- end -%>
-    <%- tokens.each do |token| -%>
-
-    # Create a new <%= token.name %> token
-    def <%= token.name %>(value, location = Location.null)
-      Token.new(:<%= token.name %>, value, location.start_offset, location.length)
-    end
-    <%- end -%>
   end
 end
