@@ -6,6 +6,9 @@ require "rake/clean"
 require "rdoc/task"
 require "ruby_memcheck"
 
+# true for either ucrt or mingw builds, will not include mswin builds
+IS_WINDOWS = RUBY_PLATFORM.include?('mingw')
+
 Rake.add_rakelib("tasks")
 
 RubyMemcheck.config(binary_name: "yarp")
@@ -40,11 +43,13 @@ desc "Generate all ERB template based files"
 task templates: TEMPLATES
 
 file "configure" do
-  sh "autoconf"
+  cmd = IS_WINDOWS ? "sh autoconf" : "autoconf" 
+  sh cmd
 end
 
 file "Makefile" => "configure" do
-  sh "./configure"
+  cmd = IS_WINDOWS ? "sh ./configure" : "./configure"
+  sh cmd
 end
 
 task make: [:templates, "Makefile"] do
