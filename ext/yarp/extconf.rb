@@ -2,29 +2,78 @@
 
 require "mkmf"
 
-if ENV["YARP_DEBUG_MODE_BUILD"]
-  $CFLAGS << " -DYARP_DEBUG_MODE_BUILD"
-end
+module Yarp
+  module ExtConf
+    class << self
+      def configure
+        configure_debug
+        configure_rubyparser
 
-if ENV["BUNDLE"]
-  # In this version we want to bundle all of the C source files together into
-  # the gem so that it can all be compiled together.
+        create_makefile("yarp")
+      end
 
-  # Concatenate all of the C source files together to allow the compiler to
-  # optimize across all of the source files.
-  File.binwrite("yarp.c", Dir[File.expand_path("src/**/*.c", __dir__)].map { |src| File.binread(src) }.join("\n"))
+      def configure_debug
+        if debug_mode_build?
+          append_cflags("-DYARP_DEBUG_MODE_BUILD")
+        end
+      end
 
-  # Tell Ruby where to find the headers for YARP, specify the C standard, and make
-  # sure all symbols are hidden by default.
-  $CFLAGS << " -I#{__dir__}/include -std=gnu99 -fvisibility=hidden"
+      def configure_rubyparser
+        find_header("yarp.h", include_dir)
 
-  $objs = %w[extension.o yarp.o node.o pack.o]
-else
-  # In this version we want to use the system installed version of YARP.
-  find_header("yarp.h", File.expand_path("../../include", __dir__))
-  unless find_library("rubyparser", "yp_parser_init", File.expand_path("../../build", __dir__))
-    raise "Please run make to build librubyparser"
+        unless find_library("rubyparser", "yp_parser_init", build_dir)
+          raise "Please run make to build librubyparser.so"
+        end
+      end
+
+      def include_dir
+        File.expand_path("../../include", __dir__)
+      end
+
+      def build_dir
+        File.expand_path("../../build", __dir__)
+      end
+
+      def print_help
+        print(<<~TEXT)
+          USAGE: ruby #{$PROGRAM_NAME} [options]
+
+            Flags that are always valid:
+
+                --enable-static
+                --disable-static
+                    Enable or disable static linking against librubyparser.
+                    The default is to statically link.
+
+                --enable-debug-mode-build
+                    Enable debug mode build.
+                    You may also use set YARP_DEBUG_MODE_BUILD environment variable.
+
+                --help
+                    Display this message.
+
+            Environment variables used:
+
+                YARP_DEBUG_MODE_BUILD
+                    Equivalent to `--enable-debug-mode-build` when set, even if nil or blank.
+
+        TEXT
+      end
+
+      def static_link?
+        enable_config("static", true)
+      end
+
+      def debug_mode_build?
+        enable_config("debug-mode-build", ENV["YARP_DEBUG_MODE_BUILD"] || false)
+      end
+    end
   end
 end
 
-create_makefile("yarp")
+if arg_config("--help")
+  Yarp::ExtConf.print_help
+  exit!(0)
+end
+
+Yarp::ExtConf.configure
