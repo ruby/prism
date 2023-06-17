@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "yarp/util/yp_newline_list.h"
 
 // Initialize a new newline list with the given capacity. Returns true if the

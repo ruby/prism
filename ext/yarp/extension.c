@@ -280,15 +280,20 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding, VALUE source) {
         VALUE location_argv[] = {
             source,
             LONG2FIX(error->start - parser->start),
-            LONG2FIX(error->end - parser->start)
+            LONG2FIX(error->end - error->start)
         };
 
         VALUE error_argv[] = {
             rb_enc_str_new_cstr(error->message, encoding),
+
             rb_class_new_instance(3, location_argv, rb_cYARPLocation)
+            rb_enc_str_new_cstr(error->line, encoding),
+            LONG2FIX(error->line_start - parser->start),
+            LONG2FIX(error->lineno),
+            rb_enc_str_new_cstr(parser->filepath_string.as.constant.source, encoding)
         };
 
-        rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
+        rb_ary_push(errors, rb_class_new_instance(6, error_argv, rb_cYARPParseError));
     }
 
     return errors;

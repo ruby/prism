@@ -6,6 +6,12 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "yarp/util/yp_list.h"
+#include "parser.h"
 
 // This struct represents a diagnostic found during parsing.
 typedef struct {
@@ -13,7 +19,12 @@ typedef struct {
     const char *start;
     const char *end;
     const char *message;
+    const char *line;
+    const char *line_start;
+    size_t lineno;
 } yp_diagnostic_t;
+
+bool yp_vdiagnostic_list_append(yp_parser_t *parser, const char *start, const char *end, const char *message, ...);
 
 // Append a diagnostic to the given list of diagnostics.
 bool yp_diagnostic_list_append(yp_list_t *list, const char *start, const char *end, const char *message);

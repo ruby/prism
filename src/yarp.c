@@ -4196,7 +4196,7 @@ yp_parser_parameter_name_check(yp_parser_t *parser, yp_token_t *name) {
     yp_constant_id_t constant_id = yp_parser_constant_id_token(parser, name);
 
     if (yp_constant_id_list_includes(&parser->current_scope->locals, constant_id)) {
-        yp_diagnostic_list_append(&parser->error_list, name->start, name->end, "Duplicated parameter name.");
+      yp_vdiagnostic_list_append(parser, name->start, name->end, "duplicate parameter `%.*s` in parameters", (name->end - name->start), name->start);
     }
 }
 
@@ -4493,7 +4493,13 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     // didn't understand the encoding that the user was trying to use. In this
     // case we'll keep using the default encoding but add an error to the
     // parser to indicate an unsuccessful parse.
-    yp_diagnostic_list_append(&parser->error_list, encoding_start, encoding_end, "Could not understand the encoding specified in the magic comment.");
+
+    char * subject = malloc(sizeof(char) * (unsigned long)(encoding_end - encoding_start + 1));
+    memcpy(subject, encoding_start, (unsigned long)(encoding_end - encoding_start));
+    subject[(encoding_end - encoding_start + 1)] = '\0';
+    
+    yp_vdiagnostic_list_append(parser, encoding_start, encoding_end, "Could not understand the encoding `%s` specified in the magic comment.", subject);
+    free(subject);
 }
 
 /******************************************************************************/

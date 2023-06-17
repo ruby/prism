@@ -109,13 +109,28 @@ module YARP
 
   # This represents an error that was encountered during parsing.
   class ParseError
-    attr_reader :message, :location
+    attr_reader :message, :location, :line, :line_offset, :lineno, :filepath
 
-    def initialize(message, location)
+    def initialize(message, location, line, line_offset, lineno, filepath)
       @message = message
       @location = location
+      @line = line
+      @line_offset = line_offset
+      @lineno = lineno
+      @filepath = filepath
     end
 
+    def print_error
+      prefix = "#{filepath}:#{lineno}: "
+      puts "#{filepath}:#{lineno} - #{line}"
+      puts underline(prefix.length + 1)
+      puts "Error: #{message}\n"
+    end
+
+    def underline(prefix_length)
+      (" " * (location.start_offset - line_offset + prefix_length)) + ("^" * location.length)
+    end
+    
     def deconstruct_keys(keys)
       { message: message, location: location }
     end
