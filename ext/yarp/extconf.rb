@@ -21,8 +21,16 @@ module Yarp
       def configure_rubyparser
         find_header("yarp.h", include_dir)
 
-        unless find_library("rubyparser", "yp_parser_init", build_dir)
-          raise "Please run make to build librubyparser.so"
+        if static_link?
+          static_archive_path = File.join(build_dir, "librubyparser.a")
+          unless File.exist?(static_archive_path)
+            raise "Please run make to build librubyparser.a"
+          end
+          append_ldflags(static_archive_path)
+        else
+          unless find_library("rubyparser", "yp_parser_init", build_dir)
+            raise "Please run make to build librubyparser.so"
+          end
         end
       end
 

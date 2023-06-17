@@ -1,13 +1,26 @@
 SOEXT := $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
-CFLAGS := @CFLAGS@ -std=c99
 DEFS := @DEFS@
+CPPFLAGS := @DEFS@ -Iinclude
+CFLAGS := @CFLAGS@ -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC	-fvisibility=hidden
 CC := @CC@
 
-all: build/librubyparser.$(SOEXT)
+HEADERS := $(shell find src -name '*.h') include/yarp/ast.h
+SOURCES := $(shell find src -name '*.c')
+OBJECTS := $(SOURCES:.c=.o)
 
-build/librubyparser.$(SOEXT): $(shell find src -name '*.c') $(shell find src -name '*.h') Makefile build include/yarp/ast.h
-	$(CC) $(DEBUG_FLAGS) $(CFLAGS) $(DEFS) -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC -g -fvisibility=hidden -shared -Iinclude -o $@ $(shell find src -name '*.c')
+all: shared static
+
+shared: build/librubyparser.$(SOEXT)
+static: build/librubyparser.a
+
+OBJECTS: Makefile $(HEADERS)
+
+build/librubyparser.$(SOEXT): Makefile build $(OBJECTS)
+	$(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(OBJECTS)
+
+build/librubyparser.a: Makefile build $(OBJECTS)
+	$(AR) $(ARFLAGS) $@	$(OBJECTS)
 
 build:
 	mkdir -p build
@@ -16,13 +29,14 @@ include/yarp/ast.h: templates/include/yarp/ast.h.erb
 	rake $@
 
 clean:
-	rm -f \
-		build/librubyparser.$(SOEXT) \
+	@rm -v -f \
+		build/librubyparser.* \
 		ext/yarp/node.c \
 		include/{ast.h,node.h} \
 		java/org/yarp/{AbstractNodeVisitor.java,Loader.java,Nodes.java} \
 		lib/yarp/{node,serialize}.rb \
-		src/{node.c,prettyprint.c,serialize.c,token_type.c}
+		src/{node.c,prettyprint.c,serialize.c,token_type.c} \
+		$(OBJECTS)
 
 .PHONY: clean
 
