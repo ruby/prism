@@ -27,4 +27,6 @@ void Init_yarp_pack(void);
 
 YP_EXPORTED_FUNCTION void Init_yarp(void);
 
+#define DISCARD_CONST_QUAL(t, v) ((t)(uintptr_t)(v))
+
 #endif // YARP_EXT_NODE_H
