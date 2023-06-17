@@ -39,12 +39,21 @@ require_relative "templates/template"
 desc "Generate all ERB template based files"
 task templates: TEMPLATES
 
+def windows?
+  RUBY_PLATFORM.include?("mingw")
+end
+
+def run_script(command)
+  command = "sh #{command}" if windows?
+  sh command
+end
+
 file "configure" do
-  sh "autoconf"
+  run_script "autoconf"
 end
 
 file "Makefile" => "configure" do
-  sh "./configure"
+  run_script "./configure"
 end
 
 task make: [:templates, "Makefile"] do

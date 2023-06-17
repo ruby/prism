@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -26,8 +26,10 @@ jobs:
         bundler-cache: true
     - name: Lint config.yml
       run: bundle exec rake lint
+      shell: bash
     - name: Run Ruby tests
       run: bundle exec rake
+      shell: bash
 
   build-without-assertions:
     runs-on: ubuntu-latest
