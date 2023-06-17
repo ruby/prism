@@ -7,3 +7,5 @@ test/fixtures/seattlerb/**/*.txt linguist-vendored
 test/fixtures/unparser/**/*.txt linguist-vendored
 test/fixtures/whitequark/**/*.txt linguist-vendored
 test/snapshots/**/*.txt linguist-generated
+
+test/fixtures/**/*.txt -text
