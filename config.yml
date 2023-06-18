@@ -330,6 +330,9 @@ flags:
   - name: CallNodeFlags
     values:
       - SafeNavigation # &. operator
+  - name: RangeNodeFlags
+    values:
+      - ExcludeEnd # ... operator
 nodes:
   - name: AliasNode
     child_nodes:
@@ -1665,6 +1668,8 @@ nodes:
         type: node?
       - name: operator_loc
         type: location
+      - name: flags
+        type: uint32
     comment: |
       Represents the use of the `..` or `...` operators.
 

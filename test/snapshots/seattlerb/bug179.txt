@@ -10,7 +10,8 @@ ProgramNode(0...9)(
          [RangeNode(2...9)(
             ParenthesesNode(2...4)(nil, (2...3), (3...4)),
             NilNode(6...9)(),
-            (4...6)
+            (4...6),
+            0
           )]
        ),
        nil,

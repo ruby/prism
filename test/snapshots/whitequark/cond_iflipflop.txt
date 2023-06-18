@@ -17,7 +17,8 @@ ProgramNode(0...29)(
                 0,
                 "bar"
               ),
-              (5...7)
+              (5...7),
+              0
             )]
          ),
          (1...2),
@@ -37,7 +38,8 @@ ProgramNode(0...29)(
        RangeNode(16...24)(
          CallNode(16...19)(nil, nil, (16...19), nil, nil, nil, nil, 0, "foo"),
          CallNode(21...24)(nil, nil, (21...24), nil, nil, nil, nil, 0, "bar"),
-         (19...21)
+         (19...21),
+         0
        ),
        nil,
        nil,
