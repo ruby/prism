@@ -3,7 +3,7 @@ ProgramNode(0...85)(
   StatementsNode(0...85)(
     [ParenthesesNode(0...6)(
        StatementsNode(1...5)(
-         [RangeNode(1...5)(nil, IntegerNode(4...5)(), (1...4), 0)]
+         [RangeNode(1...5)(nil, IntegerNode(4...5)(), (1...4), 1)]
        ),
        (0...1),
        (5...6)
@@ -27,7 +27,7 @@ ProgramNode(0...85)(
        (25...31),
        (25...26),
        ArgumentsNode(26...30)(
-         [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29), 0)]
+         [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29), 1)]
        ),
        (30...31),
        nil,
@@ -52,7 +52,7 @@ ProgramNode(0...85)(
               "bar"
             ),
             (40...43),
-            0
+            1
           ),
           nil
         )],

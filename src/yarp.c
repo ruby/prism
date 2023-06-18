@@ -3132,8 +3132,17 @@ yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *ope
         .left = left,
         .right = right,
         .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
-        .flags = operator->type == YP_TOKEN_DOT_DOT_DOT ? YP_RANGE_NODE_FLAGS_EXCLUDEEND : 0,
+        .flags = 0,
     };
+
+    switch (operator->type) {
+        case YP_TOKEN_DOT_DOT_DOT:
+        case YP_TOKEN_UDOT_DOT_DOT:
+            node->flags |= YP_RANGE_NODE_FLAGS_EXCLUDEEND;
+            break;
+        default:
+            break;
+    }
 
     return node;
 }

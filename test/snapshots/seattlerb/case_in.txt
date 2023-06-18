@@ -94,7 +94,7 @@ ProgramNode(0...746)(
      CaseNode(118...140)(
        SymbolNode(123...125)((123...124), (124...125), nil, "a"),
        [InNode(126...135)(
-          RangeNode(130...135)(nil, IntegerNode(133...135)(), (130...133), 0),
+          RangeNode(130...135)(nil, IntegerNode(133...135)(), (130...133), 1),
           nil,
           (126...128),
           nil
