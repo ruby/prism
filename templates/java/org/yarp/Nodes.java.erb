@@ -14,12 +14,12 @@ public abstract class Nodes {
     public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
 
         <%- group.values.each_with_index do |value, index| -%>
-        public static final int <%= value.upcase %> = 1 << <%= index %>;
+        public static final int <%= value.snakecase %> = 1 << <%= index %>;
         <%- end -%>
 
         <%- group.values.each do |value| -%>
-        public static boolean is<%= value %>(int flags) {
-            return (flags & <%= value.upcase %>) != 0;
+        public static boolean is<%= value.camelcase %>(int flags) {
+            return (flags & <%= value.snakecase %>) != 0;
         }
 
         <%- end -%>
@@ -49,8 +49,8 @@ public abstract class Nodes {
         }
 
         <%- group.values.each do |value| -%>
-        public boolean is<%= value %>() {
-            return (flags & <%= value.upcase %>) != 0;
+        public boolean is<%= value.camelcase %>() {
+            return (flags & <%= value.snakecase %>) != 0;
         }
 
         <%- end -%>

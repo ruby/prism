@@ -43,7 +43,7 @@ module YARP
   <%- flags.each do |flag| -%>
   module <%= flag.name %>
     <%- flag.values.each_with_index do |value, index| -%>
-    <%= value.upcase %> = 1 << <%= index %>
+    <%= value.snakecase %> = 1 << <%= index %>
     <%- end -%>
   end
 
