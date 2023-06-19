@@ -319,20 +319,30 @@ tokens:
 flags:
   - name: RegularExpressionFlags
     values:
-      - IGNORE_CASE # i - ignores the case of characters when matching
-      - MULTI_LINE  # m - allows $ to match the end of lines within strings
-      - EXTENDED    # x - ignores whitespace and allows comments in regular expressions
-      - EUC_JP      # e - forces the EUC-JP encoding
-      - ASCII_8BIT  # n - forces the ASCII-8BIT encoding
-      - WINDOWS_31J # s - forces the Windows-31J encoding
-      - UTF_8       # u - forces the UTF-8 encoding
-      - ONCE        # o - only interpolates values into the regular expression once
+      - name: IGNORE_CASE
+        comment: "i - ignores the case of characters when matching"
+      - name: MULTI_LINE
+        comment: "m - allows $ to match the end of lines within strings"
+      - name: EXTENDED
+        comment: "x - ignores whitespace and allows comments in regular expressions"
+      - name: EUC_JP
+        comment: "e - forces the EUC-JP encoding"
+      - name: ASCII_8BIT
+        comment: "n - forces the ASCII-8BIT encoding"
+      - name: WINDOWS_31J
+        comment: "s - forces the Windows-31J encoding"
+      - name: UTF_8
+        comment: "u - forces the UTF-8 encoding"
+      - name: ONCE
+        comment: "o - only interpolates values into the regular expression once"
   - name: CallNodeFlags
     values:
-      - SAFE_NAVIGATION # &. operator
+      - name: SAFE_NAVIGATION
+        comment: "&. operator"
   - name: RangeNodeFlags
     values:
-      - EXCLUDE_END # ... operator
+      - name: EXCLUDE_END
+        comment: "... operator"
 nodes:
   - name: AliasNode
     child_nodes:
