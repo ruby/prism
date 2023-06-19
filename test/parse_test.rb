@@ -57,10 +57,12 @@ class ParseTest < Test::Unit::TestCase
     FileUtils.mkdir_p(directory) unless File.directory?(directory)
 
     define_method "test_filepath_#{filepath}" do
-      # First, read the source from the filepath and make sure that it can be
-      # correctly parsed by Ripper. If it can't, then we have a fixture that is
-      # invalid Ruby.
-      source = File.read(filepath)
+      # First, read the source from the filepath. Use binmode to avoid converting CRLF on Windows,
+      # and explicitly set the external encoding to UTF-8 to override the binmode default.
+      source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
+
+      # Make sure that it can be correctly parsed by Ripper. If it can't, then we have a fixture
+      # that is invalid Ruby.
       refute_nil Ripper.sexp_raw(source)
 
       # Next, parse the source and print the value.
