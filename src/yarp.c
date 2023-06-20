@@ -5107,7 +5107,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
     // If there is no content following this #, then we're at the end of
     // the string and we can safely return string content.
     if (pound + 1 >= parser->end) {
-        parser->current.end = pound;
+        parser->current.end = pound + 1;
         return YP_TOKEN_STRING_CONTENT;
     }
 
