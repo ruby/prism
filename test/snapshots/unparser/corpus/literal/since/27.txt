@@ -1,7 +1,7 @@
 ProgramNode(0...22)(
   [],
   StatementsNode(0...22)(
-    [LambdaNode(0...14)(
+    [LambdaNode(0...16)(
        [],
        (0...2),
        nil,

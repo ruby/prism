@@ -1,6 +1,6 @@
-ProgramNode(0...52)(
+ProgramNode(0...56)(
   [],
-  StatementsNode(0...52)(
+  StatementsNode(0...56)(
     [CallNode(0...15)(
        nil,
        nil,
@@ -43,16 +43,16 @@ ProgramNode(0...52)(
        0,
        "assert"
      ),
-     CallNode(30...52)(
+     CallNode(30...56)(
        nil,
        nil,
        (30...31),
        nil,
-       ArgumentsNode(32...52)(
-         [KeywordHashNode(32...52)(
-            [AssocNode(32...52)(
+       ArgumentsNode(32...56)(
+         [KeywordHashNode(32...56)(
+            [AssocNode(32...56)(
                SymbolNode(32...34)(nil, (32...33), (33...34), "x"),
-               LambdaNode(35...52)(
+               LambdaNode(35...56)(
                  [],
                  (35...37),
                  nil,

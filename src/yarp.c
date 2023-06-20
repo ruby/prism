@@ -2673,25 +2673,17 @@ yp_lambda_node_create(
     yp_constant_id_list_t *locals,
     const yp_token_t *opening,
     yp_block_parameters_node_t *parameters,
-    yp_node_t *statements
+    yp_node_t *statements,
+    const yp_token_t *closing
 ) {
     yp_lambda_node_t *node = YP_ALLOC_NODE(parser, yp_lambda_node_t);
-
-    const char *end;
-    if (statements != NULL) {
-        end = statements->location.end;
-    } else if (parameters != NULL) {
-        end = parameters->base.location.end;
-    } else {
-        end = opening->end;
-    }
 
     *node = (yp_lambda_node_t) {
         {
             .type = YP_NODE_LAMBDA_NODE,
             .location = {
                 .start = opening->start,
-                .end = end
+                .end = closing->end
             },
         },
         .locals = *locals,
@@ -11828,7 +11820,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_constant_id_list_t locals = parser->current_scope->locals;
             yp_parser_scope_pop(parser);
             yp_accepts_block_stack_pop(parser);
-            return (yp_node_t *) yp_lambda_node_create(parser, &locals, &opening, params, body);
+            return (yp_node_t *) yp_lambda_node_create(parser, &locals, &opening, params, body, &parser->previous);
         }
         case YP_TOKEN_UPLUS: {
             parser_lex(parser);

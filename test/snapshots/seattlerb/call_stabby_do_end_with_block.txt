@@ -6,8 +6,8 @@ ProgramNode(0...22)(
        nil,
        (0...1),
        nil,
-       ArgumentsNode(2...9)(
-         [LambdaNode(2...9)(
+       ArgumentsNode(2...13)(
+         [LambdaNode(2...13)(
             [],
             (2...4),
             nil,

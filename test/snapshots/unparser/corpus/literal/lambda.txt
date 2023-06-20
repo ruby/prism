@@ -1,6 +1,6 @@
-ProgramNode(0...76)(
+ProgramNode(0...80)(
   [],
-  StatementsNode(0...76)(
+  StatementsNode(0...80)(
     [CallNode(0...10)(
        nil,
        nil,
@@ -43,13 +43,13 @@ ProgramNode(0...76)(
        0,
        "lambda"
      ),
-     LambdaNode(33...37)(
+     LambdaNode(33...41)(
        [],
        (33...35),
        BlockParametersNode(35...37)(nil, [], (35...36), (36...37)),
        nil
      ),
-     LambdaNode(42...47)(
+     LambdaNode(42...51)(
        [:a],
        (42...44),
        BlockParametersNode(44...47)(
@@ -68,7 +68,7 @@ ProgramNode(0...76)(
        ),
        nil
      ),
-     LambdaNode(52...60)(
+     LambdaNode(52...64)(
        [:a, :b],
        (52...54),
        BlockParametersNode(54...60)(
@@ -88,7 +88,7 @@ ProgramNode(0...76)(
        ),
        nil
      ),
-     LambdaNode(65...76)(
+     LambdaNode(65...80)(
        [:a, :b, :c],
        (65...67),
        BlockParametersNode(67...76)(

@@ -312,7 +312,7 @@ ProgramNode(0...3725)(
        SourceEncodingNode(323...335)(),
        (320...322)
      ),
-     MatchRequiredNode(336...351)(
+     MatchRequiredNode(336...353)(
        CallNode(336...339)(
          nil,
          nil,
@@ -324,7 +324,7 @@ ProgramNode(0...3725)(
          0,
          "foo"
        ),
-       LambdaNode(343...351)(
+       LambdaNode(343...353)(
          [],
          (343...345),
          nil,
@@ -864,7 +864,7 @@ ProgramNode(0...3725)(
        ),
        (877...879)
      ),
-     MatchRequiredNode(909...938)(
+     MatchRequiredNode(909...940)(
        CallNode(909...912)(
          nil,
          nil,
@@ -876,8 +876,8 @@ ProgramNode(0...3725)(
          0,
          "foo"
        ),
-       RangeNode(916...938)(
-         LambdaNode(916...924)(
+       RangeNode(916...940)(
+         LambdaNode(916...926)(
            [],
            (916...918),
            nil,
@@ -885,7 +885,7 @@ ProgramNode(0...3725)(
              [LocalVariableReadNode(921...924)(:bar, 1)]
            )
          ),
-         LambdaNode(930...938)(
+         LambdaNode(930...940)(
            [],
            (930...932),
            nil,
@@ -2487,7 +2487,7 @@ ProgramNode(0...3725)(
        SourceEncodingNode(1953...1965)(),
        (1950...1952)
      ),
-     MatchPredicateNode(1966...1981)(
+     MatchPredicateNode(1966...1983)(
        CallNode(1966...1969)(
          nil,
          nil,
@@ -2499,7 +2499,7 @@ ProgramNode(0...3725)(
          0,
          "foo"
        ),
-       LambdaNode(1973...1981)(
+       LambdaNode(1973...1983)(
          [],
          (1973...1975),
          nil,
@@ -3134,7 +3134,7 @@ ProgramNode(0...3725)(
          "foo"
        ),
        [InNode(2706...2724)(
-          LambdaNode(2709...2717)(
+          LambdaNode(2709...2719)(
             [],
             (2709...2711),
             nil,
@@ -3967,8 +3967,8 @@ ProgramNode(0...3725)(
           IfNode(3629...3646)(
             (3640...3642),
             LocalVariableReadNode(3643...3646)(:baz, 0),
-            StatementsNode(3629...3637)(
-              [LambdaNode(3629...3637)(
+            StatementsNode(3629...3639)(
+              [LambdaNode(3629...3639)(
                  [],
                  (3629...3631),
                  nil,

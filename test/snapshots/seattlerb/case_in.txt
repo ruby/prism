@@ -310,7 +310,7 @@ ProgramNode(0...746)(
        [InNode(441...463)(
           ArrayPatternNode(444...463)(
             nil,
-            [LambdaNode(445...457)(
+            [LambdaNode(445...459)(
                [:b],
                (445...447),
                BlockParametersNode(447...450)(

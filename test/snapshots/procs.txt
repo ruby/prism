@@ -1,7 +1,7 @@
-ProgramNode(0...262)(
+ProgramNode(0...266)(
   [],
-  StatementsNode(0...262)(
-    [LambdaNode(0...19)(
+  StatementsNode(0...266)(
+    [LambdaNode(0...21)(
        [:a, :b, :c, :d],
        (0...2),
        BlockParametersNode(3...15)(
@@ -46,7 +46,7 @@ ProgramNode(0...262)(
          (66...69)
        )
      ),
-     LambdaNode(71...79)(
+     LambdaNode(71...81)(
        [],
        (71...73),
        nil,
@@ -54,7 +54,7 @@ ProgramNode(0...262)(
          [CallNode(76...79)(nil, nil, (76...79), nil, nil, nil, nil, 0, "foo")]
        )
      ),
-     LambdaNode(83...93)(
+     LambdaNode(83...98)(
        [],
        (83...85),
        nil,
@@ -62,7 +62,7 @@ ProgramNode(0...262)(
          [CallNode(90...93)(nil, nil, (90...93), nil, nil, nil, nil, 0, "foo")]
        )
      ),
-     LambdaNode(100...127)(
+     LambdaNode(100...129)(
        [:a, :b, :c, :d, :e],
        (100...102),
        BlockParametersNode(103...123)(
@@ -87,7 +87,7 @@ ProgramNode(0...262)(
        ),
        StatementsNode(126...127)([LocalVariableReadNode(126...127)(:a, 0)])
      ),
-     LambdaNode(131...169)(
+     LambdaNode(131...171)(
        [:a, :b, :c, :d, :e, :f, :g],
        (131...133),
        BlockParametersNode(134...165)(
@@ -112,7 +112,7 @@ ProgramNode(0...262)(
        ),
        StatementsNode(168...169)([LocalVariableReadNode(168...169)(:a, 0)])
      ),
-     LambdaNode(173...214)(
+     LambdaNode(173...218)(
        [:a, :b, :c, :d, :e, :f, :g],
        (173...175),
        BlockParametersNode(176...207)(
@@ -137,7 +137,7 @@ ProgramNode(0...262)(
        ),
        StatementsNode(213...214)([LocalVariableReadNode(213...214)(:a, 0)])
      ),
-     LambdaNode(220...241)(
+     LambdaNode(220...245)(
        [:a],
        (220...222),
        BlockParametersNode(223...226)(
@@ -154,8 +154,8 @@ ProgramNode(0...262)(
          (223...224),
          (225...226)
        ),
-       StatementsNode(229...241)(
-         [LambdaNode(229...241)(
+       StatementsNode(229...243)(
+         [LambdaNode(229...243)(
             [:b],
             (229...231),
             BlockParametersNode(232...233)(
@@ -190,7 +190,7 @@ ProgramNode(0...262)(
           )]
        )
      ),
-     LambdaNode(247...262)(
+     LambdaNode(247...266)(
        [:a, :b, :c],
        (247...249),
        BlockParametersNode(250...262)(

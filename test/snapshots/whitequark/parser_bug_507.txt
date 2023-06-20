@@ -1,10 +1,10 @@
-ProgramNode(0...12)(
+ProgramNode(0...19)(
   [:m],
-  StatementsNode(0...12)(
-    [LocalVariableWriteNode(0...12)(
+  StatementsNode(0...19)(
+    [LocalVariableWriteNode(0...19)(
        :m,
        0,
-       LambdaNode(4...12)(
+       LambdaNode(4...19)(
          [:args],
          (4...6),
          BlockParametersNode(7...12)(
