@@ -12,7 +12,7 @@ ProgramNode(0...42)(
          BlockNode(5...37)(
            [],
            nil,
-           BeginNode(0...37)(
+           BeginNode(10...37)(
              nil,
              StatementsNode(10...16)(
                [SymbolNode(10...16)((10...11), (11...16), nil, "begin")]

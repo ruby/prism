@@ -8467,6 +8467,22 @@ parse_rescues_as_begin(yp_parser_t *parser, yp_statements_node_t *statements) {
     yp_token_t no_begin_token = not_provided(parser);
     yp_begin_node_t *begin_node = yp_begin_node_create(parser, &no_begin_token, statements);
     parse_rescues(parser, begin_node);
+
+    // All nodes within a begin node are optional, so we look
+    // for the earliest possible node that we can use to set
+    // the BeginNode's start location
+    const char * start = begin_node->base.location.start;
+    if (begin_node->statements) {
+        start = begin_node->statements->base.location.start;
+    } else if (begin_node->rescue_clause) {
+        start = begin_node->rescue_clause->base.location.start;
+    } else if (begin_node->else_clause) {
+        start = begin_node->else_clause->base.location.start;
+    } else if (begin_node->ensure_clause) {
+        start = begin_node->ensure_clause->base.location.start;
+    }
+
+    begin_node->base.location.start = start;
     return begin_node;
 }
 

@@ -5,7 +5,7 @@ ProgramNode(0...913)(
        (4...7),
        nil,
        nil,
-       BeginNode(12...46)(
+       BeginNode(10...46)(
          nil,
          StatementsNode(10...11)(
            [CallNode(10...11)(nil, nil, (10...11), nil, nil, nil, nil, 0, "a")]
@@ -78,7 +78,7 @@ ProgramNode(0...913)(
        (52...55),
        nil,
        nil,
-       BeginNode(69...103)(
+       BeginNode(58...103)(
          nil,
          StatementsNode(58...68)(
            [RescueModifierNode(58...68)(
@@ -235,7 +235,7 @@ ProgramNode(0...913)(
        (166...169),
        nil,
        nil,
-       BeginNode(176...205)(
+       BeginNode(172...205)(
          nil,
          StatementsNode(172...175)(
            [CallNode(172...175)(
@@ -302,7 +302,7 @@ ProgramNode(0...913)(
        (211...214),
        nil,
        nil,
-       BeginNode(0...237)(
+       BeginNode(217...237)(
          nil,
          StatementsNode(217...220)(
            [CallNode(217...220)(
@@ -350,7 +350,7 @@ ProgramNode(0...913)(
        (243...246),
        nil,
        nil,
-       BeginNode(253...269)(
+       BeginNode(249...269)(
          nil,
          StatementsNode(249...252)(
            [CallNode(249...252)(

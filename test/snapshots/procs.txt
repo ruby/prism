@@ -24,7 +24,7 @@ ProgramNode(0...266)(
        [],
        (23...25),
        nil,
-       BeginNode(0...39)(
+       BeginNode(29...39)(
          nil,
          nil,
          nil,

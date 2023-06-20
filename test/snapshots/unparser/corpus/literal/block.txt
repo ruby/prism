@@ -767,7 +767,7 @@ ProgramNode(0...737)(
        BlockNode(393...435)(
          [:bar],
          nil,
-         BeginNode(402...435)(
+         BeginNode(398...435)(
            nil,
            StatementsNode(398...401)(
              [CallNode(398...401)(
@@ -812,7 +812,7 @@ ProgramNode(0...737)(
        BlockNode(438...479)(
          [],
          nil,
-         BeginNode(447...479)(
+         BeginNode(443...479)(
            nil,
            StatementsNode(443...446)(
              [CallNode(443...446)(
@@ -881,7 +881,7 @@ ProgramNode(0...737)(
        BlockNode(482...536)(
          [:exception],
          nil,
-         BeginNode(491...536)(
+         BeginNode(487...536)(
            nil,
            StatementsNode(487...490)(
              [CallNode(487...490)(
@@ -956,7 +956,7 @@ ProgramNode(0...737)(
        BlockNode(539...569)(
          [],
          nil,
-         BeginNode(548...569)(
+         BeginNode(544...569)(
            nil,
            StatementsNode(544...547)(
              [CallNode(544...547)(
@@ -1024,7 +1024,7 @@ ProgramNode(0...737)(
        BlockNode(572...601)(
          [],
          nil,
-         BeginNode(581...601)(
+         BeginNode(577...601)(
            nil,
            StatementsNode(577...580)(
              [CallNode(577...580)(
@@ -1067,7 +1067,7 @@ ProgramNode(0...737)(
        BlockNode(604...634)(
          [],
          nil,
-         BeginNode(613...634)(
+         BeginNode(609...634)(
            nil,
            StatementsNode(609...612)(
              [CallNode(609...612)(
@@ -1119,7 +1119,7 @@ ProgramNode(0...737)(
        BlockNode(637...680)(
          [:exception],
          nil,
-         BeginNode(646...680)(
+         BeginNode(642...680)(
            nil,
            StatementsNode(642...645)(
              [CallNode(642...645)(
@@ -1193,7 +1193,7 @@ ProgramNode(0...737)(
        BlockNode(683...696)(
          [],
          nil,
-         BeginNode(0...696)(
+         BeginNode(686...696)(
            nil,
            nil,
            nil,
