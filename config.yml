@@ -317,6 +317,14 @@ tokens:
   - name: __END__
     comment: "marker for the point in the file at which the parser should stop"
 flags:
+  - name: CallNodeFlags
+    values:
+      - name: SAFE_NAVIGATION
+        comment: "&. operator"
+  - name: RangeNodeFlags
+    values:
+      - name: EXCLUDE_END
+        comment: "... operator"
   - name: RegularExpressionFlags
     values:
       - name: IGNORE_CASE
@@ -335,14 +343,6 @@ flags:
         comment: "u - forces the UTF-8 encoding"
       - name: ONCE
         comment: "o - only interpolates values into the regular expression once"
-  - name: CallNodeFlags
-    values:
-      - name: SAFE_NAVIGATION
-        comment: "&. operator"
-  - name: RangeNodeFlags
-    values:
-      - name: EXCLUDE_END
-        comment: "... operator"
 nodes:
   - name: AliasNode
     child_nodes:
