@@ -4362,6 +4362,16 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
         }
     }
 
+    // Next, we're going to check for UTF-8. This is the most common encoding.
+    // Extensions like utf-8 can contain extra encoding details like,
+    // utf-8-dos, utf-8-linux, utf-8-mac. We treat these all as utf-8 should
+    // treat any encoding starting utf-8 as utf-8.
+    if (strncasecmp(encoding_start, "utf-8", 5) == 0) {
+        // We don't need to do anything here because the default encoding is
+        // already UTF-8. We'll just return.
+        return;
+    }
+
     // Next, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
@@ -4372,19 +4382,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
         return; \
     }
 
-    // Extensions like utf-8 can contain extra encoding details like,
-    // utf-8-dos, utf-8-linux, utf-8-mac
-    // We treat these all as utf-8 should treat any encoding starting utf-8 as utf-8
-#define ENCODING_EXTENDABLE(value, prebuilt) \
-    if (strncasecmp(encoding_start, value, sizeof(value) - 1) == 0) { \
-        parser->encoding = prebuilt; \
-        parser->encoding_changed |= true; \
-        if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
-        return; \
-    }
-
     // Check most common first. (This is pretty arbitrary.)
-    ENCODING_EXTENDABLE("utf-8", yp_encoding_utf_8);
     ENCODING("ascii", yp_encoding_ascii);
     ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
     ENCODING("us-ascii", yp_encoding_ascii);
