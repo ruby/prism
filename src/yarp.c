@@ -300,6 +300,27 @@ lex_mode_push_string(yp_parser_t *parser, bool interpolation, bool label_allowed
         }
     };
 
+    // These are the places where we need to split up the content of the
+    // string. We'll use strpbrk to find the first of these characters.
+    char *breakpoints = lex_mode.as.string.breakpoints;
+    memcpy(breakpoints, "\n\\\0\0\0", sizeof(lex_mode.as.string.breakpoints));
+
+    // Now add in the terminator.
+    size_t index = 2;
+    breakpoints[index++] = terminator;
+
+    // If interpolation is allowed, then we're going to check for the #
+    // character. Otherwise we'll only look for escapes and the terminator.
+    if (interpolation) {
+        breakpoints[index++] = '#';
+    }
+
+    // If we have an incrementor, then we'll add that in as a breakpoint as
+    // well.
+    if (incrementor != '\0') {
+        breakpoints[index++] = incrementor;
+    }
+
     return lex_mode_push(parser, lex_mode);
 }
 
@@ -6807,24 +6828,7 @@ parser_lex(yp_parser_t *parser) {
 
             // These are the places where we need to split up the content of the
             // string. We'll use strpbrk to find the first of these characters.
-            char breakpoints[] = "\n\\\0\0\0";
-            size_t index = 2;
-
-            // Now add in the terminator.
-            breakpoints[index++] = parser->lex_modes.current->as.string.terminator;
-
-            // If interpolation is allowed, then we're going to check for the #
-            // character. Otherwise we'll only look for escapes and the terminator.
-            if (parser->lex_modes.current->as.string.interpolation) {
-                breakpoints[index++] = '#';
-            }
-
-            // If we have an incrementor, then we'll add that in as a breakpoint as
-            // well.
-            if (parser->lex_modes.current->as.string.incrementor != '\0') {
-                breakpoints[index++] = parser->lex_modes.current->as.string.incrementor;
-            }
-
+            const char *breakpoints = parser->lex_modes.current->as.string.breakpoints;
             const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
 
             while (breakpoint != NULL) {
@@ -7013,6 +7017,7 @@ parser_lex(yp_parser_t *parser) {
             // we need to split up the content of the heredoc. We'll use strpbrk to
             // find the first of these characters.
             char breakpoints[] = "\n\\#";
+
             yp_heredoc_quote_t quote = parser->lex_modes.current->as.heredoc.quote;
             if (quote == YP_HEREDOC_QUOTE_SINGLE) {
                 breakpoints[2] = '\0';

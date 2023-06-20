@@ -158,6 +158,10 @@ typedef struct yp_lex_mode {
             // This is the terminator of the string. It is typically either a
             // single or double quote.
             char terminator;
+
+            // This is the character set that should be used to delimit the
+            // tokens within the string.
+            char breakpoints[6];
         } string;
 
         struct {
