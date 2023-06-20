@@ -18,6 +18,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `binary`
 * `cp932`
 * `euc-jp`
+* `gbk`
 * `iso-8859-1`
 * `iso-8859-2`
 * `iso-8859-3`
@@ -35,6 +36,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `iso-8859-16`
 * `koi8-r`
 * `shift_jis`
+* `sjis`
 * `us-ascii`
 * `utf-8`
 * `windows-31j`

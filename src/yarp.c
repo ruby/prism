@@ -4352,6 +4352,14 @@ static yp_encoding_t yp_encoding_euc_jp = {
     .isupper_char = yp_encoding_euc_jp_isupper_char
 };
 
+static yp_encoding_t yp_encoding_gbk = {
+    .name = "gbk",
+    .char_width = yp_encoding_gbk_char_width,
+    .alnum_char = yp_encoding_gbk_alnum_char,
+    .alpha_char = yp_encoding_gbk_alpha_char,
+    .isupper_char = yp_encoding_gbk_isupper_char
+};
+
 static yp_encoding_t yp_encoding_iso_8859_1 = {
     .name = "iso-8859-1",
     .char_width = yp_encoding_single_char_width,
@@ -4598,6 +4606,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
 
     // Then check all the others.
     ENCODING("big5", yp_encoding_big5);
+    ENCODING("gbk", yp_encoding_gbk);
     ENCODING("iso-8859-1", yp_encoding_iso_8859_1);
     ENCODING("iso-8859-2", yp_encoding_iso_8859_2);
     ENCODING("iso-8859-3", yp_encoding_iso_8859_3);
@@ -4620,6 +4629,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("cp1251", yp_encoding_windows_1251);
     ENCODING("cp1252", yp_encoding_windows_1252);
     ENCODING("cp932", yp_encoding_windows_31j);
+    ENCODING("sjis", yp_encoding_windows_31j);
 
 #undef ENCODING
 

@@ -38,6 +38,12 @@ size_t yp_encoding_euc_jp_alpha_char(const char *c);
 size_t yp_encoding_euc_jp_alnum_char(const char *c);
 bool yp_encoding_euc_jp_isupper_char(const char *c);
 
+// GBK
+size_t yp_encoding_gbk_char_width(const char *c);
+size_t yp_encoding_gbk_alpha_char(const char *c);
+size_t yp_encoding_gbk_alnum_char(const char *c);
+bool yp_encoding_gbk_isupper_char(const char *c);
+
 // ISO-8859-1
 size_t yp_encoding_iso_8859_1_char_width(const char *c);
 size_t yp_encoding_iso_8859_1_alpha_char(const char *c);
