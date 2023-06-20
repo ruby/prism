@@ -167,7 +167,7 @@ debug_token(yp_token_t * token) {
 // Returns the incrementor character that should be used to increment the
 // nesting count if one is possible.
 static inline char
-incrementor(const char start) {
+lex_mode_incrementor(const char start) {
     switch (start) {
         case '(':
         case '[':
@@ -182,7 +182,7 @@ incrementor(const char start) {
 // Returns the matching character that should be used to terminate a list
 // beginning with the given character.
 static inline char
-terminator(const char start) {
+lex_mode_terminator(const char start) {
     switch (start) {
         case '(':
             return ')';
@@ -226,8 +226,8 @@ lex_mode_push_list(yp_parser_t *parser, bool interpolation, char delimiter) {
         .as.list = {
             .nesting = 0,
             .interpolation = interpolation,
-            .incrementor = incrementor(delimiter),
-            .terminator = terminator(delimiter)
+            .incrementor = lex_mode_incrementor(delimiter),
+            .terminator = lex_mode_terminator(delimiter)
         }
     };
 
@@ -6364,7 +6364,7 @@ parser_lex(yp_parser_t *parser) {
                         lex_state_spcarg_p(parser, space_seen)
                     ) {
                         if (!parser->encoding.alnum_char(parser->current.end)) {
-                            lex_mode_push_string(parser, true, false, incrementor(*parser->current.end), terminator(*parser->current.end));
+                            lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
 
                             if (*parser->current.end == '\r') {
                                 parser->current.end++;
@@ -6391,25 +6391,25 @@ parser_lex(yp_parser_t *parser) {
                             }
                             case 'r': {
                                 parser->current.end++;
-                                lex_mode_push_regexp(parser, incrementor(*parser->current.end), terminator(*parser->current.end));
+                                lex_mode_push_regexp(parser, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                 parser->current.end++;
                                 LEX(YP_TOKEN_REGEXP_BEGIN);
                             }
                             case 'q': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, false, false, incrementor(*parser->current.end), terminator(*parser->current.end));
+                                lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                 parser->current.end++;
                                 LEX(YP_TOKEN_STRING_BEGIN);
                             }
                             case 'Q': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, true, false, incrementor(*parser->current.end), terminator(*parser->current.end));
+                                lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                 parser->current.end++;
                                 LEX(YP_TOKEN_STRING_BEGIN);
                             }
                             case 's': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, false, false, incrementor(*parser->current.end), terminator(*parser->current.end));
+                                lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                 lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
                                 parser->current.end++;
                                 LEX(YP_TOKEN_SYMBOL_BEGIN);
@@ -6426,7 +6426,7 @@ parser_lex(yp_parser_t *parser) {
                             }
                             case 'x': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, true, false, incrementor(*parser->current.end), terminator(*parser->current.end));
+                                lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
                                 parser->current.end++;
                                 LEX(YP_TOKEN_PERCENT_LOWER_X);
                             }
