@@ -269,6 +269,20 @@ lex_mode_push_regexp(yp_parser_t *parser, char incrementor, char terminator) {
         }
     };
 
+    // These are the places where we need to split up the content of the
+    // regular expression. We'll use strpbrk to find the first of these
+    // characters.
+    char *breakpoints = lex_mode.as.regexp.breakpoints;
+    memcpy(breakpoints, "\n\\#\0\0", sizeof(lex_mode.as.regexp.breakpoints));
+
+    // First we'll add the terminator.
+    breakpoints[3] = terminator;
+
+    // Next, if there is an incrementor, then we'll check for that as well.
+    if (incrementor != '\0') {
+        breakpoints[4] = incrementor;
+    }
+
     return lex_mode_push(parser, lex_mode);
 }
 
@@ -6676,13 +6690,7 @@ parser_lex(yp_parser_t *parser) {
             // These are the places where we need to split up the content of the
             // regular expression. We'll use strpbrk to find the first of these
             // characters.
-            char breakpoints[] = "\n\\#\0\0";
-
-            breakpoints[3] = parser->lex_modes.current->as.regexp.terminator;
-            if (parser->lex_modes.current->as.regexp.incrementor != '\0') {
-                breakpoints[4] = parser->lex_modes.current->as.regexp.incrementor;
-            }
-
+            const char *breakpoints = parser->lex_modes.current->as.regexp.breakpoints;
             const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
 
             while (breakpoint != NULL) {

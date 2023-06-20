@@ -133,6 +133,10 @@ typedef struct yp_lex_mode {
 
             // This is the terminator of the regular expression.
             char terminator;
+
+            // This is the character set that should be used to delimit the
+            // tokens within the regular expression.
+            char breakpoints[6];
         } regexp;
 
         struct {
