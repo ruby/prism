@@ -14,6 +14,8 @@ The header is structured like the following table:
 | `1` | major version number |
 | `1` | minor version number |
 | `1` | patch version number |
+| varint | the length of the encoding name |
+| | the encoding name |
 | `4` | content pool offset |
 | varint | content pool size |
 

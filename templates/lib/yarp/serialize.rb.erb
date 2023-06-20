@@ -14,17 +14,22 @@ module YARP
       attr_reader :constant_pool_offset, :constant_pool
 
       def initialize(source, serialized, io)
-        # TODO: This is wrong, we should be dumping and loading the encoding.
-        # For now, we assume that the source is UTF-8.
         @encoding = Encoding::UTF_8
-        @source = source.dup.force_encoding(@encoding).freeze
+
+        @source = source.dup
         @serialized = serialized
         @io = io
+
+        @constant_pool_offset = nil
+        @constant_pool = nil
       end
 
       def load
         io.read(4) => "YARP"
         io.read(3).unpack("C3") => [0, 4, 0]
+
+        @encoding = Encoding.find(io.read(load_varint))
+        @source = source.force_encoding(@encoding).freeze
 
         @constant_pool_offset = io.read(4).unpack1("L")
         @constant_pool = Array.new(load_varint, nil)
