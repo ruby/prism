@@ -117,6 +117,10 @@ typedef struct yp_lex_mode {
 
             // This is the terminator of the list literal.
             char terminator;
+
+            // This is the character set that should be used to delimit the
+            // tokens within the list.
+            char breakpoints[11];
         } list;
 
         struct {

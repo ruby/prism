@@ -221,15 +221,38 @@ lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
 // Push on a new list lex mode.
 static inline bool
 lex_mode_push_list(yp_parser_t *parser, bool interpolation, char delimiter) {
+    char incrementor = lex_mode_incrementor(delimiter);
+    char terminator = lex_mode_terminator(delimiter);
+
     yp_lex_mode_t lex_mode = {
         .mode = YP_LEX_LIST,
         .as.list = {
             .nesting = 0,
             .interpolation = interpolation,
-            .incrementor = lex_mode_incrementor(delimiter),
-            .terminator = lex_mode_terminator(delimiter)
+            .incrementor = incrementor,
+            .terminator = terminator
         }
     };
+
+    // These are the places where we need to split up the content of the list.
+    // We'll use strpbrk to find the first of these characters.
+    char *breakpoints = lex_mode.as.list.breakpoints;
+    memcpy(breakpoints, "\\ \t\f\r\v\n\0\0\0", sizeof(lex_mode.as.list.breakpoints));
+
+    // Now we'll add the terminator to the list of breakpoints.
+    size_t index = 7;
+    breakpoints[index++] = terminator;
+
+    // If interpolation is allowed, then we're going to check for the #
+    // character. Otherwise we'll only look for escapes and the terminator.
+    if (interpolation) {
+        breakpoints[index++] = '#';
+    }
+
+    // If there is an incrementor, then we'll check for that as well.
+    if (incrementor != '\0') {
+        breakpoints[index++] = incrementor;
+    }
 
     return lex_mode_push(parser, lex_mode);
 }
@@ -6528,44 +6551,29 @@ parser_lex(yp_parser_t *parser) {
                 }
             }
         }
-        case YP_LEX_LIST: {
+        case YP_LEX_LIST: 
             // First we'll set the beginning of the token.
             parser->current.start = parser->current.end;
 
-            // If there's any whitespace at the start of the list, then we're going to
-            // trim it off the beginning and create a new token.
+            // If there's any whitespace at the start of the list, then we're
+            // going to trim it off the beginning and create a new token.
             size_t whitespace;
             if ((whitespace = yp_strspn_whitespace_newlines(parser->current.end, parser->end - parser->current.end, &parser->newline_list)) > 0) {
                 parser->current.end += whitespace;
                 LEX(YP_TOKEN_WORDS_SEP);
             }
 
-            // We'll check if we're at the end of the file. If we are, then we need to
-            // return the EOF token.
+            // We'll check if we're at the end of the file. If we are, then we
+            // need to return the EOF token.
             if (parser->current.end >= parser->end) {
                 LEX(YP_TOKEN_EOF);
             }
 
-            // These are the places where we need to split up the content of the list.
-            // We'll use strpbrk to find the first of these characters.
-            char breakpoints[] = "\\ \t\f\r\v\n\0\0\0";
-
-            // Now we'll add the terminator to the list of breakpoints.
-            size_t index = 7;
-            breakpoints[index++] = parser->lex_modes.current->as.list.terminator;
-
-            // If interpolation is allowed, then we're going to check for the #
-            // character. Otherwise we'll only look for escapes and the terminator.
-            if (parser->lex_modes.current->as.list.interpolation) {
-                breakpoints[index++] = '#';
-            }
-
-            // If there is an incrementor, then we'll check for that as well.
-            if (parser->lex_modes.current->as.list.incrementor != '\0') {
-                breakpoints[index++] = parser->lex_modes.current->as.list.incrementor;
-            }
-
+            // Here we'll get a list of the places where strpbrk should break,
+            // and then find the first one.
+            const char *breakpoints = parser->lex_modes.current->as.list.breakpoints;
             const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+
             while (breakpoint != NULL) {
                 switch (*breakpoint) {
                     case '\0':
@@ -6654,7 +6662,7 @@ parser_lex(yp_parser_t *parser) {
             // If we were unable to find a breakpoint, then this token hits the end of
             // the file.
             LEX(YP_TOKEN_EOF);
-        }
+        
         case YP_LEX_REGEXP: {
             // First, we'll set to start of this token to be the current end.
             parser->current.start = parser->current.end;
