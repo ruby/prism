@@ -4316,202 +4316,6 @@ match(yp_parser_t *parser, char value) {
     return false;
 }
 
-/******************************************************************************/
-/* Encoding-related functions                                                 */
-/******************************************************************************/
-
-static yp_encoding_t yp_encoding_ascii = {
-    .name = "ascii",
-    .char_width = yp_encoding_ascii_char_width,
-    .alnum_char = yp_encoding_ascii_alnum_char,
-    .alpha_char = yp_encoding_ascii_alpha_char,
-    .isupper_char = yp_encoding_ascii_isupper_char
-};
-
-static yp_encoding_t yp_encoding_ascii_8bit = {
-    .name = "ascii-8bit",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_ascii_alnum_char,
-    .alpha_char = yp_encoding_ascii_alpha_char,
-    .isupper_char = yp_encoding_ascii_isupper_char,
-};
-
-static yp_encoding_t yp_encoding_big5 = {
-    .name = "big5",
-    .char_width = yp_encoding_big5_char_width,
-    .alnum_char = yp_encoding_big5_alnum_char,
-    .alpha_char = yp_encoding_big5_alpha_char,
-    .isupper_char = yp_encoding_big5_isupper_char
-};
-
-static yp_encoding_t yp_encoding_euc_jp = {
-    .name = "euc-jp",
-    .char_width = yp_encoding_euc_jp_char_width,
-    .alnum_char = yp_encoding_euc_jp_alnum_char,
-    .alpha_char = yp_encoding_euc_jp_alpha_char,
-    .isupper_char = yp_encoding_euc_jp_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_1 = {
-    .name = "iso-8859-1",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_1_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_1_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_1_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_2 = {
-    .name = "iso-8859-2",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_2_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_2_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_2_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_3 = {
-    .name = "iso-8859-3",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_3_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_3_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_3_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_4 = {
-    .name = "iso-8859-4",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_4_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_4_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_4_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_5 = {
-    .name = "iso-8859-5",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_5_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_5_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_5_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_6 = {
-    .name = "iso-8859-6",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_6_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_6_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_6_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_7 = {
-    .name = "iso-8859-7",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_7_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_7_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_7_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_8 = {
-    .name = "iso-8859-8",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_8_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_8_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_8_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_9 = {
-    .name = "iso-8859-9",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_9_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_9_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_9_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_10 = {
-    .name = "iso-8859-10",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_10_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_10_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_10_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_11 = {
-    .name = "iso-8859-11",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_11_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_11_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_11_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_13 = {
-    .name = "iso-8859-13",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_13_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_13_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_13_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_14 = {
-    .name = "iso-8859-14",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_14_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_14_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_14_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_15 = {
-    .name = "iso-8859-15",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_15_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_15_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_15_isupper_char
-};
-
-static yp_encoding_t yp_encoding_iso_8859_16 = {
-    .name = "iso-8859-16",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_iso_8859_16_alnum_char,
-    .alpha_char = yp_encoding_iso_8859_16_alpha_char,
-    .isupper_char = yp_encoding_iso_8859_16_isupper_char
-};
-
-static yp_encoding_t yp_encoding_shift_jis = {
-    .name = "shift_jis",
-    .char_width = yp_encoding_shift_jis_char_width,
-    .alnum_char = yp_encoding_shift_jis_alnum_char,
-    .alpha_char = yp_encoding_shift_jis_alpha_char,
-    .isupper_char = yp_encoding_shift_jis_isupper_char
-};
-
-static yp_encoding_t yp_encoding_utf_8 = {
-    .name = "utf-8",
-    .char_width = yp_encoding_utf_8_char_width,
-    .alnum_char = yp_encoding_utf_8_alnum_char,
-    .alpha_char = yp_encoding_utf_8_alpha_char,
-    .isupper_char = yp_encoding_utf_8_isupper_char
-};
-
-static yp_encoding_t yp_encoding_windows_31j = {
-    .name = "windows-31j",
-    .char_width = yp_encoding_windows_31j_char_width,
-    .alnum_char = yp_encoding_windows_31j_alnum_char,
-    .alpha_char = yp_encoding_windows_31j_alpha_char,
-    .isupper_char = yp_encoding_windows_31j_isupper_char
-};
-
-static yp_encoding_t yp_encoding_windows_1251 = {
-    .name = "windows-1251",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_windows_1251_alnum_char,
-    .alpha_char = yp_encoding_windows_1251_alpha_char,
-    .isupper_char = yp_encoding_windows_1251_isupper_char
-};
-
-static yp_encoding_t yp_encoding_windows_1252 = {
-    .name = "windows-1252",
-    .char_width = yp_encoding_single_char_width,
-    .alnum_char = yp_encoding_windows_1252_alnum_char,
-    .alpha_char = yp_encoding_windows_1252_alpha_char,
-    .isupper_char = yp_encoding_windows_1252_isupper_char
-};
-
 // Here we're going to check if this is a "magic" comment, and perform whatever
 // actions are necessary for it here.
 static void
@@ -4558,6 +4362,16 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
         }
     }
 
+    // Next, we're going to check for UTF-8. This is the most common encoding.
+    // Extensions like utf-8 can contain extra encoding details like,
+    // utf-8-dos, utf-8-linux, utf-8-mac. We treat these all as utf-8 should
+    // treat any encoding starting utf-8 as utf-8.
+    if (strncasecmp(encoding_start, "utf-8", 5) == 0) {
+        // We don't need to do anything here because the default encoding is
+        // already UTF-8. We'll just return.
+        return;
+    }
+
     // Next, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
@@ -4568,19 +4382,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
         return; \
     }
 
-    // Extensions like utf-8 can contain extra encoding details like,
-    // utf-8-dos, utf-8-linux, utf-8-mac
-    // We treat these all as utf-8 should treat any encoding starting utf-8 as utf-8
-#define ENCODING_EXTENDABLE(value, prebuilt) \
-    if (strncasecmp(encoding_start, value, sizeof(value) - 1) == 0) { \
-        parser->encoding = prebuilt; \
-        parser->encoding_changed |= true; \
-        if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
-        return; \
-    }
-
     // Check most common first. (This is pretty arbitrary.)
-    ENCODING_EXTENDABLE("utf-8", yp_encoding_utf_8);
     ENCODING("ascii", yp_encoding_ascii);
     ENCODING("ascii-8bit", yp_encoding_ascii_8bit);
     ENCODING("us-ascii", yp_encoding_ascii);
@@ -4590,6 +4392,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
 
     // Then check all the others.
     ENCODING("big5", yp_encoding_big5);
+    ENCODING("gbk", yp_encoding_gbk);
     ENCODING("iso-8859-1", yp_encoding_iso_8859_1);
     ENCODING("iso-8859-2", yp_encoding_iso_8859_2);
     ENCODING("iso-8859-3", yp_encoding_iso_8859_3);
@@ -4605,12 +4408,14 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
     ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
     ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
+    ENCODING("koi8-r", yp_encoding_koi8_r);
     ENCODING("windows-31j", yp_encoding_windows_31j);
     ENCODING("windows-1251", yp_encoding_windows_1251);
     ENCODING("windows-1252", yp_encoding_windows_1252);
     ENCODING("cp1251", yp_encoding_windows_1251);
     ENCODING("cp1252", yp_encoding_windows_1252);
     ENCODING("cp932", yp_encoding_windows_31j);
+    ENCODING("sjis", yp_encoding_windows_31j);
 
 #undef ENCODING
 

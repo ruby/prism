@@ -9,6 +9,7 @@ class EncodingTest < Test::Unit::TestCase
     big5
     binary
     euc-jp
+    gbk
     iso-8859-1
     iso-8859-2
     iso-8859-3
@@ -24,7 +25,9 @@ class EncodingTest < Test::Unit::TestCase
     iso-8859-14
     iso-8859-15
     iso-8859-16
+    koi8-r
     shift_jis
+    sjis
     us-ascii
     utf-8
     windows-31j

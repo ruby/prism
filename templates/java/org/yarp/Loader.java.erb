@@ -57,6 +57,12 @@ public class Loader {
         expect((byte) 4);
         expect((byte) 0);
 
+        // This loads the name of the encoding. We don't actually do anything
+        // with it just yet.
+        int encodingLength = loadVarInt();
+        byte[] encodingName = new byte[encodingLength];
+        buffer.get(encodingName);
+
         int constantPoolBufferOffset = buffer.getInt();
         int constantPoolLength = loadVarInt();
         this.constantPool = new ConstantPool(source, constantPoolBufferOffset, constantPoolLength);

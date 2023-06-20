@@ -47,8 +47,9 @@ end
 
 case ARGV[0]
 when "ascii"        then table(Encoding::ASCII_8BIT)
-when "big5"         then lists("big5", 0...65536, Encoding::Big5)
+when "big5"         then lists("big5", 0...0x10000, Encoding::Big5)
 when "euc-jp"       then lists("euc-jp", 0...0x10000, Encoding::EUC_JP)
+when "gbk"          then lists("gbk", 0...0x10000, Encoding::GBK)
 when "iso-8859-1"   then table(Encoding::ISO8859_1)
 when "iso-8859-10"  then table(Encoding::ISO8859_10)
 when "iso-8859-11"  then table(Encoding::ISO8859_11)
@@ -64,6 +65,7 @@ when "iso-8859-6"   then table(Encoding::ISO8859_6)
 when "iso-8859-7"   then table(Encoding::ISO8859_7)
 when "iso-8859-8"   then table(Encoding::ISO8859_8)
 when "iso-8859-9"   then table(Encoding::ISO8859_9)
+when "koi8-r"       then table(Encoding::KOI8_R)
 when "shift_jis"    then lists("shift_jis", 0...0x10000, Encoding::Shift_JIS)
 when "utf8"         then table(Encoding::UTF_8) and lists("utf8", 0x100...0x110000, Encoding::UTF_8)
 when "windows-1251" then table(Encoding::Windows_1251)
