@@ -13,6 +13,7 @@
 /build/
 /lib/yarp/yarp.*
 /lib/yarp.bundle
+/lib/yarp.so
 test.rb
 *.dSYM
 
@@ -27,6 +28,7 @@ test.rb
 /src/prettyprint.c
 /src/serialize.c
 /src/token_type.c
+/src/**/*.o
 
 compile_commands.json
 .cache/

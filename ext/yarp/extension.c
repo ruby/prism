@@ -41,7 +41,7 @@ source_file_load(source_t *source, VALUE filepath) {
     source->source = malloc(file_size);
 
     DWORD bytes_read;
-    BOOL success = ReadFile(file, source->source, file_size, &bytes_read, NULL);
+    BOOL success = ReadFile(file, DISCARD_CONST_QUAL(void *, source->source), file_size, &bytes_read, NULL);
     CloseHandle(file);
 
     if (!success) {

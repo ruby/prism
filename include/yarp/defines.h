@@ -17,10 +17,10 @@
 #   endif
 #endif
 
-#if defined(_WIN32)
-# define YP_ATTRIBUTE_UNUSED
-#else
+#if defined(__GNUC__)
 # define YP_ATTRIBUTE_UNUSED __attribute__((unused))
+#else
+# define YP_ATTRIBUTE_UNUSED
 #endif
 
 #endif
