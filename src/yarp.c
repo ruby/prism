@@ -6613,7 +6613,7 @@ parser_lex(yp_parser_t *parser) {
                 }
             }
         }
-        case YP_LEX_LIST: 
+        case YP_LEX_LIST:
             // First we'll set the beginning of the token.
             parser->current.start = parser->current.end;
 
@@ -6724,7 +6724,7 @@ parser_lex(yp_parser_t *parser) {
             // If we were unable to find a breakpoint, then this token hits the end of
             // the file.
             LEX(YP_TOKEN_EOF);
-        
+
         case YP_LEX_REGEXP: {
             // First, we'll set to start of this token to be the current end.
             parser->current.start = parser->current.end;
