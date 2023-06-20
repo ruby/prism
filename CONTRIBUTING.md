@@ -30,3 +30,10 @@ bundle exec rake generate_compilation_database
 ```
 
 For VS Code, install the [clangd extension](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) to get the features provided by the language server.
+
+## Debugging
+
+Some useful rake tasks:
+
+- `test:valgrind` runs the test suite under valgrind to look for illegal memory access or memory leaks
+- `test:gdb` and `test:lldb` run the test suite under those debuggers
