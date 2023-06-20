@@ -186,12 +186,13 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
                 dest[(*dest_length)++] = (char) unescape_char(unescape_chars[(unsigned char) backslash[1]], flags);
             }
 
-            if (backslash[2] == '\n') {
+            if (backslash + 2 < end && backslash[2] == '\n') {
                 if (write_to_str) {
-                    dest[(*dest_length)++] = (char) unescape_char(unescape_chars[(unsigned char) backslash[1]], flags);
+                    dest[(*dest_length)++] = (char) unescape_char(unescape_chars[(unsigned char) backslash[2]], flags);
                 }
                 return backslash + 3;
             }
+
             return backslash + 2;
         }
         case 'a':
@@ -473,7 +474,7 @@ yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *str
 
     // For each escape found in the source string, we will handle it and update
     // the moving cursor->backslash window.
-    while (backslash != NULL && backslash < end) {
+    while (backslash != NULL && backslash + 1 < end) {
         assert(dest_length < length);
 
         // This is the size of the segment of the string from the previous escape
