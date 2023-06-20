@@ -12,7 +12,8 @@ ProgramNode(0...143)(
        RangeNode(9...14)(
          IntegerNode(9...10)(),
          IntegerNode(12...14)(),
-         (10...12)
+         (10...12),
+         0
        ),
        StatementsNode(15...16)([LocalVariableReadNode(15...16)(:i, 0)]),
        (0...3),
@@ -31,7 +32,8 @@ ProgramNode(0...143)(
        RangeNode(31...36)(
          IntegerNode(31...32)(),
          IntegerNode(34...36)(),
-         (32...34)
+         (32...34),
+         0
        ),
        StatementsNode(38...39)([LocalVariableReadNode(38...39)(:i, 0)]),
        (22...25),
@@ -51,7 +53,8 @@ ProgramNode(0...143)(
        RangeNode(57...62)(
          IntegerNode(57...58)(),
          IntegerNode(60...62)(),
-         (58...60)
+         (58...60),
+         0
        ),
        StatementsNode(63...64)([LocalVariableReadNode(63...64)(:i, 0)]),
        (46...49),
@@ -72,7 +75,8 @@ ProgramNode(0...143)(
        RangeNode(83...88)(
          IntegerNode(83...84)(),
          IntegerNode(86...88)(),
-         (84...86)
+         (84...86),
+         0
        ),
        StatementsNode(89...90)([LocalVariableReadNode(89...90)(:i, 0)]),
        (70...73),
@@ -91,7 +95,8 @@ ProgramNode(0...143)(
        RangeNode(105...110)(
          IntegerNode(105...106)(),
          IntegerNode(108...110)(),
-         (106...108)
+         (106...108),
+         0
        ),
        StatementsNode(114...115)([LocalVariableReadNode(114...115)(:i, 0)]),
        (96...99),
@@ -110,7 +115,8 @@ ProgramNode(0...143)(
        RangeNode(130...135)(
          IntegerNode(130...131)(),
          IntegerNode(133...135)(),
-         (131...133)
+         (131...133),
+         0
        ),
        StatementsNode(137...138)([LocalVariableReadNode(137...138)(:i, 0)]),
        (121...124),

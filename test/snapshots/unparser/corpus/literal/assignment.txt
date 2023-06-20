@@ -449,7 +449,8 @@ ProgramNode(0...719)(
          [RangeNode(446...450)(
             IntegerNode(446...447)(),
             IntegerNode(449...450)(),
-            (447...449)
+            (447...449),
+            0
           ),
           CallNode(454...459)(
             nil,

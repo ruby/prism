@@ -336,13 +336,13 @@ yp_regular_expression_flags_create(const yp_token_t *closing) {
     if (closing->type == YP_TOKEN_REGEXP_END) {
         for (const char *flag = closing->start + 1; flag < closing->end; flag++) {
             switch (*flag) {
-                case 'i': flags |= YP_REGULAR_EXPRESSION_FLAGS_IGNORECASE; break;
-                case 'm': flags |= YP_REGULAR_EXPRESSION_FLAGS_MULTILINE; break;
+                case 'i': flags |= YP_REGULAR_EXPRESSION_FLAGS_IGNORE_CASE; break;
+                case 'm': flags |= YP_REGULAR_EXPRESSION_FLAGS_MULTI_LINE; break;
                 case 'x': flags |= YP_REGULAR_EXPRESSION_FLAGS_EXTENDED; break;
-                case 'e': flags |= YP_REGULAR_EXPRESSION_FLAGS_EUCJP; break;
-                case 'n': flags |= YP_REGULAR_EXPRESSION_FLAGS_ASCII8BIT; break;
-                case 's': flags |= YP_REGULAR_EXPRESSION_FLAGS_WINDOWS31J; break;
-                case 'u': flags |= YP_REGULAR_EXPRESSION_FLAGS_UTF8; break;
+                case 'e': flags |= YP_REGULAR_EXPRESSION_FLAGS_EUC_JP; break;
+                case 'n': flags |= YP_REGULAR_EXPRESSION_FLAGS_ASCII_8BIT; break;
+                case 's': flags |= YP_REGULAR_EXPRESSION_FLAGS_WINDOWS_31J; break;
+                case 'u': flags |= YP_REGULAR_EXPRESSION_FLAGS_UTF_8; break;
                 case 'o': flags |= YP_REGULAR_EXPRESSION_FLAGS_ONCE; break;
                 default: assert(false && "unreachable");
             }
@@ -990,7 +990,7 @@ yp_call_node_call_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *o
     node->block = arguments->block;
 
     if (operator->type == YP_TOKEN_AMPERSAND_DOT) {
-        node->flags |= YP_CALL_NODE_FLAGS_SAFENAVIGATION;
+        node->flags |= YP_CALL_NODE_FLAGS_SAFE_NAVIGATION;
     }
 
     yp_string_shared_init(&node->name, message->start, message->end);
@@ -1066,7 +1066,7 @@ yp_call_node_shorthand_create(yp_parser_t *parser, yp_node_t *receiver, yp_token
     node->block = arguments->block;
 
     if (operator->type == YP_TOKEN_AMPERSAND_DOT) {
-        node->flags |= YP_CALL_NODE_FLAGS_SAFENAVIGATION;
+        node->flags |= YP_CALL_NODE_FLAGS_SAFE_NAVIGATION;
     }
 
     yp_string_constant_init(&node->name, "call", 4);
@@ -3132,7 +3132,17 @@ yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *ope
         .left = left,
         .right = right,
         .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .flags = 0,
     };
+
+    switch (operator->type) {
+        case YP_TOKEN_DOT_DOT_DOT:
+        case YP_TOKEN_UDOT_DOT_DOT:
+            node->flags |= YP_RANGE_NODE_FLAGS_EXCLUDE_END;
+            break;
+        default:
+            break;
+    }
 
     return node;
 }

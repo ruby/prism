@@ -169,7 +169,17 @@ class Flags
   def initialize(config)
     @name = config.fetch("name")
     @human = @name.gsub(/(?<=.)[A-Z]/, "_\\0").downcase
-    @values = config.fetch("values")
+    @values = config.fetch("values").map { |flag| Flag.new(flag) }
+  end
+end
+
+class Flag
+  attr_reader :name, :camelcase, :comment
+
+  def initialize(config)
+    @name = config.fetch("name")
+    @camelcase = @name.split("_").map(&:capitalize).join
+    @comment = config.fetch("comment")
   end
 end
 

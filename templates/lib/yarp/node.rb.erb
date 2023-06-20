@@ -43,7 +43,9 @@ module YARP
   <%- flags.each do |flag| -%>
   module <%= flag.name %>
     <%- flag.values.each_with_index do |value, index| -%>
-    <%= value.upcase %> = 1 << <%= index %>
+    # <%= value.comment %>
+    <%= value.name %> = 1 << <%= index %>
+<%= "\n" if value != flag.values.last -%>
     <%- end -%>
   end
 
