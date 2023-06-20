@@ -164,6 +164,39 @@ debug_token(yp_token_t * token) {
 /* Lex mode manipulations                                                     */
 /******************************************************************************/
 
+// Returns the incrementor character that should be used to increment the
+// nesting count if one is possible.
+static inline char
+incrementor(const char start) {
+    switch (start) {
+        case '(':
+        case '[':
+        case '{':
+        case '<':
+            return start;
+        default:
+            return '\0';
+    }
+}
+
+// Returns the matching character that should be used to terminate a list
+// beginning with the given character.
+static inline char
+terminator(const char start) {
+    switch (start) {
+        case '(':
+            return ')';
+        case '[':
+            return ']';
+        case '{':
+            return '}';
+        case '<':
+            return '>';
+        default:
+            return start;
+    }
+}
+
 // Push a new lex state onto the stack. If we're still within the pre-allocated
 // space of the lex state stack, then we'll just use a new slot. Otherwise we'll
 // allocate a new pointer and use that.
@@ -183,6 +216,22 @@ lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
     }
 
     return true;
+}
+
+// Push on a new list lex mode.
+static bool
+lex_mode_push_list(yp_parser_t *parser, bool interpolation, const char delimiter) {
+    yp_lex_mode_t lex_mode = {
+        .mode = YP_LEX_LIST,
+        .as.list = {
+            .nesting = 0,
+            .interpolation = interpolation,
+            .incrementor = incrementor(delimiter),
+            .terminator = terminator(delimiter)
+        }
+    };
+
+    return lex_mode_push(parser, lex_mode);
 }
 
 // Pop the current lex state off the stack. If we're within the pre-allocated
@@ -4150,39 +4199,6 @@ match(yp_parser_t *parser, char value) {
     return false;
 }
 
-// Returns the incrementor character that should be used to increment the
-// nesting count if one is possible.
-static inline char
-incrementor(const char start) {
-    switch (start) {
-        case '(':
-        case '[':
-        case '{':
-        case '<':
-            return start;
-        default:
-            return '\0';
-    }
-}
-
-// Returns the matching character that should be used to terminate a list
-// beginning with the given character.
-static inline char
-terminator(const char start) {
-    switch (start) {
-        case '(':
-            return ')';
-        case '[':
-            return ']';
-        case '{':
-            return '}';
-        case '<':
-            return '>';
-        default:
-            return start;
-    }
-}
-
 /******************************************************************************/
 /* Encoding-related functions                                                 */
 /******************************************************************************/
@@ -6387,32 +6403,12 @@ parser_lex(yp_parser_t *parser) {
                         switch (*parser->current.end) {
                             case 'i': {
                                 parser->current.end++;
-                                const char delimiter = *parser->current.end++;
-
-                                yp_lex_mode_t lex_mode = {
-                                    .mode = YP_LEX_LIST,
-                                    .as.list.incrementor = incrementor(delimiter),
-                                    .as.list.terminator = terminator(delimiter),
-                                    .as.list.nesting = 0,
-                                    .as.list.interpolation = false
-                                };
-
-                                lex_mode_push(parser, lex_mode);
+                                lex_mode_push_list(parser, false, *parser->current.end++);
                                 LEX(YP_TOKEN_PERCENT_LOWER_I);
                             }
                             case 'I': {
                                 parser->current.end++;
-                                const char delimiter = *parser->current.end++;
-
-                                yp_lex_mode_t lex_mode = {
-                                    .mode = YP_LEX_LIST,
-                                    .as.list.incrementor = incrementor(delimiter),
-                                    .as.list.terminator = terminator(delimiter),
-                                    .as.list.nesting = 0,
-                                    .as.list.interpolation = true
-                                };
-
-                                lex_mode_push(parser, lex_mode);
+                                lex_mode_push_list(parser, true, *parser->current.end++);
                                 LEX(YP_TOKEN_PERCENT_UPPER_I);
                             }
                             case 'r': {
@@ -6484,32 +6480,12 @@ parser_lex(yp_parser_t *parser) {
                             }
                             case 'w': {
                                 parser->current.end++;
-                                const char delimiter = *parser->current.end++;
-
-                                yp_lex_mode_t lex_mode = {
-                                    .mode = YP_LEX_LIST,
-                                    .as.list.incrementor = incrementor(delimiter),
-                                    .as.list.terminator = terminator(delimiter),
-                                    .as.list.nesting = 0,
-                                    .as.list.interpolation = false
-                                };
-
-                                lex_mode_push(parser, lex_mode);
+                                lex_mode_push_list(parser, false, *parser->current.end++);
                                 LEX(YP_TOKEN_PERCENT_LOWER_W);
                             }
                             case 'W': {
                                 parser->current.end++;
-                                const char delimiter = *parser->current.end++;
-
-                                yp_lex_mode_t lex_mode = {
-                                    .mode = YP_LEX_LIST,
-                                    .as.list.incrementor = incrementor(delimiter),
-                                    .as.list.terminator = terminator(delimiter),
-                                    .as.list.nesting = 0,
-                                    .as.list.interpolation = true
-                                };
-
-                                lex_mode_push(parser, lex_mode);
+                                lex_mode_push_list(parser, true, *parser->current.end++);
                                 LEX(YP_TOKEN_PERCENT_UPPER_W);
                             }
                             case 'x': {
