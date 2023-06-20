@@ -24,6 +24,7 @@ class EncodingTest < Test::Unit::TestCase
     iso-8859-14
     iso-8859-15
     iso-8859-16
+    koi8-r
     shift_jis
     us-ascii
     utf-8

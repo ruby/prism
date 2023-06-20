@@ -33,6 +33,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `iso-8859-14`
 * `iso-8859-15`
 * `iso-8859-16`
+* `koi8-r`
 * `shift_jis`
 * `us-ascii`
 * `utf-8`

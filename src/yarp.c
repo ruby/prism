@@ -4472,6 +4472,14 @@ static yp_encoding_t yp_encoding_iso_8859_16 = {
     .isupper_char = yp_encoding_iso_8859_16_isupper_char
 };
 
+static yp_encoding_t yp_encoding_koi8_r = {
+    .name = "koi8-r",
+    .char_width = yp_encoding_koi8_r_char_width,
+    .alnum_char = yp_encoding_koi8_r_alnum_char,
+    .alpha_char = yp_encoding_koi8_r_alpha_char,
+    .isupper_char = yp_encoding_koi8_r_isupper_char
+};
+
 static yp_encoding_t yp_encoding_shift_jis = {
     .name = "shift_jis",
     .char_width = yp_encoding_shift_jis_char_width,
@@ -4605,6 +4613,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("iso-8859-14", yp_encoding_iso_8859_14);
     ENCODING("iso-8859-15", yp_encoding_iso_8859_15);
     ENCODING("iso-8859-16", yp_encoding_iso_8859_16);
+    ENCODING("koi8-r", yp_encoding_koi8_r);
     ENCODING("windows-31j", yp_encoding_windows_31j);
     ENCODING("windows-1251", yp_encoding_windows_1251);
     ENCODING("windows-1252", yp_encoding_windows_1252);
