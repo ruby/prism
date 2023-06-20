@@ -393,10 +393,12 @@ module YARP
     end
 
     def test_PostExecutionNode
+      assert_location(PostExecutionNode, "END {}")
       assert_location(PostExecutionNode, "END { foo }")
     end
 
     def test_PreExecutionNode
+      assert_location(PreExecutionNode, "BEGIN {}")
       assert_location(PreExecutionNode, "BEGIN { foo }")
     end
 

@@ -1633,7 +1633,7 @@ nodes:
   - name: PostExecutionNode
     child_nodes:
       - name: statements
-        type: node
+        type: node?
         kind: StatementsNode
       - name: keyword_loc
         type: location
@@ -1649,7 +1649,7 @@ nodes:
   - name: PreExecutionNode
     child_nodes:
       - name: statements
-        type: node
+        type: node?
         kind: StatementsNode
       - name: keyword_loc
         type: location
