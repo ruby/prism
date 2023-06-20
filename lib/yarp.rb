@@ -239,7 +239,7 @@ require_relative "yarp/node"
 require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
-require "yarp.#{RbConfig::CONFIG["DLEXT"]}"
+require "yarp.so"
 
 module YARP
   class << self
