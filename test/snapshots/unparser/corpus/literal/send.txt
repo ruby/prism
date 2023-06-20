@@ -1441,7 +1441,7 @@ ProgramNode(0...991)(
        0,
        "bar"
      ),
-     CallNode(816...823)(
+     CallNode(816...828)(
        CallNode(816...819)(
          nil,
          nil,
@@ -1661,7 +1661,7 @@ ProgramNode(0...991)(
        0,
        "foo"
      ),
-     CallNode(897...905)(
+     CallNode(897...910)(
        SelfNode(897...901)(),
        (901...902),
        (902...905),

@@ -366,11 +366,11 @@ ProgramNode(0...284)(
          0,
          "foo"
        ),
-       [WhenNode(265...278)(
+       [WhenNode(265...280)(
           (265...269),
-          [SplatNode(270...278)(
+          [SplatNode(270...280)(
              (270...271),
-             CallNode(271...278)(
+             CallNode(271...280)(
                CallNode(271...274)(
                  nil,
                  nil,
