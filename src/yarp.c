@@ -12335,7 +12335,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                         yp_node_destroy(parser, node);
                         return result;
                     }
-                
+
                     yp_token_t operator = not_provided(parser);
                     node = parse_target(parser, node, &operator, NULL);
 
