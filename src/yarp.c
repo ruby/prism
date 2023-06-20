@@ -1685,17 +1685,26 @@ static yp_find_pattern_node_t *
 yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
     yp_find_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_find_pattern_node_t);
 
+    yp_node_t *left = nodes->nodes[0];
+    yp_node_t *right;
+
+    if (nodes->size == 1) {
+        right = (yp_node_t *) yp_missing_node_create(parser, left->location.end, left->location.end);
+    } else {
+        right = nodes->nodes[nodes->size - 1];
+    }
+
     *node = (yp_find_pattern_node_t) {
         {
             .type = YP_NODE_FIND_PATTERN_NODE,
             .location = {
-                .start = nodes->nodes[0]->location.start,
-                .end = nodes->nodes[nodes->size - 1]->location.end
+                .start = left->location.start,
+                .end = right->location.end,
             },
         },
         .constant = NULL,
-        .left = nodes->nodes[0],
-        .right = nodes->nodes[nodes->size - 1],
+        .left = left,
+        .right = right,
         .requireds = YP_EMPTY_NODE_LIST
     };
 
@@ -3609,14 +3618,36 @@ yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
 // Allocate and initialize a new SymbolNode node from a label.
 static yp_symbol_node_t *
 yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
-    assert(token->type == YP_TOKEN_LABEL || token->type == YP_TOKEN_MISSING);
+    yp_symbol_node_t *node;
 
-    yp_token_t opening = not_provided(parser);
-    yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
-    yp_token_t closing = { .type = YP_TOKEN_LABEL_END, .start = label.end, .end = label.end + 1 };
+    switch (token->type) {
+        case YP_TOKEN_LABEL: {
+            yp_token_t opening = not_provided(parser);
+            yp_token_t closing = { .type = YP_TOKEN_LABEL_END, .start = token->end - 1, .end = token->end };
 
-    yp_symbol_node_t *node = yp_symbol_node_create(parser, &opening, &label, &closing);
-    yp_unescape_manipulate_string(label.start, (size_t) (label.end - label.start), &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
+            node = yp_symbol_node_create(parser, &opening, &label, &closing);
+
+            ptrdiff_t length = label.end - label.start;
+            assert(length >= 0);
+
+            yp_unescape_manipulate_string(label.start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            break;
+        }
+        case YP_TOKEN_MISSING: {
+            yp_token_t opening = not_provided(parser);
+            yp_token_t closing = not_provided(parser);
+
+            yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end };
+            node = yp_symbol_node_create(parser, &opening, &label, &closing);
+            break;
+        }
+        default:
+            assert(false && "unreachable");
+            node = NULL;
+            break;
+    }
+
     return node;
 }
 
@@ -3655,7 +3686,11 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
         .unescaped = node->unescaped
     };
 
-    yp_node_destroy(parser, (yp_node_t *) node);
+    // We are explicitly _not_ using yp_node_destroy here because we don't want
+    // to trash the unescaped string. We could instead copy the string if we
+    // know that it is owned, but we're taking the fast path for now.
+    free(node);
+
     return new_node;
 }
 
@@ -5072,7 +5107,7 @@ lex_interpolation(yp_parser_t *parser, const char *pound) {
     // If there is no content following this #, then we're at the end of
     // the string and we can safely return string content.
     if (pound + 1 >= parser->end) {
-        parser->current.end = pound;
+        parser->current.end = pound + 1;
         return YP_TOKEN_STRING_CONTENT;
     }
 
@@ -7216,28 +7251,44 @@ parser_lex(yp_parser_t *parser) {
 static yp_regular_expression_node_t *
 yp_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_regular_expression_node_t *node = yp_regular_expression_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, unescape_type, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
 static yp_symbol_node_t *
 yp_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_symbol_node_t *node = yp_symbol_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, unescape_type, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
 static yp_string_node_t *
 yp_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_string_node_t *node = yp_string_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, unescape_type, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
 static yp_x_string_node_t *
 yp_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
     yp_x_string_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
     return node;
 }
 
@@ -7704,7 +7755,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                 char *name = malloc(length + 2);
                 if (name == NULL) return NULL;
 
-                sprintf(name, "%.*s=", (int) length, yp_string_source(&call->name));
+                snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
 
                 // Now switch the name to the new string.
                 yp_string_free(&call->name);
