@@ -26,4 +26,16 @@ task :lint do
 
     exit(1)
   end
+
+  # Check for trailing spaces
+  trailing_spaces_found = false
+  Dir.glob("{,!(vendor)/**/}*.{c,h,erb,rb,yml}").each do |path|
+    File.readlines(path).each_with_index do |line, index|
+      if line.match(/[ \t]+$/)
+        warn("Trailing spaces found in #{path} on line #{index + 1}")
+        trailing_spaces_found = true
+      end
+    end
+  end
+  exit(1) if trailing_spaces_found
 end
