@@ -254,18 +254,6 @@ typedef struct yp_comment {
     yp_comment_type_t type;
 } yp_comment_t;
 
-// This struct defines the functions necessary to implement the encoding
-// interface so we can determine how many bytes the subsequent character takes.
-// Each callback should return the number of bytes, or 0 if the next bytes are
-// invalid for the encoding and type.
-typedef struct {
-    const char *name;
-    size_t (*char_width)(const char *c);
-    size_t (*alpha_char)(const char *c);
-    size_t (*alnum_char)(const char *c);
-    bool (*isupper_char)(const char *c);
-} yp_encoding_t;
-
 // When the encoding that is being used to parse the source is changed by YARP,
 // we provide the ability here to call out to a user-defined function.
 typedef void (*yp_encoding_changed_callback_t)(yp_parser_t *parser);

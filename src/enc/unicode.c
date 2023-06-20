@@ -2243,7 +2243,7 @@ utf_8_codepoint(const unsigned char *c, size_t *width) {
     return 0;
 }
 
-size_t
+static size_t
 yp_encoding_utf_8_char_width(const char *c) {
     size_t width;
     const unsigned char *v = (const unsigned char *) c;
@@ -2286,7 +2286,7 @@ yp_encoding_utf_8_alnum_char(const char *c) {
     }
 }
 
-bool
+static bool
 yp_encoding_utf_8_isupper_char(const char *c) {
     const unsigned char *v = (const unsigned char *) c;
     if (*v < 0x80) {
@@ -2306,3 +2306,11 @@ yp_encoding_utf_8_isupper_char(const char *c) {
 #undef UNICODE_ALPHA_CODEPOINTS_LENGTH
 #undef UNICODE_ALNUM_CODEPOINTS_LENGTH
 #undef UNICODE_ISUPPER_CODEPOINTS_LENGTH
+
+yp_encoding_t yp_encoding_utf_8 = {
+    .name = "utf-8",
+    .char_width = yp_encoding_utf_8_char_width,
+    .alnum_char = yp_encoding_utf_8_alnum_char,
+    .alpha_char = yp_encoding_utf_8_alpha_char,
+    .isupper_char = yp_encoding_utf_8_isupper_char
+};

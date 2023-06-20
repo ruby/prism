@@ -22,26 +22,34 @@ static unsigned char yp_encoding_koi8_r_table[256] = {
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // Fx
 };
 
-size_t
+static size_t
 yp_encoding_koi8_r_char_width(const char *c) {
     const unsigned char v = (const unsigned char) *c;
     return ((v >= 0x20 && v <= 0x7E) || (v >= 0x80)) ? 1 : 0;
 }
 
-size_t
+static size_t
 yp_encoding_koi8_r_alpha_char(const char *c) {
     const unsigned char v = (const unsigned char) *c;
     return (yp_encoding_koi8_r_table[v] & YP_ENCODING_ALPHABETIC_BIT) ? 1 : 0;
 }
 
-size_t
+static size_t
 yp_encoding_koi8_r_alnum_char(const char *c) {
     const unsigned char v = (const unsigned char) *c;
     return (yp_encoding_koi8_r_table[v] & YP_ENCODING_ALPHANUMERIC_BIT) ? 1 : 0;
 }
 
-bool
+static bool
 yp_encoding_koi8_r_isupper_char(const char *c) {
     const unsigned char v = (const unsigned char) *c;
     return (yp_encoding_koi8_r_table[v] & YP_ENCODING_UPPERCASE_BIT) ? true : false;
 }
+
+yp_encoding_t yp_encoding_koi8_r = {
+    .name = "koi8-r",
+    .char_width = yp_encoding_koi8_r_char_width,
+    .alnum_char = yp_encoding_koi8_r_alnum_char,
+    .alpha_char = yp_encoding_koi8_r_alpha_char,
+    .isupper_char = yp_encoding_koi8_r_isupper_char
+};

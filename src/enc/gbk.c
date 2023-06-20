@@ -28,7 +28,7 @@ gbk_codepoint(const char *c, size_t *width) {
     return 0;
 }
 
-size_t
+static size_t
 yp_encoding_gbk_char_width(const char *c) {
     size_t width;
     gbk_codepoint(c, &width);
@@ -36,7 +36,7 @@ yp_encoding_gbk_char_width(const char *c) {
     return width;
 }
 
-size_t
+static size_t
 yp_encoding_gbk_alpha_char(const char *c) {
     size_t width;
     gbk_codepoint_t codepoint = gbk_codepoint(c, &width);
@@ -49,7 +49,7 @@ yp_encoding_gbk_alpha_char(const char *c) {
     }
 }
 
-size_t
+static size_t
 yp_encoding_gbk_alnum_char(const char *c) {
     size_t width;
     gbk_codepoint_t codepoint = gbk_codepoint(c, &width);
@@ -62,7 +62,7 @@ yp_encoding_gbk_alnum_char(const char *c) {
     }
 }
 
-bool
+static bool
 yp_encoding_gbk_isupper_char(const char *c) {
     size_t width;
     gbk_codepoint_t codepoint = gbk_codepoint(c, &width);
@@ -74,3 +74,11 @@ yp_encoding_gbk_isupper_char(const char *c) {
         return false;
     }
 }
+
+yp_encoding_t yp_encoding_gbk = {
+    .name = "gbk",
+    .char_width = yp_encoding_gbk_char_width,
+    .alnum_char = yp_encoding_gbk_alnum_char,
+    .alpha_char = yp_encoding_gbk_alpha_char,
+    .isupper_char = yp_encoding_gbk_isupper_char
+};

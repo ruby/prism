@@ -1,6 +1,6 @@
 #include "yarp/enc/yp_encoding.h"
 
-typedef uint32_t shift_jis_codepoint_t;
+typedef uint16_t shift_jis_codepoint_t;
 
 static shift_jis_codepoint_t
 shift_jis_codepoint(const char *c, size_t *width) {
@@ -25,7 +25,7 @@ shift_jis_codepoint(const char *c, size_t *width) {
     return 0;
 }
 
-size_t
+static size_t
 yp_encoding_shift_jis_char_width(const char *c) {
     size_t width;
     shift_jis_codepoint(c, &width);
@@ -33,7 +33,7 @@ yp_encoding_shift_jis_char_width(const char *c) {
     return width;
 }
 
-size_t
+static size_t
 yp_encoding_shift_jis_alpha_char(const char *c) {
     size_t width;
     shift_jis_codepoint_t codepoint = shift_jis_codepoint(c, &width);
@@ -46,7 +46,7 @@ yp_encoding_shift_jis_alpha_char(const char *c) {
     }
 }
 
-size_t
+static size_t
 yp_encoding_shift_jis_alnum_char(const char *c) {
     size_t width;
     shift_jis_codepoint_t codepoint = shift_jis_codepoint(c, &width);
@@ -59,7 +59,7 @@ yp_encoding_shift_jis_alnum_char(const char *c) {
     }
 }
 
-bool
+static bool
 yp_encoding_shift_jis_isupper_char(const char *c) {
     size_t width;
     shift_jis_codepoint_t codepoint = shift_jis_codepoint(c, &width);
@@ -71,3 +71,11 @@ yp_encoding_shift_jis_isupper_char(const char *c) {
         return 0;
     }
 }
+
+yp_encoding_t yp_encoding_shift_jis = {
+    .name = "shift_jis",
+    .char_width = yp_encoding_shift_jis_char_width,
+    .alnum_char = yp_encoding_shift_jis_alnum_char,
+    .alpha_char = yp_encoding_shift_jis_alpha_char,
+    .isupper_char = yp_encoding_shift_jis_isupper_char
+};

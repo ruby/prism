@@ -1,6 +1,6 @@
 #include "yarp/enc/yp_encoding.h"
 
-typedef uint32_t windows_31j_codepoint_t;
+typedef uint16_t windows_31j_codepoint_t;
 
 static windows_31j_codepoint_t
 windows_31j_codepoint(const char *c, size_t *width) {
@@ -25,7 +25,7 @@ windows_31j_codepoint(const char *c, size_t *width) {
     return 0;
 }
 
-size_t
+static size_t
 yp_encoding_windows_31j_char_width(const char *c) {
     size_t width;
     windows_31j_codepoint(c, &width);
@@ -33,7 +33,7 @@ yp_encoding_windows_31j_char_width(const char *c) {
     return width;
 }
 
-size_t
+static size_t
 yp_encoding_windows_31j_alpha_char(const char *c) {
     size_t width;
     windows_31j_codepoint_t codepoint = windows_31j_codepoint(c, &width);
@@ -46,7 +46,7 @@ yp_encoding_windows_31j_alpha_char(const char *c) {
     }
 }
 
-size_t
+static size_t
 yp_encoding_windows_31j_alnum_char(const char *c) {
     size_t width;
     windows_31j_codepoint_t codepoint = windows_31j_codepoint(c, &width);
@@ -59,7 +59,7 @@ yp_encoding_windows_31j_alnum_char(const char *c) {
     }
 }
 
-bool
+static bool
 yp_encoding_windows_31j_isupper_char(const char *c) {
     size_t width;
     windows_31j_codepoint_t codepoint = windows_31j_codepoint(c, &width);
@@ -71,3 +71,11 @@ yp_encoding_windows_31j_isupper_char(const char *c) {
         return false;
     }
 }
+
+yp_encoding_t yp_encoding_windows_31j = {
+    .name = "windows-31j",
+    .char_width = yp_encoding_windows_31j_char_width,
+    .alnum_char = yp_encoding_windows_31j_alnum_char,
+    .alpha_char = yp_encoding_windows_31j_alpha_char,
+    .isupper_char = yp_encoding_windows_31j_isupper_char
+};
