@@ -1,10 +1,7 @@
-// This files must be required before any system header
-// as it influences which functions system headers declare.
-
 #ifndef YARP_DEFINES_H
 #define YARP_DEFINES_H
 
-// For strnlen(), strncasecmp()
+// YP_EXPORTED_FUNCTION
 #if defined(_WIN32)
 #   define YP_EXPORTED_FUNCTION __declspec(dllexport) extern
 #else
@@ -17,10 +14,16 @@
 #   endif
 #endif
 
+// YP_ATTRIBUTE_UNUSED
 #if defined(__GNUC__)
 # define YP_ATTRIBUTE_UNUSED __attribute__((unused))
 #else
 # define YP_ATTRIBUTE_UNUSED
+#endif
+
+// inline
+#if defined(_MSC_VER) && !defined(inline)
+#   define inline __inline
 #endif
 
 #endif
