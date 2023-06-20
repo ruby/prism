@@ -151,11 +151,20 @@ ProgramNode(0...916)(
      ),
      InterpolatedStringNode(206...220)(
        (206...207),
-       [InstanceVariableReadNode(208...210)(),
+       [EmbeddedVariableNode(207...210)(
+          (207...208),
+          InstanceVariableReadNode(208...210)()
+        ),
         StringNode(210...211)(nil, (210...211), nil, " "),
-        ClassVariableReadNode(212...215)(),
+        EmbeddedVariableNode(211...215)(
+          (211...212),
+          ClassVariableReadNode(212...215)()
+        ),
         StringNode(215...216)(nil, (215...216), nil, " "),
-        GlobalVariableReadNode(217...219)()],
+        EmbeddedVariableNode(216...219)(
+          (216...217),
+          GlobalVariableReadNode(217...219)()
+        )],
        (219...220)
      ),
      IntegerNode(221...222)(),

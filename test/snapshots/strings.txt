@@ -18,7 +18,10 @@ ProgramNode(0...497)(
      StringNode(114...120)((114...116), (116...119), (119...120), "abc"),
      InterpolatedStringNode(122...130)(
        (122...123),
-       [ClassVariableReadNode(124...129)()],
+       [EmbeddedVariableNode(123...129)(
+          (123...124),
+          ClassVariableReadNode(124...129)()
+        )],
        (129...130)
      ),
      StringNode(132...138)((132...134), (134...137), (137...138), "abc"),
@@ -172,12 +175,18 @@ ProgramNode(0...497)(
      ),
      InterpolatedStringNode(404...411)(
        (404...405),
-       [GlobalVariableReadNode(406...410)()],
+       [EmbeddedVariableNode(405...410)(
+          (405...406),
+          GlobalVariableReadNode(406...410)()
+        )],
        (410...411)
      ),
      InterpolatedStringNode(413...420)(
        (413...414),
-       [InstanceVariableReadNode(415...419)()],
+       [EmbeddedVariableNode(414...419)(
+          (414...415),
+          InstanceVariableReadNode(415...419)()
+        )],
        (419...420)
      ),
      StringNode(422...437)((422...423), (423...436), (436...437), "\a # a"),

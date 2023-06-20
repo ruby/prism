@@ -1788,7 +1788,7 @@ yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_stat
     return node;
 }
 
-// Allocate a new EmbeddedStatementsNode node.
+// Allocate and initialize a new EmbeddedStatementsNode node.
 static yp_embedded_statements_node_t *
 yp_embedded_statements_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
     yp_embedded_statements_node_t *node = YP_ALLOC_NODE(parser, yp_embedded_statements_node_t);
@@ -1804,6 +1804,26 @@ yp_embedded_statements_node_create(yp_parser_t *parser, const yp_token_t *openin
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
         .statements = statements,
         .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+    };
+
+    return node;
+}
+
+// Allocate and initialize a new EmbeddedVariableNode node.
+static yp_embedded_variable_node_t *
+yp_embedded_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *variable) {
+    yp_embedded_variable_node_t *node = YP_ALLOC_NODE(parser, yp_embedded_variable_node_t);
+
+    *node = (yp_embedded_variable_node_t) {
+        {
+            .type = YP_NODE_EMBEDDED_VARIABLE_NODE,
+            .location = {
+                .start = operator->start,
+                .end = variable->location.end
+            }
+        },
+        .operator_loc = YP_LOCATION_TOKEN_VALUE(operator),
+        .variable = variable
     };
 
     return node;
@@ -8821,39 +8841,50 @@ parse_string_part(yp_parser_t *parser) {
             lex_state_set(parser, YP_LEX_STATE_BEG);
             parser_lex(parser);
 
+            yp_token_t operator = parser->previous;
+            yp_node_t *variable;
+
             switch (parser->current.type) {
                 // In this case a back reference is being interpolated. We'll
                 // create a global variable read node.
                 case YP_TOKEN_BACK_REFERENCE:
                     parser_lex(parser);
-                    return (yp_node_t *) yp_back_reference_read_node_create(parser, &parser->previous);
+                    variable = (yp_node_t *) yp_back_reference_read_node_create(parser, &parser->previous);
+                    break;
                 // In this case an nth reference is being interpolated. We'll
                 // create a global variable read node.
                 case YP_TOKEN_NUMBERED_REFERENCE:
                     parser_lex(parser);
-                    return (yp_node_t *) yp_numbered_reference_read_node_create(parser, &parser->previous);
+                    variable = (yp_node_t *) yp_numbered_reference_read_node_create(parser, &parser->previous);
+                    break;
                 // In this case a global variable is being interpolated. We'll
                 // create a global variable read node.
                 case YP_TOKEN_GLOBAL_VARIABLE:
                     parser_lex(parser);
-                    return (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
+                    variable = (yp_node_t *) yp_global_variable_read_node_create(parser, &parser->previous);
+                    break;
                 // In this case an instance variable is being interpolated.
                 // We'll create an instance variable read node.
                 case YP_TOKEN_INSTANCE_VARIABLE:
                     parser_lex(parser);
-                    return (yp_node_t *) yp_instance_variable_read_node_create(parser, &parser->previous);
+                    variable = (yp_node_t *) yp_instance_variable_read_node_create(parser, &parser->previous);
+                    break;
                 // In this case a class variable is being interpolated. We'll
                 // create a class variable read node.
                 case YP_TOKEN_CLASS_VARIABLE:
                     parser_lex(parser);
-                    return (yp_node_t *) yp_class_variable_read_node_create(parser, &parser->previous);
+                    variable = (yp_node_t *) yp_class_variable_read_node_create(parser, &parser->previous);
+                    break;
                 // We can hit here if we got an invalid token. In that case
                 // we'll not attempt to lex this token and instead just return a
                 // missing node.
                 default:
                     expect(parser, YP_TOKEN_IDENTIFIER, "Expected a valid embedded variable.");
-                    return (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
+                    variable = (yp_node_t *) yp_missing_node_create(parser, parser->current.start, parser->current.end);
+                    break;
             }
+
+            return (yp_node_t *) yp_embedded_variable_node_create(parser, &operator, variable);
         }
         default:
             parser_lex(parser);

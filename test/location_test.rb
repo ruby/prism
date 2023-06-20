@@ -281,6 +281,10 @@ module YARP
       assert_location(EmbeddedStatementsNode, '"foo #{bar} baz"', 5...11) { |node| node.parts[1] }
     end
 
+    def test_EmbeddedVariableNode
+      assert_location(EmbeddedVariableNode, '"foo #@@bar baz"', 5...11) { |node| node.parts[1] }
+    end
+
     def test_EnsureNode
       assert_location(EnsureNode, "begin; foo; ensure; bar; end", 12...28, &:ensure_clause)
     end
