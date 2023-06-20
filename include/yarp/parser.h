@@ -120,15 +120,15 @@ typedef struct yp_lex_mode {
         } list;
 
         struct {
+            // This keeps track of the nesting level of the regular expression.
+            size_t nesting;
+
             // When lexing a regular expression, it takes into account balancing
             // the terminator if the terminator is one of (), [], {}, or <>.
             char incrementor;
 
             // This is the terminator of the regular expression.
             char terminator;
-
-            // This keeps track of the nesting level of the regular expression.
-            size_t nesting;
         } regexp;
 
         struct {

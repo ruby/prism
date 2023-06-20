@@ -219,7 +219,7 @@ lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
 }
 
 // Push on a new list lex mode.
-static bool
+static inline bool
 lex_mode_push_list(yp_parser_t *parser, bool interpolation, const char delimiter) {
     yp_lex_mode_t lex_mode = {
         .mode = YP_LEX_LIST,
@@ -228,6 +228,21 @@ lex_mode_push_list(yp_parser_t *parser, bool interpolation, const char delimiter
             .interpolation = interpolation,
             .incrementor = incrementor(delimiter),
             .terminator = terminator(delimiter)
+        }
+    };
+
+    return lex_mode_push(parser, lex_mode);
+}
+
+// Push on a new regexp lex mode.
+static inline bool
+lex_mode_push_regexp(yp_parser_t *parser, const char incrementor, const char terminator) {
+    yp_lex_mode_t lex_mode = {
+        .mode = YP_LEX_REGEXP,
+        .as.regexp = {
+            .nesting = 0,
+            .incrementor = incrementor,
+            .terminator = terminator
         }
     };
 
@@ -6303,13 +6318,7 @@ parser_lex(yp_parser_t *parser) {
                 // / /=
                 case '/':
                     if (lex_state_beg_p(parser)) {
-                        lex_mode_push(parser, (yp_lex_mode_t) {
-                            .mode = YP_LEX_REGEXP,
-                            .as.regexp.incrementor = '\0',
-                            .as.regexp.terminator = '/',
-                            .as.regexp.nesting = 0
-                        });
-
+                        lex_mode_push_regexp(parser, '\0', '/');
                         LEX(YP_TOKEN_REGEXP_BEGIN);
                     }
 
@@ -6320,14 +6329,7 @@ parser_lex(yp_parser_t *parser) {
 
                     if (lex_state_spcarg_p(parser, space_seen)) {
                         yp_diagnostic_list_append(&parser->warning_list, parser->current.start, parser->current.end, "ambiguity between regexp and two divisions: wrap regexp in parentheses or add a space after `/' operator");
-
-                        lex_mode_push(parser, (yp_lex_mode_t) {
-                            .mode = YP_LEX_REGEXP,
-                            .as.regexp.incrementor = '\0',
-                            .as.regexp.terminator = '/',
-                            .as.regexp.nesting = 0
-                        });
-
+                        lex_mode_push_regexp(parser, '\0', '/');
                         LEX(YP_TOKEN_REGEXP_BEGIN);
                     }
 
@@ -6413,17 +6415,8 @@ parser_lex(yp_parser_t *parser) {
                             }
                             case 'r': {
                                 parser->current.end++;
-
-                                yp_lex_mode_t lex_mode = {
-                                    .mode = YP_LEX_REGEXP,
-                                    .as.regexp.incrementor = incrementor(*parser->current.end),
-                                    .as.regexp.terminator = terminator(*parser->current.end),
-                                    .as.regexp.nesting = 0
-                                };
-
-                                lex_mode_push(parser, lex_mode);
+                                lex_mode_push_regexp(parser, incrementor(*parser->current.end), terminator(*parser->current.end));
                                 parser->current.end++;
-
                                 LEX(YP_TOKEN_REGEXP_BEGIN);
                             }
                             case 'q': {
