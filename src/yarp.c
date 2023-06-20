@@ -1685,17 +1685,26 @@ static yp_find_pattern_node_t *
 yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
     yp_find_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_find_pattern_node_t);
 
+    yp_node_t *left = nodes->nodes[0];
+    yp_node_t *right;
+
+    if (nodes->size == 1) {
+        right = (yp_node_t *) yp_missing_node_create(parser, left->location.end, left->location.end);
+    } else {
+        right = nodes->nodes[nodes->size - 1];
+    }
+
     *node = (yp_find_pattern_node_t) {
         {
             .type = YP_NODE_FIND_PATTERN_NODE,
             .location = {
-                .start = nodes->nodes[0]->location.start,
-                .end = nodes->nodes[nodes->size - 1]->location.end
+                .start = left->location.start,
+                .end = right->location.end,
             },
         },
         .constant = NULL,
-        .left = nodes->nodes[0],
-        .right = nodes->nodes[nodes->size - 1],
+        .left = left,
+        .right = right,
         .requireds = YP_EMPTY_NODE_LIST
     };
 
