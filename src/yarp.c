@@ -1788,6 +1788,27 @@ yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_stat
     return node;
 }
 
+// Allocate a new EmbeddedStatementsNode node.
+static yp_embedded_statements_node_t *
+yp_embedded_statements_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
+    yp_embedded_statements_node_t *node = YP_ALLOC_NODE(parser, yp_embedded_statements_node_t);
+
+    *node = (yp_embedded_statements_node_t) {
+        {
+            .type = YP_NODE_EMBEDDED_STATEMENTS_NODE,
+            .location = {
+                .start = opening->start,
+                .end = closing->end
+            }
+        },
+        .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
+        .statements = statements,
+        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+    };
+
+    return node;
+}
+
 // Allocate a new EnsureNode node.
 static yp_ensure_node_t *
 yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_statements_node_t *statements, const yp_token_t *end_keyword) {
@@ -3642,27 +3663,6 @@ yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *ri
         },
         .left = left,
         .right = right
-    };
-
-    return node;
-}
-
-// Allocate a new StringInterpolatedNode node.
-static yp_string_interpolated_node_t *
-yp_string_interpolated_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
-    yp_string_interpolated_node_t *node = YP_ALLOC_NODE(parser, yp_string_interpolated_node_t);
-
-    *node = (yp_string_interpolated_node_t) {
-        {
-            .type = YP_NODE_STRING_INTERPOLATED_NODE,
-            .location = {
-                .start = opening->start,
-                .end = closing->end
-            }
-        },
-        .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
-        .statements = statements,
-        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
     };
 
     return node;
@@ -8808,7 +8808,7 @@ parse_string_part(yp_parser_t *parser) {
             expect(parser, YP_TOKEN_EMBEXPR_END, "Expected a closing delimiter for an embedded expression.");
             yp_token_t closing = parser->previous;
 
-            return (yp_node_t *) yp_string_interpolated_node_create(parser, &opening, statements, &closing);
+            return (yp_node_t *) yp_embedded_statements_node_create(parser, &opening, statements, &closing);
         }
 
         // Here the lexer has returned the beginning of an embedded variable.

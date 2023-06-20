@@ -33,7 +33,7 @@ ProgramNode(0...116)(
        [InterpolatedSymbolNode(90...100)(
           (90...92),
           [StringNode(92...95)(nil, (92...95), nil, "abc"),
-           StringInterpolatedNode(95...99)(
+           EmbeddedStatementsNode(95...99)(
              (95...97),
              StatementsNode(97...98)([IntegerNode(97...98)()]),
              (98...99)

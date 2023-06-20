@@ -5,7 +5,7 @@ ProgramNode(0...38)(
        [StringNode(3...6)(nil, (3...6), nil, "foo"),
         InterpolatedStringNode(0...13)(
           nil,
-          [StringInterpolatedNode(7...13)(
+          [EmbeddedStatementsNode(7...13)(
              (7...9),
              StatementsNode(9...12)(
                [CallNode(9...12)(
@@ -31,7 +31,7 @@ ProgramNode(0...38)(
        [StringNode(19...22)(nil, (19...22), nil, "foo"),
         InterpolatedStringNode(0...37)(
           nil,
-          [StringInterpolatedNode(23...29)(
+          [EmbeddedStatementsNode(23...29)(
              (23...25),
              StatementsNode(25...28)(
                [CallNode(25...28)(

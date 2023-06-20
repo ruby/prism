@@ -6,7 +6,7 @@ ProgramNode(0...15)(
         InterpolatedSymbolNode(5...12)(
           nil,
           [StringNode(5...6)(nil, (5...6), nil, "b"),
-           StringInterpolatedNode(6...12)(
+           EmbeddedStatementsNode(6...12)(
              (6...8),
              StatementsNode(8...11)(
                [CallNode(8...11)(

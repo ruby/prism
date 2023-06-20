@@ -11,7 +11,7 @@ ProgramNode(0...31)(
             [AssocNode(2...11)(
                InterpolatedSymbolNode(2...9)(
                  (2...3),
-                 [StringInterpolatedNode(3...7)(
+                 [EmbeddedStatementsNode(3...7)(
                     (3...5),
                     StatementsNode(5...6)(
                       [CallNode(5...6)(

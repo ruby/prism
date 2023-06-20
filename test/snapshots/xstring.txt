@@ -5,7 +5,7 @@ ProgramNode(0...40)(
      InterpolatedXStringNode(9...25)(
        (9...10),
        [StringNode(10...14)(nil, (10...14), nil, "foo "),
-        StringInterpolatedNode(14...20)(
+        EmbeddedStatementsNode(14...20)(
           (14...16),
           StatementsNode(16...19)(
             [CallNode(16...19)(

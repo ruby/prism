@@ -7,7 +7,7 @@ ProgramNode(0...299)(
        StatementsNode(10...16)(
          [InterpolatedStringNode(10...16)(
             (10...11),
-            [StringInterpolatedNode(11...14)((11...13), nil, (13...14)),
+            [EmbeddedStatementsNode(11...14)((11...13), nil, (13...14)),
              StringNode(14...15)(nil, (14...15), nil, "a")],
             (15...16)
           )]
@@ -22,7 +22,7 @@ ProgramNode(0...299)(
          [InterpolatedStringNode(31...61)(
             (31...41),
             [StringNode(42...44)(nil, (42...44), nil, "a\n"),
-             StringInterpolatedNode(44...47)((44...46), nil, (46...47)),
+             EmbeddedStatementsNode(44...47)((44...46), nil, (46...47)),
              StringNode(47...51)(nil, (47...51), nil, "a\n" + "b\n")],
             (51...61)
           ),
@@ -34,18 +34,18 @@ ProgramNode(0...299)(
      InterpolatedStringNode(69...109)(
        (69...79),
        [StringNode(80...89)(nil, (80...89), nil, "\#{}\#{}\n"),
-        StringInterpolatedNode(89...92)((89...91), nil, (91...92)),
+        EmbeddedStatementsNode(89...92)((89...91), nil, (91...92)),
         StringNode(92...93)(nil, (92...93), nil, "\n"),
-        StringInterpolatedNode(93...96)((93...95), nil, (95...96)),
+        EmbeddedStatementsNode(93...96)((93...95), nil, (95...96)),
         StringNode(96...97)(nil, (96...97), nil, "\n"),
-        StringInterpolatedNode(97...100)((97...99), nil, (99...100)),
+        EmbeddedStatementsNode(97...100)((97...99), nil, (99...100)),
         StringNode(100...101)(nil, (100...101), nil, "\n")],
        (101...109)
      ),
      RescueModifierNode(109...130)(
        InterpolatedStringNode(109...145)(
          (109...119),
-         [StringInterpolatedNode(131...134)((131...133), nil, (133...134)),
+         [EmbeddedStatementsNode(131...134)((131...133), nil, (133...134)),
           StringNode(134...137)(nil, (134...137), nil, "\n" + "a\n")],
          (137...145)
        ),
@@ -86,7 +86,7 @@ ProgramNode(0...299)(
               [InterpolatedStringNode(191...222)(
                  (191...201),
                  [StringNode(202...206)(nil, (202...206), nil, "    "),
-                  StringInterpolatedNode(206...211)(
+                  EmbeddedStatementsNode(206...211)(
                     (206...208),
                     StatementsNode(208...210)([IntegerNode(208...210)()]),
                     (210...211)
@@ -109,7 +109,7 @@ ProgramNode(0...299)(
          [InterpolatedStringNode(230...259)(
             (230...240),
             [StringNode(242...244)(nil, (242...244), nil, "  "),
-             StringInterpolatedNode(244...250)(
+             EmbeddedStatementsNode(244...250)(
                (244...246),
                StatementsNode(246...249)(
                  [CallNode(246...249)(
@@ -144,7 +144,7 @@ ProgramNode(0...299)(
          [InterpolatedStringNode(263...298)(
             (263...273),
             [StringNode(281...283)(nil, (281...283), nil, "  "),
-             StringInterpolatedNode(283...289)(
+             EmbeddedStatementsNode(283...289)(
                (283...285),
                StatementsNode(285...288)(
                  [CallNode(285...288)(

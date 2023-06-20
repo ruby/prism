@@ -4,7 +4,7 @@ ProgramNode(0...47)(
     [InterpolatedStringNode(0...47)(
        (0...7),
        [StringNode(8...12)(nil, (8...12), nil, "pre\n"),
-        StringInterpolatedNode(12...36)(
+        EmbeddedStatementsNode(12...36)(
           (12...14),
           StatementsNode(15...35)(
             [InterpolatedStringNode(15...35)(

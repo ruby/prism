@@ -25,7 +25,7 @@ ProgramNode(0...497)(
      InterpolatedStringNode(140...157)(
        (140...142),
        [StringNode(142...146)(nil, (142...146), nil, "aaa "),
-        StringInterpolatedNode(146...152)(
+        EmbeddedStatementsNode(146...152)(
           (146...148),
           StatementsNode(148...151)(
             [CallNode(148...151)(
@@ -68,7 +68,7 @@ ProgramNode(0...497)(
      InterpolatedStringNode(231...247)(
        (231...232),
        [StringNode(232...236)(nil, (232...236), nil, "aaa "),
-        StringInterpolatedNode(236...242)(
+        EmbeddedStatementsNode(236...242)(
           (236...238),
           StatementsNode(238...241)(
             [CallNode(238...241)(
@@ -120,7 +120,7 @@ ProgramNode(0...497)(
         InterpolatedStringNode(0...335)(
           nil,
           [StringNode(329...330)(nil, (329...330), nil, "b"),
-           StringInterpolatedNode(330...334)(
+           EmbeddedStatementsNode(330...334)(
              (330...332),
              StatementsNode(332...333)(
                [CallNode(332...333)(

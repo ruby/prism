@@ -232,7 +232,7 @@ ProgramNode(0...278)(
                  InterpolatedStringNode(199...214)(
                    (199...200),
                    [StringNode(200...209)(nil, (200...209), nil, "instance "),
-                    StringInterpolatedNode(209...213)(
+                    EmbeddedStatementsNode(209...213)(
                       (209...211),
                       StatementsNode(211...212)(
                         [LocalVariableReadNode(211...212)(:x, 0)]
@@ -287,7 +287,7 @@ ProgramNode(0...278)(
                  InterpolatedStringNode(266...278)(
                    (266...267),
                    [StringNode(267...273)(nil, (267...273), nil, "class "),
-                    StringInterpolatedNode(273...277)(
+                    EmbeddedStatementsNode(273...277)(
                       (273...275),
                       StatementsNode(275...276)(
                         [LocalVariableReadNode(275...276)(:x, 0)]

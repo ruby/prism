@@ -30,7 +30,7 @@ ProgramNode(0...223)(
      InterpolatedXStringNode(59...81)(
        (59...67),
        [StringNode(68...72)(nil, (68...72), nil, "  a\n"),
-        StringInterpolatedNode(72...76)(
+        EmbeddedStatementsNode(72...76)(
           (72...74),
           StatementsNode(74...75)(
             [CallNode(74...75)(
@@ -63,7 +63,7 @@ ProgramNode(0...223)(
      InterpolatedStringNode(129...151)(
        (129...137),
        [StringNode(138...142)(nil, (138...142), nil, "  a\n"),
-        StringInterpolatedNode(142...146)(
+        EmbeddedStatementsNode(142...146)(
           (142...144),
           StatementsNode(144...145)(
             [CallNode(144...145)(
@@ -86,7 +86,7 @@ ProgramNode(0...223)(
      InterpolatedStringNode(152...172)(
        (152...158),
        [StringNode(159...163)(nil, (159...163), nil, "  a\n"),
-        StringInterpolatedNode(163...167)(
+        EmbeddedStatementsNode(163...167)(
           (163...165),
           StatementsNode(165...166)(
             [CallNode(165...166)(
