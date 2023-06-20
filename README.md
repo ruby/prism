@@ -75,6 +75,7 @@ to see the syntax tree for the expression `1 + 2`.
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additionally have documentation about the overall design of the project as well as various subtopics.
 
+* [Configuration](docs/configuration.md)
 * [Design](docs/design.md)
 * [Encoding](docs/encoding.md)
 * [Extension](docs/extension.md)
