@@ -3609,14 +3609,36 @@ yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
 // Allocate and initialize a new SymbolNode node from a label.
 static yp_symbol_node_t *
 yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
-    assert(token->type == YP_TOKEN_LABEL || token->type == YP_TOKEN_MISSING);
+    yp_symbol_node_t *node;
 
-    yp_token_t opening = not_provided(parser);
-    yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
-    yp_token_t closing = { .type = YP_TOKEN_LABEL_END, .start = label.end, .end = label.end + 1 };
+    switch (token->type) {
+        case YP_TOKEN_LABEL: {
+            yp_token_t opening = not_provided(parser);
+            yp_token_t closing = { .type = YP_TOKEN_LABEL_END, .start = token->end - 1, .end = token->end };
 
-    yp_symbol_node_t *node = yp_symbol_node_create(parser, &opening, &label, &closing);
-    yp_unescape_manipulate_string(label.start, (size_t) (label.end - label.start), &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
+            node = yp_symbol_node_create(parser, &opening, &label, &closing);
+
+            ptrdiff_t length = label.end - label.start;
+            assert(length >= 0);
+
+            yp_unescape_manipulate_string(label.start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            break;
+        }
+        case YP_TOKEN_MISSING: {
+            yp_token_t opening = not_provided(parser);
+            yp_token_t closing = not_provided(parser);
+
+            yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end };
+            node = yp_symbol_node_create(parser, &opening, &label, &closing);
+            break;
+        }
+        default:
+            assert(false && "unreachable");
+            node = NULL;
+            break;
+    }
+
     return node;
 }
 
@@ -7216,28 +7238,44 @@ parser_lex(yp_parser_t *parser) {
 static yp_regular_expression_node_t *
 yp_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_regular_expression_node_t *node = yp_regular_expression_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, unescape_type, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
 static yp_symbol_node_t *
 yp_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_symbol_node_t *node = yp_symbol_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, unescape_type, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
 static yp_string_node_t *
 yp_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_string_node_t *node = yp_string_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, unescape_type, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
 static yp_x_string_node_t *
 yp_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
     yp_x_string_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-    yp_unescape_manipulate_string(content->start, (size_t) (content->end - content->start), &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+
+    ptrdiff_t length = content->end - content->start;
+    assert(length >= 0);
+
+    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
     return node;
 }
 
