@@ -105,6 +105,12 @@ typedef struct yp_lex_mode {
 
     union {
         struct {
+            // This keeps track of the nesting level of the list.
+            size_t nesting;
+
+            // Whether or not interpolation is allowed in this list.
+            bool interpolation;
+
             // When lexing a list, it takes into account balancing the
             // terminator if the terminator is one of (), [], {}, or <>.
             char incrementor;
@@ -112,14 +118,15 @@ typedef struct yp_lex_mode {
             // This is the terminator of the list literal.
             char terminator;
 
-            // This keeps track of the nesting level of the list.
-            size_t nesting;
-
-            // Whether or not interpolation is allowed in this list.
-            bool interpolation;
+            // This is the character set that should be used to delimit the
+            // tokens within the list.
+            char breakpoints[11];
         } list;
 
         struct {
+            // This keeps track of the nesting level of the regular expression.
+            size_t nesting;
+
             // When lexing a regular expression, it takes into account balancing
             // the terminator if the terminator is one of (), [], {}, or <>.
             char incrementor;
@@ -127,19 +134,12 @@ typedef struct yp_lex_mode {
             // This is the terminator of the regular expression.
             char terminator;
 
-            // This keeps track of the nesting level of the regular expression.
-            size_t nesting;
+            // This is the character set that should be used to delimit the
+            // tokens within the regular expression.
+            char breakpoints[6];
         } regexp;
 
         struct {
-            // When lexing a string, it takes into account balancing the
-            // terminator if the terminator is one of (), [], {}, or <>.
-            char incrementor;
-
-            // This is the terminator of the string. It is typically either a
-            // single or double quote.
-            char terminator;
-
             // This keeps track of the nesting level of the string.
             size_t nesting;
 
@@ -150,6 +150,18 @@ typedef struct yp_lex_mode {
             // which would indicate this was a dynamic symbol instead of a
             // string.
             bool label_allowed;
+
+            // When lexing a string, it takes into account balancing the
+            // terminator if the terminator is one of (), [], {}, or <>.
+            char incrementor;
+
+            // This is the terminator of the string. It is typically either a
+            // single or double quote.
+            char terminator;
+
+            // This is the character set that should be used to delimit the
+            // tokens within the string.
+            char breakpoints[6];
         } string;
 
         struct {
