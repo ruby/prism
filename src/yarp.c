@@ -7464,6 +7464,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                     yp_arguments_node_t *arguments = yp_arguments_node_create(parser);
                     call->arguments = arguments;
                     yp_arguments_node_arguments_append(arguments, value);
+                    target->location.end = arguments->base.location.end;
                 }
 
                 // The method name needs to change. If we previously had foo, we now

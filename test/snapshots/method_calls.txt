@@ -98,7 +98,7 @@ ProgramNode(0...1187)(
        0,
        "b"
      ),
-     CallNode(83...90)(
+     CallNode(83...94)(
        CallNode(83...86)(nil, nil, (83...86), nil, nil, nil, nil, 0, "foo"),
        (86...87),
        (87...90),
