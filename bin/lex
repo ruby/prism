@@ -18,7 +18,16 @@ end
 
 pattern = "%-70s %-70s"
 
-ripper = YARP.lex_ripper(source)
+ripper =
+  begin
+    YARP.lex_ripper(source)
+  rescue SyntaxError
+    # If Ripper raises a syntax error, we want to continue as if it didn't
+    # return any tokens at all. YARP won't raise a syntax error, so it's nicer
+    # to still be able to see the tokens that YARP generated.
+    []
+  end
+
 yarp = YARP.lex_compat(source, filepath)
 if yarp.errors.any?
   puts "Errors lexing:"
