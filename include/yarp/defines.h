@@ -1,6 +1,12 @@
 #ifndef YARP_DEFINES_H
 #define YARP_DEFINES_H
 
+#include <ctype.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+
 // YP_EXPORTED_FUNCTION
 #if defined(_WIN32)
 #   define YP_EXPORTED_FUNCTION __declspec(dllexport) extern
@@ -16,14 +22,29 @@
 
 // YP_ATTRIBUTE_UNUSED
 #if defined(__GNUC__)
-# define YP_ATTRIBUTE_UNUSED __attribute__((unused))
+#   define YP_ATTRIBUTE_UNUSED __attribute__((unused))
 #else
-# define YP_ATTRIBUTE_UNUSED
+#   define YP_ATTRIBUTE_UNUSED
 #endif
 
 // inline
 #if defined(_MSC_VER) && !defined(inline)
 #   define inline __inline
+#endif
+
+// strncasecmp
+#if !defined(HAVE_STRNCASECMP) && !defined(strncasecmp)
+    // In case strncasecmp isn't present on the system, we provide our own.
+    int yp_strncasecmp(const char *string1, const char *string2, size_t length);
+#   define strncasecmp yp_strncasecmp
+#endif
+
+// snprintf
+#if !defined(HAVE_SNPRINTF) && !defined(snprintf)
+    // In case snprintf isn't present on the system, we provide our own that
+    // simply forwards to the less-safe sprintf.
+    int yp_snprintf(char *dest, YP_ATTRIBUTE_UNUSED size_t size, const char *format, ...);
+#   define snprintf yp_snprintf
 #endif
 
 #endif
