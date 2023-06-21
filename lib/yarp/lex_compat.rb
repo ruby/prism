@@ -562,7 +562,7 @@ module YARP
 
       result_value.each_with_index do |(token, lex_state), index|
         (lineno, column) = find_location(token.location.start_offset)
-        column -= 6 if bom && lineno == 1
+        column -= index == 0 ? 6 : 3 if bom && lineno == 1
 
         event = RIPPER.fetch(token.type)
         value = token.value
