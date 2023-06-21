@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "yarp/defines.h"
+
 typedef uint32_t yp_constant_id_t;
 
 typedef struct {

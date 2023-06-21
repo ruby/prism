@@ -7495,7 +7495,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                 char *name = malloc(length + 2);
                 if (name == NULL) return NULL;
 
-                snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
+                sprintf(name, "%.*s=", (int) length, yp_string_source(&call->name));
 
                 // Now switch the name to the new string.
                 yp_string_free(&call->name);

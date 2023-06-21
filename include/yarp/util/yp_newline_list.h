@@ -14,6 +14,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "yarp/defines.h"
+
 // A list of offsets of newlines in a string. The offsets are assumed to be
 // sorted/inserted in ascending order.
 typedef struct {
