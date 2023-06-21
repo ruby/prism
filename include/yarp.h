@@ -14,7 +14,6 @@
 #include <strings.h>
 #endif
 
-#include "yarp/missing.h"
 #include "yarp/ast.h"
 #include "yarp/diagnostic.h"
 #include "yarp/node.h"
@@ -24,6 +23,7 @@
 #include "yarp/unescape.h"
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_char.h"
+#include "yarp/util/yp_strncasecmp.h"
 #include "yarp/util/yp_strnstr.h"
 #include "yarp/util/yp_strpbrk.h"
 

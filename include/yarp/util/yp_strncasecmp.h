@@ -1,5 +1,5 @@
-#ifndef YARP_MISSING_H
-#define YARP_MISSING_H
+#ifndef YARP_STRNCASECMP_H
+#define YARP_STRNCASECMP_H
 
 #include "yarp/defines.h"
 
@@ -10,9 +10,7 @@
 int yp_strncasecmp(const char *string1, const char *string2, size_t length);
 
 #ifndef HAVE_STRNCASECMP
-#ifndef strncasecmp
-#define strncasecmp yp_strncasecmp
-#endif
+  #define strncasecmp yp_strncasecmp
 #endif
 
 #endif

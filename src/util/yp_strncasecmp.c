@@ -1,4 +1,4 @@
-#include "yarp/missing.h"
+#include "yarp/util/yp_strncasecmp.h"
 
 int
 yp_strncasecmp(const char *string1, const char *string2, size_t length) {
