@@ -24,7 +24,7 @@ ProgramNode(0...370)(
        ConstantReadNode(25...26)(),
        nil,
        nil,
-       BeginNode(0...39)(
+       BeginNode(28...39)(
          nil,
          nil,
          nil,
@@ -107,7 +107,7 @@ ProgramNode(0...370)(
             (131...136),
             (137...139),
             SelfNode(140...144)(),
-            BeginNode(0...157)(
+            BeginNode(146...157)(
               nil,
               nil,
               nil,
