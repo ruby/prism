@@ -57,6 +57,12 @@ class ParseTest < Test::Unit::TestCase
     FileUtils.mkdir_p(directory) unless File.directory?(directory)
 
     define_method "test_filepath_#{filepath}" do
+      if ENV.key?("RUBYCI_NICKNAME") || ENV["RUBY_DEBUG"] =~ /ci/
+        # http://rubyci.s3.amazonaws.com/solaris10-gcc/ruby-master/log/20230621T190004Z.fail.html.gz
+        # http://ci.rvm.jp/results/trunk-yjit@ruby-sp2-docker/4612202
+        omit "Not working on RubyCI and ci.rvm.jp"
+      end
+
       # First, read the source from the filepath. Use binmode to avoid converting CRLF on Windows,
       # and explicitly set the external encoding to UTF-8 to override the binmode default.
       source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
