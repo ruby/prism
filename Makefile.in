@@ -5,7 +5,7 @@ CPPFLAGS := @DEFS@ -Iinclude
 CFLAGS := @CFLAGS@ -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC	-fvisibility=hidden
 CC := @CC@
 
-HEADERS := $(shell find src -name '*.h') include/yarp/ast.h
+HEADERS := $(shell find include -name '*.h') include/yarp/ast.h
 SOURCES := $(shell find src -name '*.c')
 OBJECTS := $(SOURCES:.c=.o)
 
@@ -14,7 +14,7 @@ all: shared static
 shared: build/librubyparser.$(SOEXT)
 static: build/librubyparser.a
 
-OBJECTS: Makefile $(HEADERS)
+$(OBJECTS): Makefile $(HEADERS)
 
 build/librubyparser.$(SOEXT): Makefile build $(OBJECTS)
 	$(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(OBJECTS)
