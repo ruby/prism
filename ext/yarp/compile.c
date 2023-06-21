@@ -580,6 +580,11 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
             push_putobject(compiler, Qtrue);
             push_getconstant(compiler, ID2SYM(parse_node_symbol((yp_node_t *) base_node)));
             return;
+        case YP_NODE_EMBEDDED_STATEMENTS_NODE: {
+            yp_embedded_statements_node_t *node = (yp_embedded_statements_node_t *) base_node;
+            yp_compile_node(compiler, (yp_node_t *) node->statements);
+            return;
+        }
         case YP_NODE_FALSE_NODE:
             push_putobject(compiler, Qfalse);
             return;
@@ -757,11 +762,6 @@ yp_compile_node(yp_iseq_compiler_t *compiler, yp_node_t *base_node) {
         case YP_NODE_STRING_NODE: {
             yp_string_node_t *node = (yp_string_node_t *) base_node;
             push_putstring(compiler, parse_string(&node->unescaped));
-            return;
-        }
-        case YP_NODE_STRING_INTERPOLATED_NODE: {
-            yp_string_interpolated_node_t *node = (yp_string_interpolated_node_t *) base_node;
-            yp_compile_node(compiler, (yp_node_t *) node->statements);
             return;
         }
         case YP_NODE_SYMBOL_NODE: {

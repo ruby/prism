@@ -8,7 +8,7 @@ ProgramNode(0...916)(
           InterpolatedStringNode(11...53)(
             (11...21),
             [StringNode(39...41)(nil, (39...41), nil, "  "),
-             StringInterpolatedNode(41...44)((41...43), nil, (43...44)),
+             EmbeddedStatementsNode(41...44)((41...43), nil, (43...44)),
              StringNode(44...45)(nil, (44...45), nil, "\n")],
             (45...53)
           ),
@@ -51,7 +51,7 @@ ProgramNode(0...916)(
            [InterpolatedStringNode(100...128)(
               (100...110),
               [StringNode(114...116)(nil, (114...116), nil, "  "),
-               StringInterpolatedNode(116...119)(
+               EmbeddedStatementsNode(116...119)(
                  (116...118),
                  nil,
                  (118...119)
@@ -104,7 +104,7 @@ ProgramNode(0...916)(
           InterpolatedStringNode(148...182)(
             (148...158),
             [StringNode(168...170)(nil, (168...170), nil, "  "),
-             StringInterpolatedNode(170...173)((170...172), nil, (172...173)),
+             EmbeddedStatementsNode(170...173)((170...172), nil, (172...173)),
              StringNode(173...174)(nil, (173...174), nil, "\n")],
             (174...182)
           ),
@@ -151,11 +151,20 @@ ProgramNode(0...916)(
      ),
      InterpolatedStringNode(206...220)(
        (206...207),
-       [InstanceVariableReadNode(208...210)(),
+       [EmbeddedVariableNode(207...210)(
+          (207...208),
+          InstanceVariableReadNode(208...210)()
+        ),
         StringNode(210...211)(nil, (210...211), nil, " "),
-        ClassVariableReadNode(212...215)(),
+        EmbeddedVariableNode(211...215)(
+          (211...212),
+          ClassVariableReadNode(212...215)()
+        ),
         StringNode(215...216)(nil, (215...216), nil, " "),
-        GlobalVariableReadNode(217...219)()],
+        EmbeddedVariableNode(216...219)(
+          (216...217),
+          GlobalVariableReadNode(217...219)()
+        )],
        (219...220)
      ),
      IntegerNode(221...222)(),
@@ -210,7 +219,7 @@ ProgramNode(0...916)(
      InterpolatedStringNode(311...326)(
        (311...312),
        [StringNode(312...319)(nil, (312...319), nil, "foobar "),
-        StringInterpolatedNode(319...325)(
+        EmbeddedStatementsNode(319...325)(
           (319...321),
           StatementsNode(321...324)(
             [CallNode(321...324)(
@@ -232,7 +241,7 @@ ProgramNode(0...916)(
      InterpolatedStringNode(327...339)(
        (327...328),
        [StringNode(328...331)(nil, (328...331), nil, "foo"),
-        StringInterpolatedNode(331...335)(
+        EmbeddedStatementsNode(331...335)(
           (331...333),
           StatementsNode(333...334)([IntegerNode(333...334)()]),
           (334...335)
@@ -243,19 +252,19 @@ ProgramNode(0...916)(
      InterpolatedStringNode(340...349)(
        (340...341),
        [StringNode(341...345)(nil, (341...345), nil, "\\\\"),
-        StringInterpolatedNode(345...348)((345...347), nil, (347...348))],
+        EmbeddedStatementsNode(345...348)((345...347), nil, (347...348))],
        (348...349)
      ),
      InterpolatedStringNode(350...359)(
        (350...351),
-       [StringInterpolatedNode(351...354)((351...353), nil, (353...354)),
+       [EmbeddedStatementsNode(351...354)((351...353), nil, (353...354)),
         StringNode(354...358)(nil, (354...358), nil, "\#{}")],
        (358...359)
      ),
      InterpolatedStringNode(360...369)(
        (360...361),
        [StringNode(361...365)(nil, (361...365), nil, "\#{}"),
-        StringInterpolatedNode(365...368)((365...367), nil, (367...368))],
+        EmbeddedStatementsNode(365...368)((365...367), nil, (367...368))],
        (368...369)
      ),
      StringNode(370...385)(
@@ -276,7 +285,7 @@ ProgramNode(0...916)(
      InterpolatedXStringNode(418...430)(
        (418...419),
        [StringNode(419...422)(nil, (419...422), nil, "foo"),
-        StringInterpolatedNode(422...429)(
+        EmbeddedStatementsNode(422...429)(
           (422...424),
           StatementsNode(424...428)([InstanceVariableReadNode(424...428)()]),
           (428...429)
@@ -321,7 +330,7 @@ ProgramNode(0...916)(
      InterpolatedRegularExpressionNode(515...527)(
        (515...516),
        [StringNode(516...519)(nil, (516...519), nil, "foo"),
-        StringInterpolatedNode(519...526)(
+        EmbeddedStatementsNode(519...526)(
           (519...521),
           StatementsNode(521...525)([InstanceVariableReadNode(521...525)()]),
           (525...526)
@@ -332,7 +341,7 @@ ProgramNode(0...916)(
      InterpolatedRegularExpressionNode(528...543)(
        (528...529),
        [StringNode(529...532)(nil, (529...532), nil, "foo"),
-        StringInterpolatedNode(532...539)(
+        EmbeddedStatementsNode(532...539)(
           (532...534),
           StatementsNode(534...538)([InstanceVariableReadNode(534...538)()]),
           (538...539)
@@ -342,7 +351,7 @@ ProgramNode(0...916)(
      ),
      InterpolatedRegularExpressionNode(544...557)(
        (544...545),
-       [StringInterpolatedNode(545...556)(
+       [EmbeddedStatementsNode(545...556)(
           (545...547),
           StatementsNode(547...555)(
             [StringNode(547...555)(
@@ -388,7 +397,7 @@ ProgramNode(0...916)(
      InterpolatedSymbolNode(582...597)(
        (582...584),
        [StringNode(584...587)(nil, (584...587), nil, "foo"),
-        StringInterpolatedNode(587...593)(
+        EmbeddedStatementsNode(587...593)(
           (587...589),
           StatementsNode(589...592)(
             [CallNode(589...592)(
@@ -410,7 +419,7 @@ ProgramNode(0...916)(
      ),
      InterpolatedSymbolNode(598...609)(
        (598...600),
-       [StringInterpolatedNode(600...608)(
+       [EmbeddedStatementsNode(600...608)(
           (600...602),
           StatementsNode(602...607)(
             [StringNode(602...607)(
@@ -674,9 +683,9 @@ ProgramNode(0...916)(
      ),
      InterpolatedStringNode(857...869)(
        (857...858),
-       [StringInterpolatedNode(858...861)((858...860), nil, (860...861)),
+       [EmbeddedStatementsNode(858...861)((858...860), nil, (860...861)),
         StringNode(861...862)(nil, (861...862), nil, "\n"),
-        StringInterpolatedNode(862...865)((862...864), nil, (864...865)),
+        EmbeddedStatementsNode(862...865)((862...864), nil, (864...865)),
         StringNode(865...868)(nil, (865...868), nil, "\n" + "a")],
        (868...869)
      ),
@@ -693,13 +702,13 @@ ProgramNode(0...916)(
          StatementsNode(878...890)(
            [InterpolatedStringNode(878...890)(
               (878...879),
-              [StringInterpolatedNode(879...882)(
+              [EmbeddedStatementsNode(879...882)(
                  (879...881),
                  nil,
                  (881...882)
                ),
                StringNode(882...883)(nil, (882...883), nil, "\n"),
-               StringInterpolatedNode(883...886)(
+               EmbeddedStatementsNode(883...886)(
                  (883...885),
                  nil,
                  (885...886)
@@ -722,7 +731,7 @@ ProgramNode(0...916)(
      InterpolatedXStringNode(902...916)(
        (902...903),
        [StringNode(903...907)(nil, (903...907), nil, "  x\n"),
-        StringInterpolatedNode(907...913)(
+        EmbeddedStatementsNode(907...913)(
           (907...909),
           StatementsNode(909...912)(
             [CallNode(909...912)(

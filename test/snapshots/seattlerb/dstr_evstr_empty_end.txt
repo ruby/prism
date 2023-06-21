@@ -3,7 +3,7 @@ ProgramNode(0...11)(
   StatementsNode(0...11)(
     [InterpolatedSymbolNode(0...11)(
        (0...2),
-       [StringInterpolatedNode(2...10)(
+       [EmbeddedStatementsNode(2...10)(
           (2...4),
           StatementsNode(4...9)(
             [CallNode(4...9)(

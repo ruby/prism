@@ -4,7 +4,7 @@ ProgramNode(0...345)(
     [SymbolNode(0...6)((0...2), (2...5), (5...6), "abc"),
      InterpolatedSymbolNode(8...17)(
        (8...10),
-       [StringInterpolatedNode(10...16)(
+       [EmbeddedStatementsNode(10...16)(
           (10...12),
           StatementsNode(12...15)(
             [CallNode(12...15)(
@@ -26,7 +26,7 @@ ProgramNode(0...345)(
      InterpolatedSymbolNode(19...29)(
        (19...21),
        [StringNode(21...24)(nil, (21...24), nil, "abc"),
-        StringInterpolatedNode(24...28)(
+        EmbeddedStatementsNode(24...28)(
           (24...26),
           StatementsNode(26...27)([IntegerNode(26...27)()]),
           (27...28)
@@ -81,7 +81,7 @@ ProgramNode(0...345)(
         InterpolatedSymbolNode(165...170)(
           nil,
           [StringNode(165...166)(nil, (165...166), nil, "b"),
-           StringInterpolatedNode(166...170)(
+           EmbeddedStatementsNode(166...170)(
              (166...168),
              StatementsNode(168...169)([IntegerNode(168...169)()]),
              (169...170)
@@ -90,7 +90,7 @@ ProgramNode(0...345)(
         ),
         InterpolatedSymbolNode(171...176)(
           nil,
-          [StringInterpolatedNode(171...175)(
+          [EmbeddedStatementsNode(171...175)(
              (171...173),
              StatementsNode(173...174)([IntegerNode(173...174)()]),
              (174...175)
@@ -101,7 +101,7 @@ ProgramNode(0...345)(
         InterpolatedSymbolNode(177...183)(
           nil,
           [StringNode(177...178)(nil, (177...178), nil, "d"),
-           StringInterpolatedNode(178...182)(
+           EmbeddedStatementsNode(178...182)(
              (178...180),
              StatementsNode(180...181)([IntegerNode(180...181)()]),
              (181...182)

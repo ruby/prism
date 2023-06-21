@@ -277,6 +277,14 @@ module YARP
       assert_location(ElseNode, "foo ? bar : baz", 10...15, &:consequent)
     end
 
+    def test_EmbeddedStatementsNode
+      assert_location(EmbeddedStatementsNode, '"foo #{bar} baz"', 5...11) { |node| node.parts[1] }
+    end
+
+    def test_EmbeddedVariableNode
+      assert_location(EmbeddedVariableNode, '"foo #@@bar baz"', 5...11) { |node| node.parts[1] }
+    end
+
     def test_EnsureNode
       assert_location(EnsureNode, "begin; foo; ensure; bar; end", 12...28, &:ensure_clause)
     end
@@ -680,10 +688,6 @@ module YARP
 
     def test_StringConcatNode
       assert_location(StringConcatNode, '"foo" "bar"')
-    end
-
-    def test_StringInterpolatedNode
-      assert_location(StringInterpolatedNode, '"foo #{bar} baz"', 5...11) { |node| node.parts[1] }
     end
 
     def test_StringNode

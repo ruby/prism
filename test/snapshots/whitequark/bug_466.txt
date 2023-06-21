@@ -9,7 +9,7 @@ ProgramNode(0...27)(
        ArgumentsNode(4...19)(
          [InterpolatedStringNode(4...19)(
             (4...5),
-            [StringInterpolatedNode(5...18)(
+            [EmbeddedStatementsNode(5...18)(
                (5...7),
                StatementsNode(7...17)(
                  [CallNode(7...17)(

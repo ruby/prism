@@ -1099,7 +1099,7 @@ ProgramNode(0...1187)(
        ArgumentsNode(846...871)(
          [InterpolatedStringNode(846...871)(
             (846...847),
-            [StringInterpolatedNode(847...870)(
+            [EmbeddedStatementsNode(847...870)(
                (847...849),
                StatementsNode(849...869)(
                  [CallNode(849...869)(

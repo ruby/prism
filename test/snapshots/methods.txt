@@ -1001,7 +1001,7 @@ ProgramNode(0...1194)(
          [InterpolatedStringNode(917...931)(
             (917...918),
             [StringNode(918...921)(nil, (918...921), nil, "foo"),
-             StringInterpolatedNode(921...930)(
+             EmbeddedStatementsNode(921...930)(
                (921...923),
                StatementsNode(923...929)(
                  [CallNode(923...929)(

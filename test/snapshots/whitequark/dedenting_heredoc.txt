@@ -10,7 +10,7 @@ ProgramNode(0...327)(
          [InterpolatedStringNode(2...28)(
             (2...8),
             [StringNode(9...17)(nil, (9...17), nil, "  x\n"),
-             StringInterpolatedNode(17...25)(
+             EmbeddedStatementsNode(17...25)(
                (17...19),
                StatementsNode(19...24)(
                  [StringNode(19...24)((19...20), (20...23), (23...24), "  y")]
@@ -35,7 +35,7 @@ ProgramNode(0...327)(
          [InterpolatedStringNode(31...55)(
             (31...37),
             [StringNode(38...46)(nil, (38...46), nil, "  x\n"),
-             StringInterpolatedNode(46...52)(
+             EmbeddedStatementsNode(46...52)(
                (46...48),
                StatementsNode(48...51)(
                  [CallNode(48...51)(
@@ -293,7 +293,7 @@ ProgramNode(0...327)(
          [InterpolatedXStringNode(303...327)(
             (303...309),
             [StringNode(310...318)(nil, (310...318), nil, "  x\n"),
-             StringInterpolatedNode(318...324)(
+             EmbeddedStatementsNode(318...324)(
                (318...320),
                StatementsNode(320...323)(
                  [CallNode(320...323)(

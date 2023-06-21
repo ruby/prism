@@ -19,14 +19,17 @@ ProgramNode(0...278)(
      InterpolatedRegularExpressionNode(28...39)(
        (28...29),
        [StringNode(29...33)(nil, (29...33), nil, "aaa "),
-        GlobalVariableReadNode(34...38)()],
+        EmbeddedVariableNode(33...38)(
+          (33...34),
+          GlobalVariableReadNode(34...38)()
+        )],
        (38...39),
        0
      ),
      InterpolatedRegularExpressionNode(41...57)(
        (41...42),
        [StringNode(42...46)(nil, (42...46), nil, "aaa "),
-        StringInterpolatedNode(46...52)(
+        EmbeddedStatementsNode(46...52)(
           (46...48),
           StatementsNode(48...51)(
             [CallNode(48...51)(

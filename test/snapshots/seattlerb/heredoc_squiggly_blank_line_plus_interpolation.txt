@@ -14,7 +14,7 @@ ProgramNode(0...20)(
               InterpolatedStringNode(8...42)(
                 (8...14),
                 [StringNode(21...26)(nil, (21...26), nil, "\n"),
-                 StringInterpolatedNode(26...32)(
+                 EmbeddedStatementsNode(26...32)(
                    (26...28),
                    StatementsNode(28...31)(
                      [CallNode(28...31)(

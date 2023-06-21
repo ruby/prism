@@ -945,6 +945,31 @@ nodes:
 
           if a then b else c end
                       ^^^^^^^^^^
+  - name: EmbeddedStatementsNode
+    child_nodes:
+      - name: opening_loc
+        type: location
+      - name: statements
+        type: node?
+        kind: StatementsNode
+      - name: closing_loc
+        type: location
+    comment: |
+      Represents an interpolated set of statements.
+
+          "foo #{bar}"
+               ^^^^^^
+  - name: EmbeddedVariableNode
+    child_nodes:
+      - name: operator_loc
+        type: location
+      - name: variable
+        type: node
+    comment: |
+      Represents an interpolated variable.
+
+          "foo #@bar"
+               ^^^^^
   - name: EnsureNode
     child_nodes:
       - name: ensure_keyword_loc
@@ -1889,20 +1914,6 @@ nodes:
 
           "foo" "bar"
           ^^^^^^^^^^^
-  - name: StringInterpolatedNode
-    child_nodes:
-      - name: opening_loc
-        type: location
-      - name: statements
-        type: node?
-        kind: StatementsNode
-      - name: closing_loc
-        type: location
-    comment: |
-      Represents an interpolated set of statements within a string.
-
-          "foo #{bar}"
-               ^^^^^^
   - name: StringNode
     child_nodes:
       - name: opening_loc

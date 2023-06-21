@@ -621,7 +621,7 @@ ProgramNode(0...719)(
        InterpolatedStringNode(566...591)(
          (566...576),
          [StringNode(577...579)(nil, (577...579), nil, "  "),
-          StringInterpolatedNode(579...582)((579...581), nil, (581...582)),
+          EmbeddedStatementsNode(579...582)((579...581), nil, (581...582)),
           StringNode(582...583)(nil, (582...583), nil, "\n")],
          (583...591)
        ),
@@ -637,7 +637,7 @@ ProgramNode(0...719)(
          [InterpolatedStringNode(595...620)(
             (595...605),
             [StringNode(606...608)(nil, (606...608), nil, "  "),
-             StringInterpolatedNode(608...611)((608...610), nil, (610...611)),
+             EmbeddedStatementsNode(608...611)((608...610), nil, (610...611)),
              StringNode(611...612)(nil, (611...612), nil, "\n")],
             (612...620)
           )]
@@ -656,7 +656,7 @@ ProgramNode(0...719)(
          [InterpolatedStringNode(626...651)(
             (626...636),
             [StringNode(637...639)(nil, (637...639), nil, "  "),
-             StringInterpolatedNode(639...642)((639...641), nil, (641...642)),
+             EmbeddedStatementsNode(639...642)((639...641), nil, (641...642)),
              StringNode(642...643)(nil, (642...643), nil, "\n")],
             (643...651)
           )]
@@ -676,7 +676,7 @@ ProgramNode(0...719)(
            [InterpolatedStringNode(653...687)(
               (653...663),
               [StringNode(673...675)(nil, (673...675), nil, "  "),
-               StringInterpolatedNode(675...678)(
+               EmbeddedStatementsNode(675...678)(
                  (675...677),
                  nil,
                  (677...678)
@@ -709,7 +709,7 @@ ProgramNode(0...719)(
        InterpolatedStringNode(694...719)(
          (694...704),
          [StringNode(705...707)(nil, (705...707), nil, "  "),
-          StringInterpolatedNode(707...710)((707...709), nil, (709...710)),
+          EmbeddedStatementsNode(707...710)((707...709), nil, (709...710)),
           StringNode(710...711)(nil, (710...711), nil, "\n")],
          (711...719)
        )

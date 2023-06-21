@@ -19,7 +19,7 @@ ProgramNode(0...140)(
      InterpolatedStringNode(20...38)(
        (20...23),
        [StringNode(23...27)(nil, (23...27), nil, "aaa "),
-        StringInterpolatedNode(27...33)(
+        EmbeddedStatementsNode(27...33)(
           (27...29),
           StatementsNode(29...32)(
             [CallNode(29...32)(

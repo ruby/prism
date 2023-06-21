@@ -33,7 +33,7 @@ ProgramNode(0...131)(
      RegularExpressionNode(64...70)((64...67), (67...69), (69...70), ")", 0),
      InterpolatedRegularExpressionNode(71...85)(
        (71...74),
-       [StringInterpolatedNode(74...81)(
+       [EmbeddedStatementsNode(74...81)(
           (74...76),
           StatementsNode(76...80)([InstanceVariableReadNode(76...80)()]),
           (80...81)

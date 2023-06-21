@@ -9,7 +9,7 @@ ProgramNode(0...8)(
        ArgumentsNode(2...8)(
          [InterpolatedXStringNode(2...8)(
             (2...3),
-            [StringInterpolatedNode(3...7)(
+            [EmbeddedStatementsNode(3...7)(
                (3...5),
                StatementsNode(5...6)(
                  [CallNode(5...6)(
