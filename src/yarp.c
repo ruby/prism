@@ -2271,6 +2271,12 @@ yp_if_node_end_keyword_loc_set(yp_if_node_t *node, const yp_token_t *keyword) {
     node->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword);
 }
 
+static inline void
+yp_else_node_end_keyword_loc_set(yp_else_node_t *node, const yp_token_t *keyword) {
+    node->base.location.end = keyword->end;
+    node->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword);
+}
+
 // Allocate and initialize a new IntegerNode node.
 static yp_integer_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
@@ -8710,7 +8716,26 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
         switch (context) {
             case YP_CONTEXT_IF:
                 ((yp_if_node_t *) current)->consequent = (yp_node_t *) else_node;
-                yp_if_node_end_keyword_loc_set((yp_if_node_t *) parent, &parser->previous);
+                // Recurse down if nodes setting the appropriate end location in all cases
+                yp_node_t * recursing_node = parent;
+                bool recursing = true;
+
+                while (recursing) {
+                    switch (recursing_node->type) {
+                        case YP_NODE_IF_NODE:
+                            yp_if_node_end_keyword_loc_set((yp_if_node_t *) recursing_node, &parser->previous);
+                            recursing_node = ((yp_if_node_t *) recursing_node)->consequent;
+                            break;
+                        case YP_NODE_ELSE_NODE:
+                            yp_else_node_end_keyword_loc_set((yp_else_node_t *) recursing_node, &parser->previous);
+                            recursing = false;
+                            break;
+                        default: {
+                            recursing = false;
+                            break;
+                        }
+                    }
+                }
                 break;
             case YP_CONTEXT_UNLESS:
                 ((yp_unless_node_t *) parent)->consequent = else_node;

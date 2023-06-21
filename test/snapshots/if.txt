@@ -23,11 +23,11 @@ ProgramNode(0...293)(
        (39...41),
        TrueNode(42...46)(),
        StatementsNode(52...56)([TrueNode(52...56)()]),
-       IfNode(57...79)(
+       IfNode(57...112)(
          (57...62),
          FalseNode(63...68)(),
          StatementsNode(74...79)([FalseNode(74...79)()]),
-         IfNode(80...98)(
+         IfNode(80...112)(
            (80...85),
            NilNode(86...89)(),
            StatementsNode(95...98)([NilNode(95...98)()]),
@@ -36,9 +36,9 @@ ProgramNode(0...293)(
              StatementsNode(104...108)([SelfNode(104...108)()]),
              (109...112)
            ),
-           nil
+           (109...112)
          ),
-         nil
+         (109...112)
        ),
        (109...112)
      ),
