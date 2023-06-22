@@ -1,6 +1,6 @@
-ProgramNode(0...709)(
+ProgramNode(0...751)(
   [],
-  StatementsNode(0...709)(
+  StatementsNode(0...751)(
     [ConstantPathNode(0...4)(
        ConstantReadNode(0...1)(),
        ConstantReadNode(3...4)(),
@@ -911,6 +911,72 @@ ProgramNode(0...709)(
        ),
        (695...697),
        0
+     ),
+     CallNode(711...715)(
+       ConstantReadNode(711...712)(),
+       (712...714),
+       (714...715),
+       nil,
+       nil,
+       nil,
+       nil,
+       0,
+       "*"
+     ),
+     CallNode(717...722)(
+       ConstantReadNode(717...718)(),
+       (718...720),
+       (720...722),
+       nil,
+       nil,
+       nil,
+       nil,
+       0,
+       "**"
+     ),
+     CallNode(724...729)(
+       ConstantReadNode(724...725)(),
+       (725...727),
+       (727...729),
+       nil,
+       nil,
+       nil,
+       nil,
+       0,
+       "[]"
+     ),
+     CallNode(731...737)(
+       ConstantReadNode(731...732)(),
+       (732...734),
+       (734...737),
+       nil,
+       nil,
+       nil,
+       nil,
+       0,
+       "[]="
+     ),
+     CallNode(739...744)(
+       ConstantReadNode(739...740)(),
+       (740...742),
+       (742...744),
+       nil,
+       nil,
+       nil,
+       nil,
+       0,
+       "+@"
+     ),
+     CallNode(746...751)(
+       ConstantReadNode(746...747)(),
+       (747...749),
+       (749...751),
+       nil,
+       nil,
+       nil,
+       nil,
+       0,
+       "-@"
      )]
   )
 )
