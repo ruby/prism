@@ -1,5 +1,5 @@
 #line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
-#include "extension.h"
+#include "yarp/extension.h"
 
 extern VALUE rb_cYARP;
 extern VALUE rb_cYARPToken;
@@ -18,8 +18,9 @@ yp_string_new(yp_string_t *string, rb_encoding *encoding) {
 
 VALUE
 yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding) {
+    ID type = rb_intern(yp_token_type_to_str(token->type));
     VALUE argv[] = {
-        ID2SYM(rb_intern(yp_token_type_to_str(token->type))),
+        ID2SYM(type),
         rb_enc_str_new(token->start, token->end - token->start, encoding),
         LONG2FIX(token->start - parser->start),
         LONG2FIX(token->end - token->start)
@@ -91,7 +92,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
 
 #line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
 VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
-    ID * constants = calloc(parser->constant_pool.size, sizeof(ID));
+    ID *constants = calloc(parser->constant_pool.size, sizeof(ID));
 
     for (size_t index = 0; index < parser->constant_pool.capacity; index++) {
         yp_constant_t constant = parser->constant_pool.constants[index];

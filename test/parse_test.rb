@@ -9,11 +9,11 @@ class ParseTest < Test::Unit::TestCase
   # default external encoding for the duration of the test.
   def setup
     @previous_default_external = Encoding.default_external
-    Encoding.default_external = Encoding::UTF_8
+    ignore_warnings { Encoding.default_external = Encoding::UTF_8 }
   end
 
   def teardown
-    Encoding.default_external = @previous_default_external
+    ignore_warnings { Encoding.default_external = @previous_default_external }
   end
 
   def test_Ruby_3_2_plus
@@ -126,5 +126,15 @@ class ParseTest < Test::Unit::TestCase
         raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
     end
+  end
+
+  private
+
+  def ignore_warnings
+    previous_verbosity = $VERBOSE
+    $VERBOSE = nil
+    yield
+  ensure
+    $VERBOSE = previous_verbosity
   end
 end
