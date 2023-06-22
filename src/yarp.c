@@ -1,16 +1,25 @@
 #include "yarp.h"
 
-#define YP_STRINGIZE0(expr) #expr
-#define YP_STRINGIZE(expr) YP_STRINGIZE0(expr)
-#define YP_VERSION_MACRO YP_STRINGIZE(YP_VERSION_MAJOR) "." YP_STRINGIZE(YP_VERSION_MINOR) "." YP_STRINGIZE(YP_VERSION_PATCH)
+// The PACKAGE_VERSION macro is defined by the build system. If it is not
+// present then we need to fail the build, since we're explicitly returning it
+// from the yp_version function.
+#ifndef PACKAGE_VERSION
+#error "PACKAGE_VERSION must be defined"
+#endif
 
-#define YP_TAB_WHITESPACE_SIZE 8
-
+// The YARP version and the serialization format.
 const char *
 yp_version(void) {
-    return YP_VERSION_MACRO;
+    return PACKAGE_VERSION;
 }
 
+// In heredocs, tabs automatically complete up to the next 8 spaces. This is
+// defined in CRuby as TAB_WIDTH.
+#define YP_TAB_WHITESPACE_SIZE 8
+
+// Debugging logging will provide you will additional debugging functions as
+// well as automatically replace some functions with their debugging
+// counterparts.
 #ifndef YP_DEBUG_LOGGING
 #define YP_DEBUG_LOGGING 0
 #endif
@@ -12865,6 +12874,3 @@ yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
 #undef YP_CASE_KEYWORD
 #undef YP_CASE_OPERATOR
 #undef YP_CASE_WRITABLE
-#undef YP_STRINGIZE
-#undef YP_STRINGIZE0
-#undef YP_VERSION_MACRO

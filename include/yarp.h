@@ -33,7 +33,7 @@ void yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buf
 
 void yp_print_node(yp_parser_t *parser, yp_node_t *node);
 
-// Returns the YARP version and notably the serialization format
+// The YARP version and the serialization format.
 YP_EXPORTED_FUNCTION const char * yp_version(void);
 
 // Initialize a parser with the given start and end pointers.

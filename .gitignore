@@ -38,6 +38,7 @@ compile_commands.json
 
 autom4te.cache
 configure
+configure-macros
 config.log
 config.status
 Makefile

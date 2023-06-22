@@ -500,8 +500,12 @@ newlines(VALUE self, VALUE string) {
 RUBY_FUNC_EXPORTED void
 Init_yarp(void) {
     if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
-        rb_raise(rb_eRuntimeError, "The YARP library version (%s) does not match the expected version (%s)", yp_version(),
-                         EXPECTED_YARP_VERSION);
+        rb_raise(
+            rb_eRuntimeError,
+            "The YARP library version (%s) does not match the expected version (%s)",
+            yp_version(),
+            EXPECTED_YARP_VERSION
+        );
     }
 
     rb_cYARP = rb_define_module("YARP");
@@ -513,7 +517,7 @@ Init_yarp(void) {
     rb_cYARPParseWarning = rb_define_class_under(rb_cYARP, "ParseWarning", rb_cObject);
     rb_cYARPParseResult = rb_define_class_under(rb_cYARP, "ParseResult", rb_cObject);
 
-    rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
+    rb_define_const(rb_cYARP, "VERSION", rb_str_new2(EXPECTED_YARP_VERSION));
 
     rb_define_singleton_method(rb_cYARP, "dump", dump, 2);
     rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
