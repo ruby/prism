@@ -3,19 +3,6 @@
 require "yarp_test_helper"
 
 class ParseTest < Test::Unit::TestCase
-  # Because we're reading the snapshots from disk, we need to make sure that
-  # they're encoded as UTF-8. When certain settings are present this might not
-  # always be the case (e.g., LANG=C or -Eascii-8bit). So here we force the
-  # default external encoding for the duration of the test.
-  def setup
-    @previous_default_external = Encoding.default_external
-    ignore_warnings { Encoding.default_external = Encoding::UTF_8 }
-  end
-
-  def teardown
-    ignore_warnings { Encoding.default_external = @previous_default_external }
-  end
-
   def test_Ruby_3_2_plus
     assert_operator RUBY_VERSION, :>=, "3.2.0", "ParseTest requires Ruby 3.2+"
   end
@@ -28,20 +15,6 @@ class ParseTest < Test::Unit::TestCase
     seattlerb/heredoc_nested.txt
     seattlerb/pct_w_heredoc_interp_nested.txt
   ]
-
-  # Because the filepath in SourceFileNodes is different from one maching to the
-  # next, PP.pp(sexp, +"", 79) can have different results: both the path itself
-  # and the line breaks based on the length of the path.
-  def normalize_printed(printed)
-    printed
-      .gsub(
-        /SourceFileNode \s*
-          \(\s* (\d+\.\.\.\d+) \s*\) \s*
-          \(\s* ("[^"]*")      \s*\)
-        /mx,
-        'SourceFileNode(\1)(\2)')
-      .gsub(__dir__, "")
-  end
 
   def find_source_file_node(node)
     if node.is_a?(YARP::SourceFileNode)
@@ -78,36 +51,35 @@ class ParseTest < Test::Unit::TestCase
       # that is invalid Ruby.
       refute_nil Ripper.sexp_raw(source)
 
-      # Next, parse the source and print the value.
-      result = YARP.parse_file(filepath)
-      value = result.value
-      printed = normalize_printed(PP.pp(value, +"", 79))
-
       # Next, assert that there were no errors during parsing.
-      assert_empty result.errors, value
+      result = YARP.parse_file(filepath)
+      assert_empty result.errors
+
+      # Next, parse the source and print the value.
+      serialized = YARP.dump(source, relative)
 
       if File.exist?(snapshot)
-        normalized = normalize_printed(File.read(snapshot))
+        saved = File.binread(snapshot)
 
         # If the snapshot file exists, but the printed value does not match the
         # snapshot, then update the snapshot file.
-        if normalized != printed
-          File.write(snapshot, normalized)
+        if serialized != saved
+          File.write(snapshot, serialized)
           warn("Updated snapshot at #{snapshot}.")
         end
 
         # If the snapshot file exists, then assert that the printed value
         # matches the snapshot.
-        assert_equal(normalized, printed)
+        assert_equal(saved, serialized)
       else
         # If the snapshot file does not yet exist, then write it out now.
-        File.write(snapshot, printed)
+        File.write(snapshot, serialized)
         warn("Created snapshot at #{snapshot}.")
       end
 
       # Next, assert that the value can be serialized and deserialized without
       # changing the shape of the tree.
-      assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
+      assert_equal_nodes(result.value, YARP.load(source, YARP.dump(source, relative)))
 
       # Next, assert that the newlines are in the expected places.
       expected_newlines = [0]
@@ -126,15 +98,5 @@ class ParseTest < Test::Unit::TestCase
         raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
     end
-  end
-
-  private
-
-  def ignore_warnings
-    previous_verbosity = $VERBOSE
-    $VERBOSE = nil
-    yield
-  ensure
-    $VERBOSE = previous_verbosity
   end
 end

@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
+require "pp"
+
+# We don't have the original source, so this is not going to be entirely
+# accurate. But it's still better than nothing.
+class Source
+  def byteslice(*)
+    ""
+  end
+
+  def force_encoding(*)
+    self
+  end
+end
+
+puts PP.pp(YARP.load(Source.new, File.read(ARGV[0])), +"", 79)

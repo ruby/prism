@@ -12,9 +12,16 @@ These test specific YARP implementation details like comments, errors, and regul
 
 ### Snapshot tests
 
-Snapshot tests ensure that parsed output is equivalent to previous parsed output. There are many categorized examples of valid syntax within the `test/fixtures/` directory. When the test suite runs, it will parse all of this syntax, and compare it against corresponding files in the `test/snapshots/` directory. For example, `test/fixtures/strings.rb` has a corresponding `test/snapshots/strings.rb`.
+Snapshot tests ensure that parsed output is equivalent to previous parsed output. There are many categorized examples of valid syntax within the `test/fixtures/` directory. When the test suite runs, it will parse all of this syntax, and compare it against corresponding files in the `test/snapshots/` directory. For example, `test/fixtures/strings.txt` has a corresponding `test/snapshots/strings.txt`.
 
 If the parsed files do not match, it will raise an error. If there is not a corresponding file in the `test/snapshots/` directory, one will be created so that it exists for the next test run.
+
+To get nicer diffs for snapshots, you should set up the `textconv` option in `git diff` to use `bin/deserialize`. This will deserialize the serialized tree and pretty-print it before diffing, which makes it much easier to see the changes. To do so, run:
+
+```bash
+git config diff.snapshot.textconv bin/deserialize
+git config diff.snapshot.binary true
+```
 
 ### Testing against repositories
 
