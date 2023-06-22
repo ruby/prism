@@ -5,11 +5,11 @@
 #include <ruby/encoding.h>
 #include "yarp.h"
 
-#include <fcntl.h>
-
+// The following headers are necessary to read files.
 #ifdef _WIN32
 #include <windows.h>
 #else
+#include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>

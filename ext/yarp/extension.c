@@ -13,7 +13,6 @@ VALUE rb_cYARPParseResult;
 // string. If it's a file, it's going to mmap the contents of the file. If it's
 // a string it's going to just point to the contents of the string.
 typedef struct {
-    enum { SOURCE_FILE, SOURCE_STRING } type;
     const char *source;
     size_t size;
 } source_t;
@@ -32,13 +31,19 @@ source_file_load(source_t *source, VALUE filepath) {
         FILE_ATTRIBUTE_NORMAL,
         NULL
     );
+
     if (file == INVALID_HANDLE_VALUE) {
-        perror("Invalid handle for file");
+        perror("CreateFile failed");
         return 1;
     }
 
+    // Get the file size.
     DWORD file_size = GetFileSize(file, NULL);
-    source->source = malloc(file_size);
+    if (file_size == INVALID_FILE_SIZE) {
+        CloseHandle(file);
+        perror("GetFileSize failed");
+        return 1;
+    }
 
     DWORD bytes_read;
     BOOL success = ReadFile(file, DISCARD_CONST_QUAL(void *, source->source), file_size, &bytes_read, NULL);
@@ -49,62 +54,75 @@ source_file_load(source_t *source, VALUE filepath) {
         return 1;
     }
 
+    source->source = malloc(file_size);
     source->size = (size_t) file_size;
-    return 0;
 #else
-    // Open the file for reading
+    // Open the file for reading.
     int fd = open(StringValueCStr(filepath), O_RDONLY);
     if (fd == -1) {
-        perror("open");
+        perror("open failed");
         return 1;
     }
 
-    // Stat the file to get the file size
+    // Stat the file to get the file size.
     struct stat sb;
     if (fstat(fd, &sb) == -1) {
         close(fd);
-        perror("fstat");
+        perror("fstat failed");
         return 1;
     }
 
-    // mmap the file descriptor to virtually get the contents
+    // Set the size of the source.
     source->size = sb.st_size;
 
-#ifdef HAVE_MMAP
+    // If the file is empty, then we don't need to do anything else, we'll set
+    // the source to a constant empty string and return.
     if (!source->size) {
+        close(fd);
         source->source = "";
         return 0;
     }
 
-    char * res = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (res == MAP_FAILED) {
-        perror("Map failed");
-        return 1;
-    } else {
-        source->source = res;
-    }
-#else
-    source->source = malloc(source->size);
-    if (source->source == NULL) return 1;
-
-    ssize_t read_size = read(fd, (void *)source->source, source->size);
-    if (read_size < 0 || (size_t)read_size != source->size) {
-        perror("Read size is incorrect");
-        free((void *)source->source);
+#ifdef HAVE_MMAP
+    void *memory = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (memory == MAP_FAILED) {
+        close(fd);
+        perror("mmap failed");
         return 1;
     }
-#endif
 
+    source->source = memory;
     close(fd);
-    return 0;
+#else
+    void *memory = malloc(source->size);
+    if (memory == NULL) {
+        close(fd);
+        return 1;
+    }
+
+    // Read the file into the buffer.
+    ssize_t read_size = read(fd, memory, source->size);
+    close(fd);
+
+    // If the read failed or we didn't read the entire file, then we need to
+    // free the buffer and return an error.
+    if (read_size < 0 || (size_t) read_size != source->size) {
+        perror("read failed");
+        free(memory);
+        return 1;
+    }
+
+    source->source = memory;
 #endif
+#endif
+
+    return 0;
 }
 
 // Load the contents and size of the given string into the given source_t.
 static void
 source_string_load(source_t *source, VALUE string) {
     *source = (source_t) {
-        .type = SOURCE_STRING,
         .source = RSTRING_PTR(string),
         .size = RSTRING_LEN(string),
     };
@@ -113,14 +131,14 @@ source_string_load(source_t *source, VALUE string) {
 // Free any resources associated with the given source_t.
 static void
 source_file_unload(source_t *source) {
-#ifdef _WIN32
-    free((void *)source->source);
+    void *memory = (void *) source->source;
+
+#if defined(_WIN32)
+    free(memory);
+#elif defined(HAVE_MMAP)
+    if (source->size) munmap(memory, source->size);
 #else
-#ifdef HAVE_MMAP
-    munmap((void *)source->source, source->size);
-#else
-    free((void *)source->source);
-#endif
+    if (source->size) free(memory);
 #endif
 }
 
