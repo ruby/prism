@@ -12484,18 +12484,6 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                 }
                 case YP_CASE_OPERATOR:
                 case YP_CASE_KEYWORD:
-                case YP_TOKEN_HEREDOC_START:
-                case YP_TOKEN_IGNORED_NEWLINE:
-                case YP_TOKEN_PERCENT_LOWER_I:
-                case YP_TOKEN_PERCENT_LOWER_W:
-                case YP_TOKEN_PERCENT_LOWER_X:
-                case YP_TOKEN_PERCENT_UPPER_I:
-                case YP_TOKEN_PERCENT_UPPER_W:
-                case YP_TOKEN_REGEXP_BEGIN:
-                case YP_TOKEN_UCOLON_COLON:
-                case YP_TOKEN_UDOT_DOT:
-                case YP_TOKEN_UDOT_DOT_DOT:
-                case YP_TOKEN___END__:
                 case YP_TOKEN_IDENTIFIER: {
                     parser_lex(parser);
 
