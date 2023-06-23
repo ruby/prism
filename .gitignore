@@ -29,6 +29,7 @@ test.rb
 /src/serialize.c
 /src/token_type.c
 /src/**/*.o
+/test/snapshots/fixtures/
 
 compile_commands.json
 .cache/
