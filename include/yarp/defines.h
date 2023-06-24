@@ -8,7 +8,9 @@
 #include <string.h>
 
 // YP_EXPORTED_FUNCTION
-#if defined(_WIN32)
+#if defined(YP_STATIC)
+#   define YP_EXPORTED_FUNCTION
+#elif defined(_WIN32)
 #   define YP_EXPORTED_FUNCTION __declspec(dllexport) extern
 #else
 #   ifndef YP_EXPORTED_FUNCTION
