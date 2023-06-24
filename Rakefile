@@ -62,9 +62,7 @@ end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
-CLOBBER.concat(["configure", "Makefile"])
-
-CLOBBER << "build/librubyparser.#{RbConfig::CONFIG["SOEXT"]}"
+CLOBBER.concat(["configure", "Makefile", "build"])
 CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|

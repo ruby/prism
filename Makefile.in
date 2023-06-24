@@ -1,3 +1,12 @@
+
+# V=0 quiet, V=1 verbose.  other values don't work.
+V = 0
+V0 = $(V:0=)
+Q1 = $(V:1=)
+Q = $(Q1:0=@)
+ECHO1 = $(V:1=@ :)
+ECHO = $(ECHO1:0=@ echo)
+
 SOEXT := $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
 DEFS := @DEFS@
@@ -18,24 +27,29 @@ static: build/librubyparser.a
 $(OBJECTS): Makefile $(HEADERS)
 
 build/librubyparser.$(SOEXT): $(SHARED_OBJECTS)
-	$(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(SHARED_OBJECTS)
+	$(ECHO) "linking $@"
+	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(SHARED_OBJECTS)
 
 build/librubyparser.a: $(STATIC_OBJECTS)
-	$(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS)
+	$(ECHO) "building $@"
+	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS) $(Q1:0=>/dev/null)
 
 build/shared/%.o: src/%.c
-	mkdir -p $(@D)
-	$(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(ECHO) "compiling $@"
+	$(Q) mkdir -p $(@D)
+	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 build/static/%.o: src/%.c
-	mkdir -p $(@D)
-	$(CC) $(DEBUG_FLAGS) -DYP_STATIC $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(ECHO) "compiling $@"
+	$(Q) mkdir -p $(@D)
+	$(Q) $(CC) $(DEBUG_FLAGS) -DYP_STATIC $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 include/yarp/ast.h: templates/include/yarp/ast.h.erb
-	rake $@
+	$(ECHO) "generating $@"
+	$(Q) rake $@
 
 clean:
-	@rm -v -f -r \
+	$(Q) rm -f -r \
 		build \
 		ext/yarp/node.c \
 		include/{ast.h,node.h} \
