@@ -14,6 +14,7 @@
 /lib/yarp/yarp.*
 /lib/yarp.bundle
 /lib/yarp.so
+test.c
 test.rb
 *.dSYM
 
