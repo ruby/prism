@@ -8544,6 +8544,12 @@ parse_block_parameters(
     }
 
     yp_block_parameters_node_t *block_parameters = yp_block_parameters_node_create(parser, parameters, opening);
+
+    if (!block_parameters && parameters) {
+        yp_node_destroy(parser, (yp_node_t *) parameters);
+        return NULL;
+    }
+
     if (accept(parser, YP_TOKEN_SEMICOLON)) {
         do {
             expect(parser, YP_TOKEN_IDENTIFIER, "Expected a local variable name.");
