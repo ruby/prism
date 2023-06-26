@@ -55,8 +55,13 @@ YP_EXPORTED_FUNCTION void yp_parser_register_encoding_decode_callback(yp_parser_
 // case with CRuby in particular to call xmalloc such that it runs GC if it
 // fails to allocate memory. It is expected that whatever callback is given will
 // never return NULL.
-YP_EXPORTED_FUNCTION void
-yp_parser_register_malloc_callback(yp_parser_t *parser, void *(*malloc_callback)(size_t));
+YP_EXPORTED_FUNCTION void yp_parser_register_malloc_callback(yp_parser_t *parser, void *(*malloc_callback)(size_t));
+
+// Register a callback for when memory should be reallocated. This is used in
+// our case with CRuby in particular to call xrealloc such that it runs GC if it
+// fails to allocate memory. It is expected that whatever callback is given will
+// never return NULL.
+YP_EXPORTED_FUNCTION void yp_parser_register_realloc_callback(yp_parser_t *parser, void *(*realloc_callback)(void *, size_t));
 
 // Free any memory associated with the given parser.
 YP_EXPORTED_FUNCTION void yp_parser_free(yp_parser_t *parser);

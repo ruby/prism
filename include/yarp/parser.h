@@ -381,6 +381,11 @@ struct yp_parser {
     // such that it runs GC if it fails to allocate memory.
     void *(*malloc_callback)(size_t);
 
+    // This is an optional callback to call when we need to reallocate memory
+    // during parsing. This is used with CRuby in particular to call xrealloc
+    // such that it runs GC if it fails to allocate memory.
+    void *(*realloc_callback)(void *, size_t);
+
     // This is the path of the file being parsed
     // We use the filepath when constructing SourceFileNodes
     yp_string_t filepath_string;
