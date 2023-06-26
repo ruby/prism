@@ -11043,6 +11043,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     receiver = parse_expression(parser, YP_BINDING_POWER_COMPOSITION, "Expected expression after `not`.");
 
                     if (!parser->recovering) {
+                        accept(parser, YP_TOKEN_NEWLINE);
                         expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected ')' after 'not' expression.");
                         arguments.closing_loc = ((yp_location_t) { .start = parser->previous.start, .end = parser->previous.end });
                     }
