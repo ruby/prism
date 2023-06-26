@@ -9326,92 +9326,106 @@ parse_pattern_constant_path(yp_parser_t *parser, yp_node_t *node) {
     // If there is a [ or ( that follows, then this is part of a larger pattern
     // expression. We'll parse the inner pattern here, then modify the returned
     // inner pattern with our constant path attached.
-    if (match_any_type_p(parser, 2, YP_TOKEN_BRACKET_LEFT, YP_TOKEN_PARENTHESIS_LEFT)) {
-        yp_token_t opening;
-        yp_token_t closing;
-        yp_node_t *inner = NULL;
-
-        if (accept(parser, YP_TOKEN_BRACKET_LEFT)) {
-            opening = parser->previous;
-
-            accept(parser, YP_TOKEN_NEWLINE);
-
-            if (!accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
-                inner = parse_pattern(parser, true, "Expected a pattern expression after the [ operator.");
-                accept(parser, YP_TOKEN_NEWLINE);
-
-                expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a ] to close the pattern expression.");
-            }
-
-            closing = parser->previous;
-        } else {
-            parser_lex(parser);
-            opening = parser->previous;
-
-            if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
-                inner = parse_pattern(parser, true, "Expected a pattern expression after the ( operator.");
-                expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ) to close the pattern expression.");
-            }
-
-            closing = parser->previous;
-        }
-
-        if (inner) {
-            // Now that we have the inner pattern, check to see if it's an array, find,
-            // or hash pattern. If it is, then we'll attach our constant path to it. If
-            // it's not, then we'll create an array pattern.
-            switch (inner->type) {
-                case YP_NODE_ARRAY_PATTERN_NODE: {
-                    yp_array_pattern_node_t *pattern_node = (yp_array_pattern_node_t *)inner;
-                    pattern_node->base.location.start = node->location.start;
-                    pattern_node->base.location.end = closing.end;
-
-                    pattern_node->constant = node;
-                    pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-                    pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
-
-                    node = (yp_node_t *)pattern_node;
-                    break;
-                }
-                case YP_NODE_FIND_PATTERN_NODE: {
-                    yp_find_pattern_node_t *pattern_node = (yp_find_pattern_node_t *) inner;
-                    pattern_node->base.location.start = node->location.start;
-                    pattern_node->base.location.end = closing.end;
-
-                    pattern_node->constant = node;
-                    pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-                    pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
-
-                    node = (yp_node_t *) pattern_node;
-                    break;
-                }
-                case YP_NODE_HASH_PATTERN_NODE: {
-                    yp_hash_pattern_node_t *pattern_node = (yp_hash_pattern_node_t *)inner;
-                    pattern_node->base.location.start = node->location.start;
-                    pattern_node->base.location.end = closing.end;
-
-                    pattern_node->constant = node;
-                    pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
-                    pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
-
-                    node = (yp_node_t *) pattern_node;
-                    break;
-                }
-                default: {
-                    yp_array_pattern_node_t *pattern_node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
-                    yp_array_pattern_node_requireds_append(pattern_node, inner);
-                    node = (yp_node_t *)pattern_node;
-                    break;
-                }
-            }
-        } else {
-            // If there was no inner pattern, then we have something like Foo() or
-            // Foo[]. In that case we'll create an array pattern with no requireds.
-            node = (yp_node_t *)yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
-        }
+    if (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_LEFT, YP_TOKEN_PARENTHESIS_LEFT)) {
+        return node;
     }
 
-    return node;
+    yp_token_t opening;
+    yp_token_t closing;
+    yp_node_t *inner = NULL;
+
+    if (accept(parser, YP_TOKEN_BRACKET_LEFT)) {
+        opening = parser->previous;
+        accept(parser, YP_TOKEN_NEWLINE);
+
+        if (!accept(parser, YP_TOKEN_BRACKET_RIGHT)) {
+            inner = parse_pattern(parser, true, "Expected a pattern expression after the [ operator.");
+            accept(parser, YP_TOKEN_NEWLINE);
+            expect(parser, YP_TOKEN_BRACKET_RIGHT, "Expected a ] to close the pattern expression.");
+        }
+
+        closing = parser->previous;
+    } else {
+        parser_lex(parser);
+        opening = parser->previous;
+
+        if (!accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
+            inner = parse_pattern(parser, true, "Expected a pattern expression after the ( operator.");
+            expect(parser, YP_TOKEN_PARENTHESIS_RIGHT, "Expected a ) to close the pattern expression.");
+        }
+
+        closing = parser->previous;
+    }
+
+    if (!inner) {
+        // If there was no inner pattern, then we have something like Foo() or
+        // Foo[]. In that case we'll create an array pattern with no requireds.
+        return (yp_node_t *) yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
+    }
+
+    // Now that we have the inner pattern, check to see if it's an array, find,
+    // or hash pattern. If it is, then we'll attach our constant path to it if
+    // it doesn't already have a constant. If it's not one of those node types
+    // or it does have a constant, then we'll create an array pattern.
+    switch (inner->type) {
+        case YP_NODE_ARRAY_PATTERN_NODE: {
+            yp_array_pattern_node_t *pattern_node = (yp_array_pattern_node_t *) inner;
+
+            if (pattern_node->constant == NULL) {
+                pattern_node->base.location.start = node->location.start;
+                pattern_node->base.location.end = closing.end;
+
+                pattern_node->constant = node;
+                pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+                pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+                return (yp_node_t *) pattern_node;
+            }
+
+            break;
+        }
+        case YP_NODE_FIND_PATTERN_NODE: {
+            yp_find_pattern_node_t *pattern_node = (yp_find_pattern_node_t *) inner;
+
+            if (pattern_node->constant == NULL) {
+                pattern_node->base.location.start = node->location.start;
+                pattern_node->base.location.end = closing.end;
+
+                pattern_node->constant = node;
+                pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+                pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+                return (yp_node_t *) pattern_node;
+            }
+
+            break;
+        }
+        case YP_NODE_HASH_PATTERN_NODE: {
+            yp_hash_pattern_node_t *pattern_node = (yp_hash_pattern_node_t *) inner;
+
+            if (pattern_node->constant == NULL) {
+                pattern_node->base.location.start = node->location.start;
+                pattern_node->base.location.end = closing.end;
+
+                pattern_node->constant = node;
+                pattern_node->opening_loc = (yp_location_t) { .start = opening.start, .end = opening.end };
+                pattern_node->closing_loc = (yp_location_t) { .start = closing.start, .end = closing.end };
+
+                return (yp_node_t *) pattern_node;
+            }
+
+            break;
+        }
+        default:
+            break;
+    }
+
+    // If we got here, then we didn't return one of the inner patterns by
+    // attaching its constant. In this case we'll create an array pattern and
+    // attach our constant to it.
+    yp_array_pattern_node_t *pattern_node = yp_array_pattern_node_constant_create(parser, node, &opening, &closing);
+    yp_array_pattern_node_requireds_append(pattern_node, inner);
+    return (yp_node_t *) pattern_node;
 }
 
 // Parse a rest pattern.

@@ -14,9 +14,11 @@
 /lib/yarp/yarp.*
 /lib/yarp.bundle
 /lib/yarp.so
-test.c
 test.rb
 *.dSYM
+
+test.c
+a.out
 
 /ext/yarp/api_node.c
 /include/yarp/ast.h
