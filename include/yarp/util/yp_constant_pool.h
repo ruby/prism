@@ -16,24 +16,6 @@
 typedef uint32_t yp_constant_id_t;
 
 typedef struct {
-    yp_constant_id_t *ids;
-    size_t size;
-    size_t capacity;
-} yp_constant_id_list_t;
-
-// Initialize a list of constant ids.
-void yp_constant_id_list_init(yp_constant_id_list_t *list);
-
-// Append a constant id to a list of constant ids.
-void yp_constant_id_list_append(yp_constant_id_list_t *list, yp_constant_id_t id);
-
-// Checks if the current constant id list includes the given constant id.
-bool yp_constant_id_list_includes(yp_constant_id_list_t *list, yp_constant_id_t id);
-
-// Free the memory associated with a list of constant ids.
-void yp_constant_id_list_free(yp_constant_id_list_t *list);
-
-typedef struct {
     yp_constant_id_t id;
     const char *start;
     size_t length;

@@ -1,45 +1,5 @@
 #include "yarp/util/yp_constant_pool.h"
 
-// Initialize a list of constant ids.
-void
-yp_constant_id_list_init(yp_constant_id_list_t *list) {
-    list->ids = NULL;
-    list->size = 0;
-    list->capacity = 0;
-}
-
-// Append a constant id to a list of constant ids.
-void
-yp_constant_id_list_append(yp_constant_id_list_t *list, yp_constant_id_t id) {
-    if (list->size >= list->capacity) {
-        size_t next_capacity = list->capacity == 0 ? 8 : list->capacity * 2;
-        yp_constant_id_t *next_ids = (yp_constant_id_t *) realloc(list->ids, sizeof(yp_constant_id_t) * next_capacity);
-
-        if (next_ids == NULL) return;
-        list->capacity = next_capacity;
-        list->ids = next_ids;
-    }
-
-    list->ids[list->size++] = id;
-}
-
-// Checks if the current constant id list includes the given constant id.
-bool
-yp_constant_id_list_includes(yp_constant_id_list_t *list, yp_constant_id_t id) {
-    for (size_t index = 0; index < list->size; index++) {
-        if (list->ids[index] == id) return true;
-    }
-    return false;
-}
-
-// Free the memory associated with a list of constant ids.
-void
-yp_constant_id_list_free(yp_constant_id_list_t *list) {
-    if (list->ids != NULL) {
-        free(list->ids);
-    }
-}
-
 // A relatively simple hash function (djb2) that is used to hash strings. We are
 // optimizing here for simplicity and speed.
 static inline size_t

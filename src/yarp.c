@@ -551,6 +551,9 @@ yp_unescape_token(yp_parser_t *parser, yp_string_t *string, const yp_token_t *to
     yp_unescape_manipulate_string(token->start, size, backslash, string, unescape_type, &parser->error_list);
 }
 
+// An empty list of constant ids. Used in initialization functions.
+#define YP_EMPTY_CONSTANT_ID_LIST ((yp_constant_id_list_t) { .ids = NULL, .size = 0, .capacity = 0 })
+
 // An empty list of locations. Used in initialization functions.
 #define YP_EMPTY_LOCATION_LIST ((yp_location_list_t) { .locations = NULL, .size = 0, .capacity = 0 })
 
@@ -559,6 +562,25 @@ yp_unescape_token(yp_parser_t *parser, yp_string_t *string, const yp_token_t *to
 
 // Allocate a new node of the given type.
 #define YP_NODE_ALLOC(parser, type) (type *) yp_malloc(parser, sizeof(type))
+
+// Checks if the current constant id list includes the given constant id.
+static bool
+yp_constant_id_list_includes(yp_constant_id_list_t *list, yp_constant_id_t id) {
+    for (size_t index = 0; index < list->size; index++) {
+        if (list->ids[index] == id) return true;
+    }
+    return false;
+}
+
+// Append a constant id to a list of constant ids.
+static inline void
+yp_constant_id_list_append(yp_parser_t *parser, yp_constant_id_list_t *list, yp_constant_id_t id) {
+    if (list->size >= list->capacity) {
+        list->capacity = list->capacity == 0 ? 8 : list->capacity * 2;
+        list->ids = (yp_constant_id_t *) yp_realloc(parser, list->ids, sizeof(yp_constant_id_t) * list->capacity);
+    }
+    list->ids[list->size++] = id;
+}
 
 // Append a token to the given list.
 static void
@@ -4228,8 +4250,12 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_lo
 static void
 yp_parser_scope_push(yp_parser_t *parser, bool closed) {
     yp_scope_t *scope = (yp_scope_t *) yp_malloc(parser, sizeof(yp_scope_t));
-    *scope = (yp_scope_t) { .closed = closed, .previous = parser->current_scope };
-    yp_constant_id_list_init(&scope->locals);
+    *scope = (yp_scope_t) {
+        .locals = YP_EMPTY_CONSTANT_ID_LIST,
+        .closed = closed,
+        .previous = parser->current_scope
+    };
+
     parser->current_scope = scope;
 }
 
@@ -4257,7 +4283,7 @@ yp_parser_local_add_location(yp_parser_t *parser, const char *start, const char 
     yp_constant_id_t constant_id = yp_parser_constant_id_location(parser, start, end);
 
     if (!yp_constant_id_list_includes(&parser->current_scope->locals, constant_id)) {
-        yp_constant_id_list_append(&parser->current_scope->locals, constant_id);
+        yp_constant_id_list_append(parser, &parser->current_scope->locals, constant_id);
     }
 }
 
@@ -12966,6 +12992,7 @@ yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
 #undef YP_CASE_PRIMITIVE
 #undef YP_CASE_WRITABLE
 #undef YP_EMPTY_ARGUMENTS
+#undef YP_EMPTY_CONSTANT_ID_LIST
 #undef YP_EMPTY_LOCATION_LIST
 #undef YP_EMPTY_NODE_LIST
 #undef YP_STRINGIZE
