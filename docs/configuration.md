@@ -9,6 +9,7 @@ A lot of code in YARP's repository is templated from a single configuration file
 * `java/org/yarp/Nodes.java` - for defining the nodes in Java
 * `lib/yarp/node.rb` - for defining the nodes in Ruby
 * `lib/yarp/serialize.rb` - for defining how to deserialize the nodes in Ruby
+* `src/memsize.c` - for defining how to calculate the size in memory of the nodes in C
 * `src/node.c` - for defining how to free the nodes in C and calculate the size in memory in C
 * `src/prettyprint.c` - for defining how to prettyprint the nodes in C
 * `src/serialize.c` - for defining how to serialize the nodes in C

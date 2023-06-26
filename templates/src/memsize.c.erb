@@ -1,0 +1,55 @@
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
+#include "yarp/memsize.h"
+
+// Calculate the size of a given node in bytes.
+static void
+yp_node_memsize_each(yp_node_t *node, yp_memsize_t *memsize) {
+    memsize->node_count++;
+
+    switch (node->type) {
+        <%- nodes.each do |node| -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
+        case <%= node.type %>: {
+            memsize->memsize += sizeof(yp_<%= node.human %>_t);
+            <%- if node.params.any? { |param| [NodeParam, OptionalNodeParam, StringParam, NodeListParam, LocationListParam, ConstantListParam].include?(param.class) } -%>
+            yp_<%= node.human %>_t *cast = (yp_<%= node.human %>_t *) node;
+            <%- node.params.each do |param| -%>
+            <%- case param -%>
+            <%- when ConstantParam, UInt32Param, LocationParam, OptionalLocationParam -%>
+            <%- when NodeParam -%>
+            yp_node_memsize_each((yp_node_t *) cast-><%= param.name %>, memsize);
+            <%- when OptionalNodeParam -%>
+            if (cast-><%= param.name %> != NULL) {
+                yp_node_memsize_each((yp_node_t *) cast-><%= param.name %>, memsize);
+            }
+            <%- when StringParam -%>
+            if (cast-><%= param.name %>.type == YP_STRING_OWNED) {
+                memsize->memsize += yp_string_length(&cast-><%= param.name %>);
+            }
+            <%- when NodeListParam -%>
+            memsize->memsize += cast-><%= param.name %>.capacity * sizeof(yp_node_t *);
+            for (size_t index = 0; index < cast-><%= param.name %>.size; index++) {
+                yp_node_memsize_each((yp_node_t *) cast-><%= param.name %>.nodes[index], memsize);
+            }
+            <%- when LocationListParam -%>
+            memsize->memsize += cast-><%= param.name %>.capacity * sizeof(yp_location_t);
+            <%- when ConstantListParam -%>
+            memsize->memsize += cast-><%= param.name %>.capacity * sizeof(yp_constant_id_t);
+            <%- else -%>
+            <%- raise -%>
+            <%- end -%>
+            <%- end -%>
+            <%- end -%>
+            break;
+        }
+        <%- end -%>
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
+    }
+}
+
+// Calculates the memory footprint of a given node.
+void
+yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize) {
+    *memsize = (yp_memsize_t) { .memsize = 0, .node_count = 0 };
+    yp_node_memsize_each(node, memsize);
+}

@@ -4,6 +4,7 @@
 #include "yarp/defines.h"
 #include "yarp/ast.h"
 #include "yarp/diagnostic.h"
+#include "yarp/memsize.h"
 #include "yarp/node.h"
 #include "yarp/pack.h"
 #include "yarp/parser.h"

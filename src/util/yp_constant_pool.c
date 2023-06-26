@@ -32,12 +32,6 @@ yp_constant_id_list_includes(yp_constant_id_list_t *list, yp_constant_id_t id) {
     return false;
 }
 
-// Get the memory size of a list of constant ids.
-size_t
-yp_constant_id_list_memsize(yp_constant_id_list_t *list) {
-    return sizeof(yp_constant_id_list_t) + (list->capacity * sizeof(yp_constant_id_t));
-}
-
 // Free the memory associated with a list of constant ids.
 void
 yp_constant_id_list_free(yp_constant_id_list_t *list) {

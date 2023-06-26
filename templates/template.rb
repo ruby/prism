@@ -242,6 +242,7 @@ TEMPLATES = [
   "java/org/yarp/AbstractNodeVisitor.java",
   "lib/yarp/node.rb",
   "lib/yarp/serialize.rb",
+  "src/memsize.c",
   "src/node.c",
   "src/prettyprint.c",
   "src/serialize.c",

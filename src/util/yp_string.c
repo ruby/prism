@@ -36,16 +36,6 @@ yp_string_constant_init(yp_string_t *string, const char *source, size_t length) 
     };
 }
 
-// Returns the memory size associated with the string.
-size_t
-yp_string_memsize(const yp_string_t *string) {
-    size_t size = sizeof(yp_string_t);
-    if (string->type == YP_STRING_OWNED) {
-        size += string->as.owned.length;
-    }
-    return size;
-}
-
 // Returns the length associated with the string.
 YP_EXPORTED_FUNCTION size_t
 yp_string_length(const yp_string_t *string) {
