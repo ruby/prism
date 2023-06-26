@@ -8,18 +8,19 @@ yp_constant_id_list_init(yp_constant_id_list_t *list) {
     list->capacity = 0;
 }
 
-// Append a constant id to a list of constant ids. Returns false if any
-// potential reallocations fail.
-bool
+// Append a constant id to a list of constant ids.
+void
 yp_constant_id_list_append(yp_constant_id_list_t *list, yp_constant_id_t id) {
     if (list->size >= list->capacity) {
-        list->capacity = list->capacity == 0 ? 8 : list->capacity * 2;
-        list->ids = (yp_constant_id_t *) realloc(list->ids, sizeof(yp_constant_id_t) * list->capacity);
-        if (list->ids == NULL) return false;
+        size_t next_capacity = list->capacity == 0 ? 8 : list->capacity * 2;
+        yp_constant_id_t *next_ids = (yp_constant_id_t *) realloc(list->ids, sizeof(yp_constant_id_t) * next_capacity);
+
+        if (next_ids == NULL) return;
+        list->capacity = next_capacity;
+        list->ids = next_ids;
     }
 
     list->ids[list->size++] = id;
-    return true;
 }
 
 // Checks if the current constant id list includes the given constant id.
@@ -63,6 +64,9 @@ yp_constant_pool_hash(const char *start, size_t length) {
 static inline bool
 yp_constant_pool_resize(yp_constant_pool_t *pool) {
     size_t next_capacity = pool->capacity * 2;
+
+    // We are using calloc here because it zeroes out the memory, which in our
+    // case we're using to mean that the slot is empty.
     yp_constant_t *next_constants = calloc(next_capacity, sizeof(yp_constant_t));
     if (next_constants == NULL) return false;
 
@@ -96,14 +100,15 @@ yp_constant_pool_resize(yp_constant_pool_t *pool) {
 }
 
 // Initialize a new constant pool with a given capacity.
-bool
+void
 yp_constant_pool_init(yp_constant_pool_t *pool, size_t capacity) {
-    pool->constants = calloc(capacity, sizeof(yp_constant_t));
-    if (pool->constants == NULL) return false;
+    yp_constant_t *constants = (yp_constant_t *) calloc(capacity, sizeof(yp_constant_t));
 
-    pool->size = 0;
-    pool->capacity = capacity;
-    return true;
+    if (constants == NULL) {
+        *pool = (yp_constant_pool_t) { .constants = NULL, .size = 0, .capacity = 0 };
+    } else {
+        *pool = (yp_constant_pool_t) { .constants = constants, .size = 0, .capacity = capacity };
+    }
 }
 
 // Insert a constant into a constant pool. Returns the id of the constant, or 0

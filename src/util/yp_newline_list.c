@@ -2,10 +2,10 @@
 
 // Initialize a new newline list with the given capacity. Returns true if the
 // allocation of the offsets succeeds, otherwise returns false.
-bool
+void
 yp_newline_list_init(yp_newline_list_t *list, const char *start, size_t capacity) {
-    list->offsets = (size_t *) calloc(capacity, sizeof(size_t));
-    if (list->offsets == NULL) return false;
+    list->offsets = (size_t *) malloc(sizeof(size_t) * capacity);
+    if (list->offsets == NULL) return;
 
     list->start = start;
 
@@ -16,24 +16,24 @@ yp_newline_list_init(yp_newline_list_t *list, const char *start, size_t capacity
 
     list->last_index = 0;
     list->last_offset = 0;
-
-    return true;
 }
 
 // Append a new offset to the newline list. Returns true if the reallocation of
 // the offsets succeeds (if one was necessary), otherwise returns false.
-bool
+void
 yp_newline_list_append(yp_newline_list_t *list, const char *cursor) {
+    assert(cursor >= list->start);
+
     if (list->size == list->capacity) {
-        list->capacity = list->capacity * 3 / 2;
-        list->offsets = (size_t *) realloc(list->offsets, list->capacity * sizeof(size_t));
-        if (list->offsets == NULL) return false;
+        size_t next_capacity = list->capacity < 4 ? 4 : list->capacity * 3 / 2;
+        size_t *next_offsets = (size_t *) realloc(list->offsets, next_capacity * sizeof(size_t));
+
+        if (next_offsets == NULL) return;
+        list->capacity = next_capacity;
+        list->offsets = next_offsets;
     }
 
-    assert(cursor >= list->start);
     list->offsets[list->size++] = (size_t) (cursor - list->start);
-
-    return true;
 }
 
 // Returns the line and column of the given offset, assuming we don't have any

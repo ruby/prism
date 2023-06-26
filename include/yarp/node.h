@@ -10,9 +10,6 @@ void yp_location_list_append(yp_location_list_t *list, const yp_token_t *token);
 // Append a new node onto the end of the node list.
 void yp_node_list_append(yp_node_list_t *list, yp_node_t *node);
 
-// Clear the node but preserves the location.
-void yp_node_clear(yp_node_t *node);
-
 // Deallocate a node and all of its children.
 YP_EXPORTED_FUNCTION void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 

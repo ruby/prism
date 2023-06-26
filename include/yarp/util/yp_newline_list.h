@@ -35,13 +35,11 @@ typedef struct {
     size_t column;
 } yp_line_column_t;
 
-// Initialize a new newline list with the given capacity. Returns true if the
-// allocation of the offsets succeeds, otherwise returns false.
-bool yp_newline_list_init(yp_newline_list_t *list, const char *start, size_t capacity);
+// Initialize a new newline list with the given capacity.
+void yp_newline_list_init(yp_newline_list_t *list, const char *start, size_t capacity);
 
-// Append a new offset to the newline list. Returns true if the reallocation of
-// the offsets succeeds (if one was necessary), otherwise returns false.
-bool yp_newline_list_append(yp_newline_list_t *list, const char *cursor);
+// Append a new offset to the newline list.
+void yp_newline_list_append(yp_newline_list_t *list, const char *cursor);
 
 // Returns the line and column of the given offset. If the offset is not in the
 // list, the line and column of the closest offset less than the given offset

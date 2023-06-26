@@ -13,7 +13,7 @@ yp_buffer_init(yp_buffer_t *buffer) {
 }
 
 // Append the given amount of space to the buffer.
-static inline void
+static inline bool
 yp_buffer_append_length(yp_buffer_t *buffer, size_t length) {
     size_t next_length = buffer->length + length;
 
@@ -23,23 +23,27 @@ yp_buffer_append_length(yp_buffer_t *buffer, size_t length) {
         } while (next_length > buffer->capacity);
 
         buffer->value = realloc(buffer->value, buffer->capacity);
+        if (buffer->value == NULL) return false;
     }
 
     buffer->length = next_length;
+    return true;
 }
 
 // Append a generic pointer to memory to the buffer.
 static inline void
 yp_buffer_append(yp_buffer_t *buffer, const void *source, size_t length) {
-    yp_buffer_append_length(buffer, length);
-    memcpy(buffer->value + (buffer->length - length), source, length);
+    if (yp_buffer_append_length(buffer, length)) {
+        memcpy(buffer->value + (buffer->length - length), source, length);
+    }
 }
 
 // Append the given amount of space as zeroes to the buffer.
 void
 yp_buffer_append_zeroes(yp_buffer_t *buffer, size_t length) {
-    yp_buffer_append_length(buffer, length);
-    memset(buffer->value + (buffer->length - length), 0, length);
+    if (yp_buffer_append_length(buffer, length)) {
+        memset(buffer->value + (buffer->length - length), 0, length);
+    }
 }
 
 // Append a string to the buffer.
@@ -74,5 +78,7 @@ yp_buffer_append_u32(yp_buffer_t *buffer, uint32_t value) {
 // Free the memory associated with the buffer.
 void
 yp_buffer_free(yp_buffer_t *buffer) {
-    free(buffer->value);
+    if (buffer->value != NULL) {
+        free(buffer->value);
+    }
 }
