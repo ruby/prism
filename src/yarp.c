@@ -5879,19 +5879,21 @@ parser_lex(yp_parser_t *parser) {
                             const char *ident_start = parser->current.end;
                             size_t width = 0;
 
-                            if (quote == YP_HEREDOC_QUOTE_NONE && (width = char_is_identifier(parser, parser->current.end)) == 0) {
+                            if (parser->current.end >= parser->end) {
+                                parser->current.end = end;
+                            } else if (quote == YP_HEREDOC_QUOTE_NONE && (width = char_is_identifier(parser, parser->current.end)) == 0) {
                                 parser->current.end = end;
                             } else {
                                 if (quote == YP_HEREDOC_QUOTE_NONE) {
                                     parser->current.end += width;
 
-                                    while ((width = char_is_identifier(parser, parser->current.end))) {
+                                    while ((parser->current.end < parser->end) && (width = char_is_identifier(parser, parser->current.end))) {
                                         parser->current.end += width;
                                     }
                                 } else {
                                     // If we have quotes, then we're going to go until we find the
                                     // end quote.
-                                    while (parser->current.end < parser->end && quote != (yp_heredoc_quote_t) (*parser->current.end)) {
+                                    while ((parser->current.end < parser->end) && quote != (yp_heredoc_quote_t) (*parser->current.end)) {
                                         parser->current.end++;
                                     }
                                 }
