@@ -299,9 +299,6 @@ typedef struct yp_scope {
 // currently parsing. It also contains the most recent and current token that
 // it's considering.
 struct yp_parser {
-    // The current state of the lexer.
-    yp_lex_state_t lex_state;
-
     // Tracks the current nesting of (), [], and {}.
     int enclosure_nesting;
 
@@ -313,24 +310,23 @@ struct yp_parser {
     // when we are interpolating blocks with braces.
     int brace_nesting;
 
-    // the stack used to determine if a do keyword belongs to the predicate of a
-    // while, until, or for loop
+    // The current state of the lexer.
+    yp_lex_state_t lex_state;
+
+    // The stack used to determine if a do keyword belongs to the predicate of a
+    // while, until, or for loop.
     yp_state_stack_t do_loop_stack;
 
-    // the stack used to determine if a do keyword belongs to the beginning of a
-    // block
+    // The stack used to determine if a do keyword belongs to the beginning of a
+    // block.
     yp_state_stack_t accepts_block_stack;
 
-    struct {
-        yp_lex_mode_t *current;                 // the current mode of the lexer
-        yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes
-        size_t index;                           // the current index into the lexer mode stack
-    } lex_modes;
+    // The pointer to the start of the source.
+    const char *start;
 
-    const char *start;   // the pointer to the start of the source
-    const char *end;     // the pointer to the end of the source
-    yp_token_t previous; // the previous token we were considering
-    yp_token_t current;  // the current token we're considering
+    // This pointer indicates where a comment must start if it is to be
+    // considered an encoding comment.
+    const char *encoding_comment_start;
 
     // This is a special field set on the parser when we need the parser to jump
     // to a specific location when lexing the next token, as opposed to just
@@ -342,6 +338,18 @@ struct yp_parser {
     // will be moved forward to the end of that heredoc. If no heredocs are
     // found on a line then this is NULL.
     const char *heredoc_end;
+
+    // The pointer to the end of the source.
+    const char *end;
+
+    struct {
+        yp_lex_mode_t *current;                 // the current mode of the lexer
+        yp_lex_mode_t stack[YP_LEX_STACK_SIZE]; // the stack of lexer modes
+        size_t index;                           // the current index into the lexer mode stack
+    } lex_modes;
+
+    yp_token_t previous; // the previous token we were considering
+    yp_token_t current;  // the current token we're considering
 
     yp_list_t comment_list;             // the list of comments that have been found while parsing
     yp_list_t warning_list;             // the list of warnings that have been found while parsing
@@ -364,13 +372,14 @@ struct yp_parser {
     // set that to our encoding and use it to parse identifiers.
     yp_encoding_decode_callback_t encoding_decode_callback;
 
-    // This pointer indicates where a comment must start if it is to be
-    // considered an encoding comment.
-    const char *encoding_comment_start;
-
     // This is an optional callback that can be attached to the parser that will
     // be called whenever a new token is lexed by the parser.
     yp_lex_callback_t *lex_callback;
+
+    // This is an optional callback to call when we need to allocate memory
+    // during parsing. This is used with CRuby in particular to call xmalloc
+    // such that it runs GC if it fails to allocate memory.
+    void *(*malloc_callback)(size_t);
 
     // This is the path of the file being parsed
     // We use the filepath when constructing SourceFileNodes

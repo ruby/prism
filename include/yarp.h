@@ -50,6 +50,13 @@ YP_EXPORTED_FUNCTION void yp_parser_register_encoding_changed_callback(yp_parser
 // parse identifiers.
 YP_EXPORTED_FUNCTION void yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback);
 
+// Register a callback for when memory should be allocated. This is used in our
+// case with CRuby in particular to call xmalloc such that it runs GC if it
+// fails to allocate memory. It is expected that whatever callback is given will
+// never return NULL.
+YP_EXPORTED_FUNCTION void
+yp_parser_register_malloc_callback(yp_parser_t *parser, void *(*malloc_callback)(size_t));
+
 // Free any memory associated with the given parser.
 YP_EXPORTED_FUNCTION void yp_parser_free(yp_parser_t *parser);
 

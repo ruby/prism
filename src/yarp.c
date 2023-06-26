@@ -161,6 +161,38 @@ debug_token(yp_token_t * token) {
 #endif
 
 /******************************************************************************/
+/* Memory-related functions                                                   */
+/******************************************************************************/
+
+// Allocate a certain amount of memory. If the parser has a malloc callback
+// registered, then we'll use that. Otherwise we'll just use malloc. This
+// function should never return NULL.
+static void *
+yp_malloc(yp_parser_t *parser, size_t size) {
+    void *memory;
+
+    if (parser->malloc_callback != NULL) {
+        memory = parser->malloc_callback(size);
+
+        // If the consumer of this library registered a malloc callback, it is
+        // assumed that it returns a non-null pointer. If it does not, then we
+        // should crash.
+        assert(memory != NULL);
+    } else {
+        memory = malloc(size);
+
+        // If the system fails to allocate memory and the consumer of this
+        // library did not register a malloc callback, then we should crash.
+        if (memory == NULL) {
+            perror("malloc failed to allocate memory");
+            exit(1);
+        }
+    }
+
+    return memory;
+}
+
+/******************************************************************************/
 /* Lex mode manipulations                                                     */
 /******************************************************************************/
 
@@ -200,26 +232,22 @@ lex_mode_terminator(const char start) {
 // Push a new lex state onto the stack. If we're still within the pre-allocated
 // space of the lex state stack, then we'll just use a new slot. Otherwise we'll
 // allocate a new pointer and use that.
-static bool
+static void
 lex_mode_push(yp_parser_t *parser, yp_lex_mode_t lex_mode) {
     lex_mode.prev = parser->lex_modes.current;
     parser->lex_modes.index++;
 
     if (parser->lex_modes.index > YP_LEX_STACK_SIZE - 1) {
-        parser->lex_modes.current = (yp_lex_mode_t *) malloc(sizeof(yp_lex_mode_t));
-        if (parser->lex_modes.current == NULL) return false;
-
+        parser->lex_modes.current = (yp_lex_mode_t *) yp_malloc(parser, sizeof(yp_lex_mode_t));
         *parser->lex_modes.current = lex_mode;
     } else {
         parser->lex_modes.stack[parser->lex_modes.index] = lex_mode;
         parser->lex_modes.current = &parser->lex_modes.stack[parser->lex_modes.index];
     }
-
-    return true;
 }
 
 // Push on a new list lex mode.
-static inline bool
+static inline void
 lex_mode_push_list(yp_parser_t *parser, bool interpolation, char delimiter) {
     char incrementor = lex_mode_incrementor(delimiter);
     char terminator = lex_mode_terminator(delimiter);
@@ -254,11 +282,11 @@ lex_mode_push_list(yp_parser_t *parser, bool interpolation, char delimiter) {
         breakpoints[index++] = incrementor;
     }
 
-    return lex_mode_push(parser, lex_mode);
+    lex_mode_push(parser, lex_mode);
 }
 
 // Push on a new regexp lex mode.
-static inline bool
+static inline void
 lex_mode_push_regexp(yp_parser_t *parser, char incrementor, char terminator) {
     yp_lex_mode_t lex_mode = {
         .mode = YP_LEX_REGEXP,
@@ -283,11 +311,11 @@ lex_mode_push_regexp(yp_parser_t *parser, char incrementor, char terminator) {
         breakpoints[4] = incrementor;
     }
 
-    return lex_mode_push(parser, lex_mode);
+    lex_mode_push(parser, lex_mode);
 }
 
 // Push on a new string lex mode.
-static inline bool
+static inline void
 lex_mode_push_string(yp_parser_t *parser, bool interpolation, bool label_allowed, char incrementor, char terminator) {
     yp_lex_mode_t lex_mode = {
         .mode = YP_LEX_STRING,
@@ -321,7 +349,7 @@ lex_mode_push_string(yp_parser_t *parser, bool interpolation, bool label_allowed
         breakpoints[index++] = incrementor;
     }
 
-    return lex_mode_push(parser, lex_mode);
+    lex_mode_push(parser, lex_mode);
 }
 
 // Pop the current lex state off the stack. If we're within the pre-allocated
@@ -499,14 +527,7 @@ yp_statements_node_create(yp_parser_t *parser);
 static void
 yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement);
 
-// This function is here to allow us a place to extend in the future when we
-// implement our own arena allocation.
-static inline void *
-yp_alloc_node(YP_ATTRIBUTE_UNUSED yp_parser_t *parser, size_t size) {
-    return malloc(size);
-}
-
-#define YP_ALLOC_NODE(parser, type) (type *) yp_alloc_node(parser, sizeof(type)); if (node == NULL) return NULL
+#define YP_ALLOC_NODE(parser, type) (type *) yp_malloc(parser, sizeof(type))
 
 // Allocate a new MissingNode node.
 static yp_missing_node_t *
@@ -4125,16 +4146,12 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_lo
 /******************************************************************************/
 
 // Allocate and initialize a new scope. Push it onto the scope stack.
-static bool
+static void
 yp_parser_scope_push(yp_parser_t *parser, bool closed) {
-    yp_scope_t *scope = (yp_scope_t *) malloc(sizeof(yp_scope_t));
-    if (scope == NULL) return false;
-
+    yp_scope_t *scope = (yp_scope_t *) yp_malloc(parser, sizeof(yp_scope_t));
     *scope = (yp_scope_t) { .closed = closed, .previous = parser->current_scope };
     yp_constant_id_list_init(&scope->locals);
-
     parser->current_scope = scope;
-    return true;
 }
 
 // Check if the current scope has a given local variables.
@@ -4552,11 +4569,9 @@ context_recoverable(yp_parser_t *parser, yp_token_t *token) {
     return false;
 }
 
-static bool
+static void
 context_push(yp_parser_t *parser, yp_context_t context) {
-    yp_context_node_t *context_node = (yp_context_node_t *) malloc(sizeof(yp_context_node_t));
-    if (context_node == NULL) return false;
-
+    yp_context_node_t *context_node = (yp_context_node_t *) yp_malloc(parser, sizeof(yp_context_node_t));
     *context_node = (yp_context_node_t) { .context = context, .prev = NULL };
 
     if (parser->current_context == NULL) {
@@ -4565,8 +4580,6 @@ context_push(yp_parser_t *parser, yp_context_t context) {
         context_node->prev = parser->current_context;
         parser->current_context = context_node;
     }
-
-    return true;
 }
 
 static void
@@ -5288,9 +5301,7 @@ parser_lex_callback(yp_parser_t *parser) {
 // Return a new comment node of the specified type.
 static inline yp_comment_t *
 parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
-    yp_comment_t *comment = (yp_comment_t *) malloc(sizeof(yp_comment_t));
-    if (comment == NULL) return NULL;
-
+    yp_comment_t *comment = (yp_comment_t *) yp_malloc(parser, sizeof(yp_comment_t));
     *comment = (yp_comment_t) {
         .type = type,
         .start = parser->current.start,
@@ -5320,7 +5331,6 @@ lex_embdoc(yp_parser_t *parser) {
 
     // Now, create a comment that is going to be attached to the parser.
     yp_comment_t *comment = parser_comment(parser, YP_COMMENT_EMBDOC);
-    if (comment == NULL) return YP_TOKEN_EOF;
 
     // Now, loop until we find the end of the embedded documentation or the end of
     // the file.
@@ -7538,9 +7548,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                 // the previous method name in, and append an =.
                 size_t length = yp_string_length(&call->name);
 
-                char *name = calloc(length + 2, sizeof(char));
-                if (name == NULL) return NULL;
-
+                char *name = (char *) yp_malloc(parser, length + 2);
                 snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
 
                 // Now switch the name to the new string.
@@ -12738,6 +12746,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
         .pattern_matching_newlines = false,
         .in_keyword_arg = false,
         .filepath_string = filepath_string,
+        .malloc_callback = NULL
     };
 
     yp_state_stack_init(&parser->do_loop_stack);
@@ -12801,6 +12810,14 @@ yp_parser_register_encoding_changed_callback(yp_parser_t *parser, yp_encoding_ch
 YP_EXPORTED_FUNCTION void
 yp_parser_register_encoding_decode_callback(yp_parser_t *parser, yp_encoding_decode_callback_t callback) {
     parser->encoding_decode_callback = callback;
+}
+
+// Register a callback for when memory should be allocated. This is used with
+// CRuby in particular to call xmalloc such that it runs GC if it fails to
+// allocate memory.
+YP_EXPORTED_FUNCTION void
+yp_parser_register_malloc_callback(yp_parser_t *parser, void *(*malloc_callback)(size_t)) {
+    parser->malloc_callback = malloc_callback;
 }
 
 // Free all of the memory associated with the comment list.
