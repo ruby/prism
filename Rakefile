@@ -63,6 +63,7 @@ end
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
 CLOBBER.concat(["configure", "Makefile", "build"])
+CLOBBER << Rake::FileList.new("src/**/*.o")
 CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
