@@ -523,6 +523,34 @@ typedef struct {
 /* Node creation functions                                                    */
 /******************************************************************************/
 
+// Certain nodes have strings associated with them. In all cases, we need to
+// initialize the string on them and unescape the values.
+static void
+yp_unescape_token(yp_parser_t *parser, yp_string_t *string, const yp_token_t *token, yp_unescape_type_t unescape_type) {
+    ptrdiff_t length = token->end - token->start;
+    assert(length >= 0);
+
+    if (unescape_type == YP_UNESCAPE_NONE) {
+        // If we're not unescaping then we can reference the source directly.
+        yp_string_shared_init(string, token->start, token->end);
+        return;
+    }
+
+    size_t size = (size_t) length;
+    const char *backslash = memchr(token->start, '\\', size);
+
+    // Here there are no escapes, so we can reference the source directly.
+    if (backslash == NULL) {
+        yp_string_shared_init(string, token->start, token->end);
+        return;
+    }
+
+    // Otherwise we have to unescape the string. In this case we will allocate
+    // the memory and then call over to our unescape function.
+    yp_string_owned_init(string, (char *) yp_malloc(parser, size), size);
+    yp_unescape_manipulate_string(token->start, size, backslash, string, unescape_type, &parser->error_list);
+}
+
 // An empty list of locations. Used in initialization functions.
 #define YP_EMPTY_LOCATION_LIST ((yp_location_list_t) { .locations = NULL, .size = 0, .capacity = 0 })
 
@@ -3861,10 +3889,7 @@ yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
             yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
             node = yp_symbol_node_create(parser, &opening, &label, &closing);
 
-            ptrdiff_t length = label.end - label.start;
-            assert(length >= 0);
-
-            yp_unescape_manipulate_string(label.start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            yp_unescape_token(parser, &node->unescaped, &label, YP_UNESCAPE_ALL);
             break;
         }
         case YP_TOKEN_MISSING: {
@@ -7100,44 +7125,28 @@ parser_lex(yp_parser_t *parser) {
 static yp_regular_expression_node_t *
 yp_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_regular_expression_node_t *node = yp_regular_expression_node_create(parser, opening, content, closing);
-
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
-
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_token(parser, &node->unescaped, content, unescape_type);
     return node;
 }
 
 static yp_symbol_node_t *
 yp_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_symbol_node_t *node = yp_symbol_node_create(parser, opening, content, closing);
-
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
-
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_token(parser, &node->unescaped, content, unescape_type);
     return node;
 }
 
 static yp_string_node_t *
 yp_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_string_node_t *node = yp_string_node_create(parser, opening, content, closing);
-
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
-
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_token(parser, &node->unescaped, content, unescape_type);
     return node;
 }
 
 static yp_x_string_node_t *
 yp_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
     yp_x_string_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
-
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
-
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+    yp_unescape_token(parser, &node->unescaped, content, YP_UNESCAPE_ALL);
     return node;
 }
 

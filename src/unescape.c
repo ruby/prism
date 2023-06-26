@@ -437,30 +437,13 @@ unescape(char *dest, size_t *dest_length, const char *backslash, const char *end
 // \c? or \C-?    delete, ASCII 7Fh (DEL)
 //
 YP_EXPORTED_FUNCTION void
-yp_unescape_manipulate_string(const char *value, size_t length, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
-    if (unescape_type == YP_UNESCAPE_NONE) {
-        // If we're not unescaping then we can reference the source directly.
-        yp_string_shared_init(string, value, value + length);
-        return;
-    }
+yp_unescape_manipulate_string(const char *value, size_t length, const char *backslash, yp_string_t *string, yp_unescape_type_t unescape_type, yp_list_t *error_list) {
+    // Check that we didn't receive YP_UNESCAPE_NONE, as that isn't supported by
+    // this function.
+    assert(unescape_type != YP_UNESCAPE_NONE);
 
-    const char *backslash = memchr(value, '\\', length);
-
-    if (backslash == NULL) {
-        // Here there are no escapes, so we can reference the source directly.
-        yp_string_shared_init(string, value, value + length);
-        return;
-    }
-
-    // Here we have found an escape character, so we need to handle all escapes
-    // within the string.
-    char *allocated = malloc(length);
-    if (allocated == NULL) {
-        yp_diagnostic_list_append(error_list, value, value + length, "Failed to allocate memory for unescaping.");
-        return;
-    }
-
-    yp_string_owned_init(string, allocated, length);
+    // Assert that the type of the given string is owned.
+    assert(string->type == YP_STRING_OWNED);
 
     // This is the memory address where we're putting the unescaped string.
     char *dest = string->as.owned.source;
