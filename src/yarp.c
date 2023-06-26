@@ -4342,22 +4342,53 @@ match(yp_parser_t *parser, char value) {
     return false;
 }
 
+// Skip to the next newline character or NUL byte.
+static inline const char *
+next_newline(const char *cursor, ptrdiff_t length) {
+    assert(length >= 0);
+
+    // Note that it's okay for us to use memchr here to look for \n because none
+    // of the encodings that we support have \n as a component of a multi-byte
+    // character.
+    return memchr(cursor, '\n', (size_t) length);
+}
+
+// Find the start of the encoding comment. This is effectively an inlined
+// version of strnstr with some modifications.
+static inline const char *
+parser_lex_encoding_comment_start(const char *cursor, ptrdiff_t remaining) {
+    assert(remaining >= 0);
+    size_t length = (size_t) remaining;
+
+    size_t key_length = strlen("coding:");
+    if (key_length > length) return NULL;
+
+    const char *cursor_limit = cursor + length - key_length + 1;
+    while ((cursor = memchr(cursor, 'c', (size_t) (cursor_limit - cursor))) != NULL) {
+        if (
+            (strncmp(cursor, "coding", key_length - 1) == 0) &&
+            (cursor[key_length - 1] == ':' || cursor[key_length - 1] == '=')
+        ) {
+            return cursor + key_length;
+        }
+
+        cursor++;
+    }
+
+    return NULL;
+}
+
 // Here we're going to check if this is a "magic" comment, and perform whatever
 // actions are necessary for it here.
 static void
 parser_lex_encoding_comment(yp_parser_t *parser) {
     const char *start = parser->current.start + 1;
-    const char *end = memchr(start, '\n', (size_t) (parser->end - start));
+    const char *end = next_newline(start, parser->end - start);
     if (end == NULL) end = parser->end;
 
     // These are the patterns we're going to match to find the encoding comment.
     // This is definitely not complete or even really correct.
-    const char *encoding_start = NULL;
-    if ((encoding_start = yp_strnstr(start, "coding:", (size_t) (end - start))) != NULL) {
-        encoding_start += 7;
-    } else if ((encoding_start = yp_strnstr(start, "coding=", (size_t) (end - start))) != NULL) {
-        encoding_start += 7;
-    }
+    const char *encoding_start = parser_lex_encoding_comment_start(start, end - start);
 
     // If we didn't find anything that matched our patterns, then return. Note
     // that this does a _very_ poor job of actually finding the encoding, and
@@ -5275,7 +5306,7 @@ parser_comment(yp_parser_t *parser, yp_comment_type_t type) {
 static yp_token_type_t
 lex_embdoc(yp_parser_t *parser) {
     // First, lex out the EMBDOC_BEGIN token.
-    const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
+    const char *newline = next_newline(parser->current.end, parser->end - parser->current.end);
 
     if (newline == NULL) {
         parser->current.end = parser->end;
@@ -5300,7 +5331,7 @@ lex_embdoc(yp_parser_t *parser) {
         // token here.
         if (strncmp(parser->current.end, "=end", 4) == 0 &&
                 (parser->current.end + 4 == parser->end || yp_char_is_whitespace(parser->current.end[4]))) {
-            const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
+            const char *newline = next_newline(parser->current.end, parser->end - parser->current.end);
 
             if (newline == NULL) {
                 parser->current.end = parser->end;
@@ -5320,7 +5351,7 @@ lex_embdoc(yp_parser_t *parser) {
 
         // Otherwise, we'll parse until the end of the line and return a line of
         // embedded documentation.
-        const char *newline = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
+        const char *newline = next_newline(parser->current.end, parser->end - parser->current.end);
 
         if (newline == NULL) {
             parser->current.end = parser->end;
@@ -5466,9 +5497,9 @@ parser_lex(yp_parser_t *parser) {
                     LEX(YP_TOKEN_EOF);
 
                 case '#': { // comments
-                    const char *ending = memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
+                    const char *ending = next_newline(parser->current.end, parser->end - parser->current.end);
                     while (ending && ending < parser->end && *ending != '\n') {
-                        ending = memchr(ending + 1, '\n', (size_t) (parser->end - ending));
+                        ending = next_newline(ending + 1, parser->end - ending);
                     }
 
                     parser->current.end = ending == NULL ? parser->end : ending + 1;
@@ -5540,7 +5571,7 @@ parser_lex(yp_parser_t *parser) {
                         // Otherwise we'll return a regular newline.
                         if (next_content[0] == '#') {
                             // Here we look for a "." or "&." following a "\n".
-                            const char *following = memchr(next_content, '\n', (size_t) (parser->end - next_content));
+                            const char *following = next_newline(next_content, parser->end - next_content);
 
                             while (following && (following < parser->end)) {
                                 following++;
@@ -5552,7 +5583,7 @@ parser_lex(yp_parser_t *parser) {
 
                                 // If there is a comment, then we need to find the end of the
                                 // comment and continue searching from there.
-                                following = memchr(following, '\n', (size_t) (parser->end - following));
+                                following = next_newline(following, parser->end - following);
                             }
 
                             // If the lex state was ignored, or we hit a '.' or a '&.',
@@ -5882,7 +5913,7 @@ parser_lex(yp_parser_t *parser) {
                                 });
 
                                 if (parser->heredoc_end == NULL) {
-                                    const char *body_start = (const char *) memchr(parser->current.end, '\n', (size_t) (parser->end - parser->current.end));
+                                    const char *body_start = next_newline(parser->current.end, parser->end - parser->current.end);
 
                                     if (body_start == NULL) {
                                         // If there is no newline after the heredoc identifier, then
@@ -9177,7 +9208,7 @@ parse_heredoc_common_whitespace(yp_parser_t *parser, yp_node_list_t *nodes) {
                     common_whitespace = cur_whitespace;
                 }
 
-                cur_char = memchr(cur_char + 1, '\n', (size_t) (parser->end - (cur_char + 1)));
+                cur_char = next_newline(cur_char + 1, parser->end - (cur_char + 1));
                 if (cur_char) cur_char++;
             }
         }
@@ -9252,7 +9283,7 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
 
             // At this point we have dedented all that we need to, so we need to find
             // the next newline.
-            const char *breakpoint = memchr(source_cursor, '\n', (size_t) (source_end - source_cursor));
+            const char *breakpoint = next_newline(source_cursor, source_end - source_cursor);
 
             if (breakpoint == NULL) {
                 // If there isn't another newline, then we can just move the rest of the
@@ -12732,7 +12763,7 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
     } else if (size >= 2 && source[0] == '#' && source[1] == '!') {
         // If the first two bytes of the source are a shebang, then we'll indicate
         // that the encoding comment is at the end of the shebang.
-        const char *encoding_comment_start = memchr(source, '\n', size);
+        const char *encoding_comment_start = next_newline(source, (ptrdiff_t) size);
         if (encoding_comment_start) {
             parser->encoding_comment_start = encoding_comment_start + 1;
         }

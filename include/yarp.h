@@ -23,7 +23,6 @@
 #include "yarp/unescape.h"
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_char.h"
-#include "yarp/util/yp_strnstr.h"
 #include "yarp/util/yp_strpbrk.h"
 
 #define YP_VERSION_MAJOR 0
