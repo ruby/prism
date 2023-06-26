@@ -9251,7 +9251,16 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
         // Get a reference to the string struct that is being held by the string
         // node. This is the value we're going to actual manipulate.
         yp_string_t *string = &((yp_string_node_t *) node)->unescaped;
-        yp_string_ensure_owned(string);
+
+        // Ensure the string is owned. If it is not, then reinitialize it as
+        // owned and copy over the previous source.
+        if (string->type != YP_STRING_OWNED) {
+            size_t length = yp_string_length(string);
+            const char *source = yp_string_source(string);
+
+            yp_string_owned_init(string, yp_malloc(parser, length), length);
+            memcpy(string->as.owned.source, source, length);
+        }
 
         // Now get the bounds of the existing string. We'll use this as a
         // destination to move bytes into. We'll also use it for bounds checking
