@@ -2,18 +2,6 @@
 #define YARP_H
 
 #include "yarp/defines.h"
-
-#include <assert.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#ifndef _WIN32
-#include <strings.h>
-#endif
-
 #include "yarp/ast.h"
 #include "yarp/diagnostic.h"
 #include "yarp/node.h"
@@ -24,6 +12,18 @@
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_char.h"
 #include "yarp/util/yp_strpbrk.h"
+
+#include <assert.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifndef _WIN32
+#include <strings.h>
+#endif
 
 #define YP_VERSION_MAJOR 0
 #define YP_VERSION_MINOR 4
@@ -55,20 +55,6 @@ YP_EXPORTED_FUNCTION void yp_parser_free(yp_parser_t *parser);
 
 // Parse the Ruby source associated with the given parser and return the tree.
 YP_EXPORTED_FUNCTION yp_node_t * yp_parse(yp_parser_t *parser);
-
-// Deallocate a node and all of its children.
-YP_EXPORTED_FUNCTION void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
-
-// This struct stores the information gathered by the yp_node_memsize function.
-// It contains both the memory footprint and additionally metadata about the
-// shape of the tree.
-typedef struct {
-    size_t memsize;
-    size_t node_count;
-} yp_memsize_t;
-
-// Calculates the memory footprint of a given node.
-YP_EXPORTED_FUNCTION void yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize);
 
 // Pretty-prints the AST represented by the given node to the given buffer.
 YP_EXPORTED_FUNCTION void yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);
