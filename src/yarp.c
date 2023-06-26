@@ -495,28 +495,43 @@ typedef struct {
 /* Node creation functions                                                    */
 /******************************************************************************/
 
-// Parse out the options for a regular expression.
-static inline uint32_t
-yp_regular_expression_flags_create(const yp_token_t *closing) {
-    uint32_t flags = 0;
+// An empty list of locations. Used in initialization functions.
+#define YP_EMPTY_LOCATION_LIST ((yp_location_list_t) { .locations = NULL, .size = 0, .capacity = 0 })
 
-    if (closing->type == YP_TOKEN_REGEXP_END) {
-        for (const char *flag = closing->start + 1; flag < closing->end; flag++) {
-            switch (*flag) {
-                case 'i': flags |= YP_REGULAR_EXPRESSION_FLAGS_IGNORE_CASE; break;
-                case 'm': flags |= YP_REGULAR_EXPRESSION_FLAGS_MULTI_LINE; break;
-                case 'x': flags |= YP_REGULAR_EXPRESSION_FLAGS_EXTENDED; break;
-                case 'e': flags |= YP_REGULAR_EXPRESSION_FLAGS_EUC_JP; break;
-                case 'n': flags |= YP_REGULAR_EXPRESSION_FLAGS_ASCII_8BIT; break;
-                case 's': flags |= YP_REGULAR_EXPRESSION_FLAGS_WINDOWS_31J; break;
-                case 'u': flags |= YP_REGULAR_EXPRESSION_FLAGS_UTF_8; break;
-                case 'o': flags |= YP_REGULAR_EXPRESSION_FLAGS_ONCE; break;
-                default: assert(false && "unreachable");
-            }
-        }
+// An empty list of nodes. Used in initialization functions.
+#define YP_EMPTY_NODE_LIST ((yp_node_list_t) { .nodes = NULL, .size = 0, .capacity = 0 })
+
+// Allocate a new node of the given type.
+#define YP_NODE_ALLOC(parser, type) (type *) yp_malloc(parser, sizeof(type))
+
+// Append a token to the given list.
+static void
+yp_location_list_append(yp_location_list_t *list, const yp_token_t *token) {
+    if (list->size == list->capacity) {
+        size_t next_capacity = list->capacity == 0 ? 2 : list->capacity * 2;
+        yp_location_t *next_locations = (yp_location_t *) realloc(list->locations, sizeof(yp_location_t) * next_capacity);
+
+        if (next_locations == NULL) return;
+        list->capacity = next_capacity;
+        list->locations = next_locations;
     }
 
-    return flags;
+    list->locations[list->size++] = (yp_location_t) { .start = token->start, .end = token->end };
+}
+
+// Append a new node onto the end of the node list.
+static void
+yp_node_list_append(yp_node_list_t *list, yp_node_t *node) {
+    if (list->size == list->capacity) {
+        size_t next_capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+        yp_node_t **next_nodes = (yp_node_t **) realloc(list->nodes, sizeof(yp_node_t *) * next_capacity);
+
+        if (next_nodes == NULL) return;
+        list->capacity = next_capacity;
+        list->nodes = next_nodes;
+    }
+
+    list->nodes[list->size++] = node;
 }
 
 // Allocate and initialize a new StatementsNode node.
@@ -527,12 +542,10 @@ yp_statements_node_create(yp_parser_t *parser);
 static void
 yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement);
 
-#define YP_ALLOC_NODE(parser, type) (type *) yp_malloc(parser, sizeof(type))
-
 // Allocate a new MissingNode node.
 static yp_missing_node_t *
 yp_missing_node_create(yp_parser_t *parser, const char *start, const char *end) {
-    yp_missing_node_t *node = YP_ALLOC_NODE(parser, yp_missing_node_t);
+    yp_missing_node_t *node = YP_NODE_ALLOC(parser, yp_missing_node_t);
     *node = (yp_missing_node_t) {{ .type = YP_NODE_MISSING_NODE, .location = { .start = start, .end = end } }};
     return node;
 }
@@ -541,7 +554,7 @@ yp_missing_node_create(yp_parser_t *parser, const char *start, const char *end) 
 static yp_alias_node_t *
 yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *new_name, yp_node_t *old_name) {
     assert(keyword->type == YP_TOKEN_KEYWORD_ALIAS);
-    yp_alias_node_t *node = YP_ALLOC_NODE(parser, yp_alias_node_t);
+    yp_alias_node_t *node = YP_NODE_ALLOC(parser, yp_alias_node_t);
 
     *node = (yp_alias_node_t) {
         {
@@ -562,7 +575,7 @@ yp_alias_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 // Allocate a new AlternationPatternNode node.
 static yp_alternation_pattern_node_t *
 yp_alternation_pattern_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right, const yp_token_t *operator) {
-    yp_alternation_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_alternation_pattern_node_t);
+    yp_alternation_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_alternation_pattern_node_t);
 
     *node = (yp_alternation_pattern_node_t) {
         {
@@ -583,7 +596,7 @@ yp_alternation_pattern_node_create(yp_parser_t *parser, yp_node_t *left, yp_node
 // Allocate and initialize a new and node.
 static yp_and_node_t *
 yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-    yp_and_node_t *node = YP_ALLOC_NODE(parser, yp_and_node_t);
+    yp_and_node_t *node = YP_NODE_ALLOC(parser, yp_and_node_t);
 
     *node = (yp_and_node_t) {
         {
@@ -604,7 +617,7 @@ yp_and_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *opera
 // Allocate an initialize a new arguments node.
 static yp_arguments_node_t *
 yp_arguments_node_create(yp_parser_t *parser) {
-    yp_arguments_node_t *node = YP_ALLOC_NODE(parser, yp_arguments_node_t);
+    yp_arguments_node_t *node = YP_NODE_ALLOC(parser, yp_arguments_node_t);
 
     *node = (yp_arguments_node_t) {
         {
@@ -637,7 +650,7 @@ yp_arguments_node_arguments_append(yp_arguments_node_t *node, yp_node_t *argumen
 // Allocate and initialize a new ArrayNode node.
 static yp_array_node_t *
 yp_array_node_create(yp_parser_t *parser, const yp_token_t *opening) {
-    yp_array_node_t *node = YP_ALLOC_NODE(parser, yp_array_node_t);
+    yp_array_node_t *node = YP_NODE_ALLOC(parser, yp_array_node_t);
 
     *node = (yp_array_node_t) {
         {
@@ -683,7 +696,7 @@ yp_array_node_close_set(yp_array_node_t *node, const yp_token_t *closing) {
 // nodes parameter is guaranteed to have at least two nodes.
 static yp_array_pattern_node_t *
 yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *nodes) {
-    yp_array_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_array_pattern_node_t);
+    yp_array_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_array_pattern_node_t);
 
     *node = (yp_array_pattern_node_t) {
         {
@@ -721,7 +734,7 @@ yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *node
 // Allocate and initialize a new array pattern node from a single rest node.
 static yp_array_pattern_node_t *
 yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
-    yp_array_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_array_pattern_node_t);
+    yp_array_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_array_pattern_node_t);
 
     *node = (yp_array_pattern_node_t) {
         {
@@ -741,7 +754,7 @@ yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
 // and closing tokens.
 static yp_array_pattern_node_t *
 yp_array_pattern_node_constant_create(yp_parser_t *parser, yp_node_t *constant, const yp_token_t *opening, const yp_token_t *closing) {
-    yp_array_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_array_pattern_node_t);
+    yp_array_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_array_pattern_node_t);
 
     *node = (yp_array_pattern_node_t) {
         {
@@ -766,7 +779,7 @@ yp_array_pattern_node_constant_create(yp_parser_t *parser, yp_node_t *constant, 
 // token.
 static yp_array_pattern_node_t *
 yp_array_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-    yp_array_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_array_pattern_node_t);
+    yp_array_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_array_pattern_node_t);
 
     *node = (yp_array_pattern_node_t) {
         {
@@ -795,7 +808,7 @@ yp_array_pattern_node_requireds_append(yp_array_pattern_node_t *node, yp_node_t 
 // Allocate and initialize a new assoc node.
 static yp_assoc_node_t *
 yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *operator, yp_node_t *value) {
-    yp_assoc_node_t *node = YP_ALLOC_NODE(parser, yp_assoc_node_t);
+    yp_assoc_node_t *node = YP_NODE_ALLOC(parser, yp_assoc_node_t);
     const char *end;
 
     if (value != NULL) {
@@ -826,7 +839,7 @@ yp_assoc_node_create(yp_parser_t *parser, yp_node_t *key, const yp_token_t *oper
 static yp_assoc_splat_node_t *
 yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token_t *operator) {
     assert(operator->type == YP_TOKEN_USTAR_STAR);
-    yp_assoc_splat_node_t *node = YP_ALLOC_NODE(parser, yp_assoc_splat_node_t);
+    yp_assoc_splat_node_t *node = YP_NODE_ALLOC(parser, yp_assoc_splat_node_t);
 
     *node = (yp_assoc_splat_node_t) {
         {
@@ -847,7 +860,7 @@ yp_assoc_splat_node_create(yp_parser_t *parser, yp_node_t *value, const yp_token
 static yp_back_reference_read_node_t *
 yp_back_reference_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
     assert(name->type == YP_TOKEN_BACK_REFERENCE);
-    yp_back_reference_read_node_t *node = YP_ALLOC_NODE(parser, yp_back_reference_read_node_t);
+    yp_back_reference_read_node_t *node = YP_NODE_ALLOC(parser, yp_back_reference_read_node_t);
 
     *node = (yp_back_reference_read_node_t) {
         {
@@ -862,7 +875,7 @@ yp_back_reference_read_node_create(yp_parser_t *parser, const yp_token_t *name) 
 // Allocate and initialize new a begin node.
 static yp_begin_node_t *
 yp_begin_node_create(yp_parser_t *parser, const yp_token_t *begin_keyword, yp_statements_node_t *statements) {
-    yp_begin_node_t *node = YP_ALLOC_NODE(parser, yp_begin_node_t);
+    yp_begin_node_t *node = YP_NODE_ALLOC(parser, yp_begin_node_t);
 
     *node = (yp_begin_node_t) {
         {
@@ -917,7 +930,7 @@ yp_begin_node_end_keyword_set(yp_begin_node_t *node, const yp_token_t *end_keywo
 // Allocate and initialize a new BlockArgumentNode node.
 static yp_block_argument_node_t *
 yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
-    yp_block_argument_node_t *node = YP_ALLOC_NODE(parser, yp_block_argument_node_t);
+    yp_block_argument_node_t *node = YP_NODE_ALLOC(parser, yp_block_argument_node_t);
 
     *node = (yp_block_argument_node_t) {
         {
@@ -937,7 +950,7 @@ yp_block_argument_node_create(yp_parser_t *parser, const yp_token_t *operator, y
 // Allocate and initialize a new BlockNode node.
 static yp_block_node_t *
 yp_block_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *opening, yp_block_parameters_node_t *parameters, yp_node_t *statements, const yp_token_t *closing) {
-    yp_block_node_t *node = YP_ALLOC_NODE(parser, yp_block_node_t);
+    yp_block_node_t *node = YP_NODE_ALLOC(parser, yp_block_node_t);
 
     *node = (yp_block_node_t) {
         {
@@ -958,7 +971,7 @@ yp_block_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const y
 static yp_block_parameter_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {
     assert(operator->type == YP_TOKEN_NOT_PROVIDED || operator->type == YP_TOKEN_AMPERSAND);
-    yp_block_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_block_parameter_node_t);
+    yp_block_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_block_parameter_node_t);
 
     *node = (yp_block_parameter_node_t) {
         {
@@ -978,7 +991,7 @@ yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, cons
 // Allocate and initialize a new BlockParametersNode node.
 static yp_block_parameters_node_t *
 yp_block_parameters_node_create(yp_parser_t *parser, yp_parameters_node_t *parameters, const yp_token_t *opening) {
-    yp_block_parameters_node_t *node = YP_ALLOC_NODE(parser, yp_block_parameters_node_t);
+    yp_block_parameters_node_t *node = YP_NODE_ALLOC(parser, yp_block_parameters_node_t);
 
     const char *start;
     if (opening->type != YP_TOKEN_NOT_PROVIDED) {
@@ -1038,7 +1051,7 @@ yp_block_parameters_node_append_local(yp_block_parameters_node_t *node, const yp
 static yp_break_node_t *
 yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
     assert(keyword->type == YP_TOKEN_KEYWORD_BREAK);
-    yp_break_node_t *node = YP_ALLOC_NODE(parser, yp_break_node_t);
+    yp_break_node_t *node = YP_NODE_ALLOC(parser, yp_break_node_t);
 
     *node = (yp_break_node_t) {
         {
@@ -1060,7 +1073,7 @@ yp_break_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
 // in the various specializations of this function.
 static yp_call_node_t *
 yp_call_node_create(yp_parser_t *parser) {
-    yp_call_node_t *node = YP_ALLOC_NODE(parser, yp_call_node_t);
+    yp_call_node_t *node = YP_NODE_ALLOC(parser, yp_call_node_t);
 
     *node = (yp_call_node_t) {
         {
@@ -1279,7 +1292,7 @@ yp_call_node_vcall_p(yp_call_node_t *node) {
 static yp_call_operator_and_write_node_t *
 yp_call_operator_and_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_call_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_call_operator_and_write_node_t);
+    yp_call_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_call_operator_and_write_node_t);
 
     *node = (yp_call_operator_and_write_node_t) {
         {
@@ -1300,7 +1313,7 @@ yp_call_operator_and_write_node_create(yp_parser_t *parser, yp_call_node_t *targ
 // Allocate a new CallOperatorWriteNode node.
 static yp_call_operator_write_node_t *
 yp_call_operator_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_call_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_call_operator_write_node_t);
+    yp_call_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_call_operator_write_node_t);
 
     *node = (yp_call_operator_write_node_t) {
         {
@@ -1323,7 +1336,7 @@ yp_call_operator_write_node_create(yp_parser_t *parser, yp_call_node_t *target, 
 static yp_call_operator_or_write_node_t *
 yp_call_operator_or_write_node_create(yp_parser_t *parser, yp_call_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_call_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_call_operator_or_write_node_t);
+    yp_call_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_call_operator_or_write_node_t);
 
     *node = (yp_call_operator_or_write_node_t) {
         {
@@ -1344,7 +1357,7 @@ yp_call_operator_or_write_node_create(yp_parser_t *parser, yp_call_node_t *targe
 // Allocate and initialize a new CapturePatternNode node.
 static yp_capture_pattern_node_t *
 yp_capture_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *target, const yp_token_t *operator) {
-    yp_capture_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_capture_pattern_node_t);
+    yp_capture_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_capture_pattern_node_t);
 
     *node = (yp_capture_pattern_node_t) {
         {
@@ -1365,7 +1378,7 @@ yp_capture_pattern_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t 
 // Allocate and initialize a new CaseNode node.
 static yp_case_node_t *
 yp_case_node_create(yp_parser_t *parser, const yp_token_t *case_keyword, yp_node_t *predicate, yp_else_node_t *consequent, const yp_token_t *end_keyword) {
-    yp_case_node_t *node = YP_ALLOC_NODE(parser, yp_case_node_t);
+    yp_case_node_t *node = YP_NODE_ALLOC(parser, yp_case_node_t);
 
     *node = (yp_case_node_t) {
         {
@@ -1411,7 +1424,7 @@ yp_case_node_end_keyword_loc_set(yp_case_node_t *node, const yp_token_t *end_key
 // Allocate a new ClassNode node.
 static yp_class_node_t *
 yp_class_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *class_keyword, yp_node_t *constant_path, const yp_token_t *inheritance_operator, yp_node_t *superclass, yp_node_t *statements, const yp_token_t *end_keyword) {
-    yp_class_node_t *node = YP_ALLOC_NODE(parser, yp_class_node_t);
+    yp_class_node_t *node = YP_NODE_ALLOC(parser, yp_class_node_t);
 
     *node = (yp_class_node_t) {
         {
@@ -1435,7 +1448,7 @@ static yp_class_variable_operator_and_write_node_t *
 yp_class_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_class_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_operator_and_write_node_t);
+    yp_class_variable_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_class_variable_operator_and_write_node_t);
 
     *node = (yp_class_variable_operator_and_write_node_t) {
         {
@@ -1456,7 +1469,7 @@ yp_class_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t 
 // Allocate and initialize a new ClassVariableOperatorWriteNode node.
 static yp_class_variable_operator_write_node_t *
 yp_class_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_class_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_operator_write_node_t);
+    yp_class_variable_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_class_variable_operator_write_node_t);
 
     *node = (yp_class_variable_operator_write_node_t) {
         {
@@ -1480,7 +1493,7 @@ static yp_class_variable_operator_or_write_node_t *
 yp_class_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_CLASS_VARIABLE_READ_NODE);
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_class_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_operator_or_write_node_t);
+    yp_class_variable_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_class_variable_operator_or_write_node_t);
 
     *node = (yp_class_variable_operator_or_write_node_t) {
         {
@@ -1502,7 +1515,7 @@ yp_class_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *
 static yp_class_variable_read_node_t *
 yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_CLASS_VARIABLE);
-    yp_class_variable_read_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_read_node_t);
+    yp_class_variable_read_node_t *node = YP_NODE_ALLOC(parser, yp_class_variable_read_node_t);
     *node = (yp_class_variable_read_node_t) {{ .type = YP_NODE_CLASS_VARIABLE_READ_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
 }
@@ -1510,7 +1523,7 @@ yp_class_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token)
 // Initialize a new ClassVariableWriteNode node from a ClassVariableRead node.
 static yp_class_variable_write_node_t *
 yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp_class_variable_read_node_t *read_node, yp_token_t *operator, yp_node_t *value) {
-    yp_class_variable_write_node_t *node = YP_ALLOC_NODE(parser, yp_class_variable_write_node_t);
+    yp_class_variable_write_node_t *node = YP_NODE_ALLOC(parser, yp_class_variable_write_node_t);
 
     *node = (yp_class_variable_write_node_t) {
         {
@@ -1532,7 +1545,7 @@ yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp
 static yp_constant_path_operator_and_write_node_t *
 yp_constant_path_operator_and_write_node_create(yp_parser_t *parser, yp_constant_path_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_constant_path_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_operator_and_write_node_t);
+    yp_constant_path_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_path_operator_and_write_node_t);
 
     *node = (yp_constant_path_operator_and_write_node_t) {
         {
@@ -1553,7 +1566,7 @@ yp_constant_path_operator_and_write_node_create(yp_parser_t *parser, yp_constant
 // Allocate and initialize a new ConstantPathOperatorWriteNode node.
 static yp_constant_path_operator_write_node_t *
 yp_constant_path_operator_write_node_create(yp_parser_t *parser, yp_constant_path_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_constant_path_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_operator_write_node_t);
+    yp_constant_path_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_path_operator_write_node_t);
 
     *node = (yp_constant_path_operator_write_node_t) {
         {
@@ -1576,7 +1589,7 @@ yp_constant_path_operator_write_node_create(yp_parser_t *parser, yp_constant_pat
 static yp_constant_path_operator_or_write_node_t *
 yp_constant_path_operator_or_write_node_create(yp_parser_t *parser, yp_constant_path_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_constant_path_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_operator_or_write_node_t);
+    yp_constant_path_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_path_operator_or_write_node_t);
 
     *node = (yp_constant_path_operator_or_write_node_t) {
         {
@@ -1597,7 +1610,7 @@ yp_constant_path_operator_or_write_node_create(yp_parser_t *parser, yp_constant_
 // Allocate and initialize a new ConstantPathNode node.
 static yp_constant_path_node_t *
 yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_token_t *delimiter, yp_node_t *child) {
-    yp_constant_path_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_node_t);
+    yp_constant_path_node_t *node = YP_NODE_ALLOC(parser, yp_constant_path_node_t);
 
     *node = (yp_constant_path_node_t) {
         {
@@ -1618,7 +1631,7 @@ yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_to
 // Allocate a new ConstantPathWriteNode node.
 static yp_constant_path_write_node_t *
 yp_constant_path_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_constant_path_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_write_node_t);
+    yp_constant_path_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_path_write_node_t);
 
     *node = (yp_constant_path_write_node_t) {
         {
@@ -1641,7 +1654,7 @@ static yp_constant_operator_and_write_node_t *
 yp_constant_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_CONSTANT_READ_NODE);
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_constant_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_operator_and_write_node_t);
+    yp_constant_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_operator_and_write_node_t);
 
     *node = (yp_constant_operator_and_write_node_t) {
         {
@@ -1662,7 +1675,7 @@ yp_constant_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *targe
 // Allocate and initialize a new ConstantOperatorWriteNode node.
 static yp_constant_operator_write_node_t *
 yp_constant_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_constant_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_operator_write_node_t);
+    yp_constant_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_operator_write_node_t);
 
     *node = (yp_constant_operator_write_node_t) {
         {
@@ -1686,7 +1699,7 @@ static yp_constant_operator_or_write_node_t *
 yp_constant_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_CONSTANT_READ_NODE);
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_constant_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_constant_operator_or_write_node_t);
+    yp_constant_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_constant_operator_or_write_node_t);
 
     *node = (yp_constant_operator_or_write_node_t) {
         {
@@ -1709,7 +1722,7 @@ static yp_constant_read_node_t *
 yp_constant_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
     assert(name->type == YP_TOKEN_CONSTANT || name->type == YP_TOKEN_MISSING);
 
-    yp_constant_read_node_t *node = YP_ALLOC_NODE(parser, yp_constant_read_node_t);
+    yp_constant_read_node_t *node = YP_NODE_ALLOC(parser, yp_constant_read_node_t);
     *node = (yp_constant_read_node_t) {{ .type = YP_NODE_CONSTANT_READ_NODE, .location = YP_LOCATION_TOKEN_VALUE(name) }};
     return node;
 }
@@ -1730,7 +1743,7 @@ yp_def_node_create(
     const yp_token_t *equal,
     const yp_token_t *end_keyword
 ) {
-    yp_def_node_t *node = YP_ALLOC_NODE(parser, yp_def_node_t);
+    yp_def_node_t *node = YP_NODE_ALLOC(parser, yp_def_node_t);
     const char *end;
 
     if (end_keyword->type == YP_TOKEN_NOT_PROVIDED) {
@@ -1763,7 +1776,7 @@ yp_def_node_create(
 // Allocate a new DefinedNode node.
 static yp_defined_node_t *
 yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t *value, const yp_token_t *rparen, const yp_location_t *keyword_loc) {
-    yp_defined_node_t *node = YP_ALLOC_NODE(parser, yp_defined_node_t);
+    yp_defined_node_t *node = YP_NODE_ALLOC(parser, yp_defined_node_t);
 
     *node = (yp_defined_node_t) {
         {
@@ -1785,7 +1798,7 @@ yp_defined_node_create(yp_parser_t *parser, const yp_token_t *lparen, yp_node_t 
 // Allocate and initialize a new ElseNode node.
 static yp_else_node_t *
 yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_statements_node_t *statements, const yp_token_t *end_keyword) {
-    yp_else_node_t *node = YP_ALLOC_NODE(parser, yp_else_node_t);
+    yp_else_node_t *node = YP_NODE_ALLOC(parser, yp_else_node_t);
     const char *end = NULL;
     if ((end_keyword->type == YP_TOKEN_NOT_PROVIDED) && (statements != NULL)) {
         end = statements->base.location.end;
@@ -1812,7 +1825,7 @@ yp_else_node_create(yp_parser_t *parser, const yp_token_t *else_keyword, yp_stat
 // Allocate and initialize a new EmbeddedStatementsNode node.
 static yp_embedded_statements_node_t *
 yp_embedded_statements_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
-    yp_embedded_statements_node_t *node = YP_ALLOC_NODE(parser, yp_embedded_statements_node_t);
+    yp_embedded_statements_node_t *node = YP_NODE_ALLOC(parser, yp_embedded_statements_node_t);
 
     *node = (yp_embedded_statements_node_t) {
         {
@@ -1833,7 +1846,7 @@ yp_embedded_statements_node_create(yp_parser_t *parser, const yp_token_t *openin
 // Allocate and initialize a new EmbeddedVariableNode node.
 static yp_embedded_variable_node_t *
 yp_embedded_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *variable) {
-    yp_embedded_variable_node_t *node = YP_ALLOC_NODE(parser, yp_embedded_variable_node_t);
+    yp_embedded_variable_node_t *node = YP_NODE_ALLOC(parser, yp_embedded_variable_node_t);
 
     *node = (yp_embedded_variable_node_t) {
         {
@@ -1853,7 +1866,7 @@ yp_embedded_variable_node_create(yp_parser_t *parser, const yp_token_t *operator
 // Allocate a new EnsureNode node.
 static yp_ensure_node_t *
 yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_statements_node_t *statements, const yp_token_t *end_keyword) {
-    yp_ensure_node_t *node = YP_ALLOC_NODE(parser, yp_ensure_node_t);
+    yp_ensure_node_t *node = YP_NODE_ALLOC(parser, yp_ensure_node_t);
 
     *node = (yp_ensure_node_t) {
         {
@@ -1875,7 +1888,7 @@ yp_ensure_node_create(yp_parser_t *parser, const yp_token_t *ensure_keyword, yp_
 static yp_false_node_t *
 yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_FALSE);
-    yp_false_node_t *node = YP_ALLOC_NODE(parser, yp_false_node_t);
+    yp_false_node_t *node = YP_NODE_ALLOC(parser, yp_false_node_t);
     *node = (yp_false_node_t) {{ .type = YP_NODE_FALSE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
 }
@@ -1884,7 +1897,7 @@ yp_false_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // nodes parameter is guaranteed to have at least two nodes.
 static yp_find_pattern_node_t *
 yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
-    yp_find_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_find_pattern_node_t);
+    yp_find_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_find_pattern_node_t);
 
     yp_node_t *left = nodes->nodes[0];
     yp_node_t *right;
@@ -1923,7 +1936,7 @@ yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
 static yp_float_node_t *
 yp_float_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_FLOAT);
-    yp_float_node_t *node = YP_ALLOC_NODE(parser, yp_float_node_t);
+    yp_float_node_t *node = YP_NODE_ALLOC(parser, yp_float_node_t);
     *node = (yp_float_node_t) {{ .type = YP_NODE_FLOAT_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
 }
@@ -1940,7 +1953,7 @@ yp_for_node_create(
     const yp_token_t *do_keyword,
     const yp_token_t *end_keyword
 ) {
-    yp_for_node_t *node = YP_ALLOC_NODE(parser, yp_for_node_t);
+    yp_for_node_t *node = YP_NODE_ALLOC(parser, yp_for_node_t);
 
     *node = (yp_for_node_t) {
         {
@@ -1966,7 +1979,7 @@ yp_for_node_create(
 static yp_forwarding_arguments_node_t *
 yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
-    yp_forwarding_arguments_node_t *node = YP_ALLOC_NODE(parser, yp_forwarding_arguments_node_t);
+    yp_forwarding_arguments_node_t *node = YP_NODE_ALLOC(parser, yp_forwarding_arguments_node_t);
     *node = (yp_forwarding_arguments_node_t) {{ .type = YP_NODE_FORWARDING_ARGUMENTS_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
 }
@@ -1975,7 +1988,7 @@ yp_forwarding_arguments_node_create(yp_parser_t *parser, const yp_token_t *token
 static yp_forwarding_parameter_node_t *
 yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_UDOT_DOT_DOT);
-    yp_forwarding_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_forwarding_parameter_node_t);
+    yp_forwarding_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_forwarding_parameter_node_t);
     *node = (yp_forwarding_parameter_node_t) {{ .type = YP_NODE_FORWARDING_PARAMETER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
 }
@@ -1984,7 +1997,7 @@ yp_forwarding_parameter_node_create(yp_parser_t *parser, const yp_token_t *token
 static yp_forwarding_super_node_t *
 yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token, yp_arguments_t *arguments) {
     assert(token->type == YP_TOKEN_KEYWORD_SUPER);
-    yp_forwarding_super_node_t *node = YP_ALLOC_NODE(parser, yp_forwarding_super_node_t);
+    yp_forwarding_super_node_t *node = YP_NODE_ALLOC(parser, yp_forwarding_super_node_t);
 
     *node = (yp_forwarding_super_node_t) {
         {
@@ -2004,7 +2017,7 @@ yp_forwarding_super_node_create(yp_parser_t *parser, const yp_token_t *token, yp
 // token.
 static yp_hash_pattern_node_t *
 yp_hash_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-    yp_hash_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_hash_pattern_node_t);
+    yp_hash_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_hash_pattern_node_t);
 
     *node = (yp_hash_pattern_node_t) {
         {
@@ -2027,7 +2040,7 @@ yp_hash_pattern_node_empty_create(yp_parser_t *parser, const yp_token_t *opening
 // Allocate and initialize a new hash pattern node.
 static yp_hash_pattern_node_t *
 yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assocs) {
-    yp_hash_pattern_node_t *node = YP_ALLOC_NODE(parser, yp_hash_pattern_node_t);
+    yp_hash_pattern_node_t *node = YP_NODE_ALLOC(parser, yp_hash_pattern_node_t);
 
     *node = (yp_hash_pattern_node_t) {
         {
@@ -2055,7 +2068,7 @@ static yp_global_variable_operator_and_write_node_t *
 yp_global_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE);
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_global_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_and_write_node_t);
+    yp_global_variable_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_global_variable_operator_and_write_node_t);
 
     *node = (yp_global_variable_operator_and_write_node_t) {
         {
@@ -2076,7 +2089,7 @@ yp_global_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t
 // Allocate and initialize a new GlobalVariableOperatorWriteNode node.
 static yp_global_variable_operator_write_node_t *
 yp_global_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_global_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_write_node_t);
+    yp_global_variable_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_global_variable_operator_write_node_t);
 
     *node = (yp_global_variable_operator_write_node_t) {
         {
@@ -2100,7 +2113,7 @@ static yp_global_variable_operator_or_write_node_t *
 yp_global_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_GLOBAL_VARIABLE_READ_NODE);
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_global_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_or_write_node_t);
+    yp_global_variable_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_global_variable_operator_or_write_node_t);
 
     *node = (yp_global_variable_operator_or_write_node_t) {
         {
@@ -2121,7 +2134,7 @@ yp_global_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t 
 // Allocate a new GlobalVariableReadNode node.
 static yp_global_variable_read_node_t *
 yp_global_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
-    yp_global_variable_read_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_read_node_t);
+    yp_global_variable_read_node_t *node = YP_NODE_ALLOC(parser, yp_global_variable_read_node_t);
 
     *node = (yp_global_variable_read_node_t) {
         {
@@ -2136,7 +2149,7 @@ yp_global_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name)
 // Allocate a new GlobalVariableWriteNode node.
 static yp_global_variable_write_node_t *
 yp_global_variable_write_node_create(yp_parser_t *parser, const yp_location_t *name_loc, const yp_token_t *operator, yp_node_t *value) {
-    yp_global_variable_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_write_node_t);
+    yp_global_variable_write_node_t *node = YP_NODE_ALLOC(parser, yp_global_variable_write_node_t);
 
     *node = (yp_global_variable_write_node_t) {
         {
@@ -2158,7 +2171,7 @@ yp_global_variable_write_node_create(yp_parser_t *parser, const yp_location_t *n
 static yp_hash_node_t *
 yp_hash_node_create(yp_parser_t *parser, const yp_token_t *opening) {
     assert(opening != NULL);
-    yp_hash_node_t *node = YP_ALLOC_NODE(parser, yp_hash_node_t);
+    yp_hash_node_t *node = YP_NODE_ALLOC(parser, yp_hash_node_t);
 
     *node = (yp_hash_node_t) {
         {
@@ -2196,7 +2209,7 @@ yp_if_node_create(yp_parser_t *parser,
     yp_node_t *consequent,
     const yp_token_t *end_keyword
 ) {
-    yp_if_node_t *node = YP_ALLOC_NODE(parser, yp_if_node_t);
+    yp_if_node_t *node = YP_NODE_ALLOC(parser, yp_if_node_t);
 
     const char *end;
     if (end_keyword->type != YP_TOKEN_NOT_PROVIDED) {
@@ -2230,7 +2243,7 @@ yp_if_node_create(yp_parser_t *parser,
 // Allocate and initialize new IfNode node in the modifier form.
 static yp_if_node_t *
 yp_if_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *if_keyword, yp_node_t *predicate) {
-    yp_if_node_t *node = YP_ALLOC_NODE(parser, yp_if_node_t);
+    yp_if_node_t *node = YP_NODE_ALLOC(parser, yp_if_node_t);
 
     yp_statements_node_t *statements = yp_statements_node_create(parser);
     yp_statements_node_body_append(statements, statement);
@@ -2265,7 +2278,7 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, yp_node_t *
     yp_token_t end_keyword = not_provided(parser);
     yp_else_node_t *else_node = yp_else_node_create(parser, colon, else_statements, &end_keyword);
 
-    yp_if_node_t *node = YP_ALLOC_NODE(parser, yp_if_node_t);
+    yp_if_node_t *node = YP_NODE_ALLOC(parser, yp_if_node_t);
 
     *node = (yp_if_node_t) {
         {
@@ -2302,7 +2315,7 @@ yp_else_node_end_keyword_loc_set(yp_else_node_t *node, const yp_token_t *keyword
 static yp_integer_node_t *
 yp_integer_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_INTEGER);
-    yp_integer_node_t *node = YP_ALLOC_NODE(parser, yp_integer_node_t);
+    yp_integer_node_t *node = YP_NODE_ALLOC(parser, yp_integer_node_t);
     *node = (yp_integer_node_t) {{ .type = YP_NODE_INTEGER_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
 }
@@ -2338,7 +2351,7 @@ yp_rational_node_create(yp_parser_t *parser, const yp_token_t *token) {
         }
     }
 
-    yp_rational_node_t *node = YP_ALLOC_NODE(parser, yp_rational_node_t);
+    yp_rational_node_t *node = YP_NODE_ALLOC(parser, yp_rational_node_t);
 
     *node = (yp_rational_node_t) {
         { .type = YP_NODE_RATIONAL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) },
@@ -2384,7 +2397,7 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
         }
     }
 
-    yp_imaginary_node_t *node = YP_ALLOC_NODE(parser, yp_imaginary_node_t);
+    yp_imaginary_node_t *node = YP_NODE_ALLOC(parser, yp_imaginary_node_t);
 
     *node = (yp_imaginary_node_t) {
         { .type = YP_NODE_IMAGINARY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) },
@@ -2397,7 +2410,7 @@ yp_imaginary_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new InNode node.
 static yp_in_node_t *
 yp_in_node_create(yp_parser_t *parser, yp_node_t *pattern, yp_statements_node_t *statements, const yp_token_t *in_keyword, const yp_token_t *then_keyword) {
-    yp_in_node_t *node = YP_ALLOC_NODE(parser, yp_in_node_t);
+    yp_in_node_t *node = YP_NODE_ALLOC(parser, yp_in_node_t);
 
     const char *end;
     if (statements != NULL) {
@@ -2430,7 +2443,7 @@ static yp_instance_variable_operator_and_write_node_t *
 yp_instance_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_instance_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_operator_and_write_node_t);
+    yp_instance_variable_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_instance_variable_operator_and_write_node_t);
 
     *node = (yp_instance_variable_operator_and_write_node_t) {
         {
@@ -2451,7 +2464,7 @@ yp_instance_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node
 // Allocate and initialize a new InstanceVariableOperatorWriteNode node.
 static yp_instance_variable_operator_write_node_t *
 yp_instance_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    yp_instance_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_operator_write_node_t);
+    yp_instance_variable_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_instance_variable_operator_write_node_t);
 
     *node = (yp_instance_variable_operator_write_node_t) {
         {
@@ -2475,7 +2488,7 @@ static yp_instance_variable_operator_or_write_node_t *
 yp_instance_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
     assert(target->type == YP_NODE_INSTANCE_VARIABLE_READ_NODE);
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_instance_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_operator_or_write_node_t);
+    yp_instance_variable_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_instance_variable_operator_or_write_node_t);
 
     *node = (yp_instance_variable_operator_or_write_node_t) {
         {
@@ -2497,7 +2510,7 @@ yp_instance_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_
 static yp_instance_variable_read_node_t *
 yp_instance_variable_read_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_INSTANCE_VARIABLE);
-    yp_instance_variable_read_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_read_node_t);
+    yp_instance_variable_read_node_t *node = YP_NODE_ALLOC(parser, yp_instance_variable_read_node_t);
 
     *node = (yp_instance_variable_read_node_t) {{
             .type = YP_NODE_INSTANCE_VARIABLE_READ_NODE, .location = YP_LOCATION_TOKEN_VALUE(token)
@@ -2509,7 +2522,7 @@ yp_instance_variable_read_node_create(yp_parser_t *parser, const yp_token_t *tok
 // Initialize a new InstanceVariableWriteNode node from an InstanceVariableRead node.
 static yp_instance_variable_write_node_t *
 yp_instance_variable_write_node_create(yp_parser_t *parser, yp_instance_variable_read_node_t *read_node, yp_token_t *operator, yp_node_t *value) {
-    yp_instance_variable_write_node_t *node = YP_ALLOC_NODE(parser, yp_instance_variable_write_node_t);
+    yp_instance_variable_write_node_t *node = YP_NODE_ALLOC(parser, yp_instance_variable_write_node_t);
     *node = (yp_instance_variable_write_node_t) {
         {
             .type = YP_NODE_INSTANCE_VARIABLE_WRITE_NODE,
@@ -2526,10 +2539,34 @@ yp_instance_variable_write_node_create(yp_parser_t *parser, yp_instance_variable
     return node;
 }
 
+// Parse out the options for a regular expression.
+static inline uint32_t
+yp_regular_expression_flags_create(const yp_token_t *closing) {
+    uint32_t flags = 0;
+
+    if (closing->type == YP_TOKEN_REGEXP_END) {
+        for (const char *flag = closing->start + 1; flag < closing->end; flag++) {
+            switch (*flag) {
+                case 'i': flags |= YP_REGULAR_EXPRESSION_FLAGS_IGNORE_CASE; break;
+                case 'm': flags |= YP_REGULAR_EXPRESSION_FLAGS_MULTI_LINE; break;
+                case 'x': flags |= YP_REGULAR_EXPRESSION_FLAGS_EXTENDED; break;
+                case 'e': flags |= YP_REGULAR_EXPRESSION_FLAGS_EUC_JP; break;
+                case 'n': flags |= YP_REGULAR_EXPRESSION_FLAGS_ASCII_8BIT; break;
+                case 's': flags |= YP_REGULAR_EXPRESSION_FLAGS_WINDOWS_31J; break;
+                case 'u': flags |= YP_REGULAR_EXPRESSION_FLAGS_UTF_8; break;
+                case 'o': flags |= YP_REGULAR_EXPRESSION_FLAGS_ONCE; break;
+                default: assert(false && "unreachable");
+            }
+        }
+    }
+
+    return flags;
+}
+
 // Allocate a new InterpolatedRegularExpressionNode node.
 static yp_interpolated_regular_expression_node_t *
 yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening) {
-    yp_interpolated_regular_expression_node_t *node = YP_ALLOC_NODE(parser, yp_interpolated_regular_expression_node_t);
+    yp_interpolated_regular_expression_node_t *node = YP_NODE_ALLOC(parser, yp_interpolated_regular_expression_node_t);
 
     *node = (yp_interpolated_regular_expression_node_t) {
         {
@@ -2564,7 +2601,7 @@ yp_interpolated_regular_expression_node_closing_set(yp_interpolated_regular_expr
 // Allocate and initialize a new InterpolatedStringNode node.
 static yp_interpolated_string_node_t *
 yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_node_list_t *parts, const yp_token_t *closing) {
-    yp_interpolated_string_node_t *node = YP_ALLOC_NODE(parser, yp_interpolated_string_node_t);
+    yp_interpolated_string_node_t *node = YP_NODE_ALLOC(parser, yp_interpolated_string_node_t);
 
     *node = (yp_interpolated_string_node_t) {
         {
@@ -2599,7 +2636,7 @@ yp_interpolated_string_node_closing_set(yp_interpolated_string_node_t *node, con
 // Allocate and initialize a new InterpolatedSymbolNode node.
 static yp_interpolated_symbol_node_t *
 yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_node_list_t *parts, const yp_token_t *closing) {
-    yp_interpolated_symbol_node_t *node = YP_ALLOC_NODE(parser, yp_interpolated_symbol_node_t);
+    yp_interpolated_symbol_node_t *node = YP_NODE_ALLOC(parser, yp_interpolated_symbol_node_t);
 
     *node = (yp_interpolated_symbol_node_t) {
         {
@@ -2635,7 +2672,7 @@ yp_interpolated_symbol_node_closing_set(yp_interpolated_symbol_node_t *node, con
 // Allocate a new InterpolatedXStringNode node.
 static yp_interpolated_x_string_node_t *
 yp_interpolated_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *closing) {
-    yp_interpolated_x_string_node_t *node = YP_ALLOC_NODE(parser, yp_interpolated_x_string_node_t);
+    yp_interpolated_x_string_node_t *node = YP_NODE_ALLOC(parser, yp_interpolated_x_string_node_t);
 
     *node = (yp_interpolated_x_string_node_t) {
         {
@@ -2668,7 +2705,7 @@ yp_interpolated_xstring_node_closing_set(yp_interpolated_x_string_node_t *node, 
 // Allocate a new KeywordHashNode node.
 static yp_keyword_hash_node_t *
 yp_keyword_hash_node_create(yp_parser_t *parser) {
-    yp_keyword_hash_node_t *node = YP_ALLOC_NODE(parser, yp_keyword_hash_node_t);
+    yp_keyword_hash_node_t *node = YP_NODE_ALLOC(parser, yp_keyword_hash_node_t);
 
     *node = (yp_keyword_hash_node_t) {
         .base = {
@@ -2697,7 +2734,7 @@ yp_keyword_hash_node_elements_append(yp_keyword_hash_node_t *hash, yp_node_t *el
 // Allocate a new KeywordParameterNode node.
 static yp_keyword_parameter_node_t *
 yp_keyword_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, yp_node_t *value) {
-    yp_keyword_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_keyword_parameter_node_t);
+    yp_keyword_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_keyword_parameter_node_t);
 
     *node = (yp_keyword_parameter_node_t) {
         {
@@ -2717,7 +2754,7 @@ yp_keyword_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, yp
 // Allocate a new KeywordRestParameterNode node.
 static yp_keyword_rest_parameter_node_t *
 yp_keyword_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
-    yp_keyword_rest_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_keyword_rest_parameter_node_t);
+    yp_keyword_rest_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_keyword_rest_parameter_node_t);
 
     *node = (yp_keyword_rest_parameter_node_t) {
         {
@@ -2744,7 +2781,7 @@ yp_lambda_node_create(
     yp_node_t *statements,
     const yp_token_t *closing
 ) {
-    yp_lambda_node_t *node = YP_ALLOC_NODE(parser, yp_lambda_node_t);
+    yp_lambda_node_t *node = YP_NODE_ALLOC(parser, yp_lambda_node_t);
 
     *node = (yp_lambda_node_t) {
         {
@@ -2768,7 +2805,7 @@ static yp_local_variable_operator_and_write_node_t *
 yp_local_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value, yp_constant_id_t constant_id) {
     assert(target->type == YP_NODE_LOCAL_VARIABLE_READ_NODE || target->type == YP_NODE_CALL_NODE);
     assert(operator->type == YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL);
-    yp_local_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_operator_and_write_node_t);
+    yp_local_variable_operator_and_write_node_t *node = YP_NODE_ALLOC(parser, yp_local_variable_operator_and_write_node_t);
 
     *node = (yp_local_variable_operator_and_write_node_t) {
         {
@@ -2790,7 +2827,7 @@ yp_local_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t 
 // Allocate and initialize a new LocalVariableOperatorWriteNode node.
 static yp_local_variable_operator_write_node_t *
 yp_local_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value, yp_constant_id_t constant_id) {
-    yp_local_variable_operator_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_operator_write_node_t);
+    yp_local_variable_operator_write_node_t *node = YP_NODE_ALLOC(parser, yp_local_variable_operator_write_node_t);
 
     *node = (yp_local_variable_operator_write_node_t) {
         {
@@ -2815,7 +2852,7 @@ static yp_local_variable_operator_or_write_node_t *
 yp_local_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value, yp_constant_id_t constant_id) {
     assert(target->type == YP_NODE_LOCAL_VARIABLE_READ_NODE || target->type == YP_NODE_CALL_NODE);
     assert(operator->type == YP_TOKEN_PIPE_PIPE_EQUAL);
-    yp_local_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_operator_or_write_node_t);
+    yp_local_variable_operator_or_write_node_t *node = YP_NODE_ALLOC(parser, yp_local_variable_operator_or_write_node_t);
 
     *node = (yp_local_variable_operator_or_write_node_t) {
         {
@@ -2837,7 +2874,7 @@ yp_local_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *
 // Allocate a new LocalVariableReadNode node.
 static yp_local_variable_read_node_t *
 yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, uint32_t depth) {
-    yp_local_variable_read_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_read_node_t);
+    yp_local_variable_read_node_t *node = YP_NODE_ALLOC(parser, yp_local_variable_read_node_t);
 
     *node = (yp_local_variable_read_node_t) {
         {
@@ -2854,7 +2891,7 @@ yp_local_variable_read_node_create(yp_parser_t *parser, const yp_token_t *name, 
 // Allocate and initialize a new LocalVariableWriteNode node.
 static yp_local_variable_write_node_t *
 yp_local_variable_write_node_create(yp_parser_t *parser, yp_constant_id_t constant_id, uint32_t depth, yp_node_t *value, const yp_location_t *name_loc, const yp_token_t *operator) {
-    yp_local_variable_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_write_node_t);
+    yp_local_variable_write_node_t *node = YP_NODE_ALLOC(parser, yp_local_variable_write_node_t);
 
     *node = (yp_local_variable_write_node_t) {
         {
@@ -2877,7 +2914,7 @@ yp_local_variable_write_node_create(yp_parser_t *parser, yp_constant_id_t consta
 // Allocate and initialize a new LocalVariableWriteNode node without an operator or target.
 static yp_local_variable_write_node_t *
 yp_local_variable_target_node_create(yp_parser_t *parser, const yp_token_t *name) {
-    yp_local_variable_write_node_t *node = YP_ALLOC_NODE(parser, yp_local_variable_write_node_t);
+    yp_local_variable_write_node_t *node = YP_NODE_ALLOC(parser, yp_local_variable_write_node_t);
 
     *node = (yp_local_variable_write_node_t) {
         {
@@ -2897,7 +2934,7 @@ yp_local_variable_target_node_create(yp_parser_t *parser, const yp_token_t *name
 // Allocate and initialize a new MatchPredicateNode node.
 static yp_match_predicate_node_t *
 yp_match_predicate_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *pattern, const yp_token_t *operator) {
-    yp_match_predicate_node_t *node = YP_ALLOC_NODE(parser, yp_match_predicate_node_t);
+    yp_match_predicate_node_t *node = YP_NODE_ALLOC(parser, yp_match_predicate_node_t);
 
     *node = (yp_match_predicate_node_t) {
         {
@@ -2918,7 +2955,7 @@ yp_match_predicate_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t 
 // Allocate and initialize a new MatchRequiredNode node.
 static yp_match_required_node_t *
 yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *pattern, const yp_token_t *operator) {
-    yp_match_required_node_t *node = YP_ALLOC_NODE(parser, yp_match_required_node_t);
+    yp_match_required_node_t *node = YP_NODE_ALLOC(parser, yp_match_required_node_t);
 
     *node = (yp_match_required_node_t) {
         {
@@ -2939,7 +2976,7 @@ yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *
 // Allocate a new ModuleNode node.
 static yp_module_node_t *
 yp_module_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *module_keyword, yp_node_t *constant_path, yp_node_t *statements, const yp_token_t *end_keyword) {
-    yp_module_node_t *node = YP_ALLOC_NODE(parser, yp_module_node_t);
+    yp_module_node_t *node = YP_NODE_ALLOC(parser, yp_module_node_t);
 
     *node = (yp_module_node_t) {
         {
@@ -2962,7 +2999,7 @@ yp_module_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const 
 // Allocate a new MultiWriteNode node.
 static yp_multi_write_node_t *
 yp_multi_write_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *value, const yp_location_t *lparen_loc, const yp_location_t *rparen_loc) {
-    yp_multi_write_node_t *node = YP_ALLOC_NODE(parser, yp_multi_write_node_t);
+    yp_multi_write_node_t *node = YP_NODE_ALLOC(parser, yp_multi_write_node_t);
 
     *node = (yp_multi_write_node_t) {
         {
@@ -3002,7 +3039,7 @@ yp_multi_write_node_operator_loc_set(yp_multi_write_node_t *node, const yp_token
 static yp_next_node_t *
 yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
     assert(keyword->type == YP_TOKEN_KEYWORD_NEXT);
-    yp_next_node_t *node = YP_ALLOC_NODE(parser, yp_next_node_t);
+    yp_next_node_t *node = YP_NODE_ALLOC(parser, yp_next_node_t);
 
     *node = (yp_next_node_t) {
         {
@@ -3023,7 +3060,7 @@ yp_next_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments
 static yp_nil_node_t *
 yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_NIL);
-    yp_nil_node_t *node = YP_ALLOC_NODE(parser, yp_nil_node_t);
+    yp_nil_node_t *node = YP_NODE_ALLOC(parser, yp_nil_node_t);
 
     *node = (yp_nil_node_t) {{ .type = YP_NODE_NIL_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3034,7 +3071,7 @@ static yp_no_keywords_parameter_node_t *
 yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *keyword) {
     assert(operator->type == YP_TOKEN_USTAR_STAR);
     assert(keyword->type == YP_TOKEN_KEYWORD_NIL);
-    yp_no_keywords_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_no_keywords_parameter_node_t);
+    yp_no_keywords_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_no_keywords_parameter_node_t);
 
     *node = (yp_no_keywords_parameter_node_t) {
         {
@@ -3055,7 +3092,7 @@ yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *oper
 static yp_numbered_reference_read_node_t *
 yp_numbered_reference_read_node_create(yp_parser_t *parser, const yp_token_t *name) {
     assert(name->type == YP_TOKEN_NUMBERED_REFERENCE);
-    yp_numbered_reference_read_node_t *node = YP_ALLOC_NODE(parser, yp_numbered_reference_read_node_t);
+    yp_numbered_reference_read_node_t *node = YP_NODE_ALLOC(parser, yp_numbered_reference_read_node_t);
 
     *node = (yp_numbered_reference_read_node_t) {
         {
@@ -3070,7 +3107,7 @@ yp_numbered_reference_read_node_create(yp_parser_t *parser, const yp_token_t *na
 // Allocate a new OptionalParameterNode node.
 static yp_optional_parameter_node_t *
 yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator, yp_node_t *value) {
-    yp_optional_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_optional_parameter_node_t);
+    yp_optional_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_optional_parameter_node_t);
 
     *node = (yp_optional_parameter_node_t) {
         {
@@ -3092,7 +3129,7 @@ yp_optional_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, c
 // Allocate and initialize a new OrNode node.
 static yp_or_node_t *
 yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-    yp_or_node_t *node = YP_ALLOC_NODE(parser, yp_or_node_t);
+    yp_or_node_t *node = YP_NODE_ALLOC(parser, yp_or_node_t);
 
     *node = (yp_or_node_t) {
         {
@@ -3113,7 +3150,7 @@ yp_or_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operat
 // Allocate and initialize a new ParametersNode node.
 static yp_parameters_node_t *
 yp_parameters_node_create(yp_parser_t *parser) {
-    yp_parameters_node_t *node = YP_ALLOC_NODE(parser, yp_parameters_node_t);
+    yp_parameters_node_t *node = YP_NODE_ALLOC(parser, yp_parameters_node_t);
 
     *node = (yp_parameters_node_t) {
         {
@@ -3200,7 +3237,7 @@ yp_parameters_node_block_set(yp_parameters_node_t *params, yp_block_parameter_no
 // Allocate a new ProgramNode node.
 static yp_program_node_t *
 yp_program_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, yp_statements_node_t *statements) {
-    yp_program_node_t *node = YP_ALLOC_NODE(parser, yp_program_node_t);
+    yp_program_node_t *node = YP_NODE_ALLOC(parser, yp_program_node_t);
 
     *node = (yp_program_node_t) {
         {
@@ -3220,7 +3257,7 @@ yp_program_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, yp_st
 // Allocate and initialize new ParenthesesNode node.
 static yp_parentheses_node_t *
 yp_parentheses_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_node_t *statements, const yp_token_t *closing) {
-    yp_parentheses_node_t *node = YP_ALLOC_NODE(parser, yp_parentheses_node_t);
+    yp_parentheses_node_t *node = YP_NODE_ALLOC(parser, yp_parentheses_node_t);
 
     *node = (yp_parentheses_node_t) {
         {
@@ -3241,7 +3278,7 @@ yp_parentheses_node_create(yp_parser_t *parser, const yp_token_t *opening, yp_no
 // Allocate and initialize a new PinnedExpressionNode node.
 static yp_pinned_expression_node_t *
 yp_pinned_expression_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *operator, const yp_token_t *lparen, const yp_token_t *rparen) {
-    yp_pinned_expression_node_t *node = YP_ALLOC_NODE(parser, yp_pinned_expression_node_t);
+    yp_pinned_expression_node_t *node = YP_NODE_ALLOC(parser, yp_pinned_expression_node_t);
 
     *node = (yp_pinned_expression_node_t) {
         {
@@ -3263,7 +3300,7 @@ yp_pinned_expression_node_create(yp_parser_t *parser, yp_node_t *expression, con
 // Allocate and initialize a new PinnedVariableNode node.
 static yp_pinned_variable_node_t *
 yp_pinned_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *variable) {
-    yp_pinned_variable_node_t *node = YP_ALLOC_NODE(parser, yp_pinned_variable_node_t);
+    yp_pinned_variable_node_t *node = YP_NODE_ALLOC(parser, yp_pinned_variable_node_t);
 
     *node = (yp_pinned_variable_node_t) {
         {
@@ -3283,7 +3320,7 @@ yp_pinned_variable_node_create(yp_parser_t *parser, const yp_token_t *operator, 
 // Allocate and initialize a new PostExecutionNode node.
 static yp_post_execution_node_t *
 yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
-    yp_post_execution_node_t *node = YP_ALLOC_NODE(parser, yp_post_execution_node_t);
+    yp_post_execution_node_t *node = YP_NODE_ALLOC(parser, yp_post_execution_node_t);
 
     *node = (yp_post_execution_node_t) {
         {
@@ -3305,7 +3342,7 @@ yp_post_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, co
 // Allocate and initialize a new PreExecutionNode node.
 static yp_pre_execution_node_t *
 yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_token_t *opening, yp_statements_node_t *statements, const yp_token_t *closing) {
-    yp_pre_execution_node_t *node = YP_ALLOC_NODE(parser, yp_pre_execution_node_t);
+    yp_pre_execution_node_t *node = YP_NODE_ALLOC(parser, yp_pre_execution_node_t);
 
     *node = (yp_pre_execution_node_t) {
         {
@@ -3327,7 +3364,7 @@ yp_pre_execution_node_create(yp_parser_t *parser, const yp_token_t *keyword, con
 // Allocate and initialize new RangeNode node.
 static yp_range_node_t *
 yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *operator, yp_node_t *right) {
-    yp_range_node_t *node = YP_ALLOC_NODE(parser, yp_range_node_t);
+    yp_range_node_t *node = YP_NODE_ALLOC(parser, yp_range_node_t);
 
     *node = (yp_range_node_t) {
         {
@@ -3359,7 +3396,7 @@ yp_range_node_create(yp_parser_t *parser, yp_node_t *left, const yp_token_t *ope
 static yp_redo_node_t *
 yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_REDO);
-    yp_redo_node_t *node = YP_ALLOC_NODE(parser, yp_redo_node_t);
+    yp_redo_node_t *node = YP_NODE_ALLOC(parser, yp_redo_node_t);
 
     *node = (yp_redo_node_t) {{ .type = YP_NODE_REDO_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3368,7 +3405,7 @@ yp_redo_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new RegularExpressionNode node.
 static yp_regular_expression_node_t *
 yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-    yp_regular_expression_node_t *node = YP_ALLOC_NODE(parser, yp_regular_expression_node_t);
+    yp_regular_expression_node_t *node = YP_NODE_ALLOC(parser, yp_regular_expression_node_t);
 
     *node = (yp_regular_expression_node_t) {
         {
@@ -3390,7 +3427,7 @@ yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening
 // Allocate a new RequiredDestructuredParameterNode node.
 static yp_required_destructured_parameter_node_t *
 yp_required_destructured_parameter_node_create(yp_parser_t *parser, const yp_token_t *opening) {
-    yp_required_destructured_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_required_destructured_parameter_node_t);
+    yp_required_destructured_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_required_destructured_parameter_node_t);
 
     *node = (yp_required_destructured_parameter_node_t) {
         {
@@ -3422,7 +3459,7 @@ yp_required_destructured_parameter_node_closing_set(yp_required_destructured_par
 static yp_required_parameter_node_t *
 yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_MISSING || token->type == YP_TOKEN_IDENTIFIER);
-    yp_required_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_required_parameter_node_t);
+    yp_required_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_required_parameter_node_t);
 
     *node = (yp_required_parameter_node_t) {
         {
@@ -3438,7 +3475,7 @@ yp_required_parameter_node_create(yp_parser_t *parser, const yp_token_t *token) 
 // Allocate a new RescueModifierNode node.
 static yp_rescue_modifier_node_t *
 yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const yp_token_t *keyword, yp_node_t *rescue_expression) {
-    yp_rescue_modifier_node_t *node = YP_ALLOC_NODE(parser, yp_rescue_modifier_node_t);
+    yp_rescue_modifier_node_t *node = YP_NODE_ALLOC(parser, yp_rescue_modifier_node_t);
 
     *node = (yp_rescue_modifier_node_t) {
         {
@@ -3459,7 +3496,7 @@ yp_rescue_modifier_node_create(yp_parser_t *parser, yp_node_t *expression, const
 // Allocate and initiliaze a new RescueNode node.
 static yp_rescue_node_t *
 yp_rescue_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
-    yp_rescue_node_t *node = YP_ALLOC_NODE(parser, yp_rescue_node_t);
+    yp_rescue_node_t *node = YP_NODE_ALLOC(parser, yp_rescue_node_t);
 
     *node = (yp_rescue_node_t) {
         {
@@ -3518,7 +3555,7 @@ yp_rescue_node_exceptions_append(yp_rescue_node_t *node, yp_node_t *exception) {
 // Allocate a new RestParameterNode node.
 static yp_rest_parameter_node_t *
 yp_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *name) {
-    yp_rest_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_rest_parameter_node_t);
+    yp_rest_parameter_node_t *node = YP_NODE_ALLOC(parser, yp_rest_parameter_node_t);
 
     *node = (yp_rest_parameter_node_t) {
         {
@@ -3539,7 +3576,7 @@ yp_rest_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, c
 static yp_retry_node_t *
 yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_RETRY);
-    yp_retry_node_t *node = YP_ALLOC_NODE(parser, yp_retry_node_t);
+    yp_retry_node_t *node = YP_NODE_ALLOC(parser, yp_retry_node_t);
 
     *node = (yp_retry_node_t) {{ .type = YP_NODE_RETRY_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3548,7 +3585,7 @@ yp_retry_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new ReturnNode node.
 static yp_return_node_t *
 yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_node_t *arguments) {
-    yp_return_node_t *node = YP_ALLOC_NODE(parser, yp_return_node_t);
+    yp_return_node_t *node = YP_NODE_ALLOC(parser, yp_return_node_t);
 
     *node = (yp_return_node_t) {
         {
@@ -3569,7 +3606,7 @@ yp_return_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argumen
 static yp_self_node_t *
 yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_SELF);
-    yp_self_node_t *node = YP_ALLOC_NODE(parser, yp_self_node_t);
+    yp_self_node_t *node = YP_NODE_ALLOC(parser, yp_self_node_t);
 
     *node = (yp_self_node_t) {{ .type = YP_NODE_SELF_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3578,7 +3615,7 @@ yp_self_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new SingletonClassNode node.
 static yp_singleton_class_node_t *
 yp_singleton_class_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *class_keyword, const yp_token_t *operator, yp_node_t *expression, yp_node_t *statements, const yp_token_t *end_keyword) {
-    yp_singleton_class_node_t *node = YP_ALLOC_NODE(parser, yp_singleton_class_node_t);
+    yp_singleton_class_node_t *node = YP_NODE_ALLOC(parser, yp_singleton_class_node_t);
 
     *node = (yp_singleton_class_node_t) {
         {
@@ -3603,7 +3640,7 @@ yp_singleton_class_node_create(yp_parser_t *parser, yp_constant_id_list_t *local
 static yp_source_encoding_node_t *
 yp_source_encoding_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD___ENCODING__);
-    yp_source_encoding_node_t *node = YP_ALLOC_NODE(parser, yp_source_encoding_node_t);
+    yp_source_encoding_node_t *node = YP_NODE_ALLOC(parser, yp_source_encoding_node_t);
 
     *node = (yp_source_encoding_node_t) {{ .type = YP_NODE_SOURCE_ENCODING_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3612,7 +3649,7 @@ yp_source_encoding_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new SourceFileNode node.
 static yp_source_file_node_t*
 yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *file_keyword) {
-    yp_source_file_node_t *node = YP_ALLOC_NODE(parser, yp_source_file_node_t);
+    yp_source_file_node_t *node = YP_NODE_ALLOC(parser, yp_source_file_node_t);
     assert(file_keyword->type == YP_TOKEN_KEYWORD___FILE__);
 
     *node = (yp_source_file_node_t) {
@@ -3630,7 +3667,7 @@ yp_source_file_node_create(yp_parser_t *parser, const yp_token_t *file_keyword) 
 static yp_source_line_node_t *
 yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD___LINE__);
-    yp_source_line_node_t *node = YP_ALLOC_NODE(parser, yp_source_line_node_t);
+    yp_source_line_node_t *node = YP_NODE_ALLOC(parser, yp_source_line_node_t);
 
     *node = (yp_source_line_node_t) {{ .type = YP_NODE_SOURCE_LINE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3639,7 +3676,7 @@ yp_source_line_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate a new SplatNode node.
 static yp_splat_node_t *
 yp_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t *expression) {
-    yp_splat_node_t *node = YP_ALLOC_NODE(parser, yp_splat_node_t);
+    yp_splat_node_t *node = YP_NODE_ALLOC(parser, yp_splat_node_t);
 
     *node = (yp_splat_node_t) {
         {
@@ -3659,7 +3696,7 @@ yp_splat_node_create(yp_parser_t *parser, const yp_token_t *operator, yp_node_t 
 // Allocate and initialize a new StatementsNode node.
 static yp_statements_node_t *
 yp_statements_node_create(yp_parser_t *parser) {
-    yp_statements_node_t *node = YP_ALLOC_NODE(parser, yp_statements_node_t);
+    yp_statements_node_t *node = YP_NODE_ALLOC(parser, yp_statements_node_t);
 
     *node = (yp_statements_node_t) {
         {
@@ -3698,7 +3735,7 @@ yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement)
 // Allocate a new StringConcatNode node.
 static yp_string_concat_node_t *
 yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *right) {
-    yp_string_concat_node_t *node = YP_ALLOC_NODE(parser, yp_string_concat_node_t);
+    yp_string_concat_node_t *node = YP_NODE_ALLOC(parser, yp_string_concat_node_t);
 
     *node = (yp_string_concat_node_t) {
         {
@@ -3718,7 +3755,7 @@ yp_string_concat_node_create(yp_parser_t *parser, yp_node_t *left, yp_node_t *ri
 // Allocate a new StringNode node.
 static yp_string_node_t *
 yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-    yp_string_node_t *node = YP_ALLOC_NODE(parser, yp_string_node_t);
+    yp_string_node_t *node = YP_NODE_ALLOC(parser, yp_string_node_t);
 
     *node = (yp_string_node_t) {
         {
@@ -3740,7 +3777,7 @@ yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
 static yp_super_node_t *
 yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_arguments_t *arguments) {
     assert(keyword->type == YP_TOKEN_KEYWORD_SUPER);
-    yp_super_node_t *node = YP_ALLOC_NODE(parser, yp_super_node_t);
+    yp_super_node_t *node = YP_NODE_ALLOC(parser, yp_super_node_t);
 
     const char *end;
     if (arguments->block != NULL) {
@@ -3775,7 +3812,7 @@ yp_super_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_argument
 // Allocate a new SymbolNode node.
 static yp_symbol_node_t *
 yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *value, const yp_token_t *closing) {
-    yp_symbol_node_t *node = YP_ALLOC_NODE(parser, yp_symbol_node_t);
+    yp_symbol_node_t *node = YP_NODE_ALLOC(parser, yp_symbol_node_t);
 
     *node = (yp_symbol_node_t) {
         {
@@ -3851,7 +3888,7 @@ yp_symbol_node_label_p(yp_node_t *node) {
 // Convert the given SymbolNode node to a StringNode node.
 static yp_string_node_t *
 yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
-    yp_string_node_t *new_node = YP_ALLOC_NODE(parser, yp_string_node_t);
+    yp_string_node_t *new_node = YP_NODE_ALLOC(parser, yp_string_node_t);
 
     *new_node = (yp_string_node_t) {
         {
@@ -3876,7 +3913,7 @@ yp_symbol_node_to_string_node(yp_parser_t *parser, yp_symbol_node_t *node) {
 static yp_true_node_t *
 yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_TRUE);
-    yp_true_node_t *node = YP_ALLOC_NODE(parser, yp_true_node_t);
+    yp_true_node_t *node = YP_NODE_ALLOC(parser, yp_true_node_t);
 
     *node = (yp_true_node_t) {{ .type = YP_NODE_TRUE_NODE, .location = YP_LOCATION_TOKEN_VALUE(token) }};
     return node;
@@ -3886,7 +3923,7 @@ yp_true_node_create(yp_parser_t *parser, const yp_token_t *token) {
 static yp_undef_node_t *
 yp_undef_node_create(yp_parser_t *parser, const yp_token_t *token) {
     assert(token->type == YP_TOKEN_KEYWORD_UNDEF);
-    yp_undef_node_t *node = YP_ALLOC_NODE(parser, yp_undef_node_t);
+    yp_undef_node_t *node = YP_NODE_ALLOC(parser, yp_undef_node_t);
 
     *node = (yp_undef_node_t) {
         {
@@ -3910,7 +3947,7 @@ yp_undef_node_append(yp_undef_node_t *node, yp_node_t *name) {
 // Allocate a new UnlessNode node.
 static yp_unless_node_t *
 yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
-    yp_unless_node_t *node = YP_ALLOC_NODE(parser, yp_unless_node_t);
+    yp_unless_node_t *node = YP_NODE_ALLOC(parser, yp_unless_node_t);
 
     const char *end;
     if (statements != NULL) {
@@ -3940,7 +3977,7 @@ yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t 
 // Allocate and initialize new UnlessNode node in the modifier form.
 static yp_unless_node_t *
 yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_token_t *unless_keyword, yp_node_t *predicate) {
-    yp_unless_node_t *node = YP_ALLOC_NODE(parser, yp_unless_node_t);
+    yp_unless_node_t *node = YP_NODE_ALLOC(parser, yp_unless_node_t);
 
     yp_statements_node_t *statements = yp_statements_node_create(parser);
     yp_statements_node_body_append(statements, statement);
@@ -3972,7 +4009,7 @@ yp_unless_node_end_keyword_loc_set(yp_unless_node_t *node, const yp_token_t *end
 // Allocate a new UntilNode node.
 static yp_until_node_t *
 yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
-    yp_until_node_t *node = YP_ALLOC_NODE(parser, yp_until_node_t);
+    yp_until_node_t *node = YP_NODE_ALLOC(parser, yp_until_node_t);
     bool has_statements = (statements != NULL) && (statements->body.size != 0);
 
     const char *start = NULL;
@@ -4008,7 +4045,7 @@ yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 // Allocate and initialize a new WhenNode node.
 static yp_when_node_t *
 yp_when_node_create(yp_parser_t *parser, const yp_token_t *keyword) {
-    yp_when_node_t *node = YP_ALLOC_NODE(parser, yp_when_node_t);
+    yp_when_node_t *node = YP_NODE_ALLOC(parser, yp_when_node_t);
 
     *node = (yp_when_node_t) {
         {
@@ -4046,7 +4083,7 @@ yp_when_node_statements_set(yp_when_node_t *node, yp_statements_node_t *statemen
 // Allocate a new WhileNode node.
 static yp_while_node_t *
 yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
-    yp_while_node_t *node = YP_ALLOC_NODE(parser, yp_while_node_t);
+    yp_while_node_t *node = YP_NODE_ALLOC(parser, yp_while_node_t);
 
     const char *start = NULL;
     bool has_statements = (statements != NULL) && (statements->body.size != 0);
@@ -4082,7 +4119,7 @@ yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
 // Allocate and initialize a new XStringNode node.
 static yp_x_string_node_t *
 yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
-    yp_x_string_node_t *node = YP_ALLOC_NODE(parser, yp_x_string_node_t);
+    yp_x_string_node_t *node = YP_NODE_ALLOC(parser, yp_x_string_node_t);
 
     *node = (yp_x_string_node_t) {
         {
@@ -4103,7 +4140,7 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
 // Allocate a new YieldNode node.
 static yp_yield_node_t *
 yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_location_t *lparen_loc, yp_arguments_node_t *arguments, const yp_location_t *rparen_loc) {
-    yp_yield_node_t *node = YP_ALLOC_NODE(parser, yp_yield_node_t);
+    yp_yield_node_t *node = YP_NODE_ALLOC(parser, yp_yield_node_t);
 
     const char *end;
     if (rparen_loc->start != NULL) {
@@ -4133,13 +4170,12 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_lo
     return node;
 }
 
-
+#undef YP_LOCATION_NODE_BASE_VALUE
+#undef YP_LOCATION_NODE_VALUE
 #undef YP_LOCATION_NULL_VALUE
 #undef YP_LOCATION_TOKEN_VALUE
-#undef YP_LOCATION_NODE_VALUE
-#undef YP_LOCATION_NODE_BASE_VALUE
+#undef YP_NODE_ALLOC
 #undef YP_TOKEN_NOT_PROVIDED_VALUE
-#undef YP_ALLOC_NODE
 
 /******************************************************************************/
 /* Scope-related functions                                                    */
@@ -12890,7 +12926,12 @@ yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
 
 #undef YP_CASE_KEYWORD
 #undef YP_CASE_OPERATOR
+#undef YP_CASE_PARAMETER
+#undef YP_CASE_PRIMITIVE
 #undef YP_CASE_WRITABLE
+#undef YP_EMPTY_ARGUMENTS
+#undef YP_EMPTY_LOCATION_LIST
+#undef YP_EMPTY_NODE_LIST
 #undef YP_STRINGIZE
 #undef YP_STRINGIZE0
 #undef YP_VERSION_MACRO
