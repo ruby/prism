@@ -299,9 +299,11 @@ typedef struct yp_scope {
 // currently parsing. It also contains the most recent and current token that
 // it's considering.
 struct yp_parser {
-    yp_lex_state_t lex_state; // the current state of the lexer
-    bool command_start;       // whether or not we're at the beginning of a command
-    int enclosure_nesting;    // tracks the current nesting of (), [], and {}
+    // The current state of the lexer.
+    yp_lex_state_t lex_state;
+
+    // Tracks the current nesting of (), [], and {}.
+    int enclosure_nesting;
 
     // Used to temporarily track the nesting of enclosures to determine if a {
     // is the beginning of a lambda following the parameters of a lambda.
@@ -347,16 +349,10 @@ struct yp_parser {
     yp_scope_t *current_scope;          // the current local scope
 
     yp_context_node_t *current_context; // the current parsing context
-    bool recovering; // whether or not we're currently recovering from a syntax error
 
     // The encoding functions for the current file is attached to the parser as
     // it's parsing so that it can change with a magic comment.
     yp_encoding_t encoding;
-
-    // Whether or not the encoding has been changed by a magic comment. We use
-    // this to provide a fast path for the lexer instead of going through the
-    // function pointer.
-    bool encoding_changed;
 
     // When the encoding that is being used to parse the source is changed by
     // YARP, we provide the ability here to call out to a user-defined function.
@@ -376,13 +372,6 @@ struct yp_parser {
     // be called whenever a new token is lexed by the parser.
     yp_lex_callback_t *lex_callback;
 
-    // This flag indicates that we are currently parsing a pattern matching
-    // expression and impacts that calculation of newlines.
-    bool pattern_matching_newlines;
-
-    // This flag indicates that we are currently parsing a keyword argument.
-    bool in_keyword_arg;
-
     // This is the path of the file being parsed
     // We use the filepath when constructing SourceFileNodes
     yp_string_t filepath_string;
@@ -393,6 +382,24 @@ struct yp_parser {
 
     // This is the list of newline offsets in the source file.
     yp_newline_list_t newline_list;
+
+    // Whether or not we're at the beginning of a command.
+    bool command_start;
+
+    // Whether or not we're currently recovering from a syntax error.
+    bool recovering;
+
+    // Whether or not the encoding has been changed by a magic comment. We use
+    // this to provide a fast path for the lexer instead of going through the
+    // function pointer.
+    bool encoding_changed;
+
+    // This flag indicates that we are currently parsing a pattern matching
+    // expression and impacts that calculation of newlines.
+    bool pattern_matching_newlines;
+
+    // This flag indicates that we are currently parsing a keyword argument.
+    bool in_keyword_arg;
 };
 
 #endif // YARP_PARSER_H
