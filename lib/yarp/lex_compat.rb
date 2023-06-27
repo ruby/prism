@@ -534,12 +534,11 @@ module YARP
       end
     end
 
-    attr_reader :source, :offsets, :filepath
+    attr_reader :source, :filepath
 
     def initialize(source, filepath = "")
       @source = source
       @filepath = filepath || ""
-      @offsets = find_offsets(source)
     end
 
     def result
@@ -561,7 +560,8 @@ module YARP
       result_value[0][0].value.prepend("\xEF\xBB\xBF") if bom
 
       result_value.each_with_index do |(token, lex_state), index|
-        (lineno, column) = find_location(token.location.start_offset)
+        lineno = token.location.start_line
+        column = token.location.start_column
         column -= index == 0 ? 6 : 3 if bom && lineno == 1
 
         event = RIPPER.fetch(token.type)
@@ -701,38 +701,6 @@ module YARP
       end
 
       ParseResult.new(tokens, result.comments, result.errors, result.warnings)
-    end
-
-    private
-
-    # YARP keeps locations around in the form of ranges of byte offsets from the
-    # start of the file. Ripper keeps locations around in the form of line and
-    # column numbers. To match the output, we keep a cache of the offsets at the
-    # beginning of each line.
-    def find_offsets(source)
-      last_offset = 0
-      offsets = [0]
-
-      source.each_line do |line|
-        last_offset += line.bytesize
-        offsets << last_offset
-      end
-
-      offsets
-    end
-
-    # Given a byte offset, find the line number and column number that it maps
-    # to. We use a binary search over the cached offsets to find the line number
-    # that the offset is on, and then subtract the offset of the previous line
-    # to find the column number.
-    def find_location(value)
-      line_number = offsets.bsearch_index { |offset| offset > value }
-      line_offset = offsets[line_number - 1] if line_number
-
-      [
-        line_number || offsets.length - 1,
-        value - (line_offset || offsets.last)
-      ]
     end
   end
 

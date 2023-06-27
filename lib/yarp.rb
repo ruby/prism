@@ -21,7 +21,7 @@ module YARP
     end
 
     def column(offset)
-      newlines[line_number(offset)] || 0
+      offset - newlines[line(offset) - 1]
     end
   end
 
@@ -29,7 +29,7 @@ module YARP
   class Location
     # A SourceRange object that is used to determine more information from the
     # given offset and length.
-    attr_reader :source_range
+    private attr_reader :source_range
 
     # The byte offset from the beginning of the source where this location
     # starts.
@@ -61,7 +61,7 @@ module YARP
 
     # The line number where this location ends.
     def end_line
-      source_range.line(end_offset)
+      source_range.line(end_offset - 1)
     end
 
     # The column number in bytes where this location starts from the start of
@@ -73,7 +73,7 @@ module YARP
     # The column number in bytes where this location ends from the start of the
     # line.
     def end_column
-      source_range.column(end_offset)
+      source_range.column(end_offset - 1)
     end
 
     def deconstruct_keys(keys)
