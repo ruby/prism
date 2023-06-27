@@ -40,6 +40,7 @@ module YARP
     <%- case param -%>
     <%- when LocationParam -%>
     <%- raise unless param.name.end_with?("_loc") -%>
+    <%- next if node.params.any? { |other| other.name == param.name.delete_suffix("_loc") } -%>
 
     # def <%= param.name.delete_suffix("_loc") %>: () -> String
     def <%= param.name.delete_suffix("_loc") %>
@@ -47,6 +48,7 @@ module YARP
     end
     <%- when OptionalLocationParam -%>
     <%- raise unless param.name.end_with?("_loc") -%>
+    <%- next if node.params.any? { |other| other.name == param.name.delete_suffix("_loc") } -%>
 
     # def <%= param.name.delete_suffix("_loc") %>: () -> String?
     def <%= param.name.delete_suffix("_loc") %>
