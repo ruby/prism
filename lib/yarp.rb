@@ -12,6 +12,10 @@ module YARP
       @newlines = newlines
     end
 
+    def slice(offset, length)
+      source.byteslice(offset, length)
+    end
+
     def line(offset)
       newlines.bsearch_index { |newline| newline > offset } || newlines.length
     end
@@ -38,6 +42,11 @@ module YARP
       @source_range = source_range
       @start_offset = start_offset
       @length = length
+    end
+
+    # The source code that this location represents.
+    def slice
+      source_range.slice(start_offset, length)
     end
 
     # The byte offset from the beginning of the source where this location ends.

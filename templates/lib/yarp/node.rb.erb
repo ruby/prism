@@ -36,6 +36,24 @@ module YARP
     def deconstruct_keys(keys)
       { <%= (node.params.map { |param| "#{param.name}: #{param.name}" } + ["location: location"]).join(", ") %> }
     end
+    <%- node.params.each do |param| -%>
+    <%- case param -%>
+    <%- when LocationParam -%>
+    <%- raise unless param.name.end_with?("_loc") -%>
+
+    # def <%= param.name.delete_suffix("_loc") %>: () -> String
+    def <%= param.name.delete_suffix("_loc") %>
+      <%= param.name %>.slice
+    end
+    <%- when OptionalLocationParam -%>
+    <%- raise unless param.name.end_with?("_loc") -%>
+
+    # def <%= param.name.delete_suffix("_loc") %>: () -> String?
+    def <%= param.name.delete_suffix("_loc") %>
+      <%= param.name %>&.slice
+    end
+    <%- end -%>
+    <%- end -%>
   end
 
   <%- end -%>
