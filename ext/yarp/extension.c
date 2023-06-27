@@ -460,21 +460,6 @@ memsize(VALUE self, VALUE string) {
 }
 
 static VALUE
-compile(VALUE self, VALUE string) {
-    yp_parser_t parser;
-    size_t length = RSTRING_LEN(string);
-    yp_parser_init(&parser, RSTRING_PTR(string), length, NULL);
-
-    yp_node_t *node = yp_parse(&parser);
-    VALUE result = yp_compile(node);
-
-    yp_node_destroy(&parser, node);
-    yp_parser_free(&parser);
-
-    return result;
-}
-
-static VALUE
 profile_file(VALUE self, VALUE filepath) {
     source_t source;
     if (source_file_load(&source, filepath) != 0) return Qnil;
@@ -546,8 +531,6 @@ Init_yarp(void) {
     rb_define_singleton_method(rb_cYARP, "unescape_all", unescape_all, 1);
 
     rb_define_singleton_method(rb_cYARP, "memsize", memsize, 1);
-
-    rb_define_singleton_method(rb_cYARP, "compile", compile, 1);
 
     rb_define_singleton_method(rb_cYARP, "profile_file", profile_file, 1);
 

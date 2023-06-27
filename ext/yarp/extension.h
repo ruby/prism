@@ -21,8 +21,6 @@ VALUE yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding
 
 VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding);
 
-VALUE yp_compile(yp_node_t *node);
-
 void Init_yarp_pack(void);
 
 YP_EXPORTED_FUNCTION void Init_yarp(void);
