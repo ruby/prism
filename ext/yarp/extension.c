@@ -285,7 +285,10 @@ lex_source(source_t *source, char *filepath) {
     yp_parser_init(&parser, source->source, source->size, filepath);
     yp_parser_register_encoding_changed_callback(&parser, lex_encoding_changed_callback);
 
-    VALUE source_range = yp_source_range_new(&parser);
+    VALUE newlines = rb_ary_new();
+    VALUE source_range_argv[] = { rb_str_new(source->source, source->size), newlines };
+    VALUE source_range = rb_class_new_instance(2, source_range_argv, rb_cYARPSourceRange);
+
     lex_data_t lex_data = {
         .source_range = source_range,
         .tokens = rb_ary_new(),
@@ -300,6 +303,13 @@ lex_source(source_t *source, char *filepath) {
 
     parser.lex_callback = &lex_callback;
     yp_node_t *node = yp_parse(&parser);
+
+    // Here we need to update the source range to have the correct newline
+    // offsets. We do it here because we've already created the object and given
+    // it over to all of the tokens.
+    for (size_t index = 0; index < parser.newline_list.size; index++) {
+        rb_ary_push(newlines, INT2FIX(parser.newline_list.offsets[index]));
+    }
 
     VALUE result_argv[] = {
         lex_data.tokens,
