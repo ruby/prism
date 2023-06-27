@@ -29,6 +29,8 @@ The repository contains the infrastructure for both a shared library (librubypar
 │   ├── yarp              Ruby library files
 │   └── yarp.rb           main entrypoint for the Ruby library
 ├── rakelib               various Rake tasks for the project
+├── rust
+│   └── yarp-sys          FFI binding for Rust
 ├── src
 │   ├── enc               various encoding files
 │   ├── util              various utility files
@@ -45,7 +47,7 @@ The repository contains the infrastructure for both a shared library (librubypar
 To compile the shared library, you will need:
 
 * A C99 compiler
-* autotools (autoconf, automake, libtool)
+* autotools autoconf, automake, libtool)
 * make
 * Ruby 3.3.0-preview1 or later
 
@@ -84,3 +86,4 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Ripper](docs/ripper.md)
 * [Serialization](docs/serialization.md)
 * [Testing](docs/testing.md)
+

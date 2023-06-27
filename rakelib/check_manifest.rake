@@ -16,6 +16,7 @@ task :check_manifest => [:templates] do
     java
     pkg
     rakelib
+    rust
     templates
     test
     tmp
