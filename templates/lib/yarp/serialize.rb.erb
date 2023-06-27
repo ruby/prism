@@ -23,9 +23,9 @@ module YARP
         @constant_pool_offset = nil
         @constant_pool = nil
 
-        newlines = [0]
-        source.b.scan("\n") { newlines << $~.offset(0)[0] + 1 }
-        @source_range = SourceRange.new(source, newlines)
+        offsets = [0]
+        source.b.scan("\n") { offsets << $~.offset(0)[0] + 1 }
+        @source_range = SourceRange.new(source, offsets)
       end
 
       def load

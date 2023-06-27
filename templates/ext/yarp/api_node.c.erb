@@ -95,13 +95,13 @@ yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding, VALU
 VALUE
 yp_source_range_new(yp_parser_t *parser) {
     VALUE source = rb_str_new(parser->start, parser->end - parser->start);
-    VALUE newlines = rb_ary_new_capa(parser->newline_list.size);
+    VALUE offsets = rb_ary_new_capa(parser->newline_list.size);
 
     for (size_t index = 0; index < parser->newline_list.size; index++) {
-        rb_ary_push(newlines, INT2FIX(parser->newline_list.offsets[index]));
+        rb_ary_push(offsets, INT2FIX(parser->newline_list.offsets[index]));
     }
 
-    VALUE source_argv[] = { source, newlines };
+    VALUE source_argv[] = { source, offsets };
     return rb_class_new_instance(2, source_argv, rb_cYARPSourceRange);
 }
 

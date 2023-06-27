@@ -5,23 +5,23 @@ module YARP
   # conjunction with locations to allow them to resolve line numbers and source
   # ranges.
   class SourceRange
-    attr_reader :source, :newlines
+    attr_reader :source, :offsets
 
-    def initialize(source, newlines)
+    def initialize(source, offsets)
       @source = source
-      @newlines = newlines
+      @offsets = offsets
     end
 
     def slice(offset, length)
       source.byteslice(offset, length)
     end
 
-    def line(offset)
-      newlines.bsearch_index { |newline| newline > offset } || newlines.length
+    def line(value)
+      offsets.bsearch_index { |offset| offset > value } || offsets.length
     end
 
-    def column(offset)
-      offset - newlines[line(offset) - 1]
+    def column(value)
+      value - offsets[line(value) - 1]
     end
   end
 
