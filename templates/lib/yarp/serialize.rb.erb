@@ -11,7 +11,7 @@ module YARP
 
     class Loader
       attr_reader :encoding, :source, :serialized, :io
-      attr_reader :constant_pool_offset, :constant_pool
+      attr_reader :constant_pool_offset, :constant_pool, :source_range
 
       def initialize(source, serialized, io)
         @encoding = Encoding::UTF_8
@@ -22,6 +22,7 @@ module YARP
 
         @constant_pool_offset = nil
         @constant_pool = nil
+        @source_range = SourceRange.new(source, [])
       end
 
       def load
@@ -71,7 +72,7 @@ module YARP
       end
 
       def load_location
-        Location.new(load_varint, load_varint)
+        Location.new(source_range, load_varint, load_varint)
       end
 
       def load_optional_location
@@ -97,7 +98,7 @@ module YARP
 
       def load_node
         type = io.getbyte
-        start_offset, length = load_varint, load_varint
+        location = load_location
 
         case type
         <%- nodes.each_with_index do |node, index| -%>
@@ -119,7 +120,7 @@ module YARP
             when UInt32Param then "load_varint"
             else raise
             end
-          } + ["start_offset", "length"]).join(", ") -%>)
+          } + ["location"]).join(", ") -%>)
           <%- end -%>
         end
       end

@@ -6,13 +6,12 @@ module YARP
     attr_reader :<%= param.name %>
 
     <%- end -%>
-    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["start_offset: Integer", "length: Integer"]).join(", ") %>) -> void
-    def initialize(<%= (node.params.map(&:name) + ["start_offset", "length"]).join(", ") %>)
+    # def initialize: (<%= (node.params.map { |param| "#{param.name}: #{param.rbs_class}" } + ["location: Location"]).join(", ") %>) -> void
+    def initialize(<%= (node.params.map(&:name) + ["location"]).join(", ") %>)
       <%- node.params.each do |param| -%>
       @<%= param.name %> = <%= param.name %>
       <%- end -%>
-      @start_offset = start_offset
-      @length = length
+      @location = location
     end
 
     # def accept: (visitor: Visitor) -> void
@@ -62,14 +61,14 @@ module YARP
     private
 
     # Create a new Location object
-    def Location(start_offset = 0, length = 0)
-      Location.new(start_offset, length)
+    def Location(source = nil, start_offset = 0, length = 0)
+      Location.new(source, start_offset, length)
     end
     <%- nodes.each do |node| -%>
 
     # Create a new <%= node.name %> node
-    def <%= node.name %>(<%= node.params.map(&:name).join(", ") %>)
-      <%= node.name %>.new(<%= (node.params.map(&:name) + ["0", "0"]).join(", ") %>)
+    def <%= node.name %>(<%= (node.params.map(&:name) + ["location = Location()"]).join(", ") %>)
+      <%= node.name %>.new(<%= (node.params.map(&:name) + ["location"]).join(", ") %>)
     end
     <%- end -%>
   end

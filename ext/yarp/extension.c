@@ -1,6 +1,7 @@
 #include "yarp/extension.h"
 
 VALUE rb_cYARP;
+VALUE rb_cYARPSourceRange;
 VALUE rb_cYARPToken;
 VALUE rb_cYARPLocation;
 
@@ -173,14 +174,17 @@ dump_file(VALUE self, VALUE filepath) {
 
 // Extract the comments out of the parser into an array.
 static VALUE
-parser_comments(yp_parser_t *parser) {
+parser_comments(yp_parser_t *parser, VALUE source_range) {
     VALUE comments = rb_ary_new();
-    yp_comment_t *comment;
 
-    for (comment = (yp_comment_t *) parser->comment_list.head; comment != NULL; comment = (yp_comment_t *) comment->node.next) {
-        VALUE location_argv[] = { LONG2FIX(comment->start - parser->start), LONG2FIX(comment->end - parser->start) };
+    for (yp_comment_t *comment = (yp_comment_t *) parser->comment_list.head; comment != NULL; comment = (yp_comment_t *) comment->node.next) {
+        VALUE location_argv[] = {
+            source_range,
+            LONG2FIX(comment->start - parser->start),
+            LONG2FIX(comment->end - parser->start)
+        };
+
         VALUE type;
-
         switch (comment->type) {
             case YP_COMMENT_INLINE:
                 type = ID2SYM(rb_intern("inline"));
@@ -196,7 +200,7 @@ parser_comments(yp_parser_t *parser) {
                 break;
         }
 
-        VALUE comment_argv[] = { type, rb_class_new_instance(2, location_argv, rb_cYARPLocation) };
+        VALUE comment_argv[] = { type, rb_class_new_instance(3, location_argv, rb_cYARPLocation) };
         rb_ary_push(comments, rb_class_new_instance(2, comment_argv, rb_cYARPComment));
     }
 
@@ -205,19 +209,20 @@ parser_comments(yp_parser_t *parser) {
 
 // Extract the errors out of the parser into an array.
 static VALUE
-parser_errors(yp_parser_t *parser, rb_encoding *encoding) {
+parser_errors(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) {
     VALUE errors = rb_ary_new();
     yp_diagnostic_t *error;
 
     for (error = (yp_diagnostic_t *) parser->error_list.head; error != NULL; error = (yp_diagnostic_t *) error->node.next) {
         VALUE location_argv[] = {
+            source_range,
             LONG2FIX(error->start - parser->start),
             LONG2FIX(error->end - parser->start)
         };
 
         VALUE error_argv[] = {
             rb_enc_str_new_cstr(error->message, encoding),
-            rb_class_new_instance(2, location_argv, rb_cYARPLocation)
+            rb_class_new_instance(3, location_argv, rb_cYARPLocation)
         };
 
         rb_ary_push(errors, rb_class_new_instance(2, error_argv, rb_cYARPParseError));
@@ -228,19 +233,20 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding) {
 
 // Extract the warnings out of the parser into an array.
 static VALUE
-parser_warnings(yp_parser_t *parser, rb_encoding *encoding) {
+parser_warnings(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) {
     VALUE warnings = rb_ary_new();
     yp_diagnostic_t *warning;
 
     for (warning = (yp_diagnostic_t *) parser->warning_list.head; warning != NULL; warning = (yp_diagnostic_t *) warning->node.next) {
         VALUE location_argv[] = {
+            source_range,
             LONG2FIX(warning->start - parser->start),
             LONG2FIX(warning->end - parser->start)
         };
 
         VALUE warning_argv[] = {
             rb_enc_str_new_cstr(warning->message, encoding),
-            rb_class_new_instance(2, location_argv, rb_cYARPLocation)
+            rb_class_new_instance(3, location_argv, rb_cYARPLocation)
         };
 
         rb_ary_push(warnings, rb_class_new_instance(2, warning_argv, rb_cYARPParseWarning));
@@ -250,6 +256,7 @@ parser_warnings(yp_parser_t *parser, rb_encoding *encoding) {
 }
 
 typedef struct {
+    VALUE source_range;
     VALUE tokens;
     rb_encoding *encoding;
 } lex_data_t;
@@ -259,7 +266,7 @@ lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
     lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
 
     VALUE yields = rb_ary_new_capa(2);
-    rb_ary_push(yields, yp_token_new(parser, token, lex_data->encoding));
+    rb_ary_push(yields, yp_token_new(parser, token, lex_data->encoding, lex_data->source_range));
     rb_ary_push(yields, INT2FIX(parser->lex_state));
 
     rb_ary_push(lex_data->tokens, yields);
@@ -278,7 +285,9 @@ lex_source(source_t *source, char *filepath) {
     yp_parser_init(&parser, source->source, source->size, filepath);
     yp_parser_register_encoding_changed_callback(&parser, lex_encoding_changed_callback);
 
+    VALUE source_range = yp_source_range_new(&parser);
     lex_data_t lex_data = {
+        .source_range = source_range,
         .tokens = rb_ary_new(),
         .encoding = rb_utf8_encoding()
     };
@@ -294,9 +303,9 @@ lex_source(source_t *source, char *filepath) {
 
     VALUE result_argv[] = {
         lex_data.tokens,
-        parser_comments(&parser),
-        parser_errors(&parser, lex_data.encoding),
-        parser_warnings(&parser, lex_data.encoding)
+        parser_comments(&parser, source_range),
+        parser_errors(&parser, lex_data.encoding, source_range),
+        parser_warnings(&parser, lex_data.encoding, source_range)
     };
 
     VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
@@ -338,11 +347,12 @@ parse_source(source_t *source, char *filepath) {
     yp_node_t *node = yp_parse(&parser);
     rb_encoding *encoding = rb_enc_find(parser.encoding.name);
 
+    VALUE source_range = yp_source_range_new(&parser);
     VALUE result_argv[] = {
         yp_ast_new(&parser, node, encoding),
-        parser_comments(&parser),
-        parser_errors(&parser, encoding),
-        parser_warnings(&parser, encoding)
+        parser_comments(&parser, source_range),
+        parser_errors(&parser, encoding, source_range),
+        parser_warnings(&parser, encoding, source_range)
     };
 
     VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
@@ -505,6 +515,7 @@ Init_yarp(void) {
     }
 
     rb_cYARP = rb_define_module("YARP");
+    rb_cYARPSourceRange = rb_define_class_under(rb_cYARP, "SourceRange", rb_cObject);
     rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
     rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
 

@@ -2,13 +2,14 @@
 #include "yarp/extension.h"
 
 extern VALUE rb_cYARP;
+extern VALUE rb_cYARPSourceRange;
 extern VALUE rb_cYARPToken;
 extern VALUE rb_cYARPLocation;
 
 static VALUE
-location_new(yp_parser_t *parser, const char *start, const char *end) {
-    VALUE argv[] = { LONG2FIX(start - parser->start), LONG2FIX(end - start) };
-    return rb_class_new_instance(2, argv, rb_cYARPLocation);
+location_new(yp_parser_t *parser, const char *start, const char *end, VALUE source_range) {
+    VALUE argv[] = { source_range, LONG2FIX(start - parser->start), LONG2FIX(end - start) };
+    return rb_class_new_instance(3, argv, rb_cYARPLocation);
 }
 
 static VALUE
@@ -16,21 +17,8 @@ yp_string_new(yp_string_t *string, rb_encoding *encoding) {
     return rb_enc_str_new(yp_string_source(string), yp_string_length(string), encoding);
 }
 
-VALUE
-yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding) {
-    ID type = rb_intern(yp_token_type_to_str(token->type));
-    VALUE argv[] = {
-        ID2SYM(type),
-        rb_enc_str_new(token->start, token->end - token->start, encoding),
-        LONG2FIX(token->start - parser->start),
-        LONG2FIX(token->end - token->start)
-    };
-
-    return rb_class_new_instance(4, argv, rb_cYARPToken);
-}
-
-VALUE
-yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *constants) {
+static VALUE
+yp_node_new(yp_parser_t *parser, yp_node_t *node, VALUE source_range, rb_encoding *encoding, ID *constants) {
     switch (node->type) {
         <%- nodes.each do |node| -%>
 #line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
@@ -38,19 +26,19 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
             <%- if node.params.any? -%>
             yp_<%= node.human %>_t *cast = (yp_<%= node.human %>_t *) node;
             <%- end -%>
-            VALUE argv[<%= node.params.length + 2 %>];
+            VALUE argv[<%= node.params.length + 1 %>];
             <%- node.params.each_with_index do |param, index| -%>
 
             // <%= param.name %>
             <%- case param -%>
             <%- when NodeParam -%>
-            argv[<%= index %>] = yp_node_new(parser, (yp_node_t *) cast-><%= param.name %>, encoding, constants);
+            argv[<%= index %>] = yp_node_new(parser, (yp_node_t *) cast-><%= param.name %>, source_range, encoding, constants);
             <%- when OptionalNodeParam -%>
-            argv[<%= index %>] = cast-><%= param.name %> == NULL ? Qnil : yp_node_new(parser, (yp_node_t *) cast-><%= param.name %>, encoding, constants);
+            argv[<%= index %>] = cast-><%= param.name %> == NULL ? Qnil : yp_node_new(parser, (yp_node_t *) cast-><%= param.name %>, source_range, encoding, constants);
             <%- when NodeListParam -%>
             argv[<%= index %>] = rb_ary_new();
             for (size_t index = 0; index < cast-><%= param.name %>.size; index++) {
-                rb_ary_push(argv[<%= index %>], yp_node_new(parser, cast-><%= param.name %>.nodes[index], encoding, constants));
+                rb_ary_push(argv[<%= index %>], yp_node_new(parser, cast-><%= param.name %>.nodes[index], source_range, encoding, constants));
             }
             <%- when StringParam -%>
             argv[<%= index %>] = yp_string_new(&cast-><%= param.name %>, encoding);
@@ -58,7 +46,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
             argv[<%= index %>] = rb_ary_new();
             for (size_t index = 0; index < cast-><%= param.name %>.size; index++) {
                 yp_location_t location = cast-><%= param.name %>.locations[index];
-                rb_ary_push(argv[<%= index %>], location_new(parser, location.start, location.end));
+                rb_ary_push(argv[<%= index %>], location_new(parser, location.start, location.end, source_range));
             }
             <%- when ConstantParam -%>
             argv[<%= index %>] = rb_id2sym(constants[cast-><%= param.name %> - 1]);
@@ -68,9 +56,9 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
                 rb_ary_push(argv[<%= index %>], rb_id2sym(constants[cast-><%= param.name %>.ids[index] - 1]));
             }
             <%- when LocationParam -%>
-            argv[<%= index %>] = location_new(parser, cast-><%= param.name %>.start, cast-><%= param.name %>.end);
+            argv[<%= index %>] = location_new(parser, cast-><%= param.name %>.start, cast-><%= param.name %>.end, source_range);
             <%- when OptionalLocationParam -%>
-            argv[<%= index %>] = cast-><%= param.name %>.start == NULL ? Qnil : location_new(parser, cast-><%= param.name %>.start, cast-><%= param.name %>.end);
+            argv[<%= index %>] = cast-><%= param.name %>.start == NULL ? Qnil : location_new(parser, cast-><%= param.name %>.start, cast-><%= param.name %>.end, source_range);
             <%- when UInt32Param -%>
             argv[<%= index %>] = ULONG2NUM(cast-><%= param.name %>);
             <%- else -%>
@@ -79,10 +67,8 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
             <%- end -%>
 
             // location
-            argv[<%= node.params.length %>] = LONG2FIX(node->location.start - parser->start);
-            argv[<%= node.params.length + 1 %>] = LONG2FIX(node->location.end - node->location.start);
-
-            return rb_class_new_instance(<%= node.params.length + 2 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= node.name %>")));
+            argv[<%= node.params.length %>] = location_new(parser, node->location.start, node->location.end, source_range);
+            return rb_class_new_instance(<%= node.params.length + 1 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= node.name %>")));
         }
         <%- end -%>
         default:
@@ -91,7 +77,36 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding, ID *con
 }
 
 #line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
+VALUE
+yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding, VALUE source_range) {
+    ID type = rb_intern(yp_token_type_to_str(token->type));
+    VALUE location = location_new(parser, token->start, token->end, source_range);
+
+    VALUE argv[] = {
+        ID2SYM(type),
+        rb_enc_str_new(token->start, token->end - token->start, encoding),
+        location
+    };
+
+    return rb_class_new_instance(3, argv, rb_cYARPToken);
+}
+
+// Create a YARP::Source object from the given parser.
+VALUE
+yp_source_range_new(yp_parser_t *parser) {
+    VALUE source = rb_str_new(parser->start, parser->end - parser->start);
+    VALUE newlines = rb_ary_new_capa(parser->newline_list.size);
+
+    for (size_t index = 0; index < parser->newline_list.size; index++) {
+        rb_ary_push(newlines, INT2FIX(parser->newline_list.offsets[index]));
+    }
+
+    VALUE source_argv[] = { source, newlines };
+    return rb_class_new_instance(2, source_argv, rb_cYARPSourceRange);
+}
+
 VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
+    VALUE source = yp_source_range_new(parser);
     ID *constants = calloc(parser->constant_pool.size, sizeof(ID));
 
     for (size_t index = 0; index < parser->constant_pool.capacity; index++) {
@@ -102,7 +117,7 @@ VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
         }
     }
 
-    VALUE res_node = yp_node_new(parser, node, encoding, constants);
+    VALUE res_node = yp_node_new(parser, node, source, encoding, constants);
     free(constants);
     return res_node;
 }

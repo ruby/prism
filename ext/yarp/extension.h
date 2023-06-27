@@ -17,12 +17,11 @@
 
 #define EXPECTED_YARP_VERSION "0.4.0"
 
-VALUE yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding);
-
+VALUE yp_source_range_new(yp_parser_t *parser);
+VALUE yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding, VALUE source_range);
 VALUE yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding);
 
 void Init_yarp_pack(void);
-
 YP_EXPORTED_FUNCTION void Init_yarp(void);
 
 #define DISCARD_CONST_QUAL(t, v) ((t)(uintptr_t)(v))
