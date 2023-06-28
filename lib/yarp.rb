@@ -239,6 +239,8 @@ module YARP
     Serialize.load(source, serialized)
   end
 
+  # Parse the given source into an AST. Optionally provide a filepath that this
+  # source comes from.
   def self.parse(source, filepath = nil)
     _parse(source, filepath)
   end
@@ -253,6 +255,9 @@ require "yarp.so"
 
 module YARP
   class << self
+    # This method comes from the C extension. Calling it this way makes it
+    # easier to handle default arguments in Ruby, and provides a source location
+    # for the method.
     private :_parse
   end
 end
