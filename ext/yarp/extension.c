@@ -10,18 +10,22 @@ VALUE rb_cYARPParseError;
 VALUE rb_cYARPParseWarning;
 VALUE rb_cYARPParseResult;
 
+/******************************************************************************/
+/* IO of Ruby code                                                            */
+/******************************************************************************/
+
 // Represents an input of Ruby code. It can either be coming from a file or a
 // string. If it's a file, we'll use demand paging to read the contents of the
 // file into a string. If it's already a string, we'll reference it directly.
 typedef struct {
     const char *source;
     size_t size;
-} source_t;
+} input_t;
 
 // Read the file indicated by the filepath parameter into source and load its
-// contents and size into the given source_t.
+// contents and size into the given input_t.
 static int
-source_file_load(source_t *source, VALUE filepath) {
+input_load_filepath(input_t *input, VALUE filepath) {
 #ifdef _WIN32
     HANDLE file = CreateFile(
         StringValueCStr(filepath),
@@ -32,16 +36,17 @@ source_file_load(source_t *source, VALUE filepath) {
         FILE_ATTRIBUTE_NORMAL,
         NULL
     );
+
     if (file == INVALID_HANDLE_VALUE) {
         perror("Invalid handle for file");
         return 1;
     }
 
     DWORD file_size = GetFileSize(file, NULL);
-    source->source = malloc(file_size);
+    input->source = malloc(file_size);
 
     DWORD bytes_read;
-    BOOL success = ReadFile(file, DISCARD_CONST_QUAL(void *, source->source), file_size, &bytes_read, NULL);
+    BOOL success = ReadFile(file, DISCARD_CONST_QUAL(void *, input->source), file_size, &bytes_read, NULL);
     CloseHandle(file);
 
     if (!success) {
@@ -49,7 +54,7 @@ source_file_load(source_t *source, VALUE filepath) {
         return 1;
     }
 
-    source->size = (size_t) file_size;
+    input->size = (size_t) file_size;
     return 0;
 #else
     // Open the file for reading
@@ -68,30 +73,30 @@ source_file_load(source_t *source, VALUE filepath) {
     }
 
     // mmap the file descriptor to virtually get the contents
-    source->size = sb.st_size;
+    input->size = sb.st_size;
 
 #ifdef HAVE_MMAP
-    if (!source->size) {
+    if (!input->size) {
         close(fd);
-        source->source = "";
+        input->source = "";
         return 0;
     }
 
-    char * res = mmap(NULL, source->size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (res == MAP_FAILED) {
+    const char *result = mmap(NULL, input->size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (result == MAP_FAILED) {
         perror("Map failed");
         return 1;
     } else {
-        source->source = res;
+        input->source = result;
     }
 #else
-    source->source = malloc(source->size);
-    if (source->source == NULL) return 1;
+    input->source = malloc(input->size);
+    if (input->source == NULL) return 1;
 
-    ssize_t read_size = read(fd, (void *)source->source, source->size);
-    if (read_size < 0 || (size_t)read_size != source->size) {
+    ssize_t read_size = read(fd, (void *) input->source, input->size);
+    if (read_size < 0 || (size_t)read_size != input->size) {
         perror("Read size is incorrect");
-        free((void *)source->source);
+        free((void *) input->source);
         return 1;
     }
 #endif
@@ -101,69 +106,74 @@ source_file_load(source_t *source, VALUE filepath) {
 #endif
 }
 
-// Load the contents and size of the given string into the given source_t.
+// Load the contents and size of the given string into the given input_t.
 static void
-source_string_load(source_t *source, VALUE string) {
-    *source = (source_t) {
-        .type = SOURCE_STRING,
-        .source = RSTRING_PTR(string),
-        .size = RSTRING_LEN(string),
-    };
+input_load_string(input_t *input, VALUE string) {
+    input->source = RSTRING_PTR(string);
+    input->size = RSTRING_LEN(string);
 }
 
-// Free any resources associated with the given source_t.
+// Free any resources associated with the given input_t.
 static void
-source_file_unload(source_t *source) {
-#ifdef _WIN32
-    free((void *)source->source);
+input_unload_filepath(input_t *input) {
+#if defined(_WIN32)
+    free((void *) input->source);
+#elif defined(HAVE_MMAP)
+    munmap((void *) input->source, input->size);
 #else
-#ifdef HAVE_MMAP
-    munmap((void *)source->source, source->size);
-#else
-    free((void *)source->source);
-#endif
+    free((void *) input->source);
 #endif
 }
 
-// Dump the AST corresponding to the given source to a string.
+/******************************************************************************/
+/* Serializing the AST                                                        */
+/******************************************************************************/
+
+// Dump the AST corresponding to the given input to a string.
 static VALUE
-dump_source(source_t *source, const char *filepath) {
+dump_input(input_t *input, const char *filepath) {
+    yp_buffer_t buffer;
+    if (!yp_buffer_init(&buffer)) {
+        rb_raise(rb_eNoMemError, "failed to allocate memory");
+    }
+
     yp_parser_t parser;
-    yp_parser_init(&parser, source->source, source->size, filepath);
+    yp_parser_init(&parser, input->source, input->size, filepath);
 
     yp_node_t *node = yp_parse(&parser);
-
-    yp_buffer_t buffer;
-    if (!yp_buffer_init(&buffer)) rb_raise(rb_eNoMemError, "failed to allocate memory");
-
     yp_serialize(&parser, node, &buffer);
-    VALUE dumped = rb_str_new(buffer.value, buffer.length);
 
+    VALUE result = rb_str_new(buffer.value, buffer.length);
     yp_node_destroy(&parser, node);
     yp_buffer_free(&buffer);
     yp_parser_free(&parser);
 
-    return dumped;
+    return result;
 }
 
 // Dump the AST corresponding to the given string to a string.
 static VALUE
 dump(VALUE self, VALUE string, VALUE filepath) {
-    source_t source;
-    source_string_load(&source, string);
-    return dump_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+    input_t input;
+    input_load_string(&input, string);
+    return dump_input(&input, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
 }
 
 // Dump the AST corresponding to the given file to a string.
 static VALUE
 dump_file(VALUE self, VALUE filepath) {
-    source_t source;
-    if (source_file_load(&source, filepath) != 0) return Qnil;
+    input_t input;
+    if (input_load_filepath(&input, filepath) != 0) return Qnil;
 
-    VALUE value = dump_source(&source, StringValueCStr(filepath));
-    source_file_unload(&source);
+    VALUE value = dump_input(&input, StringValueCStr(filepath));
+    input_unload_filepath(&input);
+
     return value;
 }
+
+/******************************************************************************/
+/* Extracting values for the parse result                                     */
+/******************************************************************************/
 
 // Extract the comments out of the parser into an array.
 static VALUE
@@ -248,12 +258,22 @@ parser_warnings(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) 
     return warnings;
 }
 
+/******************************************************************************/
+/* Lexing Ruby code                                                           */
+/******************************************************************************/
+
+// This struct gets stored in the parser and passed in to the lex callback any
+// time a new token is found. We use it to store the necessary information to
+// initialize a Token instance.
 typedef struct {
     VALUE source_range;
     VALUE tokens;
     rb_encoding *encoding;
 } lex_data_t;
 
+// This is passed as a callback to the parser. It gets called every time a new
+// token is found. Once found, we initialize a new instance of Token and push it
+// onto the tokens array.
 static void
 lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
     lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
@@ -265,6 +285,9 @@ lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
     rb_ary_push(lex_data->tokens, yields);
 }
 
+// This is called whenever the encoding changes based on the magic comment at
+// the top of the file. We use it to update the encoding that we are using to
+// create tokens.
 static void
 lex_encoding_changed_callback(yp_parser_t *parser) {
     lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
@@ -273,13 +296,13 @@ lex_encoding_changed_callback(yp_parser_t *parser) {
 
 // Return an array of tokens corresponding to the given source.
 static VALUE
-lex_source(source_t *source, char *filepath) {
+lex_source(input_t *input, char *filepath) {
     yp_parser_t parser;
-    yp_parser_init(&parser, source->source, source->size, filepath);
+    yp_parser_init(&parser, input->source, input->size, filepath);
     yp_parser_register_encoding_changed_callback(&parser, lex_encoding_changed_callback);
 
     VALUE offsets = rb_ary_new();
-    VALUE source_range_argv[] = { rb_str_new(source->source, source->size), offsets };
+    VALUE source_range_argv[] = { rb_str_new(input->source, input->size), offsets };
     VALUE source_range = rb_class_new_instance(2, source_range_argv, rb_cYARPSourceRange);
 
     lex_data_t lex_data = {
@@ -288,9 +311,9 @@ lex_source(source_t *source, char *filepath) {
         .encoding = rb_utf8_encoding()
     };
 
-    void *data = (void *) &lex_data;
+    lex_data_t *data = &lex_data;
     yp_lex_callback_t lex_callback = (yp_lex_callback_t) {
-        .data = data,
+        .data = (void *) data,
         .callback = lex_token,
     };
 
@@ -322,27 +345,33 @@ lex_source(source_t *source, char *filepath) {
 // Return an array of tokens corresponding to the given string.
 static VALUE
 lex(VALUE self, VALUE string, VALUE filepath) {
-    source_t source;
-    source_string_load(&source, string);
+    input_t input;
+    input_load_string(&input, string);
 
-    return lex_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+    return lex_source(&input, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
 }
 
 // Return an array of tokens corresponding to the given file.
 static VALUE
 lex_file(VALUE self, VALUE filepath) {
-    source_t source;
-    if (source_file_load(&source, filepath) != 0) return Qnil;
+    input_t input;
+    if (input_load_filepath(&input, filepath) != 0) return Qnil;
 
-    VALUE value = lex_source(&source, StringValueCStr(filepath));
-    source_file_unload(&source);
+    VALUE value = lex_source(&input, StringValueCStr(filepath));
+    input_unload_filepath(&input);
+
     return value;
 }
 
+/******************************************************************************/
+/* Parsing Ruby code                                                          */
+/******************************************************************************/
+
+// Parse the given input and return a ParseResult instance.
 static VALUE
-parse_source(source_t *source, char *filepath) {
+parse_source(input_t *input, char *filepath) {
     yp_parser_t parser;
-    yp_parser_init(&parser, source->source, source->size, filepath);
+    yp_parser_init(&parser, input->source, input->size, filepath);
 
     yp_node_t *node = yp_parse(&parser);
     rb_encoding *encoding = rb_enc_find(parser.encoding.name);
@@ -363,18 +392,19 @@ parse_source(source_t *source, char *filepath) {
     return result;
 }
 
+// Parse the given string and return a ParseResult instance.
 static VALUE
 parse(VALUE self, VALUE string, VALUE filepath) {
-    source_t source;
-    source_string_load(&source, string);
+    input_t input;
+    input_load_string(&input, string);
 
 #ifdef YARP_DEBUG_MODE_BUILD
-    char* dup = malloc(source.size);
-    memcpy(dup, source.source, source.size);
-    source.source = dup;
+    char* dup = malloc(input.size);
+    memcpy(dup, input.source, input.size);
+    input.source = dup;
 #endif
 
-    VALUE value = parse_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+    VALUE value = parse_source(&input, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
 
 #ifdef YARP_DEBUG_MODE_BUILD
     free(dup);
@@ -383,24 +413,32 @@ parse(VALUE self, VALUE string, VALUE filepath) {
     return value;
 }
 
+// Parse the given file and return a ParseResult instance.
 static VALUE
-parse_file(VALUE self, VALUE rb_filepath) {
-    source_t source;
-    if (source_file_load(&source, rb_filepath) != 0) {
+parse_file(VALUE self, VALUE filepath) {
+    input_t input;
+    if (input_load_filepath(&input, filepath) != 0) {
         return Qnil;
     }
 
-    VALUE value = parse_source(&source, StringValueCStr(rb_filepath));
-    source_file_unload(&source);
+    VALUE value = parse_source(&input, StringValueCStr(filepath));
+    input_unload_filepath(&input);
     return value;
 }
 
+/******************************************************************************/
+/* Utility functions exposed to make testing easier                           */
+/******************************************************************************/
+
+// Returns an array of strings corresponding to the named capture groups in the
+// given source string. If YARP was unable to parse the regular expression, this
+// function returns nil.
 static VALUE
-named_captures(VALUE self, VALUE rb_source) {
+named_captures(VALUE self, VALUE source) {
     yp_string_list_t string_list;
     yp_string_list_init(&string_list);
 
-    if (!yp_regexp_named_capture_group_names(RSTRING_PTR(rb_source), RSTRING_LEN(rb_source), &string_list)) {
+    if (!yp_regexp_named_capture_group_names(RSTRING_PTR(source), RSTRING_LEN(source), &string_list)) {
         yp_string_list_free(&string_list);
         return Qnil;
     }
@@ -415,6 +453,8 @@ named_captures(VALUE self, VALUE rb_source) {
     return names;
 }
 
+// Accepts a source string and a type of unescaping and returns the unescaped
+// version.
 static VALUE
 unescape(VALUE source, yp_unescape_type_t unescape_type) {
     yp_string_t string;
@@ -436,23 +476,27 @@ unescape(VALUE source, yp_unescape_type_t unescape_type) {
     return result;
 }
 
+// Do not unescape anything in the given string. This is here to provide a
+// consistent API.
 static VALUE
 unescape_none(VALUE self, VALUE source) {
     return unescape(source, YP_UNESCAPE_NONE);
 }
 
+// Minimally unescape the given string. This means effectively unescaping just
+// the quotes of a string. Returns the unescaped string.
 static VALUE
 unescape_minimal(VALUE self, VALUE source) {
     return unescape(source, YP_UNESCAPE_MINIMAL);
 }
 
+// Unescape everything in the given string. Return the unescaped string.
 static VALUE
 unescape_all(VALUE self, VALUE source) {
     return unescape(source, YP_UNESCAPE_ALL);
 }
 
-// This function returns a hash of information about the given source string's
-// memory usage.
+// Return a hash of information about the given source string's memory usage.
 static VALUE
 memsize(VALUE self, VALUE string) {
     yp_parser_t parser;
@@ -473,13 +517,15 @@ memsize(VALUE self, VALUE string) {
     return result;
 }
 
+// Parse the file, but do nothing with the result. This is used to profile the
+// parser for memory and speed.
 static VALUE
 profile_file(VALUE self, VALUE filepath) {
-    source_t source;
-    if (source_file_load(&source, filepath) != 0) return Qnil;
+    input_t input;
+    if (input_load_filepath(&input, filepath) != 0) return Qnil;
 
     yp_parser_t parser;
-    yp_parser_init(&parser, source.source, source.size, StringValueCStr(filepath));
+    yp_parser_init(&parser, input.source, input.size, StringValueCStr(filepath));
 
     yp_node_t *node = yp_parse(&parser);
     yp_node_destroy(&parser, node);
@@ -490,9 +536,8 @@ profile_file(VALUE self, VALUE filepath) {
 
 // The function takes a source string and returns a Ruby array containing the
 // offsets of every newline in the string. (It also includes a 0 at the
-// beginning to indicate the position of the first line.)
-//
-// It accepts a string as its only argument and returns an array of integers.
+// beginning to indicate the position of the first line.) It accepts a string as
+// its only argument and returns an array of integers.
 static VALUE
 newlines(VALUE self, VALUE string) {
     yp_parser_t parser;
@@ -510,6 +555,10 @@ newlines(VALUE self, VALUE string) {
     yp_parser_free(&parser);
     return result;
 }
+
+/******************************************************************************/
+/* Initialization of the extension                                            */
+/******************************************************************************/
 
 RUBY_FUNC_EXPORTED void
 Init_yarp(void) {
