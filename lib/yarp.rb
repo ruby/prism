@@ -221,6 +221,12 @@ module YARP
     Serialize.load(source, serialized)
   end
 
+  # Lex the given source into tokens. Optionally provide a filepath that this
+  # source comes from.
+  def self.lex(source, filepath = nil)
+    _lex(source, filepath)
+  end
+
   # Parse the given source into an AST. Optionally provide a filepath that this
   # source comes from.
   def self.parse(source, filepath = nil)
@@ -237,9 +243,9 @@ require "yarp.so"
 
 module YARP
   class << self
-    # This method comes from the C extension. Calling it this way makes it
+    # These methods comes from the C extension. Calling them this way makes it
     # easier to handle default arguments in Ruby, and provides a source location
-    # for the method.
-    private :_parse
+    # for each method.
+    private :_lex, :_parse
   end
 end

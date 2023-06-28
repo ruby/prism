@@ -331,11 +331,8 @@ static VALUE
 lex(VALUE self, VALUE string, VALUE filepath) {
     source_t source;
     source_string_load(&source, string);
-    char *filepath_char = NULL;
-    if (filepath) {
-        filepath_char = StringValueCStr(filepath);
-    }
-    return lex_source(&source, filepath_char);
+
+    return lex_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
 }
 
 // Return an array of tokens corresponding to the given file.
@@ -377,15 +374,19 @@ static VALUE
 parse(VALUE self, VALUE string, VALUE filepath) {
     source_t source;
     source_string_load(&source, string);
+
 #ifdef YARP_DEBUG_MODE_BUILD
     char* dup = malloc(source.size);
     memcpy(dup, source.source, source.size);
     source.source = dup;
 #endif
+
     VALUE value = parse_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+
 #ifdef YARP_DEBUG_MODE_BUILD
     free(dup);
 #endif
+
     return value;
 }
 
@@ -539,7 +540,7 @@ Init_yarp(void) {
     rb_define_singleton_method(rb_cYARP, "dump", dump, 2);
     rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
 
-    rb_define_singleton_method(rb_cYARP, "lex", lex, 2);
+    rb_define_singleton_method(rb_cYARP, "_lex", lex, 2);
     rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
 
     rb_define_singleton_method(rb_cYARP, "_parse", parse, 2);
