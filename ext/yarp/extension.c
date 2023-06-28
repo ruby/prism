@@ -10,11 +10,10 @@ VALUE rb_cYARPParseError;
 VALUE rb_cYARPParseWarning;
 VALUE rb_cYARPParseResult;
 
-// Represents a source of Ruby code. It can either be coming from a file or a
-// string. If it's a file, it's going to mmap the contents of the file. If it's
-// a string it's going to just point to the contents of the string.
+// Represents an input of Ruby code. It can either be coming from a file or a
+// string. If it's a file, we'll use demand paging to read the contents of the
+// file into a string. If it's already a string, we'll reference it directly.
 typedef struct {
-    enum { SOURCE_FILE, SOURCE_STRING } type;
     const char *source;
     size_t size;
 } source_t;
@@ -514,21 +513,30 @@ newlines(VALUE self, VALUE string) {
 
 RUBY_FUNC_EXPORTED void
 Init_yarp(void) {
+    // Make sure that the YARP library version matches the expected version.
+    // Otherwise something was compiled incorrectly.
     if (strcmp(yp_version(), EXPECTED_YARP_VERSION) != 0) {
-        rb_raise(rb_eRuntimeError, "The YARP library version (%s) does not match the expected version (%s)", yp_version(),
-                         EXPECTED_YARP_VERSION);
+        rb_raise(
+            rb_eRuntimeError,
+            "The YARP library version (%s) does not match the expected version (%s)",
+            yp_version(),
+            EXPECTED_YARP_VERSION
+        );
     }
 
+    // Grab up references to all of the constants that we're going to need to
+    // reference throughout this extension.
     rb_cYARP = rb_define_module("YARP");
     rb_cYARPSourceRange = rb_define_class_under(rb_cYARP, "SourceRange", rb_cObject);
     rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
     rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
-
     rb_cYARPComment = rb_define_class_under(rb_cYARP, "Comment", rb_cObject);
     rb_cYARPParseError = rb_define_class_under(rb_cYARP, "ParseError", rb_cObject);
     rb_cYARPParseWarning = rb_define_class_under(rb_cYARP, "ParseWarning", rb_cObject);
     rb_cYARPParseResult = rb_define_class_under(rb_cYARP, "ParseResult", rb_cObject);
 
+    // Define the version string here so that we can use the constants defined
+    // in yarp.h.
     rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
 
     // First, the functions that have to do with lexing and parsing.
@@ -539,17 +547,16 @@ Init_yarp(void) {
     rb_define_singleton_method(rb_cYARP, "_parse", parse, 2);
     rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
 
+    // Next, the functions that will be called by the parser to perform various
+    // internal tasks. We expose these to make them easier to test.
     rb_define_singleton_method(rb_cYARP, "named_captures", named_captures, 1);
-
     rb_define_singleton_method(rb_cYARP, "unescape_none", unescape_none, 1);
     rb_define_singleton_method(rb_cYARP, "unescape_minimal", unescape_minimal, 1);
     rb_define_singleton_method(rb_cYARP, "unescape_all", unescape_all, 1);
-
     rb_define_singleton_method(rb_cYARP, "memsize", memsize, 1);
-
     rb_define_singleton_method(rb_cYARP, "profile_file", profile_file, 1);
-
     rb_define_singleton_method(rb_cYARP, "newlines", newlines, 1);
 
+    // Next, initialize the pack API.
     Init_yarp_pack();
 }
