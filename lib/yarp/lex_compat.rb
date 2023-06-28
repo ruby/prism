@@ -714,4 +714,39 @@ module YARP
   def self.lex_compat(source, filepath = "")
     LexCompat.new(source, filepath).result
   end
+
+  # This lexes with the Ripper lex. It drops any space events but otherwise
+  # returns the same tokens. Raises SyntaxError if the syntax in source is
+  # invalid.
+  def self.lex_ripper(source)
+    previous = []
+    results = []
+
+    Ripper.lex(source, raise_errors: true).each do |token|
+      case token[1]
+      when :on_sp
+        # skip
+      when :on_tstring_content
+        if previous[1] == :on_tstring_content &&
+            (token[2].start_with?("\#$") || token[2].start_with?("\#@"))
+          previous[2] << token[2]
+        else
+          results << token
+          previous = token
+        end
+      when :on_words_sep
+        if previous[1] == :on_words_sep
+          previous[2] << token[2]
+        else
+          results << token
+          previous = token
+        end
+      else
+        results << token
+        previous = token
+      end
+    end
+
+    results
+  end
 end
