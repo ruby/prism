@@ -2,21 +2,21 @@ require "stringio"
 
 module YARP
   module Serialize
-    def self.load(source, serialized)
+    def self.load(input, serialized)
       io = StringIO.new(serialized)
       io.set_encoding(Encoding::BINARY)
 
-      Loader.new(source, serialized, io).load
+      Loader.new(input, serialized, io).load
     end
 
     class Loader
-      attr_reader :encoding, :source, :serialized, :io
-      attr_reader :constant_pool_offset, :constant_pool, :source_range
+      attr_reader :encoding, :input, :serialized, :io
+      attr_reader :constant_pool_offset, :constant_pool, :source
 
-      def initialize(source, serialized, io)
+      def initialize(input, serialized, io)
         @encoding = Encoding::UTF_8
 
-        @source = source.dup
+        @input = input.dup
         @serialized = serialized
         @io = io
 
@@ -24,8 +24,8 @@ module YARP
         @constant_pool = nil
 
         offsets = [0]
-        source.b.scan("\n") { offsets << $~.offset(0)[0] + 1 }
-        @source_range = SourceRange.new(source, offsets)
+        input.b.scan("\n") { offsets << $~.offset(0)[0] + 1 }
+        @source = Source.new(input, offsets)
       end
 
       def load
@@ -33,7 +33,7 @@ module YARP
         io.read(3).unpack("C3") => [0, 4, 0]
 
         @encoding = Encoding.find(io.read(load_varint))
-        @source = source.force_encoding(@encoding).freeze
+        @input = input.force_encoding(@encoding).freeze
 
         @constant_pool_offset = io.read(4).unpack1("L")
         @constant_pool = Array.new(load_varint, nil)
@@ -75,7 +75,7 @@ module YARP
       end
 
       def load_location
-        Location.new(source_range, load_varint, load_varint)
+        Location.new(source, load_varint, load_varint)
       end
 
       def load_optional_location
@@ -92,7 +92,7 @@ module YARP
           start = serialized.unpack1("L", offset: offset)
           length = serialized.unpack1("L", offset: offset + 4)
 
-          constant = source.byteslice(start, length).to_sym
+          constant = input.byteslice(start, length).to_sym
           constant_pool[index] = constant
         end
 

@@ -1,7 +1,7 @@
 #include "yarp/extension.h"
 
 VALUE rb_cYARP;
-VALUE rb_cYARPSourceRange;
+VALUE rb_cYARPSource;
 VALUE rb_cYARPToken;
 VALUE rb_cYARPLocation;
 
@@ -22,13 +22,32 @@ typedef struct {
     size_t size;
 } input_t;
 
+// Check if the given filepath is a string. If it's nil, then return NULL. If
+// it's not a string, then raise a type error. Otherwise return the filepath as
+// a C string.
+static const char *
+check_filepath(VALUE filepath) {
+    // If the filepath is nil, then we don't need to do anything.
+    if (NIL_P(filepath)) {
+        return NULL;
+    }
+
+    // Check if the filepath is a string. If it's not, then raise a type error.
+    if (!RB_TYPE_P(filepath, T_STRING)) {
+        rb_raise(rb_eTypeError, "wrong argument type %"PRIsVALUE" (expected String)", rb_obj_class(filepath));
+    }
+
+    // Otherwise, return the filepath as a C string.
+    return StringValueCStr(filepath);
+}
+
 // Read the file indicated by the filepath parameter into source and load its
 // contents and size into the given input_t.
 static int
-input_load_filepath(input_t *input, VALUE filepath) {
+input_load_filepath(input_t *input, const char *filepath) {
 #ifdef _WIN32
     HANDLE file = CreateFile(
-        StringValueCStr(filepath),
+        filepath,
         GENERIC_READ,
         0,
         NULL,
@@ -46,7 +65,7 @@ input_load_filepath(input_t *input, VALUE filepath) {
     input->source = malloc(file_size);
 
     DWORD bytes_read;
-    BOOL success = ReadFile(file, DISCARD_CONST_QUAL(void *, input->source), file_size, &bytes_read, NULL);
+    BOOL success = ReadFile(file, (void *)(uintptr_t)(input->source), file_size, &bytes_read, NULL);
     CloseHandle(file);
 
     if (!success) {
@@ -58,7 +77,7 @@ input_load_filepath(input_t *input, VALUE filepath) {
     return 0;
 #else
     // Open the file for reading
-    int fd = open(StringValueCStr(filepath), O_RDONLY);
+    int fd = open(filepath, O_RDONLY);
     if (fd == -1) {
         perror("open");
         return 1;
@@ -109,6 +128,11 @@ input_load_filepath(input_t *input, VALUE filepath) {
 // Load the contents and size of the given string into the given input_t.
 static void
 input_load_string(input_t *input, VALUE string) {
+    // Check if the string is a string. If it's not, then raise a type error.
+    if (!RB_TYPE_P(string, T_STRING)) {
+        rb_raise(rb_eTypeError, "wrong argument type %"PRIsVALUE" (expected String)", rb_obj_class(string));
+    }
+
     input->source = RSTRING_PTR(string);
     input->size = RSTRING_LEN(string);
 }
@@ -153,19 +177,25 @@ dump_input(input_t *input, const char *filepath) {
 
 // Dump the AST corresponding to the given string to a string.
 static VALUE
-dump(VALUE self, VALUE string, VALUE filepath) {
+dump(int argc, VALUE *argv, VALUE self) {
+    VALUE string;
+    VALUE filepath;
+    rb_scan_args(argc, argv, "11", &string, &filepath);
+
     input_t input;
     input_load_string(&input, string);
-    return dump_input(&input, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+    return dump_input(&input, check_filepath(filepath));
 }
 
 // Dump the AST corresponding to the given file to a string.
 static VALUE
 dump_file(VALUE self, VALUE filepath) {
     input_t input;
-    if (input_load_filepath(&input, filepath) != 0) return Qnil;
 
-    VALUE value = dump_input(&input, StringValueCStr(filepath));
+    const char *checked = check_filepath(filepath);
+    if (input_load_filepath(&input, checked) != 0) return Qnil;
+
+    VALUE value = dump_input(&input, checked);
     input_unload_filepath(&input);
 
     return value;
@@ -177,12 +207,12 @@ dump_file(VALUE self, VALUE filepath) {
 
 // Extract the comments out of the parser into an array.
 static VALUE
-parser_comments(yp_parser_t *parser, VALUE source_range) {
+parser_comments(yp_parser_t *parser, VALUE source) {
     VALUE comments = rb_ary_new();
 
     for (yp_comment_t *comment = (yp_comment_t *) parser->comment_list.head; comment != NULL; comment = (yp_comment_t *) comment->node.next) {
         VALUE location_argv[] = {
-            source_range,
+            source,
             LONG2FIX(comment->start - parser->start),
             LONG2FIX(comment->end - parser->start)
         };
@@ -212,13 +242,13 @@ parser_comments(yp_parser_t *parser, VALUE source_range) {
 
 // Extract the errors out of the parser into an array.
 static VALUE
-parser_errors(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) {
+parser_errors(yp_parser_t *parser, rb_encoding *encoding, VALUE source) {
     VALUE errors = rb_ary_new();
     yp_diagnostic_t *error;
 
     for (error = (yp_diagnostic_t *) parser->error_list.head; error != NULL; error = (yp_diagnostic_t *) error->node.next) {
         VALUE location_argv[] = {
-            source_range,
+            source,
             LONG2FIX(error->start - parser->start),
             LONG2FIX(error->end - parser->start)
         };
@@ -236,13 +266,13 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) {
 
 // Extract the warnings out of the parser into an array.
 static VALUE
-parser_warnings(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) {
+parser_warnings(yp_parser_t *parser, rb_encoding *encoding, VALUE source) {
     VALUE warnings = rb_ary_new();
     yp_diagnostic_t *warning;
 
     for (warning = (yp_diagnostic_t *) parser->warning_list.head; warning != NULL; warning = (yp_diagnostic_t *) warning->node.next) {
         VALUE location_argv[] = {
-            source_range,
+            source,
             LONG2FIX(warning->start - parser->start),
             LONG2FIX(warning->end - parser->start)
         };
@@ -266,7 +296,7 @@ parser_warnings(yp_parser_t *parser, rb_encoding *encoding, VALUE source_range) 
 // time a new token is found. We use it to store the necessary information to
 // initialize a Token instance.
 typedef struct {
-    VALUE source_range;
+    VALUE source;
     VALUE tokens;
     rb_encoding *encoding;
 } lex_data_t;
@@ -279,7 +309,7 @@ lex_token(void *data, yp_parser_t *parser, yp_token_t *token) {
     lex_data_t *lex_data = (lex_data_t *) parser->lex_callback->data;
 
     VALUE yields = rb_ary_new_capa(2);
-    rb_ary_push(yields, yp_token_new(parser, token, lex_data->encoding, lex_data->source_range));
+    rb_ary_push(yields, yp_token_new(parser, token, lex_data->encoding, lex_data->source));
     rb_ary_push(yields, INT2FIX(parser->lex_state));
 
     rb_ary_push(lex_data->tokens, yields);
@@ -296,17 +326,17 @@ lex_encoding_changed_callback(yp_parser_t *parser) {
 
 // Return an array of tokens corresponding to the given source.
 static VALUE
-lex_source(input_t *input, char *filepath) {
+lex_input(input_t *input, const char *filepath) {
     yp_parser_t parser;
     yp_parser_init(&parser, input->source, input->size, filepath);
     yp_parser_register_encoding_changed_callback(&parser, lex_encoding_changed_callback);
 
     VALUE offsets = rb_ary_new();
-    VALUE source_range_argv[] = { rb_str_new(input->source, input->size), offsets };
-    VALUE source_range = rb_class_new_instance(2, source_range_argv, rb_cYARPSourceRange);
+    VALUE source_argv[] = { rb_str_new(input->source, input->size), offsets };
+    VALUE source = rb_class_new_instance(2, source_argv, rb_cYARPSource);
 
     lex_data_t lex_data = {
-        .source_range = source_range,
+        .source = source,
         .tokens = rb_ary_new(),
         .encoding = rb_utf8_encoding()
     };
@@ -329,9 +359,9 @@ lex_source(input_t *input, char *filepath) {
 
     VALUE result_argv[] = {
         lex_data.tokens,
-        parser_comments(&parser, source_range),
-        parser_errors(&parser, lex_data.encoding, source_range),
-        parser_warnings(&parser, lex_data.encoding, source_range)
+        parser_comments(&parser, source),
+        parser_errors(&parser, lex_data.encoding, source),
+        parser_warnings(&parser, lex_data.encoding, source)
     };
 
     VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
@@ -344,20 +374,25 @@ lex_source(input_t *input, char *filepath) {
 
 // Return an array of tokens corresponding to the given string.
 static VALUE
-lex(VALUE self, VALUE string, VALUE filepath) {
+lex(int argc, VALUE *argv, VALUE self) {
+    VALUE string;
+    VALUE filepath;
+    rb_scan_args(argc, argv, "11", &string, &filepath);
+
     input_t input;
     input_load_string(&input, string);
-
-    return lex_source(&input, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+    return lex_input(&input, check_filepath(filepath));
 }
 
 // Return an array of tokens corresponding to the given file.
 static VALUE
 lex_file(VALUE self, VALUE filepath) {
     input_t input;
-    if (input_load_filepath(&input, filepath) != 0) return Qnil;
 
-    VALUE value = lex_source(&input, StringValueCStr(filepath));
+    const char *checked = check_filepath(filepath);
+    if (input_load_filepath(&input, checked) != 0) return Qnil;
+
+    VALUE value = lex_input(&input, checked);
     input_unload_filepath(&input);
 
     return value;
@@ -369,19 +404,19 @@ lex_file(VALUE self, VALUE filepath) {
 
 // Parse the given input and return a ParseResult instance.
 static VALUE
-parse_source(input_t *input, char *filepath) {
+parse_input(input_t *input, const char *filepath) {
     yp_parser_t parser;
     yp_parser_init(&parser, input->source, input->size, filepath);
 
     yp_node_t *node = yp_parse(&parser);
     rb_encoding *encoding = rb_enc_find(parser.encoding.name);
 
-    VALUE source_range = yp_source_range_new(&parser);
+    VALUE source = yp_source_new(&parser);
     VALUE result_argv[] = {
         yp_ast_new(&parser, node, encoding),
-        parser_comments(&parser, source_range),
-        parser_errors(&parser, encoding, source_range),
-        parser_warnings(&parser, encoding, source_range)
+        parser_comments(&parser, source),
+        parser_errors(&parser, encoding, source),
+        parser_warnings(&parser, encoding, source)
     };
 
     VALUE result = rb_class_new_instance(4, result_argv, rb_cYARPParseResult);
@@ -394,7 +429,11 @@ parse_source(input_t *input, char *filepath) {
 
 // Parse the given string and return a ParseResult instance.
 static VALUE
-parse(VALUE self, VALUE string, VALUE filepath) {
+parse(int argc, VALUE *argv, VALUE self) {
+    VALUE string;
+    VALUE filepath;
+    rb_scan_args(argc, argv, "11", &string, &filepath);
+
     input_t input;
     input_load_string(&input, string);
 
@@ -404,7 +443,7 @@ parse(VALUE self, VALUE string, VALUE filepath) {
     input.source = dup;
 #endif
 
-    VALUE value = parse_source(&input, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
+    VALUE value = parse_input(&input, check_filepath(filepath));
 
 #ifdef YARP_DEBUG_MODE_BUILD
     free(dup);
@@ -417,12 +456,13 @@ parse(VALUE self, VALUE string, VALUE filepath) {
 static VALUE
 parse_file(VALUE self, VALUE filepath) {
     input_t input;
-    if (input_load_filepath(&input, filepath) != 0) {
-        return Qnil;
-    }
 
-    VALUE value = parse_source(&input, StringValueCStr(filepath));
+    const char *checked = check_filepath(filepath);
+    if (input_load_filepath(&input, checked) != 0) return Qnil;
+
+    VALUE value = parse_input(&input, checked);
     input_unload_filepath(&input);
+
     return value;
 }
 
@@ -522,10 +562,12 @@ memsize(VALUE self, VALUE string) {
 static VALUE
 profile_file(VALUE self, VALUE filepath) {
     input_t input;
-    if (input_load_filepath(&input, filepath) != 0) return Qnil;
+
+    const char *checked = check_filepath(filepath);
+    if (input_load_filepath(&input, checked) != 0) return Qnil;
 
     yp_parser_t parser;
-    yp_parser_init(&parser, input.source, input.size, StringValueCStr(filepath));
+    yp_parser_init(&parser, input.source, input.size, checked);
 
     yp_node_t *node = yp_parse(&parser);
     yp_node_destroy(&parser, node);
@@ -576,7 +618,7 @@ Init_yarp(void) {
     // Grab up references to all of the constants that we're going to need to
     // reference throughout this extension.
     rb_cYARP = rb_define_module("YARP");
-    rb_cYARPSourceRange = rb_define_class_under(rb_cYARP, "SourceRange", rb_cObject);
+    rb_cYARPSource = rb_define_class_under(rb_cYARP, "Source", rb_cObject);
     rb_cYARPToken = rb_define_class_under(rb_cYARP, "Token", rb_cObject);
     rb_cYARPLocation = rb_define_class_under(rb_cYARP, "Location", rb_cObject);
     rb_cYARPComment = rb_define_class_under(rb_cYARP, "Comment", rb_cObject);
@@ -589,11 +631,11 @@ Init_yarp(void) {
     rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
 
     // First, the functions that have to do with lexing and parsing.
-    rb_define_singleton_method(rb_cYARP, "_dump", dump, 2);
+    rb_define_singleton_method(rb_cYARP, "dump", dump, -1);
     rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
-    rb_define_singleton_method(rb_cYARP, "_lex", lex, 2);
+    rb_define_singleton_method(rb_cYARP, "lex", lex, -1);
     rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
-    rb_define_singleton_method(rb_cYARP, "_parse", parse, 2);
+    rb_define_singleton_method(rb_cYARP, "parse", parse, -1);
     rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
 
     // Next, the functions that will be called by the parser to perform various

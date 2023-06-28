@@ -4,7 +4,7 @@ module YARP
   # This represents a source of Ruby code that has been parsed. It is used in
   # conjunction with locations to allow them to resolve line numbers and source
   # ranges.
-  class SourceRange
+  class Source
     attr_reader :source, :offsets
 
     def initialize(source, offsets)
@@ -27,9 +27,9 @@ module YARP
 
   # This represents a location in the source.
   class Location
-    # A SourceRange object that is used to determine more information from the
-    # given offset and length.
-    private attr_reader :source_range
+    # A Source object that is used to determine more information from the given
+    # offset and length.
+    private attr_reader :source
 
     # The byte offset from the beginning of the source where this location
     # starts.
@@ -38,15 +38,15 @@ module YARP
     # The length of this location in bytes.
     attr_reader :length
 
-    def initialize(source_range, start_offset, length)
-      @source_range = source_range
+    def initialize(source, start_offset, length)
+      @source = source
       @start_offset = start_offset
       @length = length
     end
 
     # The source code that this location represents.
     def slice
-      source_range.slice(start_offset, length)
+      source.slice(start_offset, length)
     end
 
     # The byte offset from the beginning of the source where this location ends.
@@ -56,24 +56,24 @@ module YARP
 
     # The line number where this location starts.
     def start_line
-      source_range.line(start_offset)
+      source.line(start_offset)
     end
 
     # The line number where this location ends.
     def end_line
-      source_range.line(end_offset - 1)
+      source.line(end_offset - 1)
     end
 
     # The column number in bytes where this location starts from the start of
     # the line.
     def start_column
-      source_range.column(start_offset)
+      source.column(start_offset)
     end
 
     # The column number in bytes where this location ends from the start of the
     # line.
     def end_column
-      source_range.column(end_offset - 1)
+      source.column(end_offset - 1)
     end
 
     def deconstruct_keys(keys)
@@ -216,28 +216,9 @@ module YARP
     end
   end
 
-  class << self
-    # Lex the given source into tokens. Optionally provide a filepath that this
-    # source comes from.
-    def lex(source, filepath = nil)
-      _lex(source, filepath)
-    end
-
-    # Parse the given source into an AST. Optionally provide a filepath that
-    # this source comes from.
-    def parse(source, filepath = nil)
-      _parse(source, filepath)
-    end
-
-    # Dump the given source into a serialized format.
-    def dump(source, filepath = nil)
-      _dump(source, filepath)
-    end
-
-    # Load the serialized AST using the source as a reference into a tree.
-    def load(source, serialized)
-      Serialize.load(source, serialized)
-    end
+  # Load the serialized AST using the source as a reference into a tree.
+  def self.load(source, serialized)
+    Serialize.load(source, serialized)
   end
 end
 
@@ -247,12 +228,3 @@ require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
 require "yarp.so"
-
-module YARP
-  class << self
-    # These methods comes from the C extension. Calling them this way makes it
-    # easier to handle default arguments in Ruby, and provides a source location
-    # for each method.
-    private :_lex, :_parse, :_dump
-  end
-end
