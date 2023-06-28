@@ -216,21 +216,28 @@ module YARP
     end
   end
 
-  # Load the serialized AST using the source as a reference into a tree.
-  def self.load(source, serialized)
-    Serialize.load(source, serialized)
-  end
+  class << self
+    # Lex the given source into tokens. Optionally provide a filepath that this
+    # source comes from.
+    def lex(source, filepath = nil)
+      _lex(source, filepath)
+    end
 
-  # Lex the given source into tokens. Optionally provide a filepath that this
-  # source comes from.
-  def self.lex(source, filepath = nil)
-    _lex(source, filepath)
-  end
+    # Parse the given source into an AST. Optionally provide a filepath that
+    # this source comes from.
+    def parse(source, filepath = nil)
+      _parse(source, filepath)
+    end
 
-  # Parse the given source into an AST. Optionally provide a filepath that this
-  # source comes from.
-  def self.parse(source, filepath = nil)
-    _parse(source, filepath)
+    # Dump the given source into a serialized format.
+    def dump(source, filepath = nil)
+      _dump(source, filepath)
+    end
+
+    # Load the serialized AST using the source as a reference into a tree.
+    def load(source, serialized)
+      Serialize.load(source, serialized)
+    end
   end
 end
 
@@ -246,6 +253,6 @@ module YARP
     # These methods comes from the C extension. Calling them this way makes it
     # easier to handle default arguments in Ruby, and provides a source location
     # for each method.
-    private :_lex, :_parse
+    private :_lex, :_parse, :_dump
   end
 end

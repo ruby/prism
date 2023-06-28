@@ -152,13 +152,7 @@ static VALUE
 dump(VALUE self, VALUE string, VALUE filepath) {
     source_t source;
     source_string_load(&source, string);
-    char *str = NULL;
-
-    if (filepath != Qnil) {
-        str = StringValueCStr(filepath);
-    }
-
-    return dump_source(&source, str);
+    return dump_source(&source, NIL_P(filepath) ? NULL : StringValueCStr(filepath));
 }
 
 // Dump the AST corresponding to the given file to a string.
@@ -537,12 +531,11 @@ Init_yarp(void) {
 
     rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
 
-    rb_define_singleton_method(rb_cYARP, "dump", dump, 2);
+    // First, the functions that have to do with lexing and parsing.
+    rb_define_singleton_method(rb_cYARP, "_dump", dump, 2);
     rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);
-
     rb_define_singleton_method(rb_cYARP, "_lex", lex, 2);
     rb_define_singleton_method(rb_cYARP, "lex_file", lex_file, 1);
-
     rb_define_singleton_method(rb_cYARP, "_parse", parse, 2);
     rb_define_singleton_method(rb_cYARP, "parse_file", parse_file, 1);
 
