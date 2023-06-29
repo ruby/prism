@@ -87,6 +87,5 @@ RDoc::Task.new do |rdoc|
     "CONTRIBUTING.md",
     "LICENSE.md",
     "README.md",
-    "vscode/*.md"
   )
 end
