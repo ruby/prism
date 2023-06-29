@@ -9,4 +9,3 @@ test/fixtures/whitequark/**/*.txt linguist-vendored
 test/snapshots/**/*.txt linguist-generated
 
 test/fixtures/**/*.txt -text
-test/snapshots/**/*.txt diff=snapshot

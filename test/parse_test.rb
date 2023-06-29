@@ -3,6 +3,21 @@
 require "yarp_test_helper"
 
 class ParseTest < Test::Unit::TestCase
+  # When we pretty-print the trees to compare against the snapshots, we want to
+  # be certain that we print with the same external encoding. This is because
+  # methods like Symbol#inspect take into account external encoding and it could
+  # change how the snapshot is generated. On machines with certain settings
+  # (like LANG=C or -Eascii-8bit) this could have been changed. So here we're
+  # going to force it to be UTF-8 to keep the snapshots consistent.
+  def setup
+    @previous_default_external = Encoding.default_external
+    ignore_warnings { Encoding.default_external = Encoding::UTF_8 }
+  end
+
+  def teardown
+    ignore_warnings { Encoding.default_external = @previous_default_external }
+  end
+
   def test_Ruby_3_2_plus
     assert_operator RUBY_VERSION, :>=, "3.2.0", "ParseTest requires Ruby 3.2+"
   end
@@ -53,28 +68,28 @@ class ParseTest < Test::Unit::TestCase
       refute_nil Ripper.sexp_raw(source)
 
       # Next, assert that there were no errors during parsing.
-      result = YARP.parse_file(filepath)
+      result = YARP.parse(source, relative)
       assert_empty result.errors
 
-      # Next, parse the source and print the value.
-      serialized = YARP.dump(source, relative)
+      # Next, pretty print the source.
+      printed = PP.pp(result.value, +"", 79)
 
       if File.exist?(snapshot)
-        saved = File.binread(snapshot)
+        saved = File.read(snapshot)
 
         # If the snapshot file exists, but the printed value does not match the
         # snapshot, then update the snapshot file.
-        if serialized != saved
-          File.write(snapshot, serialized)
+        if printed != saved
+          File.write(snapshot, printed)
           warn("Updated snapshot at #{snapshot}.")
         end
 
         # If the snapshot file exists, then assert that the printed value
         # matches the snapshot.
-        assert_equal(saved, serialized)
+        assert_equal(saved, printed)
       else
         # If the snapshot file does not yet exist, then write it out now.
-        File.write(snapshot, serialized)
+        File.write(snapshot, printed)
         warn("Created snapshot at #{snapshot}.")
       end
 
@@ -99,5 +114,15 @@ class ParseTest < Test::Unit::TestCase
         raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
     end
+  end
+
+  private
+
+  def ignore_warnings
+    previous_verbosity = $VERBOSE
+    $VERBOSE = nil
+    yield
+  ensure
+    $VERBOSE = previous_verbosity
   end
 end
