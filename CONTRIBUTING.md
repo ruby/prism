@@ -29,8 +29,6 @@ You will need `bear` which can be installed on macOS with `brew install bear`.
 bundle exec rake generate_compilation_database
 ```
 
-For VS Code, install the [clangd extension](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) to get the features provided by the language server.
-
 ## Debugging
 
 Some useful rake tasks:
