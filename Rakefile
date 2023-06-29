@@ -60,6 +60,11 @@ task generate_compilation_database: [:clobber, :templates] do
   sh "bear -- make"
 end
 
+task :rust do
+  sh "cargo run -p yarp-bindgen --quiet"
+  sh "cargo test -p yarp-sys --quiet"
+end
+
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
 CLOBBER.concat(["configure", "Makefile", "build"])

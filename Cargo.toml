@@ -1,0 +1,2 @@
+[workspace]
+members = ["rust/yarp-bindgen", "rust/yarp-sys"]

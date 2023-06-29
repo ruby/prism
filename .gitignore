@@ -43,3 +43,4 @@ config.status
 Makefile
 
 tags
+target/
