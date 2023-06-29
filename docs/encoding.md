@@ -57,11 +57,28 @@ If the user-provided callback function returns `NULL` (the value also provided b
 // Each callback should return the number of bytes, or 0 if the next bytes are
 // invalid for the encoding and type.
 typedef struct {
-  const char *name;
-  size_t (*char_width)(const char *c);
-  size_t (*alpha_char)(const char *c);
-  size_t (*alnum_char)(const char *c);
-  bool (*isupper_char)(const char *c);
+    // Return the number of bytes that the next character takes if it is valid
+    // in the encoding.
+    size_t (*char_width)(const char *c);
+
+    // Return the number of bytes that the next character takes if it is valid
+    // in the encoding and is alphabetical.
+    size_t (*alpha_char)(const char *c);
+
+    // Return the number of bytes that the next character takes if it is valid
+    // in the encoding and is alphanumeric.
+    size_t (*alnum_char)(const char *c);
+
+    // Return true if the next character is valid in the encoding and is an
+    // uppercase character.
+    bool (*isupper_char)(const char *c);
+
+    // The name of the encoding. This should correspond to a value that can be
+    // passed to Encoding.find in Ruby.
+    const char *name;
+
+    // Return true if the encoding is a multibyte encoding.
+    bool multibyte;
 } yp_encoding_t;
 
 // When an encoding is encountered that isn't understood by YARP, we provide

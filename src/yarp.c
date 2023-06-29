@@ -4401,7 +4401,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
 
     // Now determine the end of the encoding string. This is either the end of
     // the line, the first whitespace character, or a punctuation mark.
-    const char *encoding_end = yp_strpbrk(encoding_start, " \t\f\r\v\n;,", end - encoding_start);
+    const char *encoding_end = yp_strpbrk(parser, encoding_start, " \t\f\r\v\n;,", end - encoding_start);
     encoding_end = encoding_end == NULL ? end : encoding_end;
 
     // Finally, we can determine the width of the encoding string.
@@ -6498,13 +6498,13 @@ parser_lex(yp_parser_t *parser) {
             // Here we'll get a list of the places where strpbrk should break,
             // and then find the first one.
             const char *breakpoints = parser->lex_modes.current->as.list.breakpoints;
-            const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+            const char *breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
 
             while (breakpoint != NULL) {
                 switch (*breakpoint) {
                     case '\0':
                         // If we hit a null byte, skip directly past it.
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\\': {
                         // If we hit escapes, then we need to treat the next token
@@ -6525,7 +6525,7 @@ parser_lex(yp_parser_t *parser) {
                             yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
                         }
 
-                        breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
+                        breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         break;
                     }
                     case ' ':
@@ -6550,7 +6550,7 @@ parser_lex(yp_parser_t *parser) {
                             // that looked like an interpolated class or instance variable
                             // like "#@" but wasn't actually. In this case we'll just skip
                             // to the next breakpoint.
-                            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+                            breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
                             break;
                         }
                     }
@@ -6559,7 +6559,7 @@ parser_lex(yp_parser_t *parser) {
                         if (*breakpoint == parser->lex_modes.current->as.list.incrementor) {
                             // If we've hit the incrementor, then we need to skip past it and
                             // find the next breakpoint.
-                            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                            breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                             parser->lex_modes.current->as.list.nesting++;
                             break;
                         }
@@ -6570,7 +6570,7 @@ parser_lex(yp_parser_t *parser) {
                         // If this terminator doesn't actually close the list, then we need
                         // to continue on past it.
                         if (parser->lex_modes.current->as.list.nesting > 0) {
-                            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                            breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                             parser->lex_modes.current->as.list.nesting--;
                             break;
                         }
@@ -6610,13 +6610,13 @@ parser_lex(yp_parser_t *parser) {
             // regular expression. We'll use strpbrk to find the first of these
             // characters.
             const char *breakpoints = parser->lex_modes.current->as.regexp.breakpoints;
-            const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+            const char *breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
 
             while (breakpoint != NULL) {
                 switch (*breakpoint) {
                     case '\0':
                         // If we hit a null byte, skip directly past it.
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\\': {
                         // If we hit escapes, then we need to treat the next token
@@ -6630,7 +6630,7 @@ parser_lex(yp_parser_t *parser) {
                             yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
                         }
 
-                        breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
+                        breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         break;
                     }
                     case '#': {
@@ -6646,7 +6646,7 @@ parser_lex(yp_parser_t *parser) {
                             // that looked like an interpolated class or instance variable
                             // like "#@" but wasn't actually. In this case we'll just skip
                             // to the next breakpoint.
-                            breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+                            breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
                             break;
                         }
                     }
@@ -6655,7 +6655,7 @@ parser_lex(yp_parser_t *parser) {
                         if (*breakpoint == parser->lex_modes.current->as.regexp.incrementor) {
                             // If we've hit the incrementor, then we need to skip past it and
                             // find the next breakpoint.
-                            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                            breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                             parser->lex_modes.current->as.regexp.nesting++;
                             break;
                         }
@@ -6668,7 +6668,7 @@ parser_lex(yp_parser_t *parser) {
                             if (parser->lex_modes.current->as.regexp.terminator != '\n') {
                                 // If the terminator is not a newline, then we
                                 // can set the next breakpoint and continue.
-                                breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                                breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                                 break;
                             }
 
@@ -6679,7 +6679,7 @@ parser_lex(yp_parser_t *parser) {
                         assert(*breakpoint == parser->lex_modes.current->as.regexp.terminator);
 
                         if (parser->lex_modes.current->as.regexp.nesting > 0) {
-                            breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                            breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                             parser->lex_modes.current->as.regexp.nesting--;
                             break;
                         }
@@ -6727,7 +6727,7 @@ parser_lex(yp_parser_t *parser) {
             // These are the places where we need to split up the content of the
             // string. We'll use strpbrk to find the first of these characters.
             const char *breakpoints = parser->lex_modes.current->as.string.breakpoints;
-            const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+            const char *breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
 
             while (breakpoint != NULL) {
                 // If we hit the incrementor, then we'll increment then nesting and
@@ -6737,7 +6737,7 @@ parser_lex(yp_parser_t *parser) {
                     *breakpoint == parser->lex_modes.current->as.string.incrementor
                 ) {
                     parser->lex_modes.current->as.string.nesting++;
-                    breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                    breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                     continue;
                 }
 
@@ -6748,7 +6748,7 @@ parser_lex(yp_parser_t *parser) {
                     // If this terminator doesn't actually close the string, then we need
                     // to continue on past it.
                     if (parser->lex_modes.current->as.string.nesting > 0) {
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         parser->lex_modes.current->as.string.nesting--;
                         continue;
                     }
@@ -6795,7 +6795,7 @@ parser_lex(yp_parser_t *parser) {
                 if (*breakpoint == '\n') {
                     if (parser->heredoc_end == NULL) {
                         yp_newline_list_append(&parser->newline_list, breakpoint);
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         continue;
                     } else {
                         parser->current.end = breakpoint + 1;
@@ -6807,7 +6807,7 @@ parser_lex(yp_parser_t *parser) {
                 switch (*breakpoint) {
                     case '\0':
                         // Skip directly past the null character.
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\\': {
                         // If we hit escapes, then we need to treat the next token
@@ -6822,7 +6822,7 @@ parser_lex(yp_parser_t *parser) {
                             yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
                         }
 
-                        breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
+                        breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         break;
                     }
                     case '#': {
@@ -6835,7 +6835,7 @@ parser_lex(yp_parser_t *parser) {
                         // looked like an interpolated class or instance variable like "#@"
                         // but wasn't actually. In this case we'll just skip to the next
                         // breakpoint.
-                        breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+                        breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
                         break;
                     }
                     default:
@@ -6921,13 +6921,13 @@ parser_lex(yp_parser_t *parser) {
                 breakpoints[2] = '\0';
             }
 
-            const char *breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+            const char *breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
 
             while (breakpoint != NULL) {
                 switch (*breakpoint) {
                     case '\0':
                         // Skip directly past the null character.
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\n': {
                         yp_newline_list_append(&parser->newline_list, breakpoint);
@@ -6972,7 +6972,7 @@ parser_lex(yp_parser_t *parser) {
 
                         // Otherwise we hit a newline and it wasn't followed by a
                         // terminator, so we can continue parsing.
-                        breakpoint = yp_strpbrk(breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
+                        breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     }
                     case '\\': {
@@ -6989,7 +6989,7 @@ parser_lex(yp_parser_t *parser) {
                                 yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
                             }
 
-                            breakpoint = yp_strpbrk(breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
+                            breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         }
                         break;
                     }
@@ -7003,7 +7003,7 @@ parser_lex(yp_parser_t *parser) {
                         // that looked like an interpolated class or instance variable
                         // like "#@" but wasn't actually. In this case we'll just skip
                         // to the next breakpoint.
-                        breakpoint = yp_strpbrk(parser->current.end, breakpoints, parser->end - parser->current.end);
+                        breakpoint = yp_strpbrk(parser, parser->current.end, breakpoints, parser->end - parser->current.end);
                         break;
                     }
                     default:
