@@ -11,6 +11,7 @@
 #include "yarp/unescape.h"
 #include "yarp/util/yp_buffer.h"
 #include "yarp/util/yp_char.h"
+#include "yarp/util/yp_memchr.h"
 #include "yarp/util/yp_strpbrk.h"
 
 #include <assert.h>

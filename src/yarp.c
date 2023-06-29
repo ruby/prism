@@ -3788,7 +3788,7 @@ yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
             ptrdiff_t length = label.end - label.start;
             assert(length >= 0);
 
-            yp_unescape_manipulate_string(label.start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            yp_unescape_manipulate_string(parser, label.start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
             break;
         }
         case YP_TOKEN_MISSING: {
@@ -4356,7 +4356,7 @@ next_newline(const char *cursor, ptrdiff_t length) {
 // Find the start of the encoding comment. This is effectively an inlined
 // version of strnstr with some modifications.
 static inline const char *
-parser_lex_encoding_comment_start(const char *cursor, ptrdiff_t remaining) {
+parser_lex_encoding_comment_start(yp_parser_t *parser, const char *cursor, ptrdiff_t remaining) {
     assert(remaining >= 0);
     size_t length = (size_t) remaining;
 
@@ -4364,7 +4364,7 @@ parser_lex_encoding_comment_start(const char *cursor, ptrdiff_t remaining) {
     if (key_length > length) return NULL;
 
     const char *cursor_limit = cursor + length - key_length + 1;
-    while ((cursor = memchr(cursor, 'c', (size_t) (cursor_limit - cursor))) != NULL) {
+    while ((cursor = yp_memchr(parser, cursor, 'c', (size_t) (cursor_limit - cursor))) != NULL) {
         if (
             (strncmp(cursor, "coding", key_length - 1) == 0) &&
             (cursor[key_length - 1] == ':' || cursor[key_length - 1] == '=')
@@ -4388,7 +4388,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
 
     // These are the patterns we're going to match to find the encoding comment.
     // This is definitely not complete or even really correct.
-    const char *encoding_start = parser_lex_encoding_comment_start(start, end - start);
+    const char *encoding_start = parser_lex_encoding_comment_start(parser, start, end - start);
 
     // If we didn't find anything that matched our patterns, then return. Note
     // that this does a _very_ poor job of actually finding the encoding, and
@@ -7040,7 +7040,7 @@ yp_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_tok
     ptrdiff_t length = content->end - content->start;
     assert(length >= 0);
 
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
@@ -7051,7 +7051,7 @@ yp_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *openin
     ptrdiff_t length = content->end - content->start;
     assert(length >= 0);
 
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
@@ -7062,7 +7062,7 @@ yp_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *openin
     ptrdiff_t length = content->end - content->start;
     assert(length >= 0);
 
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
@@ -7073,7 +7073,7 @@ yp_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *openi
     ptrdiff_t length = content->end - content->start;
     assert(length >= 0);
 
-    yp_unescape_manipulate_string(content->start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
     return node;
 }
 
