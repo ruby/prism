@@ -43,36 +43,59 @@ check_filepath(VALUE filepath) {
 
 // Read the file indicated by the filepath parameter into source and load its
 // contents and size into the given input_t.
+//
+// We want to use demand paging as much as possible in order to avoid having to
+// read the entire file into memory (which could be detrimental to performance
+// for large files). This means that if we're on windows we'll use
+// `MapViewOfFile`, on POSIX systems that have access to `mmap` we'll use
+// `mmap`, and on other POSIX systems we'll use `read`.
 static int
 input_load_filepath(input_t *input, const char *filepath) {
 #ifdef _WIN32
-    HANDLE file = CreateFile(
-        filepath,
-        GENERIC_READ,
-        0,
-        NULL,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        NULL
-    );
+    // Open the file for reading.
+    HANDLE file = CreateFile(filepath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if (file == INVALID_HANDLE_VALUE) {
-        perror("Invalid handle for file");
+        perror("CreateFile failed");
         return 1;
     }
 
+    // Get the file size.
     DWORD file_size = GetFileSize(file, NULL);
-    input->source = malloc(file_size);
+    if (file_size == INVALID_FILE_SIZE) {
+        CloseHandle(file);
+        perror("GetFileSize failed");
+        return 1;
+    }
 
-    DWORD bytes_read;
-    BOOL success = ReadFile(file, (void *)(uintptr_t)(input->source), file_size, &bytes_read, NULL);
+    // If the file is empty, then we don't need to do anything else, we'll set
+    // the source to a constant empty string and return.
+    if (!file_size) {
+        CloseHandle(file);
+        input->size = 0;
+        input->source = "";
+        return 0;
+    }
+
+    // Create a mapping of the file.
+    HANDLE mapping = CreateFileMapping(file, NULL, PAGE_READONLY, 0, 0, NULL);
+    if (mapping == NULL) {
+        CloseHandle(file);
+        perror("CreateFileMapping failed");
+        return 1;
+    }
+
+    // Map the file into memory.
+    input->source = (const char *) MapViewOfFile(mapping, FILE_MAP_READ, 0, 0, 0);
+    CloseHandle(mapping);
     CloseHandle(file);
 
-    if (!success) {
-        perror("ReadFile failed");
+    if (input->source == NULL) {
+        perror("MapViewOfFile failed");
         return 1;
     }
 
+    // Set the size of the source.
     input->size = (size_t) file_size;
     return 0;
 #else
@@ -137,15 +160,22 @@ input_load_string(input_t *input, VALUE string) {
     input->size = RSTRING_LEN(string);
 }
 
-// Free any resources associated with the given input_t.
+// Free any resources associated with the given input_t. This is the corollary
+// function to source_file_load. It will unmap the file if it was mapped, or
+// free the memory if it was allocated.
 static void
 input_unload_filepath(input_t *input) {
+    // We don't need to free anything with 0 sized files because we handle that
+    // with a constant string instead.
+    if (!input->size) return;
+    void *memory = (void *) input->source;
+
 #if defined(_WIN32)
-    free((void *) input->source);
+    UnmapViewOfFile(memory);
 #elif defined(HAVE_MMAP)
-    munmap((void *) input->source, input->size);
+    munmap(memory, input->size);
 #else
-    free((void *) input->source);
+    free(memory);
 #endif
 }
 

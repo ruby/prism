@@ -5,6 +5,7 @@
 #include <ruby/encoding.h>
 #include "yarp.h"
 
+// The following headers are necessary to read files using demand paging.
 #ifdef _WIN32
 #include <windows.h>
 #else
