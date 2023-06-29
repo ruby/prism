@@ -74,15 +74,17 @@ include/yarp/ast.h: templates/include/yarp/ast.h.erb
 	$(Q) rake $@
 
 clean:
-	$(Q) rm -f -r \
-		build \
-		ext/yarp/node.c \
-		include/{ast.h,node.h} \
+	$(Q) rm -f -r build
+
+clobber: clean
+	$(Q) rm -f \
+		ext/yarp/api_node.c \
+		include/yarp/ast.h \
 		java/org/yarp/{AbstractNodeVisitor.java,Loader.java,Nodes.java} \
 		lib/yarp/{node,serialize}.rb \
 		src/{node.c,prettyprint.c,serialize.c,token_type.c}
 
-.PHONY: clean
+.PHONY: clean clobber
 
 all-no-debug: DEBUG_FLAGS := -DNDEBUG=1
 all-no-debug: OPTFLAGS := -O3
