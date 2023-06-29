@@ -442,6 +442,7 @@ not_provided(yp_parser_t *parser) {
     return (yp_token_t) { .type = YP_TOKEN_NOT_PROVIDED, .start = parser->start, .end = parser->start };
 }
 
+#define YP_EMPTY_STRING ((yp_string_t) { .type = YP_STRING_SHARED, .as.shared.start = NULL, .as.shared.end = NULL })
 #define YP_LOCATION_NULL_VALUE(parser) ((yp_location_t) { .start = parser->start, .end = parser->start })
 #define YP_LOCATION_TOKEN_VALUE(token) ((yp_location_t) { .start = (token)->start, .end = (token)->end })
 #define YP_LOCATION_NODE_VALUE(node) ((yp_location_t) { .start = (node)->location.start, .end = (node)->location.end })
@@ -675,7 +676,9 @@ yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *node
         .constant = NULL,
         .rest = NULL,
         .requireds = YP_EMPTY_NODE_LIST,
-        .posts = YP_EMPTY_NODE_LIST
+        .posts = YP_EMPTY_NODE_LIST,
+        .opening_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
+        .closing_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
     };
 
     // For now we're going to just copy over each pointer manually. This could be
@@ -710,7 +713,9 @@ yp_array_pattern_node_rest_create(yp_parser_t *parser, yp_node_t *rest) {
         .constant = NULL,
         .rest = rest,
         .requireds = YP_EMPTY_NODE_LIST,
-        .posts = YP_EMPTY_NODE_LIST
+        .posts = YP_EMPTY_NODE_LIST,
+        .opening_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
+        .closing_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
     };
 
     return node;
@@ -1885,7 +1890,9 @@ yp_find_pattern_node_create(yp_parser_t *parser, yp_node_list_t *nodes) {
         .constant = NULL,
         .left = left,
         .right = right,
-        .requireds = YP_EMPTY_NODE_LIST
+        .requireds = YP_EMPTY_NODE_LIST,
+        .opening_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
+        .closing_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
     };
 
     // For now we're going to just copy over each pointer manually. This could be
@@ -2018,7 +2025,9 @@ yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assoc
         },
         .constant = NULL,
         .kwrest = NULL,
-        .assocs = YP_EMPTY_NODE_LIST
+        .assocs = YP_EMPTY_NODE_LIST,
+        .opening_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE,
+        .closing_loc = YP_OPTIONAL_LOCATION_NOT_PROVIDED_VALUE
     };
 
     for (size_t index = 0; index < assocs->size; index++) {
@@ -3709,7 +3718,8 @@ yp_string_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
         .content_loc = YP_LOCATION_TOKEN_VALUE(content),
-        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing),
+        .unescaped = YP_EMPTY_STRING
     };
 
     return node;
@@ -3766,7 +3776,8 @@ yp_symbol_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_t
         },
         .opening_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(opening),
         .value_loc = YP_LOCATION_TOKEN_VALUE(value),
-        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(closing),
+        .unescaped = YP_EMPTY_STRING
     };
 
     return node;
@@ -4073,7 +4084,8 @@ yp_xstring_node_create(yp_parser_t *parser, const yp_token_t *opening, const yp_
         },
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
         .content_loc = YP_LOCATION_TOKEN_VALUE(content),
-        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing)
+        .closing_loc = YP_LOCATION_TOKEN_VALUE(closing),
+        .unescaped = YP_EMPTY_STRING
     };
 
     return node;
@@ -4113,6 +4125,7 @@ yp_yield_node_create(yp_parser_t *parser, const yp_token_t *keyword, const yp_lo
 }
 
 
+#undef YP_EMPTY_STRING
 #undef YP_LOCATION_NULL_VALUE
 #undef YP_LOCATION_TOKEN_VALUE
 #undef YP_LOCATION_NODE_VALUE

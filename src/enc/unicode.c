@@ -2230,7 +2230,7 @@ utf_8_codepoint(const unsigned char *c, size_t *width) {
 
         codepoint = (state != 0) ?
             (byte & 0x3fu) | (codepoint << 6) :
-            (0xff >> type) & (byte);
+            (0xffu >> type) & (byte);
 
         state = utf_8_dfa[256 + (state * 16) + type];
         if (!state) {
