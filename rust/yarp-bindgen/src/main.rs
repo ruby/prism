@@ -137,7 +137,7 @@ fn new_bindgen_builder(proceessor: Prettier) -> Result<String, bindgen::BindgenE
         .generate_cstr(true)
         .generate_block(true)
         .derive_copy(false)
-        .derive_default(false)
+        .derive_default(true)
         .parse_callbacks(Box::new(proceessor))
         .rustified_enum(".*")
         .allowlist_function(YP_PREFIX)
