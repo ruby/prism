@@ -1,4 +1,5 @@
 #include "yarp.h"
+#include "errors.h"
 
 #define YP_STRINGIZE0(expr) #expr
 #define YP_STRINGIZE(expr) YP_STRINGIZE0(expr)
@@ -4196,7 +4197,8 @@ yp_parser_parameter_name_check(yp_parser_t *parser, yp_token_t *name) {
     yp_constant_id_t constant_id = yp_parser_constant_id_token(parser, name);
 
     if (yp_constant_id_list_includes(&parser->current_scope->locals, constant_id)) {
-      yp_vdiagnostic_list_append(parser, name->start, name->end, "duplicate parameter `%.*s` in parameters", (name->end - name->start), name->start);
+      /* yp_vdiagnostic_list_append(parser, name->start, name->end, "duplicate parameter `%.*s` in parameters", (name->end - name->start), name->start); */
+      yp_diagnost_list_append_duplicate_parameter(parser, name->start, name->end);
     }
 }
 

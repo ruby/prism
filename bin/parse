@@ -11,5 +11,8 @@ require "yarp"
 if ARGV[0] == "-e"
   pp YARP.parse(ARGV[1])
 else
-  pp YARP.parse_file(ARGV[0])
+  result = YARP.parse_file(ARGV[0])
+  pp result
+
+  result.errors.each(&:print_error)
 end

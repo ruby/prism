@@ -285,8 +285,7 @@ parser_errors(yp_parser_t *parser, rb_encoding *encoding, VALUE source) {
 
         VALUE error_argv[] = {
             rb_enc_str_new_cstr(error->message, encoding),
-
-            rb_class_new_instance(3, location_argv, rb_cYARPLocation)
+            rb_class_new_instance(3, location_argv, rb_cYARPLocation),
             rb_enc_str_new_cstr(error->line, encoding),
             LONG2FIX(error->line_start - parser->start),
             LONG2FIX(error->lineno),

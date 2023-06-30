@@ -183,6 +183,48 @@ class Flag
   end
 end
 
+# Represents a set of flags that should be internally represented with an enum.
+class Error
+  attr_reader :name, :message
+
+  def initialize(config)
+    @name = config.fetch("name")
+    @message = config.fetch("message")
+  end
+
+  def template_string
+    message.gsub(/\{\w+\}/, "%.*s");
+  end
+
+  def string_size
+    # TODO: length is not accurate multibyte
+    size_code = "(sizeof(char)*#{message.gsub(/\{\w+\}/, "").length}) + "
+    arg_sizes = []
+    message_arg_data.each_cons(2) do |(size, start)|
+      arg_sizes << size
+    end
+    
+    size_code + arg_sizes.join(" + ")
+  end
+  
+  def template_args
+    message_arg_data.join(", ")
+  end
+
+  private
+
+  def message_arg_data
+    args = []
+    message.scan(/\{(\w+)\}/).each do |(arg)|
+      if arg == "location"
+        args += ["(unsigned int)(end - start)", "start"]
+      end
+    end
+    args
+  end
+end
+
+
 # This templates out a file using ERB with the given locals. The locals are
 # derived from the config.yml file.
 def template(name, locals)
@@ -230,7 +272,8 @@ def locals
   {
     nodes: config.fetch("nodes").map { |node| NodeType.new(node) }.sort_by(&:name),
     tokens: config.fetch("tokens").map { |token| Token.new(token) },
-    flags: config.fetch("flags").map { |flags| Flags.new(flags) }
+    flags: config.fetch("flags").map { |flags| Flags.new(flags) },
+    errors: config.fetch("errors").map { |flags| Error.new(flags) }
   }
 end
 
@@ -245,7 +288,9 @@ TEMPLATES = [
   "src/node.c",
   "src/prettyprint.c",
   "src/serialize.c",
-  "src/token_type.c"
+  "src/token_type.c",
+  "src/errors.h",
+  "src/errors.c"
 ]
 
 if __FILE__ == $0

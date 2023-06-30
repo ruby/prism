@@ -2094,3 +2094,6 @@ nodes:
 
           yield 1
           ^^^^^^^
+errors:
+  - name: duplicate_parameter
+    message: duplicate parameter `{location}` in parameters

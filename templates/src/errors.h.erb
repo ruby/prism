@@ -1,0 +1,8 @@
+#include "yarp/diagnostic.h"
+
+<%- errors.each do |error| %>
+
+bool
+yp_diagnost_list_append_<%= error.name %>(yp_parser_t *parser, const char *start, const char *end);
+
+<%- end %>
