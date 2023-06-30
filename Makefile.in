@@ -25,6 +25,9 @@ all: shared static
 shared: build/librubyparser.$(SOEXT)
 static: build/librubyparser.a
 
+$(SHARED_OBJECTS): Makefile $(HEADERS)
+$(STATIC_OBJECTS): Makefile $(HEADERS)
+
 build/librubyparser.$(SOEXT): $(SHARED_OBJECTS)
 	$(ECHO) "linking $@"
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(SHARED_OBJECTS)
