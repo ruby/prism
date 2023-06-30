@@ -38,6 +38,21 @@ Currently, encoding functionality implementing the ```yp_encoding_t``` interface
 of inputs. For the time being, ASAN instrumentation is disabled for functions from src/enc.
 See ```fuzz/asan.ignore```.
 
+To disable ASAN read instrumentation globally, use the ```FUZZ_FLAGS``` environment variable e.g.
+
+```
+FUZZ_FLAGS="-mllvm -asan-instrument-reads=false" make fuzz-run-parse
+```
+
+Note, that this may make reproducing bugs difficult as they may depend on memory outside of
+the input buffer. In that case, try
+
+```
+make fuzz-debug # enter the docker container with build tools
+make build/fuzz.heisenbug.parse #or .unescape or .regexp
+./build/fuzz.heisenbug.parse path-to-problem-input
+```
+
 
 # Triaging Crashes and Hangs
 
