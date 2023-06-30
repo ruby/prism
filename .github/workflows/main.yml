@@ -119,3 +119,17 @@ jobs:
         bundler-cache: true
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: head
+          bundler-cache: true
+      - name: Run tests
+        run: bundle exec rake rust:test
+      - name: Ensure bindings are up to date
+        run: bundle exec rake rust:bindgen && git diff --exit-code
