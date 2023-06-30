@@ -18,5 +18,6 @@ LLVMFuzzerTestOneInput(const char *input, size_t size) {
         mutation_buffer[size] = (char)i;
         harness(mutation_buffer, size);
     }
+    free(mutation_buffer);
     return 0;
 }
