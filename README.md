@@ -20,25 +20,7 @@ The repository contains the infrastructure for both a shared library (librubypar
 │   └── yarp
 │       ├── extconf.rb    configuration to generate the Makefile for the native extension
 │       └── extension.c   the native extension that interacts with librubyparser
-├── fuzz
-│   ├── corpus
-│   │   ├── parse         fuzzing corpus for parsing
-│   │   ├── regexp        fuzzing corpus for regexp
-│   │   └── unescape      fuzzing corpus for unescaping strings
-│   ├── docker
-│   │   └── Dockerfile    for building a container with the fuzzer toolchain
-│   ├── output            default location for fuzzing output
-│   ├── tools 
-│   │   ├── backtrace.sh  generates backtrace files for a crash directory
-│   │   └── minimize.sh   generates minimized crash or hang files
-│   ├── dict              ruby keywords in an AFL++ dictionary 
-│   ├── fuzz.c            generic entry point for fuzzing
-│   ├── parse.c           fuzz handler for parsing
-│   ├── parse.sh          script to run parsing fuzzer
-│   ├── regexp.c          fuzz handler for regular expression parsing
-│   ├── regexp.sh         script to run regexp fuzzer
-│   ├── unescape.c        fuzz handler for unescape functionality
-│   └── regexp.sh         script to run unescape fuzzer
+├── fuzz                  files related to fuzz testing
 ├── include
 │   ├── yarp              header files for the shared library
 │   └── yarp.h            main header file for the shared library
@@ -95,6 +77,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Design](docs/design.md)
 * [Encoding](docs/encoding.md)
 * [Extension](docs/extension.md)
+* [Fuzzing](docs/fuzzing.md)
 * [Heredocs](docs/heredocs.md)
 * [Mapping](docs/mapping.md)
 * [Ripper](docs/ripper.md)
