@@ -6,6 +6,8 @@ require "pp"
 require "test/unit"
 require "tempfile"
 
+puts "Using YARP backend: #{YARP::BACKEND}"
+
 module YARP
   module Assertions
     private

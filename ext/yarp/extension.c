@@ -522,6 +522,8 @@ Init_yarp(void) {
     // in yarp.h.
     rb_define_const(rb_cYARP, "VERSION", rb_str_new2(EXPECTED_YARP_VERSION));
 
+    rb_define_const(rb_cYARP, "BACKEND", ID2SYM(rb_intern("CExtension")));
+
     // First, the functions that have to do with lexing and parsing.
     rb_define_singleton_method(rb_cYARP, "dump", dump, -1);
     rb_define_singleton_method(rb_cYARP, "dump_file", dump_file, 1);

@@ -1,7 +1,4 @@
-#include "yarp/ast.h"
-#include "yarp/diagnostic.h"
-#include "yarp/parser.h"
-#include "yarp/util/yp_buffer.h"
+#include "yarp.h"
 
 #include <stdio.h>
 
@@ -144,6 +141,7 @@ void yp_serialize_diagnostic_list(yp_parser_t *parser, yp_list_t list, yp_buffer
     }
 }
 
+#line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
 void
 yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     // First, serialize the encoding of the parser.
@@ -196,4 +194,43 @@ yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) 
             memcpy(buffer->value + buffer_offset + 4, &constant_length, 4);
         }
     }
+}
+
+static void
+serialize_token(void *data, yp_parser_t *parser, yp_token_t *token) {
+    yp_buffer_t *buffer = (yp_buffer_t *) data;
+
+    yp_buffer_append_u32(buffer, token->type);
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(token->start - parser->start));
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(token->end - token->start));
+    yp_buffer_append_u32(buffer, parser->lex_state);
+}
+
+YP_EXPORTED_FUNCTION void
+yp_lex_serialize(const char *source, size_t size, const char *filepath, yp_buffer_t *buffer) {
+    yp_parser_t parser;
+    yp_parser_init(&parser, source, size, filepath);
+
+    yp_lex_callback_t lex_callback = (yp_lex_callback_t) {
+        .data = (void *) buffer,
+        .callback = serialize_token,
+    };
+
+    parser.lex_callback = &lex_callback;
+    yp_node_t *node = yp_parse(&parser);
+
+    // Append 0 to mark end of tokens
+    yp_buffer_append_u32(buffer, 0);
+
+    // Serialize the comments
+    yp_serialize_comment_list(&parser, parser.comment_list, buffer);
+
+    // Serialize the errors
+    yp_serialize_diagnostic_list(&parser, parser.error_list, buffer);
+
+    // Serialize the warnings
+    yp_serialize_diagnostic_list(&parser, parser.warning_list, buffer);
+
+    yp_node_destroy(&parser, node);
+    yp_parser_free(&parser);
 }

@@ -2,6 +2,8 @@
 
 require "yarp_test_helper"
 
+return if YARP::BACKEND == :Fiddle
+
 class ParseSerializeTest < Test::Unit::TestCase
   def test_parse_serialize
     dumped = YARP.const_get(:Debug).parse_serialize_file(__FILE__)

@@ -189,3 +189,8 @@ yp_string_mapped_init(yp_string_t *string, const char *filepath) {
     return true;
 #endif
 }
+
+YP_EXPORTED_FUNCTION int
+yp_string_sizeof(void) {
+    return sizeof(yp_string_t);
+}

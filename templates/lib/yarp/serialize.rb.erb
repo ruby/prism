@@ -14,29 +14,48 @@ end
 module YARP
   module Serialize
     def self.load(input, serialized)
-      io = StringIO.new(serialized)
-      io.set_encoding(Encoding::BINARY)
+      Loader.new(Source.new(input), serialized).load
+    end
 
-      Loader.new(input, serialized, io).load
+    def self.load_tokens(source, serialized)
+      Loader.new(source, serialized).load_tokens
     end
 
     class Loader
       attr_reader :encoding, :input, :serialized, :io
       attr_reader :constant_pool_offset, :constant_pool, :source
 
-      def initialize(input, serialized, io)
+      def initialize(source, serialized)
         @encoding = Encoding::UTF_8
 
-        @input = input.dup
+        @input = source.source.dup
         @serialized = serialized
-        @io = io
+        @io = StringIO.new(serialized)
+        @io.set_encoding(Encoding::BINARY)
 
         @constant_pool_offset = nil
         @constant_pool = nil
 
-        offsets = [0]
-        input.b.scan("\n") { offsets << $~.end(0) }
-        @source = Source.new(input, offsets)
+        @source = source
+      end
+
+      def load_tokens
+        tokens = []
+        while type = TOKEN_TYPES.fetch(load_varint)
+          start = load_varint
+          length = load_varint
+          lex_state = load_varint
+          location = Location.new(@source, start, length)
+          tokens << [YARP::Token.new(type, location.slice, location), lex_state]
+        end
+
+        comments = load_varint.times.map { Comment.new(Comment::TYPES.fetch(load_varint), load_location) }
+        errors = load_varint.times.map { ParseError.new(load_string, load_location) }
+        warnings = load_varint.times.map { ParseWarning.new(load_string, load_location) }
+
+        raise "Expected to consume all bytes while deserializing" unless @io.eof?
+
+        YARP::ParseResult.new(tokens, comments, errors, warnings, @source)
       end
 
       def load
@@ -145,5 +164,12 @@ module YARP
         end
       end
     end
+
+    TOKEN_TYPES = [
+      nil,
+      <%- tokens.each do |token| -%>
+      <%= token.name.to_sym.inspect %>,
+      <%- end -%>
+    ]
   end
 end
