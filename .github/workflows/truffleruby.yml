@@ -11,8 +11,9 @@ on:
   pull_request:
 
 jobs:
+  # Inspired from https://github.com/oracle/truffleruby/blob/master/.github/workflows/ci.yml
   test-loader:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04 # to be consistent with that workflow and test on older platform
     steps:
     - name: Clone YARP
       uses: actions/checkout@v3
