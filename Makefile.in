@@ -12,10 +12,10 @@ SOEXT := $(shell ruby -e 'puts RbConfig::CONFIG["SOEXT"]')
 
 DEFS := @DEFS@
 CPPFLAGS := @DEFS@ -Iinclude
-CFLAGS := @CFLAGS@ -std=c99 -Wall -Werror -Wextra -Wpedantic -Wsign-conversion -fPIC -fvisibility=hidden
+CFLAGS := @CFLAGS@ -std=c99 -Wall -Werror -Wextra -Wpedantic -Wundef -Wsign-conversion -fPIC -fvisibility=hidden
 CC := @CC@
 
-HEADERS := $(shell find include -name '*.h') include/yarp/ast.h
+HEADERS := $(shell find include -name '*.h')
 SOURCES := $(shell find src -name '*.c')
 SHARED_OBJECTS := $(subst src/,build/shared/,$(SOURCES:.c=.o))
 STATIC_OBJECTS := $(subst src/,build/static/,$(SOURCES:.c=.o))
@@ -25,8 +25,6 @@ all: shared static
 shared: build/librubyparser.$(SOEXT)
 static: build/librubyparser.a
 
-$(OBJECTS): Makefile $(HEADERS)
-
 build/librubyparser.$(SOEXT): $(SHARED_OBJECTS)
 	$(ECHO) "linking $@"
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CFLAGS) -shared -o $@ $(SHARED_OBJECTS)
@@ -35,12 +33,12 @@ build/librubyparser.a: $(STATIC_OBJECTS)
 	$(ECHO) "building $@"
 	$(Q) $(AR) $(ARFLAGS) $@ $(STATIC_OBJECTS) $(Q1:0=>/dev/null)
 
-build/shared/%.o: src/%.c
+build/shared/%.o: src/%.c Makefile $(HEADERS)
 	$(ECHO) "compiling $@"
 	$(Q) mkdir -p $(@D)
 	$(Q) $(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
-build/static/%.o: src/%.c
+build/static/%.o: src/%.c Makefile $(HEADERS)
 	$(ECHO) "compiling $@"
 	$(Q) mkdir -p $(@D)
 	$(Q) $(CC) $(DEBUG_FLAGS) -DYP_STATIC $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
@@ -71,19 +69,8 @@ fuzz-run-%: FORCE fuzz-docker-build
 	$(Q) docker run -it --rm -v $(shell pwd):/yarp -v $(FUZZ_OUTPUT_DIR):/fuzz_output yarp/fuzz /bin/bash -c "./fuzz/$*.sh /fuzz_output/$*"
 FORCE:
 
-include/yarp/ast.h: templates/include/yarp/ast.h.erb
-	$(ECHO) "generating $@"
-	$(Q) rake $@
-
 clean:
-	$(Q) rm -f -r \
-		build \
-		ext/yarp/node.c \
-		include/{ast.h,node.h} \
-		java/org/yarp/{AbstractNodeVisitor.java,Loader.java,Nodes.java} \
-		lib/yarp/{node,serialize}.rb \
-		src/{node.c,prettyprint.c,serialize.c,token_type.c} \
-		$(OBJECTS)
+	$(Q) rm -f -r build
 
 .PHONY: clean
 

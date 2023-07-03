@@ -50,7 +50,11 @@ jobs:
         YARP_DEBUG_MODE_BUILD: "1"
 
   build-without-assertions:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-20.04, ubuntu-22.04 ]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby

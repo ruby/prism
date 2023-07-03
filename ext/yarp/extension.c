@@ -665,7 +665,7 @@ Init_yarp(void) {
 
     // Define the version string here so that we can use the constants defined
     // in yarp.h.
-    rb_define_const(rb_cYARP, "VERSION", rb_sprintf("%d.%d.%d", YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH));
+    rb_define_const(rb_cYARP, "VERSION", rb_str_new2(EXPECTED_YARP_VERSION));
 
     // First, the functions that have to do with lexing and parsing.
     rb_define_singleton_method(rb_cYARP, "dump", dump, -1);

@@ -8,6 +8,7 @@
 /spec/reports/
 /top-100-gems/
 /tmp/
+/vendor/bundle
 
 /build/
 /lib/yarp/yarp.*
@@ -15,6 +16,7 @@
 /lib/yarp.so
 test.rb
 *.dSYM
+*~
 
 test.c
 a.out
@@ -41,5 +43,7 @@ configure
 config.log
 config.status
 Makefile
+/include/yarp/config.h
+/config.h.in
 
 tags
