@@ -696,7 +696,7 @@ yp_array_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *node
     for (size_t index = 0; index < nodes->size; index++) {
         yp_node_t *child = nodes->nodes[index];
 
-        if (child->type == YP_NODE_SPLAT_NODE) {
+        if (!found_rest && child->type == YP_NODE_SPLAT_NODE) {
             node->rest = child;
             found_rest = true;
         } else if (found_rest) {
@@ -11085,7 +11085,10 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
                     parser_lex(parser);
                     name = parse_undef_argument(parser);
-                    if (name->type == YP_NODE_MISSING_NODE) break;
+                    if (name->type == YP_NODE_MISSING_NODE) {
+                        yp_node_destroy(parser, name);
+                        break;
+                    }
 
                     yp_undef_node_append(undef, name);
                 }
