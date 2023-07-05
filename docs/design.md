@@ -34,7 +34,7 @@ You can find most of the functions that correspond to constructs in the Pratt pa
 
 ## Portability
 
-In order to enable using this parser in other projects, the parser is written in C99, and uses only the standard library. This means it can be embedded in most any other project without having to link against CRuby. It can be used directly through its C API to access individual fields, or it can used to parse a syntax tree and then serialize it to a single blob. For more information on serialization, see the [docs/serialize.md](docs/serialize.md) file.
+In order to enable using this parser in other projects, the parser is written in C99, and uses only the standard library. This means it can be embedded in most any other project without having to link against CRuby. It can be used directly through its C API to access individual fields, or it can used to parse a syntax tree and then serialize it to a single blob. For more information on serialization, see the [docs/serialization.md](serialization.md) file.
 
 ## Error tolerance
 
