@@ -24,7 +24,7 @@ module YARP
         @constant_pool = nil
 
         offsets = [0]
-        input.b.scan("\n") { offsets << $~.offset(0)[0] + 1 }
+        input.b.scan("\n") { offsets << $~.end(0) }
         @source = Source.new(input, offsets)
       end
 
