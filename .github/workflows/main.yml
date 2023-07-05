@@ -123,3 +123,5 @@ jobs:
         bundler-cache: true
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
+      env:
+        YARP_DEBUG_MODE_BUILD: "1"
