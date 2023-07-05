@@ -40,11 +40,6 @@
 
 int yp_strncasecmp(const char *string1, const char *string2, size_t length);
 
-#if defined(HAVE_STRNCASECMP)
-    // We use strncasecmp if it's available
-#   define yp_strncasecmp strncasecmp
-#endif
-
 int yp_snprintf(char *dest, YP_ATTRIBUTE_UNUSED size_t size, const char *format, ...);
 
 #if defined(HAVE_SNPRINTF)

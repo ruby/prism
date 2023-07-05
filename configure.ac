@@ -14,7 +14,6 @@ AC_DEFINE([YP_VERSION], ["_YP_VERSION"], [YP_VERSION])
 
 AC_CHECK_FUNCS([mmap])
 AC_CHECK_FUNCS([snprintf])
-AC_CHECK_FUNCS([strncasecmp])
 
 AC_CONFIG_HEADERS([include/yarp/config.h:config.h.in])
 AC_CONFIG_FILES([Makefile])
