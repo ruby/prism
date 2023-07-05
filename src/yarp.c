@@ -1,11 +1,5 @@
 #include "yarp.h"
-
-// The YP_VERSION macro is defined by the build system. If it is not
-// present then we need to fail the build, since we're explicitly returning it
-// from the yp_version function.
-#ifndef YP_VERSION
-#error "YP_VERSION must be defined"
-#endif
+#include "yarp/version.h"
 
 // The YARP version and the serialization format.
 const char *
@@ -4456,7 +4450,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     // Extensions like utf-8 can contain extra encoding details like,
     // utf-8-dos, utf-8-linux, utf-8-mac. We treat these all as utf-8 should
     // treat any encoding starting utf-8 as utf-8.
-    if ((encoding_start + 5 <= parser->end) && (strncasecmp(encoding_start, "utf-8", 5) == 0)) {
+    if ((encoding_start + 5 <= parser->end) && (yp_strncasecmp(encoding_start, "utf-8", 5) == 0)) {
         // We don't need to do anything here because the default encoding is
         // already UTF-8. We'll just return.
         return;
@@ -4465,7 +4459,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     // Next, we're going to loop through each of the encodings that we handle
     // explicitly. If we found one that we understand, we'll use that value.
 #define ENCODING(value, prebuilt) \
-    if (width == sizeof(value) - 1 && encoding_start + width <= parser->end && strncasecmp(encoding_start, value, width) == 0) { \
+    if (width == sizeof(value) - 1 && encoding_start + width <= parser->end && yp_strncasecmp(encoding_start, value, width) == 0) { \
         parser->encoding = prebuilt; \
         parser->encoding_changed |= true; \
         if (parser->encoding_changed_callback != NULL) parser->encoding_changed_callback(parser); \
@@ -7575,7 +7569,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                 char *name = calloc(length + 2, sizeof(char));
                 if (name == NULL) return NULL;
 
-                snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
+                yp_snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
 
                 // Now switch the name to the new string.
                 yp_string_free(&call->name);
