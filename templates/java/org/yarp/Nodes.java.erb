@@ -77,12 +77,41 @@ public abstract class Nodes {
         }
     }
 
+    public static final class Source {
+        public final byte[] bytes;
+        private final int[] lineOffsets;
+
+        public Source(byte[] bytes, int[] lineOffsets) {
+            assert lineOffsets[0] == 0;
+            this.bytes = bytes;
+            this.lineOffsets = lineOffsets;
+        }
+
+        public int line(int byteOffset) {
+            assert byteOffset >= 0 && byteOffset < bytes.length : byteOffset;
+            int index = Arrays.binarySearch(lineOffsets, byteOffset);
+            int line;
+            if (index < 0) {
+                line = -index - 1;
+            } else {
+                line = index + 1;
+            }
+            assert line >= 1 && line <= getLineCount() : line;
+            return line;
+        }
+
+        public int getLineCount() {
+            return lineOffsets.length;
+        }
+    }
+
     public static abstract class Node {
 
         public static final Node[] EMPTY_ARRAY = {};
 
         public final int startOffset;
         public final int length;
+        private boolean newLineFlag = false;
 
         public Node(int startOffset, int length) {
             this.startOffset = startOffset;
@@ -97,6 +126,18 @@ public abstract class Nodes {
             return startOffset + length;
         }
 
+        public boolean hasNewLineFlag() {
+            return newLineFlag;
+        }
+
+        public void setNewLineFlag(Source source, boolean[] newlineMarked) {
+            int line = source.line(this.startOffset);
+            if (!newlineMarked[line]) {
+                newlineMarked[line] = true;
+                this.newLineFlag = true;
+            }
+        }
+
         public abstract <T> T accept(AbstractNodeVisitor<T> visitor);
 
         public abstract Node[] childNodes();
@@ -108,7 +149,11 @@ public abstract class Nodes {
 
         private String toString(String indent) {
             StringBuilder builder = new StringBuilder();
-            builder.append(indent).append(this.getClass().getSimpleName()).append('\n');
+            builder.append(indent).append(this.getClass().getSimpleName());
+            if (hasNewLineFlag()) {
+                builder.append("[Li]");
+            }
+            builder.append('\n');
             for (Node child : childNodes()) {
                 if (child != null) {
                     builder.append(child.toString(indent + "  "));
@@ -143,6 +188,28 @@ public abstract class Nodes {
             this.<%= param.name %> = <%= param.name %>;
         <%- end -%>
         }
+
+        <%- unless node.newline -%>
+        public void setNewLineFlag(Source source, boolean[] newlineMarked) {
+          <%- node.params.each do |param| -%>
+            <%- case param -%>
+            <%- when NodeListParam -%>
+            for (Nodes.Node node : this.<%= param.name %>) {
+                node.setNewLineFlag(source, newlineMarked);
+            }
+            <%- when NodeParam -%>
+            this.<%= param.name %>.setNewLineFlag(source, newlineMarked);
+            <%- when OptionalNodeParam -%>
+            if (this.<%= param.name %> != null) {
+                this.<%= param.name %>.setNewLineFlag(source, newlineMarked);
+            }
+            <%- when -> _ { !param.java_type.include?("Node") } -%>
+            <%- else -%>
+            <%- raise "Param type #{param.class} not handled in #{__FILE__ }" -%>
+            <%- end -%>
+          <%- end -%>
+        }
+        <%- end -%>
 
         public Node[] childNodes() {
           <%- if node.params.none?(NodeListParam) and node.params.none?(SingleNodeParam) -%>
