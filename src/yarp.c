@@ -1,11 +1,5 @@
 #include "yarp.h"
-
-// The YP_VERSION macro is defined by the build system. If it is not
-// present then we need to fail the build, since we're explicitly returning it
-// from the yp_version function.
-#ifndef YP_VERSION
-#error "YP_VERSION must be defined"
-#endif
+#include "yarp/version.h"
 
 // The YARP version and the serialization format.
 const char *
