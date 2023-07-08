@@ -4,7 +4,7 @@ test_config = lambda do |t|
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
-Rake::TestTask.new(test: :compile, &test_config)
+Rake::TestTask.new(:test, &test_config)
 
 class GdbTestTask < Rake::TestTask
   def ruby(*args, **options, &block)

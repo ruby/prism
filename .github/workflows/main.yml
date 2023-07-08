@@ -123,3 +123,45 @@ jobs:
         bundler-cache: true
     - name: Run Ruby tests with valgrind
       run: bundle exec rake test:valgrind
+
+  gem-package:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - run: bundle exec rake build
+    - uses: actions/upload-artifact@v3
+      with:
+        name: gem-package
+        path: pkg
+        retention-days: 1
+
+  gem-install:
+    needs: ["gem-package"]
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.2", "head"]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - uses: actions/download-artifact@v3
+      with:
+        name: gem-package
+        path: pkg
+    - run: |
+        gem install --local pkg/yarp-*.gem
+        gem list -d yarp
+      shell: bash
+    - run: |
+        bundle install
+        rm -rf lib ext # ensure we don't use the local files
+        rake test
+      shell: bash
