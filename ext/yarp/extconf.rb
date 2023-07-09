@@ -8,16 +8,15 @@ module Yarp
   module ExtConf
     class << self
       def configure
-        configure_debug
+        configure_c_extension
         configure_rubyparser
 
         create_makefile("yarp")
       end
 
-      def configure_debug
-        if debug_mode_build?
-          append_cflags("-DYARP_DEBUG_MODE_BUILD")
-        end
+      def configure_c_extension
+        append_cflags("-DYARP_DEBUG_MODE_BUILD") if debug_mode_build?
+        append_cflags("-fvisibility=hidden")
       end
 
       def configure_rubyparser
