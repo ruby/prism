@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "bundler/gem_tasks"
 require "rake/extensiontask"
 require "rake/testtask"
 require "rake/clean"
@@ -13,14 +14,7 @@ RubyMemcheck.config(binary_name: "yarp")
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-Rake::ExtensionTask.new(:compile) do |ext|
-  ext.name = "yarp"
-  ext.ext_dir = "ext/yarp"
-  ext.lib_dir = "lib"
-  ext.gem_spec = Gem::Specification.load("yarp.gemspec")
-end
-
-task default: :test
+task default: [:compile, :test]
 
 require_relative "templates/template"
 
@@ -60,6 +54,18 @@ task generate_compilation_database: [:clobber, :templates] do
   end
 
   sh "bear -- make"
+end
+
+# decorate the gem build task with prerequisites
+task build: [:templates, :check_manifest]
+
+# the C extension
+task "compile:yarp" => ["configure", "templates"] # must be before the ExtensionTask is created
+Rake::ExtensionTask.new(:compile) do |ext|
+  ext.name = "yarp"
+  ext.ext_dir = "ext/yarp"
+  ext.lib_dir = "lib"
+  ext.gem_spec = Gem::Specification.load("yarp.gemspec")
 end
 
 # So `rake clobber` will delete generated files

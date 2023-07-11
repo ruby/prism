@@ -14,6 +14,18 @@ If you want to contribute code, please first open or contribute to a discussion.
 
 We could always use more tests! One of the biggest challenges of this project is building up a big test suite. If you want to contribute tests, feel free to open a pull request. These will get merged in as soon as possible.
 
+The `test` Rake task will not compile libraries or the C extension, and this is intentional (to make testing against an installed version easier). If you want to test your changes, please make sure you're also running either the task:
+
+``` sh
+bundle exec rake
+```
+
+or explicitly running the `compile` task:
+
+``` sh
+bundle exec rake compile test
+```
+
 ## Documentation
 
 We could always use more documentation! If you want to contribute documentation, feel free to open a pull request. These will get merged in as soon as possible. Documenting functions or methods is always useful, but we also need more guides and tutorials. If you have an idea for a guide or tutorial, feel free to open an issue and we can discuss it.

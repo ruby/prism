@@ -1,50 +1,77 @@
 # frozen_string_literal: true
 
 require "mkmf"
+require "rbconfig"
+require "rake"
 
 module Yarp
   module ExtConf
     class << self
       def configure
-        configure_debug
+        configure_c_extension
         configure_rubyparser
 
         create_makefile("yarp")
       end
 
-      def configure_debug
-        if debug_mode_build?
-          append_cflags("-DYARP_DEBUG_MODE_BUILD")
-        end
+      def configure_c_extension
+        append_cflags("-DYARP_DEBUG_MODE_BUILD") if debug_mode_build?
+        append_cflags("-fvisibility=hidden")
       end
 
       def configure_rubyparser
-        find_header("yarp.h", include_dir)
+        if static_link?
+          static_archive_path = File.join(build_dir, "librubyparser.a")
+          unless File.exist?(static_archive_path)
+            build_static_rubyparser
+          end
+          append_ldflags(static_archive_path)
+          unless find_library("rubyparser", "yp_parser_init", build_dir)
+            raise "could not link against #{File.basename(static_archive_path)}"
+          end
+        else
+          shared_library_path = File.join(build_dir, "librubyparser.#{RbConfig::CONFIG["DLEXT"]}")
+          unless File.exist?(shared_library_path)
+            build_shared_rubyparser
+          end
+          unless find_library("rubyparser", "yp_parser_init", build_dir)
+            raise "could not link against #{File.basename(shared_library_path)}"
+          end
+        end
+
+        find_header("yarp.h", include_dir) or raise "yarp.h is required"
 
         # Explicitly look for the extension header in the parent directory
         # because we want to consistently look for yarp/extension.h in our
         # source files to line up with our mirroring in CRuby.
-        find_header("yarp/extension.h", File.join(__dir__, ".."))
+        find_header("yarp/extension.h", File.join(__dir__, "..")) or raise "yarp/extension.h is required"
+      end
 
-        if static_link?
-          static_archive_path = File.join(build_dir, "librubyparser.a")
-          unless File.exist?(static_archive_path)
-            raise "Please run make to build librubyparser.a"
-          end
-          append_ldflags(static_archive_path)
-        else
-          unless find_library("rubyparser", "yp_parser_init", build_dir)
-            raise "Please run make to build librubyparser.so"
-          end
+      def build_shared_rubyparser
+        build_target_rubyparser "build/librubyparser.#{RbConfig::CONFIG["SOEXT"]}"
+      end
+
+      def build_static_rubyparser
+        build_target_rubyparser "build/librubyparser.a"
+      end
+
+      def build_target_rubyparser(target)
+        Dir.chdir(root_dir) do
+          Rake.sh("sh configure") # explicit "sh" for Windows where shebangs are not supported
+          Rake.sh("make", target)
         end
       end
 
+      def root_dir
+        File.expand_path("../..", __dir__)
+      end
+
       def include_dir
-        File.expand_path("../../include", __dir__)
+        File.join(root_dir, "include")
       end
 
       def build_dir
-        File.expand_path("../../build", __dir__)
+        File.join(root_dir, "build")
       end
 
       def print_help
