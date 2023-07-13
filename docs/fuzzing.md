@@ -77,7 +77,7 @@ e.g.
 ./fuzz/tools/minimize.sh fuzz/output/parse/default/crashes
 ```
 
-This may take a long time. In the the crash/hang directory, for each input file there will appear a minimized version with the extension `.min` appended.
+This may take a long time. In the crash/hang directory, for each input file there will appear a minimized version with the extension `.min` appended.
 
 Backtraces for crashes (not hangs) can be generated en masse with
 
