@@ -10,6 +10,8 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/ruby/yarp"
   spec.license = "MIT"
 
+  spec.required_ruby_version = ">= 2.7.0"
+
   spec.require_paths = ["lib"]
   spec.files = [
     "CODE_OF_CONDUCT.md",
