@@ -89,8 +89,13 @@ module YARP
         unless constant
           offset = constant_pool_offset + index * 8
 
-          start = serialized.unpack1("L", offset: offset)
-          length = serialized.unpack1("L", offset: offset + 4)
+          if RUBY_VERSION >= "3.1"
+            start = serialized.unpack1("L", offset: offset)
+            length = serialized.unpack1("L", offset: offset + 4)
+          else
+            start = serialized[offset..].unpack1("L")
+            length = serialized[offset+4..].unpack1("L")
+          end
 
           constant = input.byteslice(start, length).to_sym
           constant_pool[index] = constant
