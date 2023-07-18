@@ -64,14 +64,14 @@ task "compile:yarp" => ["configure", "templates"] # must be before the Extension
 Rake::ExtensionTask.new(:compile) do |ext|
   ext.name = "yarp"
   ext.ext_dir = "ext/yarp"
-  ext.lib_dir = "lib"
+  ext.lib_dir = "lib/yarp"
   ext.gem_spec = Gem::Specification.load("yarp.gemspec")
 end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
 CLOBBER.concat(["configure", "Makefile", "build", "config.h.in", "include/yarp/config.h"])
-CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
+CLOBBER << "lib/yarp/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
   desc "Template #{filepath}"

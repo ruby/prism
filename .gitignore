@@ -12,8 +12,6 @@
 
 /build/
 /lib/yarp/yarp.*
-/lib/yarp.bundle
-/lib/yarp.so
 test.rb
 *.dSYM
 *~

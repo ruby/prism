@@ -36,7 +36,7 @@ task :check_manifest => [:templates, "configure"] do
     java/org/yarp/Loader.java
     java/org/yarp/Nodes.java
     java/org/yarp/Parser.java
-    lib/yarp.{jar,so,bundle}
+    lib/yarp/yarp.{so,bundle,jar}
   ]
 
   intended_directories = Dir.children(".")

@@ -11,7 +11,7 @@ module Yarp
         configure_c_extension
         configure_rubyparser
 
-        create_makefile("yarp")
+        create_makefile("yarp/yarp")
       end
 
       def configure_c_extension
