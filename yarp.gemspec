@@ -101,7 +101,6 @@ Gem::Specification.new do |spec|
     "src/util/yp_list.c",
     "src/util/yp_memchr.c",
     "src/util/yp_newline_list.c",
-    "src/util/yp_snprintf.c",
     "src/util/yp_state_stack.c",
     "src/util/yp_string.c",
     "src/util/yp_string_list.c",
