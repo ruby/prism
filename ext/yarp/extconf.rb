@@ -7,9 +7,12 @@ require "rake"
 module Yarp
   module ExtConf
     class << self
+      DEV_INSTALL_DIR = "c_api"
+
       def configure
         configure_c_extension
         configure_rubyparser
+        install_development_files
 
         create_makefile("yarp")
       end
@@ -55,6 +58,21 @@ module Yarp
         build_target_rubyparser "build/librubyparser.a"
       end
 
+      def install_development_files
+        return unless arg_config("--install-c-api", false)
+
+        # copy the static archive into "c_api/lib"
+        lib_dir = File.join(DEV_INSTALL_DIR, "lib")
+        FileUtils.mkdir_p lib_dir
+        FileUtils.cp File.join(build_dir, "librubyparser.a"), lib_dir
+
+        # copy header files into "c_api/include"
+        FileUtils.cp_r File.join(include_dir), DEV_INSTALL_DIR
+
+        $INSTALLFILES << ["#{DEV_INSTALL_DIR}/lib/*", "$(RUBYLIBDIR)/yarp"]
+        $INSTALLFILES << ["#{DEV_INSTALL_DIR}/include/**/*.h", "$(RUBYLIBDIR)/yarp"]
+      end
+
       def build_target_rubyparser(target)
         Dir.chdir(root_dir) do
           if !File.exist?("configure") && Dir.exist?(".git")
@@ -62,7 +80,7 @@ module Yarp
             # normally we package up the configure and other files in the gem itself
             Rake.sh("autoconf")
             Rake.sh("autoheader")
-            Rake.sh("rake", "templates")
+            Rake.sh("templates/template.rb")
           end
           Rake.sh("sh", "configure") # explicit "sh" for Windows where shebangs are not supported
           Rake.sh("make", target)
@@ -95,6 +113,11 @@ module Yarp
                 --enable-debug-mode-build
                     Enable debug mode build.
                     You may also use set YARP_DEBUG_MODE_BUILD environment variable.
+
+                --install-c-api
+                    When static linking is enabled, also install the librubyparser.a static archive
+                    used to build the gem. This is useful for downstream consumers of the gem who
+                    wish to use YARP's C API.
 
                 --help
                     Display this message.
