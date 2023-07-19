@@ -10,6 +10,8 @@ import java.util.Arrays;
 // @formatter:off
 public abstract class Nodes {
 
+    public static final byte[][] EMPTY_BYTE_ARRAY_ARRAY = {};
+
 <%- flags.each do |group| -%>
     public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
         <%- group.values.each_with_index do |value, index| -%>
@@ -60,6 +62,9 @@ public abstract class Nodes {
 <%- end -%>
 
     public static final class Location {
+
+        public static final Location[] EMPTY_ARRAY = {};
+
         public final int startOffset;
         public final int length;
 
