@@ -56,7 +56,6 @@ module Yarp
       end
 
       def build_target_rubyparser(target)
-        # explicit "sh" is used for Windows where shebangs are not supported
         Dir.chdir(root_dir) do
           if !File.exist?("configure") && Dir.exist?(".git")
             # this block only exists to support building the gem from a "git" source,
