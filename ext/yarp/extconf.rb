@@ -61,11 +61,11 @@ module Yarp
           if !File.exist?("configure") && Dir.exist?(".git")
             # this block only exists to support building the gem from a "git" source,
             # normally we package up the configure and other files in the gem itself
-            Rake.sh("sh", "autoconf")
-            Rake.sh("sh", "autoheader")
-            Rake.sh("rake","templates")
+            Rake.sh("autoconf")
+            Rake.sh("autoheader")
+            Rake.sh("rake", "templates")
           end
-          Rake.sh("sh", "configure")
+          Rake.sh("sh", "configure") # explicit "sh" for Windows where shebangs are not supported
           Rake.sh("make", target)
         end
       end
