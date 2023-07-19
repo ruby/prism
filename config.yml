@@ -1810,10 +1810,13 @@ nodes:
       Represents a rescue statement.
 
           begin
-          rescue
-            foo
+          rescue Foo, *splat, Bar => ex
           ^^^^^^
+            foo
           end
+
+      `Foo, *splat, Bar` are in the `exceptions` field.
+      `ex` is in the `exception` field.
   - name: RestParameterNode
     child_nodes:
       - name: operator_loc
