@@ -56,6 +56,7 @@ Gem::Specification.new do |spec|
     "include/yarp/util/yp_strpbrk.h",
     "include/yarp/version.h",
     "lib/yarp.rb",
+    "lib/yarp/c_api.rb",
     "lib/yarp/lex_compat.rb",
     "lib/yarp/node.rb",
     "lib/yarp/pack.rb",
