@@ -4,6 +4,7 @@ task :check_manifest => [:templates, "configure"] do
 
   ignore_directories = %w[
     .bundle
+    .idea
     .git
     .github
     autom4te.cache
@@ -24,6 +25,7 @@ task :check_manifest => [:templates, "configure"] do
     .gitattributes
     .gitignore
     .gitmodules
+    *.iml
     Gemfile
     Gemfile.lock
     Makefile

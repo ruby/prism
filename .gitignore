@@ -16,6 +16,7 @@
 /lib/yarp.so
 test.rb
 *.dSYM
+/*.iml
 *~
 
 test.c
