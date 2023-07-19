@@ -940,7 +940,6 @@ nodes:
         kind: StatementsNode
       - name: end_keyword_loc
         type: location?
-    newline: false
     comment: |
       Represents an `else` clause in a `case`, `if`, or `unless` statement.
 
@@ -1179,7 +1178,6 @@ nodes:
         type: node?
       - name: end_keyword_loc
         type: location?
-    newline: false
     comment: |
       Represents the use of the `if` keyword, either in the block form or the modifier form.
 
@@ -1289,7 +1287,6 @@ nodes:
         type: location
       - name: flags
         type: uint32
-    newline: false
     comment: |
       Represents a regular expression literal that contains interpolation.
 
@@ -1303,7 +1300,6 @@ nodes:
         type: node[]
       - name: closing_loc
         type: location?
-    newline: false
     comment: |
       Represents a string literal that contains interpolation.
 
@@ -1317,7 +1313,6 @@ nodes:
         type: node[]
       - name: closing_loc
         type: location?
-    newline: false
     comment: |
       Represents a symbol literal that contains interpolation.
 
@@ -1331,7 +1326,6 @@ nodes:
         type: node[]
       - name: closing_loc
         type: location
-    newline: false
     comment: |
       Represents an xstring literal that contains interpolation.
 
@@ -1628,7 +1622,6 @@ nodes:
         type: location
       - name: closing_loc
         type: location
-    newline: false
     comment: |
       Represents a parenthesized expression
 
@@ -1701,7 +1694,6 @@ nodes:
       - name: statements
         type: node
         kind: StatementsNode
-    newline: false
     comment: The top level node of any parse tree.
   - name: RangeNode
     child_nodes:
@@ -1909,7 +1901,6 @@ nodes:
     child_nodes:
       - name: body
         type: node[]
-    newline: false
     comment: |
       Represents a set of statements contained within some scope.
 
@@ -2019,7 +2010,6 @@ nodes:
         kind: ElseNode
       - name: end_keyword_loc
         type: location?
-    newline: false
     comment: |
       Represents the use of the `unless` keyword, either in the block form or the modifier form.
 

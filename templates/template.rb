@@ -118,7 +118,7 @@ PARAM_TYPES = {
 # YAML format. It contains information about the name of the node and the
 # various child nodes it contains.
 class NodeType
-  attr_reader :name, :type, :human, :params, :newline, :comment
+  attr_reader :name, :type, :human, :params, :comment
 
   def initialize(config)
     @name = config.fetch("name")
@@ -131,7 +131,6 @@ class NodeType
                    raise("Unknown param type: #{param["type"].inspect}")
       param_type.new(**param.transform_keys(&:to_sym))
     end
-    @newline = config.fetch("newline", true)
     @comment = config.fetch("comment")
   end
 

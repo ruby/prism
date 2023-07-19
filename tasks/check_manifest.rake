@@ -11,6 +11,7 @@ task :check_manifest => [:templates, "configure"] do
     bin
     build
     fuzz
+    java
     pkg
     tasks
     templates
@@ -34,10 +35,6 @@ task :check_manifest => [:templates, "configure"] do
     config.status
     configure.ac
     include/yarp/config.h
-    java/org/yarp/AbstractNodeVisitor.java
-    java/org/yarp/Loader.java
-    java/org/yarp/Nodes.java
-    java/org/yarp/Parser.java
     lib/yarp.{jar,so,bundle}
   ]
 

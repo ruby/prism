@@ -123,15 +123,11 @@ public abstract class Nodes {
             this.length = length;
         }
 
-        public int length() {
-            return length;
-        }
-
-        public int endOffset() {
+        public final int endOffset() {
             return startOffset + length;
         }
 
-        public boolean hasNewLineFlag() {
+        public final boolean hasNewLineFlag() {
             return newLineFlag;
         }
 
@@ -144,6 +140,8 @@ public abstract class Nodes {
         }
 
         public abstract <T> T accept(AbstractNodeVisitor<T> visitor);
+
+        public abstract <T> void visitChildNodes(AbstractNodeVisitor<T> visitor);
 
         public abstract Node[] childNodes();
 
@@ -194,27 +192,29 @@ public abstract class Nodes {
         <%- end -%>
         }
 
-        <%- unless node.newline -%>
+        <%- if node.name == 'BeginNode' -%>
+        @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
+            // Never marking BeginNode, mark the StatementsNode statements instead
+        }
+        <%- end -%>
+
+        public <T> void visitChildNodes(AbstractNodeVisitor<T> visitor) {
           <%- node.params.each do |param| -%>
             <%- case param -%>
             <%- when NodeListParam -%>
-            for (Nodes.Node node : this.<%= param.name %>) {
-                node.setNewLineFlag(source, newlineMarked);
+            for (Nodes.Node child : this.<%= param.name %>) {
+                child.accept(visitor);
             }
             <%- when NodeParam -%>
-            this.<%= param.name %>.setNewLineFlag(source, newlineMarked);
+            this.<%= param.name %>.accept(visitor);
             <%- when OptionalNodeParam -%>
             if (this.<%= param.name %> != null) {
-                this.<%= param.name %>.setNewLineFlag(source, newlineMarked);
+                this.<%= param.name %>.accept(visitor);
             }
-            <%- when -> _ { !param.java_type.include?("Node") } -%>
-            <%- else -%>
-            <%- raise "Param type #{param.class} not handled in #{__FILE__ }" -%>
             <%- end -%>
           <%- end -%>
         }
-        <%- end -%>
 
         public Node[] childNodes() {
           <%- if node.params.none?(NodeListParam) and node.params.none?(SingleNodeParam) -%>
