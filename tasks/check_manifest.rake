@@ -54,6 +54,8 @@ task :check_manifest => [:templates, "configure"] do
     .reject { |filename| ignore_files.any? { |ig| File.fnmatch?(ig, filename, File::FNM_EXTGLOB) } }
     .sort
 
+  intended_files -= %w[test.rb]
+
   spec_files = raw_gemspec.files.sort
   missing_files = intended_files - spec_files
 
