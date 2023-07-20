@@ -4,6 +4,7 @@ task :check_manifest => [:templates, "configure"] do
 
   ignore_directories = %w[
     .bundle
+    .idea
     .git
     .github
     autom4te.cache
@@ -24,6 +25,7 @@ task :check_manifest => [:templates, "configure"] do
     .gitattributes
     .gitignore
     .gitmodules
+    *.iml
     Gemfile
     Gemfile.lock
     Makefile
@@ -51,6 +53,8 @@ task :check_manifest => [:templates, "configure"] do
     .select { |filename| File.file?(filename) }
     .reject { |filename| ignore_files.any? { |ig| File.fnmatch?(ig, filename, File::FNM_EXTGLOB) } }
     .sort
+
+  intended_files -= %w[test.rb]
 
   spec_files = raw_gemspec.files.sort
   missing_files = intended_files - spec_files
