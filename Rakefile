@@ -33,7 +33,6 @@ end
 file "configure" => ["configure.ac"] do
   # autoreconf would be more generic, but it does not seem to work on GitHub Actions on macOS
   run_script "autoconf"
-  run_script "autoheader"
 end
 
 file "Makefile" => ["configure", "Makefile.in"] do
@@ -70,7 +69,7 @@ end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
-CLOBBER.concat(["configure", "Makefile", "build", "config.h.in", "include/yarp/config.h"])
+CLOBBER.concat(["configure", "Makefile", "build"])
 CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|

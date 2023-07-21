@@ -6,6 +6,5 @@ AC_DEFINE([_XOPEN_SOURCE], [700], [_XOPEN_SOURCE])
 AC_CHECK_FUNCS([mmap])
 AC_CHECK_FUNCS([snprintf])
 
-AC_CONFIG_HEADERS([include/yarp/config.h:config.h.in])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

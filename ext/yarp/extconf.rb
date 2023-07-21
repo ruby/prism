@@ -15,6 +15,8 @@ module Yarp
       end
 
       def configure_c_extension
+        have_func "mmap"
+        have_func "snprintf"
         append_cflags("-DYARP_DEBUG_MODE_BUILD") if debug_mode_build?
         append_cflags("-fvisibility=hidden")
       end

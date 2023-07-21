@@ -44,7 +44,5 @@ configure
 config.log
 config.status
 Makefile
-/include/yarp/config.h
-/config.h.in
 
 tags
