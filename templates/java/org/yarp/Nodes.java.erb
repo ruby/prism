@@ -192,10 +192,24 @@ public abstract class Nodes {
         <%- end -%>
         }
 
-        <%- if node.name == 'BeginNode' -%>
+        <%- if node.newline == false -%>
         @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
-            // Never marking BeginNode, mark the StatementsNode statements instead
+            // Never mark <%= node.name %> with a newline flag, mark children instead
+        }
+        <%- elsif node.newline.is_a?(String) -%>
+        @Override
+        public void setNewLineFlag(Source source, boolean[] newlineMarked) {
+          <%- param = node.params.find { |p| p.name == node.newline } or raise node.newline -%>
+          <%- case param -%>
+          <%- in SingleNodeParam -%>
+            <%= param.name %>.setNewLineFlag(source, newlineMarked);
+          <%- in NodeListParam -%>
+            Node first = <%= param.name %>.length > 0 ? <%= param.name %>[0] : null;
+            if (first != null) {
+                first.setNewLineFlag(source, newlineMarked);
+            }
+          <%- end -%>
         }
         <%- end -%>
 
