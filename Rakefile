@@ -74,7 +74,7 @@ CLOBBER.concat(["configure", "Makefile", "build", "config.h.in", "include/yarp/c
 CLOBBER << "lib/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
-  desc "Template #{filepath}"
+  desc "Generate #{filepath}"
   file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
     template(t.name, locals)
   end
