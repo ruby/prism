@@ -22,6 +22,7 @@ test-native/run-one
 /java/org/yarp/Nodes.java
 /lib/yarp/node.rb
 /lib/yarp/serialize.rb
+/lib/yarp/compile.jar
 /src/node.c
 /src/prettyprint.c
 /src/serialize.c
