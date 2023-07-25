@@ -1628,6 +1628,7 @@ nodes:
         type: location
       - name: closing_loc
         type: location
+    newline: false
     comment: |
       Represents a parenthesized expression
 
