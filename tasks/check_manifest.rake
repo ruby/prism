@@ -7,6 +7,8 @@ task :check_manifest => [:templates, "configure"] do
     .idea
     .git
     .github
+    .cache
+    .ruby-lsp
     autom4te.cache
     bin
     build
@@ -33,6 +35,7 @@ task :check_manifest => [:templates, "configure"] do
     config.log
     config.status
     configure.ac
+    compile_commands.json
     include/yarp/config.h
     java/org/yarp/AbstractNodeVisitor.java
     java/org/yarp/Loader.java
