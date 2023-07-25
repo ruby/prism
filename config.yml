@@ -2035,6 +2035,7 @@ nodes:
       - name: statements
         type: node?
         kind: StatementsNode
+    newline: predicate
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
 
@@ -2066,6 +2067,7 @@ nodes:
       - name: statements
         type: node?
         kind: StatementsNode
+    newline: predicate
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.
 
