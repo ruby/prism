@@ -188,6 +188,7 @@ module YARP
       !success?
     end
 
+    # Keep in sync with Java MarkNewlinesVisitor
     class MarkNewlinesVisitor < YARP::Visitor
       def initialize(newline_marked)
         @newline_marked = newline_marked
