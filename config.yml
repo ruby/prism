@@ -1783,6 +1783,7 @@ nodes:
         type: location
       - name: rescue_expression
         type: node
+    newline: expression
     comment: |
       Represents an expression modified with a rescue.
 
