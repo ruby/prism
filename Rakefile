@@ -14,7 +14,7 @@ RubyMemcheck.config(binary_name: "yarp")
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-task default: [:compile, :test]
+task default: [:clobber, :compile, :test]
 
 require_relative "templates/template"
 

@@ -36,6 +36,7 @@ task :check_manifest => [:templates, "configure"] do
     configure.ac
     include/yarp/config.h
     lib/yarp.{jar,so,bundle}
+    tags
   ]
 
   intended_directories = Dir.children(".")
