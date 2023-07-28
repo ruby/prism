@@ -4,12 +4,16 @@ task :check_manifest => [:templates, "configure"] do
 
   ignore_directories = %w[
     .bundle
+    .idea
     .git
     .github
+    .cache
+    .ruby-lsp
     autom4te.cache
     bin
     build
     fuzz
+    java
     pkg
     tasks
     templates
@@ -24,6 +28,7 @@ task :check_manifest => [:templates, "configure"] do
     .gitattributes
     .gitignore
     .gitmodules
+    *.iml
     Gemfile
     Gemfile.lock
     Makefile
@@ -31,12 +36,14 @@ task :check_manifest => [:templates, "configure"] do
     config.log
     config.status
     configure.ac
+    compile_commands.json
     include/yarp/config.h
     java/org/yarp/AbstractNodeVisitor.java
     java/org/yarp/Loader.java
     java/org/yarp/Nodes.java
     java/org/yarp/Parser.java
     lib/yarp/yarp.{so,bundle,jar}
+    tags
   ]
 
   intended_directories = Dir.children(".")
@@ -51,6 +58,8 @@ task :check_manifest => [:templates, "configure"] do
     .select { |filename| File.file?(filename) }
     .reject { |filename| ignore_files.any? { |ig| File.fnmatch?(ig, filename, File::FNM_EXTGLOB) } }
     .sort
+
+  intended_files -= %w[test.rb]
 
   spec_files = raw_gemspec.files.sort
   missing_files = intended_files - spec_files

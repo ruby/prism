@@ -57,7 +57,14 @@ module Yarp
 
       def build_target_rubyparser(target)
         Dir.chdir(root_dir) do
-          Rake.sh("sh configure") # explicit "sh" for Windows where shebangs are not supported
+          if !File.exist?("configure") && Dir.exist?(".git")
+            # this block only exists to support building the gem from a "git" source,
+            # normally we package up the configure and other files in the gem itself
+            Rake.sh("autoconf")
+            Rake.sh("autoheader")
+            Rake.sh("templates/template.rb")
+          end
+          Rake.sh("sh", "configure") # explicit "sh" for Windows where shebangs are not supported
           Rake.sh("make", target)
         end
       end
