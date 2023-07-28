@@ -21,17 +21,19 @@ class LldbTestTask < Rake::TestTask
 end
 
 namespace :test do
-  RubyMemcheck::TestTask.new(valgrind_internal: :compile, &test_config)
-  Rake::Task['test:valgrind_internal'].clear_comments # Hide test:valgrind_internal from rake -T
+  if RUBY_ENGINE != "jruby"
+    RubyMemcheck::TestTask.new(valgrind_internal: :compile, &test_config)
+    Rake::Task['test:valgrind_internal'].clear_comments # Hide test:valgrind_internal from rake -T
+  
+    desc "Run tests under valgrind"
+    task :valgrind do
+      # Recompile with YARP_DEBUG_MODE_BUILD=1
+      ENV['YARP_DEBUG_MODE_BUILD'] = '1'
+      Rake::Task['clobber'].invoke
+      Rake::Task['test:valgrind_internal'].invoke
+    end
 
-  desc "Run tests under valgrind"
-  task :valgrind do
-    # Recompile with YARP_DEBUG_MODE_BUILD=1
-    ENV['YARP_DEBUG_MODE_BUILD'] = '1'
-    Rake::Task['clobber'].invoke
-    Rake::Task['test:valgrind_internal'].invoke
+    GdbTestTask.new(gdb: :compile, &test_config)
+    LldbTestTask.new(lldb: :compile, &test_config)
   end
-
-  GdbTestTask.new(gdb: :compile, &test_config)
-  LldbTestTask.new(lldb: :compile, &test_config)
 end
