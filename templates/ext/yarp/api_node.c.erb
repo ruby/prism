@@ -19,7 +19,7 @@ yp_string_new(yp_string_t *string, rb_encoding *encoding) {
 
 static VALUE
 yp_node_new(yp_parser_t *parser, yp_node_t *node, VALUE source, rb_encoding *encoding, ID *constants) {
-    switch (node->type) {
+    switch (YP_NODE_TYPE(node)) {
         <%- nodes.each do |node| -%>
 #line <%= __LINE__ + 1 %> "<%= File.basename(__FILE__) %>"
         case <%= node.type %>: {
@@ -72,7 +72,7 @@ yp_node_new(yp_parser_t *parser, yp_node_t *node, VALUE source, rb_encoding *enc
         }
         <%- end -%>
         default:
-            rb_raise(rb_eRuntimeError, "unknown node type: %d", node->type);
+            rb_raise(rb_eRuntimeError, "unknown node type: %d", YP_NODE_TYPE(node));
     }
 }
 

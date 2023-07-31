@@ -52,6 +52,18 @@ typedef enum {
 <%- end -%>
 } yp_node_type_t;
 
+// We store the node type enum in every node in the tree. We don't have nearly
+// as many node types as we do bits in an enum, so we're going to use the top
+// half of the enum to store flags about the node.
+static const unsigned int YP_NODE_FLAGS_SHIFT = sizeof(yp_node_type_t) * 8 / 2;
+static const unsigned int YP_NODE_FLAG_NEWLINE = 1 << YP_NODE_FLAGS_SHIFT;
+
+// For easy access, we define some macros that manipulate only the bottom half
+// of the node type enum.
+static const unsigned int YP_NODE_TYPE_MASK = ((1 << (sizeof(yp_node_type_t) * 8 / 2)) - 1);
+#define YP_NODE_TYPE(node) ((node)->type & YP_NODE_TYPE_MASK)
+#define YP_NODE_TYPE_P(node, type) (YP_NODE_TYPE(node) == (type))
+
 // This is the overall tagged union representing a node in the syntax tree.
 typedef struct yp_node {
     // This represents the type of the node. It somewhat maps to the nodes that
