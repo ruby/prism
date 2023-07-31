@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 static inline uint32_t
-yp_long_to_u32(long value) {
-    assert(value >= 0 && (unsigned long)value < UINT32_MAX);
+yp_ptrdifft_to_u32(ptrdiff_t value) {
+    assert(value >= 0 && ((unsigned long) value) < UINT32_MAX);
     return (uint32_t) value;
 }
 
 static inline uint32_t
-yp_ulong_to_u32(unsigned long value) {
+yp_sizet_to_u32(size_t value) {
     assert(value < UINT32_MAX);
     return (uint32_t) value;
 }
@@ -22,13 +22,13 @@ serialize_location(yp_parser_t *parser, yp_location_t *location, yp_buffer_t *bu
     assert(location->end);
     assert(location->start <= location->end);
 
-    yp_buffer_append_u32(buffer, yp_long_to_u32(location->start - parser->start));
-    yp_buffer_append_u32(buffer, yp_long_to_u32(location->end - location->start));
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(location->start - parser->start));
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(location->end - location->start));
 }
 
 void
 yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
-    yp_buffer_append_u8(buffer, YP_NODE_TYPE(node));
+    yp_buffer_append_u8(buffer, (uint8_t) YP_NODE_TYPE(node));
 
     size_t offset = buffer->length;
 
@@ -54,28 +54,28 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
                 yp_serialize_node(parser, (yp_node_t *)((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
             }
             <%- when StringParam -%>
-            uint32_t <%= param.name %>_length = yp_ulong_to_u32(yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>));
+            uint32_t <%= param.name %>_length = yp_sizet_to_u32(yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>));
             yp_buffer_append_u32(buffer, <%= param.name %>_length);
             yp_buffer_append_str(buffer, yp_string_source(&((yp_<%= node.human %>_t *)node)-><%= param.name %>), <%= param.name %>_length);
             <%- when NodeListParam -%>
-            uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
+            uint32_t <%= param.name %>_size = yp_sizet_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
             yp_buffer_append_u32(buffer, <%= param.name %>_size);
             for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
                 yp_serialize_node(parser, (yp_node_t *) ((yp_<%= node.human %>_t *)node)-><%= param.name %>.nodes[index], buffer);
             }
             <%- when LocationListParam -%>
-            uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
+            uint32_t <%= param.name %>_size = yp_sizet_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
             yp_buffer_append_u32(buffer, <%= param.name %>_size);
             for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
                 serialize_location(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.locations[index], buffer);
             }
             <%- when ConstantParam -%>
-            yp_buffer_append_u32(buffer, yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>));
+            yp_buffer_append_u32(buffer, yp_sizet_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>));
             <%- when ConstantListParam -%>
-            uint32_t <%= param.name %>_size = yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
+            uint32_t <%= param.name %>_size = yp_sizet_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.size);
             yp_buffer_append_u32(buffer, <%= param.name %>_size);
             for (uint32_t index = 0; index < <%= param.name %>_size; index++) {
-                yp_buffer_append_u32(buffer, yp_ulong_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.ids[index]));
+                yp_buffer_append_u32(buffer, yp_sizet_to_u32(((yp_<%= node.human %>_t *)node)-><%= param.name %>.ids[index]));
             }
             <%- when LocationParam -%>
             serialize_location(parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>, buffer);
@@ -94,7 +94,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
             <%- end -%>
             <%- if node.needs_serialized_length? -%>
                 // serialize length
-                uint32_t length = yp_ulong_to_u32(buffer->length - offset - sizeof(uint32_t));
+                uint32_t length = yp_sizet_to_u32(buffer->length - offset - sizeof(uint32_t));
                 memcpy(buffer->value + length_offset, &length, sizeof(uint32_t));
             <%- end -%>
             break;
@@ -107,7 +107,7 @@ void
 yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     // First, serialize the encoding of the parser.
     size_t encoding_length = strlen(parser->encoding.name);
-    yp_buffer_append_u32(buffer, yp_ulong_to_u32(encoding_length));
+    yp_buffer_append_u32(buffer, yp_sizet_to_u32(encoding_length));
     yp_buffer_append_str(buffer, parser->encoding.name, encoding_length);
 
     // Here we're going to leave space for the offset of the constant pool in
@@ -116,14 +116,14 @@ yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) 
     yp_buffer_append_zeroes(buffer, 4);
 
     // Next, encode the length of the constant pool.
-    yp_buffer_append_u32(buffer, yp_ulong_to_u32(parser->constant_pool.size));
+    yp_buffer_append_u32(buffer, yp_sizet_to_u32(parser->constant_pool.size));
 
     // Now we're going to serialize the content of the node.
     yp_serialize_node(parser, node, buffer);
 
     // Now we're going to serialize the offset of the constant pool back where
     // we left space for it.
-    uint32_t length = yp_ulong_to_u32(buffer->length);
+    uint32_t length = yp_sizet_to_u32(buffer->length);
     memcpy(buffer->value + offset, &length, sizeof(uint32_t));
 
     // Now we're going to serialize the constant pool.
@@ -139,8 +139,8 @@ yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) 
         if (constant->id != 0) {
             size_t buffer_offset = offset + ((constant->id - 1) * 8);
 
-            uint32_t source_offset = yp_long_to_u32(constant->start - parser->start);
-            uint32_t constant_length = yp_ulong_to_u32(constant->length);
+            uint32_t source_offset = yp_ptrdifft_to_u32(constant->start - parser->start);
+            uint32_t constant_length = yp_sizet_to_u32(constant->length);
 
             memcpy(buffer->value + buffer_offset, &source_offset, 4);
             memcpy(buffer->value + buffer_offset + 4, &constant_length, 4);
