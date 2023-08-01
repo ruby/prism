@@ -24,6 +24,8 @@ or explicitly running the `compile` task:
 
 ``` sh
 bundle exec rake compile test
+# or to just compile the C extension ...
+bundle exec rake compile:yarp test
 ```
 
 ## Documentation

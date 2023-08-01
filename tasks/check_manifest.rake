@@ -38,7 +38,11 @@ task :check_manifest => [:templates, "configure"] do
     configure.ac
     compile_commands.json
     include/yarp/config.h
-    lib/yarp.{jar,so,bundle}
+    java/org/yarp/AbstractNodeVisitor.java
+    java/org/yarp/Loader.java
+    java/org/yarp/Nodes.java
+    java/org/yarp/Parser.java
+    lib/yarp/yarp.{so,bundle,jar}
     tags
     test.c
     test.rb
