@@ -69,8 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       JRUBY_OPTS: "--dev"
-    steps: 
-   - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
     - name: Set up JRuby
       uses: ruby/setup-ruby@v1
       with:
