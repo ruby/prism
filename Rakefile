@@ -2,72 +2,40 @@
 
 require "bundler/gem_tasks"
 require "rake/extensiontask"
-require "rake/testtask"
 require "rake/clean"
-require "rdoc/task"
-
-Rake.add_rakelib("tasks")
-
-if RUBY_ENGINE != "jruby"
-  require "ruby_memcheck"
-  RubyMemcheck.config(binary_name: "yarp")
-end
-
-task compile: :make
-task compile_no_debug: :make_no_debug
-
-task default: [:compile, :test]
 
 require_relative "templates/template"
 
-desc "Generate all ERB template based files"
-task templates: TEMPLATES
+templates = Rake::FileList.new("templates/**/*.erb")
+sources = Rake::FileList.new("src/**/*.c").concat(templates.grep(%r{^templates/src/.*\.c\.erb$}).pathmap("%{templates/,}X")).uniq
+headers = Rake::FileList.new("include/**/*.h").concat(templates.grep(/\.h\.erb$/).pathmap("%{templates/,}X")).uniq
 
-def windows?
-  RUBY_PLATFORM.include?("mingw")
-end
-
-def run_script(command)
-  command = "sh #{command}" if windows?
-  sh command
-end
-
-file "configure" => ["configure.ac"] do
-  # autoreconf would be more generic, but it does not seem to work on GitHub Actions on macOS
-  run_script "autoconf"
-  run_script "autoheader"
-end
-
-file "Makefile" => ["configure", "Makefile.in"] do
-  run_script "./configure"
-end
-
-task make: [:templates, "Makefile"] do
-  sh "make"
-end
-
-task make_no_debug: [:templates, "Makefile"] do
-  sh "make all-no-debug"
-end
-
-task generate_compilation_database: [:clobber, :templates] do
-  sh "which bear" do |ok, _|
-    abort("Installing bear is required to generate the compilation database") unless ok
+templates.each do |filepath|
+  file filepath.pathmap("%{templates/,}X") => [filepath, "templates/template.rb", "config.yml"] do |t|
+    template(t.name, locals)
   end
-
-  sh "bear -- make"
 end
 
-# decorate the gem build task with prerequisites
-task build: [:templates, :check_manifest]
+desc "Generate all ERB template based files"
+task templates: templates.pathmap("%{templates/,}X")
 
-# the C extension
-task "compile:yarp" => ["configure", "templates"] # must be before the ExtensionTask is created
+file "ext/yarp/yarp.c" => sources do |t|
+  File.write(t.name, sources.map { |source| File.binread(source) }.join("\n\n"))
+end
 
-if RUBY_ENGINE == 'jruby'
-  require 'rake/javaextensiontask'
+headers.pathmap("ext/yarp/%p").pathmap("%d").uniq.each do |filepath|
+  directory filepath
+end
 
-  # This compiles java to make sure any templating changes produces valid code.
+rule %r{^ext/yarp/include/.+\.h$} => ["%{ext/yarp/,}X.h", "%d"] do |t|
+  cp t.source, t.name
+end
+
+task compile: ["ext/yarp/yarp.c", *templates.grep(%r{^templates/ext}).pathmap("%{templates/,}X"), *headers.pathmap("ext/yarp/%p")]
+
+if RUBY_ENGINE == "jruby"
+  require "rake/javaextensiontask"
+
   Rake::JavaExtensionTask.new(:compile) do |ext|
     ext.name = "yarp"
     ext.ext_dir = "java"
@@ -85,31 +53,9 @@ else
   end
 end
 
-# So `rake clobber` will delete generated files
-CLOBBER.concat(TEMPLATES)
-CLOBBER.concat(["configure", "Makefile", "build", "config.h.in", "include/yarp/config.h"])
-CLOBBER << "lib/yarp/yarp.#{RbConfig::CONFIG["DLEXT"]}"
+CLOBBER.push("ext/yarp/yarp.c", "ext/yarp/include")
+CLOBBER.concat(templates.pathmap("%{templates/,}X"))
 
-TEMPLATES.each do |filepath|
-  desc "Generate #{filepath}"
-  file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
-    template(t.name, locals)
-  end
-end
-
-RDoc::Task.new do |rdoc|
-  rdoc.main = "README.md"
-  rdoc.markup = "markdown"
-  rdoc.rdoc_dir = "doc"
-
-  rdoc.rdoc_files.include(
-    "docs/*.md",
-    "ext/**/*.c",
-    "lib/**/*.rb",
-    "src/**/*.c",
-    "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
-    "LICENSE.md",
-    "README.md",
-  )
-end
+task build: :check_manifest
+task test: :compile
+task default: :test

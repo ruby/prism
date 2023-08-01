@@ -13,9 +13,11 @@ task :check_manifest => [:templates, "configure"] do
     bin
     build
     fuzz
+    include
     java
     pkg
-    tasks
+    rakelib
+    src
     templates
     test
     tmp
@@ -71,5 +73,3 @@ task :check_manifest => [:templates, "configure"] do
 
   puts "☑  manifest looks good"
 end
-
-task test: :check_manifest

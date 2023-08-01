@@ -1,10 +1,6 @@
 #ifndef YARP_DEFINES_H
 #define YARP_DEFINES_H
 
-// This file should be included first by any *.h or *.c in YARP
-
-#include "yarp/config.h"
-
 #include <ctype.h>
 #include <stdarg.h>
 #include <stddef.h>

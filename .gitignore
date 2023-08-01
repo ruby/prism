@@ -22,6 +22,9 @@
 test.c
 a.out
 
+/ext/yarp/yarp.c
+/ext/yarp/include
+
 /ext/yarp/api_node.c
 /fuzz/output/
 /include/yarp/ast.h
