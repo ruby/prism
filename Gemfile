@@ -9,4 +9,7 @@ gemspec
 gem "rake"
 gem "rake-compiler"
 gem "test-unit"
-gem "ruby_memcheck", platform: %i[ mri truffleruby ]
+
+if RUBY_ENGINE != "jruby"
+  gem "ruby_memcheck"
+end
