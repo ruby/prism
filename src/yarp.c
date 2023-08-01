@@ -1014,7 +1014,7 @@ yp_block_parameters_node_closing_set(yp_block_parameters_node_t *node, const yp_
 // Append a new block-local variable to a BlockParametersNode node.
 static void
 yp_block_parameters_node_append_local(yp_block_parameters_node_t *node, const yp_token_t *local) {
-    assert(local->type == YP_TOKEN_IDENTIFIER);
+    assert(local->type == YP_TOKEN_IDENTIFIER || local->type == YP_TOKEN_MISSING);
 
     yp_location_list_append(&node->locals, local);
     if (node->base.location.start == NULL) node->base.location.start = local->start;
@@ -2044,7 +2044,7 @@ yp_hash_pattern_node_node_list_create(yp_parser_t *parser, yp_node_list_t *assoc
 // Allocate and initialize a new GlobalVariableOperatorAndWriteNode node.
 static yp_global_variable_operator_and_write_node_t *
 yp_global_variable_operator_and_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    assert(YP_NODE_TYPE_P(target, YP_NODE_GLOBAL_VARIABLE_READ_NODE));
+    assert(YP_NODE_TYPE_P(target, YP_NODE_GLOBAL_VARIABLE_READ_NODE) || YP_NODE_TYPE_P(target, YP_NODE_BACK_REFERENCE_READ_NODE) || YP_NODE_TYPE_P(target, YP_NODE_NUMBERED_REFERENCE_READ_NODE));
     assert(YP_NODE_TYPE_P(operator, YP_TOKEN_AMPERSAND_AMPERSAND_EQUAL));
     yp_global_variable_operator_and_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_and_write_node_t);
 
@@ -2089,7 +2089,7 @@ yp_global_variable_operator_write_node_create(yp_parser_t *parser, yp_node_t *ta
 // Allocate and initialize a new GlobalVariableOperatorOrWriteNode node.
 static yp_global_variable_operator_or_write_node_t *
 yp_global_variable_operator_or_write_node_create(yp_parser_t *parser, yp_node_t *target, const yp_token_t *operator, yp_node_t *value) {
-    assert(YP_NODE_TYPE_P(target, YP_NODE_GLOBAL_VARIABLE_READ_NODE));
+    assert(YP_NODE_TYPE_P(target, YP_NODE_GLOBAL_VARIABLE_READ_NODE) || YP_NODE_TYPE_P(target, YP_NODE_BACK_REFERENCE_READ_NODE) || YP_NODE_TYPE_P(target, YP_NODE_NUMBERED_REFERENCE_READ_NODE));
     assert(YP_NODE_TYPE_P(operator, YP_TOKEN_PIPE_PIPE_EQUAL));
     yp_global_variable_operator_or_write_node_t *node = YP_ALLOC_NODE(parser, yp_global_variable_operator_or_write_node_t);
 
@@ -3023,7 +3023,7 @@ yp_nil_node_create(yp_parser_t *parser, const yp_token_t *token) {
 // Allocate and initialize a new NoKeywordsParameterNode node.
 static yp_no_keywords_parameter_node_t *
 yp_no_keywords_parameter_node_create(yp_parser_t *parser, const yp_token_t *operator, const yp_token_t *keyword) {
-    assert(operator->type == YP_TOKEN_USTAR_STAR);
+    assert(operator->type == YP_TOKEN_USTAR_STAR || operator->type == YP_TOKEN_STAR_STAR);
     assert(keyword->type == YP_TOKEN_KEYWORD_NIL);
     yp_no_keywords_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_no_keywords_parameter_node_t);
 
@@ -6352,12 +6352,14 @@ parser_lex(yp_parser_t *parser) {
 
                 // % %= %i %I %q %Q %w %W
                 case '%': {
-                    // In a BEG state, if you encounter a % then you must be starting
-                    // something. In this case if there is no subsequent character then
-                    // we have an invalid token.
+                    // In a BEG state, if you encounter a % then you must be
+                    // starting something. In this case if there is no
+                    // subsequent character then we have an invalid token. We're
+                    // going to say it's the percent operator because we don't
+                    // want to move into the string lex mode unnecessarily.
                     if (lex_state_beg_p(parser) && (parser->current.end >= parser->end)) {
                         yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "unexpected end of input");
-                        LEX(YP_TOKEN_STRING_BEGIN);
+                        LEX(YP_TOKEN_PERCENT);
                     }
 
                     if (!lex_state_beg_p(parser) && match(parser, '=')) {
@@ -6387,53 +6389,89 @@ parser_lex(yp_parser_t *parser) {
                         switch (*parser->current.end) {
                             case 'i': {
                                 parser->current.end++;
-                                lex_mode_push_list(parser, false, *parser->current.end++);
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_list(parser, false, *parser->current.end++);
+                                }
+
                                 LEX(YP_TOKEN_PERCENT_LOWER_I);
                             }
                             case 'I': {
                                 parser->current.end++;
-                                lex_mode_push_list(parser, true, *parser->current.end++);
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_list(parser, true, *parser->current.end++);
+                                }
+
                                 LEX(YP_TOKEN_PERCENT_UPPER_I);
                             }
                             case 'r': {
                                 parser->current.end++;
-                                lex_mode_push_regexp(parser, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                parser->current.end++;
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_regexp(parser, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
+                                    parser->current.end++;
+                                }
+
                                 LEX(YP_TOKEN_REGEXP_BEGIN);
                             }
                             case 'q': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                parser->current.end++;
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
+                                    parser->current.end++;
+                                }
+
                                 LEX(YP_TOKEN_STRING_BEGIN);
                             }
                             case 'Q': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                parser->current.end++;
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
+                                    parser->current.end++;
+                                }
+
                                 LEX(YP_TOKEN_STRING_BEGIN);
                             }
                             case 's': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
-                                parser->current.end++;
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_string(parser, false, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
+                                    lex_state_set(parser, YP_LEX_STATE_FNAME | YP_LEX_STATE_FITEM);
+                                    parser->current.end++;
+                                }
+
                                 LEX(YP_TOKEN_SYMBOL_BEGIN);
                             }
                             case 'w': {
                                 parser->current.end++;
-                                lex_mode_push_list(parser, false, *parser->current.end++);
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_list(parser, false, *parser->current.end++);
+                                }
+
                                 LEX(YP_TOKEN_PERCENT_LOWER_W);
                             }
                             case 'W': {
                                 parser->current.end++;
-                                lex_mode_push_list(parser, true, *parser->current.end++);
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_list(parser, true, *parser->current.end++);
+                                }
+
                                 LEX(YP_TOKEN_PERCENT_UPPER_W);
                             }
                             case 'x': {
                                 parser->current.end++;
-                                lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
-                                parser->current.end++;
+
+                                if (parser->current.end < parser->end) {
+                                    lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
+                                    parser->current.end++;
+                                }
+
                                 LEX(YP_TOKEN_PERCENT_LOWER_X);
                             }
                             default:
@@ -12448,17 +12486,13 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
                 yp_location_t *content_loc = &((yp_regular_expression_node_t *) node)->content_loc;
 
-                YP_ATTRIBUTE_UNUSED bool captured_group_names =
-                    yp_regexp_named_capture_group_names(content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures);
+                if (yp_regexp_named_capture_group_names(content_loc->start, (size_t) (content_loc->end - content_loc->start), &named_captures)) {
+                    for (size_t index = 0; index < named_captures.length; index++) {
+                        yp_string_t *name = &named_captures.strings[index];
+                        assert(name->type == YP_STRING_SHARED);
 
-                // We assert that the regex was successfully parsed
-                assert(captured_group_names);
-
-                for (size_t index = 0; index < named_captures.length; index++) {
-                    yp_string_t *name = &named_captures.strings[index];
-                    assert(name->type == YP_STRING_SHARED);
-
-                    yp_parser_local_add_location(parser, name->as.shared.start, name->as.shared.end);
+                        yp_parser_local_add_location(parser, name->as.shared.start, name->as.shared.end);
+                    }
                 }
 
                 yp_string_list_free(&named_captures);
@@ -12466,6 +12500,10 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
             return (yp_node_t *) yp_call_node_binary_create(parser, node, &token, argument);
         }
+        case YP_TOKEN_USTAR:
+        case YP_TOKEN_USTAR_STAR:
+            // The only times this will occur are when we are in an error state,
+            // but we'll put them in here so that errors can propagate.
         case YP_TOKEN_BANG_EQUAL:
         case YP_TOKEN_BANG_TILDE:
         case YP_TOKEN_EQUAL_EQUAL:
