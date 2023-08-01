@@ -16,7 +16,7 @@ end
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-task default: [:clobber, :compile, :test]
+task default: [:compile, :test]
 
 require_relative "templates/template"
 

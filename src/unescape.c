@@ -1,4 +1,4 @@
-#include "yarp/unescape.h"
+#include "yarp.h"
 
 /******************************************************************************/
 /* Character checks                                                           */
@@ -461,10 +461,8 @@ yp_unescape_manipulate_string(yp_parser_t *parser, const char *value, size_t len
         return;
     }
 
-    yp_string_owned_init(string, allocated, length);
-
     // This is the memory address where we're putting the unescaped string.
-    char *dest = string->as.owned.source;
+    char *dest = allocated;
     size_t dest_length = 0;
 
     // This is the current position in the source string that we're looking at.
@@ -525,7 +523,26 @@ yp_unescape_manipulate_string(yp_parser_t *parser, const char *value, size_t len
     // We also need to update the length at the end. This is because every escape
     // reduces the length of the final string, and we don't want garbage at the
     // end.
-    string->as.owned.length = dest_length + ((size_t) (end - cursor));
+    yp_string_owned_init(string, allocated, dest_length + ((size_t) (end - cursor)));
+}
+
+YP_EXPORTED_FUNCTION bool
+yp_unescape_string(const char *start, size_t length, yp_unescape_type_t unescape_type, yp_string_t *result) {
+    bool success;
+
+    yp_list_t error_list;
+    yp_list_init(&error_list);
+
+    yp_parser_t parser;
+    yp_parser_init(&parser, start, length, "");
+
+    yp_unescape_manipulate_string(&parser, start, length, result, unescape_type, &error_list);
+    success = yp_list_empty_p(&error_list);
+
+    yp_list_free(&error_list);
+    yp_parser_free(&parser);
+
+    return success;
 }
 
 // This function is similar to yp_unescape_manipulate_string, except it doesn't
