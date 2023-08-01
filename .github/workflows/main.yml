@@ -77,7 +77,7 @@ jobs:
         ruby-version: jruby
         bundler-cache: true
     - name: Compile generated Java files
-      run: jruby -S rake
+      run: jruby --dev -S bundle exec rake
       shell: bash
 
   lex-ruby:
