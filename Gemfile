@@ -9,4 +9,4 @@ gemspec
 gem "rake"
 gem "rake-compiler"
 gem "test-unit"
-gem "ruby_memcheck"
+gem "ruby_memcheck", platform: %i[ mri truffleruby ]
