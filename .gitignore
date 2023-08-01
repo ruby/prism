@@ -12,8 +12,6 @@
 
 /build/
 /lib/yarp/yarp.*
-/lib/yarp.bundle
-/lib/yarp.so
 /test.rb
 *.dSYM
 /*.iml
@@ -24,9 +22,8 @@ a.out
 
 /ext/yarp/yarp.c
 /ext/yarp/include
-
 /ext/yarp/api_node.c
-/fuzz/output/
+
 /include/yarp/ast.h
 /java/org/yarp/AbstractNodeVisitor.java
 /java/org/yarp/Loader.java
@@ -39,15 +36,9 @@ a.out
 /src/token_type.c
 /src/**/*.o
 
+/fuzz/output/
+
 compile_commands.json
 .cache/
-
-autom4te.cache
-configure
-config.log
-config.status
-Makefile
-/include/yarp/config.h
-/config.h.in
 
 tags

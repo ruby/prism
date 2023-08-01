@@ -1,5 +1,5 @@
 desc "Perform a sanity check on the gemspec file list"
-task :check_manifest => [:templates, "configure"] do
+task :check_manifest do
   raw_gemspec = Bundler.load_gemspec("yarp.gemspec")
 
   ignore_directories = %w[
@@ -35,9 +35,6 @@ task :check_manifest => [:templates, "configure"] do
     Gemfile.lock
     Makefile
     Rakefile
-    config.log
-    config.status
-    configure.ac
     compile_commands.json
     include/yarp/config.h
     lib/yarp/yarp.{so,bundle,jar}
