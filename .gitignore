@@ -20,8 +20,8 @@
 test.c
 a.out
 
-/ext/yarp/yarp.c
 /ext/yarp/include
+/ext/yarp/src-*.c
 /ext/yarp/api_node.c
 
 /include/yarp/ast.h

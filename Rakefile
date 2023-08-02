@@ -7,8 +7,8 @@ require "rake/clean"
 require_relative "templates/template"
 
 templates = Rake::FileList.new("templates/**/*.erb")
-sources = Rake::FileList.new("src/**/*.c").concat(templates.grep(%r{^templates/src/.*\.c\.erb$}).pathmap("%{templates/,}X")).uniq
-headers = Rake::FileList.new("include/**/*.h").concat(templates.grep(/\.h\.erb$/).pathmap("%{templates/,}X")).uniq
+sources = Rake::FileList.new("src/**/*.c").concat(templates.grep(%r{^templates/src/.+\.c\.erb$}).pathmap("%{templates/,}X")).uniq
+headers = Rake::FileList.new("include/**/*.h").concat(templates.grep(%r{^templates/include/.+\.h\.erb$}).pathmap("%{templates/,}X")).uniq
 
 templates.each do |filepath|
   file filepath.pathmap("%{templates/,}X") => [filepath, "templates/template.rb", "config.yml"] do |t|
@@ -16,22 +16,29 @@ templates.each do |filepath|
   end
 end
 
+CLOBBER.concat(templates.pathmap("%{templates/,}X"))
+
 desc "Generate all ERB template based files"
 task templates: templates.pathmap("%{templates/,}X")
-
-file "ext/yarp/yarp.c" => sources do |t|
-  File.write(t.name, sources.map { |source| File.binread(source) }.join("\n\n"))
-end
 
 headers.pathmap("ext/yarp/%p").pathmap("%d").uniq.each do |filepath|
   directory filepath
 end
 
-rule %r{^ext/yarp/include/.+\.h$} => ["%{ext/yarp/,}X.h", "%d"] do |t|
-  cp t.source, t.name
+rule %r{^ext/yarp/src-.+\.c$} => -> (filepath) { filepath.delete_prefix("ext/yarp/").tr("-", "/") } do |t|
+  puts "cp #{t.source}, #{t.name}"
+  File.write(t.name, "#line 1 \"#{t.source}\"\n#{File.read(t.source)}")
 end
 
-task compile: ["ext/yarp/yarp.c", *templates.grep(%r{^templates/ext}).pathmap("%{templates/,}X"), *headers.pathmap("ext/yarp/%p")]
+rule %r{^ext/yarp/include/.+\.h$} => ["%{ext/yarp/,}X.h", "%d"] do |t|
+  puts "cp #{t.source}, #{t.name}"
+  File.write(t.name, "#line 1 \"#{t.source}\"\n#{File.read(t.source)}")
+end
+
+generated = sources.pathmap("ext/yarp/%{.*,*}X.c") { |filepath| filepath.tr("/", "-") }.concat(headers.pathmap("ext/yarp/%p"))
+CLOBBER.concat(generated)
+
+task compile: templates.grep(%r{^templates/ext}).pathmap("%{templates/,}X").concat(generated)
 
 if RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
@@ -52,9 +59,6 @@ else
     ext.gem_spec = Gem::Specification.load("yarp.gemspec")
   end
 end
-
-CLOBBER.push("ext/yarp/yarp.c", "ext/yarp/include")
-CLOBBER.concat(templates.pathmap("%{templates/,}X"))
 
 task build: :check_manifest
 task test: :compile
