@@ -333,6 +333,10 @@ flags:
         comment: "&. operator"
       - name: VARIABLE_CALL
         comment: "a call that could have been a local variable"
+  - name: LoopFlags
+    values:
+      - name: BEGIN_MODIFIER
+        comment: "a loop after a begin statement"
   - name: RangeNodeFlags
     values:
       - name: EXCLUDE_END
@@ -2064,6 +2068,8 @@ nodes:
       - name: statements
         type: node?
         kind: StatementsNode
+      - name: flags
+        type: uint32
     newline: predicate
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
@@ -2096,6 +2102,8 @@ nodes:
       - name: statements
         type: node?
         kind: StatementsNode
+      - name: flags
+        type: uint32
     newline: predicate
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.

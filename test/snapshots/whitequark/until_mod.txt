@@ -6,7 +6,8 @@ ProgramNode(0...14)(
        CallNode(11...14)(nil, nil, (11...14), nil, nil, nil, nil, 2, "foo"),
        StatementsNode(0...4)(
          [CallNode(0...4)(nil, nil, (0...4), nil, nil, nil, nil, 2, "meth")]
-       )
+       ),
+       0
      )]
   )
 )
