@@ -4051,7 +4051,7 @@ yp_unless_node_end_keyword_loc_set(yp_unless_node_t *node, const yp_token_t *end
 
 // Allocate a new UntilNode node.
 static yp_until_node_t *
-yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
+yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements, uint32_t flags) {
     yp_until_node_t *node = YP_ALLOC_NODE(parser, yp_until_node_t);
     bool has_statements = (statements != NULL) && (statements->body.size != 0);
 
@@ -4079,7 +4079,8 @@ yp_until_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
         },
         .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
         .predicate = predicate,
-        .statements = statements
+        .statements = statements,
+        .flags = flags
     };
 
     return node;
@@ -4125,7 +4126,7 @@ yp_when_node_statements_set(yp_when_node_t *node, yp_statements_node_t *statemen
 
 // Allocate a new WhileNode node.
 static yp_while_node_t *
-yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements) {
+yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *predicate, yp_statements_node_t *statements, uint32_t flags) {
     yp_while_node_t *node = YP_ALLOC_NODE(parser, yp_while_node_t);
 
     const char *start = NULL;
@@ -4153,7 +4154,8 @@ yp_while_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t *
         },
         .keyword_loc = YP_LOCATION_TOKEN_VALUE(keyword),
         .predicate = predicate,
-        .statements = statements
+        .statements = statements,
+        .flags = flags
     };
 
     return node;
@@ -11439,7 +11441,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `until` statement.");
             }
 
-            yp_until_node_t *until_node = yp_until_node_create(parser, &keyword, predicate, statements);
+            yp_until_node_t *until_node = yp_until_node_create(parser, &keyword, predicate, statements, 0);
             if (parser->previous.type == YP_TOKEN_KEYWORD_END) {
                 until_node->base.location.end = parser->previous.end;
             }
@@ -11465,7 +11467,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 expect(parser, YP_TOKEN_KEYWORD_END, "Expected `end` to close `while` statement.");
             }
 
-            yp_while_node_t *while_node = yp_while_node_create(parser, &keyword, predicate, statements);
+            yp_while_node_t *while_node = yp_while_node_create(parser, &keyword, predicate, statements, 0);
             if (parser->previous.type == YP_TOKEN_KEYWORD_END) {
                 while_node->base.location.end = parser->previous.end;
             }
@@ -12715,7 +12717,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
             yp_statements_node_body_append(statements, node);
 
             yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'until'");
-            return (yp_node_t *) yp_until_node_create(parser, &token, predicate, statements);
+            return (yp_node_t *) yp_until_node_create(parser, &token, predicate, statements, YP_NODE_TYPE_P(node, YP_NODE_BEGIN_NODE) ? YP_LOOP_FLAGS_BEGIN_MODIFIER : 0);
         }
         case YP_TOKEN_KEYWORD_WHILE_MODIFIER: {
             parser_lex(parser);
@@ -12723,7 +12725,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
             yp_statements_node_body_append(statements, node);
 
             yp_node_t *predicate = parse_expression(parser, binding_power, "Expected a predicate after 'while'");
-            return (yp_node_t *) yp_while_node_create(parser, &token, predicate, statements);
+            return (yp_node_t *) yp_while_node_create(parser, &token, predicate, statements, YP_NODE_TYPE_P(node, YP_NODE_BEGIN_NODE) ? YP_LOOP_FLAGS_BEGIN_MODIFIER : 0);
         }
         case YP_TOKEN_QUESTION_MARK: {
             parser_lex(parser);
