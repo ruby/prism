@@ -35,18 +35,29 @@ class NewlineTest < Test::Unit::TestCase
 
       if relative == "lib/yarp/serialize.rb"
         # while (b = io.getbyte) >= 128 has 2 newline flags
-        expected.delete_at actual.index(62)
+        line_number = source.lines.index { |line| line.include?('while (b = io.getbyte) >= 128') } + 1
+        expected.delete_at(expected.index(line_number))
       elsif relative == "lib/yarp/lex_compat.rb"
         # extra flag for: dedent_next =\n  ((token.event: due to bytecode order
-        actual.delete(521)
         # different line for: token =\n  case event: due to bytecode order
-        actual.delete(578)
-        expected.delete(579)
         # extra flag for: lex_state =\n  if RIPPER: due to bytecode order
-        actual.delete(611)
+        source.lines.each.with_index(1) do |line, line_number|
+          if line =~ /^\s+\w+ =$/
+            actual.delete(line_number)
+
+            # different line for: token =\n  case event: due to bytecode order
+            if line =~ /token =$/
+              expected.delete(line_number + 1)
+            end
+          end
+        end
+
         # extra flag for: (token[2].start_with?("\#$") || token[2].start_with?("\#@"))
         # unclear when ParenthesesNode should allow a second flag on the same line or not
-        actual.delete(738)
+        index = source.lines.index do |line|
+          line.include?('(token[2].start_with?("\#$") || token[2].start_with?("\#@"))')
+        end
+        actual.delete(index + 1)
       end
 
       assert_equal expected, actual
