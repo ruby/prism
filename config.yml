@@ -329,6 +329,8 @@ flags:
     values:
       - name: SAFE_NAVIGATION
         comment: "&. operator"
+      - name: VARIABLE_CALL
+        comment: "a call that could have been a local variable"
   - name: RangeNodeFlags
     values:
       - name: EXCLUDE_END
