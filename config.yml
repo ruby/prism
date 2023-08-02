@@ -304,6 +304,8 @@ tokens:
     comment: "the beginning of a symbol"
   - name: TILDE
     comment: "~ or ~@"
+  - name: UAMPERSAND
+    comment: "unary &"
   - name: UCOLON_COLON
     comment: "unary ::"
   - name: UDOT_DOT

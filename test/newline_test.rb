@@ -38,15 +38,15 @@ class NewlineTest < Test::Unit::TestCase
         expected.delete_at actual.index(62)
       elsif relative == "lib/yarp/lex_compat.rb"
         # extra flag for: dedent_next =\n  ((token.event: due to bytecode order
-        actual.delete(520)
+        actual.delete(521)
         # different line for: token =\n  case event: due to bytecode order
-        actual.delete(577)
-        expected.delete(578)
+        actual.delete(578)
+        expected.delete(579)
         # extra flag for: lex_state =\n  if RIPPER: due to bytecode order
-        actual.delete(610)
+        actual.delete(611)
         # extra flag for: (token[2].start_with?("\#$") || token[2].start_with?("\#@"))
         # unclear when ParenthesesNode should allow a second flag on the same line or not
-        actual.delete(737)
+        actual.delete(738)
       end
 
       assert_equal expected, actual
