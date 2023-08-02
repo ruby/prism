@@ -40,6 +40,9 @@ CLOBBER.concat(generated)
 
 task compile: templates.grep(%r{^templates/ext}).pathmap("%{templates/,}X").concat(generated)
 
+task(:env_ndebug) { ENV["YARP_NO_DEBUG_BUILD"] = "1" }
+task compile_no_debug: [:env_ndebug, :compile]
+
 if RUBY_ENGINE == "jruby"
   require "rake/javaextensiontask"
 

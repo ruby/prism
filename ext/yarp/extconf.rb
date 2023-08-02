@@ -8,7 +8,13 @@ append_cflags("-Werror")
 append_cflags("-fvisibility=hidden")
 
 if enable_config("debug-mode-build", ENV.fetch("YARP_DEBUG_MODE_BUILD", false))
-  append_cflags("-DYARP_DEBUG_MODE_BUILD")
+  append_cflags("-DYARP_DEBUG_MODE_BUILD=1")
+  append_cflags("-O0")
+end
+
+if enable_config("ndebug", ENV.fetch("YARP_NO_DEBUG_BUILD", false))
+  append_cflags("-DNDEBUG=1")
+  append_cflags("-O3")
 end
 
 have_func("mmap")
