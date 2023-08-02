@@ -178,5 +178,5 @@ jobs:
     - run: |
         bundle install
         rm -rf lib ext # ensure we don't use the local files
-        rake test
+        rake test_install
       shell: bash

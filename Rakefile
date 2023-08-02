@@ -65,6 +65,6 @@ else
   end
 end
 
-task build: :check_manifest
+task build: [:check_manifest, *generated]
 task test: :compile
 task default: :test

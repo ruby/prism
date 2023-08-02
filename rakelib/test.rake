@@ -9,6 +9,7 @@ config = lambda do |t|
 end
 
 Rake::TestTask.new(:test, &config)
+Rake::TestTask.new(:test_install, &config)
 
 # Skip valgrind tests if we're on JRuby.
 return if RUBY_ENGINE == "jruby"
