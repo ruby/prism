@@ -88,6 +88,12 @@ tokens:
     comment: "=~"
   - name: FLOAT
     comment: "a floating point number"
+  - name: FLOAT_IMAGINARY
+    comment: "a floating pointer number with an imaginary suffix"
+  - name: FLOAT_RATIONAL
+    comment: "a floating pointer number with a rational suffix"
+  - name: FLOAT_RATIONAL_IMAGINARY
+    comment: "a floating pointer number with a rational and imaginary suffix"
   - name: GLOBAL_VARIABLE
     comment: "a global variable"
   - name: GREATER
@@ -106,12 +112,16 @@ tokens:
     comment: "an identifier"
   - name: IGNORED_NEWLINE
     comment: "an ignored newline"
-  - name: IMAGINARY_NUMBER
-    comment: "an imaginary number literal"
   - name: INSTANCE_VARIABLE
     comment: "an instance variable"
   - name: INTEGER
     comment: "an integer (any base)"
+  - name: INTEGER_IMAGINARY
+    comment: "an integer with an imaginary suffix"
+  - name: INTEGER_RATIONAL
+    comment: "an integer with a rational suffix"
+  - name: INTEGER_RATIONAL_IMAGINARY
+    comment: "an integer with a rational and imaginary suffix"
   - name: KEYWORD_ALIAS
     comment: "alias"
   - name: KEYWORD_AND
@@ -266,8 +276,6 @@ tokens:
     comment: "+="
   - name: QUESTION_MARK
     comment: "?"
-  - name: RATIONAL_NUMBER
-    comment: "a rational number literal"
   - name: REGEXP_BEGIN
     comment: "the beginning of a regular expression"
   - name: REGEXP_END
