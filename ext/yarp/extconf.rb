@@ -12,6 +12,14 @@ module Yarp
         configure_rubyparser
 
         create_makefile("yarp/yarp")
+
+        if static_link?
+          File.open('Makefile', 'a') do |mf|
+            mf.puts
+            mf.puts '# Automatically rebuild the extension if librubyparser.a changed'
+            mf.puts '$(TARGET_SO): $(LOCAL_LIBS)'
+          end
+        end
       end
 
       def configure_c_extension
@@ -25,10 +33,7 @@ module Yarp
           unless File.exist?(static_archive_path)
             build_static_rubyparser
           end
-          append_ldflags(static_archive_path)
-          unless find_library("rubyparser", "yp_parser_init", build_dir)
-            raise "could not link against #{File.basename(static_archive_path)}"
-          end
+          $LOCAL_LIBS << " #{static_archive_path}"
         else
           shared_library_path = File.join(build_dir, "librubyparser.#{RbConfig::CONFIG["DLEXT"]}")
           unless File.exist?(shared_library_path)
