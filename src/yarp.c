@@ -942,7 +942,7 @@ yp_block_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const y
 // Allocate and initialize a new BlockParameterNode node.
 static yp_block_parameter_node_t *
 yp_block_parameter_node_create(yp_parser_t *parser, const yp_token_t *name, const yp_token_t *operator) {
-    assert(operator->type == YP_TOKEN_NOT_PROVIDED || operator->type == YP_TOKEN_AMPERSAND);
+    assert(operator->type == YP_TOKEN_NOT_PROVIDED || operator->type == YP_TOKEN_UAMPERSAND || operator->type == YP_TOKEN_AMPERSAND);
     yp_block_parameter_node_t *node = YP_ALLOC_NODE(parser, yp_block_parameter_node_t);
 
     *node = (yp_block_parameter_node_t) {
@@ -6127,7 +6127,7 @@ parser_lex(yp_parser_t *parser) {
                     LEX(lex_question_mark(parser));
 
                 // & && &&= &=
-                case '&':
+                case '&': {
                     if (match(parser, '&')) {
                         lex_state_set(parser, YP_LEX_STATE_BEG);
 
@@ -6148,13 +6148,19 @@ parser_lex(yp_parser_t *parser) {
                         LEX(YP_TOKEN_AMPERSAND_DOT);
                     }
 
+                    yp_token_type_t type = YP_TOKEN_AMPERSAND;
+                    if (lex_state_spcarg_p(parser, space_seen) || lex_state_beg_p(parser)) {
+                        type = YP_TOKEN_UAMPERSAND;
+                    }
+
                     if (lex_state_operator_p(parser)) {
                         lex_state_set(parser, YP_LEX_STATE_ARG);
                     } else {
                         lex_state_set(parser, YP_LEX_STATE_BEG);
                     }
 
-                    LEX(YP_TOKEN_AMPERSAND);
+                    LEX(type);
+                }
 
                 // | || ||= |=
                 case '|':
@@ -7538,6 +7544,10 @@ token_begins_expression_p(yp_token_type_t type) {
             // and let it be handled by the default case below.
             assert(yp_binding_powers[type].left == YP_BINDING_POWER_UNSET);
             return false;
+        case YP_TOKEN_UAMPERSAND:
+            // This is a special case because this unary operator cannot appear
+            // as a general operator, it only appears in certain circumstances.
+            return false;
         case YP_TOKEN_UCOLON_COLON:
         case YP_TOKEN_UMINUS:
         case YP_TOKEN_UMINUS_NUM:
@@ -8064,7 +8074,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_node_t *arguments, bool accept
                 parsed_bare_hash = true;
                 break;
             }
-            case YP_TOKEN_AMPERSAND: {
+            case YP_TOKEN_UAMPERSAND: {
                 parser_lex(parser);
                 yp_token_t operator = parser->previous;
                 yp_node_t *expression = NULL;
@@ -8270,6 +8280,7 @@ typedef enum {
 // This matches parameters tokens with parameters state.
 static yp_parameters_order_t parameters_ordering[YP_TOKEN_MAXIMUM] = {
     [0] = YP_PARAMETERS_NO_CHANGE,
+    [YP_TOKEN_UAMPERSAND] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
     [YP_TOKEN_AMPERSAND] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
     [YP_TOKEN_UDOT_DOT_DOT] = YP_PARAMETERS_ORDER_NOTHING_AFTER,
     [YP_TOKEN_IDENTIFIER] = YP_PARAMETERS_ORDER_NAMED,
@@ -8336,6 +8347,7 @@ parse_parameters(
                 }
                 break;
             }
+            case YP_TOKEN_UAMPERSAND:
             case YP_TOKEN_AMPERSAND: {
                 update_parameter_state(parser, &parser->current, &order);
                 parser_lex(parser);
@@ -8859,7 +8871,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
 
             arguments->closing_loc = ((yp_location_t) { .start = parser->previous.start, .end = parser->previous.end });
         }
-    } else if ((token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR)) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
+    } else if ((token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 3, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR, YP_TOKEN_UAMPERSAND)) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
         found |= true;
         yp_accepts_block_stack_push(parser, false);
 
@@ -9038,8 +9050,8 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
     case YP_TOKEN_EQUAL_TILDE: case YP_TOKEN_GREATER_EQUAL: case YP_TOKEN_GREATER_GREATER: case YP_TOKEN_GREATER: \
     case YP_TOKEN_LESS_EQUAL_GREATER: case YP_TOKEN_LESS_EQUAL: case YP_TOKEN_LESS_LESS: case YP_TOKEN_LESS: \
     case YP_TOKEN_MINUS: case YP_TOKEN_PERCENT: case YP_TOKEN_PIPE: case YP_TOKEN_PLUS: case YP_TOKEN_SLASH: \
-    case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UMINUS: case YP_TOKEN_UMINUS_NUM: \
-    case YP_TOKEN_UPLUS: case YP_TOKEN_USTAR: case YP_TOKEN_USTAR_STAR
+    case YP_TOKEN_STAR_STAR: case YP_TOKEN_STAR: case YP_TOKEN_TILDE: case YP_TOKEN_UAMPERSAND: case YP_TOKEN_UMINUS: \
+    case YP_TOKEN_UMINUS_NUM: case YP_TOKEN_UPLUS: case YP_TOKEN_USTAR: case YP_TOKEN_USTAR_STAR
 
 // This macro allows you to define a case statement for all of the token types
 // that represent the beginning of nodes that are "primitives" in a pattern
@@ -9056,9 +9068,10 @@ parse_conditional(yp_parser_t *parser, yp_context_t context) {
 
 // This macro allows you to define a case statement for all of the token types
 // that could begin a parameter.
-#define YP_CASE_PARAMETER YP_TOKEN_AMPERSAND: case YP_TOKEN_UDOT_DOT_DOT: case YP_TOKEN_IDENTIFIER: \
-    case YP_TOKEN_LABEL: case YP_TOKEN_USTAR: case YP_TOKEN_STAR: case YP_TOKEN_STAR_STAR: case YP_TOKEN_USTAR_STAR: case YP_TOKEN_CONSTANT: \
-    case YP_TOKEN_INSTANCE_VARIABLE: case YP_TOKEN_GLOBAL_VARIABLE: case YP_TOKEN_CLASS_VARIABLE
+#define YP_CASE_PARAMETER YP_TOKEN_UAMPERSAND: case YP_TOKEN_AMPERSAND: case YP_TOKEN_UDOT_DOT_DOT: \
+    case YP_TOKEN_IDENTIFIER: case YP_TOKEN_LABEL: case YP_TOKEN_USTAR: case YP_TOKEN_STAR: case YP_TOKEN_STAR_STAR: \
+    case YP_TOKEN_USTAR_STAR: case YP_TOKEN_CONSTANT: case YP_TOKEN_INSTANCE_VARIABLE: case YP_TOKEN_GLOBAL_VARIABLE: \
+    case YP_TOKEN_CLASS_VARIABLE
 
 // This macro allows you to define a case statement for all of the nodes that
 // can be transformed into write targets.
@@ -12598,6 +12611,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
 
             return (yp_node_t *) yp_call_node_binary_create(parser, node, &token, argument);
         }
+        case YP_TOKEN_UAMPERSAND:
         case YP_TOKEN_USTAR:
         case YP_TOKEN_USTAR_STAR:
             // The only times this will occur are when we are in an error state,
