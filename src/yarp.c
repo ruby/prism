@@ -1236,7 +1236,7 @@ yp_call_node_unary_create(yp_parser_t *parser, yp_token_t *operator, yp_node_t *
 // Allocate and initialize a new CallNode node from a call to a method name
 // without a receiver that could also have been a local variable read.
 static yp_call_node_t *
-yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message) {
+yp_call_node_variable_call_create(yp_parser_t *parser, yp_token_t *message) {
     yp_call_node_t *node = yp_call_node_create(parser);
 
     node->base.location.start = message->start;
@@ -1245,19 +1245,16 @@ yp_call_node_vcall_create(yp_parser_t *parser, yp_token_t *message) {
     node->message_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(message);
 
     yp_string_shared_init(&node->name, message->start, message->end);
+    node->flags |= YP_CALL_NODE_FLAGS_VARIABLE_CALL;
+
     return node;
 }
 
 // Returns whether or not this call node is a "vcall" (a call to a method name
 // without a receiver that could also have been a local variable read).
 static inline bool
-yp_call_node_vcall_p(yp_call_node_t *node) {
-    return (
-        (node->opening_loc.start == NULL) &&
-        (node->arguments == NULL) &&
-        (node->block == NULL) &&
-        (node->receiver == NULL)
-    );
+yp_call_node_variable_call_p(yp_call_node_t *node) {
+    return node->flags & YP_CALL_NODE_FLAGS_VARIABLE_CALL;
 }
 
 // Allocate and initialize a new CallOperatorAndWriteNode node.
@@ -8840,10 +8837,14 @@ parse_block(yp_parser_t *parser) {
 }
 
 // Parse a list of arguments and their surrounding parentheses if they are
-// present.
-static void
+// present. It returns true if it found any pieces of arguments (parentheses,
+// arguments, or blocks).
+static bool
 parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_block) {
+    bool found = false;
+
     if (accept(parser, YP_TOKEN_PARENTHESIS_LEFT)) {
+        found |= true;
         arguments->opening_loc = ((yp_location_t) { .start = parser->previous.start, .end = parser->previous.end });
 
         if (accept(parser, YP_TOKEN_PARENTHESIS_RIGHT)) {
@@ -8859,6 +8860,7 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
             arguments->closing_loc = ((yp_location_t) { .start = parser->previous.start, .end = parser->previous.end });
         }
     } else if ((token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR)) && !match_type_p(parser, YP_TOKEN_BRACE_LEFT)) {
+        found |= true;
         yp_accepts_block_stack_push(parser, false);
 
         // If we get here, then the subsequent token cannot be used as an infix
@@ -8875,11 +8877,15 @@ parse_arguments_list(yp_parser_t *parser, yp_arguments_t *arguments, bool accept
     // the arguments.
     if (accepts_block) {
         if (accept(parser, YP_TOKEN_BRACE_LEFT)) {
+            found |= true;
             arguments->block = parse_block(parser);
         } else if (yp_accepts_block_stack_p(parser) && accept(parser, YP_TOKEN_KEYWORD_DO)) {
+            found |= true;
             arguments->block = parse_block(parser);
         }
     }
+
+    return found;
 }
 
 static inline yp_node_t *
@@ -9341,7 +9347,7 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
 
 // Parse an identifier into either a local variable read or a call.
 static yp_node_t *
-parse_vcall(yp_parser_t *parser) {
+parse_variable_call(yp_parser_t *parser) {
     int depth;
 
     if (
@@ -9353,7 +9359,7 @@ parse_vcall(yp_parser_t *parser) {
         return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, (uint32_t) depth);
     }
 
-    return (yp_node_t *) yp_call_node_vcall_create(parser, &parser->previous);
+    return (yp_node_t *) yp_call_node_variable_call_create(parser, &parser->previous);
 }
 
 static inline yp_token_t
@@ -10463,36 +10469,42 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
         case YP_TOKEN_IDENTIFIER: {
             parser_lex(parser);
             yp_token_t identifier = parser->previous;
-            yp_node_t *node = parse_vcall(parser);
+            yp_node_t *node = parse_variable_call(parser);
 
             if (YP_NODE_TYPE_P(node, YP_NODE_CALL_NODE)) {
-                // If parse_vcall returned with a call node, then we know the identifier
-                // is not in the local table. In that case we need to check if there are
-                // arguments following the identifier.
+                // If parse_variable_call returned with a call node, then we
+                // know the identifier is not in the local table. In that case
+                // we need to check if there are arguments following the
+                // identifier.
                 yp_call_node_t *call = (yp_call_node_t *) node;
                 yp_arguments_t arguments = YP_EMPTY_ARGUMENTS;
-                parse_arguments_list(parser, &arguments, true);
 
-                call->opening_loc = arguments.opening_loc;
-                call->arguments = arguments.arguments;
-                call->closing_loc = arguments.closing_loc;
-                call->block = arguments.block;
+                if (parse_arguments_list(parser, &arguments, true)) {
+                    // Since we found arguments, we need to turn off the
+                    // variable call bit in the flags.
+                    call->flags ^= YP_CALL_NODE_FLAGS_VARIABLE_CALL;
 
-                if (arguments.block != NULL) {
-                    call->base.location.end = arguments.block->base.location.end;
-                } else if (arguments.closing_loc.start == NULL) {
-                    if (arguments.arguments != NULL) {
-                        call->base.location.end = arguments.arguments->base.location.end;
+                    call->opening_loc = arguments.opening_loc;
+                    call->arguments = arguments.arguments;
+                    call->closing_loc = arguments.closing_loc;
+                    call->block = arguments.block;
+
+                    if (arguments.block != NULL) {
+                        call->base.location.end = arguments.block->base.location.end;
+                    } else if (arguments.closing_loc.start == NULL) {
+                        if (arguments.arguments != NULL) {
+                            call->base.location.end = arguments.arguments->base.location.end;
+                        } else {
+                            call->base.location.end = call->message_loc.end;
+                        }
                     } else {
-                        call->base.location.end = call->message_loc.end;
+                        call->base.location.end = arguments.closing_loc.end;
                     }
-                } else {
-                    call->base.location.end = arguments.closing_loc.end;
                 }
             } else {
-                // Otherwise, we know the identifier is in the local table. This can
-                // still be a method call if it is followed by arguments or a block, so
-                // we need to check for that here.
+                // Otherwise, we know the identifier is in the local table. This
+                // can still be a method call if it is followed by arguments or
+                // a block, so we need to check for that here.
                 if (
                     (binding_power <= YP_BINDING_POWER_ASSIGNMENT && (token_begins_expression_p(parser->current.type) || match_any_type_p(parser, 2, YP_TOKEN_USTAR, YP_TOKEN_USTAR_STAR))) ||
                     (yp_accepts_block_stack_p(parser) && match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_DO, YP_TOKEN_BRACE_LEFT))
@@ -10974,7 +10986,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     parser_lex(parser);
 
                     if (match_any_type_p(parser, 2, YP_TOKEN_DOT, YP_TOKEN_COLON_COLON)) {
-                        receiver = parse_vcall(parser);
+                        receiver = parse_variable_call(parser);
 
                         lex_state_set(parser, YP_LEX_STATE_FNAME);
                         parser_lex(parser);
@@ -12178,12 +12190,12 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
         case YP_TOKEN_EQUAL: {
             switch (YP_NODE_TYPE(node)) {
                 case YP_NODE_CALL_NODE: {
-                    // If we have no arguments to the call node and we need this to be a
-                    // target then this is either a method call or a local variable write.
-                    // This _must_ happen before the value is parsed because it could be
-                    // referenced in the value.
+                    // If we have no arguments to the call node and we need this
+                    // to be a target then this is either a method call or a
+                    // local variable write. This _must_ happen before the value
+                    // is parsed because it could be referenced in the value.
                     yp_call_node_t *call_node = (yp_call_node_t *) node;
-                    if (yp_call_node_vcall_p(call_node)) {
+                    if (yp_call_node_variable_call_p(call_node)) {
                         yp_parser_local_add_location(parser, call_node->message_loc.start, call_node->message_loc.end);
                     }
                 }
@@ -12237,7 +12249,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                     // If we have a vcall (a method with no arguments and no
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
-                    if (yp_call_node_vcall_p(call_node)) {
+                    if (yp_call_node_variable_call_p(call_node)) {
                         yp_location_t message_loc = call_node->message_loc;
                         yp_parser_local_add_location(parser, message_loc.start, message_loc.end);
 
@@ -12342,7 +12354,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                     // If we have a vcall (a method with no arguments and no
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
-                    if (yp_call_node_vcall_p(call_node)) {
+                    if (yp_call_node_variable_call_p(call_node)) {
                         yp_location_t message_loc = call_node->message_loc;
                         yp_parser_local_add_location(parser, message_loc.start, message_loc.end);
 
@@ -12457,7 +12469,7 @@ parse_expression_infix(yp_parser_t *parser, yp_node_t *node, yp_binding_power_t 
                     // If we have a vcall (a method with no arguments and no
                     // receiver that could have been a local variable) then we
                     // will transform it into a local variable write.
-                    if (yp_call_node_vcall_p(call_node)) {
+                    if (yp_call_node_variable_call_p(call_node)) {
                         yp_location_t message_loc = call_node->message_loc;
                         yp_parser_local_add_location(parser, message_loc.start, message_loc.end);
 

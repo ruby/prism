@@ -13,7 +13,7 @@ ProgramNode(0...30)(
              nil,
              nil,
              nil,
-             0,
+             2,
              "var"
            ),
            (13...14),
