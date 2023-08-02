@@ -1,4 +1,5 @@
 #include "yarp/ast.h"
+#include "yarp/diagnostic.h"
 #include "yarp/parser.h"
 #include "yarp/util/yp_buffer.h"
 
@@ -103,12 +104,38 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     }
 }
 
+void yp_serialize_diagnostic(yp_parser_t *parser, yp_diagnostic_t *diagnostic, yp_buffer_t *buffer) {
+    // serialize message
+    size_t message_length = strlen(diagnostic->message);
+    yp_buffer_append_u32(buffer, yp_sizet_to_u32(message_length));
+    yp_buffer_append_str(buffer, diagnostic->message, message_length);
+
+    // serialize location
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(diagnostic->start - parser->start));
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(diagnostic->end - diagnostic->start));
+}
+
+void yp_serialize_diagnostic_list(yp_parser_t *parser, yp_list_t list, yp_buffer_t *buffer) {
+    yp_buffer_append_u32(buffer, yp_list_size(&list));
+
+    yp_diagnostic_t *diagnostic;
+    for (diagnostic = (yp_diagnostic_t *) list.head; diagnostic != NULL; diagnostic = (yp_diagnostic_t *) diagnostic->node.next) {
+        yp_serialize_diagnostic(parser, diagnostic, buffer);
+    }
+}
+
 void
 yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     // First, serialize the encoding of the parser.
     size_t encoding_length = strlen(parser->encoding.name);
     yp_buffer_append_u32(buffer, yp_sizet_to_u32(encoding_length));
     yp_buffer_append_str(buffer, parser->encoding.name, encoding_length);
+
+    // Serialize the errors
+    yp_serialize_diagnostic_list(parser, parser->error_list, buffer);
+
+    // Serialize the warnings
+    yp_serialize_diagnostic_list(parser, parser->warning_list, buffer);
 
     // Here we're going to leave space for the offset of the constant pool in
     // the buffer.

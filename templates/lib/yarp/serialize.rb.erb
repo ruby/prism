@@ -35,10 +35,15 @@ module YARP
         @encoding = Encoding.find(io.read(load_varint))
         @input = input.force_encoding(@encoding).freeze
 
+        errors = load_varint.times.map { ParseError.new(load_string, load_location) }
+        warnings = load_varint.times.map { ParseWarning.new(load_string, load_location) }
+
         @constant_pool_offset = io.read(4).unpack1("L")
         @constant_pool = Array.new(load_varint, nil)
 
-        load_node
+        ast = load_node
+
+        YARP::ParseResult.new(ast, [], errors, warnings, @source)
       end
 
       private

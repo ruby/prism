@@ -240,6 +240,7 @@ TEMPLATES = [
   "include/yarp/ast.h",
   "java/org/yarp/Loader.java",
   "java/org/yarp/Nodes.java",
+  "java/org/yarp/ParseResult.java",
   "java/org/yarp/AbstractNodeVisitor.java",
   "lib/yarp/node.rb",
   "lib/yarp/serialize.rb",
