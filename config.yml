@@ -336,7 +336,7 @@ flags:
   - name: LoopFlags
     values:
       - name: BEGIN_MODIFIER
-        comment: "a loop after a begin statement"
+        comment: "a loop after a begin statement, so the body is executed first before the condition"
   - name: RangeNodeFlags
     values:
       - name: EXCLUDE_END
