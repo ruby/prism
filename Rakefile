@@ -10,16 +10,21 @@ templates = Rake::FileList.new("templates/**/*.erb")
 sources = Rake::FileList.new("src/**/*.c").concat(templates.grep(%r{^templates/src/.+\.c\.erb$}).pathmap("%{templates/,}X")).uniq
 headers = Rake::FileList.new("include/**/*.h").concat(templates.grep(%r{^templates/include/.+\.h\.erb$}).pathmap("%{templates/,}X")).uniq
 
+generated_templates = templates.pathmap("%{templates/,}X")
+generated_sources = sources.pathmap("ext/yarp/%{.*,*}X.c") { |filepath| filepath.tr("/", "-") }
+generated_headers = headers.pathmap("ext/yarp/%p")
+
+generated = generated_templates.concat(generated_sources).concat(generated_headers)
+CLOBBER.concat(generated)
+
 templates.each do |filepath|
   file filepath.pathmap("%{templates/,}X") => [filepath, "templates/template.rb", "config.yml"] do |t|
     template(t.name, locals)
   end
 end
 
-CLOBBER.concat(templates.pathmap("%{templates/,}X"))
-
 desc "Generate all ERB template based files"
-task templates: templates.pathmap("%{templates/,}X")
+task templates: generated_templates
 
 headers.pathmap("ext/yarp/%p").pathmap("%d").uniq.each do |filepath|
   directory filepath
@@ -35,10 +40,7 @@ rule %r{^ext/yarp/include/.+\.h$} => ["%{ext/yarp/,}X.h", "%d"] do |t|
   File.write(t.name, "#line 1 \"#{t.source}\"\n#{File.read(t.source)}")
 end
 
-generated = sources.pathmap("ext/yarp/%{.*,*}X.c") { |filepath| filepath.tr("/", "-") }.concat(headers.pathmap("ext/yarp/%p"))
-CLOBBER.concat(generated)
-
-task compile: templates.grep(%r{^templates/ext}).pathmap("%{templates/,}X").concat(generated)
+task compile: generated
 
 task(:env_ndebug) { ENV["YARP_NO_DEBUG_BUILD"] = "1" }
 task compile_no_debug: [:env_ndebug, :compile]

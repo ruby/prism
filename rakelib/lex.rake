@@ -241,7 +241,7 @@ task "lex:rubygems": :compile do
   RESULTS
 end
 
-TOP_100_GEM_FILENAME = "tasks/top-100-gems.yml"
+TOP_100_GEM_FILENAME = "rakelib/top-100-gems.yml"
 TOP_100_GEMS_DIR = "top-100-gems"
 TOP_100_GEMS_INVALID_SYNTAX_PREFIXES = %w[
   top-100-gems/brakeman-5.4.1/bundle/ruby/3.1.0/gems/erubis-2.7.0/lib/erubis/helpers/rails_form_helper.rb
