@@ -26,9 +26,6 @@ module Yarp
             build_static_rubyparser
           end
           append_ldflags(static_archive_path)
-          unless find_library("rubyparser", "yp_parser_init", build_dir)
-            raise "could not link against #{File.basename(static_archive_path)}"
-          end
         else
           shared_library_path = File.join(build_dir, "librubyparser.#{RbConfig::CONFIG["DLEXT"]}")
           unless File.exist?(shared_library_path)
