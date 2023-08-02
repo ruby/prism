@@ -881,19 +881,35 @@ nodes:
       - name: value
         type: node?
     comment: |
-      Represents writing to a constant.
+      Represents writing to a constant path.
 
-          Foo = 1
-          ^^^^^^^
+          ::Foo = 1
+          ^^^^^^^^^
 
           Foo::Bar = 1
           ^^^^^^^^^^^^
+
+          ::Foo::Bar = 1
+          ^^^^^^^^^^^^^^
   - name: ConstantReadNode
     comment: |
       Represents referencing a constant.
 
           Foo
           ^^^
+  - name: ConstantWriteNode
+    child_nodes:
+      - name: name_loc
+        type: location
+      - name: value
+        type: node?
+      - name: operator_loc
+        type: location?
+    comment: |
+      Represents writing to a constant.
+
+          Foo = 1
+          ^^^^^^^
   - name: DefNode
     child_nodes:
       - name: name_loc
