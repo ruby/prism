@@ -42,6 +42,17 @@ end
 
 task compile: generated
 
+directory "pkg"
+
+sopath = "pkg/librubyparser.#{RbConfig::CONFIG["SOEXT"]}"
+CLOBBER.push(sopath)
+
+file sopath => [*sources, *headers, "pkg"] do |t|
+  sh "cc -std=c99 -Wall -Wconversion -Wextra -Wpedantic -Wundef -Werror -fvisibility=hidden -DYP_EXPORT_SYMBOLS -Iinclude -shared -o #{t.name} #{sources.join(" ")}"
+end
+
+task shared: sopath
+
 task(:env_ndebug) { ENV["YARP_NO_DEBUG_BUILD"] = "1" }
 task compile_no_debug: [:env_ndebug, :compile]
 

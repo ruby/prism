@@ -11,8 +11,8 @@ end
 Rake::TestTask.new(:test, &config)
 Rake::TestTask.new(:test_install, &config)
 
-# Skip valgrind tests if we're on JRuby.
-return if RUBY_ENGINE == "jruby"
+# Skip valgrind tests if we're on JRuby or TruffleRuby.
+return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
 
 require "ruby_memcheck"
 RubyMemcheck.config(binary_name: "yarp")
