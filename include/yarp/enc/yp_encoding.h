@@ -47,11 +47,6 @@ typedef struct {
 #define YP_ENCODING_ALPHANUMERIC_BIT 1 << 1
 #define YP_ENCODING_UPPERCASE_BIT 1 << 2
 
-// The function is shared between all of the encodings that use single bytes to
-// represent characters. They don't have need of a dynamic function to determine
-// their width.
-size_t yp_encoding_single_char_width(YP_ATTRIBUTE_UNUSED const char *c, YP_ATTRIBUTE_UNUSED ptrdiff_t n);
-
 // These functions are reused by some other encodings, so they are defined here
 // so they can be shared.
 size_t yp_encoding_ascii_alpha_char(const char *c, YP_ATTRIBUTE_UNUSED ptrdiff_t n);

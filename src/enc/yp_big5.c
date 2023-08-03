@@ -1,9 +1,9 @@
 #include "yarp/enc/yp_encoding.h"
 
-typedef uint16_t big5_codepoint_t;
+typedef uint16_t yp_big5_codepoint_t;
 
-static big5_codepoint_t
-big5_codepoint(const char *c, ptrdiff_t n, size_t *width) {
+static yp_big5_codepoint_t
+yp_big5_codepoint(const char *c, ptrdiff_t n, size_t *width) {
     const unsigned char *uc = (const unsigned char *) c;
 
     // These are the single byte characters.
@@ -15,7 +15,7 @@ big5_codepoint(const char *c, ptrdiff_t n, size_t *width) {
     // These are the double byte characters.
     if ((n > 1) && (uc[0] >= 0xA1 && uc[0] <= 0xFE) && (uc[1] >= 0x40 && uc[1] <= 0xFE)) {
         *width = 2;
-        return (big5_codepoint_t) (uc[0] << 8 | uc[1]);
+        return (yp_big5_codepoint_t) (uc[0] << 8 | uc[1]);
     }
 
     *width = 0;
@@ -25,7 +25,7 @@ big5_codepoint(const char *c, ptrdiff_t n, size_t *width) {
 static size_t
 yp_encoding_big5_char_width(const char *c, ptrdiff_t n) {
     size_t width;
-    big5_codepoint(c, n, &width);
+    yp_big5_codepoint(c, n, &width);
 
     return width;
 }
@@ -33,7 +33,7 @@ yp_encoding_big5_char_width(const char *c, ptrdiff_t n) {
 static size_t
 yp_encoding_big5_alpha_char(const char *c, ptrdiff_t n) {
     size_t width;
-    big5_codepoint_t codepoint = big5_codepoint(c, n, &width);
+    yp_big5_codepoint_t codepoint = yp_big5_codepoint(c, n, &width);
 
     if (width == 1) {
         const char value = (const char) codepoint;
@@ -46,7 +46,7 @@ yp_encoding_big5_alpha_char(const char *c, ptrdiff_t n) {
 static size_t
 yp_encoding_big5_alnum_char(const char *c, ptrdiff_t n) {
     size_t width;
-    big5_codepoint_t codepoint = big5_codepoint(c, n, &width);
+    yp_big5_codepoint_t codepoint = yp_big5_codepoint(c, n, &width);
 
     if (width == 1) {
         const char value = (const char) codepoint;
@@ -59,7 +59,7 @@ yp_encoding_big5_alnum_char(const char *c, ptrdiff_t n) {
 static bool
 yp_encoding_big5_isupper_char(const char *c, ptrdiff_t n) {
     size_t width;
-    big5_codepoint_t codepoint = big5_codepoint(c, n, &width);
+    yp_big5_codepoint_t codepoint = yp_big5_codepoint(c, n, &width);
 
     if (width == 1) {
         const char value = (const char) codepoint;
