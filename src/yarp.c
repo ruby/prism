@@ -4312,12 +4312,13 @@ static inline size_t
 char_is_identifier_start(yp_parser_t *parser, const char *c) {
     const unsigned char uc = (unsigned char) *c;
 
-    return (
-        (parser->encoding_changed
-            ? parser->encoding.alpha_char(c)
-            : (uc < 0x80 ? (yp_encoding_unicode_table[uc] & YP_ENCODING_ALPHABETIC_BIT ? 1 : 0) : yp_encoding_utf_8_alpha_char(c))
-        ) || (uc == '_') || (uc >= 0x80)
-    );
+    if (parser->encoding_changed) {
+        return parser->encoding.alpha_char(c, parser->end - c) || (uc == '_') || (uc >= 0x80);
+    } else if (uc < 0x80) {
+        return (yp_encoding_unicode_table[uc] & YP_ENCODING_ALPHABETIC_BIT ? 1 : 0) || (uc == '_');
+    } else {
+        return (size_t) (yp_encoding_utf_8_alpha_char(c, parser->end - c) || 1u);
+    }
 }
 
 // Like the above, this function is also used extremely frequently to lex all of
@@ -4327,12 +4328,13 @@ static inline size_t
 char_is_identifier(yp_parser_t *parser, const char *c) {
     const unsigned char uc = (unsigned char) *c;
 
-    return (
-        (parser->encoding_changed
-            ? parser->encoding.alnum_char(c)
-            : (uc < 0x80 ? (yp_encoding_unicode_table[uc] & YP_ENCODING_ALPHANUMERIC_BIT ? 1 : 0) : yp_encoding_utf_8_alnum_char(c))
-        ) || (uc == '_') || (uc >= 0x80)
-    );
+    if (parser->encoding_changed) {
+        return parser->encoding.alnum_char(c, parser->end - c) || (uc == '_') || (uc >= 0x80);
+    } else if (uc < 0x80) {
+        return (yp_encoding_unicode_table[uc] & YP_ENCODING_ALPHANUMERIC_BIT ? 1 : 0) || (uc == '_');
+    } else {
+        return (size_t) (yp_encoding_utf_8_alnum_char(c, parser->end - c) || 1u);
+    }
 }
 
 // Here we're defining a perfect hash for the characters that are allowed in
@@ -5138,7 +5140,7 @@ lex_identifier(yp_parser_t *parser, bool previous_command_start) {
         }
     }
 
-    return parser->encoding.isupper_char(parser->current.start) ? YP_TOKEN_CONSTANT : YP_TOKEN_IDENTIFIER;
+    return parser->encoding.isupper_char(parser->current.start, parser->end - parser->current.start) ? YP_TOKEN_CONSTANT : YP_TOKEN_IDENTIFIER;
 }
 
 // Returns true if the current token that the parser is considering is at the
@@ -5332,12 +5334,16 @@ lex_question_mark(yp_parser_t *parser) {
         parser->current.end += yp_unescape_calculate_difference(parser->current.start + 1, parser->end, YP_UNESCAPE_ALL, true, &parser->error_list);
         return YP_TOKEN_CHARACTER_LITERAL;
     } else {
-        size_t encoding_width = parser->encoding.char_width(parser->current.end);
+        size_t encoding_width = parser->encoding.char_width(parser->current.end, parser->end - parser->current.end);
+
         // We only want to return a character literal if there's exactly one
         // alphanumeric character right after the `?`
         if (
-            !parser->encoding.alnum_char(parser->current.end) ||
-            !parser->encoding.alnum_char(parser->current.end + encoding_width)
+            !parser->encoding.alnum_char(parser->current.end, parser->end - parser->current.end) ||
+            (
+                (parser->current.end + encoding_width >= parser->end) ||
+                !parser->encoding.alnum_char(parser->current.end + encoding_width, parser->end - (parser->current.end + encoding_width))
+            )
         ) {
             lex_state_set(parser, YP_LEX_STATE_END);
             parser->current.end += encoding_width;
@@ -6418,7 +6424,7 @@ parser_lex(yp_parser_t *parser) {
                         (lex_state_p(parser, YP_LEX_STATE_FITEM) && (*parser->current.end == 's')) ||
                         lex_state_spcarg_p(parser, space_seen)
                     ) {
-                        if (!parser->encoding.alnum_char(parser->current.end)) {
+                        if (!parser->encoding.alnum_char(parser->current.end, parser->end - parser->current.end)) {
                             lex_mode_push_string(parser, true, false, lex_mode_incrementor(*parser->current.end), lex_mode_terminator(*parser->current.end));
 
                             if (*parser->current.end == '\r') {

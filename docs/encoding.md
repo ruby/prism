@@ -58,20 +58,24 @@ If the user-provided callback function returns `NULL` (the value also provided b
 // invalid for the encoding and type.
 typedef struct {
     // Return the number of bytes that the next character takes if it is valid
-    // in the encoding.
-    size_t (*char_width)(const char *c);
+    // in the encoding. Does not read more than n bytes. It is assumed that n is
+    // at least 1.
+    size_t (*char_width)(const char *c, ptrdiff_t n);
 
     // Return the number of bytes that the next character takes if it is valid
-    // in the encoding and is alphabetical.
-    size_t (*alpha_char)(const char *c);
+    // in the encoding and is alphabetical. Does not read more than n bytes. It
+    // is assumed that n is at least 1.
+    size_t (*alpha_char)(const char *c, ptrdiff_t n);
 
     // Return the number of bytes that the next character takes if it is valid
-    // in the encoding and is alphanumeric.
-    size_t (*alnum_char)(const char *c);
+    // in the encoding and is alphanumeric. Does not read more than n bytes. It
+    // is assumed that n is at least 1.
+    size_t (*alnum_char)(const char *c, ptrdiff_t n);
 
     // Return true if the next character is valid in the encoding and is an
-    // uppercase character.
-    bool (*isupper_char)(const char *c);
+    // uppercase character. Does not read more than n bytes. It is assumed that
+    // n is at least 1.
+    bool (*isupper_char)(const char *c, ptrdiff_t n);
 
     // The name of the encoding. This should correspond to a value that can be
     // passed to Encoding.find in Ruby.
