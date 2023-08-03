@@ -1,9 +1,9 @@
 #include "yarp/enc/yp_encoding.h"
 
-typedef uint16_t gbk_codepoint_t;
+typedef uint16_t yp_gbk_codepoint_t;
 
-static gbk_codepoint_t
-gbk_codepoint(const char *c, ptrdiff_t n, size_t *width) {
+static yp_gbk_codepoint_t
+yp_gbk_codepoint(const char *c, ptrdiff_t n, size_t *width) {
     const unsigned char *uc = (const unsigned char *) c;
 
     // These are the single byte characters.
@@ -24,7 +24,7 @@ gbk_codepoint(const char *c, ptrdiff_t n, size_t *width) {
         )
     ) {
         *width = 2;
-        return (gbk_codepoint_t) (uc[0] << 8 | uc[1]);
+        return (yp_gbk_codepoint_t) (uc[0] << 8 | uc[1]);
     }
 
     *width = 0;
@@ -34,7 +34,7 @@ gbk_codepoint(const char *c, ptrdiff_t n, size_t *width) {
 static size_t
 yp_encoding_gbk_char_width(const char *c, ptrdiff_t n) {
     size_t width;
-    gbk_codepoint(c, n, &width);
+    yp_gbk_codepoint(c, n, &width);
 
     return width;
 }
@@ -42,7 +42,7 @@ yp_encoding_gbk_char_width(const char *c, ptrdiff_t n) {
 static size_t
 yp_encoding_gbk_alpha_char(const char *c, ptrdiff_t n) {
     size_t width;
-    gbk_codepoint_t codepoint = gbk_codepoint(c, n, &width);
+    yp_gbk_codepoint_t codepoint = yp_gbk_codepoint(c, n, &width);
 
     if (width == 1) {
         const char value = (const char) codepoint;
@@ -55,7 +55,7 @@ yp_encoding_gbk_alpha_char(const char *c, ptrdiff_t n) {
 static size_t
 yp_encoding_gbk_alnum_char(const char *c, ptrdiff_t n) {
     size_t width;
-    gbk_codepoint_t codepoint = gbk_codepoint(c, n, &width);
+    yp_gbk_codepoint_t codepoint = yp_gbk_codepoint(c, n, &width);
 
     if (width == 1) {
         const char value = (const char) codepoint;
@@ -68,7 +68,7 @@ yp_encoding_gbk_alnum_char(const char *c, ptrdiff_t n) {
 static bool
 yp_encoding_gbk_isupper_char(const char *c, ptrdiff_t n) {
     size_t width;
-    gbk_codepoint_t codepoint = gbk_codepoint(c, n, &width);
+    yp_gbk_codepoint_t codepoint = yp_gbk_codepoint(c, n, &width);
 
     if (width == 1) {
         const char value = (const char) codepoint;
