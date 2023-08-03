@@ -4,6 +4,6 @@
 // represent characters. They don't have need of a dynamic function to determine
 // their width.
 size_t
-yp_encoding_single_char_width(YP_ATTRIBUTE_UNUSED const char *c) {
+yp_encoding_single_char_width(YP_ATTRIBUTE_UNUSED const char *c, YP_ATTRIBUTE_UNUSED ptrdiff_t n) {
     return 1;
 }

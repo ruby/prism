@@ -16,7 +16,7 @@ yp_memchr(yp_parser_t *parser, const void *memory, int character, size_t number)
                 return (void *) (source + index);
             }
 
-            size_t width = parser->encoding.char_width(source + index);
+            size_t width = parser->encoding.char_width(source + index, (ptrdiff_t) (number - index));
             if (width == 0) {
                 return NULL;
             }
