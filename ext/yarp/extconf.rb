@@ -18,6 +18,7 @@ end
 
 have_func("mmap")
 have_func("snprintf")
+create_header(File.expand_path("include/yarp/config.h", __dir__))
 
 unless find_header("yarp.h", File.expand_path("include", __dir__))
   raise "yarp.h is required"

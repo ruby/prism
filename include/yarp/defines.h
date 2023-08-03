@@ -1,6 +1,8 @@
 #ifndef YARP_DEFINES_H
 #define YARP_DEFINES_H
 
+#include "yarp/config.h"
+
 #include <ctype.h>
 #include <stdarg.h>
 #include <stddef.h>
