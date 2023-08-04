@@ -1245,8 +1245,6 @@ yp_call_node_variable_call_create(yp_parser_t *parser, yp_token_t *message) {
     node->message_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(message);
 
     yp_string_shared_init(&node->name, message->start, message->end);
-    node->flags |= YP_CALL_NODE_FLAGS_VARIABLE_CALL;
-
     return node;
 }
 
@@ -9351,18 +9349,21 @@ parse_alias_argument(yp_parser_t *parser, bool first) {
 // Parse an identifier into either a local variable read or a call.
 static yp_node_t *
 parse_variable_call(yp_parser_t *parser) {
-    int depth;
+    uint32_t flags = 0;
 
-    if (
-        (parser->current.type != YP_TOKEN_PARENTHESIS_LEFT) &&
-        (parser->previous.end[-1] != '!') &&
-        (parser->previous.end[-1] != '?') &&
-        (depth = yp_parser_local_depth(parser, &parser->previous)) != -1
-    ) {
-        return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, (uint32_t) depth);
+    if (!match_type_p(parser, YP_TOKEN_PARENTHESIS_LEFT) && (parser->previous.end[-1] != '!') && (parser->previous.end[-1] != '?')) {
+        int depth;
+        if ((depth = yp_parser_local_depth(parser, &parser->previous)) != -1) {
+            return (yp_node_t *) yp_local_variable_read_node_create(parser, &parser->previous, (uint32_t) depth);
+        }
+
+        flags |= YP_CALL_NODE_FLAGS_VARIABLE_CALL;
     }
 
-    return (yp_node_t *) yp_call_node_variable_call_create(parser, &parser->previous);
+    yp_call_node_t *node = yp_call_node_variable_call_create(parser, &parser->previous);
+    node->flags = flags;
+
+    return (yp_node_t *) node;
 }
 
 static inline yp_token_t
@@ -10485,7 +10486,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 if (parse_arguments_list(parser, &arguments, true)) {
                     // Since we found arguments, we need to turn off the
                     // variable call bit in the flags.
-                    call->flags ^= YP_CALL_NODE_FLAGS_VARIABLE_CALL;
+                    call->flags &= (uint32_t) ~YP_CALL_NODE_FLAGS_VARIABLE_CALL;
 
                     call->opening_loc = arguments.opening_loc;
                     call->arguments = arguments.arguments;

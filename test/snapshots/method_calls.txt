@@ -60,7 +60,7 @@ ProgramNode(0...1200)(
        1,
        "baz"
      ),
-     CallNode(54...56)(nil, nil, (54...56), nil, nil, nil, nil, 2, "a!"),
+     CallNode(54...56)(nil, nil, (54...56), nil, nil, nil, nil, 0, "a!"),
      CallNode(58...62)(
        CallNode(58...59)(nil, nil, (58...59), nil, nil, nil, nil, 2, "a"),
        (59...60),
@@ -109,7 +109,7 @@ ProgramNode(0...1200)(
        0,
        "bar="
      ),
-     CallNode(96...98)(nil, nil, (96...98), nil, nil, nil, nil, 2, "a?"),
+     CallNode(96...98)(nil, nil, (96...98), nil, nil, nil, nil, 0, "a?"),
      CallNode(100...109)(
        nil,
        nil,
@@ -454,7 +454,7 @@ ProgramNode(0...1200)(
              nil,
              nil,
              nil,
-             2,
+             0,
              "bar?"
            ),
            CallNode(250...253)(
