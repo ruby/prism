@@ -1830,7 +1830,7 @@ nodes:
         type: node[]
       - name: operator_loc
         type: location?
-      - name: exception
+      - name: reference
         type: node?
       - name: statements
         type: node?
