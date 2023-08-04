@@ -90,7 +90,7 @@ ProgramNode(0...120)(
               nil,
               nil,
               nil,
-              2,
+              0,
               "b?"
             ),
             nil,

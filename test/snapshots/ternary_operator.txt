@@ -53,7 +53,7 @@ ProgramNode(0...117)(
      ),
      IfNode(40...55)(
        nil,
-       CallNode(40...46)(nil, nil, (40...46), nil, nil, nil, nil, 2, "empty?"),
+       CallNode(40...46)(nil, nil, (40...46), nil, nil, nil, nil, 0, "empty?"),
        StatementsNode(47...51)([TrueNode(47...51)()]),
        ElseNode(51...55)(
          (51...52),
@@ -64,7 +64,7 @@ ProgramNode(0...117)(
      ),
      IfNode(57...73)(
        nil,
-       CallNode(57...63)(nil, nil, (57...63), nil, nil, nil, nil, 2, "empty?"),
+       CallNode(57...63)(nil, nil, (57...63), nil, nil, nil, nil, 0, "empty?"),
        StatementsNode(64...69)([FalseNode(64...69)()]),
        ElseNode(69...73)(
          (69...70),
@@ -75,7 +75,7 @@ ProgramNode(0...117)(
      ),
      IfNode(75...89)(
        nil,
-       CallNode(75...81)(nil, nil, (75...81), nil, nil, nil, nil, 2, "empty?"),
+       CallNode(75...81)(nil, nil, (75...81), nil, nil, nil, nil, 0, "empty?"),
        StatementsNode(82...85)([NilNode(82...85)()]),
        ElseNode(85...89)(
          (85...86),
@@ -86,7 +86,7 @@ ProgramNode(0...117)(
      ),
      IfNode(91...101)(
        nil,
-       CallNode(91...93)(nil, nil, (91...93), nil, nil, nil, nil, 2, "a?"),
+       CallNode(91...93)(nil, nil, (91...93), nil, nil, nil, nil, 0, "a?"),
        StatementsNode(94...97)([NilNode(94...97)()]),
        ElseNode(97...101)(
          (97...98),

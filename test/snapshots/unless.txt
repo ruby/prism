@@ -57,7 +57,7 @@ ProgramNode(0...141)(
          nil,
          nil,
          nil,
-         2,
+         0,
          "bar?"
        ),
        StatementsNode(119...129)(
