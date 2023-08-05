@@ -40,12 +40,4 @@ a.out
 compile_commands.json
 .cache/
 
-autom4te.cache
-configure
-config.log
-config.status
-Makefile
-/include/yarp/config.h
-/config.h.in
-
 tags

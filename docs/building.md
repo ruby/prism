@@ -1,6 +1,7 @@
 # Building
 
 The following describes how to build YARP from source.
+This comes directly from the [Makefile](../Makefile).
 
 ## Common
 
@@ -12,11 +13,6 @@ The following flags should be used to compile YARP:
 * `-Wall -Wconversion -Wextra -Wpedantic -Wundef` - Enable the warnings we care about
 * `-Werror` - Treat warnings as errors
 * `-fvisibility=hidden` - Hide all symbols by default
-
-The following flags can be used to compile YARP:
-
-* `-DHAVE_MMAP` - Should be passed if the system has the `mmap` function
-* `-DHAVE_SNPRINTF` - Should be passed if the system has the `snprintf` function
 
 ## Shared
 

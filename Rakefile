@@ -23,21 +23,11 @@ def run_script(command)
   sh command
 end
 
-file "configure" => ["configure.ac"] do
-  # autoreconf would be more generic, but it does not seem to work on GitHub Actions on macOS
-  run_script "autoconf"
-  run_script "autoheader"
-end
-
-file "Makefile" => ["configure", "Makefile.in"] do
-  run_script "./configure"
-end
-
-task make: [:templates, "Makefile"] do
+task make: [:templates] do
   sh "make"
 end
 
-task make_no_debug: [:templates, "Makefile"] do
+task make_no_debug: [:templates] do
   sh "make all-no-debug"
 end
 
@@ -45,7 +35,7 @@ end
 task build: [:templates, :check_manifest]
 
 # the C extension
-task "compile:yarp" => ["configure", "templates"] # must be before the ExtensionTask is created
+task "compile:yarp" => ["templates"] # must be before the ExtensionTask is created
 
 if RUBY_ENGINE == 'jruby'
   require 'rake/javaextensiontask'
@@ -70,7 +60,7 @@ end
 
 # So `rake clobber` will delete generated files
 CLOBBER.concat(TEMPLATES)
-CLOBBER.concat(["configure", "Makefile", "build", "config.h.in", "include/yarp/config.h"])
+CLOBBER.concat(["build"])
 CLOBBER << "lib/yarp/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
 TEMPLATES.each do |filepath|
