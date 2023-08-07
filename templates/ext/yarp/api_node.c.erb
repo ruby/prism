@@ -2,9 +2,14 @@
 #include "yarp/extension.h"
 
 extern VALUE rb_cYARP;
+extern VALUE rb_cYARPNode;
 extern VALUE rb_cYARPSource;
 extern VALUE rb_cYARPToken;
 extern VALUE rb_cYARPLocation;
+
+<%- nodes.each do |node| -%>
+static VALUE rb_cYARP<%= node.name %>;
+<%- end -%>
 
 static VALUE
 yp_location_new(yp_parser_t *parser, const char *start, const char *end, VALUE source) {
@@ -174,7 +179,7 @@ yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
                     // location
                     argv[<%= node.params.length %>] = yp_location_new(parser, node->location.start, node->location.end, source);
 
-                    rb_ary_push(value_stack, rb_class_new_instance(<%= node.params.length + 1 %>, argv, rb_const_get_at(rb_cYARP, rb_intern("<%= node.name %>"))));
+                    rb_ary_push(value_stack, rb_class_new_instance(<%= node.params.length + 1 %>, argv, rb_cYARP<%= node.name %>));
                     break;
                 }
                 <%- end -%>
@@ -187,4 +192,11 @@ yp_ast_new(yp_parser_t *parser, yp_node_t *node, rb_encoding *encoding) {
     VALUE result = rb_ary_pop(value_stack);
     free(constants);
     return result;
+}
+
+void
+Init_yarp_api_node(void) {
+    <%- nodes.each do |node| -%>
+    rb_cYARP<%= node.name %> = rb_define_class_under(rb_cYARP, "<%= node.name %>", rb_cYARPNode);
+    <%- end -%>
 }
