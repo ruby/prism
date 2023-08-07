@@ -309,6 +309,10 @@ module YARP
     def self.newlines(source)
       YARP.parse(source).source.offsets
     end
+
+    def self.parse_serialize_file(filepath)
+      parse_serialize_file_metadata(filepath, [filepath.bytesize, filepath.b, 0].pack("LA*L"))
+    end
   end
 
   # Marking this as private so that consumers don't see it. It makes it a little

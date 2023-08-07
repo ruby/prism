@@ -75,7 +75,7 @@ void yp_buffer_free(yp_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-void yp_parse_serialize(const char *, size_t, yp_buffer_t *);
+void yp_parse_serialize(const char *, size_t, yp_buffer_t *, const char *);
 ```
 
 Typically you would use a stack-allocated `yp_buffer_t` and call `yp_parse_serialize`, as in:
@@ -86,9 +86,33 @@ serialize(const char *source, size_t length) {
   yp_buffer_t buffer;
   if (!yp_buffer_init(&buffer)) return;
 
-  yp_parse_serialize(source, length, &buffer);
+  yp_parse_serialize(source, length, &buffer, NULL);
   // Do something with the serialized string.
 
   yp_buffer_free(&buffer);
 }
 ```
+
+The final argument to `yp_parse_serialize` controls the metadata of the source. This includes the filepath that the source is associated with, and any nested local variables scopes that are necessary to properly parse the file (in the case of parsing an `eval`). The metadata is a serialized format itself, and is structured as follows:
+
+| # bytes | field |
+| --- | --- |
+| `4` | the size of the filepath string |
+| | the filepath string |
+| `4` | the number of local variable scopes |
+
+Then, each local variable scope is encoded as:
+
+| # bytes | field |
+| --- | --- |
+| `4` | the number of local variables in the scope |
+| | the local variables |
+
+Each local variable within each scope is encoded as:
+
+| # bytes | field |
+| --- | --- |
+| `4` | the size of the local variable name |
+| | the local variable name |
+
+The metadata can be `NULL` (as seen in the example above). If it is not null, then a minimal metadata string would be `"\0\0\0\0\0\0\0\0"` which would use 4 bytes to indicate an empty filepath string and 4 bytes to indicate that there were no local variable scopes.
