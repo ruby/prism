@@ -32,7 +32,9 @@ yarp = YARP.lex_compat(source, filepath)
 if yarp.errors.any?
   puts "Errors lexing:"
   yarp.errors.map do |error|
-    puts "\e[1;31m- #{error.message}\e[0m"
+    print "- [#{error.location.start_line},#{error.location.start_column}-"
+    print "#{error.location.end_line},#{error.location.end_column}] "
+    puts "\e[1;31m#{error.message}\e[0m"
   end
   puts "\n"
 end
