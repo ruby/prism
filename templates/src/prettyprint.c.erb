@@ -35,26 +35,32 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
             yp_buffer_append_str(buffer, yp_string_source(&((yp_<%= node.human %>_t *)node)-><%= param.name %>), yp_string_length(&((yp_<%= node.human %>_t *)node)-><%= param.name %>));
             yp_buffer_append_str(buffer, "\"", 1);
             <%- when NodeListParam -%>
+            yp_buffer_append_str(buffer, "[", 1);
             for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
                 if (index != 0) yp_buffer_append_str(buffer, ", ", 2);
                 prettyprint_node(buffer, parser, (yp_node_t *) ((yp_<%= node.human %>_t *) node)-><%= param.name %>.nodes[index]);
             }
+            yp_buffer_append_str(buffer, "]", 1);
             <%- when LocationListParam -%>
+            yp_buffer_append_str(buffer, "[", 1);
             for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
                 if (index != 0) yp_buffer_append_str(buffer, ", ", 2);
                 prettyprint_location(buffer, parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>.locations[index]);
             }
+            yp_buffer_append_str(buffer, "]", 1);
             <%- when ConstantParam -%>
             char <%= param.name %>_buffer[12];
             yp_snprintf(<%= param.name %>_buffer, sizeof(<%= param.name %>_buffer), "%u", ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
             yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
             <%- when ConstantListParam -%>
+            yp_buffer_append_str(buffer, "[", 1);
             for (uint32_t index = 0; index < ((yp_<%= node.human %>_t *)node)-><%= param.name %>.size; index++) {
                 if (index != 0) yp_buffer_append_str(buffer, ", ", 2);
                 char <%= param.name %>_buffer[12];
                 yp_snprintf(<%= param.name %>_buffer, sizeof(<%= param.name %>_buffer), "%u", ((yp_<%= node.human %>_t *)node)-><%= param.name %>.ids[index]);
                 yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
             }
+            yp_buffer_append_str(buffer, "]", 1);
             <%- when LocationParam -%>
             prettyprint_location(buffer, parser, &((yp_<%= node.human %>_t *)node)-><%= param.name %>);
             <%- when OptionalLocationParam -%>
