@@ -12925,7 +12925,7 @@ parse_expression(yp_parser_t *parser, yp_binding_power_t binding_power, const ch
 
 static yp_node_t *
 parse_program(yp_parser_t *parser) {
-    yp_parser_scope_push(parser, true);
+    yp_parser_scope_push(parser, !parser->current_scope);
     parser_lex(parser);
 
     yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_MAIN);
@@ -12943,6 +12943,60 @@ parse_program(yp_parser_t *parser) {
     }
 
     return (yp_node_t *) yp_program_node_create(parser, &locals, statements);
+}
+
+static uint32_t
+yp_read_u32(const char *ptr) {
+    if (((uintptr_t) ptr) % sizeof(uint32_t) == 0) {
+        return *((uint32_t *) ptr);
+    } else {
+        uint32_t value;
+        memcpy(&value, ptr, sizeof(uint32_t));
+        return value;
+    }
+}
+
+// Process any additional metadata being passed into a parse.  Since the source
+// of these calls will be from Ruby implementation internals we assume it is from
+// a trusted source.
+//
+// Currently, this is only passing in variable scoping surrounding an eval, but
+// eventually it will be extended to hold any additional metadata.  This data
+// is serialized to reduce the calling complexity for a foreign function call
+// vs a foreign runtime making a bindable in-memory version of a C structure.
+//
+// *Format*
+//
+// No metadata should just be NULL.  For variable scopes it should be:
+//
+// ```text
+// [number_of_variable_scopes: uint32_t,
+//   [number_of_variables: uint32_t,
+//      [data_length: uint32_t, data: char*]*
+//   ]*
+// ]
+// ```
+static void
+yp_parser_metadata(yp_parser_t *parser, const char *metadata) {
+    const char *p = metadata;
+    uint32_t number_of_scopes = yp_read_u32(p);
+    p += 4;
+
+    for (size_t scope_index = 0; scope_index < number_of_scopes; scope_index++) {
+        uint32_t number_of_variables = yp_read_u32(p);
+        p += 4;
+
+        yp_parser_scope_push(parser, scope_index == 0);
+
+        for (size_t variable_index = 0; variable_index < number_of_variables; variable_index++) {
+            uint32_t length = yp_read_u32(p);
+            p += 4;
+
+            yp_parser_local_add_location(parser, p, p + length);
+
+            p += length;
+        }
+    }
 }
 
 /******************************************************************************/
@@ -13099,9 +13153,10 @@ yp_serialize(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
 YP_EXPORTED_FUNCTION void
-yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer) {
+yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer, const char *metadata) {
     yp_parser_t parser;
     yp_parser_init(&parser, source, size, NULL);
+    if (metadata) yp_parser_metadata(&parser, metadata);
 
     yp_node_t *node = yp_parse(&parser);
     yp_serialize(&parser, node, buffer);
