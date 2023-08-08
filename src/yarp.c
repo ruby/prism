@@ -12950,8 +12950,11 @@ parse_program(yp_parser_t *parser) {
     return (yp_node_t *) yp_program_node_create(parser, &locals, statements);
 }
 
+// Read a 32-bit unsigned integer from a pointer. This function is used to read
+// the metadata that is passed into the parser from the Ruby implementation. It
+// handles aligned and unaligned reads.
 static uint32_t
-yp_read_u32(const char *ptr) {
+yp_metadata_read_u32(const char *ptr) {
     if (((uintptr_t) ptr) % sizeof(uint32_t) == 0) {
         return *((uint32_t *) ptr);
     } else {
@@ -12961,45 +12964,57 @@ yp_read_u32(const char *ptr) {
     }
 }
 
-// Process any additional metadata being passed into a parse.  Since the source
-// of these calls will be from Ruby implementation internals we assume it is from
-// a trusted source.
+// Process any additional metadata being passed into a call to the parser via
+// the yp_parse_serialize function. Since the source of these calls will be from
+// Ruby implementation internals we assume it is from a trusted source.
 //
 // Currently, this is only passing in variable scoping surrounding an eval, but
 // eventually it will be extended to hold any additional metadata.  This data
 // is serialized to reduce the calling complexity for a foreign function call
 // vs a foreign runtime making a bindable in-memory version of a C structure.
 //
-// *Format*
-//
-// No metadata should just be NULL.  For variable scopes it should be:
+// metadata is assumed to be a valid pointer pointing to well-formed data. The
+// format is described below:
 //
 // ```text
-// [number_of_variable_scopes: uint32_t,
-//   [number_of_variables: uint32_t,
-//      [data_length: uint32_t, data: char*]*
+// [
+//   filepath_size: uint32_t,
+//   filepath: char*,
+//   scopes_count: uint32_t,
+//   [
+//     locals_count: uint32_t,
+//     [local_size: uint32_t, local: char*]*
 //   ]*
 // ]
 // ```
 static void
 yp_parser_metadata(yp_parser_t *parser, const char *metadata) {
-    const char *p = metadata;
-    uint32_t number_of_scopes = yp_read_u32(p);
-    p += 4;
+    uint32_t filepath_size = yp_metadata_read_u32(metadata);
+    metadata += 4;
 
-    for (size_t scope_index = 0; scope_index < number_of_scopes; scope_index++) {
-        uint32_t number_of_variables = yp_read_u32(p);
-        p += 4;
+    if (filepath_size) {
+        yp_string_t filepath_string;
+        yp_string_constant_init(&filepath_string, metadata, filepath_size);
+
+        parser->filepath_string = filepath_string;
+        metadata += filepath_size;
+    }
+
+    uint32_t scopes_count = yp_metadata_read_u32(metadata);
+    metadata += 4;
+
+    for (size_t scope_index = 0; scope_index < scopes_count; scope_index++) {
+        uint32_t locals_count = yp_metadata_read_u32(metadata);
+        metadata += 4;
 
         yp_parser_scope_push(parser, scope_index == 0);
 
-        for (size_t variable_index = 0; variable_index < number_of_variables; variable_index++) {
-            uint32_t length = yp_read_u32(p);
-            p += 4;
+        for (size_t local_index = 0; local_index < locals_count; local_index++) {
+            uint32_t local_size = yp_metadata_read_u32(metadata);
+            metadata += 4;
 
-            yp_parser_local_add_location(parser, p, p + length);
-
-            p += length;
+            yp_parser_local_add_location(parser, metadata, metadata + local_size);
+            metadata += local_size;
         }
     }
 }
