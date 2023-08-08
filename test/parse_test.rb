@@ -105,7 +105,7 @@ class ParseTest < Test::Unit::TestCase
 
       # Next, assert that the value can be serialized and deserialized without
       # changing the shape of the tree.
-      assert_equal_nodes(result.value, YARP.load(source, YARP.dump(source, relative)))
+      assert_equal_nodes(result.value, YARP.load(source, YARP.dump(source, relative)).value)
 
       # Next, assert that the newlines are in the expected places.
       expected_newlines = [0]
@@ -141,7 +141,7 @@ class ParseTest < Test::Unit::TestCase
         result = YARP.parse(snippet, relative)
         assert_empty result.errors
 
-        assert_equal_nodes(result.value, YARP.load(snippet, YARP.dump(snippet, relative)))
+        assert_equal_nodes(result.value, YARP.load(snippet, YARP.dump(snippet, relative)).value)
       end
     end
   end
