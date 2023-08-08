@@ -4,8 +4,6 @@ require "bundler/gem_tasks"
 require "rake/extensiontask"
 require "rake/clean"
 
-Rake.add_rakelib("tasks")
-
 task compile: :make
 task compile_no_debug: :make_no_debug
 
