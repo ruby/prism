@@ -180,3 +180,32 @@ jobs:
         rm -rf lib ext # ensure we don't use the local files
         rake test
       shell: bash
+
+  gcc-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - name: Run build with gcc-analyzer enabled
+      run: |
+        CFLAGS='-fanalyzer' bundle exec rake compile
+
+  clang-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: head
+        bundler-cache: true
+    - name: Install clang-analyzer
+      run: sudo apt-get install -y clang-tools
+    - name: Run build with clang-analyzer
+      run: |
+        scan-build bundle exec rake compile 2>&1 | tee /tmp/scan_build_output.log
+        grep -q 'scan-build: No bugs found.' /tmp/scan_build_output.log
