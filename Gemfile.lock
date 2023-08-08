@@ -30,8 +30,5 @@ DEPENDENCIES
   test-unit
   yarp!
 
-RUBY VERSION
-   ruby 3.1.0p0
-
 BUNDLED WITH
    2.3.6
