@@ -3,7 +3,6 @@
 require "bundler/gem_tasks"
 require "rake/extensiontask"
 require "rake/clean"
-require "rdoc/task"
 
 Rake.add_rakelib("tasks")
 
@@ -89,21 +88,4 @@ TEMPLATES.each do |filepath|
   file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
     template(t.name, locals)
   end
-end
-
-RDoc::Task.new do |rdoc|
-  rdoc.main = "README.md"
-  rdoc.markup = "markdown"
-  rdoc.rdoc_dir = "doc"
-
-  rdoc.rdoc_files.include(
-    "docs/*.md",
-    "ext/**/*.c",
-    "lib/**/*.rb",
-    "src/**/*.c",
-    "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
-    "LICENSE.md",
-    "README.md",
-  )
 end
