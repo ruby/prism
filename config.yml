@@ -884,6 +884,7 @@ nodes:
     child_nodes:
       - name: target
         type: node
+        kind: ConstantPathNode
       - name: operator_loc
         type: location?
       - name: value
