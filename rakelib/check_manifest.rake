@@ -15,7 +15,7 @@ task :check_manifest => [:templates, "configure"] do
     fuzz
     java
     pkg
-    tasks
+    rakelib
     templates
     test
     tmp

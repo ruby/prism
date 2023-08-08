@@ -2,16 +2,7 @@
 
 require "bundler/gem_tasks"
 require "rake/extensiontask"
-require "rake/testtask"
 require "rake/clean"
-require "rdoc/task"
-
-Rake.add_rakelib("tasks")
-
-if RUBY_ENGINE != "jruby"
-  require "ruby_memcheck"
-  RubyMemcheck.config(binary_name: "yarp")
-end
 
 task compile: :make
 task compile_no_debug: :make_no_debug
@@ -48,14 +39,6 @@ end
 
 task make_no_debug: [:templates, "Makefile"] do
   sh "make all-no-debug"
-end
-
-task generate_compilation_database: [:clobber, :templates] do
-  sh "which bear" do |ok, _|
-    abort("Installing bear is required to generate the compilation database") unless ok
-  end
-
-  sh "bear -- make"
 end
 
 # decorate the gem build task with prerequisites
@@ -95,21 +78,4 @@ TEMPLATES.each do |filepath|
   file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
     template(t.name, locals)
   end
-end
-
-RDoc::Task.new do |rdoc|
-  rdoc.main = "README.md"
-  rdoc.markup = "markdown"
-  rdoc.rdoc_dir = "doc"
-
-  rdoc.rdoc_files.include(
-    "docs/*.md",
-    "ext/**/*.c",
-    "lib/**/*.rb",
-    "src/**/*.c",
-    "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
-    "LICENSE.md",
-    "README.md",
-  )
 end

@@ -6,18 +6,18 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    mini_portile2 (2.8.1)
-    nokogiri (1.14.3)
-      mini_portile2 (~> 2.8.0)
+    mini_portile2 (2.8.4)
+    nokogiri (1.15.3)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    power_assert (2.0.1)
-    racc (1.6.2)
+    power_assert (2.0.3)
+    racc (1.7.1)
     rake (13.0.6)
-    rake-compiler (1.2.0)
+    rake-compiler (1.2.5)
       rake
-    ruby_memcheck (1.2.0)
+    ruby_memcheck (2.0.0)
       nokogiri
-    test-unit (3.5.3)
+    test-unit (3.6.1)
       power_assert
 
 PLATFORMS
