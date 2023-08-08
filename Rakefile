@@ -43,14 +43,6 @@ task make_no_debug: [:templates, "Makefile"] do
   sh "make all-no-debug"
 end
 
-task generate_compilation_database: [:clobber, :templates] do
-  sh "which bear" do |ok, _|
-    abort("Installing bear is required to generate the compilation database") unless ok
-  end
-
-  sh "bear -- make"
-end
-
 # decorate the gem build task with prerequisites
 task build: [:templates, :check_manifest]
 

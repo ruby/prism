@@ -40,7 +40,7 @@ create an ignored `compile_commands.json` file at the project root, which is use
 You will need `bear` which can be installed on macOS with `brew install bear`.
 
 ```sh
-bundle exec rake generate_compilation_database
+bundle exec rake bear
 ```
 
 ## Debugging
