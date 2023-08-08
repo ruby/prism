@@ -984,23 +984,27 @@ class ErrorsTest < Test::Unit::TestCase
   end
 
   def test_duplicated_parameter_names
-    expected = DefNode(
-      Location(),
-      nil,
-      ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b), RequiredParameterNode(:a)], [], [], nil, [], nil, nil),
-      nil,
-      [:a, :b],
-      Location(),
-      nil,
-      Location(),
-      Location(),
-      nil,
-      Location()
-    )
+    # For some reason, Ripper reports no error for Ruby 3.0 when you have
+    # duplicated parameter names for positional parameters.
+    unless RUBY_VERSION < "3.1.0"
+      expected = DefNode(
+        Location(),
+        nil,
+        ParametersNode([RequiredParameterNode(:a), RequiredParameterNode(:b), RequiredParameterNode(:a)], [], [], nil, [], nil, nil),
+        nil,
+        [:a, :b],
+        Location(),
+        nil,
+        Location(),
+        Location(),
+        nil,
+        Location()
+      )
 
-    assert_errors expected, "def foo(a,b,a);end", [
-      ["Duplicated parameter name.", 12..13]
-    ]
+      assert_errors expected, "def foo(a,b,a);end", [
+        ["Duplicated parameter name.", 12..13]
+      ]
+    end
 
     expected = DefNode(
       Location(),

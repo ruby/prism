@@ -40,8 +40,8 @@ module YARP
       end
 
       def load
-        io.read(4) => "YARP"
-        io.read(3).unpack("C3") => [0, 4, 0]
+        raise "Invalid serialization" if io.read(4) != "YARP"
+        raise "Invalid serialization" if io.read(3).unpack("C3") != [0, 6, 0]
 
         @encoding = Encoding.find(io.read(load_varint))
         @input = input.force_encoding(@encoding).freeze
