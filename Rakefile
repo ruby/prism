@@ -2,16 +2,10 @@
 
 require "bundler/gem_tasks"
 require "rake/extensiontask"
-require "rake/testtask"
 require "rake/clean"
 require "rdoc/task"
 
 Rake.add_rakelib("tasks")
-
-if RUBY_ENGINE != "jruby"
-  require "ruby_memcheck"
-  RubyMemcheck.config(binary_name: "yarp")
-end
 
 task compile: :make
 task compile_no_debug: :make_no_debug

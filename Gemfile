@@ -2,11 +2,11 @@
 
 source "https://rubygems.org"
 
-ruby ">= 3.1.0"
+ruby ">= 3.0.0"
 
 gemspec
 
 gem "rake"
 gem "rake-compiler"
 gem "test-unit"
-gem "ruby_memcheck", platform: %i[ mri truffleruby mswin mingw x64_mingw ]
+gem "ruby_memcheck", platform: %i[mri truffleruby mswin mingw x64_mingw]

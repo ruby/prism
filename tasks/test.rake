@@ -1,39 +1,50 @@
-test_config = lambda do |t|
+# frozen_string_literal: true
+
+require "rake/testtask"
+
+config = lambda do |t|
   t.libs << "test"
   t.libs << "lib"
   t.test_files = FileList["test/**/*_test.rb"]
 end
 
-Rake::TestTask.new(:test, &test_config)
+Rake::TestTask.new(:test, &config)
 
-class GdbTestTask < Rake::TestTask
-  def ruby(*args, **options, &block)
-    command = "gdb --args #{RUBY} #{args.join(" ")}"
-    sh(command, **options, &block)
-  end
-end
+# If we're on JRuby or TruffleRuby, we don't want to bother to configure
+# memcheck or debug tests.
+return if RUBY_ENGINE == "jruby" || RUBY_ENGINE == "truffleruby"
 
-class LldbTestTask < Rake::TestTask
-  def ruby(*args, **options, &block)
-    command = "lldb #{RUBY} -- #{args.join(" ")}"
-    sh(command, **options, &block)
-  end
-end
+require "ruby_memcheck"
 
 namespace :test do
-  if RUBY_ENGINE != "jruby"
-    RubyMemcheck::TestTask.new(valgrind_internal: :compile, &test_config)
-    Rake::Task['test:valgrind_internal'].clear_comments # Hide test:valgrind_internal from rake -T
-  
-    desc "Run tests under valgrind"
-    task :valgrind do
-      # Recompile with YARP_DEBUG_MODE_BUILD=1
-      ENV['YARP_DEBUG_MODE_BUILD'] = '1'
-      Rake::Task['clobber'].invoke
-      Rake::Task['test:valgrind_internal'].invoke
-    end
+  RubyMemcheck::TestTask.new(valgrind_internal: :compile, &config)
 
-    GdbTestTask.new(gdb: :compile, &test_config)
-    LldbTestTask.new(lldb: :compile, &test_config)
+  # Hide test:valgrind_internal from rake -T
+  Rake::Task["test:valgrind_internal"].clear_comments
+
+  desc "Run tests under valgrind"
+  task :valgrind do
+    # Recompile with YARP_DEBUG_MODE_BUILD=1
+    ENV["YARP_DEBUG_MODE_BUILD"] = "1"
+    Rake::Task["clobber"].invoke
+    Rake::Task["test:valgrind_internal"].invoke
   end
+
+  class GdbTestTask < Rake::TestTask
+    def ruby(*args, **options, &block)
+      command = "gdb --args #{RUBY} #{args.join(" ")}"
+      sh(command, **options, &block)
+    end
+  end
+
+  GdbTestTask.new(gdb: :compile, &config)
+
+  class LldbTestTask < Rake::TestTask
+    def ruby(*args, **options, &block)
+      command = "lldb #{RUBY} -- #{args.join(" ")}"
+      sh(command, **options, &block)
+    end
+  end
+
+  LldbTestTask.new(lldb: :compile, &config)
 end
