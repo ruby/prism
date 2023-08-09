@@ -46,22 +46,20 @@ typedef struct yp_node_list {
     size_t capacity;
 } yp_node_list_t;
 
-typedef enum {
+enum yp_node_type {
 <%- nodes.each_with_index do |node, index| -%>
     <%= node.type %> = <%= index + 1 %>,
 <%- end -%>
-} yp_node_type_t;
+};
 
-// We store the node type enum in every node in the tree. We don't have nearly
-// as many node types as we do bits in an enum, so we're going to use the top
-// half of the enum to store flags about the node.
-#define YP_NODE_FLAGS_SHIFT (sizeof(yp_node_type_t) * 8 / 2)
-#define YP_NODE_FLAG_NEWLINE (1U << YP_NODE_FLAGS_SHIFT)
+typedef uint16_t yp_node_type_t;
+typedef uint16_t yp_node_flags_t;
 
-// For easy access, we define some macros that manipulate only the bottom half
-// of the node type enum.
-static const unsigned int YP_NODE_TYPE_MASK = ((1 << (sizeof(yp_node_type_t) * 8 / 2)) - 1);
-#define YP_NODE_TYPE(node) ((node)->type & YP_NODE_TYPE_MASK)
+// We store the flags enum in every node in the tree
+static const uint16_t YP_NODE_FLAG_NEWLINE = 0x1;
+
+// For easy access, we define some macros to check node type
+#define YP_NODE_TYPE(node) ((enum yp_node_type)node->type)
 #define YP_NODE_TYPE_P(node, type) (YP_NODE_TYPE(node) == (type))
 
 // This is the overall tagged union representing a node in the syntax tree.
@@ -69,6 +67,10 @@ typedef struct yp_node {
     // This represents the type of the node. It somewhat maps to the nodes that
     // existed in the original grammar and ripper, but it's not a 1:1 mapping.
     yp_node_type_t type;
+
+    // This represents any flags on the node. Currently, this is only a newline
+    // flag
+    yp_node_flags_t flags;
 
     // This is the location of the node in the source. It's a range of bytes
     // containing a start and an end.

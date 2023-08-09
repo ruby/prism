@@ -505,7 +505,7 @@ yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement)
 // implement our own arena allocation.
 static inline void *
 yp_alloc_node(YP_ATTRIBUTE_UNUSED yp_parser_t *parser, size_t size) {
-    void *memory = malloc(size);
+    void *memory = calloc(1, size);
     if (memory == NULL) {
         fprintf(stderr, "Failed to allocate %zu bytes\n", size);
         abort();
@@ -2284,7 +2284,8 @@ yp_if_node_create(yp_parser_t *parser,
 
     *node = (yp_if_node_t) {
         {
-            .type = YP_NODE_IF_NODE | YP_NODE_FLAG_NEWLINE,
+            .type = YP_NODE_IF_NODE,
+            .flags = YP_NODE_FLAG_NEWLINE,
             .location = {
                 .start = if_keyword->start,
                 .end = end
@@ -2310,7 +2311,8 @@ yp_if_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const yp_t
 
     *node = (yp_if_node_t) {
         {
-            .type = YP_NODE_IF_NODE | YP_NODE_FLAG_NEWLINE,
+            .type = YP_NODE_IF_NODE,
+            .flags = YP_NODE_FLAG_NEWLINE,
             .location = {
                 .start = statement->location.start,
                 .end = predicate->location.end
@@ -2342,7 +2344,8 @@ yp_if_node_ternary_create(yp_parser_t *parser, yp_node_t *predicate, yp_node_t *
 
     *node = (yp_if_node_t) {
         {
-            .type = YP_NODE_IF_NODE | YP_NODE_FLAG_NEWLINE,
+            .type = YP_NODE_IF_NODE,
+            .flags = YP_NODE_FLAG_NEWLINE,
             .location = {
                 .start = predicate->location.start,
                 .end = false_expression->location.end,
@@ -3746,7 +3749,7 @@ yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement)
     node->base.location.end = statement->location.end;
 
     // Every statement gets marked as a place where a newline can occur.
-    statement->type |= YP_NODE_FLAG_NEWLINE;
+    statement->flags = YP_NODE_FLAG_NEWLINE;
 }
 
 // Allocate a new StringConcatNode node.
@@ -4004,7 +4007,8 @@ yp_unless_node_create(yp_parser_t *parser, const yp_token_t *keyword, yp_node_t 
 
     *node = (yp_unless_node_t) {
         {
-            .type = YP_NODE_UNLESS_NODE | YP_NODE_FLAG_NEWLINE,
+            .type = YP_NODE_UNLESS_NODE,
+            .flags = YP_NODE_FLAG_NEWLINE,
             .location = {
                 .start = keyword->start,
                 .end = end
@@ -4030,7 +4034,8 @@ yp_unless_node_modifier_create(yp_parser_t *parser, yp_node_t *statement, const 
 
     *node = (yp_unless_node_t) {
         {
-            .type = YP_NODE_UNLESS_NODE | YP_NODE_FLAG_NEWLINE,
+            .type = YP_NODE_UNLESS_NODE,
+            .flags = YP_NODE_FLAG_NEWLINE,
             .location = {
                 .start = statement->location.start,
                 .end = predicate->location.end
