@@ -2,13 +2,15 @@
 
 Gem::Specification.new do |spec|
   spec.name = "yarp"
-  spec.version = "0.4.0"
+  spec.version = "0.6.0"
   spec.authors = ["Shopify"]
   spec.email = ["ruby@shopify.com"]
 
   spec.summary = "Yet Another Ruby Parser"
   spec.homepage = "https://github.com/ruby/yarp"
   spec.license = "MIT"
+
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.require_paths = ["lib"]
   spec.files = [

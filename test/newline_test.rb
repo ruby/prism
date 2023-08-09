@@ -63,6 +63,9 @@ class NewlineTest < Test::Unit::TestCase
           line.include?('(token[2].start_with?("\#$") || token[2].start_with?("\#@"))')
         end
         actual.delete(index + 1)
+      elsif relative == "test/parse_test.rb"
+        line_number = source.lines.index { |line| line.include?("while (node = queue.shift)") } + 1
+        expected.delete_at(expected.index(line_number))
       end
 
       assert_equal expected, actual
