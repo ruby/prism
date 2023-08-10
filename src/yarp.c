@@ -12195,18 +12195,18 @@ static inline yp_node_t *
 parse_assignment_value(yp_parser_t *parser, yp_binding_power_t previous_binding_power, yp_binding_power_t binding_power, const char *message) {
     yp_node_t *value = parse_starred_expression(parser, binding_power, message);
 
-    if (previous_binding_power == YP_BINDING_POWER_STATEMENT && accept(parser, YP_TOKEN_COMMA)) {
+    if (previous_binding_power == YP_BINDING_POWER_STATEMENT && (YP_NODE_TYPE_P(value, YP_NODE_SPLAT_NODE) || match_type_p(parser, YP_TOKEN_COMMA))) {
         yp_token_t opening = not_provided(parser);
         yp_array_node_t *array = yp_array_node_create(parser, &opening);
 
         yp_array_node_elements_append(array, value);
         value = (yp_node_t *) array;
 
-        do {
+        while (accept(parser, YP_TOKEN_COMMA)) {
             yp_node_t *element = parse_starred_expression(parser, binding_power, "Expected an element for the array.");
             yp_array_node_elements_append(array, element);
             if (YP_NODE_TYPE_P(element, YP_NODE_MISSING_NODE)) break;
-        } while (accept(parser, YP_TOKEN_COMMA));
+        }
     }
 
     return value;
