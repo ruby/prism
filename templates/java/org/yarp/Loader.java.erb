@@ -228,7 +228,7 @@ public class Loader {
               when ConstantListParam then "loadConstants()"
               when LocationParam then "loadLocation()"
               when OptionalLocationParam then "loadOptionalLocation()"
-              when UInt32Param then "loadVarInt()"
+              when UInt32Param, FlagsParam then "loadVarInt()"
               else raise
               end
             }

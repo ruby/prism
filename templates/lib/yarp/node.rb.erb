@@ -71,6 +71,14 @@ module YARP
     def <%= param.name.delete_suffix("_loc") %>
       <%= param.name %>&.slice
     end
+    <%- when FlagsParam -%>
+    <%- flags.find { |flag| flag.name == param.kind }.tap { raise "Expected to find #{param.kind}" unless _1 }.values.each do |value| -%>
+
+    # def <%= value.name.downcase %>?: () -> bool
+    def <%= value.name.downcase %>?
+      <%= param.name %>.anybits?(<%= param.kind %>::<%= value.name %>)
+    end
+    <%- end -%>
     <%- end -%>
     <%- end -%>
   end

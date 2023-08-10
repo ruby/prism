@@ -603,7 +603,8 @@ nodes:
         type: node?
         kind: BlockNode
       - name: flags
-        type: uint32
+        type: flags
+        kind: CallNodeFlags
       - name: name
         type: string
     comment: |
@@ -1323,7 +1324,8 @@ nodes:
       - name: closing_loc
         type: location
       - name: flags
-        type: uint32
+        type: flags
+        kind: RegularExpressionFlags
     newline: parts
     comment: |
       Represents a regular expression literal that contains interpolation.
@@ -1746,7 +1748,8 @@ nodes:
       - name: operator_loc
         type: location
       - name: flags
-        type: uint32
+        type: flags
+        kind: RangeNodeFlags
     comment: |
       Represents the use of the `..` or `...` operators.
 
@@ -1781,7 +1784,8 @@ nodes:
       - name: unescaped
         type: string
       - name: flags
-        type: uint32
+        type: flags
+        kind: RegularExpressionFlags
     comment: |
       Represents a regular expression literal with no interpolation.
 
@@ -2072,7 +2076,8 @@ nodes:
         type: node?
         kind: StatementsNode
       - name: flags
-        type: uint32
+        type: flags
+        kind: LoopFlags
     newline: predicate
     comment: |
       Represents the use of the `until` keyword, either in the block form or the modifier form.
@@ -2106,7 +2111,8 @@ nodes:
         type: node?
         kind: StatementsNode
       - name: flags
-        type: uint32
+        type: flags
+        kind: LoopFlags
     newline: predicate
     comment: |
       Represents the use of the `while` keyword, either in the block form or the modifier form.

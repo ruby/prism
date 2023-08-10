@@ -55,7 +55,8 @@ enum yp_node_type {
 typedef uint16_t yp_node_type_t;
 typedef uint16_t yp_node_flags_t;
 
-// We store the flags enum in every node in the tree
+// We store the flags enum in every node in the tree. Some flags are common to
+// all nodes (the ones listed below). Others are specific to certain node types.
 static const uint16_t YP_NODE_FLAG_NEWLINE = 0x1;
 
 // For easy access, we define some macros to check node type
@@ -81,7 +82,7 @@ typedef struct yp_node {
 // <%= node.name %>
 typedef struct yp_<%= node.human %> {
     yp_node_t base;
-<%- node.params.each do |param| -%>
+<%- node.params.grep_v(FlagsParam).each do |param| -%>
     <%= case param
     in NodeParam | OptionalNodeParam then "struct #{param.c_type} *#{param.name}"
     in NodeListParam then "struct yp_node_list #{param.name}"
@@ -100,7 +101,7 @@ typedef struct yp_<%= node.human %> {
 
 // <%= flag.name %>
 typedef enum {
-    <%- flag.values.each_with_index do |value, index| -%>
+    <%- flag.values.each.with_index(COMMON_FLAGS) do |value, index| -%>
     YP_<%= flag.human.upcase %>_<%= value.name %> = 1 << <%= index %>,
     <%- end -%>
 } yp_<%= flag.human %>_t;

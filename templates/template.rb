@@ -4,6 +4,8 @@ require "erb"
 require "fileutils"
 require "yaml"
 
+COMMON_FLAGS = 1
+
 class Param
   attr_reader :name, :options
 
@@ -101,6 +103,15 @@ class UInt32Param < Param
   def java_type = "int"
 end
 
+# This represents a set of flags. It is very similar to the UInt32Param, but can
+# be directly embedded into the flags field on the struct and provides
+# convenient methods for checking if a flag is set.
+class FlagsParam < Param
+  def rbs_class = "Integer"
+  def java_type = "int"
+  def kind = options.fetch(:kind)
+end
+
 PARAM_TYPES = {
   "node" => NodeParam,
   "node?" => OptionalNodeParam,
@@ -112,6 +123,7 @@ PARAM_TYPES = {
   "location" => LocationParam,
   "location?" => OptionalLocationParam,
   "uint32" => UInt32Param,
+  "flags" => FlagsParam
 }
 
 # This class represents a node in the tree, configured by the config.yml file in
