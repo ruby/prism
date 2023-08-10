@@ -5,10 +5,9 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * *'
 
 jobs:
   # Inspired from https://github.com/oracle/truffleruby/blob/master/.github/workflows/ci.yml
