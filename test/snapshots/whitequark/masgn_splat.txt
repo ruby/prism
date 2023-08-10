@@ -54,9 +54,23 @@ ProgramNode(0...139)(
        [InstanceVariableWriteNode(47...51)((47...51), nil, nil),
         ClassVariableWriteNode(53...58)((53...58), nil, nil)],
        (59...60),
-       SplatNode(61...65)(
-         (61...62),
-         CallNode(62...65)(nil, nil, (62...65), nil, nil, nil, nil, 2, "foo")
+       ArrayNode(61...65)(
+         [SplatNode(61...65)(
+            (61...62),
+            CallNode(62...65)(
+              nil,
+              nil,
+              (62...65),
+              nil,
+              nil,
+              nil,
+              nil,
+              2,
+              "foo"
+            )
+          )],
+         nil,
+         nil
        ),
        nil,
        nil

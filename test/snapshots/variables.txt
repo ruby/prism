@@ -173,9 +173,13 @@ ProgramNode(0...293)(
      LocalVariableWriteNode(260...270)(
        :foo,
        0,
-       SplatNode(266...270)(
-         (266...267),
-         LocalVariableReadNode(267...270)(:bar, 0)
+       ArrayNode(266...270)(
+         [SplatNode(266...270)(
+            (266...267),
+            LocalVariableReadNode(267...270)(:bar, 0)
+          )],
+         nil,
+         nil
        ),
        (260...263),
        (264...265)
