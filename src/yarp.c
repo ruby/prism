@@ -4631,6 +4631,7 @@ parser_lex_encoding_comment(yp_parser_t *parser) {
     ENCODING("cp1252", yp_encoding_windows_1252);
     ENCODING("cp932", yp_encoding_windows_31j);
     ENCODING("sjis", yp_encoding_windows_31j);
+    ENCODING("utf8-mac", yp_encoding_utf8_mac);
 
 #undef ENCODING
 
