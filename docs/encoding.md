@@ -39,6 +39,7 @@ The key of the comment can be either "encoding" or "coding". The value of the co
 * `sjis`
 * `us-ascii`
 * `utf-8`
+* `utf8-mac`
 * `windows-31j`
 * `windows-1251`
 * `windows-1252`
