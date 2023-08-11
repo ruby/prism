@@ -108,7 +108,7 @@ end
 # convenient methods for checking if a flag is set.
 class FlagsParam < Param
   def rbs_class = "Integer"
-  def java_type = "int"
+  def java_type = "short"
   def kind = options.fetch(:kind)
 end
 

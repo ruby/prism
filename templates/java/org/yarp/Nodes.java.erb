@@ -17,18 +17,18 @@ public abstract class Nodes {
         <%- group.values.each_with_index do |value, index| -%>
 
         // <%= value.comment %>
-        public static final int <%= value.name %> = 1 << <%= index %>;
+        public static final short <%= value.name %> = 1 << <%= index %>;
         <%- end -%>
 
         <%- group.values.each do |value| -%>
-        public static boolean is<%= value.camelcase %>(int flags) {
+        public static boolean is<%= value.camelcase %>(short flags) {
             return (flags & <%= value.name %>) != 0;
         }
 
         <%- end -%>
-        private final int flags;
+        private final short flags;
 
-        public <%= group.name %>(int flags) {
+        public <%= group.name %>(short flags) {
             this.flags = flags;
         }
 
