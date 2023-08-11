@@ -3,38 +3,22 @@ package org.yarp;
 public final class ParseResult {
 
     public static final class Error {
-        private final String message;
-        private final Nodes.Location location;
+        public final String message;
+        public final Nodes.Location location;
 
         public Error(String message, Nodes.Location location) {
             this.message = message;
             this.location = location;
         }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public Nodes.Location getLocation() {
-            return location;
-        }
     }
 
     public static final class Warning {
-        private final String message;
-        private final Nodes.Location location;
+        public final String message;
+        public final Nodes.Location location;
 
         public Warning(String message, Nodes.Location location) {
             this.message = message;
             this.location = location;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public Nodes.Location getLocation() {
-            return location;
         }
     }
 
@@ -59,5 +43,4 @@ public final class ParseResult {
     public Warning[] getWarnings() {
         return warnings;
     }
-
 }
