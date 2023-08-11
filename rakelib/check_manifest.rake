@@ -1,5 +1,5 @@
 desc "Perform a sanity check on the gemspec file list"
-task :check_manifest => [:templates, "configure"] do
+task :check_manifest => [:templates] do
   raw_gemspec = Bundler.load_gemspec("yarp.gemspec")
 
   ignore_directories = %w[

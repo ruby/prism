@@ -7762,7 +7762,7 @@ parse_target(yp_parser_t *parser, yp_node_t *target, yp_token_t *operator, yp_no
                 char *name = calloc(length + 2, sizeof(char));
                 if (name == NULL) return NULL;
 
-                yp_snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
+                snprintf(name, length + 2, "%.*s=", (int) length, yp_string_source(&call->name));
 
                 // Now switch the name to the new string.
                 yp_string_free(&call->name);

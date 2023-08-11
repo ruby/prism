@@ -8,7 +8,7 @@ The repository contains the infrastructure for both a shared library (librubypar
 
 ```
 .
-├── Makefile.in           configuration to compile the shared library and native tests
+├── Makefile              configuration to compile the shared library and native tests
 ├── Rakefile              configuration to compile the native extension and run the Ruby tests
 ├── bin
 │   ├── lex               runs the lexer on a file or string, prints the tokens, and compares to ripper

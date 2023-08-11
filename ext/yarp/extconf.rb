@@ -2,7 +2,6 @@
 
 require "mkmf"
 require "rbconfig"
-require "rake"
 
 module Yarp
   module ExtConf
@@ -62,15 +61,12 @@ module Yarp
 
       def build_target_rubyparser(target)
         Dir.chdir(root_dir) do
-          if !File.exist?("configure") && Dir.exist?(".git")
+          if !File.exist?("include/yarp/ast.h") && Dir.exist?(".git")
             # this block only exists to support building the gem from a "git" source,
             # normally we package up the configure and other files in the gem itself
-            Rake.sh("autoconf")
-            Rake.sh("autoheader")
-            Rake.sh("templates/template.rb")
+            system("templates/template.rb", exception: true)
           end
-          Rake.sh("sh", "configure") # explicit "sh" for Windows where shebangs are not supported
-          Rake.sh("make", target)
+          system("make", target, exception: true)
         end
       end
 
