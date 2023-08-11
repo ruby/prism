@@ -1,5 +1,6 @@
 package org.yarp;
 
+import java.lang.Short;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -207,6 +208,12 @@ public class Loader {
         return x;
     }
 
+    private short loadFlags() {
+        int flags = loadVarInt();
+        assert flags >= 0 && flags <= Short.MAX_VALUE;
+        return (short) flags;
+    }
+
     private Nodes.Node loadNode() {
         int type = buffer.get() & 0xFF;
         int startOffset = loadVarInt();
@@ -229,6 +236,7 @@ public class Loader {
               when LocationParam then "loadLocation()"
               when OptionalLocationParam then "loadOptionalLocation()"
               when UInt32Param then "loadVarInt()"
+              when FlagsParam then "loadFlags()"
               else raise
               end
             }

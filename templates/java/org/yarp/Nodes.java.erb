@@ -12,55 +12,6 @@ public abstract class Nodes {
 
     public static final byte[][] EMPTY_BYTE_ARRAY_ARRAY = {};
 
-<%- flags.each do |group| -%>
-    public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
-        <%- group.values.each_with_index do |value, index| -%>
-
-        // <%= value.comment %>
-        public static final int <%= value.name %> = 1 << <%= index %>;
-        <%- end -%>
-
-        <%- group.values.each do |value| -%>
-        public static boolean is<%= value.camelcase %>(int flags) {
-            return (flags & <%= value.name %>) != 0;
-        }
-
-        <%- end -%>
-        private final int flags;
-
-        public <%= group.name %>(int flags) {
-            this.flags = flags;
-        }
-
-        @Override
-        public int hashCode() {
-            return flags;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (!(other instanceof <%= group.name %>)) {
-                return false;
-            }
-
-            return flags == ((<%= group.name %>) other).flags;
-        }
-
-        @Override
-        public int compareTo(<%= group.name %> other) {
-            return flags - other.flags;
-        }
-
-        <%- group.values.each do |value| -%>
-        public boolean is<%= value.camelcase %>() {
-            return (flags & <%= value.name %>) != 0;
-        }
-
-        <%- end -%>
-    }
-
-<%- end -%>
-
     public static final class Location {
 
         public static final Location[] EMPTY_ARRAY = {};
@@ -181,7 +132,56 @@ public abstract class Nodes {
             return builder.toString();
         }
     }
+<%# FLAGS -%>
+    <%- flags.each do |group| -%>
 
+    public static final class <%= group.name %> implements Comparable<<%= group.name %>> {
+        <%- group.values.each_with_index do |value, index| -%>
+
+        // <%= value.comment %>
+        public static final short <%= value.name %> = 1 << <%= index %>;
+        <%- end -%>
+
+        <%- group.values.each do |value| -%>
+        public static boolean is<%= value.camelcase %>(short flags) {
+            return (flags & <%= value.name %>) != 0;
+        }
+
+        <%- end -%>
+        private final short flags;
+
+        public <%= group.name %>(short flags) {
+            this.flags = flags;
+        }
+
+        @Override
+        public int hashCode() {
+            return flags;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof <%= group.name %>)) {
+                return false;
+            }
+
+            return flags == ((<%= group.name %>) other).flags;
+        }
+
+        @Override
+        public int compareTo(<%= group.name %> other) {
+            return flags - other.flags;
+        }
+
+        <%- group.values.each do |value| -%>
+        public boolean is<%= value.camelcase %>() {
+            return (flags & <%= value.name %>) != 0;
+        }
+
+        <%- end -%>
+    }
+<%- end -%>
+<%# NODES -%>
     <%- nodes.each do |node| -%>
 
     <%= "#{node.comment.split("\n").map { |line| "// #{line}" }.join("\n    ")}\n" if node.comment -%>
@@ -207,7 +207,18 @@ public abstract class Nodes {
             this.<%= param.name %> = <%= param.name %>;
         <%- end -%>
         }
+        <%# methods for flags -%>
+        <%- node.params.each do |param| -%>
+        <%- if param.is_a?(FlagsParam) -%>
+        <%- flags.find { |flag| flag.name == param.kind }.tap { raise "Expected to find #{param.kind}" unless _1 }.values.each do |value| -%>
 
+        public boolean is<%= value.camelcase %>() {
+            return <%= param.kind %>.is<%= value.camelcase %>(this.<%= param.name %>);
+        }
+        <%- end -%>
+        <%- end -%>
+        <%- end -%>
+        <%# potential override of setNewLineFlag() -%>
         <%- if node.newline == false -%>
         @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {

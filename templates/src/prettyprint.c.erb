@@ -73,6 +73,10 @@ prettyprint_node(yp_buffer_t *buffer, yp_parser_t *parser, yp_node_t *node) {
             char <%= param.name %>_buffer[12];
             snprintf(<%= param.name %>_buffer, sizeof(<%= param.name %>_buffer), "+%d", ((yp_<%= node.human %>_t *)node)-><%= param.name %>);
             yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
+            <%- when FlagsParam -%>
+            char <%= param.name %>_buffer[12];
+            snprintf(<%= param.name %>_buffer, sizeof(<%= param.name %>_buffer), "+%d", node->flags >> <%= COMMON_FLAGS %>);
+            yp_buffer_append_str(buffer, <%= param.name %>_buffer, strlen(<%= param.name %>_buffer));
             <%- else -%>
             <%- raise -%>
             <%- end -%>

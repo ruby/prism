@@ -136,7 +136,7 @@ module YARP
             when ConstantListParam then "Array.new(load_varint) { load_constant }"
             when LocationParam then "load_location"
             when OptionalLocationParam then "load_optional_location"
-            when UInt32Param then "load_varint"
+            when UInt32Param, FlagsParam then "load_varint"
             else raise
             end
           } + ["location"]).join(", ") -%>)
