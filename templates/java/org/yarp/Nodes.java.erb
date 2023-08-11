@@ -82,10 +82,30 @@ public abstract class Nodes {
         public final byte[] bytes;
         private final int[] lineOffsets;
 
+        public Source(byte[] bytes) {
+            this(bytes, computeLineOffsets(bytes));
+        }
+
         public Source(byte[] bytes, int[] lineOffsets) {
             assert lineOffsets[0] == 0;
             this.bytes = bytes;
             this.lineOffsets = lineOffsets;
+        }
+
+        public static int[] computeLineOffsets(byte[] bytes) {
+            int[] lineOffsets = new int[8];
+            int lineOffsetsSize = 0;
+            lineOffsets[lineOffsetsSize++] = 0;
+
+            for (int i = 0; i < bytes.length; i++) {
+                if (bytes[i] == '\n') {
+                    if (lineOffsetsSize == lineOffsets.length) {
+                        lineOffsets = Arrays.copyOf(lineOffsets, lineOffsets.length * 2);
+                    }
+                    lineOffsets[lineOffsetsSize++] = i + 1;
+                }
+            }
+            return Arrays.copyOf(lineOffsets, lineOffsetsSize);
         }
 
         public int line(int byteOffset) {
