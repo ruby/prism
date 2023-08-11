@@ -7,7 +7,10 @@ ProgramNode(0...18)(
          nil,
          (3...9),
          (3...4),
-         ArgumentsNode(4...8)([IntegerNode(4...5)(), IntegerNode(7...8)()]),
+         ArgumentsNode(4...8)(
+           [IntegerNode(4...5)(), IntegerNode(7...8)()],
+           nil
+         ),
          (8...9),
          nil,
          0,
@@ -30,7 +33,8 @@ ProgramNode(0...18)(
               nil,
               2,
               "foo"
-            )]
+            )],
+           nil
          ),
          nil,
          nil,

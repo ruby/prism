@@ -11,7 +11,8 @@ ProgramNode(0...15)(
             (6...7),
             nil,
             ArgumentsNode(8...10)(
-              [StringNode(8...10)((8...9), (9...9), (9...10), "")]
+              [StringNode(8...10)((8...9), (9...9), (9...10), "")],
+              nil
             ),
             nil,
             nil,

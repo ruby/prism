@@ -12,7 +12,8 @@ ProgramNode(0...40)(
             (6...32),
             (32...33),
             "hello\n" + " my\n" + " dear\n" + " friend"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -25,7 +26,8 @@ ProgramNode(0...40)(
        (37...38),
        nil,
        ArgumentsNode(39...40)(
-         [CallNode(39...40)(nil, nil, (39...40), nil, nil, nil, nil, 2, "b")]
+         [CallNode(39...40)(nil, nil, (39...40), nil, nil, nil, nil, 2, "b")],
+         nil
        ),
        nil,
        nil,

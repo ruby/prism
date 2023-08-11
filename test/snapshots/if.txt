@@ -85,7 +85,7 @@ ProgramNode(0...382)(
        ),
        StatementsNode(188...196)(
          [BreakNode(188...196)(
-            ArgumentsNode(194...196)([IntegerNode(194...196)()]),
+            ArgumentsNode(194...196)([IntegerNode(194...196)()], nil),
             (188...193)
           )]
        ),
@@ -168,13 +168,14 @@ ProgramNode(0...382)(
             (246...247),
             nil,
             ArgumentsNode(248...250)(
-              [KeywordHashNode(248...250)(
-                 [AssocNode(248...250)(
-                    SymbolNode(248...250)(nil, (248...249), (249...250), "b"),
-                    nil,
-                    nil
-                  )]
-               )]
+              [],
+              KeywordHashNode(248...250)(
+                [AssocNode(248...250)(
+                   SymbolNode(248...250)(nil, (248...249), (249...250), "b"),
+                   nil,
+                   nil
+                 )]
+              )
             ),
             nil,
             nil,

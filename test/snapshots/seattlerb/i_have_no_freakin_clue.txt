@@ -11,7 +11,8 @@ ProgramNode(0...20)(
             (4...5),
             (5...6),
             ArgumentsNode(6...8)(
-              [StringNode(6...8)((6...7), (7...7), (7...8), "")]
+              [StringNode(6...8)((6...7), (7...7), (7...8), "")],
+              nil
             ),
             (8...9),
             nil,
@@ -32,13 +33,14 @@ ProgramNode(0...20)(
        (14...15),
        nil,
        ArgumentsNode(16...20)(
-         [KeywordHashNode(16...20)(
-            [AssocNode(16...20)(
-               SymbolNode(16...18)(nil, (16...17), (17...18), "d"),
-               IntegerNode(19...20)(),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(16...20)(
+           [AssocNode(16...20)(
+              SymbolNode(16...18)(nil, (16...17), (17...18), "d"),
+              IntegerNode(19...20)(),
+              nil
+            )]
+         )
        ),
        nil,
        nil,

@@ -13,7 +13,8 @@ ProgramNode(0...74)(
            (10...15),
            nil,
            ArgumentsNode(16...18)(
-             [SymbolNode(16...18)((16...17), (17...18), nil, "x")]
+             [SymbolNode(16...18)((16...17), (17...18), nil, "x")],
+             nil
            ),
            nil,
            nil,
@@ -38,7 +39,8 @@ ProgramNode(0...74)(
            (29...34),
            nil,
            ArgumentsNode(35...37)(
-             [SymbolNode(35...37)((35...36), (36...37), nil, "x")]
+             [SymbolNode(35...37)((35...36), (36...37), nil, "x")],
+             nil
            ),
            nil,
            nil,
@@ -63,7 +65,8 @@ ProgramNode(0...74)(
            (48...53),
            nil,
            ArgumentsNode(54...56)(
-             [SymbolNode(54...56)((54...55), (55...56), nil, "x")]
+             [SymbolNode(54...56)((54...55), (55...56), nil, "x")],
+             nil
            ),
            nil,
            nil,
@@ -88,7 +91,8 @@ ProgramNode(0...74)(
            (66...71),
            nil,
            ArgumentsNode(72...74)(
-             [SymbolNode(72...74)((72...73), (73...74), nil, "x")]
+             [SymbolNode(72...74)((72...73), (73...74), nil, "x")],
+             nil
            ),
            nil,
            nil,

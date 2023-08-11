@@ -7,13 +7,14 @@ ProgramNode(0...15)(
        (3...15),
        (3...4),
        ArgumentsNode(4...13)(
-         [KeywordHashNode(4...13)(
-            [AssocNode(4...13)(
-               SymbolNode(4...8)((4...5), (5...8), nil, "baz"),
-               IntegerNode(12...13)(),
-               (9...11)
-             )]
-          )]
+         [],
+         KeywordHashNode(4...13)(
+           [AssocNode(4...13)(
+              SymbolNode(4...8)((4...5), (5...8), nil, "baz"),
+              IntegerNode(12...13)(),
+              (9...11)
+            )]
+         )
        ),
        (14...15),
        nil,

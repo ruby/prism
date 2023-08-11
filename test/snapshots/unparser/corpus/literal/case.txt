@@ -340,7 +340,8 @@ ProgramNode(0...284)(
                     nil,
                     2,
                     "baz"
-                  )]
+                  )],
+                 nil
                ),
                nil,
                nil,
@@ -385,7 +386,7 @@ ProgramNode(0...284)(
                (274...275),
                (275...278),
                nil,
-               ArgumentsNode(279...280)([IntegerNode(279...280)()]),
+               ArgumentsNode(279...280)([IntegerNode(279...280)()], nil),
                nil,
                nil,
                0,

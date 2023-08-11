@@ -179,7 +179,8 @@ ProgramNode(0...266)(
                  (238...239),
                  nil,
                  ArgumentsNode(240...241)(
-                   [LocalVariableReadNode(240...241)(:b, 0)]
+                   [LocalVariableReadNode(240...241)(:b, 0)],
+                   nil
                  ),
                  nil,
                  nil,

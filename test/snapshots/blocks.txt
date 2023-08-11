@@ -7,7 +7,8 @@ ProgramNode(0...402)(
        (3...8),
        (3...4),
        ArgumentsNode(4...7)(
-         [CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 2, "bar")]
+         [CallNode(4...7)(nil, nil, (4...7), nil, nil, nil, nil, 2, "bar")],
+         nil
        ),
        (7...8),
        BlockNode(9...16)(
@@ -38,7 +39,18 @@ ProgramNode(0...402)(
        (21...26),
        (21...22),
        ArgumentsNode(22...25)(
-         [CallNode(22...25)(nil, nil, (22...25), nil, nil, nil, nil, 2, "bar")]
+         [CallNode(22...25)(
+            nil,
+            nil,
+            (22...25),
+            nil,
+            nil,
+            nil,
+            nil,
+            2,
+            "bar"
+          )],
+         nil
        ),
        (25...26),
        BlockNode(27...37)(
@@ -68,7 +80,7 @@ ProgramNode(0...402)(
        (40...41),
        (41...47),
        (47...48),
-       ArgumentsNode(48...49)([IntegerNode(48...49)()]),
+       ArgumentsNode(48...49)([IntegerNode(48...49)()], nil),
        (49...50),
        BlockNode(51...74)(
          [:x, :memo],
@@ -136,7 +148,8 @@ ProgramNode(0...402)(
             ),
             (97...98),
             (108...109)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -159,7 +172,8 @@ ProgramNode(0...402)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(119...125)([], nil, nil, (119...121), (122...125)),
@@ -188,13 +202,15 @@ ProgramNode(0...402)(
                  nil,
                  2,
                  "baz"
-               )]
+               )],
+              nil
             ),
             nil,
             nil,
             0,
             "bar"
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(139...145)([], nil, nil, (139...141), (142...145)),
@@ -232,7 +248,7 @@ ProgramNode(0...402)(
                   nil,
                   (160...163),
                   (160...161),
-                  ArgumentsNode(161...162)([IntegerNode(161...162)()]),
+                  ArgumentsNode(161...162)([IntegerNode(161...162)()], nil),
                   (162...163),
                   nil,
                   0,
@@ -359,7 +375,8 @@ ProgramNode(0...402)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        (242...243),
        BlockNode(244...251)(
@@ -580,7 +597,8 @@ ProgramNode(0...402)(
             ),
             0,
             "lambda"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,

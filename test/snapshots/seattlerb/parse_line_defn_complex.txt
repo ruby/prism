@@ -19,7 +19,10 @@ ProgramNode(0...40)(
             nil,
             (11...12),
             (12...13),
-            ArgumentsNode(13...14)([LocalVariableReadNode(13...14)(:y, 0)]),
+            ArgumentsNode(13...14)(
+              [LocalVariableReadNode(13...14)(:y, 0)],
+              nil
+            ),
             (14...15),
             nil,
             0,
@@ -34,7 +37,10 @@ ProgramNode(0...40)(
           ),
           ReturnNode(27...35)(
             (27...33),
-            ArgumentsNode(34...35)([LocalVariableReadNode(34...35)(:y, 0)])
+            ArgumentsNode(34...35)(
+              [LocalVariableReadNode(34...35)(:y, 0)],
+              nil
+            )
           )]
        ),
        [:y],

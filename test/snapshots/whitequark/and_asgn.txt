@@ -23,7 +23,8 @@ ProgramNode(0...28)(
          (16...22),
          (16...17),
          ArgumentsNode(17...21)(
-           [IntegerNode(17...18)(), IntegerNode(20...21)()]
+           [IntegerNode(17...18)(), IntegerNode(20...21)()],
+           nil
          ),
          (21...22),
          nil,

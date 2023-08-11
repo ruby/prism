@@ -23,13 +23,15 @@ ProgramNode(0...10)(
                  nil,
                  2,
                  "bar"
-               )]
+               )],
+              nil
             ),
             nil,
             nil,
             0,
             "m"
-          )]
+          )],
+         nil
        ),
        (9...10),
        nil,

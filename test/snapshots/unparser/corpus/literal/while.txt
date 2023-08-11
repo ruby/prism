@@ -87,7 +87,8 @@ ProgramNode(0...620)(
                    nil,
                    2,
                    "baz"
-                 )]
+                 )],
+                nil
               ),
               nil,
               nil,

@@ -7,7 +7,8 @@ ProgramNode(0...159)(
        (14...19),
        (19...20),
        ArgumentsNode(20...21)(
-         [CallNode(20...21)(nil, nil, (20...21), nil, nil, nil, nil, 2, "a")]
+         [CallNode(20...21)(nil, nil, (20...21), nil, nil, nil, nil, 2, "a")],
+         nil
        ),
        (21...22),
        nil
@@ -17,7 +18,8 @@ ProgramNode(0...159)(
        (28...29),
        ArgumentsNode(29...33)(
          [CallNode(29...30)(nil, nil, (29...30), nil, nil, nil, nil, 2, "a"),
-          CallNode(32...33)(nil, nil, (32...33), nil, nil, nil, nil, 2, "b")]
+          CallNode(32...33)(nil, nil, (32...33), nil, nil, nil, nil, 2, "b")],
+         nil
        ),
        (33...34),
        nil
@@ -39,7 +41,8 @@ ProgramNode(0...159)(
               "block"
             ),
             (41...42)
-          )]
+          )],
+         nil
        ),
        (47...48),
        nil
@@ -62,7 +65,8 @@ ProgramNode(0...159)(
               "block"
             ),
             (58...59)
-          )]
+          )],
+         nil
        ),
        (64...65),
        nil
@@ -99,7 +103,8 @@ ProgramNode(0...159)(
             ),
             0,
             "a"
-          )]
+          )],
+         nil
        ),
        (83...84),
        nil
@@ -139,7 +144,8 @@ ProgramNode(0...159)(
             nil,
             2,
             "a"
-          )]
+          )],
+         nil
        ),
        (108...109),
        BlockNode(110...119)(
@@ -212,7 +218,8 @@ ProgramNode(0...159)(
             nil,
             2,
             "b"
-          )]
+          )],
+         nil
        ),
        (148...149),
        BlockNode(150...159)(

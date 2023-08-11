@@ -46,13 +46,15 @@ ProgramNode(0...131)(
                  nil,
                  2,
                  "bar"
-               )]
+               )],
+              nil
             ),
             nil,
             nil,
             0,
             "foo"
-          )]
+          )],
+         nil
        ),
        (130...131),
        nil,

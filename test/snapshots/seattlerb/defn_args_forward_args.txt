@@ -24,7 +24,8 @@ ProgramNode(0...41)(
             ArgumentsNode(23...35)(
               [SymbolNode(23...27)((23...24), (24...27), nil, "get"),
                LocalVariableReadNode(29...30)(:z, 0),
-               ForwardingArgumentsNode(32...35)()]
+               ForwardingArgumentsNode(32...35)()],
+              nil
             ),
             (35...36),
             nil,

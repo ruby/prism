@@ -24,7 +24,8 @@ ProgramNode(0...437)(
               ),
               (17...23),
               NilNode(24...27)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -54,7 +55,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (45...46),
            nil,
@@ -90,7 +92,8 @@ ProgramNode(0...437)(
               ),
               (75...81),
               NilNode(82...85)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -120,7 +123,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (102...103),
            nil,
@@ -166,7 +170,8 @@ ProgramNode(0...437)(
               ),
               (135...141),
               NilNode(142...145)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -205,7 +210,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (165...166),
            nil,
@@ -250,7 +256,8 @@ ProgramNode(0...437)(
               ),
               (198...204),
               NilNode(205...208)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -289,7 +296,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (228...229),
            nil,
@@ -328,7 +336,8 @@ ProgramNode(0...437)(
               ),
               (263...269),
               NilNode(270...273)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -360,7 +369,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (295...296),
            nil,
@@ -404,7 +414,8 @@ ProgramNode(0...437)(
               ),
               (329...335),
               NilNode(336...339)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -443,7 +454,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (360...361),
            nil,
@@ -461,7 +473,7 @@ ProgramNode(0...437)(
          nil,
          (377...380),
          (377...378),
-         ArgumentsNode(378...379)([IntegerNode(378...379)()]),
+         ArgumentsNode(378...379)([IntegerNode(378...379)()], nil),
          (379...380),
          nil,
          0,
@@ -488,7 +500,8 @@ ProgramNode(0...437)(
               ),
               (394...400),
               NilNode(401...404)()
-            )]
+            )],
+           nil
          ),
          nil,
          nil,
@@ -503,7 +516,7 @@ ProgramNode(0...437)(
          nil,
          (409...412),
          (409...410),
-         ArgumentsNode(410...411)([IntegerNode(410...411)()]),
+         ArgumentsNode(410...411)([IntegerNode(410...411)()], nil),
          (411...412),
          nil,
          0,
@@ -527,7 +540,8 @@ ProgramNode(0...437)(
                 nil,
                 2,
                 "bar"
-              )]
+              )],
+             nil
            ),
            (425...426),
            nil,

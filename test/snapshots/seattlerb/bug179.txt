@@ -12,7 +12,8 @@ ProgramNode(0...9)(
             NilNode(6...9)(),
             (4...6),
             0
-          )]
+          )],
+         nil
        ),
        nil,
        nil,

@@ -11,7 +11,7 @@ ProgramNode(8...111)(
             nil,
             (33...34),
             nil,
-            ArgumentsNode(35...36)([IntegerNode(35...36)()]),
+            ArgumentsNode(35...36)([IntegerNode(35...36)()], nil),
             nil,
             nil,
             0,

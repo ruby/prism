@@ -19,25 +19,28 @@ ProgramNode(0...139)(
             StatementsNode(26...27)([IntegerNode(26...27)()]),
             (25...26),
             (27...28)
-          )]
+          )],
+         nil
        )
      ),
      ReturnNode(30...39)(
        (30...36),
        ArgumentsNode(37...39)(
-         [SplatNode(37...39)((37...38), IntegerNode(38...39)())]
+         [SplatNode(37...39)((37...38), IntegerNode(38...39)())],
+         nil
        )
      ),
      ReturnNode(41...49)(
        (41...47),
-       ArgumentsNode(48...49)([IntegerNode(48...49)()])
+       ArgumentsNode(48...49)([IntegerNode(48...49)()], nil)
      ),
      ReturnNode(51...65)(
        (51...57),
        ArgumentsNode(58...65)(
          [IntegerNode(58...59)(),
           IntegerNode(61...62)(),
-          IntegerNode(64...65)()]
+          IntegerNode(64...65)()],
+         nil
        )
      ),
      ReturnNode(67...81)(
@@ -45,7 +48,8 @@ ProgramNode(0...139)(
        ArgumentsNode(74...81)(
          [IntegerNode(74...75)(),
           IntegerNode(77...78)(),
-          IntegerNode(80...81)()]
+          IntegerNode(80...81)()],
+         nil
        )
      ),
      ReturnNode(83...99)(
@@ -57,7 +61,8 @@ ProgramNode(0...139)(
              IntegerNode(97...98)()],
             (90...91),
             (98...99)
-          )]
+          )],
+         nil
        )
      ),
      ReturnNode(101...118)(
@@ -69,13 +74,15 @@ ProgramNode(0...139)(
             ),
             (107...108),
             (117...118)
-          )]
+          )],
+         nil
        )
      ),
      ReturnNode(120...128)(
        (120...126),
        ArgumentsNode(126...128)(
-         [ParenthesesNode(126...128)(nil, (126...127), (127...128))]
+         [ParenthesesNode(126...128)(nil, (126...127), (127...128))],
+         nil
        )
      ),
      ReturnNode(130...139)(
@@ -85,7 +92,8 @@ ProgramNode(0...139)(
             StatementsNode(137...138)([IntegerNode(137...138)()]),
             (136...137),
             (138...139)
-          )]
+          )],
+         nil
        )
      )]
   )

@@ -20,14 +20,15 @@ ProgramNode(0...41)(
             (13...16),
             (16...17),
             ArgumentsNode(17...35)(
-              [KeywordHashNode(17...35)(
-                 [AssocSplatNode(17...19)(nil, (17...19)),
-                  AssocNode(21...35)(
-                    SymbolNode(21...30)(nil, (21...29), (29...30), "from_foo"),
-                    TrueNode(31...35)(),
-                    nil
-                  )]
-               )]
+              [],
+              KeywordHashNode(17...35)(
+                [AssocSplatNode(17...19)(nil, (17...19)),
+                 AssocNode(21...35)(
+                   SymbolNode(21...30)(nil, (21...29), (29...30), "from_foo"),
+                   TrueNode(31...35)(),
+                   nil
+                 )]
+              )
             ),
             (35...36),
             nil,

@@ -12,7 +12,8 @@ ProgramNode(0...278)(
             (10...14),
             nil,
             ArgumentsNode(15...22)(
-              [StringNode(15...22)((15...16), (16...21), (21...22), "Hello")]
+              [StringNode(15...22)((15...16), (16...21), (21...22), "Hello")],
+              nil
             ),
             nil,
             nil,
@@ -39,7 +40,8 @@ ProgramNode(0...278)(
             (36...40),
             nil,
             ArgumentsNode(41...48)(
-              [StringNode(41...48)((41...42), (42...47), (47...48), "Hello")]
+              [StringNode(41...48)((41...42), (42...47), (47...48), "Hello")],
+              nil
             ),
             nil,
             nil,
@@ -73,7 +75,10 @@ ProgramNode(0...278)(
             nil,
             (63...67),
             nil,
-            ArgumentsNode(68...69)([LocalVariableReadNode(68...69)(:x, 0)]),
+            ArgumentsNode(68...69)(
+              [LocalVariableReadNode(68...69)(:x, 0)],
+              nil
+            ),
             nil,
             nil,
             0,
@@ -99,7 +104,8 @@ ProgramNode(0...278)(
             (85...89),
             nil,
             ArgumentsNode(90...97)(
-              [StringNode(90...97)((90...91), (91...96), (96...97), "Hello")]
+              [StringNode(90...97)((90...91), (91...96), (96...97), "Hello")],
+              nil
             ),
             nil,
             nil,
@@ -141,7 +147,8 @@ ProgramNode(0...278)(
                  (121...126),
                  (126...127),
                  "Hello"
-               )]
+               )],
+              nil
             ),
             nil,
             nil,
@@ -186,7 +193,8 @@ ProgramNode(0...278)(
             (146...150),
             nil,
             ArgumentsNode(151...152)(
-              [LocalVariableReadNode(151...152)(:x, 0)]
+              [LocalVariableReadNode(151...152)(:x, 0)],
+              nil
             ),
             nil,
             nil,
@@ -241,7 +249,8 @@ ProgramNode(0...278)(
                     )],
                    (213...214)
                  )
-               )]
+               )],
+              nil
             ),
             nil,
             nil,
@@ -296,7 +305,8 @@ ProgramNode(0...278)(
                     )],
                    (277...278)
                  )
-               )]
+               )],
+              nil
             ),
             nil,
             nil,

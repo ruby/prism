@@ -88,7 +88,8 @@ ProgramNode(0...233)(
        (76...77),
        ArgumentsNode(77...83)(
          [CallNode(77...78)(nil, nil, (77...78), nil, nil, nil, nil, 2, "k"),
-          CallNode(82...83)(nil, nil, (82...83), nil, nil, nil, nil, 2, "v")]
+          CallNode(82...83)(nil, nil, (82...83), nil, nil, nil, nil, 2, "v")],
+         nil
        ),
        (78...79),
        nil,
@@ -222,7 +223,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (153...154),
          nil,
@@ -250,7 +252,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (163...164),
          nil,
@@ -278,7 +281,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (173...174),
          nil,
@@ -306,7 +310,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (184...185),
          nil,
@@ -334,7 +339,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (194...195),
          nil,
@@ -362,7 +368,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (204...205),
          nil,
@@ -389,7 +396,8 @@ ProgramNode(0...233)(
               nil,
               2,
               "b"
-            )]
+            )],
+           nil
          ),
          (215...216),
          nil,

@@ -7,7 +7,8 @@ ProgramNode(0...1237)(
        (4...7),
        nil,
        ArgumentsNode(8...14)(
-         [StringNode(8...14)((8...10), (10...13), (13...14), "baz")]
+         [StringNode(8...14)((8...10), (10...13), (13...14), "baz")],
+         nil
        ),
        nil,
        nil,
@@ -21,7 +22,8 @@ ProgramNode(0...1237)(
        (19...20),
        ArgumentsNode(20...24)(
          [CallNode(20...21)(nil, nil, (20...21), nil, nil, nil, nil, 2, "c"),
-          CallNode(23...24)(nil, nil, (23...24), nil, nil, nil, nil, 2, "d")]
+          CallNode(23...24)(nil, nil, (23...24), nil, nil, nil, nil, 2, "d")],
+         nil
        ),
        (24...25),
        nil,
@@ -80,7 +82,8 @@ ProgramNode(0...1237)(
        ArgumentsNode(67...74)(
          [IntegerNode(67...68)(),
           IntegerNode(70...71)(),
-          IntegerNode(73...74)()]
+          IntegerNode(73...74)()],
+         nil
        ),
        (74...75),
        nil,
@@ -104,7 +107,8 @@ ProgramNode(0...1237)(
        (86...87),
        nil,
        ArgumentsNode(88...89)(
-         [CallNode(88...89)(nil, nil, (88...89), nil, nil, nil, nil, 2, "c")]
+         [CallNode(88...89)(nil, nil, (88...89), nil, nil, nil, nil, 2, "c")],
+         nil
        ),
        nil,
        nil,
@@ -116,7 +120,7 @@ ProgramNode(0...1237)(
        (94...95),
        (95...98),
        nil,
-       ArgumentsNode(101...102)([IntegerNode(101...102)()]),
+       ArgumentsNode(101...102)([IntegerNode(101...102)()], nil),
        nil,
        nil,
        0,
@@ -142,7 +146,8 @@ ProgramNode(0...1237)(
               "block"
             ),
             (110...111)
-          )]
+          )],
+         nil
        ),
        (116...117),
        nil,
@@ -155,22 +160,23 @@ ProgramNode(0...1237)(
        (119...120),
        (120...121),
        ArgumentsNode(121...129)(
-         [KeywordHashNode(121...129)(
-            [AssocSplatNode(121...129)(
-               CallNode(123...129)(
-                 nil,
-                 nil,
-                 (123...129),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "kwargs"
-               ),
-               (121...123)
-             )]
-          )]
+         [],
+         KeywordHashNode(121...129)(
+           [AssocSplatNode(121...129)(
+              CallNode(123...129)(
+                nil,
+                nil,
+                (123...129),
+                nil,
+                nil,
+                nil,
+                nil,
+                2,
+                "kwargs"
+              ),
+              (121...123)
+            )]
+         )
        ),
        (129...130),
        nil,
@@ -235,7 +241,8 @@ ProgramNode(0...1237)(
             nil,
             2,
             "c"
-          )]
+          )],
+         nil
        ),
        (145...146),
        nil,
@@ -272,7 +279,8 @@ ProgramNode(0...1237)(
               2,
               "args"
             )
-          )]
+          )],
+         nil
        ),
        (160...161),
        nil,
@@ -306,7 +314,8 @@ ProgramNode(0...1237)(
             nil,
             2,
             "c"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -340,7 +349,8 @@ ProgramNode(0...1237)(
             nil,
             2,
             "d"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -437,7 +447,8 @@ ProgramNode(0...1237)(
             nil,
             2,
             "c"
-          )]
+          )],
+         nil
        ),
        (225...226),
        nil,
@@ -504,7 +515,8 @@ ProgramNode(0...1237)(
             nil,
             ArgumentsNode(240...246)(
               [SymbolNode(240...242)((240...241), (241...242), nil, "a"),
-               SymbolNode(244...246)((244...245), (245...246), nil, "b")]
+               SymbolNode(244...246)((244...245), (245...246), nil, "b")],
+              nil
             ),
             nil,
             nil,
@@ -522,7 +534,8 @@ ProgramNode(0...1237)(
        (274...275),
        ArgumentsNode(275...284)(
          [SymbolNode(275...277)((275...276), (276...277), nil, "a"),
-          SymbolNode(282...284)((282...283), (283...284), nil, "b")]
+          SymbolNode(282...284)((282...283), (283...284), nil, "b")],
+         nil
        ),
        (285...286),
        nil,
@@ -548,7 +561,8 @@ ProgramNode(0...1237)(
               2,
               "rest"
             )
-          )]
+          )],
+         nil
        ),
        (297...298),
        nil,
@@ -562,27 +576,27 @@ ProgramNode(0...1237)(
        (303...304),
        ArgumentsNode(304...339)(
          [SymbolNode(304...306)((304...305), (305...306), nil, "a"),
-          KeywordHashNode(308...332)(
-            [AssocNode(308...322)(
-               SymbolNode(308...310)((308...309), (309...310), nil, "h"),
-               ArrayNode(314...322)(
-                 [SymbolNode(315...317)((315...316), (316...317), nil, "x"),
-                  SymbolNode(319...321)((319...320), (320...321), nil, "y")],
-                 (314...315),
-                 (321...322)
-               ),
-               (311...313)
-             ),
-             AssocNode(324...332)(
-               SymbolNode(324...326)((324...325), (325...326), nil, "a"),
-               SymbolNode(330...332)((330...331), (331...332), nil, "b"),
-               (327...329)
-             )]
-          ),
           BlockArgumentNode(334...339)(
             SymbolNode(335...339)((335...336), (336...339), nil, "bar"),
             (334...335)
-          )]
+          )],
+         KeywordHashNode(308...332)(
+           [AssocNode(308...322)(
+              SymbolNode(308...310)((308...309), (309...310), nil, "h"),
+              ArrayNode(314...322)(
+                [SymbolNode(315...317)((315...316), (316...317), nil, "x"),
+                 SymbolNode(319...321)((319...320), (320...321), nil, "y")],
+                (314...315),
+                (321...322)
+              ),
+              (311...313)
+            ),
+            AssocNode(324...332)(
+              SymbolNode(324...326)((324...325), (325...326), nil, "a"),
+              SymbolNode(330...332)((330...331), (331...332), nil, "b"),
+              (327...329)
+            )]
+         )
        ),
        (339...340),
        nil,
@@ -613,7 +627,8 @@ ProgramNode(0...1237)(
                nil
              )],
             (390...391)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -626,14 +641,14 @@ ProgramNode(0...1237)(
        (393...396),
        nil,
        ArgumentsNode(397...408)(
-         [SymbolNode(397...399)((397...398), (398...399), nil, "a"),
-          KeywordHashNode(401...408)(
-            [AssocNode(401...408)(
-               SymbolNode(401...403)(nil, (401...402), (402...403), "b"),
-               TrueNode(404...408)(),
-               nil
-             )]
-          )]
+         [SymbolNode(397...399)((397...398), (398...399), nil, "a")],
+         KeywordHashNode(401...408)(
+           [AssocNode(401...408)(
+              SymbolNode(401...403)(nil, (401...402), (402...403), "b"),
+              TrueNode(404...408)(),
+              nil
+            )]
+         )
        ),
        nil,
        BlockNode(409...429)(
@@ -660,7 +675,8 @@ ProgramNode(0...1237)(
               (419...423),
               nil,
               ArgumentsNode(424...425)(
-                [LocalVariableReadNode(424...425)(:a, 0)]
+                [LocalVariableReadNode(424...425)(:a, 0)],
+                nil
               ),
               nil,
               nil,
@@ -680,13 +696,14 @@ ProgramNode(0...1237)(
        (431...433),
        nil,
        ArgumentsNode(434...448)(
-         [KeywordHashNode(434...448)(
-            [AssocNode(434...448)(
-               SymbolNode(434...440)(nil, (434...439), (439...440), "there"),
-               SymbolNode(441...448)((441...442), (442...448), nil, "friend"),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(434...448)(
+           [AssocNode(434...448)(
+              SymbolNode(434...440)(nil, (434...439), (439...440), "there"),
+              SymbolNode(441...448)((441...442), (442...448), nil, "friend"),
+              nil
+            )]
+         )
        ),
        nil,
        nil,
@@ -699,22 +716,23 @@ ProgramNode(0...1237)(
        (450...452),
        nil,
        ArgumentsNode(453...490)(
-         [KeywordHashNode(453...490)(
-            [AssocNode(453...470)(
-               SymbolNode(453...459)((453...454), (454...459), nil, "there"),
-               SymbolNode(463...470)((463...464), (464...470), nil, "friend"),
-               (460...462)
-             ),
-             AssocSplatNode(472...476)(
-               HashNode(474...476)((474...475), [], (475...476)),
-               (472...474)
-             ),
-             AssocNode(478...490)(
-               SymbolNode(478...485)(nil, (478...484), (484...485), "whatup"),
-               SymbolNode(486...490)((486...487), (487...490), nil, "dog"),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(453...490)(
+           [AssocNode(453...470)(
+              SymbolNode(453...459)((453...454), (454...459), nil, "there"),
+              SymbolNode(463...470)((463...464), (464...470), nil, "friend"),
+              (460...462)
+            ),
+            AssocSplatNode(472...476)(
+              HashNode(474...476)((474...475), [], (475...476)),
+              (472...474)
+            ),
+            AssocNode(478...490)(
+              SymbolNode(478...485)(nil, (478...484), (484...485), "whatup"),
+              SymbolNode(486...490)((486...487), (487...490), nil, "dog"),
+              nil
+            )]
+         )
        ),
        nil,
        nil,
@@ -727,22 +745,23 @@ ProgramNode(0...1237)(
        (492...494),
        (494...495),
        ArgumentsNode(495...532)(
-         [KeywordHashNode(495...532)(
-            [AssocNode(495...512)(
-               SymbolNode(495...501)((495...496), (496...501), nil, "there"),
-               SymbolNode(505...512)((505...506), (506...512), nil, "friend"),
-               (502...504)
-             ),
-             AssocSplatNode(514...518)(
-               HashNode(516...518)((516...517), [], (517...518)),
-               (514...516)
-             ),
-             AssocNode(520...532)(
-               SymbolNode(520...527)(nil, (520...526), (526...527), "whatup"),
-               SymbolNode(528...532)((528...529), (529...532), nil, "dog"),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(495...532)(
+           [AssocNode(495...512)(
+              SymbolNode(495...501)((495...496), (496...501), nil, "there"),
+              SymbolNode(505...512)((505...506), (506...512), nil, "friend"),
+              (502...504)
+            ),
+            AssocSplatNode(514...518)(
+              HashNode(516...518)((516...517), [], (517...518)),
+              (514...516)
+            ),
+            AssocNode(520...532)(
+              SymbolNode(520...527)(nil, (520...526), (526...527), "whatup"),
+              SymbolNode(528...532)((528...529), (529...532), nil, "dog"),
+              nil
+            )]
+         )
        ),
        (532...533),
        nil,
@@ -772,7 +791,8 @@ ProgramNode(0...1237)(
           BlockArgumentNode(563...570)(
             SymbolNode(564...570)((564...565), (565...570), nil, "block"),
             (563...564)
-          )]
+          )],
+         nil
        ),
        (570...571),
        nil,
@@ -785,13 +805,14 @@ ProgramNode(0...1237)(
        (573...575),
        nil,
        ArgumentsNode(576...593)(
-         [KeywordHashNode(576...593)(
-            [AssocNode(576...593)(
-               SymbolNode(576...582)((576...577), (577...582), nil, "there"),
-               SymbolNode(586...593)((586...587), (587...593), nil, "friend"),
-               (583...585)
-             )]
-          )]
+         [],
+         KeywordHashNode(576...593)(
+           [AssocNode(576...593)(
+              SymbolNode(576...582)((576...577), (577...582), nil, "there"),
+              SymbolNode(586...593)((586...587), (587...593), nil, "friend"),
+              (583...585)
+            )]
+         )
        ),
        nil,
        nil,
@@ -805,7 +826,8 @@ ProgramNode(0...1237)(
        (598...599),
        ArgumentsNode(599...605)(
          [SymbolNode(599...601)((599...600), (600...601), nil, "a"),
-          SymbolNode(603...605)((603...604), (604...605), nil, "b")]
+          SymbolNode(603...605)((603...604), (604...605), nil, "b")],
+         nil
        ),
        (607...608),
        nil,
@@ -818,14 +840,14 @@ ProgramNode(0...1237)(
        (610...613),
        (613...614),
        ArgumentsNode(615...624)(
-         [SymbolNode(615...617)((615...616), (616...617), nil, "a"),
-          KeywordHashNode(619...624)(
-            [AssocNode(619...624)(
-               SymbolNode(619...621)(nil, (619...620), (620...621), "b"),
-               SymbolNode(622...624)((622...623), (623...624), nil, "c"),
-               nil
-             )]
-          )]
+         [SymbolNode(615...617)((615...616), (616...617), nil, "a")],
+         KeywordHashNode(619...624)(
+           [AssocNode(619...624)(
+              SymbolNode(619...621)(nil, (619...620), (620...621), "b"),
+              SymbolNode(622...624)((622...623), (623...624), nil, "c"),
+              nil
+            )]
+         )
        ),
        (626...627),
        nil,
@@ -841,7 +863,8 @@ ProgramNode(0...1237)(
          [BlockArgumentNode(633...640)(
             SymbolNode(634...640)((634...635), (635...640), nil, "block"),
             (633...634)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -853,23 +876,23 @@ ProgramNode(0...1237)(
        nil,
        (642...645),
        nil,
-       ArgumentsNode(646...672)(
-         [KeywordHashNode(646...663)(
-            [AssocNode(646...653)(
-               SymbolNode(646...648)(nil, (646...647), (647...648), "a"),
-               TrueNode(649...653)(),
-               nil
-             ),
-             AssocNode(655...663)(
-               SymbolNode(655...657)(nil, (655...656), (656...657), "b"),
-               FalseNode(658...663)(),
-               nil
-             )]
-          ),
-          BlockArgumentNode(665...672)(
+       ArgumentsNode(665...672)(
+         [BlockArgumentNode(665...672)(
             SymbolNode(666...672)((666...667), (667...672), nil, "block"),
             (665...666)
-          )]
+          )],
+         KeywordHashNode(646...663)(
+           [AssocNode(646...653)(
+              SymbolNode(646...648)(nil, (646...647), (647...648), "a"),
+              TrueNode(649...653)(),
+              nil
+            ),
+            AssocNode(655...663)(
+              SymbolNode(655...657)(nil, (655...656), (656...657), "b"),
+              FalseNode(658...663)(),
+              nil
+            )]
+         )
        ),
        nil,
        nil,
@@ -882,14 +905,14 @@ ProgramNode(0...1237)(
        (674...683),
        nil,
        ArgumentsNode(684...695)(
-         [IntegerNode(684...685)(),
-          KeywordHashNode(687...695)(
-            [AssocNode(687...695)(
-               SymbolNode(687...693)(nil, (687...692), (692...693), "kwarg"),
-               IntegerNode(694...695)(),
-               nil
-             )]
-          )]
+         [IntegerNode(684...685)()],
+         KeywordHashNode(687...695)(
+           [AssocNode(687...695)(
+              SymbolNode(687...693)(nil, (687...692), (692...693), "kwarg"),
+              IntegerNode(694...695)(),
+              nil
+            )]
+         )
        ),
        nil,
        nil,
@@ -901,7 +924,7 @@ ProgramNode(0...1237)(
        (703...704),
        (704...711),
        (711...712),
-       ArgumentsNode(712...714)([IntegerNode(712...714)()]),
+       ArgumentsNode(712...714)([IntegerNode(712...714)()], nil),
        (714...715),
        nil,
        0,
@@ -955,7 +978,8 @@ ProgramNode(0...1237)(
        (751...752),
        nil,
        ArgumentsNode(753...757)(
-         [SymbolNode(753...757)((753...754), (754...757), nil, "foo")]
+         [SymbolNode(753...757)((753...754), (754...757), nil, "foo")],
+         nil
        ),
        nil,
        nil,
@@ -972,7 +996,8 @@ ProgramNode(0...1237)(
        (765...766),
        (766...767),
        ArgumentsNode(767...771)(
-         [SymbolNode(767...771)((767...768), (768...771), nil, "foo")]
+         [SymbolNode(767...771)((767...768), (768...771), nil, "foo")],
+         nil
        ),
        (771...772),
        nil,
@@ -989,7 +1014,8 @@ ProgramNode(0...1237)(
        (780...781),
        (781...782),
        ArgumentsNode(782...786)(
-         [SymbolNode(782...786)((782...783), (783...786), nil, "foo")]
+         [SymbolNode(782...786)((782...783), (783...786), nil, "foo")],
+         nil
        ),
        (786...787),
        BlockNode(788...791)([], nil, nil, (788...789), (790...791)),
@@ -1002,18 +1028,19 @@ ProgramNode(0...1237)(
        (793...796),
        (796...797),
        ArgumentsNode(797...804)(
-         [KeywordHashNode(797...804)(
-            [AssocNode(797...804)(
-               SymbolNode(797...801)(
-                 (797...798),
-                 (798...799),
-                 (799...801),
-                 "a"
-               ),
-               IntegerNode(802...804)(),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(797...804)(
+           [AssocNode(797...804)(
+              SymbolNode(797...801)(
+                (797...798),
+                (798...799),
+                (799...801),
+                "a"
+              ),
+              IntegerNode(802...804)(),
+              nil
+            )]
+         )
        ),
        (804...805),
        nil,
@@ -1026,42 +1053,38 @@ ProgramNode(0...1237)(
        (807...810),
        nil,
        ArgumentsNode(811...835)(
-         [KeywordHashNode(811...835)(
-            [AssocNode(811...835)(
-               SymbolNode(811...815)(nil, (811...814), (814...815), "bar"),
-               HashNode(816...835)(
-                 (816...817),
-                 [AssocNode(818...833)(
-                    SymbolNode(818...822)(
-                      nil,
-                      (818...821),
-                      (821...822),
-                      "baz"
-                    ),
-                    CallNode(823...833)(
-                      nil,
-                      nil,
-                      (823...826),
-                      nil,
-                      nil,
-                      nil,
-                      BlockNode(827...833)(
-                        [],
-                        nil,
-                        nil,
-                        (827...829),
-                        (830...833)
-                      ),
-                      0,
-                      "qux"
-                    ),
-                    nil
-                  )],
-                 (834...835)
-               ),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(811...835)(
+           [AssocNode(811...835)(
+              SymbolNode(811...815)(nil, (811...814), (814...815), "bar"),
+              HashNode(816...835)(
+                (816...817),
+                [AssocNode(818...833)(
+                   SymbolNode(818...822)(nil, (818...821), (821...822), "baz"),
+                   CallNode(823...833)(
+                     nil,
+                     nil,
+                     (823...826),
+                     nil,
+                     nil,
+                     nil,
+                     BlockNode(827...833)(
+                       [],
+                       nil,
+                       nil,
+                       (827...829),
+                       (830...833)
+                     ),
+                     0,
+                     "qux"
+                   ),
+                   nil
+                 )],
+                (834...835)
+              ),
+              nil
+            )]
+         )
        ),
        nil,
        nil,
@@ -1074,36 +1097,37 @@ ProgramNode(0...1237)(
        (837...840),
        nil,
        ArgumentsNode(841...861)(
-         [KeywordHashNode(841...861)(
-            [AssocNode(841...861)(
-               SymbolNode(841...845)(nil, (841...844), (844...845), "bar"),
-               HashNode(846...861)(
-                 (846...847),
-                 [AssocSplatNode(848...859)(
-                    CallNode(850...859)(
-                      nil,
-                      nil,
-                      (850...852),
-                      nil,
-                      nil,
-                      nil,
-                      BlockNode(853...859)(
-                        [],
-                        nil,
-                        nil,
-                        (853...855),
-                        (856...859)
-                      ),
-                      0,
-                      "kw"
-                    ),
-                    (848...850)
-                  )],
-                 (860...861)
-               ),
-               nil
-             )]
-          )]
+         [],
+         KeywordHashNode(841...861)(
+           [AssocNode(841...861)(
+              SymbolNode(841...845)(nil, (841...844), (844...845), "bar"),
+              HashNode(846...861)(
+                (846...847),
+                [AssocSplatNode(848...859)(
+                   CallNode(850...859)(
+                     nil,
+                     nil,
+                     (850...852),
+                     nil,
+                     nil,
+                     nil,
+                     BlockNode(853...859)(
+                       [],
+                       nil,
+                       nil,
+                       (853...855),
+                       (856...859)
+                     ),
+                     0,
+                     "kw"
+                   ),
+                   (848...850)
+                 )],
+                (860...861)
+              ),
+              nil
+            )]
+         )
        ),
        nil,
        nil,
@@ -1159,7 +1183,8 @@ ProgramNode(0...1237)(
                (890...891)
              )],
             (891...892)
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(893...899)([], nil, nil, (893...895), (896...899)),
@@ -1192,7 +1217,8 @@ ProgramNode(0...1237)(
                )]
             ),
             (926...929)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1223,7 +1249,8 @@ ProgramNode(0...1237)(
                )]
             ),
             (957...960)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1250,7 +1277,8 @@ ProgramNode(0...1237)(
              )],
             (966...967),
             (977...978)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1288,7 +1316,8 @@ ProgramNode(0...1237)(
             nil,
             nil,
             (1005...1008)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1351,7 +1380,8 @@ ProgramNode(0...1237)(
             ),
             nil,
             (1058...1061)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1447,7 +1477,8 @@ ProgramNode(0...1237)(
                )]
             ),
             0
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1470,7 +1501,8 @@ ProgramNode(0...1237)(
             BlockNode(1162...1164)([], nil, nil, (1162...1163), (1163...1164)),
             0,
             "A"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1514,7 +1546,8 @@ ProgramNode(0...1237)(
             ),
             0,
             "A"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1547,7 +1580,8 @@ ProgramNode(0...1237)(
             BlockNode(1193...1195)([], nil, nil, (1193...1194), (1194...1195)),
             0,
             "A"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1580,7 +1614,8 @@ ProgramNode(0...1237)(
             BlockNode(1206...1208)([], nil, nil, (1206...1207), (1207...1208)),
             0,
             "A"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -1609,7 +1644,8 @@ ProgramNode(0...1237)(
                     ),
                     (1219...1220),
                     (1223...1224)
-                  )]
+                  )],
+                 nil
                ),
                nil,
                nil,

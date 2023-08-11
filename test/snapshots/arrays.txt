@@ -23,7 +23,8 @@ ProgramNode(0...511)(
              IntegerNode(28...29)()],
             nil,
             nil
-          )]
+          )],
+         nil
        ),
        (18...19),
        nil,
@@ -122,7 +123,8 @@ ProgramNode(0...511)(
               nil,
               2,
               "bar"
-            )]
+            )],
+           nil
          ),
          (121...122),
          nil,
@@ -154,7 +156,8 @@ ProgramNode(0...511)(
             nil,
             2,
             "qux"
-          )]
+          )],
+         nil
        ),
        (126...127),
        nil,
@@ -188,7 +191,8 @@ ProgramNode(0...511)(
               nil,
               2,
               "bar"
-            )]
+            )],
+           nil
          ),
          (142...143),
          nil,
@@ -209,7 +213,8 @@ ProgramNode(0...511)(
             nil,
             2,
             "baz"
-          )]
+          )],
+         nil
        ),
        (147...148),
        nil,
@@ -254,7 +259,8 @@ ProgramNode(0...511)(
             nil,
             2,
             "baz"
-          )]
+          )],
+         nil
        ),
        (167...168),
        nil,
@@ -309,7 +315,8 @@ ProgramNode(0...511)(
             nil,
             2,
             "qux"
-          )]
+          )],
+         nil
        ),
        (182...183),
        nil,
@@ -332,7 +339,7 @@ ProgramNode(0...511)(
           nil,
           (194...197),
           (194...195),
-          ArgumentsNode(195...196)([IntegerNode(195...196)()]),
+          ArgumentsNode(195...196)([IntegerNode(195...196)()], nil),
           (196...197),
           nil,
           0,
@@ -353,7 +360,7 @@ ProgramNode(0...511)(
           nil,
           (202...205),
           (202...203),
-          ArgumentsNode(203...204)([IntegerNode(203...204)()]),
+          ArgumentsNode(203...204)([IntegerNode(203...204)()], nil),
           (204...205),
           nil,
           0,
@@ -421,13 +428,15 @@ ProgramNode(0...511)(
                  nil,
                  2,
                  "qux"
-               )]
+               )],
+              nil
             ),
             (225...226),
             nil,
             0,
             "[]="
-          )]
+          )],
+         nil
        ),
        (232...233),
        nil,
@@ -460,7 +469,8 @@ ProgramNode(0...511)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        (242...243),
        nil,
@@ -504,7 +514,8 @@ ProgramNode(0...511)(
             nil,
             2,
             "baz"
-          )]
+          )],
+         nil
        ),
        (252...253),
        nil,

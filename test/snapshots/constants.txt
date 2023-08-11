@@ -36,7 +36,7 @@ ProgramNode(0...715)(
        nil,
        (43...46),
        nil,
-       ArgumentsNode(47...48)([IntegerNode(47...48)()]),
+       ArgumentsNode(47...48)([IntegerNode(47...48)()], nil),
        nil,
        nil,
        0,
@@ -728,7 +728,8 @@ ProgramNode(0...715)(
             nil,
             2,
             "i"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -751,7 +752,8 @@ ProgramNode(0...715)(
             nil,
             2,
             "w"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -774,7 +776,8 @@ ProgramNode(0...715)(
             nil,
             2,
             "x"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -786,7 +789,7 @@ ProgramNode(0...715)(
        (637...639),
        (639...640),
        nil,
-       ArgumentsNode(640...641)([ConstantReadNode(640...641)()]),
+       ArgumentsNode(640...641)([ConstantReadNode(640...641)()], nil),
        nil,
        nil,
        0,
@@ -797,7 +800,7 @@ ProgramNode(0...715)(
        (644...646),
        (646...647),
        nil,
-       ArgumentsNode(647...648)([ConstantReadNode(647...648)()]),
+       ArgumentsNode(647...648)([ConstantReadNode(647...648)()], nil),
        nil,
        nil,
        0,

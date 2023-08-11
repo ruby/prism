@@ -198,7 +198,8 @@ ProgramNode(0...719)(
             [SplatNode(231...235)(
                (231...232),
                LocalVariableReadNode(232...235)(:foo, 0)
-             )]
+             )],
+            nil
           ),
           (235...236),
           nil,
@@ -210,7 +211,7 @@ ProgramNode(0...719)(
           nil,
           (239...242),
           (239...240),
-          ArgumentsNode(240...241)([IntegerNode(240...241)()]),
+          ArgumentsNode(240...241)([IntegerNode(240...241)()], nil),
           (241...242),
           nil,
           0,
@@ -231,7 +232,7 @@ ProgramNode(0...719)(
           nil,
           (255...258),
           (255...256),
-          ArgumentsNode(256...257)([IntegerNode(256...257)()]),
+          ArgumentsNode(256...257)([IntegerNode(256...257)()], nil),
           (257...258),
           nil,
           0,
@@ -242,7 +243,7 @@ ProgramNode(0...719)(
           nil,
           (261...264),
           (261...262),
-          ArgumentsNode(262...263)([IntegerNode(262...263)()]),
+          ArgumentsNode(262...263)([IntegerNode(262...263)()], nil),
           (263...264),
           nil,
           0,
@@ -385,7 +386,8 @@ ProgramNode(0...719)(
        (400...403),
        (403...404),
        ArgumentsNode(404...408)(
-         [IntegerNode(404...405)(), IntegerNode(407...408)()]
+         [IntegerNode(404...405)(), IntegerNode(407...408)()],
+         nil
        ),
        (408...409),
        nil,
@@ -397,7 +399,7 @@ ProgramNode(0...719)(
        (413...414),
        (414...417),
        nil,
-       ArgumentsNode(417...421)([TrueNode(417...421)()]),
+       ArgumentsNode(417...421)([TrueNode(417...421)()], nil),
        nil,
        nil,
        0,
@@ -433,7 +435,8 @@ ProgramNode(0...719)(
             nil,
             2,
             "value"
-          )]
+          )],
+         nil
        ),
        (432...433),
        nil,
@@ -462,7 +465,8 @@ ProgramNode(0...719)(
             nil,
             2,
             "value"
-          )]
+          )],
+         nil
        ),
        (450...451),
        nil,
@@ -474,7 +478,7 @@ ProgramNode(0...719)(
        nil,
        (463...465),
        (463...464),
-       ArgumentsNode(468...469)([IntegerNode(468...469)()]),
+       ArgumentsNode(468...469)([IntegerNode(468...469)()], nil),
        (464...465),
        nil,
        0,
@@ -498,7 +502,8 @@ ProgramNode(0...719)(
             nil,
             2,
             "value"
-          )]
+          )],
+         nil
        ),
        (478...479),
        nil,
@@ -532,7 +537,8 @@ ProgramNode(0...719)(
             nil,
             2,
             "value"
-          )]
+          )],
+         nil
        ),
        (497...498),
        nil,
@@ -552,7 +558,8 @@ ProgramNode(0...719)(
        (517...518),
        nil,
        ArgumentsNode(519...522)(
-         [StringNode(519...522)((519...521), (521...521), (521...522), "")]
+         [StringNode(519...522)((519...521), (521...521), (521...522), "")],
+         nil
        ),
        nil,
        nil,
@@ -576,7 +583,8 @@ ProgramNode(0...719)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        (528...529),
        nil,
@@ -590,7 +598,8 @@ ProgramNode(0...719)(
          (537...542),
          (537...538),
          ArgumentsNode(538...541)(
-           [StringNode(538...541)((538...540), (540...540), (540...541), "")]
+           [StringNode(538...541)((538...540), (540...540), (540...541), "")],
+           nil
          ),
          (541...542),
          nil,
@@ -640,7 +649,8 @@ ProgramNode(0...719)(
              EmbeddedStatementsNode(608...611)((608...610), nil, (610...611)),
              StringNode(611...612)(nil, (611...612), nil, "\n")],
             (612...620)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -659,7 +669,8 @@ ProgramNode(0...719)(
              EmbeddedStatementsNode(639...642)((639...641), nil, (641...642)),
              StringNode(642...643)(nil, (642...643), nil, "\n")],
             (643...651)
-          )]
+          )],
+         nil
        ),
        (622...623),
        nil,
@@ -683,7 +694,8 @@ ProgramNode(0...719)(
                ),
                StringNode(678...679)(nil, (678...679), nil, "\n")],
               (679...687)
-            )]
+            )],
+           nil
          ),
          (663...664),
          nil,

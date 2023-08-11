@@ -6,7 +6,7 @@ ProgramNode(0...16)(
        (1...2),
        (2...4),
        (4...5),
-       ArgumentsNode(5...15)([TrueNode(5...9)(), TrueNode(11...15)()]),
+       ArgumentsNode(5...15)([TrueNode(5...9)(), TrueNode(11...15)()], nil),
        (15...16),
        nil,
        0,

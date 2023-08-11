@@ -657,7 +657,8 @@ yp_arguments_node_create(yp_parser_t *parser) {
             .type = YP_NODE_ARGUMENTS_NODE,
             .location = YP_LOCATION_NULL_VALUE(parser)
         },
-        .arguments = YP_EMPTY_NODE_LIST
+        .arguments = YP_EMPTY_NODE_LIST,
+        .keywords = NULL
     };
 
     return node;
@@ -678,6 +679,19 @@ yp_arguments_node_arguments_append(yp_arguments_node_t *node, yp_node_t *argumen
 
     node->base.location.end = argument->location.end;
     yp_node_list_append(&node->arguments, argument);
+}
+
+// Set the keywords of an arguments node.
+static void
+yp_arguments_node_keywords_set(yp_arguments_node_t *node, yp_keyword_hash_node_t *keywords) {
+    assert(node->keywords == NULL);
+
+    if (yp_arguments_node_size(node) == 0) {
+        node->base.location.start = keywords->base.location.start;
+    }
+
+    node->base.location.end = keywords->base.location.end;
+    node->keywords = keywords;
 }
 
 // Allocate and initialize a new ArrayNode node.
@@ -8111,7 +8125,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
         return;
     }
 
-    bool parsed_bare_hash = false;
+    bool parsed_keyword_hash = false;
     bool parsed_block_argument = false;
 
     while (!match_type_p(parser, YP_TOKEN_EOF)) {
@@ -8124,18 +8138,28 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
         switch (parser->current.type) {
             case YP_TOKEN_USTAR_STAR:
             case YP_TOKEN_LABEL: {
-                if (parsed_bare_hash) {
+                if (parsed_keyword_hash) {
                     yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
                 }
 
-                yp_keyword_hash_node_t *hash = yp_keyword_hash_node_create(parser);
-                argument = (yp_node_t *)hash;
+                yp_keyword_hash_node_t *keyword_hash = yp_keyword_hash_node_create(parser);
+                argument = (yp_node_t *) keyword_hash;
 
                 if (!match_any_type_p(parser, 7, terminator, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON, YP_TOKEN_EOF, YP_TOKEN_BRACE_RIGHT, YP_TOKEN_KEYWORD_DO, YP_TOKEN_PARENTHESIS_RIGHT)) {
-                    parse_assocs(parser, (yp_node_t *) hash);
+                    parse_assocs(parser, argument);
                 }
 
-                parsed_bare_hash = true;
+                if (parsed_keyword_hash) {
+                    // This can occur if you have very incorrect syntax. We
+                    // don't want to set the keywords because they've already
+                    // been set. So instead we'll add them onto regular set of
+                    // arguments.
+                    yp_arguments_node_arguments_append(arguments->arguments, argument);
+                } else {
+                    yp_arguments_node_keywords_set(arguments->arguments, keyword_hash);
+                }
+
+                parsed_keyword_hash = true;
                 break;
             }
             case YP_TOKEN_UAMPERSAND: {
@@ -8149,7 +8173,9 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
                     yp_diagnostic_list_append(&parser->error_list, operator.start, operator.end, "unexpected & when parent method is not forwarding.");
                 }
 
-                argument = (yp_node_t *)yp_block_argument_node_create(parser, &operator, expression);
+                argument = (yp_node_t *) yp_block_argument_node_create(parser, &operator, expression);
+                yp_arguments_node_arguments_append(arguments->arguments, argument);
+
                 parsed_block_argument = true;
                 arguments->implicit_block = true;
                 break;
@@ -8167,13 +8193,14 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
                 } else {
                     yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in argument.");
 
-                    if (parsed_bare_hash) {
+                    if (parsed_keyword_hash) {
                         yp_diagnostic_list_append(&parser->error_list, operator.start, expression->location.end, "Unexpected splat argument after double splat.");
                     }
 
                     argument = (yp_node_t *) yp_splat_node_create(parser, &operator, expression);
                 }
 
+                yp_arguments_node_arguments_append(arguments->arguments, argument);
                 break;
             }
             case YP_TOKEN_UDOT_DOT_DOT: {
@@ -8191,7 +8218,8 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
                             yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "unexpected ... when parent method is not forwarding.");
                         }
 
-                        argument = (yp_node_t *)yp_forwarding_arguments_node_create(parser, &parser->previous);
+                        argument = (yp_node_t *) yp_forwarding_arguments_node_create(parser, &parser->previous);
+                        yp_arguments_node_arguments_append(arguments->arguments, argument);
                         break;
                     }
                 }
@@ -8203,7 +8231,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
                 }
 
                 if (yp_symbol_node_label_p(argument) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-                    if (parsed_bare_hash) {
+                    if (parsed_keyword_hash) {
                         yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected bare hash argument.");
                     }
 
@@ -8214,31 +8242,41 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
                         operator = not_provided(parser);
                     }
 
-                    yp_keyword_hash_node_t *bare_hash = yp_keyword_hash_node_create(parser);
-
                     // Finish parsing the one we are part way through
                     yp_node_t *value = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected a value in the hash literal.");
+                    yp_node_t *assoc = (yp_node_t *) yp_assoc_node_create(parser, argument, &operator, value);
 
-                    argument = (yp_node_t *) yp_assoc_node_create(parser, argument, &operator, value);
-                    yp_keyword_hash_node_elements_append(bare_hash, argument);
-                    argument = (yp_node_t *) bare_hash;
+                    yp_keyword_hash_node_t *keyword_hash = yp_keyword_hash_node_create(parser);
+                    argument = (yp_node_t *) keyword_hash;
+
+                    yp_keyword_hash_node_elements_append(keyword_hash, assoc);
 
                     // Then parse more if we have a comma
                     if (accept(parser, YP_TOKEN_COMMA) && (
                         token_begins_expression_p(parser->current.type) ||
                         match_any_type_p(parser, 2, YP_TOKEN_USTAR_STAR, YP_TOKEN_LABEL)
                     )) {
-                        parse_assocs(parser, (yp_node_t *) bare_hash);
+                        parse_assocs(parser, argument);
                     }
 
-                    parsed_bare_hash = true;
+                    if (parsed_keyword_hash) {
+                        // This can occur if you have very incorrect syntax. We
+                        // don't want to set the keywords because they've already
+                        // been set. So instead we'll add them onto regular set of
+                        // arguments.
+                        yp_arguments_node_arguments_append(arguments->arguments, argument);
+                    } else {
+                        yp_arguments_node_keywords_set(arguments->arguments, keyword_hash);
+                    }
+
+                    parsed_keyword_hash = true;
+                } else {
+                    yp_arguments_node_arguments_append(arguments->arguments, argument);
                 }
 
                 break;
             }
         }
-
-        yp_arguments_node_arguments_append(arguments->arguments, argument);
 
         // If parsing the argument failed, we need to stop parsing arguments.
         if (YP_NODE_TYPE_P(argument, YP_NODE_MISSING_NODE) || parser->recovering) break;
@@ -8248,7 +8286,7 @@ parse_arguments(yp_parser_t *parser, yp_arguments_t *arguments, bool accepts_for
         // because it is not functioning as a statement terminator.
         if (terminator != YP_TOKEN_EOF) accept(parser, YP_TOKEN_NEWLINE);
 
-        if (parser->previous.type == YP_TOKEN_COMMA && parsed_bare_hash) {
+        if (parser->previous.type == YP_TOKEN_COMMA && parsed_keyword_hash) {
             // If we previously were on a comma and we just parsed a bare hash, then
             // we want to continue parsing arguments. This is because the comma was
             // grabbed up by the hash parser.
@@ -10277,7 +10315,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             yp_array_node_t *array = yp_array_node_create(parser, &parser->previous);
             yp_accepts_block_stack_push(parser, true);
-            bool parsed_bare_hash = false;
+            bool parsed_keyword_hash = false;
 
             while (!match_any_type_p(parser, 2, YP_TOKEN_BRACKET_RIGHT, YP_TOKEN_EOF)) {
                 // Handle the case where we don't have a comma and we have a newline followed by a right bracket.
@@ -10301,7 +10339,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                     yp_node_t *expression = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an expression after '*' in the array.");
                     element = (yp_node_t *) yp_splat_node_create(parser, &operator, expression);
                 } else if (match_any_type_p(parser, 2, YP_TOKEN_LABEL, YP_TOKEN_USTAR_STAR)) {
-                    if (parsed_bare_hash) {
+                    if (parsed_keyword_hash) {
                         yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Unexpected bare hash.");
                     }
 
@@ -10312,12 +10350,12 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                         parse_assocs(parser, (yp_node_t *) hash);
                     }
 
-                    parsed_bare_hash = true;
+                    parsed_keyword_hash = true;
                 } else {
                     element = parse_expression(parser, YP_BINDING_POWER_DEFINED, "Expected an element for the array.");
 
                     if (yp_symbol_node_label_p(element) || accept(parser, YP_TOKEN_EQUAL_GREATER)) {
-                        if (parsed_bare_hash) {
+                        if (parsed_keyword_hash) {
                             yp_diagnostic_list_append(&parser->error_list, parser->previous.start, parser->previous.end, "Unexpected bare hash.");
                         }
 
@@ -10339,7 +10377,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                             parse_assocs(parser, (yp_node_t *) hash);
                         }
 
-                        parsed_bare_hash = true;
+                        parsed_keyword_hash = true;
                     }
                 }
 

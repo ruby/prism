@@ -6,7 +6,10 @@ ProgramNode(0...23)(
        nil,
        (0...3),
        nil,
-       ArgumentsNode(4...6)([ParenthesesNode(4...6)(nil, (4...5), (5...6))]),
+       ArgumentsNode(4...6)(
+         [ParenthesesNode(4...6)(nil, (4...5), (5...6))],
+         nil
+       ),
        nil,
        BlockNode(7...23)(
          [],
@@ -28,7 +31,8 @@ ProgramNode(0...23)(
                    nil,
                    2,
                    "a"
-                 )]
+                 )],
+                nil
               ),
               (12...13),
               BlockNode(14...21)([], nil, nil, (14...16), (18...21)),

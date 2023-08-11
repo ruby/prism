@@ -7,7 +7,7 @@ ProgramNode(0...173)(
          nil,
          (0...4),
          nil,
-         ArgumentsNode(5...6)([IntegerNode(5...6)()]),
+         ArgumentsNode(5...6)([IntegerNode(5...6)()], nil),
          nil,
          BlockNode(7...13)([], nil, nil, (7...9), (10...13)),
          0,
@@ -17,7 +17,18 @@ ProgramNode(0...173)(
        (14...17),
        nil,
        ArgumentsNode(18...21)(
-         [CallNode(18...21)(nil, nil, (18...21), nil, nil, nil, nil, 2, "bar")]
+         [CallNode(18...21)(
+            nil,
+            nil,
+            (18...21),
+            nil,
+            nil,
+            nil,
+            nil,
+            2,
+            "bar"
+          )],
+         nil
        ),
        nil,
        nil,
@@ -30,7 +41,7 @@ ProgramNode(0...173)(
          nil,
          (23...27),
          nil,
-         ArgumentsNode(28...29)([IntegerNode(28...29)()]),
+         ArgumentsNode(28...29)([IntegerNode(28...29)()], nil),
          nil,
          BlockNode(30...36)([], nil, nil, (30...32), (33...36)),
          0,
@@ -40,7 +51,18 @@ ProgramNode(0...173)(
        (37...40),
        nil,
        ArgumentsNode(41...44)(
-         [CallNode(41...44)(nil, nil, (41...44), nil, nil, nil, nil, 2, "bar")]
+         [CallNode(41...44)(
+            nil,
+            nil,
+            (41...44),
+            nil,
+            nil,
+            nil,
+            nil,
+            2,
+            "bar"
+          )],
+         nil
        ),
        nil,
        BlockNode(45...51)([], nil, nil, (45...47), (48...51)),
@@ -53,7 +75,7 @@ ProgramNode(0...173)(
          nil,
          (53...57),
          nil,
-         ArgumentsNode(58...59)([IntegerNode(58...59)()]),
+         ArgumentsNode(58...59)([IntegerNode(58...59)()], nil),
          nil,
          BlockNode(60...66)([], nil, nil, (60...62), (63...66)),
          0,
@@ -74,7 +96,7 @@ ProgramNode(0...173)(
          nil,
          (75...79),
          nil,
-         ArgumentsNode(80...81)([IntegerNode(80...81)()]),
+         ArgumentsNode(80...81)([IntegerNode(80...81)()], nil),
          nil,
          BlockNode(82...88)([], nil, nil, (82...84), (85...88)),
          0,
@@ -84,7 +106,18 @@ ProgramNode(0...173)(
        (89...92),
        (92...93),
        ArgumentsNode(93...96)(
-         [CallNode(93...96)(nil, nil, (93...96), nil, nil, nil, nil, 2, "bar")]
+         [CallNode(93...96)(
+            nil,
+            nil,
+            (93...96),
+            nil,
+            nil,
+            nil,
+            nil,
+            2,
+            "bar"
+          )],
+         nil
        ),
        (96...97),
        nil,
@@ -97,7 +130,7 @@ ProgramNode(0...173)(
          nil,
          (99...103),
          nil,
-         ArgumentsNode(104...105)([IntegerNode(104...105)()]),
+         ArgumentsNode(104...105)([IntegerNode(104...105)()], nil),
          nil,
          BlockNode(106...112)([], nil, nil, (106...108), (109...112)),
          0,
@@ -117,7 +150,8 @@ ProgramNode(0...173)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        (120...121),
        BlockNode(122...124)([], nil, nil, (122...123), (123...124)),
@@ -130,7 +164,7 @@ ProgramNode(0...173)(
          nil,
          (126...130),
          nil,
-         ArgumentsNode(131...132)([IntegerNode(131...132)()]),
+         ArgumentsNode(131...132)([IntegerNode(131...132)()], nil),
          nil,
          BlockNode(133...139)([], nil, nil, (133...135), (136...139)),
          0,
@@ -150,7 +184,8 @@ ProgramNode(0...173)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -163,7 +198,7 @@ ProgramNode(0...173)(
          nil,
          (150...154),
          nil,
-         ArgumentsNode(155...156)([IntegerNode(155...156)()]),
+         ArgumentsNode(155...156)([IntegerNode(155...156)()], nil),
          nil,
          BlockNode(157...163)([], nil, nil, (157...159), (160...163)),
          0,
@@ -183,7 +218,8 @@ ProgramNode(0...173)(
             nil,
             2,
             "bar"
-          )]
+          )],
+         nil
        ),
        (172...173),
        nil,

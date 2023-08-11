@@ -83,7 +83,7 @@ class ErrorsTest < Test::Unit::TestCase
           nil,
           Location(),
           nil,
-          ArgumentsNode([MissingNode()]),
+          ArgumentsNode([MissingNode()], nil),
           nil,
           nil,
           0,
@@ -294,10 +294,10 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location(),
       Location(),
-      ArgumentsNode([
-        KeywordHashNode([AssocSplatNode(expression("kwargs"), Location())]),
-        SplatNode(Location(), expression("args"))
-      ]),
+      ArgumentsNode(
+        [SplatNode(Location(), expression("args"))],
+        KeywordHashNode([AssocSplatNode(expression("kwargs"), Location())])
+      ),
       Location(),
       nil,
       0,
@@ -318,7 +318,7 @@ class ErrorsTest < Test::Unit::TestCase
       ArgumentsNode([
         BlockArgumentNode(expression("block"), Location()),
         expression("foo")
-      ]),
+      ], nil),
       Location(),
       nil,
       0,
@@ -344,16 +344,16 @@ class ErrorsTest < Test::Unit::TestCase
       nil,
       Location(),
       Location(),
-      ArgumentsNode([
+      ArgumentsNode(
+        [SplatNode(Location(), expression("args"))],
         KeywordHashNode(
           [AssocNode(
             SymbolNode(nil, Location(), Location(), "foo"),
             expression("bar"),
             nil
           )]
-        ),
-        SplatNode(Location(), expression("args"))
-      ]),
+        )
+      ),
       Location(),
       nil,
       0,

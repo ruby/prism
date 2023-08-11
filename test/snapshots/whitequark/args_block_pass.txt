@@ -10,7 +10,8 @@ ProgramNode(0...9)(
          [BlockArgumentNode(4...8)(
             CallNode(5...8)(nil, nil, (5...8), nil, nil, nil, nil, 2, "bar"),
             (4...5)
-          )]
+          )],
+         nil
        ),
        (8...9),
        nil,

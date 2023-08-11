@@ -18,19 +18,21 @@ ProgramNode(0...168)(
             StatementsNode(24...25)([IntegerNode(24...25)()]),
             (23...24),
             (25...26)
-          )]
+          )],
+         nil
        ),
        (7...12)
      ),
      BreakNode(28...35)(
-       ArgumentsNode(34...35)([IntegerNode(34...35)()]),
+       ArgumentsNode(34...35)([IntegerNode(34...35)()], nil),
        (28...33)
      ),
      BreakNode(37...50)(
        ArgumentsNode(43...50)(
          [IntegerNode(43...44)(),
           IntegerNode(46...47)(),
-          IntegerNode(49...50)()]
+          IntegerNode(49...50)()],
+         nil
        ),
        (37...42)
      ),
@@ -38,7 +40,8 @@ ProgramNode(0...168)(
        ArgumentsNode(58...65)(
          [IntegerNode(58...59)(),
           IntegerNode(61...62)(),
-          IntegerNode(64...65)()]
+          IntegerNode(64...65)()],
+         nil
        ),
        (52...57)
      ),
@@ -50,7 +53,8 @@ ProgramNode(0...168)(
              IntegerNode(80...81)()],
             (73...74),
             (81...82)
-          )]
+          )],
+         nil
        ),
        (67...72)
      ),
@@ -62,13 +66,15 @@ ProgramNode(0...168)(
             ),
             (89...90),
             (99...100)
-          )]
+          )],
+         nil
        ),
        (84...89)
      ),
      BreakNode(102...109)(
        ArgumentsNode(107...109)(
-         [ParenthesesNode(107...109)(nil, (107...108), (108...109))]
+         [ParenthesesNode(107...109)(nil, (107...108), (108...109))],
+         nil
        ),
        (102...107)
      ),
@@ -78,7 +84,8 @@ ProgramNode(0...168)(
             StatementsNode(117...118)([IntegerNode(117...118)()]),
             (116...117),
             (118...119)
-          )]
+          )],
+         nil
        ),
        (111...116)
      ),
@@ -95,7 +102,7 @@ ProgramNode(0...168)(
            nil,
            StatementsNode(127...135)(
              [BreakNode(127...135)(
-                ArgumentsNode(133...135)([IntegerNode(133...135)()]),
+                ArgumentsNode(133...135)([IntegerNode(133...135)()], nil),
                 (127...132)
               )]
            ),
@@ -108,7 +115,7 @@ ProgramNode(0...168)(
        nil,
        (138...140),
        nil,
-       ArgumentsNode(141...143)([IntegerNode(141...143)()]),
+       ArgumentsNode(141...143)([IntegerNode(141...143)()], nil),
        nil,
        nil,
        0,
@@ -148,7 +155,7 @@ ProgramNode(0...168)(
        nil,
        (163...165),
        nil,
-       ArgumentsNode(166...168)([IntegerNode(166...168)()]),
+       ArgumentsNode(166...168)([IntegerNode(166...168)()], nil),
        nil,
        nil,
        0,

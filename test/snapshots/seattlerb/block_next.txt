@@ -19,7 +19,8 @@ ProgramNode(0...25)(
                  nil,
                  2,
                  "arg"
-               )]
+               )],
+              nil
             ),
             nil,
             BlockNode(13...25)(
@@ -44,7 +45,8 @@ ProgramNode(0...25)(
             ),
             0,
             "foo"
-          )]
+          )],
+         nil
        ),
        (0...4)
      )]

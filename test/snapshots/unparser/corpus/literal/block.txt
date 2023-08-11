@@ -138,7 +138,7 @@ ProgramNode(0...737)(
        nil,
        (64...67),
        (67...68),
-       ArgumentsNode(68...69)([IntegerNode(68...69)()]),
+       ArgumentsNode(68...69)([IntegerNode(68...69)()], nil),
        (69...70),
        BlockNode(71...80)(
          [],
@@ -1268,7 +1268,8 @@ ProgramNode(0...737)(
                    nil,
                    2,
                    "_2"
-                 )]
+                 )],
+                nil
               ),
               nil,
               nil,

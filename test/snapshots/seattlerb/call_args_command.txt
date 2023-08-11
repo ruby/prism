@@ -12,12 +12,13 @@ ProgramNode(0...9)(
             (5...6),
             (6...7),
             nil,
-            ArgumentsNode(8...9)([IntegerNode(8...9)()]),
+            ArgumentsNode(8...9)([IntegerNode(8...9)()], nil),
             nil,
             nil,
             0,
             "d"
-          )]
+          )],
+         nil
        ),
        nil,
        nil,

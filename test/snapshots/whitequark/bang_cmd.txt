@@ -8,7 +8,8 @@ ProgramNode(0...6)(
          (1...2),
          nil,
          ArgumentsNode(3...6)(
-           [CallNode(3...6)(nil, nil, (3...6), nil, nil, nil, nil, 2, "foo")]
+           [CallNode(3...6)(nil, nil, (3...6), nil, nil, nil, nil, 2, "foo")],
+           nil
          ),
          nil,
          nil,

@@ -19,7 +19,8 @@ ProgramNode(0...28)(
             nil,
             ArgumentsNode(19...23)(
               [LocalVariableReadNode(19...20)(:a, 0),
-               LocalVariableReadNode(22...23)(:b, 0)]
+               LocalVariableReadNode(22...23)(:b, 0)],
+              nil
             ),
             nil,
             nil,

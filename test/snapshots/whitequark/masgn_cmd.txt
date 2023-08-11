@@ -10,7 +10,10 @@ ProgramNode(0...16)(
          nil,
          (11...12),
          nil,
-         ArgumentsNode(13...16)([LocalVariableReadNode(13...16)(:foo, 0)]),
+         ArgumentsNode(13...16)(
+           [LocalVariableReadNode(13...16)(:foo, 0)],
+           nil
+         ),
          nil,
          nil,
          0,

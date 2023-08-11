@@ -13,13 +13,15 @@ ProgramNode(0...14)(
             (4...5),
             nil,
             ArgumentsNode(6...7)(
-              [CallNode(6...7)(nil, nil, (6...7), nil, nil, nil, nil, 2, "b")]
+              [CallNode(6...7)(nil, nil, (6...7), nil, nil, nil, nil, 2, "b")],
+              nil
             ),
             nil,
             nil,
             0,
             "+"
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(8...14)([], nil, nil, (8...10), (11...14)),

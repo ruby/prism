@@ -7,7 +7,8 @@ ProgramNode(0...12)(
        (5...7),
        nil,
        ArgumentsNode(8...12)(
-         [StringNode(8...12)((8...9), (9...11), (11...12), ":\n")]
+         [StringNode(8...12)((8...9), (9...11), (11...12), ":\n")],
+         nil
        ),
        nil,
        nil,

@@ -20,10 +20,10 @@ ProgramNode(0...90)(
             (24...27),
             (27...28),
             ArgumentsNode(28...40)(
-              [LocalVariableReadNode(28...36)(:argument, 0),
-               KeywordHashNode(38...40)(
-                 [AssocSplatNode(38...40)(nil, (38...40))]
-               )]
+              [LocalVariableReadNode(28...36)(:argument, 0)],
+              KeywordHashNode(38...40)(
+                [AssocSplatNode(38...40)(nil, (38...40))]
+              )
             ),
             (40...41),
             nil,
@@ -59,7 +59,8 @@ ProgramNode(0...90)(
             (73...74),
             ArgumentsNode(74...85)(
               [LocalVariableReadNode(74...82)(:argument, 0),
-               SplatNode(84...85)((84...85), nil)]
+               SplatNode(84...85)((84...85), nil)],
+              nil
             ),
             (85...86),
             nil,

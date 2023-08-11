@@ -109,7 +109,7 @@ ProgramNode(0...140)(
            nil,
            (130...133),
            (130...131),
-           ArgumentsNode(131...132)([IntegerNode(131...132)()]),
+           ArgumentsNode(131...132)([IntegerNode(131...132)()], nil),
            (132...133),
            nil,
            0,

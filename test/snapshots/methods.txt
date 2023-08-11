@@ -653,7 +653,13 @@ ProgramNode(0...1194)(
               [ReturnNode(598...608)(
                  (598...604),
                  ArgumentsNode(605...608)(
-                   [SymbolNode(605...608)((605...606), (606...608), nil, "hi")]
+                   [SymbolNode(605...608)(
+                      (605...606),
+                      (606...608),
+                      nil,
+                      "hi"
+                    )],
+                   nil
                  )
                )]
             ),
@@ -748,7 +754,10 @@ ProgramNode(0...1194)(
             nil,
             (697...698),
             (698...699),
-            ArgumentsNode(699...700)([SplatNode(699...700)((699...700), nil)]),
+            ArgumentsNode(699...700)(
+              [SplatNode(699...700)((699...700), nil)],
+              nil
+            ),
             (700...701),
             nil,
             0,
@@ -781,7 +790,10 @@ ProgramNode(0...1194)(
             nil,
             (720...721),
             (721...722),
-            ArgumentsNode(722...725)([ForwardingArgumentsNode(722...725)()]),
+            ArgumentsNode(722...725)(
+              [ForwardingArgumentsNode(722...725)()],
+              nil
+            ),
             (725...726),
             nil,
             0,
@@ -817,7 +829,8 @@ ProgramNode(0...1194)(
             ArgumentsNode(747...756)(
               [IntegerNode(747...748)(),
                IntegerNode(750...751)(),
-               ForwardingArgumentsNode(753...756)()]
+               ForwardingArgumentsNode(753...756)()],
+              nil
             ),
             (756...757),
             nil,
@@ -1010,7 +1023,8 @@ ProgramNode(0...1194)(
                     (923...924),
                     (924...925),
                     ArgumentsNode(925...928)(
-                      [ForwardingArgumentsNode(925...928)()]
+                      [ForwardingArgumentsNode(925...928)()],
+                      nil
                     ),
                     (928...929),
                     nil,
@@ -1042,50 +1056,51 @@ ProgramNode(0...1194)(
             (951...956),
             nil,
             ArgumentsNode(957...976)(
-              [KeywordHashNode(957...976)(
-                 [AssocSplatNode(957...962)(
-                    CallNode(959...962)(
-                      nil,
-                      nil,
-                      (959...962),
-                      nil,
-                      nil,
-                      nil,
-                      nil,
-                      2,
-                      "bar"
-                    ),
-                    (957...959)
-                  ),
-                  AssocSplatNode(964...969)(
-                    CallNode(966...969)(
-                      nil,
-                      nil,
-                      (966...969),
-                      nil,
-                      nil,
-                      nil,
-                      nil,
-                      2,
-                      "baz"
-                    ),
-                    (964...966)
-                  ),
-                  AssocSplatNode(971...976)(
-                    CallNode(973...976)(
-                      nil,
-                      nil,
-                      (973...976),
-                      nil,
-                      nil,
-                      nil,
-                      nil,
-                      2,
-                      "qux"
-                    ),
-                    (971...973)
-                  )]
-               )]
+              [],
+              KeywordHashNode(957...976)(
+                [AssocSplatNode(957...962)(
+                   CallNode(959...962)(
+                     nil,
+                     nil,
+                     (959...962),
+                     nil,
+                     nil,
+                     nil,
+                     nil,
+                     2,
+                     "bar"
+                   ),
+                   (957...959)
+                 ),
+                 AssocSplatNode(964...969)(
+                   CallNode(966...969)(
+                     nil,
+                     nil,
+                     (966...969),
+                     nil,
+                     nil,
+                     nil,
+                     nil,
+                     2,
+                     "baz"
+                   ),
+                   (964...966)
+                 ),
+                 AssocSplatNode(971...976)(
+                   CallNode(973...976)(
+                     nil,
+                     nil,
+                     (973...976),
+                     nil,
+                     nil,
+                     nil,
+                     nil,
+                     2,
+                     "qux"
+                   ),
+                   (971...973)
+                 )]
+              )
             ),
             nil,
             nil,
@@ -1362,7 +1377,8 @@ ProgramNode(0...1194)(
                  ),
                  0,
                  "a"
-               )]
+               )],
+              nil
             ),
             nil,
             nil,

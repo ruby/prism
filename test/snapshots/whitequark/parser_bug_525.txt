@@ -7,23 +7,24 @@ ProgramNode(0...32)(
        (0...2),
        nil,
        ArgumentsNode(3...11)(
-         [KeywordHashNode(3...11)(
-            [AssocNode(3...11)(
-               SymbolNode(3...5)((3...4), (4...5), nil, "k"),
-               CallNode(9...11)(
-                 nil,
-                 nil,
-                 (9...11),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 2,
-                 "m2"
-               ),
-               (6...8)
-             )]
-          )]
+         [],
+         KeywordHashNode(3...11)(
+           [AssocNode(3...11)(
+              SymbolNode(3...5)((3...4), (4...5), nil, "k"),
+              CallNode(9...11)(
+                nil,
+                nil,
+                (9...11),
+                nil,
+                nil,
+                nil,
+                nil,
+                2,
+                "m2"
+              ),
+              (6...8)
+            )]
+         )
        ),
        nil,
        BlockNode(12...32)(

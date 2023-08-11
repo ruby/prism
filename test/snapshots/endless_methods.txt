@@ -25,7 +25,8 @@ ProgramNode(0...51)(
             (23...24),
             nil,
             ArgumentsNode(25...27)(
-              [StringNode(25...27)((25...26), (26...26), (26...27), "")]
+              [StringNode(25...27)((25...26), (26...26), (26...27), "")],
+              nil
             ),
             nil,
             nil,
@@ -52,7 +53,7 @@ ProgramNode(0...51)(
               nil,
               (44...45),
               nil,
-              ArgumentsNode(46...47)([IntegerNode(46...47)()]),
+              ArgumentsNode(46...47)([IntegerNode(46...47)()], nil),
               nil,
               nil,
               0,
@@ -61,7 +62,7 @@ ProgramNode(0...51)(
             nil,
             (48...49),
             nil,
-            ArgumentsNode(50...51)([IntegerNode(50...51)()]),
+            ArgumentsNode(50...51)([IntegerNode(50...51)()], nil),
             nil,
             nil,
             0,

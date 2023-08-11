@@ -31,7 +31,10 @@ ProgramNode(0...23)(
               nil,
               (16...17),
               nil,
-              ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:y, 0)]),
+              ArgumentsNode(18...19)(
+                [LocalVariableReadNode(18...19)(:y, 0)],
+                nil
+              ),
               nil,
               nil,
               0,

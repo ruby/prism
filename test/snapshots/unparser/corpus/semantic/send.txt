@@ -7,7 +7,7 @@ ProgramNode(0...44)(
        nil,
        (4...7),
        (7...8),
-       ArgumentsNode(8...9)([IntegerNode(8...9)()]),
+       ArgumentsNode(8...9)([IntegerNode(8...9)()], nil),
        (9...10),
        nil,
        0,
@@ -31,7 +31,8 @@ ProgramNode(0...44)(
                 nil,
                 2,
                 "b"
-              )]
+              )],
+             nil
            ),
            (19...20),
            nil,
@@ -51,7 +52,8 @@ ProgramNode(0...44)(
        (23...25),
        nil,
        ArgumentsNode(26...27)(
-         [CallNode(26...27)(nil, nil, (26...27), nil, nil, nil, nil, 2, "d")]
+         [CallNode(26...27)(nil, nil, (26...27), nil, nil, nil, nil, 2, "d")],
+         nil
        ),
        nil,
        nil,
@@ -100,13 +102,15 @@ ProgramNode(0...44)(
                  nil,
                  2,
                  "c"
-               )]
+               )],
+              nil
             ),
             (43...44),
             nil,
             0,
             "==="
-          )]
+          )],
+         nil
        ),
        nil,
        nil,

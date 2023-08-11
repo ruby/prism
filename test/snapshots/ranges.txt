@@ -27,7 +27,8 @@ ProgramNode(0...85)(
        (25...31),
        (25...26),
        ArgumentsNode(26...30)(
-         [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29), 1)]
+         [RangeNode(26...30)(nil, IntegerNode(29...30)(), (26...29), 1)],
+         nil
        ),
        (30...31),
        nil,

@@ -20,7 +20,8 @@ ProgramNode(0...223)(
             (27...36),
             [StringNode(47...51)(nil, (47...51), nil, "  b\n")],
             (51...58)
-          )]
+          )],
+         nil
        ),
        nil,
        nil,

@@ -20,7 +20,8 @@ ProgramNode(0...24)(
               nil,
               2,
               "dir"
-            )]
+            )],
+           nil
          ),
          nil,
          nil,

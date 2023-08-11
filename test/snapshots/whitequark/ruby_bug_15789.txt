@@ -47,7 +47,8 @@ ProgramNode(0...41)(
               (15...16)
             ),
             StatementsNode(18...19)([LocalVariableReadNode(18...19)(:a, 0)])
-          )]
+          )],
+         nil
        ),
        nil,
        nil,
@@ -98,7 +99,8 @@ ProgramNode(0...41)(
               (36...37)
             ),
             StatementsNode(39...40)([LocalVariableReadNode(39...40)(:a, 0)])
-          )]
+          )],
+         nil
        ),
        nil,
        nil,

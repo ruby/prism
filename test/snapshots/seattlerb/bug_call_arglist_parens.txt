@@ -17,7 +17,8 @@ ProgramNode(6...94)(
                  (22...23),
                  (25...26)
                ),
-               IntegerNode(28...29)()]
+               IntegerNode(28...29)()],
+              nil
             ),
             nil,
             nil,
@@ -49,7 +50,8 @@ ProgramNode(6...94)(
                  (66...67),
                  (68...69)
                ),
-               IntegerNode(71...72)()]
+               IntegerNode(71...72)()],
+              nil
             ),
             nil,
             nil,
@@ -76,7 +78,8 @@ ProgramNode(6...94)(
             (87...88),
             (90...91)
           ),
-          IntegerNode(93...94)()]
+          IntegerNode(93...94)()],
+         nil
        ),
        nil,
        nil,

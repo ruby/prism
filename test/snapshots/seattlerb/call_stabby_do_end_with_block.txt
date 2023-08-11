@@ -12,7 +12,8 @@ ProgramNode(0...22)(
             (2...4),
             nil,
             StatementsNode(8...9)([IntegerNode(8...9)()])
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(14...22)(

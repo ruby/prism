@@ -21,7 +21,10 @@ ProgramNode(0...292)(
                  nil,
                  (15...18),
                  (18...19),
-                 ArgumentsNode(19...22)([ForwardingArgumentsNode(19...22)()]),
+                 ArgumentsNode(19...22)(
+                   [ForwardingArgumentsNode(19...22)()],
+                   nil
+                 ),
                  (22...23),
                  nil,
                  0,
@@ -60,7 +63,10 @@ ProgramNode(0...292)(
                  nil,
                  (44...47),
                  (47...48),
-                 ArgumentsNode(48...51)([ForwardingArgumentsNode(48...51)()]),
+                 ArgumentsNode(48...51)(
+                   [ForwardingArgumentsNode(48...51)()],
+                   nil
+                 ),
                  (51...52),
                  nil,
                  0,
@@ -118,7 +124,7 @@ ProgramNode(0...292)(
             nil,
             (90...93),
             (93...94),
-            ArgumentsNode(94...97)([ForwardingArgumentsNode(94...97)()]),
+            ArgumentsNode(94...97)([ForwardingArgumentsNode(94...97)()], nil),
             (97...98),
             nil,
             0,
@@ -151,7 +157,10 @@ ProgramNode(0...292)(
             nil,
             (122...125),
             (125...126),
-            ArgumentsNode(126...129)([ForwardingArgumentsNode(126...129)()]),
+            ArgumentsNode(126...129)(
+              [ForwardingArgumentsNode(126...129)()],
+              nil
+            ),
             (129...130),
             nil,
             0,
@@ -184,7 +193,10 @@ ProgramNode(0...292)(
             nil,
             (152...155),
             (155...156),
-            ArgumentsNode(156...159)([ForwardingArgumentsNode(156...159)()]),
+            ArgumentsNode(156...159)(
+              [ForwardingArgumentsNode(156...159)()],
+              nil
+            ),
             (159...160),
             nil,
             0,
@@ -248,7 +260,10 @@ ProgramNode(0...292)(
             nil,
             (215...218),
             (218...219),
-            ArgumentsNode(219...222)([ForwardingArgumentsNode(219...222)()]),
+            ArgumentsNode(219...222)(
+              [ForwardingArgumentsNode(219...222)()],
+              nil
+            ),
             (222...223),
             nil,
             0,
@@ -286,7 +301,10 @@ ProgramNode(0...292)(
             nil,
             (249...252),
             (252...253),
-            ArgumentsNode(253...256)([ForwardingArgumentsNode(253...256)()]),
+            ArgumentsNode(253...256)(
+              [ForwardingArgumentsNode(253...256)()],
+              nil
+            ),
             (256...257),
             nil,
             0,
@@ -319,7 +337,10 @@ ProgramNode(0...292)(
             nil,
             (280...283),
             (283...284),
-            ArgumentsNode(284...287)([ForwardingArgumentsNode(284...287)()]),
+            ArgumentsNode(284...287)(
+              [ForwardingArgumentsNode(284...287)()],
+              nil
+            ),
             (287...288),
             nil,
             0,

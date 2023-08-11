@@ -34,7 +34,8 @@ ProgramNode(0...25)(
                         nil,
                         2,
                         "p"
-                      )]
+                      )],
+                     nil
                    ),
                    (7...8),
                    nil,
@@ -57,7 +58,8 @@ ProgramNode(0...25)(
                         nil,
                         2,
                         "p"
-                      )]
+                      )],
+                     nil
                    ),
                    nil,
                    nil,
@@ -71,7 +73,18 @@ ProgramNode(0...25)(
             0,
             "p"
           ),
-          CallNode(15...18)(nil, nil, (15...18), nil, nil, nil, nil, 2, "tap")]
+          CallNode(15...18)(
+            nil,
+            nil,
+            (15...18),
+            nil,
+            nil,
+            nil,
+            nil,
+            2,
+            "tap"
+          )],
+         nil
        ),
        nil,
        BlockNode(19...25)([], nil, nil, (19...21), (22...25)),

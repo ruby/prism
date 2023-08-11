@@ -8,7 +8,10 @@ ProgramNode(0...12)(
          nil,
          (3...4),
          nil,
-         ArgumentsNode(5...7)([SymbolNode(5...7)((5...6), (6...7), nil, "x")]),
+         ArgumentsNode(5...7)(
+           [SymbolNode(5...7)((5...6), (6...7), nil, "x")],
+           nil
+         ),
          nil,
          nil,
          0,

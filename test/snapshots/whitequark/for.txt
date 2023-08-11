@@ -16,7 +16,10 @@ ProgramNode(0...48)(
             nil,
             (16...17),
             nil,
-            ArgumentsNode(18...19)([LocalVariableReadNode(18...19)(:a, 0)]),
+            ArgumentsNode(18...19)(
+              [LocalVariableReadNode(18...19)(:a, 0)],
+              nil
+            ),
             nil,
             nil,
             0,
@@ -43,7 +46,10 @@ ProgramNode(0...48)(
             nil,
             (40...41),
             nil,
-            ArgumentsNode(42...43)([LocalVariableReadNode(42...43)(:a, 0)]),
+            ArgumentsNode(42...43)(
+              [LocalVariableReadNode(42...43)(:a, 0)],
+              nil
+            ),
             nil,
             nil,
             0,

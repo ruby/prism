@@ -20,7 +20,8 @@ ProgramNode(0...51)(
             (13...16),
             (16...17),
             ArgumentsNode(17...18)(
-              [BlockArgumentNode(17...18)(nil, (17...18))]
+              [BlockArgumentNode(17...18)(nil, (17...18))],
+              nil
             ),
             (18...19),
             nil,
@@ -55,7 +56,8 @@ ProgramNode(0...51)(
             (41...44),
             (44...45),
             ArgumentsNode(45...46)(
-              [BlockArgumentNode(45...46)(nil, (45...46))]
+              [BlockArgumentNode(45...46)(nil, (45...46))],
+              nil
             ),
             (46...47),
             nil,

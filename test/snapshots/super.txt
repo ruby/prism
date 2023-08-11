@@ -6,7 +6,7 @@ ProgramNode(0...40)(
      SuperNode(16...24)(
        (16...21),
        (21...22),
-       ArgumentsNode(22...23)([IntegerNode(22...23)()]),
+       ArgumentsNode(22...23)([IntegerNode(22...23)()], nil),
        (23...24),
        nil
      ),
@@ -16,7 +16,8 @@ ProgramNode(0...40)(
        ArgumentsNode(32...39)(
          [IntegerNode(32...33)(),
           IntegerNode(35...36)(),
-          IntegerNode(38...39)()]
+          IntegerNode(38...39)()],
+         nil
        ),
        (39...40),
        nil

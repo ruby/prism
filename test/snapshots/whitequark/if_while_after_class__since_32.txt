@@ -29,7 +29,7 @@ ProgramNode(0...178)(
            TrueNode(52...56)(),
            StatementsNode(58...70)(
              [BreakNode(58...70)(
-                ArgumentsNode(64...70)([ConstantReadNode(64...70)()]),
+                ArgumentsNode(64...70)([ConstantReadNode(64...70)()], nil),
                 (58...63)
               )]
            ),
@@ -69,7 +69,7 @@ ProgramNode(0...178)(
            TrueNode(143...147)(),
            StatementsNode(149...161)(
              [BreakNode(149...161)(
-                ArgumentsNode(155...161)([ConstantReadNode(155...161)()]),
+                ArgumentsNode(155...161)([ConstantReadNode(155...161)()], nil),
                 (149...154)
               )]
            ),

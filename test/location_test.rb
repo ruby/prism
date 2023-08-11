@@ -41,12 +41,12 @@ module YARP
     def test_AssocNode
       assert_location(AssocNode, "{ foo: :bar }", 2...11) { |node| node.elements.first }
       assert_location(AssocNode, "{ :foo => :bar }", 2...14) { |node| node.elements.first }
-      assert_location(AssocNode, "foo(bar: :baz)", 4...13) { |node| node.arguments.arguments.first.elements.first }
+      assert_location(AssocNode, "foo(bar: :baz)", 4...13) { |node| node.arguments.keywords.elements.first }
     end
 
     def test_AssocSplatNode
       assert_location(AssocSplatNode, "{ **foo }", 2...7) { |node| node.elements.first }
-      assert_location(AssocSplatNode, "foo(**bar)", 4...9) { |node| node.arguments.arguments.first.elements.first }
+      assert_location(AssocSplatNode, "foo(**bar)", 4...9) { |node| node.arguments.keywords.elements.first }
     end
 
     def test_BackReferenceReadNode
@@ -423,7 +423,7 @@ module YARP
     end
 
     def test_KeywordHashNode
-      assert_location(KeywordHashNode, "foo(a, b: 1)", 7...11) { |node| node.arguments.arguments[1] }
+      assert_location(KeywordHashNode, "foo(a, b: 1)", 7...11) { |node| node.arguments.keywords }
     end
 
     def test_KeywordParameterNode

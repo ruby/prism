@@ -5,13 +5,25 @@ ProgramNode(0...41)(
      ReturnNode(8...18)(
        (8...14),
        ArgumentsNode(15...18)(
-         [CallNode(15...18)(nil, nil, (15...18), nil, nil, nil, nil, 2, "foo")]
+         [CallNode(15...18)(
+            nil,
+            nil,
+            (15...18),
+            nil,
+            nil,
+            nil,
+            nil,
+            2,
+            "foo"
+          )],
+         nil
        )
      ),
      ReturnNode(20...28)(
        (20...26),
        ArgumentsNode(26...28)(
-         [ParenthesesNode(26...28)(nil, (26...27), (27...28))]
+         [ParenthesesNode(26...28)(nil, (26...27), (27...28))],
+         nil
        )
      ),
      ReturnNode(30...41)(
@@ -33,7 +45,8 @@ ProgramNode(0...41)(
             ),
             (36...37),
             (40...41)
-          )]
+          )],
+         nil
        )
      )]
   )

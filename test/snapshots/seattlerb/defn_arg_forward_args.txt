@@ -21,7 +21,8 @@ ProgramNode(0...29)(
             (16...17),
             ArgumentsNode(17...23)(
               [LocalVariableReadNode(17...18)(:x, 0),
-               ForwardingArgumentsNode(20...23)()]
+               ForwardingArgumentsNode(20...23)()],
+              nil
             ),
             (23...24),
             nil,

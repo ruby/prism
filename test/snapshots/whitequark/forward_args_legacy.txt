@@ -19,7 +19,7 @@ ProgramNode(0...77)(
             nil,
             (14...17),
             (17...18),
-            ArgumentsNode(18...21)([ForwardingArgumentsNode(18...21)()]),
+            ArgumentsNode(18...21)([ForwardingArgumentsNode(18...21)()], nil),
             (21...22),
             nil,
             0,
@@ -71,7 +71,7 @@ ProgramNode(0...77)(
          [SuperNode(62...72)(
             (62...67),
             (67...68),
-            ArgumentsNode(68...71)([ForwardingArgumentsNode(68...71)()]),
+            ArgumentsNode(68...71)([ForwardingArgumentsNode(68...71)()], nil),
             (71...72),
             nil
           )]

@@ -20,7 +20,10 @@ ProgramNode(0...27)(
                            nil,
                            (9...10),
                            nil,
-                           ArgumentsNode(10...11)([IntegerNode(10...11)()]),
+                           ArgumentsNode(10...11)(
+                             [IntegerNode(10...11)()],
+                             nil
+                           ),
                            nil,
                            nil,
                            0,
@@ -43,7 +46,8 @@ ProgramNode(0...27)(
                (17...18)
              )],
             (18...19)
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(20...27)([], nil, nil, (20...22), (24...27)),

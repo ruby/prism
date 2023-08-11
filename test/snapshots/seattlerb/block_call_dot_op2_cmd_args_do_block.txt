@@ -18,7 +18,8 @@ ProgramNode(0...33)(
               nil,
               0,
               "c"
-            )]
+            )],
+           nil
          ),
          nil,
          BlockNode(8...16)(
@@ -47,7 +48,8 @@ ProgramNode(0...33)(
        (17...18),
        nil,
        ArgumentsNode(19...20)(
-         [CallNode(19...20)(nil, nil, (19...20), nil, nil, nil, nil, 2, "f")]
+         [CallNode(19...20)(nil, nil, (19...20), nil, nil, nil, nil, 2, "f")],
+         nil
        ),
        nil,
        BlockNode(21...33)(

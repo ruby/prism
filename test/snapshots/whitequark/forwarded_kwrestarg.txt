@@ -20,9 +20,10 @@ ProgramNode(0...25)(
             (13...16),
             (16...17),
             ArgumentsNode(17...19)(
-              [KeywordHashNode(17...19)(
-                 [AssocSplatNode(17...19)(nil, (17...19))]
-               )]
+              [],
+              KeywordHashNode(17...19)(
+                [AssocSplatNode(17...19)(nil, (17...19))]
+              )
             ),
             (19...20),
             nil,

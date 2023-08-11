@@ -52,7 +52,8 @@ ProgramNode(0...314)(
             nil,
             ArgumentsNode(92...98)(
               [SymbolNode(92...94)((92...93), (93...94), nil, "a"),
-               SymbolNode(96...98)((96...97), (97...98), nil, "b")]
+               SymbolNode(96...98)((96...97), (97...98), nil, "b")],
+              nil
             ),
             nil,
             nil,

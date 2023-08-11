@@ -58,7 +58,8 @@ ProgramNode(0...916)(
                ),
                StringNode(119...120)(nil, (119...120), nil, "\n")],
               (120...128)
-            )]
+            )],
+           nil
          ),
          (110...111),
          nil,
@@ -81,7 +82,8 @@ ProgramNode(0...916)(
          (128...129),
          (129...130),
          ArgumentsNode(130...133)(
-           [StringNode(130...133)((130...132), (132...132), (132...133), "")]
+           [StringNode(130...133)((130...132), (132...132), (132...133), "")],
+           nil
          ),
          (133...134),
          nil,
@@ -409,7 +411,7 @@ ProgramNode(0...916)(
               nil,
               (615...616),
               nil,
-              ArgumentsNode(617...620)([FloatNode(617...620)()]),
+              ArgumentsNode(617...620)([FloatNode(617...620)()], nil),
               nil,
               nil,
               0,
@@ -432,7 +434,7 @@ ProgramNode(0...916)(
               nil,
               (633...634),
               nil,
-              ArgumentsNode(635...638)([FloatNode(635...638)()]),
+              ArgumentsNode(635...638)([FloatNode(635...638)()], nil),
               nil,
               nil,
               0,
@@ -453,7 +455,7 @@ ProgramNode(0...916)(
               nil,
               (645...646),
               nil,
-              ArgumentsNode(647...650)([FloatNode(647...650)()]),
+              ArgumentsNode(647...650)([FloatNode(647...650)()], nil),
               nil,
               nil,
               0,

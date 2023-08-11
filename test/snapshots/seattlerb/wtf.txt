@@ -35,7 +35,8 @@ ProgramNode(0...25)(
                   LocalVariableReadNode(21...22)(:b, 0)],
                  (17...18),
                  (22...23)
-               )]
+               )],
+              nil
             ),
             nil,
             nil,

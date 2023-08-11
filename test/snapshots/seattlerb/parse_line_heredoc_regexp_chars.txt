@@ -22,7 +22,10 @@ ProgramNode(6...74)(
        nil,
        (63...67),
        nil,
-       ArgumentsNode(68...74)([LocalVariableReadNode(68...74)(:string, 0)]),
+       ArgumentsNode(68...74)(
+         [LocalVariableReadNode(68...74)(:string, 0)],
+         nil
+       ),
        nil,
        nil,
        0,

@@ -12,7 +12,10 @@ ProgramNode(0...30)(
            nil,
            (12...13),
            nil,
-           ArgumentsNode(14...17)([LocalVariableReadNode(14...17)(:foo, 0)]),
+           ArgumentsNode(14...17)(
+             [LocalVariableReadNode(14...17)(:foo, 0)],
+             nil
+           ),
            nil,
            nil,
            0,
@@ -32,7 +35,10 @@ ProgramNode(0...30)(
          nil,
          (25...26),
          nil,
-         ArgumentsNode(27...30)([LocalVariableReadNode(27...30)(:foo, 0)]),
+         ArgumentsNode(27...30)(
+           [LocalVariableReadNode(27...30)(:foo, 0)],
+           nil
+         ),
          nil,
          nil,
          0,

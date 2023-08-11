@@ -11,7 +11,8 @@ ProgramNode(0...43)(
             StatementsNode(9...10)([IntegerNode(9...10)()]),
             (8...9),
             (10...11)
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(12...14)([], nil, nil, (12...13), (13...14)),
@@ -28,7 +29,8 @@ ProgramNode(0...43)(
             StatementsNode(26...27)([IntegerNode(26...27)()]),
             (25...26),
             (27...28)
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(29...31)([], nil, nil, (29...30), (30...31)),
@@ -45,7 +47,8 @@ ProgramNode(0...43)(
             StatementsNode(38...39)([IntegerNode(38...39)()]),
             (37...38),
             (39...40)
-          )]
+          )],
+         nil
        ),
        nil,
        BlockNode(41...43)([], nil, nil, (41...42), (42...43)),

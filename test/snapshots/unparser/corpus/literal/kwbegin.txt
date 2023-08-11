@@ -249,7 +249,7 @@ ProgramNode(0...530)(
               nil,
               (283...288),
               (288...289),
-              ArgumentsNode(289...298)([ConstantReadNode(289...298)()]),
+              ArgumentsNode(289...298)([ConstantReadNode(289...298)()], nil),
               (298...299),
               nil,
               0,

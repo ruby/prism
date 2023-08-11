@@ -405,6 +405,9 @@ nodes:
     child_nodes:
       - name: arguments
         type: node[]
+      - name: keywords
+        type: node?
+        kind: KeywordHashNode
     comment: |
       Represents a set of arguments to a method or a keyword.
 

@@ -19,7 +19,7 @@ ProgramNode(0...23)(
             nil,
             (12...13),
             (13...14),
-            ArgumentsNode(14...17)([ForwardingArgumentsNode(14...17)()]),
+            ArgumentsNode(14...17)([ForwardingArgumentsNode(14...17)()], nil),
             (17...18),
             nil,
             0,

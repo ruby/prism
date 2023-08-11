@@ -6,7 +6,7 @@ ProgramNode(0...5)(
        nil,
        (2...3),
        nil,
-       ArgumentsNode(4...5)([IntegerNode(4...5)()]),
+       ArgumentsNode(4...5)([IntegerNode(4...5)()], nil),
        nil,
        nil,
        0,

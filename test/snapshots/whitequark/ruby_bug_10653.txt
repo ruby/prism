@@ -105,7 +105,8 @@ ProgramNode(0...93)(
                    (82...83),
                    nil,
                    ArgumentsNode(84...85)(
-                     [LocalVariableReadNode(84...85)(:n, 0)]
+                     [LocalVariableReadNode(84...85)(:n, 0)],
+                     nil
                    ),
                    nil,
                    nil,

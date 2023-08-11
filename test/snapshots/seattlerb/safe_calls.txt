@@ -16,7 +16,7 @@ ProgramNode(0...10)(
        (4...6),
        (6...7),
        (7...8),
-       ArgumentsNode(8...9)([IntegerNode(8...9)()]),
+       ArgumentsNode(8...9)([IntegerNode(8...9)()], nil),
        (9...10),
        nil,
        1,

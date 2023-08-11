@@ -34,7 +34,8 @@ ProgramNode(0...55)(
                       nil,
                       2,
                       "b"
-                    )]
+                    )],
+                   nil
                  ),
                  nil,
                  nil,

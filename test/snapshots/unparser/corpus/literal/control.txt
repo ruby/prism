@@ -8,11 +8,14 @@ ProgramNode(0...144)(
      RedoNode(24...28)(),
      ReturnNode(29...37)(
        (29...35),
-       ArgumentsNode(36...37)([IntegerNode(36...37)()])
+       ArgumentsNode(36...37)([IntegerNode(36...37)()], nil)
      ),
      ReturnNode(38...49)(
        (38...44),
-       ArgumentsNode(45...49)([IntegerNode(45...46)(), IntegerNode(48...49)()])
+       ArgumentsNode(45...49)(
+         [IntegerNode(45...46)(), IntegerNode(48...49)()],
+         nil
+       )
      ),
      ReturnNode(50...69)(
        (50...56),
@@ -27,7 +30,8 @@ ProgramNode(0...144)(
               nil
             ),
             nil
-          )]
+          )],
+         nil
        )
      ),
      BreakNode(70...88)(
@@ -42,7 +46,8 @@ ProgramNode(0...144)(
               nil
             ),
             nil
-          )]
+          )],
+         nil
        ),
        (70...75)
      ),
@@ -58,7 +63,8 @@ ProgramNode(0...144)(
               nil
             ),
             nil
-          )]
+          )],
+         nil
        ),
        (89...93)
      ),
@@ -76,7 +82,8 @@ ProgramNode(0...144)(
               (141...144)
             ),
             (141...144)
-          )]
+          )],
+         nil
        )
      )]
   )

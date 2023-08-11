@@ -7,7 +7,8 @@ ProgramNode(0...25)(
        (0...1),
        nil,
        ArgumentsNode(2...3)(
-         [CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "a")]
+         [CallNode(2...3)(nil, nil, (2...3), nil, nil, nil, nil, 2, "a")],
+         nil
        ),
        nil,
        BlockNode(4...25)(
@@ -33,7 +34,10 @@ ProgramNode(0...25)(
               nil,
               (18...19),
               nil,
-              ArgumentsNode(20...21)([LocalVariableReadNode(20...21)(:y, 0)]),
+              ArgumentsNode(20...21)(
+                [LocalVariableReadNode(20...21)(:y, 0)],
+                nil
+              ),
               nil,
               nil,
               0,
