@@ -29,8 +29,9 @@ task :lint do
 
   # Check for trailing spaces
   trailing_spaces_found = false
-  Dir.glob("**/*.{c,h,erb,rb,yml}").reject { _1.start_with? "vendor/" }.
-    each do |path|
+  Dir.glob("**/*.{c,h,erb,rb,yml}")
+    .reject { _1.start_with?("tmp") || _1.start_with?("vendor/") }
+    .each do |path|
       File.readlines(path).each_with_index do |line, index|
         if line.match(/[ \t]+$/)
           warn("Trailing spaces found in #{path} on line #{index + 1}")

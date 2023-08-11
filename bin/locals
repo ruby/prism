@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
+
+source = ARGV[0] == "-e" ? ARGV[1] : File.read(ARGV[0])
+
+puts "CRuby:"
+p YARP.const_get(:Debug).cruby_locals(source)
+
+puts "YARP:"
+p YARP.const_get(:Debug).yarp_locals(source)
