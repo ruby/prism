@@ -337,12 +337,10 @@ flags:
     values:
       - name: BEGIN_MODIFIER
         comment: "a loop after a begin statement, so the body is executed first before the condition"
-  - name: RangeNodeFlags
+  - name: RangeFlags
     values:
       - name: EXCLUDE_END
         comment: "... operator"
-      - name: FLIP_FLOP
-        comment: "a range used as a flip flop"
   - name: RegularExpressionFlags
     values:
       - name: IGNORE_CASE
@@ -1056,6 +1054,22 @@ nodes:
 
           foo in Foo(*bar, baz, *qux)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  - name: FlipFlopNode
+    child_nodes:
+      - name: left
+        type: node?
+      - name: right
+        type: node?
+      - name: operator_loc
+        type: location
+      - name: flags
+        type: flags
+        kind: RangeFlags
+    comment: |
+      Represents the use of the `..` or `...` operators to create flip flops.
+
+          baz if foo .. bar
+                 ^^^^^^^^^^
   - name: FloatNode
     comment: |
       Represents a floating point number literal.
@@ -1749,7 +1763,7 @@ nodes:
         type: location
       - name: flags
         type: flags
-        kind: RangeNodeFlags
+        kind: RangeFlags
     comment: |
       Represents the use of the `..` or `...` operators.
 

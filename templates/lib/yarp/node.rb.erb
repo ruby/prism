@@ -20,19 +20,21 @@ module YARP
     end
     <%# potential override of set_newline_flag -%>
     <%- if node.newline == false -%>
+
     def set_newline_flag(newline_marked)
       # Never mark <%= node.name %> with a newline flag, mark children instead
     end
     <%- elsif node.newline.is_a?(String) -%>
+
     def set_newline_flag(newline_marked)
-    <%- param = node.params.find { |p| p.name == node.newline } or raise node.newline -%>
-    <%- case param -%>
-    <%- in SingleNodeParam -%>
+      <%- param = node.params.find { |p| p.name == node.newline } or raise node.newline -%>
+      <%- case param -%>
+      <%- in SingleNodeParam -%>
       <%= param.name %>.set_newline_flag(newline_marked)
-    <%- in NodeListParam -%>
+      <%- in NodeListParam -%>
       first = <%= param.name %>.first
       first.set_newline_flag(newline_marked) if first
-    <%- end -%>
+      <%- end -%>
     end
     <%- end -%>
 
