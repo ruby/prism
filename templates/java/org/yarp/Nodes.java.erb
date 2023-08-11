@@ -207,7 +207,18 @@ public abstract class Nodes {
             this.<%= param.name %> = <%= param.name %>;
         <%- end -%>
         }
+        <%# methods for flags -%>
+        <%- node.params.each do |param| -%>
+        <%- if param.is_a?(FlagsParam) -%>
+        <%- flags.find { |flag| flag.name == param.kind }.tap { raise "Expected to find #{param.kind}" unless _1 }.values.each do |value| -%>
 
+        public boolean is<%= value.camelcase %>() {
+            return <%= param.kind %>.is<%= value.camelcase %>(this.<%= param.name %>);
+        }
+        <%- end -%>
+        <%- end -%>
+        <%- end -%>
+        <%# potential override of setNewLineFlag() -%>
         <%- if node.newline == false -%>
         @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
