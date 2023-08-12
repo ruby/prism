@@ -29,11 +29,12 @@ module YARP
     def set_newline_flag(newline_marked)
       <%- param = node.params.find { |p| p.name == node.newline } or raise node.newline -%>
       <%- case param -%>
-      <%- in SingleNodeParam -%>
+      <%- when SingleNodeParam -%>
       <%= param.name %>.set_newline_flag(newline_marked)
-      <%- in NodeListParam -%>
+      <%- when NodeListParam -%>
       first = <%= param.name %>.first
       first.set_newline_flag(newline_marked) if first
+      <%- else raise param.class.name -%>
       <%- end -%>
     end
     <%- end -%>

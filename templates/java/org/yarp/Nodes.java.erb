@@ -231,13 +231,14 @@ public abstract class Nodes {
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
           <%- param = node.params.find { |p| p.name == node.newline } or raise node.newline -%>
           <%- case param -%>
-          <%- in SingleNodeParam -%>
+          <%- when SingleNodeParam -%>
             this.<%= param.name %>.setNewLineFlag(source, newlineMarked);
-          <%- in NodeListParam -%>
+          <%- when NodeListParam -%>
             Node first = this.<%= param.name %>.length > 0 ? this.<%= param.name %>[0] : null;
             if (first != null) {
                 first.setNewLineFlag(source, newlineMarked);
             }
+          <%- else raise param.class.name -%>
           <%- end -%>
         }
         <%- end -%>
