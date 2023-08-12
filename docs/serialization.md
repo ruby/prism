@@ -28,6 +28,18 @@ This drastically cuts down on the size of the serialized string, especially when
 | varint | byte offset into the source string where this location begins |
 | varint | length of the location in bytes in the source string |
 
+### comment
+
+The comment type is one of:
+* 0=`INLINE` (`# comment`)
+* 1=`EMBEDDED_DOCUMENT` (`=begin`/`=end`)
+* 2=`__END__` (after `__END__`)
+
+| # bytes | field |
+| --- | --- |
+| varint | comment type |
+| location | the location in the source of this comment |
+
 ### diagnostic
 
 | # bytes | field |
@@ -51,6 +63,8 @@ The header is structured like the following table:
 | `1` | minor version number |
 | `1` | patch version number |
 | string | the encoding name |
+| varint | number of comments |
+| comment* | comments |
 | varint | number of errors |
 | diagnostic* | errors |
 | varint | number of warnings |

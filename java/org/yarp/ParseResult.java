@@ -2,6 +2,27 @@ package org.yarp;
 
 public final class ParseResult {
 
+    public enum CommentType {
+        /** # comment */
+        INLINE,
+        /** =begin/=end */
+        EMBEDDED_DOCUMENT,
+        /** after __END__ */
+        __END__;
+
+        static final CommentType[] VALUES = values();
+    }
+
+    public static final class Comment {
+        public final CommentType type;
+        public final Nodes.Location location;
+
+        public Comment(CommentType type, Nodes.Location location) {
+            this.type = type;
+            this.location = location;
+        }
+    }
+
     public static final class Error {
         public final String message;
         public final Nodes.Location location;
@@ -22,25 +43,15 @@ public final class ParseResult {
         }
     }
 
-    private final Nodes.Node value;
-    private final Error[] errors;
-    private final Warning[] warnings;
+    public final Nodes.Node value;
+    public final Comment[] comments;
+    public final Error[] errors;
+    public final Warning[] warnings;
 
-    public ParseResult(Nodes.Node value, Error[] errors, Warning[] warnings) {
+    public ParseResult(Nodes.Node value, Comment[] comments, Error[] errors, Warning[] warnings) {
         this.value = value;
+        this.comments = comments;
         this.errors = errors;
         this.warnings = warnings;
-    }
-
-    public Nodes.Node getValue() {
-        return value;
-    }
-
-    public Error[] getErrors() {
-        return errors;
-    }
-
-    public Warning[] getWarnings() {
-        return warnings;
     }
 }
