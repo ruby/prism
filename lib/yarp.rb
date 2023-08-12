@@ -340,31 +340,43 @@ require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
 
-if RUBY_ENGINE == 'ruby' and ENV["YARP_FIDDLE_BACKEND"] != "true"
+if RUBY_ENGINE == 'ruby' and ENV["YARP_FFI_BACKEND"] != "true"
   require "yarp/yarp.so"
 else
   require "rbconfig"
-  require "fiddle"
-  require "fiddle/import"
+  require "ffi"
 
   module YARP
-    BACKEND = :Fiddle
+    BACKEND = :FFI
 
     module LibRubyParser
-      extend Fiddle::Importer
+      extend FFI::Library
 
-      Buffer = struct ['char *value', 'size_t length', 'size_t capacity']
+      class Buffer < FFI::Struct
+        layout value: :pointer, length: :size_t, capacity: :size_t
 
-      dlload File.expand_path("../build/librubyparser.#{RbConfig::CONFIG['SOEXT']}", __dir__)
+        def to_ruby_string
+          self[:value].read_string(self[:length])
+        end
+      end
 
-      # Not all Fiddle versions have a bool type: https://github.com/ruby/fiddle/issues/130
-      typealias 'bool', 'char'
+      ffi_lib File.expand_path("../build/librubyparser.#{RbConfig::CONFIG['SOEXT']}", __dir__)
+
+      def self.resolve_type(type)
+        type = type.strip.sub(/^const /, '')
+        type.end_with?('*') ? :pointer : type.to_sym
+      end
 
       def self.load_exported_functions_from(header, functions)
         File.readlines(File.expand_path("../include/#{header}", __dir__)).each do |line|
           if line.start_with?('YP_EXPORTED_FUNCTION ')
             if functions.any? { |function| line.include?(function) }
-              extern line.delete_prefix('YP_EXPORTED_FUNCTION ')
+              /^YP_EXPORTED_FUNCTION (?<return_type>.+) (?<name>\w+)\((?<arg_types>.+)\);$/ =~ line or raise "Could not parse #{line}"
+              arg_types = arg_types.split(',')
+              arg_types = [] if arg_types == %w[void]
+              arg_types = arg_types.map { |type| resolve_type(type.sub(/\w+$/, '')) }
+              return_type = resolve_type return_type
+              attach_function name, arg_types, return_type
             end
           end
         end
@@ -378,21 +390,37 @@ else
         %w[yp_string_mapped_init yp_string_free yp_string_source yp_string_length yp_string_sizeof])
 
       SIZEOF_YP_STRING = yp_string_sizeof
+
+      def self.pointer(size)
+        pointer = FFI::MemoryPointer.new(size)
+        begin
+          yield pointer
+        ensure
+          pointer.free
+        end
+      end
+
+      def self.yp_string(&block)
+        pointer(LibRubyParser::SIZEOF_YP_STRING, &block)
+      end
     end
+    private_constant :LibRubyParser
 
     VERSION = LibRubyParser.yp_version.to_s
 
     def self.dump_internal(source, source_size, filepath)
-      LibRubyParser::Buffer.malloc(Fiddle::RUBY_FREE) do |buffer|
-        raise unless LibRubyParser.yp_buffer_init(buffer) == 1
+      buffer = LibRubyParser::Buffer.new
+      begin
+        raise unless LibRubyParser.yp_buffer_init(buffer)
         metadata = nil
         if filepath
           metadata = [filepath.bytesize].pack('L') + filepath + [0].pack('L')
         end
         LibRubyParser.yp_parse_serialize(source, source_size, buffer, metadata)
-        buffer.value.to_s(buffer.length)
+        buffer.to_ruby_string
       ensure
         LibRubyParser.yp_buffer_free(buffer)
+        buffer.pointer.free
       end
     end
     private_class_method :dump_internal
@@ -402,8 +430,8 @@ else
     end
 
     def self.dump_file(filepath)
-      Fiddle::Pointer.malloc(LibRubyParser::SIZEOF_YP_STRING, Fiddle::RUBY_FREE) do |contents|
-        raise unless LibRubyParser.yp_string_mapped_init(contents, filepath) == 1
+      LibRubyParser.yp_string do |contents|
+        raise unless LibRubyParser.yp_string_mapped_init(contents, filepath)
         dump_internal(LibRubyParser.yp_string_source(contents), LibRubyParser.yp_string_length(contents), filepath)
       ensure
         LibRubyParser.yp_string_free(contents)
@@ -411,10 +439,11 @@ else
     end
 
     def self.lex(code, filepath = nil)
-      LibRubyParser::Buffer.malloc(Fiddle::RUBY_FREE) do |buffer|
-        raise unless LibRubyParser.yp_buffer_init(buffer) == 1
+      buffer = LibRubyParser::Buffer.new
+      begin
+        raise unless LibRubyParser.yp_buffer_init(buffer)
         LibRubyParser.yp_lex_serialize(code, code.bytesize, filepath, buffer)
-        serialized = buffer.value.to_s(buffer.length)
+        serialized = buffer.to_ruby_string
 
         source = Source.new(code)
         parse_result = YARP::Serialize.load_tokens(source, serialized)
@@ -422,14 +451,15 @@ else
         ParseResult.new(parse_result.value, parse_result.comments, parse_result.errors, parse_result.warnings, source)
       ensure
         LibRubyParser.yp_buffer_free(buffer)
+        buffer.pointer.free
       end
     end
 
     def self.lex_file(filepath)
-      Fiddle::Pointer.malloc(LibRubyParser::SIZEOF_YP_STRING, Fiddle::RUBY_FREE) do |contents|
-        raise unless LibRubyParser.yp_string_mapped_init(contents, filepath) == 1
+      LibRubyParser.yp_string do |contents|
+        raise unless LibRubyParser.yp_string_mapped_init(contents, filepath)
         # We need the Ruby String for the YARP::Source anyway, so just use that
-        code_string = LibRubyParser.yp_string_source(contents).to_s(LibRubyParser.yp_string_length(contents))
+        code_string = LibRubyParser.yp_string_source(contents).read_string(LibRubyParser.yp_string_length(contents))
         lex(code_string, filepath)
       ensure
         LibRubyParser.yp_string_free(contents)
@@ -444,10 +474,10 @@ else
     end
 
     def self.parse_file(filepath)
-      Fiddle::Pointer.malloc(LibRubyParser::SIZEOF_YP_STRING, Fiddle::RUBY_FREE) do |contents|
-        raise unless LibRubyParser.yp_string_mapped_init(contents, filepath) == 1
+      LibRubyParser.yp_string do |contents|
+        raise unless LibRubyParser.yp_string_mapped_init(contents, filepath)
         # We need the Ruby String for the YARP::Source anyway, so just use that
-        code_string = LibRubyParser.yp_string_source(contents).to_s(LibRubyParser.yp_string_length(contents))
+        code_string = LibRubyParser.yp_string_source(contents).read_string(LibRubyParser.yp_string_length(contents))
         parse(code_string, filepath)
       ensure
         LibRubyParser.yp_string_free(contents)

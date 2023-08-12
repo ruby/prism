@@ -2,7 +2,7 @@
 
 require "yarp_test_helper"
 
-return if YARP::BACKEND == :Fiddle
+return if YARP::BACKEND == :FFI
 
 class ParseSerializeTest < Test::Unit::TestCase
   def test_parse_serialize
