@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-known_failures = %w[seattlerb/heredoc_nested.txt]
 fixtures = File.expand_path("../test/fixtures", __dir__)
 serialized_dir = File.expand_path("../serialized", fixtures)
 
@@ -11,7 +10,6 @@ task "test:serialize_fixtures" do
   require "fileutils"
 
   Dir["**/*.txt", base: fixtures].each do |relative|
-    next if known_failures.include?(relative)
     path = "#{fixtures}/#{relative}"
     serialized_path = "#{serialized_dir}/#{relative}"
 
@@ -27,7 +25,6 @@ task "test:java_loader" do
   java_import 'org.yarp.Nodes$Source'
 
   Dir["**/*.txt", base: fixtures].each do |relative|
-    next if known_failures.include?(relative)
     path = "#{fixtures}/#{relative}"
     serialized_path = "#{serialized_dir}/#{relative}"
     serialized = File.binread(serialized_path).unpack('c*')
