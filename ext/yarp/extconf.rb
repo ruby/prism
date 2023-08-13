@@ -1,12 +1,20 @@
 # frozen_string_literal: true
 
-require "mkmf"
 require "rbconfig"
 
 module Yarp
   module ExtConf
     class << self
       def configure
+        unless RUBY_ENGINE == "ruby"
+          build_shared_rubyparser
+          File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
+          return
+        end
+
+        # require "mkmf" prepends the LLVM toolchain to PATH on TruffleRuby.
+        # We want to use the native toolchain, so only require mkmf when it's needed
+        require "mkmf"
         configure_c_extension
         configure_rubyparser
 
@@ -34,7 +42,7 @@ module Yarp
           end
           $LOCAL_LIBS << " #{static_archive_path}"
         else
-          shared_library_path = File.join(build_dir, "librubyparser.#{RbConfig::CONFIG["DLEXT"]}")
+          shared_library_path = File.join(build_dir, "librubyparser.#{RbConfig::CONFIG["SOEXT"]}")
           unless File.exist?(shared_library_path)
             build_shared_rubyparser
           end
@@ -119,7 +127,7 @@ module Yarp
   end
 end
 
-if arg_config("--help")
+if ARGV.delete("--help")
   Yarp::ExtConf.print_help
   exit!(0)
 end
