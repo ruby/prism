@@ -236,6 +236,12 @@ module YARP
       value.accept(visitor)
       value
     end
+
+    # Construct a new ParseResult with the same internal values, but with the
+    # given source.
+    def with_source(source)
+      ParseResult.new(value, comments, errors, warnings, source)
+    end
   end
 
   # This represents a token from the Ruby source.
