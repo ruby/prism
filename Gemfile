@@ -8,4 +8,4 @@ gem "rake"
 gem "rake-compiler"
 gem "test-unit"
 gem "ruby_memcheck", platform: %i[mri truffleruby mswin mingw x64_mingw]
-gem "ffi" if RUBY_ENGINE == "ruby" and ENV["YARP_FFI_BACKEND"]
+gem "ffi"
