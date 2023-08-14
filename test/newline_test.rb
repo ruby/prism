@@ -2,6 +2,8 @@
 
 require "yarp_test_helper"
 
+return unless defined?(RubyVM::InstructionSequence)
+
 class NewlineTest < Test::Unit::TestCase
   class NewlineVisitor < YARP::Visitor
     attr_reader :source, :newlines

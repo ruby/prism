@@ -36,7 +36,7 @@ void yp_string_constant_init(yp_string_t *string, const char *source, size_t len
 // for large files). This means that if we're on windows we'll use
 // `MapViewOfFile`, on POSIX systems that have access to `mmap` we'll use
 // `mmap`, and on other POSIX systems we'll use `read`.
-bool yp_string_mapped_init(yp_string_t *string, const char *filepath);
+YP_EXPORTED_FUNCTION bool yp_string_mapped_init(yp_string_t *string, const char *filepath);
 
 // Returns the memory size associated with the string.
 size_t yp_string_memsize(const yp_string_t *string);
@@ -53,5 +53,7 @@ YP_EXPORTED_FUNCTION const char * yp_string_source(const yp_string_t *string);
 
 // Free the associated memory of the given string.
 YP_EXPORTED_FUNCTION void yp_string_free(yp_string_t *string);
+
+YP_EXPORTED_FUNCTION int yp_string_sizeof(void);
 
 #endif // YARP_STRING_H

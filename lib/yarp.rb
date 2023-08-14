@@ -7,9 +7,15 @@ module YARP
   class Source
     attr_reader :source, :offsets
 
-    def initialize(source, offsets)
+    def initialize(source, offsets = compute_offsets(source))
       @source = source
       @offsets = offsets
+    end
+
+    private def compute_offsets(code)
+      offsets = [0]
+      code.b.scan("\n") { offsets << $~.end(0) }
+      offsets
     end
 
     def slice(offset, length)
@@ -334,4 +340,8 @@ require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
 
-require "yarp/yarp"
+if RUBY_ENGINE == 'ruby' and !ENV["YARP_FFI_BACKEND"]
+  require "yarp/yarp.so"
+else
+  require "yarp/ffi"
+end

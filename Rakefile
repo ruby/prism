@@ -37,7 +37,14 @@ task build: [:templates, :check_manifest]
 # the C extension
 task "compile:yarp" => ["templates"] # must be before the ExtensionTask is created
 
-if RUBY_ENGINE == 'jruby'
+if RUBY_ENGINE == 'ruby' and !ENV["YARP_FFI_BACKEND"]
+  Rake::ExtensionTask.new(:compile) do |ext|
+    ext.name = "yarp"
+    ext.ext_dir = "ext/yarp"
+    ext.lib_dir = "lib/yarp"
+    ext.gem_spec = Gem::Specification.load("yarp.gemspec")
+  end
+elsif RUBY_ENGINE == 'jruby'
   require 'rake/javaextensiontask'
 
   # This compiles java to make sure any templating changes produces valid code.
@@ -47,13 +54,6 @@ if RUBY_ENGINE == 'jruby'
     ext.lib_dir = "tmp"
     ext.source_version = "1.8"
     ext.target_version = "1.8"
-    ext.gem_spec = Gem::Specification.load("yarp.gemspec")
-  end
-else
-  Rake::ExtensionTask.new(:compile) do |ext|
-    ext.name = "yarp"
-    ext.ext_dir = "ext/yarp"
-    ext.lib_dir = "lib/yarp"
     ext.gem_spec = Gem::Specification.load("yarp.gemspec")
   end
 end

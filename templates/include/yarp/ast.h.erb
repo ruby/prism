@@ -84,14 +84,15 @@ typedef struct yp_<%= node.human %> {
     yp_node_t base;
 <%- node.params.grep_v(FlagsParam).each do |param| -%>
     <%= case param
-    in NodeParam | OptionalNodeParam then "struct #{param.c_type} *#{param.name}"
-    in NodeListParam then "struct yp_node_list #{param.name}"
-    in LocationListParam then "yp_location_list_t #{param.name}"
-    in ConstantParam then "yp_constant_id_t #{param.name}"
-    in ConstantListParam then "yp_constant_id_list_t #{param.name}"
-    in StringParam then "yp_string_t #{param.name}"
-    in LocationParam | OptionalLocationParam then "yp_location_t #{param.name}"
-    in UInt32Param then "uint32_t #{param.name}"
+    when NodeParam, OptionalNodeParam then "struct #{param.c_type} *#{param.name}"
+    when NodeListParam then "struct yp_node_list #{param.name}"
+    when LocationListParam then "yp_location_list_t #{param.name}"
+    when ConstantParam then "yp_constant_id_t #{param.name}"
+    when ConstantListParam then "yp_constant_id_list_t #{param.name}"
+    when StringParam then "yp_string_t #{param.name}"
+    when LocationParam, OptionalLocationParam then "yp_location_t #{param.name}"
+    when UInt32Param then "uint32_t #{param.name}"
+    else raise param.class.name
     end
     %>;
 <%- end -%>

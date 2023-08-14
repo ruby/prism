@@ -23,7 +23,9 @@ module KindTypes
     end
   end
 
-  def java_type = options[:kind] || "Node"
+  def java_type
+    options[:kind] || "Node"
+  end
 
   def java_cast
     if options[:kind]
@@ -39,7 +41,9 @@ end
 class NodeParam < Param
   include KindTypes
 
-  def rbs_class = "Node"
+  def rbs_class
+    "Node"
+  end
 end
 
 # This represents a parameter to a node that is itself a node and can be
@@ -47,7 +51,9 @@ end
 class OptionalNodeParam < Param
   include KindTypes
 
-  def rbs_class = "Node?"
+  def rbs_class
+    "Node?"
+  end
 end
 
 SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
@@ -55,61 +61,99 @@ SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
 # This represents a parameter to a node that is a list of nodes. We pass them as
 # references and store them as references.
 class NodeListParam < Param
-  def rbs_class = "Array[Node]"
-  def java_type = "Node[]"
+  def rbs_class
+    "Array[Node]"
+  end
+  def java_type
+    "Node[]"
+  end
 end
 
 # This represents a parameter to a node that is a list of locations.
 class LocationListParam < Param
-  def rbs_class = "Array[Location]"
-  def java_type = "Location[]"
+  def rbs_class
+    "Array[Location]"
+  end
+  def java_type
+    "Location[]"
+  end
 end
 
 # This represents a parameter to a node that is the ID of a string interned
 # through the parser's constant pool.
 class ConstantParam < Param
-  def rbs_class = "Symbol"
-  def java_type = "byte[]"
+  def rbs_class
+    "Symbol"
+  end
+  def java_type
+    "byte[]"
+  end
 end
 
 # This represents a parameter to a node that is a list of IDs that are
 # associated with strings interned through the parser's constant pool.
 class ConstantListParam < Param
-  def rbs_class = "Array[Symbol]"
-  def java_type = "byte[][]"
+  def rbs_class
+    "Array[Symbol]"
+  end
+  def java_type
+    "byte[][]"
+  end
 end
 
 # This represents a parameter to a node that is a string.
 class StringParam < Param
-  def rbs_class = "String"
-  def java_type = "byte[]"
+  def rbs_class
+    "String"
+  end
+  def java_type
+    "byte[]"
+  end
 end
 
 # This represents a parameter to a node that is a location.
 class LocationParam < Param
-  def rbs_class = "Location"
-  def java_type = "Location"
+  def rbs_class
+    "Location"
+  end
+  def java_type
+    "Location"
+  end
 end
 
 # This represents a parameter to a node that is a location that is optional.
 class OptionalLocationParam < Param
-  def rbs_class = "Location?"
-  def java_type = "Location"
+  def rbs_class
+    "Location?"
+  end
+  def java_type
+    "Location"
+  end
 end
 
 # This represents an integer parameter.
 class UInt32Param < Param
-  def rbs_class = "Integer"
-  def java_type = "int"
+  def rbs_class
+    "Integer"
+  end
+  def java_type
+    "int"
+  end
 end
 
 # This represents a set of flags. It is very similar to the UInt32Param, but can
 # be directly embedded into the flags field on the struct and provides
 # convenient methods for checking if a flag is set.
 class FlagsParam < Param
-  def rbs_class = "Integer"
-  def java_type = "short"
-  def kind = options.fetch(:kind)
+  def rbs_class
+    "Integer"
+  end
+  def java_type
+    "short"
+  end
+  def kind
+    options.fetch(:kind)
+  end
 end
 
 PARAM_TYPES = {
