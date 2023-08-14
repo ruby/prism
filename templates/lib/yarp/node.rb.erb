@@ -18,7 +18,6 @@ module YARP
     def accept(visitor)
       visitor.visit_<%= node.human %>(self)
     end
-    <%# potential override of set_newline_flag -%>
     <%- if node.newline == false -%>
 
     def set_newline_flag(newline_marked)
