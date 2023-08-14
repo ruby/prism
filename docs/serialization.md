@@ -37,7 +37,7 @@ The comment type is one of:
 
 | # bytes | field |
 | --- | --- |
-| varint | comment type |
+| `1` | comment type |
 | location | the location in the source of this comment |
 
 ### diagnostic

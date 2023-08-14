@@ -46,7 +46,7 @@ module YARP
         @encoding = Encoding.find(io.read(load_varint))
         @input = input.force_encoding(@encoding).freeze
 
-        comments = load_varint.times.map { Comment.new(Comment::TYPES.fetch(load_varint), load_location) }
+        comments = load_varint.times.map { Comment.new(Comment::TYPES.fetch(io.getbyte), load_location) }
         errors = load_varint.times.map { ParseError.new(load_string, load_location) }
         warnings = load_varint.times.map { ParseWarning.new(load_string, load_location) }
 

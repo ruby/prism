@@ -108,7 +108,7 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
 
 void yp_serialize_comment(yp_parser_t *parser, yp_comment_t *comment, yp_buffer_t *buffer) {
     // serialize type
-    yp_buffer_append_u32(buffer, comment->type);
+    yp_buffer_append_u8(buffer, (uint8_t) comment->type);
 
     // serialize location
     yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(comment->start - parser->start));

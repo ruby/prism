@@ -103,8 +103,7 @@ public class Loader {
         ParseResult.Comment[] comments = new ParseResult.Comment[count];
 
         for (int i = 0; i < count; i++) {
-            int typeInt = loadVarInt();
-            ParseResult.CommentType type = ParseResult.CommentType.VALUES[typeInt];
+            ParseResult.CommentType type = ParseResult.CommentType.VALUES[buffer.get()];
             Nodes.Location location = loadLocation();
 
             ParseResult.Comment comment = new ParseResult.Comment(type, location);
