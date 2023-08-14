@@ -6,13 +6,6 @@ require "yarp_test_helper"
 # running on Ruby 3.2+.
 return if RUBY_VERSION < "3.2.0"
 
-# It is useful to have a diff even if the strings to compare are big
-# However, ruby/ruby does not have a version of Test::Unit with access to
-# max_diff_target_string_size
-if defined?(Test::Unit::Assertions::AssertionMessage)
-  Test::Unit::Assertions::AssertionMessage.max_diff_target_string_size = 5000
-end
-
 class ParseTest < Test::Unit::TestCase
   # When we pretty-print the trees to compare against the snapshots, we want to
   # be certain that we print with the same external encoding. This is because

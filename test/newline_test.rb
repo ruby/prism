@@ -4,6 +4,13 @@ require "yarp_test_helper"
 
 return unless defined?(RubyVM::InstructionSequence)
 
+# It is useful to have a diff even if the strings to compare are big
+# However, ruby/ruby does not have a version of Test::Unit with access to
+# max_diff_target_string_size
+if defined?(Test::Unit::Assertions::AssertionMessage)
+  Test::Unit::Assertions::AssertionMessage.max_diff_target_string_size = 5000
+end
+
 class NewlineTest < Test::Unit::TestCase
   class NewlineVisitor < YARP::Visitor
     attr_reader :source, :newlines
