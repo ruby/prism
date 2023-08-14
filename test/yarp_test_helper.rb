@@ -6,7 +6,7 @@ require "pp"
 require "test/unit"
 require "tempfile"
 
-puts "Using YARP backend: #{YARP::BACKEND}"
+puts "Using YARP backend: #{YARP::BACKEND}" if ENV["YARP_FFI_BACKEND"]
 
 module YARP
   module Assertions

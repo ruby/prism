@@ -37,7 +37,7 @@ task build: [:templates, :check_manifest]
 # the C extension
 task "compile:yarp" => ["templates"] # must be before the ExtensionTask is created
 
-if RUBY_ENGINE == 'ruby' and ENV["YARP_FFI_BACKEND"] != "true"
+if RUBY_ENGINE == 'ruby' and !ENV["YARP_FFI_BACKEND"]
   Rake::ExtensionTask.new(:compile) do |ext|
     ext.name = "yarp"
     ext.ext_dir = "ext/yarp"

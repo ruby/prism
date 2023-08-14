@@ -340,7 +340,7 @@ require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
 
-if RUBY_ENGINE == 'ruby' and ENV["YARP_FFI_BACKEND"] != "true"
+if RUBY_ENGINE == 'ruby' and !ENV["YARP_FFI_BACKEND"]
   require "yarp/yarp.so"
 else
   require "rbconfig"
