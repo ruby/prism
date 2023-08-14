@@ -13,6 +13,10 @@ end
 
 module YARP
   module Serialize
+    MAJOR_VERSION = 0
+    MINOR_VERSION = 7
+    PATCH_VERSION = 0
+
     def self.load(input, serialized)
       Loader.new(Source.new(input), serialized).load
     end
@@ -60,7 +64,7 @@ module YARP
 
       def load
         raise "Invalid serialization" if io.read(4) != "YARP"
-        raise "Invalid serialization" if io.read(3).unpack("C3") != [0, 6, 0]
+        raise "Invalid serialization" if io.read(3).unpack("C3") != [MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION]
 
         @encoding = Encoding.find(io.read(load_varint))
         @input = input.force_encoding(@encoding).freeze
