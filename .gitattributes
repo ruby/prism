@@ -8,6 +8,7 @@ test/fixtures/unparser/**/*.txt linguist-vendored
 test/fixtures/whitequark/**/*.txt linguist-vendored
 test/snapshots/**/*.txt linguist-generated
 
-test/fixtures/**/*.txt -text
-
+# Preserve \n on git clone on Windows, regardless of the git config core.autocrlf value
+# See https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
 **/*.rb text eol=lf
+**/*.txt text eol=lf
