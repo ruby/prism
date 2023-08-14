@@ -334,9 +334,17 @@ module YARP
         @parts = parts
       end
 
-      def type = parts[0]
-      def local_table = parts[10]
-      def instructions = parts[13]
+      def type
+        parts[0]
+      end
+
+      def local_table
+        parts[10]
+      end
+
+      def instructions
+        parts[13]
+      end
 
       def each_child
         instructions.each do |instruction|
