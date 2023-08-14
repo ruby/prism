@@ -61,12 +61,12 @@ end
 TARGETS = {
   ruby: {
     repo: "https://github.com/ruby/ruby",
-    sha: "c1c926219de5489c321d53577ff2eb8c041e166f",
+    sha: "52837fcec2340048f9bdc2169cde17243c5e9d6d",
     excludes: ["spec/ruby/command_line/fixtures/bad_syntax.rb"]
   },
   discourse: {
     repo: "https://github.com/discourse/discourse",
-    sha: "4b22e67c8bc1814133f58bc32f84e42372654abc"
+    sha: "a5542eeab07ec43deb3bcd391e2e56ad30ebd676"
   }
 }
 
