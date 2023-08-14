@@ -7157,13 +7157,13 @@ parser_lex(yp_parser_t *parser) {
                         breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\n': {
-                        yp_newline_list_append(&parser->newline_list, breakpoint);
-
                         if (parser->heredoc_end != NULL && (parser->heredoc_end > breakpoint)) {
                             parser_flush_heredoc_end(parser);
                             parser->current.end = breakpoint + 1;
                             LEX(YP_TOKEN_STRING_CONTENT);
                         }
+
+                        yp_newline_list_append(&parser->newline_list, breakpoint);
 
                         const char *start = breakpoint + 1;
                         if (parser->lex_modes.current->as.heredoc.indent != YP_HEREDOC_INDENT_NONE) {

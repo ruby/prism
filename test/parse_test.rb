@@ -33,9 +33,6 @@ class ParseTest < Test::Unit::TestCase
     YARP.parse("") => YARP::ParseResult[value: YARP::ProgramNode[statements: YARP::StatementsNode[body: []]]]
   end
 
-  known_failures = %w[seattlerb/heredoc_nested.txt]
-  known_failures << "seattlerb/pct_w_heredoc_interp_nested.txt" if RUBY_VERSION < "3.3.0"
-
   def test_parse_takes_file_path
     filepath = "filepath.rb"
     result = YARP.parse("def foo; __FILE__; end", filepath)
@@ -45,10 +42,9 @@ class ParseTest < Test::Unit::TestCase
 
   base = File.join(__dir__, "fixtures")
   Dir["**/*.txt", base: base].each do |relative|
-    next if known_failures.include?(relative)
-
     filepath = File.join(base, relative)
     snapshot = File.expand_path(File.join("snapshots", relative), __dir__)
+
     directory = File.dirname(snapshot)
     FileUtils.mkdir_p(directory) unless File.directory?(directory)
 
@@ -95,6 +91,14 @@ class ParseTest < Test::Unit::TestCase
       expected_newlines = [0]
       source.b.scan("\n") { expected_newlines << $~.offset(0)[0] + 1 }
       assert_equal expected_newlines, YARP.const_get(:Debug).newlines(source)
+
+      # This file has changed behavior in Ripper in Ruby 3.3, so we skip it if
+      # we're on an earlier version.
+      return if relative == "seattlerb/pct_w_heredoc_interp_nested.txt" && RUBY_VERSION < "3.3.0"
+
+      # It seems like there are some oddities with nested heredocs and ripper.
+      # Waiting for feedback on https://bugs.ruby-lang.org/issues/19838.
+      return if relative == "seattlerb/heredoc_nested.txt"
 
       # Finally, assert that we can lex the source and get the same tokens as
       # Ripper.
