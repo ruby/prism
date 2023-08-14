@@ -12,12 +12,6 @@ module YARP
       @offsets = offsets
     end
 
-    private def compute_offsets(code)
-      offsets = [0]
-      code.b.scan("\n") { offsets << $~.end(0) }
-      offsets
-    end
-
     def slice(offset, length)
       source.byteslice(offset, length)
     end
@@ -28,6 +22,14 @@ module YARP
 
     def column(value)
       value - offsets[line(value) - 1]
+    end
+
+    private
+
+    def compute_offsets(code)
+      offsets = [0]
+      code.b.scan("\n") { offsets << $~.end(0) }
+      offsets
     end
   end
 
@@ -472,8 +474,8 @@ require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
 
-if RUBY_ENGINE == 'ruby' and !ENV["YARP_FFI_BACKEND"]
-  require "yarp/yarp.so"
+if RUBY_ENGINE == "ruby" and !ENV["YARP_FFI_BACKEND"]
+  require "yarp/yarp"
 else
   require "yarp/ffi"
 end

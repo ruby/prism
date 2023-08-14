@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# This file is responsible for mirroring the API provided by the C extension by
+# using FFI to call into the shared library.
+
 require "rbconfig"
 require "ffi"
 
@@ -17,7 +20,7 @@ module YARP
       end
     end
 
-    ffi_lib File.expand_path("../../build/librubyparser.#{RbConfig::CONFIG['SOEXT']}", __dir__)
+    ffi_lib File.expand_path("../../build/librubyparser.#{RbConfig::CONFIG["SOEXT"]}", __dir__)
 
     def self.resolve_type(type)
       type = type.strip.sub(/^const /, '')
@@ -26,12 +29,14 @@ module YARP
 
     def self.load_exported_functions_from(header, functions)
       File.readlines(File.expand_path("../../include/#{header}", __dir__)).each do |line|
-        if line.start_with?('YP_EXPORTED_FUNCTION ')
+        if line.start_with?("YP_EXPORTED_FUNCTION ")
           if functions.any? { |function| line.include?(function) }
             /^YP_EXPORTED_FUNCTION (?<return_type>.+) (?<name>\w+)\((?<arg_types>.+)\);$/ =~ line or raise "Could not parse #{line}"
+
             arg_types = arg_types.split(',')
             arg_types = [] if arg_types == %w[void]
             arg_types = arg_types.map { |type| resolve_type(type.sub(/\w+$/, '')) }
+
             return_type = resolve_type return_type
             attach_function name, arg_types, return_type
           end
@@ -41,8 +46,10 @@ module YARP
 
     load_exported_functions_from("yarp.h",
       %w[yp_version yp_parse_serialize yp_lex_serialize])
+
     load_exported_functions_from("yarp/util/yp_buffer.h",
       %w[yp_buffer_init yp_buffer_free])
+
     load_exported_functions_from("yarp/util/yp_string.h",
       %w[yp_string_mapped_init yp_string_free yp_string_source yp_string_length yp_string_sizeof])
 

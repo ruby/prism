@@ -64,6 +64,7 @@ class NodeListParam < Param
   def rbs_class
     "Array[Node]"
   end
+
   def java_type
     "Node[]"
   end
@@ -74,6 +75,7 @@ class LocationListParam < Param
   def rbs_class
     "Array[Location]"
   end
+
   def java_type
     "Location[]"
   end
@@ -85,6 +87,7 @@ class ConstantParam < Param
   def rbs_class
     "Symbol"
   end
+
   def java_type
     "byte[]"
   end
@@ -96,6 +99,7 @@ class ConstantListParam < Param
   def rbs_class
     "Array[Symbol]"
   end
+
   def java_type
     "byte[][]"
   end
@@ -106,6 +110,7 @@ class StringParam < Param
   def rbs_class
     "String"
   end
+
   def java_type
     "byte[]"
   end
@@ -116,6 +121,7 @@ class LocationParam < Param
   def rbs_class
     "Location"
   end
+
   def java_type
     "Location"
   end
@@ -126,6 +132,7 @@ class OptionalLocationParam < Param
   def rbs_class
     "Location?"
   end
+
   def java_type
     "Location"
   end
@@ -136,6 +143,7 @@ class UInt32Param < Param
   def rbs_class
     "Integer"
   end
+
   def java_type
     "int"
   end
@@ -148,9 +156,11 @@ class FlagsParam < Param
   def rbs_class
     "Integer"
   end
+
   def java_type
     "short"
   end
+
   def kind
     options.fetch(:kind)
   end
