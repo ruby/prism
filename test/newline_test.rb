@@ -69,7 +69,9 @@ class NewlineTest < Test::Unit::TestCase
       end
 
       if line.match?(/^\s+\w+ = \[$/)
-        actual[actual.index(line_number)] += 1
+        if !expected.include?(line_number) && !expected.include?(line_number + 2)
+          actual[actual.index(line_number)] += 1
+        end
       end
     end
 
