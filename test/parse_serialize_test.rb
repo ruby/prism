@@ -22,7 +22,5 @@ class ParseSerializeTest < Test::Unit::TestCase
       return node if node.is_a?(YARP::SourceFileNode)
       queue.concat(node.child_nodes.compact)
     end
-
-    nil
   end
 end

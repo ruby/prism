@@ -26,62 +26,55 @@ class NewlineTest < Test::Unit::TestCase
     end
   end
 
-  root = File.dirname(__dir__)
-
-  Dir["{lib,test}/**/*.rb", base: root].each do |relative|
-    # Our newlines are not exact, so for now skip a couple of files that are
-    # marked as incorrect.
-    next if relative == "test/parse_serialize_test.rb"
-
-    filepath = File.join(root, relative)
-
-    define_method "test_newline_flags_#{relative}" do
-      source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
-      expected = rubyvm_lines(source)
-
-      result = YARP.parse_file(filepath)
-      assert_empty result.errors
-
-      result.mark_newlines
-      visitor = NewlineVisitor.new(result.source)
-      result.value.accept(visitor)
-      actual = visitor.newlines
-
-      if relative == "lib/yarp/serialize.rb"
-        # while (b = io.getbyte) >= 128 has 2 newline flags
-        line_number = source.lines.index { |line| line.include?('while (b = io.getbyte) >= 128') } + 1
-        expected.delete_at(expected.index(line_number))
-      elsif relative == "lib/yarp/lex_compat.rb"
-        # extra flag for: dedent_next =\n  ((token.event: due to bytecode order
-        # different line for: token =\n  case event: due to bytecode order
-        # extra flag for: lex_state =\n  if RIPPER: due to bytecode order
-        source.lines.each.with_index(1) do |line, line_number|
-          if line =~ /^\s+\w+ =$/
-            actual.delete(line_number)
-
-            # different line for: token =\n  case event: due to bytecode order
-            if line =~ /token =$/
-              expected.delete(line_number + 1)
-            end
-          end
-        end
-
-        # extra flag for: (token[2].start_with?("\#$") || token[2].start_with?("\#@"))
-        # unclear when ParenthesesNode should allow a second flag on the same line or not
-        index = source.lines.index do |line|
-          line.include?('(token[2].start_with?("\#$") || token[2].start_with?("\#@"))')
-        end
-        actual.delete(index + 1)
-      elsif relative == "test/parse_test.rb"
-        line_number = source.lines.index { |line| line.include?("while (node = queue.shift)") } + 1
-        expected.delete_at(expected.index(line_number))
-      end
-
-      assert_equal expected, actual
+  base = File.dirname(__dir__)
+  Dir["{lib,test}/**/*.rb", base: base].each do |relative|
+    define_method("test_newline_flags_#{relative}") do
+      assert_newlines(base, relative)
     end
   end
 
   private
+
+  def assert_newlines(base, relative)
+    filepath = File.join(base, relative)
+    source = File.read(filepath, binmode: true, external_encoding: Encoding::UTF_8)
+    expected = rubyvm_lines(source)
+
+    result = YARP.parse_file(filepath)
+    assert_empty result.errors
+
+    result.mark_newlines
+    visitor = NewlineVisitor.new(result.source)
+
+    result.value.accept(visitor)
+    actual = visitor.newlines
+
+    source.each_line.with_index(1) do |line, line_number|
+      # Lines like `while (foo = bar)` result in two line flags in the bytecode
+      # but only one newline flag in the AST. We need to remove the extra line
+      # flag from the bytecode to make the test pass.
+      if line.match?(/while \(/)
+        index = expected.index(line_number)
+        expected.delete_at(index) if index
+      end
+
+      # Lines like `foo =` where the value is on the next line result in another
+      # line flag in the bytecode but only one newline flag in the AST.
+      if line.match?(/^\s+\w+ =$/)
+        if source.lines[line_number].match?(/^\s+case/)
+          actual[actual.index(line_number)] += 1
+        else
+          actual.delete_at(actual.index(line_number))
+        end
+      end
+
+      if line.match?(/^\s+\w+ = \[$/)
+        actual[actual.index(line_number)] += 1
+      end
+    end
+
+    assert_equal expected, actual
+  end
 
   def ignore_warnings
     previous_verbosity = $VERBOSE
