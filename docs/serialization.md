@@ -1,10 +1,58 @@
 # Serialization
 
-YARP ships with the ability to serialize a syntax tree to a single string. The string can then be deserialized back into a syntax tree using a language other than C. This is useful for using the parsing logic in other tools without having to write a parser in that language. The syntax tree still requires a copy of the original source, as for the most part it just contains byte offsets into the source string.
+YARP ships with the ability to serialize a syntax tree to a single string.
+The string can then be deserialized back into a syntax tree using a language other than C.
+This is useful for using the parsing logic in other tools without having to write a parser in that language.
+The syntax tree still requires a copy of the original source, as for the most part it just contains byte offsets into the source string.
+
+## Types
+
+Let us define some simple types for readability.
+
+### varint
+
+A variable-length integer with the value fitting in `uint32_t` using between 1 and 5 bytes, using the [LEB128](https://en.wikipedia.org/wiki/LEB128) encoding.
+This drastically cuts down on the size of the serialized string, especially when the source file is large.
+
+### string
+
+| # bytes | field |
+| --- | --- |
+| varint | the length of the string in bytes |
+| ... | the string bytes |
+
+### location
+
+| # bytes | field |
+| --- | --- |
+| varint | byte offset into the source string where this location begins |
+| varint | length of the location in bytes in the source string |
+
+### comment
+
+The comment type is one of:
+* 0=`INLINE` (`# comment`)
+* 1=`EMBEDDED_DOCUMENT` (`=begin`/`=end`)
+* 2=`__END__` (after `__END__`)
+
+| # bytes | field |
+| --- | --- |
+| `1` | comment type |
+| location | the location in the source of this comment |
+
+### diagnostic
+
+| # bytes | field |
+| --- | --- |
+| string | diagnostic message (ASCII-only characters) |
+| location | the location in the source this diagnostic applies to |
 
 ## Structure
 
-The serialized string representing the syntax tree is composed of three parts: the header, the body, and the constant pool. The header contains information like the version of YARP that serialized the tree. The body contains the actual nodes in the tree. The constant pool contains constants that were interned while parsing.
+The serialized string representing the syntax tree is composed of three parts: the header, the body, and the constant pool.
+The header contains information like the version of YARP that serialized the tree.
+The body contains the actual nodes in the tree.
+The constant pool contains constants that were interned while parsing.
 
 The header is structured like the following table:
 
@@ -14,32 +62,28 @@ The header is structured like the following table:
 | `1` | major version number |
 | `1` | minor version number |
 | `1` | patch version number |
-| varint | the length of the encoding name |
 | string | the encoding name |
+| varint | number of comments |
+| comment* | comments |
 | varint | number of errors |
-| varint | byte length of error |
-| string | error string, as byte[] in source encoding |
-| varint | location in the source code - start |
-| varint | location in the source code - length |
-| ... | more errors |
+| diagnostic* | errors |
 | varint | number of warnings |
-| varint | byte length of warning |
-| string | warning string, as byte[] in source encoding |
-| varint | location in the source code - start |
-| varint | location in the source code - length |
-| ... | more warnings |
+| diagnostic* | warnings |
 | `4` | content pool offset |
 | varint | content pool size |
 
-After the header comes the body of the serialized string. The body consistents of a sequence of nodes that is built using a prefix traversal order of the syntax tree. Each node is structured like the following table:
+After the header comes the body of the serialized string.
+The body consistents of a sequence of nodes that is built using a prefix traversal order of the syntax tree.
+Each node is structured like the following table:
 
 | # bytes | field |
 | --- | --- |
 | `1` | node type |
-| varint | byte offset into the source string where this node begins |
-| varint | length of the node in bytes in the source string |
+| location | node location |
 
-Each node's child is then appended to the serialized string. The child node types can be determined by referencing `config.yml`. Depending on the type of child node, it could take a couple of different forms, described below:
+Each node's child is then appended to the serialized string.
+The child node types can be determined by referencing `config.yml`.
+Depending on the type of child node, it could take a couple of different forms, described below:
 
 * `node` - A child node that is a node itself. This is structured just as like parent node.
 * `node?` - A child node that is optionally present. If the node is not present, then a single `0` byte will be written in its place. If it is present, then it will be structured just as like parent node.
@@ -52,7 +96,10 @@ Each node's child is then appended to the serialized string. The child node type
 * `location[]` - A child node that is an array of locations. This is structured as a `4` byte length, followed by the locations themselves.
 * `uint32` - A child node that is a 32-bit unsigned integer. This is structured as a variable-length integer.
 
-After the syntax tree, the content pool is serialized. This is a list of constants that were referenced from within the tree. The content pool begins at the offset specified in the header. Each constant is structured as:
+After the syntax tree, the content pool is serialized.
+This is a list of constants that were referenced from within the tree.
+The content pool begins at the offset specified in the header.
+Each constant is structured as:
 
 | # bytes | field |
 | --- | --- |
@@ -60,10 +107,6 @@ After the syntax tree, the content pool is serialized. This is a list of constan
 | `4` | the byte length in the source |
 
 At the end of the serialization, the buffer is null terminated.
-
-## Variable-length integers
-
-Variable-length integers are used throughout the serialized format, using the [LEB128](https://en.wikipedia.org/wiki/LEB128) encoding. This drastically cuts down on the size of the serialized string, especially when the source file is large.
 
 ## APIs
 
@@ -105,7 +148,10 @@ serialize(const char *source, size_t length) {
 }
 ```
 
-The final argument to `yp_parse_serialize` controls the metadata of the source. This includes the filepath that the source is associated with, and any nested local variables scopes that are necessary to properly parse the file (in the case of parsing an `eval`). The metadata is a serialized format itself, and is structured as follows:
+The final argument to `yp_parse_serialize` controls the metadata of the source.
+This includes the filepath that the source is associated with, and any nested local variables scopes that are necessary to properly parse the file (in the case of parsing an `eval`).
+Note that no `varint` are used here to make it easier to produce the metadata for the caller, and also serialized size is less important here.
+The metadata is a serialized format itself, and is structured as follows:
 
 | # bytes | field |
 | --- | --- |
@@ -127,4 +173,5 @@ Each local variable within each scope is encoded as:
 | `4` | the size of the local variable name |
 | | the local variable name |
 
-The metadata can be `NULL` (as seen in the example above). If it is not null, then a minimal metadata string would be `"\0\0\0\0\0\0\0\0"` which would use 4 bytes to indicate an empty filepath string and 4 bytes to indicate that there were no local variable scopes.
+The metadata can be `NULL` (as seen in the example above).
+If it is not null, then a minimal metadata string would be `"\0\0\0\0\0\0\0\0"` which would use 4 bytes to indicate an empty filepath string and 4 bytes to indicate that there were no local variable scopes.

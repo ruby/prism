@@ -106,6 +106,24 @@ yp_serialize_node(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) {
     }
 }
 
+void yp_serialize_comment(yp_parser_t *parser, yp_comment_t *comment, yp_buffer_t *buffer) {
+    // serialize type
+    yp_buffer_append_u8(buffer, (uint8_t) comment->type);
+
+    // serialize location
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(comment->start - parser->start));
+    yp_buffer_append_u32(buffer, yp_ptrdifft_to_u32(comment->end - comment->start));
+}
+
+void yp_serialize_comment_list(yp_parser_t *parser, yp_list_t list, yp_buffer_t *buffer) {
+    yp_buffer_append_u32(buffer, yp_list_size(&list));
+
+    yp_comment_t *comment;
+    for (comment = (yp_comment_t *) list.head; comment != NULL; comment = (yp_comment_t *) comment->node.next) {
+        yp_serialize_comment(parser, comment, buffer);
+    }
+}
+
 void yp_serialize_diagnostic(yp_parser_t *parser, yp_diagnostic_t *diagnostic, yp_buffer_t *buffer) {
     // serialize message
     size_t message_length = strlen(diagnostic->message);
@@ -132,6 +150,9 @@ yp_serialize_content(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer) 
     size_t encoding_length = strlen(parser->encoding.name);
     yp_buffer_append_u32(buffer, yp_sizet_to_u32(encoding_length));
     yp_buffer_append_str(buffer, parser->encoding.name, encoding_length);
+
+    // Serialize the comments
+    yp_serialize_comment_list(parser, parser->comment_list, buffer);
 
     // Serialize the errors
     yp_serialize_diagnostic_list(parser, parser->error_list, buffer);

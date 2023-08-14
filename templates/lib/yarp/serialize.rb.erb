@@ -46,6 +46,7 @@ module YARP
         @encoding = Encoding.find(io.read(load_varint))
         @input = input.force_encoding(@encoding).freeze
 
+        comments = load_varint.times.map { Comment.new(Comment::TYPES.fetch(io.getbyte), load_location) }
         errors = load_varint.times.map { ParseError.new(load_string, load_location) }
         warnings = load_varint.times.map { ParseWarning.new(load_string, load_location) }
 
@@ -54,7 +55,7 @@ module YARP
 
         ast = load_node
 
-        YARP::ParseResult.new(ast, [], errors, warnings, @source)
+        YARP::ParseResult.new(ast, comments, errors, warnings, @source)
       end
 
       private

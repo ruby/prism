@@ -101,6 +101,8 @@ module YARP
 
   # This represents a comment that was encountered during parsing.
   class Comment
+    TYPES = [:inline, :embdoc, :__END__]
+
     attr_reader :type, :location
 
     def initialize(type, location)

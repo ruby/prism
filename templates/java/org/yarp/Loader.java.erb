@@ -1,5 +1,7 @@
 package org.yarp;
 
+import org.yarp.ParseResult;
+
 import java.lang.Short;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -67,6 +69,7 @@ public class Loader {
         byte[] encodingName = new byte[encodingLength];
         buffer.get(encodingName);
 
+        ParseResult.Comment[] comments = loadComments();
         ParseResult.Error[] errors = loadSyntaxErrors();
         ParseResult.Warning[] warnings = loadWarnings();
 
@@ -85,7 +88,7 @@ public class Loader {
         MarkNewlinesVisitor visitor = new MarkNewlinesVisitor(source, newlineMarked);
         node.accept(visitor);
 
-        return new ParseResult(node, errors, warnings);
+        return new ParseResult(node, comments, errors, warnings);
     }
 
     private byte[] loadString() {
@@ -93,6 +96,21 @@ public class Loader {
         byte[] string = new byte[length];
         buffer.get(string);
         return string;
+    }
+
+    private ParseResult.Comment[] loadComments() {
+        int count = loadVarInt();
+        ParseResult.Comment[] comments = new ParseResult.Comment[count];
+
+        for (int i = 0; i < count; i++) {
+            ParseResult.CommentType type = ParseResult.CommentType.VALUES[buffer.get()];
+            Nodes.Location location = loadLocation();
+
+            ParseResult.Comment comment = new ParseResult.Comment(type, location);
+            comments[i] = comment;
+        }
+
+        return comments;
     }
 
     private ParseResult.Error[] loadSyntaxErrors() {

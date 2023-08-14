@@ -220,11 +220,13 @@ public abstract class Nodes {
         <%- end -%>
         <%# potential override of setNewLineFlag() -%>
         <%- if node.newline == false -%>
+
         @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
             // Never mark <%= node.name %> with a newline flag, mark children instead
         }
         <%- elsif node.newline.is_a?(String) -%>
+
         @Override
         public void setNewLineFlag(Source source, boolean[] newlineMarked) {
           <%- param = node.params.find { |p| p.name == node.newline } or raise node.newline -%>
