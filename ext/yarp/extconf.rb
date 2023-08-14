@@ -7,13 +7,14 @@ module Yarp
     class << self
       def configure
         unless RUBY_ENGINE == "ruby"
+          # On non-CRuby we only need the shared library, so build only that and not the C extension.
+          # We also avoid `require "mkmf"` as that prepends the LLVM toolchain to PATH on TruffleRuby,
+          # but we want to use the native toolchain here since librubyparser is run natively.
           build_shared_rubyparser
           File.write("Makefile", "all install clean:\n\t@#{RbConfig::CONFIG["NULLCMD"]}\n")
           return
         end
 
-        # require "mkmf" prepends the LLVM toolchain to PATH on TruffleRuby.
-        # We want to use the native toolchain, so only require mkmf when it's needed
         require "mkmf"
         configure_c_extension
         configure_rubyparser
