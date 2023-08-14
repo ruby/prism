@@ -2,10 +2,6 @@
 
 require "yarp_test_helper"
 
-# To accurately compare against the snapshots, we need to make sure that we're
-# running on Ruby 3.2+.
-return if RUBY_VERSION < "3.2.0"
-
 class ParseTest < Test::Unit::TestCase
   # When we pretty-print the trees to compare against the snapshots, we want to
   # be certain that we print with the same external encoding. This is because
@@ -34,8 +30,15 @@ class ParseTest < Test::Unit::TestCase
     assert_equal filepath, find_source_file_node(result.value).filepath
   end
 
+  # To accurately compare against Ripper, we need to make sure that we're
+  # running on Ruby 3.2+.
+  check_ripper = RUBY_VERSION >= "3.2.0"
+
   base = File.join(__dir__, "fixtures")
   Dir["**/*.txt", base: base].each do |relative|
+    # These fail on TruffleRuby due to a difference in Symbol#inspect: :测试 vs :"测试"
+    next if RUBY_ENGINE == "truffleruby" and %w[seattlerb/bug202.txt seattlerb/magic_encoding_comment.txt].include?(relative)
+
     filepath = File.join(base, relative)
     snapshot = File.expand_path(File.join("snapshots", relative), __dir__)
 
@@ -49,7 +52,7 @@ class ParseTest < Test::Unit::TestCase
 
       # Make sure that it can be correctly parsed by Ripper. If it can't, then we have a fixture
       # that is invalid Ruby.
-      refute_nil Ripper.sexp_raw(source)
+      refute_nil Ripper.sexp_raw(source) if check_ripper
 
       # Next, assert that there were no errors during parsing.
       result = YARP.parse(source, relative)
@@ -100,12 +103,14 @@ class ParseTest < Test::Unit::TestCase
       assert_equal [], lex_result.errors
       tokens = lex_result.value
 
-      begin
-        YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
-          assert_equal ripper, yarp
+      if check_ripper
+        begin
+          YARP.lex_ripper(source).zip(tokens).each do |(ripper, yarp)|
+            assert_equal ripper, yarp
+          end
+        rescue SyntaxError
+          raise ArgumentError, "Test file has invalid syntax #{filepath}"
         end
-      rescue SyntaxError
-        raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
     end
   end
