@@ -40,7 +40,7 @@ fn serialize_test() {
 
         assert_eq!(&serialized[0..4], b"YARP");
         assert_eq!(serialized[4..5][0], 0); // YP_VERSION_MAJOR
-        assert_eq!(serialized[5..6][0], 6); // YP_VERSION_MINOR
+        assert_eq!(serialized[5..6][0], 7); // YP_VERSION_MINOR
         assert_eq!(serialized[6..7][0], 0); // YP_VERSION_PATCH
 
         yp_buffer_free(buffer);
