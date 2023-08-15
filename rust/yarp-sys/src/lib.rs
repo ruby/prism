@@ -38,8 +38,6 @@ mod bindings {
     // and `librubyparser`. Here is where we pull in those bindings and make
     // them part of our library.
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
-
-    pub type yp_parser_t_lex_modes = yp_parser__bindgen_ty_1;
 }
 
 pub use self::bindings::*;
