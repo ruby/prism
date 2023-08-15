@@ -13,8 +13,7 @@ ProgramNode(0...106)(
           "  not here\n" +
           "HERE\n" +
           "\n" +
-          "<<~BUT\n" +
-          "  but\n" +
+          "<<~BUT  but\n" +
           "BUT\n" +
           "  there\n"
         )],

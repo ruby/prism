@@ -5,7 +5,7 @@ ProgramNode(0...93)(
        (0...1),
        (1...39),
        (39...40),
-       "  why would someone do this? \n" + "  blah\n"
+       "  why would someone do this?   blah\n"
      ),
      InterpolatedStringNode(42...93)(
        (42...49),
@@ -13,7 +13,7 @@ ProgramNode(0...93)(
           nil,
           (50...88),
           nil,
-          "  why would someone do this? \n" + "  blah\n"
+          "  why would someone do this?   blah\n"
         )],
        (88...93)
      )]

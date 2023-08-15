@@ -3934,10 +3934,10 @@ yp_symbol_node_label_create(yp_parser_t *parser, const yp_token_t *token) {
             yp_token_t label = { .type = YP_TOKEN_LABEL, .start = token->start, .end = token->end - 1 };
             node = yp_symbol_node_create(parser, &opening, &label, &closing);
 
-            ptrdiff_t length = label.end - label.start;
-            assert(length >= 0);
+            assert((label.end - label.start) >= 0);
+            yp_string_shared_init(&node->unescaped, label.start, label.end);
 
-            yp_unescape_manipulate_string(parser, label.start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+            yp_unescape_manipulate_string(parser, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
             break;
         }
         case YP_TOKEN_MISSING: {
@@ -7203,11 +7203,16 @@ parser_lex(yp_parser_t *parser) {
                         break;
                     }
                     case '\\': {
-                        // If we hit escapes, then we need to treat the next token
-                        // literally. In this case we'll skip past the next character and
-                        // find the next breakpoint.
-                        if (breakpoint[1] == '\n') {
+                        // If we hit an escape, then we need to skip past
+                        // however many characters the escape takes up. However
+                        // it's important that if \n or \r\n are escaped that we
+                        // stop looping before the newline and not after the
+                        // newline so that we can still potentially find the
+                        // terminator of the heredoc.
+                        if (breakpoint + 1 < parser->end && breakpoint[1] == '\n') {
                             breakpoint++;
+                        } else if (breakpoint + 2 < parser->end && breakpoint[1] == '\r' && breakpoint[2] == '\n') {
+                            breakpoint += 2;
                         } else {
                             yp_unescape_type_t unescape_type = (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL;
                             size_t difference = yp_unescape_calculate_difference(breakpoint, parser->end, unescape_type, false, &parser->error_list);
@@ -7218,6 +7223,7 @@ parser_lex(yp_parser_t *parser) {
 
                             breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                         }
+
                         break;
                     }
                     case '#': {
@@ -7264,10 +7270,10 @@ static yp_regular_expression_node_t *
 yp_regular_expression_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_regular_expression_node_t *node = yp_regular_expression_node_create(parser, opening, content, closing);
 
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
+    assert((content->end - content->start) >= 0);
+    yp_string_shared_init(&node->unescaped, content->start, content->end);
 
-    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_manipulate_string(parser, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
@@ -7275,10 +7281,10 @@ static yp_symbol_node_t *
 yp_symbol_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_symbol_node_t *node = yp_symbol_node_create(parser, opening, content, closing);
 
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
+    assert((content->end - content->start) >= 0);
+    yp_string_shared_init(&node->unescaped, content->start, content->end);
 
-    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_manipulate_string(parser, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
@@ -7286,10 +7292,10 @@ static yp_string_node_t *
 yp_string_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing, yp_unescape_type_t unescape_type) {
     yp_string_node_t *node = yp_string_node_create(parser, opening, content, closing);
 
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
+    assert((content->end - content->start) >= 0);
+    yp_string_shared_init(&node->unescaped, content->start, content->end);
 
-    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, unescape_type, &parser->error_list);
+    yp_unescape_manipulate_string(parser, &node->unescaped, unescape_type, &parser->error_list);
     return node;
 }
 
@@ -7297,10 +7303,10 @@ static yp_x_string_node_t *
 yp_xstring_node_create_and_unescape(yp_parser_t *parser, const yp_token_t *opening, const yp_token_t *content, const yp_token_t *closing) {
     yp_x_string_node_t *node = yp_xstring_node_create(parser, opening, content, closing);
 
-    ptrdiff_t length = content->end - content->start;
-    assert(length >= 0);
+    assert((content->end - content->start) >= 0);
+    yp_string_shared_init(&node->unescaped, content->start, content->end);
 
-    yp_unescape_manipulate_string(parser, content->start, (size_t) length, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
+    yp_unescape_manipulate_string(parser, &node->unescaped, YP_UNESCAPE_ALL, &parser->error_list);
     return node;
 }
 
@@ -9172,7 +9178,12 @@ parse_string_part(yp_parser_t *parser) {
             yp_unescape_type_t unescape_type = YP_UNESCAPE_ALL;
 
             if (parser->lex_modes.current->mode == YP_LEX_HEREDOC) {
-                if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
+                if (parser->lex_modes.current->as.heredoc.indent == YP_HEREDOC_INDENT_TILDE) {
+                    // If we're in a tilde heredoc, we want to unescape it later
+                    // because we don't want unescaped newlines to disappear
+                    // before we handle them in the dedent.
+                    unescape_type = YP_UNESCAPE_NONE;
+                } else if (parser->lex_modes.current->as.heredoc.quote == YP_HEREDOC_QUOTE_SINGLE) {
                     unescape_type = YP_UNESCAPE_MINIMAL;
                 }
             }
@@ -9552,7 +9563,7 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
 
         // Get a reference to the string struct that is being held by the string
         // node. This is the value we're going to actual manipulate.
-        yp_string_t *string = &((yp_string_node_t *) node)->unescaped;
+        yp_string_t *string = &(((yp_string_node_t *) node)->unescaped);
         yp_string_ensure_owned(string);
 
         // Now get the bounds of the existing string. We'll use this as a
@@ -9614,6 +9625,7 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
         }
 
         string->length = dest_length;
+        yp_unescape_manipulate_string(parser, string, (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL, &parser->error_list);
     }
 }
 
