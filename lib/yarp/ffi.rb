@@ -188,7 +188,7 @@ module YARP
       LibRubyParser.yp_lex_serialize(code, code.bytesize, filepath, buffer)
 
       source = Source.new(code)
-      Serialize.load_tokens(source, buffer.to_ruby_string).with_source(source)
+      Serialize.load_tokens(source, buffer.to_ruby_string)
     end
   end
 
@@ -199,7 +199,7 @@ module YARP
 
   # Mirror the YARP.parse API by using the serialization API.
   def self.parse(code, filepath = nil)
-    YARP.load(code, dump(code, filepath)).with_source(Source.new(code))
+    YARP.load(code, dump(code, filepath))
   end
 
   # Mirror the YARP.parse_file API by using the serialization API. This uses

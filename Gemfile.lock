@@ -7,7 +7,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     ffi (1.15.5)
-    ffi (1.15.5-java)
     mini_portile2 (2.8.4)
     nokogiri (1.15.3)
       mini_portile2 (~> 2.8.2)
