@@ -2706,6 +2706,10 @@ yp_interpolated_string_node_create(yp_parser_t *parser, const yp_token_t *openin
 // Append a part to an InterpolatedStringNode node.
 static inline void
 yp_interpolated_string_node_append(yp_interpolated_string_node_t *node, yp_node_t *part) {
+    if (node->parts.size == 0 && node->opening_loc.start == NULL) {
+        node->base.location.start = part->location.start;
+    }
+
     yp_node_list_append(&node->parts, part);
     node->base.location.end = part->location.end;
 }
@@ -10711,12 +10715,15 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
             lex_state_set(parser, YP_LEX_STATE_END);
             expect(parser, YP_TOKEN_HEREDOC_END, "Expected a closing delimiter for heredoc.");
+
             if (quote == YP_HEREDOC_QUOTE_BACKTICK) {
                 assert(YP_NODE_TYPE_P(node, YP_NODE_INTERPOLATED_X_STRING_NODE));
                 yp_interpolated_xstring_node_closing_set(((yp_interpolated_x_string_node_t *) node), &parser->previous);
+                node->location = ((yp_interpolated_x_string_node_t *) node)->opening_loc;
             } else {
                 assert(YP_NODE_TYPE_P(node, YP_NODE_INTERPOLATED_STRING_NODE));
                 yp_interpolated_string_node_closing_set((yp_interpolated_string_node_t *) node, &parser->previous);
+                node->location = ((yp_interpolated_string_node_t *) node)->opening_loc;
             }
 
             // If this is a heredoc that is indented with a ~, then we need to dedent

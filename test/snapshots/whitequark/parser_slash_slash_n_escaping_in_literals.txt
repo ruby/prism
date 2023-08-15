@@ -43,17 +43,17 @@ ProgramNode(0...210)(
      ),
      SymbolNode(123...130)(nil, (125...129), nil, "ab"),
      SymbolNode(132...139)((132...134), (134...138), (138...139), "ab"),
-     InterpolatedStringNode(141...161)(
+     InterpolatedStringNode(141...150)(
        (141...150),
        [StringNode(151...156)(nil, (151...156), nil, "ab\n")],
        (156...161)
      ),
-     InterpolatedStringNode(162...182)(
+     InterpolatedStringNode(162...171)(
        (162...171),
        [StringNode(172...177)(nil, (172...177), nil, "a\\\n" + "b\n")],
        (177...182)
      ),
-     InterpolatedXStringNode(183...203)(
+     InterpolatedXStringNode(183...192)(
        (183...192),
        [StringNode(193...198)(nil, (193...198), nil, "ab\n")],
        (198...203)
