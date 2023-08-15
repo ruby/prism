@@ -17,7 +17,7 @@ fn main() {
     let bindings = generate_bindings(&ruby_include_path);
 
     // Write the bindings to file.
-    write_bindngs(&bindings);
+    write_bindings(&bindings);
 }
 
 /// Gets the path to project files (`librubyparser*`) at `[root]/build/`.
@@ -29,7 +29,8 @@ fn ruby_build_path() -> PathBuf {
         .unwrap()
 }
 
-/// Gets the path to the header files that `bindgen` needs for doing code generation.
+/// Gets the path to the header files that `bindgen` needs for doing code
+/// generation.
 ///
 fn ruby_include_path() -> PathBuf {
     cargo_manifest_path()
@@ -42,9 +43,9 @@ fn cargo_manifest_path() -> PathBuf {
     PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
 }
 
-/// Uses `bindgen` to generate bindings to the C API. Update this to allow new types/functions/etc
-/// to be generated (it's allowlisted to only expose functions that'd make sense for public
-/// consumption).
+/// Uses `bindgen` to generate bindings to the C API. Update this to allow new
+/// types/functions/etc to be generated (it's allowlisted to only expose
+/// functions that'd make sense for public consumption).
 ///
 /// This method only generates code in memory here--it doesn't write it to file.
 ///
@@ -77,10 +78,7 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_type("yp_node_type")
         .allowlist_type("yp_parser_t")
         .allowlist_type("yp_pack_size")
-        // TODO: Commenting this because I can't figure out how to get bindgen to generate the
-        // inner-unions nicely. Hand-rolling this in src/lib.rs for now.
-        // .allowlist_type("yp_string_t")
-        .blocklist_type(r#"^yp_string_t\S*"#)
+        .allowlist_type("yp_string_t")
         .allowlist_type("yp_string_list_t")
         .allowlist_type("yp_token_type_t")
         // Enums
@@ -135,9 +133,9 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .expect("Unable to generate yarp bindings")
 }
 
-/// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into the actual library
-/// in `src/lib.rs`.
-fn write_bindngs(bindings: &bindgen::Bindings) {
+/// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into
+/// the actual library in `src/lib.rs`.
+fn write_bindings(bindings: &bindgen::Bindings) {
     let out_path = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
 
     bindings
