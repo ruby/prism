@@ -22,7 +22,7 @@ ProgramNode(0...108)(
        (28...31),
        (36...37)
      ),
-     InterpolatedStringNode(41...73)(
+     InterpolatedStringNode(41...45)(
        (41...45),
        [StringNode(47...70)(
           nil,
@@ -49,7 +49,7 @@ ProgramNode(0...108)(
          (95...96),
          ArgumentsNode(96...107)(
            [CallNode(96...107)(
-              InterpolatedStringNode(96...128)(
+              InterpolatedStringNode(96...102)(
                 (96...102),
                 [StringNode(110...121)(
                    nil,
