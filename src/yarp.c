@@ -13190,6 +13190,8 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
         .enclosure_nesting = 0,
         .lambda_enclosure_nesting = -1,
         .brace_nesting = 0,
+        .do_loop_stack = YP_STATE_STACK_EMPTY,
+        .accepts_block_stack = YP_STATE_STACK_EMPTY,
         .lex_modes = {
             .index = 0,
             .stack = {{ .mode = YP_LEX_DEFAULT }},
@@ -13201,6 +13203,9 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
         .current = { .type = YP_TOKEN_EOF, .start = source, .end = source },
         .next_start = NULL,
         .heredoc_end = NULL,
+        .comment_list = YP_LIST_EMPTY,
+        .warning_list = YP_LIST_EMPTY,
+        .error_list = YP_LIST_EMPTY,
         .current_scope = NULL,
         .current_context = NULL,
         .recovering = false,
@@ -13213,15 +13218,11 @@ yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char 
         .pattern_matching_newlines = false,
         .in_keyword_arg = false,
         .filepath_string = filepath_string,
+        .constant_pool = YP_CONSTANT_POOL_EMPTY,
+        .newline_list = YP_NEWLINE_LIST_EMPTY
     };
 
-    yp_state_stack_init(&parser->do_loop_stack);
-    yp_state_stack_init(&parser->accepts_block_stack);
     yp_accepts_block_stack_push(parser, true);
-
-    yp_list_init(&parser->warning_list);
-    yp_list_init(&parser->error_list);
-    yp_list_init(&parser->comment_list);
 
     // Initialize the constant pool. We're going to completely guess as to the
     // number of constants that we'll need based on the size of the input. The
