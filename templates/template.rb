@@ -38,6 +38,7 @@ class NodeParam < Param
   include KindTypes
 
   def rbs_class = "Node"
+  def sorbet_class = "YARP::Node"
 end
 
 # This represents a parameter to a node that is itself a node and can be
@@ -46,6 +47,7 @@ class OptionalNodeParam < Param
   include KindTypes
 
   def rbs_class = "Node?"
+  def sorbet_class = "T.nilable(YARP::Node)"
 end
 
 SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
@@ -54,12 +56,14 @@ SingleNodeParam = -> (node) { NodeParam === node or OptionalNodeParam === node }
 # references and store them as references.
 class NodeListParam < Param
   def rbs_class = "Array[Node]"
+  def sorbet_class = "T::Array[YARP::Node]"
   def java_type = "Node[]"
 end
 
 # This represents a parameter to a node that is a list of locations.
 class LocationListParam < Param
   def rbs_class = "Array[Location]"
+  def sorbet_class = "T::Array[YARP::Location]"
   def java_type = "Location[]"
 end
 
@@ -67,6 +71,7 @@ end
 # through the parser's constant pool.
 class ConstantParam < Param
   def rbs_class = "Symbol"
+  def sorbet_class = "YARP::Symbol"
   def java_type = "byte[]"
 end
 
@@ -74,30 +79,35 @@ end
 # associated with strings interned through the parser's constant pool.
 class ConstantListParam < Param
   def rbs_class = "Array[Symbol]"
+  def sorbet_class = "T::Array[YARP::Symbol]"
   def java_type = "byte[][]"
 end
 
 # This represents a parameter to a node that is a string.
 class StringParam < Param
   def rbs_class = "String"
+  def sorbet_class = "String"
   def java_type = "byte[]"
 end
 
 # This represents a parameter to a node that is a location.
 class LocationParam < Param
   def rbs_class = "Location"
+  def sorbet_class = "YARP::Location"
   def java_type = "Location"
 end
 
 # This represents a parameter to a node that is a location that is optional.
 class OptionalLocationParam < Param
   def rbs_class = "Location?"
+  def sorbet_class = "T.nilable(Location)"
   def java_type = "Location"
 end
 
 # This represents an integer parameter.
 class UInt32Param < Param
   def rbs_class = "Integer"
+  def sorbet_class = "Integer"
   def java_type = "int"
 end
 
@@ -243,6 +253,7 @@ TEMPLATES = [
   "java/org/yarp/ParseResult.java",
   "java/org/yarp/AbstractNodeVisitor.java",
   "lib/yarp/node.rb",
+  "rbi/yarp.rbi",
   "lib/yarp/serialize.rb",
   "src/node.c",
   "src/prettyprint.c",

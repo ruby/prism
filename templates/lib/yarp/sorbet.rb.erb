@@ -1,0 +1,47 @@
+  <%- nodes.each do |node| -%>
+  <%= "#{node.comment.split("\n").map { |line| line.empty? ? "#" : "# #{line}" }.join("\n  ")}\n  " if node.comment %>class <%= node.name -%> < Node
+    <%- node.params.each do |param| -%>
+    sig { returns(<%= param.sorbet_class %>) }
+    attr_reader :<%= param.name %>
+
+    <%- end -%>
+    sig do
+      params(<%= (node.params.map { |param| "#{param.name}: #{param.sorbet_class}" } + ["location: YARP::Location"]).join(", ") %>).void
+    end
+    def initialize(<%= (node.params.map(&:name) + ["location"]).join(", ") %>); end
+
+    sig { params(visitor: YARP::Visitor).void }
+    def accept(visitor); end
+
+    sig { params(newline_marked: T::Boolean).void }
+    def set_newline_flag(newline_marked); end
+
+    sig { returns T::Array[T.nilable(YARP::Node)] }
+    def child_nodes; end
+
+    sig { returns T::Array[T.nilable(YARP::Node)] }
+    alias deconstruct child_nodes
+
+    sig do
+      params(keys: T::Array[Symbol]).returns(T::Hash[Symbol, T.any(nil, YARP::Node, T::Array[YARP::Node], String, YARP::Token, T::Array[YARP::Token], YARP::Location])])
+    end
+    def deconstruct_keys(keys); end
+    <%- node.params.each do |param| -%>
+    <%- case param -%>
+    <%- when LocationParam -%>
+    <%- raise unless param.name.end_with?("_loc") -%>
+    <%- next if node.params.any? { |other| other.name == param.name.delete_suffix("_loc") } -%>
+
+    sig { returns(String) }
+    def <%= param.name.delete_suffix("_loc") %>; end
+    <%- when OptionalLocationParam -%>
+    <%- raise unless param.name.end_with?("_loc") -%>
+    <%- next if node.params.any? { |other| other.name == param.name.delete_suffix("_loc") } -%>
+
+    sig { returns(T.nilable(String))}
+    def <%= param.name.delete_suffix("_loc") %>; end
+    <%- end -%>
+    <%- end -%>
+  end
+  <%- end -%>
+end
