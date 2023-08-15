@@ -9556,10 +9556,26 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
     int common_whitespace;
     if ((common_whitespace = parse_heredoc_common_whitespace(parser, nodes)) <= 0) return;
 
-    // Iterate over all nodes, and trim whitespace accordingly.
-    for (size_t index = 0; index < nodes->size; index++) {
-        yp_node_t *node = nodes->nodes[index];
-        if (!YP_NODE_TYPE_P(node, YP_NODE_STRING_NODE)) continue;
+    // The next node should be dedented if it's the first node in the list or if
+    // if follows a string node.
+    bool dedent_next = true;
+
+    // Iterate over all nodes, and trim whitespace accordingly. We're going to
+    // keep around two indices: a read and a write. If we end up trimming all of
+    // the whitespace from a node, then we'll drop it from the list entirely.
+    size_t write_index = 0;
+
+    for (size_t read_index = 0; read_index < nodes->size; read_index++) {
+        yp_node_t *node = nodes->nodes[read_index];
+
+        // We're not manipulating child nodes that aren't strings. In this case
+        // we'll skip past it and indicate that the subsequent node should not
+        // be dedented.
+        if (!YP_NODE_TYPE_P(node, YP_NODE_STRING_NODE)) {
+            nodes->nodes[write_index++] = node;
+            dedent_next = false;
+            continue;
+        }
 
         // Get a reference to the string struct that is being held by the string
         // node. This is the value we're going to actual manipulate.
@@ -9579,7 +9595,6 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
         // whitespace, so we'll maintain a pointer to the current position in the
         // string that we're writing to.
         char *dest_cursor = source_start;
-        bool dedent_next = (index == 0) || YP_NODE_TYPE_P(nodes->nodes[index - 1], YP_NODE_STRING_NODE);
 
         while (source_cursor < source_end) {
             // If we need to dedent the next element within the heredoc or the next
@@ -9624,9 +9639,20 @@ parse_heredoc_dedent(yp_parser_t *parser, yp_node_t *node, yp_heredoc_quote_t qu
             dedent_next = true;
         }
 
-        string->length = dest_length;
-        yp_unescape_manipulate_string(parser, string, (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL, &parser->error_list);
+        // We only want to write this node into the list if it has any content.
+        if (dest_length == 0) {
+            yp_node_destroy(parser, node);
+        } else {
+            string->length = dest_length;
+            yp_unescape_manipulate_string(parser, string, (quote == YP_HEREDOC_QUOTE_SINGLE) ? YP_UNESCAPE_MINIMAL : YP_UNESCAPE_ALL, &parser->error_list);
+            nodes->nodes[write_index++] = node;
+        }
+
+        // We always dedent the next node if it follows a string node.
+        dedent_next = true;
     }
+
+    nodes->size = write_index;
 }
 
 static yp_node_t *
