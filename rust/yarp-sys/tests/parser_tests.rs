@@ -82,7 +82,6 @@ fn diagnostics_test() {
         let node = yp_parse(parser);
 
         let error_list = &parser.error_list;
-        // TODO: error_list.head used to get set, but after rebasing `87e02c0b`, this behavior changed. (This pointer used to not be null).
         assert!(!error_list.head.is_null());
 
         let error = error_list.head as *const yp_diagnostic_t;
@@ -131,8 +130,6 @@ fn encoding_change_test() {
         yp_parser_register_encoding_changed_callback(parser, Some(callback));
 
         let node = yp_parse(parser);
-        // TODO: This used to get set (assumingly from encountering the 'ascii' encoding directive
-        // in `source`), but after rebasing `87e02c0b`, this behavior changed.
         assert!(parser.encoding_changed);
 
         // This value should have been mutated inside the callback when the encoding changed.
@@ -172,7 +169,7 @@ fn encoding_decode_test() {
 
     static THING: OnceLock<Output> = OnceLock::new();
 
-    let source = CString::new("# encoding: meow").unwrap();
+    let source = CString::new("# encoding: ascii").unwrap();
     let mut parser = MaybeUninit::<yp_parser_t>::uninit();
 
     unsafe {
@@ -187,8 +184,6 @@ fn encoding_decode_test() {
         yp_parser_register_encoding_decode_callback(parser, Some(callback));
 
         let node = yp_parse(parser);
-        // TODO: parser.encoding.name used to get set to "ascii" (via the callback),
-        // but stopped after I rebased on `87e02c0b`.
         assert!(!parser.encoding.name.is_null());
         assert!(!yp_encoding_ascii.name.is_null());
         assert_eq!(
@@ -197,8 +192,8 @@ fn encoding_decode_test() {
         );
 
         let output = THING.get().unwrap();
-        assert_eq!(&output.name, "meow");
-        assert_eq!(output.width, 4);
+        assert_eq!(&output.name, "ascii");
+        assert_eq!(output.width, 5);
 
         yp_node_destroy(parser, node);
         yp_parser_free(parser);

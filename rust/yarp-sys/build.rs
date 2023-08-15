@@ -76,7 +76,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_type("yp_pack_size")
         .allowlist_type("yp_parser_t")
         .allowlist_type("yp_string_t")
-        .allowlist_type("yp_token_type_t")
         .allowlist_type(r#"^yp_\w+_node_t"#)
         // Enums
         .rustified_non_exhaustive_enum("yp_comment_type_t")
@@ -92,7 +91,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         // Functions
         .allowlist_function("yp_list_empty_p")
         .allowlist_function("yp_list_free")
-        .allowlist_function("yp_list_init")
         .allowlist_function("yp_node_destroy")
         .allowlist_function("yp_pack_parse")
         .allowlist_function("yp_parse")
@@ -104,7 +102,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_function("yp_string_free")
         .allowlist_function("yp_string_length")
         .allowlist_function("yp_string_source")
-        .allowlist_function("yp_token_type_to_str")
         .allowlist_function("yp_version")
         // Vars
         .allowlist_var(r#"^yp_encoding\S+"#)
