@@ -125,16 +125,3 @@ mod string {
         }
     }
 }
-
-#[test]
-fn string_list_test() {
-    use yarp_sys::{yp_string_list_free, yp_string_list_init, yp_string_list_t};
-
-    let mut list = MaybeUninit::<yp_string_list_t>::uninit();
-
-    unsafe {
-        yp_string_list_init(list.as_mut_ptr());
-        let list = list.assume_init_mut();
-        yp_string_list_free(list);
-    }
-}
