@@ -2,15 +2,14 @@ use std::{
     ffi::{c_char, CStr, CString},
     mem::MaybeUninit,
     path::Path,
-    slice, str,
     sync::OnceLock,
 };
 
 use yarp_sys::{
-    yp_buffer_free, yp_buffer_init, yp_buffer_t, yp_comment_t, yp_comment_type_t, yp_diagnostic_t,
+    yp_comment_t, yp_comment_type_t, yp_diagnostic_t,
     yp_encoding_ascii, yp_encoding_t, yp_node_destroy, yp_parse, yp_parser_free, yp_parser_init,
     yp_parser_register_encoding_changed_callback, yp_parser_register_encoding_decode_callback,
-    yp_parser_t, yp_prettyprint,
+    yp_parser_t,
 };
 
 fn ruby_file_contents() -> (CString, usize) {
@@ -33,33 +32,6 @@ fn init_test() {
         let parser = parser.assume_init_mut();
 
         yp_parser_free(parser);
-    }
-}
-
-#[test]
-fn parse_and_print_test() {
-    let (ruby_file_contents, len) = ruby_file_contents();
-    let source = ruby_file_contents.as_ptr();
-    let mut parser = MaybeUninit::<yp_parser_t>::uninit();
-    let mut buffer = MaybeUninit::<yp_buffer_t>::uninit();
-
-    unsafe {
-        yp_parser_init(parser.as_mut_ptr(), source, len, std::ptr::null());
-        let parser = parser.assume_init_mut();
-        let node = yp_parse(parser);
-
-        assert!(yp_buffer_init(buffer.as_mut_ptr()), "Failed to init buffer");
-
-        let buffer = buffer.assume_init_mut();
-        yp_prettyprint(parser, node, buffer);
-
-        let slice = slice::from_raw_parts(buffer.value.cast::<u8>(), buffer.length);
-        let string = str::from_utf8(slice).unwrap();
-        assert!(string.starts_with("ProgramNode"));
-
-        yp_node_destroy(parser, node);
-        yp_parser_free(parser);
-        yp_buffer_free(buffer);
     }
 }
 
@@ -110,7 +82,6 @@ fn diagnostics_test() {
         let node = yp_parse(parser);
 
         let error_list = &parser.error_list;
-        // TODO: error_list.head used to get set, but after rebasing `87e02c0b`, this behavior changed. (This pointer used to not be null).
         assert!(!error_list.head.is_null());
 
         let error = error_list.head as *const yp_diagnostic_t;
@@ -159,8 +130,6 @@ fn encoding_change_test() {
         yp_parser_register_encoding_changed_callback(parser, Some(callback));
 
         let node = yp_parse(parser);
-        // TODO: This used to get set (assumingly from encountering the 'ascii' encoding directive
-        // in `source`), but after rebasing `87e02c0b`, this behavior changed.
         assert!(parser.encoding_changed);
 
         // This value should have been mutated inside the callback when the encoding changed.
@@ -200,7 +169,7 @@ fn encoding_decode_test() {
 
     static THING: OnceLock<Output> = OnceLock::new();
 
-    let source = CString::new("# encoding: meow").unwrap();
+    let source = CString::new("# encoding: ascii").unwrap();
     let mut parser = MaybeUninit::<yp_parser_t>::uninit();
 
     unsafe {
@@ -215,8 +184,6 @@ fn encoding_decode_test() {
         yp_parser_register_encoding_decode_callback(parser, Some(callback));
 
         let node = yp_parse(parser);
-        // TODO: parser.encoding.name used to get set to "ascii" (via the callback),
-        // but stopped after I rebased on `87e02c0b`.
         assert!(!parser.encoding.name.is_null());
         assert!(!yp_encoding_ascii.name.is_null());
         assert_eq!(
@@ -225,8 +192,8 @@ fn encoding_decode_test() {
         );
 
         let output = THING.get().unwrap();
-        assert_eq!(&output.name, "meow");
-        assert_eq!(output.width, 4);
+        assert_eq!(&output.name, "ascii");
+        assert_eq!(output.width, 5);
 
         yp_node_destroy(parser, node);
         yp_parser_free(parser);

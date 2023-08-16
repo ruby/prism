@@ -17,7 +17,7 @@ fn main() {
     let bindings = generate_bindings(&ruby_include_path);
 
     // Write the bindings to file.
-    write_bindngs(&bindings);
+    write_bindings(&bindings);
 }
 
 /// Gets the path to project files (`librubyparser*`) at `[root]/build/`.
@@ -29,7 +29,8 @@ fn ruby_build_path() -> PathBuf {
         .unwrap()
 }
 
-/// Gets the path to the header files that `bindgen` needs for doing code generation.
+/// Gets the path to the header files that `bindgen` needs for doing code
+/// generation.
 ///
 fn ruby_include_path() -> PathBuf {
     cargo_manifest_path()
@@ -42,9 +43,9 @@ fn cargo_manifest_path() -> PathBuf {
     PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
 }
 
-/// Uses `bindgen` to generate bindings to the C API. Update this to allow new types/functions/etc
-/// to be generated (it's allowlisted to only expose functions that'd make sense for public
-/// consumption).
+/// Uses `bindgen` to generate bindings to the C API. Update this to allow new
+/// types/functions/etc to be generated (it's allowlisted to only expose
+/// functions that'd make sense for public consumption).
 ///
 /// This method only generates code in memory here--it doesn't write it to file.
 ///
@@ -65,31 +66,19 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .size_t_is_usize(true)
         .sort_semantically(true)
         // Structs
-        .allowlist_type(r#"^yp_\w+_node_t"#)
-        .allowlist_type("yp_buffer_t")
         .allowlist_type("yp_comment_t")
         .allowlist_type("yp_diagnostic_t")
         .allowlist_type("yp_encoding_changed_callback_t")
         .allowlist_type("yp_encoding_decode_callback_t")
-        .allowlist_type("yp_memsize_t")
         .allowlist_type("yp_list_t")
         .allowlist_type("yp_node_t")
         .allowlist_type("yp_node_type")
-        .allowlist_type("yp_parser_t")
         .allowlist_type("yp_pack_size")
-        // TODO: Commenting this because I can't figure out how to get bindgen to generate the
-        // inner-unions nicely. Hand-rolling this in src/lib.rs for now.
-        // .allowlist_type("yp_string_t")
-        .blocklist_type(r#"^yp_string_t\S*"#)
-        .allowlist_type("yp_string_list_t")
-        .allowlist_type("yp_token_type_t")
+        .allowlist_type("yp_parser_t")
+        .allowlist_type("yp_string_t")
+        .allowlist_type(r#"^yp_\w+_node_t"#)
         // Enums
         .rustified_non_exhaustive_enum("yp_comment_type_t")
-        .rustified_non_exhaustive_enum("yp_context_t")
-        .rustified_non_exhaustive_enum("yp_heredoc_indent_t")
-        .rustified_non_exhaustive_enum("yp_heredoc_quote_t")
-        .rustified_non_exhaustive_enum("yp_lex_mode_t")
-        .rustified_non_exhaustive_enum("yp_lex_state_t")
         .rustified_non_exhaustive_enum("yp_node_type")
         .rustified_non_exhaustive_enum("yp_pack_encoding")
         .rustified_non_exhaustive_enum("yp_pack_endian")
@@ -99,35 +88,20 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .rustified_non_exhaustive_enum("yp_pack_size")
         .rustified_non_exhaustive_enum("yp_pack_type")
         .rustified_non_exhaustive_enum("yp_pack_variant")
-        .rustified_non_exhaustive_enum("yp_token_type")
-        .rustified_non_exhaustive_enum("yp_unescape_type_t")
         // Functions
-        .allowlist_function("yp_buffer_init")
-        .allowlist_function("yp_buffer_free")
-        .allowlist_function("yp_node_destroy")
         .allowlist_function("yp_list_empty_p")
         .allowlist_function("yp_list_free")
-        .allowlist_function("yp_list_init")
-        .allowlist_function("yp_node_memsize")
+        .allowlist_function("yp_node_destroy")
         .allowlist_function("yp_pack_parse")
         .allowlist_function("yp_parse")
-        .allowlist_function("yp_parse_serialize")
         .allowlist_function("yp_parser_free")
         .allowlist_function("yp_parser_init")
         .allowlist_function("yp_parser_register_encoding_changed_callback")
         .allowlist_function("yp_parser_register_encoding_decode_callback")
-        .allowlist_function("yp_prettyprint")
-        .allowlist_function("yp_regexp_named_capture_group_names")
-        .allowlist_function("yp_serialize")
         .allowlist_function("yp_size_to_native")
         .allowlist_function("yp_string_free")
         .allowlist_function("yp_string_length")
         .allowlist_function("yp_string_source")
-        .allowlist_function("yp_string_list_init")
-        .allowlist_function("yp_string_list_free")
-        .allowlist_function("yp_token_type_to_str")
-        .allowlist_function("yp_unescape_calculate_difference")
-        .allowlist_function("yp_unescape_manipulate_string")
         .allowlist_function("yp_version")
         // Vars
         .allowlist_var(r#"^yp_encoding\S+"#)
@@ -135,9 +109,9 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .expect("Unable to generate yarp bindings")
 }
 
-/// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into the actual library
-/// in `src/lib.rs`.
-fn write_bindngs(bindings: &bindgen::Bindings) {
+/// Write the bindings to the `$OUT_DIR/bindings.rs` file. We'll pull these into
+/// the actual library in `src/lib.rs`.
+fn write_bindings(bindings: &bindgen::Bindings) {
     let out_path = PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
 
     bindings
