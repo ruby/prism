@@ -1,5 +1,5 @@
 <<EOS
-foobar
+foobar
 baz
 EOS
 
