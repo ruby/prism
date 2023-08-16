@@ -18,6 +18,10 @@ env:
 
 jobs:
   cargo-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        crate: [yarp-sys, yarp]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,17 +36,21 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
+            ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('Cargo.toml') }}
+            ${{ runner.os }}-cargo-${{ matrix.crate }}
       - name: rake compile
         run: bundle exec rake compile
       - name: cargo test
-        working-directory: rust/yarp-sys
+        working-directory: rust/${{ matrix.crate }}
         run: cargo test
 
   cargo-clippy:
+    strategy:
+      fail-fast: false
+      matrix:
+        crate: [yarp-sys, yarp]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -57,14 +65,14 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
-            ${{ runner.os }}-cargo
+            ${{ runner.os }}-cargo-${{ matrix.crate }}-${{ hashFiles('Cargo.toml') }}
+            ${{ runner.os }}-cargo-${{ matrix.crate }}
       - name: rake compile
         run: bundle exec rake compile
       - name: cargo clippy
-        working-directory: rust/yarp-sys
+        working-directory: rust/${{ matrix.crate }}
         run: cargo clippy --tests -- -W "clippy::pedantic"
 
   sanitizer-test:
@@ -74,6 +82,7 @@ jobs:
       fail-fast: false
       matrix:
         sanitizer: [address, leak]
+        crate: [yarp-sys, yarp]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -97,5 +106,5 @@ jobs:
           # about some small leaks if backtraces are captured,
           # so ensure they're not
           RUST_BACKTRACE: 0
-        working-directory: rust/yarp-sys
+        working-directory: rust/${{ matrix.crate }}
         run: cargo test -Zbuild-std --verbose --target=x86_64-unknown-linux-gnu
