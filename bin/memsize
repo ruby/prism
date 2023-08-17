@@ -10,14 +10,16 @@ results =
       node["name"],
       node.fetch("child_nodes", []).sum do |child_node|
         case child_node["type"]
-        when "integer"
+        when "uint32", "constant"
           4
         when "node", "node?"
           8
         when "location", "location?"
           16
-        when "node[]", "string", "token", "token?", "location[]"
+        when "node[]", "string", "token", "token?", "location[]", "constant[]"
           24
+        when "flags"
+          0
         else
           raise "Unknown type: #{child_node["type"]}"
         end
