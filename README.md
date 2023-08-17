@@ -79,11 +79,11 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information. We additio
 * [Configuration](docs/configuration.md)
 * [Design](docs/design.md)
 * [Encoding](docs/encoding.md)
-* [Extension](docs/extension.md)
 * [Fuzzing](docs/fuzzing.md)
 * [Heredocs](docs/heredocs.md)
 * [Mapping](docs/mapping.md)
 * [Ripper](docs/ripper.md)
+* [Ruby API](docs/ruby_api.md)
 * [Serialization](docs/serialization.md)
 * [Testing](docs/testing.md)
 
