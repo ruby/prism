@@ -3,7 +3,6 @@
 //! Rustified version of Ruby's YARP parser.
 //!
 #![warn(
-    box_pointers,
     clippy::all,
     clippy::nursery,
     clippy::pedantic,
