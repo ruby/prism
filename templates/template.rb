@@ -320,6 +320,10 @@ TEMPLATES = [
 ]
 
 if __FILE__ == $0
-  templates = ARGV.empty? ? TEMPLATES : ARGV
-  templates.each { |f| template f, locals }
+  if ARGV.empty?
+    TEMPLATES.each { |f| template(f, locals) }
+  else
+    name, write_to = ARGV
+    template(name, locals, write_to: write_to)
+  end
 end
