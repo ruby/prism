@@ -252,10 +252,10 @@ end
 
 # This templates out a file using ERB with the given locals. The locals are
 # derived from the config.yml file.
-def template(name, locals)
+def template(name, locals, write_to: nil)
   filepath = "templates/#{name}.erb"
   template = File.expand_path("../#{filepath}", __dir__)
-  write_to = File.expand_path("../#{name}", __dir__)
+  write_to ||= File.expand_path("../#{name}", __dir__)
 
   if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
     erb = ERB.new(File.read(template), trim_mode: "-")
