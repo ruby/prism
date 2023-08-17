@@ -40,12 +40,12 @@ module YARP
 
     # def child_nodes: () -> Array[nil | Node]
     def child_nodes
-      [<%= node.params.filter_map { |param|
+      [<%= node.params.map { |param|
         case param
         when SingleNodeParam then param.name
         when NodeListParam then "*#{param.name}"
         end
-      }.join(", ") %>]
+      }.compact.join(", ") %>]
     end
 
     # def deconstruct: () -> Array[nil | Node]
@@ -74,7 +74,7 @@ module YARP
       <%= param.name %>&.slice
     end
     <%- when FlagsParam -%>
-    <%- flags.find { |flag| flag.name == param.kind }.tap { raise "Expected to find #{param.kind}" unless _1 }.values.each do |value| -%>
+    <%- flags.find { |flag| flag.name == param.kind }.tap { |flag| raise "Expected to find #{param.kind}" unless flag }.values.each do |value| -%>
 
     # def <%= value.name.downcase %>?: () -> bool
     def <%= value.name.downcase %>?
