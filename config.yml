@@ -2111,10 +2111,12 @@ nodes:
         type: node?
         kind: StatementsNode
     comment: |
-      case true
-      when true
-      ^^^^^^^^^
-      end
+      Represents the use of the `when` keyword within a case statement.
+
+          case true
+          when true
+          ^^^^^^^^^
+          end
   - name: WhileNode
     child_nodes:
       - name: keyword_loc
