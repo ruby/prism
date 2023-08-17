@@ -257,7 +257,11 @@ def template(name, locals)
   template = File.expand_path("../#{filepath}", __dir__)
   write_to = File.expand_path("../#{name}", __dir__)
 
-  erb = ERB.new(File.read(template), trim_mode: "-")
+  if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
+    erb = ERB.new(File.read(template), trim_mode: "-")
+  else
+    erb = ERB.new(File.read(template), nil, "-")
+  end
   erb.filename = template
 
   non_ruby_heading = <<~HEADING
@@ -316,5 +320,10 @@ TEMPLATES = [
 ]
 
 if __FILE__ == $0
-  TEMPLATES.each { |f| template f, locals }
+  if ARGV.empty?
+    TEMPLATES.each { |f| template(f, locals) }
+  else
+    name, write_to = ARGV
+    template(name, locals, write_to: write_to)
+  end
 end
