@@ -68,8 +68,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         // Structs
         .allowlist_type("yp_comment_t")
         .allowlist_type("yp_diagnostic_t")
-        .allowlist_type("yp_encoding_changed_callback_t")
-        .allowlist_type("yp_encoding_decode_callback_t")
         .allowlist_type("yp_list_t")
         .allowlist_type("yp_node_t")
         .allowlist_type("yp_node_type")
@@ -96,8 +94,6 @@ fn generate_bindings(ruby_include_path: &Path) -> bindgen::Bindings {
         .allowlist_function("yp_parse")
         .allowlist_function("yp_parser_free")
         .allowlist_function("yp_parser_init")
-        .allowlist_function("yp_parser_register_encoding_changed_callback")
-        .allowlist_function("yp_parser_register_encoding_decode_callback")
         .allowlist_function("yp_size_to_native")
         .allowlist_function("yp_string_free")
         .allowlist_function("yp_string_length")
