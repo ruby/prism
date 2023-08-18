@@ -1932,7 +1932,6 @@ nodes:
           __ENCODING__
           ^^^^^^^^^^^^
   - name: SourceFileNode
-    is_migrated: true
     child_nodes:
       - name: filepath
         type: string
