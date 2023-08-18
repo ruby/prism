@@ -1,5 +1,5 @@
 if true then
-  p('a')
+  p("a")
   b = 1
   p b
   c =1

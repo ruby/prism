@@ -11,13 +11,6 @@
 # APIs provided to the test suite (for example the ParseHelper module below).
 # This is obviously relatively brittle, but it's effective for now.
 
-# These files are not valid Ruby
-known_failures = %w(
-  test/fixtures/whitequark/range_endless.txt
-  test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
-  test/fixtures/whitequark/pattern_match.txt
-)
-
 namespace :whitequark do
   desc "Ensure there's a local copy of whitequark/parser"
   file "tmp/whitequark" do
@@ -84,6 +77,13 @@ namespace :whitequark do
       ParseHelper::COLLECTED.each do |(name, codes)|
         File.write("test/fixtures/whitequark/#{name}.txt", "#{codes.sort.join("\n\n")}\n")
       end
+
+      # These files are not valid Ruby
+      known_failures = %w[
+        test/fixtures/whitequark/range_endless.txt
+        test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
+        test/fixtures/whitequark/pattern_match.txt
+      ]
 
       # Remove all invalid Ruby files
       known_failures.each { rm _1 }
