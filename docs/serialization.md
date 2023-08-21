@@ -73,7 +73,7 @@ The header is structured like the following table:
 | varint | content pool size |
 
 After the header comes the body of the serialized string.
-The body consistents of a sequence of nodes that is built using a prefix traversal order of the syntax tree.
+The body consists of a sequence of nodes that is built using a prefix traversal order of the syntax tree.
 Each node is structured like the following table:
 
 | # bytes | field |

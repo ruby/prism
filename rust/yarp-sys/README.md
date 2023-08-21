@@ -17,7 +17,7 @@ doing `cargo doc --open`!)
 
 ### Dependencies
 
-In addition to the Ruby YARP depedencies, you shouldn't need anything else besides Rust.
+In addition to the Ruby YARP dependencies, you shouldn't need anything else besides Rust.
 
 ### Updating bindings
 
