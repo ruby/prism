@@ -1493,7 +1493,7 @@ yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_to
             .type = YP_NODE_CONSTANT_PATH_NODE,
             .location = {
                 .start = parent == NULL ? delimiter->start : parent->location.start,
-                .end = child == NULL ? parent->location.end : child->location.end
+                .end = child == NULL ? (parent == NULL ? delimiter->end : parent->location.end) : child->location.end
             },
         },
         .parent = parent,
@@ -1510,7 +1510,10 @@ yp_constant_path_node_from_path_or_read_node(yp_parser_t *parser, yp_node_t *nod
         return (yp_constant_path_node_t *)node;
     }
 
-    assert(node->type == YP_NODE_CONSTANT_READ_NODE || node->type == YP_NODE_MISSING_NODE);
+    if (node->type != YP_NODE_CONSTANT_READ_NODE && node->type != YP_NODE_MISSING_NODE) {
+        yp_diagnostic_list_append(&parser->error_list, node->location.start, node->location.end, "Not a valid class or module name");
+        return yp_constant_path_node_create(parser, NULL, &parser->current, NULL);
+    }
 
     return yp_constant_path_node_create(parser, node, &parser->current, NULL);
 }
