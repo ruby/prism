@@ -4,7 +4,7 @@ ProgramNode(0...370)(
     [ClassNode(0...17)(
        [:a],
        (0...5),
-       ConstantReadNode(6...7)(),
+       ConstantPathNode(6...7)(ConstantReadNode(6...7)(), nil, (17...18)),
        nil,
        nil,
        StatementsNode(8...13)(
@@ -21,7 +21,7 @@ ProgramNode(0...370)(
      ClassNode(19...39)(
        [],
        (19...24),
-       ConstantReadNode(25...26)(),
+       ConstantPathNode(25...26)(ConstantReadNode(25...26)(), nil, (39...40)),
        nil,
        nil,
        BeginNode(28...39)(
@@ -37,7 +37,7 @@ ProgramNode(0...370)(
      ClassNode(41...75)(
        [],
        (41...46),
-       ConstantReadNode(47...48)(),
+       ConstantPathNode(47...48)(ConstantReadNode(47...48)(), nil, (75...76)),
        nil,
        nil,
        BeginNode(50...75)(
@@ -53,7 +53,7 @@ ProgramNode(0...370)(
      ClassNode(77...98)(
        [:a],
        (77...82),
-       ConstantReadNode(83...84)(),
+       ConstantPathNode(83...84)(ConstantReadNode(83...84)(), nil, (98...99)),
        (85...86),
        ConstantReadNode(87...88)(),
        StatementsNode(89...94)(
@@ -98,7 +98,11 @@ ProgramNode(0...370)(
      ClassNode(122...162)(
        [],
        (122...127),
-       ConstantReadNode(128...129)(),
+       ConstantPathNode(128...129)(
+         ConstantReadNode(128...129)(),
+         nil,
+         (162...163)
+       ),
        nil,
        nil,
        StatementsNode(131...157)(
@@ -123,7 +127,11 @@ ProgramNode(0...370)(
      ClassNode(164...218)(
        [],
        (164...169),
-       ConstantReadNode(170...171)(),
+       ConstantPathNode(170...171)(
+         ConstantReadNode(170...171)(),
+         nil,
+         (218...219)
+       ),
        nil,
        nil,
        StatementsNode(173...213)(
@@ -260,7 +268,11 @@ ProgramNode(0...370)(
      ClassNode(352...370)(
        [],
        (352...357),
-       ConstantReadNode(358...359)(),
+       ConstantPathNode(358...359)(
+         ConstantReadNode(358...359)(),
+         nil,
+         (370...371)
+       ),
        (360...361),
        CallNode(362...366)(
          ConstantReadNode(362...363)(),

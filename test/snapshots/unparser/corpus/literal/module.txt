@@ -1,7 +1,13 @@
 ProgramNode(0...106)(
   [],
   StatementsNode(0...106)(
-    [ModuleNode(0...12)([], (0...6), ConstantReadNode(7...8)(), nil, (9...12)),
+    [ModuleNode(0...12)(
+       [],
+       (0...6),
+       ConstantPathNode(7...8)(ConstantReadNode(7...8)(), nil, (12...13)),
+       nil,
+       (9...12)
+     ),
      ModuleNode(14...29)(
        [],
        (14...20),
@@ -31,7 +37,11 @@ ProgramNode(0...106)(
      ModuleNode(51...106)(
        [],
        (51...57),
-       ConstantReadNode(58...59)(),
+       ConstantPathNode(58...59)(
+         ConstantReadNode(58...59)(),
+         nil,
+         (106...107)
+       ),
        StatementsNode(62...102)(
          [CallNode(62...76)(
             nil,

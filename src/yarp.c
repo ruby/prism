@@ -1484,10 +1484,42 @@ yp_case_node_end_keyword_loc_set(yp_case_node_t *node, const yp_token_t *end_key
     node->end_keyword_loc = YP_LOCATION_TOKEN_VALUE(end_keyword);
 }
 
+// Allocate and initialize a new ConstantPathNode node.
+static yp_constant_path_node_t *
+yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_token_t *delimiter, yp_node_t *child) {
+    yp_constant_path_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_node_t);
+    *node = (yp_constant_path_node_t) {
+        {
+            .type = YP_NODE_CONSTANT_PATH_NODE,
+            .location = {
+                .start = parent == NULL ? delimiter->start : parent->location.start,
+                .end = child == NULL ? parent->location.end : child->location.end
+            },
+        },
+        .parent = parent,
+        .child = child,
+        .delimiter_loc = YP_LOCATION_TOKEN_VALUE(delimiter)
+    };
+
+    return node;
+}
+
+static yp_constant_path_node_t*
+yp_constant_path_node_from_path_or_read_node(yp_parser_t *parser, yp_node_t *node) {
+    if (node->type == YP_NODE_CONSTANT_PATH_NODE) {
+        return (yp_constant_path_node_t *)node;
+    }
+
+    assert(node->type == YP_NODE_CONSTANT_READ_NODE || node->type == YP_NODE_MISSING_NODE);
+
+    return yp_constant_path_node_create(parser, node, &parser->current, NULL);
+}
+
 // Allocate a new ClassNode node.
 static yp_class_node_t *
-yp_class_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *class_keyword, yp_node_t *constant_path, const yp_token_t *inheritance_operator, yp_node_t *superclass, yp_node_t *body, const yp_token_t *end_keyword) {
+yp_class_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *class_keyword, yp_node_t *path_or_read_node, const yp_token_t *inheritance_operator, yp_node_t *superclass, yp_node_t *body, const yp_token_t *end_keyword) {
     yp_class_node_t *node = YP_ALLOC_NODE(parser, yp_class_node_t);
+    yp_constant_path_node_t *constant_path = yp_constant_path_node_from_path_or_read_node(parser, path_or_read_node);
 
     *node = (yp_class_node_t) {
         {
@@ -1531,27 +1563,6 @@ yp_class_variable_read_node_to_class_variable_write_node(yp_parser_t *parser, yp
         .name_loc = YP_LOCATION_NODE_VALUE((yp_node_t *)read_node),
         .operator_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator),
         .value = value
-    };
-
-    return node;
-}
-
-// Allocate and initialize a new ConstantPathNode node.
-static yp_constant_path_node_t *
-yp_constant_path_node_create(yp_parser_t *parser, yp_node_t *parent, const yp_token_t *delimiter, yp_node_t *child) {
-    yp_constant_path_node_t *node = YP_ALLOC_NODE(parser, yp_constant_path_node_t);
-
-    *node = (yp_constant_path_node_t) {
-        {
-            .type = YP_NODE_CONSTANT_PATH_NODE,
-            .location = {
-                .start = parent == NULL ? delimiter->start : parent->location.start,
-                .end = child->location.end
-            },
-        },
-        .parent = parent,
-        .child = child,
-        .delimiter_loc = YP_LOCATION_TOKEN_VALUE(delimiter)
     };
 
     return node;
@@ -2679,8 +2690,9 @@ yp_match_required_node_create(yp_parser_t *parser, yp_node_t *value, yp_node_t *
 
 // Allocate a new ModuleNode node.
 static yp_module_node_t *
-yp_module_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *module_keyword, yp_node_t *constant_path, yp_node_t *body, const yp_token_t *end_keyword) {
+yp_module_node_create(yp_parser_t *parser, yp_constant_id_list_t *locals, const yp_token_t *module_keyword, yp_node_t *path_or_read_node, yp_node_t *body, const yp_token_t *end_keyword) {
     yp_module_node_t *node = YP_ALLOC_NODE(parser, yp_module_node_t);
+    yp_constant_path_node_t *constant_path = yp_constant_path_node_from_path_or_read_node(parser, path_or_read_node);
 
     *node = (yp_module_node_t) {
         {
@@ -10755,7 +10767,8 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 return (yp_node_t *) yp_singleton_class_node_create(parser, &locals, &class_keyword, &operator, expression, statements, &parser->previous);
             }
 
-            yp_node_t *name = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected to find a class name after `class`.");
+            yp_node_t *path_or_read_node = parse_expression(parser, YP_BINDING_POWER_INDEX, "Expected to find a class name after `class`.");
+
             yp_token_t inheritance_operator;
             yp_node_t *superclass;
 
@@ -10796,7 +10809,7 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_constant_id_list_t locals = parser->current_scope->locals;
             yp_parser_scope_pop(parser);
             yp_do_loop_stack_pop(parser);
-            return (yp_node_t *) yp_class_node_create(parser, &locals, &class_keyword, name, &inheritance_operator, superclass, statements, &parser->previous);
+            return (yp_node_t *) yp_class_node_create(parser, &locals, &class_keyword, path_or_read_node, &inheritance_operator, superclass, statements, &parser->previous);
         }
         case YP_TOKEN_KEYWORD_DEF: {
             yp_token_t def_keyword = parser->current;

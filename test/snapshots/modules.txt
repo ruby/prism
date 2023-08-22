@@ -4,7 +4,7 @@ ProgramNode(0...140)(
     [ModuleNode(0...18)(
        [:a],
        (0...6),
-       ConstantReadNode(7...8)(),
+       ConstantPathNode(7...8)(ConstantReadNode(7...8)(), nil, (18...19)),
        StatementsNode(9...14)(
          [LocalVariableWriteNode(9...14)(
             :a,
@@ -53,7 +53,7 @@ ProgramNode(0...140)(
      ModuleNode(57...85)(
        [:x],
        (57...63),
-       ConstantReadNode(64...65)(),
+       ConstantPathNode(64...65)(ConstantReadNode(64...65)(), nil, (85...86)),
        BeginNode(67...85)(
          nil,
          StatementsNode(67...72)(

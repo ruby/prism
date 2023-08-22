@@ -16,9 +16,9 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ModuleNode(
       [],
       Location(),
-      ConstantReadNode(),
+      ConstantPathNode(ConstantReadNode(), nil, Location()),
       StatementsNode(
-        [ModuleNode([], Location(), MissingNode(), nil, Location())]
+        [ModuleNode([], Location(), ConstantPathNode(MissingNode(), nil, Location()), nil, Location())]
       ),
       Location()
     )
@@ -383,7 +383,12 @@ class ErrorsTest < Test::Unit::TestCase
       Location(),
       nil,
       nil,
-      StatementsNode([ModuleNode([], Location(), ConstantReadNode(), nil, Location())]),
+      StatementsNode([ModuleNode(
+        [],
+        Location(),
+        ConstantPathNode(ConstantReadNode(), nil, Location()),
+        nil,
+        Location())]),
       [],
       Location(),
       nil,
@@ -414,7 +419,11 @@ class ErrorsTest < Test::Unit::TestCase
            BlockNode(
              [],
              nil,
-             StatementsNode([ModuleNode([], Location(), ConstantReadNode(), nil, Location())]),
+             StatementsNode([ModuleNode([], Location(), ConstantPathNode(
+               ConstantReadNode(),
+               nil,
+               Location()
+             ), nil, Location())]),
              Location(),
              Location()
            ),
@@ -451,7 +460,7 @@ class ErrorsTest < Test::Unit::TestCase
         [ClassNode(
            [],
            Location(),
-           ConstantReadNode(),
+           ConstantPathNode(ConstantReadNode(), nil, Location()),
            nil,
            nil,
            nil,
@@ -951,7 +960,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ClassNode(
       [],
       Location(),
-      ConstantReadNode(),
+      ConstantPathNode(ConstantReadNode(), nil, Location()),
       nil,
       nil,
       StatementsNode([ReturnNode(Location(), nil)]),
@@ -967,7 +976,7 @@ class ErrorsTest < Test::Unit::TestCase
     expected = ModuleNode(
       [],
       Location(),
-      ConstantReadNode(),
+      ConstantPathNode(ConstantReadNode(), nil, Location()),
       StatementsNode([ReturnNode(Location(), nil)]),
       Location()
     )

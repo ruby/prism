@@ -4,7 +4,7 @@ ProgramNode(0...999)(
     [ModuleNode(0...35)(
        [:foo, :a, :_],
        (0...6),
-       ConstantReadNode(7...8)(),
+       ConstantPathNode(7...8)(ConstantReadNode(7...8)(), nil, (35...36)),
        StatementsNode(11...31)(
          [OrWriteNode(11...31)(
             LocalVariableWriteNode(11...14)(:foo, 0, nil, (11...14), nil),
@@ -52,7 +52,7 @@ ProgramNode(0...999)(
      ModuleNode(37...73)(
        [:local],
        (37...43),
-       ConstantReadNode(44...45)(),
+       ConstantPathNode(44...45)(ConstantReadNode(44...45)(), nil, (73...74)),
        StatementsNode(48...69)(
          [LocalVariableWriteNode(48...57)(
             :local,
@@ -79,7 +79,11 @@ ProgramNode(0...999)(
        ClassNode(74...85)(
          [],
          (74...79),
-         ConstantReadNode(80...81)(),
+         ConstantPathNode(80...81)(
+           ConstantReadNode(80...81)(),
+           nil,
+           (85...86)
+         ),
          nil,
          nil,
          nil,
@@ -98,7 +102,11 @@ ProgramNode(0...999)(
        ModuleNode(90...102)(
          [],
          (90...96),
-         ConstantReadNode(97...98)(),
+         ConstantPathNode(97...98)(
+           ConstantReadNode(97...98)(),
+           nil,
+           (102...103)
+         ),
          nil,
          (99...102)
        ),

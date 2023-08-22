@@ -723,6 +723,7 @@ nodes:
         type: location
       - name: constant_path
         type: node
+        kind: ConstantPathNode
       - name: inheritance_operator_loc
         type: location?
       - name: superclass
@@ -760,7 +761,7 @@ nodes:
       - name: parent
         type: node?
       - name: child
-        type: node
+        type: node?
       - name: delimiter_loc
         type: location
     comment: |
@@ -1314,6 +1315,7 @@ nodes:
         type: location
       - name: constant_path
         type: node
+        kind: ConstantPathNode
       - name: body
         type: node?
       - name: end_keyword_loc

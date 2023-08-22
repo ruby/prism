@@ -43,7 +43,11 @@ ProgramNode(0...132)(
               [ClassNode(63...75)(
                  [],
                  (63...68),
-                 ConstantReadNode(69...70)(),
+                 ConstantPathNode(69...70)(
+                   ConstantReadNode(69...70)(),
+                   nil,
+                   (75...76)
+                 ),
                  nil,
                  nil,
                  nil,
@@ -75,7 +79,11 @@ ProgramNode(0...132)(
               [ModuleNode(109...122)(
                  [],
                  (109...115),
-                 ConstantReadNode(116...117)(),
+                 ConstantPathNode(116...117)(
+                   ConstantReadNode(116...117)(),
+                   nil,
+                   (122...123)
+                 ),
                  nil,
                  (119...122)
                )]

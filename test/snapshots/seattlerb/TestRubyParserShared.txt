@@ -45,7 +45,11 @@ ProgramNode(0...689)(
      ClassNode(141...269)(
        [],
        (141...146),
-       ConstantReadNode(147...148)(),
+       ConstantPathNode(147...148)(
+         ConstantReadNode(147...148)(),
+         nil,
+         (282...291)
+       ),
        nil,
        nil,
        StatementsNode(168...246)(
@@ -91,14 +95,22 @@ ProgramNode(0...689)(
      ClassNode(293...376)(
        [],
        (293...298),
-       ConstantReadNode(299...300)(),
+       ConstantPathNode(299...300)(
+         ConstantReadNode(299...300)(),
+         nil,
+         (384...393)
+       ),
        nil,
        nil,
        StatementsNode(315...358)(
          [ClassNode(315...358)(
             [],
             (315...320),
-            ConstantReadNode(321...322)(),
+            ConstantPathNode(321...322)(
+              ConstantReadNode(321...322)(),
+              nil,
+              (364...373)
+            ),
             nil,
             nil,
             StatementsNode(337...343)(
@@ -116,7 +128,11 @@ ProgramNode(0...689)(
      ClassNode(395...498)(
        [],
        (395...400),
-       ConstantReadNode(401...402)(),
+       ConstantPathNode(401...402)(
+         ConstantReadNode(401...402)(),
+         nil,
+         (506...515)
+       ),
        nil,
        nil,
        StatementsNode(417...480)(
@@ -162,7 +178,11 @@ ProgramNode(0...689)(
      ModuleNode(517...565)(
        [],
        (517...523),
-       ConstantReadNode(524...525)(),
+       ConstantPathNode(524...525)(
+         ConstantReadNode(524...525)(),
+         nil,
+         (565...566)
+       ),
        StatementsNode(528...561)(
          [ConstantWriteNode(528...561)(
             (528...529),
@@ -180,12 +200,20 @@ ProgramNode(0...689)(
      ModuleNode(568...651)(
        [],
        (568...574),
-       ConstantReadNode(575...576)(),
+       ConstantPathNode(575...576)(
+         ConstantReadNode(575...576)(),
+         nil,
+         (659...668)
+       ),
        StatementsNode(590...633)(
          [ModuleNode(590...633)(
             [],
             (590...596),
-            ConstantReadNode(597...598)(),
+            ConstantPathNode(597...598)(
+              ConstantReadNode(597...598)(),
+              nil,
+              (639...648)
+            ),
             StatementsNode(612...618)(
               [ConstantWriteNode(612...618)(
                  (612...613),

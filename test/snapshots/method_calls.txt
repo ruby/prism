@@ -1175,7 +1175,11 @@ ProgramNode(0...1237)(
          [ClassNode(905...929)(
             [],
             (905...910),
-            ConstantReadNode(911...914)(),
+            ConstantPathNode(911...914)(
+              ConstantReadNode(911...914)(),
+              nil,
+              (929...930)
+            ),
             nil,
             nil,
             StatementsNode(915...925)(
@@ -1208,7 +1212,11 @@ ProgramNode(0...1237)(
          [ModuleNode(935...960)(
             [],
             (935...941),
-            ConstantReadNode(942...945)(),
+            ConstantPathNode(942...945)(
+              ConstantReadNode(942...945)(),
+              nil,
+              (960...961)
+            ),
             StatementsNode(946...956)(
               [CallNode(946...956)(
                  nil,
