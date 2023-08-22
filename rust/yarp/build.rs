@@ -415,7 +415,7 @@ impl<'pr> Location<'pr> {{
 
     /// Returns a byte slice for the range.
     #[must_use]
-    pub fn as_byte_slice(&self) -> &'pr [u8] {{
+    pub fn as_slice(&self) -> &'pr [u8] {{
         let start: *mut u8 = self.start() as *mut u8;
         let end: *mut u8 = self.end() as *mut u8;
 
@@ -428,7 +428,7 @@ impl<'pr> Location<'pr> {{
 
 impl std::fmt::Debug for Location<'_> {{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
-        let slice: &[u8] = self.as_byte_slice();
+        let slice: &[u8] = self.as_slice();
 
         let mut visible = String::new();
         visible.push('"');

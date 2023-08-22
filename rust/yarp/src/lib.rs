@@ -252,7 +252,7 @@ mod tests {
 
         assert_eq!(slice, "222");
 
-        let slice = std::str::from_utf8(location.as_byte_slice()).unwrap();
+        let slice = std::str::from_utf8(location.as_slice()).unwrap();
 
         assert_eq!(slice, "222");
     }
