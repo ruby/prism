@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 # Usage:
+#   bin/lex # defaults to test.rb
 #   bin/lex <filename>
 #   bin/lex -e "<source-code>"
 
@@ -12,7 +13,7 @@ require "yarp"
 if ARGV[0] == "-e"
   source = ARGV[1]
 else
-  filepath = ARGV.first
+  filepath = ARGV.first || "test.rb"
   source = File.read(filepath)
 end
 
