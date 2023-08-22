@@ -154,6 +154,12 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "}}")?;
     writeln!(file)?;
     writeln!(file, "impl<'pr> {}<'pr> {{", node.name)?;
+    writeln!(file, "    /// Converts this node to a generic node.")?;
+    writeln!(file, "    #[must_use]")?;
+    writeln!(file, "    pub fn as_node(&self) -> Node<'pr> {{")?;
+    writeln!(file, "        Node::{} {{ pointer: self.pointer, marker: PhantomData }}", node.name)?;
+    writeln!(file, "    }}")?;
+    writeln!(file)?;
     writeln!(file, "    /// Returns the location of this node.")?;
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
