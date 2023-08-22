@@ -410,15 +410,23 @@ impl<'pr> Location<'pr> {{
     pub fn end(&self) -> *const c_char {{
         unsafe {{ self.pointer.as_ref().end }}
     }}
+
+    /// Returns a byte slice for the range.
+    #[must_use]
+    pub fn as_byte_slice(&self) -> &'pr [u8] {{
+        let start: *mut u8 = self.start() as *mut u8;
+        let end: *mut u8 = self.end() as *mut u8;
+
+        unsafe {{
+          let len = usize::try_from(end.offset_from(start)).expect("end should point to memory after start");
+          std::slice::from_raw_parts(start, len)
+        }}
+    }}
 }}
 
 impl std::fmt::Debug for Location<'_> {{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
-        let start: *mut u8 = unsafe {{ self.pointer.as_ref().start as *mut u8 }};
-        let end: *mut u8 = unsafe {{ self.pointer.as_ref().end as *mut u8 }};
-
-        let len = end as usize - start as usize;
-        let slice: &[u8] = unsafe {{ std::slice::from_raw_parts(start, len) }};
+        let slice: &[u8] = self.as_byte_slice();
 
         let mut visible = String::new();
         visible.push('"');
