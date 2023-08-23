@@ -7,7 +7,7 @@ require "rake/clean"
 task compile: :make
 task compile_no_debug: :make_no_debug
 
-task default: [:compile, :test]
+task default: [:check_manifest, :compile, :test]
 
 require_relative "templates/template"
 

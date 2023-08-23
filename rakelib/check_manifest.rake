@@ -70,5 +70,3 @@ task :check_manifest => [:templates] do
 
   puts "☑  manifest looks good"
 end
-
-task test: :check_manifest
