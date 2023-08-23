@@ -312,4 +312,20 @@ mod tests {
 
         assert_eq!(visitor.count, 2);
     }
+
+    #[test]
+    fn node_upcast_test() {
+        use super::Node;
+
+        let source = "module Foo; end";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let upcast_node = node.as_program_node().unwrap().as_node();
+        assert!(matches!(upcast_node, Node::ProgramNode { .. }));
+
+        let node = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let upcast_node = node.as_module_node().unwrap().as_node();
+        assert!(matches!(upcast_node, Node::ModuleNode { .. }));
+    }
 }
