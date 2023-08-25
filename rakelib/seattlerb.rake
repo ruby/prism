@@ -7,27 +7,27 @@ namespace :seattlerb do
   end
 
   desc "Ensure we have a fixtures directory for the seattlerb tests"
-  file "test/fixtures/seattlerb" do
-    mkdir_p "test/fixtures/seattlerb"
+  file "test/yarp/fixtures/seattlerb" do
+    mkdir_p "test/yarp/fixtures/seattlerb"
   end
 
   desc "Import the seattlerb tests"
-  task import: ["tmp/seattlerb", "test/fixtures/seattlerb"] do
+  task import: ["tmp/seattlerb", "test/yarp/fixtures/seattlerb"] do
     require "base64"
 
     # These files are not valid Ruby
     known_failures = %w[
-      test/fixtures/seattlerb/args_dstar__anon_solo.txt
-      test/fixtures/seattlerb/args_dstar__anon_trailing.txt
-      test/fixtures/seattlerb/args_star__anon_solo.txt
-      test/fixtures/seattlerb/args_star__anon_trailing.txt
-      test/fixtures/seattlerb/begin_else_return_value.txt
-      test/fixtures/seattlerb/block_yield.txt
-      test/fixtures/seattlerb/bug_begin_else.txt
-      test/fixtures/seattlerb/bug170.txt
-      test/fixtures/seattlerb/call_block_arg_unnamed.txt
-      test/fixtures/seattlerb/iter_array_curly.txt
-      test/fixtures/seattlerb/magic_encoding_comment__bad.txt
+      test/yarp/fixtures/seattlerb/args_dstar__anon_solo.txt
+      test/yarp/fixtures/seattlerb/args_dstar__anon_trailing.txt
+      test/yarp/fixtures/seattlerb/args_star__anon_solo.txt
+      test/yarp/fixtures/seattlerb/args_star__anon_trailing.txt
+      test/yarp/fixtures/seattlerb/begin_else_return_value.txt
+      test/yarp/fixtures/seattlerb/block_yield.txt
+      test/yarp/fixtures/seattlerb/bug_begin_else.txt
+      test/yarp/fixtures/seattlerb/bug170.txt
+      test/yarp/fixtures/seattlerb/call_block_arg_unnamed.txt
+      test/yarp/fixtures/seattlerb/iter_array_curly.txt
+      test/yarp/fixtures/seattlerb/magic_encoding_comment__bad.txt
     ]
 
     # Cleaning up some file names
@@ -43,7 +43,7 @@ namespace :seattlerb do
     ].map { Base64.decode64(_1) }
 
     # The license is in the README
-    cp "tmp/seattlerb/README.rdoc", "test/fixtures/seattlerb/README.rdoc"
+    cp "tmp/seattlerb/README.rdoc", "test/yarp/fixtures/seattlerb/README.rdoc"
 
     require_relative "../tmp/seattlerb/test/test_ruby_parser"
 
@@ -74,7 +74,7 @@ namespace :seattlerb do
           end
         end
 
-        filepath = "test/fixtures/seattlerb/#{name}.txt"
+        filepath = "test/yarp/fixtures/seattlerb/#{name}.txt"
         File.write(filepath, "#{codes.uniq.sort.join("\n\n")}\n")
       end
 
@@ -86,6 +86,6 @@ namespace :seattlerb do
   desc "Clean up tmp files related to seattlerb"
   task :clean do
     rm_rf "tmp/seattlerb"
-    rm_rf "test/fixtures/seattlerb"
+    rm_rf "test/yarp/fixtures/seattlerb"
   end
 end

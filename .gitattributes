@@ -3,10 +3,10 @@ templates/**/*.h.erb linguist-language=C
 templates/**/*.java.erb linguist-language=Java
 templates/**/*.rb.erb linguist-language=Ruby
 
-test/fixtures/seattlerb/**/*.txt linguist-vendored
-test/fixtures/unparser/**/*.txt linguist-vendored
-test/fixtures/whitequark/**/*.txt linguist-vendored
-test/snapshots/**/*.txt linguist-generated
+test/yarp/fixtures/seattlerb/**/*.txt linguist-vendored
+test/yarp/fixtures/unparser/**/*.txt linguist-vendored
+test/yarp/fixtures/whitequark/**/*.txt linguist-vendored
+test/yarp/snapshots/**/*.txt linguist-generated
 
 # All .rb files should have LF line ending, even on Windows, regardless of the git config core.autocrlf value.
 # All .txt should have their line endings as committed in the repository (there are some intentional CR in there),
