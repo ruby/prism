@@ -219,6 +219,7 @@ jobs:
       run: |
         bundle install
         rm -rf lib ext # ensure we don't use the local files
+        git checkout lib/yarp/version.rb # we need version.rb to load the gemspec
         rake test
       shell: bash
 
