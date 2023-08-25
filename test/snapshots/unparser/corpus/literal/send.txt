@@ -6,25 +6,14 @@ ProgramNode(0...999)(
        (0...6),
        ConstantReadNode(7...8)(),
        StatementsNode(11...31)(
-         [OrWriteNode(11...31)(
-            LocalVariableWriteNode(11...14)(:foo, 0, nil, (11...14), nil),
+         [LocalVariableOrWriteNode(11...31)(
+            (11...14),
+            (15...18),
             ParenthesesNode(19...31)(
               StatementsNode(21...30)(
                 [MultiWriteNode(21...30)(
-                   [LocalVariableWriteNode(21...22)(
-                      :a,
-                      0,
-                      nil,
-                      (21...22),
-                      nil
-                    ),
-                    LocalVariableWriteNode(24...25)(
-                      :_,
-                      0,
-                      nil,
-                      (24...25),
-                      nil
-                    )],
+                   [LocalVariableTargetNode(21...22)(:a, 0),
+                    LocalVariableTargetNode(24...25)(:_, 0)],
                    (27...28),
                    CallNode(29...30)(
                      nil,
@@ -44,7 +33,8 @@ ProgramNode(0...999)(
               (19...20),
               (30...31)
             ),
-            (15...18)
+            :foo,
+            0
           )]
        ),
        (32...35),
