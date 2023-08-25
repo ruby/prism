@@ -20,4 +20,6 @@ The full API is documented below.
 * `YARP.lex_file(filepath)` - parse the tokens corresponding to the given source file and return them as an array within a parse result
 * `YARP.parse(source)` - parse the syntax tree corresponding to the given source string and return it within a parse result
 * `YARP.parse_file(filepath)` - parse the syntax tree corresponding to the given source file and return it within a parse result
+* `YARP.parse_lex(source)` - parse the syntax tree corresponding to the given source string and return it within a parse result, along with the tokens
+* `YARP.parse_lex_file(filepath)` - parse the syntax tree corresponding to the given source file and return it within a parse result, along with the tokens
 * `YARP.load(source, serialized)` - load the serialized syntax tree using the source as a reference into a syntax tree

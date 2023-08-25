@@ -38,7 +38,7 @@ ProgramNode(0...3743)(
      ),
      MatchRequiredNode(78...91)(
        CallNode(78...81)(nil, nil, (78...81), nil, nil, nil, nil, 2, "foo"),
-       SymbolNode(85...91)(nil, (87...90), nil, "foo"),
+       SymbolNode(85...91)((85...87), (87...90), (90...91), "foo"),
        (82...84)
      ),
      MatchRequiredNode(92...104)(
@@ -323,6 +323,8 @@ ProgramNode(0...3743)(
        LambdaNode(343...353)(
          [],
          (343...345),
+         (346...347),
+         (352...353),
          nil,
          StatementsNode(348...351)([LocalVariableReadNode(348...351)(:bar, 1)])
        ),
@@ -461,8 +463,8 @@ ProgramNode(0...3743)(
          "foo"
        ),
        RangeNode(472...488)(
-         SymbolNode(472...478)(nil, (474...477), nil, "foo"),
-         SymbolNode(482...488)(nil, (484...487), nil, "foo"),
+         SymbolNode(472...478)((472...474), (474...477), (477...478), "foo"),
+         SymbolNode(482...488)((482...484), (484...487), (487...488), "foo"),
          (479...481),
          0
        ),
@@ -868,6 +870,8 @@ ProgramNode(0...3743)(
          LambdaNode(916...926)(
            [],
            (916...918),
+           (919...920),
+           (925...926),
            nil,
            StatementsNode(921...924)(
              [LocalVariableReadNode(921...924)(:bar, 1)]
@@ -876,6 +880,8 @@ ProgramNode(0...3743)(
          LambdaNode(930...940)(
            [],
            (930...932),
+           (933...934),
+           (939...940),
            nil,
            StatementsNode(935...938)(
              [LocalVariableReadNode(935...938)(:bar, 1)]
@@ -1943,7 +1949,12 @@ ProgramNode(0...3743)(
          2,
          "foo"
        ),
-       SymbolNode(1733...1739)(nil, (1735...1738), nil, "foo"),
+       SymbolNode(1733...1739)(
+         (1733...1735),
+         (1735...1738),
+         (1738...1739),
+         "foo"
+       ),
        (1730...1732)
      ),
      MatchPredicateNode(1740...1752)(
@@ -2263,6 +2274,8 @@ ProgramNode(0...3743)(
        LambdaNode(1991...2001)(
          [],
          (1991...1993),
+         (1994...1995),
+         (2000...2001),
          nil,
          StatementsNode(1996...1999)(
            [LocalVariableReadNode(1996...1999)(:bar, 1)]
@@ -2442,7 +2455,12 @@ ProgramNode(0...3743)(
          "foo"
        ),
        [InNode(2196...2210)(
-          SymbolNode(2199...2205)(nil, (2201...2204), nil, "foo"),
+          SymbolNode(2199...2205)(
+            (2199...2201),
+            (2201...2204),
+            (2204...2205),
+            "foo"
+          ),
           nil,
           (2196...2198),
           (2206...2210)
@@ -2888,6 +2906,8 @@ ProgramNode(0...3743)(
           LambdaNode(2727...2737)(
             [],
             (2727...2729),
+            (2730...2731),
+            (2736...2737),
             nil,
             StatementsNode(2732...2735)(
               [LocalVariableReadNode(2732...2735)(:bar, 1)]
@@ -3134,7 +3154,12 @@ ProgramNode(0...3743)(
             (3000...3002),
             LocalVariableReadNode(3003...3006)(:baz, 0),
             StatementsNode(2993...2999)(
-              [SymbolNode(2993...2999)(nil, (2995...2998), nil, "foo")]
+              [SymbolNode(2993...2999)(
+                 (2993...2995),
+                 (2995...2998),
+                 (2998...2999),
+                 "foo"
+               )]
             ),
             nil,
             nil
@@ -3712,6 +3737,8 @@ ProgramNode(0...3743)(
               [LambdaNode(3647...3657)(
                  [],
                  (3647...3649),
+                 (3650...3651),
+                 (3656...3657),
                  nil,
                  StatementsNode(3652...3655)(
                    [LocalVariableReadNode(3652...3655)(:bar, 1)]

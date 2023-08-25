@@ -10,8 +10,8 @@ ProgramNode(0...999)(
             (11...14),
             (15...18),
             ParenthesesNode(19...31)(
-              StatementsNode(21...30)(
-                [MultiWriteNode(21...30)(
+              StatementsNode(20...30)(
+                [MultiWriteNode(20...30)(
                    [LocalVariableTargetNode(21...22)(:a, 0),
                     LocalVariableTargetNode(24...25)(:_, 0)],
                    (27...28),
@@ -281,6 +281,7 @@ ProgramNode(0...999)(
      CallNode(255...272)(
        UntilNode(255...268)(
          (255...260),
+         (265...268),
          CallNode(261...264)(
            nil,
            nil,
@@ -307,6 +308,7 @@ ProgramNode(0...999)(
      CallNode(273...290)(
        WhileNode(273...286)(
          (273...278),
+         (283...286),
          CallNode(279...282)(
            nil,
            nil,

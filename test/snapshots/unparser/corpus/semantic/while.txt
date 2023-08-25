@@ -3,6 +3,7 @@ ProgramNode(0...188)(
   StatementsNode(0...188)(
     [UntilNode(0...13)(
        (2...7),
+       nil,
        CallNode(8...13)(
          nil,
          nil,
@@ -21,6 +22,7 @@ ProgramNode(0...188)(
      ),
      UntilNode(15...34)(
        (15...20),
+       (31...34),
        CallNode(21...26)(
          nil,
          nil,
@@ -39,6 +41,7 @@ ProgramNode(0...188)(
      ),
      WhileNode(36...55)(
        (46...51),
+       nil,
        LocalVariableReadNode(52...55)(:foo, 0),
        StatementsNode(36...45)(
          [LocalVariableWriteNode(36...45)(
@@ -63,6 +66,7 @@ ProgramNode(0...188)(
      ),
      UntilNode(57...75)(
        (59...64),
+       nil,
        AndNode(65...75)(
          CallNode(65...66)(nil, nil, (65...66), nil, nil, nil, nil, 2, "b"),
          CallNode(70...75)(
@@ -85,6 +89,7 @@ ProgramNode(0...188)(
      ),
      WhileNode(77...96)(
        (77...82),
+       (93...96),
        LocalVariableWriteNode(83...88)(
          :a,
          0,
@@ -97,6 +102,7 @@ ProgramNode(0...188)(
      ),
      UntilNode(98...130)(
        (100...105),
+       nil,
        CallNode(106...130)(
          nil,
          nil,
@@ -155,6 +161,7 @@ ProgramNode(0...188)(
           ),
           WhileNode(155...184)(
             (155...160),
+            (181...184),
             LocalVariableReadNode(161...164)(:foo, 0),
             StatementsNode(169...178)(
               [LocalVariableWriteNode(169...178)(
