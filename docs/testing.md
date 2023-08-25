@@ -12,9 +12,9 @@ These test specific YARP implementation details like comments, errors, and regul
 
 ### Snapshot tests
 
-Snapshot tests ensure that parsed output is equivalent to previous parsed output. There are many categorized examples of valid syntax within the `test/fixtures/` directory. When the test suite runs, it will parse all of this syntax, and compare it against corresponding files in the `test/snapshots/` directory. For example, `test/fixtures/strings.txt` has a corresponding `test/snapshots/strings.txt`.
+Snapshot tests ensure that parsed output is equivalent to previous parsed output. There are many categorized examples of valid syntax within the `test/yarp/fixtures/` directory. When the test suite runs, it will parse all of this syntax, and compare it against corresponding files in the `test/yarp/snapshots/` directory. For example, `test/yarp/fixtures/strings.txt` has a corresponding `test/yarp/snapshots/strings.txt`.
 
-If the parsed files do not match, it will raise an error. If there is not a corresponding file in the `test/snapshots/` directory, one will be created so that it exists for the next test run.
+If the parsed files do not match, it will raise an error. If there is not a corresponding file in the `test/yarp/snapshots/` directory, one will be created so that it exists for the next test run.
 
 ### Testing against repositories
 

@@ -18,13 +18,13 @@ namespace :whitequark do
   end
 
   desc "Ensure we have a fixtures directory for the whitequark/parser tests"
-  file "test/fixtures/whitequark" do
-    mkdir_p "test/fixtures/whitequark"
+  file "test/yarp/fixtures/whitequark" do
+    mkdir_p "test/yarp/fixtures/whitequark"
   end
 
   desc "Import the whitequark/parser tests"
-  task import: ["tmp/whitequark", "test/fixtures/whitequark"] do
-    cp "tmp/whitequark/LICENSE.txt", "test/fixtures/whitequark/LICENSE"
+  task import: ["tmp/whitequark", "test/yarp/fixtures/whitequark"] do
+    cp "tmp/whitequark/LICENSE.txt", "test/yarp/fixtures/whitequark/LICENSE"
 
     mkdir_p "tmp/whitequark/scratch"
     touch "tmp/whitequark/scratch/helper.rb"
@@ -75,14 +75,14 @@ namespace :whitequark do
 
     Minitest.after_run do
       ParseHelper::COLLECTED.each do |(name, codes)|
-        File.write("test/fixtures/whitequark/#{name}.txt", "#{codes.sort.join("\n\n")}\n")
+        File.write("test/yarp/fixtures/whitequark/#{name}.txt", "#{codes.sort.join("\n\n")}\n")
       end
 
       # These files are not valid Ruby
       known_failures = %w[
-        test/fixtures/whitequark/range_endless.txt
-        test/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
-        test/fixtures/whitequark/pattern_match.txt
+        test/yarp/fixtures/whitequark/range_endless.txt
+        test/yarp/fixtures/whitequark/control_meta_escape_chars_in_regexp__since_31.txt
+        test/yarp/fixtures/whitequark/pattern_match.txt
       ]
 
       # Remove all invalid Ruby files
@@ -93,6 +93,6 @@ namespace :whitequark do
   desc "Clean up tmp files related to whitequark/parser"
   task :clean do
     rm_rf "tmp/whitequark"
-    rm_rf "test/fixtures/whitequark"
+    rm_rf "test/yarp/fixtures/whitequark"
   end
 end

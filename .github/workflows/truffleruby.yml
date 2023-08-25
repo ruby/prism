@@ -65,8 +65,8 @@ jobs:
       run: jt build -- --dependencies "$(jt -q mx --env jvm graalvm-dist-name)"
       working-directory: truffleruby-ws/truffleruby
 
-    - name: Parse test/fixtures/**/*.rb
-      run: jt ruby -e 'Dir.glob("test/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
+    - name: Parse test/yarp/fixtures/**/*.rb
+      run: jt ruby -e 'Dir.glob("test/yarp/fixtures/**/*.rb") { |file| puts file; Truffle::Debug.yarp_parse(File.read(file)) }'
       working-directory: yarp
 
     - name: Parse src/main/ruby/truffleruby/**/*.rb

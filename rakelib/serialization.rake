@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fixtures = File.expand_path("../test/fixtures", __dir__)
+fixtures = File.expand_path("../test/yarp/fixtures", __dir__)
 serialized_dir = File.expand_path("../serialized", fixtures)
 
 desc "Serialize test fixtures and save it to .serialized files"

@@ -7,27 +7,27 @@ namespace :unparser do
   end
 
   desc "Ensure we have a fixtures directory for the unparser tests"
-  file "test/fixtures/unparser" do
-    mkdir_p "test/fixtures/unparser"
+  file "test/yarp/fixtures/unparser" do
+    mkdir_p "test/yarp/fixtures/unparser"
   end
 
   desc "Import the unparser tests"
-  task import: ["tmp/unparser", "test/fixtures/unparser"] do
-    cp "tmp/unparser/LICENSE", "test/fixtures/unparser/LICENSE"
-    cp_r "tmp/unparser/test/corpus/", "test/fixtures/unparser"
+  task import: ["tmp/unparser", "test/yarp/fixtures/unparser"] do
+    cp "tmp/unparser/LICENSE", "test/yarp/fixtures/unparser/LICENSE"
+    cp_r "tmp/unparser/test/corpus/", "test/yarp/fixtures/unparser"
 
-    Dir["test/fixtures/unparser/**/*.rb"].each do |f|
+    Dir["test/yarp/fixtures/unparser/**/*.rb"].each do |f|
       File.rename(f, f.sub(/\.rb$/, ".txt"))
     end
 
     # There's an issue with one of the test files in unparser. We'll correct it
     # until https://github.com/mbj/unparser/issues/340 is closed.
-    filepath = "test/fixtures/unparser/corpus/literal/pattern.txt"
+    filepath = "test/yarp/fixtures/unparser/corpus/literal/pattern.txt"
     File.write(filepath, File.read(filepath).gsub("\"\#{\"a\"}\"", "\"a\""))
 
     # These files are not valid Ruby
     known_failures = %w[
-      test/fixtures/unparser/corpus/literal/binary.txt
+      test/yarp/fixtures/unparser/corpus/literal/binary.txt
     ]
 
     # Remove all invalid Ruby files
@@ -37,6 +37,6 @@ namespace :unparser do
   desc "Clean up tmp files related to unparser"
   task :clean do
     rm_rf "tmp/unparser"
-    rm_rf "test/fixtures/unparser"
+    rm_rf "test/yarp/fixtures/unparser"
   end
 end
