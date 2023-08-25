@@ -4,7 +4,6 @@ A lot of code in YARP's repository is templated from a single configuration file
 
 * `ext/yarp/api_node.c` - for defining how to build Ruby objects for the nodes out of C structs
 * `include/yarp/ast.h` - for defining the C structs that represent the nodes
-* `include/yarp/version.h` - defines `YP_VERSION, YP_VERSION_MAJOR, YP_VERSION_MINOR, YP_VERSION_PATCH`
 * `java/org/yarp/AbstractNodeVisitor.java` - for defining the visitor interface for the nodes in Java
 * `java/org/yarp/Loader.java` - for defining how to deserialize the nodes in Java
 * `java/org/yarp/Nodes.java` - for defining the nodes in Java
