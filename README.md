@@ -14,7 +14,6 @@ The repository contains the infrastructure for both a shared library (librubypar
 │   ├── lex               runs the lexer on a file or string, prints the tokens, and compares to ripper
 │   └── parse             runs the parser on a file or string and prints the syntax tree
 ├── config.yml            specification for tokens and nodes in the tree
-├── configure.ac          configuration to generate the Makefile
 ├── docs                  documentation about the project
 ├── ext
 │   └── yarp
@@ -30,6 +29,7 @@ The repository contains the infrastructure for both a shared library (librubypar
 │   └── yarp.rb           main entrypoint for the Ruby library
 ├── rakelib               various Rake tasks for the project
 ├── rust
+│   ├── yarp              Rustified crate for the shared library
 │   └── yarp-sys          FFI binding for Rust
 ├── src
 │   ├── enc               various encoding files
