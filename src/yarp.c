@@ -2816,10 +2816,11 @@ yp_interpolated_symbol_node_create(yp_parser_t *parser, const yp_token_t *openin
 
 static inline void
 yp_interpolated_symbol_node_append(yp_interpolated_symbol_node_t *node, yp_node_t *part) {
-    yp_node_list_append(&node->parts, part);
-    if (!node->base.location.start) {
+    if (node->parts.size == 0 && node->opening_loc.start == NULL) {
         node->base.location.start = part->location.start;
     }
+
+    yp_node_list_append(&node->parts, part);
     node->base.location.end = part->location.end;
 }
 
@@ -6941,9 +6942,19 @@ parser_lex(yp_parser_t *parser) {
                     yp_unescape_type_t unescape_type = lex_mode->as.list.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
                     size_t difference = yp_unescape_calculate_difference(parser, breakpoint, unescape_type, false);
 
-                    // If the result is an escaped newline, then we need to
-                    // track that newline.
-                    yp_newline_list_check_append(&parser->newline_list, breakpoint + difference - 1);
+                    // If the result is an escaped newline ...
+                    if (*(breakpoint + difference - 1) == '\n') {
+                        if (parser->heredoc_end) {
+                            // ... if we are on the same line as a heredoc, flush the heredoc and
+                            // continue parsing after heredoc_end.
+                            parser->current.end = breakpoint + difference;
+                            parser_flush_heredoc_end(parser);
+                            LEX(YP_TOKEN_STRING_CONTENT);
+                        } else {
+                            // ... else track the newline.
+                            yp_newline_list_append(&parser->newline_list, breakpoint + difference - 1);
+                        }
+                    }
 
                     breakpoint = yp_strpbrk(parser, breakpoint + difference, breakpoints, parser->end - (breakpoint + difference));
                     continue;
@@ -11933,14 +11944,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             yp_array_node_t *array = yp_array_node_create(parser, &parser->previous);
 
             while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
-                if (yp_array_node_size(array) == 0) {
-                    accept(parser, YP_TOKEN_WORDS_SEP);
-                } else {
-                    expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the symbols in a `%i` list.");
-                    if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
-                }
-
+                accept(parser, YP_TOKEN_WORDS_SEP);
                 if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
+
                 expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a symbol in a `%i` list.");
 
                 yp_token_t opening = not_provided(parser);
@@ -11995,6 +12001,19 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                             // to the list of child nodes.
                             yp_node_t *part = parse_string_part(parser);
                             yp_interpolated_symbol_node_append((yp_interpolated_symbol_node_t *) current, part);
+                        } else if (YP_NODE_TYPE_P(current, YP_NODE_SYMBOL_NODE)) {
+                            // If we hit string content and the current node is a string node,
+                            // then we need to convert the current node into an interpolated
+                            // string and add the string content to the list of child nodes.
+                            yp_token_t opening = not_provided(parser);
+                            yp_token_t closing = not_provided(parser);
+                            yp_interpolated_symbol_node_t *interpolated =
+                                yp_interpolated_symbol_node_create(parser, &opening, NULL, &closing);
+                            yp_interpolated_symbol_node_append(interpolated, current);
+
+                            yp_node_t *part = parse_string_part(parser);
+                            yp_interpolated_symbol_node_append(interpolated, part);
+                            current = (yp_node_t *) interpolated;
                         } else {
                             assert(false && "unreachable");
                         }
@@ -12097,12 +12116,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
             accept(parser, YP_TOKEN_WORDS_SEP);
 
             while (!match_any_type_p(parser, 2, YP_TOKEN_STRING_END, YP_TOKEN_EOF)) {
-                if (yp_array_node_size(array) == 0) {
-                    accept(parser, YP_TOKEN_WORDS_SEP);
-                } else {
-                    expect(parser, YP_TOKEN_WORDS_SEP, "Expected a separator for the strings in a `%w` list.");
-                    if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
-                }
+                accept(parser, YP_TOKEN_WORDS_SEP);
+                if (match_type_p(parser, YP_TOKEN_STRING_END)) break;
+
                 expect(parser, YP_TOKEN_STRING_CONTENT, "Expected a string in a `%w` list.");
 
                 yp_token_t opening = not_provided(parser);
@@ -12152,6 +12168,19 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                             // to the list of child nodes.
                             yp_node_t *part = parse_string_part(parser);
                             yp_interpolated_string_node_append((yp_interpolated_string_node_t *) current, part);
+                        } else if (YP_NODE_TYPE_P(current, YP_NODE_STRING_NODE)) {
+                            // If we hit string content and the current node is a string node,
+                            // then we need to convert the current node into an interpolated
+                            // string and add the string content to the list of child nodes.
+                            yp_token_t opening = not_provided(parser);
+                            yp_token_t closing = not_provided(parser);
+                            yp_interpolated_string_node_t *interpolated =
+                                yp_interpolated_string_node_create(parser, &opening, NULL, &closing);
+                            yp_interpolated_string_node_append(interpolated, current);
+
+                            yp_node_t *part = parse_string_part(parser);
+                            yp_interpolated_string_node_append(interpolated, part);
+                            current = (yp_node_t *) interpolated;
                         } else {
                             assert(false && "unreachable");
                         }
