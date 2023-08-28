@@ -328,4 +328,19 @@ mod tests {
         let upcast_node = node.as_module_node().unwrap().as_node();
         assert!(matches!(upcast_node, Node::ModuleNode { .. }));
     }
+
+    #[test]
+    fn constant_id_test() {
+        let source = "module Foo; x = 1; end";
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let module = module.as_module_node().unwrap();
+        let locals = module.locals().iter().collect::<Vec<_>>();
+
+        assert_eq!(locals.len(), 1);
+
+        assert_eq!(locals[0].as_slice(), b"x");
+    }
 }

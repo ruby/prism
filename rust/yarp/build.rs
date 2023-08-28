@@ -556,6 +556,16 @@ impl<'pr> ConstantId<'pr> {{
     fn new(parser: NonNull<yp_parser_t>, id: yp_constant_id_t) -> Self {{
         ConstantId {{ parser, id, marker: PhantomData }}
     }}
+
+    /// Returns a byte slice for the constant ID.
+    #[must_use]
+    pub fn as_slice(&self) -> &'pr [u8] {{
+        unsafe {{
+            let pool = &(*self.parser.as_ptr()).constant_pool;
+            let constant = &(*pool.constants.offset(isize::try_from(self.id).expect("id should be in range")));
+            std::slice::from_raw_parts(constant.start.cast::<u8>(), constant.length)
+        }}
+    }}
 }}
 
 impl std::fmt::Debug for ConstantId<'_> {{
