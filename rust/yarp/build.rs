@@ -221,8 +221,8 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "    }}")?;
             },
             NodeParamType::Constant => {
-                writeln!(file, "    pub fn {}(&self) -> yp_constant_id_t {{", node_param.name)?;
-                writeln!(file, "        unsafe {{ (*self.pointer).{} }}", node_param.name)?;
+                writeln!(file, "    pub fn {}(&self) -> ConstantId<'pr> {{", node_param.name)?;
+                writeln!(file, "        ConstantId::new(unsafe {{ (*self.pointer).{} }})", node_param.name)?;
                 writeln!(file, "    }}")?;
             },
             NodeParamType::ConstantList => {
@@ -539,6 +539,24 @@ impl std::fmt::Debug for NodeList<'_> {{
     }}
 }}
 
+/// A handle for a constant ID.
+pub struct ConstantId<'pr> {{
+    id: yp_constant_id_t,
+    marker: PhantomData<&'pr mut yp_constant_id_t>
+}}
+
+impl<'pr> ConstantId<'pr> {{
+    fn new(id: yp_constant_id_t) -> Self {{
+        ConstantId {{ id: id, marker: PhantomData }}
+    }}
+}}
+
+impl std::fmt::Debug for ConstantId<'_> {{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{
+        write!(f, "{{:?}}", self.id)
+    }}
+}}
+
 /// An iterator over the constants in a list.
 pub struct ConstantListIter<'pr> {{
     pointer: NonNull<yp_constant_id_list_t>,
@@ -547,7 +565,7 @@ pub struct ConstantListIter<'pr> {{
 }}
 
 impl<'pr> Iterator for ConstantListIter<'pr> {{
-    type Item = yp_constant_id_t;
+    type Item = ConstantId<'pr>;
 
     fn next(&mut self) -> Option<Self::Item> {{
         if self.index >= unsafe {{ self.pointer.as_ref().size }} {{
@@ -555,7 +573,7 @@ impl<'pr> Iterator for ConstantListIter<'pr> {{
         }} else {{
             let constant_id: yp_constant_id_t = unsafe {{ *(self.pointer.as_ref().ids.add(self.index)) }};
             self.index += 1;
-            Some(constant_id)
+            Some(ConstantId::new(constant_id))
         }}
     }}
 }}
