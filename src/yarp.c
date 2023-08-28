@@ -9054,10 +9054,12 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
         }
 
         if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_KEYWORD_END)) {
+            yp_accepts_block_stack_push(parser, true);
             yp_statements_node_t *statements = parse_statements(parser, YP_CONTEXT_RESCUE);
             if (statements) {
                 yp_rescue_node_statements_set(rescue, statements);
             }
+            yp_accepts_block_stack_pop(parser);
             accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         }
 
@@ -9088,7 +9090,9 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
 
         yp_statements_node_t *else_statements = NULL;
         if (!match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_END, YP_TOKEN_KEYWORD_ENSURE)) {
+            yp_accepts_block_stack_push(parser, true);
             else_statements = parse_statements(parser, YP_CONTEXT_RESCUE_ELSE);
+            yp_accepts_block_stack_pop(parser);
             accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         }
 
@@ -9102,7 +9106,9 @@ parse_rescues(yp_parser_t *parser, yp_begin_node_t *parent_node) {
 
         yp_statements_node_t *ensure_statements = NULL;
         if (!match_type_p(parser, YP_TOKEN_KEYWORD_END)) {
+            yp_accepts_block_stack_push(parser, true);
             ensure_statements = parse_statements(parser, YP_CONTEXT_ENSURE);
+            yp_accepts_block_stack_pop(parser);
             accept_any(parser, 2, YP_TOKEN_NEWLINE, YP_TOKEN_SEMICOLON);
         }
 
@@ -9212,7 +9218,9 @@ parse_block(yp_parser_t *parser) {
     } else {
         if (!match_type_p(parser, YP_TOKEN_KEYWORD_END)) {
             if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ELSE, YP_TOKEN_KEYWORD_ENSURE)) {
+                yp_accepts_block_stack_push(parser, true);
                 statements = (yp_node_t *) parse_statements(parser, YP_CONTEXT_BLOCK_KEYWORDS);
+                yp_accepts_block_stack_pop(parser);
             }
 
             if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
@@ -11373,7 +11381,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
 
                 yp_node_t *statements = NULL;
                 if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_KEYWORD_END)) {
+                    yp_accepts_block_stack_push(parser, true);
                     statements = (yp_node_t *) parse_statements(parser, YP_CONTEXT_SCLASS);
+                    yp_accepts_block_stack_pop(parser);
                 }
 
                 if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
@@ -11654,7 +11664,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 yp_do_loop_stack_push(parser, false);
 
                 if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE, YP_TOKEN_KEYWORD_END)) {
+                    yp_accepts_block_stack_push(parser, true);
                     statements = (yp_node_t *) parse_statements(parser, YP_CONTEXT_DEF);
+                    yp_accepts_block_stack_pop(parser);
                 }
 
                 if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
@@ -12511,7 +12523,9 @@ parse_expression_prefix(yp_parser_t *parser, yp_binding_power_t binding_power) {
                 opening = parser->previous;
 
                 if (!match_any_type_p(parser, 3, YP_TOKEN_KEYWORD_END, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
+                    yp_accepts_block_stack_push(parser, true);
                     body = (yp_node_t *) parse_statements(parser, YP_CONTEXT_LAMBDA_DO_END);
+                    yp_accepts_block_stack_pop(parser);
                 }
 
                 if (match_any_type_p(parser, 2, YP_TOKEN_KEYWORD_RESCUE, YP_TOKEN_KEYWORD_ENSURE)) {
