@@ -148,6 +148,9 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     }
 
     writeln!(file, "pub struct {}<'pr> {{", node.name)?;
+    writeln!(file, "    /// The pointer to the parser this node came from.")?;
+    writeln!(file, "    parser: NonNull<yp_parser_t>,")?;
+    writeln!(file)?;
     writeln!(file, "    /// The raw pointer to the node allocated by YARP.")?;
     writeln!(file, "    pointer: *mut yp{}_t,", struct_name(&node.name))?;
     writeln!(file)?;
@@ -159,7 +162,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "    /// Converts this node to a generic node.")?;
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn as_node(&self) -> Node<'pr> {{")?;
-    writeln!(file, "        Node::{} {{ pointer: self.pointer, marker: PhantomData }}", node.name)?;
+    writeln!(file, "        Node::{} {{ parser: self.parser, pointer: self.pointer, marker: PhantomData }}", node.name)?;
     writeln!(file, "    }}")?;
     writeln!(file)?;
     writeln!(file, "    /// Returns the location of this node.")?;
@@ -179,12 +182,12 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 if let Some(kind) = &node_param.kind {
                     writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", node_param.name, kind)?;
                     writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), node_param.name)?;
-                    writeln!(file, "        {} {{ pointer: node, marker: PhantomData }}", kind)?;
+                    writeln!(file, "        {} {{ parser: self.parser, pointer: node, marker: PhantomData }}", kind)?;
                     writeln!(file, "    }}")?;
                 } else {
                     writeln!(file, "    pub fn {}(&self) -> Node<'pr> {{", node_param.name)?;
                     writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", node_param.name)?;
-                    writeln!(file, "        Node::new(node)")?;
+                    writeln!(file, "        Node::new(self.parser, node)")?;
                     writeln!(file, "    }}")?;
                 }
             },
@@ -195,7 +198,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
-                    writeln!(file, "            Some({} {{ pointer: node, marker: PhantomData }})", kind)?;
+                    writeln!(file, "            Some({} {{ parser: self.parser, pointer: node, marker: PhantomData }})", kind)?;
                     writeln!(file, "        }}")?;
                     writeln!(file, "    }}")?;
                 } else {
@@ -204,7 +207,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
-                    writeln!(file, "            Some(Node::new(node))")?;
+                    writeln!(file, "            Some(Node::new(self.parser, node))")?;
                     writeln!(file, "        }}")?;
                     writeln!(file, "    }}")?;
                 }
@@ -212,7 +215,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeParamType::NodeList => {
                 writeln!(file, "    pub fn {}(&self) -> NodeList<'pr> {{", node_param.name)?;
                 writeln!(file, "        let pointer: *mut yp_node_list = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
-                writeln!(file, "        NodeList {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
+                writeln!(file, "        NodeList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeParamType::String => {
@@ -222,13 +225,13 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             },
             NodeParamType::Constant => {
                 writeln!(file, "    pub fn {}(&self) -> ConstantId<'pr> {{", node_param.name)?;
-                writeln!(file, "        ConstantId::new(unsafe {{ (*self.pointer).{} }})", node_param.name)?;
+                writeln!(file, "        ConstantId::new(self.parser, unsafe {{ (*self.pointer).{} }})", node_param.name)?;
                 writeln!(file, "    }}")?;
             },
             NodeParamType::ConstantList => {
                 writeln!(file, "    pub fn {}(&self) -> ConstantList<'pr> {{", node_param.name)?;
                 writeln!(file, "        let pointer: *mut yp_constant_id_list_t = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
-                writeln!(file, "        ConstantList {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
+                writeln!(file, "        ConstantList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
             NodeParamType::Location => {
@@ -309,7 +312,7 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
     writeln!(file, "       match node {{")?;
 
     for node in &config.nodes {
-        writeln!(file, "           Node::{} {{ pointer, marker }} => self.visit{}(&{} {{ pointer: *pointer, marker: *marker }}),", node.name, struct_name(&node.name), node.name)?;
+        writeln!(file, "           Node::{} {{ parser, pointer, marker }} => self.visit{}(&{} {{ parser: *parser, pointer: *pointer, marker: *marker }}),", node.name, struct_name(&node.name), node.name)?;
     }
 
     writeln!(file, "       }}")?;
@@ -496,6 +499,7 @@ impl std::fmt::Debug for LocationList<'_> {{
 
 /// An iterator over the nodes in a list.
 pub struct NodeListIter<'pr> {{
+    parser: NonNull<yp_parser_t>,
     pointer: NonNull<yp_node_list>,
     index: usize,
     marker: PhantomData<&'pr mut yp_node_list>
@@ -510,13 +514,14 @@ impl<'pr> Iterator for NodeListIter<'pr> {{
         }} else {{
             let node: *mut yp_node_t = unsafe {{ *(self.pointer.as_ref().nodes.add(self.index)) }};
             self.index += 1;
-            Some(Node::new(node))
+            Some(Node::new(self.parser, node))
         }}
     }}
 }}
 
 /// A list of nodes.
 pub struct NodeList<'pr> {{
+    parser: NonNull<yp_parser_t>,
     pointer: NonNull<yp_node_list>,
     marker: PhantomData<&'pr mut yp_node_list>
 }}
@@ -526,6 +531,7 @@ impl<'pr> NodeList<'pr> {{
     #[must_use]
     pub fn iter(&self) -> NodeListIter<'pr> {{
         NodeListIter {{
+            parser: self.parser,
             pointer: self.pointer,
             index: 0,
             marker: PhantomData
@@ -617,6 +623,9 @@ impl std::fmt::Debug for ConstantList<'_> {{
     for node in &config.nodes {
         writeln!(file, "    /// The {} node", node.name)?;
         writeln!(file, "    {} {{", node.name)?;
+        writeln!(file, "        /// The pointer to the associated parser this node came from.")?;
+        writeln!(file, "        parser: NonNull<yp_parser_t>,")?;
+        writeln!(file)?;
         writeln!(file, "        /// The raw pointer to the node allocated by YARP.")?;
         writeln!(file, "        pointer: *mut yp{}_t,", struct_name(&node.name))?;
         writeln!(file)?;
@@ -637,12 +646,12 @@ impl<'pr> Node<'pr> {{
     /// Panics if the node type cannot be read.
     ///
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
-    pub fn new(node: *mut yp_node_t) -> Self {{
+    pub fn new(parser: NonNull<yp_parser_t>, node: *mut yp_node_t) -> Self {{
         match unsafe {{ (*node).type_ }} {{
 "#)?;
 
     for node in &config.nodes {
-        writeln!(file, "            {} => Self::{} {{ pointer: node.cast::<yp{}_t>(), marker: PhantomData }},", type_name(&node.name), node.name, struct_name(&node.name))?;
+        writeln!(file, "            {} => Self::{} {{ parser, pointer: node.cast::<yp{}_t>(), marker: PhantomData }},", type_name(&node.name), node.name, struct_name(&node.name))?;
     }
 
     writeln!(file, "            _ => panic!(\"Unknown node type: {{}}\", unsafe {{ (*node).type_ }})")?;
@@ -655,7 +664,7 @@ impl<'pr> Node<'pr> {{
         writeln!(file, "    #[must_use]")?;
         writeln!(file, "    pub fn as{}(&self) -> Option<{}<'_>> {{", struct_name(&node.name), node.name)?;
         writeln!(file, "        match *self {{")?;
-        writeln!(file, "            Self::{} {{ pointer, marker }} => Some({} {{ pointer, marker }}),", node.name, node.name)?;
+        writeln!(file, "            Self::{} {{ parser, pointer, marker }} => Some({} {{ parser, pointer, marker }}),", node.name, node.name)?;
         writeln!(file, "            _ => None")?;
         writeln!(file, "        }}")?;
         writeln!(file, "    }}")?;
@@ -669,7 +678,7 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "        match *self {{")?;
 
     for node in &config.nodes {
-        writeln!(file, "            Self::{} {{ pointer, marker }} => write!(f, \"{{:?}}\", {} {{ pointer, marker }}),", node.name, node.name)?;
+        writeln!(file, "            Self::{} {{ parser, pointer, marker }} => write!(f, \"{{:?}}\", {} {{ parser, pointer, marker }}),", node.name, node.name)?;
     }
 
     writeln!(file, "        }}")?;
