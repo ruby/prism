@@ -547,13 +547,14 @@ impl std::fmt::Debug for NodeList<'_> {{
 
 /// A handle for a constant ID.
 pub struct ConstantId<'pr> {{
+    parser: NonNull<yp_parser_t>,
     id: yp_constant_id_t,
     marker: PhantomData<&'pr mut yp_constant_id_t>
 }}
 
 impl<'pr> ConstantId<'pr> {{
-    fn new(id: yp_constant_id_t) -> Self {{
-        ConstantId {{ id: id, marker: PhantomData }}
+    fn new(parser: NonNull<yp_parser_t>, id: yp_constant_id_t) -> Self {{
+        ConstantId {{ parser, id, marker: PhantomData }}
     }}
 }}
 
@@ -565,6 +566,7 @@ impl std::fmt::Debug for ConstantId<'_> {{
 
 /// An iterator over the constants in a list.
 pub struct ConstantListIter<'pr> {{
+    parser: NonNull<yp_parser_t>,
     pointer: NonNull<yp_constant_id_list_t>,
     index: usize,
     marker: PhantomData<&'pr mut yp_constant_id_list_t>
@@ -579,13 +581,16 @@ impl<'pr> Iterator for ConstantListIter<'pr> {{
         }} else {{
             let constant_id: yp_constant_id_t = unsafe {{ *(self.pointer.as_ref().ids.add(self.index)) }};
             self.index += 1;
-            Some(ConstantId::new(constant_id))
+            Some(ConstantId::new(self.parser, constant_id))
         }}
     }}
 }}
 
 /// A list of constants.
 pub struct ConstantList<'pr> {{
+    /// The raw pointer to the parser where this list came from.
+    parser: NonNull<yp_parser_t>,
+
     /// The raw pointer to the list allocated by YARP.
     pointer: NonNull<yp_constant_id_list_t>,
 
@@ -598,6 +603,7 @@ impl<'pr> ConstantList<'pr> {{
     #[must_use]
     pub fn iter(&self) -> ConstantListIter<'pr> {{
         ConstantListIter {{
+            parser: self.parser,
             pointer: self.pointer,
             index: 0,
             marker: PhantomData
