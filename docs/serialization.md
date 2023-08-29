@@ -130,14 +130,14 @@ void yp_buffer_free(yp_buffer_t *);
 
 // Parse and serialize the AST represented by the given source to the given
 // buffer.
-void yp_parse_serialize(const char *, size_t, yp_buffer_t *, const char *);
+void yp_parse_serialize(const uint8_t *source, size_t length, yp_buffer_t *buffer, const char *metadata);
 ```
 
 Typically you would use a stack-allocated `yp_buffer_t` and call `yp_parse_serialize`, as in:
 
 ```c
 void
-serialize(const char *source, size_t length) {
+serialize(const uint8_t *source, size_t length) {
   yp_buffer_t buffer;
   if (!yp_buffer_init(&buffer)) return;
 

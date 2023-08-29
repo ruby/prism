@@ -1,7 +1,7 @@
 #include <yarp.h>
 
 static void
-unescape(const char *input, size_t size, yp_unescape_type_t type) {
+unescape(const uint8_t *input, size_t size, yp_unescape_type_t type) {
     yp_parser_t parser;
     yp_parser_init(&parser, input, size, "unescape.c");
 
@@ -13,7 +13,7 @@ unescape(const char *input, size_t size, yp_unescape_type_t type) {
 }
 
 void
-harness(const char *input, size_t size) {
+harness(const uint8_t *input, size_t size) {
     unescape(input, size, YP_UNESCAPE_ALL);
     unescape(input, size, YP_UNESCAPE_MINIMAL);
     unescape(input, size, YP_UNESCAPE_NONE);

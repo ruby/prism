@@ -396,7 +396,6 @@ fn write_bindings(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     let mut file = std::fs::File::create(&out_path).expect("Unable to create file");
 
     writeln!(file, r#"
-use std::ffi::c_char;
 use std::marker::PhantomData;
 use std::ptr::NonNull;
 
@@ -412,24 +411,23 @@ pub struct Location<'pr> {{
 impl<'pr> Location<'pr> {{
     /// Returns the pointer to the start of the range.
     #[must_use]
-    pub fn start(&self) -> *const c_char {{
+    pub fn start(&self) -> *const u8 {{
         unsafe {{ self.pointer.as_ref().start }}
     }}
 
     /// Returns the pointer to the end of the range.
     #[must_use]
-    pub fn end(&self) -> *const c_char {{
+    pub fn end(&self) -> *const u8 {{
         unsafe {{ self.pointer.as_ref().end }}
     }}
 
     /// Returns a byte slice for the range.
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {{
-        let start: *mut u8 = self.start() as *mut u8;
-        let end: *mut u8 = self.end() as *mut u8;
+        let start = self.start();
 
         unsafe {{
-          let len = usize::try_from(end.offset_from(start)).expect("end should point to memory after start");
+          let len = usize::try_from(self.end().offset_from(start)).expect("end should point to memory after start");
           std::slice::from_raw_parts(start, len)
         }}
     }}
@@ -563,7 +561,7 @@ impl<'pr> ConstantId<'pr> {{
         unsafe {{
             let pool = &(*self.parser.as_ptr()).constant_pool;
             let constant = &(*pool.constants.offset(isize::try_from(self.id).expect("id should be in range")));
-            std::slice::from_raw_parts(constant.start.cast::<u8>(), constant.length)
+            std::slice::from_raw_parts(constant.start, constant.length)
         }}
     }}
 }}

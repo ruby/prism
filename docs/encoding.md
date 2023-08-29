@@ -61,22 +61,22 @@ typedef struct {
     // Return the number of bytes that the next character takes if it is valid
     // in the encoding. Does not read more than n bytes. It is assumed that n is
     // at least 1.
-    size_t (*char_width)(const char *c, ptrdiff_t n);
+    size_t (*char_width)(const uint8_t *b, ptrdiff_t n);
 
     // Return the number of bytes that the next character takes if it is valid
     // in the encoding and is alphabetical. Does not read more than n bytes. It
     // is assumed that n is at least 1.
-    size_t (*alpha_char)(const char *c, ptrdiff_t n);
+    size_t (*alpha_char)(const uint8_t *b, ptrdiff_t n);
 
     // Return the number of bytes that the next character takes if it is valid
     // in the encoding and is alphanumeric. Does not read more than n bytes. It
     // is assumed that n is at least 1.
-    size_t (*alnum_char)(const char *c, ptrdiff_t n);
+    size_t (*alnum_char)(const uint8_t *b, ptrdiff_t n);
 
     // Return true if the next character is valid in the encoding and is an
     // uppercase character. Does not read more than n bytes. It is assumed that
     // n is at least 1.
-    bool (*isupper_char)(const char *c, ptrdiff_t n);
+    bool (*isupper_char)(const uint8_t *b, ptrdiff_t n);
 
     // The name of the encoding. This should correspond to a value that can be
     // passed to Encoding.find in Ruby.
@@ -90,7 +90,7 @@ typedef struct {
 // the ability here to call out to a user-defined function to get an encoding
 // struct. If the function returns something that isn't NULL, we set that to
 // our encoding and use it to parse identifiers.
-typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(yp_parser_t *parser, const char *name, size_t width);
+typedef yp_encoding_t *(*yp_encoding_decode_callback_t)(yp_parser_t *parser, const uint8_t *name, size_t width);
 
 // Register a callback that will be called when YARP encounters a magic comment
 // with an encoding referenced that it doesn't understand. The callback should

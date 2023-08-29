@@ -3,7 +3,7 @@
 desc "Generate the lookup tables for yp_char.c"
 namespace :generate do
   task :char do
-    puts "static const unsigned char yp_char_table[256] = {"
+    puts "static const uint8_t yp_char_table[256] = {"
     puts "//#{(0...16).map { |value| value.to_s(16).upcase }.join("  ")}"
 
     (0...256).each_slice(16).with_index do |slice, row_index|
@@ -22,7 +22,7 @@ namespace :generate do
       puts "  #{row.join(" ")} // #{row_index.to_s(16).upcase}x\n"
     end
 
-    puts "};\nstatic const unsigned char yp_number_table[256] = {"
+    puts "};\nstatic const uint8_t yp_number_table[256] = {"
     puts "  // #{(0...16).map { |value| value.to_s(16).upcase }.join("     ")}"
 
     (0...256).each_slice(16).with_index do |slice, row_index|
