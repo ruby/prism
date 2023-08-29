@@ -662,7 +662,7 @@ impl<'pr> Node<'pr> {{
     /// Panics if the node type cannot be read.
     ///
     #[allow(clippy::not_unsafe_ptr_arg_deref)]
-    pub fn new(parser: NonNull<yp_parser_t>, node: *mut yp_node_t) -> Self {{
+    pub(crate) fn new(parser: NonNull<yp_parser_t>, node: *mut yp_node_t) -> Self {{
         match unsafe {{ (*node).type_ }} {{
 "#)?;
 
