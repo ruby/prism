@@ -72,7 +72,7 @@ struct Config {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = config_path();
     let file = std::fs::File::open(&path)?;
-    println!("cargo:rerun-if-changed={}", path.display());
+    println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
     let config: Config = serde_yaml::from_reader(file)?;
 
     write_bindings(&config)?;
