@@ -675,6 +675,17 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "    }}")?;
     writeln!(file)?;
 
+    writeln!(file, "    /// Returns the location of this node.")?;
+    writeln!(file, "    #[must_use]")?;
+    writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
+    writeln!(file, "        match *self {{")?;
+    for node in &config.nodes {
+        writeln!(file, "            Self::{} {{ pointer, .. }} => Location {{ pointer: unsafe {{ NonNull::new_unchecked(&mut (*pointer.cast::<yp_node_t>()).location) }}, marker: PhantomData }},", node.name)?;
+    }
+    writeln!(file, "        }}")?;
+    writeln!(file, "    }}")?;
+    writeln!(file)?;
+
     for node in &config.nodes {
         writeln!(file, "    /// Returns the node as a `{}`.", node.name)?;
         writeln!(file, "    #[must_use]")?;
