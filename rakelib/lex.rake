@@ -303,21 +303,23 @@ task "parse:topgems": ["download:topgems", :compile] do
   require "yarp"
   require_relative "../test/yarp/test_helper"
 
-  class ParseTop100GemsTest < Test::Unit::TestCase
-    Dir["#{TOP_100_GEMS_DIR}/**/*.rb"].each do |filepath|
-      test filepath do
-        result = YARP.parse_file(filepath)
+  module YARP
+    class ParseTop100GemsTest < TestCase
+      Dir["#{TOP_100_GEMS_DIR}/**/*.rb"].each do |filepath|
+        test filepath do
+          result = YARP.parse_file(filepath)
 
-        if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
-          assert_false result.success?
-          # ensure it is actually invalid syntax
-          assert_false system(RbConfig.ruby, "-c", filepath, out: File::NULL, err: File::NULL)
-          next
+          if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
+            assert_false result.success?
+            # ensure it is actually invalid syntax
+            assert_false system(RbConfig.ruby, "-c", filepath, out: File::NULL, err: File::NULL)
+            next
+          end
+
+          assert result.success?, "failed to parse #{filepath}"
+          value = result.value
+          assert_valid_locations(value)
         end
-
-        assert result.success?, "failed to parse #{filepath}"
-        value = result.value
-        assert_valid_locations(value)
       end
     end
   end
