@@ -801,6 +801,17 @@ module YARP
       assert_equal expected, actual
     end
 
+    def test_attributes
+      result = YARP.parse("class Foo\nend")
+      location = result.value.statements.body.last.location
+      assert_equal 0, location.start_column
+      assert_equal 2, location.end_column
+      assert_equal 1, location.start_line
+      assert_equal 2, location.end_line
+      assert_equal 0, location.start_offset
+      assert_equal 13, location.end_offset
+    end
+
     private
 
     def assert_location(kind, source, expected = 0...source.length)
