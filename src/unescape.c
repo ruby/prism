@@ -237,13 +237,14 @@ unescape(yp_parser_t *parser, uint8_t *dest, size_t *dest_length, const uint8_t 
 
                 unicode_cursor += yp_strspn_whitespace(unicode_cursor, end - unicode_cursor);
 
-                while ((*unicode_cursor != '}') && (unicode_cursor < end)) {
+                while ((unicode_cursor < end) && (*unicode_cursor != '}')) {
                     const uint8_t *unicode_start = unicode_cursor;
                     size_t hexadecimal_length = yp_strspn_hexadecimal_digit(unicode_cursor, end - unicode_cursor);
 
                     // \u{nnnn} character literal allows only 1-6 hexadecimal digits
-                    if (hexadecimal_length > 6)
+                    if (hexadecimal_length > 6) {
                         yp_diagnostic_list_append(&parser->error_list, unicode_cursor, unicode_cursor + hexadecimal_length, "invalid Unicode escape.");
+                    }
 
                     // there are not hexadecimal characters
                     if (hexadecimal_length == 0) {
@@ -270,10 +271,14 @@ unescape(yp_parser_t *parser, uint8_t *dest, size_t *dest_length, const uint8_t 
                 if (flags & YP_UNESCAPE_FLAG_EXPECT_SINGLE && codepoints_count > 1)
                     yp_diagnostic_list_append(&parser->error_list, extra_codepoints_start, unicode_cursor - 1, "Multiple codepoints at single character literal");
 
-                return unicode_cursor + 1;
+
+                if (unicode_cursor < end && *unicode_cursor == '}') {
+                    unicode_cursor++;
+                }
+                return unicode_cursor;
             }
 
-            if ((backslash + 2) < end && yp_char_is_hexadecimal_digits(backslash + 2, 4)) {
+            if ((backslash + 5) < end && yp_char_is_hexadecimal_digits(backslash + 2, 4)) {
                 uint32_t value;
                 unescape_unicode(backslash + 2, 4, &value);
 
