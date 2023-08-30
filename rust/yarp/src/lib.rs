@@ -262,6 +262,22 @@ mod tests {
         let not_joined = location.join(&recv_loc);
         assert!(not_joined.is_none());
 
+        {
+            let result = parse(source.as_ref());
+            let node = result.node();
+            let node = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+            let node = node.as_call_node().unwrap().receiver().unwrap();
+            let plus = node.as_call_node().unwrap();
+            let node = plus.arguments().unwrap().arguments().iter().next().unwrap();
+
+            let location = node.as_integer_node().unwrap().location();
+            let not_joined = recv_loc.join(&location);
+            assert!(not_joined.is_none());
+
+            let not_joined = location.join(&recv_loc);
+            assert!(not_joined.is_none());
+        }
+
         let location = node.location();
         let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
 

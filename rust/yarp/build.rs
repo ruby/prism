@@ -169,7 +169,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
     writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).base.location }};")?;
-    writeln!(file, "        Location::new(unsafe {{ &(*pointer) }})")?;
+    writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
     writeln!(file, "    }}")?;
 
     for field in &node.fields {
@@ -237,7 +237,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeFieldType::Location => {
                 writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        Location::new(unsafe {{ &(*pointer) }})")?;
+                writeln!(file, "        Location::new(self.parser, unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::OptionalLocation => {
@@ -247,7 +247,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "        if start.is_null() {{")?;
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
-                writeln!(file, "            Some(Location::new(unsafe {{ &(*pointer) }}))")?;
+                writeln!(file, "            Some(Location::new(self.parser, unsafe {{ &(*pointer) }}))")?;
                 writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
@@ -399,6 +399,7 @@ use yarp_sys::*;
 
 /// A range in the source file.
 pub struct Location<'pr> {{
+    parser: NonNull<yp_parser_t>,
     pub(crate) start: *const u8,
     pub(crate) end: *const u8,
     marker: PhantomData<&'pr [u8]>
@@ -416,18 +417,19 @@ impl<'pr> Location<'pr> {{
 
     /// Return a Location from the given `yp_location_t`.
     #[must_use]
-    pub const fn new(loc: &'pr yp_location_t) -> Location<'pr> {{
-        Location {{ start: loc.start, end: loc.end, marker: PhantomData }}
+    pub(crate) const fn new(parser: NonNull<yp_parser_t>, loc: &'pr yp_location_t) -> Location<'pr> {{
+        Location {{ parser, start: loc.start, end: loc.end, marker: PhantomData }}
     }}
 
     /// Return a Location starting at self and ending at the end of other.
-    /// Returns None if self starts after other.
+    /// Returns None if both locations did not originate from the same parser,
+    /// or if self starts after other.
     #[must_use]
     pub fn join(&self, other: &Location<'pr>) -> Option<Location<'pr>> {{
-        if self.start > other.start {{
+        if self.parser != other.parser || self.start > other.start {{
             None
         }} else {{
-            Some(Location {{ start: self.start, end: other.end, marker: PhantomData }})
+            Some(Location {{ parser: self.parser, start: self.start, end: other.end, marker: PhantomData }})
         }}
     }}
 }}
@@ -632,7 +634,7 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
     writeln!(file, "        match *self {{")?;
     for node in &config.nodes {
-        writeln!(file, "            Self::{} {{ pointer, .. }} => Location::new(unsafe {{ &((*pointer.cast::<yp_node_t>()).location) }}),", node.name)?;
+        writeln!(file, "            Self::{} {{ pointer, parser, .. }} => Location::new(parser, unsafe {{ &((*pointer.cast::<yp_node_t>()).location) }}),", node.name)?;
     }
     writeln!(file, "        }}")?;
     writeln!(file, "    }}")?;
