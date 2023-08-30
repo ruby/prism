@@ -12,7 +12,7 @@ task default: [:check_manifest, :compile, :test]
 require_relative "templates/template"
 
 desc "Generate all ERB template based files"
-task templates: TEMPLATES
+task templates: YARP::TEMPLATES
 
 def windows?
   RUBY_PLATFORM.include?("mingw")
@@ -59,13 +59,13 @@ elsif RUBY_ENGINE == "jruby"
 end
 
 # So `rake clobber` will delete generated files
-CLOBBER.concat(TEMPLATES)
+CLOBBER.concat(YARP::TEMPLATES)
 CLOBBER.concat(["build"])
 CLOBBER << "lib/yarp/yarp.#{RbConfig::CONFIG["DLEXT"]}"
 
-TEMPLATES.each do |filepath|
+YARP::TEMPLATES.each do |filepath|
   desc "Generate #{filepath}"
   file filepath => ["templates/#{filepath}.erb", "templates/template.rb", "config.yml"] do |t|
-    template(t.name, locals)
+    YARP.template(t.name)
   end
 end
