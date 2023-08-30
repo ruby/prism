@@ -274,6 +274,8 @@ unescape(yp_parser_t *parser, uint8_t *dest, size_t *dest_length, const uint8_t 
 
                 if (unicode_cursor < end && *unicode_cursor == '}') {
                     unicode_cursor++;
+                } else {
+                    yp_diagnostic_list_append(&parser->error_list, backslash, unicode_cursor, "invalid Unicode escape.");
                 }
                 return unicode_cursor;
             }
