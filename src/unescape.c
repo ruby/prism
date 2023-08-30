@@ -69,17 +69,15 @@ char_is_ascii_printable(const uint8_t b) {
 // Scan the 1-3 digits of octal into the value. Returns the number of digits
 // scanned.
 static inline size_t
-unescape_octal(const uint8_t *backslash, uint8_t *value) {
+unescape_octal(const uint8_t *backslash, uint8_t *value, const uint8_t *end) {
     *value = (uint8_t) (backslash[1] - '0');
-    if (!yp_char_is_octal_digit(backslash[2])) {
+    if (backslash + 2 >= end || !yp_char_is_octal_digit(backslash[2])) {
         return 2;
     }
-
     *value = (uint8_t) ((*value << 3) | (backslash[2] - '0'));
-    if (!yp_char_is_octal_digit(backslash[3])) {
+    if (backslash + 3 >= end || !yp_char_is_octal_digit(backslash[3])) {
         return 3;
     }
-
     *value = (uint8_t) ((*value << 3) | (backslash[3] - '0'));
     return 4;
 }
@@ -93,12 +91,15 @@ unescape_hexadecimal_digit(const uint8_t value) {
 // Scan the 1-2 digits of hexadecimal into the value. Returns the number of
 // digits scanned.
 static inline size_t
-unescape_hexadecimal(const uint8_t *backslash, uint8_t *value) {
+unescape_hexadecimal(const uint8_t *backslash, uint8_t *value, const uint8_t *end) {
+    *value = 0;
+    if (backslash + 2 >= end || !yp_char_is_hexadecimal_digit(backslash[2])) {
+        return 2;
+    }
     *value = unescape_hexadecimal_digit(backslash[2]);
-    if (!yp_char_is_hexadecimal_digit(backslash[3])) {
+    if (backslash + 3 >=  end || !yp_char_is_hexadecimal_digit(backslash[3])) {
         return 3;
     }
-
     *value = (uint8_t) ((*value << 4) | unescape_hexadecimal_digit(backslash[3]));
     return 4;
 }
@@ -204,7 +205,7 @@ unescape(yp_parser_t *parser, uint8_t *dest, size_t *dest_length, const uint8_t 
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9': {
             uint8_t value;
-            const uint8_t *cursor = backslash + unescape_octal(backslash, &value);
+            const uint8_t *cursor = backslash + unescape_octal(backslash, &value, end);
 
             if (dest) {
                 dest[(*dest_length)++] = unescape_char(value, flags);
@@ -214,7 +215,7 @@ unescape(yp_parser_t *parser, uint8_t *dest, size_t *dest_length, const uint8_t 
         // \xnn         hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
         case 'x': {
             uint8_t value;
-            const uint8_t *cursor = backslash + unescape_hexadecimal(backslash, &value);
+            const uint8_t *cursor = backslash + unescape_hexadecimal(backslash, &value, end);
 
             if (dest) {
                 dest[(*dest_length)++] = unescape_char(value, flags);
