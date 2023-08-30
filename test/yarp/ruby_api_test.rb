@@ -39,18 +39,18 @@ class YARPRubyAPITest < Test::Unit::TestCase
     assert_equal 0, joined.start_offset
     assert_equal 10, joined.length
 
-    assert_raises RuntimeError, "Incompatible locations" do
+    assert_raise RuntimeError, "Incompatible locations" do
       arg.location.join(recv.location)
     end
 
     other_recv, other_args_node, _ = parse_expression("1234 + 567").child_nodes
     other_arg = other_args_node.arguments[0]
 
-    assert_raises RuntimeError, "Incompatible sources" do
+    assert_raise RuntimeError, "Incompatible sources" do
       other_arg.location.join(recv.location)
     end
 
-    assert_raises RuntimeError, "Incompatible sources" do
+    assert_raise RuntimeError, "Incompatible sources" do
       recv.location.join(other_arg.location)
     end
   end
