@@ -11,7 +11,7 @@ fn node_test() {
     unsafe {
         yp_parser_init(
             parser.as_mut_ptr(),
-            code.as_ptr(),
+            code.as_ptr().cast::<u8>(),
             code.as_bytes().len(),
             std::ptr::null(),
         );

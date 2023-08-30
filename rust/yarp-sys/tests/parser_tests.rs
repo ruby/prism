@@ -22,7 +22,7 @@ fn ruby_file_contents() -> (CString, usize) {
 #[test]
 fn init_test() {
     let (ruby_file_contents, len) = ruby_file_contents();
-    let source = ruby_file_contents.as_ptr();
+    let source = ruby_file_contents.as_ptr().cast::<u8>();
     let mut parser = MaybeUninit::<yp_parser_t>::uninit();
 
     unsafe {
@@ -41,7 +41,7 @@ fn comments_test() {
     unsafe {
         yp_parser_init(
             parser.as_mut_ptr(),
-            source.as_ptr(),
+            source.as_ptr().cast::<u8>(),
             source.as_bytes().len(),
             std::ptr::null(),
         );
@@ -72,7 +72,7 @@ fn diagnostics_test() {
     unsafe {
         yp_parser_init(
             parser.as_mut_ptr(),
-            source.as_ptr(),
+            source.as_ptr().cast::<u8>(),
             source.as_bytes().len(),
             std::ptr::null(),
         );

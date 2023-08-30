@@ -68,8 +68,8 @@ impl<'pr> Comment<'pr> {
     #[must_use]
     pub fn text(&self) -> &[u8] {
         unsafe {
-            let start = self.comment.as_ref().start.cast::<u8>();
-            let end = self.comment.as_ref().end.cast::<u8>();
+            let start = self.comment.as_ref().start;
+            let end = self.comment.as_ref().end;
 
             let len = usize::try_from(end.offset_from(start)).expect("end should point to memory after start");
             std::slice::from_raw_parts(start, len)
@@ -138,7 +138,7 @@ impl<'pr> ParseResult<'pr> {
     /// location range.
     #[must_use]
     pub fn as_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
-        let root = self.source.as_ptr().cast::<c_char>();
+        let root = self.source.as_ptr();
 
         let start = usize::try_from(unsafe { location.start().offset_from(root) }).expect("start should point to memory after root");
         let end = usize::try_from(unsafe { location.end().offset_from(root) }).expect("end should point to memory after root");
@@ -207,7 +207,7 @@ pub fn parse(source: &[u8]) -> ParseResult<'_> {
 
         yp_parser_init(
             (*uninit).as_mut_ptr(),
-            source.as_ptr().cast::<c_char>(),
+            source.as_ptr(),
             source.len(),
             std::ptr::null(),
         );

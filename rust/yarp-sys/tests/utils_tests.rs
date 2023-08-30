@@ -31,8 +31,6 @@ fn list_test() {
 }
 
 mod string {
-    use std::ffi::c_char;
-
     use yarp_sys::{
         yp_string_free, yp_string_length, yp_string_source, yp_string_t,
         yp_string_t__bindgen_ty_1, YP_STRING_SHARED, YP_STRING_OWNED,
@@ -47,8 +45,8 @@ mod string {
     }
 
     impl S {
-        fn start_ptr(&self) -> *const c_char {
-            self.c_string.as_ptr()
+        fn start_ptr(&self) -> *const u8 {
+            self.c_string.as_ptr().cast::<u8>()
         }
     }
 
@@ -57,7 +55,7 @@ mod string {
 
         let yp_string = yp_string_t {
             type_: string_type,
-            source: c_string.as_ptr() as *mut c_char,
+            source: c_string.as_ptr().cast::<u8>(),
             length: c_string.as_bytes().len(),
         };
 
@@ -91,7 +89,7 @@ mod string {
             assert_eq!(result_len, 16);
 
             let result_start = yp_string_source(&s.yp_string);
-            assert_eq!(s.yp_string.source, result_start as *mut c_char);
+            assert_eq!(s.yp_string.source, result_start);
 
             // Don't drop the yp_string--we don't own it anymore!
         }
@@ -106,7 +104,7 @@ mod string {
             assert_eq!(result_len, 16);
 
             let result_start = yp_string_source(&s.yp_string);
-            assert_eq!(s.yp_string.source, result_start as *mut c_char);
+            assert_eq!(s.yp_string.source, result_start);
 
             yp_string_free(&mut s.yp_string);
         }
@@ -121,7 +119,7 @@ mod string {
             assert_eq!(result_len, 16);
 
             let result_start = yp_string_source(&s.yp_string);
-            assert_eq!(s.yp_string.source, result_start as *mut c_char);
+            assert_eq!(s.yp_string.source, result_start);
         }
     }
 }
