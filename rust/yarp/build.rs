@@ -169,7 +169,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "    #[must_use]")?;
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
     writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).base.location }};")?;
-    writeln!(file, "        Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
+    writeln!(file, "        Location::new(unsafe {{ &(*pointer) }})")?;
     writeln!(file, "    }}")?;
 
     for field in &node.fields {
@@ -237,7 +237,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeFieldType::Location => {
                 writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
+                writeln!(file, "        Location::new(unsafe {{ &(*pointer) }})")?;
                 writeln!(file, "    }}")?;
             },
             NodeFieldType::OptionalLocation => {
@@ -247,7 +247,7 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "        if start.is_null() {{")?;
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
-                writeln!(file, "            Some(Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }})")?;
+                writeln!(file, "            Some(Location::new(unsafe {{ &(*pointer) }}))")?;
                 writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
@@ -399,32 +399,25 @@ use yarp_sys::*;
 
 /// A range in the source file.
 pub struct Location<'pr> {{
-    pointer: NonNull<yp_location_t>,
-    marker: PhantomData<&'pr mut yp_location_t>
+    pub(crate) start: *const u8,
+    pub(crate) end: *const u8,
+    marker: PhantomData<&'pr [u8]>
 }}
 
 impl<'pr> Location<'pr> {{
-    /// Returns the pointer to the start of the range.
-    #[must_use]
-    pub fn start(&self) -> *const u8 {{
-        unsafe {{ self.pointer.as_ref().start }}
-    }}
-
-    /// Returns the pointer to the end of the range.
-    #[must_use]
-    pub fn end(&self) -> *const u8 {{
-        unsafe {{ self.pointer.as_ref().end }}
-    }}
-
     /// Returns a byte slice for the range.
     #[must_use]
     pub fn as_slice(&self) -> &'pr [u8] {{
-        let start = self.start();
-
         unsafe {{
-          let len = usize::try_from(self.end().offset_from(start)).expect("end should point to memory after start");
-          std::slice::from_raw_parts(start, len)
+          let len = usize::try_from(self.end.offset_from(self.start)).expect("end should point to memory after start");
+          std::slice::from_raw_parts(self.start, len)
         }}
+    }}
+
+    /// Return a Location from the given `yp_location_t`.
+    #[must_use]
+    pub const fn new(loc: &'pr yp_location_t) -> Location<'pr> {{
+        Location {{ start: loc.start, end: loc.end, marker: PhantomData }}
     }}
 }}
 
@@ -628,7 +621,7 @@ impl<'pr> Node<'pr> {{
     writeln!(file, "    pub fn location(&self) -> Location<'pr> {{")?;
     writeln!(file, "        match *self {{")?;
     for node in &config.nodes {
-        writeln!(file, "            Self::{} {{ pointer, .. }} => Location {{ pointer: unsafe {{ NonNull::new_unchecked(&mut (*pointer.cast::<yp_node_t>()).location) }}, marker: PhantomData }},", node.name)?;
+        writeln!(file, "            Self::{} {{ pointer, .. }} => Location::new(unsafe {{ &((*pointer.cast::<yp_node_t>()).location) }}),", node.name)?;
     }
     writeln!(file, "        }}")?;
     writeln!(file, "    }}")?;

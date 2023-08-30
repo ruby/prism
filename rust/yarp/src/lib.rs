@@ -140,8 +140,8 @@ impl<'pr> ParseResult<'pr> {
     pub fn as_slice(&self, location: &Location<'pr>) -> &'pr [u8] {
         let root = self.source.as_ptr();
 
-        let start = usize::try_from(unsafe { location.start().offset_from(root) }).expect("start should point to memory after root");
-        let end = usize::try_from(unsafe { location.end().offset_from(root) }).expect("end should point to memory after root");
+        let start = usize::try_from(unsafe { location.start.offset_from(root) }).expect("start should point to memory after root");
+        let end = usize::try_from(unsafe { location.end.offset_from(root) }).expect("end should point to memory after root");
 
         &self.source[start..end]
     }
