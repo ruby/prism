@@ -348,4 +348,40 @@ mod tests {
 
         assert_eq!(locals[0].as_slice(), b"x");
     }
+
+    #[test]
+    fn optional_loc_test() {
+        let source = r#"
+module Example
+  x = call_func(3, 4)
+  y = x.call_func 5, 6
+end
+"#;
+        let result = parse(source.as_ref());
+
+        let node = result.node();
+        let module = node.as_program_node().unwrap().statements().body().iter().next().unwrap();
+        let module = module.as_module_node().unwrap();
+        let body = module.body();
+        let writes = body.iter().next().unwrap().as_statements_node().unwrap().body().iter().collect::<Vec<_>>();
+        assert_eq!(writes.len(), 2);
+
+        let asgn = &writes[0];
+        let call = asgn.as_local_variable_write_node().unwrap().value();
+        let call = call.as_call_node().unwrap();
+
+        let operator_loc = call.operator_loc();
+        assert!(operator_loc.is_none());
+        let closing_loc = call.closing_loc();
+        assert!(closing_loc.is_some());
+
+        let asgn = &writes[1];
+        let call = asgn.as_local_variable_write_node().unwrap().value();
+        let call = call.as_call_node().unwrap();
+
+        let operator_loc = call.operator_loc();
+        assert!(operator_loc.is_some());
+        let closing_loc = call.closing_loc();
+        assert!(closing_loc.is_none());
+    }
 }
