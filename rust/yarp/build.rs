@@ -246,7 +246,8 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
             NodeFieldType::OptionalLocation => {
                 writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
                 writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
-                writeln!(file, "        if pointer.is_null() {{")?;
+                writeln!(file, "        let start = unsafe {{ (*pointer).start }};")?;
+                writeln!(file, "        if start.is_null() {{")?;
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
                 writeln!(file, "            Some(Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }})")?;
