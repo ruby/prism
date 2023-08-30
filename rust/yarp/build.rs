@@ -9,7 +9,7 @@ use std::io::Write;
 use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
-enum NodeParamType {
+enum NodeFieldType {
     #[serde(rename = "node")]
     Node,
 
@@ -45,9 +45,12 @@ enum NodeParamType {
 }
 
 #[derive(Debug, Deserialize)]
-struct NodeParam {
+struct NodeField {
     name: String,
-    r#type: NodeParamType,
+
+    #[serde(rename = "type")]
+    field_type: NodeFieldType,
+
     kind: Option<String>
 }
 
@@ -56,7 +59,7 @@ struct Node {
     name: String,
 
     #[serde(default)]
-    child_nodes: Vec<NodeParam>,
+    fields: Vec<NodeField>,
 
     comment: String
 }
@@ -172,29 +175,29 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "        Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
     writeln!(file, "    }}")?;
 
-    for node_param in &node.child_nodes {
+    for field in &node.fields {
         writeln!(file)?;
-        writeln!(file, "    /// Returns the `{}` param", node_param.name)?;
+        writeln!(file, "    /// Returns the `{}` param", field.name)?;
         writeln!(file, "    #[must_use]")?;
 
-        match node_param.r#type {
-            NodeParamType::Node => {
-                if let Some(kind) = &node_param.kind {
-                    writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", node_param.name, kind)?;
-                    writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), node_param.name)?;
+        match field.field_type {
+            NodeFieldType::Node => {
+                if let Some(kind) = &field.kind {
+                    writeln!(file, "    pub fn {}(&self) -> {}<'pr> {{", field.name, kind)?;
+                    writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        {} {{ parser: self.parser, pointer: node, marker: PhantomData }}", kind)?;
                     writeln!(file, "    }}")?;
                 } else {
-                    writeln!(file, "    pub fn {}(&self) -> Node<'pr> {{", node_param.name)?;
-                    writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", node_param.name)?;
+                    writeln!(file, "    pub fn {}(&self) -> Node<'pr> {{", field.name)?;
+                    writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
                     writeln!(file, "        Node::new(self.parser, node)")?;
                     writeln!(file, "    }}")?;
                 }
             },
-            NodeParamType::OptionalNode => {
-                if let Some(kind) = &node_param.kind {
-                    writeln!(file, "    pub fn {}(&self) -> Option<{}<'pr>> {{", node_param.name, kind)?;
-                    writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), node_param.name)?;
+            NodeFieldType::OptionalNode => {
+                if let Some(kind) = &field.kind {
+                    writeln!(file, "    pub fn {}(&self) -> Option<{}<'pr>> {{", field.name, kind)?;
+                    writeln!(file, "        let node: *mut yp{}_t = unsafe {{ (*self.pointer).{} }};", struct_name(kind), field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
@@ -202,8 +205,8 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                     writeln!(file, "        }}")?;
                     writeln!(file, "    }}")?;
                 } else {
-                    writeln!(file, "    pub fn {}(&self) -> Option<Node<'pr>> {{", node_param.name)?;
-                    writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", node_param.name)?;
+                    writeln!(file, "    pub fn {}(&self) -> Option<Node<'pr>> {{", field.name)?;
+                    writeln!(file, "        let node: *mut yp_node_t = unsafe {{ (*self.pointer).{} }};", field.name)?;
                     writeln!(file, "        if node.is_null() {{")?;
                     writeln!(file, "            None")?;
                     writeln!(file, "        }} else {{")?;
@@ -212,37 +215,37 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                     writeln!(file, "    }}")?;
                 }
             },
-            NodeParamType::NodeList => {
-                writeln!(file, "    pub fn {}(&self) -> NodeList<'pr> {{", node_param.name)?;
-                writeln!(file, "        let pointer: *mut yp_node_list = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
+            NodeFieldType::NodeList => {
+                writeln!(file, "    pub fn {}(&self) -> NodeList<'pr> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut yp_node_list = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        NodeList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::String => {
-                writeln!(file, "    pub const fn {}(&self) -> &str {{", node_param.name)?;
+            NodeFieldType::String => {
+                writeln!(file, "    pub const fn {}(&self) -> &str {{", field.name)?;
                 writeln!(file, "        \"\"")?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::Constant => {
-                writeln!(file, "    pub fn {}(&self) -> ConstantId<'pr> {{", node_param.name)?;
-                writeln!(file, "        ConstantId::new(self.parser, unsafe {{ (*self.pointer).{} }})", node_param.name)?;
+            NodeFieldType::Constant => {
+                writeln!(file, "    pub fn {}(&self) -> ConstantId<'pr> {{", field.name)?;
+                writeln!(file, "        ConstantId::new(self.parser, unsafe {{ (*self.pointer).{} }})", field.name)?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::ConstantList => {
-                writeln!(file, "    pub fn {}(&self) -> ConstantList<'pr> {{", node_param.name)?;
-                writeln!(file, "        let pointer: *mut yp_constant_id_list_t = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
+            NodeFieldType::ConstantList => {
+                writeln!(file, "    pub fn {}(&self) -> ConstantList<'pr> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut yp_constant_id_list_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        ConstantList {{ parser: self.parser, pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::Location => {
-                writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", node_param.name)?;
-                writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
+            NodeFieldType::Location => {
+                writeln!(file, "    pub fn {}(&self) -> Location<'pr> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        Location {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::OptionalLocation => {
-                writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", node_param.name)?;
-                writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
+            NodeFieldType::OptionalLocation => {
+                writeln!(file, "    pub fn {}(&self) -> Option<Location<'pr>> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut yp_location_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        if pointer.is_null() {{")?;
                 writeln!(file, "            None")?;
                 writeln!(file, "        }} else {{")?;
@@ -250,19 +253,19 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
                 writeln!(file, "        }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::LocationList => {
-                writeln!(file, "    pub fn {}(&self) -> LocationList<'pr> {{", node_param.name)?;
-                writeln!(file, "        let pointer: *mut yp_location_list_t = unsafe {{ &mut (*self.pointer).{} }};", node_param.name)?;
+            NodeFieldType::LocationList => {
+                writeln!(file, "    pub fn {}(&self) -> LocationList<'pr> {{", field.name)?;
+                writeln!(file, "        let pointer: *mut yp_location_list_t = unsafe {{ &mut (*self.pointer).{} }};", field.name)?;
                 writeln!(file, "        LocationList {{ pointer: unsafe {{ NonNull::new_unchecked(pointer) }}, marker: PhantomData }}")?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::UInt32 => {
-                writeln!(file, "    pub fn {}(&self) -> u32 {{", node_param.name)?;
-                writeln!(file, "        unsafe {{ (*self.pointer).{} }}", node_param.name)?;
+            NodeFieldType::UInt32 => {
+                writeln!(file, "    pub fn {}(&self) -> u32 {{", field.name)?;
+                writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
                 writeln!(file, "    }}")?;
             },
-            NodeParamType::Flags => {
-                writeln!(file, "    pub fn {}(&self) -> yp_node_flags_t {{", node_param.name)?;
+            NodeFieldType::Flags => {
+                writeln!(file, "    pub fn {}(&self) -> yp_node_flags_t {{", field.name)?;
                 writeln!(file, "        unsafe {{ (*self.pointer).base.flags }}")?;
                 writeln!(file, "    }}")?;
             }
@@ -276,11 +279,11 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
     writeln!(file, "    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{")?;
 
     write!(file, "        write!(f, \"{}(", node.name)?;
-    if node.child_nodes.is_empty() {
+    if node.fields.is_empty() {
         write!(file, ")\"")?;
     } else {
         let mut padding = false;
-        for _ in &node.child_nodes {
+        for _ in &node.fields {
             if padding { write!(file, ", ")?; }
             write!(file, "{{:?}}")?;
             padding = true;
@@ -289,9 +292,9 @@ fn write_node(file: &mut File, node: &Node) -> Result<(), Box<dyn std::error::Er
         write!(file, ")\", ")?;
         padding = false;
 
-        for node_param in &node.child_nodes {
+        for field in &node.fields {
             if padding { write!(file, ", ")?; }
-            write!(file, "self.{}()", node_param.name)?;
+            write!(file, "self.{}()", field.name)?;
             padding = true;
         }
     }
@@ -332,9 +335,9 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
         writeln!(file, "/// The default visitor implementation for a `{}` node.", node.name)?;
 
         let mut children = false;
-        for node_param in &node.child_nodes {
-            match node_param.r#type {
-                NodeParamType::Node | NodeParamType::OptionalNode | NodeParamType::NodeList => {
+        for field in &node.fields {
+            match field.field_type {
+                NodeFieldType::Node | NodeFieldType::OptionalNode | NodeFieldType::NodeList => {
                     children = true;
                     break;
                 },
@@ -348,28 +351,28 @@ fn write_visit(file: &mut File, config: &Config) -> Result<(), Box<dyn std::erro
             writeln!(file, "    V: Visit<'pr> + ?Sized,")?;
             writeln!(file, "{{")?;
 
-            for node_param in &node.child_nodes {
-                match node_param.r#type {
-                    NodeParamType::Node => {
-                        if let Some(kind) = &node_param.kind {
-                            writeln!(file, "    visitor.visit{}(&node.{}());", struct_name(kind), node_param.name)?;
+            for field in &node.fields {
+                match field.field_type {
+                    NodeFieldType::Node => {
+                        if let Some(kind) = &field.kind {
+                            writeln!(file, "    visitor.visit{}(&node.{}());", struct_name(kind), field.name)?;
                         } else {
-                            writeln!(file, "    visitor.visit(&node.{}());", node_param.name)?;
+                            writeln!(file, "    visitor.visit(&node.{}());", field.name)?;
                         }
                     },
-                    NodeParamType::OptionalNode => {
-                        if let Some(kind) = &node_param.kind {
-                            writeln!(file, "    if let Some(node) = node.{}() {{", node_param.name)?;
+                    NodeFieldType::OptionalNode => {
+                        if let Some(kind) = &field.kind {
+                            writeln!(file, "    if let Some(node) = node.{}() {{", field.name)?;
                             writeln!(file, "        visitor.visit{}(&node);", struct_name(kind))?;
                             writeln!(file, "    }}")?;
                         } else {
-                            writeln!(file, "    if let Some(node) = node.{}() {{", node_param.name)?;
+                            writeln!(file, "    if let Some(node) = node.{}() {{", field.name)?;
                             writeln!(file, "        visitor.visit(&node);")?;
                             writeln!(file, "    }}")?;
                         }
                     },
-                    NodeParamType::NodeList => {
-                        writeln!(file, "    for node in node.{}().iter() {{", node_param.name)?;
+                    NodeFieldType::NodeList => {
+                        writeln!(file, "    for node in node.{}().iter() {{", field.name)?;
                         writeln!(file, "        visitor.visit(&node);")?;
                         writeln!(file, "    }}")?;
                     },
