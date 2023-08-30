@@ -22,5 +22,27 @@ module YARP
     snippet "incomplete escaped list", "%w[\\"
     snippet "incomplete escaped regex", "/a\\"
     snippet "unterminated heredoc with unterminated escape at end of file", "<<A\n\\"
+
+    snippet "statements node with multiple heredocs", <<~EOF
+      for <<A + <<B
+      A
+      B
+    EOF
+    snippet "create a binary call node with arg before receiver", <<~EOF
+      <<-A.g/{/
+      A
+      /, ""\\
+    EOF
+    snippet "regular expression with start and end out of order", <<~RUBY
+      <<-A.g//,
+      A
+      /{/, ''\\
+    RUBY
+    snippet "interpolated regular expression with start and end out of order", <<~RUBY
+      <<-A.g/{/,
+      A
+      a
+      /{/, ''\\
+    RUBY
   end
 end

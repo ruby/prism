@@ -161,6 +161,10 @@ debug_token(yp_token_t * token) {
 
 #endif
 
+/* Macros for min/max.  */
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 /******************************************************************************/
 /* Lex mode manipulations                                                     */
 /******************************************************************************/
@@ -1240,8 +1244,8 @@ static yp_call_node_t *
 yp_call_node_binary_create(yp_parser_t *parser, yp_node_t *receiver, yp_token_t *operator, yp_node_t *argument) {
     yp_call_node_t *node = yp_call_node_create(parser);
 
-    node->base.location.start = receiver->location.start;
-    node->base.location.end = argument->location.end;
+    node->base.location.start = MIN(receiver->location.start, argument->location.start);
+    node->base.location.end = MAX(receiver->location.end, argument->location.end);
 
     node->receiver = receiver;
     node->message_loc = YP_OPTIONAL_LOCATION_TOKEN_VALUE(operator);
@@ -2762,8 +2766,13 @@ yp_interpolated_regular_expression_node_create(yp_parser_t *parser, const yp_tok
 
 static inline void
 yp_interpolated_regular_expression_node_append(yp_interpolated_regular_expression_node_t *node, yp_node_t *part) {
+    if (node->base.location.start > part->location.start) {
+        node->base.location.start = part->location.start;
+    }
+    if (node->base.location.end < part->location.end) {
+        node->base.location.end = part->location.end;
+    }
     yp_node_list_append(&node->parts, part);
-    node->base.location.end = part->location.end;
 }
 
 static inline void
@@ -3596,8 +3605,8 @@ yp_regular_expression_node_create(yp_parser_t *parser, const yp_token_t *opening
             .type = YP_NODE_REGULAR_EXPRESSION_NODE,
             .flags = yp_regular_expression_flags_create(closing),
             .location = {
-                .start = opening->start,
-                .end = closing->end
+                .start = MIN(opening->start, closing->start),
+                .end = MAX(opening->end, closing->end)
             }
         },
         .opening_loc = YP_LOCATION_TOKEN_VALUE(opening),
@@ -3908,12 +3917,14 @@ yp_statements_node_location_set(yp_statements_node_t *node, const uint8_t *start
 // Append a new node to the given StatementsNode node's body.
 static void
 yp_statements_node_body_append(yp_statements_node_t *node, yp_node_t *statement) {
-    if (yp_statements_node_body_length(node) == 0) {
+    if (yp_statements_node_body_length(node) == 0 || statement->location.start < node->base.location.start) {
         node->base.location.start = statement->location.start;
+    }
+    if (statement->location.end > node->base.location.end) {
+        node->base.location.end = statement->location.end;
     }
 
     yp_node_list_append(&node->body, statement);
-    node->base.location.end = statement->location.end;
 
     // Every statement gets marked as a place where a newline can occur.
     statement->flags |= YP_NODE_FLAG_NEWLINE;
