@@ -419,6 +419,17 @@ impl<'pr> Location<'pr> {{
     pub const fn new(loc: &'pr yp_location_t) -> Location<'pr> {{
         Location {{ start: loc.start, end: loc.end, marker: PhantomData }}
     }}
+
+    /// Return a Location starting at self and ending at the end of other.
+    /// Returns None if self starts after other.
+    #[must_use]
+    pub fn join(&self, other: &Location<'pr>) -> Option<Location<'pr>> {{
+        if self.start > other.start {{
+            None
+        }} else {{
+            Some(Location {{ start: self.start, end: other.end, marker: PhantomData }})
+        }}
+    }}
 }}
 
 impl std::fmt::Debug for Location<'_> {{
