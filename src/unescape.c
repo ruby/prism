@@ -538,6 +538,10 @@ size_t
 yp_unescape_calculate_difference(yp_parser_t *parser, const uint8_t *backslash, yp_unescape_type_t unescape_type, bool expect_single_codepoint) {
     assert(unescape_type != YP_UNESCAPE_NONE);
 
+    if (backslash + 1 >= parser->end) {
+        return 0;
+    }
+
     switch (backslash[1]) {
         case '\\':
         case '\'':
