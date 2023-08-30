@@ -1,34 +1,47 @@
 # frozen_string_literal: true
 
 module YARP
+  # This class is responsible for lexing files with both lex_compat and
+  # lex_ripper and ensuring they match up. It keeps track of the files which
+  # failed to match up, and the files which passed.
   class LexTask
-    attr_reader :previous_todos, :todos, :passing_file_count
+    attr_reader :failing_files, :passing_file_count
 
-    def initialize(previous_todos)
-      @previous_todos = previous_todos
+    def initialize
       @passing_file_count = 0
-      @todos = []
+      @failing_files = []
     end
 
     def compare(filepath)
-      if lex(filepath)
+      # If we can't read the file, then ignore it.
+      return true if !File.file?(filepath) || !File.readable?(filepath)
+
+      # Read the file into memory.
+      source = File.read(filepath)
+
+      # If the filepath contains invalid Ruby code, then ignore it.
+      begin
+        RubyVM::AbstractSyntaxTree.parse(source)
+      rescue ArgumentError, SyntaxError
+        return true
+      end
+
+      result = YARP.lex_compat(source)
+      if result.errors.empty? && YARP.lex_ripper(source) == result.value
         @passing_file_count += 1
         true
       else
-        @todos << filepath
+        @failing_files << filepath
         false
       end
     end
 
     def failing_file_count
-      @todos.length
+      failing_files.length
     end
 
-    # ENV["TODOS"] was toggled and there are failing files
-    # or new failures were introduced
     def failed?
-      (ENV["TODOS"] && failing_file_count > 0) ||
-        (@todos - @previous_todos).any?
+      failing_files.any?
     end
 
     def summary
@@ -38,22 +51,32 @@ module YARP
         PERCENT=#{(passing_file_count.to_f / (passing_file_count + failing_file_count) * 100).round(2)}%
       RESULTS
     end
+  end
+
+  class << self
+    # This method is responsible for iterating through a list of items and running
+    # each item in a separate thread. It will block until all items have been
+    # processed. This is particularly useful for tasks that are IO-bound like
+    # downloading files or reading files from disk.
+    def parallelize(items, &block)
+      Thread.abort_on_exception = true
+
+      queue = Queue.new
+      items.each { |item| queue << item }
+
+      workers =
+        ENV.fetch("WORKERS") { 16 }.to_i.times.map do
+          parallelize_thread(queue, &block)
+        end
+
+      workers.map(&:join)
+    end
 
     private
 
-    # For the given filepath, read it and lex it with both lex_compat and
-    # lex_ripper. Compare the output of both and ensure they match.
-    def lex(filepath)
-      source = File.read(filepath)
-      lexed = YARP.lex_compat(source)
-      begin
-        lexed_ripper = YARP.lex_ripper(source)
-      rescue SyntaxError
-        return true # If the file is invalid, we say the output is equivalent for comparison purposes
-      end
-      lexed.errors.empty? && lexed_ripper == lexed.value
-    rescue
-      false
+    # Create a new thread with a minimal number of locals that it can access.
+    def parallelize_thread(queue, &block)
+      Thread.new { block.call(queue.shift) until queue.empty? }
     end
   end
 end
@@ -96,7 +119,7 @@ TARGETS.each do |name, target|
     plain_text = ENV.fetch("CI", false)
     warn_failing = ENV.fetch("VERBOSE", false)
 
-    lex_task = YARP::LexTask.new(target.fetch(:todos, []).map { |todo| File.join(dirpath, todo) })
+    lex_task = YARP::LexTask.new
     filepaths = Dir[File.join(dirpath, "**", "*.rb")]
 
     if excludes = target[:excludes]
@@ -118,20 +141,9 @@ TARGETS.each do |name, target|
 
     puts("\n\n")
 
-    previous_todos = lex_task.previous_todos.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }
-    current_todos = lex_task.todos.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }
-    current_minus_previous = current_todos - previous_todos
-    previous_minus_current = previous_todos - current_todos
-
-    if current_minus_previous.any?
+    if lex_task.failing_files.any?
       puts("Uh oh, there are some files which were previously passing but are now failing. Here are the files:")
-      puts("    - #{current_minus_previous.join("\n    - ")}")
-    elsif (previous_minus_current).any?
-      puts("Some files listed as todo are now passing:")
-      puts("    - #{previous_minus_current.join("\n    - ")}")
-
-      puts("This is the new list which can be copied into lex.rake:")
-      puts("    - #{current_todos.join("\n    - ")}")
+      puts("    - #{lex_task.failing_files.map { _1.gsub(/tmp\/targets\/[a-zA-Z0-9_]*\//, "") }.join("\n    - ")}")
     else
       puts("The todos list in lex.rake is up to date")
     end
@@ -150,7 +162,7 @@ task lex: :compile do
   plain_text = ENV.fetch("CI", false)
   warn_failing = ENV.fetch("VERBOSE", false)
 
-  lex_task = YARP::LexTask.new([])
+  lex_task = YARP::LexTask.new
   filepaths = Dir[ENV.fetch("FILEPATHS")]
 
   filepaths.each do |filepath|
@@ -170,8 +182,10 @@ task lex: :compile do
   exit(1) if lex_task.failed?
 end
 
+directory "tmp/failing"
+
 desc "Lex against the most recent version of various rubygems"
-task "lex:rubygems": :compile do
+task "lex:rubygems": [:compile, "tmp/failing"] do
   $:.unshift(File.expand_path("../lib", __dir__))
   require "net/http"
   require "ripper"
@@ -179,12 +193,12 @@ task "lex:rubygems": :compile do
   require "tmpdir"
   require "yarp"
 
-  queue = Queue.new
+  items = []
   Gem::SpecFetcher.new.available_specs(:latest).first.each do |source, gems|
     gems.each do |tuple|
       gem_name = File.basename(tuple.spec_name, ".gemspec")
-      gem_url = source.uri.merge("/gems/#{gem_name}.gem")
-      queue << [gem_name, gem_url]
+      gem_uri = source.uri.merge("/gems/#{gem_name}.gem")
+      items << [gem_name, gem_uri]
     end
   end
 
@@ -192,48 +206,40 @@ task "lex:rubygems": :compile do
   passing_gem_count = 0
   failing_gem_count = 0
 
-  workers =
-    ENV.fetch("WORKERS", 16).times.map do
-      Thread.new do
-        Net::HTTP.start("rubygems.org", 443, use_ssl: true) do |http|
-          until queue.empty?
-            (gem_name, gem_url) = queue.shift
+  YARP.parallelize(items) do |(gem_name, gem_uri)|
+  # items.each do |(gem_name, gem_uri)|
+    response = Net::HTTP.get_response(gem_uri)
+    next unless response.is_a?(Net::HTTPSuccess)
 
-            http.request(Net::HTTP::Get.new(gem_url)) do |response|
-              # Skip unexpected responses
-              next unless response.is_a?(Net::HTTPSuccess)
+    Dir.mktmpdir do |directory|
+      filepath = File.join(directory, "#{gem_name}.gem")
+      File.write(filepath, response.body)
 
-              Dir.mktmpdir do |directory|
-                filepath = File.join(directory, "#{gem_name}.gem")
-                File.write(filepath, response.body)
+      begin
+        Gem::Package.new(filepath).extract_files(directory, "[!~]*")
+      rescue
+        # If the gem fails to extract, we'll just skip it
+        next
+      end
 
-                begin
-                  Gem::Package.new(filepath).extract_files(directory, "[!~]*")
-
-                  lex_task = YARP::LexTask.new([])
-                  Dir[File.join(directory, "**", "*.rb")].each do |filepath|
-                    lex_task.compare(filepath)
-                  end
-
-                  if lex_task.failed?
-                    failing_gem_count += 1
-                    print("\033[31mE\033[0m")
-                  else
-                    passing_gem_count += 1
-                    warn(gem_name) if warn_failing
-                    print("\033[32m.\033[0m")
-                  end
-                rescue
-                  # If the gem fails to extract, we'll just skip it
-                end
-              end
-            end
-          end
+      lex_task = YARP::LexTask.new
+      Dir[File.join(directory, "**", "*.rb")].each do |filepath|
+        unless lex_task.compare(filepath)
+          cp filepath, "tmp/failing/#{SecureRandom.hex}-#{File.basename(filepath)}"
         end
       end
-    end
 
-  workers.each(&:join)
+      if lex_task.failed?
+        failing_gem_count += 1
+        print("\033[31mE\033[0m")
+      else
+        passing_gem_count += 1
+        warn(gem_name) if warn_failing
+        print("\033[32m.\033[0m")
+      end
+    end
+  end
+
   puts(<<~RESULTS)
     PASSING=#{passing_gem_count}
     FAILING=#{failing_gem_count}
@@ -250,84 +256,66 @@ TOP_100_GEMS_INVALID_SYNTAX_PREFIXES = %w[
   top-100-gems/fastlane-2.212.1/fastlane/lib/assets/custom_action_template.rb
 ]
 
-desc "Download the top 100 rubygems under #{TOP_100_GEMS_DIR}/"
-task "download:topgems" do
-  $:.unshift(File.expand_path("../lib", __dir__))
-  require "net/http"
-  require "rubygems/package"
-  require "tmpdir"
+namespace :download do
+  directory TOP_100_GEMS_DIR
 
-  queue = Queue.new
-  YAML.safe_load_file(TOP_100_GEM_FILENAME).each do |gem_name|
-    gem_url = "https://rubygems.org/gems/#{gem_name}.gem"
-    queue << [gem_name, gem_url]
-  end
+  desc "Download the top 100 rubygems under #{TOP_100_GEMS_DIR}/"
+  task topgems: TOP_100_GEMS_DIR do
+    $:.unshift(File.expand_path("../lib", __dir__))
+    require "net/http"
+    require "rubygems/package"
+    require "tmpdir"
 
-  Dir.mkdir TOP_100_GEMS_DIR unless File.directory? TOP_100_GEMS_DIR
+    YARP.parallelize(YAML.safe_load_file(TOP_100_GEM_FILENAME)) do |gem_name|
+      directory = File.expand_path("#{TOP_100_GEMS_DIR}/#{gem_name}")
+      next if File.directory?(directory)
 
-  workers =
-    ENV.fetch("WORKERS", 16).times.map do
-      Thread.new do
-        Net::HTTP.start("rubygems.org", 443, use_ssl: true) do |http|
-          until queue.empty?
-            (gem_name, gem_url) = queue.shift
-            directory = File.expand_path("#{TOP_100_GEMS_DIR}/#{gem_name}")
-            unless File.directory? directory
-              puts "Downloading #{gem_name}"
+      puts "Downloading #{gem_name}"
 
-              http.request(Net::HTTP::Get.new(gem_url)) do |response|
-                # Skip unexpected responses
-                raise gem_url unless response.is_a?(Net::HTTPSuccess)
+      uri = URI.parse("https://rubygems.org/gems/#{gem_name}.gem")
+      response = Net::HTTP.get_response(uri)
+      raise gem_name unless response.is_a?(Net::HTTPSuccess)
 
-                Dir.mktmpdir do |tmpdir|
-                  filepath = File.join(tmpdir, "#{gem_name}.gem")
-                  File.write(filepath, response.body)
-
-                  Gem::Package.new(filepath).extract_files(directory, "**/*.rb")
-                end
-              end
-            end
-          end
-        end
+      Dir.mktmpdir do |tmpdir|
+        filepath = File.join(tmpdir, "#{gem_name}.gem")
+        File.write(filepath, response.body)
+        Gem::Package.new(filepath).extract_files(directory, "**/*.rb")
       end
     end
-
-  workers.each(&:join)
+  end
 end
 
-# This task parses each .rb file of the top 100 gems with YARP and ensures they parse
-# successfully (unless they are invalid syntax as confirmed by "ruby -c").
-# It also does some sanity check for every location recorded in the AST.
+# This task parses each .rb file of the top 100 gems with YARP and ensures they
+# parse successfully (unless they are invalid syntax as confirmed by "ruby -c").
 desc "Parse the top 100 rubygems"
 task "parse:topgems": ["download:topgems", :compile] do
+  $:.unshift(File.expand_path("../lib", __dir__))
   require "yarp"
-  require_relative "../test/yarp/test_helper"
 
-  module YARP
-    class ParseTop100GemsTest < TestCase
-      Dir["#{TOP_100_GEMS_DIR}/**/*.rb"].each do |filepath|
-        test filepath do
-          result = YARP.parse_file(filepath)
+  incorrect = []
+  YARP.parallelize(Dir["#{TOP_100_GEMS_DIR}/**/*.rb"]) do |filepath|
+    result = YARP.parse_file(filepath)
 
-          if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
-            assert_false result.success?
-            # ensure it is actually invalid syntax
-            assert_false system(RbConfig.ruby, "-c", filepath, out: File::NULL, err: File::NULL)
-            next
-          end
-
-          assert result.success?, "failed to parse #{filepath}"
-          value = result.value
-          assert_valid_locations(value)
-        end
-      end
+    if TOP_100_GEMS_INVALID_SYNTAX_PREFIXES.any? { |prefix| filepath.start_with?(prefix) }
+      # Check that the file failed to parse and that it actually contains
+      # invalid syntax.
+      incorrect << filepath if result.success? || system(RbConfig.ruby, "-c", filepath, out: File::NULL, err: File::NULL)
+    else
+      incorrect << filepath unless result.success?
     end
+  end
+
+  if incorrect.any?
+    warn("The following files failed to parse:")
+    warn("  - #{incorrect.join("\n  - ")}")
+    exit(1)
+  else
+    puts("All files parsed successfully.")
   end
 end
 
-# This task lexes against the top 100 gems, and will exit(1)
-# if the existing failures in rakelib/top-100-gems.yml are no
-# longer correct.
+# This task lexes against the top 100 gems, and will exit(1) if any files fail
+# to lex properly.
 desc "Lex against the top 100 rubygems"
 task "lex:topgems": ["download:topgems", :compile] do
   $:.unshift(File.expand_path("../lib", __dir__))
@@ -337,67 +325,34 @@ task "lex:topgems": ["download:topgems", :compile] do
   require "tmpdir"
   require "yarp"
 
-  previous_todos_by_gem_name = {}
+  gem_names = YAML.safe_load_file(TOP_100_GEM_FILENAME)
+  failing_files = {}
 
-  YAML.safe_load_file(TOP_100_GEM_FILENAME).each do |gem_info|
-    if gem_info.class == Hash
-      previous_todos_by_gem_name.merge!(gem_info)
-    else
-      previous_todos_by_gem_name[gem_info] = []
-    end
-  end
-
-  warn_failing = ENV.fetch("VERBOSE", false)
-
-  # An array of hashes with gem_name => [new_failing_files] for any new
-  # failures that we didn't previously have. If there is anything in
-  # this list, the task will report it and exit(1)
-  new_failing_files_by_gem = []
-
-  # An array of hashes with gem_name => [all_failing_files] for all failures
-  # (including pre-existing ones). If there are fewer failures than before,
-  # this list will be used to generate the new yml file before exit(1)
-  updated_todos_by_gem_name = {}
-
-  previous_todos_by_gem_name.keys.each do |gem_name|
+  YARP.parallelize(gem_names) do |gem_name|
     puts "Lexing #{gem_name}"
-    directory = "#{TOP_100_GEMS_DIR}/#{gem_name}"
+    directory = File.expand_path("#{TOP_100_GEMS_DIR}/#{gem_name}")
 
-    todos = previous_todos_by_gem_name[gem_name].map do |todo_filepath|
-      File.join(directory, todo_filepath)
-    end
-    lex_task = YARP::LexTask.new(todos)
+    lex_task = YARP::LexTask.new
     Dir[File.join(directory, "**", "*.rb")].each do |filepath|
       lex_task.compare(filepath)
     end
 
-    todos = lex_task.todos.map { _1.gsub("#{directory}/", "") }
-
-    updated_todos_by_gem_name.merge!({ gem_name => todos })
-
-    if lex_task.failed?
-      new_failing_files_by_gem << { gem_name => todos }
-    end
+    gem_failing_files = lex_task.failing_files.map { |todo| todo.delete_prefix("#{directory}/") }
+    failing_files[gem_name] = gem_failing_files if gem_failing_files.any?
   end
 
-  failing_gem_count, passing_gem_count = updated_todos_by_gem_name.partition { |_, todos| todos.any? }.map(&:size)
+  failing = failing_files.length
+  passing = gem_names.length - failing
 
   puts(<<~RESULTS)
-    PASSING=#{passing_gem_count}
-    FAILING=#{failing_gem_count}
-    PERCENT=#{(passing_gem_count.to_f / (passing_gem_count + failing_gem_count) * 100).round(2)}%
+    PASSING=#{passing}
+    FAILING=#{failing}
+    PERCENT=#{(passing.to_f / gem_names.length * 100).round(2)}%
   RESULTS
 
-  if new_failing_files_by_gem.any?
-    puts "Oh no! There were new failures:"
-    puts new_failing_files_by_gem.to_yaml
-    exit(1)
-  elsif (updated_todos_by_gem_name != previous_todos_by_gem_name)
-    puts "There are files that were previously failing but are no longer failing:"
-    puts "Please update #{TOP_100_GEM_FILENAME} with the following"
-    puts (updated_todos_by_gem_name.sort_by(&:first).map do |k, v|
-      v.any? ? { k => v } : k
-    end).to_yaml
+  if failing > 0
+    warn("The following files failed to lex:")
+    warn(failing_files.to_yaml)
     exit(1)
   end
 end
