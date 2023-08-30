@@ -252,9 +252,13 @@ mod tests {
         let slice = std::str::from_utf8(result.as_slice(&location)).unwrap();
 
         assert_eq!(slice, "222");
+        assert_eq!(6, location.start_offset());
+        assert_eq!(9, location.end_offset());
 
         let recv_loc = plus.receiver().unwrap().location();
         assert_eq!(recv_loc.as_slice(), b"111");
+        assert_eq!(0, recv_loc.start_offset());
+        assert_eq!(3, recv_loc.end_offset());
 
         let joined = recv_loc.join(&location).unwrap();
         assert_eq!(joined.as_slice(), b"111 + 222");

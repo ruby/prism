@@ -432,6 +432,24 @@ impl<'pr> Location<'pr> {{
             Some(Location {{ parser: self.parser, start: self.start, end: other.end, marker: PhantomData }})
         }}
     }}
+
+    /// Return the start offset from the beginning of the parsed source.
+    #[must_use]
+    pub fn start_offset(&self) -> usize {{
+        unsafe {{
+            let parser_start = (*self.parser.as_ptr()).start;
+            usize::try_from(self.start.offset_from(parser_start)).expect("start should point to memory after the parser's start")
+        }}
+    }}
+
+    /// Return the end offset from the beginning of the parsed source.
+    #[must_use]
+    pub fn end_offset(&self) -> usize {{
+        unsafe {{
+            let parser_start = (*self.parser.as_ptr()).start;
+            usize::try_from(self.end.offset_from(parser_start)).expect("end should point to memory after the parser's start")
+        }}
+    }}
 }}
 
 impl std::fmt::Debug for Location<'_> {{
