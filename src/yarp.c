@@ -380,6 +380,9 @@ lex_state_arg_p(yp_parser_t *parser) {
 
 static inline bool
 lex_state_spcarg_p(yp_parser_t *parser, bool space_seen) {
+    if (parser->current.end >= parser->end) {
+        return false;
+    }
     return lex_state_arg_p(parser) && space_seen && !yp_char_is_whitespace(*parser->current.end);
 }
 
@@ -4994,7 +4997,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
             // 0d1111 is a decimal number
             case 'd':
             case 'D':
-                if (yp_char_is_decimal_digit(*++parser->current.end)) {
+                parser->current.end++;
+                if (yp_char_is_decimal_digit(peek(parser))) {
                     parser->current.end += yp_strspn_decimal_number(parser->current.end, parser->end - parser->current.end);
                 } else {
                     yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid decimal number.");
@@ -5005,7 +5009,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
             // 0b1111 is a binary number
             case 'b':
             case 'B':
-                if (yp_char_is_binary_digit(*++parser->current.end)) {
+                parser->current.end++;
+                if (yp_char_is_binary_digit(peek(parser))) {
                     parser->current.end += yp_strspn_binary_number(parser->current.end, parser->end - parser->current.end);
                 } else {
                     yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid binary number.");
@@ -5016,7 +5021,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
             // 0o1111 is an octal number
             case 'o':
             case 'O':
-                if (yp_char_is_octal_digit(*++parser->current.end)) {
+                parser->current.end++;
+                if (yp_char_is_octal_digit(peek(parser))) {
                     parser->current.end += yp_strspn_octal_number(parser->current.end, parser->end - parser->current.end);
                 } else {
                     yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid octal number.");
@@ -5040,7 +5046,8 @@ lex_numeric_prefix(yp_parser_t *parser) {
             // 0x1111 is a hexadecimal number
             case 'x':
             case 'X':
-                if (yp_char_is_hexadecimal_digit(*++parser->current.end)) {
+                parser->current.end++;
+                if (yp_char_is_hexadecimal_digit(peek(parser))) {
                     parser->current.end += yp_strspn_hexadecimal_number(parser->current.end, parser->end - parser->current.end);
                 } else {
                     yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid hexadecimal number.");
@@ -5124,6 +5131,11 @@ lex_numeric(yp_parser_t *parser) {
 
 static yp_token_type_t
 lex_global_variable(yp_parser_t *parser) {
+    if (parser->current.end >= parser->end) {
+        yp_diagnostic_list_append(&parser->error_list, parser->current.start, parser->current.end, "Invalid global variable.");
+        return YP_TOKEN_GLOBAL_VARIABLE;
+    }
+
     switch (*parser->current.end) {
         case '~':  // $~: match-data
         case '*':  // $*: argv
@@ -5903,13 +5915,13 @@ parser_lex(yp_parser_t *parser) {
                             // Here we look for a "." or "&." following a "\n".
                             const char *following = next_newline(next_content, parser->end - next_content);
 
-                            while (following && (following < parser->end)) {
+                            while (following && (following + 1 < parser->end)) {
                                 following++;
                                 following += yp_strspn_inline_whitespace(following, parser->end - following);
 
                                 // If this is not followed by a comment, then we can break out
                                 // of this loop.
-                                if (*following != '#') break;
+                                if (peek_at(parser, following) != '#') break;
 
                                 // If there is a comment, then we need to find the end of the
                                 // comment and continue searching from there.
@@ -6576,7 +6588,7 @@ parser_lex(yp_parser_t *parser) {
                         LEX(YP_TOKEN_COLON_COLON);
                     }
 
-                    if (lex_state_end_p(parser) || yp_char_is_whitespace(*parser->current.end) || peek(parser) == '#') {
+                    if (lex_state_end_p(parser) || yp_char_is_whitespace(peek(parser)) || peek(parser) == '#') {
                         lex_state_set(parser, YP_LEX_STATE_BEG);
                         LEX(YP_TOKEN_COLON);
                     }
@@ -6940,6 +6952,12 @@ parser_lex(yp_parser_t *parser) {
                 // literally. In this case we'll skip past the next character
                 // and find the next breakpoint.
                 if (*breakpoint == '\\') {
+                    // Check that we're not at the end of the file.
+                    if (breakpoint + 1 >= parser->end) {
+                        breakpoint = NULL;
+                        continue;
+                    }
+
                     yp_unescape_type_t unescape_type = lex_mode->as.list.interpolation ? YP_UNESCAPE_ALL : YP_UNESCAPE_MINIMAL;
                     size_t difference = yp_unescape_calculate_difference(parser, breakpoint, unescape_type, false);
 
@@ -7073,6 +7091,12 @@ parser_lex(yp_parser_t *parser) {
                 // literally. In this case we'll skip past the next character
                 // and find the next breakpoint.
                 if (*breakpoint == '\\') {
+                    // Check that we're not at the end of the file.
+                    if (breakpoint + 1 >= parser->end) {
+                        breakpoint = NULL;
+                        continue;
+                    }
+
                     size_t difference = yp_unescape_calculate_difference(parser, breakpoint, YP_UNESCAPE_ALL, false);
 
                     // If the result is an escaped newline ...
@@ -7219,6 +7243,12 @@ parser_lex(yp_parser_t *parser) {
                         breakpoint = yp_strpbrk(parser, breakpoint + 1, breakpoints, parser->end - (breakpoint + 1));
                         break;
                     case '\\': {
+                        // Check that we're not at the end of the file.
+                        if (breakpoint + 1 >= parser->end) {
+                            breakpoint = NULL;
+                            break;
+                        }
+
                         // If we hit escapes, then we need to treat the next token
                         // literally. In this case we'll skip past the next character and
                         // find the next breakpoint.
@@ -7383,6 +7413,12 @@ parser_lex(yp_parser_t *parser) {
                         break;
                     }
                     case '\\': {
+                        // Check that we're not at the end of the file.
+                        if (breakpoint + 1 >= parser->end) {
+                            breakpoint = NULL;
+                            break;
+                        }
+
                         // If we hit an escape, then we need to skip past
                         // however many characters the escape takes up. However
                         // it's important that if \n or \r\n are escaped that we
